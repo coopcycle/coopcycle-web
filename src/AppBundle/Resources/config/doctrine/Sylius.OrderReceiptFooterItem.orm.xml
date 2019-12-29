@@ -4,7 +4,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <many-to-one field="parent" target-entity="AppBundle\Entity\Sylius\OrderReceipt" inversed-by="lineItems" fetch="LAZY">
+    <many-to-one field="parent" target-entity="AppBundle\Entity\Sylius\OrderReceipt" inversed-by="footerItems" fetch="LAZY">
       <join-columns>
         <join-column name="parent_id" referenced-column-name="id"/>
       </join-columns>

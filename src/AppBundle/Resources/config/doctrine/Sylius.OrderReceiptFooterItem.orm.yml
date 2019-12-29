@@ -10,7 +10,7 @@ AppBundle\Entity\Sylius\OrderReceiptFooterItem:
     manyToOne:
         parent:
             targetEntity: AppBundle\Entity\Sylius\OrderReceipt
-            inversedBy: lineItems
+            inversedBy: footerItems
             gedmo:
                 - sortableGroup
 
