@@ -111,9 +111,14 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $address = $this->normalizer->denormalize($data, Address::class, $format);
 
-        if (null === $address->getGeo() && isset($data['latLng'])) {
-            [ $latitude, $longitude ] = $data['latLng'];
-            $address->setGeo(new GeoCoordinates($latitude, $longitude));
+        if (null === $address->getGeo()) {
+            if (isset($data['latLng'])) {
+                [ $latitude, $longitude ] = $data['latLng'];
+                $address->setGeo(new GeoCoordinates($latitude, $longitude));
+            } else {
+                $geocoded = $this->geocoder->geocode($address->getStreetAddress());
+                $address->setGeo($geocoded->getGeo());
+            }
         }
 
         return $address;

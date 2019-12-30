@@ -387,6 +387,85 @@ Feature: Deliveries
       }
       """
 
+  Scenario: Create delivery with details with OAuth
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "dropoff": {
+          "address": {
+            "streetAddress": "48, Rue de Rivoli Paris",
+            "telephone": "0612345678",
+            "contactName": "John Doe"
+          },
+          "before": "2018-08-29 13:30:00"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.startsWith('2018-08-29')",
+          "doneBefore":"@string@.startsWith('2018-08-29')",
+          "comments": ""
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone": "+33612345678",
+            "name":null,
+            "contactName": "John Doe"
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.startsWith('2018-08-29T13:30:00')",
+          "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')",
+          "comments": ""
+        }
+      }
+      """
+
   Scenario: Create delivery with latLng with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
