@@ -4,6 +4,12 @@ services:
     autowire: true
     autoconfigure: true
 
+  misd_phone_number.serializer.normalizer:
+    class: AppBundle\Serializer\PhoneNumberNormalizer
+    arguments:
+      - '@libphonenumber.phone_number_util'
+      - '%country_iso%'
+
   AppBundle\Serializer\DeliveryNormalizer:
     arguments:
       $normalizer: '@api_platform.jsonld.normalizer.item'
