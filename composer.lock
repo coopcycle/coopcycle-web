@@ -5240,28 +5240,30 @@
         },
         {
             "name": "knplabs/knp-time-bundle",
-            "version": "v1.10.0",
+            "version": "v1.11.0",
             "target-dir": "Knp/Bundle/TimeBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpTimeBundle.git",
-                "reference": "19ea7e2dee337ae98306bbdf7a4ce060f5e5d984"
+                "reference": "8f3983f8b53e9c350f7dd476461bd7f5b32dfc89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpTimeBundle/zipball/19ea7e2dee337ae98306bbdf7a4ce060f5e5d984",
-                "reference": "19ea7e2dee337ae98306bbdf7a4ce060f5e5d984",
+                "url": "https://api.github.com/repos/KnpLabs/KnpTimeBundle/zipball/8f3983f8b53e9c350f7dd476461bd7f5b32dfc89",
+                "reference": "8f3983f8b53e9c350f7dd476461bd7f5b32dfc89",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6",
-                "symfony/config": "~3.4|~4.0|^5.0",
-                "symfony/dependency-injection": "~3.4|~4.0|^5.0",
-                "symfony/templating": "~3.4|~4.0|^5.0",
-                "symfony/translation": "~3.4|~4.0|^5.0"
+                "php": "^7.1.3",
+                "symfony/config": "~3.4|^4.3|^5.0",
+                "symfony/dependency-injection": "~3.4|^4.3|^5.0",
+                "symfony/templating": "~3.4|^4.3|^5.0",
+                "symfony/translation": "^4.3|^5.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8|^5.0"
+                "symfony/framework-bundle": "^4.3|^5.0",
+                "symfony/phpunit-bridge": "^4.3|^5.0",
+                "symfony/twig-bundle": "^4.3|^5.0"
             },
             "suggest": {
                 "symfony/twig-bundle": "to use the Twig time_diff function"
@@ -5301,7 +5303,7 @@
                 "knplabs",
                 "time"
             ],
-            "time": "2019-12-05T03:43:17+00:00"
+            "time": "2019-12-30T16:00:41+00:00"
         },
         {
             "name": "laravolt/avatar",
