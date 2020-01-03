@@ -1,0 +1,13 @@
+AppBundle\Entity\Sylius\Payment:
+    type: entity
+    table: sylius_payment
+    manyToOne:
+        order:
+            targetEntity: Sylius\Component\Order\Model\OrderInterface
+            inversedBy: payments
+            fetch: LAZY
+            joinColumns:
+                order_id:
+                    referencedColumnName: id
+                    nullable: false
+                    onDelete: CASCADE

@@ -6,8 +6,8 @@ use AppBundle\Domain\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event\CheckoutFailed;
 use AppBundle\Domain\Order\Event\CheckoutSucceeded;
 use AppBundle\Domain\Order\Handler\CheckoutHandler;
-use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
@@ -55,18 +55,18 @@ class CheckoutHandlerTest extends TestCase
 
     public function testCheckoutLegacy()
     {
-        $stripePayment = new StripePayment();
-        $stripePayment->setState(PaymentInterface::STATE_CART);
+        $payment = new Payment();
+        $payment->setState(PaymentInterface::STATE_CART);
 
         $charge = Stripe\Charge::constructFrom([
             'id' => 'ch_123456',
         ]);
 
         $order = new Order();
-        $order->addPayment($stripePayment);
+        $order->addPayment($payment);
 
         $this->stripeManager
-            ->authorize($stripePayment)
+            ->authorize($payment)
             ->willReturn($charge);
 
         $this->eventRecorder
@@ -79,13 +79,13 @@ class CheckoutHandlerTest extends TestCase
 
         $this->assertNotNull($order->getShippedAt());
         $this->assertEquals(new \DateTime($this->asap), $order->getShippedAt());
-        $this->assertEquals('ch_123456', $stripePayment->getCharge());
+        $this->assertEquals('ch_123456', $payment->getCharge());
     }
 
     public function testCheckoutWithPaymentIntent()
     {
-        $stripePayment = new StripePayment();
-        $stripePayment->setState(PaymentInterface::STATE_CART);
+        $payment = new Payment();
+        $payment->setState(PaymentInterface::STATE_CART);
 
         $paymentIntent = Stripe\PaymentIntent::constructFrom([
             'id' => 'pi_12345678',
@@ -95,13 +95,13 @@ class CheckoutHandlerTest extends TestCase
             ],
             'client_secret' => ''
         ]);
-        $stripePayment->setPaymentIntent($paymentIntent);
+        $payment->setPaymentIntent($paymentIntent);
 
         $order = new Order();
-        $order->addPayment($stripePayment);
+        $order->addPayment($payment);
 
         $this->stripeManager
-            ->confirmIntent($stripePayment)
+            ->confirmIntent($payment)
             ->willReturn($paymentIntent);
 
         $this->eventRecorder
@@ -118,8 +118,8 @@ class CheckoutHandlerTest extends TestCase
 
     public function testCheckoutFailed()
     {
-        $stripePayment = new StripePayment();
-        $stripePayment->setState(PaymentInterface::STATE_CART);
+        $payment = new Payment();
+        $payment->setState(PaymentInterface::STATE_CART);
 
         $paymentIntent = Stripe\PaymentIntent::constructFrom([
             'id' => 'pi_12345678',
@@ -129,13 +129,13 @@ class CheckoutHandlerTest extends TestCase
             ],
             'client_secret' => ''
         ]);
-        $stripePayment->setPaymentIntent($paymentIntent);
+        $payment->setPaymentIntent($paymentIntent);
 
         $order = new Order();
-        $order->addPayment($stripePayment);
+        $order->addPayment($payment);
 
         $this->stripeManager
-            ->confirmIntent($stripePayment)
+            ->confirmIntent($payment)
             ->willThrow(new \Exception('Lorem ipsum'));
 
         $this->eventRecorder
@@ -174,10 +174,10 @@ class CheckoutHandlerTest extends TestCase
             ->willReturn(null);
 
         $this->stripeManager
-            ->confirmIntent(Argument::type(StripePayment::class))
+            ->confirmIntent(Argument::type(Payment::class))
             ->shouldNotBeCalled();
         $this->stripeManager
-            ->authorize(Argument::type(StripePayment::class))
+            ->authorize(Argument::type(Payment::class))
             ->shouldNotBeCalled();
 
         $order

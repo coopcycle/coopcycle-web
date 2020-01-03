@@ -4,8 +4,8 @@ namespace Tests\AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Reactor\UpdateState;
-use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Sylius\Order\OrderInterface;
 use Prophecy\Argument;
 use SimpleBus\Message\Bus\MessageBus;
@@ -48,7 +48,7 @@ class UpdateStateTest extends KernelTestCase
     public function testCheckoutSucceeded()
     {
         $order = new Order();
-        $stripePayment = new StripePayment();
+        $payment = new Payment();
 
         $this->eventBus
             ->handle(Argument::that(function (Event\OrderCreated $event) use ($order) {
@@ -56,24 +56,24 @@ class UpdateStateTest extends KernelTestCase
             }))
             ->shouldBeCalled();
 
-        call_user_func_array($this->updateState, [ new Event\CheckoutSucceeded($order, $stripePayment) ]);
+        call_user_func_array($this->updateState, [ new Event\CheckoutSucceeded($order, $payment) ]);
 
-        $this->assertEquals('authorized', $stripePayment->getState());
+        $this->assertEquals('authorized', $payment->getState());
     }
 
     public function testCheckoutFailed()
     {
         $order = new Order();
-        $stripePayment = new StripePayment();
+        $payment = new Payment();
 
         $this->orderProcessor
             ->process(Argument::is($order))
             ->shouldBeCalled();
 
-        call_user_func_array($this->updateState, [ new Event\CheckoutFailed($order, $stripePayment, 'Lorem ipsum') ]);
+        call_user_func_array($this->updateState, [ new Event\CheckoutFailed($order, $payment, 'Lorem ipsum') ]);
 
-        $this->assertEquals('failed', $stripePayment->getState());
-        $this->assertEquals('Lorem ipsum', $stripePayment->getLastError());
+        $this->assertEquals('failed', $payment->getState());
+        $this->assertEquals('Lorem ipsum', $payment->getLastError());
     }
 
     public function testOrderCreated()

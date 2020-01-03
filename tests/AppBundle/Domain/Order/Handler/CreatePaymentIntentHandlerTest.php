@@ -5,7 +5,7 @@ namespace Tests\AppBundle\Domain\Order\Handler;
 use AppBundle\Domain\Order\Command\CreatePaymentIntent;
 use AppBundle\Domain\Order\Event\CheckoutFailed;
 use AppBundle\Domain\Order\Handler\CreatePaymentIntentHandler;
-use AppBundle\Entity\StripePayment;
+use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
@@ -40,11 +40,11 @@ class CreatePaymentIntentHandlerTest extends TestCase
     {
         $order = $this->prophesize(OrderInterface::class);
 
-        $stripePayment = new StripePayment();
+        $payment = new Payment();
 
         $order
             ->getLastPayment(PaymentInterface::STATE_CART)
-            ->willReturn($stripePayment);
+            ->willReturn($payment);
 
         $this->orderNumberAssigner
             ->assignNumber($order)
@@ -60,28 +60,28 @@ class CreatePaymentIntentHandlerTest extends TestCase
         ]);
 
         $this->stripeManager
-            ->createIntent($stripePayment)
+            ->createIntent($payment)
             ->willReturn($paymentIntent);
 
         $command = new CreatePaymentIntent($order->reveal(), 'pm_123456');
 
         call_user_func_array($this->handler, [$command]);
 
-        $this->assertEquals('pm_123456', $stripePayment->getPaymentMethod());
-        $this->assertEquals('pi_12345678', $stripePayment->getPaymentIntent());
-        $this->assertEquals('requires_action', $stripePayment->getPaymentIntentStatus());
-        $this->assertEquals('use_stripe_sdk', $stripePayment->getPaymentIntentNextAction());
+        $this->assertEquals('pm_123456', $payment->getPaymentMethod());
+        $this->assertEquals('pi_12345678', $payment->getPaymentIntent());
+        $this->assertEquals('requires_action', $payment->getPaymentIntentStatus());
+        $this->assertEquals('use_stripe_sdk', $payment->getPaymentIntentNextAction());
     }
 
     public function testException()
     {
         $order = $this->prophesize(OrderInterface::class);
 
-        $stripePayment = new StripePayment();
+        $payment = new Payment();
 
         $order
             ->getLastPayment(PaymentInterface::STATE_CART)
-            ->willReturn($stripePayment);
+            ->willReturn($payment);
 
         $this->orderNumberAssigner
             ->assignNumber($order)
@@ -97,7 +97,7 @@ class CreatePaymentIntentHandlerTest extends TestCase
         ]);
 
         $this->stripeManager
-            ->createIntent($stripePayment)
+            ->createIntent($payment)
             ->willThrow(CardException::factory('Lorem ipsum'));
 
         $command = new CreatePaymentIntent($order->reveal(), 'pm_123456');

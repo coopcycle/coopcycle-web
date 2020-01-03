@@ -42,8 +42,8 @@ class CheckoutHandler
         $order = $command->getOrder();
         $stripeToken = $command->getStripeToken();
 
-        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
-        $isFreeOrder = null === $stripePayment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
+        $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
+        $isFreeOrder = null === $payment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
 
         if ($isFreeOrder) {
             $this->orderNumberAssigner->assignNumber($order);
@@ -53,34 +53,34 @@ class CheckoutHandler
             return;
         }
 
-        // TODO Check if $stripePayment !== null
+        // TODO Check if $payment !== null
 
         try {
 
-            if ($stripePayment->getPaymentIntent()) {
-                if ($stripePayment->getPaymentIntent() !== $stripeToken) {
-                    $this->eventRecorder->record(new Event\CheckoutFailed($order, $stripePayment, 'Payment Intent mismatch'));
+            if ($payment->getPaymentIntent()) {
+                if ($payment->getPaymentIntent() !== $stripeToken) {
+                    $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, 'Payment Intent mismatch'));
                     return;
                 }
 
-                if ($stripePayment->requiresUseStripeSDK()) {
-                    $this->stripeManager->confirmIntent($stripePayment);
+                if ($payment->requiresUseStripeSDK()) {
+                    $this->stripeManager->confirmIntent($payment);
                 }
             } else {
                 $this->orderNumberAssigner->assignNumber($order);
-                $stripePayment->setStripeToken($stripeToken);
+                $payment->setStripeToken($stripeToken);
 
-                $charge = $this->stripeManager->authorize($stripePayment);
+                $charge = $this->stripeManager->authorize($payment);
 
-                $stripePayment->setCharge($charge->id);
+                $payment->setCharge($charge->id);
             }
 
             $this->setShippingDate($order);
 
-            $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $stripePayment));
+            $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $payment));
 
         } catch (\Exception $e) {
-            $this->eventRecorder->record(new Event\CheckoutFailed($order, $stripePayment, $e->getMessage()));
+            $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, $e->getMessage()));
         }
     }
 }
