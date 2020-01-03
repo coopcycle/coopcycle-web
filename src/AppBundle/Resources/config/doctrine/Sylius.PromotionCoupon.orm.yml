@@ -1,8 +1,0 @@
-AppBundle\Entity\Sylius\PromotionCoupon:
-    type: entity
-    table: sylius_promotion_coupon
-    fields:
-        perCustomerUsageLimit:
-            type: integer
-            column: per_customer_usage_limit
-            nullable: true

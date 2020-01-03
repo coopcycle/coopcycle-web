@@ -1,9 +1,0 @@
-AppBundle\Entity\Sylius\FrozenOrder:
-    type: mappedSuperclass
-    fields:
-        issuedAt:
-            type: datetime
-            column: issued_at
-            gedmo:
-                timestampable:
-                    on: create

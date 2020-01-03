@@ -1,3 +1,0 @@
-AppBundle\Entity\Restaurant:
-    type: entity
-    repositoryClass: AppBundle\Entity\RestaurantRepository
