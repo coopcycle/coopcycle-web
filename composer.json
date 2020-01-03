@@ -40,7 +40,7 @@
         "snc/redis-bundle": "^3.0",
         "knplabs/knp-time-bundle": "^1.7",
         "twig/extensions": "^1.5",
-        "cocur/slugify": "^3.1",
+        "cocur/slugify": "^4.0",
         "gesdinet/jwt-refresh-token-bundle": "^0.9",
         "predis/predis": "^1.1",
         "emcconville/google-map-polyline-encoding-tool": "^1.3",
