@@ -7004,29 +7004,29 @@
         },
         {
             "name": "notfloran/mjml-bundle",
-            "version": "v3.2.0",
+            "version": "v3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/notFloran/mjml-bundle.git",
-                "reference": "59cf1662680457e0104cf13e2135483f8183f33a"
+                "reference": "ea97bb3c018c8d8a5eb95e7ce8ca6f703d01bdb6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/notFloran/mjml-bundle/zipball/59cf1662680457e0104cf13e2135483f8183f33a",
-                "reference": "59cf1662680457e0104cf13e2135483f8183f33a",
+                "url": "https://api.github.com/repos/notFloran/mjml-bundle/zipball/ea97bb3c018c8d8a5eb95e7ce8ca6f703d01bdb6",
+                "reference": "ea97bb3c018c8d8a5eb95e7ce8ca6f703d01bdb6",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1.0",
-                "symfony/dependency-injection": "^3.4 || ^4.0",
-                "symfony/process": "^3.4 || ^4.0",
-                "symfony/twig-bundle": "^3.4 || ^4.0"
+                "symfony/dependency-injection": "^3.4 || ^4.0 || ^5.0",
+                "symfony/process": "^3.4 || ^4.0 || ^5.0",
+                "symfony/twig-bundle": "^3.4 || ^4.0 || ^5.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.10",
-                "matthiasnoback/symfony-config-test": "^4.0",
-                "phpstan/phpstan": "^0.9.2",
-                "phpunit/phpunit": "^7.4"
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "matthiasnoback/symfony-config-test": "^4.1",
+                "phpstan/phpstan": "^0.12.0",
+                "phpunit/phpunit": "^7.0"
             },
             "suggest": {
                 "swiftmailer/swiftmailer": "Plugin to integrate MJML in SwiftMailer"
@@ -7052,7 +7052,7 @@
                 "email",
                 "mjml"
             ],
-            "time": "2019-10-09T11:34:08+00:00"
+            "time": "2019-12-08T09:26:49+00:00"
         },
         {
             "name": "nyholm/psr7",
