@@ -7,9 +7,6 @@ AppBundle\Entity\Address:
                 - geo
             flags:
                 - spatial
-    options:
-        spatial_indexes:
-            - idx_address_geo
     id:
         id:
             type: integer
