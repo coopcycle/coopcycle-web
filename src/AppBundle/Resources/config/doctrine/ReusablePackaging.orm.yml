@@ -23,6 +23,7 @@ AppBundle\Entity\ReusablePackaging:
     manyToOne:
         restaurant:
             targetEntity: AppBundle\Entity\Restaurant
+            inversedBy: reusablePackagings
             joinColumns:
                 restaurant_id:
                     referencedColumnName: id

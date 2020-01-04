@@ -18,6 +18,7 @@ AppBundle\Entity\Sylius\ProductVariantOptionValue:
     manyToOne:
         variant:
             targetEntity: Sylius\Component\Product\Model\ProductVariantInterface
+            inversedBy: optionValues
             joinColumns:
                 variant_id:
                     referencedColumnName: id
