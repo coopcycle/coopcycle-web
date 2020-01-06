@@ -14039,6 +14039,7 @@
                 "code",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-code",
             "time": "2019-10-05T23:18:22+00:00"
         },
         {
@@ -14106,6 +14107,7 @@
                 "psr",
                 "psr-7"
             ],
+            "abandoned": "laminas/laminas-diactoros",
             "time": "2019-11-13T19:16:13+00:00"
         },
         {
@@ -14160,6 +14162,7 @@
                 "events",
                 "zf2"
             ],
+            "abandoned": "laminas/laminas-eventmanager",
             "time": "2018-04-25T15:33:34+00:00"
         },
         {
@@ -14206,6 +14209,7 @@
                 "stdlib",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-stdlib",
             "time": "2018-08-28T21:34:05+00:00"
         }
     ],
@@ -15162,21 +15166,20 @@
         },
         {
             "name": "phpstan/phpstan-symfony",
-            "version": "0.12.1",
+            "version": "0.12.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-symfony.git",
-                "reference": "548bd9cddbfc374ba2fa66ca915307398ba52c4c"
+                "reference": "ce417c1e7d6e8722e50757caaa7557f32534dfe9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/548bd9cddbfc374ba2fa66ca915307398ba52c4c",
-                "reference": "548bd9cddbfc374ba2fa66ca915307398ba52c4c",
+                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/ce417c1e7d6e8722e50757caaa7557f32534dfe9",
+                "reference": "ce417c1e7d6e8722e50757caaa7557f32534dfe9",
                 "shasum": ""
             },
             "require": {
                 "ext-simplexml": "*",
-                "nikic/php-parser": "^4.0",
                 "php": "^7.1",
                 "phpstan/phpstan": "^0.12"
             },
@@ -15186,6 +15189,7 @@
             "require-dev": {
                 "consistence/coding-standard": "^3.0.1",
                 "dealerdirect/phpcodesniffer-composer-installer": "^0.4.4",
+                "ergebnis/composer-normalize": "^2.0.2",
                 "jakub-onderka/php-parallel-lint": "^1.0",
                 "phing/phing": "^2.16.0",
                 "phpstan/phpstan-phpunit": "^0.12",
@@ -15228,7 +15232,7 @@
                 }
             ],
             "description": "Symfony Framework extensions and rules for PHPStan",
-            "time": "2019-12-10T10:36:24+00:00"
+            "time": "2020-01-02T19:40:41+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
