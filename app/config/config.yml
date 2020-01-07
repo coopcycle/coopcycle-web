@@ -141,7 +141,7 @@ doctrine:
         auto_mapping: true
         mappings:
             AppBundle:
-                type: "%doctrine_orm_mapping_type%"
+                type: xml
         dql:
             string_functions:
                 ST_DWithin: Jsor\Doctrine\PostGIS\Functions\ST_DWithin

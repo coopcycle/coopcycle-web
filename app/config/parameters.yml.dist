@@ -69,5 +69,3 @@ parameters:
     oauth.facebook.client_secret: 'YourFacebookClientSecret'
 
     host: nginx
-
-    doctrine_orm_mapping_type: yml
