@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import axios from 'axios'
+import { taskComparator, withoutTasks, withLinkedTasks } from './utils'
 
 function createClient(dispatch) {
 
@@ -74,9 +75,7 @@ function createClient(dispatch) {
   return client
 }
 
-export const ASSIGN_TASKS = 'ASSIGN_TASKS'
 export const ADD_CREATED_TASK = 'ADD_CREATED_TASK'
-export const REMOVE_TASKS = 'REMOVE_TASKS'
 export const UPDATE_TASK = 'UPDATE_TASK'
 export const OPEN_ADD_USER = 'OPEN_ADD_USER'
 export const CLOSE_ADD_USER = 'CLOSE_ADD_USER'
@@ -90,8 +89,6 @@ export const ADD_TASK_LIST_REQUEST = 'ADD_TASK_LIST_REQUEST'
 export const ADD_TASK_LIST_REQUEST_SUCCESS = 'ADD_TASK_LIST_REQUEST_SUCCESS'
 export const SET_GEOLOCATION = 'SET_GEOLOCATION'
 export const SET_OFFLINE = 'SET_OFFLINE'
-export const DRAKE_DRAG = 'DRAKE_DRAG'
-export const DRAKE_DRAGEND = 'DRAKE_DRAGEND'
 export const OPEN_NEW_TASK_MODAL = 'OPEN_NEW_TASK_MODAL'
 export const CLOSE_NEW_TASK_MODAL = 'CLOSE_NEW_TASK_MODAL'
 export const SET_CURRENT_TASK = 'SET_CURRENT_TASK'
@@ -119,41 +116,27 @@ export const LOAD_TASK_EVENTS_REQUEST = 'LOAD_TASK_EVENTS_REQUEST'
 export const LOAD_TASK_EVENTS_SUCCESS = 'LOAD_TASK_EVENTS_SUCCESS'
 export const LOAD_TASK_EVENTS_FAILURE = 'LOAD_TASK_EVENTS_FAILURE'
 
-function assignTasks(username, tasks) {
+export const SET_TASK_LISTS_LOADING = 'SET_TASK_LISTS_LOADING'
+
+function setTaskListsLoading(loading = true) {
+  return { type: SET_TASK_LISTS_LOADING, loading }
+}
+
+export function assignAfter(username, task, after) {
 
   return function(dispatch, getState) {
 
-    const { allTasks } = getState()
-
-    const newTasks = []
-    tasks.forEach(task => {
-      // FIXME
-      // Make it work when more than 2 tasks are linked together
-      if (task.previous) {
-        // If previous task is another day, will be null
-        const previousTask = _.find(allTasks, t => t['@id'] === task.previous)
-        if (previousTask) {
-          newTasks.push(previousTask)
-        }
-        newTasks.push(task)
-      } else if (task.next) {
-        // If next task is another day, will be null
-        const nextTask = _.find(allTasks, t => t['@id'] === task.next)
-        newTasks.push(task)
-        if (nextTask) {
-          newTasks.push(nextTask)
-        }
-      } else {
-        newTasks.push(task)
-      }
-    })
-
-    dispatch({ type: ASSIGN_TASKS, username, tasks: newTasks })
-
-    const { taskLists } = getState()
+    const { allTasks, taskLists } = getState()
     const taskList = _.find(taskLists, taskList => taskList.username === username)
+    const taskIndex = _.findIndex(taskList.items, t => taskComparator(t, after))
 
-    dispatch(modifyTaskList(username, taskList.items))
+    if (-1 !== taskIndex) {
+      const newTaskListItems = taskList.items.slice()
+      Array.prototype.splice.apply(newTaskListItems,
+        Array.prototype.concat([ taskIndex + 1, 0 ], withLinkedTasks(task, allTasks))
+      )
+      dispatch(modifyTaskList(username, newTaskListItems))
+    }
   }
 }
 
@@ -163,20 +146,16 @@ function addCreatedTask(task) {
 
 function removeTasks(username, tasks) {
 
+  if (!Array.isArray(tasks)) {
+    tasks = [ tasks ]
+  }
+
   return function(dispatch, getState) {
 
-    dispatch({ type: REMOVE_TASKS, username, tasks })
-
-    const { taskLists } = getState()
+    const { allTasks, taskLists } = getState()
     const taskList = _.find(taskLists, taskList => taskList.username === username)
 
-    const newTasks = _.differenceWith(
-      taskList.items,
-      _.intersectionWith(taskList.items, tasks, (a, b) => a['@id'] === b['@id']),
-      (a, b) => a['@id'] === b['@id']
-    )
-
-    dispatch(modifyTaskList(username, newTasks))
+    dispatch(modifyTaskList(username, withoutTasks(taskList.items, withLinkedTasks(tasks, allTasks))))
   }
 }
 
@@ -193,7 +172,7 @@ function closeAddUserModal() {
 }
 
 function modifyTaskListRequest(username, tasks) {
-  return {type: MODIFY_TASK_LIST_REQUEST, username, tasks}
+  return { type: MODIFY_TASK_LIST_REQUEST, username, tasks }
 }
 
 function modifyTaskListRequestSuccess(taskList) {
@@ -210,34 +189,43 @@ function resetFilters() {
 
 function modifyTaskList(username, tasks) {
 
-  const data = tasks.map((task, index) => {
-    return {
-      task: task['@id'],
-      position: index
-    }
-  })
+  const data = tasks.map((task, index) => ({
+    task: task['@id'],
+    position: index,
+  }))
 
   return function(dispatch, getState) {
 
-    const { date } = getState()
+    const { date, allTasks } = getState()
 
     const url = window.Routing.generate('admin_task_list_modify', {
       date: date.format('YYYY-MM-DD'),
       username,
     })
 
-    dispatch(modifyTaskListRequest(username, tasks))
+    const newTasks = tasks.map((task, position) => {
+      const rt = _.find(allTasks, t => t['@id'] === task['@id'])
 
-    return fetch(url, {
-      credentials: 'include',
-      method: 'PUT',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json'
+      return {
+        ...rt,
+        position,
       }
     })
-      .then(res => res.json())
-      .then(taskList => dispatch(modifyTaskListRequestSuccess(taskList)))
+
+    dispatch(modifyTaskListRequest(username, newTasks))
+
+    axios
+      .put(url, data, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/ld+json'
+        },
+      })
+      .then(res => dispatch(modifyTaskListRequestSuccess(res.data)))
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+      })
   }
 }
 
@@ -296,14 +284,6 @@ function setGeolocation(username, coords) {
 
 function setOffline(username) {
   return { type: SET_OFFLINE, username }
-}
-
-function drakeDrag() {
-  return { type: DRAKE_DRAG }
-}
-
-function drakeDragEnd() {
-  return { type: DRAKE_DRAGEND }
 }
 
 function openNewTaskModal() {
@@ -585,7 +565,6 @@ export {
   updateTask,
   addTaskList,
   modifyTaskList,
-  assignTasks,
   removeTasks,
   openAddUserModal,
   closeAddUserModal,
@@ -596,8 +575,6 @@ export {
   selectTask,
   setGeolocation,
   setOffline,
-  drakeDrag,
-  drakeDragEnd,
   openNewTaskModal,
   closeNewTaskModal,
   setCurrentTask,
@@ -617,4 +594,5 @@ export {
   setPolylineStyle,
   cancelTasks,
   loadTaskEvents,
+  setTaskListsLoading,
 }

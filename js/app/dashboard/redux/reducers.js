@@ -2,11 +2,9 @@ import _ from 'lodash'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
 
-import { createTaskList } from './utils'
+import { createTaskList, removedTasks, taskComparator, withoutTasks } from './utils'
 import {
-  ASSIGN_TASKS,
   ADD_CREATED_TASK,
-  REMOVE_TASKS,
   UPDATE_TASK,
   OPEN_ADD_USER,
   CLOSE_ADD_USER,
@@ -20,8 +18,6 @@ import {
   ADD_TASK_LIST_REQUEST_SUCCESS,
   SET_GEOLOCATION,
   SET_OFFLINE,
-  DRAKE_DRAG,
-  DRAKE_DRAGEND,
   OPEN_NEW_TASK_MODAL,
   CLOSE_NEW_TASK_MODAL,
   SET_CURRENT_TASK,
@@ -44,11 +40,10 @@ import {
   LOAD_TASK_EVENTS_REQUEST,
   LOAD_TASK_EVENTS_SUCCESS,
   LOAD_TASK_EVENTS_FAILURE,
+  SET_TASK_LISTS_LOADING,
 } from './actions'
 
 const moment = extendMoment(Moment)
-
-const taskComparator = (taskA, taskB) => taskA['@id'] === taskB['@id']
 
 const replaceOrAddTask = (tasks, task) => {
 
@@ -82,14 +77,6 @@ const acceptTask = (task, date) => {
   return range.overlaps(dateAsRange)
 }
 
-const withoutTasks = (state, tasks) => {
-  return _.differenceWith(
-    state,
-    _.intersectionWith(state, tasks, taskComparator),
-    taskComparator
-  )
-}
-
 const defaultFilters = {
   showFinishedTasks: true,
   showCancelledTasks: false,
@@ -118,7 +105,6 @@ const initialState = {
   jwt: '',
   positions: [],
   offline: [],
-  isDragging: false,
   taskModalIsOpen: false,
   currentTask: null,
   isTaskModalLoading: false,
@@ -138,7 +124,28 @@ const rootReducer = (state = initialState, action) => {
   let taskListIndex
 
   switch (action.type) {
+  case MODIFY_TASK_LIST_REQUEST:
+
+    taskListIndex = _.findIndex(state.taskLists, taskList => taskList.username === action.username)
+    newTaskLists.splice(taskListIndex, 1, {
+      ...state.taskLists[taskListIndex],
+      items: action.tasks,
+    })
+
+    let removed = removedTasks(state.taskLists[taskListIndex].items, action.tasks)
+
+    return {
+      ...state,
+      taskListsLoading: true,
+      taskLists: newTaskLists,
+      unassignedTasks: withoutTasks(
+        Array.prototype.concat(state.unassignedTasks, removed),
+        action.tasks
+      ),
+    }
+
   case MODIFY_TASK_LIST_REQUEST_SUCCESS:
+
     taskListIndex = _.findIndex(state.taskLists, taskList => taskList['@id'] === action.taskList['@id'])
     newTaskLists.splice(taskListIndex, 1, {
       ...action.taskList,
@@ -155,34 +162,6 @@ const rootReducer = (state = initialState, action) => {
     return {
       ...state,
       taskLists: Array.prototype.concat(state.taskLists, action.taskList),
-    }
-
-  case ASSIGN_TASKS:
-
-    taskListIndex = _.findIndex(state.taskLists, taskList => taskList.username === action.username)
-    newTaskLists.splice(taskListIndex, 1, {
-      ...state.taskLists[taskListIndex],
-      items: Array.prototype.concat(state.taskLists[taskListIndex].items, action.tasks),
-    })
-
-    return {
-      ...state,
-      unassignedTasks: withoutTasks(state.unassignedTasks, action.tasks),
-      taskLists: newTaskLists,
-    }
-
-  case REMOVE_TASKS:
-
-    taskListIndex = _.findIndex(state.taskLists, taskList => taskList.username === action.username)
-    newTaskLists.splice(taskListIndex, 1, {
-      ...state.taskLists[taskListIndex],
-      items: withoutTasks(state.taskLists[taskListIndex].items, action.tasks),
-    })
-
-    return {
-      ...state,
-      taskLists: newTaskLists,
-      unassignedTasks: Array.prototype.concat(state.unassignedTasks, action.tasks)
     }
 
   case ADD_CREATED_TASK:
@@ -295,14 +274,15 @@ const addModalIsOpen = (state = false, action) => {
   }
 }
 
-const taskListsLoading = (state = false, action) => {
+const _taskListsLoading = (state = false, action) => {
   switch(action.type) {
   case ADD_TASK_LIST_REQUEST:
-  case MODIFY_TASK_LIST_REQUEST:
     return true
   case ADD_TASK_LIST_REQUEST_SUCCESS:
   case MODIFY_TASK_LIST_REQUEST_SUCCESS:
     return false
+  case SET_TASK_LISTS_LOADING:
+    return action.loading
   default:
     return state
   }
@@ -430,31 +410,16 @@ const offline = (state = [], action) => {
   return state
 }
 
-const isDragging = (state = false, action) => {
-  switch (action.type) {
-  case DRAKE_DRAG:
-
-    return true
-
-  case DRAKE_DRAGEND:
-
-    return false
-
-  default:
-
-    return state
-  }
-}
-
 const combinedTasks = (state = initialState, action) => {
 
-  const { unassignedTasks, taskLists, allTasks } = rootReducer(state, action)
+  const { unassignedTasks, taskLists, allTasks, taskListsLoading } = rootReducer(state, action)
 
   return {
     ...state,
     unassignedTasks,
     taskLists,
     allTasks,
+    taskListsLoading,
   }
 }
 
@@ -648,7 +613,7 @@ const taskEvents = (state = initialState.taskEvents, action) => {
 
 export default (state = initialState, action) => {
 
-  const { allTasks, unassignedTasks, taskLists, tasksWithColor } = combinedTasks(state, action)
+  const { allTasks, unassignedTasks, taskLists, tasksWithColor, taskListsLoading } = combinedTasks(state, action)
   const { filters, isDefaultFilters } = combinedFilters(state, action)
 
   return {
@@ -656,7 +621,7 @@ export default (state = initialState, action) => {
     unassignedTasks,
     taskLists,
     allTasks,
-    taskListsLoading: taskListsLoading(state.taskListsLoading, action),
+    taskListsLoading: _taskListsLoading(taskListsLoading, action),
     addModalIsOpen: addModalIsOpen(state.addModalIsOpen, action),
     polylineEnabled: polylineEnabled(state.polylineEnabled, action),
     taskListGroupMode: taskListGroupMode(state.taskListGroupMode, action),
@@ -664,7 +629,6 @@ export default (state = initialState, action) => {
     jwt: jwt(state.jwt, action),
     positions: positions(state.positions, action),
     offline: offline(state.offline, action),
-    isDragging: isDragging(state.isDragging, action),
     taskModalIsOpen: taskModalIsOpen(state.taskModalIsOpen, action),
     currentTask: currentTask(state.currentTask, action),
     isTaskModalLoading: isTaskModalLoading(state.isTaskModalLoading, action),
