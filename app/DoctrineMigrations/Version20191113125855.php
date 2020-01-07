@@ -35,13 +35,13 @@ final class Version20191113125855 extends AbstractMigration
             'stripe_payment_method_id' => $stripeMethod['id']
         ]);
 
-        $stmt = $this->connection->prepare("SELECT COALESCE(MAX(id), 0) FROM sylius_payment");
+        $stmt = $this->connection->prepare("SELECT last_value FROM stripe_payment_id_seq");
         $stmt->execute();
 
         $latestId = $stmt->fetchColumn();
-        $latestId = intval($latestId) + 1;
+        $latestId = intval($latestId);
 
-        $this->addSql("ALTER SEQUENCE sylius_payment_id_seq RESTART WITH {$latestId}");
+        $this->addSql("SELECT SETVAL('sylius_payment_id_seq', {$latestId}, true)");
     }
 
     public function down(Schema $schema) : void
