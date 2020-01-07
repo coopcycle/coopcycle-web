@@ -23,7 +23,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Testwork\Tester\Result\TestResult;
-use Coduo\PHPMatcher\Factory\SimpleFactory;
+use Coduo\PHPMatcher\PHPMatcher;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -260,12 +260,12 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             throw new \RuntimeException("Can not convert given JSON string to valid JSON format.");
         }
 
-        $factory = new SimpleFactory();
-        $matcher = $factory->createMatcher();
+        $matcher = new PHPMatcher();
         $match = $matcher->match($responseJson, $expectedJson);
 
         if ($match !== true) {
-            throw new \RuntimeException("Expected JSON doesn't match response JSON.");
+            throw new \RuntimeException(sprintf("Expected JSON doesn't match response JSON.\n%s",
+                (string) $matcher->backtrace()));
         }
     }
 

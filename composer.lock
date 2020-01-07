@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2ec2932d78ed3ac9954cb25d619da9a9",
+    "content-hash": "a98376f60b777f241d6942a3ca7eca79",
     "packages": [
         {
             "name": "api-platform/core",
@@ -14652,36 +14652,36 @@
         },
         {
             "name": "coduo/php-matcher",
-            "version": "3.2.3",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coduo/php-matcher.git",
-                "reference": "c7b3eb00007074b88e8517ab4b0c428a6909cf3f"
+                "reference": "aaa33639fe03d5883e0ccfbeea3d02a65ebc567c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coduo/php-matcher/zipball/c7b3eb00007074b88e8517ab4b0c428a6909cf3f",
-                "reference": "c7b3eb00007074b88e8517ab4b0c428a6909cf3f",
+                "url": "https://api.github.com/repos/coduo/php-matcher/zipball/aaa33639fe03d5883e0ccfbeea3d02a65ebc567c",
+                "reference": "aaa33639fe03d5883e0ccfbeea3d02a65ebc567c",
                 "shasum": ""
             },
             "require": {
-                "coduo/php-to-string": "^2",
+                "coduo/php-to-string": "^3",
                 "doctrine/lexer": "^1.0",
                 "ext-filter": "*",
                 "ext-json": "*",
                 "openlss/lib-array2xml": "^1.0",
-                "php": ">=7.0.0",
-                "symfony/expression-language": "^2.3|^3.0|^4.0",
-                "symfony/property-access": "^2.3|^3.0|^4.0"
+                "php": ">=7.2",
+                "symfony/expression-language": "^2.3|^3.0|^4.0|^5.0",
+                "symfony/property-access": "^2.3|^3.0|^4.0|^5.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.4",
-                "phpunit/phpunit": "^6.0|^7.0"
+                "phpunit/phpunit": "^8.4"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.3-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -14710,39 +14710,39 @@
                 "matcher",
                 "tests"
             ],
-            "time": "2019-11-24T12:35:06+00:00"
+            "time": "2019-12-22T16:54:01+00:00"
         },
         {
             "name": "coduo/php-to-string",
-            "version": "2.0.2",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coduo/php-to-string.git",
-                "reference": "b3f2aa97055ea62ed6c63fae0db33454b47f1a5d"
+                "reference": "06afb7365634466287bd6b55a26fa462c28377e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coduo/php-to-string/zipball/b3f2aa97055ea62ed6c63fae0db33454b47f1a5d",
-                "reference": "b3f2aa97055ea62ed6c63fae0db33454b47f1a5d",
+                "url": "https://api.github.com/repos/coduo/php-to-string/zipball/06afb7365634466287bd6b55a26fa462c28377e0",
+                "reference": "06afb7365634466287bd6b55a26fa462c28377e0",
                 "shasum": ""
             },
             "require": {
-                "ext-intl": "*",
-                "php": ">=5.3.0"
+                "php": "^7.2",
+                "symfony/intl": "^3.4|^4.0|^5.0"
             },
             "require-dev": {
-                "coduo/phpspec-data-provider-extension": "^1",
+                "coduo/phpspec-data-provider-extension": "^1.0.3",
                 "phpspec/phpspec": "^2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev"
+                    "dev-master": "3.1-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "": "src"
+                "psr-4": {
+                    "Coduo\\ToString\\": "src/Coduo/ToString"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -14759,13 +14759,14 @@
                     "email": "norbert@orzechowicz.pl"
                 }
             ],
+            "description": "Simple library that converts PHP value into strings",
             "keywords": [
                 "php",
                 "string",
                 "to",
                 "to string"
             ],
-            "time": "2019-08-09T13:19:26+00:00"
+            "time": "2019-11-23T10:30:04+00:00"
         },
         {
             "name": "container-interop/container-interop",
