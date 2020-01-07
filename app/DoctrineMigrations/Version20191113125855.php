@@ -39,7 +39,7 @@ final class Version20191113125855 extends AbstractMigration
         $stmt->execute();
 
         $latestId = $stmt->fetchColumn();
-        $latestId = $latestId + 1;
+        $latestId = intval($latestId) + 1;
 
         $this->addSql("ALTER SEQUENCE sylius_payment_id_seq RESTART WITH {$latestId}");
     }
