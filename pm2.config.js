@@ -39,6 +39,7 @@ var apps = [{
   name: "coopcycle-dispatch-" + appName,
   instances : 2,
   exec_mode : "cluster",
+  mergeLogs: true,
   script: "./js/api/dispatch/index.js",
   watch: ["./js/api/dispatch/index.js", "./js/api/models/*.js", "./js/api/*.js"],
   port: config.parameters['app.dispatch_port'] || 8000
@@ -46,6 +47,7 @@ var apps = [{
   name: "coopcycle-tracking-" + appName,
   instances : 2,
   exec_mode : "cluster",
+  mergeLogs: true,
   script: "./js/api/tracking/index.js",
   watch: ["./js/api/tracking/index.js", "./js/api/tracking/index.html"],
   port: config.parameters['app.tracking_port'] || 8001
