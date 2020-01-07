@@ -7,8 +7,8 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="name" type="string" column="name" precision="0" scale="0" nullable="false"/>
-    <field name="polygon" type="geojson" column="polygon" precision="0" scale="0" nullable="false">
+    <field name="name" type="string" column="name" nullable="false"/>
+    <field name="polygon" type="geojson" column="polygon" nullable="false">
       <options>
         <option name="geometry_type">POLYGON</option>
         <option name="srid">4326</option>

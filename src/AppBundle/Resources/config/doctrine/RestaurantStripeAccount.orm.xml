@@ -8,12 +8,12 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="livemode" type="boolean" column="livemode"/>
-    <many-to-one field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="stripeAccounts" fetch="LAZY">
+    <many-to-one field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="stripeAccounts">
       <join-columns>
         <join-column name="restaurant_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="stripeAccount" target-entity="AppBundle\Entity\StripeAccount" fetch="LAZY">
+    <many-to-one field="stripeAccount" target-entity="AppBundle\Entity\StripeAccount">
       <cascade>
         <cascade-all/>
       </cascade>

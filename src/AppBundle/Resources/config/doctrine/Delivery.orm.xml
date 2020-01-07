@@ -3,17 +3,17 @@
   <entity name="AppBundle\Entity\Delivery" table="delivery">
     <field name="weight" type="integer" column="weight" nullable="true"/>
     <field name="vehicle" type="string" column="vehicle" nullable="true"/>
-    <one-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="delivery" fetch="LAZY">
+    <one-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="delivery">
       <join-columns>
         <join-column name="order_id" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
-    <one-to-many field="packages" target-entity="AppBundle\Entity\Delivery\Package" mapped-by="delivery" fetch="LAZY">
+    <one-to-many field="packages" target-entity="AppBundle\Entity\Delivery\Package" mapped-by="delivery">
       <cascade>
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <many-to-one field="store" target-entity="AppBundle\Entity\Store" inversed-by="deliveries" fetch="LAZY">
+    <many-to-one field="store" target-entity="AppBundle\Entity\Store" inversed-by="deliveries">
       <join-columns>
         <join-column name="store_id" referenced-column-name="id"/>
       </join-columns>

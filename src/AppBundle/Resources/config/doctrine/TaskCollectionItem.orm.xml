@@ -8,12 +8,12 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="position" type="integer" column="position"/>
-    <many-to-one field="parent" target-entity="AppBundle\Entity\TaskCollection" inversed-by="items" fetch="LAZY">
+    <many-to-one field="parent" target-entity="AppBundle\Entity\TaskCollection" inversed-by="items">
       <join-columns>
         <join-column name="parent_id" referenced-column-name="id" on-delete="SET NULL"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="task" target-entity="AppBundle\Entity\Task" fetch="LAZY">
+    <many-to-one field="task" target-entity="AppBundle\Entity\Task">
       <cascade>
         <cascade-persist/>
       </cascade>

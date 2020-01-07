@@ -4,8 +4,8 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="description" type="string" column="description" precision="0" scale="0" nullable="true"/>
-    <field name="name" type="string" column="name" precision="0" scale="0" nullable="true"/>
-    <field name="url" type="string" column="url" precision="0" scale="0" nullable="true"/>
+    <field name="description" type="string" column="description" nullable="true"/>
+    <field name="name" type="string" column="name" nullable="true"/>
+    <field name="url" type="string" column="url" nullable="true"/>
   </mapped-superclass>
 </doctrine-mapping>
