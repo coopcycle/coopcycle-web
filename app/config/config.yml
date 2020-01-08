@@ -28,7 +28,7 @@ framework:
     translator:      { fallbacks: ["en"] }
     secret:          "%secret%"
     router:
-        resource: "%kernel.root_dir%/config/routing.yml"
+        resource: "%kernel.project_dir%/app/config/routing.yml"
         strict_requirements: ~
     form:            ~
     csrf_protection: ~
@@ -233,25 +233,25 @@ oneup_flysystem:
     adapters:
         assets_local:
             local:
-                directory: '%kernel.root_dir%/../web/images/assets'
+                directory: '%kernel.project_dir%/web/images/assets'
         product_images_local:
             local:
-                directory: '%kernel.root_dir%/../web/images/products'
+                directory: '%kernel.project_dir%/web/images/products'
         restaurant_images_local:
             local:
-                directory: '%kernel.root_dir%/../web/images/restaurants'
+                directory: '%kernel.project_dir%/web/images/restaurants'
         store_images_local:
             local:
-                directory: '%kernel.root_dir%/../web/images/stores'
+                directory: '%kernel.project_dir%/web/images/stores'
         task_images_local:
             local:
-                directory: '%kernel.root_dir%/../web/images/tasks'
+                directory: '%kernel.project_dir%/web/images/tasks'
         invoices_local:
             local:
-                directory: '%kernel.root_dir%/../web/invoices'
+                directory: '%kernel.project_dir%/web/invoices'
         receipts_local:
             local:
-                directory: '%kernel.root_dir%/../web/receipts'
+                directory: '%kernel.project_dir%/web/receipts'
         assets_s3:
             awss3v3:
                 client: s3_client
