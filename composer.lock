@@ -2936,12 +2936,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "1e932f6fb58c56a41adc4186169d98fdd5f1e71e"
+                "reference": "a9e71b6e7b61e7f39ba77436ba3e9af954450c4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/1e932f6fb58c56a41adc4186169d98fdd5f1e71e",
-                "reference": "1e932f6fb58c56a41adc4186169d98fdd5f1e71e",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/a9e71b6e7b61e7f39ba77436ba3e9af954450c4b",
+                "reference": "a9e71b6e7b61e7f39ba77436ba3e9af954450c4b",
                 "shasum": ""
             },
             "require": {
@@ -3005,7 +3005,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2019-10-24T10:15:01+00:00"
+            "time": "2020-01-08T18:06:24+00:00"
         },
         {
             "name": "fzaninotto/faker",
@@ -10348,16 +10348,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.16.0",
+            "version": "v7.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "7f6e7edfc8a2641da714ce122efbb730a22b4ddb"
+                "reference": "b7e86a890e1c57f7cd8e42bf7baac70c6ee0f64f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/7f6e7edfc8a2641da714ce122efbb730a22b4ddb",
-                "reference": "7f6e7edfc8a2641da714ce122efbb730a22b4ddb",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/b7e86a890e1c57f7cd8e42bf7baac70c6ee0f64f",
+                "reference": "b7e86a890e1c57f7cd8e42bf7baac70c6ee0f64f",
                 "shasum": ""
             },
             "require": {
@@ -10401,7 +10401,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2020-01-07T02:09:57+00:00"
+            "time": "2020-01-08T21:23:37+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
