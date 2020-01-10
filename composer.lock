@@ -7248,22 +7248,24 @@
         },
         {
             "name": "oneup/flysystem-bundle",
-            "version": "3.3.0",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/1up-lab/OneupFlysystemBundle.git",
-                "reference": "eb06fdc02362504702d162564c4c2b307ff30df0"
+                "reference": "bf8b1bdc4fca6e0ad072ff917b9c9e792d682588"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/1up-lab/OneupFlysystemBundle/zipball/eb06fdc02362504702d162564c4c2b307ff30df0",
-                "reference": "eb06fdc02362504702d162564c4c2b307ff30df0",
+                "url": "https://api.github.com/repos/1up-lab/OneupFlysystemBundle/zipball/bf8b1bdc4fca6e0ad072ff917b9c9e792d682588",
+                "reference": "bf8b1bdc4fca6e0ad072ff917b9c9e792d682588",
                 "shasum": ""
             },
             "require": {
                 "league/flysystem": "^1.0.26",
                 "php": "^7.0",
-                "symfony/framework-bundle": "^3.4|^4.0|^5.0"
+                "symfony/config": "^3.4|^4.0|^5.0",
+                "symfony/dependency-injection": "^3.4|^4.0|^5.0",
+                "symfony/http-kernel": "^3.4|^4.0|^5.0"
             },
             "require-dev": {
                 "jenko/flysystem-gaufrette": "^1.0",
@@ -7284,6 +7286,7 @@
                 "symfony/asset": "^3.4|^4.0|^5.0",
                 "symfony/browser-kit": "^3.4|^4.0|^5.0",
                 "symfony/finder": "^3.4|^4.0|^5.0",
+                "symfony/framework-bundle": "^3.4|^4.0|^5.0",
                 "symfony/templating": "^3.4|^4.0|^5.0",
                 "symfony/translation": "^3.4|^4.0|^5.0",
                 "symfony/yaml": "^3.4|^4.0|^5.0",
@@ -7343,7 +7346,7 @@
                 "filesystem",
                 "symfony"
             ],
-            "time": "2019-12-06T16:27:51+00:00"
+            "time": "2020-01-09T08:40:41+00:00"
         },
         {
             "name": "oneup/uploader-bundle",
