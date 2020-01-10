@@ -1,19 +1,15 @@
 import React from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
-
-import Form from 'antd/lib/form'
-const FormItem = Form.Item
-
-import Button from 'antd/lib/button'
-import DatePicker from 'antd/lib/date-picker'
-import TimePicker from 'antd/lib/time-picker'
+import { Button, DatePicker, Form, TimePicker } from 'antd'
 import ConfigProvider from 'antd/lib/config-provider'
 
 import de_DE from 'antd/es/locale/de_DE'
 import en_US from 'antd/es/locale/en_US'
 import es_ES from 'antd/es/locale/es_ES'
 import fr_FR from 'antd/es/locale/fr_FR'
+
+const FormItem = Form.Item
 
 const localeMap = {
   'de': de_DE,

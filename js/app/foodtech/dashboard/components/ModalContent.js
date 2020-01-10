@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import Timeline from 'antd/lib/timeline'
+import { Timeline } from 'antd'
 import moment from 'moment'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 

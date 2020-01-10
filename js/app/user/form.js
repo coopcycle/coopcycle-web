@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import Switch from 'antd/lib/switch'
+import { Switch } from 'antd'
 
 import i18n from '../i18n'
 

@@ -2,13 +2,13 @@
 
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
-{%  block breadcrumb %}
+{% block breadcrumb %}
   <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
   <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
   <li>{% trans %}restaurant.form.accessPlanning{% endtrans %}</li>
 {%  endblock %}
 
-{%  block content %}
+{% block content %}
   <h1 class="page-header">{% trans %}restaurant.list.planning{%  endtrans %}</h1>
   <h3 id="closing-rules-form__title">{% trans %}restaurant.closingForm.title{% endtrans %}</h3>
   {{ form_start(form, { attr: { id: 'closing-rules-form' }}) }}
@@ -33,12 +33,16 @@
     <div class="col-md-12" id="calendar-planning">
     </div>
   </div>
-{%  endblock %}
+{% endblock %}
 
-{%  block scripts %}
+{% block styles %}
+  {{ encore_entry_link_tags('restaurant-planning') }}
+{% endblock %}
+
+{% block scripts %}
   <script>
     window.AppData.closingRules = {{ closing_rules_json|raw }};
     window.AppData.openingHours = {{ opening_hours_json|raw }};
   </script>
   {{ encore_entry_script_tags('restaurant-planning') }}
-{%  endblock %}
+{% endblock %}

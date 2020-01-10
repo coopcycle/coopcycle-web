@@ -38,6 +38,10 @@
     {{ form_end(form) }}
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('user-form') }}
+{% endblock %}
+
 {% block scripts %}
   <script>
     window.AppData = window.AppData || {}

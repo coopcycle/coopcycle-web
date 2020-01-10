@@ -6,6 +6,10 @@
 
 {% block footer %}{% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('foodtech-dashboard') }}
+{% endblock %}
+
 {% block scripts %}
 {% set current_route = app.request.attributes.get('_route') %}
 {{ encore_entry_script_tags('foodtech-dashboard') }}

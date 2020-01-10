@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import DatePicker from 'antd/lib/date-picker'
+import { DatePicker } from 'antd'
 import ConfigProvider from 'antd/lib/config-provider'
 import fr_FR from 'antd/es/locale/fr_FR'
 import en_GB from 'antd/es/locale/en_GB'

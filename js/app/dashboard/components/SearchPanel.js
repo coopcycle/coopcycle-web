@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
-import Input from 'antd/lib/input'
+import { Input } from 'antd'
 import Fuse from 'fuse.js'
 
 import { toggleSearch } from '../redux/actions'

@@ -1,8 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import Radio from 'antd/lib/radio'
-import Form from 'antd/lib/form'
+import { Form, Radio } from 'antd'
 
 import {
   closeSettings,

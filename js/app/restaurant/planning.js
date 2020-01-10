@@ -1,11 +1,10 @@
 import React from 'react'
 import { render } from 'react-dom'
-import Calendar from 'antd/lib/calendar'
+import { Calendar, DatePicker } from 'antd'
 import moment from 'moment'
 import ConfigProvider from 'antd/lib/config-provider'
 import frFR from 'antd/es/locale/fr_FR'
 import enGB from 'antd/es/locale/en_GB'
-import DatePicker from 'antd/lib/date-picker'
 import _ from 'lodash'
 import axios from 'axios'
 
