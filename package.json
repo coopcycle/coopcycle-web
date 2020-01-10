@@ -53,6 +53,7 @@
     "axios": "^0.19.0",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
+    "babel-plugin-import": "^1.13.0",
     "beautifymarker": "1.0.7",
     "bootstrap-sass": "^3.4.1",
     "chai": "^4.2.0",

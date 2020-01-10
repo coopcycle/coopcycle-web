@@ -43,7 +43,11 @@ Encore
   .enableSassLoader(function(sassOptions) {}, {
     resolveUrlLoader: false
   })
-  .enableLessLoader()
+  .enableLessLoader(function(lessOptions) {
+    // Avoid error "Inline JavaScript is not enabled. Is it set in your options?"
+    // https://github.com/ant-design/ant-motion/issues/44
+    lessOptions.javascriptEnabled = true
+  })
 
   .autoProvidejQuery()
 
