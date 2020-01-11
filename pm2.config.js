@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 var argv = require('minimist')(process.argv.slice(2));
 var _ = require('lodash');
 var ConfigLoader = require('./js/api/ConfigLoader');
@@ -69,6 +71,11 @@ apps = _.map(apps, function(app) {
     env: {
       NODE_ENV: "development",
       PORT: app.port,
+      COOPCYCLE_DB_HOST:     process.env.COOPCYCLE_DB_HOST,
+      COOPCYCLE_DB_NAME:     process.env.COOPCYCLE_DB_NAME,
+      COOPCYCLE_DB_USER:     process.env.COOPCYCLE_DB_USER,
+      COOPCYCLE_DB_PASSWORD: process.env.COOPCYCLE_DB_PASSWORD,
+      COOPCYCLE_REDIS_DSN:   process.env.COOPCYCLE_REDIS_DSN,
     },
     env_production : {
       NODE_ENV: "production",
