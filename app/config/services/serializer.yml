@@ -17,14 +17,8 @@ services:
 
   AppBundle\Serializer\RestaurantNormalizer:
     arguments:
-      - "@api_platform.jsonld.normalizer.item"
-      - "@router"
-      - '@request_stack'
-      - "@vich_uploader.templating.helper.uploader_helper"
-      - "@sylius.context.currency"
-      - "@coopcycle.price_formatter"
-      - "@slugify"
-      - "%kernel.default_locale%"
+      $normalizer: "@api_platform.jsonld.normalizer.item"
+      $locale: "%kernel.default_locale%"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\TaskNormalizer:

@@ -8,6 +8,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Utils\PriceFormatter;
 use Cocur\Slugify\SlugifyInterface;
+use Liip\ImagineBundle\Service\FilterService;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -34,7 +35,8 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         CurrencyContextInterface $currencyContext,
         PriceFormatter $priceFormatter,
         SlugifyInterface $slugify,
-        $locale)
+        FilterService $imagineFilter,
+        string $locale)
     {
         $this->normalizer = $normalizer;
         $this->urlGenerator = $urlGenerator;
@@ -43,6 +45,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->currencyContext = $currencyContext;
         $this->priceFormatter = $priceFormatter;
         $this->slugify = $slugify;
+        $this->imagineFilter = $imagineFilter;
         $this->locale = $locale;
     }
 
@@ -104,11 +107,12 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $imagePath = $this->uploaderHelper->asset($object, 'imageFile');
         if (empty($imagePath)) {
             $imagePath = '/img/cuisine/default.jpg';
-        }
-
-        $request = $this->requestStack->getCurrentRequest();
-        if ($request) {
-            $data['image'] = $request->getUriForPath($imagePath);
+            $request = $this->requestStack->getCurrentRequest();
+            if ($request) {
+                $data['image'] = $request->getUriForPath($imagePath);
+            }
+        } else {
+            $data['image'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail');
         }
 
         return $data;
