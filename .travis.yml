@@ -114,7 +114,7 @@ script:
   - php vendor/bin/phpstan analyse
   - node node_modules/.bin/eslint --quiet js/app/
   - phpunit
-  - $(npm bin)/cypress run
+  - npm run jest
   - php vendor/bin/behat -f progress
   - node node_modules/.bin/mocha --require @babel/register --exit js/tests/
-  - npm run jest
+  - $(npm bin)/cypress run
