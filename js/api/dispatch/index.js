@@ -2,7 +2,6 @@ var WebSocketServer = require('ws').Server
 var http = require('http')
 var fs = require('fs')
 var _ = require('lodash')
-var moment = require('moment')
 
 var winston = require('winston')
 winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug'
