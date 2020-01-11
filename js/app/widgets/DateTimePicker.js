@@ -1,8 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
-import { Button, DatePicker, Form, TimePicker } from 'antd'
-import ConfigProvider from 'antd/lib/config-provider'
+import { Button, ConfigProvider, DatePicker, Form, TimePicker } from 'antd'
 
 import de_DE from 'antd/es/locale/de_DE'
 import en_US from 'antd/es/locale/en_US'
