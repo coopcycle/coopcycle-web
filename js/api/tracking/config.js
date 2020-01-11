@@ -3,7 +3,7 @@ const Sequelize = require('sequelize')
 module.exports = function(rootDir) {
 
   var sub = require('../RedisClient')({
-    prefix: process.env.COOPCYCLE_DB_NAME,
+    prefix: process.env.COOPCYCLE_DB_NAME + ':',
     url: process.env.COOPCYCLE_REDIS_DSN
   });
 
@@ -15,7 +15,7 @@ module.exports = function(rootDir) {
   var sequelize = new Sequelize(
     process.env.COOPCYCLE_DB_NAME,
     process.env.COOPCYCLE_DB_USER,
-    process.env.COOPCYCLE_DB_PASSWORD,
+    process.env.COOPCYCLE_DB_PASSWORD || null,
     {
       host: process.env.COOPCYCLE_DB_HOST,
       port: port,

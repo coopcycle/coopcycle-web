@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 var serialize = require('locutus/php/var/serialize');
 var pg = require('pg');
 var fs = require('fs');
@@ -18,16 +20,21 @@ function TestUtils(config) {
 
   this.config = config;
 
+  let port = 5432
+  if (process.env.COOPCYCLE_DB_PORT) {
+    port = parseInt(process.env.COOPCYCLE_DB_PORT, 10)
+  }
+
   this.pgConfig = {
-    user: config.doctrine.dbal.user,
-    database: config.doctrine.dbal.dbname,
-    password: config.doctrine.dbal.password,
-    host: config.doctrine.dbal.host,
+    user: process.env.COOPCYCLE_DB_USER,
+    database: process.env.COOPCYCLE_DB_NAME + '_test',
+    password: process.env.COOPCYCLE_DB_PASSWORD || null,
+    host: process.env.COOPCYCLE_DB_HOST,
   };
 
   this.redis = require('redis').createClient({
-    prefix: config.snc_redis.clients.default.options.prefix,
-    url: config.snc_redis.clients.default.dsn
+    prefix: process.env.COOPCYCLE_DB_NAME + '_test:',
+    url: process.env.COOPCYCLE_REDIS_DSN
   });
 
   var jwtConfig = config.lexik_jwt_authentication;
@@ -39,11 +46,12 @@ function TestUtils(config) {
   };
 
   var sequelize = new Sequelize(
-    config.doctrine.dbal.dbname,
-    config.doctrine.dbal.user,
-    config.doctrine.dbal.password,
+    process.env.COOPCYCLE_DB_NAME + '_test',
+    process.env.COOPCYCLE_DB_USER,
+    process.env.COOPCYCLE_DB_PASSWORD || null,
     {
-      host: config.doctrine.dbal.host,
+      host: process.env.COOPCYCLE_DB_HOST,
+      port: port,
       dialect: 'postgres',
       logging: false,
     }
@@ -109,7 +117,7 @@ TestUtils.prototype.createUser = function(username, roles) {
         resolve(user)
       })
       .catch(function(e) {
-        reject(err.errors)
+        reject(e.errors)
       })
   })
 };

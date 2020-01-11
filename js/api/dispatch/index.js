@@ -1,7 +1,8 @@
 var WebSocketServer = require('ws').Server
 var http = require('http')
-var fs = require('fs')
 var _ = require('lodash')
+
+var TokenVerifier = require('../TokenVerifier')
 
 var winston = require('winston')
 winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug'
@@ -29,9 +30,7 @@ var server = http.createServer(function(request, response) {
     // we don't have to implement anything.
 });
 
-var cert = fs.readFileSync(ROOT_DIR + '/var/jwt/public.pem')
-var TokenVerifier = require('../TokenVerifier')
-var tokenVerifier = new TokenVerifier(cert, db)
+var tokenVerifier = new TokenVerifier(ROOT_DIR + '/var/jwt/public.pem', db)
 
 var wsServer = new WebSocketServer({
     server: server,

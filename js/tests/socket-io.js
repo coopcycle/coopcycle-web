@@ -11,8 +11,8 @@ var config = configLoader.load();
 var utils = new TestUtils(config);
 
 var pub = require('../api/RedisClient')({
-  prefix: config.snc_redis.clients.default.options.prefix,
-  url: config.snc_redis.clients.default.dsn
+  prefix: process.env.COOPCYCLE_DB_NAME + '_test:',
+  url: process.env.COOPCYCLE_REDIS_DSN
 });
 
 var initUsers = function() {
@@ -106,6 +106,7 @@ describe('Connect to Socket.IO', function() {
     'order:fulfilled'
   ].forEach((eventName) => {
     it(`should emit "${eventName}" message to expected users`, function() {
+      this.timeout(3000)
       return new Promise((resolve, reject) => {
 
         const socketForBill = createSocket('bill')

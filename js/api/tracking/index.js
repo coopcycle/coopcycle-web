@@ -1,8 +1,6 @@
 var path = require('path');
 var _ = require('lodash');
 var http = require('http');
-var fs = require('fs');
-var jwt = require('jsonwebtoken');
 
 const TokenVerifier = require('../TokenVerifier')
 
@@ -31,8 +29,7 @@ const server = http.createServer(function(request, response) {
     // we don't have to implement anything.
 });
 
-const cert = fs.readFileSync(ROOT_DIR + '/var/jwt/public.pem')
-const tokenVerifier = new TokenVerifier(cert, db)
+const tokenVerifier = new TokenVerifier(ROOT_DIR + '/var/jwt/public.pem', db)
 
 const io = require('socket.io')(server, { path: '/tracking/socket.io' });
 

@@ -84,6 +84,7 @@ apps = _.map(apps, function(app) {
     env_test : {
       NODE_ENV: "test",
       PORT: app.port,
+      COOPCYCLE_DB_NAME:     process.env.COOPCYCLE_DB_NAME + '_test',
     }
   });
 });
