@@ -1,4 +1,4 @@
-{
+module.exports = {
   "presets": [
     ["@babel/preset-env", {
       "useBuiltIns": "usage",
@@ -8,7 +8,7 @@
   ],
   "plugins": [
     "@babel/plugin-proposal-object-rest-spread",
-    ["import", { "libraryName": "antd", "style": true }]
+    ["import", { "libraryName": "antd", "style": (path, file) => `${path}/style/index.css` }]
   ],
   "env": {
     "test": {
