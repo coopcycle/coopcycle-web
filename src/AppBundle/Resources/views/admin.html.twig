@@ -30,8 +30,9 @@
 </div>
 {% endblock %}
 
-{% block styles %}
+{% block styles_common %}
   {{ encore_entry_link_tags('widgets-admin') }}
+  {% block styles %}{% endblock %}
 {% endblock %}
 
 {% block scripts_common %}
