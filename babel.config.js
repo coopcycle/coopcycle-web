@@ -8,7 +8,13 @@ module.exports = {
   ],
   "plugins": [
     "@babel/plugin-proposal-object-rest-spread",
-    ["import", { "libraryName": "antd", "style": (path, file) => `${path}/style/index.css` }]
+    ["import", { "libraryName": "antd", "style": (path, file) => {
+      if (path === 'antd/lib/col' || path === 'antd/lib/row') {
+        return 'antd/lib/grid/style/index.css'
+      }
+
+      return `${path}/style/index.css`
+    } }]
   ],
   "env": {
     "test": {

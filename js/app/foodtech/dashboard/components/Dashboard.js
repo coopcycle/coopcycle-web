@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import Modal from 'react-modal'
-import { DatePicker, Slider, Grid, Switch } from 'antd'
+import { DatePicker, Slider, Col, Row, Switch } from 'antd'
 import moment from 'moment'
 import Column from './Column'
 import ModalContent from './ModalContent'
@@ -55,13 +55,13 @@ class Dashboard extends React.Component {
         <div className="FoodtechDashboard__Navbar">
           { this.props.showSettings && (
             <div>
-              <Grid.Row type="flex" align="middle">
-                <Grid.Col span={ 6 }>
+              <Row type="flex" align="middle">
+                <Col span={ 6 }>
                   <span>
                     <i className="fa fa-clock-o"></i> { this.props.t('RESTAURANT_DASHBOARD_DELAY_SETTING') }
                   </span>
-                </Grid.Col>
-                <Grid.Col span={ 18 }>
+                </Col>
+                <Col span={ 18 }>
                   <Slider
                     max={ 30 }
                     defaultValue={ this.props.preparationDelay }
@@ -69,8 +69,8 @@ class Dashboard extends React.Component {
                     step={ null }
                     tipFormatter={ this._tipFormatter.bind(this) }
                     onChange={ delay => this.props.setPreparationDelay(delay) } />
-                </Grid.Col>
-              </Grid.Row>
+                </Col>
+              </Row>
             </div>
           )}
           { this.props.restaurant && (
