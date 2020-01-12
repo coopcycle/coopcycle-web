@@ -2,6 +2,9 @@ import Dropzone from 'dropzone'
 import Croppie from 'croppie'
 import i18n from '../i18n'
 
+import "dropzone/dist/dropzone.css";
+import "croppie/croppie.css";
+
 Dropzone.autoDiscover = false
 
 export default function(el, options) {
