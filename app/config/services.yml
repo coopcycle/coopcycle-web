@@ -99,11 +99,15 @@ services:
       $currencyFactory: '@sylius.factory.currency'
       $promotionFactory: '@sylius.factory.promotion'
       $locale: '%kernel.default_locale%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:setup' }
 
   AppBundle\Command\CreateSettingCommand:
     arguments:
       $entityName: '%craue_config.entity_name%'
       $config: '@craue_config'
+    tags:
+      - { name: 'console.command', command: 'craue:setting:create' }
 
   AppBundle\Command\InitDemoCommand:
     arguments:
@@ -118,18 +122,24 @@ services:
       $taxCategoryManager: '@sylius.manager.tax_category'
       $taxRateFactory: '@sylius.factory.tax_rate'
       $taxRateManager: '@sylius.manager.tax_rate'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:demo:init' }
 
   AppBundle\Command\ApplyTaxesCommand:
     arguments:
       $orderTaxesProcessor: '@sylius.order_processing.order_taxes_processor'
       $orderRepository: '@sylius.repository.order'
       $orderManager: '@sylius.manager.order'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:orders:process-taxes' }
 
   AppBundle\Command\ImportStripeFeeCommand:
     arguments:
       $orderRepository: '@sylius.repository.order'
       $orderManager: '@sylius.manager.order'
       $adjustmentFactory: '@sylius.factory.adjustment'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:orders:import-stripe-fee' }
 
   AppBundle\Command\BotCommand:
     arguments:
@@ -140,6 +150,8 @@ services:
       $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
       $projectDir: '%kernel.project_dir%'
       $environment: '%kernel.environment%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:fixtures:load' }
 
   AppBundle\Command\UploadImagesCommand:
     arguments:
@@ -153,6 +165,8 @@ services:
       $remoteReceiptsFilesystem: '@receipts_s3_filesystem'
       $localAssetsFilesystem: '@assets_filesystem'
       $remoteAssetsFilesystem: '@assets_s3_filesystem'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:s3:upload_files' }
 
   AppBundle\Controller\OrderController:
     arguments:
