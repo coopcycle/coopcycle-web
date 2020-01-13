@@ -49,7 +49,7 @@ class Geocoder
             }
 
             // Add Google provider only if api key is configured
-            $apiKey = $settingsManager->get('google_api_key');
+            $apiKey = $this->settingsManager->get('google_api_key');
             if (!empty($apiKey)) {
                 $region = strtoupper($this->country);
                 $providers[] = new GoogleMapsProvider($httpClient, $region, $apiKey);
