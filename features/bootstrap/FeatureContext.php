@@ -40,14 +40,15 @@ use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuthClient;
 use Trikoder\Bundle\OAuth2Bundle\Model\Grant;
 use Trikoder\Bundle\OAuth2Bundle\Model\Scope;
 use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
+use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use DMore\ChromeDriver\ChromeDriver;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Predis\Client as Redis;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Defines application features from the specific context.
@@ -103,7 +104,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         UserManipulator $userManipulator,
         AuthorizationServer $authorizationServer,
         Redis $redis,
-        IriConverterInterface $iriConverter)
+        IriConverterInterface $iriConverter,
+        HttpMessageFactoryInterface $httpMessageFactory)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -119,6 +121,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->authorizationServer = $authorizationServer;
         $this->redis = $redis;
         $this->iriConverter = $iriConverter;
+        $this->httpMessageFactory = $httpMessageFactory;
     }
 
     public function setKernel(KernelInterface $kernel)
@@ -806,17 +809,17 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $identifier = $oAuthClient->getIdentifier();
         $secret = $oAuthClient->getSecret();
 
-        $headers = [
-            'Authorization' => sprintf('Basic %s', base64_encode(sprintf('%s:%s', $identifier, $secret))),
-        ];
-
         $body = [
             'grant_type' => 'client_credentials',
             'scope' => 'tasks deliveries'
         ];
 
-        $request = new ServerRequest([], [], null, null, 'php://temp', $headers, [], [], $body);
-        $response = new Response();
+        $request = $this->httpMessageFactory->createRequest(
+            Request::create($uri, $method = 'POST', $parameters = $body, $cookies = [], $files = [], $server = [
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode(sprintf('%s:%s', $identifier, $secret))),
+            ], $content = null)
+        );
+        $response = $this->httpMessageFactory->createResponse(new Response());
 
         $response = $this->authorizationServer->respondToAccessTokenRequest($request, $response);
 
