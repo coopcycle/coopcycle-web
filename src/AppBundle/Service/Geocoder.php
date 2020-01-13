@@ -18,6 +18,9 @@ use PredictHQ\AddressFormatter\Formatter as AddressFormatter;
 
 class Geocoder
 {
+    private $settingsManager;
+    private $country;
+    private $locale;
     private $geocoder;
     private $addressFormatter;
 
@@ -26,25 +29,36 @@ class Geocoder
      */
     public function __construct(SettingsManager $settingsManager, $country, $locale)
     {
-        $httpClient = new Client();
-
-        $providers = [];
-
-        // For France only, use https://adresse.data.gouv.fr/
-        if ('fr' === $country) {
-            // TODO Create own provider to get results with a high score
-            $providers[] = AddokProvider::withBANServer($httpClient);
-        }
-
-        // Add Google provider only if api key is configured
-        $apiKey = $settingsManager->get('google_api_key');
-        if (!empty($apiKey)) {
-            $region = strtoupper($country);
-            $providers[] = new GoogleMapsProvider($httpClient, $region, $apiKey);
-        }
-
-        $this->geocoder = new StatefulGeocoder(new ChainProvider($providers), $locale);
+        $this->settingsManager = $settingsManager;
+        $this->country = $country;
+        $this->locale = $locale;
         $this->addressFormatter = new AddressFormatter();
+    }
+
+    private function getGeocoder()
+    {
+        if (null === $this->geocoder) {
+            $httpClient = new Client();
+
+            $providers = [];
+
+            // For France only, use https://adresse.data.gouv.fr/
+            if ('fr' === $this->country) {
+                // TODO Create own provider to get results with a high score
+                $providers[] = AddokProvider::withBANServer($httpClient);
+            }
+
+            // Add Google provider only if api key is configured
+            $apiKey = $settingsManager->get('google_api_key');
+            if (!empty($apiKey)) {
+                $region = strtoupper($this->country);
+                $providers[] = new GoogleMapsProvider($httpClient, $region, $apiKey);
+            }
+
+            $this->geocoder = new StatefulGeocoder(new ChainProvider($providers), $this->locale);
+        }
+
+        return $this->geocoder;
     }
 
     /**
@@ -60,7 +74,7 @@ class Geocoder
      */
     public function geocode($value)
     {
-        $results = $this->geocoder->geocode($value);
+        $results = $this->getGeocoder()->geocode($value);
 
         if (count($results) > 0) {
             $result = $results->first();
@@ -81,7 +95,7 @@ class Geocoder
 
     public function reverse(float $latitude, float $longitude)
     {
-        $results = $this->geocoder->reverse($latitude, $longitude);
+        $results = $this->getGeocoder()->reverse($latitude, $longitude);
 
         if (count($results) > 0) {
             $result = $results->first();
