@@ -815,7 +815,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         ];
 
         $request = $this->httpMessageFactory->createRequest(
-            Request::create($uri, $method = 'POST', $parameters = $body, $cookies = [], $files = [], $server = [
+            Request::create('/uri', $method = 'POST', $parameters = $body, $cookies = [], $files = [], $server = [
                 'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode(sprintf('%s:%s', $identifier, $secret))),
             ], $content = null)
         );
