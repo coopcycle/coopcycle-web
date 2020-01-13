@@ -2,6 +2,8 @@
 
 namespace AppBundle\Command;
 
+use Craue\ConfigBundle\Util\Config;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,6 +15,18 @@ Class CreateSettingCommand extends ContainerAwareCommand
     private $entityName;
     private $entityManager;
     private $craueConfig;
+
+    public function __construct(
+        string $entityName,
+        ManagerRegistry $doctrine,
+        Config $config)
+    {
+        $this->entityName = $entityName;
+        $this->doctrine = $doctrine;
+        $this->craueConfig = $config;
+
+        parent::__construct();
+    }
 
     protected function configure()
     {
@@ -41,9 +55,7 @@ Class CreateSettingCommand extends ContainerAwareCommand
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $this->entityName = $this->getContainer()->getParameter('craue_config.entity_name');
-        $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass($this->entityName);
-        $this->craueConfig = $this->getContainer()->get('craue_config');
+        $this->entityManager = $this->doctrine->getManagerForClass($this->entityName);
     }
 
     protected function interact(InputInterface $input, OutputInterface $output)
