@@ -677,8 +677,6 @@ services:
     tags:
       - { name: monolog.logger, channel: api }
 
-  AppBundle\Monolog\Formatter\ApiFormatter: ~
-
   AppBundle\EventListener\Upload\UploadListener:
     arguments:
       - '@doctrine'
@@ -779,3 +777,11 @@ services:
   AppBundle\Service\TagManager:
     arguments:
       $cache: '@tag_manager.cache'
+
+  AppBundle\Log\RequestResponseProcessor:
+    tags:
+      - { name: monolog.processor, channel: api }
+
+  Symfony\Bridge\Monolog\Processor\TokenProcessor:
+    tags:
+      - { name: monolog.processor, channel: api }

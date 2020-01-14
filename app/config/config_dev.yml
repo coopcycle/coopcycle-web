@@ -28,7 +28,7 @@ monolog:
             type: rotating_file
             path: "%kernel.logs_dir%/api.%kernel.environment%.log"
             level: info
-            formatter: AppBundle\Monolog\Formatter\ApiFormatter
+            formatter: monolog.formatter.json
             max_files: 3
             channels: [api]
         stripe:
