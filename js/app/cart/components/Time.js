@@ -48,10 +48,10 @@ function mapStateToProps(state) {
   const { asap, fast, today, diff } = state.times
 
   let timeAsText
-  if (today && fast) {
+  if (!state.cart.shippedAt && today && fast) {
     timeAsText = i18n.t('CART_DELIVERY_TIME_DIFF', { diff })
   } else {
-    const time = !!state.cart.shippedAt ? state.cart.shippedAt : asap
+    const time = state.cart.shippedAt ? state.cart.shippedAt : asap
     let fromNow = moment(time).calendar(null, { sameElse: 'LLLL' }).toLowerCase()
     timeAsText = i18n.t('CART_DELIVERY_TIME', { fromNow })
   }
