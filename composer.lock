@@ -9726,39 +9726,44 @@
         },
         {
             "name": "sentry/sentry-symfony",
-            "version": "3.2.1",
+            "version": "3.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-symfony.git",
-                "reference": "620b90dc35c12ef96c6460df74e30441e359ce6d"
+                "reference": "b8090f49d69298e2081726daea67d0b90adcb8ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/620b90dc35c12ef96c6460df74e30441e359ce6d",
-                "reference": "620b90dc35c12ef96c6460df74e30441e359ce6d",
+                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/b8090f49d69298e2081726daea67d0b90adcb8ce",
+                "reference": "b8090f49d69298e2081726daea67d0b90adcb8ce",
                 "shasum": ""
             },
             "require": {
                 "jean85/pretty-package-versions": "^1.0",
+                "ocramius/package-versions": "^1.3.0",
                 "php": "^7.1",
                 "sentry/sdk": "^2.0",
-                "symfony/config": "^2.8||^3.0||^4.0",
-                "symfony/console": "^2.8||^3.0||^4.0",
-                "symfony/dependency-injection": "^2.8||^3.0||^4.0",
-                "symfony/event-dispatcher": "^2.8||^3.0||^4.0",
-                "symfony/http-kernel": "^2.8||^3.0||^4.0",
-                "symfony/security-core": "^2.8||^3.0||^4.0"
+                "symfony/config": "^3.4||^4.0||^5.0",
+                "symfony/console": "^3.4||^4.0||^5.0",
+                "symfony/dependency-injection": "^3.4||^4.0||^5.0",
+                "symfony/event-dispatcher": "^3.4||^4.0||^5.0",
+                "symfony/http-kernel": "^3.4||^4.0||^5.0",
+                "symfony/security-core": "^3.4||^4.0||^5.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.8",
                 "jangregor/phpstan-prophecy": "^0.3.0",
                 "monolog/monolog": "^1.11||^2.0",
                 "php-http/mock-client": "^1.0",
-                "phpstan/phpstan": "^0.11",
                 "phpstan/phpstan-phpunit": "^0.11",
-                "phpunit/phpunit": "^7.5",
-                "scrutinizer/ocular": "^1.4",
-                "symfony/expression-language": "^2.8||^3.0||^4.0"
+                "phpstan/phpstan-shim": "^0.11",
+                "phpunit/phpunit": "^7.5||^8.5",
+                "symfony/browser-kit": "^3.4||^4.0||^5.0",
+                "symfony/expression-language": "^3.4||^4.0||^5.0",
+                "symfony/framework-bundle": "^3.4||^4.0||^5.0",
+                "symfony/monolog-bundle": "^3.4",
+                "symfony/phpunit-bridge": "^5.0",
+                "symfony/yaml": "^3.4||^4.0||^5.0"
             },
             "suggest": {
                 "monolog/monolog": "Required to use the Monolog handler"
@@ -9799,7 +9804,7 @@
                 "sentry",
                 "symfony"
             ],
-            "time": "2019-11-29T21:24:37+00:00"
+            "time": "2020-01-14T10:49:15+00:00"
         },
         {
             "name": "simple-bus/message-bus",
