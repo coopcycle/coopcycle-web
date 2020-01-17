@@ -5189,34 +5189,39 @@
         },
         {
             "name": "knplabs/knp-paginator-bundle",
-            "version": "v5.0.0",
+            "version": "v5.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpPaginatorBundle.git",
-                "reference": "dcbd60ebf494cc10cedcd65237edc8d632cf675b"
+                "reference": "4d5e7e5e9b6b618c0995f3f906b584c6db3786db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/dcbd60ebf494cc10cedcd65237edc8d632cf675b",
-                "reference": "dcbd60ebf494cc10cedcd65237edc8d632cf675b",
+                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/4d5e7e5e9b6b618c0995f3f906b584c6db3786db",
+                "reference": "4d5e7e5e9b6b618c0995f3f906b584c6db3786db",
                 "shasum": ""
             },
             "require": {
                 "knplabs/knp-components": "^2.0",
                 "php": "^7.2",
-                "symfony/framework-bundle": "^4.3 || ^5.0",
+                "symfony/config": "^4.3 || ^5.0",
+                "symfony/dependency-injection": "^4.3 || ^5.0",
+                "symfony/event-dispatcher": "^4.3 || ^5.0",
+                "symfony/http-foundation": "^4.3 || ^5.0",
+                "symfony/http-kernel": "^4.3 || ^5.0",
+                "symfony/routing": "^4.3 || ^5.0",
                 "symfony/translation": "^4.3 || ^5.0",
                 "twig/twig": "^2.0 || ^3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.5 || ^8.4",
+                "phpunit/phpunit": "^7.5 || ^8.5",
                 "symfony/expression-language": "^4.3 || ^5.0",
-                "symfony/templating": "^3.4 || ^4.0"
+                "symfony/templating": "^4.3 || ^5.0"
             },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "5.0.x-dev"
+                    "dev-master": "5.1.x-dev"
                 }
             },
             "autoload": {
@@ -5249,7 +5254,7 @@
                 "paginator",
                 "symfony"
             ],
-            "time": "2019-11-27T08:58:44+00:00"
+            "time": "2020-01-16T07:53:51+00:00"
         },
         {
             "name": "knplabs/knp-time-bundle",
