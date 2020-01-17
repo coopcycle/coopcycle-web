@@ -2540,12 +2540,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-vendor-hardening.git",
-                "reference": "43a46dd8d9836781e8da4a34de7aaa4092cd4acf"
+                "reference": "909bf65c92a5f6612950111eb0e015a25cd289f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/43a46dd8d9836781e8da4a34de7aaa4092cd4acf",
-                "reference": "43a46dd8d9836781e8da4a34de7aaa4092cd4acf",
+                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/909bf65c92a5f6612950111eb0e015a25cd289f1",
+                "reference": "909bf65c92a5f6612950111eb0e015a25cd289f1",
                 "shasum": ""
             },
             "require": {
@@ -2570,7 +2570,7 @@
             "keywords": [
                 "drupal"
             ],
-            "time": "2019-11-02T06:51:59+00:00"
+            "time": "2020-01-16T10:35:54+00:00"
         },
         {
             "name": "duccio/apns-php",
@@ -4001,19 +4001,22 @@
                 "twig/twig": "<1.34"
             },
             "require-dev": {
+                "doctrine/doctrine-bundle": "^1.11",
                 "doctrine/orm": "^2.3",
                 "friendsofphp/php-cs-fixer": "^2.0",
-                "friendsofsymfony/user-bundle": "^2.0",
+                "friendsofsymfony/user-bundle": "^2.1",
                 "php-http/guzzle6-adapter": "^2.0",
                 "php-http/httplug-bundle": "^1.7",
                 "phpunit/phpunit": "^6.5|^7.5",
-                "symfony/browser-kit": "^3.4|^4.2",
+                "symfony/browser-kit": "^3.4|^4.3",
+                "symfony/css-selector": "^3.4|^4.3",
                 "symfony/monolog-bundle": "^3.4",
-                "symfony/phpunit-bridge": "^3.4|^4.2",
-                "symfony/property-access": "^3.4|^4.2",
-                "symfony/stopwatch": "^3.4|^4.2",
-                "symfony/twig-bundle": "^3.4|^4.2",
-                "symfony/validator": "^3.4|^4.2"
+                "symfony/phpunit-bridge": "^3.4|^4.3",
+                "symfony/property-access": "^3.4|^4.3",
+                "symfony/stopwatch": "^3.4|^4.3",
+                "symfony/translation": "^3.4|^4.3",
+                "symfony/twig-bundle": "^3.4|^4.3",
+                "symfony/validator": "^3.4|^4.3"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "to use Doctrine user provider",
@@ -6494,6 +6497,7 @@
                 "cron",
                 "schedule"
             ],
+            "abandoned": "dragonmantank/cron-expression",
             "time": "2019-12-28T04:23:06+00:00"
         },
         {
@@ -9723,16 +9727,16 @@
         },
         {
             "name": "sentry/sentry-symfony",
-            "version": "3.3.1",
+            "version": "3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-symfony.git",
-                "reference": "b8090f49d69298e2081726daea67d0b90adcb8ce"
+                "reference": "3a9c2669969604c362cc63ba8fa118d9a00ac711"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/b8090f49d69298e2081726daea67d0b90adcb8ce",
-                "reference": "b8090f49d69298e2081726daea67d0b90adcb8ce",
+                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/3a9c2669969604c362cc63ba8fa118d9a00ac711",
+                "reference": "3a9c2669969604c362cc63ba8fa118d9a00ac711",
                 "shasum": ""
             },
             "require": {
@@ -9801,7 +9805,7 @@
                 "sentry",
                 "symfony"
             ],
-            "time": "2020-01-14T10:49:15+00:00"
+            "time": "2020-01-16T08:45:03+00:00"
         },
         {
             "name": "simple-bus/message-bus",
