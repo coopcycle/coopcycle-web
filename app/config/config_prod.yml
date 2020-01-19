@@ -61,13 +61,6 @@ monolog:
             formatter: monolog.formatter.json
             max_files: 7
             channels: [api]
-        messenger:
-            type: rotating_file
-            path: "%kernel.logs_dir%/messenger.%kernel.environment%.log"
-            level: debug
-            formatter: monolog.formatter.json
-            max_files: 7
-            channels: [messenger]
         stripe:
             type: rotating_file
             path: "%kernel.logs_dir%/stripe.%kernel.environment%.log"
