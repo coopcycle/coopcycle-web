@@ -41,13 +41,17 @@ doctrine:
 monolog:
     handlers:
         main:
-            type:         fingers_crossed
+            type: fingers_crossed
             action_level: error
-            handler:      nested
+            handler: nested
+            excluded_404s:
+                # regex: exclude all 404 errors from the logs
+                - ^/
         nested:
-            type:  rotating_file
-            path:  "%kernel.logs_dir%/%kernel.environment%.log"
+            type: rotating_file
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
+            formatter: monolog.formatter.json
             max_files: 7
             channels: ["!api", "!stripe"]
         api:
@@ -57,6 +61,13 @@ monolog:
             formatter: monolog.formatter.json
             max_files: 7
             channels: [api]
+        messenger:
+            type: rotating_file
+            path: "%kernel.logs_dir%/messenger.%kernel.environment%.log"
+            level: debug
+            formatter: monolog.formatter.json
+            max_files: 7
+            channels: [messenger]
         stripe:
             type: rotating_file
             path: "%kernel.logs_dir%/stripe.%kernel.environment%.log"
