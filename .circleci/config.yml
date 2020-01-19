@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Pull containers
-          command: docker-compose pull
+          command: docker-compose pull --ignore-pull-failures
       - run:
           name: Build containers
           command: docker-compose build
