@@ -45,6 +45,7 @@ framework:
     http_method_override: true
     assets: ~
     cache:
+        prefix_seed: "%database_name%"
         pools:
             enabled_filter_configurator.cache:
                 adapter: cache.adapter.filesystem
