@@ -97,6 +97,7 @@ localBusiness.form.website: Sitio web
 localBusiness.form.telephone: Teléfono
 localBusiness.form.openingHours: Horario de apertura
 localBusiness.form.deliveryPerimeterExpression: Zona o máxima distancia de reparto
+localBusiness.form.shippingOptionsDays: Opciones de entrega (en días)
 restaurant.available: Disponible
 restaurant.unavailable: No disponible
 restaurant.disabledWarning: "Éste restaurante está desactivado así que los visitantes\

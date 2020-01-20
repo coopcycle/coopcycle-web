@@ -103,6 +103,7 @@ localBusiness.form.website: Site web
 localBusiness.form.telephone: Numéro de téléphone
 localBusiness.form.openingHours: Heures d'ouvertures
 localBusiness.form.deliveryPerimeterExpression: Zone distance max de livraison
+localBusiness.form.shippingOptionsDays: Nombre de choix pour la livraison (en jours)
 restaurant.available: Disponible
 restaurant.unavailable: Indisponible
 restaurant.disabledWarning: "Ce restaurant n'est pas activé et n'est donc pas visible\
