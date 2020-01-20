@@ -66,7 +66,7 @@ trait OrderTrait
             throw $this->createNotFoundException(sprintf('Receipt for order "%s" does not exist', $orderNumber));
         }
 
-        $fileSystem = $this->get('receipts_filesystem');
+        $fileSystem = $this->get('receipts_s3_filesystem');
 
         $filename = sprintf('%s.pdf', $orderNumber);
 
