@@ -49,6 +49,17 @@ framework:
         pools:
             enabled_filter_configurator.cache:
                 adapter: cache.adapter.filesystem
+    messenger:
+        transports:
+            # https://symfony.com/doc/current/messenger.html#redis-transport
+            async:
+                dsn: "%redis_dsn%"
+                options:
+                    stream: "%database_name%:messages"
+                    group: "%database_name%"
+                    consumer: "%database_name%:consumer"
+        routing:
+            'AppBundle\Message\PushNotification': async
 
 # Twig Configuration
 twig:

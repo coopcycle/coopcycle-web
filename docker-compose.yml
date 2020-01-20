@@ -56,6 +56,7 @@ services:
     build:
       dockerfile: './docker/php/Dockerfile'
       context: '.'
+    image: coopcycle/php
     depends_on:
       - postgres
       - redis
@@ -76,6 +77,22 @@ services:
       - './:/var/www/html:cached'
     cap_add:
       - SYS_ADMIN
+
+  php_worker:
+    build:
+      dockerfile: './docker/php_worker/Dockerfile'
+      context: '.'
+    depends_on:
+      - php
+    restart: always
+    environment:
+      SYMFONY_ENV: dev
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+    volumes:
+      - 'php_cache:/var/www/html/var/cache'
+      - './:/var/www/html:cached'
 
   nginx:
     image: 'nginx:1.11-alpine'

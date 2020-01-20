@@ -26,6 +26,12 @@ services:
   AppBundle\Service\:
     resource: '../../src/AppBundle/Service/*'
 
+  AppBundle\Message\:
+    resource: '../../src/AppBundle/Message/*'
+
+  AppBundle\MessageHandler\:
+    resource: '../../src/AppBundle/MessageHandler/*'
+
   AppBundle\Controller\:
     resource: '../../src/AppBundle/Controller'
     tags: ['controller.service_arguments']
@@ -557,7 +563,9 @@ services:
       - { name: doctrine.event_subscriber, connection: default }
 
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber:
-    arguments: [ '@event_bus', '@coopcycle.domain.event_store', '@coopcycle.remote_push_notification_manager', '@logger' ]
+    arguments:
+      $eventBus: '@event_bus'
+      $eventStore: '@coopcycle.domain.event_store'
     tags:
       - { name: doctrine.event_subscriber, connection: default }
 
