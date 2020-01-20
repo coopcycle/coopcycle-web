@@ -171,6 +171,8 @@ services:
       $remoteReceiptsFilesystem: '@receipts_s3_filesystem'
       $localAssetsFilesystem: '@assets_filesystem'
       $remoteAssetsFilesystem: '@assets_s3_filesystem'
+      $localStoreImagesFilesystem: '@store_images_filesystem'
+      $remoteStoreImagesFilesystem: '@store_images_s3_filesystem'
     tags:
       - { name: 'console.command', command: 'coopcycle:s3:upload_files' }
 

@@ -23,7 +23,9 @@ class UploadImagesCommand extends ContainerAwareCommand
         Filesystem $localReceiptsFilesystem,
         Filesystem $remoteReceiptsFilesystem,
         Filesystem $localAssetsFilesystem,
-        Filesystem $remoteAssetsFilesystem)
+        Filesystem $remoteAssetsFilesystem,
+        Filesystem $localStoreImagesFilesystem,
+        Filesystem $remoteStoreImagesFilesystem)
     {
         $this->localProductImagesFilesystem = $localProductImagesFilesystem;
         $this->remoteProductImagesFilesystem = $remoteProductImagesFilesystem;
@@ -39,6 +41,9 @@ class UploadImagesCommand extends ContainerAwareCommand
 
         $this->localAssetsFilesystem = $localAssetsFilesystem;
         $this->remoteAssetsFilesystem = $remoteAssetsFilesystem;
+
+        $this->localStoreImagesFilesystem = $localStoreImagesFilesystem;
+        $this->remoteStoreImagesFilesystem = $remoteStoreImagesFilesystem;
 
         parent::__construct();
     }
@@ -85,6 +90,12 @@ class UploadImagesCommand extends ContainerAwareCommand
         $this->synchronize(
             $this->localAssetsFilesystem,
             $this->remoteAssetsFilesystem
+        );
+
+        $this->io->text('Uploading store images');
+        $this->synchronize(
+            $this->localStoreImagesFilesystem,
+            $this->remoteStoreImagesFilesystem
         );
 
         return 0;
