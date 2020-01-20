@@ -72,7 +72,6 @@ services:
   Sylius\Component\Channel\Repository\ChannelRepositoryInterface: '@sylius.repository.channel'
   Sylius\Component\Channel\Context\ChannelContextInterface: '@sylius.context.channel.composite'
   Predis\Client: '@snc_redis.default'
-  SM\Factory\FactoryInterface: '@sm.factory'
   Sylius\Bundle\CurrencyBundle\Templating\Helper\CurrencyHelperInterface: '@sylius.templating.helper.currency'
   FOS\UserBundle\Util\UserManipulator:
     alias: 'fos_user.util.user_manipulator'

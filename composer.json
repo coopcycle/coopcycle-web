@@ -45,7 +45,7 @@
         "predis/predis": "^1.1",
         "emcconville/google-map-polyline-encoding-tool": "^1.3",
         "stripe/stripe-php": "^7.7",
-        "vich/uploader-bundle": "~1.8",
+        "vich/uploader-bundle": "^1.13",
         "doctrine/doctrine-migrations-bundle": "^2.0",
         "guzzlehttp/guzzle": "~6.0",
         "csa/guzzle-bundle": "^3.0",
@@ -102,7 +102,8 @@
         "sylius/inventory": "^1.6.4",
         "oneup/flysystem-bundle": "^3.1",
         "drupal/core-vendor-hardening": "9.0.x-dev",
-        "league/flysystem-aws-s3-v3": "^1.0"
+        "league/flysystem-aws-s3-v3": "^1.0",
+        "sylius/resource-bundle": "dev-master"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

@@ -7,13 +7,15 @@ use AppBundle\Domain\Order\Reactor\UpdateState;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Sylius\Order\OrderInterface;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use SimpleBus\Message\Bus\MessageBus;
+use SM\Factory\FactoryInterface;
+use SM\StateMachine\StateMachineInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class UpdateStateTest extends KernelTestCase
+class UpdateStateTest extends TestCase
 {
     private $stateMachineFactory;
     private $orderProcessor;
@@ -24,11 +26,13 @@ class UpdateStateTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->stateMachineFactory = $this->prophesize(FactoryInterface::class);
+        $this->stateMachine = $this->prophesize(StateMachineInterface::class);
 
-        self::bootKernel();
+        $this->stateMachineFactory
+            ->get(Argument::type('object'), Argument::type('string'))
+            ->willReturn($this->stateMachine->reveal());
 
-        $this->stateMachineFactory = static::$kernel->getContainer()->get('sm.factory');
         $this->orderProcessor = $this->prophesize(OrderProcessorInterface::class);
         $this->serializer = $this->prophesize(SerializerInterface::class);
         $this->eventBus = $this->prophesize(MessageBus::class);
@@ -38,12 +42,12 @@ class UpdateStateTest extends KernelTestCase
             ->willReturn(json_encode(['foo' => 'bar']));
 
         $this->updateState = new UpdateState(
-            $this->stateMachineFactory,
+            $this->stateMachineFactory->reveal(),
             $this->orderProcessor->reveal(),
             $this->serializer->reveal(),
             $this->eventBus->reveal()
         );
-        }
+    }
 
     public function testCheckoutSucceeded()
     {
@@ -58,7 +62,7 @@ class UpdateStateTest extends KernelTestCase
 
         call_user_func_array($this->updateState, [ new Event\CheckoutSucceeded($order, $payment) ]);
 
-        $this->assertEquals('authorized', $payment->getState());
+        $this->stateMachine->apply('authorize')->shouldHaveBeenCalled();
     }
 
     public function testCheckoutFailed()
@@ -72,8 +76,7 @@ class UpdateStateTest extends KernelTestCase
 
         call_user_func_array($this->updateState, [ new Event\CheckoutFailed($order, $payment, 'Lorem ipsum') ]);
 
-        $this->assertEquals('failed', $payment->getState());
-        $this->assertEquals('Lorem ipsum', $payment->getLastError());
+        $this->stateMachine->apply('fail')->shouldHaveBeenCalled();
     }
 
     public function testOrderCreated()
@@ -83,7 +86,7 @@ class UpdateStateTest extends KernelTestCase
 
         call_user_func_array($this->updateState, [ new Event\OrderCreated($order) ]);
 
-        $this->assertEquals('new', $order->getState());
+        $this->stateMachine->apply('create')->shouldHaveBeenCalled();
     }
 
     public function testOrderAccepted()
@@ -93,6 +96,6 @@ class UpdateStateTest extends KernelTestCase
 
         call_user_func_array($this->updateState, [ new Event\OrderAccepted($order) ]);
 
-        $this->assertEquals('accepted', $order->getState());
+        $this->stateMachine->apply('accept')->shouldHaveBeenCalled();
     }
 }
