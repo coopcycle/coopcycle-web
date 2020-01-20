@@ -116,12 +116,10 @@ final class PricingSubscriber implements EventSubscriberInterface
             throw new BadRequestHttpException('Address could not be geocoded');
         }
 
-        $data = $this->routing->getRawResponse(
+        $distance = $this->routing->getDistance(
             $pickupAddress->getGeo(),
             $dropoffAddress->getGeo()
         );
-
-        $distance = $data['routes'][0]['distance'];
 
         $delivery = new Delivery();
         $delivery->getPickup()->setAddress($pickupAddress);
