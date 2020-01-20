@@ -213,18 +213,9 @@ class DeliveryType extends AbstractType
                 $coordinates[] = $task->getAddress()->getGeo();
             }
 
-            $data = $this->routing->getServiceResponse('route', $coordinates, [
-                'steps' => 'true',
-                'overview' => 'full'
-            ]);
-
-            $distance = $data['routes'][0]['distance'];
-            $duration = $data['routes'][0]['duration'];
-            $polyline = $data['routes'][0]['geometry'];
-
-            $delivery->setDistance((int) $distance);
-            $delivery->setDuration((int) $duration);
-            $delivery->setPolyline($polyline);
+            $delivery->setDistance($this->routing->getDistance(...$coordinates));
+            $delivery->setDuration($this->routing->getDuration(...$coordinates));
+            $delivery->setPolyline($this->routing->getPolyline(...$coordinates));
         });
     }
 

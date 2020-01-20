@@ -48,13 +48,9 @@ class TaskCollectionSubscriber implements EventSubscriber
             $taskCollection->setDuration(0);
             $taskCollection->setPolyline('');
         } else {
-            $data = $this->routing->getServiceResponse('route', $coordinates, [
-                'steps' => 'true',
-                'overview' => 'full'
-            ]);
-            $taskCollection->setDistance((int) $data['routes'][0]['distance']);
-            $taskCollection->setDuration((int) $data['routes'][0]['duration']);
-            $taskCollection->setPolyline($data['routes'][0]['geometry']);
+            $taskCollection->setDistance($this->routing->getDistance(...$coordinates));
+            $taskCollection->setDuration($this->routing->getDuration(...$coordinates));
+            $taskCollection->setPolyline($this->routing->getPolyline(...$coordinates));
         }
     }
 
