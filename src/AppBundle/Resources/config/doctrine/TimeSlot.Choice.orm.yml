@@ -29,6 +29,7 @@ AppBundle\Entity\TimeSlot\Choice:
     manyToOne:
         timeSlot:
             targetEntity: AppBundle\Entity\TimeSlot
+            inversedBy: choices
             joinColumns:
                 time_slot_id:
                     referencedColumnName: id
