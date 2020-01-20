@@ -55,6 +55,9 @@ AppBundle\Entity\Restaurant:
             nullable: false
             options:
                 default: 0
+        shippingOptionsDays:
+            type: integer
+            nullable: true
         imageName:
             type: string
             scale: 0

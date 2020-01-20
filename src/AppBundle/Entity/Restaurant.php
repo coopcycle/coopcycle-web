@@ -141,6 +141,8 @@ class Restaurant extends FoodEstablishment
      */
     protected $orderingDelayMinutes = 0;
 
+    protected $shippingOptionsDays = 2;
+
     protected $pledge;
 
     /**
@@ -515,42 +517,32 @@ class Restaurant extends FoodEstablishment
             return [];
         }
 
-        // We return times for the next 2 days
-        // There used to be a constant NUMBER_OF_AVAILABLE_DAYS = 2
-        // As the interface doesn't allow passing a parameter,
-        // we don't care about using a loop
-
         $availabilities = [];
 
         $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
 
+        $shippingOptionsDays = $this->shippingOptionsDays ?? 2;
+
         if (!$nextClosingDate) { // It is open 24/7
-            $period = CarbonPeriod::create(
-                $nextOpeningDate, '15 minutes', Carbon::instance($now)->add(2, 'days'),
-                CarbonPeriod::EXCLUDE_END_DATE
-            );
-            foreach ($period as $date) {
-                $availabilities[] = $date->format(\DateTime::ATOM);
-            }
-        } else {
+            $nextClosingDate = Carbon::instance($now)->add($shippingOptionsDays, 'days');
+        }
+
+        $numberOfDays = 0;
+        $days = [];
+        while ($numberOfDays < $shippingOptionsDays) {
+
             $period = CarbonPeriod::create(
                 $nextOpeningDate, '15 minutes', $nextClosingDate,
                 CarbonPeriod::EXCLUDE_END_DATE
             );
             foreach ($period as $date) {
                 $availabilities[] = $date->format(\DateTime::ATOM);
+                $days[] = $date->format('Y-m-d');
+                $numberOfDays = count(array_unique($days));
             }
 
             $nextOpeningDate = $this->getNextOpeningDate($nextClosingDate);
             $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
-
-            $period = CarbonPeriod::create(
-                $nextOpeningDate, '15 minutes', $nextClosingDate,
-                CarbonPeriod::EXCLUDE_END_DATE
-            );
-            foreach ($period as $date) {
-                $availabilities[] = $date->format(\DateTime::ATOM);
-            }
         }
 
         return $availabilities;
@@ -649,6 +641,22 @@ class Restaurant extends FoodEstablishment
     public function setOrderingDelayMinutes(int $orderingDelayMinutes)
     {
         $this->orderingDelayMinutes = $orderingDelayMinutes;
+    }
+
+    /**
+     * @return int
+     */
+    public function getShippingOptionsDays()
+    {
+        return $this->shippingOptionsDays;
+    }
+
+    /**
+     * @param int $shippingOptionsDays
+     */
+    public function setShippingOptionsDays(int $shippingOptionsDays)
+    {
+        $this->shippingOptionsDays = $shippingOptionsDays;
     }
 
     /**

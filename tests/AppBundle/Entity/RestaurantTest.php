@@ -10,6 +10,34 @@ use Symfony\Component\Validator\Validation;
 
 class RestaurantTest extends TestCase
 {
+    private function assertDays($expected, array $dates)
+    {
+        $days = array_reduce($dates, function ($days, $item) {
+            $day = (new \DateTime($item))->format('Y-m-d');
+            if (!in_array($day, $days)) {
+                  $days[] = $day;
+            }
+
+            return $days;
+        }, []);
+
+        $this->assertEquals($expected, $days);
+    }
+
+    private function assertNumberOfDays($expected, array $dates)
+    {
+        $days = array_reduce($dates, function ($days, $item) {
+            $day = (new \DateTime($item))->format('Y-m-d');
+            if (!in_array($day, $days)) {
+                  $days[] = $day;
+            }
+
+            return $days;
+        }, []);
+
+        $this->assertEquals($expected, count($days));
+    }
+
     public function test247()
     {
         $restaurant = new Restaurant();
@@ -213,6 +241,19 @@ class RestaurantTest extends TestCase
             "2017-10-06T17:00:00+02:00",
             "2017-10-06T17:15:00+02:00"
         ], $availabilities);
+
+        $restaurant->setShippingOptionsDays(3);
+
+        $availabilities = $restaurant->getAvailabilities($date);
+
+        $this->assertNumberOfDays(4, $availabilities);
+
+        $this->assertDays([
+            "2017-10-04",
+            "2017-10-05",
+            "2017-10-06",
+            "2017-10-07"
+        ], $availabilities);
     }
 
     public function testGetAvailabilitiesOnSameDay()
@@ -267,6 +308,18 @@ class RestaurantTest extends TestCase
             '2017-10-05T18:15:00+02:00',
             '2017-10-05T18:30:00+02:00',
             '2017-10-05T18:45:00+02:00',
+        ], $availabilities);
+
+        $restaurant->setShippingOptionsDays(3);
+
+        $availabilities = $restaurant->getAvailabilities($date);
+
+        $this->assertNumberOfDays(3, $availabilities);
+
+        $this->assertDays([
+            "2017-10-04",
+            "2017-10-05",
+            "2017-10-06",
         ], $availabilities);
     }
 
@@ -437,6 +490,19 @@ class RestaurantTest extends TestCase
             '2019-08-08T18:15:00+02:00',
             '2019-08-08T18:30:00+02:00',
             '2019-08-08T18:45:00+02:00',
+        ], $availabilities);
+
+        $restaurant->setShippingOptionsDays(4);
+
+        $availabilities = $restaurant->getAvailabilities($date);
+
+        $this->assertNumberOfDays(4, $availabilities);
+
+        $this->assertDays([
+            "2019-08-06",
+            "2019-08-08",
+            "2019-08-09",
+            "2019-08-10",
         ], $availabilities);
     }
 
