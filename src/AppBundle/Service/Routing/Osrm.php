@@ -131,7 +131,7 @@ class Osrm extends Base
     {
         $response = $this->getRawResponse($origin, $destination);
 
-        return $response['routes'][0]['distance'];
+        return (int) $response['routes'][0]['distance'];
     }
 
     /**
@@ -143,6 +143,6 @@ class Osrm extends Base
     {
         $response = $this->getRawResponse($origin, $destination);
 
-        return $response['routes'][0]['duration'];
+        return (int) $response['routes'][0]['duration'];
     }
 }
