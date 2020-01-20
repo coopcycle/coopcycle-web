@@ -84,6 +84,7 @@ services:
     public: true
   Liip\ImagineBundle\Service\FilterService: '@liip_imagine.service.filter'
   League\Flysystem\MountManager: '@oneup_flysystem.mount_manager'
+  AppBundle\Service\RoutingInterface: '@routing_service'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -466,11 +467,13 @@ services:
         arguments:
             - '@coopcycle.utils.restaurant_filter'
 
+  AppBundle\Service\Routing\Osrm:
+    arguments:
+      $client: '@csa_guzzle.client.osrm'
+
   routing_service:
     public: true
-    class: AppBundle\Service\Routing\Osrm
-    arguments:
-      - '@csa_guzzle.client.osrm'
+    class: AppBundle\Service\Routing\OsrmWithFallback
 
   AppBundle\Filter\OrderDateFilter:
     tags: [ 'api_platform.filter' ]
