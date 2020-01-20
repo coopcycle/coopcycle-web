@@ -39,12 +39,10 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
             $delivery->setStore($store);
         }
 
-        $osrmData = $this->routing->getRawResponse(
+        $distance = $this->routing->getDistance(
             $delivery->getPickup()->getAddress()->getGeo(),
             $delivery->getDropoff()->getAddress()->getGeo()
         );
-
-        $distance = $osrmData['routes'][0]['distance'];
 
         $delivery->setDistance(ceil($distance));
         $delivery->setWeight($data->weight ?? null);

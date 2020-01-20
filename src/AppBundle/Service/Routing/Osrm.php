@@ -80,7 +80,7 @@ class Osrm extends Base
      * @param GeoCoordinates $destination
      * @return array|null
      */
-    public function getRawResponse(GeoCoordinates $origin, GeoCoordinates $destination)
+    private function getRawResponse(GeoCoordinates $origin, GeoCoordinates $destination)
     {
         return $this->getServiceResponse('route', [ $origin, $destination ], ['overview' => 'full']);
     }

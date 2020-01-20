@@ -112,16 +112,16 @@ class BotCommand extends DaemonCommand
 
             $this->logMessage($bot, sprintf('Last position is %s, %s', $lastPosition->getLatitude(), $lastPosition->getLongitude()));
 
-            $osrmData = $this->routing->getRawResponse(
+            $coords = [
                 $lastPosition,
                 new GeoCoordinates(
                     $nextTask['address']['geo']['latitude'],
                     $nextTask['address']['geo']['longitude']
                 )
-            );
+            ];
 
-            $duration = $osrmData['routes'][0]['duration'];
-            $polyline = $osrmData['routes'][0]['geometry'];
+            $duration = $this->routing->getDuration(...$coords);
+            $polyline = $this->routing->getPolyline(...$coords);
 
             $points = Polyline::decode($polyline);
             $points = Polyline::pair($points);

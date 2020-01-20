@@ -81,12 +81,10 @@ class OrderValidator extends ConstraintValidator
             return;
         }
 
-        $data = $this->routing->getRawResponse(
+        $distance = $this->routing->getDistance(
             $restaurant->getAddress()->getGeo(),
             $shippingAddress->getGeo()
         );
-
-        $distance = $data['routes'][0]['distance'];
 
         if (!$restaurant->canDeliverAddress($order->getShippingAddress(), $distance, $this->expressionLanguage)) {
             $this->context->buildViolation($constraint->addressTooFarMessage)

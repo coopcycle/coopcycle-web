@@ -175,12 +175,10 @@ final class DeliverySubscriber implements EventSubscriberInterface
 
         $delivery = $event->getControllerResult();
 
-        $osrmData = $this->routing->getRawResponse(
+        $distance = $this->routing->getDistance(
             $delivery->getPickup()->getAddress()->getGeo(),
             $delivery->getDropoff()->getAddress()->getGeo()
         );
-
-        $distance = $osrmData['routes'][0]['distance'];
 
         $delivery->setDistance(ceil($distance));
     }

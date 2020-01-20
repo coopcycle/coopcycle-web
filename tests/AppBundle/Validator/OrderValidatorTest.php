@@ -42,15 +42,12 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
     private function prophesizeGetRawResponse(GeoCoordinates $origin, GeoCoordinates $destination, $distance, $duration)
     {
         $this->routing
-            ->getRawResponse($origin, $destination)
-            ->willReturn([
-                'routes' => [
-                    [
-                        'distance' => $distance,
-                        'duration' => $duration
-                    ]
-                ]
-            ]);
+            ->getDistance($origin, $destination)
+            ->willReturn($distance);
+
+        $this->routing
+            ->getDuration($origin, $destination)
+            ->willReturn($duration);
     }
 
     private function createAddressProphecy(GeoCoordinates $coords)
