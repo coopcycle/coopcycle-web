@@ -26,6 +26,5 @@ parameters:
         - '#Call to an undefined method Swift_Mailer::getMessages\(\)#'
         - '#Method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) invoked with 2 parameters, 1 required#'
         - '#Strict comparison using === between null and Sylius\\Component\\Order\\Model\\OrderInterface will always evaluate to false#'
-        - '#Call to an undefined method AppBundle\\Service\\RoutingInterface::getServiceResponse\(\)#'
         - '#Call to an undefined method [a-zA-Z\\]+::accessControl\(\)#'
         - '#Comparison operation "<" between 0\|1 and 10 is always true#'

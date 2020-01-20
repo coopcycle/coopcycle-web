@@ -3,7 +3,7 @@
 namespace AppBundle\Action;
 
 use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Service\RoutingInterface;
+use AppBundle\Service\Routing\Osrm;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,14 +13,14 @@ use Symfony\Component\HttpFoundation\Request;
 class Routing
 {
     /**
-     * @var RoutingInterface
+     * @var Osrm
      */
     private $routing;
 
     /**
-     * @param RoutingInterface $routing
+     * @param Osrm $routing
      */
-    public function __construct(RoutingInterface $routing)
+    public function __construct(Osrm $routing)
     {
         $this->routing = $routing;
     }
