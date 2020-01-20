@@ -141,6 +141,9 @@ class Restaurant extends FoodEstablishment
      */
     protected $orderingDelayMinutes = 0;
 
+    /**
+     * @Assert\LessThanOrEqual(30)
+     */
     protected $shippingOptionsDays = 2;
 
     protected $pledge;
@@ -522,6 +525,10 @@ class Restaurant extends FoodEstablishment
         $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
 
         $shippingOptionsDays = $this->shippingOptionsDays ?? 2;
+
+        if ($shippingOptionsDays > 30) {
+            $shippingOptionsDays = 30;
+        }
 
         if (!$nextClosingDate) { // It is open 24/7
             $nextClosingDate = Carbon::instance($now)->add($shippingOptionsDays, 'days');

@@ -30,6 +30,9 @@ class RestaurantType extends LocalBusinessType
             ])
             ->add('shippingOptionsDays', IntegerType::class, [
                 'label' => 'localBusiness.form.shippingOptionsDays',
+                'attr' => [
+                    'max' => 30
+                ]
             ])
             ->add('orderingDelayHours', IntegerType::class, [
                 'label' => 'localBusiness.form.orderingDelayHours',
