@@ -1544,16 +1544,16 @@
         },
         {
             "name": "doctrine/data-fixtures",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/data-fixtures.git",
-                "reference": "640ab13b91bac8925af3da94dee4daf96b62a428"
+                "reference": "39e9777c9089351a468f780b01cffa3cb0a42907"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/data-fixtures/zipball/640ab13b91bac8925af3da94dee4daf96b62a428",
-                "reference": "640ab13b91bac8925af3da94dee4daf96b62a428",
+                "url": "https://api.github.com/repos/doctrine/data-fixtures/zipball/39e9777c9089351a468f780b01cffa3cb0a42907",
+                "reference": "39e9777c9089351a468f780b01cffa3cb0a42907",
                 "shasum": ""
             },
             "require": {
@@ -1604,7 +1604,7 @@
             "keywords": [
                 "database"
             ],
-            "time": "2020-01-13T18:16:40+00:00"
+            "time": "2020-01-17T11:11:28+00:00"
         },
         {
             "name": "doctrine/dbal",
@@ -3853,16 +3853,16 @@
         },
         {
             "name": "hautelook/alice-bundle",
-            "version": "v2.6.1",
+            "version": "v2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hautelook/AliceBundle.git",
-                "reference": "33d2ce4f3fcc8cceafe1de367c3bbfceb9400e45"
+                "reference": "a15a9c5353cafe102a0da6378738e57fa3e410c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hautelook/AliceBundle/zipball/33d2ce4f3fcc8cceafe1de367c3bbfceb9400e45",
-                "reference": "33d2ce4f3fcc8cceafe1de367c3bbfceb9400e45",
+                "url": "https://api.github.com/repos/hautelook/AliceBundle/zipball/a15a9c5353cafe102a0da6378738e57fa3e410c2",
+                "reference": "a15a9c5353cafe102a0da6378738e57fa3e410c2",
                 "shasum": ""
             },
             "require": {
@@ -3917,7 +3917,7 @@
                 "orm",
                 "symfony"
             ],
-            "time": "2020-01-13T18:05:08+00:00"
+            "time": "2020-01-18T07:41:08+00:00"
         },
         {
             "name": "hoa/compiler",
@@ -7358,16 +7358,16 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.9.4",
+            "version": "1.9.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "579bb7356d91f9456ccd505f24ca8b667966a0a7"
+                "reference": "b2c28789e80a97badd14145fda39b545d83ca3ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/579bb7356d91f9456ccd505f24ca8b667966a0a7",
-                "reference": "579bb7356d91f9456ccd505f24ca8b667966a0a7",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/b2c28789e80a97badd14145fda39b545d83ca3ef",
+                "reference": "b2c28789e80a97badd14145fda39b545d83ca3ef",
                 "shasum": ""
             },
             "require": {
@@ -7402,7 +7402,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2019-12-15T19:12:40+00:00"
+            "time": "2020-01-17T21:11:47+00:00"
         },
         {
             "name": "myclabs/php-enum",
