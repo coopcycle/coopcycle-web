@@ -36,7 +36,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -100,7 +99,7 @@ class RestaurantController extends AbstractController
             'availabilities' => $this->orderTimeHelper->getAvailabilities($cart),
             'times' => $this->orderTimeHelper->getTimeInfo($cart),
             'errors' => $errors,
-        ], count($errors) > 0 ? 400 : 200);
+        ]);
     }
 
     private function customizeSeoPage(Restaurant $restaurant, Request $request)

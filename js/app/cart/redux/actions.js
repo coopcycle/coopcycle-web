@@ -55,10 +55,12 @@ function notifyListeners(cart) {
   listeners.forEach(listener => listener.dispatchEvent(event))
 }
 
-function handleAjaxResponse(res, dispatch, success) {
-  if (success) {
+function handleAjaxResponse(res, dispatch) {
+
+  const hasErrors = res.errors && _.size(res.errors) > 0
+
+  if (!hasErrors) {
     dispatch(fetchSuccess(res))
-    dispatch(clearLastAddItemRequest())
   } else {
     dispatch(fetchFailure(res))
   }
@@ -80,9 +82,9 @@ export function addItem(itemURL, quantity = 1) {
     return $.post(itemURL, { quantity })
       .then(res => {
         window._paq.push(['trackEvent', 'Checkout', 'addItem'])
-        handleAjaxResponse(res, dispatch, true)
+        handleAjaxResponse(res, dispatch)
       })
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
   }
 }
 
@@ -98,11 +100,11 @@ export function queueAddItem(itemURL, quantity = 1) {
       $.post(itemURL, { quantity })
         .then(res => {
           window._paq.push(['trackEvent', 'Checkout', 'addItem'])
-          handleAjaxResponse(res, dispatch, true)
+          handleAjaxResponse(res, dispatch)
           next()
         })
         .fail(e => {
-          handleAjaxResponse(e.responseJSON, dispatch, false)
+          handleAjaxResponse(e.responseJSON, dispatch)
           next()
         })
     }
@@ -125,9 +127,9 @@ export function addItemWithOptions(itemURL, data, quantity = 1) {
     return $.post(itemURL, data)
       .then(res => {
         window._paq.push(['trackEvent', 'Checkout', 'addItemWithOptions'])
-        handleAjaxResponse(res, dispatch, true)
+        handleAjaxResponse(res, dispatch)
       })
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
   }
 }
 
@@ -143,8 +145,8 @@ export function updateItemQuantity(itemID, quantity) {
     dispatch(fetchRequest())
 
     $.post(url, { quantity })
-      .then(res => handleAjaxResponse(res, dispatch, true))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .then(res => handleAjaxResponse(res, dispatch))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
   }
 }
 
@@ -165,8 +167,8 @@ export function removeItem(itemID) {
     }
 
     return $.ajax(fetchParams)
-      .then(res => handleAjaxResponse(res, dispatch, true))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .then(res => handleAjaxResponse(res, dispatch))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
   }
 }
 
@@ -177,8 +179,8 @@ export function sync() {
     dispatch(fetchRequest())
 
     postForm()
-      .then(res => handleAjaxResponse(res, dispatch, true))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .then(res => handleAjaxResponse(res, dispatch))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
   }
 }
 
@@ -217,8 +219,8 @@ export function changeDate() {
     dispatch(fetchRequest())
 
     postFormWithTime()
-      .then(res => handleAjaxResponse(res, dispatch, true))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .then(res => handleAjaxResponse(res, dispatch))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
   }
 }
 
@@ -249,8 +251,8 @@ export function changeAddress(address) {
           window.Routing.generate('restaurant_cart_address', { id: restaurant.id })
 
         $.post(url, { address: address.id })
-          .then(res => handleAjaxResponse(res, dispatch, true))
-          .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+          .then(res => handleAjaxResponse(res, dispatch))
+          .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
 
       } else {
 
@@ -263,8 +265,8 @@ export function changeAddress(address) {
         })
 
         postForm()
-          .then(res => handleAjaxResponse(res, dispatch, true))
-          .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+          .then(res => handleAjaxResponse(res, dispatch))
+          .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
       }
 
     } else {
@@ -300,19 +302,25 @@ export function clearDate() {
     dispatch(fetchRequest())
 
     $.post(url)
-      .then(res => handleAjaxResponse(res, dispatch, true))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .then(res => handleAjaxResponse(res, dispatch))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
 
   }
 }
 
+// FIXME
+// It is actually bad to name this action after what it really does
+// It should be named "startNewSession" or something like that
+// i.e something that represents what the user actually does
 export function retryLastAddItemRequest() {
 
   return (dispatch, getState) => {
 
     const lastAddItemRequest = getState().lastAddItemRequest
 
-    // TODO Check the request is not null
+    if (!lastAddItemRequest || !lastAddItemRequest.url) {
+      return
+    }
 
     dispatch(fetchRequest())
 
@@ -325,7 +333,10 @@ export function retryLastAddItemRequest() {
     }
 
     $.post(lastAddItemRequest.url, data)
-      .then(res => handleAjaxResponse(res, dispatch, true))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .then(res => {
+        dispatch(clearLastAddItemRequest())
+        handleAjaxResponse(res, dispatch)
+      })
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
   }
 }
