@@ -1,0 +1,14 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+jobs:
+  BUILD_ASSETS:
+    name: Build assets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: npm install
+      - run: NODE_ENV=production node_modules/.bin/encore production
