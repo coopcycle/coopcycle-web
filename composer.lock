@@ -5938,16 +5938,16 @@
         },
         {
             "name": "knplabs/knp-paginator-bundle",
-            "version": "v5.1.0",
+            "version": "v5.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpPaginatorBundle.git",
-                "reference": "4d5e7e5e9b6b618c0995f3f906b584c6db3786db"
+                "reference": "086da9cd27262ba45bcaca3a6777e97068fce8de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/4d5e7e5e9b6b618c0995f3f906b584c6db3786db",
-                "reference": "4d5e7e5e9b6b618c0995f3f906b584c6db3786db",
+                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/086da9cd27262ba45bcaca3a6777e97068fce8de",
+                "reference": "086da9cd27262ba45bcaca3a6777e97068fce8de",
                 "shasum": ""
             },
             "require": {
@@ -6003,7 +6003,7 @@
                 "paginator",
                 "symfony"
             ],
-            "time": "2020-01-16T07:53:51+00:00"
+            "time": "2020-01-21T17:00:39+00:00"
         },
         {
             "name": "knplabs/knp-time-bundle",
