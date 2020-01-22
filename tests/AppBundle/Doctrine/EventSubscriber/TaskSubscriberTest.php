@@ -9,7 +9,6 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Message\PushNotification;
-use AppBundle\Service\RemotePushNotificationManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;

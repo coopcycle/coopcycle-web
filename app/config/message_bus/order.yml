@@ -167,9 +167,10 @@ services:
   coopcycle.domain.order.reactor.send_remote_push_notification:
     class: AppBundle\Domain\Order\Reactor\SendRemotePushNotification
     arguments:
-      - '@coopcycle.remote_push_notification_manager'
+      - '@message_bus'
       - '@api_platform.iri_converter'
       - '@serializer'
+      - '@translator'
     tags:
         - name: event_subscriber
           subscribes_to: order:created

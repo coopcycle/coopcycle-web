@@ -5,23 +5,28 @@ namespace AppBundle\Domain\Order\Reactor;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event\OrderCreated;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Service\RemotePushNotificationManager;
+use AppBundle\Message\PushNotification;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class SendRemotePushNotification
 {
-    private $remotePushNotificationManager;
+    private $messageBus;
     private $iriConverter;
     private $serializer;
+    private $translator;
 
     public function __construct(
-        RemotePushNotificationManager $remotePushNotificationManager,
+        MessageBusInterface $messageBus,
         IriConverterInterface $iriConverter,
-        SerializerInterface $serializer)
+        SerializerInterface $serializer,
+        TranslatorInterface $translator)
     {
-        $this->remotePushNotificationManager = $remotePushNotificationManager;
+        $this->messageBus = $messageBus;
         $this->iriConverter = $iriConverter;
         $this->serializer = $serializer;
+        $this->translator = $translator;
     }
 
     public function __invoke($event)
@@ -47,9 +52,16 @@ class SendRemotePushNotification
                     ]
                 ];
 
-                // TODO Translate notification title
-                $this->remotePushNotificationManager
-                    ->send('New order to accept', $owners, $data);
+                $message = $this->translator->trans('notifications.restaurant.new_order');
+
+                $users = array_unique($owners);
+                $users = array_map(function ($user) {
+                    return $user->getUsername();
+                }, $owners);
+
+                $this->messageBus->dispatch(
+                    new PushNotification($message, $users, $data)
+                );
             }
         }
     }

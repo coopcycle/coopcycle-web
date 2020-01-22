@@ -734,3 +734,4 @@ receipt.footer_item.total_incl_tax: Total incl. impuestos
 receipt.total: Total incl. impuestos
 receipt.billing_details: Pedido pagado con tarjeta de crédito el %date%
 receipt.emitter_details: Pedido en el restaurante <strong>%restaurant_name%</strong>
+notifications.restaurant.new_order: Nuevo pedido por confirmar
