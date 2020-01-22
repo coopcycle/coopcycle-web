@@ -56,7 +56,7 @@ class ApiLogSubscriber implements EventSubscriberInterface
         $response = $event->getResponse();
 
         $level = $this->getLogLevel($response);
-        $message = sprintf('%s %s', $request->getMethod(), $request->getPathInfo());
+        $message = sprintf('%s %s %d', $request->getMethod(), $request->getPathInfo(), $response->getStatusCode());
 
         $this->logger->log($level, $message, [
             'request' => $request,
