@@ -34,3 +34,4 @@ jobs:
           OS_AUTH_URL: ${{ secrets.OS_AUTH_URL }}
           OS_TENANT_ID: ${{ secrets.OS_TENANT_ID }}
           OS_TENANT_NAME: ${{ secrets.OS_TENANT_NAME }}
+          OS_REGION_NAME: ${{ secrets.OS_REGION_NAME }}
