@@ -20,7 +20,7 @@ class ApiLogSubscriber implements EventSubscriberInterface
     private $secretPaths = [
         '/api/login_check',
         '/api/register',
-        '/api/token/refresh',
+        // '/api/token/refresh',
     ];
 
     public function __construct(LoggerInterface $logger)
