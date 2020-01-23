@@ -28,7 +28,7 @@ class OpeningHoursSpecification implements \JsonSerializable
 
     private static function parseOpeningHours($text)
     {
-        preg_match('/(Mo|Tu|We|Th|Fr|Sa|Su)+-?(Mo|Tu|We|Th|Fr|Sa|Su)?/', $text, $matches);
+        preg_match('/(Mo|Tu|We|Th|Fr|Sa|Su)+(?:[,-](Mo|Tu|We|Th|Fr|Sa|Su)*)*/', $text, $matches);
 
         $days = $matches[0];
 
@@ -47,6 +47,10 @@ class OpeningHoursSpecification implements \JsonSerializable
                 if ($end === $short) {
                     $append = false;
                 }
+            }
+        } elseif (false !== strpos($days, ',')) {
+            foreach (explode(',', $days) as $d) {
+                $openingHoursSpecification->dayOfWeek[] = self::$daysOfWeek[$d];
             }
         } else {
             $openingHoursSpecification->dayOfWeek[] = self::$daysOfWeek[$days];
