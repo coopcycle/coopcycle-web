@@ -218,6 +218,7 @@ lexik_jwt_authentication:
 
 gesdinet_jwt_refresh_token:
     user_provider: fos_user.user_provider.username_email
+    ttl_update: true
 
 snc_redis:
     clients:
