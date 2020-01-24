@@ -142,6 +142,7 @@ class Restaurant extends FoodEstablishment
     protected $orderingDelayMinutes = 0;
 
     /**
+     * @Assert\GreaterThan(0)
      * @Assert\LessThanOrEqual(30)
      */
     protected $shippingOptionsDays = 2;
