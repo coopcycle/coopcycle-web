@@ -8,6 +8,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
 use Prophecy\Argument;
+use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -147,5 +148,43 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $this->assertCount(1, $adjustments);
         $this->assertEquals(500, $order->getFeeTotal());
+    }
+
+    public function testOrderWithDeliveryPromotion()
+    {
+        $contract = self::createContract(565, 350, 0.1860);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(2500));
+
+        $freeDeliveryAdjustment = new Adjustment();
+        $freeDeliveryAdjustment->setType(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
+        $freeDeliveryAdjustment->setLabel('Free delivery');
+        $freeDeliveryAdjustment->setAmount(-350);
+        $freeDeliveryAdjustment->setOriginCode('FREE_DELIVERY');
+
+        $order->addAdjustment($freeDeliveryAdjustment);
+
+        $deliveryAdjustment = new Adjustment();
+        $deliveryAdjustment->setType(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        $deliveryAdjustment->setLabel('Delivery');
+        $deliveryAdjustment->setAmount(350);
+
+        $order->addAdjustment($deliveryAdjustment);
+
+        $this->orderFeeProcessor->process($order);
+
+        // The customer pays 25 (delivery is free)
+        $this->assertEquals(2500, $order->getTotal());
+
+        $feeAdjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+        $deliveryAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+
+        $this->assertCount(1, $feeAdjustments);
+        $this->assertEquals(680, $order->getFeeTotal());
     }
 }
