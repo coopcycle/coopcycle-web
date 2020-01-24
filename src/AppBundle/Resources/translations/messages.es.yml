@@ -456,6 +456,7 @@ form.checkout_address.notes.help: Tu comentario será enviado al restaurante
 form.checkout_address.promotion_coupon.label: Código promocional
 form.checkout_address.telephone.label: Teléfono
 form.checkout_address.reusable_packaging_enabled.label: Quiero envases reutilizables
+form.checkout_address.add_promotion.label: Aplicar
 form.task_export.start.label: Inicio
 form.task_export.end.label: Final
 form.api_app.name.label: Nombre de la aplicación

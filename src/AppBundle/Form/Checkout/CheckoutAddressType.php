@@ -48,6 +48,9 @@ class CheckoutAddressType extends AbstractType
             ->add('promotionCoupon', PromotionCouponToCodeType::class, [
                 'label' => 'form.checkout_address.promotion_coupon.label',
                 'required' => false,
+            ])
+            ->add('addPromotion', SubmitType::class, [
+                'label' => 'form.checkout_address.add_promotion.label'
             ]);
 
         $builder->get('shippingAddress')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {

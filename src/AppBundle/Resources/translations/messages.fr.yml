@@ -540,6 +540,7 @@ form.checkout_address.promotion_coupon.label: Code promotionnel
 form.checkout_address.telephone.label: Téléphone
 form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages réutilisables
 form.checkout_address.quote.label: Demander un devis
+form.checkout_address.add_promotion.label: Appliquer
 form.task_export.start.label: Début
 form.task_export.end.label: Fin
 form.api_app.name.label: Nom de l'application

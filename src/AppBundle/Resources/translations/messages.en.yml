@@ -626,6 +626,7 @@ form.checkout_address.notes.help: Your observation will be forwarded to the rest
 form.checkout_address.promotion_coupon.label: Coupon code
 form.checkout_address.telephone.label: Phone number
 form.checkout_address.reusable_packaging_enabled.label: I want reusable packaging
+form.checkout_address.add_promotion.label: Apply
 form.task_export.start.label: Start
 form.task_export.end.label: End
 form.api_app.name.label: App name

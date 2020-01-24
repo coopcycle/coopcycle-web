@@ -59,6 +59,15 @@
   {{ block('checkout_shippedAt_row') }}
 {% endblock %}
 
+{% block _checkout_address_promotionCoupon_widget %}
+<div class="input-group">
+  {{ form_widget(form) }}
+  <span class="input-group-btn">
+    {{ form_widget(form.parent.addPromotion, { attr: { class: 'btn-primary' } }) }}
+  </span>
+</div>
+{% endblock %}
+
 {% block _checkout_address_shippedAt_widget %}
   {{ block('checkout_shippedAt_widget') }}
 {% endblock %}

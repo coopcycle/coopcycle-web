@@ -106,6 +106,10 @@ class OrderController extends AbstractController
 
             $this->objectManager->flush();
 
+            if ($form->getClickedButton() && 'addPromotion' === $form->getClickedButton()->getName()) {
+                return $this->redirectToRoute('order');
+            }
+
             if ($originalReusablePackagingEnabled !== $order->isReusablePackagingEnabled()) {
                 return $this->redirectToRoute('order');
             }
