@@ -323,12 +323,16 @@ trait AdminDashboardTrait
 
         // @see https://symfonycasts.com/screencast/symfony-uploads/file-streaming
 
-        $imagePath = $storage->resolvePath($image, 'file');
+        // FIXME
+        // It's not clean to use resolveUri()
+        // but the problem is that resolvePath() returns the path with prefix,
+        // while $fs is alreay aware of the prefix
+        $imagePath = ltrim($storage->resolveUri($image, 'file'), '/');
 
-        $fs = $this->get('task_images_filesystem');
+        $fs = $this->get('task_images_s3_filesystem');
 
         if (!$fs->has($imagePath)) {
-            throw new NotFoundHttpException(sprintf('Image at path "%s" not found', $$imagePath));
+            throw new NotFoundHttpException(sprintf('Image at path "%s" not found', $imagePath));
         }
 
         $response = new StreamedResponse(function() use ($storage, $image) {
