@@ -121,7 +121,8 @@ Feature: Carts
             "latitude":48.863814,
             "longitude":2.3329
           },
-          "streetAddress":"190 Rue de Rivoli, Paris"
+          "streetAddress":"190 Rue de Rivoli, Paris",
+          "telephone": null
         },
         "shippedAt":null,
         "reusablePackagingEnabled":false,
@@ -181,7 +182,8 @@ Feature: Carts
             "latitude":48.863814,
             "longitude":2.3329
           },
-          "streetAddress":"190 Rue de Rivoli, Paris"
+          "streetAddress":"190 Rue de Rivoli, Paris",
+          "telephone":null
         },
         "shippedAt":null,
         "reusablePackagingEnabled":false,

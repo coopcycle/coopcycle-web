@@ -79,7 +79,7 @@ abstract class PostalAddress
     protected $streetAddress;
 
     /**
-     * @Groups({"place", "address_create", "task_edit", "order_update"})
+     * @Groups({"place", "address_create", "task_edit", "order_update", "cart"})
      * @ApiProperty(iri="https://schema.org/telephone")
      * @AssertPhoneNumber
      */
