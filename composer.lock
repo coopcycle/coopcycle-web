@@ -10293,16 +10293,16 @@
         },
         {
             "name": "sentry/sentry",
-            "version": "2.3.0",
+            "version": "2.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php.git",
-                "reference": "335bd24c4a817efdb7c3ec83ca42321a7761df6a"
+                "reference": "6d736f8cefa989f6171e30e1d1bfa214f7f5ab58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/335bd24c4a817efdb7c3ec83ca42321a7761df6a",
-                "reference": "335bd24c4a817efdb7c3ec83ca42321a7761df6a",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/6d736f8cefa989f6171e30e1d1bfa214f7f5ab58",
+                "reference": "6d736f8cefa989f6171e30e1d1bfa214f7f5ab58",
                 "shasum": ""
             },
             "require": {
@@ -10374,20 +10374,20 @@
                 "logging",
                 "sentry"
             ],
-            "time": "2020-01-08T11:27:08+00:00"
+            "time": "2020-01-23T09:40:22+00:00"
         },
         {
             "name": "sentry/sentry-symfony",
-            "version": "3.4.0",
+            "version": "3.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-symfony.git",
-                "reference": "1d120b268725bd22f04bac230a3b216844bc0131"
+                "reference": "b35dfa80653dee4273c6aa755030e542269ce139"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/1d120b268725bd22f04bac230a3b216844bc0131",
-                "reference": "1d120b268725bd22f04bac230a3b216844bc0131",
+                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/b35dfa80653dee4273c6aa755030e542269ce139",
+                "reference": "b35dfa80653dee4273c6aa755030e542269ce139",
                 "shasum": ""
             },
             "require": {
@@ -10456,7 +10456,7 @@
                 "sentry",
                 "symfony"
             ],
-            "time": "2020-01-20T14:31:04+00:00"
+            "time": "2020-01-24T11:08:26+00:00"
         },
         {
             "name": "simple-bus/message-bus",
