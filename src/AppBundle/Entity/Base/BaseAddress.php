@@ -20,7 +20,7 @@ class BaseAddress extends Place
     /**
      * @var string Floor
      *
-     * @Groups({"address", "task", "task", "task_edit"})
+     * @Groups({"address", "task", "task", "task_edit", "order_update"})
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/addressLocality")
      */

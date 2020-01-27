@@ -43,7 +43,7 @@ Sylius\Component\Order\Model\Order:
     state:
       groups: ['order']
     notes:
-      groups: ['order', 'cart']
+      groups: ['order', 'cart', 'order_update']
     createdAt:
       groups: ['order']
     timeline:
