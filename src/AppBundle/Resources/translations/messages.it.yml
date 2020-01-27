@@ -8,3 +8,69 @@ base.footer.suggest: Suggerisci un ristorante
 adminDashboard.title: Pannello di amministrazione
 adminDashboard.configuration: Configurazione
 adminDashboard.tooltip.orders: Gestisci gli ordini dei ristoranti
+adminDashboard.pricing.settings: Impostazioni
+adminDashboard.pricing.manage: Gestisci
+adminDashboard.pricing.title: Prezzi
+adminDashboard.settings.title: Impostazioni
+form.user.quotes_allowed.label: Consenti all'utente di richiedere un preventivo
+adminDashboard.users.invite: Invita utente
+adminDashboard.users.createNew: Aggiungi utente
+adminDashboard.users.edit.addRestaurant: Aggiungi un ristorante
+adminDashboard.users.edit.addStore: Aggiungi un negozio
+adminDashboard.menuCategories.save: Salva
+adminDashboard.users.editUser: Modifica utente
+adminDashboard.users.roles: Ruoli
+adminDashboard.users.edit: Modifica
+adminDashboard.users.title: Utenti
+adminDashboard.restaurants.exclusive: Esclusivo
+adminDashboard.restaurants.createNew: Crea un nuovo ristorante
+adminDashboard.restaurants.title: Ristoranti
+adminDashboard.orders.showCanceled: Gestisci gli ordini dei ristoranti
+adminDashboard.orders.previousOrders: Ordini precedenti
+adminDashboard.orders.title: Ordini
+adminDashboard.stores.form.uploadImage: Upload immagine
+adminDashboard.stores.createNew: Crea un nuovo negozio
+adminDashboard.stores.title: Negozi
+adminDashboard.menuCategories.addCategory: Aggiungi categoria
+adminDashboard.menuCategories.categories: Categorie
+adminDashboard.menuCategories.menu: Menu
+embed.delivery.billing_address: Indirizzo di fatturazione
+embed.delivery.specify_billing_address: Specifica un indirizzo di fatturazione
+embed.delivery.contact_heading: Contattaci
+embed.payment.heading: Paga il mio ordine
+embed.delivery.paid_at: Pagamento fatto il %date%
+embed.delivery.use_form_below: Utilizza il modulo qui sotto per pagare il tuo ordine
+  con carta di credito
+embed.delivery.summary.title: Riepilogo del tuo ordine
+embed.breadcrumb.confirm: Conferma
+embed.breadcrumb.summary: Riepilogo
+embed.breadcrumb.start: Informazioni
+embed.delivery.iframe_code: Utilizzare il codice HTML riportato di seguito per incorporare
+  il modulo nel sito Web
+embed.delivery.configure_pricing_rule_set: È innanzitutto necessario configurare una
+  regola di determinazione dei prezzi da applicare
+embed.delivery.title: Modulo di creazione consegna
+adminDashboard.package_sets.title: Pacchi
+adminDashboard.embed.title: Visualizzazione esterna
+adminDashboard.deliveries.save: Salva
+adminDashboard.deliveries.deliveryAddress: Indirizzo di consegna
+adminDashboard.deliveries.originAddress: Indirizzo di origine
+adminDashboard.deliveries.delivery: Consegna
+adminDashboard.deliveries.address: Indirizzo
+adminDashboard.deliveries.courier: Corriere
+adminDashboard.deliveries.dueDate: Data di scadenza
+adminDashboard.deliveries.type: Tipo
+adminDashboard.deliveries.title: Consegne
+adminDashboard.dashboard.cancel: Cancella
+adminDashboard.dashboard.displayAll: Visualizza tutto
+adminDashboard.dashboard.displayByGroups: Visualizza per gruppo
+adminDashboard.dashboard.deleteTaskGroup: Cancella gruppo attività
+adminDashboard.dashboard.exportTasks: Esporta attività
+adminDashboard.dashboard.importTasks: Importa attività
+adminDashboard.dashboard.export: Esporta
+adminDashboard.dashboard.import: Importa
+adminDashboard.dashboard.title: Dashboard
+adminDashboard.tooltip.users: Gestisci account utente
+adminDashboard.tooltip.restaurants: Gestisci ristoranti
+adminDashboard.tooltip.stores: Gestisci negozi
+adminDashboard.tooltip.deliveries: Gestisci consegne
