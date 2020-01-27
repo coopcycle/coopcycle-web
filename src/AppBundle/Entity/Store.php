@@ -120,6 +120,9 @@ class Store extends LocalBusiness
 
     private $createOrders = false;
 
+    /**
+     * @ApiSubresource
+     */
     private $addresses;
 
     /**

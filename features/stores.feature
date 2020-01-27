@@ -573,3 +573,64 @@ Feature: Stores
         "hydra:search":@...@
       }
       """
+
+  Scenario: Retrieve store dropoff addresses
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | deliveries.yml      |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/stores/1/addresses?type=dropoff"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Address",
+        "@id":"/api/stores/1/addresses",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "id":@integer@,
+            "contactName":null,
+            "description":null,
+            "floor":null,
+            "geo":{
+              "latitude":48.864577,
+              "longitude":2.333338
+            },
+            "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+            "telephone":null,
+            "name":null
+          },
+          {
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "id":@integer@,
+            "contactName":null,
+            "description":null,
+            "floor":null,
+            "geo":{
+              "latitude":48.864577,
+              "longitude":2.333338
+            },
+            "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
+            "telephone":null,
+            "name":null
+          }
+        ],
+        "hydra:totalItems":2,
+        "hydra:view":{
+          "@id":"/api/stores/1/addresses?type=dropoff",
+          "@type":"hydra:PartialCollectionView"
+        }
+      }
+      """

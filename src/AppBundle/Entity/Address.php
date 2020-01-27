@@ -27,6 +27,12 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN')"
  *     }
+ *   },
+ *   subresourceOperations={
+ *     "api_stores_addresses_get_subresource"={
+ *       "method"="GET",
+ *       "normalization_context"={"groups"={"address", "place", "delivery"}}
+ *     }
  *   }
  * )
  */

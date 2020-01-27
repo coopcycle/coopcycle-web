@@ -658,6 +658,14 @@ services:
       - { name: 'api_platform.collection_data_provider', priority: 2 }
     autoconfigure: false
 
+  AppBundle\Api\DataProvider\StoreAddressesSubresourceDataProvider:
+    arguments:
+      $requestStack: '@request_stack'
+      $doctrine: '@doctrine'
+    tags:
+      - { name: 'api_platform.subresource_data_provider', priority: 2 }
+    autoconfigure: false
+
   AppBundle\Utils\RestaurantFilter:
     arguments:
       - '@routing_service'
