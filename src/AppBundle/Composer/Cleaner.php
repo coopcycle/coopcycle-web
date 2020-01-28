@@ -7,6 +7,7 @@ use Composer\Package\BasePackage;
 use Composer\Util\Filesystem;
 
 // @see https://github.com/0xch/composer-vendor-cleanup/blob/master/src/CleanupScript.php
+// @see https://github.com/barryvdh/composer-cleanup-plugin/blob/master/src/CleanupPlugin.php
 class Cleaner
 {
     protected static $filesystem;
