@@ -13768,16 +13768,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v4.4.2",
+            "version": "v4.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "5973dacbd9587d9bf1234dfcb546c3cbdfbc4c9e"
+                "reference": "7b24eb98cc67eacd4e169c141a5bd043eb378f6d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/5973dacbd9587d9bf1234dfcb546c3cbdfbc4c9e",
-                "reference": "5973dacbd9587d9bf1234dfcb546c3cbdfbc4c9e",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/7b24eb98cc67eacd4e169c141a5bd043eb378f6d",
+                "reference": "7b24eb98cc67eacd4e169c141a5bd043eb378f6d",
                 "shasum": ""
             },
             "require": {
@@ -13939,7 +13939,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2019-12-19T16:23:58+00:00"
+            "time": "2020-01-21T13:23:35+00:00"
         },
         {
             "name": "symfony/webpack-encore-bundle",
