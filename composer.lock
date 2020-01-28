@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "acd979b066e1641d5770aeadbf42a415",
+    "content-hash": "5eeb313dbb4200f1ec52003a67ad1c3a",
     "packages": [
         {
             "name": "api-platform/core",
@@ -2214,16 +2214,16 @@
         },
         {
             "name": "doctrine/migrations",
-            "version": "2.2.0",
+            "version": "2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/migrations.git",
-                "reference": "8e124252d2f6be1124017d746d5994dd4095d66f"
+                "reference": "a3987131febeb0e9acb3c47ab0df0af004588934"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/migrations/zipball/8e124252d2f6be1124017d746d5994dd4095d66f",
-                "reference": "8e124252d2f6be1124017d746d5994dd4095d66f",
+                "url": "https://api.github.com/repos/doctrine/migrations/zipball/a3987131febeb0e9acb3c47ab0df0af004588934",
+                "reference": "a3987131febeb0e9acb3c47ab0df0af004588934",
                 "shasum": ""
             },
             "require": {
@@ -2292,7 +2292,7 @@
                 "migrations",
                 "php"
             ],
-            "time": "2019-11-13T11:06:31+00:00"
+            "time": "2019-12-04T06:09:14+00:00"
         },
         {
             "name": "doctrine/orm",
@@ -5454,20 +5454,20 @@
         },
         {
             "name": "jmose/command-scheduler-bundle",
-            "version": "v2.1.0",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/j-guyon/CommandSchedulerBundle.git",
-                "reference": "d6899bf3e36095810f14115d52d79eada6290bd9"
+                "reference": "916ac90adb79e4aaf3951b8e3964aecfa58c56e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/j-guyon/CommandSchedulerBundle/zipball/d6899bf3e36095810f14115d52d79eada6290bd9",
-                "reference": "d6899bf3e36095810f14115d52d79eada6290bd9",
+                "url": "https://api.github.com/repos/j-guyon/CommandSchedulerBundle/zipball/916ac90adb79e4aaf3951b8e3964aecfa58c56e5",
+                "reference": "916ac90adb79e4aaf3951b8e3964aecfa58c56e5",
                 "shasum": ""
             },
             "require": {
-                "doctrine/doctrine-bundle": "^1.6.10",
+                "doctrine/doctrine-bundle": "^1.6.10|^2.0",
                 "doctrine/orm": "^2.5.11",
                 "mtdowling/cron-expression": "^1.2",
                 "php": "^7.1",
@@ -5518,7 +5518,7 @@
                 "symfony",
                 "task"
             ],
-            "time": "2019-11-07T17:01:02+00:00"
+            "time": "2020-01-28T10:46:55+00:00"
         },
         {
             "name": "jms/metadata",
@@ -14475,16 +14475,16 @@
         },
         {
             "name": "willdurand/geocoder",
-            "version": "4.2.1",
+            "version": "4.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/geocoder-php/php-common.git",
-                "reference": "aaa17bddb8dc9e4553110db8beb38534b095b61a"
+                "reference": "31bc59626c737871c3d5cc4dc9bc468a7668d0d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/geocoder-php/php-common/zipball/aaa17bddb8dc9e4553110db8beb38534b095b61a",
-                "reference": "aaa17bddb8dc9e4553110db8beb38534b095b61a",
+                "url": "https://api.github.com/repos/geocoder-php/php-common/zipball/31bc59626c737871c3d5cc4dc9bc468a7668d0d1",
+                "reference": "31bc59626c737871c3d5cc4dc9bc468a7668d0d1",
                 "shasum": ""
             },
             "require": {
@@ -14492,7 +14492,7 @@
             },
             "require-dev": {
                 "nyholm/nsa": "^1.1",
-                "phpunit/phpunit": "6.3.*",
+                "phpunit/phpunit": "^6.5 || ^7.5",
                 "symfony/stopwatch": "~2.5"
             },
             "suggest": {
@@ -14518,7 +14518,7 @@
             ],
             "authors": [
                 {
-                    "name": "William DURAND",
+                    "name": "William Durand",
                     "email": "william.durand1@gmail.com"
                 }
             ],
@@ -14530,7 +14530,7 @@
                 "geocoding",
                 "geoip"
             ],
-            "time": "2018-12-26T12:01:09+00:00"
+            "time": "2020-01-22T09:02:24+00:00"
         },
         {
             "name": "willdurand/hateoas",
