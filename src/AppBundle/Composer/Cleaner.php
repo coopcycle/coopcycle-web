@@ -24,9 +24,11 @@ class Cleaner
             }
         }
 
-        // foreach ($files as $file) {
-        //     self::$filesystem->remove($file);
-        // }
+        $event->getIO()->write(sprintf('Removing %d files', count($files)));
+
+        foreach ($files as $file) {
+            self::$filesystem->remove($file);
+        }
     }
 
     public static function loadComposerJson($dir)
