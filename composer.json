@@ -120,11 +120,13 @@
     },
     "scripts": {
         "post-install-cmd": [
+            "AppBundle\\Composer\\Cleaner::clean",
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "@php bin/console cache:clear --no-warmup",
             "@php bin/console assets:install --symlink --relative web"
         ],
         "post-update-cmd": [
+            "AppBundle\\Composer\\Cleaner::clean",
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "@php bin/console cache:clear --no-warmup",
             "@php bin/console assets:install --symlink --relative web"
