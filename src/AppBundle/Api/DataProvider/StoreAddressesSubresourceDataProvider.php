@@ -51,10 +51,9 @@ final class StoreAddressesSubresourceDataProvider implements SubresourceDataProv
             $qb = $this->doctrine->getRepository(Address::class)->createQueryBuilder('a');
 
             $qb->join(Task::class, 't', Join::WITH, 'a.id = t.address');
-            $qb->join(Delivery::class, 'd', Join::WITH, 'd.id = t.delivery');
+            $qb->join(Delivery::class, 'd', Join::WITH, 'd.id = t.delivery AND d.store = :store');
 
             $qb
-                ->andWhere('d.store = :store')
                 ->andWhere('t.type = :type')
                 ->setParameter('store', $store)
                 ->setParameter('type', 'DROPOFF');
