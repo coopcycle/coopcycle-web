@@ -12597,7 +12597,7 @@
         },
         {
             "name": "sylius/taxonomy",
-            "version": "v1.6.4",
+            "version": "v1.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Taxonomy.git",
@@ -12660,7 +12660,7 @@
         },
         {
             "name": "sylius/taxonomy-bundle",
-            "version": "v1.6.4",
+            "version": "v1.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusTaxonomyBundle.git",
