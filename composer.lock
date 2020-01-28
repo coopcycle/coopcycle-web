@@ -11672,7 +11672,7 @@
         },
         {
             "name": "sylius/money-bundle",
-            "version": "v1.6.4",
+            "version": "v1.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusMoneyBundle.git",
@@ -11747,7 +11747,7 @@
         },
         {
             "name": "sylius/order",
-            "version": "v1.6.4",
+            "version": "v1.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Order.git",
@@ -11810,16 +11810,16 @@
         },
         {
             "name": "sylius/order-bundle",
-            "version": "v1.6.4",
+            "version": "v1.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusOrderBundle.git",
-                "reference": "ca3e50f6bcded4f7bb488d6aef1fe5b4c6cb8505"
+                "reference": "196337022d20acca455d90f09b81a692ec271f98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusOrderBundle/zipball/ca3e50f6bcded4f7bb488d6aef1fe5b4c6cb8505",
-                "reference": "ca3e50f6bcded4f7bb488d6aef1fe5b4c6cb8505",
+                "url": "https://api.github.com/repos/Sylius/SyliusOrderBundle/zipball/196337022d20acca455d90f09b81a692ec271f98",
+                "reference": "196337022d20acca455d90f09b81a692ec271f98",
                 "shasum": ""
             },
             "require": {
@@ -11884,7 +11884,7 @@
                 "shop",
                 "sylius"
             ],
-            "time": "2019-10-07T14:51:38+00:00"
+            "time": "2020-01-14T15:04:34+00:00"
         },
         {
             "name": "sylius/payment",
