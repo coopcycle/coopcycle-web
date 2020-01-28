@@ -586,14 +586,14 @@ Feature: Stores
     Given the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    When the user "bob" sends a "GET" request to "/api/stores/1/addresses?type=dropoff"
+    When the user "bob" sends a "GET" request to "/api/stores/2/addresses?type=dropoff"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """
       {
         "@context":"/api/contexts/Address",
-        "@id":"/api/stores/1/addresses",
+        "@id":"/api/stores/2/addresses",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -604,32 +604,17 @@ Feature: Stores
             "description":null,
             "floor":null,
             "geo":{
-              "latitude":48.864577,
-              "longitude":2.333338
+              "latitude":48.884625,
+              "longitude":2.322084
             },
-            "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
-            "telephone":null,
-            "name":null
-          },
-          {
-            "@id":"@string@.startsWith('/api/addresses')",
-            "@type":"http://schema.org/Place",
-            "id":@integer@,
-            "contactName":null,
-            "description":null,
-            "floor":null,
-            "geo":{
-              "latitude":48.864577,
-              "longitude":2.333338
-            },
-            "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
+            "streetAddress":"18 Rue des Batignolles",
             "telephone":null,
             "name":null
           }
         ],
-        "hydra:totalItems":2,
+        "hydra:totalItems":1,
         "hydra:view":{
-          "@id":"/api/stores/1/addresses?type=dropoff",
+          "@id":"/api/stores/2/addresses?type=dropoff",
           "@type":"hydra:PartialCollectionView"
         }
       }

@@ -36,7 +36,9 @@ final class StoreAddressesSubresourceDataProvider implements SubresourceDataProv
      */
     public function getSubresource(string $resourceClass, array $identifiers, array $context, string $operationName = null)
     {
-        [$identifier, $identifierResourceClass, $id] = $context['identifiers'][0];
+        [$identifier, $identifierResourceClass] = $context['identifiers'][0];
+
+        $id = (int) $context['subresource_identifiers'][$identifier];
 
         $store = $this->doctrine->getRepository(Store::class)->find($id);
         if (!$store) {

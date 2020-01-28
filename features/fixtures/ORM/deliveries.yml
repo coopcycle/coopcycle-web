@@ -28,3 +28,29 @@ AppBundle\Entity\Delivery:
         - <identity(new \DateTime('2019-11-12 20:00:00'))>
         - <identity(new \DateTime('2019-11-12 20:30:00'))>
     store: "@store_1"
+  delivery_3:
+    __factory:
+      createWithAddress:
+        - "@address_2"
+        - "@address_3"
+    __calls:
+      - setPickupRange:
+        - <identity(new \DateTime('2019-11-12 18:00:00'))>
+        - <identity(new \DateTime('2019-11-12 18:30:00'))>
+      - setDropoffRange:
+        - <identity(new \DateTime('2019-11-12 20:00:00'))>
+        - <identity(new \DateTime('2019-11-12 20:30:00'))>
+    store: "@store_2"
+  delivery_4:
+    __factory:
+      createWithAddress:
+        - "@address_2"
+        - "@address_3"
+    __calls:
+      - setPickupRange:
+        - <identity(new \DateTime('2019-11-12 18:00:00'))>
+        - <identity(new \DateTime('2019-11-12 18:30:00'))>
+      - setDropoffRange:
+        - <identity(new \DateTime('2019-11-12 20:00:00'))>
+        - <identity(new \DateTime('2019-11-12 20:30:00'))>
+    store: "@store_2"
