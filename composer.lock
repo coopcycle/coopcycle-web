@@ -12461,7 +12461,7 @@
         },
         {
             "name": "sylius/taxation",
-            "version": "v1.6.4",
+            "version": "v1.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Taxation.git",
@@ -12525,16 +12525,16 @@
         },
         {
             "name": "sylius/taxation-bundle",
-            "version": "v1.6.4",
+            "version": "v1.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusTaxationBundle.git",
-                "reference": "ccc092798f9dd822829ca58cb35531d59fbda514"
+                "reference": "505a43d6d7e5d4b0030faf252dc93c120e3bd9c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusTaxationBundle/zipball/ccc092798f9dd822829ca58cb35531d59fbda514",
-                "reference": "ccc092798f9dd822829ca58cb35531d59fbda514",
+                "url": "https://api.github.com/repos/Sylius/SyliusTaxationBundle/zipball/505a43d6d7e5d4b0030faf252dc93c120e3bd9c7",
+                "reference": "505a43d6d7e5d4b0030faf252dc93c120e3bd9c7",
                 "shasum": ""
             },
             "require": {
@@ -12593,7 +12593,7 @@
                 "taxes",
                 "webshop"
             ],
-            "time": "2019-06-25T08:09:35+00:00"
+            "time": "2020-01-23T08:54:00+00:00"
         },
         {
             "name": "sylius/taxonomy",
