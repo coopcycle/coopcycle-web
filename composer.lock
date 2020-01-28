@@ -11473,7 +11473,7 @@
         },
         {
             "name": "sylius/inventory",
-            "version": "v1.6.4",
+            "version": "v1.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Inventory.git",
