@@ -80,6 +80,7 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         $cartSession = new \stdClass();
+        $cartSession->cart = null;
         if ($token instanceof JWTUserToken && $token->hasAttribute('cart')) {
             $cartSession->cart = $token->getAttribute('cart');
         }
