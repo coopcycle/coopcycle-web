@@ -37,6 +37,7 @@ class ApiRegistrationType extends AbstractType
                 ->add('givenName', TextType::class)
                 ->add('familyName', TextType::class)
                 ->add('telephone', PhoneNumberType::class, [
+                    'required' => false,
                     'format' => PhoneNumberFormat::NATIONAL,
                     'default_region' => strtoupper($this->countryIso)
                 ]);
@@ -46,6 +47,7 @@ class ApiRegistrationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            'validation_groups' => ['api'],
             'data_class' => ApiUser::class,
             'csrf_protection' => false
         ]);
