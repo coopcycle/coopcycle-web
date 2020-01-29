@@ -75,7 +75,6 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
 
     /**
      * @Groups({"order"})
-     * @Assert\NotBlank(groups={"Default"})
      * @AssertPhoneNumber
      * @ApiProperty(iri="https://schema.org/telephone")
      */

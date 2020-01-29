@@ -161,10 +161,6 @@ Feature: Authenticate
         {
           "propertyPath":"data.familyName",
           "message":@string@
-        },
-        {
-          "propertyPath":"data.telephone",
-          "message":@string@
         }
       ]
     }
