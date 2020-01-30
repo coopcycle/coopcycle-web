@@ -12,6 +12,7 @@ use Prophecy\Argument;
 use SimpleBus\Message\Bus\MessageBus;
 use SM\Factory\FactoryInterface;
 use SM\StateMachine\StateMachineInterface;
+use SM\SMException;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -97,5 +98,20 @@ class UpdateStateTest extends TestCase
         call_user_func_array($this->updateState, [ new Event\OrderAccepted($order) ]);
 
         $this->stateMachine->apply('accept')->shouldHaveBeenCalled();
+    }
+
+    public function testOrderFulfilledWithNewOrder()
+    {
+        $this->expectException(SMException::class);
+
+        $order = new Order();
+        $order->setState(OrderInterface::STATE_NEW);
+
+        // Here we simulate an exception when going from "new" to "fulfill"
+        // This can happen when an order for delivery has been placed
+        $this->stateMachine->apply('fulfill')->willThrow(new SMException());
+        $this->stateMachine->can('fulfill')->willReturn(false);
+
+        call_user_func_array($this->updateState, [ new Event\OrderFulfilled($order) ]);
     }
 }
