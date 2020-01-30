@@ -10378,16 +10378,16 @@
         },
         {
             "name": "sentry/sentry-symfony",
-            "version": "3.4.1",
+            "version": "3.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-symfony.git",
-                "reference": "b35dfa80653dee4273c6aa755030e542269ce139"
+                "reference": "afb01cce2e803b463e1a59e44dc2c3caf4781cbc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/b35dfa80653dee4273c6aa755030e542269ce139",
-                "reference": "b35dfa80653dee4273c6aa755030e542269ce139",
+                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/afb01cce2e803b463e1a59e44dc2c3caf4781cbc",
+                "reference": "afb01cce2e803b463e1a59e44dc2c3caf4781cbc",
                 "shasum": ""
             },
             "require": {
@@ -10456,7 +10456,7 @@
                 "sentry",
                 "symfony"
             ],
-            "time": "2020-01-24T11:08:26+00:00"
+            "time": "2020-01-29T09:32:19+00:00"
         },
         {
             "name": "simple-bus/message-bus",
