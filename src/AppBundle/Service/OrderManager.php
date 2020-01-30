@@ -48,12 +48,6 @@ class OrderManager
         $this->commandBus->handle(new OrderCommand\Quote($order));
     }
 
-    public function ready(OrderInterface $order)
-    {
-        $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
-        $stateMachine->apply(OrderTransitions::TRANSITION_READY);
-    }
-
     public function fulfill(OrderInterface $order)
     {
         $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);

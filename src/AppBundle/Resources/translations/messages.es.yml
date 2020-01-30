@@ -228,7 +228,6 @@ order.state.refused: Rechazado
 order.state.accepted: Aceptado
 order.state.cancelled: Cancelado
 order.state.fulfilled: Entregado
-order.state.ready: Listo
 payment.state.cart: Cesta
 payment.state.new: Nuevo
 payment.state.authorized: Autorizado

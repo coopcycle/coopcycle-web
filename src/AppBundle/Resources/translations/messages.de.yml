@@ -339,7 +339,6 @@ order.payment.total: Auszahlung %total%
 order.payment.cvc: CVC
 order.state.accepted: Akzeptiert
 order.state.refused: Abgelehnt
-order.state.ready: Fertig
 order.state.fulfilled: Geliefert
 order.state.cancelled: Abgebrochen
 payment.state.cart: Warenkorb

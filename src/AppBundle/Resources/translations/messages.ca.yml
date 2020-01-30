@@ -263,7 +263,6 @@ order.state.cart: Cistell de compra
 order.state.accepted: Acceptat
 order.state.refused: Refusat
 order.state.new: Nou
-order.state.ready: Llest
 order.state.fulfilled: Entregat
 order.state.cancelled: Cancel·lat
 payment.state.cart: Cistell de compra
