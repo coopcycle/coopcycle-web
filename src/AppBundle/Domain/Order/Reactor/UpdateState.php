@@ -116,7 +116,7 @@ class UpdateState
             $transition = $this->eventNameToTransition[$event::messageName()];
 
             $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
-            $stateMachine->apply($transition);
+            $stateMachine->apply($transition, true);
         }
     }
 }

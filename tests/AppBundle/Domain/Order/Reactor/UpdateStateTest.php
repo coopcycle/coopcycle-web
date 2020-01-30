@@ -87,7 +87,7 @@ class UpdateStateTest extends TestCase
 
         call_user_func_array($this->updateState, [ new Event\OrderCreated($order) ]);
 
-        $this->stateMachine->apply('create')->shouldHaveBeenCalled();
+        $this->stateMachine->apply('create', true)->shouldHaveBeenCalled();
     }
 
     public function testOrderAccepted()
@@ -97,21 +97,16 @@ class UpdateStateTest extends TestCase
 
         call_user_func_array($this->updateState, [ new Event\OrderAccepted($order) ]);
 
-        $this->stateMachine->apply('accept')->shouldHaveBeenCalled();
+        $this->stateMachine->apply('accept', true)->shouldHaveBeenCalled();
     }
 
-    public function testOrderFulfilledWithNewOrder()
+    public function testOrderFulfilled()
     {
-        $this->expectException(SMException::class);
-
         $order = new Order();
-        $order->setState(OrderInterface::STATE_NEW);
-
-        // Here we simulate an exception when going from "new" to "fulfill"
-        // This can happen when an order for delivery has been placed
-        $this->stateMachine->apply('fulfill')->willThrow(new SMException());
-        $this->stateMachine->can('fulfill')->willReturn(false);
+        $order->setState(OrderInterface::STATE_ACCEPTED);
 
         call_user_func_array($this->updateState, [ new Event\OrderFulfilled($order) ]);
+
+        $this->stateMachine->apply('fulfill', true)->shouldHaveBeenCalled();
     }
 }
