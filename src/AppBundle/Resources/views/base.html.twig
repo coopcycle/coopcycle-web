@@ -82,7 +82,24 @@
             <div class="col-sm-6">
               <div class="text-right">
                 <a class="btn-google-play" href="https://play.google.com/store/apps/details?id=fr.coopcycle">
-                  <img alt="Disponible sur Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/{{ app.request.locale }}_badge_web_generic.png" />
+                  <img alt="Disponible sur Google Play"
+                    src="https://play.google.com/intl/en_us/badges/images/generic/{{ app.request.locale }}_badge_web_generic.png" />
+                </a>
+              </div>
+              {% set app_store_badges = {
+                'de': 'Download_on_the_App_Store_Badge_DE_RGB_blk.svg',
+                'en': 'Download_on_the_App_Store_Badge_EN_RGB_blk.svg',
+                'es': 'Download_on_the_App_Store_Badge_ES_RGB_blk.svg',
+                'fr': 'Download_on_the_App_Store_Badge_FR_RGB_blk.svg'
+              } %}
+              {% set app_store_badge = app_store_badges['en'] %}
+              {% if app_store_badges[app.request.locale] is defined %}
+                {% set app_store_badge = app_store_badges[app.request.locale] %}
+              {% endif %}
+              <div class="text-right">
+                <a href="https://apps.apple.com/us/app/coopcycle/id1324884530?l=fr&ls=1">
+                  <img alt="Télécharger dans l'App Store"
+                    src="{{ asset('img/app/app-store/' ~ app_store_badge) }}" />
                 </a>
               </div>
             </div>
