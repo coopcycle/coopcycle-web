@@ -25,7 +25,7 @@ jobs:
         run: |
           mkdir $GITHUB_SHA
           tar czvf $GITHUB_SHA/assets.tgz -C web/build .
-          aws --endpoint=$AWS_ENDPOINT s3 cp $GITHUB_SHA/assets.tgz s3://sha1/$GITHUB_SHA.tgz
+          aws --endpoint=$AWS_ENDPOINT s3 cp $GITHUB_SHA/assets.tgz s3://sha1/$GITHUB_SHA.tgz --acl public-read
         env:
           AWS_ENDPOINT: ${{ secrets.AWS_ENDPOINT }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
