@@ -7,6 +7,8 @@ import enGB from 'antd/es/locale/en_GB'
 import _ from 'lodash'
 import axios from 'axios'
 
+import 'antd/es/select/style/index.css'
+
 const baseURL = location.protocol + '//' + location.hostname
 
 const { RangePicker } = DatePicker,
