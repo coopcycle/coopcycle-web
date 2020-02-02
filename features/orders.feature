@@ -271,6 +271,42 @@ Feature: Orders
     }
     """
 
+  Scenario: Get order timing with holidays
+    Given the current time is "2017-09-02 11:00:00"
+    And the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the setting "brand_name" has value "CoopCycle"
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" is closed between "2017-09-02 09:00:00" and "2017-09-04 11:00:00"
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" is authenticated
+    And the user "bob" has ordered something at the restaurant with id "1"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/orders/1/timing"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "preparation":"@string@.matchRegex('/^[0-9]+ minutes$/')",
+      "shipping":"@string@.matchRegex('/^[0-9]+ minutes$/')",
+      "asap":"@string@.startsWith('2017-09-04T11:45:00')",
+      "today":@boolean@,
+      "fast":@boolean@,
+      "diff":"@string@.matchRegex('/^[0-9]+ - [0-9]+$/')",
+      "choices":@array@
+    }
+    """
+
   Scenario: Create order with address
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:

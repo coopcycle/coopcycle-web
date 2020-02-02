@@ -3,6 +3,7 @@
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
@@ -962,5 +963,23 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         ];
 
         $this->restContext->iAddHeaderEqualTo($headerName, sprintf('Bearer %s', $jwtEncoder->encode($payload)));
+    }
+
+    /**
+     * @Given the restaurant with id :id is closed between :start and :end
+     */
+    public function theRestaurantWithIdIsClosedBetweenAnd($id, $start, $end)
+    {
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+
+        $closingRule = new ClosingRule();
+        $closingRule->setRestaurant($restaurant);
+        $closingRule->setStartDate(new \DateTime($start));
+        $closingRule->setEndDate(new \DateTime($end));
+
+        $restaurant->addClosingRule($closingRule);
+
+        $em = $this->doctrine->getManagerForClass(Restaurant::class);
+        $em->flush();
     }
 }
