@@ -82,7 +82,8 @@ adminDashboard.tags.save: Save
 adminDashboard.tags.createNew: Create new tag
 adminDashboard.tags.name: Name
 adminDashboard.tags.color: Color
-adminDashboard.tags.confirm_delete: Are you sure to delete this tag ? all elements rely to it will not be able to show it or be grouped by it anymore.
+adminDashboard.tags.confirm_delete: Are you sure to delete this tag ? all elements
+  rely to it will not be able to show it or be grouped by it anymore.
 adminDashboard.taxation.title: Taxation
 adminDashboard.taxation.button: Add taxation
 adminDashboard.zones.title: Zones
@@ -125,26 +126,25 @@ localBusiness.form.deliveryPerimeterExpression: Zone or max distance for deliver
 localBusiness.form.shippingOptionsDays: Number of shipping choices (in days)
 restaurant.available: Available
 restaurant.unavailable: Unavailable
-restaurant.disabledWarning: 'This restaurant is disabled so the site visitors can''t
-  see this page. If you want to, you can <a target="_blank" href="%restaurantEditUrl%">activate
-  it in the admin</a>.
-
-  '
+restaurant.disabledWarning: "This restaurant is disabled so the site visitors can't\
+  \ see this page. If you want to, you can <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
+  >activate it in the admin</a>.\n"
 restaurant.closedWarningWithDelay: Order now for later. Order at least %delay% in
   advance.
 restaurant.temporaryClosedWarning: This restaurant is closed until <strong>%date%</strong>.
   You can still order for later on though!
-restaurant.noMenuWarning: 'This restaurant has no menu for now
-
-  '
-restaurant.quotes_disclaimer.authenticated: This restaurant also accepts orders on quotation. To create quotes, you must be a referenced customer. <a href="%contact_us%">Contact us</a> for more information.
-restaurant.quotes_disclaimer.not_authenticated: This restaurant also accepts orders on quotation. If you are a referenced customer, <a href="%login%">login</a> to create a quote. <a href="%contact_us%">Contact us</a> for more information.
-restaurant.form.noPricingRule: 'No pricing rules have been implemented, <a href="%editPricingRule%">click here to create one</a>.'
-restaurant.form.enabled.tooltip: 'When disabled, a restaurant is not visible on the
-  website. It doesn''t show in search results and its own page is not accessible by
-  visitors.
-
-  '
+restaurant.noMenuWarning: "This restaurant has no menu for now\n"
+restaurant.quotes_disclaimer.authenticated: This restaurant also accepts orders on
+  quotation. To create quotes, you must be a referenced customer. <a href="%contact_us%">Contact
+  us</a> for more information.
+restaurant.quotes_disclaimer.not_authenticated: This restaurant also accepts orders
+  on quotation. If you are a referenced customer, <a href="%login%">login</a> to create
+  a quote. <a href="%contact_us%">Contact us</a> for more information.
+restaurant.form.noPricingRule: No pricing rules have been implemented, <a href="%editPricingRule%">click
+  here to create one</a>.
+restaurant.form.enabled.tooltip: "When disabled, a restaurant is not visible on the\
+  \ website. It doesn't show in search results and its own page is not accessible\
+  \ by visitors.\n"
 restaurant.form.allow_stripe_connect.label: Allow the restaurant to manage Stripe
   account on its own
 restaurant.form.temporaryClosingRule: If you wish to close temporarily your restaurant,
@@ -154,7 +154,7 @@ restaurant.form.accessPlanning: Access planning
 restaurant.form.createRestaurant: Create restaurant
 restaurant.form.save: Save
 restaurant.form.exclusive.label: This restaurant is exclusive
-restaurant.form.quotes_allowed.label: "This restaurant also accepts quotes (ex: catering)"
+restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (ex: catering)'
 restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries.
@@ -198,23 +198,16 @@ restaurant.list.createNewRestaurant: Create a new restaurant
 restaurant.list.preparationTime: Preparation
 restaurant.list.stats: Statistics
 restaurant.list.depositRefund: Deposit-refund
-restaurant.product_options.help: 'Options all products to be <strong>configurable</strong>
-
-  <br>
-
-  They allow for example to add supplements, or to choose the elements of a menu (accompaniment,
-  drink…)
-
-  <br>
-
-  For each option, you can define a list of values
-
-  '
+restaurant.product_options.help: "Options all products to be <strong>configurable</strong>\n\
+  <br>\nThey allow for example to add supplements, or to choose the elements of a\
+  \ menu (accompaniment, drink…)\n<br>\nFor each option, you can define a list of\
+  \ values\n"
 restaurant.product_options.list.values: Values
 restaurant.form.uploadImage: Upload an image
 restaurant.stats.order_number: Order number
 restaurant.stats.delivered_on: Delivered on
-restaurant.stats.total_products_including_all_taxes: Total products including all taxes
+restaurant.stats.total_products_including_all_taxes: Total products including all
+  taxes
 restaurant.stats.total_products_excluding_taxes: Total products excluding taxes
 restaurant.stats.delivery: Delivery
 profile.addresses.breadcrumb: Addresses
@@ -331,9 +324,7 @@ form.task.recipient.help: Specify the name of the contact person
 form.task_event.notes.placeholder: 'Ex: address not found, no problem…'
 form.task_event.notes.help: You can edit the comment
 form.task_upload.file: File
-form.task_upload.file.help: 'Supported file formats: csv, ods, xlsx
-
-  '
+form.task_upload.file.help: "Supported file formats: csv, ods, xlsx\n"
 form.task_complete.done.label: Complete
 form.task_complete.fail.label: Report problem
 task.type.PICKUP: Pickup
@@ -391,14 +382,9 @@ form.order.refund_modal.title: Refund
 form.payment.refund_amount.label: Amount
 form.payment.refund_amount.help: The amount you specify will be refunded to the customer
 form.payment.refund_application_fee.label: Refund fees
-form.payment.refund_application_fee.help: 'If you check this box, the commission charged
-  by the platform to the partner will be refunded proportionally
-
-  <br>
-
-  <a href="https://stripe.com/docs/connect/direct-charges#issuing-refunds">Learn more</a>
-
-  '
+form.payment.refund_application_fee.help: "If you check this box, the commission charged\
+  \ by the platform to the partner will be refunded proportionally\n<br>\n<a href=\"\
+  https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Learn more</a>\n"
 form.address.addressLocality.label: City
 form.address.postalCode.label: Postal code
 form.address.floor.label: Floor
@@ -416,10 +402,9 @@ form.pricing_rule_set.rules.label: Rules
 form.pricing_rule.price.label: Price
 form.preparation_time_rule.expression.label: Expression
 form.preparation_time_rule.time.label: Time
-form.preparation_time.defaults_warning: 'This restaurant does not have any custom
-  preparation time yet. The default rules have been copied below, you can change them.
-
-  '
+form.preparation_time.defaults_warning: "This restaurant does not have any custom\
+  \ preparation time yet. The default rules have been copied below, you can change\
+  \ them.\n"
 form.settings.date_time: Date and time
 form.settings.brand_name.label: Brand name
 form.settings.stripe.title: Stripe Account
@@ -433,30 +418,21 @@ form.settings.stripe_testmode.help: 'In « test » mode, you will have to use <a
 form.settings.stripe_enable_livemode.help: To enable « live » mode, you need to configure
   « live » keys first.
 form.settings.stripe_publishable_key.label: Stripe publishable key
-form.settings.stripe_publishable_key.help: 'Create a Stripe account to obtain your
-  <a href="https://stripe.com/docs/dashboard#api-keys">publishable key</a>
-
-  '
+form.settings.stripe_publishable_key.help: "Create a Stripe account to obtain your\
+  \ <a href=\"https://stripe.com/docs/dashboard#api-keys\">publishable key</a>\n"
 form.settings.stripe_secret_key.label: Stripe secret key
-form.settings.stripe_secret_key.help: 'Create a Stripe account to obtain your <a href="https://stripe.com/docs/dashboard#api-keys">publishable
-  key</a>
-
-  '
+form.settings.stripe_secret_key.help: "Create a Stripe account to obtain your <a href=\"\
+  https://stripe.com/docs/dashboard#api-keys\">publishable key</a>\n"
 form.settings.stripe_connect_client_id.label: Stripe Connect identifier
-form.settings.stripe_connect_client_id.help: 'Get the identifier on the <a href="https://dashboard.stripe.com/account/applications/settings">parameters
-  page</a>
-
-  '
+form.settings.stripe_connect_client_id.help: "Get the identifier on the <a href=\"\
+  https://dashboard.stripe.com/account/applications/settings\">parameters page</a>\n"
 form.settings.google_api_key.label: Google API key
-form.settings.google_api_key.help: 'Create a Google account to obtain your <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">API
-  key</a>
-
-  '
+form.settings.google_api_key.help: "Create a Google account to obtain your <a href=\"\
+  https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
+  >API key</a>\n"
 form.settings.latlng.label: Geographical coordinates
-form.settings.latlng.help: 'Specify the default latitude and longitude. You can get
-  it on <a href="https://www.latlong.net/">latlong.net</a>
-
-  '
+form.settings.latlng.help: "Specify the default latitude and longitude. You can get\
+  \ it on <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
 form.settings.default_tax_category.label: VAT rate for deliveries
 form.settings.default_tax_category.help: Specify the VAT rate to use for deliveries
 form.settings.administrator_email.label: Administrator email
@@ -469,28 +445,14 @@ form.settings.company_logo.help: This logo will be used invoices & proofs of del
 form.suggest.name.label: Name
 form.suggest.name.help: Please indicate the exact name so that we can find it
 form.suggest.submit.label: Suggest now
-form.suggest.message: 'Can''t find your favorite restaurant ?
-
-  <br>
-
-  Give us his name and address. Then other users can vote to see it appear in the
-  list of restaurants.
-
-  <br>
-
-  This will allow us to better identify the restaurants to be approached and provide
-  them the proof of a real demand.
-
-  '
+form.suggest.message: "Can't find your favorite restaurant ?\n<br>\nGive us its name\
+  \ and address. Then other users can vote to see it appear in the list of restaurants.\n\
+  <br>\nThis will allow us to better identify the restaurants to be approached and\
+  \ provide them the proof of a real demand.\n"
 form.suggest.thank_you_message: Thank you for suggesting this restaurant!
-restaurant.suggest.message: 'Help us convince %restaurant.name% to work with %brand_name%!
-
-  <br>
-
-  To see it on the platform, we need you and your voice to support our future request
-  for collaboration with this brand.
-
-  '
+restaurant.suggest.message: "Help us convince %restaurant.name% to work with %brand_name%!\n\
+  <br>\nTo see it on the platform, we need you and your voice to support our future\
+  \ request for collaboration with this brand.\n"
 restaurant.suggest.vote: Vote for %name%
 pledge.suggested_by: Suggested by @%username%
 restaurant.suggest.has_voted: You have already voted for this restaurant !
@@ -527,32 +489,24 @@ form.delivery_embed.name.help: Your name or company name
 form.delivery_embed.telephone.label: Phone number
 form.delivery_embed.vehicle.disclaimer: We deliver on cargo bike items of more than
   50x40x20 (cm) or whose weight exceeds 6kg
-form.registration.username.help: 'Your username cannot be longer than 15 characters.
-  A username can only contain alphanumeric characters (letters A-Z, numbers 0-9) with
-  the exception of underscores.
-
-  '
+form.registration.username.help: "Your username cannot be longer than 15 characters.\
+  \ A username can only contain alphanumeric characters (letters A-Z, numbers 0-9)\
+  \ with the exception of underscores.\n"
 form.local_business.stripe_account.title: Stripe account
 form.local_business.stripe_account.help: Connect a Stripe account to transfer money
   to another bank account
 form.local_business.stripe_account.connect_button.text: Connect with Stripe
 form.local_business.stripe_account.not_configured: You can't connect an account yet
 form.local_business.stripe_account.success: Stripe account connected successfully
-form.local_business.stripe_account.need_stripe_account: 'You didn''t create a Stripe
-  account for this restaurant yet. Stripe is a payment platform which allows us to
-  handle securely card payments and transfers to your bank account.<br>
-
-  To create a Stripe account for this restaurant please <a href="%stripeAuthorizeURL%">click
-  here</a>.
-
-  '
-form.local_business.stripe_account.link_ok: 'This restaurant is linked to a Stripe
-  account and can receive payments from the platform.<br>
-
-  To manage your Stripe account and the transfers to your account, please use the
-  <a href="https://dashboard.stripe.com/" target="_blank">Stripe dashboard</a>.
-
-  '
+form.local_business.stripe_account.need_stripe_account: "You didn't create a Stripe\
+  \ account for this restaurant yet. Stripe is a payment platform which allows us\
+  \ to handle securely card payments and transfers to your bank account.<br>\nTo create\
+  \ a Stripe account for this restaurant please <a href=\"%stripeAuthorizeURL%\">click\
+  \ here</a>.\n"
+form.local_business.stripe_account.link_ok: "This restaurant is linked to a Stripe\
+  \ account and can receive payments from the platform.<br>\nTo manage your Stripe\
+  \ account and the transfers to your account, please use the <a href=\"https://dashboard.stripe.com/\"\
+  \ target=\"_blank\">Stripe dashboard</a>.\n"
 form.menu_item.name.label: Name
 form.menu_item.price.label: Price
 form.menu_item_modifier.name.label: Name
@@ -560,31 +514,15 @@ form.menu_item_modifier.price.label: Price
 form.menu_item_modifier.calculusStrategy.label: Price calculation
 form.menu_taxon.name.label: Name
 form.menu_taxon.add_child.label: Add section
-form.menu_taxon.child_name.placeholder: 'Example: main courses, desserts…
-
-  '
+form.menu_taxon.child_name.placeholder: "Example: main courses, desserts…\n"
 form.menu_editor.products_panel.title: Products
 form.menu_editor.save.label: Save Changes
-form.menu_editor.help: 'Use the editor below to compose the menu items
-
-  <br>
-
-  Drag and drop the products into the sections on the left
-
-  <br>
-
-  If you want to remove a product from the menu, drop it in the « Products » section
-  on the right
-
-  <br>
-
-  Do not forget to click on the « Save Changes » button below
-
-  '
-form.menu_editor.products.help: 'To add products to the list on the right, add them
-  to the <a href="%products_url%">catalog</a> first
-
-  '
+form.menu_editor.help: "Use the editor below to compose the menu items\n<br>\nDrag\
+  \ and drop the products into the sections on the left\n<br>\nIf you want to remove\
+  \ a product from the menu, drop it in the « Products » section on the right\n<br>\n\
+  Do not forget to click on the « Save Changes » button below\n"
+form.menu_editor.products.help: "To add products to the list on the right, add them\
+  \ to the <a href=\"%products_url%\">catalog</a> first\n"
 form.menu_editor.taxon_modal.title: Modify a section
 form.product.name.label: Name
 form.product.description.label: Description
@@ -596,17 +534,14 @@ form.product.allergens.help: Does this product contain the following allergens?
 form.product.restricted_diets.label: Restricted diets
 form.product.restricted_diets.help: Does this product fit for the following diets?
 form.product.confirm.label: Confirm changes
-form.product.confirm.help: 'You have changed the product name. If it is a <strong>minor
-  modification</strong> (misspelled, upper case…), click on « Confirm changes ».
-
-  <br>
-
-  If not, you must <a href="%link%">create a new product</a>, so that you can distinguish
-  the products you sell and maintain history.
-  '
-form.product.reusable_packaging_enabled.label: 'Enable reusable packaging for this product'
-form.product.reusable_packaging.label: 'Type of reusable packaging'
-form.product.reusable_packaging_unit.label: 'Number of units'
+form.product.confirm.help: "You have changed the product name. If it is a <strong>minor\
+  \ modification</strong> (misspelled, upper case…), click on « Confirm changes ».\n\
+  <br>\nIf not, you must <a href=\"%link%\">create a new product</a>, so that you\
+  \ can distinguish the products you sell and maintain history. "
+form.product.reusable_packaging_enabled.label: Enable reusable packaging for this
+  product
+form.product.reusable_packaging.label: Type of reusable packaging
+form.product.reusable_packaging_unit.label: Number of units
 form.product_option.name.label: Name
 form.product_option.strategy.label: Price calculation
 form.product_option.price.label: Price
@@ -619,9 +554,7 @@ form.product_option.additional.help: The customer can choose several values, wit
 form.product_option_value.value.label: Value
 form.product_option_value.price.label: Price
 form.checkout_address.notes.label: An observation?
-form.checkout_address.notes.placeholder: 'Example: without sauce, without tomatoes…
-
-  '
+form.checkout_address.notes.placeholder: "Example: without sauce, without tomatoes…\n"
 form.checkout_address.notes.help: Your observation will be forwarded to the restaurant
 form.checkout_address.promotion_coupon.label: Coupon code
 form.checkout_address.telephone.label: Phone number
@@ -655,9 +588,11 @@ form.reusable_packaging.name.label: Name
 form.reusable_packaging.is_tracked.label: Tracking enabled
 form.reusable_packaging.price.label: Price
 form.reusable_packaging.on_hand.label: Stock
-form.deposit_refund_settings.deposit_refund_optin.label: Deposit-refund system is optional
+form.deposit_refund_settings.deposit_refund_optin.label: Deposit-refund system is
+  optional
 form.new_order.variant_name.label: Product name
-form.new_order.variant_name.help: The name that will appear in the order summary and invoice
+form.new_order.variant_name.help: The name that will appear in the order summary and
+  invoice
 form.new_order.variant_price.label: Price
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
@@ -673,19 +608,11 @@ user.edit.enabled.help: A deactivated user will be logged out and can't login ba
   on the platform.
 user.profile.familyName: Family name
 user.profile.givenName: Given name
-roles.ROLE_ADMIN.help: 'Administrator : Full access to all features
-
-  '
-roles.ROLE_COURIER.help: 'Courier : view waiting tasks, modify assigned tasks…
-
-  '
-roles.ROLE_RESTAURANT.help: 'Restaurant owner: manage assigned restaurants, manage
-  orders…
-
-  '
-roles.ROLE_STORE.help: 'Store owner: manage assigned stores, manage deliveries…
-
-  '
+roles.ROLE_ADMIN.help: "Administrator : Full access to all features\n"
+roles.ROLE_COURIER.help: "Courier : view waiting tasks, modify assigned tasks…\n"
+roles.ROLE_RESTAURANT.help: "Restaurant owner: manage assigned restaurants, manage\
+  \ orders…\n"
+roles.ROLE_STORE.help: "Store owner: manage assigned stores, manage deliveries…\n"
 stores.form.save: Save
 stores.manage: Manage
 stores.settings: Settings
@@ -698,11 +625,8 @@ stores.deliveries.heading: 'Delivery #%delivery_id% - %delivery_distance%'
 stores.deliveries.task_unassigned: Unassigned
 stores.addresses: Addresses
 meta.title: Delivery platform for worker-owned business
-admin.settings.missing_mandatory_settings: 'Mandatory settings are missing.
-
-  Go to <a href="%settings_url%">settings page</a> to configure them.
-
-  '
+admin.settings.missing_mandatory_settings: "Mandatory settings are missing.\nGo to\
+  \ <a href=\"%settings_url%\">settings page</a> to configure them.\n"
 index.map.tip: Use the map below to find restaurants
 index.banner: Delicious meals delivered at your place
 index.our_restaurants: Our restaurants
@@ -710,42 +634,18 @@ index.view_all_restaurants: View all restaurants →
 notifications.empty: No notifications
 adminDashboard.statistics: Statistics
 adminDashboard.activity.title: Activity
-activity.task.created: '@%owner% created task #task/%aggregate_id%
-
-  '
-activity.task.assigned: '@%owner% assigned task #task/%aggregate_id%
-
-  '
-activity.task.unassigned: '@%owner% unassigned task #task/%aggregate_id%
-
-  '
-activity.task.done: '@%owner% completed task #task/%aggregate_id%
-
-  '
-activity.task.failed: '@%owner% could not complete task #task/%aggregate_id%
-
-  '
-activity.task.cancelled: '@%owner% has cancelled task #task/%aggregate_id%
-
-  '
-activity.order.created: 'Order #order/%aggregate_id% has been created by @%owner%
-
-  '
-activity.order.accepted: 'Order #order/%aggregate_id% has been accepted
-
-  '
-activity.order.refused: 'Order #order/%aggregate_id% has been refused
-
-  '
-activity.order.picked: '@%owner% has picked order #order/%aggregate_id%
-
-  '
-activity.order.dropped: '@%owner% has dropped order #order/%aggregate_id%
-
-  '
-activity.order.fulfilled: 'Order #order/#%aggregate_id% is fulfilled
-
-  '
+activity.task.created: "@%owner% created task #task/%aggregate_id%\n"
+activity.task.assigned: "@%owner% assigned task #task/%aggregate_id%\n"
+activity.task.unassigned: "@%owner% unassigned task #task/%aggregate_id%\n"
+activity.task.done: "@%owner% completed task #task/%aggregate_id%\n"
+activity.task.failed: "@%owner% could not complete task #task/%aggregate_id%\n"
+activity.task.cancelled: "@%owner% has cancelled task #task/%aggregate_id%\n"
+activity.order.created: "Order #order/%aggregate_id% has been created by @%owner%\n"
+activity.order.accepted: "Order #order/%aggregate_id% has been accepted\n"
+activity.order.refused: "Order #order/%aggregate_id% has been refused\n"
+activity.order.picked: "@%owner% has picked order #order/%aggregate_id%\n"
+activity.order.dropped: "@%owner% has dropped order #order/%aggregate_id%\n"
+activity.order.fulfilled: "Order #order/#%aggregate_id% is fulfilled\n"
 social.sign_in_with_facebook: Sign in with Facebook
 embed.delivery.summary: 'You have requested a race that will be dropped at <strong>%dropoff_date%</strong>
   at the following address: <strong>%dropoff_address%</strong> <br> We calculated
@@ -784,7 +684,8 @@ basics.stripe_fees: Stripe fees
 basics.platform_fees: Platform fees
 basics.net_income: Net income
 basics.send_invitation: Send an invitation
-basics.send_invitation.confirm: Your invitation has been sent ! You can now edit the settings of the new user.
+basics.send_invitation.confirm: Your invitation has been sent ! You can now edit the
+  settings of the new user.
 profile.password.change: Change your password
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?
@@ -862,7 +763,8 @@ receipt.footer_item.total_incl_tax: Total incl. tax
 receipt.total: Total including tax
 receipt.billing_details: Order paid by credit card on %date%
 receipt.emitter_details: Order at restaurant <strong>%restaurant_name%</strong>
-delivery.import.success_message: 'Your file was successfully processed, %count% deliveries have been created'
+delivery.import.success_message: Your file was successfully processed, %count% deliveries
+  have been created
 form.delivery_import.store.label: Store
 basics.view_example: View example
 notifications.restaurant.new_order: New order to accept
