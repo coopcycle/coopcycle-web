@@ -62,3 +62,13 @@ AppBundle\Entity\Restaurant:
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
     contract: "@contract_3"
+  restaurant_4:
+    name: 'Wild Buffet'
+    orderingDelayMinutes: 0
+    address: "@address_3"
+    openingHours: ['Mo-Sa 11:30-14:30']
+    enabled: true
+    contract: "@contract_3"
+    __calls:
+      - setDeletedAt:
+        - <identity(new \DateTime('2019-11-12 18:00:00'))>
