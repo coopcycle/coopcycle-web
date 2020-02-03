@@ -10956,16 +10956,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.21.1",
+            "version": "v7.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "6c23253581928c35322616c527d0a97e47267ec3"
+                "reference": "44021812c0c368ff37259f7b18155a2b3d4c15b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/6c23253581928c35322616c527d0a97e47267ec3",
-                "reference": "6c23253581928c35322616c527d0a97e47267ec3",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/44021812c0c368ff37259f7b18155a2b3d4c15b3",
+                "reference": "44021812c0c368ff37259f7b18155a2b3d4c15b3",
                 "shasum": ""
             },
             "require": {
@@ -11009,7 +11009,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2020-01-29T20:14:55+00:00"
+            "time": "2020-01-31T18:06:21+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -16861,6 +16861,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "friendsofsymfony/user-bundle": 20,
+        "league/geotools": 0,
         "mailjet/mailjet-swiftmailer": 20,
         "hwi/oauth-bundle": 20,
         "drupal/core-vendor-hardening": 20,
