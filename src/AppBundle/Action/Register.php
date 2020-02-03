@@ -112,6 +112,7 @@ class Register
             $this->userManager->updateUser($user);
 
         } catch (\Exception $e) {
+            // FIXME If a "real" error occurs, it is hidden
             // TODO Send JSON-LD response
             throw new BadRequestHttpException($e);
         }
