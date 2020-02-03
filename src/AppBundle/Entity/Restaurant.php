@@ -19,6 +19,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\Timestampable;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
@@ -88,6 +89,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class Restaurant extends FoodEstablishment
 {
+    use Timestampable;
     use SoftDeleteableEntity;
 
     const STATE_NORMAL = 'normal';
@@ -191,10 +193,6 @@ class Restaurant extends FoodEstablishment
      * @Groups({"restaurant"})
      */
     private $closingRules;
-
-    private $createdAt;
-
-    private $updatedAt;
 
     private $owners;
 
