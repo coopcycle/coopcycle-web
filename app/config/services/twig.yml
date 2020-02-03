@@ -47,7 +47,7 @@ services:
     arguments:
       $cache: '@twig.cache_extension.provider'
       $keyGenerator: '@twig.cache_extension.key_generator'
-      $lifetime: 30
+      $lifetime: 300
 
   twig.cache_extension:
     class: Twig\CacheExtension\Extension
