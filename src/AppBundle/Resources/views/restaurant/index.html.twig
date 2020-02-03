@@ -88,6 +88,12 @@
   {% if restaurant.menuTaxon is not null %}
   <div class="row">
 
+    {#
+    WARNING
+    We cache the follwing block for performance
+    Iterating through all products, options… is a lot of database requests
+    #}
+    {% cache ('restaurant_' ~ restaurant.id ~ '_menu_v0.3') restaurant %}
     <div class="col-xs-12 col-sm-8" id="menu">
       <div class="restaurant-menu-wrapper">
       {% for child in restaurant.menuTaxon.children %}
@@ -130,6 +136,7 @@
       {% endfor %}
       </div>
     </div>
+    {% endcache %}
 
     <div class="col-xs-12 col-sm-4">
       {{ form_start(cart_form) }}
@@ -155,6 +162,12 @@
 
 {# Modals for product options #}
 
+{#
+WARNING
+We cache the follwing block for performance
+Iterating through all products, options… is a lot of database requests
+#}
+{% cache ('restaurant_' ~ restaurant.id ~ '_modals_v0.3') restaurant %}
 {% if restaurant.menuTaxon is not null %}
   {% for child in restaurant.menuTaxon.children %}
     {% for product in child.products %}
@@ -285,6 +298,7 @@
     {% endfor %}
   {% endfor %}
 {% endif %}
+{% endcache %}
 
 {% set restaurant_json = {
   id: restaurant.id,
