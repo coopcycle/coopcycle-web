@@ -26,3 +26,33 @@ services:
     class: Twig_Extensions_Extension_Intl
     tags:
       - { name: twig.extension }
+
+  twig.cache_extension.provider:
+    class: Twig\CacheExtension\CacheProvider\PsrCacheAdapter
+    arguments:
+      $cache: '@cache.app'
+
+  twig.cache_extension.strategy.lifetime:
+    class: Twig\CacheExtension\CacheStrategy\LifetimeCacheStrategy
+    arguments:
+      $cache: '@twig.cache_extension.provider'
+
+  twig.cache_extension.key_generator:
+    class: AppBundle\Twig\CacheExtension\KeyGenerator
+    arguments:
+      $slugify: '@slugify'
+
+  twig.cache_extension.strategy.generational:
+    class: Twig\CacheExtension\CacheStrategy\GenerationalCacheStrategy
+    arguments:
+      $cache: '@twig.cache_extension.provider'
+      $keyGenerator: '@twig.cache_extension.key_generator'
+      $lifetime: 30
+
+  twig.cache_extension:
+    class: Twig\CacheExtension\Extension
+    arguments:
+      # $cacheStrategy: '@twig.cache_extension.strategy.lifetime'
+      $cacheStrategy: '@twig.cache_extension.strategy.generational'
+    tags:
+      - { name: twig.extension }
