@@ -45,9 +45,9 @@
     "xml2js": "^0.4.22"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-object-rest-spread": "^7.7.7",
-    "@babel/preset-react": "^7.7.4",
-    "@babel/register": "^7.7.7",
+    "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
+    "@babel/preset-react": "^7.8.3",
+    "@babel/register": "^7.8.3",
     "@symfony/webpack-encore": "^0.28.0",
     "antd": "^3.22.2",
     "autoprefixer": "^9.7.3",
