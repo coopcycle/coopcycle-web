@@ -8114,16 +8114,16 @@
         },
         {
             "name": "oneup/uploader-bundle",
-            "version": "2.1.5",
+            "version": "2.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/1up-lab/OneupUploaderBundle.git",
-                "reference": "a6011449b716f163fe1ae323053077e59212350c"
+                "reference": "a36b9a0cd8aaf6774efffc6c00b3519fb050a8db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/1up-lab/OneupUploaderBundle/zipball/a6011449b716f163fe1ae323053077e59212350c",
-                "reference": "a6011449b716f163fe1ae323053077e59212350c",
+                "url": "https://api.github.com/repos/1up-lab/OneupUploaderBundle/zipball/a36b9a0cd8aaf6774efffc6c00b3519fb050a8db",
+                "reference": "a36b9a0cd8aaf6774efffc6c00b3519fb050a8db",
                 "shasum": ""
             },
             "require": {
@@ -8131,18 +8131,20 @@
                 "symfony/asset": "^3.0|^4.0",
                 "symfony/finder": "^3.0|^4.0",
                 "symfony/framework-bundle": "^3.0|^4.0",
+                "symfony/http-foundation": "^3.0|^4.0",
                 "symfony/templating": "^3.0|^4.0",
                 "symfony/translation": "^3.0|^4.0",
                 "symfony/yaml": "^3.0|^4.0"
             },
             "require-dev": {
                 "amazonwebservices/aws-sdk-for-php": "1.5.*",
-                "knplabs/gaufrette": "0.2.*@dev",
+                "knplabs/gaufrette": "^0.9",
                 "oneup/flysystem-bundle": "^1.2|^2.0|^3.0",
-                "phpunit/phpunit": "^6.5",
+                "phpunit/phpunit": "^7.5",
                 "sensio/framework-extra-bundle": "^5.0",
                 "symfony/browser-kit": "^3.0|^4.0",
                 "symfony/class-loader": "^3.0|^4.0",
+                "symfony/phpunit-bridge": "^5.0",
                 "symfony/security-bundle": "^3.0|^4.0",
                 "symfony/var-dumper": "^3.0|^4.0",
                 "twistor/flysystem-stream-wrapper": "^1.0"
@@ -8194,7 +8196,7 @@
                 "plupload",
                 "upload"
             ],
-            "time": "2020-02-04T10:37:36+00:00"
+            "time": "2020-02-04T14:24:29+00:00"
         },
         {
             "name": "pagerfanta/pagerfanta",
