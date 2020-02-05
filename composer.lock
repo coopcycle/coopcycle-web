@@ -3428,16 +3428,16 @@
         },
         {
             "name": "gesdinet/jwt-refresh-token-bundle",
-            "version": "v0.9.0",
+            "version": "v0.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/markitosgv/JWTRefreshTokenBundle.git",
-                "reference": "fd0e4290ff74d545149d389976a9027b1a5baf66"
+                "reference": "1f2729e45b5eb28d6461d94dadeb0211a96754e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/markitosgv/JWTRefreshTokenBundle/zipball/fd0e4290ff74d545149d389976a9027b1a5baf66",
-                "reference": "fd0e4290ff74d545149d389976a9027b1a5baf66",
+                "url": "https://api.github.com/repos/markitosgv/JWTRefreshTokenBundle/zipball/1f2729e45b5eb28d6461d94dadeb0211a96754e8",
+                "reference": "1f2729e45b5eb28d6461d94dadeb0211a96754e8",
                 "shasum": ""
             },
             "require": {
@@ -3477,7 +3477,7 @@
             "keywords": [
                 "jwt refresh token bundle symfony json web"
             ],
-            "time": "2019-12-05T09:07:22+00:00"
+            "time": "2020-02-04T16:08:46+00:00"
         },
         {
             "name": "giggsey/libphonenumber-for-php",
