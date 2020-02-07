@@ -8114,16 +8114,16 @@
         },
         {
             "name": "oneup/uploader-bundle",
-            "version": "2.1.6",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/1up-lab/OneupUploaderBundle.git",
-                "reference": "a36b9a0cd8aaf6774efffc6c00b3519fb050a8db"
+                "reference": "8bd74b2d5f07f9ee6280f0b90ed8199471f57f52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/1up-lab/OneupUploaderBundle/zipball/a36b9a0cd8aaf6774efffc6c00b3519fb050a8db",
-                "reference": "a36b9a0cd8aaf6774efffc6c00b3519fb050a8db",
+                "url": "https://api.github.com/repos/1up-lab/OneupUploaderBundle/zipball/8bd74b2d5f07f9ee6280f0b90ed8199471f57f52",
+                "reference": "8bd74b2d5f07f9ee6280f0b90ed8199471f57f52",
                 "shasum": ""
             },
             "require": {
@@ -8134,7 +8134,8 @@
                 "symfony/http-foundation": "^3.0|^4.0",
                 "symfony/templating": "^3.0|^4.0",
                 "symfony/translation": "^3.0|^4.0",
-                "symfony/yaml": "^3.0|^4.0"
+                "symfony/yaml": "^3.0|^4.0",
+                "twig/twig": "^1.41|^2.10|^3.0"
             },
             "require-dev": {
                 "amazonwebservices/aws-sdk-for-php": "1.5.*",
@@ -8196,7 +8197,7 @@
                 "plupload",
                 "upload"
             ],
-            "time": "2020-02-04T14:24:29+00:00"
+            "time": "2020-02-06T09:12:03+00:00"
         },
         {
             "name": "pagerfanta/pagerfanta",
