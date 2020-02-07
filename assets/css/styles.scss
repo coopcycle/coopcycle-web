@@ -222,13 +222,6 @@ h1, h2, h3, h4, h5, h6 {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-
-  // @media (min-width: $screen-lg-min) {
-  //   width: 33%;
-  // }
-  // @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-  //   width: 50%;
-  // }
   @media (max-width: $screen-xs-max) {
     padding: 30px 0;
   }
