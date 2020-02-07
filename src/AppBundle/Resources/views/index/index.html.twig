@@ -39,7 +39,7 @@
     <h2 class="homepage-restaurants__title">{% trans %}index.our_restaurants{% endtrans %}</h2>
     {% if show_more %}
     <div class="homepage-restaurants__show-more text-left">
-      <a href="{{ path('restaurants') }}">{% trans %}index.view_all_restaurants{% endtrans %}</a>
+      <a href="{{ path('restaurants') }}">{% trans %}index.view_all_restaurants{% endtrans %} →</a>
     </div>
     {% endif %}
     <div class="row display-flex restaurant-list">
@@ -65,7 +65,7 @@
     </div>
     {% if show_more %}
     <div class="homepage-restaurants__show-more text-right">
-      <a href="{{ path('restaurants') }}">{% trans %}index.view_all_restaurants{% endtrans %}</a>
+      <a href="{{ path('restaurants') }}">{% trans %}index.view_all_restaurants{% endtrans %} →</a>
     </div>
     {% endif %}
   </div>

@@ -515,7 +515,7 @@ admin.settings.missing_mandatory_settings: "Algunos ajustes obligatorios no han 
 index.map.tip: Usa el mapa para encontrar restaurantes
 index.banner: Platos deliciosos del restaurante a tu casa
 index.our_restaurants: Nuestros restaurantes
-index.view_all_restaurants: Ver todos los restaurantes →
+index.view_all_restaurants: Ver todos los restaurantes
 notifications.empty: Ninguna notificación
 adminDashboard.statistics: Estadísticas
 adminDashboard.activity.title: Actividad

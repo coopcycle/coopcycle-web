@@ -663,7 +663,7 @@ admin.settings.missing_mandatory_settings: 'Falta la configuració obligatòria.
 index.map.tip: Utilitzeu el mapa següent per trobar restaurants
 index.banner: Deliciosos menjars entregats a domicili
 index.our_restaurants: Els nostres restaurants
-index.view_all_restaurants: Veure tots els restaurants →
+index.view_all_restaurants: Veure tots els restaurants
 notifications.empty: No hi ha notificacions
 adminDashboard.statistics: Estadístiques
 adminDashboard.activity.title: Activitat

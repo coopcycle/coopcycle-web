@@ -706,7 +706,7 @@ admin.settings.missing_mandatory_settings: 'Mandatory settings are missing.
 index.map.tip: Use the map below to find restaurants
 index.banner: Delicious meals delivered at your place
 index.our_restaurants: Our restaurants
-index.view_all_restaurants: View all restaurants →
+index.view_all_restaurants: View all restaurants
 notifications.empty: No notifications
 adminDashboard.statistics: Statistics
 adminDashboard.activity.title: Activity

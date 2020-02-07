@@ -609,7 +609,7 @@ admin.settings.missing_mandatory_settings: "Des paramètres obligatoires sont ma
 index.map.tip: Utilisez la carte ci-dessous pour trouver des restaurants
 index.banner: De bons plats livrés à domicile
 index.our_restaurants: Nos restaurants
-index.view_all_restaurants: Voir tous les restaurants →
+index.view_all_restaurants: Voir tous les restaurants
 pagination.previous: Précédent
 pagination.next: Suivante
 basics.save: Enregistrer
