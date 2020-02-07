@@ -183,6 +183,10 @@ const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}
     const { errors } = action.payload
 
     return errors.hasOwnProperty('shippingAddress')
+  case REPLACE_ERRORS:
+    const { propertyPath } = action.payload
+
+    return propertyPath === 'shippingAddress'
   default:
 
     return state
