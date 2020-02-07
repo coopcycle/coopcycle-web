@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux'
+import _ from 'lodash'
 
 import {
   FETCH_REQUEST,
@@ -10,6 +11,7 @@ import {
   SET_LAST_ADD_ITEM_REQUEST,
   CLEAR_LAST_ADD_ITEM_REQUEST,
   SET_DATE_MODAL_OPEN,
+  CLOSE_ADDRESS_MODAL,
 } from './actions'
 
 const initialState = {
@@ -39,7 +41,8 @@ const initialState = {
     today: false,
     diff: ''
   },
-  isDateModalOpen: false
+  isDateModalOpen: false,
+  isAddressModalOpen: false,
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -169,6 +172,38 @@ const times = (state = initialState.times, action = {}) => {
   }
 }
 
+const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}) => {
+  switch (action.type) {
+  case FETCH_REQUEST:
+  case CLOSE_ADDRESS_MODAL:
+
+    return false
+
+  case FETCH_SUCCESS:
+  case FETCH_FAILURE:
+    const { errors } = action.payload
+
+    const hasError = errors.hasOwnProperty('shippingAddress')
+
+    let titleText = ''
+    let isAddressTooFar = false
+    if (hasError) {
+
+      const addressTooFarError = _.find(errors.shippingAddress, error => error.code === 'Order::ADDRESS_TOO_FAR')
+      if (addressTooFarError) {
+        isAddressTooFar = true
+      }
+
+      titleText = _.first(errors.shippingAddress).message
+    }
+
+    return hasError
+  default:
+
+    return state
+  }
+}
+
 export default combineReducers({
   isFetching,
   cart,
@@ -184,4 +219,5 @@ export default combineReducers({
   lastAddItemRequest,
   times,
   isDateModalOpen,
+  isAddressModalOpen,
 })

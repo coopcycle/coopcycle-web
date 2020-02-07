@@ -933,6 +933,17 @@ form[name="store"] #store_imageFile_file {
     width: calc(100% - 30px);
     height: 80%;
   }
+  .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px 12px;
+    @media (max-width: $screen-xs-max) {
+      font-size: 40px;
+      padding: 12px 18px;
+    }
+
+  }
 }
 
 .ReactModal__Content--restaurant {

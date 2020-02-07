@@ -15,6 +15,7 @@ export const SET_STREET_ADDRESS = 'SET_STREET_ADDRESS'
 export const TOGGLE_MOBILE_CART = 'TOGGLE_MOBILE_CART'
 export const REPLACE_ERRORS = 'REPLACE_ERRORS'
 export const SET_DATE_MODAL_OPEN = 'SET_DATE_MODAL_OPEN'
+export const CLOSE_ADDRESS_MODAL = 'CLOSE_ADDRESS_MODAL'
 
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const fetchSuccess = createAction(FETCH_SUCCESS)
@@ -27,6 +28,7 @@ export const replaceErrors = createAction(REPLACE_ERRORS, (propertyPath, errors)
 export const setLastAddItemRequest = createAction(SET_LAST_ADD_ITEM_REQUEST, (url, data) => ({ url, data }))
 export const clearLastAddItemRequest = createAction(CLEAR_LAST_ADD_ITEM_REQUEST)
 export const setDateModalOpen = createAction(SET_DATE_MODAL_OPEN)
+export const closeAddressModal = createAction(CLOSE_ADDRESS_MODAL)
 
 function postForm() {
 

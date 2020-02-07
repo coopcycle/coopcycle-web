@@ -5,7 +5,7 @@ import _ from 'lodash'
 import Modal from 'react-modal'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
-import { changeAddress } from '../redux/actions'
+import { changeAddress, closeAddressModal } from '../redux/actions'
 
 const ADDRESS_TOO_FAR = 'Order::ADDRESS_TOO_FAR'
 
@@ -31,6 +31,9 @@ class AddressModal extends Component {
         className="ReactModal__Content--enter-address"
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
+        <button type="button" className="close" onClick={ this.props.closeAddressModal }>
+          <i className="fa fa-close"></i>
+        </button>
         <h4 className="text-center">{ this.props.titleText }</h4>
         <AddressAutosuggest
           addresses={ this.props.addresses }
@@ -47,6 +50,7 @@ class AddressModal extends Component {
             </a>
           </div>
         ) }
+
       </Modal>
     )
   }
@@ -69,7 +73,7 @@ function mapStateToProps(state) {
   }
 
   return {
-    isOpen: hasError,
+    isOpen: state.isAddressModalOpen,
     titleText,
     isAddressTooFar,
     addresses: state.addresses,
@@ -80,6 +84,7 @@ function mapDispatchToProps(dispatch) {
 
   return {
     changeAddress: address => dispatch(changeAddress(address)),
+    closeAddressModal: () => dispatch(closeAddressModal()),
   }
 }
 
