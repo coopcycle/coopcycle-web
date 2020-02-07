@@ -177,10 +177,17 @@ h1, h2, h3, h4, h5, h6 {
   color: $white;
   font-weight: 700;
   margin-bottom: $bs-base-margin;
+  @media (max-width: $screen-xs-max) {
+    font-size: 26px;
+    text-align: center;
+  }
 }
 
 .banner-search {
   margin-top: $bs-base-margin * 2;
+  @media (max-width: $screen-xs-max) {
+    margin-top: 0;
+  }
 }
 
 .banner {
@@ -215,6 +222,17 @@ h1, h2, h3, h4, h5, h6 {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
+
+  // @media (min-width: $screen-lg-min) {
+  //   width: 33%;
+  // }
+  // @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+  //   width: 50%;
+  // }
+  @media (max-width: $screen-xs-max) {
+    padding: 30px 0;
+  }
+
 }
 
 .homepage-map {
@@ -939,7 +957,7 @@ form[name="store"] #store_imageFile_file {
     right: 0;
     padding: 10px 12px;
     @media (max-width: $screen-xs-max) {
-      font-size: 40px;
+      font-size: 32px;
       padding: 12px 18px;
     }
 
