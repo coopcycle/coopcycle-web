@@ -13650,16 +13650,16 @@
         },
         {
             "name": "symfony/string",
-            "version": "v5.0.2",
+            "version": "v5.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "96868dd86d12de86236cb46f774f9a127477bd99"
+                "reference": "978261d3c4ffd64f99dea0e78b026690a67fe7fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/96868dd86d12de86236cb46f774f9a127477bd99",
-                "reference": "96868dd86d12de86236cb46f774f9a127477bd99",
+                "url": "https://api.github.com/repos/symfony/string/zipball/978261d3c4ffd64f99dea0e78b026690a67fe7fe",
+                "reference": "978261d3c4ffd64f99dea0e78b026690a67fe7fe",
                 "shasum": ""
             },
             "require": {
@@ -13710,7 +13710,7 @@
                 "utf-8",
                 "utf8"
             ],
-            "time": "2019-12-07T13:35:22+00:00"
+            "time": "2020-01-14T17:54:59+00:00"
         },
         {
             "name": "symfony/swiftmailer-bundle",
@@ -14335,16 +14335,16 @@
         },
         {
             "name": "vich/uploader-bundle",
-            "version": "1.13.0",
+            "version": "1.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dustin10/VichUploaderBundle.git",
-                "reference": "83be1a5fc9415826b28b2947623b876c6f028e59"
+                "reference": "282321173e8a01a295d04fa642658b6b10c3ec9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dustin10/VichUploaderBundle/zipball/83be1a5fc9415826b28b2947623b876c6f028e59",
-                "reference": "83be1a5fc9415826b28b2947623b876c6f028e59",
+                "url": "https://api.github.com/repos/dustin10/VichUploaderBundle/zipball/282321173e8a01a295d04fa642658b6b10c3ec9a",
+                "reference": "282321173e8a01a295d04fa642658b6b10c3ec9a",
                 "shasum": ""
             },
             "require": {
@@ -14428,7 +14428,7 @@
                 "file uploads",
                 "upload"
             ],
-            "time": "2020-01-14T08:33:14+00:00"
+            "time": "2020-02-06T07:49:31+00:00"
         },
         {
             "name": "webmozart/assert",
