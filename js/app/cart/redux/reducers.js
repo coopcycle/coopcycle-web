@@ -183,21 +183,7 @@ const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}
   case FETCH_FAILURE:
     const { errors } = action.payload
 
-    const hasError = errors.hasOwnProperty('shippingAddress')
-
-    let titleText = ''
-    let isAddressTooFar = false
-    if (hasError) {
-
-      const addressTooFarError = _.find(errors.shippingAddress, error => error.code === 'Order::ADDRESS_TOO_FAR')
-      if (addressTooFarError) {
-        isAddressTooFar = true
-      }
-
-      titleText = _.first(errors.shippingAddress).message
-    }
-
-    return hasError
+    return errors.hasOwnProperty('shippingAddress')
   default:
 
     return state
