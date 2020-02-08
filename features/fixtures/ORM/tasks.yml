@@ -68,3 +68,9 @@ AppBundle\Entity\Task:
     doneBefore: <identity(new \DateTime('2018-03-02 12:30:00'))>
     comments: "#bob"
     status: "CANCELLED"
+  task_7:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-02-02 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-02-02 12:30:00'))>
+    comments: "#bob"
+    status: "DONE"

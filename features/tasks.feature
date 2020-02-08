@@ -88,7 +88,7 @@ Feature: Tasks
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "@id":"/api/task_events/2",
+            "@id":"@string@.startsWith('/api/task_events')",
             "@type":"TaskEvent",
             "id":@integer@,
             "task":"/api/tasks/2",
@@ -98,7 +98,7 @@ Feature: Tasks
             "createdAt":"@string@.isDateTime()"
           },
           {
-            "@id":"/api/task_events/7",
+            "@id":"@string@.startsWith('/api/task_events')",
             "@type":"TaskEvent",
             "id":@integer@,
             "task":"/api/tasks/2",
@@ -225,6 +225,35 @@ Feature: Tasks
         "previous":null,
         "group":null,
         "tags":@array@
+      }
+      """
+
+  Scenario: Task is already completed
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/7/done" with body:
+      """
+      {}
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Error",
+        "@type":"hydra:Error",
+        "hydra:title":"An error occurred",
+        "hydra:description":"Task #7 is already completed",
+        "trace":@array@
       }
       """
 

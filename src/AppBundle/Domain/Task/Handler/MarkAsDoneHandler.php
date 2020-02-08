@@ -6,6 +6,7 @@ use AppBundle\Domain\Task\Command\MarkAsDone;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
+use AppBundle\Exception\TaskAlreadyCompletedException;
 use AppBundle\Exception\TaskCancelledException;
 use SimpleBus\Message\Recorder\RecordsMessages;
 
@@ -23,6 +24,11 @@ class MarkAsDoneHandler
         $task = $command->getTask();
 
         // TODO Use StateMachine?
+
+        if ($task->isCompleted()) {
+            throw new TaskAlreadyCompletedException(sprintf('Task #%d is already completed', $task->getId()));
+        }
+
         if ($task->isCancelled()) {
             throw new TaskCancelledException(sprintf('Task #%d is cancelled', $task->getId()));
         }
