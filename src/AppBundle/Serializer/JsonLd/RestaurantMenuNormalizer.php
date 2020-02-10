@@ -32,6 +32,17 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
         $this->variantResolver = $variantResolver;
     }
 
+    private function normalizeRange($range)
+    {
+        return implode('', [
+            '[',
+            $range->getLower(),
+            ',',
+            $range->isUpperInfinite() ? '' : $range->getUpper(),
+            ']',
+        ]);
+    }
+
     private function normalizeOptions($options)
     {
         $data = [];
@@ -40,7 +51,7 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
 
             $option->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-            $data[] = [
+            $payload = [
                 '@type' => 'MenuSection',
                 'name' => $option->getName(),
                 'identifier' => $option->getCode(),
@@ -48,6 +59,12 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                 'additional' => $option->isAdditional(),
                 'hasMenuItem' => $this->normalizeOptionValues($option, $option->getValues()),
             ];
+
+            if (null !== $option->getValuesRange()) {
+                $payload['valuesRange'] = $this->normalizeRange($option->getValuesRange());
+            }
+
+            $data[] = $payload;
         }
 
         return $data;
