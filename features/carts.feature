@@ -199,7 +199,7 @@ Feature: Carts
       }
       """
 
-  Scenario: Add items to cart
+  Scenario: Add items to cart (legacy options payload)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | products.yml        |
@@ -224,6 +224,82 @@ Feature: Carts
         "quantity": 2,
         "options": [
           "PIZZA_TOPPING_PEPPERONI"
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders/1",
+        "@type":"http://schema.org/Order",
+        "customer":"/api/users/1",
+        "restaurant":"/api/restaurants/1",
+        "shippingAddress":null,
+        "shippedAt":null,
+        "reusablePackagingEnabled":false,
+        "notes":null,
+        "items":[
+          {
+            "id":@integer@,
+            "quantity":2,
+            "unitPrice":900,
+            "total":1800,
+            "name":"Pizza",
+            "adjustments":{
+              "menu_item_modifier":[
+                {
+                  "id":@integer@,
+                  "label":"1 × Pepperoni",
+                  "amount":0
+                }
+              ]
+            }
+          }
+        ],
+        "itemsTotal":1800,
+        "total":2150,
+        "adjustments":{
+          "delivery":[
+            {
+              "id":@integer@,
+              "label":"Livraison",
+              "amount":350
+            }
+          ],
+          "delivery_promotion":[],
+          "reusable_packaging":[]
+        }
+      }
+      """
+
+  Scenario: Add items to cart
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the setting "default_tax_category" has value "tva_livraison"
+    Given the user "bob" has created a cart at restaurant with id "1"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/orders/1/items" with body:
+      """
+      {
+        "product": "PIZZA",
+        "quantity": 2,
+        "options": [
+          {"code": "PIZZA_TOPPING_PEPPERONI", "quantity": 1}
         ]
       }
       """
@@ -833,7 +909,6 @@ Feature: Carts
       """
       {}
       """
-    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -884,6 +959,5 @@ Feature: Carts
       """
       {}
       """
-    Then print last response
     Then the response status code should be 403
     And the response should be in JSON

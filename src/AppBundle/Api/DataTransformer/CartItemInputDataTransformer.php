@@ -50,9 +50,23 @@ class CartItemInputDataTransformer implements DataTransformerInterface
                 $productVariant = $this->variantResolver->getVariant($product);
             } else {
                 $optionValues = new \SplObjectStorage();
-                foreach ($data->options as $optionValueCode) {
-                    $optionValue = $this->productOptionValueRepository->findOneByCode($optionValueCode);
-                    $optionValues->attach($optionValue);
+                foreach ($data->options as $option) {
+                    // Legacy
+                    if (is_string($option)) {
+                        $optionValue = $this->productOptionValueRepository->findOneByCode($option);
+                        $optionValues->attach($optionValue);
+                    } else {
+                        $optionValue = $this->productOptionValueRepository->findOneByCode($option['code']);
+                        if ($optionValue && $product->hasOptionValue($optionValue)) {
+                            $quantity = isset($option['quantity']) ? (int) $option['quantity'] : 0;
+                            if (!$optionValue->getOption()->isAdditional() || null === $optionValue->getOption()->getValuesRange()) {
+                                $quantity = 1;
+                            }
+                            if ($quantity > 0) {
+                                $optionValues->attach($optionValue, $quantity);
+                            }
+                        }
+                    }
                 }
                 $productVariant = $this->variantResolver->getVariantForOptionValues($product, $optionValues);
             }

@@ -67,7 +67,7 @@ Feature: Orders
     And the user "sarah" sends a "GET" request to "/api/orders/1"
     Then the response status code should be 200
 
-  Scenario: Create order
+  Scenario: Create order (legacy options payload)
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
@@ -103,6 +103,121 @@ Feature: Orders
           "quantity": 1,
           "options": [
             "PIZZA_TOPPING_PEPPERONI"
+          ]
+        }, {
+          "product": "HAMBURGER",
+          "quantity": 2
+        }]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/Order",
+      "@id":"@string@.startsWith('/api/orders')",
+      "@type":"http://schema.org/Order",
+      "customer":@...@,
+      "restaurant":{
+        "@id":"/api/restaurants/1",
+        "@type":"http://schema.org/Restaurant",
+        "name":"Nodaiwa",
+        "image":@string@,
+        "address":{
+          "@id":"@string@.startsWith('/api/addresses')",
+          "@type":"http://schema.org/Place",
+          "geo":{
+            "latitude":@double@,
+            "longitude":@double@
+          },
+          "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+          "name":null,
+          "telephone": null
+        },
+        "telephone": null
+      },
+      "shippingAddress":{
+        "@id":"@string@.startsWith('/api/addresses')",
+        "@type":"http://schema.org/Place",
+        "geo":{
+          "latitude":48.855799,
+          "longitude":2.359207
+        },
+        "streetAddress":"1, rue de Rivoli",
+        "name":null,
+        "telephone": null
+      },
+      "items":[
+        {
+          "id":@integer@,
+          "quantity":@integer@,
+          "unitPrice":@integer@,
+          "total":@integer@,
+          "name":@string@,
+          "adjustments":@...@
+        },
+        {
+          "id":@integer@,
+          "quantity":@integer@,
+          "unitPrice":@integer@,
+          "total":@integer@,
+          "name":@string@,
+          "adjustments":@...@
+        }
+      ],
+      "adjustments":@...@,
+      "id":@integer@,
+      "number":null,
+      "total":@integer@,
+      "itemsTotal":@integer@,
+      "taxTotal":@integer@,
+      "state":"cart",
+      "notes": null,
+      "createdAt":@string@,
+      "shippedAt":"@string@.startsWith('2017-09-02T12:30:00')",
+      "preparationExpectedAt":null,
+      "pickupExpectedAt":null,
+      "reusablePackagingEnabled": false
+    }
+    """
+
+  Scenario: Create order
+    Given the current time is "2017-09-02 11:00:00"
+    And the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the setting "brand_name" has value "CoopCycle"
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+      | givenName  | Bob               |
+      | familyName | Doe               |
+    And the user "bob" has delivery address:
+      | streetAddress | 1, rue de Rivoli    |
+      | postalCode    | 75004               |
+      | geo           | 48.855799, 2.359207 |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/orders" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/1",
+        "shippingAddress": "/api/addresses/4",
+        "shippedAt": "2017-09-02 12:30:00",
+        "items": [{
+          "product": "PIZZA",
+          "quantity": 1,
+          "options": [
+            {"code": "PIZZA_TOPPING_PEPPERONI", "quantity": 1}
           ]
         }, {
           "product": "HAMBURGER",
