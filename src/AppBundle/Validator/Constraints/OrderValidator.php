@@ -43,6 +43,12 @@ class OrderValidator extends ConstraintValidator
     private function validateRestaurant($object, Constraint $constraint)
     {
         $order = $object;
+        $isNew = $order->getId() === null || $order->getState() === OrderInterface::STATE_CART;
+
+        if (!$isNew) {
+            return;
+        }
+
         $restaurant = $order->getRestaurant();
 
         if (null !== $order->getShippedAt() && !$restaurant->isOpen($order->getShippedAt())) {
