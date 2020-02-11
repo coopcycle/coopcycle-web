@@ -325,15 +325,19 @@ services:
     tags:
       - { name: sylius.promotion_coupon_eligibility_checker }
 
-  sylius.promotion.promotion_rule_checker.is_customer:
-    class: AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker
-    arguments:
-      - "@security.token_storage"
+  AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker:
     tags:
-        - name: sylius.promotion_rule_checker
-          type: is_customer
-          label: 'Is customer'
-          form_type: AppBundle\Form\Sylius\Promotion\Rule\IsCustomerConfigurationType
+      - name: sylius.promotion_rule_checker
+        type: is_customer
+        label: 'Is customer'
+        form_type: AppBundle\Form\Sylius\Promotion\Rule\IsCustomerConfigurationType
+
+  AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker:
+    tags:
+      - name: sylius.promotion_rule_checker
+        type: is_restaurant
+        label: 'Is restaurant'
+        form_type: AppBundle\Form\Sylius\Promotion\Rule\IsRestaurantConfigurationType
 
   coopcycle.sylius.factory.product_variant:
     class: AppBundle\Sylius\Product\ProductVariantFactory

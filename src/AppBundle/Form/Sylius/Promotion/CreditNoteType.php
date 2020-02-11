@@ -2,6 +2,8 @@
 
 namespace AppBundle\Form\Sylius\Promotion;
 
+use AppBundle\Entity\Restaurant;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -28,6 +30,12 @@ class CreditNoteType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'form.credit_note.name.label',
                 'help' => 'form.credit_note.name.help'
+            ])
+            ->add('restaurant', EntityType::class, [
+                'class' => Restaurant::class,
+                'choice_label' => 'name',
+                'help' => 'form.credit_note.restaurant.help',
+                'required' => false,
             ]);
     }
 }

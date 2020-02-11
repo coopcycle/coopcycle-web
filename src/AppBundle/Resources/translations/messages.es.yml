@@ -467,6 +467,7 @@ form.credit_note.user_search.help: El descuento solo será utilizable por este u
 form.credit_note.amount.label: Suma
 form.credit_note.name.label: Nombre
 form.credit_note.name.help: El nombre del descuento que se mostrará en la cesta
+form.credit_note.restaurant.help: El descuento sólo se podrá utilizar para pedir en este restaurante. Deje vacio para aplicar a todos los restaurantes.
 form.embed_settings.with_vehicle.label: Añadir la posibilidad de elegir el tipo de
   vehículo
 form.delivery_embed.name.label: Nombre

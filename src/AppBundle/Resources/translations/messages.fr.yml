@@ -551,6 +551,7 @@ form.credit_note.user_search.help: La réduction ne sera utilisable que par cet 
 form.credit_note.amount.label: Montant
 form.credit_note.name.label: Nom
 form.credit_note.name.help: Le nom de la réduction qui sera affiché dans le panier
+form.credit_note.restaurant.help: La réduction ne sera utilisable qu'en cas de commande dans ce restaurant. Laissez vide pour appliquer à tous les restaurants.
 form.embed_settings.with_vehicle.label: Ajouter le choix du type de véhicule
 form.embed_settings.with_weight.label: Demander le poids de la marchandise
 form.resend_confirmation_email.submit.label: Renvoyer l'email

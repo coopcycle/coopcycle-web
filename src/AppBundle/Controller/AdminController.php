@@ -53,6 +53,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
+use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
 use AppBundle\Utils\MessageLoggingTwigSwiftMailer;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -1312,6 +1313,17 @@ class AdminController extends Controller
             ]);
 
             $promotion->addRule($promotionRule);
+
+            if (isset($data['restaurant']) && $data['restaurant'] instanceof Restaurant) {
+
+                $isRestaurantRule = $this->get('sylius.factory.promotion_rule')->createNew();
+                $isRestaurantRule->setType(IsRestaurantRuleChecker::TYPE);
+                $isRestaurantRule->setConfiguration([
+                    'restaurant_id' => $data['restaurant']->getId()
+                ]);
+
+                $promotion->addRule($isRestaurantRule);
+            }
 
             do {
                 $hash = bin2hex(random_bytes(20));

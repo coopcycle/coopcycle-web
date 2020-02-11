@@ -638,6 +638,7 @@ form.credit_note.amount.label: Amount
 form.credit_note.name.label: Name
 form.credit_note.name.help: The name of the promotion that will be displayed in the
   cart
+form.credit_note.restaurant.help: The promotion will only be usable when ordering at this restaurant. Leave blank to apply to all restaurants.
 form.resend_confirmation_email.submit.label: Send email again
 form.embed_settings.with_vehicle.label: Add vehicle choice
 form.embed_settings.with_weight.label: Ask for weight of goods
