@@ -3147,16 +3147,16 @@
         },
         {
             "name": "geo6/geocoder-php-addok-provider",
-            "version": "v1.1.1",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/geo6/geocoder-php-addok-provider.git",
-                "reference": "69de6ef48c07ccac85bacbbb77e6154db0a8326c"
+                "reference": "f4434f2d9d32542b7dbc51565da119f2f6786d3f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/geo6/geocoder-php-addok-provider/zipball/69de6ef48c07ccac85bacbbb77e6154db0a8326c",
-                "reference": "69de6ef48c07ccac85bacbbb77e6154db0a8326c",
+                "url": "https://api.github.com/repos/geo6/geocoder-php-addok-provider/zipball/f4434f2d9d32542b7dbc51565da119f2f6786d3f",
+                "reference": "f4434f2d9d32542b7dbc51565da119f2f6786d3f",
                 "shasum": ""
             },
             "require": {
@@ -3193,7 +3193,7 @@
                 }
             ],
             "description": "Geocoder addok adapter",
-            "time": "2020-02-08T07:37:44+00:00"
+            "time": "2020-02-09T15:42:11+00:00"
         },
         {
             "name": "geocoder-php/chain-provider",
