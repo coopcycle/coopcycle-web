@@ -147,8 +147,8 @@ restaurant.form.enabled.tooltip: "When disabled, a restaurant is not visible on 
   \ by visitors.\n"
 restaurant.form.allow_stripe_connect.label: Allow the restaurant to manage Stripe
   account on its own
-restaurant.form.temporaryClosingRule: If you wish to close temporarily your restaurant,
-  follow this link
+restaurant.form.temporaryClosingRule: Click here to temporarily disable orders to
+  your restaurant.
 restaurant.form.deposit_refund_enabled.label: Enable deposit-refund system
 restaurant.form.accessPlanning: Access planning
 restaurant.form.createRestaurant: Create restaurant
@@ -571,7 +571,8 @@ form.credit_note.amount.label: Amount
 form.credit_note.name.label: Name
 form.credit_note.name.help: The name of the promotion that will be displayed in the
   cart
-form.credit_note.restaurant.help: The promotion will only be usable when ordering at this restaurant. Leave blank to apply to all restaurants.
+form.credit_note.restaurant.help: The promotion will only be usable when ordering
+  at this restaurant. Leave blank to apply to all restaurants.
 form.resend_confirmation_email.submit.label: Send email again
 form.embed_settings.with_vehicle.label: Add vehicle choice
 form.embed_settings.with_weight.label: Ask for weight of goods
