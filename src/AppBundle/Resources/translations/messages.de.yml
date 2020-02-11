@@ -56,7 +56,7 @@ form.delivery.vehicle.VEHICLE_BIKE: Fahrrad
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Lastenrad
 form.delivery.pickup.label: Abholadresse
 form.delivery.dropoff.label: Lieferung
-form.delivery.weight.label: Gewicht (g)
+form.delivery.weight.label: Gewicht
 form.delivery.pickup.doneBefore.label: Abholzeit
 form.delivery.price.label: Preis
 form.address.addressLocality.label: Stadt
@@ -467,3 +467,59 @@ form.user.quotes_allowed.label: Erlaube diesem Kunden, ein Angebot anzufordern
 receipt.line_item.total_products: Gesamtbetrag
 receipt.footer_item.total_excl_tax: Nettobetrag
 receipt.footer_item.total_incl_tax: Gesamtbetrag
+order.list.generate_receipt: Erstellen
+order.public_link: Teilbarer Link
+order.total_excluding_tax: Gesamt (zzgl. MwSt.)
+adminDashboard.users.invite: Benutzer*in einladen
+form.product.confirm.label: Änderungen bestätigen
+form.product.allergens.help: Enthält dieses Produkt die folgenden Allergene?
+form.product.allergens.label: Allergene
+form.product.enabled.label: Aktiviert
+form.product.taxCategory.label: Steuer
+form.product.description.label: Beschreibung
+form.maintenance.message.label: Nachricht
+pledge.reject: Ablehnen
+pledge.accept: Annehmen
+restaurant.suggest.has_voted: Du hast für das  Restaurant schon gestimmt!
+form.task.recipient.help: Gib bitte den Namen der Ansprechperson an.
+receipt.emitter_details: Bestellung beim Restaurant  <strong>%restaurant_name%</strong>
+receipt.total: Gesamt (Inkl. MwSt.)
+receipt.line_item.total: Gesamt
+adminDashboard.statistics: Statistiken
+notifications.empty: Keine Benachrichtigung
+index.view_all_restaurants: Alle Restaurants
+index.our_restaurants: Unsere Restaurants
+index.banner: Dein Lieblingsessen zu dir nach Hause
+stores.addresses: Adressen
+stores.deliveries.heading: 'Lieferung #%delivery_id% - %delivery_distance%'
+stores.deliveries: Lieferungen
+stores.api_keys: API Schlüssel
+stores.pricing_rule_set: Preisermittlung
+stores.users: Benutzer*in
+stores.createNewDelivery: Neue Lieferung anlegen
+stores.settings: Einstellungen
+user.profile.givenName: Vorname
+user.profile.familyName: Nachname
+roles.ROLE_USER: Benutzer*in
+product_option.strategy.option: Fester Preis unabhängig von der Wahl
+product_option.strategy.free: Frei
+promotion_coupon.used.label: Anzahl der Vewendungen
+form.new_order.variant_price.label: Preis
+form.new_order.variant_name.label: Name des Produkts
+form.reusable_packaging.price.label: Preis
+form.reusable_packaging.is_tracked.label: Tracking aktiviert
+form.reusable_packaging.name.label: Name
+form.stripe_payment.cardholder_name.label: Name des Karteninhabers
+form.package.volume_units.label: Volumeneinheiten
+form.package.name.label: Name
+form.package_set.packages.label: Verpackungen
+form.package_set.name.label: Name
+form.time_slot_choice.end_time.label: Endzeit
+form.time_slot_choice.start_time.label: Startzeit
+form.time_slot.choices.label: Auswahl
+form.settings.company_logo.label: Logo der Firma
+form.delivery.weight.help: Bitte das Gewicht in Gramm eingeben (1Kg=1000g)
+form.task.recipient.label: Kontakt
+form.task.telephone.label: Telefon
+form.task.address.label: Adresse
+localBusiness.form.enabled: Aktiviert
