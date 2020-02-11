@@ -29,3 +29,4 @@ parameters:
         - '#Call to an undefined method [a-zA-Z\\]+::accessControl\(\)#'
         - '#Comparison operation "<" between 0\|1 and 10 is always true#'
         - '#Call to an undefined method League\\Geotools\\Distance\\DistanceInterface::flat\(\)#'
+        - '#Call to an undefined method Sylius\\Component\\Promotion\\Model\\PromotionSubjectInterface::getRestaurant\(\)#'
