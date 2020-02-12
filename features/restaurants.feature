@@ -41,7 +41,8 @@ Feature: Manage restaurants
           "servesCuisine":@array@,
           "enabled":true,
           "address":@...@,
-          "name":"Café Barjot"
+          "name":"Café Barjot",
+          "description":null
         }
       ],
       "hydra:totalItems":1,
@@ -78,6 +79,7 @@ Feature: Manage restaurants
       "servesCuisine":@array@,
       "enabled":true,
       "name":"Nodaiwa",
+      "description": null,
       "state": "normal",
       "address":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -306,6 +308,7 @@ Feature: Manage restaurants
         "@type":"http://schema.org/Restaurant",
         "id":@integer@,
         "name":@string@,
+        "description":null,
         "servesCuisine":@array@,
         "enabled":true,
         "address":@...@,
@@ -387,6 +390,7 @@ Feature: Manage restaurants
         "@type":"http://schema.org/Restaurant",
         "id":1,
         "name":"Nodaiwa",
+        "description": null,
         "servesCuisine":@array@,
         "enabled":true,
         "address":@...@,
