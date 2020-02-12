@@ -111,6 +111,9 @@ class Restaurant extends FoodEstablishment
      */
     protected $name;
 
+    /**
+     * @Groups({"restaurant"})
+     */
     protected $description;
 
     /**
