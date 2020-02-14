@@ -1,7 +1,5 @@
 registration.email.subject: |
   Email confirmation
-# Use rel="notrack" to make sure Mailjet does not rewrite links.
-# This is needed for deep links to work.
 registration.email.message: |
   <h2>Welcome to %brand_name%, %username%</h2>
   You’re receiving this message because you recently signed up for a %brand_name% account.
@@ -13,37 +11,28 @@ registration.email.textMessage: |
   Welcome to %brand_name%, %username%,\n\n
   You’re receiving this message because you recently signed up for a %brand_name% account.\n
   To confirm your email, please click the following link: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
-resetting.email.message:
-  <h2>Hello %username%</h2>
-  To reset your password, please click the button below.
+resetting.email.message: <h2>Hello %username%</h2> To reset your password, please
+  click the button below.
 resetting.email.reset: Reset password
-
 order.view: View order
-
 order.public_url: |
   To track the status of your order, <a href="%order.public_url%">click here</a>.
 order.foodtech.accepted: |
   The cook begins to prepare your order.
   <br>
   A courier arrives to bring it to you!
-order.foodtech.cancelled: |
-  The restaurant is not able to prepare your order %order.number%.
-  <br>
-  Your account has not been charged.
-
+order.foodtech.cancelled: "The restaurant is unable to prepare your order %order.number%.\n\
+  <br>\nYour account has not been charged.\n"
 admin.order.created.subject: New order to be confirmed
 admin.order.created.body: |
   Hello,
   <br>
   A new order has been created.
-
 admin.order_foodtech.created.body: |
   Hello,
   <br>
   A new order has been created for the restaurant <strong>%restaurant.name%</strong>.
-
-admin.pledge.subject:  A new suggestion has been sent !
-
+admin.pledge.subject: A new suggestion has been sent !
 admin.send_invitation.subject: Invitation to CoopCycle !
 admin.send_invitation.body: |
   Hello %username%,
@@ -54,7 +43,6 @@ admin.send_invitation.body: |
   <br>
   The CoopCycle Team.
 admin.send_invitation.create_password: Create my password
-
 admin.pledge.body: |
   Hello,
   <br>
@@ -63,7 +51,6 @@ admin.pledge.body: |
   Thank you,
   <br>
   The CoopCycle Team.
-
 user.pledge.subject: Your suggestion is now on CoopCycle !
 user.pledge.body: |
   Hello,
@@ -73,33 +60,22 @@ user.pledge.body: |
   Gratefully,
   <br>
   Team CoopCycle.
-
 owner.order.created.subject: New order to confirm
 owner.order.created.body: |
   Hi,
   <br>
   A new order has been placed for your restaurant <strong>%restaurant.name%</strong>.
-
-order.created.subject: Confirmation of your order %order.number%
-order.created.body: |
-  Hello,
-  <br>
-  We have registered your order.
-  <br>
-  We will check your order as soon as possible and we will contact you when it is confirmed.
-
-order.accepted.subject: Your order %order.number% has been accepted
-order.accepted.body.intro: |
-  Hello,
-  <br>
-  Your order is confirmed.
-
+order.created.subject: Order %order.number% has been received
+order.created.body: "Hello,\n<br>\nWe have received your order.\n<br>\nWe will check\
+  \ your order as soon as possible and send you an email when it is confirmed.\n"
+order.accepted.subject: Order %order.number% has been confirmed for delivery
+order.accepted.body.intro: "Hello,\n<br>\nYour order is confirmed, it will be delivered\
+  \ as scheduled.\n"
 order.cancelled.subject: Your order %order.number% has been cancelled
 order.cancelled.body.intro: |
   Hello,
   <br>
   We are sorry, but your order has been cancelled.
-
 order.delayed.subject: Your order %order.number% has been delayed
 order.delayed.body: |
   Hello,
@@ -107,20 +83,17 @@ order.delayed.body: |
   We are sorry, but your order will be delayed by %delay% minutes.
   <br>
   We apologize for the inconvenience.
-
-task.done.subject: "Task #%task.id% completed"
+task.done.subject: 'Task #%task.id% completed'
 task.done.body: |
   Hello,
   <br>
   Task #%task.id% has been completed.
-
-task.failed.subject: "Task #%task.id% could not be completed"
+task.failed.subject: 'Task #%task.id% could not be completed'
 task.failed.body: |
   Hello,
   <br>
   Task #%task.id% could not be completed.
-
-order.payment.subject: "Payment of your order %order.number%"
+order.payment.subject: Payment of your order %order.number%
 order.payment.body: |
   Hello,
   <br>
