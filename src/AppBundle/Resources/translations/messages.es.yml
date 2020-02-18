@@ -467,7 +467,8 @@ form.credit_note.user_search.help: El descuento solo será utilizable por este u
 form.credit_note.amount.label: Suma
 form.credit_note.name.label: Nombre
 form.credit_note.name.help: El nombre del descuento que se mostrará en la cesta
-form.credit_note.restaurant.help: El descuento sólo se podrá utilizar para pedir en este restaurante. Deje vacio para aplicar a todos los restaurantes.
+form.credit_note.restaurant.help: El descuento sólo se podrá utilizar para pedir en
+  este restaurante. Deje vacio para aplicar a todos los restaurantes.
 form.embed_settings.with_vehicle.label: Añadir la posibilidad de elegir el tipo de
   vehículo
 form.delivery_embed.name.label: Nombre
@@ -515,7 +516,7 @@ admin.settings.missing_mandatory_settings: "Algunos ajustes obligatorios no han 
   \ configurados.\nVes a la <a href=\"%settings_url%\">página de ajustes</a> para\
   \ configurarlos.\n"
 index.map.tip: Usa el mapa para encontrar restaurantes
-index.banner: Platos deliciosos del restaurante a tu casa
+index.banner: Platos deliciosos del restaurante a tu casa.
 index.our_restaurants: Nuestros restaurantes
 index.view_all_restaurants: Ver todos los restaurantes
 notifications.empty: Ninguna notificación
@@ -717,13 +718,14 @@ order_item.adjustment_type.reusable_packaging: '%quantity% × paquete(s)'
 order.adjustment_type.reusable_packaging: Embalaje
 order.reusable_packaging.alert: Esta orden debe estar empacada en un paquete reutilizable
 form.user.quotes_allowed.label: Permitir a este cliente solicitar una cita
-restaurant.form.quotes_allowed.label: 'Este restaurante tambien accepta pedidos en citas (ej: catering)'
+restaurant.form.quotes_allowed.label: 'Este restaurante tambien accepta pedidos en
+  citas (ej: catering)'
 restaurant.form.exclusive.label: Este restaurante es exclusivo
 restaurant.form.noPricingRule: Ninguna tarificación ha sido implementada, <a href="%editPricingRule%">haga
   clic aquí para crear una</a>.
-restaurant.quotes_disclaimer.not_authenticated: Éste restaurante tabmien accepta
-  pedidos en cita. Si usted es un cliente referenciado, <a href="%login%">Conéctese
-  </a> para crear una cita. <a href="%contact_us%">Contáctenos</a> para más información.
+restaurant.quotes_disclaimer.not_authenticated: Éste restaurante tabmien accepta pedidos
+  en cita. Si usted es un cliente referenciado, <a href="%login%">Conéctese </a> para
+  crear una cita. <a href="%contact_us%">Contáctenos</a> para más información.
 receipt.title: 'Recibo del pedido #%number%'
 receipt.line_item.name: Producto
 receipt.line_item.unit_price: Precio unitario
