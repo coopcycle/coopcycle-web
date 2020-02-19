@@ -60,7 +60,16 @@ class RemotePushNotificationManager
 
         // TODO Make sure data are key/value pairs as strings
         if (!empty($data)) {
-            $payload['data'] = $data;
+
+            $dataFlat = [];
+            foreach ($data as $key => $value) {
+                if (!is_string($value)) {
+                    $value = json_encode($value);
+                }
+                $dataFlat[$key] = $value;
+            }
+
+            $payload['data'] = $dataFlat;
         }
 
         $message = CloudMessage::fromArray($payload);

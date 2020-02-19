@@ -259,9 +259,13 @@ class RemotePushNotificationManagerTest extends TestCase
 
                 $this->assertArrayHasKey('notification', $data);
                 $this->assertArrayHasKey('android', $data);
+                $this->assertArrayHasKey('data', $data);
 
                 $this->assertEquals('Hello world!', $data['notification']['title']);
                 $this->assertEquals('Hello world!', $data['notification']['body']);
+
+                $this->assertArrayHasKey('event', $data['data']);
+                $this->assertEquals('{"name":"foo"}', $data['data']['event']);
 
                 return true;
             }), [ $token2, $token3 ])
@@ -271,6 +275,6 @@ class RemotePushNotificationManagerTest extends TestCase
             $user1,
             $user2,
             $user3
-        ]);
+        ], ['event' => [ 'name' => 'foo' ]]);
     }
 }

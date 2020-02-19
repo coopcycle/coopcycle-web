@@ -224,10 +224,10 @@ class TaskSubscriberTest extends TestCase
                 'Tasks for 2019-11-21 changed!',
                 [ 'bob' ],
                 [
-                    'event' => json_encode([
+                    'event' => [
                         'name' => 'tasks:changed',
                         'data' => ['date' => '2019-11-21']
-                    ])
+                    ]
                 ]
             ))
             ->shouldHaveBeenCalledTimes(1);
