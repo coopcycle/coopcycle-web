@@ -1,10 +1,14 @@
 import Sortable from 'sortablejs'
 
 const childrenContainer = document.querySelector('#menu_editor_children')
+const source = document.querySelector('[data-draggable-source]')
 
-let productContainers = [
-  document.querySelector('[data-draggable-source]')
-]
+let productContainers = []
+
+if (source) {
+  productContainers.push(source)
+}
+
 productContainers = productContainers.concat(
   [].slice.call(document.querySelectorAll('[data-draggable-target]'))
 )
