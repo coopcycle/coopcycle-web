@@ -64,6 +64,7 @@ class AppKernel extends Kernel
             new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             new M6Web\Bundle\DaemonBundle\M6WebDaemonBundle(),
             new Oneup\FlysystemBundle\OneupFlysystemBundle(),
+            new Kreait\Firebase\Symfony\Bundle\FirebaseBundle(),
             new AppBundle\AppBundle(),
         ];
 

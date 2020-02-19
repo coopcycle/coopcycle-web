@@ -554,10 +554,8 @@ services:
 
   AppBundle\Service\RemotePushNotificationManager:
     arguments:
-      - "@csa_guzzle.client.fcm"
-      - "@apns_php.push"
-      - "%apns_certificate_pass_phrase%"
-      - "%fcm_server_api_key%"
+      $apns: "@apns_php.push"
+      $apnsCertificatePassPhrase: "%apns_certificate_pass_phrase%"
 
   AppBundle\Service\Geocoder:
     arguments:

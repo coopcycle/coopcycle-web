@@ -402,10 +402,6 @@ csa_guzzle:
             config:
                 base_uri: "https://maps.googleapis.com"
                 lazy: true
-        fcm:
-            config:
-                base_uri: "https://fcm.googleapis.com"
-                lazy: true
         browserless:
             config:
                 base_uri: "%browserless_base_uri%"

@@ -4,23 +4,22 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\RemotePushToken;
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Psr7\Request;
+use Kreait\Firebase\Factory as FirebaseFactory;
+// use Kreait\Firebase\Messaging as FirebaseMessaging;
+use Kreait\Firebase\Exception\ServiceAccountDiscoveryFailed;
+use Kreait\Firebase\Messaging\CloudMessage;
 
 class RemotePushNotificationManager
 {
-    private $httpClient;
-    private $fcmServerApiKey;
+    private $firebaseFactory;
     private $apns;
 
     public function __construct(
-        HttpClient $httpClient,
+        FirebaseFactory $firebaseFactory,
         \ApnsPHP_Push $apns,
-        $apnsCertificatePassPhrase,
-        $fcmServerApiKey)
+        string $apnsCertificatePassPhrase)
     {
-        $this->httpClient = $httpClient;
-        $this->fcmServerApiKey = $fcmServerApiKey;
+        $this->firebaseFactory = $firebaseFactory;
 
         $apns->setProviderCertificatePassphrase($apnsCertificatePassPhrase);
         $this->apns = $apns;
@@ -35,39 +34,49 @@ class RemotePushNotificationManager
             return;
         }
 
-        $payload = [
-            'priority' => 'high',
-        ];
-
-        if (count($tokens) === 1) {
-            $payload['to'] = current($tokens)->getToken();
-        } else {
-            $registrationIds = array_map(function (RemotePushToken $token) {
-                return $token->getToken();
-            }, $tokens);
-
-            // Make sure to have a zero-indexed array
-            $payload['registration_ids'] = array_values($registrationIds);
+        try {
+            $firebaseMessaging = $this->firebaseFactory->createMessaging();
+        } catch (ServiceAccountDiscoveryFailed $e) {
+            // TODO Log error
+            return;
         }
 
-        $payload['notification']['body'] = $message;
-        $payload['notification']['sound'] = 'default';
 
-        // This parameter specifies the custom key-value pairs of the message's payload.
-        // For example, with data:{"score":"3x1"}:
-        // The key should not be a reserved word ("from" or any word starting with "google" or "gcm").
-        // Do not use any of the words defined in this table (such as collapse_key).
-        // Values in string types are recommended.
-        // You have to convert values in objects or other non-string data types (e.g., integers or booleans) to string.
-        $payload['data'] = $data;
-
-        $headers = [
-            'Authorization' => sprintf('key=%s', $this->fcmServerApiKey),
-            'Content-Type' => 'application/json'
+        // @see https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
+        // @see https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels
+        $payload = [
+            'android' => [
+                'priority' => 'high',
+                'notification' => [
+                    'sound' => 'default',
+                    'channel_id' => 'coopcycle_important',
+                ],
+            ],
+            'notification' => [
+                'title' => $message,
+                'body' => $message,
+            ],
         ];
 
-        $request = new Request('POST', '/fcm/send', $headers, $body = json_encode($payload));
-        $response = $this->httpClient->send($request);
+        // TODO Make sure data are key/value pairs as strings
+        if (!empty($data)) {
+            $payload['data'] = $data;
+        }
+
+        $message = CloudMessage::fromArray($payload);
+
+        $deviceTokens = array_map(function (RemotePushToken $token) {
+            return $token->getToken();
+        }, $tokens);
+
+        // Make sure to have a zero-indexed array
+        $deviceTokens = array_values($deviceTokens);
+
+        try {
+            $firebaseMessaging->sendMulticast($message, $deviceTokens);
+        } catch (\Exception $e) {
+            // TODO Log error
+        }
     }
 
     private function apns($message, array $tokens, $data = [])
