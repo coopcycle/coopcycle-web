@@ -63,11 +63,9 @@
                 <a href="#"
                 data-toggle="modal"
                 data-target="#editTaxonModal"
-                data-edit-taxon-id="{{ child.vars.value.id }}">{{ child.vars.value.name }}</a> 
-                <a href="#"
-                data-toggle="modal"
-                data-target="#editTaxonModal"
-                data-edit-taxon-id="{{ child.vars.value.id }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                data-edit-taxon-id="{{ child.vars.value.id }}">
+                  <span>{{ child.vars.value.name }}<span>  <i class="fa fa-pencil" aria-hidden="true"></i>
+                </a>
               {% set delete_section_params = {
                 restaurantId: restaurant.id,
                 menuId: menu.id,

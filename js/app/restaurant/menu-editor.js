@@ -76,7 +76,7 @@ $('#editTaxonModal form').on('submit', function(e) {
   const taxonId = parseInt($(this).find('input[type="hidden"]').val(), 10)
   const taxonName = $(this).find('input[type="text"]').val()
 
-  $(`[data-edit-taxon-id="${taxonId}"]`).text(taxonName)
+  $(`[data-edit-taxon-id="${taxonId}"] > span`).text(taxonName)
 
   const input = childrenContainer
     .querySelector(`[data-taxon-id="${taxonId}"]`)
