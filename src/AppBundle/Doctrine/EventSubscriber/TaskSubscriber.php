@@ -138,12 +138,12 @@ class TaskSubscriber implements EventSubscriber
                 }, $users);
 
                 $data = [
-                    'event' => [
+                    'event' => json_encode([
                         'name' => 'tasks:changed',
                         'data' => [
                             'date' => $date->format('Y-m-d')
                         ]
-                    ]
+                    ])
                 ];
 
                 // TODO Translate

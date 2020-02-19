@@ -42,14 +42,14 @@ class SendRemotePushNotification
                 $restaurantNormalized = $this->normalizeRestaurant($order->getRestaurant());
 
                 $data = [
-                    'event' => [
+                    'event' => json_encode([
                         'name' => 'order:created',
                         'data' => [
                             'restaurant' => $restaurantNormalized,
                             'date' => $order->getShippedAt()->format('Y-m-d'),
                             'order' => $this->iriConverter->getIriFromItem($order),
                         ]
-                    ]
+                    ]),
                 ];
 
                 $message = $this->translator->trans('notifications.restaurant.new_order');
