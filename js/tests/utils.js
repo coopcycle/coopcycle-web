@@ -16,9 +16,7 @@ var pgCleaner = new DatabaseCleaner('postgresql', {
 });
 var redisCleaner = new DatabaseCleaner('redis');
 
-function TestUtils(config) {
-
-  this.config = config;
+function TestUtils() {
 
   let port = 5432
   if (process.env.COOPCYCLE_DB_PORT) {
@@ -37,12 +35,11 @@ function TestUtils(config) {
     url: process.env.COOPCYCLE_REDIS_DSN
   });
 
-  var jwtConfig = config.lexik_jwt_authentication;
-  var privateKey = fs.readFileSync(jwtConfig.secret_key);
+  var privateKey = fs.readFileSync(__dirname + '/../../var/jwt/private.pem');
 
   this.cert = {
     key: privateKey,
-    passphrase: jwtConfig.pass_phrase
+    passphrase: process.env.COOPCYCLE_PRIVATE_KEY_PASSPHRASE
   };
 
   var sequelize = new Sequelize(
