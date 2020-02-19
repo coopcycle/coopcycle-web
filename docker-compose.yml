@@ -161,6 +161,12 @@ services:
       /bin/sh -c "
       /usr/bin/mc config host add coopcycle http://minio:9000 minio coopcycle;
       /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images;
+      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images/assets;
+      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images/products;
+      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images/receipts;
+      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images/restaurants;
+      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images/stores;
+      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images/tasks;
       /usr/bin/mc policy set public coopcycle/images;
       "
 
