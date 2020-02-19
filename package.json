@@ -19,11 +19,9 @@
   "dependencies": {
     "@mapbox/polyline": "^1.1.0",
     "co": "^4.6.0",
-    "deepmerge": "^1.5.2",
     "dotenv": "^8.2.0",
     "form-data": "^2.3.3",
     "i18next": "^17.0.16",
-    "js-yaml": "^3.13.1",
     "jsonwebtoken": "^8.5.1",
     "locutus": "^2.0.11",
     "lodash": "^4.17.15",
