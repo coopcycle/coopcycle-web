@@ -2,13 +2,9 @@ var assert = require('assert');
 var fs = require('fs');
 var io = require('socket.io-client');
 
-var ConfigLoader = require('../api/ConfigLoader');
 var TestUtils = require('./utils');
 
-var configLoader = new ConfigLoader('app/config/config_test.yml');
-var config = configLoader.load();
-
-var utils = new TestUtils(config);
+var utils = new TestUtils();
 
 var pub = require('../api/RedisClient')({
   prefix: process.env.COOPCYCLE_DB_NAME + '_test:',
