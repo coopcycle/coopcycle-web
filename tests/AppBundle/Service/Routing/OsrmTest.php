@@ -30,16 +30,17 @@ class OsrmTest extends TestCase
         ];
 
         $this->client
-            ->request('GET', '/route/v1/bicycle/2.352222,48.856613;2.352222,48.856613?overview=full')
+            ->request('GET', '/route/v1/bicycle/2.352222,48.856613;2.352222,48.856613;2.352222,48.856613?overview=full')
             ->willReturn(new Response(200, [], json_encode($responseBody)))
             ->shouldBeCalledTimes(1);
 
-        $origin = new GeoCoordinates(48.856613, 2.352222);
-        $destination = new GeoCoordinates(48.856613, 2.352222);
+        $coord1 = new GeoCoordinates(48.856613, 2.352222);
+        $coord2 = new GeoCoordinates(48.856613, 2.352222);
+        $coord3 = new GeoCoordinates(48.856613, 2.352222);
 
-        $this->assertEquals(3000, $this->osrm->getDistance($origin, $destination));
-        $this->assertEquals(3000, $this->osrm->getDistance(...[$origin, $destination]));
-        $this->assertEquals(3600, $this->osrm->getDuration($origin, $destination));
-        $this->assertEquals('abcdefgh', $this->osrm->getPolyline($origin, $destination));
+        $this->assertEquals(3000, $this->osrm->getDistance($coord1, $coord2, $coord3));
+        $this->assertEquals(3000, $this->osrm->getDistance(...[$coord1, $coord2, $coord3]));
+        $this->assertEquals(3600, $this->osrm->getDuration($coord1, $coord2, $coord3));
+        $this->assertEquals('abcdefgh', $this->osrm->getPolyline($coord1, $coord2, $coord3));
     }
 }
