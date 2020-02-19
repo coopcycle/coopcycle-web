@@ -3853,16 +3853,16 @@
         },
         {
             "name": "hautelook/alice-bundle",
-            "version": "v2.7.0",
+            "version": "v2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hautelook/AliceBundle.git",
-                "reference": "b6246190d20b91f2ab7b2d0fd71a7188edc8d62b"
+                "reference": "05ccc72119f76e6131077bbb306899dd59db3f6d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hautelook/AliceBundle/zipball/b6246190d20b91f2ab7b2d0fd71a7188edc8d62b",
-                "reference": "b6246190d20b91f2ab7b2d0fd71a7188edc8d62b",
+                "url": "https://api.github.com/repos/hautelook/AliceBundle/zipball/05ccc72119f76e6131077bbb306899dd59db3f6d",
+                "reference": "05ccc72119f76e6131077bbb306899dd59db3f6d",
                 "shasum": ""
             },
             "require": {
@@ -3917,7 +3917,7 @@
                 "orm",
                 "symfony"
             ],
-            "time": "2020-01-21T11:42:02+00:00"
+            "time": "2020-02-18T12:31:48+00:00"
         },
         {
             "name": "hoa/compiler",
