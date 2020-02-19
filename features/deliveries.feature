@@ -152,8 +152,22 @@ Feature: Deliveries
         }
       }
       """
-    Given the OAuth client "Acme" sends a "GET" request to "/api/deliveries/1"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/deliveries/1"
     Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/1",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":1,
+        "pickup":@...@,
+        "dropoff":@...@
+      }
+      """
 
   Scenario: Create delivery with implicit pickup address with OAuth (with before & after)
     Given the fixtures files are loaded:
