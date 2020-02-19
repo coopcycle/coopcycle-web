@@ -6,11 +6,23 @@ use AppBundle\Entity\Base\GeoCoordinates;
 
 interface RoutingInterface
 {
-    public function getPolyline(GeoCoordinates $origin, GeoCoordinates $destination);
+    /**
+     * @param GeoCoordinates[] ...$coordinates
+     */
+    public function getPolyline(GeoCoordinates ...$coordinates);
 
-    public function getPoints(GeoCoordinates $origin, GeoCoordinates $destination);
+    /**
+     * @param GeoCoordinates[] ...$coordinates
+     */
+    public function getPoints(GeoCoordinates ...$coordinates);
 
-    public function getDistance(GeoCoordinates $origin, GeoCoordinates $destination);
+    /**
+     * @param GeoCoordinates[] ...$coordinates
+     */
+    public function getDistance(GeoCoordinates ...$coordinates);
 
-    public function getDuration(GeoCoordinates $origin, GeoCoordinates $destination);
+    /**
+     * @param GeoCoordinates[] ...$coordinates
+     */
+    public function getDuration(GeoCoordinates ...$coordinates);
 }

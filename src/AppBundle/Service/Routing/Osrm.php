@@ -75,16 +75,6 @@ class Osrm extends Base
         $this->client = $client;
     }
 
-    /**
-     * @param GeoCoordinates $origin
-     * @param GeoCoordinates $destination
-     * @return array|null
-     */
-    private function getRawResponse(GeoCoordinates $origin, GeoCoordinates $destination)
-    {
-        return $this->getServiceResponse('route', [ $origin, $destination ], ['overview' => 'full']);
-    }
-
     public function getServiceResponse($service, array $coordinates, array $options = [])
     {
         $coords = array_map(function($coordinate) {
@@ -111,37 +101,31 @@ class Osrm extends Base
     }
 
     /**
-     * @param GeoCoordinates $origin
-     * @param GeoCoordinates $destination
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getPolyline(GeoCoordinates $origin, GeoCoordinates $destination)
+    public function getPolyline(GeoCoordinates ...$coordinates)
     {
-        $response = $this->getRawResponse($origin, $destination);
+        $response = $this->getServiceResponse('route', $coordinates, ['overview' => 'full']);
 
         return $response['routes'][0]['geometry'];
     }
 
     /**
-     * @param GeoCoordinates $origin
-     * @param GeoCoordinates $destination
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getDistance(GeoCoordinates $origin, GeoCoordinates $destination)
+    public function getDistance(GeoCoordinates ...$coordinates)
     {
-        $response = $this->getRawResponse($origin, $destination);
+        $response = $this->getServiceResponse('route', $coordinates, ['overview' => 'full']);
 
         return (int) $response['routes'][0]['distance'];
     }
 
     /**
-     * @param GeoCoordinates $origin
-     * @param GeoCoordinates $destination
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getDuration(GeoCoordinates $origin, GeoCoordinates $destination)
+    public function getDuration(GeoCoordinates ...$coordinates)
     {
-        $response = $this->getRawResponse($origin, $destination);
+        $response = $this->getServiceResponse('route', $coordinates, ['overview' => 'full']);
 
         return (int) $response['routes'][0]['duration'];
     }

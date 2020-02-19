@@ -17,12 +17,11 @@ class Fallback extends Base
     /**
      * {@inheritdoc}
      */
-    public function getPolyline(GeoCoordinates $origin, GeoCoordinates $destination)
+    public function getPolyline(GeoCoordinates ...$coordinates)
     {
-        $points = [
-            [ $origin->getLatitude(), $origin->getLongitude() ],
-            [ $destination->getLatitude(), $destination->getLongitude() ],
-        ];
+        $points = array_map(function (GeoCoordinates $c) {
+            return [ $c->getLatitude(), $c->getLongitude() ];
+        }, $coordinates);
 
         return Polyline::encode($points);
     }
@@ -30,26 +29,41 @@ class Fallback extends Base
     /**
      * {@inheritdoc}
      */
-    public function getDistance(GeoCoordinates $origin, GeoCoordinates $destination)
+    public function getDistance(GeoCoordinates ...$coordinates)
     {
         $geotools = new Geotools();
-        $coordA = new Coordinate([ $origin->getLatitude(), $origin->getLongitude() ]);
-        $coordB = new Coordinate([ $destination->getLatitude(), $destination->getLongitude() ]);
 
-        $distance = $geotools
-            ->distance()
-            ->setFrom($coordA)
-            ->setTo($coordB);
+        if (count($coordinates) <= 1) {
+            return 0;
+        }
 
-        return (int) $distance->flat();
+        $from = array_shift($coordinates);
+
+        $totalDistance = 0;
+
+        while (count($coordinates) > 0) {
+
+            $to = array_shift($coordinates);
+
+            $distance = $geotools
+                ->distance()
+                ->setFrom(new Coordinate([ $from->getLatitude(), $from->getLongitude() ]))
+                ->setTo(new Coordinate([ $to->getLatitude(), $to->getLongitude() ]));
+
+            $totalDistance += (int) $distance->flat();
+
+            $from = $to;
+        }
+
+        return $totalDistance;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDuration(GeoCoordinates $origin, GeoCoordinates $destination)
+    public function getDuration(GeoCoordinates ...$coordinates)
     {
-        $distance = $this->getDistance($origin, $destination);
+        $distance = $this->getDistance(...$coordinates);
 
         $metersPerHour = self::KILOMETERS_PER_HOUR * 1000;
 

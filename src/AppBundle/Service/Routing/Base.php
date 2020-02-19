@@ -8,9 +8,9 @@ use Polyline;
 
 abstract class Base implements RoutingInterface
 {
-    public function getPoints(GeoCoordinates $origin, GeoCoordinates $destination)
+    public function getPoints(GeoCoordinates ...$coordinates)
     {
-        $polyline = $this->getPolyline($origin, $destination);
+        $polyline = $this->getPolyline(...$coordinates);
         $points = Polyline::decode($polyline);
 
         return Polyline::pair($points);

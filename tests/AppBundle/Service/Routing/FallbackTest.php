@@ -16,10 +16,11 @@ class FallbackTest extends TestCase
 
         $distance = $fallback->getDistance(
             new GeoCoordinates(48.895452, 2.362388),
-            new GeoCoordinates(48.861305, 2.374576)
+            new GeoCoordinates(48.861305, 2.374576),
+            new GeoCoordinates(48.857624, 2.384607)
         );
 
-        $this->assertEquals(3904, $distance);
+        $this->assertEquals(4745, $distance);
     }
 
     public function testGetDuration()

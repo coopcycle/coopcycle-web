@@ -23,36 +23,36 @@ class OsrmWithFallback extends Base
     /**
      * {@inheritdoc}
      */
-    public function getPolyline(GeoCoordinates $origin, GeoCoordinates $destination)
+    public function getPolyline(GeoCoordinates ...$coordinates)
     {
         try {
-            return $this->osrm->getPolyline($origin, $destination);
+            return $this->osrm->getPolyline(...$coordinates);
         } catch (GuzzleException $e) {
-            return $this->fallback->getPolyline($origin, $destination);
+            return $this->fallback->getPolyline(...$coordinates);
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDistance(GeoCoordinates $origin, GeoCoordinates $destination)
+    public function getDistance(GeoCoordinates ...$coordinates)
     {
         try {
-            return $this->osrm->getDistance($origin, $destination);
+            return $this->osrm->getDistance(...$coordinates);
         } catch (GuzzleException $e) {
-            return $this->fallback->getDistance($origin, $destination);
+            return $this->fallback->getDistance(...$coordinates);
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDuration(GeoCoordinates $origin, GeoCoordinates $destination)
+    public function getDuration(GeoCoordinates ...$coordinates)
     {
         try {
-            return $this->osrm->getDuration($origin, $destination);
+            return $this->osrm->getDuration(...$coordinates);
         } catch (GuzzleException $e) {
-            return $this->fallback->getDuration($origin, $destination);
+            return $this->fallback->getDuration(...$coordinates);
         }
     }
 }
