@@ -28,9 +28,11 @@
             <h4>{{ 'order.cart.title'|trans }}</h4>
             <div class="order-map__column-block" id="items">
               {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
+              <div class="alert alert-info py-0">
               {% if form.reusablePackagingEnabled is defined %}
-                {{ form_row(form.reusablePackagingEnabled) }}
+                {{ form_widget(form.reusablePackagingEnabled) }}
               {% endif %}
+              </div>
             </div>
 
             <div class="order-map__column-block">

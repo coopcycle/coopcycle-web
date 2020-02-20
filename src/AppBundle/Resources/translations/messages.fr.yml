@@ -539,7 +539,8 @@ form.checkout_address.notes.placeholder: "Exemple : sans sauce, sans tomates…\
 form.checkout_address.notes.help: Votre remarque sera transmise au restaurant
 form.checkout_address.promotion_coupon.label: Code promotionnel
 form.checkout_address.telephone.label: Téléphone
-form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages réutilisables
+form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages réutilisables (%price%)
+form.checkout_address.reusable_packaging_loopeat_enabled.label: Je veux des emballages réutilisables LoopEat (%price%)
 form.checkout_address.quote.label: Demander un devis
 form.checkout_address.add_promotion.label: Appliquer
 form.task_export.start.label: Début
@@ -804,3 +805,4 @@ receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</stron
 notifications.restaurant.new_order: Nouvelle commande à confirmer
 profile.loopeat.connect: Connecter mon compte LoopEat
 profile.loopeat.connected: Compte LoopEat connecté
+basics.free: gratuit
