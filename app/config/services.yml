@@ -187,6 +187,18 @@ services:
     tags:
       - { name: monolog.logger, channel: stripe }
 
+  AppBundle\LoopEat\Client:
+    arguments: [ { base_uri: "%loopeat_base_url%", timeout: 15.0 } ]
+    calls:
+      - method: setLoopEatClientId
+        arguments:
+            - '%loopeat_client_id%'
+      - method: setLoopEatClientSecret
+        arguments:
+            - '%loopeat_client_secret%'
+    tags:
+      - { name: csa_guzzle.client }
+
   AppBundle\Controller\RestaurantController:
     arguments:
       $orderManager: '@sylius.manager.order'
