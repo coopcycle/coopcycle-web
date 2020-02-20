@@ -21,46 +21,7 @@ Feature: Tasks
         "@context":"/api/contexts/Task",
         "@id":"/api/tasks",
         "@type":"hydra:Collection",
-        "hydra:member":[
-          {
-            "@id":"@string@.startsWith('/api/tasks')",
-            "@type":"Task",
-            "id":@integer@,
-            "type":"DROPOFF",
-            "status":"TODO",
-            "address":@...@,
-            "after":"2018-03-02T11:30:00+00:00",
-            "before":"2018-03-02T12:00:00+00:00",
-            "doneAfter":"2018-03-02T11:30:00+00:00",
-            "doneBefore":"2018-03-02T12:00:00+00:00",
-            "comments":"#bob",
-            "updatedAt":"@string@.isDateTime()",
-            "isAssigned":true,
-            "assignedTo":"bob",
-            "previous":null,
-            "group":null,
-            "tags":@array@
-          },
-          {
-            "@id":"@string@.startsWith('/api/tasks')",
-            "@type":"Task",
-            "id":@integer@,
-            "type":"DROPOFF",
-            "status":"DONE",
-            "address":@...@,
-            "after":"2018-03-02T12:00:00+00:00",
-            "before":"2018-03-02T12:30:00+00:00",
-            "doneAfter":"2018-03-02T12:00:00+00:00",
-            "doneBefore":"2018-03-02T12:30:00+00:00",
-            "comments":"#bob",
-            "updatedAt":"@string@.isDateTime()",
-            "isAssigned":true,
-            "assignedTo":"bob",
-            "previous":null,
-            "group":null,
-            "tags":@array@
-          }
-        ],
+        "hydra:member":@array@,
         "hydra:totalItems":2
       }
       """
@@ -464,7 +425,8 @@ Feature: Tasks
         "next":null,
         "group":null,
         "tags":@array@,
-        "images":@array@
+        "images":@array@,
+        "fields":null
       }
       """
 
@@ -536,7 +498,8 @@ Feature: Tasks
         "tags": [
           {"name":"Important","slug":"important","color":"#000000"}
         ],
-        "images":@array@
+        "images":@array@,
+        "fields":null
       }
       """
 
@@ -594,6 +557,83 @@ Feature: Tasks
     When the user "bob" sends a "GET" request to "/api/tasks/1"
     Then the response status code should be 200
     And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/1",
+        "@type":"Task",
+        "id":1,
+        "type":"PICKUP",
+        "status":"TODO",
+        "address":@...@,
+        "doneAfter":"@string@.isDateTime()",
+        "doneBefore":"@string@.isDateTime()",
+        "comments":"",
+        "updatedAt":"@string@.isDateTime()",
+        "group":null,
+        "fields":null,
+        "images":[],
+        "tags":[],
+        "isAssigned":false,
+        "after":"2019-11-12T18:00:00+01:00",
+        "before":"2019-11-12T18:30:00+01:00",
+        "assignedTo":null,
+        "previous":null,
+        "next":"/api/tasks/2"
+      }
+      """
+
+  Scenario: Authorized to retrieve task as messenger
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml      |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_COURIER"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/tasks/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/1",
+        "@type":"Task",
+        "id":1,
+        "type":"DROPOFF",
+        "status":"TODO",
+        "address":@...@,
+        "doneAfter":"2018-03-02T10:30:00+01:00",
+        "doneBefore":"2018-03-02T11:00:00+01:00",
+        "comments":"",
+        "updatedAt":"@string@.isDateTime()",
+        "group":null,
+        "fields":{
+          "name":"Group",
+          "items":[
+            {
+              "type":"number",
+              "name":"containers_returned",
+              "label":"Containers returned",
+              "required":true
+            }
+          ]
+        },
+        "images":[],
+        "tags":[],
+        "isAssigned":false,
+        "after":"2018-03-02T10:30:00+01:00",
+        "before":"2018-03-02T11:00:00+01:00",
+        "assignedTo":null,
+        "previous":null,
+        "next":null
+      }
+      """
 
   Scenario: Not enough permissions to create task
     Given the fixtures files are loaded:

@@ -108,6 +108,8 @@ AppBundle\Entity\Task:
             orphanRemoval: false
         taskFieldGroup:
             targetEntity: AppBundle\Entity\TaskFieldGroup
+            cascade:
+                - persist
     oneToMany:
         events:
             targetEntity: AppBundle\Entity\TaskEvent

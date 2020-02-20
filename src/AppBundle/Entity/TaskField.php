@@ -2,26 +2,32 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 class TaskField
 {
     private $id;
 
     /**
+     * @Groups({"task"})
      * @var string
      */
     private $type;
 
     /**
+     * @Groups({"task"})
      * @var string
      */
     private $name;
 
     /**
+     * @Groups({"task"})
      * @var string
      */
     private $label;
 
     /**
+     * @Groups({"task"})
      * @var bool
      */
     private $required = false;

@@ -3,6 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
+
 
 class TaskFieldGroup
 {
@@ -10,6 +13,7 @@ class TaskFieldGroup
 
     /**
      * @var string
+     * @Groups({"task"})
      */
     private $name;
 
@@ -52,7 +56,8 @@ class TaskFieldGroup
     }
 
     /**
-     * @return string
+     * @Groups({"task"})
+     * @SerializedName("items")
      */
     public function getFields()
     {
@@ -60,8 +65,6 @@ class TaskFieldGroup
     }
 
     /**
-     * @param string $fields
-     *
      * @return self
      */
     public function setFields($fields)

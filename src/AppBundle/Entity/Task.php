@@ -614,6 +614,10 @@ class Task implements TaggableInterface
         $this->taskFieldGroup = $taskFieldGroup;
     }
 
+    /**
+     * @Groups({"task"})
+     * @SerializedName("fields")
+     */
     public function getTaskFieldGroup()
     {
         return $this->taskFieldGroup;
