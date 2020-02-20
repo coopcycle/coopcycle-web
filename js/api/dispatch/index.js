@@ -1,11 +1,19 @@
 var WebSocketServer = require('ws').Server
 var http = require('http')
 var _ = require('lodash')
+var winston = require('winston')
 
 var TokenVerifier = require('../TokenVerifier')
 
-var winston = require('winston')
-winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug'
+const logger = winston.createLogger({
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.simple()
+    })
+  ]
+})
 
 var ROOT_DIR = __dirname + '/../../..'
 
@@ -51,7 +59,7 @@ let isClosing = false
 let rooms = {}
 
 sub.on('psubscribe', (channel, count) => {
-  winston.info(`Subscribed to ${channel} (${count})`)
+  logger.info(`Subscribed to ${channel} (${count})`)
   initialize()
 })
 
@@ -59,14 +67,14 @@ function initialize() {
 
   sub.on('pmessage', function(patternWithPrefix, channelWithPrefix, message) {
 
-    winston.debug(`Received pmessage on channel ${channelWithPrefix}`)
+    logger.debug(`Received pmessage on channel ${channelWithPrefix}`)
 
     const channel = sub.unprefixedChannel(channelWithPrefix)
     const pattern = sub.unprefixedChannel(patternWithPrefix)
     const decoded = JSON.parse(message)
 
     if (rooms[channel]) {
-      winston.debug(`Emitting "${decoded.name}" to sockets in ${channel}`)
+      logger.debug(`Emitting "${decoded.name}" to sockets in ${channel}`)
       _.forEach(rooms[channel], ws => ws.send(message))
     }
 

@@ -1,11 +1,19 @@
 var path = require('path');
 var _ = require('lodash');
 var http = require('http');
+var winston = require('winston')
 
 const TokenVerifier = require('../TokenVerifier')
 
-var winston = require('winston')
-winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug'
+const logger = winston.createLogger({
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.simple()
+    })
+  ]
+})
 
 var ROOT_DIR = __dirname + '/../../..';
 
@@ -34,7 +42,7 @@ const tokenVerifier = new TokenVerifier(ROOT_DIR + '/var/jwt/public.pem', db)
 const io = require('socket.io')(server, { path: '/tracking/socket.io' });
 
 sub.on('psubscribe', (channel, count) => {
-  winston.info(`Subscribed to ${channel} (${count})`)
+  logger.info(`Subscribed to ${channel} (${count})`)
   if (count === 2) {
     initialize()
   }
@@ -71,14 +79,14 @@ function initialize() {
 
   sub.on('pmessage', function(patternWithPrefix, channelWithPrefix, message) {
 
-    winston.debug(`Received pmessage on channel ${channelWithPrefix}`)
+    logger.debug(`Received pmessage on channel ${channelWithPrefix}`)
 
     const channel = sub.unprefixedChannel(channelWithPrefix)
     const pattern = sub.unprefixedChannel(patternWithPrefix)
 
     message = JSON.parse(message)
 
-    winston.debug(`Emitting "${message.name}" to sockets in ${channel}`)
+    logger.debug(`Emitting "${message.name}" to sockets in ${channel}`)
 
     io.in(channel).emit(message.name, message.data)
 

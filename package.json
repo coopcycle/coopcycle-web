@@ -38,7 +38,7 @@
     "sequelize": "^5.21.4",
     "socket.io": "2.0.3",
     "whatwg-fetch": "^2.0.4",
-    "winston": "^2.4.4",
+    "winston": "^3.2",
     "ws": "^7.2.0",
     "xml2js": "^0.4.22"
   },
