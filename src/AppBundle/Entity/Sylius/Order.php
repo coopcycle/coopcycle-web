@@ -584,7 +584,7 @@ class Order extends BaseOrder implements OrderInterface
             return false;
         }
 
-        if (!$restaurant->isDepositRefundEnabled()) {
+        if (!$restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {
             return false;
         }
 

@@ -121,7 +121,7 @@ class ProductType extends AbstractType
                 'data' => $this->getSortedOptions($product),
             ]);
 
-            if ($product->getRestaurant()->isDepositRefundEnabled()) {
+            if ($product->getRestaurant()->isDepositRefundEnabled() || $product->getRestaurant()->isLoopeatEnabled()) {
                 $form
                     ->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
