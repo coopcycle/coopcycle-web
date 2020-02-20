@@ -93,7 +93,7 @@ class CheckoutAddressType extends AbstractType
                 $packagingAmount = $order->getReusablePackagingAmount();
 
                 if ($packagingAmount > 0) {
-                    $packagingPrice = $this->priceFormatter->formatWithSymbol($packagingAmount);
+                    $packagingPrice = sprintf('+ %s', $this->priceFormatter->formatWithSymbol($packagingAmount));
                 } else {
                     $packagingPrice = $this->translator->trans('basics.free');
                 }
