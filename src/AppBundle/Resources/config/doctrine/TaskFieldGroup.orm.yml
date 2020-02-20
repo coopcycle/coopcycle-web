@@ -1,0 +1,27 @@
+AppBundle\Entity\TaskFieldGroup:
+    type: entity
+    table: task_field_group
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+    manyToMany:
+        fields:
+            targetEntity: AppBundle\Entity\TaskField
+            cascade:
+                - all
+            joinTable:
+                name: task_field_group_fields
+                inverseJoinColumns:
+                    -
+                        name: task_field_group_id
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: task_field_id
+                        referencedColumnName: id

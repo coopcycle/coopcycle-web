@@ -1,0 +1,19 @@
+AppBundle\Entity\TaskField:
+    type: entity
+    table: task_field
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        type:
+            type: string
+        name:
+            type: string
+        label:
+            type: text
+        required:
+            type: boolean
+            nullable: false

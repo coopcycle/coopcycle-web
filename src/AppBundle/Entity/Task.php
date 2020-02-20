@@ -240,6 +240,8 @@ class Task implements TaggableInterface
      */
     private $assignedOn;
 
+    private $taskFieldGroup;
+
     /**
      * @var Collection<int,TaskImage>
      * @Groups({"task", "task_edit"})
@@ -605,6 +607,16 @@ class Task implements TaggableInterface
         if ($this->hasEvent(TaskDomainEvent\TaskFailed::messageName())) {
             return $this->getLastEvent(TaskDomainEvent\TaskFailed::messageName())->getCreatedAt();
         }
+    }
+
+    public function setTaskFieldGroup($taskFieldGroup)
+    {
+        $this->taskFieldGroup = $taskFieldGroup;
+    }
+
+    public function getTaskFieldGroup()
+    {
+        return $this->taskFieldGroup;
     }
 
     /* Legacy */

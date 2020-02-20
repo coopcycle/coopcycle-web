@@ -106,6 +106,8 @@ AppBundle\Entity\Task:
                 assigned_to:
                     referencedColumnName: id
             orphanRemoval: false
+        taskFieldGroup:
+            targetEntity: AppBundle\Entity\TaskFieldGroup
     oneToMany:
         events:
             targetEntity: AppBundle\Entity\TaskEvent
