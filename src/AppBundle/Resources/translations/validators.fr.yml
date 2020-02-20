@@ -38,3 +38,5 @@ task.before.mustBeGreaterThanAfter: La plage horaire n'est pas valide
 product_option.valuesRange.notAllowed: Vous ne pouvez pas définir d'intervalle pour une option obligatoire
 
 product.reusablePackagingUnit.mustBeGreaterThanZero: Vous devez spécifier une quantité supérieure à 0
+
+loopeat.insufficient_balance: Votre solde LoopEat (X) n'est pas suffisant pour emballer la totalité de la commande
