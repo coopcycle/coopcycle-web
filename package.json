@@ -84,7 +84,7 @@
     "less-loader": "^4.1.0",
     "libphonenumber-js": "^1.7.44",
     "lottie-web": "^5.6.4",
-    "mocha": "^6.2.2",
+    "mocha": "^7.0.1",
     "moment-range": "^4.0.2",
     "node-sass": "^4.13.0",
     "postcss-loader": "^3.0.0",
