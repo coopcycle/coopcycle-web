@@ -7,6 +7,7 @@ use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Restaurant\PreparationTimeRule;
+use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\ProductTaxon;
@@ -109,6 +110,8 @@ trait RestaurantTrait
             }
         }
 
+        $wasLoopEatEnabled = $restaurant->isLoopeatEnabled();
+
         $activationErrors = [];
         $formErrors = [];
         $routes = $request->attributes->get('routes');
@@ -135,6 +138,20 @@ trait RestaurantTrait
                 $violations = $this->get('validator')->validate($restaurant, null, ['activable']);
                 if (count($violations) > 0) {
                     $restaurant->setEnabled(false);
+                }
+
+                if (!$wasLoopEatEnabled && $restaurant->isLoopeatEnabled()) {
+
+                    if (!$restaurant->hasReusablePackagingWithName('LoopEat')) {
+                        $reusablePackaging = new ReusablePackaging();
+                        $reusablePackaging->setName('LoopEat');
+                        $reusablePackaging->setPrice(0);
+                        $reusablePackaging->setOnHold(0);
+                        $reusablePackaging->setOnHand(9999);
+                        $reusablePackaging->setTracked(false);
+
+                        $restaurant->addReusablePackaging($reusablePackaging);
+                    }
                 }
 
                 $this->getDoctrine()->getManagerForClass(Restaurant::class)->persist($restaurant);

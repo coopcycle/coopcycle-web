@@ -975,6 +975,22 @@ class Restaurant extends FoodEstablishment
     }
 
     /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasReusablePackagingWithName(string $name)
+    {
+        foreach ($this->reusablePackagings as $reusablePackaging) {
+            if ($reusablePackaging->getName() === $name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return bool
      */
     public function isLoopeatEnabled()
