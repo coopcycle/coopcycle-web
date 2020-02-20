@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Me as MeController;
 use AppBundle\Api\Filter\UserRoleFilter;
+use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
@@ -43,6 +44,8 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  */
 class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 {
+    use LoopEatOAuthCredentialsTrait;
+
     protected $id;
 
     /**
@@ -95,10 +98,6 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     protected $facebookId;
 
     protected $facebookAccessToken;
-
-    protected $loopeatAccessToken;
-
-    protected $loopeatRefreshToken;
 
     protected $quotesAllowed = false;
 
@@ -316,50 +315,5 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
         $this->quotesAllowed = $quotesAllowed;
 
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLoopeatAccessToken()
-    {
-        return $this->loopeatAccessToken;
-    }
-
-    /**
-     * @param mixed $loopeatAccessToken
-     *
-     * @return self
-     */
-    public function setLoopeatAccessToken($loopeatAccessToken)
-    {
-        $this->loopeatAccessToken = $loopeatAccessToken;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLoopeatRefreshToken()
-    {
-        return $this->loopeatRefreshToken;
-    }
-
-    /**
-     * @param mixed $loopeatRefreshToken
-     *
-     * @return self
-     */
-    public function setLoopeatRefreshToken($loopeatRefreshToken)
-    {
-        $this->loopeatRefreshToken = $loopeatRefreshToken;
-
-        return $this;
-    }
-
-    public function hasLoopEatCredentials()
-    {
-        return null !== $this->loopeatAccessToken && null !== $this->loopeatRefreshToken;
     }
 }
