@@ -71,7 +71,7 @@
     "file-loader": "^1.1.11",
     "font-awesome": "^4.7.0",
     "fontawesome-markers": "^4.6.1",
-    "formik": "^1.5.8",
+    "formik": "^2.1.4",
     "fuse.js": "^3.4.5",
     "gasparesganga-jquery-loading-overlay": "^2.1.6",
     "jest": "^24.9.0",
