@@ -650,15 +650,15 @@ activity.order.picked: "@%owner% has picked order #order/%aggregate_id%\n"
 activity.order.dropped: "@%owner% has dropped order #order/%aggregate_id%\n"
 activity.order.fulfilled: "Order #order/#%aggregate_id% is fulfilled\n"
 social.sign_in_with_facebook: Sign in with Facebook
-embed.delivery.summary: 'You have requested a race that will be dropped at <strong>%dropoff_date%</strong>
-  at the following address: <strong>%dropoff_address%</strong> <br> We calculated
-  a distance of <strong>%distance% kilometers</strong>. <br> According to our prices,
-  this race will cost you <strong>%total_excluding_tax% tax excl.</strong> (%total_including_tax%
-  tax incl.).'
-embed.delivery.submit.help: Click to confirm the quote and order the race.
-embed.delivery.confirm_message: We have registered your request. Your race is waiting
-  for validation. <br> We will send you an email within a few minutes. You will receive
-  a second mail as soon as the race is confirmed.
+embed.delivery.summary: 'You have requested a delivery that will be dropped off at
+  <strong>%dropoff_date%</strong> at the following address: <strong>%dropoff_address%</strong>
+  <br> We calculated a distance of <strong>%distance% kilometers</strong>. <br> According
+  to our prices, this delivery will cost you <strong>%total_excluding_tax% tax excl.</strong>
+  (%total_including_tax% tax incl.).'
+embed.delivery.submit.help: Click to confirm the quote and order the delivery.
+embed.delivery.confirm_message: We have registered your request. Your delivery is
+  waiting for validation. <br> We will send you an email in the next few minutes.
+  You will receive a second mail as soon as the delivery is confirmed.
 pagination.previous: Previous
 pagination.next: Next
 basics.view: View
