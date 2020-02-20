@@ -140,6 +140,8 @@ class Restaurant extends FoodEstablishment
 
     protected $depositRefundOptin = true;
 
+    protected $loopeatEnabled = false;
+
     /**
      * @var integer Additional time to delay ordering
      *
@@ -963,5 +965,25 @@ class Restaurant extends FoodEstablishment
     public function hasReusablePackaging(ReusablePackaging $reusablePackaging)
     {
         return $this->reusablePackagings->contains($reusablePackaging);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLoopeatEnabled()
+    {
+        return $this->loopeatEnabled;
+    }
+
+    /**
+     * @param bool $loopeatEnabled
+     *
+     * @return self
+     */
+    public function setLoopeatEnabled($loopeatEnabled)
+    {
+        $this->loopeatEnabled = $loopeatEnabled;
+
+        return $this;
     }
 }

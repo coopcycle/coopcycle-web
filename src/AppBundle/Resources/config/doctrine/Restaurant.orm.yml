@@ -143,6 +143,11 @@ AppBundle\Entity\Restaurant:
             column: quotes_allowed
             options:
                 default: false
+        loopeatEnabled:
+            type: boolean
+            column: loopeat_enabled
+            options:
+                default: false
     manyToMany:
         servesCuisine:
             targetEntity: AppBundle\Entity\Cuisine

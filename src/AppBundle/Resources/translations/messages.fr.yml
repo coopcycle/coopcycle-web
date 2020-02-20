@@ -131,6 +131,7 @@ restaurant.form.createRestaurant: Créer un restaurant
 restaurant.form.exclusive.label: Ce restaurant est une exclusivité
 restaurant.form.quotes_allowed.label: "Ce restaurant accepte également des commandes sur devis (ex : traiteur)"
 restaurant.form.save: Enregistrer
+restaurant.form.loopeat_enabled.label: Activer le système de consignes LoopEat
 restaurant.deliveryPerimeterExpression.title: Périmètre de livraison
 restaurant.deliveryPerimeterExpression.help: Définit le périmètre de livraison accepté.
   Vous pouvez choisir un rayon (en km) ou une zone

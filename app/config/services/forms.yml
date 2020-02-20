@@ -100,11 +100,13 @@ services:
   AppBundle\Form\RestaurantType:
     arguments:
       $country: '%country_iso%'
+      $loopeatEnabled: '%loopeat_enabled%'
     tags: [ form.type ]
 
   AppBundle\Form\StoreType:
     arguments:
       $country: '%country_iso%'
+      $loopeatEnabled: '%loopeat_enabled%'
     tags: [ form.type ]
 
   AppBundle\Form\ProductOptionType:
