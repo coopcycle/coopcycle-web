@@ -82,12 +82,14 @@ class Client extends BaseClient
 
     public function currentCustomer(ApiUser $customer)
     {
-        return $this->request('GET', '/customers/current', [
+        $response = $this->request('GET', '/customers/current', [
             'headers' => [
                 'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
             ],
             'oauth_credentials' => $customer,
         ]);
+
+        return json_decode((string) $response->getBody(), true);
     }
 
     public function grab(ApiUser $customer, Restaurant $restaurant, $quantity = 1)
