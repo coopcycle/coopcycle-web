@@ -28,11 +28,16 @@
             <h4>{{ 'order.cart.title'|trans }}</h4>
             <div class="order-map__column-block" id="items">
               {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
-              <div class="alert alert-info py-0">
-              {% if form.reusablePackagingEnabled is defined %}
-                {{ form_widget(form.reusablePackagingEnabled) }}
-              {% endif %}
+              {% if order.restaurant.isLoopeatEnabled() and not loopeat_valid %}
+              <div class="alert alert-warning">
+                {% trans from 'validators' %}loopeat.insufficient_balance{% endtrans %}
               </div>
+              {% endif %}
+              {% if form.reusablePackagingEnabled is defined %}
+              <div class="alert alert-info py-0">
+                {{ form_widget(form.reusablePackagingEnabled) }}
+              </div>
+              {% endif %}
             </div>
 
             <div class="order-map__column-block">

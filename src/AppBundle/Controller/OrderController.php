@@ -23,6 +23,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("/order")
@@ -54,7 +55,8 @@ class OrderController extends AbstractController
         OrderManager $orderManager,
         CartContextInterface $cartContext,
         OrderProcessorInterface $orderProcessor,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        ValidatorInterface $validator)
     {
         $order = $cartContext->getCart();
 
@@ -126,10 +128,17 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order_payment');
         }
 
+        $isLoopEatValid = true;
+        if ($order->getRestaurant()->isLoopeatEnabled()) {
+            $violations = $validator->validate($order, null, ['loopeat']);
+            $isLoopEatValid = count($violations) === 0;
+        }
+
         return array(
             'order' => $order,
             'asap' => $this->orderTimeHelper->getAsap($order),
             'form' => $form->createView(),
+            'loopeat_valid' => $isLoopEatValid,
         );
     }
 
