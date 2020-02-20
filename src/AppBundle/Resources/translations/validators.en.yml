@@ -41,3 +41,5 @@ product_option.valuesRange.notAllowed: You can't define a range for a mandatory 
 product.reusablePackagingUnit.mustBeGreaterThanZero: You must specify a quantity greater than 0
 
 order.state.notModifiable: Order can't be modified anymore
+
+loopeat.insufficient_balance: Your LoopEat balance (X) is not sufficient to wrap the whole order

@@ -13,3 +13,11 @@
 <p><strong>{% trans %}profile.givenName{%  endtrans %}</strong>: {{ user.givenName }}</p>
 <p><strong>{% trans %}profile.telephone{%  endtrans %}</strong>: {% if user.telephone %}{{ user.telephone |phone_number_format('NATIONAL') }}{% endif %}</p>
 <p><a href="{{ path('fos_user_change_password') }}">{% trans %}profile.password.change{% endtrans %}</a></p>
+
+{% if loopeat_enabled %}
+  {% if has_loopeat_credentials %}
+    <p><a class="btn btn-default btn-sm"><i class="fa fa-check"></i> {% trans %}profile.loopeat.connected{% endtrans %}</a></p>
+  {% else %}
+    <p><a href="{{ loopeat_authorize_url }}" class="btn btn-success btn-sm">{% trans %}profile.loopeat.connect{% endtrans %}</a></p>
+  {% endif %}
+{% endif %}

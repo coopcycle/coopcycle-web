@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Me as MeController;
 use AppBundle\Api\Filter\UserRoleFilter;
+use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
@@ -43,6 +44,8 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  */
 class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 {
+    use LoopEatOAuthCredentialsTrait;
+
     protected $id;
 
     /**

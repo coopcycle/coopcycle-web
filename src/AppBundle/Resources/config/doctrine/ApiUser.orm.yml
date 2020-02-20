@@ -28,6 +28,14 @@ AppBundle\Entity\ApiUser:
             type: string
             nullable: true
             column: facebook_access_token
+        loopeatAccessToken:
+            type: text
+            nullable: true
+            column: loopeat_access_token
+        loopeatRefreshToken:
+            type: text
+            nullable: true
+            column: loopeat_refresh_token
         quotesAllowed:
             type: boolean
             column: quotes_allowed

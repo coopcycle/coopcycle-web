@@ -14,6 +14,10 @@ parameters:
     locale: "%coopcycle.locale%"
     locale_regex: ca|fr|en|es|de
     router.request_context.host: '%host%'
+    loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
+    loopeat_base_url: '%env(LOOPEAT_BASE_URL)%'
+    loopeat_client_id: '%env(LOOPEAT_CLIENT_ID)%'
+    loopeat_client_secret: '%env(LOOPEAT_CLIENT_SECRET)%'
 
 services:
     tag_manager.cache:

@@ -92,6 +92,9 @@
       {% if form.depositRefundEnabled is defined %}
         {{ form_row(form.depositRefundEnabled) }}
       {% endif %}
+      {% if form.loopeatEnabled is defined %}
+        {{ form_row(form.loopeatEnabled) }}
+      {% endif %}
     </div>
   </div>
 
@@ -152,12 +155,15 @@
   {% do form.address.setRendered %}
 
   {% if restaurant.id is not null %}
+
     {% set show_stripe_connect = false %}
+
     {% for role in restaurant.stripeConnectRoles %}
       {% if is_granted(role) %}
         {% set show_stripe_connect = true %}
       {% endif %}
     {% endfor %}
+
     {% if show_stripe_connect %}
       <hr>
       {% include "@App/_partials/restaurant/stripe_accounts.html.twig" %}
@@ -170,6 +176,12 @@
         </div>
       {% endif %}
     {% endif %}
+
+    {% if restaurant.loopeatEnabled and loopeat_authorize_url is defined %}
+      <h4>LoopEat</h4>
+      <p><a href="{{ loopeat_authorize_url }}" class="btn btn-success btn-sm">{% trans %}profile.loopeat.connect{% endtrans %}</a></p>
+    {% endif %}
+
   {% else %}
     {% if form.allowStripeConnect is defined %}
       {% do form.allowStripeConnect.setRendered %}

@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Checkout;
 
 use AppBundle\Form\AddressType;
+use AppBundle\Utils\PriceFormatter;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
@@ -20,6 +21,8 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 class CheckoutAddressType extends AbstractType
@@ -27,9 +30,17 @@ class CheckoutAddressType extends AbstractType
     private $tokenStorage;
     private $country;
 
-    public function __construct(TokenStorageInterface $tokenStorage, $country)
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        TranslatorInterface $translator,
+        PriceFormatter $priceFormatter,
+        ValidatorInterface $validator,
+        $country)
     {
         $this->tokenStorage = $tokenStorage;
+        $this->translator = $translator;
+        $this->priceFormatter = $priceFormatter;
+        $this->validator = $validator;
         $this->country = strtoupper($country);
     }
 
@@ -83,10 +94,32 @@ class CheckoutAddressType extends AbstractType
             $restaurant = $order->getRestaurant();
 
             if ($order->isEligibleToReusablePackaging() && $restaurant->isDepositRefundOptin()) {
-                $form->add('reusablePackagingEnabled', CheckboxType::class, [
-                    'required' => false,
-                    'label' => 'form.checkout_address.reusable_packaging_enabled.label',
-                ]);
+
+                $isLoopEatValid = true;
+                if ($order->getRestaurant()->isLoopeatEnabled()) {
+                    $violations = $this->validator->validate($order, null, ['loopeat']);
+                    $isLoopEatValid = count($violations) === 0;
+                }
+
+                if ($isLoopEatValid) {
+                    $key = $restaurant->isLoopeatEnabled() ? 'reusable_packaging_loopeat_enabled' : 'reusable_packaging_enabled';
+
+                    $packagingAmount = $order->getReusablePackagingAmount();
+
+                    if ($packagingAmount > 0) {
+                        $packagingPrice = sprintf('+ %s', $this->priceFormatter->formatWithSymbol($packagingAmount));
+                    } else {
+                        $packagingPrice = $this->translator->trans('basics.free');
+                    }
+
+                    $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                        'required' => false,
+                        'label' => sprintf('form.checkout_address.%s.label', $key),
+                        'label_translation_parameters' => [
+                            '%price%' => $packagingPrice,
+                        ],
+                    ]);
+                }
             }
 
             // When the restaurant accepts quotes and the customer is allowed,

@@ -131,6 +131,7 @@ restaurant.form.createRestaurant: Créer un restaurant
 restaurant.form.exclusive.label: Ce restaurant est une exclusivité
 restaurant.form.quotes_allowed.label: "Ce restaurant accepte également des commandes sur devis (ex : traiteur)"
 restaurant.form.save: Enregistrer
+restaurant.form.loopeat_enabled.label: Activer le système de consignes LoopEat
 restaurant.deliveryPerimeterExpression.title: Périmètre de livraison
 restaurant.deliveryPerimeterExpression.help: Définit le périmètre de livraison accepté.
   Vous pouvez choisir un rayon (en km) ou une zone
@@ -538,7 +539,8 @@ form.checkout_address.notes.placeholder: "Exemple : sans sauce, sans tomates…\
 form.checkout_address.notes.help: Votre remarque sera transmise au restaurant
 form.checkout_address.promotion_coupon.label: Code promotionnel
 form.checkout_address.telephone.label: Téléphone
-form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages réutilisables
+form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages réutilisables (%price%)
+form.checkout_address.reusable_packaging_loopeat_enabled.label: Je veux des emballages réutilisables LoopEat (%price%)
 form.checkout_address.quote.label: Demander un devis
 form.checkout_address.add_promotion.label: Appliquer
 form.task_export.start.label: Début
@@ -801,3 +803,6 @@ receipt.total: Total TTC
 receipt.billing_details: Commande payée par carte de crédit le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nouvelle commande à confirmer
+profile.loopeat.connect: Connecter mon compte LoopEat
+profile.loopeat.connected: Compte LoopEat connecté
+basics.free: gratuit

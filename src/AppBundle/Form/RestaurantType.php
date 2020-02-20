@@ -67,6 +67,13 @@ class RestaurantType extends LocalBusinessType
                 ->add('delete', SubmitType::class, [
                     'label' => 'basics.delete',
                 ]);
+
+            if ($options['loopeat_enabled']) {
+                $builder->add('loopeatEnabled', CheckboxType::class, [
+                    'label' => 'restaurant.form.loopeat_enabled.label',
+                    'required' => false,
+                ]);
+            }
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
@@ -113,6 +120,7 @@ class RestaurantType extends LocalBusinessType
 
         $resolver->setDefaults(array(
             'data_class' => Restaurant::class,
+            'loopeat_enabled' => $this->loopeatEnabled,
         ));
     }
 }

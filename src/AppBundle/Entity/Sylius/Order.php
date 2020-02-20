@@ -27,6 +27,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Validator\Constraints\IsOrderModifiable as AssertOrderIsModifiable;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
+use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelInterface;
@@ -164,6 +165,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *
  * @AssertOrder(groups={"Default"})
  * @AssertOrderIsModifiable(groups={"cart"})
+ * @AssertLoopEatOrder(groups={"loopeat"})
  */
 class Order extends BaseOrder implements OrderInterface
 {
@@ -584,7 +586,7 @@ class Order extends BaseOrder implements OrderInterface
             return false;
         }
 
-        if (!$restaurant->isDepositRefundEnabled()) {
+        if (!$restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {
             return false;
         }
 
@@ -617,6 +619,52 @@ class Order extends BaseOrder implements OrderInterface
         $this->reusablePackagingEnabled = $reusablePackagingEnabled;
 
         return $this;
+    }
+
+    public function getReusablePackagingQuantity(): int
+    {
+        $quantity = 0;
+        foreach ($this->getItems() as $item) {
+
+            $product = $item->getVariant()->getProduct();
+
+            if ($product->isReusablePackagingEnabled()) {
+
+                $reusablePackaging = $product->getReusablePackaging();
+
+                if (null === $reusablePackaging) {
+                    continue;
+                }
+
+                $quantity += ceil($product->getReusablePackagingUnit() * $item->getQuantity());
+            }
+        }
+
+        return $quantity;
+    }
+
+    public function getReusablePackagingAmount(): int
+    {
+        $amount = 0;
+        foreach ($this->getItems() as $item) {
+
+            $product = $item->getVariant()->getProduct();
+
+            if ($product->isReusablePackagingEnabled()) {
+
+                $reusablePackaging = $product->getReusablePackaging();
+
+                if (null === $reusablePackaging) {
+                    continue;
+                }
+
+                $quantity = ceil($product->getReusablePackagingUnit() * $item->getQuantity());
+
+                $amount += $reusablePackaging->getPrice() * $quantity;
+            }
+        }
+
+        return $amount;
     }
 
     public function getReceipt()

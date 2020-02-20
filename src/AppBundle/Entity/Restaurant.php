@@ -20,6 +20,7 @@ use Carbon\CarbonPeriod;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\Timestampable;
+use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
@@ -91,6 +92,7 @@ class Restaurant extends FoodEstablishment
 {
     use Timestampable;
     use SoftDeleteableEntity;
+    use LoopEatOAuthCredentialsTrait;
 
     const STATE_NORMAL = 'normal';
     const STATE_RUSH = 'rush';
@@ -139,6 +141,8 @@ class Restaurant extends FoodEstablishment
     protected $depositRefundEnabled = false;
 
     protected $depositRefundOptin = true;
+
+    protected $loopeatEnabled = false;
 
     /**
      * @var integer Additional time to delay ordering
@@ -889,6 +893,11 @@ class Restaurant extends FoodEstablishment
      */
     public function isDepositRefundOptin(): bool
     {
+        if ($this->isLoopeatEnabled()) {
+
+            return true;
+        }
+
         return $this->depositRefundOptin;
     }
 
@@ -963,5 +972,41 @@ class Restaurant extends FoodEstablishment
     public function hasReusablePackaging(ReusablePackaging $reusablePackaging)
     {
         return $this->reusablePackagings->contains($reusablePackaging);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasReusablePackagingWithName(string $name)
+    {
+        foreach ($this->reusablePackagings as $reusablePackaging) {
+            if ($reusablePackaging->getName() === $name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLoopeatEnabled()
+    {
+        return $this->loopeatEnabled;
+    }
+
+    /**
+     * @param bool $loopeatEnabled
+     *
+     * @return self
+     */
+    public function setLoopeatEnabled($loopeatEnabled)
+    {
+        $this->loopeatEnabled = $loopeatEnabled;
+
+        return $this;
     }
 }

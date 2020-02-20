@@ -155,6 +155,7 @@ restaurant.form.createRestaurant: Create restaurant
 restaurant.form.save: Save
 restaurant.form.exclusive.label: This restaurant is exclusive
 restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (ex: catering)'
+restaurant.form.loopeat_enabled.label: Enable LoopEat deposit-refund system
 restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries.
@@ -558,7 +559,8 @@ form.checkout_address.notes.placeholder: "Example: without sauce, without tomato
 form.checkout_address.notes.help: Your observation will be forwarded to the restaurant
 form.checkout_address.promotion_coupon.label: Coupon code
 form.checkout_address.telephone.label: Phone number
-form.checkout_address.reusable_packaging_enabled.label: I want reusable packaging
+form.checkout_address.reusable_packaging_enabled.label: I want reusable packaging (%price%)
+form.checkout_address.reusable_packaging_loopeat_enabled.label: I want to use LoopEat containers (%price%)
 form.checkout_address.add_promotion.label: Apply
 form.task_export.start.label: Start
 form.task_export.end.label: End
@@ -771,3 +773,6 @@ delivery.import.success_message: Your file was successfully processed, %count% d
 form.delivery_import.store.label: Store
 basics.view_example: View example
 notifications.restaurant.new_order: New order to accept
+profile.loopeat.connect: Connect my LoopEat account
+profile.loopeat.connected: LoopEat account connected
+basics.free: free

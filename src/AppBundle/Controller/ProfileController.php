@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Controller\Utils\OrderTrait;
@@ -25,6 +26,7 @@ use Doctrine\Common\Collections\Collection;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
 use Cocur\Slugify\SlugifyInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -81,7 +83,11 @@ class ProfileController extends Controller
         }
     }
 
-    public function indexAction(Request $request, SlugifyInterface $slugify, TranslatorInterface $translator)
+    public function indexAction(Request $request,
+        SlugifyInterface $slugify,
+        TranslatorInterface $translator,
+        JWTEncoderInterface $jwtEncoder,
+        IriConverterInterface $iriConverter)
     {
         $user = $this->getUser();
 
@@ -126,8 +132,43 @@ class ProfileController extends Controller
             return $this->tasksAction($request);
         }
 
+        $loopeatEnabled = $this->getParameter('loopeat_enabled');
+
+        $loopeatAuthorizeUrl = '';
+        if ($loopeatEnabled && !$this->getUser()->hasLoopEatCredentials()) {
+
+            $redirectUri = $this->generateUrl('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+            $redirectAfterUri = $this->generateUrl(
+                'fos_user_profile_show',
+                [],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+
+            // Use a JWT as the "state" parameter
+            $state = $jwtEncoder->encode([
+                'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
+                'sub' => $iriConverter->getIriFromItem($this->getUser()),
+                // The "iss" (Issuer) claim contains a redirect URL
+                'iss' => $redirectAfterUri,
+            ]);
+
+            $queryString = http_build_query([
+                'client_id' => $this->getParameter('loopeat_client_id'),
+                'response_type' => 'code',
+                'state' => $state,
+                // FIXME redirect_uri doesn't work yet
+                // 'redirect_uri' => $redirectUri,
+            ]);
+
+            $loopeatAuthorizeUrl = sprintf('%s/oauth/authorize?%s', $this->getParameter('loopeat_base_url'), $queryString);
+        }
+
         return $this->render('@App/profile/index.html.twig', array(
             'user' => $user,
+            'loopeat_enabled' => $loopeatEnabled,
+            'has_loopeat_credentials' => $this->getUser()->hasLoopEatCredentials(),
+            'loopeat_authorize_url' => $loopeatAuthorizeUrl,
         ));
     }
 
