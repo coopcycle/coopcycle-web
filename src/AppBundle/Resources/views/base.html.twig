@@ -108,8 +108,10 @@
       </footer>
     {% endblock %}
     {% if app.environment == "prod" %}
-      <script src="https://browser.sentry-cdn.com/5.5.0/bundle.min.js"
-        integrity="sha384-/kLYKYxlMDI1l+lhDHECQrq1Z4fnk/A32MWVF6rRnuE2WiOuAmg3wr3McNOG3Szi" crossorigin="anonymous"></script>
+      <script
+        src="https://browser.sentry-cdn.com/5.12.1/bundle.min.js"
+        integrity="sha384-y+an4eARFKvjzOivf/Z7JtMJhaN6b+lLQ5oFbBbUwZNNVir39cYtkjW1r6Xjbxg3"
+        crossorigin="anonymous"></script>
       <script>
         Sentry.init({ dsn: '{{ sentry_public_dsn }}' });
       </script>
