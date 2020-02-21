@@ -84,7 +84,7 @@ function bootstrap($popover, options) {
       }
     )
   })
-  .catch(e => { /* Fail silently */ })
+  .catch(() => { /* Fail silently */ })
 }
 
 $.getJSON(window.Routing.generate('profile_jwt'))
