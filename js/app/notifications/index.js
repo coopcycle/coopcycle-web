@@ -58,7 +58,8 @@ function bootstrap($popover, options) {
   Promise.all([
     $.getJSON(options.unreadCountURL),
     $.getJSON(options.notificationsURL, { format: 'json' })
-  ]).then(values => {
+  ])
+  .then(values => {
 
     const [ count, notifications ] = values
 
@@ -83,6 +84,7 @@ function bootstrap($popover, options) {
       }
     )
   })
+  .catch(e => { /* Fail silently */ })
 }
 
 $.getJSON(window.Routing.generate('profile_jwt'))
