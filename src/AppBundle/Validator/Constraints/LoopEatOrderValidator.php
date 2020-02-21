@@ -5,6 +5,8 @@ namespace AppBundle\Validator\Constraints;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Action\Utils\TokenStorageTrait;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -19,10 +21,12 @@ class LoopEatOrderValidator extends ConstraintValidator
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        LoopEatClient $client)
+        LoopEatClient $client,
+        LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
         $this->client = $client;
+        $this->logger = $logger;
     }
 
     public function validate($object, Constraint $constraint)
@@ -47,13 +51,18 @@ class LoopEatOrderValidator extends ConstraintValidator
             return;
         }
 
-        $currentCustomer = $this->client->currentCustomer($this->getUser());
-        $loopeatBalance = $currentCustomer['loopeatBalance'];
+        try {
+            $currentCustomer = $this->client->currentCustomer($this->getUser());
+            $loopeatBalance = $currentCustomer['loopeatBalance'];
 
-        if ($loopeatBalance < $quantity) {
-            $this->context->buildViolation($constraint->insufficientBalance)
-                ->atPath('reusablePackagingEnabled')
-                ->addViolation();
+            if ($loopeatBalance < $quantity) {
+                $this->context->buildViolation($constraint->insufficientBalance)
+                    ->atPath('reusablePackagingEnabled')
+                    ->addViolation();
+            }
+        } catch (RequestException $e) {
+            $this->logger->error($e->getMessage());
         }
+
     }
 }
