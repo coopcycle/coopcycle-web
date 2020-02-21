@@ -188,7 +188,7 @@ services:
       - { name: monolog.logger, channel: stripe }
 
   AppBundle\LoopEat\Client:
-    arguments: [ { base_uri: "%loopeat_base_url%", timeout: 15.0 } ]
+    arguments: [ { base_uri: "%loopeat_base_url%", timeout: 5.0 } ]
     calls:
       - method: setLoopEatClientId
         arguments:
