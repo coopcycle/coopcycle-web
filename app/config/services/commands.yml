@@ -1,0 +1,101 @@
+services:
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  AppBundle\Command\ApplyTaxesCommand:
+    arguments:
+      $orderTaxesProcessor: '@sylius.order_processing.order_taxes_processor'
+      $orderRepository: '@sylius.repository.order'
+      $orderManager: '@sylius.manager.order'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:orders:process-taxes' }
+
+  # TODO Add tag
+  AppBundle\Command\BotCommand:
+    arguments:
+      $apiClient: '@csa_guzzle.client.api'
+
+  AppBundle\Command\CreateSettingCommand:
+    arguments:
+      $entityName: '%craue_config.entity_name%'
+      $config: '@craue_config'
+    tags:
+      - { name: 'console.command', command: 'craue:setting:create' }
+
+  AppBundle\Command\FlushTrackingCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:tracking:flush' }
+
+  AppBundle\Command\ImportStripeFeeCommand:
+    arguments:
+      $orderRepository: '@sylius.repository.order'
+      $orderManager: '@sylius.manager.order'
+      $adjustmentFactory: '@sylius.factory.adjustment'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:orders:import-stripe-fee' }
+
+  AppBundle\Command\InitDemoCommand:
+    arguments:
+      $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
+      $faker: '@nelmio_alice.faker.generator'
+      $craueConfig: '@craue_config'
+      $configEntityName: '%craue_config.entity_name%'
+      $taxonFactory: '@sylius.factory.taxon'
+      $phoneNumberUtil: '@libphonenumber.phone_number_util'
+      $taxCategoryRepository: '@sylius.repository.tax_category'
+      $taxCategoryFactory: '@sylius.factory.tax_category'
+      $taxCategoryManager: '@sylius.manager.tax_category'
+      $taxRateFactory: '@sylius.factory.tax_rate'
+      $taxRateManager: '@sylius.manager.tax_rate'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:demo:init' }
+
+  AppBundle\Command\LoadFixturesCommand:
+    arguments:
+      $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
+      $projectDir: '%kernel.project_dir%'
+      $environment: '%kernel.environment%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:fixtures:load' }
+
+  AppBundle\Command\SetupCommand:
+    arguments:
+      $productRepository: '@sylius.repository.product'
+      $productFactory: '@sylius.factory.product'
+      $productManager: '@sylius.manager.product'
+      $productAttributeRepository: '@sylius.repository.product_attribute'
+      $productAttributeManager: '@sylius.manager.product_attribute'
+      $localeRepository: '@sylius.repository.locale'
+      $localeFactory: '@sylius.factory.locale'
+      $channelRepository: '@sylius.repository.channel'
+      $channelFactory: '@sylius.factory.channel'
+      $currencyRepository: '@sylius.repository.currency'
+      $currencyFactory: '@sylius.factory.currency'
+      $promotionFactory: '@sylius.factory.promotion'
+      $locale: '%kernel.default_locale%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:setup' }
+
+  AppBundle\Command\UploadImagesCommand:
+    arguments:
+      $localProductImagesFilesystem: '@product_images_filesystem'
+      $remoteProductImagesFilesystem: '@product_images_s3_filesystem'
+      $localRestaurantImagesFilesystem: '@restaurant_images_filesystem'
+      $remoteRestaurantImagesFilesystem: '@restaurant_images_s3_filesystem'
+      $localTaskImagesFilesystem: '@task_images_filesystem'
+      $remoteTaskImagesFilesystem: '@task_images_s3_filesystem'
+      $localReceiptsFilesystem: '@receipts_filesystem'
+      $remoteReceiptsFilesystem: '@receipts_s3_filesystem'
+      $localAssetsFilesystem: '@assets_filesystem'
+      $remoteAssetsFilesystem: '@assets_s3_filesystem'
+      $localStoreImagesFilesystem: '@store_images_filesystem'
+      $remoteStoreImagesFilesystem: '@store_images_s3_filesystem'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:s3:upload_files' }
+
+  AppBundle\Command\RemotePushNotificationsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:notifications:remote-push' }
