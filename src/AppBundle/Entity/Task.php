@@ -14,6 +14,7 @@ use AppBundle\Action\Task\Duplicate as TaskDuplicate;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskFilter;
+use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
@@ -538,5 +539,16 @@ class Task implements TaggableInterface
         }
 
         return false;
+    }
+
+    public function getCompletedAt()
+    {
+        if ($this->hasEvent(TaskDomainEvent\TaskDone::messageName())) {
+            return $this->getLastEvent(TaskDomainEvent\TaskDone::messageName())->getCreatedAt();
+        }
+
+        if ($task->hasEvent(TaskDomainEvent\TaskFailed::messageName())) {
+            return $this->getLastEvent(TaskDomainEvent\TaskFailed::messageName())->getCreatedAt();
+        }
     }
 }
