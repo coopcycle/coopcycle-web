@@ -547,7 +547,7 @@ class Task implements TaggableInterface
             return $this->getLastEvent(TaskDomainEvent\TaskDone::messageName())->getCreatedAt();
         }
 
-        if ($task->hasEvent(TaskDomainEvent\TaskFailed::messageName())) {
+        if ($this->hasEvent(TaskDomainEvent\TaskFailed::messageName())) {
             return $this->getLastEvent(TaskDomainEvent\TaskFailed::messageName())->getCreatedAt();
         }
     }
