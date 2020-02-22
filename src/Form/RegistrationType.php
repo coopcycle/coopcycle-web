@@ -12,13 +12,16 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationType extends AbstractTypeExtension
 {
+    private $urlGenerator;
     private $isDemo;
 
-    public function __construct(bool $isDemo = false)
+    public function __construct(UrlGeneratorInterface $urlGenerator, bool $isDemo = false)
     {
+        $this->urlGenerator = $urlGenerator;
         $this->isDemo = $isDemo;
     }
 
@@ -40,6 +43,7 @@ class RegistrationType extends AbstractTypeExtension
             ]);
         }
 
+        // Add help to "username" field
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             $child = $form->get('username');
