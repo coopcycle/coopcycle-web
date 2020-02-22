@@ -63,6 +63,7 @@ framework:
                     group: "%database_name%"
                     consumer: "%database_name%:consumer"
         routing:
+            'AppBundle\Message\Email': async
             'AppBundle\Message\PushNotification': async
 
 # Twig Configuration

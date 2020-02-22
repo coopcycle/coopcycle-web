@@ -829,3 +829,7 @@ services:
   Symfony\Bridge\Monolog\Processor\TokenProcessor:
     tags:
       - { name: monolog.processor, channel: api }
+
+  AppBundle\MessageHandler\EmailHandler:
+    arguments:
+      $transport: '@swiftmailer.transport.real'
