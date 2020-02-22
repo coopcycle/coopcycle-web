@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
+use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
@@ -87,7 +88,7 @@ class ImportStripeFeeCommand extends Command
             $this->io->text(sprintf('Retrieving order #%d', $options['order']));
             $orders[] = $this->orderRepository->find($options['order']);
 
-        } elseif (isset($options['date'])) {
+        } else {
 
             $date = $this->getDate($input);
 
@@ -210,6 +211,6 @@ class ImportStripeFeeCommand extends Command
             return false;
         }
 
-        return new \DateTime('yesterday');
+        return Carbon::yesterday();
     }
 }
