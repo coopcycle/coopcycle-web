@@ -87,3 +87,17 @@ Sylius\Component\Product\Model\Product:
       groups: ['product']
     enabled:
       groups: ['product', 'product_update']
+
+Trikoder\Bundle\OAuth2Bundle\Model\Client:
+  attributes:
+    normalization_context:
+      groups: ['api_app']
+    denormalization_context:
+      groups: ['api_app']
+
+# Trikoder\Bundle\OAuth2Bundle\Model\Scope:
+#   attributes:
+#     normalization_context:
+#       groups: ['api_app']
+#     denormalization_context:
+#       groups: ['api_app']
