@@ -18,6 +18,7 @@ use Trikoder\Bundle\OAuth2Bundle\Model\Client;
  *       "security"="is_granted('ROLE_ADMIN')"
  *     }
  *   },
+ *   collectionOperations={},
  *   attributes={
  *     "normalization_context"={"groups"={"api_app"}},
  *   }
