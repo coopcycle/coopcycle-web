@@ -159,6 +159,9 @@ doctrine:
             Sylius\Component\Order\Model\OrderInterface: AppBundle\Sylius\Order\OrderInterface
 
 api_platform:
+    version: 1.0.0
+    title: CoopCycle
+    show_webby: false
     mapping:
         paths:
             - '%kernel.project_dir%/src/AppBundle/Api/Dto'
