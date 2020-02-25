@@ -438,3 +438,8 @@ admin_tag:
         _controller: AppBundle\Controller\TagController::tagAction
         template: '@App/admin/tag.html.twig'
         redirect_route: admin_tags
+
+admin_task_receipt:
+    path:     /admin/tasks/{id}/receipt.pdf
+    defaults: { _controller: AppBundle\Controller\AdminController::taskReceiptAction }
+    methods:  [ GET ]

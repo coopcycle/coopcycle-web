@@ -804,3 +804,8 @@ notifications.restaurant.new_order: Nouvelle commande à confirmer
 profile.loopeat.connect: Connecter mon compte LoopEat
 profile.loopeat.connected: Compte LoopEat connecté
 basics.free: gratuit
+task.receipt.greeting: Cher client, chère cliente,
+task.receipt.message: Par la présente, nous confirmons que nous avons bien livré votre colis à <strong>%address%</strong> le <strong>%date%</strong>
+task.receipt.received_by: Le colis a été reçu par <strong>%name%</strong>
+task.receipt.attached_images: Images jointes
+task.receipt.reference: 'Référence : <strong>%ref%</strong>'

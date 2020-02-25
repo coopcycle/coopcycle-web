@@ -79,6 +79,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -1667,5 +1668,32 @@ class AdminController extends Controller
         return $this->render('@App/admin/new_order.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    public function taskReceiptAction($id, Request $request, EmailManager $emailManager, \Symfony\Component\Messenger\MessageBusInterface $bus)
+    {
+        $task = $this->getDoctrine()->getRepository(Task::class)->find($id);
+
+        $html = $this->get('twig')->render('@App/task/receipt.pdf.twig', [
+            'task' => $task,
+        ]);
+
+        $client = $this->get('csa_guzzle.client.browserless');
+
+        $pdf = $client->request('POST', '/pdf', [
+            'json' => ['html' => $html]
+        ]);
+
+        $response = new Response((string) $pdf->getBody());
+
+        $response->headers->add(['Content-Type' => 'application/pdf']);
+        $response->headers->add([
+            'Content-Disposition' => $response->headers->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                sprintf('task-%d-receipt.pdf', $task->getId())
+            )
+        ]);
+
+        return $response;
     }
 }

@@ -533,6 +533,7 @@ fos_js_routing:
         - admin_task_image_download
         - admin_task_list_create
         - admin_task_list_modify
+        - admin_task_receipt
         - profile_jwt
         - profile_notifications
         - profile_notifications_unread

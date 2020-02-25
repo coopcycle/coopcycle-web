@@ -774,3 +774,8 @@ notifications.restaurant.new_order: New order to accept
 profile.loopeat.connect: Connect my LoopEat account
 profile.loopeat.connected: LoopEat account connected
 basics.free: free
+task.receipt.greeting: Dear customer,
+task.receipt.message: Hereby we confirm that we have delivered your parcel at <strong>%address%</strong> on <strong>%date%</strong>
+task.receipt.received_by: The parcel was received by <strong>%name%</strong>
+task.receipt.attached_images: Attached images
+task.receipt.reference: 'Reference: <strong>%ref%</strong>'

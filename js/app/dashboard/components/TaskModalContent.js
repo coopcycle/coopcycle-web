@@ -460,7 +460,16 @@ class TaskModalContent extends React.Component {
                 )}
                 { (values.status === 'TODO' && values.isAssigned) && (
                   <div className="text-center">
-                    <a href="#" onClick={ this.onCompleteClick.bind(this) }>Terminer</a>
+                    <a href="#" onClick={ this.onCompleteClick.bind(this) }>
+                      { this.props.t('ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS') }
+                    </a>
+                  </div>
+                )}
+                { (values.status === 'DONE' && values.type === 'DROPOFF') && (
+                  <div className="text-center">
+                    <a href={ window.Routing.generate('admin_task_receipt', { id: values.id }) } target="_blank">
+                      <i className="fa fa-file-pdf-o"></i> { this.props.t('ADMIN_DASHBOARD_TASK_DOWNLOAD_PDF') }
+                    </a>
                   </div>
                 )}
               </div>
