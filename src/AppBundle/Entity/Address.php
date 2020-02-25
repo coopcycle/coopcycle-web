@@ -101,9 +101,15 @@ class Address extends BaseAddress
     public function getFirstName()
     {
         if (!empty($this->contactName)) {
-            [$firstName, $lastName] = explode(' ', $this->contactName, 2);
 
-            return $firstName;
+            $parts = explode(' ', $this->contactName, 2);
+            if (count($parts) === 2) {
+                [$firstName, $lastName] = $parts;
+
+                return $firstName;
+            }
+
+            return $this->contactName;
         }
 
         return null;
@@ -116,9 +122,15 @@ class Address extends BaseAddress
     public function getLastName()
     {
         if (!empty($this->contactName)) {
-            [$firstName, $lastName] = explode(' ', $this->contactName, 2);
 
-            return $lastName;
+            $parts = explode(' ', $this->contactName, 2);
+            if (count($parts) === 2) {
+                [$firstName, $lastName] = $parts;
+
+                return $lastName;
+            }
+
+            return $this->contactName;
         }
 
         return null;

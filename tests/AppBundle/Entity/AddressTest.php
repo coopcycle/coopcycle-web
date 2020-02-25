@@ -18,5 +18,10 @@ class AddressTest extends TestCase
 
         $this->assertEquals('John', $address->getFirstName());
         $this->assertEquals('Doe', $address->getLastName());
+
+        $address->setContactName('John');
+
+        $this->assertEquals('John', $address->getFirstName());
+        $this->assertEquals('John', $address->getLastName());
     }
 }
