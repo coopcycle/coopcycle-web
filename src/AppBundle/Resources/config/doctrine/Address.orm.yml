@@ -49,14 +49,6 @@ AppBundle\Entity\Address:
         streetAddress:
             type: string
             column: street_address
-        firstName:
-            type: string
-            nullable: true
-            column: first_name
-        lastName:
-            type: string
-            nullable: true
-            column: last_name
         company:
             type: string
             nullable: true

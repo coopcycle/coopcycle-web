@@ -101,8 +101,6 @@ form.payment.refund_amount.label: Menge
 embed.delivery.contact_heading: Kontakt
 embed.delivery.specify_billing_address: Geben Sie eine Rechnungsadresse an
 embed.delivery.billing_address: Rechnungsadresse
-form.address.firstName.label: Vorname
-form.address.lastName.label: Nachname
 form.address.company.label: Firmenname
 embed.breadcrumb.start: Informationen
 form.delivery.dropoff.doneBefore.label: Lieferzeit

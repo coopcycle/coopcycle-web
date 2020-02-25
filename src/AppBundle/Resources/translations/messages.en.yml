@@ -395,8 +395,6 @@ form.address.streetAddress.label: Address
 form.address.streetAddress.error.noLatLng: Please select an address in the dropdown
 form.address.name.label: Name
 form.address.name.placeholder: Home, work…
-form.address.firstName.label: First name
-form.address.lastName.label: Last name
 form.address.company.label: Company
 form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Rules

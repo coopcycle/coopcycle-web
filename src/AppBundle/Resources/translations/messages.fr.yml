@@ -374,8 +374,6 @@ form.address.postalCode.label: Code postal
 form.address.floor.label: Étage
 form.address.description.label: Instructions
 form.address.description.placeholder: 2ème porte à gauche…
-form.address.firstName.label: Prénom
-form.address.lastName.label: Nom
 form.address.company.label: Entreprise
 form.pricing_rule_set.name.label: Nom
 form.pricing_rule_set.rules.label: Règles

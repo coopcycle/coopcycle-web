@@ -214,10 +214,7 @@ class EmbedController extends Controller
 
     private function setBillingAddress(OrderInterface $order, Address $address)
     {
-        if (null !== $address->getFirstName()
-        ||  null !== $address->getLastName()
-        ||  null !== $address->getCompany()
-        ||  null !== $address->getStreetAddress()) {
+        if (null !== $address->getCompany() || null !== $address->getStreetAddress()) {
             $order->setBillingAddress($address);
         }
     }

@@ -378,8 +378,6 @@ form.address.streetAddress.label: Adreça
 form.address.streetAddress.error.noLatLng: Seleccioneu una adreça al menú desplegable
 form.address.name.label: Nom
 form.address.name.placeholder: Casa, feina…
-form.address.firstName.label: Nom
-form.address.lastName.label: Cognom
 form.address.company.label: Empresa
 form.pricing_rule_set.name.label: Nom
 form.pricing_rule_set.rules.label: Normes

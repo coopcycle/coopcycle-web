@@ -108,8 +108,6 @@
         <h4 class="panel-title">Adresse de facturation</h4>
       </div>
       <div class="panel-body">
-        {{ order.billingAddress.firstName }} {{ order.billingAddress.lastName }}
-        <br>
         {% if order.billingAddress.company is not empty %}
         {{ order.billingAddress.company }}
         <br>

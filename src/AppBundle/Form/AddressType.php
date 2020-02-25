@@ -78,14 +78,6 @@ class AddressType extends AbstractType
 
         if (true === $options['extended']) {
             $builder
-                ->add('firstName', TextType::class, [
-                    'label' => 'form.address.firstName.label',
-                    'required' => false,
-                ])
-                ->add('lastName', TextType::class, [
-                    'label' => 'form.address.lastName.label',
-                    'required' => false,
-                ])
                 ->add('company', TextType::class, [
                     'label' => 'form.address.company.label',
                     'required' => false,

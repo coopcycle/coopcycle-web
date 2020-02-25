@@ -132,7 +132,7 @@ class TaskType extends AbstractType
             }
 
             if ($form->has('recipient')) {
-                $task->getAddress()->setFirstName($form->get('recipient')->getData());
+                $task->getAddress()->setContactName($form->get('recipient')->getData());
             }
         });
     }

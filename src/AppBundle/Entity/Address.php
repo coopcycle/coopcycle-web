@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use AppBundle\Action\CreateAddress;
 use AppBundle\Entity\Base\BaseAddress;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
@@ -44,16 +45,6 @@ class Address extends BaseAddress
      */
     private $id;
 
-    /**
-     * @Groups({"task"})
-     */
-    private $firstName;
-
-    /**
-     * @Groups({"task"})
-     */
-    private $lastName;
-
     private $company;
 
     /**
@@ -69,30 +60,6 @@ class Address extends BaseAddress
     public function getId()
     {
         return $this->id;
-    }
-
-    public function getFirstName()
-    {
-        return $this->firstName;
-    }
-
-    public function setFirstName($firstName)
-    {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function getLastName()
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName($lastName)
-    {
-        $this->lastName = $lastName;
-
-        return $this;
     }
 
     public function getCompany()
@@ -125,5 +92,35 @@ class Address extends BaseAddress
         $this->contactName = $contactName;
 
         return $this;
+    }
+
+    /**
+     * @SerializedName("firstName")
+     * @Groups({"task"})
+     */
+    public function getFirstName()
+    {
+        if (!empty($this->contactName)) {
+            [$firstName, $lastName] = explode(' ', $this->contactName, 2);
+
+            return $firstName;
+        }
+
+        return null;
+    }
+
+    /**
+     * @SerializedName("lastName")
+     * @Groups({"task"})
+     */
+    public function getLastName()
+    {
+        if (!empty($this->contactName)) {
+            [$firstName, $lastName] = explode(' ', $this->contactName, 2);
+
+            return $lastName;
+        }
+
+        return null;
     }
 }

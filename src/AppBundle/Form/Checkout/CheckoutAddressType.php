@@ -146,8 +146,9 @@ class CheckoutAddressType extends AbstractType
             $shippingAddress = $order->getShippingAddress();
 
             // Copy customer data into address
-            $shippingAddress->setFirstName($customer->getGivenName());
-            $shippingAddress->setLastName($customer->getFamilyName());
+            $shippingAddress->setContactName(
+                trim(sprintf('%s %s', $customer->getGivenName(), $customer->getFamilyName()))
+            );
             $shippingAddress->setTelephone($customer->getTelephone());
         });
     }
