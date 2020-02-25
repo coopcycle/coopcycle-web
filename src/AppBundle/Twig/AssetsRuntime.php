@@ -3,6 +3,7 @@
 namespace AppBundle\Twig;
 
 use Twig\Extension\RuntimeExtensionInterface;
+use Intervention\Image\ImageManagerStatic;
 use League\Flysystem\MountManager;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
@@ -36,5 +37,24 @@ class AssetsRuntime implements RuntimeExtensionInterface
         }
 
         return $this->cacheManager->getBrowserPath($uri, $filter);
+    }
+
+    public function assetBase64($obj, string $fieldName, string $filter): ?string
+    {
+        $mapping = $this->propertyMappingFactory->fromField($obj, $fieldName);
+
+        $fileSystem = $this->mountManager->getFilesystem($mapping->getUploadDestination());
+
+        $uri = $this->storage->resolveUri($obj, $fieldName);
+
+        if (!$uri) {
+            return '';
+        }
+
+        if (!$fileSystem->has($uri)) {
+            return '';
+        }
+
+        return (string) ImageManagerStatic::make($fileSystem->read($uri))->encode('data-url');
     }
 }
