@@ -354,6 +354,14 @@ class TaskModalContent extends React.Component {
                       onBlur={ handleBlur }
                       value={ values.address.name || '' } />
                   </div>
+                  <div className="form-group form-group-sm">
+                    <label className="control-label" htmlFor="address_contactName">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_CONTACT_NAME_LABEL') }</label>
+                    <input type="text" id="address_contactName" name="address.contactName" placeholder={ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_CONTACT_NAME_PLACEHOLDER') } className="form-control"
+                      autoComplete="off"
+                      onChange={ handleChange }
+                      onBlur={ handleBlur }
+                      value={ values.address.contactName || '' } />
+                  </div>
                   <div className={ errors.address && touched.address && errors.address.telephone && touched.address.telephone ? 'form-group form-group-sm has-error' : 'form-group form-group-sm' }>
                     <label className="control-label" htmlFor="address_telephone">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_LABEL') }</label>
                     <PhoneInput

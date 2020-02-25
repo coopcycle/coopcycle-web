@@ -48,7 +48,7 @@ class Address extends BaseAddress
     private $company;
 
     /**
-     * @Groups({"delivery", "delivery_create"})
+     * @Groups({"task", "delivery", "delivery_create"})
      */
     private $contactName;
 
