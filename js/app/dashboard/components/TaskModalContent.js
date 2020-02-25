@@ -467,7 +467,7 @@ class TaskModalContent extends React.Component {
                 )}
                 { (values.status === 'DONE' && values.type === 'DROPOFF') && (
                   <div className="text-center">
-                    <a href={ window.Routing.generate('admin_task_receipt', { id: values.id }) } target="_blank">
+                    <a href={ window.Routing.generate('admin_task_receipt', { id: values.id }) } target="_blank" rel="noopener noreferrer">
                       <i className="fa fa-file-pdf-o"></i> { this.props.t('ADMIN_DASHBOARD_TASK_DOWNLOAD_PDF') }
                     </a>
                   </div>
