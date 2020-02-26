@@ -25,6 +25,7 @@ class TaskSubscriber implements EventSubscriber
     private $messageBus;
     private $logger;
     private $createdTasks = [];
+    private $postFlushEvents = [];
     private $usersToNotify;
 
     public function __construct(
@@ -89,6 +90,8 @@ class TaskSubscriber implements EventSubscriber
 
         $allMessages = [];
 
+        $this->postFlushEvents = [];
+
         foreach ($tasks as $task) {
 
             $processor = new EntityChangeSetProcessor($provider, $this->logger);
@@ -98,7 +101,11 @@ class TaskSubscriber implements EventSubscriber
 
             if (count($messages) > 0) {
                 foreach ($messages as $message) {
-                    $this->eventBus->handle($message);
+                    if (null !== $task->getId()) {
+                        $this->eventBus->handle($message);
+                    } else {
+                        $this->postFlushEvents[] = $message;
+                    }
                 }
 
                 $uow->computeChangeSets();
@@ -125,6 +132,10 @@ class TaskSubscriber implements EventSubscriber
     {
         foreach ($this->createdTasks as $task) {
             $this->eventBus->handle(new TaskCreated($task));
+        }
+
+        foreach ($this->postFlushEvents as $postFlushEvent) {
+            $this->eventBus->handle($postFlushEvent);
         }
 
         if (count($this->usersToNotify) > 0) {
