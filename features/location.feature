@@ -18,3 +18,4 @@ Feature: Location tracking
       ]
       """
     Then the response status code should be 200
+    And the Tile38 collection "coopcycle_test:fleet" should contain key "bob" with point "48.8678,2.3677283"

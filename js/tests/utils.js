@@ -35,6 +35,10 @@ function TestUtils() {
     url: process.env.COOPCYCLE_REDIS_DSN
   });
 
+  this.tile38 = require('redis').createClient({
+    url: process.env.COOPCYCLE_TILE38_DSN
+  });
+
   var privateKey = fs.readFileSync(__dirname + '/../../var/jwt/private.pem');
 
   this.cert = {
@@ -64,6 +68,7 @@ TestUtils.prototype.createJWT = function(username) {
 TestUtils.prototype.cleanDb = function() {
   var pgConfig = this.pgConfig;
   var redis = this.redis;
+  var tile38 = this.tile38;
 
   var pool = new pg.Pool(pgConfig);
 
@@ -87,7 +92,18 @@ TestUtils.prototype.cleanDb = function() {
         });
       });
 
-      return Promise.all([ cleanPg, cleanRedis ])
+      var cleanTile38 = new Promise(function(resolve, reject) {
+        const tile38FleetKey = `${process.env.COOPCYCLE_DB_NAME}_test:fleet`
+        tile38.send_command('DROP', [tile38FleetKey], function(err) {
+          if (!err) {
+            resolve()
+          } else {
+            reject()
+          }
+        })
+      });
+
+      return Promise.all([ cleanPg, cleanRedis, cleanTile38 ])
         .then(() => resolve())
         .catch(err => reject(err))
     });
@@ -279,6 +295,19 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant, taxCatego
 
   });
 
+};
+
+TestUtils.prototype.updateLocation = function(username, latitude, longitude) {
+  const tile38FleetKey = `${process.env.COOPCYCLE_DB_NAME}_test:fleet`
+
+  return new Promise((resolve, reject) => {
+    this.tile38.send_command('SET', [tile38FleetKey, username,
+      'POINT', latitude, longitude], function(err, res) {
+      if (!err) {
+        resolve()
+      }
+    })
+  });
 };
 
 let timeoutId;
