@@ -70,6 +70,7 @@ install:
   - docker run -t -v $(pwd)/var/osrm:/data -d -p 5000:5000 osrm/osrm-backend:$OSRM_VERSION osrm-routed --algorithm mld /data/paris-france.osrm
   - docker run -t -d -p 12111:12111 stripemock/stripe-mock
   - docker run -t -d -p 8889:80 adrianrudnik/mjml-server
+  - docker run -t -d -p 9851:9851 tile38/tile38
   # Configure php-fpm
   # @see https://docs.travis-ci.com/user/languages/php/
   # @see http://php.net/manual/fr/install.fpm.configuration.php#clear-env
