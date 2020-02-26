@@ -19,10 +19,16 @@ class PushNotificationHandler implements MessageHandlerInterface
 
     public function __invoke(PushNotification $message)
     {
-        $users = array_map(function ($username) {
-            return $this->userManager->findUserByUsername($username);
-        }, $message->getUsers());
+        $users = array_reduce($message->getUsers(), function ($carry, $item) {
+            if ($user = $this->userManager->findUserByUsername($item)) {
+                $carry[] = $user;
+            }
 
-        $this->remotePushNotificationManager->send($message->getContent(), $users, $message->getData());
+            return $carry;
+        }, []);
+
+        if (count($users) > 0) {
+            $this->remotePushNotificationManager->send($message->getContent(), $users, $message->getData());
+        }
     }
 }
