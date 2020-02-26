@@ -138,7 +138,7 @@ class TaskModalContent extends React.Component {
       }
     }
 
-    if (values.address.hasOwnProperty('telephone') && values.address.telephone.trim().length > 0) {
+    if (values.address.telephone && values.address.telephone.trim().length > 0) {
       if (!isValidPhoneNumber(values.address.telephone)) {
         errors.address = {
           ...errors.address,
