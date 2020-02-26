@@ -66,6 +66,7 @@ framework:
         routing:
             'AppBundle\Message\Email': async
             'AppBundle\Message\PushNotification': async
+            'AppBundle\Message\Event': async
 
 # Twig Configuration
 twig:
