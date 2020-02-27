@@ -123,14 +123,14 @@ class TaskList extends React.Component {
                   if (e.type === 'add') {
                     const task = _.find(this.props.allTasks, t => t['@id'] === e.item.getAttribute('data-task-id'))
 
-                    if (task.previous) {
+                    if (task && task.previous) {
                       // If previous task is another day, will be null
                       const previousTask = _.find(this.props.allTasks, t => t['@id'] === task.previous)
                       if (previousTask) {
                         Array.prototype.splice.apply(tasks,
                           Array.prototype.concat([ e.newIndex, 0 ], previousTask))
                       }
-                    } else if (task.next) {
+                    } else if (task && task.next) {
                       // If next task is another day, will be null
                       const nextTask = _.find(this.props.allTasks, t => t['@id'] === task.next)
                       if (nextTask) {
