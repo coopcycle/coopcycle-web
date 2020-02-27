@@ -3,7 +3,6 @@
 namespace AppBundle\Action;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
-use AppBundle\Service\SocketIoManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Predis\Client as Redis;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,20 +17,23 @@ class UpdateLocation
 
     protected $doctrine;
     protected $redis;
-    protected $socketIoManager;
+    protected $tile38;
+    protected $fleetKey;
     protected $logger;
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
         ManagerRegistry $doctrine,
         Redis $redis,
-        SocketIoManager $socketIoManager,
+        Redis $tile38,
+        string $fleetKey,
         LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
         $this->doctrine = $doctrine;
         $this->redis = $redis;
-        $this->socketIoManager = $socketIoManager;
+        $this->tile38 = $tile38;
+        $this->fleetKey = $fleetKey;
         $this->logger = $logger;
     }
 
@@ -77,21 +79,11 @@ class UpdateLocation
 
         $this->logger->info(sprintf('Last position recorded at %s', $datetime->format('Y-m-d H:i:s')));
 
-        $this->socketIoManager->toAdmins('tracking', [
-            'user' => $username,
-            'coords' => [
-                'lat' => (float) $lastLocation['latitude'],
-                'lng' => (float) $lastLocation['longitude'],
-            ]
-        ]);
+        // SET fleet truck1 POINT 3.5123 -12.2693
 
-         $this->socketIoManager->toCourier($this->getUser(), 'tracking', [
-            'user' => $username,
-            'coords' => [
-                'lat' => (float) $lastLocation['latitude'],
-                'lng' => (float) $lastLocation['longitude'],
-            ]
-        ]);
+        $response =
+            $this->tile38->executeRaw(['SET', $this->fleetKey, $username,
+                'POINT', $lastLocation['latitude'], $lastLocation['longitude']]);
 
         return new JsonResponse([]);
     }

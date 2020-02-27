@@ -140,4 +140,32 @@ describe('Connect to Socket.IO', function() {
     });
   });
 
+  it(`should emit "tracking" message to admins`, function() {
+      this.timeout(3000)
+      return new Promise((resolve, reject) => {
+
+        // Use "sarah" has role ROLE_ADMIN
+        const socketForSarah = createSocket('sarah')
+        const socketForBill = createSocket('bill')
+
+        // Wait for all sockets to connect, and send message
+        Promise.all([
+          new Promise((resolve, reject) => socketForBill.on('connect', () => resolve())),
+          new Promise((resolve, reject) => socketForSarah.on('connect', () => resolve())),
+        ]).then(() => {
+          setTimeout(() => utils.updateLocation('bob', 48.856613, 2.352222), 500)
+        })
+
+        socketForSarah.on('tracking', function(message) {
+          assert.deepEqual({ user: 'bob', coords: { lat: 48.856613, lng: 2.352222 } }, message);
+          resolve();
+        })
+
+        socketForBill.on('tracking', function(message) {
+          reject(new Error(`Message "tracking" should not have been emitted`));
+        })
+
+      })
+    });
+
 });

@@ -60,6 +60,7 @@ apps = _.map(apps, function(app) {
       COOPCYCLE_DB_PASSWORD: process.env.COOPCYCLE_DB_PASSWORD,
       COOPCYCLE_REDIS_DSN:   process.env.COOPCYCLE_REDIS_DSN,
       COOPCYCLE_POSTGRES_SSLMODE: process.env.COOPCYCLE_POSTGRES_SSLMODE,
+      COOPCYCLE_TILE38_DSN:   process.env.COOPCYCLE_TILE38_DSN,
     },
     env_production : {
       NODE_ENV: "production",

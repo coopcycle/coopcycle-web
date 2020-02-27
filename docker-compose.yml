@@ -170,6 +170,9 @@ services:
       /usr/bin/mc policy set public coopcycle/images;
       "
 
+  tile38:
+    image: tile38/tile38
+
 volumes:
   node_modules:
   pg_data:

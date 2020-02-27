@@ -24,6 +24,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Testwork\Tester\Result\TestResult;
+use Behat\Behat\Tester\Exception\PendingException;
 use Coduo\PHPMatcher\PHPMatcher;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -106,7 +107,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         AuthorizationServer $authorizationServer,
         Redis $redis,
         IriConverterInterface $iriConverter,
-        HttpMessageFactoryInterface $httpMessageFactory)
+        HttpMessageFactoryInterface $httpMessageFactory,
+        Redis $tile38)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -123,6 +125,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->redis = $redis;
         $this->iriConverter = $iriConverter;
         $this->httpMessageFactory = $httpMessageFactory;
+        $this->tile38 = $tile38;
     }
 
     public function setKernel(KernelInterface $kernel)
@@ -981,5 +984,24 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $em = $this->doctrine->getManagerForClass(Restaurant::class);
         $em->flush();
+    }
+
+    /**
+     * @Then the Tile38 collection :collectionName should contain key :keyName with point :value
+     */
+    public function assertTile38CollectionContainsKeyWithPoint($collectionName, $keyName, $value)
+    {
+        $response =
+            $this->tile38->executeRaw(['GET', $collectionName, $keyName]);
+
+        [ $latitude, $longitude ] = explode(',', $value);
+
+        // {"type":"Point","coordinates":[2.352222,48.856613]}
+
+        $data = json_decode($response, true);
+
+        Assert::assertArrayHasKey('type', $data);
+        Assert::assertArrayHasKey('coordinates', $data);
+        Assert::assertEquals([ $longitude, $latitude ], $data['coordinates']);
     }
 }
