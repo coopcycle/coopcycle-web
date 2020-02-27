@@ -40,30 +40,67 @@ const pulse = _.debounce(() => {
   setTimeout(() => $pulse.removeClass('pulse--animate'), 2000)
 }, 2000)
 
+let isRefreshingToken = false
+
+const createSocket = (token, dispatch) => {
+  const socket = io(`//${window.location.hostname}`, {
+    path: '/tracking/socket.io',
+    transports: [ 'websocket' ],
+    query: {
+      token
+    },
+  })
+
+  socket.on('task:done', data => dispatch(updateTask(data.task)))
+  socket.on('task:failed', data => dispatch(updateTask(data.task)))
+  socket.on('task:cancelled', data => dispatch(updateTask(data.task)))
+  socket.on('task:created', data => dispatch(addCreatedTask(data.task)))
+
+  socket.on('task:assigned', data => dispatch(updateTask(data.task)))
+  socket.on('task:unassigned', data => dispatch(updateTask(data.task)))
+
+  socket.on('tracking', data => {
+    pulse()
+    dispatch(setGeolocation(data.user, data.coords))
+  })
+
+  socket.on('connect', () => {
+    console.log('CONNECT!')
+  })
+
+  socket.on('error', (message) => {
+    if (message === 'Authentication error') {
+      refreshToken(dispatch)
+    }
+  })
+
+  return socket
+}
+
+function refreshToken(dispatch) {
+
+  if (isRefreshingToken) {
+    return
+  }
+
+  isRefreshingToken = true
+
+  $.getJSON(window.Routing.generate('profile_jwt')).then(token => {
+
+    socket.off()
+    socket.close()
+
+    socket = createSocket(token, dispatch)
+
+    isRefreshingToken = false
+  })
+}
+
 export const socketIO = ({ dispatch, getState }) => {
 
   if (!socket) {
 
-    socket = io(`//${window.location.hostname}`, {
-      path: '/tracking/socket.io',
-      transports: [ 'websocket' ],
-      query: {
-        token: getState().jwt,
-      },
-    })
-
-    socket.on('task:done', data => dispatch(updateTask(data.task)))
-    socket.on('task:failed', data => dispatch(updateTask(data.task)))
-    socket.on('task:cancelled', data => dispatch(updateTask(data.task)))
-    socket.on('task:created', data => dispatch(addCreatedTask(data.task)))
-
-    socket.on('task:assigned', data => dispatch(updateTask(data.task)))
-    socket.on('task:unassigned', data => dispatch(updateTask(data.task)))
-
-    socket.on('tracking', data => {
-      pulse()
-      dispatch(setGeolocation(data.user, data.coords))
-    })
+    socket = createSocket(getState().jwt, dispatch)
 
     setTimeout(() => {
       checkLastSeen(dispatch, getState)

@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { I18nextProvider } from 'react-i18next'
 import NotificationList from './NotificationList'
 import i18n from '../i18n'
+import { createSocketIo } from '../socket.io'
 
 function bootstrap($popover, options) {
 
@@ -53,6 +54,23 @@ function bootstrap($popover, options) {
       token: options.jwt,
     },
     transports: [ 'websocket' ],
+  })
+
+  createSocketIo().then((s) => {
+    console.log('S1', s)
+    s.on(`notifications`, notification => console.log('notif', notification))
+  })
+  // createSocketIo().then((s) => console.log('S2', s))
+  // createSocketIo().then((s) => console.log('S3', s))
+  setTimeout(() => {
+    createSocketIo().then((s) => {
+      console.log('S4', s)
+      console.log(s._callbacks)
+    })
+  }, 5000)
+
+  socket.on('error', (e) => {
+    console.log('NOTIF ERR')
   })
 
   Promise.all([
