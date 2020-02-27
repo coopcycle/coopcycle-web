@@ -129,4 +129,16 @@ class Osrm extends Base
 
         return (int) $response['routes'][0]['duration'];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEtas(GeoCoordinates ...$coordinates)
+    {
+        $response = $this->getServiceResponse('route', $coordinates, ['overview' => 'full']);
+
+        return array_map(function ($leg) {
+            return (int) $leg['duration'];
+        }, $response['routes'][0]['legs']);
+    }
 }

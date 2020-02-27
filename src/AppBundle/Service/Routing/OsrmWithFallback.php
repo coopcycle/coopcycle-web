@@ -55,4 +55,16 @@ class OsrmWithFallback extends Base
             return $this->fallback->getDuration(...$coordinates);
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEtas(GeoCoordinates ...$coordinates)
+    {
+        try {
+            return $this->osrm->getEtas(...$coordinates);
+        } catch (GuzzleException $e) {
+            return $this->fallback->getEtas(...$coordinates);
+        }
+    }
 }

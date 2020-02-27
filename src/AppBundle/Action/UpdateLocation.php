@@ -3,12 +3,14 @@
 namespace AppBundle\Action;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
+use AppBundle\Message\Location;
 use Doctrine\Persistence\ManagerRegistry;
 use Predis\Client as Redis;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Psr\Log\LoggerInterface;
 
 class UpdateLocation
@@ -27,6 +29,7 @@ class UpdateLocation
         Redis $redis,
         Redis $tile38,
         string $fleetKey,
+        MessageBusInterface $messageBus,
         LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
@@ -34,6 +37,7 @@ class UpdateLocation
         $this->redis = $redis;
         $this->tile38 = $tile38;
         $this->fleetKey = $fleetKey;
+        $this->messageBus = $messageBus;
         $this->logger = $logger;
     }
 
@@ -84,6 +88,10 @@ class UpdateLocation
         $response =
             $this->tile38->executeRaw(['SET', $this->fleetKey, $username,
                 'POINT', $lastLocation['latitude'], $lastLocation['longitude']]);
+
+        $this->messageBus->dispatch(
+            new Location($username, [ $lastLocation['latitude'], $lastLocation['longitude'] ])
+        );
 
         return new JsonResponse([]);
     }

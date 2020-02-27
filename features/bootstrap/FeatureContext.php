@@ -1004,4 +1004,12 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         Assert::assertArrayHasKey('coordinates', $data);
         Assert::assertEquals([ $longitude, $latitude ], $data['coordinates']);
     }
+
+    /**
+     * @Then the Redis key :key should contain :value
+     */
+    public function assertRedisKeyContains($key, $value)
+    {
+        Assert::assertEquals($value, $this->redis->get($key));
+    }
 }
