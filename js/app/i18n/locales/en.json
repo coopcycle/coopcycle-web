@@ -98,6 +98,8 @@
     "ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES": "As the crow flies",
     "ADMIN_DASHBOARD_CANCEL_TASKS_MULTI": "Cancel {{count}} task(s)",
     "ADMIN_DASHBOARD_NO_ACTION_AVAILABLE": "No action available",
+    "ADMIN_DASHBOARD_MOVE_TO_TOP": "Move to top",
+    "ADMIN_DASHBOARD_MOVE_TO_BOTTOM": "Move to bottom",
     "USER_EDIT_ENABLED_LABEL": "Enabled",
     "USER_EDIT_DISABLED_LABEL": "Disabled",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Delivery expected at {{deliveryTime}}.",

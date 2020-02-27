@@ -4,11 +4,13 @@ import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
 import { ContextMenu, MenuItem, connectMenu } from 'react-contextmenu'
 
-import { removeTasks, cancelTasks } from '../redux/actions'
+import { removeTasks, cancelTasks, moveToTop, moveToBottom } from '../redux/actions'
 
 const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
 const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
 const CANCEL_MULTI = 'CANCEL_MULTI'
+const MOVE_TO_TOP = 'MOVE_TO_TOP'
+const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
 
 function _unassign(tasksToUnassign, removeTasks) {
   const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo)
@@ -18,7 +20,10 @@ function _unassign(tasksToUnassign, removeTasks) {
 /**
  * The variable "trigger" contains the task that was right-clicked
  */
-const DynamicMenu = ({ id, trigger, unassignedTasks, selectedTasks, tasksToUnassign, containsOnlyUnassignedTasks, removeTasks, cancelTasks, t }) => {
+const DynamicMenu = ({
+  id, trigger,
+  unassignedTasks, selectedTasks, tasksToUnassign, containsOnlyUnassignedTasks,
+  removeTasks, cancelTasks, moveToTop, moveToBottom, t }) => {
 
   const actions = []
 
@@ -27,6 +32,10 @@ const DynamicMenu = ({ id, trigger, unassignedTasks, selectedTasks, tasksToUnass
     const isAssigned = !_.find(unassignedTasks, unassignedTask => unassignedTask['@id'] === trigger.task['@id'])
     if (isAssigned) {
       actions.push(UNASSIGN_SINGLE)
+      if (selectedTasks.length === 1) {
+        actions.push(MOVE_TO_TOP)
+        actions.push(MOVE_TO_BOTTOM)
+      }
     }
 
     if (selectedTasks.length > 0) {
@@ -50,6 +59,16 @@ const DynamicMenu = ({ id, trigger, unassignedTasks, selectedTasks, tasksToUnass
       { actions.includes(UNASSIGN_SINGLE) && (
         <MenuItem onClick={ () => _unassign([ trigger.task ], removeTasks) }>
           { t('ADMIN_DASHBOARD_UNASSIGN_TASK', { id: trigger.task.id }) }
+        </MenuItem>
+      )}
+      { actions.includes(MOVE_TO_TOP) && (
+        <MenuItem onClick={ () => moveToTop(trigger.task) }>
+          { t('ADMIN_DASHBOARD_MOVE_TO_TOP') }
+        </MenuItem>
+      )}
+      { actions.includes(MOVE_TO_BOTTOM) && (
+        <MenuItem onClick={ () => moveToBottom(trigger.task) }>
+          { t('ADMIN_DASHBOARD_MOVE_TO_BOTTOM') }
         </MenuItem>
       )}
       { actions.includes(UNASSIGN_MULTI) && (
@@ -96,6 +115,8 @@ function mapDispatchToProps(dispatch) {
   return {
     removeTasks: (username, tasks) => dispatch(removeTasks(username, tasks)),
     cancelTasks: tasks => dispatch(cancelTasks(tasks)),
+    moveToTop: task => dispatch(moveToTop(task)),
+    moveToBottom: task => dispatch(moveToBottom(task)),
   }
 }
 

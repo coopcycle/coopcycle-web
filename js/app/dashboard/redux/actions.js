@@ -278,6 +278,36 @@ function addTaskList(username) {
   }
 }
 
+function moveToTop(task) {
+
+  return function(dispatch, getState) {
+
+    const { taskLists } = getState()
+    const taskList = _.find(taskLists, taskList => taskList.username === task.assignedTo)
+
+    if (taskList) {
+      const newTasks = taskList.items.filter(item => item['@id'] !== task['@id'])
+      newTasks.unshift(task)
+      dispatch(modifyTaskList(taskList.username, newTasks))
+    }
+  }
+}
+
+function moveToBottom(task) {
+
+  return function(dispatch, getState) {
+
+    const { taskLists } = getState()
+    const taskList = _.find(taskLists, taskList => taskList.username === task.assignedTo)
+
+    if (taskList) {
+      const newTasks = taskList.items.filter(item => item['@id'] !== task['@id'])
+      newTasks.push(task)
+      dispatch(modifyTaskList(taskList.username, newTasks))
+    }
+  }
+}
+
 function setGeolocation(username, coords) {
   return { type: SET_GEOLOCATION, username, coords }
 }
@@ -595,4 +625,6 @@ export {
   cancelTasks,
   loadTaskEvents,
   setTaskListsLoading,
+  moveToTop,
+  moveToBottom,
 }
