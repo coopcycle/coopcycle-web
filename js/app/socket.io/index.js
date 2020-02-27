@@ -34,7 +34,7 @@ function refreshToken() {
 
   getToken().then(token => {
 
-    console.log('TOKEN REFRESHED')
+    // console.log('TOKEN REFRESHED')
 
     let events = _.mapKeys(socket._callbacks, (value, key) => key.substring(1))
     // events = _.filter(events, (value, key) => {
@@ -65,12 +65,7 @@ function refreshToken() {
     // })
 
     _.forEach(events, (callbacks, event) => {
-      console.log('RE-ADDING EVVENT', event)
-      // socket.on(event, cb)
-      _.forEach(callbacks, (cb) => {
-        console.log('RE-ADDING EVVENT', event, cb)
-        socket.on(event, cb)
-      })
+      _.forEach(callbacks, (cb) => socket.on(event, cb))
     })
 
     isRefreshingToken = false
