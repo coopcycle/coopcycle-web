@@ -38,25 +38,19 @@ class RefundHandler
             throw new \Exception(sprintf('Payment #%d can\'t be refunded', $payment->getId()));
         }
 
-        try {
+        // FIXME With several partial refunds, need to check if totally refunded
+        $isPartial = (int) $amount < $payment->getOrder()->getTotal();
 
-            // FIXME With several partial refunds, need to check if totally refunded
-            $isPartial = (int) $amount < $payment->getOrder()->getTotal();
+        $transition = $isPartial ? 'refund_partially' : PaymentTransitions::TRANSITION_REFUND;
 
-            $transition = $isPartial ? 'refund_partially' : PaymentTransitions::TRANSITION_REFUND;
+        $refund = $this->stripeManager->refund($payment, $amount, $refundApplicationFee);
 
-            $refund = $this->stripeManager->refund($payment, $amount, $refundApplicationFee);
-
-            if ($payment->getState() === 'refunded_partially' && $transition !== 'refund_partially') {
-                $stateMachine->apply($transition);
-            }
-
-            $payment->addRefund($refund);
-
-            // TODO Record event
-
-        } catch (\Exception $e) {
-            // TODO Record event
+        if ($payment->getState() === 'refunded_partially' && $transition !== 'refund_partially') {
+            $stateMachine->apply($transition);
         }
+
+        $payment->addRefund($refund);
+
+        // TODO Record event
     }
 }
