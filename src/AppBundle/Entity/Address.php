@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use AppBundle\Action\CreateAddress;
 use AppBundle\Entity\Base\BaseAddress;
+use AppBundle\Entity\Base\GeoCoordinates;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -136,5 +137,19 @@ class Address extends BaseAddress
         }
 
         return null;
+    }
+
+    /**
+     * @param array $latLng
+     * @SerializedName("latLng")
+     * @Groups({"delivery_create"})
+     */
+    public function setLatLng(array $latLng)
+    {
+        [ $lat, $lng ] = $latLng;
+
+        $this->setGeo(new GeoCoordinates($lat, $lng));
+
+        return $this;
     }
 }

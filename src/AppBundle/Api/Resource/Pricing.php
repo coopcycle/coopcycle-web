@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "input"=DeliveryInput::class,
  *       "controller"=PricingController::class,
  *       "write"=false,
+ *       "denormalization_context"={"groups"={"delivery_create", "pricing_deliveries"}},
  *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_STORE')",
  *       "swagger_context"={
  *         "summary"="Calculates price of a Delivery",

@@ -231,6 +231,28 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         return new self();
     }
 
+    public static function createWithTasks($pickup, $dropoff)
+    {
+        $delivery = self::create();
+
+        $delivery->removeTask($delivery->getPickup());
+        $delivery->removeTask($delivery->getDropoff());
+
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setDelivery($delivery);
+
+        $dropoff->setType(Task::TYPE_DROPOFF);
+        $dropoff->setDelivery($delivery);
+
+        $pickup->setNext($dropoff);
+        $dropoff->setPrevious($pickup);
+
+        $delivery->addTask($pickup);
+        $delivery->addTask($dropoff);
+
+        return $delivery;
+    }
+
     public static function createWithAddress($pickupAddress, $dropoffAddress)
     {
         $delivery = self::createWithDefaults();

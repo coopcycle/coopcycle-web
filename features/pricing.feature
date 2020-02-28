@@ -92,6 +92,10 @@ Feature: Pricing
       """
       {
         "store":"/api/stores/1",
+        "weight": 12000,
+        "packages": [
+          {"type": "SMALL", "quantity": 2}
+        ],
         "pickup": {
           "address": {
             "streetAddress": "24, Rue de la Paix Paris",

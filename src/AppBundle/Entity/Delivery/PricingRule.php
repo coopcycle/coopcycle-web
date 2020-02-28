@@ -25,6 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_STORE')",
  *       "input"=DeliveryInput::class,
  *       "output"=YesNoOutput::class,
+ *       "denormalization_context"={"groups"={"delivery_create"}},
  *       "write"=false,
  *       "swagger_context"={
  *         "summary"="Evaluates a PricingRule",

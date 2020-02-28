@@ -3,8 +3,10 @@
 namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Core\Exception\InvalidArgumentException;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Task;
+use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -19,12 +21,14 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         ItemNormalizer $normalizer,
         IriConverterInterface $iriConverter,
         TagManager $tagManager,
-        UserManagerInterface $userManager)
+        UserManagerInterface $userManager,
+        Geocoder $geocoder)
     {
         $this->normalizer = $normalizer;
         $this->iriConverter = $iriConverter;
         $this->tagManager = $tagManager;
         $this->userManager = $userManager;
+        $this->geocoder = $geocoder;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -84,7 +88,23 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             unset($data['doneBefore']);
         }
 
+        $address = null;
+        if (isset($data['address']) && is_string($data['address'])) {
+            try {
+                $this->iriConverter->getItemFromIri($data['address']);
+            } catch (InvalidArgumentException $e) {
+                $addressAsString = $data['address'];
+                unset($data['address']);
+                $address = $this->geocoder->geocode($addressAsString);
+            }
+
+        }
+
         $task = $this->normalizer->denormalize($data, $class, $format, $context);
+
+        if ($address && null === $task->getAddress()) {
+            $task->setAddress($address);
+        }
 
         if (isset($data['tags'])) {
             $tags = $this->tagManager->fromSlugs($data['tags']);

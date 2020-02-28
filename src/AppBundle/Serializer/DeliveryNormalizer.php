@@ -19,7 +19,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private $normalizer;
     private $geocoder;
-    private $packageRepository;
+    private $doctrine;
     private $logger;
 
     public function __construct(
@@ -32,7 +32,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->normalizer = $normalizer;
         $this->geocoder = $geocoder;
         $this->iriConverter = $iriConverter;
-        $this->packageRepository = $doctrine->getRepository(Package::class);
+        $this->doctrine = $doctrine;
         $this->logger = $logger;
     }
 
@@ -134,8 +134,11 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         if (isset($data['packages'])) {
+
+            $packageRepository = $this->doctrine->getRepository(Package::class);
+
             foreach ($data['packages'] as $p) {
-                $package = $this->packageRepository->findOneByName($p['type']);
+                $package = $packageRepository->findOneByName($p['type']);
                 if ($package) {
                     $delivery->addPackageWithQuantity($package, $p['quantity']);
                 }

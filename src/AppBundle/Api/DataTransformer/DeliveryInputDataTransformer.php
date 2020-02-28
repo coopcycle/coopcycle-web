@@ -4,21 +4,24 @@ namespace AppBundle\Api\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Package;
+use AppBundle\Entity\Store;
+use AppBundle\Entity\Task;
 use AppBundle\Api\Resource\Pricing;
-use AppBundle\Serializer\DeliveryNormalizer;
 use AppBundle\Service\RoutingInterface;
 use ApiPlatform\Core\Api\IriConverterInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
 class DeliveryInputDataTransformer implements DataTransformerInterface
 {
     public function __construct(
-        DeliveryNormalizer $deliveryNormalizer,
         RoutingInterface $routing,
-        IriConverterInterface $iriConverter)
+        IriConverterInterface $iriConverter,
+        ManagerRegistry $doctrine)
     {
-        $this->deliveryNormalizer = $deliveryNormalizer;
         $this->routing = $routing;
         $this->iriConverter = $iriConverter;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -26,17 +29,20 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
      */
     public function transform($data, string $to, array $context = [])
     {
-        $deliveryData = [
-            'pickup' => $data->pickup,
-            'dropoff' => $data->dropoff,
-            'weight' => $data->weight,
-            'packages' => $data->packages,
-        ];
-        $delivery = $this->deliveryNormalizer->denormalize($deliveryData, Delivery::class);
+        $delivery = Delivery::createWithTasks($data->pickup, $data->dropoff);
 
-        if ($data->store) {
-            $store = $this->iriConverter->getItemFromIri($data->store);
-            $delivery->setStore($store);
+        if ($data->store && $data->store instanceof Store) {
+            $delivery->setStore($data->store);
+        }
+
+        if ($data->packages && is_array($data->packages)) {
+            $packageRepository = $this->doctrine->getRepository(Package::class);
+            foreach ($data->packages as $p) {
+                $package = $packageRepository->findOneByName($p['type']);
+                if ($package) {
+                    $delivery->addPackageWithQuantity($package, $p['quantity']);
+                }
+            }
         }
 
         $distance = $this->routing->getDistance(
