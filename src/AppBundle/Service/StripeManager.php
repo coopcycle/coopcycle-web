@@ -283,6 +283,11 @@ class StripeManager
             }
         }
 
+        // FIXME
+        // When a direct charge was used (without a connected Stripe account)
+        // we have the following error
+        // "refund_application_fee can only be used by the Connect application that created the charge."
+
         $args['refund_application_fee'] = $refundApplicationFee;
 
         return Stripe\Refund::create($args, $stripeOptions);
