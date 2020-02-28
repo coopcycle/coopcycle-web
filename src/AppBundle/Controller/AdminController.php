@@ -226,7 +226,12 @@ class AdminController extends Controller
 
                     $this->get('sylius.manager.order')->flush();
 
-                    return $this->redirectToRoute('admin_orders');
+                    $this->addFlash(
+                        'notice',
+                        $this->get('translator')->trans('orders.payment_refunded')
+                    );
+
+                    return $this->redirectToRoute('admin_order', ['id' => $id]);
                 }
             }
         }

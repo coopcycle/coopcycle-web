@@ -749,6 +749,7 @@ orders.new: New order
 basics.copy: Copy
 orders.payment_link.send_by_email: Send payment link by email
 orders.payment_link.sent: Email sent successfully
+orders.payment_refunded: Payment refunded successfully
 form.min_max.lower.label: Min. number
 form.min_max.upper.label: Max. number
 form.min_max.infinity.label: No maximum

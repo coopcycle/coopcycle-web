@@ -783,6 +783,7 @@ orders.new: Nouvelle commande
 basics.copy: Copier
 orders.payment_link.send_by_email: Envoyer un lien de paiement
 orders.payment_link.sent: L'email a été envoyé
+orders.payment_refunded: Le paiement a été remboursé
 form.min_max.lower.label: Valeur min.
 form.min_max.upper.label: Valeur max.
 form.min_max.infinity.label: Pas de maximum
