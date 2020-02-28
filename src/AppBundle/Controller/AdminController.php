@@ -209,7 +209,14 @@ class AdminController extends Controller
 
         foreach ($form->get('payments') as $paymentForm) {
             if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
-                if ($form->getClickedButton() && 'refund' === $form->getClickedButton()->getName()) {
+
+                $hasClickedRefund =
+                    $paymentForm->getClickedButton() && 'refund' === $paymentForm->getClickedButton()->getName();
+
+                $hasExpectedFields =
+                    $paymentForm->has('amount') && $paymentForm->has('refundApplicationFee');
+
+                if ($hasClickedRefund && $hasExpectedFields) {
 
                     $payment = $paymentForm->getData();
                     $amount = $paymentForm->get('amount')->getData();
