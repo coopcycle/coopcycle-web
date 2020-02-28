@@ -6,6 +6,7 @@ import { ContextMenuTrigger } from 'react-contextmenu'
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
 import { selectTasksWithColor } from '../redux/selectors'
+import TaskEta from './TaskEta'
 
 moment.locale($('html').attr('lang'))
 
@@ -102,6 +103,12 @@ class Task extends React.Component {
     }
   }
 
+  renderEtaProgress() {
+    return (
+      <TaskEta date={ this.props.date } task={ this.props.task } />
+    )
+  }
+
   render() {
 
     const { color, task, selected } = this.props
@@ -161,6 +168,7 @@ class Task extends React.Component {
         { this.renderAttrs() }
         { this.renderTags() }
         { this.renderIconRight() }
+        { this.renderEtaProgress() }
       </ContextMenuTrigger>
     )
 
@@ -177,6 +185,7 @@ function mapStateToProps(state, ownProps) {
   return {
     selected: -1 !== state.selectedTasks.indexOf(ownProps.task),
     color,
+    date: state.date,
   }
 }
 

@@ -126,3 +126,30 @@ export function withLinkedTasks(tasks, allTasks) {
 
   return newTasks
 }
+
+export const timeframeToPercentage = (timeframe, reference) => {
+
+  const after = moment(timeframe[0])
+  const before = moment(timeframe[1])
+
+  const start = moment(reference).set({ hour: 0, minute: 0, second: 0 })
+  const end = moment(reference).set({ hour: 23, minute: 59, second: 59 })
+
+  const afterAsSeconds = after.diff(start, 'seconds')
+  const beforeAsSeconds = before.diff(start, 'seconds')
+
+  const percentAfter = after.isAfter(start) ? afterAsSeconds / 86400 : 0.0
+  const percentBefore = before.isBefore(end) ? (beforeAsSeconds / 86400) : 1.0
+
+  return [ percentAfter, percentBefore ]
+}
+
+export const nowToPercentage = (now) => {
+
+  now = now || moment()
+
+  const start = moment(now).set({ hour: 0, minute: 0, second: 0 })
+  const nowAsSeconds = moment(now).diff(start, 'seconds')
+
+  return nowAsSeconds / 86400
+}

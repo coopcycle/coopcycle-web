@@ -256,6 +256,33 @@ html, body {
   background-color: $yellow!important;
 }
 
+.task__eta {
+  width: 100%;
+  height: 4px;
+  display: block;
+  position: absolute;
+  background-color: #E8E8E8;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  &__now {
+    position: absolute;
+    transform: translateX(-2px);
+    height: 4px;
+    width: 4px;
+    display: block;
+    position: absolute;
+    background-color: black;
+  }
+  &__timeframe {
+    position: absolute;
+    height: 4px;
+    display: block;
+    position: absolute;
+    background-color: #C8C8C8;
+  }
+}
+
 .task__tags,
 .task__attrs {
   > i {

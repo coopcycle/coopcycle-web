@@ -1,4 +1,11 @@
-import { groupLinkedTasks, removedTasks, withoutTasks, withLinkedTasks } from '../redux/utils'
+import {
+  groupLinkedTasks,
+  removedTasks,
+  withoutTasks,
+  withLinkedTasks,
+  timeframeToPercentage,
+  nowToPercentage,
+} from '../redux/utils'
 
 describe('groupLinkedTasks', () => {
 
@@ -225,5 +232,37 @@ describe('withLinkedTasks', () => {
         previous: '/api/tasks/1',
       }
     ])
+  })
+})
+
+describe('timeframeToPercentage', () => {
+
+  it('should return expected results', () => {
+
+    expect(timeframeToPercentage(['2020-02-27 12:00:00', '2020-02-27 18:00:00'], '2020-02-27')).toEqual([
+      0.5,
+      0.75
+    ])
+    expect(timeframeToPercentage(['2020-02-27 09:00:00', '2020-02-27 21:00:00'], '2020-02-27')).toEqual([
+      0.375,
+      0.875
+    ])
+    expect(timeframeToPercentage(['2020-02-27 09:00:00', '2020-02-28 12:00:00'], '2020-02-27')).toEqual([
+      0.375,
+      1.0
+    ])
+    expect(timeframeToPercentage(['2020-02-27 09:00:00', '2020-02-28 12:00:00'], '2020-02-28')).toEqual([
+      0.0,
+      0.5
+    ])
+  })
+})
+
+describe('nowToPercentage', () => {
+
+  it('should return expected results', () => {
+    expect(nowToPercentage('2020-02-27 00:00:00')).toEqual(0.0)
+    expect(nowToPercentage('2020-02-27 12:00:00')).toEqual(0.5)
+    expect(nowToPercentage('2020-02-27 18:00:00')).toEqual(0.75)
   })
 })
