@@ -166,6 +166,7 @@
     "CROPPIE_CONFIRM": "Confirm",
     "CROPPIE_CANCEL": "Cancel",
     "DROPZONE_DEFAULT_MESSAGE": "Drop files here",
-    "TAGS_SELECT_PLACEHOLDER": "Select tags…"
+    "TAGS_SELECT_PLACEHOLDER": "Select tags…",
+    "ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS": "Unassign all tasks?"
   }
 }

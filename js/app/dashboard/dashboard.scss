@@ -224,6 +224,18 @@ html, body {
   }
 }
 
+.taskList__panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  &__unassign {
+    padding-left: 4px;
+  }
+  .dashboard__panel__heading__link {
+    flex: 1;
+  }
+}
+
 .task__icon {
   &--right {
     font-size: 14px;

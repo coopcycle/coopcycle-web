@@ -152,6 +152,10 @@ function removeTasks(username, tasks) {
 
   return function(dispatch, getState) {
 
+    if (tasks.length === 0) {
+      return
+    }
+
     const { allTasks, taskLists } = getState()
     const taskList = _.find(taskLists, taskList => taskList.username === username)
 

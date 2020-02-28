@@ -1,15 +1,19 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { render } from 'react-dom'
 import moment from 'moment'
 import Sortable from 'react-sortablejs'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
 import Task from './Task'
+import TaskListPopoverContent from './TaskListPopoverContent'
 import { removeTasks, modifyTaskList, togglePolyline } from '../redux/actions'
 import { selectFilteredTasks } from '../redux/selectors'
 
 moment.locale($('html').attr('lang'))
+
+const TaskListPopoverContentWithTrans = withTranslation()(TaskListPopoverContent)
 
 class TaskList extends React.Component {
 
@@ -41,6 +45,37 @@ class TaskList extends React.Component {
     this.props.removeTasks(this.props.username, task)
   }
 
+  onClickUnassign(e) {
+    e.preventDefault()
+
+    const $target = $(e.currentTarget)
+
+    if (!$target.data('bs.popover')) {
+
+      const el = document.createElement('div')
+
+      const cb = () => {
+        $target.popover({
+          trigger: 'manual',
+          html: true,
+          container: 'body',
+          placement: 'left',
+          content: el
+        })
+        $target.popover('toggle')
+      }
+
+      render(<TaskListPopoverContentWithTrans
+        onClickCancel={ () => $target.popover('hide') }
+        onClickConfirm={ () => {
+          $target.popover('hide')
+          this.props.removeTasks(this.props.username, this.props.uncompletedTasks)
+        }} />, el, cb)
+    } else {
+      $target.popover('toggle')
+    }
+  }
+
   render() {
 
     const {
@@ -48,6 +83,7 @@ class TaskList extends React.Component {
       distance,
       username,
       polylineEnabled,
+      uncompletedTasks,
     } = this.props
 
     let { tasks } = this.props
@@ -78,24 +114,27 @@ class TaskList extends React.Component {
 
     return (
       <div className="panel panel-default nomargin noradius noborder">
-        <div className="panel-heading  dashboard__panel__heading">
-          <h3
-            className="panel-title"
-            role="button"
-            data-toggle="collapse"
-            data-target={ '#' + collabsableId }
-            aria-expanded={ collapsed ? 'false' : 'true' }
-          >
-            <img src={ avatarURL } width="20" height="20" /> 
+        <div className="panel-heading dashboard__panel__heading">
+          <h3 className="panel-title taskList__panel-title">
             <a
               className="dashboard__panel__heading__link"
+              role="button"
+              data-toggle="collapse"
+              data-target={ '#' + collabsableId }
+              aria-expanded={ collapsed ? 'false' : 'true' }
             >
-              { username }
+              <img src={ avatarURL } width="20" height="20" /> 
+              <span>{ username }</span>
               &nbsp;&nbsp;
               <span className="badge">{ tasks.length }</span>
               &nbsp;&nbsp;
               <i className={ collapsed ? 'fa fa-caret-down' : 'fa fa-caret-up' }></i>
             </a>
+            { uncompletedTasks.length > 0 && (
+            <a onClick={ e => this.onClickUnassign(e) } className="taskList__panel-title__unassign">
+              <i className="fa fa-close"></i>
+            </a>
+            )}
           </h3>
         </div>
         <div role="tabpanel" id={ collabsableId } className="collapse">
@@ -188,7 +227,8 @@ function mapStateToProps(state, ownProps) {
     }),
     distance: ownProps.distance,
     duration: ownProps.duration,
-    filters: state.filters
+    filters: state.filters,
+    uncompletedTasks: _.filter(ownProps.items, t => t.status === 'TODO'),
   }
 }
 
