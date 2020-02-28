@@ -46,16 +46,9 @@ export default function(el, options) {
           async: true,
           url: options.image,
           success: function(message, text, jqXHR) {
-
             const filesize = jqXHR.getResponseHeader('Content-Length')
             const filename = options.image.substr(options.image.lastIndexOf('/') + 1)
-
-            var mockFile = { name: filename, size: filesize }
-
-            dz.files.push(mockFile)
-            dz.emit('addedfile', mockFile)
-            dz.emit('thumbnail', mockFile, options.image)
-            dz.emit('complete', mockFile)
+            dz.displayExistingFile({ name: filename, size: filesize }, options.image)
           }
         })
       }
