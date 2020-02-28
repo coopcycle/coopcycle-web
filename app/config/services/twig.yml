@@ -7,7 +7,7 @@ services:
   AppBundle\Twig\:
     resource: '../../../src/AppBundle/Twig/*'
 
-  League\Flysystem\Filesystem $assetsFilesystem: '@assets_filesystem'
+  League\Flysystem\Filesystem $assetsFilesystem: '@assets_s3_filesystem'
 
   AppBundle\Twig\AppearanceRuntime:
     arguments:
