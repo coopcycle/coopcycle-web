@@ -28,7 +28,12 @@
 <ul style="text-align: right;">
   <li><strong>{{ coopcycle_setting('brand_name') }}</strong></li>
   <li>{{ coopcycle_setting('administrator_email') }}</li>
-  <li>{{ coopcycle_setting('phone_number') }}</li>
+  {% set phone_number = coopcycle_setting('phone_number') %}
+  {% if phone_number is not empty %}
+  <li>
+    <span>{{ phone_number|phone_number_format('NATIONAL') }}</span>
+  </li>
+  {% endif %}
 </ul>
 {% endblock %}
 
