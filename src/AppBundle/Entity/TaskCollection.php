@@ -22,7 +22,7 @@ abstract class TaskCollection
 
     /**
      * @Assert\Valid()
-     * @Groups({"task_collection", "task", "delivery", "place"})
+     * @Groups({"task_collection", "task"})
      */
     protected $items;
 

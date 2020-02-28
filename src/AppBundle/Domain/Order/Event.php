@@ -26,7 +26,7 @@ abstract class Event extends BaseEvent implements SerializableEventInterface
     public function normalize(NormalizerInterface $serializer)
     {
         $normalized = $serializer->normalize($this->getOrder(), 'jsonld', [
-            'groups' => ['order', 'address', 'place']
+            'groups' => ['order', 'address']
         ]);
 
         return [

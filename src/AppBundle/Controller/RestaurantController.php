@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -187,7 +189,10 @@ class RestaurantController extends AbstractController
      * )
      * @Template()
      */
-    public function indexAction($id, $slug, Request $request, SlugifyInterface $slugify, CartContextInterface $cartContext)
+    public function indexAction($id, $slug, Request $request,
+        SlugifyInterface $slugify,
+        CartContextInterface $cartContext,
+        IriConverterInterface $iriConverter)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)->find($id);
@@ -234,19 +239,23 @@ class RestaurantController extends AbstractController
         $user = $this->getUser();
         if ($request->query->has('address') && $user && count($user->getAddresses()) > 0) {
 
-            $addressId = intval(base_convert($request->query->get('address'), 36, 10));
+            $addressIRI = base64_decode($request->query->get('address'));
 
-            $shippingAddress = $this->getDoctrine()
-                ->getRepository(Address::class)
-                ->find($addressId);
+            try {
 
-            if ($user->getAddresses()->contains($shippingAddress)) {
-                $cart->setShippingAddress($shippingAddress);
+                $shippingAddress = $iriConverter->getItemFromIri($addressIRI);
 
-                $this->orderManager->persist($cart);
-                $this->orderManager->flush();
+                if ($user->getAddresses()->contains($shippingAddress)) {
+                    $cart->setShippingAddress($shippingAddress);
 
-                $this->saveSession($request, $cart);
+                    $this->orderManager->persist($cart);
+                    $this->orderManager->flush();
+
+                    $this->saveSession($request, $cart);
+                }
+
+            } catch (ItemNotFoundException $e) {
+                // Do nothing
             }
         }
 
@@ -325,7 +334,7 @@ class RestaurantController extends AbstractController
             'resource_class' => Restaurant::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['restaurant_seo', 'postal_address']
+            'groups' => ['restaurant_seo', 'address']
         ]);
 
         $delay = null;
@@ -350,23 +359,29 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/restaurant/{id}/cart/address", name="restaurant_cart_address", methods={"POST"})
      */
-    public function changeAddressAction($id, Request $request, CartContextInterface $cartContext)
+    public function changeAddressAction($id, Request $request,
+        CartContextInterface $cartContext,
+        IriConverterInterface $iriConverter)
     {
         $cart = $cartContext->getCart();
         $user = $this->getUser();
         if ($request->request->has('address') && $user && count($user->getAddresses()) > 0) {
 
-            $addressId = $request->request->get('address');
+            $addressIRI = $request->request->get('address');
 
-            $shippingAddress = $this->getDoctrine()
-                ->getRepository(Address::class)
-                ->find($addressId);
+            try {
 
-            if ($user->getAddresses()->contains($shippingAddress)) {
-                $cart->setShippingAddress($shippingAddress);
+                $shippingAddress = $iriConverter->getItemFromIri($addressIRI);
 
-                $this->orderManager->persist($cart);
-                $this->orderManager->flush();
+                if ($user->getAddresses()->contains($shippingAddress)) {
+                    $cart->setShippingAddress($shippingAddress);
+
+                    $this->orderManager->persist($cart);
+                    $this->orderManager->flush();
+                }
+
+            } catch (ItemNotFoundException $e) {
+                // Do nothing
             }
         }
 

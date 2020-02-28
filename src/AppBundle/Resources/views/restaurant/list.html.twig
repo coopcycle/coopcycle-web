@@ -71,7 +71,7 @@
               var $newAddressInput = $('<input>');
               $newAddressInput.attr('type', 'hidden');
               $newAddressInput.attr('name', 'address');
-              $newAddressInput.val(address.id.toString(36));
+              $newAddressInput.val(btoa(address['@id']));
               $searchForm.append($newAddressInput);
             }
           }

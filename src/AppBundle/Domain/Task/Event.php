@@ -29,7 +29,7 @@ abstract class Event extends BaseEvent implements SerializableEventInterface
             'resource_class' => Task::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['task', 'delivery', 'place']
+            'groups' => ['task', 'delivery', 'address']
         ]);
 
         return [

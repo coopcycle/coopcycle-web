@@ -23,7 +23,7 @@ trait OrderTrait
             'resource_class' => Order::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['order', 'place']
+            'groups' => ['order', 'address']
         ]);
 
         return new JsonResponse($orderNormalized, 200);

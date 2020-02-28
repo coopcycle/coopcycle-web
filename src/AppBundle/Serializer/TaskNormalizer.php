@@ -31,11 +31,12 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        if (isset($data['doneAfter'])) {
-            $data['after'] = $data['doneAfter'];
+        // Legacy props
+        if (isset($data['after'])) {
+            $data['doneAfter'] = $data['after'];
         }
-        if (isset($data['doneBefore'])) {
-            $data['before'] = $data['doneBefore'];
+        if (isset($data['before'])) {
+            $data['doneBefore'] = $data['before'];
         }
 
         // Make sure "comments" is a string
@@ -73,12 +74,14 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        if (!isset($data['doneAfter']) && isset($data['after'])) {
-            $data['doneAfter'] = $data['after'];
+        // Legacy props
+        if (isset($data['doneAfter']) && !isset($data['after'])) {
+            $data['after'] = $data['doneAfter'];
+            unset($data['doneAfter']);
         }
-
-        if (!isset($data['doneBefore']) && isset($data['before'])) {
-            $data['doneBefore'] = $data['before'];
+        if (isset($data['doneBefore']) && !isset($data['before'])) {
+            $data['before'] = $data['doneBefore'];
+            unset($data['doneBefore']);
         }
 
         $task = $this->normalizer->denormalize($data, $class, $format, $context);

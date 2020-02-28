@@ -164,7 +164,7 @@ trait AdminDashboardTrait
                 'resource_class' => Task::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
-                'groups' => ['task', 'delivery', 'place']
+                'groups' => ['task', 'delivery', 'address']
             ]);
         }, $allTasks);
 
@@ -173,7 +173,7 @@ trait AdminDashboardTrait
                 'resource_class' => TaskList::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
-                'groups' => ['task_collection', 'task', 'delivery', 'place']
+                'groups' => ['task_collection', 'task', 'delivery', 'address']
             ]);
         }, $taskLists);
 
@@ -275,7 +275,7 @@ trait AdminDashboardTrait
             'resource_class' => TaskList::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['task_collection', 'task', 'delivery', 'place']
+            'groups' => ['task_collection', 'task', 'delivery', 'address']
         ]));
     }
 

@@ -21,7 +21,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *
  * @ApiResource(iri="http://schema.org/Store",
  *   attributes={
- *     "normalization_context"={"groups"={"store", "place"}}
+ *     "normalization_context"={"groups"={"store", "address"}}
  *   },
  *   collectionOperations={
  *     "get"={

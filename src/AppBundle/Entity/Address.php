@@ -12,6 +12,9 @@ use ApiPlatform\Core\Annotation\ApiResource;
  * @see http://schema.org/Place Documentation on Schema.org
  *
  * @ApiResource(iri="http://schema.org/Place",
+ *   attributes={
+ *     "normalization_context"={"groups"={"address"}}
+ *   },
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
@@ -32,7 +35,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *   subresourceOperations={
  *     "api_stores_addresses_get_subresource"={
  *       "method"="GET",
- *       "normalization_context"={"groups"={"address", "place", "delivery"}}
+ *       "normalization_context"={"groups"={"address", "delivery"}}
  *     }
  *   }
  * )
@@ -40,7 +43,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 class Address extends BaseAddress
 {
     /**
-     * @Groups({"address"})
      * @var int
      */
     private $id;
@@ -48,7 +50,7 @@ class Address extends BaseAddress
     private $company;
 
     /**
-     * @Groups({"task", "delivery", "delivery_create"})
+     * @Groups({"task", "delivery", "delivery_create", "task_create"})
      */
     private $contactName;
 

@@ -38,13 +38,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function normalize($object, $format = null, array $context = array())
     {
-        $data =  $this->normalizer->normalize($object, $format, $context);
-
-        if (isset($data['items'])) {
-            unset($data['items']);
-        }
-
-        return $data;
+        return $this->normalizer->normalize($object, $format, $context);
     }
 
     public function supportsNormalization($data, $format = null)

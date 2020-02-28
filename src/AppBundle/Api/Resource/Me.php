@@ -14,7 +14,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *       "path"="/me",
  *       "controller"=MeController::class,
  *       "read"=false,
- *       "normalization_context"={"groups"={"user", "place", "api_app"}}
+ *       "normalization_context"={"groups"={"user", "address", "api_app"}}
  *     }
  *   }
  * )

@@ -157,7 +157,7 @@ context('Checkout', () => {
 
     cy.location().then((loc) => {
       expect(loc.pathname).to.eq('/fr/restaurants')
-      expect(loc.search).to.match(/\?geohash=[a-z0-9]+&address=[a-z0-9]+/)
+      expect(loc.search).to.match(/\?geohash=[a-z0-9]+&address=[A-Za-z0-9%=]+/)
     })
 
     cy.contains('Crazy Hamburger').click()

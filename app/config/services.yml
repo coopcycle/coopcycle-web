@@ -750,3 +750,8 @@ services:
   AppBundle\MessageHandler\EmailHandler:
     arguments:
       $transport: '@swiftmailer.transport.real'
+
+  AppBundle\Api\Swagger\SwaggerDecorator:
+      decorates: 'api_platform.swagger.normalizer.api_gateway'
+      arguments: [ '@AppBundle\Api\Swagger\SwaggerDecorator.inner' ]
+      autoconfigure: false

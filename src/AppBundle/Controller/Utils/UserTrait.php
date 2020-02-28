@@ -45,7 +45,7 @@ trait UserTrait
                 'resource_class' => Address::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
-                'groups' => ['address', 'place']
+                'groups' => ['address']
             ]);
         }, $addresses);
     }

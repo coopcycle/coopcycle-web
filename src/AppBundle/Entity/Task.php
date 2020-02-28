@@ -29,8 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ApiResource(
  *   attributes={
- *     "denormalization_context"={"groups"={"task", "address_create", "task_edit"}},
- *     "normalization_context"={"groups"={"task", "delivery", "place"}}
+ *     "normalization_context"={"groups"={"task", "delivery", "address"}}
  *   },
  *   collectionOperations={
  *     "get"={
@@ -40,7 +39,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "post"={
  *       "method"="POST",
  *       "access_control"="is_granted('ROLE_ADMIN')",
- *       "denormalization_context"={"groups"={"task", "place"}},
+ *       "denormalization_context"={"groups"={"task_create"}},
  *     },
  *     "my_tasks"={
  *       "method"="GET",
@@ -72,37 +71,79 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="PUT",
  *       "path"="/tasks/{id}/done",
  *       "controller"=TaskDone::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))"
+ *       "denormalization_context"={"groups"={"task_operation"}},
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+ *       "swagger_context"={
+ *         "summary"="Marks a Task as done",
+ *         "parameters"={
+ *           {
+ *             "in"="body",
+ *             "schema"={"type"="object", "properties"={"notes"={"type"="string"}}}
+ *           }
+ *         }
+ *       }
  *     },
  *     "task_failed"={
  *       "method"="PUT",
  *       "path"="/tasks/{id}/failed",
  *       "controller"=TaskFailed::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))"
+ *       "denormalization_context"={"groups"={"task_operation"}},
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+ *       "swagger_context"={
+ *         "summary"="Marks a Task as failed",
+ *         "parameters"={
+ *           {
+ *             "in"="body",
+ *             "schema"={"type"="object", "properties"={"notes"={"type"="string"}}}
+ *           }
+ *         }
+ *       }
  *     },
  *     "task_assign"={
  *       "method"="PUT",
  *       "path"="/tasks/{id}/assign",
  *       "controller"=TaskAssign::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')"
+ *       "denormalization_context"={"groups"={"task_operation"}},
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "swagger_context"={
+ *         "summary"="Assigns a Task to a messenger",
+ *         "parameters"={
+ *           {
+ *             "in"="body",
+ *             "schema"={"type"="object", "properties"={"username"={"type"="string"}}}
+ *           }
+ *         }
+ *       }
  *     },
  *     "task_unassign"={
  *       "method"="PUT",
  *       "path"="/tasks/{id}/unassign",
  *       "controller"=TaskUnassign::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))"
+ *       "denormalization_context"={"groups"={"task_operation"}},
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+ *       "swagger_context"={
+ *         "summary"="Unassigns a Task from a messenger"
+ *       }
  *     },
  *     "task_cancel"={
  *       "method"="PUT",
  *       "path"="/tasks/{id}/cancel",
  *       "controller"=TaskCancel::class,
- *       "access_control"="is_granted('ROLE_ADMIN')"
+ *       "denormalization_context"={"groups"={"task_operation"}},
+ *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "swagger_context"={
+ *         "summary"="Cancels a Task"
+ *       }
  *     },
  *     "task_duplicate"={
  *       "method"="POST",
  *       "path"="/tasks/{id}/duplicate",
  *       "controller"=TaskDuplicate::class,
- *       "access_control"="is_granted('ROLE_ADMIN')"
+ *       "denormalization_context"={"groups"={"task_operation"}},
+ *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "swagger_context"={
+ *         "summary"="Duplicates a Task"
+ *       }
  *     }
  *   },
  *   subresourceOperations={
@@ -134,7 +175,7 @@ class Task implements TaggableInterface
     private $id;
 
     /**
-     * @Groups({"task", "task_edit"})
+     * @Groups({"task", "task_create", "task_edit"})
      */
     private $type = self::TYPE_DROPOFF;
 
@@ -146,13 +187,10 @@ class Task implements TaggableInterface
     private $delivery;
 
     /**
-     * @Groups({"task", "task_edit", "place", "address_create"})
+     * @Groups({"task", "task_create", "task_edit", "address", "address_create", "delivery_create"})
      */
     private $address;
 
-    /**
-     * @Groups({"task", "task_edit", "delivery"})
-     */
     private $doneAfter;
 
     /**
@@ -161,12 +199,11 @@ class Task implements TaggableInterface
      *     "this.getDoneAfter() == null or this.getDoneAfter() < this.getDoneBefore()",
      *     message="task.before.mustBeGreaterThanAfter"
      * )
-     * @Groups({"task", "task_edit", "delivery"})
      */
     private $doneBefore;
 
     /**
-     * @Groups({"task", "task_edit", "delivery"})
+     * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create"})
      */
     private $comments;
 
@@ -296,24 +333,40 @@ class Task implements TaggableInterface
         return $this;
     }
 
-    public function getDoneAfter()
+    /**
+     * @SerializedName("after")
+     * @Groups({"task", "task_edit", "delivery"})
+     */
+    public function getAfter()
     {
         return $this->doneAfter;
     }
 
-    public function setDoneAfter(?\DateTime $doneAfter)
+    /**
+     * @SerializedName("after")
+     * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create"})
+     */
+    public function setAfter(?\DateTime $doneAfter)
     {
         $this->doneAfter = $doneAfter;
 
         return $this;
     }
 
-    public function getDoneBefore()
+    /**
+     * @SerializedName("before")
+     * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create"})
+     */
+    public function getBefore()
     {
         return $this->doneBefore;
     }
 
-    public function setDoneBefore(?\DateTime $doneBefore)
+    /**
+     * @SerializedName("before")
+     * @Groups({"task", "task_edit", "delivery"})
+     */
+    public function setBefore(?\DateTime $doneBefore)
     {
         $this->doneBefore = $doneBefore;
 
@@ -550,5 +603,27 @@ class Task implements TaggableInterface
         if ($this->hasEvent(TaskDomainEvent\TaskFailed::messageName())) {
             return $this->getLastEvent(TaskDomainEvent\TaskFailed::messageName())->getCreatedAt();
         }
+    }
+
+    /* Legacy */
+
+    public function getDoneAfter()
+    {
+        return $this->getAfter();
+    }
+
+    public function setDoneAfter(?\DateTime $after)
+    {
+        return $this->setAfter($after);
+    }
+
+    public function getDoneBefore()
+    {
+        return $this->getBefore();
+    }
+
+    public function setDoneBefore(?\DateTime $before)
+    {
+        return $this->setBefore($before);
     }
 }

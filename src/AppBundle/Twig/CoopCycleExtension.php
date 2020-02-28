@@ -93,7 +93,7 @@ class CoopCycleExtension extends AbstractExtension
                         'resource_class' => Address::class,
                         'operation_type' => 'item',
                         'item_operation_name' => 'get',
-                        'groups' => ['address', 'postal_address', 'place']
+                        'groups' => ['address']
                     ]);
 
                     $collection[] = $normalized;

@@ -158,7 +158,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order_create"}},
- *     "normalization_context"={"groups"={"order", "place"}}
+ *     "normalization_context"={"groups"={"order", "address"}}
  *   }
  * )
  * @ApiFilter(OrderDateFilter::class, properties={"date": "exact"})

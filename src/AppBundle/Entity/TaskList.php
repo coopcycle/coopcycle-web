@@ -32,7 +32,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     }
  *   },
  *   attributes={
- *     "normalization_context"={"groups"={"task_collection", "task", "place"}}
+ *     "normalization_context"={"groups"={"task_collection", "task", "address"}}
  *   }
  * )
  * @ApiFilter(DateFilter::class, properties={"date"})

@@ -245,14 +245,14 @@ export function changeAddress(address) {
 
       dispatch(fetchRequest())
 
-      if (address.hasOwnProperty('id')) {
+      if (address['@id']) {
 
         isNewAddressFormElement.value = '0'
 
         const url =
           window.Routing.generate('restaurant_cart_address', { id: restaurant.id })
 
-        $.post(url, { address: address.id })
+        $.post(url, { address: address['@id'] })
           .then(res => handleAjaxResponse(res, dispatch))
           .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
 

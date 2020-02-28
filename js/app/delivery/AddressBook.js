@@ -88,7 +88,7 @@ export default function(el, options) {
       preciseOnly={ true }
       onAddressSelected={ (value, address) => {
 
-        if (address.id) {
+        if (address['@id']) {
           existingAddressControlHidden.value = address['@id']
           isNewAddressControlHidden.remove()
         } else {

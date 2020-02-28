@@ -599,10 +599,7 @@ Feature: Stores
           {
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
-            "id":@integer@,
             "contactName":null,
-            "description":null,
-            "floor":null,
             "geo":{
               "latitude":48.884625,
               "longitude":2.322084

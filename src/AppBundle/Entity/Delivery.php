@@ -27,7 +27,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   collectionOperations={
  *     "post"={
  *       "method"="POST",
- *       "denormalization_context"={"groups"={"delivery_create"}}
+ *       "denormalization_context"={"groups"={"delivery_create"}},
+ *       "swagger_context"={
+ *         "parameters"=Delivery::SWAGGER_CONTEXT_POST_PARAMETERS
+ *       }
  *     },
  *     "check"={
  *       "method"="POST",
@@ -35,7 +38,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "write"=false,
  *       "status"=200,
  *       "validation_groups"={"Default", "delivery_check"},
- *       "denormalization_context"={"groups"={"delivery_create"}}
+ *       "denormalization_context"={"groups"={"delivery_create"}},
+ *       "swagger_context"={
+ *         "summary"="Asserts a Delivery is feasible",
+ *         "parameters"=Delivery::SWAGGER_CONTEXT_POST_PARAMETERS
+ *       }
  *     }
  *   },
  *   itemOperations={
@@ -50,19 +57,25 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *        "method"="PUT",
  *        "path"="/deliveries/{id}/pick",
  *        "controller"=PickDelivery::class,
- *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())"
+ *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())",
+ *        "swagger_context"={
+ *          "summary"="Marks a Delivery as picked"
+ *        }
  *     },
  *     "drop"={
  *        "method"="PUT",
  *        "path"="/deliveries/{id}/drop",
  *        "controller"=DropDelivery::class,
- *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())"
+ *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())",
+ *        "swagger_context"={
+ *          "summary"="Marks a Delivery as dropped"
+ *        }
  *     }
  *   },
  *   attributes={
  *     "order"={"createdAt": "DESC"},
  *     "denormalization_context"={"groups"={"order_create"}},
- *     "normalization_context"={"groups"={"delivery", "place", "order"}},
+ *     "normalization_context"={"groups"={"delivery", "address", "order"}},
  *     "pagination_items_per_page"=15
  *   }
  * )
@@ -93,6 +106,20 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
     private $store;
 
     private $packages;
+
+    const SWAGGER_CONTEXT_POST_PARAMETERS = [
+        [
+            "in"=>"body",
+            "schema" => [
+                "type" => "object",
+                "required" => ["dropoff"],
+                "properties" => [
+                    "dropoff" => ['$ref' => '#/definitions/Task-task_create'],
+                    "pickup" => ['$ref' => '#/definitions/Task-task_create'],
+                ]
+            ]
+        ]
+    ];
 
     public function __construct()
     {

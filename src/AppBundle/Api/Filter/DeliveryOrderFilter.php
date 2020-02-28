@@ -4,6 +4,7 @@ namespace AppBundle\Api\Filter;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskCollectionItem;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryBuilderHelper;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
@@ -23,16 +24,19 @@ class DeliveryOrderFilter extends OrderFilter
         $parts = $queryBuilder->getDQLPart('join');
 
         $itemsAlias = null;
-        foreach ($parts[$rootAlias] as $join) {
-            /** @var Join $join */
-            if (sprintf('%s.items', $rootAlias) === $join->getJoin()) {
-                $itemsAlias = $join->getAlias();
-                break;
+        if (isset($parts[$rootAlias])) {
+            foreach ($parts[$rootAlias] as $join) {
+                /** @var Join $join */
+                if (sprintf('%s.items', $rootAlias) === $join->getJoin()) {
+                    $itemsAlias = $join->getAlias();
+                    break;
+                }
             }
         }
 
         if (null === $itemsAlias) {
-            return;
+            $itemsAlias = $queryNameGenerator->generateJoinAlias('items');
+            $queryBuilder->innerJoin(sprintf('%s.items', $rootAlias), $itemsAlias, Join::WITH);
         }
 
         $expr = $queryBuilder->expr();
