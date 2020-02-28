@@ -408,7 +408,7 @@ class TaskModalContent extends React.Component {
                       <DatePicker.RangePicker
                         style={{ width: '100%' }}
                         showTime={{ hideDisabledOptions: true, format: 'HH:mm' }}
-                        format="YYYY-MM-DD HH:mm"
+                        format="LLL"
                         defaultValue={[ moment(values.after), moment(values.before) ]}
                         onChange={(value) => {
                           setFieldValue('after', value[0].format())
