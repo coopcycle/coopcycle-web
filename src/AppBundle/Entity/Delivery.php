@@ -197,6 +197,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
     }
 
     /**
+     * @return Task|null
      * @Groups({"delivery"})
      */
     public function getPickup()
@@ -206,9 +207,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
                 return $task;
             }
         }
+
+        return null;
     }
 
     /**
+     * @return Task|null
      * @Groups({"delivery"})
      */
     public function getDropoff()
@@ -218,6 +222,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
                 return $task;
             }
         }
+
+        return null;
     }
 
     public static function create()

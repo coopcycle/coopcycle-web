@@ -14,7 +14,23 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *       "path"="/me",
  *       "controller"=MeController::class,
  *       "read"=false,
- *       "normalization_context"={"groups"={"user", "address", "api_app"}}
+ *       "normalization_context"={"groups"={"user", "address", "api_app"}},
+ *       "swagger_context"={
+ *         "summary"="Retrieves information about the authenticated token",
+ *         "responses"={
+ *           "200"={
+ *             "schema"={
+ *               "type"="object",
+ *               "properties"={
+ *                 "addresses"={"type"="array","items"={"$ref"="#/definitions/Address"}},
+ *                 "username"={"type"="string"},
+ *                 "email"={"type"="string"},
+ *                 "roles"={"type"="array","items"={"type"="string"}},
+ *               }
+ *             }
+ *           }
+ *         }
+ *       }
  *     }
  *   }
  * )
