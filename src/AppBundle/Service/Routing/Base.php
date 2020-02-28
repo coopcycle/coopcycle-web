@@ -15,4 +15,9 @@ abstract class Base implements RoutingInterface
 
         return Polyline::pair($points);
     }
+
+    public function getEtas(GeoCoordinates ...$coordinates)
+    {
+        return [];
+    }
 }

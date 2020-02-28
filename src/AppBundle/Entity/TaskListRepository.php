@@ -25,4 +25,16 @@ class TaskListRepository extends EntityRepository
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    public function findOneByUserAndDate(UserInterface $user, \DateTime $date)
+    {
+        $qb = $this->createQueryBuilder('o')
+            ->andWhere('o.courier = :user')
+            ->andWhere('DATE(o.date) = :date')
+            ->setParameter('user', $user)
+            ->setParameter('date', $date->format('Y-m-d'))
+            ;
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

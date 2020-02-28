@@ -1,0 +1,65 @@
+include:
+  - sylius_channels.yml
+
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.864577", "2.333338" ]
+  geo_2:
+    __construct: [ "48.846656", "2.369052" ]
+  geo_3:
+    __construct: [ "48.878658", "2.341055" ]
+
+AppBundle\Entity\ApiUser:
+  bob:
+    __factory:
+      '@FOS\UserBundle\Util\UserManipulator::create':
+        - 'bob'
+        - '123456'
+        - 'bob@demo.coopcycle.org'
+        - true
+        - false
+  sarah:
+    __factory:
+      '@FOS\UserBundle\Util\UserManipulator::create':
+        - 'sarah'
+        - '123456'
+        - 'sarah@demo.coopcycle.org'
+        - true
+        - false
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: Paris
+    postalCode: '75010'
+    streetAddress: 272, rue Saint Honoré 75001 Paris 1er
+    geo: "@geo_1"
+  address_2:
+    addressLocality: 'Paris'
+    postalCode: '75010'
+    streetAddress: 18, avenue Ledru-Rollin 75012 Paris 12ème
+    geo: "@geo_2"
+  address_3:
+    addressLocality: Paris
+    postalCode: '75010'
+    streetAddress: 17, rue Milton 75009 Paris 9ème
+    geo: "@geo_3"
+
+AppBundle\Entity\Task:
+  task_1:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('2020-02-27 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2020-02-27 12:30:00'))>
+    __calls:
+      - assignTo: [ "@bob", <identity(new \DateTime('2020-02-27'))> ]
+  task_2:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('2020-02-27 13:00:00'))>
+    doneBefore: <identity(new \DateTime('2020-02-27 13:30:00'))>
+    __calls:
+      - assignTo: [ "@bob", <identity(new \DateTime('2020-02-27'))> ]
+  task_3:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2020-02-27 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2020-02-27 12:30:00'))>
+    __calls:
+      - assignTo: [ "@bob", <identity(new \DateTime('2020-02-27'))> ]

@@ -25,4 +25,10 @@ interface RoutingInterface
      * @param GeoCoordinates[] ...$coordinates
      */
     public function getDuration(GeoCoordinates ...$coordinates);
+
+    /**
+     * @param GeoCoordinates[] ...$coordinates
+     * @return array
+     */
+    public function getEtas(GeoCoordinates ...$coordinates);
 }
