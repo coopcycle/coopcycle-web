@@ -48,11 +48,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "pagination_enabled"=false,
  *       "filters"={},
  *       "swagger_context"={
+ *         "summary"="Retrieves the collection of Task resources assigned to the authenticated token.",
  *         "parameters"={{
- *           "name"="date",
  *           "in"="path",
+ *           "name"="date",
  *           "required"="true",
- *           "type"="string"
+ *           "type"="string",
+ *           "format"="date"
  *         }}
  *       }
  *     }

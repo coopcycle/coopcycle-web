@@ -72,44 +72,81 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="PUT",
  *       "path"="/orders/{id}/pay",
  *       "controller"=OrderPay::class,
- *       "access_control"="object.getCustomer() == user"
+ *       "access_control"="object.getCustomer() == user",
+ *       "swagger_context"={
+ *         "summary"="Pays a Order resource."
+ *       }
  *     },
  *     "accept"={
  *       "method"="PUT",
  *       "path"="/orders/{id}/accept",
  *       "controller"=OrderAccept::class,
  *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())",
- *       "deserialize"=false
+ *       "deserialize"=false,
+ *       "swagger_context"={
+ *         "summary"="Accepts a Order resource."
+ *       }
  *     },
  *     "refuse"={
  *       "method"="PUT",
  *       "path"="/orders/{id}/refuse",
  *       "controller"=OrderRefuse::class,
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())"
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())",
+ *       "swagger_context"={
+ *         "summary"="Refuses a Order resource."
+ *       }
  *     },
  *     "delay"={
  *       "method"="PUT",
  *       "path"="/orders/{id}/delay",
  *       "controller"=OrderDelay::class,
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())"
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())",
+ *       "swagger_context"={
+ *         "summary"="Delays a Order resource."
+ *       }
  *     },
  *     "cancel"={
  *       "method"="PUT",
  *       "path"="/orders/{id}/cancel",
  *       "controller"=OrderCancel::class,
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())"
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())",
+ *       "swagger_context"={
+ *         "summary"="Cancels a Order resource."
+ *       }
  *     },
  *     "assign"={
  *       "method"="PUT",
  *       "path"="/orders/{id}/assign",
  *       "controller"=OrderAssign::class,
  *       "validation_groups"={"cart"},
- *       "normalization_context"={"groups"={"cart"}}
+ *       "normalization_context"={"groups"={"cart"}},
+ *       "swagger_context"={
+ *         "summary"="Assigns a Order resource to a User."
+ *       }
  *     },
  *     "get_cart_timing"={
  *       "method"="GET",
  *       "path"="/orders/{id}/timing",
- *       "access_control"="object.getCustomer() == user"
+ *       "access_control"="object.getCustomer() == user",
+ *       "swagger_context"={
+ *         "summary"="Retrieves timing information about a Order resource.",
+ *         "responses"={
+ *           "200"={
+ *             "schema"={
+ *               "type"="object",
+ *               "properties"={
+ *                 "preparation"={"type"="string"},
+ *                 "shipping"={"type"="string"},
+ *                 "asap"={"type"="string", "format"="date-time"},
+ *                 "today"={"type"="boolean"},
+ *                 "fast"={"type"="boolean"},
+ *                 "diff"={"type"="string"},
+ *                 "choices"={"type"="array", "item"={"type"="string", "format"="date-time"}},
+ *               }
+ *             }
+ *           }
+ *         }
+ *       }
  *     },
  *     "validate"={
  *       "method"="GET",
@@ -133,7 +170,10 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "validation_groups"={"cart"},
  *       "denormalization_context"={"groups"={"cart"}},
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="(object.getCustomer() != null and object.getCustomer() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())"
+ *       "security"="(object.getCustomer() != null and object.getCustomer() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())",
+ *       "swagger_context"={
+ *         "summary"="Adds items to a Order resource."
+ *       }
  *     },
  *     "put_item"={
  *       "method"="PUT",
@@ -153,7 +193,10 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "validate"=false,
  *       "write"=false,
  *       "status"=200,
- *       "security"="(object.getCustomer() != null and object.getCustomer() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())"
+ *       "security"="(object.getCustomer() != null and object.getCustomer() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())",
+ *       "swagger_context"={
+ *         "summary"="Deletes items from a Order resource."
+ *       }
  *     }
  *   },
  *   attributes={
