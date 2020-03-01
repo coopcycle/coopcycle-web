@@ -109,6 +109,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     const SWAGGER_CONTEXT_POST_PARAMETERS = [
         [
+            "name" => "delivery",
             "in"=>"body",
             "schema" => [
                 "type" => "object",

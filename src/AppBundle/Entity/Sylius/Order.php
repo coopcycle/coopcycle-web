@@ -55,7 +55,17 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/timing",
  *       "write"=false,
  *       "status"=200,
- *       "denormalization_context"={"groups"={"order_create", "address_create"}}
+ *       "denormalization_context"={"groups"={"order_create", "address_create"}},
+ *       "normalization_context"={"groups"={"cart_timing"}},
+ *       "swagger_context"={
+ *         "summary"="Retrieves timing information about a Order resource.",
+ *         "responses"={
+ *           "200"={
+ *             "description"="Order timing information",
+ *             "schema"=Order::SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA
+ *           }
+ *         }
+ *       }
  *     },
  *     "my_orders"={
  *       "method"="GET",
@@ -132,18 +142,8 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *         "summary"="Retrieves timing information about a Order resource.",
  *         "responses"={
  *           "200"={
- *             "schema"={
- *               "type"="object",
- *               "properties"={
- *                 "preparation"={"type"="string"},
- *                 "shipping"={"type"="string"},
- *                 "asap"={"type"="string", "format"="date-time"},
- *                 "today"={"type"="boolean"},
- *                 "fast"={"type"="boolean"},
- *                 "diff"={"type"="string"},
- *                 "choices"={"type"="array", "item"={"type"="string", "format"="date-time"}},
- *               }
- *             }
+ *             "description"="Order timing information",
+ *             "schema"=Order::SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA
  *           }
  *         }
  *       }
@@ -239,6 +239,19 @@ class Order extends BaseOrder implements OrderInterface
     protected $reusablePackagingEnabled = false;
 
     protected $receipt;
+
+    const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
+        "type" => "object",
+        "properties" => [
+            "preparation" => ['type' => 'string'],
+            "shipping" => ['type' => 'string'],
+            "asap" => ['type' => 'string', 'format' => 'date-time'],
+            "today" => ['type' => 'boolean'],
+            "fast" => ['type' => 'boolean'],
+            "diff" => ['type' => 'string'],
+            "choices" => ['type' => 'array', 'item' => ['type' => 'string', 'format' => 'date-time']],
+        ]
+    ];
 
     public function __construct()
     {

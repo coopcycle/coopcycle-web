@@ -19,6 +19,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *         "summary"="Retrieves information about the authenticated token",
  *         "responses"={
  *           "200"={
+ *             "description"="Authenticated token information",
  *             "schema"={
  *               "type"="object",
  *               "properties"={

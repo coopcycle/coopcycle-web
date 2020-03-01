@@ -52,7 +52,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *         "parameters"={{
  *           "in"="path",
  *           "name"="date",
- *           "required"="true",
+ *           "required"=true,
  *           "type"="string",
  *           "format"="date"
  *         }}
