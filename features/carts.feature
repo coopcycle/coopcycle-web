@@ -495,6 +495,7 @@ Feature: Carts
         "adjustments":@...@
       }
       """
+    And the payment amount of order with IRI "/api/orders/1" should be "3050"
 
   Scenario: Update cart items quantity (with session)
     Given the fixtures files are loaded:

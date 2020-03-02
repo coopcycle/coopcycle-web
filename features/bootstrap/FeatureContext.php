@@ -1004,4 +1004,16 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         Assert::assertArrayHasKey('coordinates', $data);
         Assert::assertEquals([ $longitude, $latitude ], $data['coordinates']);
     }
+
+    /**
+     * @Then the payment amount of order with IRI :iri should be :value
+     */
+    public function assertPaymentAmountOfOrderWithIriEquals($iri, $value)
+    {
+        $order = $this->iriConverter->getItemFromIri($iri);
+
+        $payment = $order->getLastPayment();
+
+        Assert::assertEquals($value, $payment->getAmount());
+    }
 }

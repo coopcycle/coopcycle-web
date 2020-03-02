@@ -4,11 +4,16 @@ namespace AppBundle\Action\Cart;
 
 use Symfony\Component\HttpFoundation\Request;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 
 class UpdateItem
 {
-    public function __construct(OrderItemQuantityModifierInterface $orderItemQuantityModifier)
+    private $orderProcessor;
+    private $orderItemQuantityModifier;
+
+    public function __construct(OrderItemQuantityModifierInterface $orderItemQuantityModifier, OrderProcessorInterface $orderProcessor)
     {
+        $this->orderProcessor = $orderProcessor;
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
     }
 
@@ -32,6 +37,8 @@ class UpdateItem
                 break;
             }
         }
+
+        $this->orderProcessor->process($data);
 
         return $data;
     }
