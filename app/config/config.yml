@@ -27,6 +27,7 @@ services:
           - name: cache.pool
             provider: snc_redis.default
             namespace: tag_manager
+    cache.messenger.restart_workers_signal: '@restart_workers_signal.cache'
 
 framework:
     #esi:             ~
@@ -51,9 +52,12 @@ framework:
     assets: ~
     cache:
         prefix_seed: "%database_name%"
+        default_redis_provider: "%redis_dsn%"
         pools:
             enabled_filter_configurator.cache:
                 adapter: cache.adapter.filesystem
+            restart_workers_signal.cache:
+                adapter: cache.adapter.redis
     messenger:
         transports:
             # https://symfony.com/doc/current/messenger.html#redis-transport
