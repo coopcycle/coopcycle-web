@@ -86,6 +86,8 @@ services:
   League\Flysystem\MountManager: '@oneup_flysystem.mount_manager'
   AppBundle\Service\RoutingInterface: '@routing_service'
 
+  League\Flysystem\Filesystem $taskImportsFilesystem: '@task_imports_filesystem'
+
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
       $isFoodtechEnabled: '%foodtech_enabled%'
@@ -755,3 +757,7 @@ services:
       decorates: 'api_platform.swagger.normalizer.api_gateway'
       arguments: [ '@AppBundle\Api\Swagger\SwaggerDecorator.inner' ]
       autoconfigure: false
+
+  AppBundle\MessageHandler\ImportTasksHandler:
+    arguments:
+      $secret: '%secret%'

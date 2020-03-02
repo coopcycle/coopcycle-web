@@ -104,12 +104,6 @@
 {% endblock %}
 
 {% block scripts %}
-{% set task_upload_form_errors = [] %}
-{% if task_upload_form.vars.submitted and not task_upload_form.vars.valid %}
-  {% for error in task_upload_form.file.vars.errors %}
-    {% set task_upload_form_errors = task_upload_form_errors|merge([ { message: error.message } ]) %}
-  {% endfor %}
-{% endif %}
 <script>
 window.AppData = window.AppData || {};
 window.AppData.Dashboard = {
@@ -117,7 +111,7 @@ window.AppData.Dashboard = {
   tasks: {{ tasks|json_encode()|raw }},
   taskLists: {{ task_lists|json_encode()|raw }},
   couriersList: {{ couriers|json_encode()|raw }},
-  taskUploadFormErrors: {{ task_upload_form_errors|json_encode()|raw }},
+  taskImportToken: {{ task_import_token|json_encode()|raw }},
   tags: {{ tags|json_encode()|raw }},
   jwt: "{{ jwt }}",
   nav: "{{ nav ? 'on' : 'off' }}"

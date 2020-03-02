@@ -71,6 +71,7 @@ framework:
             'AppBundle\Message\Email': async
             'AppBundle\Message\PushNotification': async
             'AppBundle\Message\Event': async
+            'AppBundle\Message\ImportTasks': async
 
 # Twig Configuration
 twig:
@@ -319,6 +320,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: receipts
+        task_imports:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: task_imports
     filesystems:
         assets:
             adapter: assets_local
@@ -372,6 +378,10 @@ oneup_flysystem:
             adapter: receipts_s3
             alias: receipts_s3_filesystem
             mount: receipts_s3_filesystem
+        task_imports:
+            adapter: task_imports
+            alias: task_imports_filesystem
+            mount: task_imports_filesystem
 
 vich_uploader:
     db_driver: orm

@@ -21,10 +21,10 @@ let preloadedState = {
   unassignedTasks: _.filter(window.AppData.Dashboard.tasks, task => !task.isAssigned),
   allTasks: window.AppData.Dashboard.tasks,
   taskLists: window.AppData.Dashboard.taskLists,
-  taskUploadFormErrors: window.AppData.Dashboard.taskUploadFormErrors,
   tags: window.AppData.Dashboard.tags,
   nav: window.AppData.Dashboard.nav,
   couriersList: window.AppData.Dashboard.couriersList,
+  taskImportToken: window.AppData.Dashboard.taskImportToken,
 }
 
 const key = date.format('YYYY-MM-DD')
