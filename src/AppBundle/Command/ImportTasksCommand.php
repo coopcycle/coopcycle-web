@@ -68,6 +68,8 @@ class ImportTasksCommand extends Command
                 'date',
                 'd',
                 InputOption::VALUE_REQUIRED,
+                'The default date',
+                'now'
             )
             ;
     }
@@ -82,14 +84,14 @@ class ImportTasksCommand extends Command
         $filename = $input->getArgument('filename');
         $token = $input->getArgument('token');
 
-        $date = new \DateTime($input->getOption('date', 'now'));
+        $date = new \DateTime($input->getOption('date'));
 
         RemotePushNotificationManager::disable();
 
         $decoded = $this->hashids->decode($token);
         if (count($decoded) !== 1) {
             $this->io->caution(sprintf('Token "%s" could not be decoded', $token));
-            return;
+            return 1;
         }
 
         $taskGroupId = current($decoded);
@@ -100,7 +102,7 @@ class ImportTasksCommand extends Command
 
         if (!$taskGroup) {
             $this->io->caution(sprintf('TaskGroup #%d does not exist', $taskGroupId));
-            return;
+            return 1;
         }
 
         // Download file locally
@@ -109,7 +111,7 @@ class ImportTasksCommand extends Command
 
         if (false === file_put_contents($tempnam, $this->taskImportsFilesystem->read($filename))) {
             $this->io->caution('Could not write temp file');
-            return;
+            return 1;
         }
 
         try {
@@ -130,7 +132,7 @@ class ImportTasksCommand extends Command
                 ['message' => $e->getMessage()]
             ]);
             unlink($tempnam);
-            return;
+            return 1;
         }
 
         foreach ($tasks as $task) {
