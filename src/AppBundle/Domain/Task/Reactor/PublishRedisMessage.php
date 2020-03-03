@@ -2,32 +2,24 @@
 
 namespace AppBundle\Domain\Task\Reactor;
 
-use AppBundle\Domain\Task\Event as TaskEvent;
-use AppBundle\Domain\SerializableEventInterface;
-use AppBundle\Message\Event as EventMessage;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use AppBundle\Domain\Task\Event;
+use AppBundle\Service\SocketIoManager;
 
 class PublishRedisMessage
 {
-    private $serializer;
-    private $messageBus;
+    private $socketIoManager;
 
-    public function __construct(SerializerInterface $serializer, MessageBusInterface $messageBus)
+    public function __construct(SocketIoManager $socketIoManager)
     {
-        $this->serializer = $serializer;
-        $this->messageBus = $messageBus;
+        $this->socketIoManager = $socketIoManager;
     }
 
-    public function __invoke(TaskEvent $event)
+    public function __invoke(Event $event)
     {
-        $data = [];
-        if ($event instanceof SerializableEventInterface) {
-            $data = $event->normalize($this->serializer);
-        }
+        try {
+            $this->socketIoManager->toAdmins($event);
+        } catch (\Exception $e) {
 
-        $this->messageBus->dispatch(
-            new EventMessage($event::messageName(), $data)
-        );
+        }
     }
 }
