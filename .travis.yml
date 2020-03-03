@@ -118,6 +118,7 @@ script:
   - node node_modules/.bin/eslint --quiet js/app/
   - phpunit
   - npm run jest
+  - php bin/console doctrine:schema:validate --skip-sync --env=test
   - php vendor/bin/behat -f progress
   - node node_modules/.bin/mocha --require @babel/register --exit js/tests/
   - $(npm bin)/cypress run

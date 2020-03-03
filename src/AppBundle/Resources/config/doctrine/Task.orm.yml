@@ -90,8 +90,7 @@ AppBundle\Entity\Task:
             cascade:
                 - persist
             fetch: LAZY
-            mappedBy: null
-            inversedBy: null
+            inversedBy: tasks
             joinColumns:
                 group_id:
                     referencedColumnName: id
