@@ -42,6 +42,7 @@ import {
   LOAD_TASK_EVENTS_FAILURE,
   SET_TASK_LISTS_LOADING,
   SET_TASK_UPLOAD_FORM_ERRORS,
+  CLEAR_TASK_IMPORT_TOKEN,
 } from './actions'
 
 const moment = extendMoment(Moment)
@@ -119,6 +120,7 @@ const initialState = {
   isLoadingTaskEvents: false,
   taskEvents: {},
   taskUploadFormErrors: [],
+  taskImportToken: null,
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -622,6 +624,15 @@ const taskUploadFormErrors = (state = initialState.taskUploadFormErrors, action)
   return state
 }
 
+const taskImportToken = (state = initialState.taskImportToken, action) => {
+  switch (action.type) {
+  case CLEAR_TASK_IMPORT_TOKEN:
+    return null
+  }
+
+  return state
+}
+
 export default (state = initialState, action) => {
 
   const { allTasks, unassignedTasks, taskLists, tasksWithColor, taskListsLoading } = combinedTasks(state, action)
@@ -654,5 +665,6 @@ export default (state = initialState, action) => {
     isLoadingTaskEvents: isLoadingTaskEvents(state.isLoadingTaskEvents, action),
     taskEvents: taskEvents(state.taskEvents, action),
     taskUploadFormErrors: taskUploadFormErrors(state.taskUploadFormErrors, action),
+    taskImportToken: taskImportToken(state.taskImportToken, action),
   }
 }

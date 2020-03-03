@@ -101,6 +101,7 @@
     "ADMIN_DASHBOARD_MOVE_TO_TOP": "Move to top",
     "ADMIN_DASHBOARD_MOVE_TO_BOTTOM": "Move to bottom",
     "ADMIN_DASHBOARD_TASK_IMPORT_SUCCESS": "Tasks successfully imported",
+    "ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING": "Task import processing…",
     "USER_EDIT_ENABLED_LABEL": "Enabled",
     "USER_EDIT_DISABLED_LABEL": "Disabled",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Delivery expected at {{deliveryTime}}.",

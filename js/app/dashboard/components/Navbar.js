@@ -6,6 +6,7 @@ import moment from 'moment'
 import { ConfigProvider, DatePicker } from 'antd'
 import fr_FR from 'antd/es/locale/fr_FR'
 import en_GB from 'antd/es/locale/en_GB'
+import { toast } from 'react-toastify'
 
 import { openFiltersModal, resetFilters, openSettings } from '../redux/actions'
 
@@ -13,6 +14,12 @@ const locale = $('html').attr('lang'),
   antdLocale = locale === 'fr' ? fr_FR : en_GB
 
 class Navbar extends React.Component {
+
+  componentDidMount(prevProps) {
+    if (this.props.taskImportToken) {
+      toast(this.props.t('ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING'))
+    }
+  }
 
   componentDidUpdate(prevProps) {
     if (!prevProps.hasUploadErrors && this.props.hasUploadErrors) {
@@ -84,6 +91,27 @@ class Navbar extends React.Component {
     )
   }
 
+  renderImportButton() {
+
+    if (this.props.taskImportToken) {
+      return (
+        <li>
+          <a>
+            <i className="fa fa-spinner fa-spin"></i> { this.props.t('ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING') }
+          </a>
+        </li>
+      )
+    }
+
+    return (
+      <li>
+        <a href="#" data-toggle="modal" data-target="#upload-modal">
+          <i className="fa fa-upload" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_IMPORT') }
+        </a>
+      </li>
+    )
+  }
+
   render () {
 
     return (
@@ -121,11 +149,8 @@ class Navbar extends React.Component {
                   <i className="fa fa-download" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_EXPORT') }
                 </a>
               </li>
-              <li>
-                <a href="#" data-toggle="modal" data-target="#upload-modal">
-                  <i className="fa fa-upload" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_IMPORT') }
-                </a>
-              </li>
+              { this.renderImportButton() }
+
               { this.props.hasUploadErrors && (
                 <li>
                   <a id="task-upload-form-errors" href="#"
@@ -172,7 +197,8 @@ function mapStateToProps(state) {
     hasUploadErrors: state.taskUploadFormErrors.length > 0,
     uploadErrors: state.taskUploadFormErrors,
     nav: state.nav,
-    isDefaultFilters: state.isDefaultFilters
+    isDefaultFilters: state.isDefaultFilters,
+    taskImportToken: state.taskImportToken,
   }
 }
 

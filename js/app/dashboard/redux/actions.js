@@ -119,6 +119,7 @@ export const LOAD_TASK_EVENTS_FAILURE = 'LOAD_TASK_EVENTS_FAILURE'
 export const SET_TASK_LISTS_LOADING = 'SET_TASK_LISTS_LOADING'
 
 export const SET_TASK_UPLOAD_FORM_ERRORS = 'SET_TASK_UPLOAD_FORM_ERRORS'
+export const CLEAR_TASK_IMPORT_TOKEN = 'CLEAR_TASK_IMPORT_TOKEN'
 
 function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
@@ -406,6 +407,10 @@ function loadTaskEventsFailure(error) {
   return { type: LOAD_TASK_EVENTS_FAILURE, error }
 }
 
+function clearTaskImportToken() {
+  return { type: CLEAR_TASK_IMPORT_TOKEN }
+}
+
 function createTask(task) {
 
   return function(dispatch, getState) {
@@ -638,4 +643,5 @@ export {
   moveToTop,
   moveToBottom,
   setTaskUploadFormErrors,
+  clearTaskImportToken,
 }

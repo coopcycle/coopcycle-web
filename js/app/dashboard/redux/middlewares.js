@@ -4,6 +4,7 @@ import {
   updateTask,
   setOffline,
   setTaskUploadFormErrors,
+  clearTaskImportToken,
   SET_FILTER_VALUE,
   RESET_FILTERS,
 } from './actions'
@@ -66,6 +67,7 @@ export const socketIO = ({ dispatch, getState }) => {
     socket.on('task_import:success', data => {
       const { taskImportToken } = getState()
       if (!!taskImportToken && data.token === taskImportToken) {
+        dispatch(clearTaskImportToken())
         toast(i18n.t('ADMIN_DASHBOARD_TASK_IMPORT_SUCCESS'))
       }
     })

@@ -98,6 +98,7 @@
     "ADMIN_DASHBOARD_MOVE_TO_TOP": "Déplacer au début",
     "ADMIN_DASHBOARD_MOVE_TO_BOTTOM": "Déplacer à la fin",
     "ADMIN_DASHBOARD_TASK_IMPORT_SUCCESS": "Tâches importées avec succès",
+    "ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING": "Importation en cours…",
     "USER_EDIT_ENABLED_LABEL": "Activé",
     "USER_EDIT_DISABLED_LABEL": "Désactivé",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Livraison prévue à {{deliveryTime}}.",
