@@ -2,6 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Modal from 'react-modal'
 
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 import {
   setCurrentTask,
   closeNewTaskModal,
@@ -68,6 +71,7 @@ class DashboardApp extends React.Component {
           shouldCloseOnOverlayClick={ true }>
           <SettingsModalContent />
         </Modal>
+        <ToastContainer />
       </div>
     )
   }

@@ -14,10 +14,14 @@ use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
+use AppBundle\Message\ImportTasks;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\TaskImageNamer;
+use AppBundle\Utils\TaskSpreadsheetParser;
 use Cocur\Slugify\SlugifyInterface;
 use FOS\UserBundle\Model\UserInterface;
+use Hashids\Hashids;
+use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -29,23 +33,24 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait AdminDashboardTrait
 {
-    protected function redirectToDashboard(Request $request)
+    protected function redirectToDashboard(Request $request, array $params = [])
     {
         $nav = $request->query->getBoolean('nav', true);
 
-        $params = [
+        $defaultParams = [
             'date' => $request->get('date'),
         ];
 
         if (!$nav) {
-            $params['nav'] = 'off';
+            $defaultParams['nav'] = 'off';
         }
 
-        return $this->redirectToRoute('admin_dashboard_fullscreen', $params);
+        return $this->redirectToRoute('admin_dashboard_fullscreen', array_merge($defaultParams, $params));
     }
 
     /**
@@ -60,13 +65,15 @@ trait AdminDashboardTrait
      * @Route("/admin/dashboard/fullscreen/{date}", name="admin_dashboard_fullscreen",
      *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}|__DATE__"})
      */
-    public function dashboardFullscreenAction($date, Request $request, TaskManager $taskManager, JWTManagerInterface $jwtManager)
+    public function dashboardFullscreenAction($date, Request $request,
+        TaskManager $taskManager,
+        JWTManagerInterface $jwtManager,
+        MessageBusInterface $messageBus,
+        Filesystem $taskImportsFilesystem)
     {
+        $hashids = new Hashids($this->getParameter('secret'), 8);
+
         $date = new \DateTime($date);
-        $dayAfter = clone $date;
-        $dayAfter->modify('+1 day');
-        $dayBefore = clone $date;
-        $dayBefore->modify('-1 day');
 
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -82,7 +89,6 @@ trait AdminDashboardTrait
         $taskExport = new \stdClass();
         $taskExport->start = new \DateTime('first day of this month');
         $taskExport->end = new \DateTime();
-        $taskExport->csv = '';
 
         $taskExportForm = $this->createForm(TaskExportType::class, $taskExport);
 
@@ -92,28 +98,32 @@ trait AdminDashboardTrait
         if ($taskUploadForm->isSubmitted()) {
             if ($taskUploadForm->isValid()) {
 
-                $taskImport = $taskUploadForm->getData();
-
                 $taskGroup = new TaskGroup();
                 $taskGroup->setName(sprintf('Import %s', date('d/m H:i')));
 
+                // The TaskGroup will serve as a unique identifier
                 $this->getDoctrine()
                     ->getManagerForClass(TaskGroup::class)
                     ->persist($taskGroup);
-
-                foreach ($taskImport->tasks as $task) {
-                    $task->setGroup($taskGroup);
-
-                    $this->getDoctrine()
-                        ->getManagerForClass(Task::class)
-                        ->persist($task);
-                }
-
                 $this->getDoctrine()
-                    ->getManagerForClass(Task::class)
+                    ->getManagerForClass(TaskGroup::class)
                     ->flush();
 
-                return $this->redirectToDashboard($request);
+                $encoded = $hashids->encode($taskGroup->getId());
+
+                $file = $taskUploadForm->get('file')->getData();
+
+                $mimeType = mime_content_type($file->getPathname());
+
+                $filename = sprintf('%s.%s', $encoded, TaskSpreadsheetParser::getFileExtension($mimeType));
+
+                $taskImportsFilesystem->write($filename, file_get_contents($file->getPathname()));
+
+                $messageBus->dispatch(
+                    new ImportTasks($encoded, $filename, $date)
+                );
+
+                return $this->redirectToDashboard($request, ['import' => $encoded]);
             }
         }
 
@@ -203,8 +213,6 @@ trait AdminDashboardTrait
         return $this->render('@App/admin/dashboard_iframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
-            'dayAfter' => $dayAfter,
-            'dayBefore' => $dayBefore,
             'couriers' => $couriers,
             'tasks' => $allTasksNormalized,
             'task_lists' => $taskListsNormalized,
@@ -213,6 +221,7 @@ trait AdminDashboardTrait
             'task_group_form' => $taskGroupForm->createView(),
             'tags' => $normalizedTags,
             'jwt' => $jwtManager->create($this->getUser()),
+            'task_import_token' => $request->query->get('import'),
         ]);
     }
 

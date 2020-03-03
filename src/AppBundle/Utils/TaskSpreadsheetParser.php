@@ -57,6 +57,32 @@ class TaskSpreadsheetParser
         $this->countryCode = $countryCode;
     }
 
+    public static function getMimeTypes()
+    {
+        return array_merge(
+            self::MIME_TYPE_CSV,
+            self::MIME_TYPE_ODS,
+            self::MIME_TYPE_XLSX,
+        );
+    }
+
+    public static function getFileExtension($mimeType)
+    {
+        if (in_array($mimeType, self::MIME_TYPE_CSV)) {
+            return 'csv';
+        }
+
+        if (in_array($mimeType, self::MIME_TYPE_ODS)) {
+            return 'ods';
+        }
+
+        if (in_array($mimeType, self::MIME_TYPE_XLSX)) {
+            return 'xlsx';
+        }
+
+        throw new \Exception('Unsupported file type');
+    }
+
     /**
      * @throws IOException
      * @throws NumberParseException

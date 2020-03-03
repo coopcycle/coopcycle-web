@@ -3,11 +3,14 @@ import {
   setGeolocation,
   updateTask,
   setOffline,
+  setTaskUploadFormErrors,
   SET_FILTER_VALUE,
   RESET_FILTERS,
 } from './actions'
 import moment from 'moment'
 import _ from 'lodash'
+import { toast } from 'react-toastify'
+import i18n from '../../i18n'
 
 // If the user has not been seen for 5min, it is considered offline
 const OFFLINE_TIMEOUT = (5 * 60 * 1000)
@@ -59,6 +62,15 @@ export const socketIO = ({ dispatch, getState }) => {
 
     socket.on('task:assigned', data => dispatch(updateTask(data.task)))
     socket.on('task:unassigned', data => dispatch(updateTask(data.task)))
+
+    socket.on('task_import:success', data => {
+      const { taskImportToken } = getState()
+      if (!!taskImportToken && data.token === taskImportToken) {
+        toast(i18n.t('ADMIN_DASHBOARD_TASK_IMPORT_SUCCESS'))
+      }
+    })
+
+    socket.on('task_import:failure', errors => dispatch(setTaskUploadFormErrors(errors)))
 
     socket.on('tracking', data => {
       pulse()

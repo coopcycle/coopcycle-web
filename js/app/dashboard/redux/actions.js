@@ -118,6 +118,8 @@ export const LOAD_TASK_EVENTS_FAILURE = 'LOAD_TASK_EVENTS_FAILURE'
 
 export const SET_TASK_LISTS_LOADING = 'SET_TASK_LISTS_LOADING'
 
+export const SET_TASK_UPLOAD_FORM_ERRORS = 'SET_TASK_UPLOAD_FORM_ERRORS'
+
 function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
 }
@@ -189,6 +191,10 @@ function setFilterValue(key, value) {
 
 function resetFilters() {
   return { type: RESET_FILTERS }
+}
+
+function setTaskUploadFormErrors(errors) {
+  return { type: SET_TASK_UPLOAD_FORM_ERRORS, errors }
 }
 
 function modifyTaskList(username, tasks) {
@@ -631,4 +637,5 @@ export {
   setTaskListsLoading,
   moveToTop,
   moveToBottom,
+  setTaskUploadFormErrors,
 }

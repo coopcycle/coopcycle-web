@@ -14,12 +14,15 @@ const locale = $('html').attr('lang'),
 
 class Navbar extends React.Component {
 
-  componentDidMount() {
-    if (this.props.hasUploadErrors) {
-      $('#task-upload-form-errors').popover({
-        html: true,
-        container: 'body'
-      })
+  componentDidUpdate(prevProps) {
+    if (!prevProps.hasUploadErrors && this.props.hasUploadErrors) {
+      const $target = $('#task-upload-form-errors')
+      if (!$target.data('bs.popover')) {
+        $target.popover({
+          html: true,
+          container: 'body',
+        })
+      }
     }
   }
 
