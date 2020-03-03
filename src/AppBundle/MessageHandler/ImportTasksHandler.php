@@ -5,6 +5,7 @@ namespace AppBundle\MessageHandler;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Message\ImportTasks;
+use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\SocketIoManager;
 use AppBundle\Utils\TaskSpreadsheetParser;
 use Doctrine\ORM\EntityManagerInterface;
@@ -44,6 +45,8 @@ class ImportTasksHandler implements MessageHandlerInterface
 
     public function __invoke(ImportTasks $message)
     {
+        RemotePushNotificationManager::disable();
+
         $decoded = $this->hashids->decode($message->getToken());
         if (count($decoded) !== 1) {
             $this->logger->error(sprintf('Token "%s" could not be decoded', $message->getToken()));

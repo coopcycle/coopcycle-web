@@ -5,7 +5,6 @@ namespace AppBundle\Service;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\RemotePushToken;
 use Kreait\Firebase\Factory as FirebaseFactory;
-// use Kreait\Firebase\Messaging as FirebaseMessaging;
 use Kreait\Firebase\Exception\ServiceAccountDiscoveryFailed;
 use Kreait\Firebase\Messaging\CloudMessage;
 
@@ -13,6 +12,7 @@ class RemotePushNotificationManager
 {
     private $firebaseFactory;
     private $apns;
+    private static $enabled = true;
 
     public function __construct(
         FirebaseFactory $firebaseFactory,
@@ -23,6 +23,21 @@ class RemotePushNotificationManager
 
         $apns->setProviderCertificatePassphrase($apnsCertificatePassPhrase);
         $this->apns = $apns;
+    }
+
+    public static function isEnabled()
+    {
+        return self::$enabled;
+    }
+
+    public static function disable()
+    {
+        self::$enabled = false;
+    }
+
+    public static function enable()
+    {
+        self::$enabled = true;
     }
 
     /**

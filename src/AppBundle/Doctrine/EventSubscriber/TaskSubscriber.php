@@ -10,6 +10,7 @@ use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Entity\Task;
 use AppBundle\Message\PushNotification;
+use AppBundle\Service\RemotePushNotificationManager;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
@@ -160,9 +161,11 @@ class TaskSubscriber implements EventSubscriber
                 // TODO Translate
                 $message = sprintf('Tasks for %s changed!', $date->format('Y-m-d'));
 
-                $this->messageBus->dispatch(
-                    new PushNotification($message, $users, $data)
-                );
+                if (RemotePushNotificationManager::isEnabled()) {
+                    $this->messageBus->dispatch(
+                        new PushNotification($message, $users, $data)
+                    );
+                }
             }
         }
     }

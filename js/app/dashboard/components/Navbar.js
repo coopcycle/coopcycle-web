@@ -15,7 +15,7 @@ const locale = $('html').attr('lang'),
 
 class Navbar extends React.Component {
 
-  componentDidMount(prevProps) {
+  componentDidMount() {
     if (this.props.taskImportToken) {
       toast(this.props.t('ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING'))
     }
