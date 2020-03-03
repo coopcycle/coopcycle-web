@@ -99,3 +99,9 @@ services:
   AppBundle\Command\RemotePushNotificationsCommand:
     tags:
       - { name: 'console.command', command: 'coopcycle:notifications:remote-push' }
+
+  AppBundle\Command\ImportTasksCommand:
+    arguments:
+      $secret: '%secret%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:tasks:import' }
