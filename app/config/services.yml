@@ -498,17 +498,17 @@ services:
       - "%country_iso%"
       - "%kernel.default_locale%"
 
-  AppBundle\EventListener\TaskCollectionSubscriber:
-    arguments: [ '@event_dispatcher', '@routing_service', '@logger' ]
-    tags:
-      - { name: doctrine.event_subscriber, connection: default }
-
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber:
     arguments:
       $eventBus: '@event_bus'
       $eventStore: '@coopcycle.domain.event_store'
     tags:
-      - { name: doctrine.event_subscriber, connection: default }
+      - { name: doctrine.event_subscriber, connection: default, priority: 32 }
+
+  AppBundle\Doctrine\EventSubscriber\TaskCollectionSubscriber:
+    arguments: [ '@event_dispatcher', '@routing_service', '@logger' ]
+    tags:
+      - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
   AppBundle\Api\EventSubscriber\RemotePushTokenSubscriber:
     arguments:

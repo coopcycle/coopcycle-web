@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\EventListener;
+namespace AppBundle\Doctrine\EventSubscriber;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
