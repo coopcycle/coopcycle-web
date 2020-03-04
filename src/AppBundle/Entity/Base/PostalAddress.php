@@ -45,7 +45,7 @@ abstract class PostalAddress
     /**
      * @var string The name of the item.
      *
-     * @Groups({"address", "address_create", "task_edit"})
+     * @Groups({"address", "address_create", "task_create", "task_edit"})
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/name")
      */
