@@ -159,4 +159,36 @@ class TaskSpreadsheetParserTest extends TestCase
             }
         }
     }
+
+    public function parseTimeWindowProvider()
+    {
+        return [
+            [
+                '5/03/2020 12:00',
+                '5/03/2020 14:30',
+                new \DateTime('2020-03-05 12:00:00'),
+                new \DateTime('2020-03-05 14:30:00')
+            ],
+            [
+                '2020-03-05 12:00',
+                '2020-03-05 14:30',
+                new \DateTime('2020-03-05 12:00:00'),
+                new \DateTime('2020-03-05 14:30:00')
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider parseTimeWindowProvider
+     */
+    public function testParseTimeWindow($afterText, $beforeText, \DateTime $expectedAfter, \DateTime $expectedBefore)
+    {
+        [ $after, $before ] = TaskSpreadsheetParser::parseTimeWindow([
+            'after' => $afterText,
+            'before' => $beforeText,
+        ], new \DateTime());
+
+        $this->assertEquals($expectedAfter, $after);
+        $this->assertEquals($expectedBefore, $before);
+    }
 }

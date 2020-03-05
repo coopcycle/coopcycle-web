@@ -20,7 +20,7 @@ use libphonenumber\PhoneNumberUtil;
 class TaskSpreadsheetParser
 {
     const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
-    const DATE_PATTERN_SLASH = '#(?<day>[0-9]{2})/(?<month>[0-9]{2})/?(?<year>[0-9]{4})?#';
+    const DATE_PATTERN_SLASH = '#(?<day>[0-9]{1,2})/(?<month>[0-9]{1,2})/?(?<year>[0-9]{4})?#';
     const TIME_PATTERN = '/(?<hour>[0-9]{1,2})[:hH]+(?<minute>[0-9]{1,2})?/';
 
     const MIME_TYPE_ODS = [
@@ -132,7 +132,7 @@ class TaskSpreadsheetParser
 
         foreach ($data as $record) {
 
-            [ $doneAfter, $doneBefore ] = $this->parseTimeWindow($record, $defaultDate);
+            [ $doneAfter, $doneBefore ] = self::parseTimeWindow($record, $defaultDate);
 
             $address = null;
 
@@ -258,7 +258,7 @@ class TaskSpreadsheetParser
         }
     }
 
-    private function parseTimeWindow(array $record, \DateTime $defaultDate)
+    public static function parseTimeWindow(array $record, \DateTime $defaultDate)
     {
         // Default fallback values
         $doneAfter = clone $defaultDate;
@@ -268,20 +268,19 @@ class TaskSpreadsheetParser
         $doneBefore->setTime(23, 59);
 
         if (isset($record['after'])) {
-            $this->parseDate($doneAfter, $record['after']);
-            $this->parseTime($doneAfter, $record['after']);
-
+            self::parseDate($doneAfter, $record['after']);
+            self::parseTime($doneAfter, $record['after']);
         }
 
         if (isset($record['before'])) {
-            $this->parseDate($doneBefore, $record['before']);
-            $this->parseTime($doneBefore, $record['before']);
+            self::parseDate($doneBefore, $record['before']);
+            self::parseTime($doneBefore, $record['before']);
         }
 
         return [ $doneAfter, $doneBefore ];
     }
 
-    private function parseDate(\DateTime $date, $text)
+    private static function parseDate(\DateTime $date, $text)
     {
         if (1 === preg_match(self::DATE_PATTERN_HYPHEN, $text, $matches)) {
             $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
@@ -290,7 +289,7 @@ class TaskSpreadsheetParser
         }
     }
 
-    private function parseTime(\DateTime $date, $text)
+    private static function parseTime(\DateTime $date, $text)
     {
         if (1 === preg_match(self::TIME_PATTERN, $text, $matches)) {
             $date->setTime($matches['hour'], isset($matches['minute']) ? $matches['minute'] : 00);
