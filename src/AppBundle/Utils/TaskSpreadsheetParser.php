@@ -21,6 +21,7 @@ class TaskSpreadsheetParser
 {
     const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
     const DATE_PATTERN_SLASH = '#(?<day>[0-9]{1,2})/(?<month>[0-9]{1,2})/?(?<year>[0-9]{4})?#';
+    const DATE_PATTERN_DOT = '#(?<day>[0-9]{1,2})\.(?<month>[0-9]{1,2})\.?(?<year>[0-9]{4})?#';
     const TIME_PATTERN = '/(?<hour>[0-9]{1,2})[:hH]+(?<minute>[0-9]{1,2})?/';
 
     const MIME_TYPE_ODS = [
@@ -286,6 +287,8 @@ class TaskSpreadsheetParser
             $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
         } elseif (1 === preg_match(self::DATE_PATTERN_SLASH, $text, $matches)) {
             $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
+        } elseif (1 === preg_match(self::DATE_PATTERN_DOT, $text, $matches)) {
+            $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
         }
     }
 
@@ -325,8 +328,9 @@ class TaskSpreadsheetParser
     {
         $hyphen = preg_match(self::DATE_PATTERN_HYPHEN, $text);
         $slash = preg_match(self::DATE_PATTERN_SLASH, $text);
+        $dot = preg_match(self::DATE_PATTERN_DOT, $text);
 
-        return $hyphen === 1 || $slash === 1;
+        return $hyphen === 1 || $slash === 1 || $dot === 1;
     }
 
     private function extractAssign($text)

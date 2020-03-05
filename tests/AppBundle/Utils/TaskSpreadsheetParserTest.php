@@ -164,7 +164,7 @@ class TaskSpreadsheetParserTest extends TestCase
     {
         return [
             [
-                '5/03/2020 12:00',
+                '05/03/2020 12:00',
                 '5/03/2020 14:30',
                 new \DateTime('2020-03-05 12:00:00'),
                 new \DateTime('2020-03-05 14:30:00')
@@ -172,6 +172,12 @@ class TaskSpreadsheetParserTest extends TestCase
             [
                 '2020-03-05 12:00',
                 '2020-03-05 14:30',
+                new \DateTime('2020-03-05 12:00:00'),
+                new \DateTime('2020-03-05 14:30:00')
+            ],
+            [
+                '05.03.2020 12:00',
+                '5.03.2020 14:30',
                 new \DateTime('2020-03-05 12:00:00'),
                 new \DateTime('2020-03-05 14:30:00')
             ],
