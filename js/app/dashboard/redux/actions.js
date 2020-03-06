@@ -319,8 +319,8 @@ function moveToBottom(task) {
   }
 }
 
-function setGeolocation(username, coords) {
-  return { type: SET_GEOLOCATION, username, coords }
+function setGeolocation(username, coords, timestamp) {
+  return { type: SET_GEOLOCATION, username, coords, timestamp }
 }
 
 function setOffline(username) {

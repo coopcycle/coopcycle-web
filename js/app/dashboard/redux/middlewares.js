@@ -76,7 +76,7 @@ export const socketIO = ({ dispatch, getState }) => {
 
     socket.on('tracking', data => {
       pulse()
-      dispatch(setGeolocation(data.user, data.coords))
+      dispatch(setGeolocation(data.user, data.coords, data.ts))
     })
 
     setTimeout(() => {

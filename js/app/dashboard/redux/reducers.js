@@ -367,7 +367,7 @@ const positions = (state = [], action) => {
     const marker = {
       username: action.username,
       coords: action.coords,
-      lastSeen: moment()
+      lastSeen: moment(action.timestamp, 'X'),
     }
 
     const newState = state.slice(0)
