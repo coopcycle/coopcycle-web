@@ -157,7 +157,7 @@ function scan () {
 
   console.log('Scanning…')
 
-  tile38Client.send_command('SCAN', [tile38FleetKey, 'CURSOR', cursor, 'LIMIT', '2'], function (err, res) {
+  tile38Client.send_command('SCAN', [tile38FleetKey, 'CURSOR', cursor, 'LIMIT', '10'], function (err, res) {
 
     if (err) throw err;
 
