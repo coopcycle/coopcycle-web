@@ -82,8 +82,19 @@ class UpdateLocation
         // SET fleet truck1 POINT 3.5123 -12.2693
 
         $response =
-            $this->tile38->executeRaw(['SET', $this->fleetKey, $username,
-                'POINT', $lastLocation['latitude'], $lastLocation['longitude']]);
+            $this->tile38->executeRaw(['SET',
+                $this->fleetKey,
+                $username,
+                'POINT',
+                $lastLocation['latitude'],
+                $lastLocation['longitude'],
+                $lastLocation['time'],
+            ]);
+
+        // EXPIRE fleet truck 10
+
+        $response =
+            $this->tile38->executeRaw(['EXPIRE', $this->fleetKey, $username, 120]);
 
         return new JsonResponse([]);
     }
