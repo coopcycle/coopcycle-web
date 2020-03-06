@@ -48,6 +48,21 @@ const tokenVerifier = new TokenVerifier(ROOT_DIR + '/var/jwt/public.pem', db)
 
 const io = require('socket.io')(server, { path: '/tracking/socket.io' });
 
+function createTile38Channel(tile38ChannelName, tile38FleetKey) {
+
+  // We create bounds that cover the whole world
+  // SETCHAN tracking WITHIN fleet FENCE BOUNDS -90 -180 90 180
+  return new Promise((resolve, reject) => {
+    tile38Client.send_command('SETCHAN', [tile38ChannelName, 'WITHIN', tile38FleetKey, 'FENCE', 'BOUNDS', -90, -180, 90, 180], function(err, res) {
+      if (!err) {
+        resolve()
+      } else {
+        reject()
+      }
+    })
+  })
+}
+
 function bootstrap() {
 
   const subscribeToRedis = () => new Promise((resolve, reject) => {
@@ -64,20 +79,28 @@ function bootstrap() {
   const createTile38ChannelIfNotExists = () => new Promise((resolve, reject) => {
     tile38Client.send_command('CHANS', ['*'], function(err, res) {
       if (!err) {
-        const tile38ChannelExists = _.find(res, (item) => item[0] === tile38ChannelName)
-        if (!tile38ChannelExists) {
-          // We create bounds that cover the whole world
-          // SETCHAN tracking WITHIN fleet FENCE BOUNDS -90 -180 90 180
-          tile38Client.send_command('SETCHAN', [tile38ChannelName, 'WITHIN', tile38FleetKey, 'FENCE', 'BOUNDS', -90, -180, 90, 180], function(err, res) {
-            if (!err) {
-              resolve()
-            } else {
-              reject()
-            }
-          })
-        } else {
-          resolve()
+        const tile38ChannelWithSameName = _.find(res, (item) => item[0] === tile38ChannelName)
+        if (tile38ChannelWithSameName) {
+          if (tile38ChannelWithSameName[1] === tile38FleetKey) {
+            resolve()
+          } else {
+            tile38Client.send_command('DELCHAN', [tile38ChannelName], function(err, res) {
+              if (!err) {
+                createTile38Channel(tile38ChannelName, tile38FleetKey)
+                  .then(resolve)
+                  .catch(reject)
+              } else {
+                reject()
+              }
+            })
+          }
+          return
         }
+
+        createTile38Channel(tile38ChannelName, tile38FleetKey)
+          .then(resolve)
+          .catch(reject)
+
       } else {
         reject()
       }
@@ -132,6 +155,8 @@ let cursor = 0
 
 function scan () {
 
+  console.log('Scanning…')
+
   tile38Client.send_command('SCAN', [tile38FleetKey, 'CURSOR', cursor, 'LIMIT', '2'], function (err, res) {
 
     if (err) throw err;
@@ -149,10 +174,11 @@ function scan () {
       keys.forEach(function(key) {
         const [ username, data ] = key
         const object = JSON.parse(data)
-        const [ lng, lat ] = object.coordinates
+        const [ lng, lat, timestamp ] = object.coordinates
         io.in('dispatch').emit('tracking', {
           user: username,
-          coords: { lat, lng }
+          coords: { lat, lng },
+          ts: timestamp,
         })
       })
     }
@@ -223,14 +249,16 @@ function initialize() {
 
       console.log(`Sending "tracking" message to users in rooms "admins" & "couriers:${data.id}"`)
 
-      const [ lng, lat ] = data.object.coordinates
+      const [ lng, lat, timestamp ] = data.object.coordinates
       io.in('dispatch').emit('tracking', {
         user: data.id,
-        coords: { lat, lng }
+        coords: { lat, lng },
+        ts: timestamp,
       })
       io.in(`couriers:${data.id}`).emit('tracking', {
         user: data.id,
-        coords: { lat, lng }
+        coords: { lat, lng },
+        ts: timestamp,
       })
     }
 
