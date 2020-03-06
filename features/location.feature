@@ -13,9 +13,9 @@ Feature: Location tracking
         {
           "latitude":48.8678,
           "longitude":2.3677283,
-          "time":1527855030
+          "time":1527855030000
         }
       ]
       """
     Then the response status code should be 200
-    And the Tile38 collection "coopcycle_test:fleet" should contain key "bob" with point "48.8678,2.3677283"
+    And the Tile38 collection "coopcycle_test:fleet" should contain key "bob" with point "48.8678,2.3677283,1527855030"

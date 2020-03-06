@@ -994,15 +994,15 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $response =
             $this->tile38->executeRaw(['GET', $collectionName, $keyName]);
 
-        [ $latitude, $longitude ] = explode(',', $value);
+        [ $latitude, $longitude, $timestamp ] = explode(',', $value);
 
-        // {"type":"Point","coordinates":[2.352222,48.856613]}
+        // {"type":"Point","coordinates":[2.352222,48.856613,1527855030]}
 
         $data = json_decode($response, true);
 
         Assert::assertArrayHasKey('type', $data);
         Assert::assertArrayHasKey('coordinates', $data);
-        Assert::assertEquals([ $longitude, $latitude ], $data['coordinates']);
+        Assert::assertEquals([ $longitude, $latitude, $timestamp ], $data['coordinates']);
     }
 
     /**
