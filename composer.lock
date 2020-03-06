@@ -2934,16 +2934,16 @@
         },
         {
             "name": "friendsofsymfony/rest-bundle",
-            "version": "2.6.0",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSRestBundle.git",
-                "reference": "54758949bff9fc520997415341323eebf3f54892"
+                "reference": "22fbbc35a2964564bfde765007655174262315c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSRestBundle/zipball/54758949bff9fc520997415341323eebf3f54892",
-                "reference": "54758949bff9fc520997415341323eebf3f54892",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSRestBundle/zipball/22fbbc35a2964564bfde765007655174262315c9",
+                "reference": "22fbbc35a2964564bfde765007655174262315c9",
                 "shasum": ""
             },
             "require": {
@@ -2969,7 +2969,8 @@
                 "sensio/framework-extra-bundle": "<3.0.13"
             },
             "require-dev": {
-                "jms/serializer": "^1.13|^2.0",
+                "friendsofphp/php-cs-fixer": "^2.0",
+                "jms/serializer": "^1.13|^2.0|^3.0",
                 "jms/serializer-bundle": "^2.3.1|^3.0",
                 "phpoption/phpoption": "^1.1",
                 "psr/http-message": "^1.0",
@@ -2998,7 +2999,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.6-dev"
+                    "dev-master": "2.7-dev"
                 }
             },
             "autoload": {
@@ -3032,7 +3033,7 @@
             "keywords": [
                 "rest"
             ],
-            "time": "2019-10-21T08:22:30+00:00"
+            "time": "2020-03-04T21:18:53+00:00"
         },
         {
             "name": "friendsofsymfony/user-bundle",
@@ -5882,16 +5883,16 @@
         },
         {
             "name": "jms/serializer",
-            "version": "3.4.0",
+            "version": "3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/schmittjoh/serializer.git",
-                "reference": "e2d3c49d9322a08ee32221a5623c898160dada79"
+                "reference": "0e286681396d8139406e596c6c802d37ab0b2124"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/schmittjoh/serializer/zipball/e2d3c49d9322a08ee32221a5623c898160dada79",
-                "reference": "e2d3c49d9322a08ee32221a5623c898160dada79",
+                "url": "https://api.github.com/repos/schmittjoh/serializer/zipball/0e286681396d8139406e596c6c802d37ab0b2124",
+                "reference": "0e286681396d8139406e596c6c802d37ab0b2124",
                 "shasum": ""
             },
             "require": {
@@ -5913,7 +5914,7 @@
                 "ext-pdo_sqlite": "*",
                 "jackalope/jackalope-doctrine-dbal": "^1.1.5",
                 "ocramius/proxy-manager": "^1.0|^2.0",
-                "phpunit/phpunit": "^7.5||^8.0",
+                "phpunit/phpunit": "^7.5||^8.0||^9.0",
                 "psr/container": "^1.0",
                 "symfony/dependency-injection": "^3.0|^4.0|^5.0",
                 "symfony/expression-language": "^3.0|^4.0|^5.0",
@@ -5932,7 +5933,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.4-dev"
+                    "dev-master": "3.5-dev"
                 }
             },
             "autoload": {
@@ -5963,7 +5964,7 @@
                 "serialization",
                 "xml"
             ],
-            "time": "2019-12-14T20:49:23+00:00"
+            "time": "2020-02-22T21:06:01+00:00"
         },
         {
             "name": "jms/serializer-bundle",
@@ -11806,7 +11807,7 @@
         },
         {
             "name": "sylius/attribute",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Attribute.git",
@@ -11869,7 +11870,7 @@
         },
         {
             "name": "sylius/attribute-bundle",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusAttributeBundle.git",
@@ -11941,7 +11942,7 @@
         },
         {
             "name": "sylius/channel",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Channel.git",
@@ -12007,7 +12008,7 @@
         },
         {
             "name": "sylius/channel-bundle",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusChannelBundle.git",
@@ -12077,7 +12078,7 @@
         },
         {
             "name": "sylius/currency",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Currency.git",
@@ -12139,7 +12140,7 @@
         },
         {
             "name": "sylius/currency-bundle",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusCurrencyBundle.git",
@@ -12213,7 +12214,7 @@
         },
         {
             "name": "sylius/inventory",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Inventory.git",
@@ -12275,7 +12276,7 @@
         },
         {
             "name": "sylius/locale",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Locale.git",
@@ -12338,7 +12339,7 @@
         },
         {
             "name": "sylius/locale-bundle",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusLocaleBundle.git",
@@ -12412,7 +12413,7 @@
         },
         {
             "name": "sylius/money-bundle",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusMoneyBundle.git",
@@ -12487,7 +12488,7 @@
         },
         {
             "name": "sylius/order",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Order.git",
@@ -12550,7 +12551,7 @@
         },
         {
             "name": "sylius/order-bundle",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusOrderBundle.git",
@@ -12628,7 +12629,7 @@
         },
         {
             "name": "sylius/payment",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Payment.git",
@@ -12690,7 +12691,7 @@
         },
         {
             "name": "sylius/payment-bundle",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusPaymentBundle.git",
@@ -12759,7 +12760,7 @@
         },
         {
             "name": "sylius/product",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Product.git",
@@ -12829,7 +12830,7 @@
         },
         {
             "name": "sylius/product-bundle",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusProductBundle.git",
@@ -12902,16 +12903,16 @@
         },
         {
             "name": "sylius/promotion",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Promotion.git",
-                "reference": "ab570b8f7451c3fc6763e151663ef927819ebe28"
+                "reference": "2f06fb1c85f38a942dbe1050b5d230969bd4efa5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/Promotion/zipball/ab570b8f7451c3fc6763e151663ef927819ebe28",
-                "reference": "ab570b8f7451c3fc6763e151663ef927819ebe28",
+                "url": "https://api.github.com/repos/Sylius/Promotion/zipball/2f06fb1c85f38a942dbe1050b5d230969bd4efa5",
+                "reference": "2f06fb1c85f38a942dbe1050b5d230969bd4efa5",
                 "shasum": ""
             },
             "require": {
@@ -12960,20 +12961,20 @@
                 "shop",
                 "sylius"
             ],
-            "time": "2020-01-14T15:04:34+00:00"
+            "time": "2020-02-27T15:09:38+00:00"
         },
         {
             "name": "sylius/promotion-bundle",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusPromotionBundle.git",
-                "reference": "bd641f3cfc2861775fb45525bf46fd769bdbcf35"
+                "reference": "3d364402b1dd083378e58462c97ccdcd32e833a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusPromotionBundle/zipball/bd641f3cfc2861775fb45525bf46fd769bdbcf35",
-                "reference": "bd641f3cfc2861775fb45525bf46fd769bdbcf35",
+                "url": "https://api.github.com/repos/Sylius/SyliusPromotionBundle/zipball/3d364402b1dd083378e58462c97ccdcd32e833a5",
+                "reference": "3d364402b1dd083378e58462c97ccdcd32e833a5",
                 "shasum": ""
             },
             "require": {
@@ -13035,7 +13036,7 @@
                 "shop",
                 "sylius"
             ],
-            "time": "2019-12-18T12:26:48+00:00"
+            "time": "2020-02-06T06:49:50+00:00"
         },
         {
             "name": "sylius/registry",
@@ -13201,7 +13202,7 @@
         },
         {
             "name": "sylius/taxation",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Taxation.git",
@@ -13265,7 +13266,7 @@
         },
         {
             "name": "sylius/taxation-bundle",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusTaxationBundle.git",
@@ -13337,7 +13338,7 @@
         },
         {
             "name": "sylius/taxonomy",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Taxonomy.git",
@@ -13400,7 +13401,7 @@
         },
         {
             "name": "sylius/taxonomy-bundle",
-            "version": "v1.6.5",
+            "version": "v1.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusTaxonomyBundle.git",
@@ -13673,16 +13674,16 @@
         },
         {
             "name": "symfony/polyfill-iconv",
-            "version": "v1.13.1",
+            "version": "v1.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-iconv.git",
-                "reference": "a019efccc03f1a335af6b4f20c30f5ea8060be36"
+                "reference": "926832ce51059bb58211b7b2080a88e0c3b5328e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/a019efccc03f1a335af6b4f20c30f5ea8060be36",
-                "reference": "a019efccc03f1a335af6b4f20c30f5ea8060be36",
+                "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/926832ce51059bb58211b7b2080a88e0c3b5328e",
+                "reference": "926832ce51059bb58211b7b2080a88e0c3b5328e",
                 "shasum": ""
             },
             "require": {
@@ -13694,7 +13695,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.13-dev"
+                    "dev-master": "1.14-dev"
                 }
             },
             "autoload": {
@@ -13728,7 +13729,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2019-11-27T13:56:44+00:00"
+            "time": "2020-01-13T11:15:53+00:00"
         },
         {
             "name": "symfony/polyfill-intl-grapheme",
@@ -15329,16 +15330,16 @@
         },
         {
             "name": "willdurand/hateoas",
-            "version": "3.5.0",
+            "version": "3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/willdurand/Hateoas.git",
-                "reference": "14895248ad8ee30598fbeb1d22842bba48602a91"
+                "reference": "27cfbb4b8497075dba2290cc51b903479385c12a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/willdurand/Hateoas/zipball/14895248ad8ee30598fbeb1d22842bba48602a91",
-                "reference": "14895248ad8ee30598fbeb1d22842bba48602a91",
+                "url": "https://api.github.com/repos/willdurand/Hateoas/zipball/27cfbb4b8497075dba2290cc51b903479385c12a",
+                "reference": "27cfbb4b8497075dba2290cc51b903479385c12a",
                 "shasum": ""
             },
             "require": {
@@ -15350,7 +15351,7 @@
             },
             "require-dev": {
                 "doctrine/coding-standard": "^5.0",
-                "doctrine/persistence": "^1.0",
+                "doctrine/persistence": "^1.3.4",
                 "pagerfanta/pagerfanta": "~1.0",
                 "phpunit/phpunit": "^7",
                 "symfony/routing": "~3.0 || ~4.0 || ~5.0",
@@ -15392,7 +15393,7 @@
                 }
             ],
             "description": "A PHP library to support implementing representations for HATEOAS REST web services",
-            "time": "2019-12-02T07:07:11+00:00"
+            "time": "2020-02-19T11:47:03+00:00"
         },
         {
             "name": "willdurand/hateoas-bundle",
