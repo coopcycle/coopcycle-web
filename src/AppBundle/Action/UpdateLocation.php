@@ -94,7 +94,7 @@ class UpdateLocation
         // EXPIRE fleet truck 10
 
         $response =
-            $this->tile38->executeRaw(['EXPIRE', $this->fleetKey, $username, 120]);
+            $this->tile38->executeRaw(['EXPIRE', $this->fleetKey, $username, 60 * 30]);
 
         return new JsonResponse([]);
     }
