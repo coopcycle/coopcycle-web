@@ -23,13 +23,14 @@
           <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
           <div class="border-bottom" id="items">
             {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
-            {% if order.restaurant.isLoopeatEnabled() and not loopeat_valid %}
+            {# {% if order.restaurant.isLoopeatEnabled() and not loopeat_valid %}
             <div class="p-3">
               <div class="alert alert-warning">
                 {% trans from 'validators' %}loopeat.insufficient_balance{% endtrans %}
               </div>
             </div>
-            {% endif %}
+            {% endif %} #}
+
             {% if form.reusablePackagingEnabled is defined %}
             <div class="p-3">
               <div class="alert alert-info py-0 m-0">
@@ -37,6 +38,7 @@
               </div>
             </div>
             {% endif %}
+
           </div>
 
           <div class="px-3 pt-3 border-bottom">
@@ -99,6 +101,21 @@
     </div>
     {{ form_end(form) }}
 
+    <div class="modal fade" id="modal-loopeat" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-body mb-0 p-0">
+            <div class="embed-responsive embed-responsive-16by9 z-depth-1-half">
+              <iframe class="embed-responsive-item" allowfullscreen></iframe>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-outline-primary btn-rounded btn-md ml-4" data-dismiss="modal">{{ 'basics.close'|trans }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   {% else %}
     <div class="alert alert-warning">
       {% trans from 'validators' %}cart.empty{% endtrans %}
@@ -110,9 +127,51 @@
 {% block scripts %}
 {% if not order.empty %}
 <script>
-$('#checkout_address_reusablePackagingEnabled').on('change', function(e) {
-  $(this).closest('form').submit();
-});
+(function () {
+
+  var loopeatIframe = document.querySelector('#modal-loopeat iframe');
+  var preventUncheck = false;
+
+  function onMessage(e) {
+    if (e.source === loopeatIframe.contentWindow) {
+      var messageData = JSON.parse(e.data)
+      if (messageData && messageData.loopeat) {
+        if (messageData.loopeat.success) {
+          preventUncheck = true;
+          $('#modal-loopeat').modal('hide');
+
+          $('#checkout_address_reusablePackagingEnabled').prop('checked', true);
+          $('#checkout_address_reusablePackagingEnabled').closest('form').submit();
+        } else {
+          $('#modal-loopeat').modal('hide');
+        }
+      }
+    }
+  }
+  window.addEventListener('message', onMessage, true);
+
+  $('#modal-loopeat').on('shown.bs.modal', function() {
+    preventUncheck = false;
+  });
+  $('#modal-loopeat').on('hidden.bs.modal', function() {
+    if (!preventUncheck) {
+      $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
+    }
+  });
+
+  $('#checkout_address_reusablePackagingEnabled').on('change', function(e) {
+    var isChecked = $(this).is(':checked');
+    var isLoopeat = $(this).data('loopeat') === true;
+    if (isChecked && isLoopeat) {
+      var iframeUrl = $(this).data('loopeatAuthorizeUrl');
+      $('#modal-loopeat iframe').attr('src', iframeUrl);
+      $('#modal-loopeat').modal('show');
+    } else {
+      $(this).closest('form').submit();
+    }
+  });
+
+})();
 </script>
 {% endif %}
 {% endblock %}

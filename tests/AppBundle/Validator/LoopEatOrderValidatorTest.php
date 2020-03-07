@@ -87,7 +87,9 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
         $constraint = new LoopEatOrderConstraint();
         $violations = $this->validator->validate($order->reveal(), $constraint);
 
-        $this->assertNoViolation();
+        $this->buildViolation($constraint->insufficientQuantity)
+            ->atPath('property.path.reusablePackagingEnabled')
+            ->assertRaised();
     }
 
     public function testValid()

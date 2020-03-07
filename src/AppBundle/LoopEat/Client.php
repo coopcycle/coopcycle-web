@@ -4,21 +4,27 @@ namespace AppBundle\LoopEat;
 
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\LocalBusiness;
+use FOS\UserBundle\Model\UserManagerInterface;
 use GuzzleHttp\Client as BaseClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise\RejectedPromise;
 use GuzzleHttp\Psr7;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class Client extends BaseClient
 {
     const JWT_CLAIM_SUCCESS_REDIRECT = 'https://coopcycle.org/loopeat_success_redirect';
     const JWT_CLAIM_FAILURE_REDIRECT = 'https://coopcycle.org/loopeat_failure_redirect';
 
-    public function __construct(array $config = [])
+    private $logger;
+
+    public function __construct(array $config = [], UserManagerInterface $userManager, LoggerInterface $logger)
     {
         $stack = HandlerStack::create();
         $stack->push($this->refreshToken());
@@ -26,6 +32,9 @@ class Client extends BaseClient
         $config['handler'] = $stack;
 
         parent::__construct($config);
+
+        $this->userManager = $userManager;
+        $this->logger = $logger;
     }
 
     public function setLoopEatClientId($loopEatClientId)
@@ -44,6 +53,10 @@ class Client extends BaseClient
             return function (RequestInterface $request, array $options) use ($handler) {
                 return $handler($request, $options)->then(
                     function ($value) use ($handler, $request, $options) {
+
+                        $this->logger->info(sprintf('Request "%s %s" returned %d',
+                            $request->getMethod(), $request->getUri(), $value->getStatusCode()));
+
                         if (401 === $value->getStatusCode()) {
 
                             if (isset($options['oauth_credentials'])) {
@@ -58,6 +71,9 @@ class Client extends BaseClient
                                 // https://www.oauth.com/oauth2-servers/access-tokens/refreshing-access-tokens/
                                 try {
 
+                                    $this->logger->info(sprintf('Refreshing token with "%s"',
+                                        $options['oauth_credentials']->getLoopeatRefreshToken()));
+
                                     $response = $this->request('POST', '/oauth/token', [
                                         'form_params' => $params,
                                     ]);
@@ -66,7 +82,11 @@ class Client extends BaseClient
 
                                     $options['oauth_credentials']->setLoopeatAccessToken($data['access_token']);
 
-                                    // TODO Flush
+                                    if ($options['oauth_credentials'] instanceof UserInterface) {
+                                        $this->logger->info(sprintf('Saving new access token for "%s"',
+                                            $options['oauth_credentials']->getUsername()));
+                                        $this->userManager->updateUser($options['oauth_credentials']);
+                                    }
 
                                     $request = Psr7\modify_request($request, [
                                         'set_headers' => [
@@ -117,32 +137,40 @@ class Client extends BaseClient
 
     public function grab(ApiUser $customer, LocalBusiness $restaurant, $quantity = 1)
     {
-        for ($i = 0; $i < $quantity; $i++) {
+        $this->logger->info(sprintf('Grabbing %d Loopeats at "%s" for "%s"',
+            $quantity, $restaurant->getName(), $customer->getUsername()));
 
-            $response = $this->request('GET', '/customers/grab_loopeat', [
-                'headers' => [
-                    'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
-                ],
-                'oauth_credentials' => $customer,
-            ]);
+        try {
 
-            $url = (string) $response->getBody();
+            for ($i = 0; $i < $quantity; $i++) {
 
-            // $parts = parse_url($url);
-            // $params = parse_str($parts['query']);
-            // print_r($params);
+                $response = $this->request('GET', '/customers/grab_loopeat', [
+                    'headers' => [
+                        'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
+                    ],
+                    'oauth_credentials' => $customer,
+                ]);
 
-            $response = $this->request('GET', $url, [
-                'headers' => [
-                    'Authorization' => sprintf('Bearer %s', $restaurant->getLoopeatAccessToken())
-                ],
-                'oauth_credentials' => $restaurant,
-            ]);
+                $url = (string) $response->getBody();
 
-            if ($response->getStatusCode() !== 200) {
-                return false;
+                $this->logger->info(sprintf('Got token "%s" to grab for "%s"', $url, $customer->getUsername()));
+
+                $response = $this->request('GET', $url, [
+                    'headers' => [
+                        'Authorization' => sprintf('Bearer %s', $restaurant->getLoopeatAccessToken())
+                    ],
+                    'oauth_credentials' => $restaurant,
+                ]);
+
             }
+
+        } catch (RequestException $e) {
+            $this->logger->error($e->getMessage());
+            return false;
         }
+
+        $this->logger->info(sprintf('Successfully grabbed %d Loopeats at "%s" for "%s"',
+            $quantity, $restaurant->getName(), $customer->getUsername()));
 
         return true;
     }

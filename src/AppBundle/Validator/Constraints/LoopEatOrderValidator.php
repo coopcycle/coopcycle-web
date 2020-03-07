@@ -36,16 +36,23 @@ class LoopEatOrderValidator extends ConstraintValidator
         }
 
         if (!$restaurant->isLoopeatEnabled()) {
+            $this->context->buildViolation($constraint->disabled)
+                ->atPath('reusablePackagingEnabled')
+                ->addViolation();
             return;
         }
 
         $quantity = $object->getReusablePackagingQuantity();
 
         if ($quantity < 1) {
+            $this->context->buildViolation($constraint->insufficientQuantity)
+                ->atPath('reusablePackagingEnabled')
+                ->addViolation();
             return;
         }
 
         try {
+
             $currentCustomer = $this->client->currentCustomer($object->getCustomer());
             $loopeatBalance = $currentCustomer['loopeatBalance'];
 
@@ -54,7 +61,13 @@ class LoopEatOrderValidator extends ConstraintValidator
                     ->atPath('reusablePackagingEnabled')
                     ->addViolation();
             }
+
         } catch (RequestException $e) {
+
+            $this->context->buildViolation($constraint->requestFailed)
+                ->atPath('reusablePackagingEnabled')
+                ->addViolation();
+
             $this->logger->error($e->getMessage());
         }
 

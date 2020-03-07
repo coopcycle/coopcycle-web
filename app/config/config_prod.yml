@@ -53,7 +53,7 @@ monolog:
             level: debug
             formatter: monolog.formatter.json
             max_files: 7
-            channels: ["!api", "!stripe"]
+            channels: ["!api", "!stripe", "!loopeat"]
         api:
             type: rotating_file
             path: "%kernel.logs_dir%/api.%kernel.environment%.log"
@@ -88,6 +88,12 @@ monolog:
             level: info
             max_files: 7
             channels: [stripe]
+        loopeat:
+            type: rotating_file
+            path: "%kernel.logs_dir%/loopeat.%kernel.environment%.log"
+            level: info
+            max_files: 7
+            channels: [loopeat]
         mailer:
             level:    error
             type:     rotating_file

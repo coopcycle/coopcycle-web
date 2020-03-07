@@ -938,3 +938,4 @@ sms.with_tracking: |
   Hello,
   Our messenger is on its way to %address%.
   Track it on %link%
+basics.close: Close

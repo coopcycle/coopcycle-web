@@ -31,6 +31,8 @@ class GrabLoopEats
             return;
         }
 
+        // TODO Make sure the reusable packagings are actually from LoopEat
+
         $this->client->grab($order->getCustomer(), $order->getRestaurant(), $order->getReusablePackagingQuantity());
     }
 }

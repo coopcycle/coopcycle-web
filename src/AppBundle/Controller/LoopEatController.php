@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\LoopEat\Client as LoopEatClient;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
@@ -64,6 +65,24 @@ class LoopEatController extends AbstractController
         return json_decode($res, true);
     }
 
+    private function getFailureRedirect(array $payload)
+    {
+        if (isset($payload[LoopEatClient::JWT_CLAIM_FAILURE_REDIRECT])) {
+            return $payload[LoopEatClient::JWT_CLAIM_FAILURE_REDIRECT];
+        }
+
+        return $payload['iss'];
+    }
+
+    private function getSuccessRedirect(array $payload)
+    {
+        if (isset($payload[LoopEatClient::JWT_CLAIM_SUCCESS_REDIRECT])) {
+            return $payload[LoopEatClient::JWT_CLAIM_SUCCESS_REDIRECT];
+        }
+
+        return $payload['iss'];
+    }
+
     /**
      * @Route("/loopeat/oauth/callback", name="loopeat_oauth_callback")
      */
@@ -74,10 +93,6 @@ class LoopEatController extends AbstractController
         UserManagerInterface $userManager,
         EntityManagerInterface $objectManager)
     {
-        if (!$request->query->has('code')) {
-            throw new BadRequestHttpException('Missing "code" parameter.');
-        }
-
         if (!$request->query->has('state')) {
             throw $this->createAccessDeniedException();
         }
@@ -90,7 +105,7 @@ class LoopEatController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if (!isset($payload['iss']) || !isset($payload['sub'])) {
+        if (!isset($payload['sub'])) {
             throw $this->createAccessDeniedException();
         }
 
@@ -100,12 +115,21 @@ class LoopEatController extends AbstractController
             throw new BadRequestHttpException(sprintf('Subject should be an instance of "%s" or "%s"', LocalBusiness::class, ApiUser::class));
         }
 
+        if (!$request->query->has('code') && !$request->query->has('error')) {
+            throw new BadRequestHttpException('Request has no "code" or "error" parameter.');
+        }
+
+        if ($request->query->has('error')) {
+
+            return $this->redirect($this->getFailureRedirect($payload));
+        }
+
         $data = $this->authorizationCode($request->query->get('code'));
 
         if (false === $data) {
             $this->addFlash('error', 'There was an error while trying to connect your LoopEat account.');
 
-            return $this->redirect($payload['iss']);
+            return $this->redirect($this->getFailureRedirect($payload));
         }
 
         $subject->setLoopeatAccessToken($data['access_token']);
@@ -121,6 +145,22 @@ class LoopEatController extends AbstractController
 
         $this->addFlash('notice', 'LoopEat account connected successfully!');
 
-        return $this->redirect($payload['iss']);
+        return $this->redirect($this->getSuccessRedirect($payload));
+    }
+
+    /**
+     * @Route("/loopeat/success", name="loopeat_success")
+     */
+    public function successAction(Request $request)
+    {
+        return $this->render('@App/loopeat/post_message.html.twig', ['loopeat_success' => true]);
+    }
+
+    /**
+     * @Route("/loopeat/failure", name="loopeat_failure")
+     */
+    public function failureAction(Request $request)
+    {
+        return $this->render('@App/loopeat/post_message.html.twig', ['loopeat_success' => false]);
     }
 }
