@@ -56,23 +56,30 @@ class Client extends BaseClient
                                 );
 
                                 // https://www.oauth.com/oauth2-servers/access-tokens/refreshing-access-tokens/
-                                $response = $this->request('POST', '/oauth/token', [
-                                    'form_params' => $params,
-                                ]);
+                                try {
 
-                                $data = json_decode((string) $response->getBody(), true);
+                                    $response = $this->request('POST', '/oauth/token', [
+                                        'form_params' => $params,
+                                    ]);
 
-                                $options['oauth_credentials']->setLoopeatAccessToken($data['access_token']);
+                                    $data = json_decode((string) $response->getBody(), true);
 
-                                // TODO Flush
+                                    $options['oauth_credentials']->setLoopeatAccessToken($data['access_token']);
 
-                                $request = Psr7\modify_request($request, [
-                                    'set_headers' => [
-                                        'Authorization' => sprintf('Bearer %s', $data['access_token'])
-                                    ]
-                                ]);
+                                    // TODO Flush
 
-                                return $handler($request, $options);
+                                    $request = Psr7\modify_request($request, [
+                                        'set_headers' => [
+                                            'Authorization' => sprintf('Bearer %s', $data['access_token'])
+                                        ]
+                                    ]);
+
+                                    return $handler($request, $options);
+
+                                } catch (RequestException $e) {
+                                    return $handler($request, $options);
+                                }
+
                             }
                         }
 
