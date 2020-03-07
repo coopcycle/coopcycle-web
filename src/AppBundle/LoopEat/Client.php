@@ -15,6 +15,9 @@ use Psr\Http\Message\ResponseInterface;
 
 class Client extends BaseClient
 {
+    const JWT_CLAIM_SUCCESS_REDIRECT = 'https://coopcycle.org/loopeat_success_redirect';
+    const JWT_CLAIM_FAILURE_REDIRECT = 'https://coopcycle.org/loopeat_failure_redirect';
+
     public function __construct(array $config = [])
     {
         $stack = HandlerStack::create();
@@ -78,6 +81,19 @@ class Client extends BaseClient
                 );
             };
         };
+    }
+
+    public function getOAuthAuthorizeUrl(array $params = [])
+    {
+        $defaults = [
+            'client_id' => $this->loopEatClientId,
+            'response_type' => 'code',
+        ];
+
+        $params = array_merge($defaults, $params);
+        $queryString = http_build_query($params);
+
+        return sprintf('%s/oauth/authorize?%s', $this->getConfig('base_uri'), $queryString);
     }
 
     public function currentCustomer(ApiUser $customer)
