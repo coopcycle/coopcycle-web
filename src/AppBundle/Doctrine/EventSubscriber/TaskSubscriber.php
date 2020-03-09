@@ -57,6 +57,10 @@ class TaskSubscriber implements EventSubscriber
 
     public function onFlush(OnFlushEventArgs $args)
     {
+        $this->createdTasks = [];
+        $this->postFlushEvents = [];
+        $this->usersToNotify = [];
+
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
 
@@ -131,11 +135,14 @@ class TaskSubscriber implements EventSubscriber
 
     public function postFlush(PostFlushEventArgs $args)
     {
+        $this->debug(sprintf('There are %d "task:created" events to handle', count($this->createdTasks)));
         foreach ($this->createdTasks as $task) {
             $this->eventBus->handle(new TaskCreated($task));
         }
 
+        $this->debug(sprintf('There are %d more events to handle', count($this->postFlushEvents)));
         foreach ($this->postFlushEvents as $postFlushEvent) {
+            $this->debug(sprintf('Handling event %s', $postFlushEvent::messageName()));
             $this->eventBus->handle($postFlushEvent);
         }
 
@@ -168,5 +175,9 @@ class TaskSubscriber implements EventSubscriber
                 }
             }
         }
+
+        $this->createdTasks = [];
+        $this->postFlushEvents = [];
+        $this->usersToNotify = [];
     }
 }
