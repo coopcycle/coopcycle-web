@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Doctrine\EventSubscriber;
 
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber;
 use AppBundle\Domain\EventStore;
+use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
@@ -107,6 +108,26 @@ class TaskSubscriberTest extends TestCase
         $this->eventBus
             ->handle(Argument::type(TaskCreated::class))
             ->shouldHaveBeenCalledTimes(1);
+
+        // Make sure it can be called several
+        // times during the same request cycle
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([]);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([]);
+        $unitOfWork
+            ->getEntityChangeSet($task)
+            ->willReturn([]);
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
     }
 
     public function testOnFlushWithAssignedTask()
@@ -167,6 +188,29 @@ class TaskSubscriberTest extends TestCase
         $this->eventBus
             ->handle(Argument::type(TaskCreated::class))
             ->shouldNotHaveBeenCalled();
+        $this->eventBus
+            ->handle(Argument::type(TaskAssigned::class))
+            ->shouldHaveBeenCalledTimes(1);
+
+        // Make sure it can be called several
+        // times during the same request cycle
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([]);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([]);
+        $unitOfWork
+            ->getEntityChangeSet($task)
+            ->willReturn([]);
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
     }
 
     public function testOnFlushWithSeveralAssignedTasksToSameUser()
