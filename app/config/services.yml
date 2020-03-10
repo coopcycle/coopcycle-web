@@ -602,8 +602,6 @@ services:
       - { name: 'api_platform.subresource_data_provider', priority: 2 }
     autoconfigure: false
 
-  AppBundle\Api\DataProvider\RemotePushTokenDataProvider: ~
-
   AppBundle\Utils\RestaurantFilter:
     arguments:
       - '@routing_service'

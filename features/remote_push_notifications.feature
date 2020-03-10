@@ -65,10 +65,10 @@ Feature: Remote push notifications
       | username | bob               |
       | password | 123456            |
     And the user "bob" is authenticated
-    And the user "bob" has a remote push token with value "1234567890" for platform "android"
+    And the user "bob" has a remote push token with value "abc123:abc123-abc123_abc123-abc123_abc123_abc123_abc123" for platform "android"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "DELETE" request to "/api/me/remote_push_tokens/1234567890"
+    And the user "bob" sends a "DELETE" request to "/api/me/remote_push_tokens/abc123:abc123-abc123_abc123-abc123_abc123_abc123_abc123"
     Then the response status code should be 204
 
   Scenario: Token not found
