@@ -12,9 +12,17 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class TimeSlotType extends AbstractType
 {
+    private $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -22,10 +30,21 @@ class TimeSlotType extends AbstractType
             	'label' => 'form.time_slot.name.label'
             ])
             ->add('interval', ChoiceType::class, [
+                'label' => 'form.time_slot.interval.label',
                 'choices'  => [
-                    '2 days' => '2 days',
-                    '3 days' => '3 days',
-                    '1 week' => '1 week',
+                    $this->translator->trans('basics.days', ['%count%' => 2]) => '2 days',
+                    $this->translator->trans('basics.days', ['%count%' => 3]) => '3 days',
+                    $this->translator->trans('basics.weeks', ['%count%' => 1]) => '1 week',
+                ],
+            ])
+            ->add('priorNotice', ChoiceType::class, [
+                'label' => 'form.time_slot.prior_notice.label',
+                'choices'  => [
+                    $this->translator->trans('basics.none') => null,
+                    $this->translator->trans('basics.hours', ['%count%' => 1]) => '1 hour',
+                    $this->translator->trans('basics.hours', ['%count%' => 2]) => '2 hours',
+                    $this->translator->trans('basics.hours', ['%count%' => 3]) => '3 hours',
+                    $this->translator->trans('basics.hours', ['%count%' => 6]) => '6 hours',
                 ],
             ])
             ->add('workingDaysOnly', CheckboxType::class, [

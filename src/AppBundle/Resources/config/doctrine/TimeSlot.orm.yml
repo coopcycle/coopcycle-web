@@ -21,6 +21,10 @@ AppBundle\Entity\TimeSlot:
             type: json_array
             nullable: true
             column: opening_hours
+        priorNotice:
+            type: string
+            nullable: true
+            column: prior_notice
         createdAt:
             type: datetime
             column: created_at

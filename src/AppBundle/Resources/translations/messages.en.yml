@@ -582,6 +582,7 @@ form.time_slot.working_days_only.label: Allow selecting only working days
 form.time_slot.choices.label: Choices
 form.time_slot_choice.start_time.label: Start time
 form.time_slot_choice.end_time.label: End time
+form.time_slot.prior_notice.label: Prior notice
 form.package_set.name.label: Name
 form.package_set.packages.label: Packages
 form.package.name.label: Name
@@ -780,3 +781,7 @@ task.receipt.message: Hereby we confirm that we have delivered your parcel at <s
 task.receipt.received_by: The parcel was received by <strong>%name%</strong>
 task.receipt.attached_images: Attached images
 task.receipt.reference: 'Reference: <strong>%ref%</strong>'
+basics.hours: '%count% hour|%count% hours'
+basics.days: '%count% day|%count% days'
+basics.weeks: '%count% week|%count% weeks'
+basics.none: None

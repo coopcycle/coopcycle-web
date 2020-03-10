@@ -190,6 +190,7 @@ Feature: Stores
           }
         ],
         "interval":"2 days",
+        "priorNotice":null,
         "workingDaysOnly":true,
         "openingHoursSpecification":[]
       }
@@ -217,6 +218,7 @@ Feature: Stores
         "name":"Time slot with opening hours",
         "choices":[],
         "interval":"2 days",
+        "priorNotice":null,
         "workingDaysOnly":false,
         "openingHoursSpecification":[
           {
@@ -277,6 +279,7 @@ Feature: Stores
         "name":"Time slot with opening hours",
         "choices":[],
         "interval":"2 days",
+        "priorNotice":null,
         "workingDaysOnly":false,
         "openingHoursSpecification":[
           {

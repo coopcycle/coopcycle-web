@@ -46,6 +46,12 @@ class TimeSlot
     private $workingDaysOnly = true;
 
     /**
+     * @var string
+     * @Groups({"time_slot"})
+     */
+    private $priorNotice;
+
+    /**
      * @var array
      */
     private $openingHours = [];
@@ -197,5 +203,25 @@ class TimeSlot
         }
 
         return [];
+    }
+
+    /**
+     * @return string
+     */
+    public function getPriorNotice()
+    {
+        return $this->priorNotice;
+    }
+
+    /**
+     * @param string $priorNotice
+     *
+     * @return self
+     */
+    public function setPriorNotice($priorNotice)
+    {
+        $this->priorNotice = $priorNotice;
+
+        return $this;
     }
 }

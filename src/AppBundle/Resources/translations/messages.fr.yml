@@ -560,6 +560,7 @@ form.time_slot.working_days_only.label: Limiter les choix aux jours ouvrés
 form.time_slot.choices.label: Plages horaires
 form.time_slot_choice.start_time.label: Date de début
 form.time_slot_choice.end_time.label: Date de fin
+form.time_slot.prior_notice.label: Délai de prévenance
 form.stripe_payment.cardholder_name.label: Nom du titulaire de la carte
 form.user.quotes_allowed.label: Autoriser cet utilisateur à faire des demandes de devis
 form.reusable_packaging.name.label: Nom
@@ -810,3 +811,7 @@ task.receipt.message: Par la présente, nous confirmons que nous avons bien livr
 task.receipt.received_by: Le colis a été reçu par <strong>%name%</strong>
 task.receipt.attached_images: Images jointes
 task.receipt.reference: 'Référence : <strong>%ref%</strong>'
+basics.hours: '%count% heure|%count% heures'
+basics.days: '%count% jour|%count% jours'
+basics.weeks: '%count% semaine|%count% semaines'
+basics.none: Aucun

@@ -12,6 +12,7 @@
       </options>
     </field>
     <field name="openingHours" type="json_array" column="opening_hours" nullable="true"/>
+    <field name="priorNotice" type="string" column="prior_notice" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>

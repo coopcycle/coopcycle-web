@@ -169,3 +169,6 @@ services:
 
   AppBundle\Form\ProductOptionWithPositionType:
     tags: [ form.type ]
+
+  AppBundle\Form\TimeSlotType:
+    tags: [ form.type ]
