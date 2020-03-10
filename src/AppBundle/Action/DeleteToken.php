@@ -5,6 +5,7 @@ namespace AppBundle\Action;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\RemotePushToken;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -31,6 +32,9 @@ class DeleteToken
         if ($remotePushToken) {
             $this->objectManager->remove($remotePushToken);
             $this->objectManager->flush();
+            return;
         }
+
+        throw new NotFoundHttpException(sprintf('Token with value "%s" does not exist', $token));
     }
 }
