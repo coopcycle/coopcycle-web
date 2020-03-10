@@ -2,6 +2,20 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
+/**
+ * @ApiResource(
+ *   collectionOperations={},
+ *   itemOperations={
+ *     "get"={"method"="GET"},
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "path"="/me/remote_push_tokens/{id}"
+ *     }
+ *   }
+ * )
+ */
 class RemotePushToken
 {
     protected $id;

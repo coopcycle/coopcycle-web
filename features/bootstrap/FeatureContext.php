@@ -9,6 +9,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\DeliveryAddress;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Store\Token as StoreToken;
 use AppBundle\Entity\Task;
@@ -1015,5 +1016,22 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $payment = $order->getLastPayment();
 
         Assert::assertEquals($value, $payment->getAmount());
+    }
+
+    /**
+     * @Given the user :username has a remote push token with value :value for platform :platform
+     */
+    public function userHasRemotePushTokenWithValueForPlatform($username, $value, $platform)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+
+        $token = new RemotePushToken();
+        $token->setToken($value);
+        $token->setPlatform($platform);
+
+        $user->addRemotePushToken($token);
+
+        $userManager->updateUser($user);
     }
 }

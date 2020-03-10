@@ -36,3 +36,26 @@ Feature: Remote push notifications
     Then the response status code should be 201
     And the response should be in JSON
 
+  Scenario: Delete ios token
+    Given the user is loaded:
+      | email    | bob@coopcycle.org |
+      | username | bob               |
+      | password | 123456            |
+    And the user "bob" is authenticated
+    And the user "bob" has a remote push token with value "1234567890" for platform "ios"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "DELETE" request to "/api/me/remote_push_tokens/1234567890"
+    Then the response status code should be 204
+
+  Scenario: Delete Android token
+    Given the user is loaded:
+      | email    | bob@coopcycle.org |
+      | username | bob               |
+      | password | 123456            |
+    And the user "bob" is authenticated
+    And the user "bob" has a remote push token with value "1234567890" for platform "android"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "DELETE" request to "/api/me/remote_push_tokens/1234567890"
+    Then the response status code should be 204
