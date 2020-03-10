@@ -45,6 +45,8 @@ AppBundle\Entity\ApiUser:
         remotePushTokens:
             targetEntity: AppBundle\Entity\RemotePushToken
             mappedBy: user
+            cascade:
+                - persist
     manyToOne:
         channel:
             targetEntity: Sylius\Component\Channel\Model\ChannelInterface

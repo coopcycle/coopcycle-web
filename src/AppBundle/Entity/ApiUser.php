@@ -271,6 +271,15 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
         return $this;
     }
 
+    public function addRemotePushToken(RemotePushToken $remotePushToken)
+    {
+        $remotePushToken->setUser($this);
+
+        $this->remotePushTokens->add($remotePushToken);
+
+        return $this;
+    }
+
     public function getFullName()
     {
         return join(' ', [$this->givenName, $this->familyName]);

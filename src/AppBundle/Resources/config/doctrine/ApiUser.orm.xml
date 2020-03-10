@@ -16,7 +16,11 @@
         <option name="default">0</option>
       </options>
     </field>
-    <one-to-many field="remotePushTokens" target-entity="AppBundle\Entity\RemotePushToken" mapped-by="user"/>
+    <one-to-many field="remotePushTokens" target-entity="AppBundle\Entity\RemotePushToken" mapped-by="user">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-many>
     <many-to-one field="channel" target-entity="Sylius\Component\Channel\Model\Channel">
       <join-columns>
         <join-column name="channel_id" referenced-column-name="id" nullable="true"/>
