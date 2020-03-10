@@ -3,10 +3,19 @@
 namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Api\Dto\CreateRemotePushTokenRequest;
 
 /**
  * @ApiResource(
- *   collectionOperations={},
+ *   collectionOperations={
+ *     "post"={
+ *       "path"="/me/remote_push_tokens",
+ *       "input"=CreateRemotePushTokenRequest::class,
+ *       "swagger_context"={
+ *         "summary": "Creates a RemotePushToken resource for iOS."
+ *       }
+ *     },
+ *   },
  *   itemOperations={
  *     "get"={"method"="GET"},
  *     "delete"={

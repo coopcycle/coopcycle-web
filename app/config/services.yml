@@ -510,13 +510,6 @@ services:
     tags:
       - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
-  AppBundle\Api\EventSubscriber\RemotePushTokenSubscriber:
-    arguments:
-        - '@security.token_storage'
-        - '@doctrine'
-        - '@logger'
-    tags: [ 'kernel.event_subscriber' ]
-
   AppBundle\Api\EventSubscriber\PricingSubscriber:
     arguments:
         - '@coopcycle.delivery.manager'
@@ -696,6 +689,7 @@ services:
   AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
   AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RestaurantInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\RemotePushTokenInputDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:
