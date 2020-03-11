@@ -294,9 +294,15 @@ Feature: Carts
         "notes":null,
         "items":[],
         "itemsTotal":0,
-        "total":0,
+        "total":350,
         "adjustments":{
-          "delivery":[],
+          "delivery":[
+            {
+              "id":2,
+              "label":"Livraison",
+              "amount":350
+            }
+          ],
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[]
