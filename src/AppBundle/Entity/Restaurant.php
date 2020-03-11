@@ -132,14 +132,21 @@ class Restaurant extends FoodEstablishment
      * A disable restaurant is not shown to visitors, but remain accessible in preview to admins and owners.
      *
      * @Groups({"restaurant"})
-     *
      */
     protected $enabled = false;
 
     protected $quotesAllowed = false;
 
+    /**
+     * @var bool
+     * @Groups({"restaurant"})
+     */
     protected $depositRefundEnabled = false;
 
+    /**
+     * @var bool
+     * @Groups({"restaurant"})
+     */
     protected $depositRefundOptin = true;
 
     protected $loopeatEnabled = false;
