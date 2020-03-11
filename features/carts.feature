@@ -253,6 +253,7 @@ Feature: Carts
               "amount":-350
             }
           ],
+          "order_promotion":[],
           "reusable_packaging":[]
         }
       }
