@@ -230,6 +230,7 @@ Feature: Food Tech
         "adjustments":{
           "delivery":@array@,
           "delivery_promotion":[],
+          "order_promotion":[],
           "reusable_packaging":[]
         }
       }
@@ -288,6 +289,7 @@ Feature: Food Tech
         "adjustments":{
           "delivery":@array@,
           "delivery_promotion":[],
+          "order_promotion":[],
           "reusable_packaging":[]
         }
       }
