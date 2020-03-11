@@ -53,7 +53,7 @@ Sylius\Component\Order\Model\Order:
     pickupExpectedAt:
       groups: ['order']
     reusablePackagingEnabled:
-      groups: ['order', 'cart']
+      groups: ['order', 'cart', 'order_update']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:

@@ -259,6 +259,51 @@ Feature: Carts
       }
       """
 
+  Scenario: Enable reusable packaging (with session)
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    Given there is a cart at restaurant with id "1"
+    And there is a token for the last cart at restaurant with id "1"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send an authenticated "PUT" request to "/api/orders/1" with body:
+      """
+      {
+        "reusablePackagingEnabled": true
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders/1",
+        "@type":"http://schema.org/Order",
+        "customer":null,
+        "restaurant":"/api/restaurants/1",
+        "shippingAddress":null,
+        "shippedAt":null,
+        "reusablePackagingEnabled":true,
+        "notes":null,
+        "items":[],
+        "itemsTotal":0,
+        "total":0,
+        "adjustments":{
+          "delivery":[],
+          "delivery_promotion":[],
+          "order_promotion":[],
+          "reusable_packaging":[]
+        }
+      }
+      """
+
   Scenario: Add items to cart (legacy options payload)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -487,6 +532,65 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[]
         }
+      }
+      """
+
+  Scenario: Obtain reusable packaging potential action (with session)
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has deposit-refund enabled
+    And the product with code "PIZZA" has reusable packaging enabled with unit "1"
+    Given there is a cart at restaurant with id "1"
+    And there is a token for the last cart at restaurant with id "1"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send an authenticated "POST" request to "/api/orders/1/items" with body:
+      """
+      {
+        "product": "PIZZA",
+        "quantity": 2,
+        "options": [
+          "PIZZA_TOPPING_PEPPERONI"
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders/1",
+        "@type":"http://schema.org/Order",
+        "customer":null,
+        "restaurant":"/api/restaurants/1",
+        "shippingAddress":null,
+        "shippedAt":null,
+        "reusablePackagingEnabled":false,
+        "notes":null,
+        "items":@array@,
+        "itemsTotal":1800,
+        "total":2150,
+        "adjustments":@...@,
+        "potentialAction":[
+          {
+            "@context":"http://schema.org",
+            "@type":"EnableReusablePackagingAction",
+            "actionStatus":"PotentialActionStatus",
+            "description":@string@
+          }
+        ]
       }
       """
 

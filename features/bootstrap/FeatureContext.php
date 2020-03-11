@@ -15,6 +15,7 @@ use AppBundle\Entity\Store\Token as StoreToken;
 use AppBundle\Entity\Task;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Entity\Sylius\Product;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
@@ -1033,5 +1034,30 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $user->addRemotePushToken($token);
 
         $userManager->updateUser($user);
+    }
+
+    /**
+     * @Given the restaurant with id :id has deposit-refund enabled
+     */
+    public function enableDepositRefund($id)
+    {
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant->setDepositRefundEnabled(true);
+
+        $em = $this->doctrine->getManagerForClass(Restaurant::class);
+        $em->flush();
+    }
+
+    /**
+     * @Given the product with code :code has reusable packaging enabled with unit :units
+     */
+    public function enableReusablePackagingForProductWithQuantity($code, $unit)
+    {
+        $product = $this->doctrine->getRepository(Product::class)->findOneByCode($code);
+        $product->setReusablePackagingEnabled(true);
+        $product->setReusablePackagingUnit($unit);
+
+        $em = $this->doctrine->getManagerForClass(Product::class);
+        $em->flush();
     }
 }

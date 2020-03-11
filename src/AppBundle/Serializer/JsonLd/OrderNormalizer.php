@@ -7,6 +7,7 @@ use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
+use AppBundle\Utils\PriceFormatter;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Bundle\PromotionBundle\Doctrine\ORM\PromotionCouponRepository;
 use Sylius\Component\Order\Model\AdjustmentInterface as BaseAdjustmentInterface;
@@ -16,6 +17,7 @@ use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -32,6 +34,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
     private $orderModifier;
     private $promotionCouponRepository;
     private $orderProcessor;
+    private $priceFormatter;
+    private $translator;
 
     public function __construct(
         ItemNormalizer $normalizer,
@@ -45,7 +49,9 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         OrderModifierInterface $orderModifier,
         IriConverterInterface $iriConverter,
         PromotionCouponRepository $promotionCouponRepository,
-        OrderProcessorInterface $orderProcessor)
+        OrderProcessorInterface $orderProcessor,
+        PriceFormatter $priceFormatter,
+        TranslatorInterface $translator)
     {
         $this->normalizer = $normalizer;
         $this->channelContext = $channelContext;
@@ -59,6 +65,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->iriConverter = $iriConverter;
         $this->promotionCouponRepository = $promotionCouponRepository;
         $this->orderProcessor = $orderProcessor;
+        $this->priceFormatter = $priceFormatter;
+        $this->translator = $translator;
     }
 
     public function normalizeAdjustments(Order $order)
@@ -105,6 +113,31 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         $data['adjustments'] = $this->normalizeAdjustments($object);
+
+        $restaurant = $object->getRestaurant();
+
+        // Suggest the customer to use reusable packaging via order payload
+        if (null !== $restaurant && $restaurant->isDepositRefundOptin() && $object->isEligibleToReusablePackaging()) {
+
+            $transKey = 'form.checkout_address.reusable_packaging_enabled.label';
+            $packagingAmount = $object->getReusablePackagingAmount();
+
+            if ($packagingAmount > 0) {
+                $packagingPrice = sprintf('+ %s', $this->priceFormatter->formatWithSymbol($packagingAmount));
+            } else {
+                $packagingPrice = $this->translator->trans('basics.free');
+            }
+
+            // @see https://schema.org/docs/actions.html
+            $enableReusablePackagingAction = [
+                "@context" => "http://schema.org",
+                "@type" => "EnableReusablePackagingAction",
+                "actionStatus" => "PotentialActionStatus",
+                "description" => $this->translator->trans($transKey, [ '%price%' => $packagingPrice ])
+            ];
+
+            $data['potentialAction'] = [ $enableReusablePackagingAction ];
+        }
 
         if (isset($context['is_web']) && $context['is_web']) {
 
@@ -176,6 +209,10 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 $order->setPromotionCoupon($promotionCoupon);
                 $this->orderProcessor->process($order);
             }
+        }
+
+        if (isset($data['reusablePackagingEnabled'])) {
+            $this->orderProcessor->process($order);
         }
 
         if (isset($data['items'])) {
