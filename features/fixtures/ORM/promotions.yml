@@ -1,0 +1,18 @@
+Sylius\Component\Promotion\Model\Promotion:
+  free_delivery_promotion:
+    name: Free delivery
+    code: FREE_DELIVERY
+    couponBased: true
+    priority: 1
+    actions: [ '@free_delivery_action' ]
+    coupons: [ '@free_delivery_coupon' ]
+
+Sylius\Component\Promotion\Model\PromotionAction:
+  free_delivery_action:
+    type: delivery_percentage_discount
+    configuration:
+      percentage: 1.0
+
+AppBundle\Entity\Sylius\PromotionCoupon:
+  free_delivery_coupon:
+    code: FREE_DELIVERY

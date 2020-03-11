@@ -48,6 +48,7 @@ services:
       $productOptionValueRepository: "@sylius.repository.product_option_value"
       $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
       $orderItemFactory: "@sylius.factory.order_item"
+      $promotionCouponRepository: "@sylius.repository.promotion_coupon"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\Json\OrderItemNormalizer:

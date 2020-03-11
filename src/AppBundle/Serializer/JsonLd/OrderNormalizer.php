@@ -8,9 +8,11 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Bundle\PromotionBundle\Doctrine\ORM\PromotionCouponRepository;
 use Sylius\Component\Order\Model\AdjustmentInterface as BaseAdjustmentInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
@@ -28,6 +30,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
     private $orderItemFactory;
     private $orderItemQuantityModifier;
     private $orderModifier;
+    private $promotionCouponRepository;
+    private $orderProcessor;
 
     public function __construct(
         ItemNormalizer $normalizer,
@@ -39,7 +43,9 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         FactoryInterface $orderItemFactory,
         OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         OrderModifierInterface $orderModifier,
-        IriConverterInterface $iriConverter)
+        IriConverterInterface $iriConverter,
+        PromotionCouponRepository $promotionCouponRepository,
+        OrderProcessorInterface $orderProcessor)
     {
         $this->normalizer = $normalizer;
         $this->channelContext = $channelContext;
@@ -51,6 +57,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->orderModifier = $orderModifier;
         $this->objectNormalizer = $objectNormalizer;
         $this->iriConverter = $iriConverter;
+        $this->promotionCouponRepository = $promotionCouponRepository;
+        $this->orderProcessor = $orderProcessor;
     }
 
     public function normalizeAdjustments(Order $order)
@@ -159,6 +167,13 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $order = $this->normalizer->denormalize($data, $class, $format, $context);
 
         $order->setChannel($this->channelContext->getChannel());
+
+        if ($order->getState() === Order::STATE_CART && isset($data['promotionCoupon'])) {
+            if ($promotionCoupon = $this->promotionCouponRepository->findOneByCode($data['promotionCoupon'])) {
+                $order->setPromotionCoupon($promotionCoupon);
+                $this->orderProcessor->process($order);
+            }
+        }
 
         if (isset($data['items'])) {
             $orderItems = array_map(function ($item) {
