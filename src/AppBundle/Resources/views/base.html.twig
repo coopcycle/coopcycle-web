@@ -149,6 +149,15 @@
       {% block scripts %}{% endblock %}
     {% endblock %}
 
+    <script>
+    const url = new URL('http://localhost/.well-known/mercure');
+    url.searchParams.append('topic', 'http://example.com/user/admin');
+    const eventSource = new EventSource(url, { withCredentials: true });
+    eventSource.onmessage = function(e) {
+      console.log(e);
+    };
+    </script>
+
     {% if app.environment == "test" %}
     <script>
     {% include '@App/_partials/error_handler.js.twig' %}
