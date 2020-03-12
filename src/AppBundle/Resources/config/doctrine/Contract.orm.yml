@@ -14,6 +14,9 @@ AppBundle\Entity\Contract:
         flatDeliveryPrice:
             type: integer
             column: flat_delivery_price
+        variableDeliveryPriceEnabled:
+            type: boolean
+            column: variable_delivery_price_enabled
         feeRate:
             type: float
             column: fee_rate
@@ -40,4 +43,11 @@ AppBundle\Entity\Contract:
                 restaurant_id:
                     referencedColumnName: id
             orphanRemoval: false
+    manyToOne:
+        variableDeliveryPrice:
+            targetEntity: AppBundle\Entity\Delivery\PricingRuleSet
+            joinColumn:
+                variable_delivery_price_id:
+                    referencedColumnName: id
+                    nullable: true
     lifecycleCallbacks: {  }

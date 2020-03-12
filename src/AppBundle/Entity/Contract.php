@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -30,6 +31,18 @@ class Contract
      * @Assert\Type("integer")
      */
     private $flatDeliveryPrice;
+
+    /**
+     * @var bool
+     * Use a PricingRuleSet to calculate the amount charged by the platform.
+     */
+    private $variableDeliveryPriceEnabled = false;
+
+    /**
+     * @var PricingRuleSet|null
+     * The pricing rule to calculate the amount charged by the platform.
+     */
+    private $variableDeliveryPrice;
 
     /**
      * @var int
@@ -99,6 +112,38 @@ class Contract
     public function setFlatDeliveryPrice(int $flatDeliveryPrice)
     {
         $this->flatDeliveryPrice = $flatDeliveryPrice;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVariableDeliveryPriceEnabled(): bool
+    {
+        return $this->variableDeliveryPriceEnabled;
+    }
+
+    /**
+     * @param bool $variableDeliveryPriceEnabled
+     */
+    public function setVariableDeliveryPriceEnabled(bool $variableDeliveryPriceEnabled): void
+    {
+        $this->variableDeliveryPriceEnabled = $variableDeliveryPriceEnabled;
+    }
+
+    /**
+     * @return PricingRuleSet|null
+     */
+    public function getVariableDeliveryPrice()
+    {
+        return $this->variableDeliveryPrice;
+    }
+
+    /**
+     * @param PricingRuleSet|null $variableDeliveryPrice
+     */
+    public function setVariableDeliveryPrice(?PricingRuleSet $variableDeliveryPrice)
+    {
+        $this->variableDeliveryPrice = $variableDeliveryPrice;
     }
 
     /**
