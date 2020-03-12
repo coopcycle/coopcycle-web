@@ -545,11 +545,6 @@ class Restaurant extends FoodEstablishment
 
         if (!$nextClosingDate) { // It is open 24/7
             $nextClosingDate = Carbon::instance($now)->add($shippingOptionsDays, 'days');
-        }
-
-        $numberOfDays = 0;
-        $days = [];
-        while ($numberOfDays < $shippingOptionsDays) {
 
             $period = CarbonPeriod::create(
                 $nextOpeningDate, '15 minutes', $nextClosingDate,
@@ -557,12 +552,35 @@ class Restaurant extends FoodEstablishment
             );
             foreach ($period as $date) {
                 $availabilities[] = $date->format(\DateTime::ATOM);
-                $days[] = $date->format('Y-m-d');
-                $numberOfDays = count(array_unique($days));
             }
 
-            $nextOpeningDate = $this->getNextOpeningDate($nextClosingDate);
-            $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
+            return $availabilities;
+        }
+
+        $numberOfDays = 0;
+        $days = [];
+        while ($numberOfDays < $shippingOptionsDays) {
+            while (true) {
+
+                $period = CarbonPeriod::create(
+                    $nextOpeningDate, '15 minutes', $nextClosingDate,
+                    CarbonPeriod::EXCLUDE_END_DATE
+                );
+                foreach ($period as $date) {
+                    $availabilities[] = $date->format(\DateTime::ATOM);
+                    $days[] = $date->format('Y-m-d');
+                    $numberOfDays = count(array_unique($days));
+                }
+
+                $nextOpeningDate = $this->getNextOpeningDate($nextClosingDate);
+
+                if (!Carbon::instance($nextOpeningDate)->isSameDay($nextClosingDate)) {
+                    $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
+                    break;
+                }
+
+                $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
+            }
         }
 
         return $availabilities;

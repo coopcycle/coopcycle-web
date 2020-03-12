@@ -323,6 +323,43 @@ class RestaurantTest extends TestCase
         ], $availabilities);
     }
 
+    public function testGetAvailabilitiesOnSameDayWithOneShippingOption()
+    {
+        $restaurant = new Restaurant();
+        $restaurant->setOpeningHours([
+            "Tu-Su 13:15-16:00",
+            "Tu-Su 20:15-23:15"
+        ]);
+        $restaurant->setShippingOptionsDays(1);
+
+        $date = new \DateTime('2020-03-12T15:30:00+02:00');
+
+        $availabilities = $restaurant->getAvailabilities($date);
+
+        $this->assertEquals([
+            '2020-03-12T15:30:00+02:00',
+            '2020-03-12T15:45:00+02:00',
+            '2020-03-12T20:15:00+02:00',
+            '2020-03-12T20:30:00+02:00',
+            '2020-03-12T20:45:00+02:00',
+            '2020-03-12T21:00:00+02:00',
+            '2020-03-12T21:15:00+02:00',
+            '2020-03-12T21:30:00+02:00',
+            '2020-03-12T21:45:00+02:00',
+            '2020-03-12T22:00:00+02:00',
+            '2020-03-12T22:15:00+02:00',
+            '2020-03-12T22:30:00+02:00',
+            '2020-03-12T22:45:00+02:00',
+            '2020-03-12T23:00:00+02:00',
+        ], $availabilities);
+
+        $this->assertNumberOfDays(1, $availabilities);
+
+        $this->assertDays([
+            "2020-03-12",
+        ], $availabilities);
+    }
+
     public function testGetAvailabilitiesOnAnotherDay()
     {
         $restaurant = new Restaurant();
