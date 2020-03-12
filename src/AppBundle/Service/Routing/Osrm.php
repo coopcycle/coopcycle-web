@@ -78,6 +78,7 @@ class Osrm extends Base
     public function getServiceResponse($service, array $coordinates, array $options = [])
     {
         $coords = array_map(function($coordinate) {
+            // String of format {longitude},{latitude};{longitude},{latitude}[;{longitude},{latitude} ...] or polyline({polyline}) or polyline6({polyline6}) .
             return implode(',', [ $coordinate->getLongitude(), $coordinate->getLatitude() ]);
         }, $coordinates);
 
