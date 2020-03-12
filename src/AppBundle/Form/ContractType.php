@@ -3,6 +3,9 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Contract;
+use AppBundle\Entity\Delivery\PricingRuleSet;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\PercentType;
@@ -17,18 +20,41 @@ class ContractType extends AbstractType
         $builder
             ->add('minimumCartAmount', MoneyType::class, [
                 'label' => 'restaurant.contract.minimumCartAmount.label',
+                'help' => 'restaurant.contract.minimumCartAmount.help',
                 'divisor' => 100,
             ])
             ->add('flatDeliveryPrice', MoneyType::class, [
                 'label' => 'restaurant.contract.flatDeliveryPrice.label',
+                'help' => 'restaurant.contract.flatDeliveryPrice.help',
                 'divisor' => 100,
             ])
+            ->add('variableDeliveryPriceEnabled', ChoiceType::class, array(
+                'label' => 'restaurant.contract.variableDeliveryPriceEnabled.label',
+                'choices' => [
+                    'No' => false,
+                    'Yes' => true,
+                ],
+                'expanded' => true,
+                'multiple' => false,
+            ))
+            ->add('variableDeliveryPrice', EntityType::class, array(
+                'required' => false,
+                'placeholder' => 'restaurant.contract.variableDeliveryPrice.placeholder',
+                'label' => 'restaurant.contract.variableDeliveryPrice.label',
+                'class' => PricingRuleSet::class,
+                'choice_label' => 'name',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('prs')->orderBy('prs.name', 'ASC');
+                }
+            ))
             ->add('customerAmount', MoneyType::class, [
                 'label' => 'restaurant.contract.customerAmount.label',
+                'help' => 'restaurant.contract.customerAmount.help',
                 'divisor' => 100,
             ])
             ->add('feeRate', PercentType::class, [
                 'label' => 'restaurant.contract.feeRate.label',
+                'help' => 'restaurant.contract.feeRate.help',
                 'scale' => 2,
                 'type' => 'fractional',
             ])

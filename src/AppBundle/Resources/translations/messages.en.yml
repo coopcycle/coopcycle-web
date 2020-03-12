@@ -164,6 +164,11 @@ restaurant.contract.minimumCartAmount.label: Minimum cart amount
 restaurant.contract.flatDeliveryPrice.label: Amount charged by the platform
 restaurant.contract.flatDeliveryPrice.help: This amount will not be displayed in the
   cart and will not increase the total amount
+restaurant.contract.variableDeliveryPrice.label: Amount charged by the platform (variable)
+restaurant.contract.variableDeliveryPrice.help: The amount charged will be calculated using the selected pricing rule set
+restaurant.contract.variableDeliveryPrice.placeholder: Please select a pricing rule set
+restaurant.contract.variableDeliveryPriceEnabled.label: Enable variable amount charged by the platform
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Amount is calculated dynamically
 restaurant.contract.customerAmount.label: Amount paid by the customer
 restaurant.contract.customerAmount.help: This amount will be displayed in the cart
   and will increase the total amount

@@ -211,9 +211,11 @@
 
   {% if form.contract is defined %}
     {{ form_row(form.contract.minimumCartAmount) }}
-    {{ form_row(form.contract.flatDeliveryPrice, { help: 'restaurant.contract.flatDeliveryPrice.help' }) }}
-    {{ form_row(form.contract.customerAmount, { help: 'restaurant.contract.customerAmount.help' }) }}
-    {{ form_row(form.contract.feeRate, { help: 'restaurant.contract.feeRate.help' }) }}
+    {{ form_row(form.contract.variableDeliveryPriceEnabled) }}
+    {{ form_row(form.contract.flatDeliveryPrice) }}
+    {{ form_row(form.contract.variableDeliveryPrice) }}
+    {{ form_row(form.contract.customerAmount) }}
+    {{ form_row(form.contract.feeRate) }}
     <p>
       <a class="help-block collapsed" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_advanced">
         <i class="fa fa-plus"></i><i class="fa fa-minus"></i> {% trans %}restaurant.contract.showAdvanced{% endtrans %}
@@ -239,10 +241,14 @@
               <th>{% trans %}restaurant.contract.customerAmount.label{% endtrans %}</th>
               <td class="text-right">{{ restaurant.contract.customerAmount|price_format }}</td>
             </tr>
-            <tr>
-              <th>{% trans %}restaurant.contract.flatDeliveryPrice.label{% endtrans %}</th>
-              <td class="text-right">{{ restaurant.contract.flatDeliveryPrice|price_format }}</td>
-            </tr>
+            {% if restaurant.contract.variableDeliveryPriceEnabled %}
+              {{ 'restaurant.contract.variableDeliveryPriceEnabled.disclaimer'|trans }}
+            {% else %}
+              <tr>
+                <th>{% trans %}restaurant.contract.flatDeliveryPrice.label{% endtrans %}</th>
+                <td class="text-right">{{ restaurant.contract.flatDeliveryPrice|price_format }}</td>
+              </tr>
+            {% endif %}
             <tr>
               <th>{% trans %}restaurant.contract.feeRate.label{% endtrans %}</th>
               <td class="text-right">{{ (restaurant.contract.feeRate * 100) }}%</td>
