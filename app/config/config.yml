@@ -19,6 +19,7 @@ parameters:
     loopeat_client_id: '%env(LOOPEAT_CLIENT_ID)%'
     loopeat_client_secret: '%env(LOOPEAT_CLIENT_SECRET)%'
     tile38_fleet_key: '%database_name%:fleet'
+    mercure.default_hub: '%env(MERCURE_SUBSCRIBE_URL)%'
 
 services:
     tag_manager.cache:
@@ -182,6 +183,8 @@ api_platform:
     # see https://github.com/api-platform/core/pull/2721
     messenger:
         enabled: false
+    mercure:
+        enabled: true
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -731,3 +734,10 @@ mjml:
 sensio_framework_extra:
     router:
         annotations: false
+
+mercure:
+    enable_profiler: '%kernel.debug%'
+    hubs:
+        default:
+            url: '%env(MERCURE_PUBLISH_URL)%'
+            jwt: '%env(MERCURE_JWT_TOKEN)%'

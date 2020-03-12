@@ -65,6 +65,7 @@ class AppKernel extends Kernel
             new M6Web\Bundle\DaemonBundle\M6WebDaemonBundle(),
             new Oneup\FlysystemBundle\OneupFlysystemBundle(),
             new Kreait\Firebase\Symfony\Bundle\FirebaseBundle(),
+            new Symfony\Bundle\MercureBundle\MercureBundle(),
             new AppBundle\AppBundle(),
         ];
 

@@ -173,6 +173,17 @@ services:
   tile38:
     image: tile38/tile38
 
+  mercure:
+    image: dunglas/mercure:v0.8
+    ports:
+      - '3001:80'
+    environment:
+      JWT_KEY: '!ChangeMe!'
+      DEBUG: '1'
+      ALLOW_ANONYMOUS: '0'
+      CORS_ALLOWED_ORIGINS: '*'
+      PUBLISH_ALLOWED_ORIGINS: http://localhost
+
 volumes:
   node_modules:
   pg_data:
