@@ -184,13 +184,12 @@ services:
   sylius.order_processing.order_options_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderOptionsProcessor
     arguments:
-      - "@sylius.factory.adjustment"
+      $adjustmentFactory: "@sylius.factory.adjustment"
 
   sylius.order_processing.order_fee_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderFeeProcessor
     arguments:
-      - "@sylius.factory.adjustment"
-      - "@translator"
+      $adjustmentFactory: "@sylius.factory.adjustment"
 
   AppBundle\Sylius\OrderProcessing\OrderDisabledProductProcessor:
     tags:
@@ -352,7 +351,7 @@ services:
 
   AppBundle\Service\DeliveryManager:
     arguments:
-      - "@coopcycle.expression_language"
+      $expressionLanguage: "@coopcycle.expression_language"
 
   AppBundle\Utils\PreparationTimeCalculator:
     arguments:

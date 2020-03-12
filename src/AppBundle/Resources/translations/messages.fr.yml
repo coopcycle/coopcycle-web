@@ -161,6 +161,11 @@ restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réserv
 restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez
   contacter un administrateur.
 restaurant.contract.showAdvanced: Montrer les réglages avancés
+restaurant.contract.variableDeliveryPrice.label: Montant variable facturé par la plateforme pour la livraison
+restaurant.contract.variableDeliveryPrice.help: Le montant facturé sera calculé en utilisant la tarification sélectionnée
+restaurant.contract.variableDeliveryPrice.placeholder: Veuillez sélectionner une tarification
+restaurant.contract.variableDeliveryPriceEnabled.label: Activer le montant variable
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Le montant est calulé dynamiquement
 restaurant.menus.noMenus: Vous n'avez pas créé de menu pour le moment.
 restaurant.menus.activate: Activer
 restaurant.menus.activated: Le menu « %menu_name% » a bien été activé. Il sera désormais

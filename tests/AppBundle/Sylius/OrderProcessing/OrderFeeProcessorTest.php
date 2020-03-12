@@ -3,11 +3,15 @@
 namespace Tests\AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\Contract;
+use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
 use Prophecy\Argument;
+use Psr\Log\NullLogger;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
@@ -32,15 +36,25 @@ class OrderFeeProcessorTest extends KernelTestCase
             ->willReturn('Foo');
 
         $this->adjustmentFactory = static::$kernel->getContainer()->get('sylius.factory.adjustment');
-        $this->orderFeeProcessor = new OrderFeeProcessor($this->adjustmentFactory, $this->translator->reveal());
+        $this->deliveryManager = $this->prophesize(DeliveryManager::class);
+
+        $this->orderFeeProcessor = new OrderFeeProcessor(
+            $this->adjustmentFactory,
+            $this->translator->reveal(),
+            $this->deliveryManager->reveal(),
+            new NullLogger()
+        );
     }
 
-    private static function createContract($flatDeliveryPrice, $customerAmount, $feeRate)
+    private static function createContract($flatDeliveryPrice, $customerAmount, $feeRate,
+        $variableDeliveryPriceEnabled = false, $variableDeliveryPrice = null)
     {
         $contract = new Contract();
         $contract->setFlatDeliveryPrice($flatDeliveryPrice);
         $contract->setCustomerAmount($customerAmount);
         $contract->setFeeRate($feeRate);
+        $contract->setVariableDeliveryPriceEnabled($variableDeliveryPriceEnabled);
+        $contract->setVariableDeliveryPrice($variableDeliveryPrice);
 
         return $contract;
     }
@@ -186,5 +200,65 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $this->assertCount(1, $feeAdjustments);
         $this->assertEquals(680, $order->getFeeTotal());
+    }
+
+    public function testOrderWithVariableBusinessAmount()
+    {
+        $pricing = new PricingRuleSet();
+        $contract = self::createContract(0, 0, 0.00, true, $pricing);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(1000));
+
+        $delivery = new Delivery();
+
+        $this->deliveryManager
+            ->createFromOrder($order)
+            ->willReturn($delivery);
+
+        $this->deliveryManager
+            ->getPrice($delivery, $pricing)
+            ->willReturn(750);
+
+        $this->orderFeeProcessor->process($order);
+
+        $adjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+
+        $this->assertCount(1, $adjustments);
+        $this->assertEquals(750, $order->getFeeTotal());
+    }
+
+    public function testOrderWithVariableBusinessAmountFallback()
+    {
+        $pricing = new PricingRuleSet();
+        $contract = self::createContract(350, 0, 0.00, true, $pricing);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(1000));
+
+        $delivery = new Delivery();
+
+        $this->deliveryManager
+            ->createFromOrder($order)
+            ->willReturn($delivery);
+
+        $this->deliveryManager
+            ->getPrice($delivery, $pricing)
+            ->willReturn(null);
+
+        $this->orderFeeProcessor->process($order);
+
+        $adjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+
+        $this->assertCount(1, $adjustments);
+        $this->assertEquals(350, $order->getFeeTotal());
     }
 }

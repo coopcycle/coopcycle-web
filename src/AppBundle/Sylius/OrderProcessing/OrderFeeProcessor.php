@@ -2,8 +2,11 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
+use AppBundle\Entity\Delivery;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -14,13 +17,19 @@ final class OrderFeeProcessor implements OrderProcessorInterface
 {
     private $adjustmentFactory;
     private $translator;
+    private $deliveryManager;
+    private $logger;
 
     public function __construct(
         AdjustmentFactoryInterface $adjustmentFactory,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        DeliveryManager $deliveryManager,
+        LoggerInterface $logger)
     {
         $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
+        $this->deliveryManager = $deliveryManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -39,9 +48,22 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         $order->removeAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
         $order->removeAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
 
-        $feeRate = $restaurant->getContract()->getFeeRate();
-        $customerAmount = $restaurant->getContract()->getCustomerAmount();
-        $businessAmount = $restaurant->getContract()->getFlatDeliveryPrice();
+        $contract = $restaurant->getContract();
+
+        $feeRate = $contract->getFeeRate();
+        $customerAmount = $contract->getCustomerAmount();
+
+        $businessAmount = $contract->getFlatDeliveryPrice();
+        if ($contract->isVariableDeliveryPriceEnabled()) {
+            $businessAmount = $this->deliveryManager->getPrice(
+                $this->getDelivery($order),
+                $contract->getVariableDeliveryPrice()
+            );
+            if (null === $businessAmount) {
+                $this->logger->error('OrderFeeProcessor | could not calculate price, falling back to flat price');
+                $businessAmount = $contract->getFlatDeliveryPrice();
+            }
+        }
 
         $deliveryPromotionAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
         foreach ($deliveryPromotionAdjustments as $deliveryPromotionAdjustment) {
@@ -63,5 +85,17 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             $neutral = false
         );
         $order->addAdjustment($deliveryAdjustment);
+    }
+
+    private function getDelivery(OrderInterface $order)
+    {
+        $delivery = $order->getDelivery();
+
+        if (null === $order->getDelivery()) {
+
+            return $this->deliveryManager->createFromOrder($order);
+        }
+
+        return $delivery;
     }
 }
