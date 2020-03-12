@@ -332,9 +332,7 @@ class RestaurantTest extends TestCase
         ]);
         $restaurant->setShippingOptionsDays(1);
 
-        $date = new \DateTime('2020-03-12T15:30:00+02:00');
-
-        $availabilities = $restaurant->getAvailabilities($date);
+        $availabilities = $restaurant->getAvailabilities(new \DateTime('2020-03-12T15:30:00+02:00'));
 
         $this->assertEquals([
             '2020-03-12T15:30:00+02:00',
@@ -357,6 +355,40 @@ class RestaurantTest extends TestCase
 
         $this->assertDays([
             "2020-03-12",
+        ], $availabilities);
+
+        $availabilities = $restaurant->getAvailabilities(new \DateTime('2020-03-12T23:30:00+02:00'));
+
+        $this->assertEquals([
+            '2020-03-13T13:15:00+02:00',
+            '2020-03-13T13:30:00+02:00',
+            '2020-03-13T13:45:00+02:00',
+            '2020-03-13T14:00:00+02:00',
+            '2020-03-13T14:15:00+02:00',
+            '2020-03-13T14:30:00+02:00',
+            '2020-03-13T14:45:00+02:00',
+            '2020-03-13T15:00:00+02:00',
+            '2020-03-13T15:15:00+02:00',
+            '2020-03-13T15:30:00+02:00',
+            '2020-03-13T15:45:00+02:00',
+            '2020-03-13T20:15:00+02:00',
+            '2020-03-13T20:30:00+02:00',
+            '2020-03-13T20:45:00+02:00',
+            '2020-03-13T21:00:00+02:00',
+            '2020-03-13T21:15:00+02:00',
+            '2020-03-13T21:30:00+02:00',
+            '2020-03-13T21:45:00+02:00',
+            '2020-03-13T22:00:00+02:00',
+            '2020-03-13T22:15:00+02:00',
+            '2020-03-13T22:30:00+02:00',
+            '2020-03-13T22:45:00+02:00',
+            '2020-03-13T23:00:00+02:00',
+        ], $availabilities);
+
+        $this->assertNumberOfDays(1, $availabilities);
+
+        $this->assertDays([
+            "2020-03-13",
         ], $availabilities);
     }
 
