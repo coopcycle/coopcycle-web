@@ -48,6 +48,9 @@ env:
     - COOPCYCLE_DB_PASSWORD=
     - COOPCYCLE_REDIS_DSN=redis://127.0.0.1:6379/0
     - COOPCYCLE_TILE38_DSN=redis://127.0.0.1:9851
+    - MERCURE_PUBLISH_URL=http://127.0.0.1:3001/.well-known/mercure
+    - MERCURE_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOltdfX0.Oo0yg7y4yMa1vr_bziltxuTCqb8JVHKxp-f_FwwOim0
+    - MERCURE_SUBSCRIBE_URL=http://localhost/.well-known/mercure
     # https://docs.travis-ci.com/user/encryption-keys
     # GOOGLE_API_KEY
     - secure: "QQdL4x+Ht2/qUv+qhtyR/9effGz2P6PyJ0+8lGWycu0K5sKmtcUO/6xK7il4/uK5nogm4YcON1Pcmm665NhfCSu1gicNgd0bYR0KIWIYPeWUM9pjC1yzZhh2MOl9p0NWo6ulI1Ex7WTmN8sXc5AuNhpnKuQXR8mZPu5Tg9YTodkglKARdO11Nk1rU4dLefvlmncWHgtZ4DTYINe0jHWLH0RnmLKtKVzwLpeSt/AEplRAl25fh+qp6fw61qoHMLLyUGTJpli+mvEUruAKupc4bERBOaL9uEa+J0X0eOumK5tQLyXPGjibPRjwJWxBq7OHZOWtX4CvbWU6xoF/MM0hp9HRdH6i06tlo68BTR+dBviQWw7s2JLqCWrYtb6ifsmg+FVY4cKTDQG9mEJ6ZEMa8OAIaIltaXj3MyrrbsnkJIbweXn6OfsJBxzeIO8VaNJ++XA5uFD/RH1ClY9je6P635eFU2KSOoj58i3ElNl8Mn1/hwaBUZlfmytwLMmDmjyNr0EpuLohep6+FLv5vksgea0Nj1wI7HUJ0kY8bX6+BkFL1AWVrDJX3ZW38GvAArRWs+HHF7PN35agwSwOhih8SRtn/DpOWBNfG1Q+/PN1Yf6tWsPWc6aGCWNFiWjTOOtrkTTo1RO2uVuYaprsbW9nzMu69wlq82z/0ZxmKenxAYM="
@@ -72,6 +75,7 @@ install:
   - docker run -t -d -p 12111:12111 stripemock/stripe-mock
   - docker run -t -d -p 8889:80 adrianrudnik/mjml-server
   - docker run -t -d -p 9851:9851 tile38/tile38
+  - docker run -t -d -p 3001:80 -e JWT_KEY='!ChangeMe!' -e ALLOW_ANONYMOUS=1 -e CORS_ALLOWED_ORIGINS=* -e PUBLISH_ALLOWED_ORIGINS='http://localhost' dunglas/mercure
   # Configure php-fpm
   # @see https://docs.travis-ci.com/user/languages/php/
   # @see http://php.net/manual/fr/install.fpm.configuration.php#clear-env
