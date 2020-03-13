@@ -9,6 +9,7 @@
     <th>{% trans %}order.list.summary{% endtrans %}</th>
     {% if is_granted('ROLE_ADMIN') %}
     <th class="text-right">{% trans %}order.total_excluding_tax{% endtrans %}</th>
+    <th class="text-right">{% trans %}basics.platform_fees{% endtrans %}</th>
     {% endif %}
     <th class="text-right">{% trans %}order.total_including_tax{% endtrans %}</th>
     <th class="text-center">{% trans %}order.list.receipt{% endtrans %}</th>
@@ -66,6 +67,7 @@
     <td class="text-right">
       <span>{{ (order.itemsTotal - order.itemsTaxTotal)|price_format }}</span>
     </td>
+    <td class="text-right">{{ order.getFeeTotal()|price_format }}</td>
     {% endif %}
     <td class="text-right">
       <span>{{ order.total|price_format }}</span>
