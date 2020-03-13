@@ -117,7 +117,9 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $restaurant = $object->getRestaurant();
 
         // Suggest the customer to use reusable packaging via order payload
-        if (null !== $restaurant && $restaurant->isDepositRefundOptin() && $object->isEligibleToReusablePackaging()) {
+        if (null !== $restaurant &&
+            $restaurant->isDepositRefundEnabled() && $restaurant->isDepositRefundOptin() &&
+            $object->isEligibleToReusablePackaging()) {
 
             $transKey = 'form.checkout_address.reusable_packaging_enabled.label';
             $packagingAmount = $object->getReusablePackagingAmount();
