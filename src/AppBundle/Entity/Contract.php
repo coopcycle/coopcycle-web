@@ -53,6 +53,18 @@ class Contract
     private $customerAmount = 0;
 
     /**
+     * @var PricingRuleSet|null
+     * The pricing rule to calculate the amount paid by the customer.
+     */
+    private $variableCustomerAmount;
+
+    /**
+     * @var bool
+     * Use a PricingRuleSet to calculate the amount paid by the customer.
+     */
+    private $variableCustomerAmountEnabled = false;
+
+    /**
      * @var float
      * @Assert\NotBlank
      * @Assert\Type("float")
@@ -193,4 +205,43 @@ class Contract
         $this->restaurantPaysStripeFee = $restaurantPaysStripeFee;
     }
 
+    /**
+     * @return PricingRuleSet|null
+     */
+    public function getVariableCustomerAmount()
+    {
+        return $this->variableCustomerAmount;
+    }
+
+    /**
+     * @param PricingRuleSet|null $variableCustomerAmount
+     *
+     * @return self
+     */
+    public function setVariableCustomerAmount($variableCustomerAmount)
+    {
+        $this->variableCustomerAmount = $variableCustomerAmount;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVariableCustomerAmountEnabled()
+    {
+        return $this->variableCustomerAmountEnabled;
+    }
+
+    /**
+     * @param bool $variableCustomerAmountEnabled
+     *
+     * @return self
+     */
+    public function setVariableCustomerAmountEnabled($variableCustomerAmountEnabled)
+    {
+        $this->variableCustomerAmountEnabled = $variableCustomerAmountEnabled;
+
+        return $this;
+    }
 }

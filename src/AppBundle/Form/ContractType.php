@@ -47,11 +47,30 @@ class ContractType extends AbstractType
                     return $er->createQueryBuilder('prs')->orderBy('prs.name', 'ASC');
                 }
             ))
+            ->add('variableCustomerAmountEnabled', ChoiceType::class, array(
+                'label' => 'restaurant.contract.variableCustomerAmountEnabled.label',
+                'choices' => [
+                    'No' => false,
+                    'Yes' => true,
+                ],
+                'expanded' => true,
+                'multiple' => false,
+            ))
             ->add('customerAmount', MoneyType::class, [
                 'label' => 'restaurant.contract.customerAmount.label',
                 'help' => 'restaurant.contract.customerAmount.help',
                 'divisor' => 100,
             ])
+            ->add('variableCustomerAmount', EntityType::class, array(
+                'required' => false,
+                'placeholder' => 'restaurant.contract.variableCustomerAmount.placeholder',
+                'label' => 'restaurant.contract.variableCustomerAmount.label',
+                'class' => PricingRuleSet::class,
+                'choice_label' => 'name',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('prs')->orderBy('prs.name', 'ASC');
+                }
+            ))
             ->add('feeRate', PercentType::class, [
                 'label' => 'restaurant.contract.feeRate.label',
                 'help' => 'restaurant.contract.feeRate.help',

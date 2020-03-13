@@ -47,7 +47,8 @@ class OrderFeeProcessorTest extends KernelTestCase
     }
 
     private static function createContract($flatDeliveryPrice, $customerAmount, $feeRate,
-        $variableDeliveryPriceEnabled = false, $variableDeliveryPrice = null)
+        $variableDeliveryPriceEnabled = false, $variableDeliveryPrice = null,
+        $variableCustomerAmountEnabled = false, $variableCustomerAmount = null)
     {
         $contract = new Contract();
         $contract->setFlatDeliveryPrice($flatDeliveryPrice);
@@ -55,6 +56,8 @@ class OrderFeeProcessorTest extends KernelTestCase
         $contract->setFeeRate($feeRate);
         $contract->setVariableDeliveryPriceEnabled($variableDeliveryPriceEnabled);
         $contract->setVariableDeliveryPrice($variableDeliveryPrice);
+        $contract->setVariableCustomerAmountEnabled($variableCustomerAmountEnabled);
+        $contract->setVariableCustomerAmount($variableCustomerAmount);
 
         return $contract;
     }
@@ -260,5 +263,39 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $this->assertCount(1, $adjustments);
         $this->assertEquals(350, $order->getFeeTotal());
+    }
+
+    public function testOrderWithVariableCustomerAmount()
+    {
+        $pricing = new PricingRuleSet();
+        $contract = self::createContract(550, 0, 0.00, false, null, true, $pricing);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(1000));
+
+        $delivery = new Delivery();
+
+        $this->deliveryManager
+            ->createFromOrder($order)
+            ->willReturn($delivery);
+
+        $this->deliveryManager
+            ->getPrice($delivery, $pricing)
+            ->willReturn(350);
+
+        $this->orderFeeProcessor->process($order);
+
+        $feeAdjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+        $deliveryAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+
+        $this->assertCount(1, $feeAdjustments);
+        $this->assertCount(1, $deliveryAdjustments);
+
+        $this->assertEquals(550, $order->getFeeTotal());
+        $this->assertEquals(350, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
     }
 }

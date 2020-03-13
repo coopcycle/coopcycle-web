@@ -211,10 +211,15 @@
 
   {% if form.contract is defined %}
     {{ form_row(form.contract.minimumCartAmount) }}
+
     {{ form_row(form.contract.variableDeliveryPriceEnabled) }}
     {{ form_row(form.contract.flatDeliveryPrice) }}
     {{ form_row(form.contract.variableDeliveryPrice) }}
+
+    {{ form_row(form.contract.variableCustomerAmountEnabled) }}
     {{ form_row(form.contract.customerAmount) }}
+    {{ form_row(form.contract.variableCustomerAmount) }}
+
     {{ form_row(form.contract.feeRate) }}
     <p>
       <a class="help-block collapsed" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_advanced">

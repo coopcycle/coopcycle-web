@@ -49,14 +49,29 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         $order->removeAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
 
         $contract = $restaurant->getContract();
-
         $feeRate = $contract->getFeeRate();
+
+        $delivery = null;
+        if ($contract->isVariableDeliveryPriceEnabled() || $contract->isVariableCustomerAmountEnabled()) {
+            $delivery = $this->getDelivery($order);
+        }
+
         $customerAmount = $contract->getCustomerAmount();
+        if ($contract->isVariableCustomerAmountEnabled()) {
+            $customerAmount = $this->deliveryManager->getPrice(
+                $delivery,
+                $contract->getVariableCustomerAmount()
+            );
+            if (null === $customerAmount) {
+                $this->logger->error('OrderFeeProcessor | could not calculate price, falling back to flat price');
+                $customerAmount = $contract->getCustomerAmount();
+            }
+        }
 
         $businessAmount = $contract->getFlatDeliveryPrice();
         if ($contract->isVariableDeliveryPriceEnabled()) {
             $businessAmount = $this->deliveryManager->getPrice(
-                $this->getDelivery($order),
+                $delivery,
                 $contract->getVariableDeliveryPrice()
             );
             if (null === $businessAmount) {
@@ -84,6 +99,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             $customerAmount,
             $neutral = false
         );
+
         $order->addAdjustment($deliveryAdjustment);
     }
 
