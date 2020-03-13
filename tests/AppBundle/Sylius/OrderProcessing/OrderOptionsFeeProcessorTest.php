@@ -6,6 +6,7 @@ use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
 use AppBundle\Sylius\OrderProcessing\OrderOptionsFeeProcessor;
@@ -15,6 +16,7 @@ use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
+use Psr\Log\NullLogger;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Sylius\Component\Order\Processor\CompositeOrderProcessor;
@@ -49,7 +51,14 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $this->orderItemQuantityModifier =
             static::$kernel->getContainer()->get('sylius.order_item_quantity_modifier');
 
-        $this->orderFeeProcessor = new OrderFeeProcessor($this->adjustmentFactory, $this->translator->reveal());
+        $this->deliveryManager = $this->prophesize(DeliveryManager::class);
+
+        $this->orderFeeProcessor = new OrderFeeProcessor(
+            $this->adjustmentFactory,
+            $this->translator->reveal(),
+            $this->deliveryManager->reveal(),
+            new NullLogger()
+        );
         $this->orderOptionsProcessor = new OrderOptionsProcessor($this->adjustmentFactory);
 
         $this->compositeProcessor = new CompositeOrderProcessor();

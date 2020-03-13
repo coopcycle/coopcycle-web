@@ -164,6 +164,11 @@ restaurant.contract.minimumCartAmount.label: Minimum cart amount
 restaurant.contract.flatDeliveryPrice.label: Amount charged by the platform
 restaurant.contract.flatDeliveryPrice.help: This amount will not be displayed in the
   cart and will not increase the total amount
+restaurant.contract.variableDeliveryPrice.label: Amount charged by the platform (variable)
+restaurant.contract.variableDeliveryPrice.help: The amount charged will be calculated using the selected pricing rule set
+restaurant.contract.variableDeliveryPrice.placeholder: Please select a pricing rule set
+restaurant.contract.variableDeliveryPriceEnabled.label: Enable variable amount charged by the platform
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Amount is calculated dynamically
 restaurant.contract.customerAmount.label: Amount paid by the customer
 restaurant.contract.customerAmount.help: This amount will be displayed in the cart
   and will increase the total amount
@@ -179,6 +184,16 @@ restaurant.contract.restaurantPaysStripeFee.cooperative: Cooperative
 restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
 restaurant.contract.noContract: No contract details. Please contact an administrator.
 restaurant.contract.showAdvanced: Show advanced settings
+restaurant.contract.variableCustomerAmount.label: Amount paid by the customer (variable)
+restaurant.contract.variableCustomerAmount.help: The price paid will be calculated using the selected pricing rule set
+restaurant.contract.variableCustomerAmount.placeholder: Please select a pricing rule set
+restaurant.contract.variableCustomerAmountEnabled.label: Enable variable amount paid by the customer
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: Amount is calculated dynamically
+restaurant.contract.calculation_info: "You can charge the restaurant an amount different from the amount paid by the customer.
+<br>
+For example, you can offer delivery to the customer while charging a fixed amount to the restaurant.
+<br>
+You can also configure a dynamic amount (for example, based on distance)."
 restaurant.menus.noMenus: You have not created any menu for the moment.
 restaurant.menus.activate: Activate
 restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now
@@ -785,3 +800,5 @@ basics.hours: '%count% hour|%count% hours'
 basics.days: '%count% day|%count% days'
 basics.weeks: '%count% week|%count% weeks'
 basics.none: None
+basics.yes: 'Yes'
+basics.no: 'No'

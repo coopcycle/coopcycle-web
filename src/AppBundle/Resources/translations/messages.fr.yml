@@ -140,7 +140,7 @@ restaurant.contract.minimumCartAmount.label: Montant minimum du panier
 restaurant.contract.flatDeliveryPrice.label: Montant facturé par la plateforme pour
   la livraison
 restaurant.contract.flatDeliveryPrice.help: Ce montant sera versé à la société de
-  livraison pour ses services. Il sera prélevé sur le paiement du client mais ne sera
+  livraison pour ses services, peu importe le prix payé par le client. Il sera prélevé sur le paiement du client mais ne sera
   pas affiché dans le panier
 restaurant.contract.customerAmount.label: Montant payé par le client pour la livraison
 restaurant.contract.customerAmount.help: Ce montant sera payé par le client pour la
@@ -161,6 +161,21 @@ restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réserv
 restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez
   contacter un administrateur.
 restaurant.contract.showAdvanced: Montrer les réglages avancés
+restaurant.contract.variableDeliveryPrice.label: Montant variable facturé par la plateforme pour la livraison
+restaurant.contract.variableDeliveryPrice.help: Le montant facturé sera calculé en utilisant la tarification sélectionnée
+restaurant.contract.variableDeliveryPrice.placeholder: Veuillez sélectionner une tarification
+restaurant.contract.variableDeliveryPriceEnabled.label: Le montant facturé par la plateforme est variable
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Le montant est calculé dynamiquement
+restaurant.contract.variableCustomerAmount.label: Montant variable payé par le client pour la livraison
+restaurant.contract.variableCustomerAmount.help: Le prix payé par le client sera calculé en utilisant la tarification sélectionnée
+restaurant.contract.variableCustomerAmount.placeholder: Veuillez sélectionner une tarification
+restaurant.contract.variableCustomerAmountEnabled.label: Le montant payé par le client est variable
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: Le montant est calculé dynamiquement
+restaurant.contract.calculation_info: "Vous pouvez facturer au restaurant un montant différent de celui qui est payé par le client.
+<br>
+Par exemple, vous pouvez offrir la livraison au client tout en facturant une somme fixe au restaurant.
+<br>
+Vous pouvez également configurer un montant dynamique (par exemple, en fonction de la distance)."
 restaurant.menus.noMenus: Vous n'avez pas créé de menu pour le moment.
 restaurant.menus.activate: Activer
 restaurant.menus.activated: Le menu « %menu_name% » a bien été activé. Il sera désormais
@@ -815,3 +830,5 @@ basics.hours: '%count% heure|%count% heures'
 basics.days: '%count% jour|%count% jours'
 basics.weeks: '%count% semaine|%count% semaines'
 basics.none: Aucun
+basics.yes: Oui
+basics.no: Non

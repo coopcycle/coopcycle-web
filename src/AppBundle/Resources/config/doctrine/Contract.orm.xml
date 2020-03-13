@@ -6,6 +6,8 @@
     </id>
     <field name="minimumCartAmount" type="integer" column="minimum_cart_amount"/>
     <field name="flatDeliveryPrice" type="integer" column="flat_delivery_price"/>
+    <field name="variableDeliveryPriceEnabled" type="boolean" column="variable_delivery_price_enabled"/>
+    <field name="variableCustomerAmountEnabled" type="boolean" column="variable_customer_amount_enabled"/>
     <field name="feeRate" type="float" column="fee_rate"/>
     <field name="restaurantPaysStripeFee" type="boolean" column="restaurant_pays_stripe" nullable="false">
       <options>
@@ -25,5 +27,15 @@
         <join-column name="restaurant_id" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
+    <many-to-one field="variableDeliveryPrice" target-entity="AppBundle\Entity\Delivery\PricingRuleSet">
+      <join-columns>
+        <join-column name="variable_delivery_price_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="variableCustomerAmount" target-entity="AppBundle\Entity\Delivery\PricingRuleSet">
+      <join-columns>
+        <join-column name="variable_customer_amount_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
   </entity>
 </doctrine-mapping>

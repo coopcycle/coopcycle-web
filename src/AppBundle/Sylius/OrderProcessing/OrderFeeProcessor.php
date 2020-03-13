@@ -2,8 +2,11 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
+use AppBundle\Entity\Delivery;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -14,13 +17,19 @@ final class OrderFeeProcessor implements OrderProcessorInterface
 {
     private $adjustmentFactory;
     private $translator;
+    private $deliveryManager;
+    private $logger;
 
     public function __construct(
         AdjustmentFactoryInterface $adjustmentFactory,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        DeliveryManager $deliveryManager,
+        LoggerInterface $logger)
     {
         $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
+        $this->deliveryManager = $deliveryManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -39,9 +48,43 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         $order->removeAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
         $order->removeAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
 
-        $feeRate = $restaurant->getContract()->getFeeRate();
-        $customerAmount = $restaurant->getContract()->getCustomerAmount();
-        $businessAmount = $restaurant->getContract()->getFlatDeliveryPrice();
+        $contract = $restaurant->getContract();
+        $feeRate = $contract->getFeeRate();
+
+        $delivery = null;
+        if ($contract->isVariableDeliveryPriceEnabled() || $contract->isVariableCustomerAmountEnabled()) {
+            $delivery = $this->getDelivery($order);
+        }
+
+        $customerAmount = $contract->getCustomerAmount();
+        if ($contract->isVariableCustomerAmountEnabled()) {
+            $customerAmount = $this->deliveryManager->getPrice(
+                $delivery,
+                $contract->getVariableCustomerAmount()
+            );
+            if (null === $customerAmount) {
+                $this->logger->error('OrderFeeProcessor | could not calculate price, falling back to flat price');
+                $customerAmount = $contract->getCustomerAmount();
+            } else {
+                $this->logger->info(sprintf('Order #%d | customer amount  | matched rule "%s"',
+                    $order->getId(), $this->deliveryManager->getLastMatchedRule()->getExpression()));
+            }
+        }
+
+        $businessAmount = $contract->getFlatDeliveryPrice();
+        if ($contract->isVariableDeliveryPriceEnabled()) {
+            $businessAmount = $this->deliveryManager->getPrice(
+                $delivery,
+                $contract->getVariableDeliveryPrice()
+            );
+            if (null === $businessAmount) {
+                $this->logger->error('OrderFeeProcessor | could not calculate price, falling back to flat price');
+                $businessAmount = $contract->getFlatDeliveryPrice();
+            } else {
+                $this->logger->info(sprintf('Order #%d | business amount | matched rule "%s"',
+                    $order->getId(), $this->deliveryManager->getLastMatchedRule()->getExpression()));
+            }
+        }
 
         $deliveryPromotionAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
         foreach ($deliveryPromotionAdjustments as $deliveryPromotionAdjustment) {
@@ -62,6 +105,19 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             $customerAmount,
             $neutral = false
         );
+
         $order->addAdjustment($deliveryAdjustment);
+    }
+
+    private function getDelivery(OrderInterface $order)
+    {
+        $delivery = $order->getDelivery();
+
+        if (null === $order->getDelivery()) {
+
+            return $this->deliveryManager->createFromOrder($order);
+        }
+
+        return $delivery;
     }
 }

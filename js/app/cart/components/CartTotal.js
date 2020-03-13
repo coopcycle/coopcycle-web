@@ -1,15 +1,37 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
+import _ from 'lodash'
+
+const Adjustment = ({ adjustment, tooltip }) => (
+  <div>
+    <span>{ adjustment.label }</span>
+    { tooltip && (
+      <span className="ml-1" data-toggle="tooltip" data-placement="right" title={ tooltip }>
+        <i className="fa fa-info-circle"></i>
+      </span>
+    ) }
+    <strong className="pull-right">{ (adjustment.amount / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
+  </div>
+)
 
 class CartTotal extends React.Component {
 
+  componentDidMount() {
+    if (this.props.variableCustomerAmountEnabled) {
+      $('body').tooltip({
+        selector: '[data-toggle="tooltip"]'
+      })
+    }
+  }
+
   renderAdjustments() {
 
+    const { variableCustomerAmountEnabled } = this.props
+
     let adjustments = []
-    if (this.props.adjustments.hasOwnProperty('delivery')) {
-      adjustments = adjustments.concat(this.props.adjustments.delivery)
-    }
+
+    const deliveryAdjustments = this.props.adjustments.delivery || []
 
     if (this.props.adjustments.hasOwnProperty('reusable_packaging')) {
       adjustments = adjustments.concat(this.props.adjustments.reusable_packaging)
@@ -19,14 +41,27 @@ class CartTotal extends React.Component {
       adjustments = adjustments.concat(this.props.adjustments.delivery_promotion)
     }
 
-    if (adjustments.length > 0) {
+    let deliveryAdjustmentProps = {}
+    if (variableCustomerAmountEnabled) {
+      deliveryAdjustmentProps = {
+        ...deliveryAdjustmentProps,
+        tooltip: this.props.t('CART_DYNAMIC_DELIVERY_FEE'),
+      }
+    }
+
+    if (adjustments.length > 0 || deliveryAdjustments.length > 0) {
       return (
         <div>
+          { deliveryAdjustments.map(adjustment =>
+            <Adjustment
+              key={ adjustment.id }
+              adjustment={ _.first(deliveryAdjustments) }
+              { ...deliveryAdjustmentProps } />
+          )}
           { adjustments.map(adjustment =>
-            <div key={ adjustment.id }>
-              <span>{ adjustment.label }</span>
-              <strong className="pull-right">{ (adjustment.amount / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
-            </div>
+            <Adjustment
+              key={ adjustment.id }
+              adjustment={ adjustment } />
           )}
         </div>
       )
@@ -79,6 +114,7 @@ function mapStateToProps (state) {
     itemsTotal,
     total,
     adjustments,
+    variableCustomerAmountEnabled: cart.restaurant.variableCustomerAmountEnabled,
   }
 }
 
