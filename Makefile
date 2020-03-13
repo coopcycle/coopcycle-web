@@ -12,8 +12,10 @@ osrm:
 	@docker-compose run --rm osrm osrm-partition /data/data.osrm
 	@docker-compose run --rm osrm osrm-customize /data/data.osrm
 
-phpunit:
+test-db-sync:
 	@docker-compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --quiet
+
+phpunit:
 	@docker-compose exec php php vendor/bin/phpunit
 
 behat:
