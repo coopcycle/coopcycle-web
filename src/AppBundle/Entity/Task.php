@@ -11,6 +11,7 @@ use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
+use AppBundle\Api\Dto\CompleteTaskInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskFilter;
@@ -75,6 +76,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "controller"=TaskDone::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
  *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+ *       "input"=CompleteTaskInput::class,
  *       "swagger_context"={
  *         "summary"="Marks a Task as done",
  *         "parameters"={
@@ -247,6 +249,11 @@ class Task implements TaggableInterface
      * @Groups({"task", "task_edit"})
      */
     private $images;
+
+    /**
+     * @Groups({"task"})
+     */
+    private $data = [];
 
     public function __construct()
     {
@@ -621,6 +628,18 @@ class Task implements TaggableInterface
     public function getTaskFieldGroup()
     {
         return $this->taskFieldGroup;
+    }
+
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    public function setData(array $data)
+    {
+        $this->data = $data;
+
+        return $this;
     }
 
     /* Legacy */

@@ -561,6 +561,23 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @Given the task with id :id is assigned to :username at date :date
+     */
+    public function theTaskWithIdIsAssignedToAtDate($id, $username, $date)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+
+        $user = $userManager->findUserByUsername($username);
+        $task = $this->doctrine
+            ->getRepository(Task::class)
+            ->find($id);
+
+        $task->assignTo($user, new \DateTime($date));
+
+        $this->doctrine->getManagerForClass(Task::class)->flush();
+    }
+
+    /**
      * @Given the setting :name has value :value
      */
     public function theSettingHasValue($name, $value)

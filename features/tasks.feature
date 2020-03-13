@@ -122,7 +122,7 @@ Feature: Tasks
         "id":2,
         "type":"DROPOFF",
         "status":"DONE",
-        "address":@...@,
+        "address":"@...@",
         "after":"2018-03-02T11:30:00+01:00",
         "before":"2018-03-02T12:00:00+01:00",
         "doneAfter":"2018-03-02T11:30:00+01:00",
@@ -141,7 +141,71 @@ Feature: Tasks
             "color":"#FF0000"
           }]
         },
-        "tags":@array@
+        "tags":@array@,
+        "data": []
+      }
+      """
+
+  Scenario: Mark task as done with data
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the task with id "1" is assigned to "bob" at date "2018-03-02"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/1/done" with body:
+      """
+      {
+        "notes": "All good",
+        "data": {
+          "containers_returned": 3
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/1",
+        "@type":"Task",
+        "id":1,
+        "type":"DROPOFF",
+        "status":"DONE",
+        "address":"@*@",
+        "comments":"",
+        "updatedAt":"@string@.isDateTime()",
+        "group":null,
+        "fields":{
+          "name":"Group",
+          "items":[
+            {
+              "type":"number",
+              "name":"containers_returned",
+              "label":"Containers returned",
+              "required":true
+            }
+          ]
+        },
+        "images":[],
+        "tags":[],
+        "after":"2018-03-02T10:30:00+01:00",
+        "before":"2018-03-02T11:00:00+01:00",
+        "isAssigned":true,
+        "doneAfter":"2018-03-02T10:30:00+01:00",
+        "doneBefore":"2018-03-02T11:00:00+01:00",
+        "assignedTo":"bob",
+        "previous":null,
+        "next":null,
+        "data": {
+          "containers_returned": 3
+        }
       }
       """
 
@@ -426,7 +490,8 @@ Feature: Tasks
         "group":null,
         "tags":@array@,
         "images":@array@,
-        "fields":null
+        "fields":null,
+        "data":[]
       }
       """
 
@@ -499,7 +564,8 @@ Feature: Tasks
           {"name":"Important","slug":"important","color":"#000000"}
         ],
         "images":@array@,
-        "fields":null
+        "fields":null,
+        "data":[]
       }
       """
 

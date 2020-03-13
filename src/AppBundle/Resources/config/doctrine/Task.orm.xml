@@ -9,6 +9,7 @@
     <field name="doneAfter" type="datetime" column="done_after" nullable="false"/>
     <field name="doneBefore" type="datetime" column="done_before" nullable="false"/>
     <field name="comments" type="text" column="comments" nullable="true"/>
+    <field name="data" type="json_array" column="data" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>

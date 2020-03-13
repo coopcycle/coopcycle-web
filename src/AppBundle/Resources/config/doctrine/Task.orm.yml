@@ -51,6 +51,10 @@ AppBundle\Entity\Task:
             unique: false
             nullable: true
             precision: 0
+        data:
+            type: json_array
+            column: data
+            nullable: true
         createdAt:
             type: datetime
             column: created_at
