@@ -165,6 +165,7 @@
     "CROPPIE_CANCEL": "Annuler",
     "DROPZONE_DEFAULT_MESSAGE": "Déposez les fichiers ici",
     "TAGS_SELECT_PLACEHOLDER": "Sélectionnez les tags…",
-    "ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS": "Dé-assigner toutes les tâches ?"
+    "ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS": "Dé-assigner toutes les tâches ?",
+    "CART_DYNAMIC_DELIVERY_FEE": "Les frais de livraison sont calculés en fonction de votre adresse"
   }
 }

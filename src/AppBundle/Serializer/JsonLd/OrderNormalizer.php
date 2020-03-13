@@ -152,6 +152,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             } else {
                 $data['restaurant'] = [
                     'id' => $restaurant->getId(),
+                    'variableCustomerAmountEnabled' => $restaurant->getContract()->isVariableCustomerAmountEnabled(),
                     'address' => [
                         'latlng' => [
                             $restaurant->getAddress()->getGeo()->getLatitude(),
