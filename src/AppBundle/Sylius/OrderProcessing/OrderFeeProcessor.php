@@ -65,6 +65,9 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             if (null === $customerAmount) {
                 $this->logger->error('OrderFeeProcessor | could not calculate price, falling back to flat price');
                 $customerAmount = $contract->getCustomerAmount();
+            } else {
+                $this->logger->info(sprintf('Order #%d | customer amount  | matched rule "%s"',
+                    $order->getId(), $this->deliveryManager->getLastMatchedRule()->getExpression()));
             }
         }
 
@@ -77,6 +80,9 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             if (null === $businessAmount) {
                 $this->logger->error('OrderFeeProcessor | could not calculate price, falling back to flat price');
                 $businessAmount = $contract->getFlatDeliveryPrice();
+            } else {
+                $this->logger->info(sprintf('Order #%d | business amount | matched rule "%s"',
+                    $order->getId(), $this->deliveryManager->getLastMatchedRule()->getExpression()));
             }
         }
 

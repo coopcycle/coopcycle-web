@@ -68,6 +68,13 @@ monolog:
             formatter: monolog.formatter.json
             max_files: 7
             channels: [messenger]
+        fee_calculation:
+            type: rotating_file
+            path: "%kernel.logs_dir%/fee_calculation.%kernel.environment%.log"
+            level: info
+            formatter: monolog.formatter.json
+            max_files: 7
+            channels: [fee_calculation]
         stripe:
             type: rotating_file
             path: "%kernel.logs_dir%/stripe.%kernel.environment%.log"

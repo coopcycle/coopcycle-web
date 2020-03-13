@@ -27,11 +27,20 @@ class DeliveryManager
 
     public function getPrice(Delivery $delivery, PricingRuleSet $ruleSet)
     {
+        $this->lastMatchedRule = null;
+
         foreach ($ruleSet->getRules() as $rule) {
             if ($rule->matches($delivery, $this->expressionLanguage)) {
+                $this->lastMatchedRule = $rule;
+
                 return $rule->evaluatePrice($delivery, $this->expressionLanguage);
             }
         }
+    }
+
+    public function getLastMatchedRule()
+    {
+        return $this->lastMatchedRule;
     }
 
     public function createFromOrder(OrderInterface $order)

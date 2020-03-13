@@ -190,6 +190,8 @@ services:
     class: AppBundle\Sylius\OrderProcessing\OrderFeeProcessor
     arguments:
       $adjustmentFactory: "@sylius.factory.adjustment"
+    tags:
+      - { name: monolog.logger, channel: fee_calculation }
 
   AppBundle\Sylius\OrderProcessing\OrderDisabledProductProcessor:
     tags:
