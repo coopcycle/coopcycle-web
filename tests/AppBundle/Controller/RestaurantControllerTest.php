@@ -5,6 +5,7 @@ namespace Tests\AppBundle\Controller;
 use AppBundle\Controller\RestaurantController;
 use AppBundle\DataType\NumRange;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Contract;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
@@ -148,6 +149,7 @@ class RestaurantControllerTest extends WebTestCase
 
         $restaurant = new Restaurant();
         $restaurant->setAddress($restaurantAddress);
+        $restaurant->setContract(new Contract());
         $this->setId($restaurant, 1);
 
         // Don't use a mock for the cart
@@ -227,6 +229,7 @@ class RestaurantControllerTest extends WebTestCase
 
         $expectedRestaurant = [
             'id' => 1,
+            'variableCustomerAmountEnabled' => false,
             'address' => [
                 'latlng' => [48.856613, 2.352222]
             ]
