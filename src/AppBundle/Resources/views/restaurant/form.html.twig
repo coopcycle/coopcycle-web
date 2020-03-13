@@ -212,13 +212,23 @@
   {% if form.contract is defined %}
     {{ form_row(form.contract.minimumCartAmount) }}
 
-    {{ form_row(form.contract.variableDeliveryPriceEnabled) }}
-    {{ form_row(form.contract.flatDeliveryPrice) }}
-    {{ form_row(form.contract.variableDeliveryPrice) }}
-
-    {{ form_row(form.contract.variableCustomerAmountEnabled) }}
-    {{ form_row(form.contract.customerAmount) }}
-    {{ form_row(form.contract.variableCustomerAmount) }}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="alert alert-info">{% trans %}restaurant.contract.calculation_info{% endtrans %}</div>
+        <div class="row">
+          <div class="col-sm-6">
+            {{ form_row(form.contract.variableDeliveryPriceEnabled) }}
+            {{ form_row(form.contract.flatDeliveryPrice) }}
+            {{ form_row(form.contract.variableDeliveryPrice) }}
+          </div>
+          <div class="col-sm-6">
+            {{ form_row(form.contract.variableCustomerAmountEnabled) }}
+            {{ form_row(form.contract.customerAmount) }}
+            {{ form_row(form.contract.variableCustomerAmount) }}
+          </div>
+        </div>
+      </div>
+    </div>
 
     {{ form_row(form.contract.feeRate) }}
     <p>

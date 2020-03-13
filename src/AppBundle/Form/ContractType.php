@@ -20,7 +20,6 @@ class ContractType extends AbstractType
         $builder
             ->add('minimumCartAmount', MoneyType::class, [
                 'label' => 'restaurant.contract.minimumCartAmount.label',
-                'help' => 'restaurant.contract.minimumCartAmount.help',
                 'divisor' => 100,
             ])
             ->add('flatDeliveryPrice', MoneyType::class, [
@@ -31,8 +30,8 @@ class ContractType extends AbstractType
             ->add('variableDeliveryPriceEnabled', ChoiceType::class, array(
                 'label' => 'restaurant.contract.variableDeliveryPriceEnabled.label',
                 'choices' => [
-                    'basics.yes' => false,
-                    'basics.no' => true,
+                    'basics.no' => false,
+                    'basics.yes' => true,
                 ],
                 'expanded' => true,
                 'multiple' => false,
@@ -50,8 +49,8 @@ class ContractType extends AbstractType
             ->add('variableCustomerAmountEnabled', ChoiceType::class, array(
                 'label' => 'restaurant.contract.variableCustomerAmountEnabled.label',
                 'choices' => [
-                    'basics.yes' => false,
-                    'basics.no' => true,
+                    'basics.no' => false,
+                    'basics.yes' => true,
                 ],
                 'expanded' => true,
                 'multiple' => false,

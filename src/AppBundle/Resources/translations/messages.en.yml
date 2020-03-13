@@ -189,6 +189,11 @@ restaurant.contract.variableCustomerAmount.help: The price paid will be calculat
 restaurant.contract.variableCustomerAmount.placeholder: Please select a pricing rule set
 restaurant.contract.variableCustomerAmountEnabled.label: Enable variable amount paid by the customer
 restaurant.contract.variableCustomerAmountEnabled.disclaimer: Amount is calculated dynamically
+restaurant.contract.calculation_info: "You can charge the restaurant an amount different from the amount paid by the customer.
+<br>
+For example, you can offer delivery to the customer while charging a fixed amount to the restaurant.
+<br>
+You can also configure a dynamic amount (for example, based on distance)."
 restaurant.menus.noMenus: You have not created any menu for the moment.
 restaurant.menus.activate: Activate
 restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now
