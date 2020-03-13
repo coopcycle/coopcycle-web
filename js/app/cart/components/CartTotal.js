@@ -70,7 +70,7 @@ class CartTotal extends React.Component {
 
   render() {
 
-    const { total, itemsTotal, variableCustomerAmountEnabled } = this.props
+    const { total, itemsTotal } = this.props
 
     if (itemsTotal > 0) {
       return (
