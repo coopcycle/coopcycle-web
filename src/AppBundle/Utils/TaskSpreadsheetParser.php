@@ -281,8 +281,24 @@ class TaskSpreadsheetParser
         return [ $doneAfter, $doneBefore ];
     }
 
+    private static function patchXLSXDate(\DateTimeInterface $date)
+    {
+        // This can happen when the cell has format numeric
+        if ('1899-12-30' === $date->format('Y-m-d')) {
+            return $date->format('H:i:s');
+        }
+
+        return $date->format(\DateTime::W3C);
+    }
+
     private static function parseDate(\DateTime $date, $text)
     {
+        if (!is_string($text)) {
+            if ($text instanceof \DateTimeInterface) {
+                $text = self::patchXLSXDate($text);
+            }
+        }
+
         if (1 === preg_match(self::DATE_PATTERN_HYPHEN, $text, $matches)) {
             $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
         } elseif (1 === preg_match(self::DATE_PATTERN_SLASH, $text, $matches)) {
@@ -294,6 +310,12 @@ class TaskSpreadsheetParser
 
     private static function parseTime(\DateTime $date, $text)
     {
+        if (!is_string($text)) {
+            if ($text instanceof \DateTimeInterface) {
+                $text = self::patchXLSXDate($text);
+            }
+        }
+
         if (1 === preg_match(self::TIME_PATTERN, $text, $matches)) {
             $date->setTime($matches['hour'], isset($matches['minute']) ? $matches['minute'] : 00);
         }
