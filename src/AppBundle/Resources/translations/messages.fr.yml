@@ -164,8 +164,13 @@ restaurant.contract.showAdvanced: Montrer les réglages avancés
 restaurant.contract.variableDeliveryPrice.label: Montant variable facturé par la plateforme pour la livraison
 restaurant.contract.variableDeliveryPrice.help: Le montant facturé sera calculé en utilisant la tarification sélectionnée
 restaurant.contract.variableDeliveryPrice.placeholder: Veuillez sélectionner une tarification
-restaurant.contract.variableDeliveryPriceEnabled.label: Activer le montant variable
-restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Le montant est calulé dynamiquement
+restaurant.contract.variableDeliveryPriceEnabled.label: Le montant facturé par la plateforme est variable
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Le montant est calculé dynamiquement
+restaurant.contract.variableCustomerAmount.label: Montant variable payé par le client pour la livraison
+restaurant.contract.variableCustomerAmount.help: Le prix payé par le client sera calculé en utilisant la tarification sélectionnée
+restaurant.contract.variableCustomerAmount.placeholder: Veuillez sélectionner une tarification
+restaurant.contract.variableCustomerAmountEnabled.label: Le montant payé par le client est variable
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: Le montant est calculé dynamiquement
 restaurant.menus.noMenus: Vous n'avez pas créé de menu pour le moment.
 restaurant.menus.activate: Activer
 restaurant.menus.activated: Le menu « %menu_name% » a bien été activé. Il sera désormais
@@ -820,3 +825,5 @@ basics.hours: '%count% heure|%count% heures'
 basics.days: '%count% jour|%count% jours'
 basics.weeks: '%count% semaine|%count% semaines'
 basics.none: Aucun
+basics.yes: Oui
+basics.no: Non

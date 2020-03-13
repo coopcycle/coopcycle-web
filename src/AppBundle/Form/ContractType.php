@@ -31,8 +31,8 @@ class ContractType extends AbstractType
             ->add('variableDeliveryPriceEnabled', ChoiceType::class, array(
                 'label' => 'restaurant.contract.variableDeliveryPriceEnabled.label',
                 'choices' => [
-                    'No' => false,
-                    'Yes' => true,
+                    'basics.yes' => false,
+                    'basics.no' => true,
                 ],
                 'expanded' => true,
                 'multiple' => false,
@@ -50,8 +50,8 @@ class ContractType extends AbstractType
             ->add('variableCustomerAmountEnabled', ChoiceType::class, array(
                 'label' => 'restaurant.contract.variableCustomerAmountEnabled.label',
                 'choices' => [
-                    'No' => false,
-                    'Yes' => true,
+                    'basics.yes' => false,
+                    'basics.no' => true,
                 ],
                 'expanded' => true,
                 'multiple' => false,

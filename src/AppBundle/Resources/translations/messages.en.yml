@@ -184,6 +184,11 @@ restaurant.contract.restaurantPaysStripeFee.cooperative: Cooperative
 restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
 restaurant.contract.noContract: No contract details. Please contact an administrator.
 restaurant.contract.showAdvanced: Show advanced settings
+restaurant.contract.variableCustomerAmount.label: Amount paid by the customer (variable)
+restaurant.contract.variableCustomerAmount.help: The price paid will be calculated using the selected pricing rule set
+restaurant.contract.variableCustomerAmount.placeholder: Please select a pricing rule set
+restaurant.contract.variableCustomerAmountEnabled.label: Enable variable amount paid by the customer
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: Amount is calculated dynamically
 restaurant.menus.noMenus: You have not created any menu for the moment.
 restaurant.menus.activate: Activate
 restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now
@@ -790,3 +795,5 @@ basics.hours: '%count% hour|%count% hours'
 basics.days: '%count% day|%count% days'
 basics.weeks: '%count% week|%count% weeks'
 basics.none: None
+basics.yes: 'Yes'
+basics.no: 'No'
