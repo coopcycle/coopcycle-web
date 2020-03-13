@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
@@ -224,6 +225,10 @@ class OrderFeeProcessorTest extends KernelTestCase
             ->willReturn($delivery);
 
         $this->deliveryManager
+            ->getLastMatchedRule()
+            ->willReturn(new PricingRule());
+
+        $this->deliveryManager
             ->getPrice($delivery, $pricing)
             ->willReturn(750);
 
@@ -286,6 +291,10 @@ class OrderFeeProcessorTest extends KernelTestCase
         $this->deliveryManager
             ->getPrice($delivery, $pricing)
             ->willReturn(350);
+
+        $this->deliveryManager
+            ->getLastMatchedRule()
+            ->willReturn(new PricingRule());
 
         $this->orderFeeProcessor->process($order);
 

@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -38,7 +39,7 @@ class DeliveryManager
         }
     }
 
-    public function getLastMatchedRule()
+    public function getLastMatchedRule(): ?PricingRule
     {
         return $this->lastMatchedRule;
     }
