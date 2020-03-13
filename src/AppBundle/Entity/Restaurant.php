@@ -234,6 +234,7 @@ class Restaurant extends FoodEstablishment
     /**
      * @var Contract|null
      * @Groups({"order_create"})
+     * @Assert\Valid(groups={"Default", "activable"})
      */
     private $contract;
 

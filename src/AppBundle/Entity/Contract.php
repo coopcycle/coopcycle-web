@@ -41,6 +41,11 @@ class Contract
     /**
      * @var PricingRuleSet|null
      * The pricing rule to calculate the amount charged by the platform.
+     * @Assert\Expression(
+     *   "this.getVariableDeliveryPrice() != null or !this.isVariableDeliveryPriceEnabled()",
+     *   message="restaurant.contract.variableDeliveryPrice.pickOne",
+     *   groups={"Default", "activable"}
+     * )
      */
     private $variableDeliveryPrice;
 
@@ -55,6 +60,11 @@ class Contract
     /**
      * @var PricingRuleSet|null
      * The pricing rule to calculate the amount paid by the customer.
+     * @Assert\Expression(
+     *   "this.getVariableCustomerAmount() != null or !this.isVariableCustomerAmountEnabled()",
+     *   message="restaurant.contract.variableCustomerAmount.pickOne",
+     *   groups={"Default", "activable"}
+     * )
      */
     private $variableCustomerAmount;
 

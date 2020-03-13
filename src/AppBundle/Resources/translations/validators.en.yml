@@ -43,3 +43,6 @@ product.reusablePackagingUnit.mustBeGreaterThanZero: You must specify a quantity
 order.state.notModifiable: Order can't be modified anymore
 
 loopeat.insufficient_balance: Your LoopEat balance (X) is not sufficient to wrap the whole order
+
+restaurant.contract.variableCustomerAmount.pickOne: Please pick at least one pricing
+restaurant.contract.variableDeliveryPrice.pickOne: Please pick at least one pricing
