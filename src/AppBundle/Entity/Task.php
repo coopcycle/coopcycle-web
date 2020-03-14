@@ -20,6 +20,7 @@ use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Validator\Constraints\Task as AssertTask;
+use AppBundle\Validator\Constraints\TaskData as AssertTaskData;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -157,6 +158,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   }
  * )
  * @AssertTask()
+ * @AssertTaskData(groups={"complete"})
  * @ApiFilter(TaskDateFilter::class, properties={"date"})
  * @ApiFilter(TaskFilter::class)
  * @ApiFilter(AssignedFilter::class, properties={"assigned"})

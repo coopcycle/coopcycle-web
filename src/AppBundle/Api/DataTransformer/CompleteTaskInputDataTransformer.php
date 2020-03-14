@@ -4,6 +4,7 @@ namespace AppBundle\Api\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
+use ApiPlatform\Core\Validator\ValidatorInterface;
 use AppBundle\Entity\Task;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -12,6 +13,13 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class CompleteTaskInputDataTransformer implements DataTransformerInterface
 {
+    private $validator;
+
+    public function __construct(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -22,6 +30,8 @@ class CompleteTaskInputDataTransformer implements DataTransformerInterface
         if (!empty($data->data)) {
             $task->setData($data->data);
         }
+
+        $this->validator->validate($task, ['groups' => 'complete']);
 
         return $task;
     }

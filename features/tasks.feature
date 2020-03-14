@@ -209,6 +209,85 @@ Feature: Tasks
       }
       """
 
+  Scenario: Mark task as done with missing required data
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the task with id "1" is assigned to "bob" at date "2018-03-02"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/1/done" with body:
+      """
+      {
+        "notes": "All good",
+        "data": {
+          "foo": "bar"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":@string@,
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"data[containers_returned]",
+            "message":@string@
+          }
+        ]
+      }
+      """
+
+  Scenario: Mark task as done with invalid data
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the task with id "1" is assigned to "bob" at date "2018-03-02"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/1/done" with body:
+      """
+      {
+        "notes": "All good",
+        "data": {
+          "foo": "bar",
+          "containers_returned": "Hello, world"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":@string@,
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"data[containers_returned]",
+            "message":@string@
+          }
+        ]
+      }
+      """
+
   Scenario: Mark task as failed with notes
     Given the fixtures files are loaded:
       | sylius_channels.yml |
