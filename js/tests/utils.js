@@ -202,6 +202,7 @@ TestUtils.prototype.createRestaurant = function(name, coordinates) {
       geo: { type: 'Point', coordinates: [ coordinates.latitude, coordinates.longitude ] }
     }).then(function(address) {
       Restaurant.create({
+        type: 'restaurant',
         name: name,
         createdAt: new Date(),
         updatedAt: new Date(),
