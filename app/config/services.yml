@@ -149,12 +149,11 @@ services:
 
   AppBundle\EventListener\MaintenanceListener:
     arguments:
-      - '@security.authorization_checker'
-      - '@security.token_storage'
-      - '@crawler_detect'
-      - '@snc_redis.default'
-      - '@translator'
-      - '@twig'
+      $authorizationChecker: '@security.authorization_checker'
+      $tokenStorage: '@security.token_storage'
+      $crawlerDetect: '@crawler_detect'
+      $redis: '@snc_redis.default'
+      $templating: '@twig'
     tags:
       - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 

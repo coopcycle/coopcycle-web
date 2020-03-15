@@ -21,6 +21,7 @@ class MaintenanceListener
     private $templating;
     private $patterns = [
         '#^/login#',
+        '#^/api/routing#',
     ];
 
     public function __construct(
