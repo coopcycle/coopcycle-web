@@ -95,7 +95,7 @@
         "nyholm/psr7": "^1.1",
         "hwi/oauth-bundle": "dev-master",
         "php-http/httplug-bundle": "^1.16",
-        "m6web/daemon-bundle": "^5.0",
+        "m6web/daemon-bundle": "^6.0",
         "azuyalabs/yasumi": "^2.1",
         "hashids/hashids": "^4.0",
         "sylius/inventory": "^1.6.5",
