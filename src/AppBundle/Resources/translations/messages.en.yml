@@ -650,6 +650,8 @@ index.map.tip: Use the map below to find restaurants
 index.banner: Delicious meals delivered to your home.
 index.our_restaurants: Our restaurants
 index.view_all_restaurants: View all restaurants
+index.our_shops: Our shops
+index.view_all_shops: View all shops
 notifications.empty: No notifications
 adminDashboard.statistics: Statistics
 adminDashboard.activity.title: Activity

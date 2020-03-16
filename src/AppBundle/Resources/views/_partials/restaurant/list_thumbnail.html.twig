@@ -12,6 +12,10 @@
   {% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
 {% endif %}
 
+{% if local_business_type is defined %}
+  {% set restaurant_path_params = restaurant_path_params|merge({ type: local_business_type }) %}
+{% endif %}
+
 {% set isOpen = restaurant.isOpen %}
 
 <a class="thumbnail restaurant-item {% if not restaurant.enabled %}restaurant-item--disabled{% endif %}"
