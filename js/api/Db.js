@@ -90,6 +90,7 @@ module.exports = function(sequelize) {
   }));
 
   Db.Restaurant = sequelize.define('restaurant', {
+    type: Sequelize.STRING,
     name: Sequelize.STRING,
     state: {
       type: Sequelize.STRING,

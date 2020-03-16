@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity name="AppBundle\Entity\LocalBusiness" inheritance-type="SINGLE_TABLE" table="restaurant">
+    <discriminator-column name="type" type="string" />
+    <discriminator-map>
+        <discriminator-mapping value="restaurant" class="AppBundle\Entity\Restaurant" />
+        <discriminator-mapping value="shop" class="AppBundle\Entity\Shop" />
+    </discriminator-map>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <indexes>
+      <index name="restaurant_enabled_index" columns="id,enabled"/>
+    </indexes>
+    <field name="name" type="string" column="name" nullable="true"/>
+    <field name="description" type="text" column="description" nullable="true"/>
+    <field name="enabled" type="boolean" column="enabled" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="depositRefundEnabled" type="boolean" column="deposit_refund_enabled">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="depositRefundOptin" type="boolean" column="deposit_refund_optin">
+      <options>
+        <option name="default">t</option>
+      </options>
+    </field>
+    <field name="orderingDelayMinutes" type="integer" column="ordering_delay_minutes" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="shippingOptionsDays" type="integer" column="shipping_options_days" nullable="true"/>
+    <field name="imageName" type="string" column="image_name" length="255" nullable="true"/>
+    <field name="website" type="string" column="website" nullable="true"/>
+    <field name="telephone" type="phone_number" column="telephone" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <field name="legalName" type="string" column="legal_name" nullable="true"/>
+    <field name="deliveryPerimeterExpression" type="string" column="delivery_perimeter_expression" nullable="false">
+      <options>
+        <option name="default">distance &lt; 3000</option>
+      </options>
+    </field>
+    <field name="openingHours" type="json_array" column="opening_hours" nullable="true"/>
+    <field name="vatID" type="string" column="vat_id" nullable="true"/>
+    <field name="additionalProperties" type="json_array" column="additional_properties" nullable="true"/>
+    <field name="state" type="string" column="state"/>
+    <field name="stripeConnectRoles" type="json_array" column="stripe_connect_roles"/>
+    <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
+    <field name="exclusive" type="boolean" column="exclusive">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="quotesAllowed" type="boolean" column="quotes_allowed">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="loopeatEnabled" type="boolean" column="loopeat_enabled">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="loopeatAccessToken" type="text" column="loopeat_access_token" nullable="true"/>
+    <field name="loopeatRefreshToken" type="text" column="loopeat_refresh_token" nullable="true"/>
+    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
+    <one-to-one field="contract" target-entity="AppBundle\Entity\Contract" mapped-by="restaurant">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-one>
+    <one-to-one field="pledge" target-entity="AppBundle\Entity\Restaurant\Pledge" mapped-by="restaurant">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-one>
+    <one-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule" mapped-by="restaurant">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <one-to-many field="preparationTimeRules" target-entity="AppBundle\Entity\Restaurant\PreparationTimeRule" mapped-by="restaurant">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <order-by>
+        <order-by-field name="position" direction="ASC"/>
+      </order-by>
+    </one-to-many>
+    <one-to-many field="stripeAccounts" target-entity="AppBundle\Entity\RestaurantStripeAccount" mapped-by="restaurant">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <one-to-many field="reusablePackagings" target-entity="AppBundle\Entity\ReusablePackaging" mapped-by="restaurant">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <one-to-many field="orders" target-entity="AppBundle\Entity\Sylius\Order" mapped-by="restaurant"/>
+    <many-to-one field="address" target-entity="AppBundle\Entity\Address" fetch="EAGER">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-columns>
+        <join-column name="address_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="activeMenuTaxon" target-entity="AppBundle\Entity\Sylius\Taxon">
+      <join-columns>
+        <join-column name="active_menu_taxon_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="servesCuisine" target-entity="AppBundle\Entity\Cuisine">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-table name="restaurant_cuisine">
+        <join-columns>
+          <join-column name="restaurant_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="cuisine_id" referenced-column-name="id" nullable="true"/>
+        </inverse-join-columns>
+      </join-table>
+      <order-by>
+        <order-by-field name="name" direction="ASC"/>
+      </order-by>
+    </many-to-many>
+    <many-to-many field="owners" target-entity="AppBundle\Entity\ApiUser" mapped-by="restaurants"/>
+    <many-to-many field="products" target-entity="AppBundle\Entity\Sylius\Product" mapped-by="restaurant">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-table name="restaurant_product">
+        <join-columns>
+          <join-column name="restaurant_id" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="product_id" referenced-column-name="id" unique="true"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="productOptions" target-entity="AppBundle\Entity\Sylius\ProductOption">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-table name="restaurant_product_option">
+        <join-columns>
+          <join-column name="restaurant_id" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="option_id" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="taxons" target-entity="AppBundle\Entity\Sylius\Taxon">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-table name="restaurant_taxon">
+        <join-columns>
+          <join-column name="restaurant_id" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="taxon_id" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>

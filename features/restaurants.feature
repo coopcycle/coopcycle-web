@@ -36,15 +36,44 @@ Feature: Manage restaurants
       "hydra:member":[
         {
           "@id":"/api/restaurants/2",
-          "id": 2,
           "@type":"http://schema.org/Restaurant",
-          "servesCuisine":@array@,
-          "enabled":true,
-          "depositRefundEnabled": false,
-          "depositRefundOptin": true,
-          "address":@...@,
+          "id":2,
           "name":"Café Barjot",
-          "description":null
+          "description":null,
+          "enabled":true,
+          "depositRefundEnabled":false,
+          "depositRefundOptin":true,
+          "telephone":null,
+          "address":{
+            "@id":"/api/addresses/2",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "latitude":48.846656,
+              "longitude":2.369052
+            },
+            "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
+            "telephone":null,
+            "name":null
+          },
+          "state":"normal",
+          "openingHoursSpecification":[
+            {
+              "@type":"OpeningHoursSpecification",
+              "opens":"11:30",
+              "closes":"14:30",
+              "dayOfWeek":[
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday"
+              ]
+            }
+          ],
+          "specialOpeningHoursSpecification":[],
+          "availabilities":"@*@",
+          "image":@string@
         }
       ],
       "hydra:totalItems":1,
@@ -78,7 +107,6 @@ Feature: Manage restaurants
       "@id":"/api/restaurants/1",
       "id":1,
       "@type":"http://schema.org/Restaurant",
-      "servesCuisine":@array@,
       "enabled":true,
       "depositRefundEnabled": false,
       "depositRefundOptin": true,
@@ -311,7 +339,6 @@ Feature: Manage restaurants
         "id":@integer@,
         "name":@string@,
         "description":null,
-        "servesCuisine":@array@,
         "enabled":true,
         "depositRefundEnabled": false,
         "depositRefundOptin": true,
@@ -393,7 +420,6 @@ Feature: Manage restaurants
         "id":1,
         "name":"Nodaiwa",
         "description": null,
-        "servesCuisine":@array@,
         "enabled":true,
         "depositRefundEnabled": false,
         "depositRefundOptin": true,

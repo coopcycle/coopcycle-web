@@ -1,0 +1,2 @@
+AppBundle\Entity\Shop:
+    type: entity
