@@ -405,6 +405,15 @@ services:
         arguments:
             - '@coopcycle.utils.restaurant_filter'
 
+  AppBundle\Entity\ShopRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Shop
+    calls:
+      - method: setRestaurantFilter
+        arguments:
+            - '@coopcycle.utils.restaurant_filter'
+
   AppBundle\Service\Routing\Osrm:
     arguments:
       $client: '@csa_guzzle.client.osrm'
