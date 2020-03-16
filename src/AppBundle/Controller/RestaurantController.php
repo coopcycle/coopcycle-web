@@ -15,6 +15,8 @@ use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Form\PledgeType;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\RestaurantRepository;
+use AppBundle\Entity\Shop;
+use AppBundle\Entity\ShopRepository;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Form\Order\CartType;
@@ -144,7 +146,6 @@ class RestaurantController extends AbstractController
 
     /**
      * @Route("/restaurants", name="restaurants")
-     * @Template()
      */
     public function listAction(Request $request, RestaurantRepository $repository)
     {
@@ -171,7 +172,7 @@ class RestaurantController extends AbstractController
 
         $pages = ceil($count / self::ITEMS_PER_PAGE);
 
-        return array(
+        return $this->render('@App/restaurant/list.html.twig', array(
             'count' => $count,
             'restaurants' => $matches,
             'page' => $page,
@@ -179,17 +180,24 @@ class RestaurantController extends AbstractController
             'geohash' => $request->query->get('geohash'),
             'addresses_normalized' => $this->getUserAddresses(),
             'address' => $request->query->has('address') ? $request->query->get('address') : null,
-        );
+        ));
     }
 
     /**
-     * @Route("/restaurant/{id}-{slug}", name="restaurant",
-     *   requirements={"id" = "(\d+|__RESTAURANT_ID__)", "slug" = "([a-z0-9-]+)"},
-     *   defaults={"slug" = ""}
+     * @Route("/{type}/{id}-{slug}", name="restaurant",
+     *   requirements={
+     *     "type"="(restaurant|shop)",
+     *     "id"="(\d+|__RESTAURANT_ID__)",
+     *     "slug"="([a-z0-9-]+)"
+     *   },
+     *   defaults={
+     *     "slug"="",
+     *     "type"="restaurant"
+     *   }
      * )
      * @Template()
      */
-    public function indexAction($id, $slug, Request $request,
+    public function indexAction($type, $id, $slug, Request $request,
         SlugifyInterface $slugify,
         CartContextInterface $cartContext,
         IriConverterInterface $iriConverter)
@@ -661,5 +669,13 @@ class RestaurantController extends AbstractController
         }
 
         return $this->redirectToRoute('restaurant', [ 'id' => $id ]);
+    }
+
+    /**
+     * @Route("/shops", name="shops")
+     */
+    public function shopListAction(Request $request, ShopRepository $repository)
+    {
+        return $this->listAction($request, $repository);
     }
 }
