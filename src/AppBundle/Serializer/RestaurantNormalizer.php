@@ -101,8 +101,6 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         unset($data['activeMenuTaxon']);
 
         $data['availabilities'] = $object->getAvailabilities();
-        $data['minimumCartAmount'] = $object->getMinimumCartAmount();
-        $data['flatDeliveryPrice'] = $object->getFlatDeliveryPrice();
 
         $imagePath = $this->uploaderHelper->asset($object, 'imageFile');
         if (empty($imagePath)) {
@@ -118,7 +116,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         return $data;
     }
 
-    private function normalizeForSeo($object, $data)
+    private function normalizeForSeo(Restaurant $object, $data)
     {
         $data['@context'] = 'http://schema.org';
 
@@ -156,18 +154,23 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
             'deliveryMethod' => [
                 'http://purl.org/goodrelations/v1#DeliveryModeOwnFleet'
             ],
-            'priceSpecification' => [
+        ];
+
+        $contract = $object->getContract();
+
+        if (!$contract->isVariableCustomerAmountEnabled()) {
+            $data['potentialAction']['priceSpecification'] = [
                 '@type' => 'DeliveryChargeSpecification',
                 'appliesToDeliveryMethod' => 'http://purl.org/goodrelations/v1#DeliveryModeOwnFleet',
                 'priceCurrency' => $priceCurrency,
-                'price' => $this->priceFormatter->format($object->getFlatDeliveryPrice()),
+                'price' => $this->priceFormatter->format($contract->getCustomerAmount()),
                 'eligibleTransactionVolume' => [
                     '@type' => 'PriceSpecification',
                     'priceCurrency' => $priceCurrency,
-                    'price' => $this->priceFormatter->format($object->getMinimumCartAmount())
+                    'price' => $this->priceFormatter->format($contract->getMinimumCartAmount())
                 ]
-            ]
-        ];
+            ];
+        }
 
         return $data;
     }

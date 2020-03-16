@@ -80,8 +80,8 @@ Feature: Manage restaurants
       "@type":"http://schema.org/Restaurant",
       "servesCuisine":@array@,
       "enabled":true,
-          "depositRefundEnabled": false,
-          "depositRefundOptin": true,
+      "depositRefundEnabled": false,
+      "depositRefundOptin": true,
       "name":"Nodaiwa",
       "description": null,
       "state": "normal",
@@ -108,9 +108,7 @@ Feature: Manage restaurants
         }
       ],
       "specialOpeningHoursSpecification":[],
-      "availabilities":@array@,
-      "minimumCartAmount":@integer@,
-      "flatDeliveryPrice":@integer@
+      "availabilities":@array@
     }
     """
 
@@ -315,8 +313,8 @@ Feature: Manage restaurants
         "description":null,
         "servesCuisine":@array@,
         "enabled":true,
-          "depositRefundEnabled": false,
-          "depositRefundOptin": true,
+        "depositRefundEnabled": false,
+        "depositRefundOptin": true,
         "address":@...@,
         "state":"rush",
         "telephone":null,
@@ -324,8 +322,6 @@ Feature: Manage restaurants
         "specialOpeningHoursSpecification":@array@,
         "hasMenu":"/api/restaurants/menus/2",
         "availabilities":@array@,
-        "minimumCartAmount":@integer@,
-        "flatDeliveryPrice":@integer@,
         "image":@string@
       }
       """
@@ -399,16 +395,14 @@ Feature: Manage restaurants
         "description": null,
         "servesCuisine":@array@,
         "enabled":true,
-          "depositRefundEnabled": false,
-          "depositRefundOptin": true,
+        "depositRefundEnabled": false,
+        "depositRefundOptin": true,
         "address":@...@,
         "state":"rush",
         "telephone":null,
         "openingHoursSpecification":@array@,
         "specialOpeningHoursSpecification":@array@,
         "availabilities":@array@,
-        "minimumCartAmount":@integer@,
-        "flatDeliveryPrice":@integer@,
         "image":@string@
       }
       """
