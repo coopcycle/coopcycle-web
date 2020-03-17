@@ -71,6 +71,13 @@ class SendEmail
         );
         $this->eventBus->handle(new EmailSent($order, $order->getCustomer()->getEmail()));
 
+        // Send email with instructions to customer
+        $this->emailManager->sendTo(
+            $this->emailManager->createCovid19Message(),
+            [$order->getCustomer()->getEmail() => $order->getCustomer()->getFullName()]
+        );
+        $this->eventBus->handle(new EmailSent($order, $order->getCustomer()->getEmail()));
+
         // Send email to admin
         $this->emailManager->sendTo(
             $this->emailManager->createOrderCreatedMessageForAdmin($order),

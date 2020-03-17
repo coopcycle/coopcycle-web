@@ -126,6 +126,7 @@ order.payment.body: |
   <br>
   Vous trouverez ci-dessous un lien vous permettant de payer par carte bleue.
 
+covid_19.subject: "COVID-19 | Instructions importantes pour votre commande"
 covid_19.body: |
   <h1>Consignes à suivre pour votre livraison</h1>
   <p>Face à l'épidémie de COVID-19 (Coronavirus) en cours, vous devez respecter <strong>impérativement</strong> les consignes suivantes : </p>

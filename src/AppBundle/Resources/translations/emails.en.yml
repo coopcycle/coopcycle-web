@@ -97,6 +97,7 @@ order.payment.subject: Payment of your order %order.number%
 order.payment.body: "Hello,\n<br>\nWe have completed a delivery that you have ordered\
   \ from us.\n<br>\nYou will find below a link allowing you to pay by credit card.\n"
 
+covid_19.subject: "COVID-19 | Important instructions for your order"
 covid_19.body: |
   <h1>Instructions to follow for your delivery</h1>
   Given the current COVID-19 (Coronavirus) epidemic, you <strong>must imperatively</strong> respect the following instructions:
