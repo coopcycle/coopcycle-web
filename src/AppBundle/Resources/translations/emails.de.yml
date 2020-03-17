@@ -55,3 +55,16 @@ admin.send_invitation.body: "Hallo %username%,\n<br>\ndies ist eine Einladung zu
   \ um die Erstellung Deines Accounts zu vervollständigen, klicke bitte auf den folgenden\
   \ Link.\n<br>\nVielen Dank,\n<br>\nDas CoopCycle Team.\n"
 admin.send_invitation.subject: Einladung zu CoopCycle!
+
+covid_19.subject: "COVID-19 | Wichtige Anweisungen für Ihre Bestellung"
+covid_19.body: |
+  <h1>Instruktionen für Ihre Lieferung</h1>
+  <p>Angesichts der aktuellen COVID-19 (Coronavirus)-Epidemie müssen Sie <strong>unbedingt</strong> die folgenden Anweisungen beachten:</p>
+  <h2>1. Respektieren Sie die soziale Distanzierung </h2>
+  <p>Wir liefern Ihre Bestellung an Ihrer Haustür ab, so dass Sie sich nicht an die Person wenden müssen, die zur Lieferung kommt. Es ist auch nicht nötig, ein Trinkgeld zu hinterlassen.</p>
+  <h2>2. Packen Sie Ihre Bestellung nach Erhalt aus</h2>
+  <p>Das Virus kann auf Karton- und Plastikoberflächen mehrere Tage lang überleben. Die Verpackung ist daher einer der größten Vektoren für die Übertragung des Virus. Wir bitten Sie daher, Ihre Bestellung <strong>auszupacken und den Inhalt auf Platten</strong> zu übertragen.</p>
+  <h2>3. Werfen Sie die Verpackung weg</h2>
+  <p>Sobald Ihre Bestellung ausgepackt ist, stellen Sie sicher, dass Sie die Verpackung <strong>in einem geschlossenen Mülleimer</strong> entsorgen, um versehentliches Berühren zu vermeiden.</p>
+  <h2>4. Waschen Sie Ihre Hände!</h2>
+  <p>Wenn Sie Ihre Bestellung ausgepackt und die Verpackung entsorgt haben, <strong>waschen Sie Ihre Hände!</strong></p>
