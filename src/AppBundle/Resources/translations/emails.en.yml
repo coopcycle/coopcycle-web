@@ -96,3 +96,16 @@ task.failed.body: |
 order.payment.subject: Payment of your order %order.number%
 order.payment.body: "Hello,\n<br>\nWe have completed a delivery that you have ordered\
   \ from us.\n<br>\nYou will find below a link allowing you to pay by credit card.\n"
+
+covid_19.body: |
+  <h1>Instructions to follow for your delivery</h1>
+  Given the current COVID-19 (Coronavirus) epidemic, you <strong>must imperatively</strong> respect the following instructions:
+  <h2>1. Respect social distancing</h2>
+  We will drop off your order on your doorstep, so you won't have to approach the person who comes to deliver. There is also no need to leave a tip.
+  <h2>2. Unpack your order after receipt</h2>
+  The virus can survive on cardboard and plastic surfaces for several days. Packaging is therefore one of the largest vectors for transmission of the virus.
+  We therefore ask you to <strong>unpack your order and transfer the contents to plates</strong>.
+  <h2>3. Dispose of the packaging</h2>
+  Once your order is unpacked, be sure to <strong>dispose of the packaging in a closed trash can</strong> to avoid inadvertently touching it later.
+  <h2>4. Wash your hands!</h2>
+  Once you have unpacked your order and discarded the packaging, <strong>wash your hands!</strong>

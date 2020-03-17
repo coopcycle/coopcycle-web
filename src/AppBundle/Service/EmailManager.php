@@ -210,4 +210,12 @@ class EmailManager
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
+
+    public function createCovid19Message()
+    {
+        $subject = $this->translator->trans('covid_19.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('@App/emails/covid_19.mjml.twig'));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
 }

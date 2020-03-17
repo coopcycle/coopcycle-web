@@ -1475,6 +1475,19 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/admin/emails/covid-19", name="admin_email_covid_19_preview")
+     */
+    public function covid19EmailPreviewAction(Request $request, EmailManager $emailManager)
+    {
+        $message = $emailManager->createCovid19Message();
+
+        $response = new Response();
+        $response->setContent($message->getBody());
+
+        return $response;
+    }
+
+    /**
      * @Route("/admin/restaurants/pledges", name="admin_restaurants_pledges")
      */
     public function restaurantsPledgesListAction(Request $request, EntityManagerInterface $manager)
