@@ -272,6 +272,7 @@ order.state.fulfilled: Livrée
 order.state.cancelled: Annulée
 order.adjustment_type.delivery: Livraison
 order.adjustment_type.platform_fees: Frais CoopCycle
+order.adjustment_type.tip: Pourboire
 order.delivery_time: Livraison %time%
 order.public_link: Lien public
 payment.state.cart: Panier
@@ -556,6 +557,9 @@ form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages r
 form.checkout_address.reusable_packaging_loopeat_enabled.label: Je veux des emballages réutilisables LoopEat (%price%)
 form.checkout_address.quote.label: Demander un devis
 form.checkout_address.add_promotion.label: Appliquer
+form.checkout_address.tip_amount.label: Pourboire
+form.checkout_address.tip_amount.help: Merci ❤
+form.checkout_address.add_tip.label: Appliquer
 form.task_export.start.label: Début
 form.task_export.end.label: Fin
 form.api_app.name.label: Nom de l'application

@@ -240,6 +240,11 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $receipt;
 
+    /**
+     * @var int
+     */
+    protected $tipAmount = 0;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -752,5 +757,15 @@ class Order extends BaseOrder implements OrderInterface
 
             return $receipt;
         }
+    }
+
+    public function getTipAmount()
+    {
+        return $this->tipAmount;
+    }
+
+    public function setTipAmount(int $tipAmount)
+    {
+        $this->tipAmount = $tipAmount;
     }
 }

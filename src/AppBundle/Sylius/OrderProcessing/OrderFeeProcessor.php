@@ -47,6 +47,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
 
         $order->removeAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
         $order->removeAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+        $order->removeAdjustments(AdjustmentInterface::TIP_ADJUSTMENT);
 
         $contract = $restaurant->getContract();
         $feeRate = $contract->getFeeRate();
@@ -89,6 +90,20 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         $deliveryPromotionAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
         foreach ($deliveryPromotionAdjustments as $deliveryPromotionAdjustment) {
             $businessAmount += $deliveryPromotionAdjustment->getAmount();
+        }
+
+        if ($order->getTipAmount() > 0) {
+
+            $tipAdjustment = $this->adjustmentFactory->createWithData(
+                AdjustmentInterface::TIP_ADJUSTMENT,
+                $this->translator->trans('order.adjustment_type.tip'),
+                $order->getTipAmount(),
+                $neutral = false
+            );
+
+            $order->addAdjustment($tipAdjustment);
+
+            $businessAmount += $order->getTipAmount();
         }
 
         $feeAdjustment = $this->adjustmentFactory->createWithData(

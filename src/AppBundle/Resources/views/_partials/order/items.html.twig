@@ -38,6 +38,7 @@
   {% set delivery_adjustments = order.getAdjustments('delivery') %}
   {% set promotion_adjustments = [] %}
   {% set packaging_adjustments = order.getAdjustments('reusable_packaging') %}
+  {% set tip_adjustments = order.getAdjustments('tip') %}
   {% for adjustment in order.adjustments %}
     {% if adjustment.type == 'delivery_promotion' or adjustment.type == 'order_promotion' %}
       {% set promotion_adjustments = [ adjustment ]|merge(promotion_adjustments) %}
@@ -68,6 +69,16 @@
         {{ delivery_adjustment.amount|price_format }}
       </td>
     </tr>
+    {% endif %}
+    {% if tip_adjustments|length > 0 %}
+      {% for adjustment in tip_adjustments %}
+      <tr>
+        <th>{{ adjustment.label }}</th>
+        <td class="text-right">
+          {{ adjustment.amount|price_format }}
+        </td>
+      </tr>
+      {% endfor %}
     {% endif %}
     {% if promotion_adjustments|length > 0 %}
       {% for adjustment in promotion_adjustments %}

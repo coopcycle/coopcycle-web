@@ -168,6 +168,28 @@ class OrderFeeProcessorTest extends KernelTestCase
         $this->assertEquals(500, $order->getFeeTotal());
     }
 
+    public function testOrderWithBusinessAmountAndCustomerAmountAndTip()
+    {
+        $contract = self::createContract(500, 500, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(1000));
+        $order->setTipAmount(300);
+
+        $this->orderFeeProcessor->process($order);
+
+        $this->assertEquals(1800, $order->getTotal());
+
+        $adjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+
+        $this->assertCount(1, $adjustments);
+        $this->assertEquals(800, $order->getFeeTotal());
+    }
+
     public function testOrderWithDeliveryPromotion()
     {
         $contract = self::createContract(565, 350, 0.1860);

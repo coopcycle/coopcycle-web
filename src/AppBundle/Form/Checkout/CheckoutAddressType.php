@@ -10,6 +10,7 @@ use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
 use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
@@ -62,6 +63,20 @@ class CheckoutAddressType extends AbstractType
             ])
             ->add('addPromotion', SubmitType::class, [
                 'label' => 'form.checkout_address.add_promotion.label'
+            ])
+            ->add('tipAmount', NumberType::class, [
+                'label' => 'form.checkout_address.tip_amount.label',
+                'mapped' => false,
+                'required' => false,
+                'html5' => true,
+                'attr'  => array(
+                    'min'  => 0,
+                    'step' => 0.5,
+                ),
+                'help' => 'form.checkout_address.tip_amount.help'
+            ])
+            ->add('addTip', SubmitType::class, [
+                'label' => 'form.checkout_address.add_tip.label'
             ]);
 
         $builder->get('shippingAddress')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
@@ -150,6 +165,11 @@ class CheckoutAddressType extends AbstractType
                 trim(sprintf('%s %s', $customer->getGivenName(), $customer->getFamilyName()))
             );
             $shippingAddress->setTelephone($customer->getTelephone());
+
+            if ($form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName()) {
+                $tipAmount = $form->get('tipAmount')->getData();
+                $order->setTipAmount((int) ($tipAmount * 100));
+            }
         });
     }
 

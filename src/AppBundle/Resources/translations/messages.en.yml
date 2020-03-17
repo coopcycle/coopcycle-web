@@ -300,6 +300,7 @@ payment.state.refunded_partially: Partially Refunded
 order.adjustment_type.delivery: Delivery
 order.adjustment_type.platform_fees: CoopCycle fees
 order.adjustment_type.reusable_packaging: Packaging
+order.adjustment_type.tip: Tip
 order_item.adjustment_type.reusable_packaging: '%quantity% × packaging(s)'
 order.list.total: Total
 order.list.shippedAt: Shipping time
@@ -575,6 +576,9 @@ form.checkout_address.telephone.label: Phone number
 form.checkout_address.reusable_packaging_enabled.label: I want reusable packaging (%price%)
 form.checkout_address.reusable_packaging_loopeat_enabled.label: I want to use LoopEat containers (%price%)
 form.checkout_address.add_promotion.label: Apply
+form.checkout_address.tip_amount.label: Tip
+form.checkout_address.tip_amount.help: Thank you ❤
+form.checkout_address.add_tip.label: Apply
 form.task_export.start.label: Start
 form.task_export.end.label: End
 form.api_app.name.label: App name
