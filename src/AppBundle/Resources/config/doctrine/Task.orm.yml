@@ -51,6 +51,8 @@ AppBundle\Entity\Task:
             unique: false
             nullable: true
             precision: 0
+        doorstep:
+            type: boolean
         createdAt:
             type: datetime
             column: created_at

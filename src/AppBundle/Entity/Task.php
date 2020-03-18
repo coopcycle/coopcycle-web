@@ -246,6 +246,8 @@ class Task implements TaggableInterface
      */
     private $images;
 
+    private $doorstep = false;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -627,5 +629,17 @@ class Task implements TaggableInterface
     public function setDoneBefore(?\DateTime $before)
     {
         return $this->setBefore($before);
+    }
+
+    public function setDoorstep($doorstep)
+    {
+        $this->doorstep = $doorstep;
+
+        return $this;
+    }
+
+    public function isDoorstep()
+    {
+        return $this->doorstep;
     }
 }
