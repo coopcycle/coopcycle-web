@@ -16,7 +16,7 @@ class Done extends Base
         $task = $data;
 
         try {
-            $this->taskManager->markAsDone($task, $this->getNotes($request));
+            $this->taskManager->markAsDone($task, $this->getNotes($request), $this->getContactName($request));
         } catch (PreviousTaskNotCompletedException $e) {
             throw new BadRequestHttpException($e->getMessage());
         } catch (TaskAlreadyCompletedException $e) {

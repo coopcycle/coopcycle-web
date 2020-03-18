@@ -29,13 +29,13 @@ class TaskManager
         $this->commandBus->handle(new DeleteGroup($taskGroup));
     }
 
-    public function markAsDone(Task $task, $notes = null)
+    public function markAsDone(Task $task, $notes = null, $contactName = null)
     {
-        $this->commandBus->handle(new MarkAsDone($task, $notes));
+        $this->commandBus->handle(new MarkAsDone($task, $notes, $contactName));
     }
 
-    public function markAsFailed(Task $task, $notes = null)
+    public function markAsFailed(Task $task, $notes = null, $contactName = null)
     {
-        $this->commandBus->handle(new MarkAsFailed($task, $notes));
+        $this->commandBus->handle(new MarkAsFailed($task, $notes, $contactName));
     }
 }

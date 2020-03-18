@@ -40,5 +40,10 @@ class MarkAsFailedHandler
         $this->eventRecorder->record(new Event\TaskFailed($task, $command->getNotes()));
 
         $task->setStatus(Task::STATUS_FAILED);
+
+        $contactName = $command->getContactName();
+        if (!empty($contactName)) {
+            $task->getAddress()->setContactName($contactName);
+        }
     }
 }

@@ -40,5 +40,10 @@ class MarkAsDoneHandler
         $this->eventRecorder->record(new Event\TaskDone($task, $command->getNotes()));
 
         $task->setStatus(Task::STATUS_DONE);
+
+        $contactName = $command->getContactName();
+        if (!empty($contactName)) {
+            $task->getAddress()->setContactName($contactName);
+        }
     }
 }

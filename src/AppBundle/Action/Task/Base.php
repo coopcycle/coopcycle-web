@@ -37,4 +37,19 @@ abstract class Base
             return $data['reason'];
         }
     }
+
+    protected function getContactName(Request $request)
+    {
+        $data = [];
+        $content = $request->getContent();
+        if (!empty($content)) {
+            $data = json_decode($content, true);
+        }
+
+        if (isset($data['contactName'])) {
+            return $data['contactName'];
+        }
+
+        return '';
+    }
 }

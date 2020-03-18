@@ -184,6 +184,67 @@ Feature: Tasks
       }
       """
 
+  Scenario: Mark task as done with contact name
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/2/done" with body:
+      """
+      {
+        "contactName":"John Doe"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/2",
+        "@type":"Task",
+        "id":2,
+        "type":"DROPOFF",
+        "status":"DONE",
+        "address":{
+          "@id":"/api/addresses/2",
+          "@type":"http://schema.org/Place",
+          "contactName":"John Doe",
+          "description":null,
+          "floor":null,
+          "geo":{
+            "latitude":48.846656,
+            "longitude":2.369052
+          },
+          "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
+          "telephone":null,
+          "firstName":"John",
+          "lastName":"Doe",
+          "name":null
+        },
+        "comments":"#bob",
+        "updatedAt":"@string@.isDateTime()",
+        "group":"@*@",
+        "images":[],
+        "tags":[],
+        "after":"2018-03-02T11:30:00+01:00",
+        "before":"2018-03-02T12:00:00+01:00",
+        "isAssigned":true,
+        "doneAfter":"2018-03-02T11:30:00+01:00",
+        "doneBefore":"2018-03-02T12:00:00+01:00",
+        "assignedTo":"bob",
+        "previous":null,
+        "next":null
+      }
+      """
+
   Scenario: Mark task as failed with notes
     Given the fixtures files are loaded:
       | sylius_channels.yml |

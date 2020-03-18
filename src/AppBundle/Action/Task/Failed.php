@@ -16,7 +16,7 @@ class Failed extends Base
         $task = $data;
 
         try {
-            $this->taskManager->markAsFailed($task, $this->getNotes($request));
+            $this->taskManager->markAsFailed($task, $this->getNotes($request), $this->getContactName($request));
         } catch (PreviousTaskNotCompletedException $e) {
             throw new BadRequestHttpException($e->getMessage());
         } catch (TaskAlreadyCompletedException $e) {
