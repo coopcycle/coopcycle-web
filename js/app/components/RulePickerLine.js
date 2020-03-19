@@ -27,6 +27,7 @@ const typeToOperators = {
   'pickup.address': ['in_zone', 'out_zone'],
   'dropoff.address': ['in_zone', 'out_zone'],
   'diff_days(pickup)': ['==', '<', '>', 'in'],
+  'dropoff.doorstep': ['=='],
 }
 
 class RulePickerLine extends React.Component {
@@ -111,6 +112,16 @@ class RulePickerLine extends React.Component {
     )
   }
 
+  renderBooleanInput() {
+
+    return (
+      <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
+        <option value="false">No</option>
+        <option value="true">Yes</option>
+      </select>
+    )
+  }
+
   renderBoundPicker () {
     /*
      * Return the displayed input for bound selection
@@ -131,6 +142,10 @@ class RulePickerLine extends React.Component {
     case '==':
       if (this.state.type === 'diff_days(pickup)') {
         return this.renderNumberInput()
+      }
+
+      if (this.state.type === 'dropoff.doorstep') {
+        return this.renderBooleanInput()
       }
 
       return (
@@ -171,6 +186,7 @@ class RulePickerLine extends React.Component {
             <option value="pickup.address">{ i18n.t('RULE_PICKER_LINE_PICKUP_ADDRESS') }</option>
             <option value="dropoff.address">{ i18n.t('RULE_PICKER_LINE_DROPOFF_ADDRESS') }</option>
             <option value="diff_days(pickup)">{ i18n.t('RULE_PICKER_LINE_PICKUP_DIFF_DAYS') }</option>
+            <option value="dropoff.doorstep">{ i18n.t('RULE_PICKER_LINE_DROPOFF_DOORSTEP') }</option>
           </select>
         </div>
         <div className="col-md-3">

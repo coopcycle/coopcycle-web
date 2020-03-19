@@ -26,6 +26,9 @@ const lineToString = state => {
   case 'out_zone':
     return `${state.operator}(${state.left}, "${state.right}")`
   case '==':
+    if (state.left === 'dropoff.doorstep') {
+      return `${state.left} == ${state.right}`
+    }
     return `${state.left} == "${state.right}"`
   }
 }

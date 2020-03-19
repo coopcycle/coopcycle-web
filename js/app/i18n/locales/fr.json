@@ -122,6 +122,7 @@
     "RULE_PICKER_LINE_BIKE_TYPE": "Type de vélo",
     "RULE_PICKER_LINE_PICKUP_ADDRESS": "Adresse de retrait",
     "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Adresse de dépôt",
+    "RULE_PICKER_LINE_DROPOFF_DOORSTEP": "Dépôt au pas de la porte",
     "ORDER_LIST_STATE": "État",
     "ORDER_LIST_PREPARATION_TIME": "Heure de préparation",
     "ORDER_LIST_PICKUP_TIME": "Heure de pickup",

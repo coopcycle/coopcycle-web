@@ -3,6 +3,7 @@ const diffDaysRegexp = /diff_days\(pickup\) (<|>|==) ([\d]+)/
 const vehicleRegexp = /(vehicle)\s+== "(cargo_bike|bike)"/
 const inRegexp = /([\w]+) in ([\d]+)\.\.([\d]+)/
 const comparatorRegexp = /([\w]+) (<|>) ([\d]+)/
+const doorstepDropoffRegexp = /(dropoff.doorstep)\s+== (true|false)/
 
 const parseToken = token => {
 
@@ -30,6 +31,15 @@ const parseToken = token => {
       left: vehicleTest[1],
       operator: '==',
       right: vehicleTest[2]
+    }
+  }
+
+  const doorstepDropoffTest = doorstepDropoffRegexp.exec(token)
+  if (doorstepDropoffTest) {
+    return {
+      left: doorstepDropoffTest[1],
+      operator: '==',
+      right: doorstepDropoffTest[2]
     }
   }
 
