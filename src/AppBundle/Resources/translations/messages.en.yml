@@ -165,10 +165,14 @@ restaurant.contract.flatDeliveryPrice.label: Amount charged by the platform
 restaurant.contract.flatDeliveryPrice.help: This amount will not be displayed in the
   cart and will not increase the total amount
 restaurant.contract.variableDeliveryPrice.label: Amount charged by the platform (variable)
-restaurant.contract.variableDeliveryPrice.help: The amount charged will be calculated using the selected pricing rule set
-restaurant.contract.variableDeliveryPrice.placeholder: Please select a pricing rule set
-restaurant.contract.variableDeliveryPriceEnabled.label: Enable variable amount charged by the platform
-restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Amount is calculated dynamically
+restaurant.contract.variableDeliveryPrice.help: The amount charged will be calculated
+  using the selected pricing rule set
+restaurant.contract.variableDeliveryPrice.placeholder: Please select a pricing rule
+  set
+restaurant.contract.variableDeliveryPriceEnabled.label: Enable variable amount charged
+  by the platform
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Amount is calculated
+  dynamically
 restaurant.contract.customerAmount.label: Amount paid by the customer
 restaurant.contract.customerAmount.help: This amount will be displayed in the cart
   and will increase the total amount
@@ -185,15 +189,18 @@ restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
 restaurant.contract.noContract: No contract details. Please contact an administrator.
 restaurant.contract.showAdvanced: Show advanced settings
 restaurant.contract.variableCustomerAmount.label: Amount paid by the customer (variable)
-restaurant.contract.variableCustomerAmount.help: The price paid will be calculated using the selected pricing rule set
-restaurant.contract.variableCustomerAmount.placeholder: Please select a pricing rule set
-restaurant.contract.variableCustomerAmountEnabled.label: Enable variable amount paid by the customer
-restaurant.contract.variableCustomerAmountEnabled.disclaimer: Amount is calculated dynamically
-restaurant.contract.calculation_info: "You can charge the restaurant an amount different from the amount paid by the customer.
-<br>
-For example, you can offer delivery to the customer while charging a fixed amount to the restaurant.
-<br>
-You can also configure a dynamic amount (for example, based on distance)."
+restaurant.contract.variableCustomerAmount.help: The price paid will be calculated
+  using the selected pricing rule set
+restaurant.contract.variableCustomerAmount.placeholder: Please select a pricing rule
+  set
+restaurant.contract.variableCustomerAmountEnabled.label: Enable variable amount paid
+  by the customer
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: Amount is calculated
+  dynamically
+restaurant.contract.calculation_info: You can charge the restaurant an amount different
+  from the amount paid by the customer. <br> For example, you can offer delivery to
+  the customer while charging a fixed amount to the restaurant. <br> You can also
+  configure a dynamic amount (for example, based on distance).
 restaurant.menus.noMenus: You have not created any menu for the moment.
 restaurant.menus.activate: Activate
 restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now
@@ -569,13 +576,15 @@ form.product_option.additional.help: The customer can choose several values, wit
   having to choose at least one
 form.product_option_value.value.label: Value
 form.product_option_value.price.label: Price
-form.checkout_address.notes.label: An observation?
+form.checkout_address.notes.label: Leave a note for the restaurant
 form.checkout_address.notes.placeholder: "Example: without sauce, without tomatoes…\n"
-form.checkout_address.notes.help: Your observation will be forwarded to the restaurant
+form.checkout_address.notes.help: Your note will be forwarded to the restaurant
 form.checkout_address.promotion_coupon.label: Coupon code
 form.checkout_address.telephone.label: Phone number
-form.checkout_address.reusable_packaging_enabled.label: I want reusable packaging (%price%)
-form.checkout_address.reusable_packaging_loopeat_enabled.label: I want to use LoopEat containers (%price%)
+form.checkout_address.reusable_packaging_enabled.label: I want reusable packaging
+  (%price%)
+form.checkout_address.reusable_packaging_loopeat_enabled.label: I want to use LoopEat
+  containers (%price%)
 form.checkout_address.add_promotion.label: Apply
 form.checkout_address.tip_amount.label: Tip
 form.checkout_address.tip_amount.help: Thank you ❤
@@ -799,7 +808,8 @@ profile.loopeat.connect: Connect my LoopEat account
 profile.loopeat.connected: LoopEat account connected
 basics.free: free
 task.receipt.greeting: Dear customer,
-task.receipt.message: Hereby we confirm that we have delivered your parcel at <strong>%address%</strong> on <strong>%date%</strong>
+task.receipt.message: Hereby we confirm that we have delivered your parcel at <strong>%address%</strong>
+  on <strong>%date%</strong>
 task.receipt.received_by: The parcel was received by <strong>%name%</strong>
 task.receipt.attached_images: Attached images
 task.receipt.reference: 'Reference: <strong>%ref%</strong>'
