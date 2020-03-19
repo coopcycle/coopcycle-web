@@ -11641,16 +11641,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.26.0",
+            "version": "v7.27.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "14163c10e1edb0e7720c9c295a1e7c7a0bf48e75"
+                "reference": "a6bbc392248f892123aed515b18a6360447cd658"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/14163c10e1edb0e7720c9c295a1e7c7a0bf48e75",
-                "reference": "14163c10e1edb0e7720c9c295a1e7c7a0bf48e75",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/a6bbc392248f892123aed515b18a6360447cd658",
+                "reference": "a6bbc392248f892123aed515b18a6360447cd658",
                 "shasum": ""
             },
             "require": {
@@ -11694,7 +11694,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2020-02-26T19:59:00+00:00"
+            "time": "2020-03-18T20:32:13+00:00"
         },
         {
             "name": "superbalist/flysystem-google-storage",
