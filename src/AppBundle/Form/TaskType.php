@@ -9,6 +9,7 @@ use AppBundle\Service\TaskManager;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -92,6 +93,14 @@ class TaskType extends AbstractType
                 ]);
         }
 
+        if ($options['with_doorstep']) {
+            $builder
+                ->add('doorstep', CheckboxType::class, [
+                    'label' => 'form.task.dropoff.doorstep.label',
+                    'required' => false,
+                ]);
+        }
+
         if ($builder->has('tagsAsString')) {
             $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
@@ -146,6 +155,7 @@ class TaskType extends AbstractType
             'with_addresses' => [],
             'address_placeholder' => null,
             'with_recipient_details' => false,
+            'with_doorstep' => false,
         ));
     }
 }

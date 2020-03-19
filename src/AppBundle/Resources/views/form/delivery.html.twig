@@ -54,6 +54,9 @@ col-sm-9
   {% if form.recipient is defined %}
     {{ form_row(form.recipient) }}
   {% endif %}
+  {% if form.doorstep is defined %}
+    {{ form_row(form.doorstep) }}
+  {% endif %}
 
   {% if form.tagsAsString is defined %}
     <hr>

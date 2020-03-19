@@ -116,6 +116,7 @@ class DeliveryType extends AbstractType
                 'with_addresses' => null !== $store ? $store->getAddresses() : [],
                 'address_placeholder' => 'form.delivery.dropoff.address_placeholder',
                 'with_recipient_details' => $options['with_dropoff_recipient_details'],
+                'with_doorstep' => $options['with_dropoff_doorstep'],
             ]);
 
             if (null === $store) {
@@ -226,6 +227,7 @@ class DeliveryType extends AbstractType
             'with_vehicle' => false,
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
             'with_dropoff_recipient_details' => false,
+            'with_dropoff_doorstep' => false,
         ));
     }
 
