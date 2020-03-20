@@ -72,6 +72,7 @@ framework:
             'AppBundle\Message\Email': async
             'AppBundle\Message\PushNotification': async
             'AppBundle\Message\ImportTasks': async
+            'AppBundle\Message\Sms': async
 
 # Twig Configuration
 twig:
