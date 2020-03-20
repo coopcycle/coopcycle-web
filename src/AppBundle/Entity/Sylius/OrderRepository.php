@@ -142,7 +142,7 @@ class OrderRepository extends BaseOrderRepository
         ;
     }
 
-    public function findOneByTask(Task $task)
+    public function findOneByTask(Task $task): ?OrderInterface
     {
         $qb = $this->createQueryBuilder('o');
         $qb

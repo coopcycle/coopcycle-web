@@ -85,3 +85,17 @@ services:
         subscribes_to: task:done
       - name: event_subscriber
         subscribes_to: task:failed
+
+  coopcycle.domain.task.reactor.send_sms:
+    class: AppBundle\Domain\Task\Reactor\SendSms
+    arguments:
+      - '@coopcycle.settings_manager'
+      - '@sylius.repository.order'
+      - '@message_bus'
+      - '@libphonenumber.phone_number_util'
+      - '@router'
+      - '@translator'
+      - '%secret%'
+    tags:
+      - name: event_subscriber
+        subscribes_to: task:started

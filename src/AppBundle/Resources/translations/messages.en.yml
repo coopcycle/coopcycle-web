@@ -911,3 +911,10 @@ users.couriers: Couriers
 users.restaurant_owners: Restaurant owners
 users.store_owners: Store owners
 users.administrators: Administrators
+sms.simple: |
+  Hello,
+  Our messenger is on its way to %address%.
+sms.with_tracking: |
+  Hello,
+  Our messenger is on its way to %address%.
+  Track it on %link%

@@ -898,3 +898,10 @@ users.couriers: Coursiers
 users.restaurant_owners: Restaurants
 users.store_owners: Magasins
 users.administrators: Administrateurs
+sms.simple: |
+  Bonjour,
+  Notre coursier se dirige vers %address%.
+sms.with_tracking: |
+  Bonjour,
+  Notre coursier se dirige vers %address%.
+  Suivez l'avancement sur %link%
