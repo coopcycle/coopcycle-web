@@ -3,6 +3,7 @@
 namespace AppBundle\Api\EventSubscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
+use AppBundle\Service\MaintenanceManager;
 use Predis\Client as Redis;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,10 +19,12 @@ final class MaintenanceSubscriber implements EventSubscriberInterface
 
     public function __construct(
         Redis $redis,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        MaintenanceManager $maintenance
     ) {
         $this->redis = $redis;
         $this->translator = $translator;
+        $this->maintenance = $maintenance;
     }
 
     public static function getSubscribedEvents()
@@ -40,6 +43,11 @@ final class MaintenanceSubscriber implements EventSubscriberInterface
         $maintenance = $this->redis->get('maintenance');
 
         if (empty($maintenance)) {
+            return;
+        }
+
+
+        if ($this->maintenance->canBypass()) {
             return;
         }
 

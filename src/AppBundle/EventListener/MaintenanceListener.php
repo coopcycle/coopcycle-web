@@ -2,18 +2,17 @@
 
 namespace AppBundle\EventListener;
 
+use AppBundle\Service\MaintenanceManager;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Predis\Client as Redis;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
 class MaintenanceListener
 {
-    private $authorizationChecker;
     private $tokenStorage;
     private $crawlerDetect;
     private $redis;
@@ -25,14 +24,14 @@ class MaintenanceListener
     ];
 
     public function __construct(
-        AuthorizationCheckerInterface $authorizationChecker,
+        MaintenanceManager $maintenance,
         TokenStorageInterface $tokenStorage,
         CrawlerDetect $crawlerDetect,
         Redis $redis,
         TranslatorInterface $translator,
-        TwigEnvironment $templating
-    ) {
-        $this->authorizationChecker = $authorizationChecker;
+        TwigEnvironment $templating)
+    {
+        $this->maintenance = $maintenance;
         $this->tokenStorage = $tokenStorage;
         $this->crawlerDetect = $crawlerDetect;
         $this->redis = $redis;
@@ -59,7 +58,7 @@ class MaintenanceListener
 
         $maintenance = $this->redis->get('maintenance');
 
-        if ($maintenance && !$this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+        if ($maintenance && !$this->maintenance->canBypass()) {
 
             foreach ($this->patterns as $pattern) {
                 if (preg_match($pattern, rawurldecode($request->getPathInfo()))) {

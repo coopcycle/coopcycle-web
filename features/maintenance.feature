@@ -54,3 +54,19 @@ Feature: Maintenance
         "message":@string@
       }
       """
+
+  Scenario: Retrieve assigned tasks (maintenance enabled)
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    And the maintenance mode is on
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/me/tasks/2018-03-02"
+    Then the response status code should be 200

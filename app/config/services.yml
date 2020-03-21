@@ -149,7 +149,6 @@ services:
 
   AppBundle\EventListener\MaintenanceListener:
     arguments:
-      $authorizationChecker: '@security.authorization_checker'
       $tokenStorage: '@security.token_storage'
       $crawlerDetect: '@crawler_detect'
       $redis: '@snc_redis.default'
@@ -764,3 +763,5 @@ services:
   AppBundle\MessageHandler\ImportTasksHandler:
     arguments:
       $secret: '%secret%'
+
+  AppBundle\Service\MaintenanceManager: ~
