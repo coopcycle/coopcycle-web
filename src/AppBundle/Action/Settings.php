@@ -19,6 +19,7 @@ class Settings
         'stripe_publishable_key',
         'google_api_key',
         'latlng',
+        'currency_code',
     ];
 
     public function __construct(SettingsManager $settingsManager, $country, $locale)
