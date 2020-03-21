@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
 class MaintenanceManager
 {
@@ -15,7 +16,11 @@ class MaintenanceManager
 
     public function canBypass()
     {
-        return $this->authorizationChecker->isGranted('ROLE_ADMIN')
-            || $this->authorizationChecker->isGranted('ROLE_COURIER');
+        try {
+            return $this->authorizationChecker->isGranted('ROLE_ADMIN')
+                || $this->authorizationChecker->isGranted('ROLE_COURIER');
+        } catch (AuthenticationCredentialsNotFoundException $e) {
+            return false;
+        }
     }
 }
