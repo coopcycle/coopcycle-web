@@ -156,16 +156,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.131.0",
+            "version": "3.133.41",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "371ca02855c92c13e36fa5f6d38e68211354c979"
+                "reference": "9b4a110de75631339329a4ca45ebbaf7ddd1f7f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/371ca02855c92c13e36fa5f6d38e68211354c979",
-                "reference": "371ca02855c92c13e36fa5f6d38e68211354c979",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9b4a110de75631339329a4ca45ebbaf7ddd1f7f9",
+                "reference": "9b4a110de75631339329a4ca45ebbaf7ddd1f7f9",
                 "shasum": ""
             },
             "require": {
@@ -236,7 +236,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-01-06T19:10:20+00:00"
+            "time": "2020-03-20T18:10:54+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -6995,16 +6995,16 @@
         },
         {
             "name": "league/flysystem-aws-s3-v3",
-            "version": "1.0.23",
+            "version": "1.0.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem-aws-s3-v3.git",
-                "reference": "15b0cdeab7240bf8e8bffa85ae5275bbc3692bf4"
+                "reference": "4382036bde5dc926f9b8b337e5bdb15e5ec7b570"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-aws-s3-v3/zipball/15b0cdeab7240bf8e8bffa85ae5275bbc3692bf4",
-                "reference": "15b0cdeab7240bf8e8bffa85ae5275bbc3692bf4",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-aws-s3-v3/zipball/4382036bde5dc926f9b8b337e5bdb15e5ec7b570",
+                "reference": "4382036bde5dc926f9b8b337e5bdb15e5ec7b570",
                 "shasum": ""
             },
             "require": {
@@ -7038,7 +7038,7 @@
                 }
             ],
             "description": "Flysystem adapter for the AWS S3 SDK v3.x",
-            "time": "2019-06-05T17:18:29+00:00"
+            "time": "2020-02-23T13:31:58+00:00"
         },
         {
             "name": "league/geotools",
