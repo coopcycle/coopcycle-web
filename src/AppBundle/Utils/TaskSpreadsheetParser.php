@@ -63,7 +63,7 @@ class TaskSpreadsheetParser
         return array_merge(
             self::MIME_TYPE_CSV,
             self::MIME_TYPE_ODS,
-            self::MIME_TYPE_XLSX,
+            self::MIME_TYPE_XLSX
         );
     }
 
