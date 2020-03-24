@@ -132,8 +132,9 @@ AppBundle\Entity\Task:
             joinColumns:
                 next_task_id:
                     referencedColumnName: id
-    lifecycleCallbacks: {  }
     entityListeners:
         AppBundle\Entity\Listener\TaskListener:
             prePersist:
                 - prePersist
+            postPersist:
+                - postPersist

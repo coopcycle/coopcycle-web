@@ -382,6 +382,10 @@ services:
   AppBundle\Utils\OrderTimeHelper: ~
 
   AppBundle\Entity\Listener\TaskListener:
+    arguments:
+      $tile38: '@snc_redis.tile38'
+      $doorstepChanNamespace: '%tile38_doorstep_chan_namespace%'
+      $fleetKey: '%tile38_fleet_key%'
     tags:
       - { name: doctrine.orm.entity_listener }
 
