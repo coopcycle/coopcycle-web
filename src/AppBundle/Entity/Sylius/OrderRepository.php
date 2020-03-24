@@ -2,8 +2,11 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Sylius\Bundle\OrderBundle\Doctrine\ORM\OrderRepository as BaseOrderRepository;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
@@ -137,5 +140,18 @@ class OrderRepository extends BaseOrderRepository
             ->getQuery()
             ->getSingleScalarResult()
         ;
+    }
+
+    public function findOneByTask(Task $task)
+    {
+        $qb = $this->createQueryBuilder('o');
+        $qb
+            ->leftJoin(Delivery::class, 'd', Join::WITH, 'o.id = d.order')
+            ->leftJoin(Task::class, 't', Join::WITH, 'd.id = t.delivery')
+            ->andWhere('t.id = :task')
+            ->setParameter('task', $task)
+            ;
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }
