@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c35838f3b29139e1e9d0b0308c248e61",
+    "content-hash": "a7b44778a1b3b527d6de0ae29623bfac",
     "packages": [
         {
             "name": "api-platform/core",
@@ -7395,16 +7395,16 @@
         },
         {
             "name": "m6web/daemon-bundle",
-            "version": "v5.0.0",
+            "version": "v6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/M6Web/DaemonBundle.git",
-                "reference": "1c9da9fa2f9c0a48fcad728aa175684ab757e28f"
+                "reference": "02fd72fcb9503fafb57bf852bbc7caadd5d7233d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/M6Web/DaemonBundle/zipball/1c9da9fa2f9c0a48fcad728aa175684ab757e28f",
-                "reference": "1c9da9fa2f9c0a48fcad728aa175684ab757e28f",
+                "url": "https://api.github.com/repos/M6Web/DaemonBundle/zipball/02fd72fcb9503fafb57bf852bbc7caadd5d7233d",
+                "reference": "02fd72fcb9503fafb57bf852bbc7caadd5d7233d",
                 "shasum": ""
             },
             "require": {
@@ -7412,16 +7412,16 @@
                 "php": ">=7.2",
                 "psr/event-dispatcher": "^1.0",
                 "react/event-loop": "@stable",
-                "symfony/console": "~4.3",
-                "symfony/framework-bundle": "~4.3",
-                "symfony/yaml": "~4.3"
+                "symfony/console": "~4.4 || ~5.0",
+                "symfony/framework-bundle": "~4.4 || ~5.0",
+                "symfony/yaml": "~4.4 || ~5.0"
             },
             "conflict": {
-                "symfony/event-dispatcher": "<4.3"
+                "symfony/event-dispatcher": "<4.4"
             },
             "require-dev": {
                 "phpunit/phpunit": "^8.4",
-                "sensiolabs/security-checker": "^5.0"
+                "sensiolabs/security-checker": "^6.0"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -7443,7 +7443,7 @@
                 }
             ],
             "description": "bundle sf easing creating daemon commands",
-            "time": "2019-11-18T13:22:21+00:00"
+            "time": "2020-03-10T09:31:11+00:00"
         },
         {
             "name": "mailjet/mailjet-apiv3-php",

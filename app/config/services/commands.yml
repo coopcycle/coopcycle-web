@@ -13,10 +13,20 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:orders:process-taxes' }
 
-  # TODO Add tag
   AppBundle\Command\BotCommand:
+    parent: M6Web\Bundle\DaemonBundle\Command\DaemonCommand
+    autowire: false
+    autoconfigure: false
+    public: false
     arguments:
+      $doctrine: '@doctrine.orm.default_entity_manager'
+      $userManager: '@fos_user.user_manager'
+      $tokenManager: '@lexik_jwt_authentication.jwt_manager'
+      $routing: '@routing_service'
+      $settingsManager: '@coopcycle.settings_manager'
       $apiClient: '@csa_guzzle.client.api'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:bot' }
 
   AppBundle\Command\CreateSettingCommand:
     arguments:
