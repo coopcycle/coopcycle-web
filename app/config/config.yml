@@ -19,6 +19,7 @@ parameters:
     loopeat_client_id: '%env(LOOPEAT_CLIENT_ID)%'
     loopeat_client_secret: '%env(LOOPEAT_CLIENT_SECRET)%'
     tile38_fleet_key: '%database_name%:fleet'
+    tile38_doorstep_chan_namespace: '%database_name%'
 
 services:
     tag_manager.cache:

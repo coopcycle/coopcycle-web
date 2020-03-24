@@ -172,6 +172,12 @@ class Task implements TaggableInterface
     const STATUS_CANCELLED = 'CANCELLED';
 
     /**
+     * The radius (in meters) that is used for geofences.
+     * @var int
+     */
+    const GEOFENCING_RADIUS = 300;
+
+    /**
      * @Groups({"task", "delivery"})
      */
     private $id;
