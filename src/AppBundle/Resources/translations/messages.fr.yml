@@ -839,3 +839,4 @@ basics.weeks: '%count% semaine|%count% semaines'
 basics.none: Aucun
 basics.yes: Oui
 basics.no: Non
+notifications.messenger_approaching: Bonjour %customer% ! Votre livreur·se %messenger% est tout·e proche. Tenez-vous prêt·e !

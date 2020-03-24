@@ -809,3 +809,4 @@ basics.weeks: '%count% week|%count% weeks'
 basics.none: None
 basics.yes: 'Yes'
 basics.no: 'No'
+notifications.messenger_approaching: Hey %customer%! Our messenger %messenger% is nearly with you. Get ready!
