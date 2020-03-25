@@ -36,11 +36,12 @@ embed.delivery.title: Delivery creation form
 embed.delivery.configure_pricing_rule_set: You must first configure a pricing rule
   to apply
 embed.delivery.iframe_code: Use the HTML code below to embed the form on your website
-embed.breadcrumb.start: Informations
+embed.breadcrumb.start: Information
 embed.breadcrumb.summary: Summary
 embed.breadcrumb.confirm: Confirmation
 embed.delivery.summary.title: Summary of your order
-embed.delivery.use_form_below: Use the form below to pay your order by credit card
+embed.delivery.use_form_below: Use the form below to pay for your order by credit
+  card
 embed.delivery.paid_at: Payment made on %date%
 embed.payment.heading: Pay my order
 embed.delivery.contact_heading: Contact
@@ -277,7 +278,7 @@ order.total_tax: Taxes
 order.total_tax_by_rate: Total %name%
 order.preparation_expected_at: Preparation expected at %date%
 order.shipping_date.title: Your shipping date
-order.payment.title: Your payment informations
+order.payment.title: Your payment information
 order.payment.expiration.label: Expiration
 order.payment.month.label: Month
 order.payment.year.label: Year
