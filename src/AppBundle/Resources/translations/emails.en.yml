@@ -96,17 +96,17 @@ task.failed.body: |
 order.payment.subject: Payment of your order %order.number%
 order.payment.body: "Hello,\n<br>\nWe have completed a delivery that you have ordered\
   \ from us.\n<br>\nYou will find below a link allowing you to pay by credit card.\n"
-
-covid_19.subject: "COVID-19 | Important instructions for your order"
-covid_19.body: |
-  <h1>Instructions to follow for your delivery</h1>
-  <p>Given the current COVID-19 (Coronavirus) epidemic, you <strong>must imperatively</strong> respect the following instructions:</p>
-  <h2>1. Respect social distancing</h2>
-  <p>We will drop off your order on your doorstep, so you won't have to approach the person who comes to deliver. There is also no need to leave a tip.</p>
-  <h2>2. Unpack your order after receipt</h2>
-  <p>The virus can survive on cardboard and plastic surfaces for several days. Packaging is therefore one of the largest vectors for transmission of the virus.
-  We therefore ask you to <strong>unpack your order and transfer the contents to plates</strong>.</p>
-  <h2>3. Dispose of the packaging</h2>
-  <p>Once your order is unpacked, be sure to <strong>dispose of the packaging in a closed trash can</strong> to avoid inadvertently touching it later.</p>
-  <h2>4. Wash your hands!</h2>
-  <p>Once you have unpacked your order and discarded the packaging, <strong>wash your hands!</strong></p>
+covid_19.subject: COVID-19 | Important instructions for your order
+covid_19.body: "<h1>Instructions to follow for your delivery</h1>\n<p>Given the current\
+  \ COVID-19 (Coronavirus) pandemic, you <strong>must strictly</strong> adhere to\
+  \ the following instructions:</p>\n<h2>1. Respect social distancing</h2>\n<p>We\
+  \ will drop off your order on your doorstep, so you won't have to approach the person\
+  \ who comes to deliver. There is also no need to leave a tip.</p>\n<h2>2. Unpack\
+  \ your order after receipt</h2>\n<p>The virus can survive on cardboard and plastic\
+  \ surfaces for several days. Packaging is therefore a high risk route of transmission\
+  \ of the virus.\nWe therefore ask you to <strong>unpack your order and transfer\
+  \ the contents to plates</strong>.</p>\n<h2>3. Dispose of the packaging</h2>\n<p>Once\
+  \ your order is unpacked, be sure to <strong>dispose of the packaging in a closed\
+  \ bin</strong> to avoid inadvertently touching it later.</p>\n<h2>4. Wash your hands!</h2>\n\
+  <p>Once you have unpacked your order and discarded the packaging, <strong>wash your\
+  \ hands!</strong></p>\n"
