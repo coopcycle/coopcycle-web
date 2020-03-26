@@ -229,7 +229,7 @@ class BotCommand extends DaemonCommand
         $payload[] = [
             'latitude' => $nextPosition->getLatitude(),
             'longitude' => $nextPosition->getLongitude(),
-            'time' => time()
+            'time' => microtime()
         ];
 
         try {
