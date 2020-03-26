@@ -241,7 +241,8 @@ Feature: Tasks
         "doneBefore":"2018-03-02T12:00:00+01:00",
         "assignedTo":"bob",
         "previous":null,
-        "next":null
+        "next":null,
+        "doorstep":false
       }
       """
 
@@ -525,7 +526,8 @@ Feature: Tasks
         "next":null,
         "group":null,
         "tags":@array@,
-        "images":@array@
+        "images":@array@,
+        "doorstep":false
       }
       """
 
@@ -597,7 +599,8 @@ Feature: Tasks
         "tags": [
           {"name":"Important","slug":"important","color":"#000000"}
         ],
-        "images":@array@
+        "images":@array@,
+        "doorstep":false
       }
       """
 

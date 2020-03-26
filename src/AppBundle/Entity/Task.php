@@ -246,6 +246,9 @@ class Task implements TaggableInterface
      */
     private $images;
 
+    /**
+     * @Groups({"task", "task_create", "task_edit"})
+     */
     private $doorstep = false;
 
     public function __construct()
