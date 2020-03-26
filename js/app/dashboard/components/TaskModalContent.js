@@ -278,7 +278,8 @@ class TaskModalContent extends React.Component {
       before: moment(this.props.date).add(2, 'hours').format(),
       comments: '',
       tags: [],
-      assignedTo: null
+      assignedTo: null,
+      doorstep: false,
     }
 
     if (!!this.props.task) {
@@ -472,6 +473,16 @@ class TaskModalContent extends React.Component {
                     </a>
                   </div>
                 )}
+                { values.type === 'DROPOFF' && (
+                  <div className="checkbox">
+                    <label>
+                      <input type="checkbox"
+                        name="doorstep"
+                        defaultChecked={ values.doorstep }
+                        onChange={ handleChange } /> <span>{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_DOORSTEP_DROPOFF') }</span>
+                    </label>
+                  </div>
+                ) }
               </div>
               { this.renderFooter(values) }
             </form>
