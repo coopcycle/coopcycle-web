@@ -109,7 +109,9 @@ class GeofencingCommand extends Command
 
                     $payload = json_decode($message->payload, true);
 
-                    preg_match('/^coopcycle:dropoff:([0-9]+)$/', $payload['hook'], $matches);
+                    $regexp = sprintf('/^%s:dropoff:([0-9]+)$/', $this->doorstepChanNamespace);
+
+                    preg_match($regexp, $payload['hook'], $matches);
 
                     $taskId = (int) $matches[1];
 
