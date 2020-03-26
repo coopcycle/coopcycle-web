@@ -119,6 +119,7 @@ services:
   AppBundle\Command\GeofencingCommand:
     arguments:
       $tile38: '@snc_redis.tile38'
+      $doorstepChanNamespace: '%tile38_doorstep_chan_namespace%'
     tags:
       - { name: 'console.command', command: 'coopcycle:geofencing' }
       - { name: 'monolog.logger', channel: 'geofencing' }

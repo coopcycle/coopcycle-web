@@ -30,12 +30,14 @@ class GeofencingCommand extends Command
     public function __construct(
         EntityManagerInterface $doctrine,
         Redis $tile38,
+        string $doorstepChanNamespace,
         MessageBusInterface $messageBus,
         TranslatorInterface $translator,
         LoggerInterface $logger)
     {
         $this->doctrine = $doctrine;
         $this->tile38 = $tile38;
+        $this->doorstepChanNamespace = $doorstepChanNamespace;
         $this->messageBus = $messageBus;
         $this->translator = $translator;
         $this->logger = $logger;
@@ -76,7 +78,7 @@ class GeofencingCommand extends Command
 
         $pubsub = $this->tile38->pubSubLoop();
 
-        $pubsub->psubscribe('coopcycle:dropoff:*');
+        $pubsub->psubscribe(sprintf('%s:dropoff:*', $this->doorstepChanNamespace));
 
         foreach ($pubsub as $message) {
 
