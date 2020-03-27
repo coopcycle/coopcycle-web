@@ -3,6 +3,7 @@
 namespace AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -54,11 +55,15 @@ final class OrderFeeProcessor implements OrderProcessorInterface
 
         $delivery = null;
         if ($contract->isVariableDeliveryPriceEnabled() || $contract->isVariableCustomerAmountEnabled()) {
-            $delivery = $this->getDelivery($order);
+            try {
+                $delivery = $this->getDelivery($order);
+            } catch (ShippingAddressMissingException $e) {
+                $this->logger->error('OrderFeeProcessor | address is missing');
+            }
         }
 
         $customerAmount = $contract->getCustomerAmount();
-        if ($contract->isVariableCustomerAmountEnabled()) {
+        if ($contract->isVariableCustomerAmountEnabled() && null !== $delivery) {
             $customerAmount = $this->deliveryManager->getPrice(
                 $delivery,
                 $contract->getVariableCustomerAmount()
@@ -73,7 +78,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         }
 
         $businessAmount = $contract->getFlatDeliveryPrice();
-        if ($contract->isVariableDeliveryPriceEnabled()) {
+        if ($contract->isVariableDeliveryPriceEnabled() && null !== $delivery) {
             $businessAmount = $this->deliveryManager->getPrice(
                 $delivery,
                 $contract->getVariableDeliveryPrice()
