@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
@@ -52,6 +53,10 @@ class DeliveryManager
 
         $pickupAddress = $order->getRestaurant()->getAddress();
         $dropoffAddress = $order->getShippingAddress();
+
+        if (null === $dropoffAddress) {
+            throw new ShippingAddressMissingException(sprintf('Order does not have a shipping address'));
+        }
 
         $distance = $this->routing->getDistance(
             $pickupAddress->getGeo(),

@@ -9,6 +9,7 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\OrderTimeHelper;
@@ -115,5 +116,34 @@ class DeliveryManagerTest extends KernelTestCase
         $this->assertEquals($expectedPickupBefore, $pickup->getBefore());
         $this->assertEquals($restaurantAddress, $pickup->getAddress());
         $this->assertEquals($shippingAddress, $dropoff->getAddress());
+    }
+
+    public function testCreateFromOrderThrowsException()
+    {
+        $this->expectException(ShippingAddressMissingException::class);
+
+        $restaurantAddress = new Address();
+        $restaurantAddressCoords = new GeoCoordinates();
+        $restaurantAddress->setGeo($restaurantAddressCoords);
+
+        $shippingAddress = new Address();
+        $shippingAddressCoords = new GeoCoordinates();
+        $shippingAddress->setGeo($shippingAddressCoords);
+
+        $restaurant = new Restaurant();
+        $restaurant->setAddress($restaurantAddress);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        // The shipping address is missing
+        // $order->setShippingAddress(null);
+
+        $deliveryManager = new DeliveryManager(
+            $this->expressionLanguage,
+            $this->routing->reveal(),
+            $this->orderTimeHelper->reveal()
+        );
+
+        $delivery = $deliveryManager->createFromOrder($order);
     }
 }
