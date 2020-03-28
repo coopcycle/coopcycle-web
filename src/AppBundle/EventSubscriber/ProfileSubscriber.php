@@ -2,6 +2,8 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Store;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -18,19 +20,24 @@ class ProfileSubscriber implements EventSubscriberInterface
         $this->tokenStorage = $tokenStorage;
     }
 
+    /**
+     * @return Restaurant|Store
+     */
     private function findResourceInSession(Request $request, Collection $items, $sessionKey)
     {
-        if (!$request->getSession()->has($sessionKey)) {
-            $item = $items->first();
-            $request->getSession()->set($sessionKey, $item->getId());
-        }
+        if ($request->getSession()->has($sessionKey)) {
+            foreach ($items as $item) {
+                if ($item->getId() === $request->getSession()->get($sessionKey)) {
 
-        foreach ($items as $item) {
-            if ($item->getId() === $request->getSession()->get($sessionKey)) {
-
-                return $item;
+                    return $item;
+                }
             }
         }
+
+        $item = $items->first();
+        $request->getSession()->set($sessionKey, $item->getId());
+
+        return $item;
     }
 
     public function onKernelRequest(RequestEvent $event)
@@ -73,7 +80,6 @@ class ProfileSubscriber implements EventSubscriberInterface
         if (count($stores) > 0 && $user->hasRole('ROLE_STORE')) {
             $request->attributes->set('_store', $this->findResourceInSession($request, $stores, '_store'));
         }
-
 
         if (count($restaurants) > 0 && $user->hasRole('ROLE_RESTAURANT')) {
             $request->attributes->set('_restaurant', $this->findResourceInSession($request, $restaurants, '_restaurant'));
