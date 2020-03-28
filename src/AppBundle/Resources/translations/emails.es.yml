@@ -42,13 +42,11 @@ task.done.body: "Buenos dias,\n<br>\nLa tarea #%task.id% ha sido completada.\n"
 task.failed.subject: 'La tarea #%task.id% no se pudo completar'
 task.failed.body: "Buenos dias,\n<br>\nLa tarea #%task.id% no se pudo completar.\n"
 admin.pledge.subject: ¡Se ha enviado una nueva sugerencia!
-admin.pledge.body: "Hola,\n<br>\n%username% le gustaría %pledge.name% estar en CoopCycle\
-  \ !\n<br>\nGracias,\n<br>\nEl equipo de CoopCycle.\n"
+admin.pledge.body: "Hola,\n<br>\n%username% le gustaría %pledge.name% estar en CoopCycle!"
 user.pledge.subject: Su sugerencia ahora está en CoopCycle!
-user.pledge.body: "Hola,\n<br>\nGracias a ti, %pledge.name% ahora está en CoopCycle\
-  \ !\n<br>\nCon agradecimiento,\n<br>\nEquipo de CoopCycle.\n"
+user.pledge.body: "Hola,\n<br>\nGracias a ti, %pledge.name% ahora está en CoopCycle!"
 admin.send_invitation.create_password: Crear my contraseña
 admin.send_invitation.body: "Hola %username%,\n<br>\nEste correo es una invitación\
   \ a tu espacio CoopCycle, para terminar la creación de su cuenta, por favor haga\
-  \ un clic en el siguiente enlace.\n<br>\nGracias,\n<br>\nEl equipo de CoopCycle.\n"
+  \ un clic en el siguiente enlace."
 admin.send_invitation.subject: ¡ Invitación a CoopCycle !

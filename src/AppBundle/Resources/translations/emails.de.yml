@@ -44,16 +44,15 @@ task.done.body: "Hallo,\n<br>\nder Auftrag #%task.id% wurde abgeschlossen.\n"
 task.failed.subject: 'Auftrag #%task.id% konnte nicht abgeschlossen werden'
 task.failed.body: "Hallo,\n<br>\nAuftrag #%task.id% konnte leider nicht abgeschlossen\
   \ werden.\n"
-user.pledge.body: "Hallo,\n<br>\ndank dir ist %pledge.name% jetzt auf CoopCycle!\n\
-  <br>\nVielen Dank,\n<br>\nTeam CoopCycle.\n"
+user.pledge.body: "Hallo,\n<br>\ndank dir ist %pledge.name% jetzt auf CoopCycle!"
 user.pledge.subject: Dein Vorschlag ist jetzt auf CoopCycle!
 admin.pledge.body: "Hallo,\n<br>\n%username% möchte, dass %pledge.name% auf CoopCycle\
-  \ ist!\n<br>\nVielen Dank,\n<br>\nDas CoopCycle-Team.\n"
+  \ ist!"
 admin.pledge.subject: Ein neuer Vorschlag wurde übermittelt!
 admin.send_invitation.create_password: Passwort erstellen
 admin.send_invitation.body: "Hallo %username%,\n<br>\ndies ist eine Einladung zu CoopCycle,\
   \ um die Erstellung Deines Accounts zu vervollständigen, klicke bitte auf den folgenden\
-  \ Link.\n<br>\nVielen Dank,\n<br>\nDas CoopCycle Team.\n"
+  \ Link."
 admin.send_invitation.subject: Einladung zu CoopCycle!
 
 covid_19.subject: "COVID-19 | Wichtige Anweisungen für Ihre Bestellung"

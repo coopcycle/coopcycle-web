@@ -47,10 +47,6 @@ admin.send_invitation.body: |
   Bonjour %username%,
   <br>
   Ceci est une invitation à l'espace CoopCycle, pour finaliser la création de votre compte veuillez cliquer sur lien suivant.
-  <br>
-  Merci,
-  <br>
-  L'Equipe CoopCycle.
 admin.send_invitation.create_password: Créer mon mot de passe
 
 admin.pledge.subject: Une nouvelle suggestion a été envoyée !
@@ -58,19 +54,12 @@ admin.pledge.body: |
   Bonjour,
   <br>
   %username% souhaiterait que %pledge.name% soit sur CoopCycle !
-  <br>
-  Merci,
-  <br>
-  L'Equipe CoopCycle.
+
 user.pledge.subject: Votre suggestion est désormais sur CoopCycle !
 user.pledge.body: |
   Bonjour,
   <br>
-  grâce à vous, %pledge.name% est désormais sur CoopCycle !
-  <br>
-  Merci,
-  <br>
-  L'Equipe CoopCycle.
+  Grâce à vous, %pledge.name% est désormais sur CoopCycle !
 
 owner.order.created.subject: Nouvelle commande à confirmer
 owner.order.created.body: |
