@@ -84,6 +84,7 @@ class TaskList extends React.Component {
       username,
       polylineEnabled,
       uncompletedTasks,
+      isEmpty,
     } = this.props
 
     let { tasks } = this.props
@@ -108,7 +109,7 @@ class TaskList extends React.Component {
     const avatarURL = window.Routing.generate('user_avatar', { username })
 
     const taskListClasslist = ['taskList__tasks', 'list-group', 'nomargin']
-    if (tasks.length === 0) {
+    if (isEmpty) {
       taskListClasslist.push('taskList__tasks--empty')
     }
 
@@ -217,14 +218,20 @@ class TaskList extends React.Component {
 }
 
 function mapStateToProps(state, ownProps) {
+
+  const tasksFiltered = selectFilteredTasks({
+    tasks: ownProps.items,
+    filters: state.filters,
+    date: state.date,
+  })
+
+  // console.log(`Showing ${tasksFiltered.length} of ${ownProps.items.length}`)
+
   return {
     polylineEnabled: state.polylineEnabled[ownProps.username],
     allTasks: state.allTasks,
-    tasks: selectFilteredTasks({
-      tasks: ownProps.items,
-      filters: state.filters,
-      date: state.date,
-    }),
+    tasks: ownProps.items,
+    isEmpty: ownProps.items.length === 0 || tasksFiltered.length === 0,
     distance: ownProps.distance,
     duration: ownProps.duration,
     filters: state.filters,
@@ -234,9 +241,9 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    removeTasks: (username, tasks) => { dispatch(removeTasks(username, tasks)) },
-    modifyTaskList: (username, tasks) => { dispatch(modifyTaskList(username, tasks)) },
-    togglePolyline: (username) => { dispatch(togglePolyline(username)) },
+    removeTasks: (username, tasks) => dispatch(removeTasks(username, tasks)),
+    modifyTaskList: (username, tasks) => dispatch(modifyTaskList(username, tasks)),
+    togglePolyline: (username) => dispatch(togglePolyline(username)),
   }
 }
 

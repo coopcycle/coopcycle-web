@@ -27,76 +27,14 @@ export const selectFilteredTasks = createSelector(
   state => state.date,
   (tasks, filters, date) => {
 
-    let tasksFiltered = tasks.slice(0)
+    return filter(tasks.slice(0), task => {
 
-    const {
-      showFinishedTasks,
-      showCancelledTasks,
-      tags,
-      hiddenCouriers,
-      timeRange,
-    } = filters
-
-    if (!showFinishedTasks) {
-      tasksFiltered =
-        filter(tasksFiltered, task => !includes(['DONE', 'FAILED'], task.status))
-    }
-
-    if (!showCancelledTasks) {
-      tasksFiltered =
-        filter(tasksFiltered, task => 'CANCELLED' !== task.status)
-    }
-
-    if (tags.length > 0) {
-
-      tasksFiltered =
-        filter(tasksFiltered, task => {
-          if (task.tags.length === 0) {
-            return false
-          }
-
-          return intersectionWith(task.tags, tags, (tag, slug) => tag.slug === slug).length > 0
-        })
-    }
-
-    if (hiddenCouriers.length > 0) {
-
-      tasksFiltered =
-        filter(tasksFiltered, task => {
-          if (!task.isAssigned) {
-            return false
-          }
-
-          return !includes(hiddenCouriers, task.assignedTo)
-        })
-    }
-
-    if (!isEqual(timeRange, [0, 24])) {
-
-      tasksFiltered =
-        filter(tasksFiltered, task => {
-
-          const [ start, end ] = timeRange
-
-          const startHour = start
-          const endHour = end === 24 ? 23 : end
-          const endMinute = end === 24 ? 59 : 0
-
-          const dateAsRange = moment.range(
-            moment(date).set({ hour: startHour, minute: 0 }),
-            moment(date).set({ hour: endHour, minute: endMinute })
-          )
-
-          const range = moment.range(
-            moment(task.doneAfter),
-            moment(task.doneBefore)
-          )
-
-          return range.overlaps(dateAsRange)
-        })
-    }
-
-    return tasksFiltered
+      return selectIsVisibleTask({
+        task,
+        filters,
+        date,
+      })
+    })
   }
 )
 
@@ -109,4 +47,75 @@ export const selectTasksWithColor = createSelector(
   state => state.allTasks,
   allTasks =>
     mapValues(groupLinkedTasks(allTasks), taskIds => integerToColor(taskIds.reduce((accumulator, value) => accumulator + value)))
+)
+
+export const selectIsVisibleTask = createSelector(
+  state => state.task,
+  state => state.filters,
+  state => state.date,
+  (task, filters, date) => {
+
+    const {
+      showFinishedTasks,
+      showCancelledTasks,
+      tags,
+      hiddenCouriers,
+      timeRange,
+    } = filters
+
+    if (!showFinishedTasks && includes(['DONE', 'FAILED'], task.status)) {
+      return false
+    }
+
+    if (!showCancelledTasks && 'CANCELLED' === task.status) {
+      return false
+    }
+
+    if (tags.length > 0) {
+
+      if (task.tags.length === 0) {
+        return false
+      }
+
+      if (intersectionWith(task.tags, tags, (tag, slug) => tag.slug === slug).length === 0) {
+        return false
+      }
+    }
+
+    if (hiddenCouriers.length > 0) {
+
+      if (!task.isAssigned) {
+        return false
+      }
+
+      if (includes(hiddenCouriers, task.assignedTo)) {
+        return false
+      }
+    }
+
+    if (!isEqual(timeRange, [0, 24])) {
+
+      const [ start, end ] = timeRange
+
+      const startHour = start
+      const endHour = end === 24 ? 23 : end
+      const endMinute = end === 24 ? 59 : 0
+
+      const dateAsRange = moment.range(
+        moment(date).set({ hour: startHour, minute: 0 }),
+        moment(date).set({ hour: endHour, minute: endMinute })
+      )
+
+      const range = moment.range(
+        moment(task.doneAfter),
+        moment(task.doneBefore)
+      )
+
+      if (!range.overlaps(dateAsRange)) {
+        return false
+      }
+    }
+
+    return true
+  }
 )

@@ -8,7 +8,6 @@ import Sortable from 'react-sortablejs'
 import Task from './Task'
 import TaskGroup from './TaskGroup'
 import { setTaskListGroupMode, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
-import { selectFilteredTasks } from '../redux/selectors'
 
 class UnassignedTasks extends React.Component {
 
@@ -134,12 +133,9 @@ class UnassignedTasks extends React.Component {
 }
 
 function mapStateToProps (state) {
+
   return {
-    unassignedTasks: selectFilteredTasks({
-      tasks: state.unassignedTasks,
-      filters: state.filters,
-      date: state.date,
-    }),
+    unassignedTasks: state.unassignedTasks,
     taskListGroupMode: state.taskListGroupMode,
     showCancelledTasks: state.filters.showCancelledTasks,
     taskModalIsOpen: state.taskModalIsOpen

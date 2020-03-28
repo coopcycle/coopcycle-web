@@ -5,7 +5,7 @@ import moment from 'moment'
 import { ContextMenuTrigger } from 'react-contextmenu'
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
-import { selectTasksWithColor } from '../redux/selectors'
+import { selectTasksWithColor, selectIsVisibleTask } from '../redux/selectors'
 import TaskEta from './TaskEta'
 
 moment.locale($('html').attr('lang'))
@@ -111,7 +111,7 @@ class Task extends React.Component {
 
   render() {
 
-    const { color, task, selected } = this.props
+    const { color, task, selected, isVisible } = this.props
 
     const classNames = [
       'list-group-item',
@@ -138,7 +138,7 @@ class Task extends React.Component {
     const contextMenuTriggerAttrs = {
       ...taskAttributes,
       style: {
-        display: 'block',
+        display: isVisible ? 'block' : 'none',
         borderLeft: `6px solid ${color}`
       },
       key: task['@id'],
@@ -186,6 +186,11 @@ function mapStateToProps(state, ownProps) {
     selected: -1 !== state.selectedTasks.indexOf(ownProps.task),
     color,
     date: state.date,
+    isVisible: selectIsVisibleTask({
+      task: ownProps.task,
+      filters: state.filters,
+      date: state.date,
+    }),
   }
 }
 
