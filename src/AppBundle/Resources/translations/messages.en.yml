@@ -590,6 +590,7 @@ form.checkout_address.add_promotion.label: Apply
 form.checkout_address.tip_amount.label: Tip
 form.checkout_address.tip_amount.help: Thank you ❤
 form.checkout_address.add_tip.label: Apply
+form.checkout_address.quote.label: Request a quote
 form.task_export.start.label: Start
 form.task_export.end.label: End
 form.api_app.name.label: App name

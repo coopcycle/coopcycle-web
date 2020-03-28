@@ -561,7 +561,6 @@ form.checkout_address.add_promotion.label: Appliquer
 form.checkout_address.tip_amount.label: Pourboire
 form.checkout_address.tip_amount.help: Merci ❤
 form.checkout_address.add_tip.label: Appliquer
-form.checkout_address.quote.label: Request a quote
 form.task_export.start.label: Début
 form.task_export.end.label: Fin
 form.api_app.name.label: Nom de l'application
