@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { SketchPicker } from 'react-color'
+import SketchPicker from 'react-color/lib/Sketch'
 
 export default function(el) {
 
