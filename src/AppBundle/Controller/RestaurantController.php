@@ -630,10 +630,14 @@ class RestaurantController extends AbstractController
 
             $pledge->setState('new');
             $pledge->setUser($this->getUser());
+
             $manager->persist($pledge);
             $manager->flush();
 
-            $emailManager->createAdminPledgeConfirmationMessage($pledge);
+            $emailManager->sendTo(
+                $emailManager->createAdminPledgeConfirmationMessage($pledge),
+                $settingsManager->get('administrator_email')
+            );
 
             $this->addFlash(
                 'pledge',
