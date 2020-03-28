@@ -136,7 +136,7 @@ class OrderController extends AbstractController
 
         return array(
             'order' => $order,
-            'asap' => $this->orderTimeHelper->getAsap($order),
+            'shipping_time' => null !== $order->getShippedAt() ? $order->getShippedAt() : $this->orderTimeHelper->getAsap($order),
             'form' => $form->createView(),
             'loopeat_valid' => $isLoopEatValid,
         );
