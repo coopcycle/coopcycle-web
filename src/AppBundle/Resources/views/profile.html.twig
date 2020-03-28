@@ -30,7 +30,10 @@
               </a>
               <ul class="dropdown-menu">
                 {% for s in app.user.stores %}
-                  {% if store != s %}
+                  {# Use "same as" to avoid "Nesting level too deep - recursive dependency?" #}
+                  {# It can happen, because when not using strict comparison, #}
+                  {# PHP would compare all the properties of the objects #}
+                  {% if s is not same as(store) %}
                   <li>
                     <a href="{{ path('fos_user_profile_show', { store: s.id }) }}">
                       {{ s.name }}
@@ -56,7 +59,10 @@
               </a>
               <ul class="dropdown-menu">
                 {% for r in app.user.restaurants %}
-                  {% if restaurant != r %}
+                  {# Use "same as" to avoid "Nesting level too deep - recursive dependency?" #}
+                  {# It can happen, because when not using strict comparison, #}
+                  {# PHP would compare all the properties of the objects #}
+                  {% if r is not same as(restaurant) %}
                   <li>
                     <a href="{{ path('fos_user_profile_show', { restaurant: r.id }) }}">
                       {{ r.name }}
