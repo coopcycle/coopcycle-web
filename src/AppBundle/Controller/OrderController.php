@@ -47,6 +47,18 @@ class OrderController extends AbstractController
         $this->logger = $logger;
     }
 
+    private function getShippingTime(OrderInterface $order)
+    {
+        $shippingTime = $order->getShippedAt();
+
+        if (null !== $shippingTime) {
+
+            return $shippingTime;
+        }
+
+        return $this->orderTimeHelper->getAsap($order);
+    }
+
     /**
      * @Route("/", name="order")
      * @Template()
@@ -136,7 +148,7 @@ class OrderController extends AbstractController
 
         return array(
             'order' => $order,
-            'shipping_time' => null !== $order->getShippedAt() ? $order->getShippedAt() : $this->orderTimeHelper->getAsap($order),
+            'shipping_time' => $this->getShippingTime($order),
             'form' => $form->createView(),
             'loopeat_valid' => $isLoopEatValid,
         );
@@ -170,7 +182,7 @@ class OrderController extends AbstractController
             'order' => $order,
             'deliveryAddress' => $order->getShippingAddress(),
             'restaurant' => $order->getRestaurant(),
-            'asap' => $this->orderTimeHelper->getAsap($order),
+            'shipping_time' => $this->getShippingTime($order),
         ];
 
         $form->handleRequest($request);
