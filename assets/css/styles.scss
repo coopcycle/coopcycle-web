@@ -766,55 +766,6 @@ button.menu-item:active {
   }
 }
 
-.order-map__wrapper {
-  height: 100%;
-  position: relative;
-}
-
-.order-map {
-  flex: 1;
-  z-index: -1;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-}
-
-.order-map__column {
-  margin: 10px;
-  background-color: $white;
-  box-sizing: border-box;
-
-  h4 {
-    margin: 0;
-    padding: 10px 15px;
-    border-bottom: 1px solid #ddd;
-  }
-
-  @media screen and (max-width: $screen-sm-max) {
-    margin: 0 0 20px;
-  }
-}
-
-.order-map__column-heading {
-  display: block;
-  color: $headings-color;
-  &:hover {
-    color: $headings-color;
-    text-decoration: none;
-    background-color: #eee;
-  }
-}
-
-.order-map__column-block {
-  padding: 10px 15px;
-  border-bottom: 1px solid #ddd;
-  &:last-of-type {
-    border-bottom: none;
-  }
-}
-
 .btn-payment > .fa-spinner {
   display:none;
 }

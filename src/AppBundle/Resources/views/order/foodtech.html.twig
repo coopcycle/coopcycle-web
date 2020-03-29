@@ -6,45 +6,27 @@
 {% endblock %}
 
 {% block content %}
-  <div class="order-map__wrapper">
-    <div class="row">
-      <div class="col-xs-12 col-md-6 col-md-offset-6">
-        <div class="order-map__column">
-
-          <a class="order-map__column-heading" role="button" data-toggle="collapse" href="#restaurant" aria-expanded="false" aria-controls="restaurant">
-            <h4>{{ order.restaurant.name }} <span class="pull-right"><i class="fa fa-chevron-down"></i></span></h4>
-          </a>
-          <div class="collapse order-map__column-block" id="restaurant">
-            {% include "@App/_partials/order/restaurant_details.html.twig" %}
-          </div>
-
-          <a class="order-map__column-heading" role="button" data-toggle="collapse" href="#items" aria-expanded="false" aria-controls="items">
-            <h4>{{ 'order.cart.title'|trans }}<span class="pull-right"><i class="fa fa-chevron-down"></i></span></h4>
-          </a>
-          <div class="collapse order-map__column-block" id="items">
-            {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
-          </div>
-
-          <div class="order-map__column-block">
-            <div id="order-timeline"></div>
-          </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-6">
+      <div class="border mb-3">
+        <h4 class="bg-light p-3 m-0">{{ order.restaurant.name }}</h4>
+        <div class="px-3 py-4" id="restaurant">
+          {% include "@App/_partials/order/restaurant_details.html.twig" %}
+        </div>
+        <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
+        <div id="items">
+          {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
         </div>
       </div>
     </div>
-    <div id="map" class="order-map hidden-xs hidden-sm"></div>
+    <div class="col-xs-12 col-md-6">
+      <div id="order-timeline"></div>
+    </div>
   </div>
 {% endblock %}
 
 {% block scripts %}
-{{ encore_entry_script_tags('delivery-map') }}
 <script>
-new CoopCycle.DeliveryMap('map', {
-  pickup: {{ order.restaurant.address|latlng|json_encode() }},
-  dropoff: {{ order.shippingAddress|latlng|json_encode() }},
-  fitBoundsOptions: {
-    paddingBottomRight: [ 350, 0 ]
-  }
-});
 new CoopCycle.OrderTimeline(document.querySelector('#order-timeline'), {
   order: {{ order_normalized|json_encode()|raw }},
   events: {{ events|json_encode()|raw }},

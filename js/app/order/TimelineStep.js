@@ -1,31 +1,30 @@
-import React, { Component } from 'react'
+import React from 'react'
 
-export default class extends Component {
-  render () {
+export default (props) => {
 
-    const classNames = ['order-timeline__step']
-    if (this.props.success) {
-      classNames.push('order-timeline__step--success')
-    }
-    if (this.props.danger) {
-      classNames.push('order-timeline__step--danger')
-    }
-    if (this.props.active) {
-      classNames.push('order-timeline__step--active')
-    }
-
-    return (
-      <div className={ classNames.join(' ') }>
-        <i className="order-timeline__step__bullet"></i>
-        <span className="order-timeline__step__title">
-          { this.props.title }
-        </span>
-        <div
-          className="order-timeline__step__description"
-          style={ this.props.active ? { display: 'block'} : {} }>
-          { this.props.description }
-        </div>
-      </div>
-    )
+  const classNames = ['order-timeline__step']
+  if (props.success) {
+    classNames.push('order-timeline__step--success')
   }
+  if (props.danger) {
+    classNames.push('order-timeline__step--danger')
+  }
+  if (props.active) {
+    classNames.push('order-timeline__step--active')
+  }
+
+  return (
+    <div className={ classNames.join(' ') }>
+      <i className="order-timeline__step__bullet"></i>
+      <span className="order-timeline__step__title">
+        { props.title }
+        { props.spinner && (<i className="fa fa-spinner fa-pulse ml-2"></i>) }
+      </span>
+      <div
+        className="order-timeline__step__description"
+        style={ props.active ? { display: 'block'} : {} }>
+        { props.description }
+      </div>
+    </div>
+  )
 }

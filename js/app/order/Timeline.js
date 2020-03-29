@@ -92,7 +92,7 @@ export default class extends Component {
     switch (last.name) {
     case 'order:created':
       return (
-        <TimelineStep active
+        <TimelineStep active spinner
           title={ i18n.t('ORDER_TIMELINE_AFTER_CREATED_TITLE') }
           description={ i18n.t('ORDER_TIMELINE_AFTER_CREATED_DESCRIPTION') } />
       )
@@ -140,10 +140,11 @@ export default class extends Component {
     }
 
     return (
-      <div>
-        <p>{ message }</p>
-        <hr/>
-        { this.renderTimeline() }
+      <div className="border mb-3">
+        <h4 className="bg-light p-3 m-0">{ message }</h4>
+        <div className="px-3 py-4">
+          { this.renderTimeline() }
+        </div>
       </div>
     )
   }

@@ -9,72 +9,63 @@
 
     {% include '@App/order/breadcrumb.html.twig' %}
 
-    <div class="order-map__wrapper">
-      <div class="row">
-        <div class="col-xs-12 col-md-6 col-md-offset-6">
-          <div class="order-map__column">
+    {{ form_start(form) }}
+    {% include '@App/order/_partials/time.html.twig' %}
+    <div class="row">
+      <div class="col-xs-12 col-md-6">
+        <div class="border mb-3">
 
-            {{ form_start(form) }}
+          <h4 class="bg-light p-3 m-0">{{ order.restaurant.name }}</h4>
+          <div class="px-3 py-4">
+            {% include "@App/_partials/order/restaurant_details.html.twig" %}
+          </div>
 
-            <div class="row">
-              <div class="col-xs-12">
-                {% include '@App/order/_partials/time.html.twig' %}
+          <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
+          <div id="items">
+            {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
+          </div>
+
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-6">
+        <div class="border">
+          <h4 class="bg-light p-3 m-0">{% trans %}order.payment.title{% endtrans %}</h4>
+          <div class="p-3">
+
+            {% if error is defined %}
+              <div class="alert alert-danger">
+                {{ error }}
               </div>
-            </div>
+            {% endif %}
 
-            <a class="order-map__column-heading" role="button" data-toggle="collapse" href="#restaurant" aria-expanded="false" aria-controls="restaurant">
-              <h4>{{ order.restaurant.name }} <span class="pull-right"><i class="fa fa-chevron-down"></i></span></h4>
-            </a>
-            <div class="collapse order-map__column-block" id="restaurant">
-              {% include "@App/_partials/order/restaurant_details.html.twig" %}
-            </div>
+            {{ form_errors(form) }}
 
-            <a class="order-map__column-heading" role="button" data-toggle="collapse" href="#items" aria-expanded="false" aria-controls="items">
-              <h4>{{ 'order.cart.title'|trans }}<span class="pull-right"><i class="fa fa-chevron-down"></i></span></h4>
-            </a>
-            <div class="collapse order-map__column-block" id="items">
-              {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
-            </div>
+            {{ form_widget(form.stripePayment.stripeToken) }}
 
-            <h4>{% trans %}order.payment.title{% endtrans %}</h4>
-            <div class="order-map__column-block">
-              {% if error is defined %}
-                <div class="alert alert-danger">
-                  {{ error }}
-                </div>
-              {% endif %}
+            {{ form_row(form.stripePayment.cardholderName) }}
 
-              {{ form_errors(form) }}
-
-              {{ form_widget(form.stripePayment.stripeToken) }}
-
-              {{ form_row(form.stripePayment.cardholderName) }}
-
-              <div class="form-group">
-                <label class="control-label hidden" for="card-element">
-                  {% trans %}order.payment.title{% endtrans %}
-                </label>
-                <div id="card-element">
-                  <!-- a Stripe Element will be inserted here. -->
-                </div>
-                <!-- Used to display form errors -->
-                <div id="card-errors" role="alert"></div>
+            <div class="form-group">
+              <label class="control-label hidden" for="card-element">
+                {% trans %}order.payment.title{% endtrans %}
+              </label>
+              <div id="card-element">
+                <!-- a Stripe Element will be inserted here. -->
               </div>
-
-              <div class="text-center">
-                <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
-                  <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
-                </button>
-              </div>
+              <!-- Used to display form errors -->
+              <div id="card-errors" role="alert"></div>
             </div>
 
-            {{ form_end(form) }}
+            <div class="text-center">
+              <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
+                <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+              </button>
+            </div>
 
           </div>
         </div>
       </div>
-      <div id="map" class="order-map hidden-xs hidden-sm"></div>
     </div>
+    {{ form_end(form) }}
 
   {% else %}
     <div class="alert alert-warning">
@@ -87,15 +78,7 @@
 {% block scripts %}
 {% if not order.empty %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-{{ encore_entry_script_tags('delivery-map') }}
 <script type="text/javascript">
-  new CoopCycle.DeliveryMap('map', {
-    pickup: {{ order.restaurant.address|latlng|json_encode() }},
-    dropoff: {{ order.shippingAddress|latlng|json_encode() }},
-    fitBoundsOptions: {
-      paddingBottomRight: [ 350, 0 ]
-    }
-  });
   new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
     publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
     tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),

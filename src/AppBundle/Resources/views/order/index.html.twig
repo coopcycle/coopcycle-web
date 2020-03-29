@@ -9,88 +9,77 @@
 
     {% include '@App/order/breadcrumb.html.twig' %}
 
-    <div class="order-map__wrapper">
-      {{ form_start(form) }}
-      <div class="row">
-        <div class="col-xs-12">
-          {% include '@App/order/_partials/time.html.twig' %}
+    {{ form_start(form) }}
+    {% include '@App/order/_partials/time.html.twig' %}
+    <div class="row">
+      <div class="col-xs-12 col-md-6">
+        <div class="border mb-3">
+
+          <h4 class="bg-light p-3 m-0">{{ order.restaurant.name }}</h4>
+          <div class="px-3 py-4">
+            {% include "@App/_partials/order/restaurant_details.html.twig" %}
+          </div>
+
+          <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
+          <div class="border-bottom" id="items">
+            {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
+            {% if order.restaurant.isLoopeatEnabled() and not loopeat_valid %}
+            <div class="alert alert-warning">
+              {% trans from 'validators' %}loopeat.insufficient_balance{% endtrans %}
+            </div>
+            {% endif %}
+            {% if form.reusablePackagingEnabled is defined %}
+            <div class="alert alert-info py-0">
+              {{ form_widget(form.reusablePackagingEnabled) }}
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="px-3 pt-3 border-bottom">
+            {{ form_row(form.promotionCoupon) }}
+            {# We use an input group with the button #}
+            {# {{ form_row(form.addPromotion) }} #}
+          </div>
+
+          <div class="px-3 pt-3">
+            {{ form_row(form.tipAmount) }}
+            {# We use an input group with the button #}
+            {# {{ form_row(form.addPromotion) }} #}
+          </div>
+
         </div>
       </div>
-      <div class="row">
-        <div class="col-xs-12 col-md-6">
-          <div class="order-map__column">
+      <div class="col-xs-12 col-md-6">
+        <div class="border">
 
-            <h4>{{ order.restaurant.name }}</h4>
-            <div class="order-map__column-block">
-              {% include "@App/_partials/order/restaurant_details.html.twig" %}
-            </div>
+          <h4 class="bg-light p-3 m-0">{% trans %}cart.widget.title{% endtrans %}</h4>
+          <div class="p-3 border-bottom">
+            {% if form.telephone is defined %}
+              {{ form_row(form.telephone) }}
+            {% endif %}
+            {{ form_row(form.shippingAddress.streetAddress) }}
+            {{ form_row(form.shippingAddress.floor) }}
 
-            <h4>{{ 'order.cart.title'|trans }}</h4>
-            <div class="order-map__column-block" id="items">
-              {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
-              {% if order.restaurant.isLoopeatEnabled() and not loopeat_valid %}
-              <div class="alert alert-warning">
-                {% trans from 'validators' %}loopeat.insufficient_balance{% endtrans %}
-              </div>
-              {% endif %}
-              {% if form.reusablePackagingEnabled is defined %}
-              <div class="alert alert-info py-0">
-                {{ form_widget(form.reusablePackagingEnabled) }}
-              </div>
-              {% endif %}
-            </div>
+            {# FIXME Are these fields really needed? #}
+            {{ form_row(form.shippingAddress.postalCode) }}
+            {{ form_row(form.shippingAddress.addressLocality) }}
 
-            <div class="order-map__column-block">
-              {{ form_row(form.promotionCoupon) }}
-              {# We use an input group with the button #}
-              {# {{ form_row(form.addPromotion) }} #}
-            </div>
-
-            <div class="order-map__column-block">
-              {{ form_row(form.tipAmount) }}
-              {# We use an input group with the button #}
-              {# {{ form_row(form.addPromotion) }} #}
-            </div>
-
+            {{ form_row(form.shippingAddress.description) }}
           </div>
-        </div>
-        <div class="col-xs-12 col-md-6">
-          <div class="order-map__column">
-
-            <h4>{% trans %}cart.widget.title{% endtrans %}</h4>
-            <div class="order-map__column-block">
-              {% if form.telephone is defined %}
-                {{ form_row(form.telephone) }}
+          <div class="p-3 border-bottom">
+            {{ form_row(form.notes) }}
+            <div class="text-center">
+              <button class="btn btn-block btn-lg btn-primary" type="submit">{% trans %}cart.widget.button{% endtrans %}</button>
+              {% if form.quote is defined %}
+                {{ form_widget(form.quote, { attr: { class: 'btn-block btn-lg btn-default' } }) }}
               {% endif %}
-              {{ form_row(form.shippingAddress.streetAddress) }}
-              {{ form_row(form.shippingAddress.floor) }}
-              <div class="row">
-                <div class="col-md-4">
-                  {{ form_row(form.shippingAddress.postalCode) }}
-                </div>
-                <div class="col-md-8">
-                  {{ form_row(form.shippingAddress.addressLocality) }}
-                </div>
-              </div>
-              {{ form_row(form.shippingAddress.description) }}
-              <hr>
-              {{ form_row(form.notes) }}
-
-              <div class="text-center">
-                <button class="btn btn-block btn-lg btn-primary" type="submit">{% trans %}cart.widget.button{% endtrans %}</button>
-                {% if form.quote is defined %}
-                  {{ form_widget(form.quote, { attr: { class: 'btn-block btn-lg btn-default' } }) }}
-                {% endif %}
-              </div>
             </div>
-
           </div>
+
         </div>
       </div>
-      {{ form_end(form) }}
-
-      <div id="map" class="order-map hidden-xs hidden-sm"></div>
     </div>
+    {{ form_end(form) }}
 
   {% else %}
     <div class="alert alert-warning">
@@ -102,19 +91,9 @@
 
 {% block scripts %}
 {% if not order.empty %}
-{{ encore_entry_script_tags('delivery-map') }}
 <script>
-
 $('#checkout_address_reusablePackagingEnabled').on('change', function(e) {
   $(this).closest('form').submit();
-});
-
-new CoopCycle.DeliveryMap('map', {
-  pickup: {{ order.restaurant.address|latlng|json_encode() }},
-  dropoff: {{ order.shippingAddress|latlng|json_encode() }},
-  fitBoundsOptions: {
-    paddingBottomRight: [ 350, 0 ]
-  }
 });
 new CoopCycle.CheckoutDateTime(document.querySelector('#checkout_address_shippedAt'), {
   dateElement: document.querySelector('#checkout_address_shippedAt_date'),
