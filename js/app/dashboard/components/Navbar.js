@@ -93,7 +93,7 @@ class Navbar extends React.Component {
 
   renderImportButton() {
 
-    if (this.props.taskImportToken) {
+    if (this.props.taskImportToken && !this.props.hasUploadErrors) {
       return (
         <li>
           <a>
