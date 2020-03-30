@@ -49,7 +49,7 @@
       {% for tax_rate in order|split_tax_rates %}
       <tr>
         <th>{% trans with { '%name%': tax_rate.name } %}order.total_tax_by_rate{% endtrans %}</th>
-        <td class="text-right">
+        <td class="text-right text-nowrap">
           {{ tax_rate.amount|price_format }}
         </td>
       </tr>
@@ -57,7 +57,7 @@
     {% endif %}
     <tr>
       <th>{% trans %}order.items_total{% endtrans %}</th>
-      <td class="text-right">
+      <td class="text-right text-nowrap">
         {{ order.itemsTotal|price_format }}
       </td>
     </tr>
@@ -65,7 +65,7 @@
     {% set delivery_adjustment = order.getAdjustments('delivery')|first %}
     <tr>
       <th>{{ delivery_adjustment.label }}</th>
-      <td class="text-right">
+      <td class="text-right text-nowrap">
         {{ delivery_adjustment.amount|price_format }}
       </td>
     </tr>
@@ -74,7 +74,7 @@
       {% for adjustment in tip_adjustments %}
       <tr>
         <th>{{ adjustment.label }}</th>
-        <td class="text-right">
+        <td class="text-right text-nowrap">
           {{ adjustment.amount|price_format }}
         </td>
       </tr>
@@ -84,7 +84,7 @@
       {% for adjustment in promotion_adjustments %}
       <tr>
         <th>{{ adjustment.label }}</th>
-        <td class="text-right">
+        <td class="text-right text-nowrap">
           {{ adjustment.amount|price_format }}
         </td>
       </tr>
@@ -94,7 +94,7 @@
       {% for adjustment in packaging_adjustments %}
       <tr>
         <th>{{ adjustment.label }}</th>
-        <td class="text-right">
+        <td class="text-right text-nowrap">
           {{ adjustment.amount|price_format }}
         </td>
       </tr>
@@ -103,14 +103,14 @@
     {% if with_total_excluding_tax is defined and with_total_excluding_tax %}
       <tr>
         <th>{% trans %}order.total_excluding_tax{% endtrans %}</th>
-        <td class="text-right">
+        <td class="text-right text-nowrap">
           {{ (order.itemsTotal - order.itemsTaxTotal)|price_format }}
         </td>
       </tr>
     {% endif %}
     <tr>
       <th>{% trans %}order.total_including_tax{% endtrans %}</th>
-      <td class="text-right">
+      <td class="text-right text-nowrap">
         {{ order.total|price_format }}
       </td>
     </tr>
