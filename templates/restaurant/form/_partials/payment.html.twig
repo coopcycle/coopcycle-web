@@ -22,6 +22,10 @@
     {% endif %}
   {% endif %}
 
+  <span id='cwppButton'></span>
+
+  <a href="https://www.sandbox.paypal.com/signin/authorize?scope=openid https://uri.paypal.com/services/paypalattributes/business https://uri.paypal.com/services/paypalhere address email profile&response_type=code&redirect_uri=http://127.0.0.1/paypal/oauth/callback&client_id={{ coopcycle_setting('paypal_client_id') }}" class="btn btn-default">CONNECT PAYPAL</a>
+
 {% else %}
 
   {% if form.allowStripeConnect is defined %}

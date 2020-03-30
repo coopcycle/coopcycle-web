@@ -9,6 +9,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Service\OrderManager;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
@@ -23,6 +24,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+use PayPalCheckoutSdk\Core\SandboxEnvironment;
+use PayPalCheckoutSdk\Core\PayPalHttpClient;
 
 /**
  * @Route("/order")
@@ -153,8 +157,16 @@ class OrderController extends AbstractController
     public function paymentAction(Request $request,
         OrderManager $orderManager,
         CartContextInterface $cartContext,
-        StripeManager $stripeManager)
+        StripeManager $stripeManager,
+        SettingsManager $settingsManager)
     {
+        $paypalClientId = $settingsManager->get('paypal_client_id');
+        $paypalClientSecret = $settingsManager->get('paypal_client_secret');
+
+        $paypalClient = new PayPalHttpClient(
+            new SandboxEnvironment($paypalClientId, $paypalClientSecret)
+        );
+
         $order = $cartContext->getCart();
 
         if (null === $order || null === $order->getRestaurant()) {

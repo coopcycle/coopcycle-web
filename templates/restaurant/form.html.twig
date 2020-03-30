@@ -197,4 +197,22 @@
 {% block scripts %}
 {{ encore_entry_script_tags('restaurant-form') }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
+<script src='https://www.paypalobjects.com/js/external/connect/api.js'></script>
+<script>
+paypal.use( ['login'], function (login) {
+  login.render ({
+    "appid":"{{ coopcycle_setting('paypal_client_id') }}",
+    "authend":"sandbox",
+    "scopes":"openid https://uri.paypal.com/services/paypalattributes",
+    "containerid":"cwppButton",
+    "responseType":"code",
+    "locale":"fr-fr",
+    "buttonType":"CWP",
+    "buttonShape":"rectangle",
+    "buttonSize":"lg",
+    "fullPage":"true",
+    "returnurl":"http://127.0.0.1/paypal/oauth/callback"
+  });
+});
+</script>
 {% endblock %}

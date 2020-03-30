@@ -53,6 +53,8 @@
               <div id="card-errors" role="alert"></div>
             </div>
 
+            <div id="paypal-button-container"></div>
+
             <div class="text-center hidden mt-3" id="payment-redirect-help">
               <span class="help-block">{{ 'order.payment.redirect.help'|trans }}</span>
             </div>
@@ -92,12 +94,55 @@
 {% block scripts %}
 {% if not order.empty %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+<script src="https://www.paypal.com/sdk/js?client-id={{ coopcycle_setting('paypal_client_id') }}&currency=EUR">
 <script type="text/javascript">
   new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
     publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
     tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
     cardholderNameElement: document.querySelector('#checkout_payment_stripePayment_cardholderName')
   });
+</script>
+<script>
+paypal.Buttons({
+  createOrder: function(data, actions) {
+
+    console.log('createOrder')
+
+    // This function sets up the details of the transaction, including the amount and line item details.
+    return actions.order.create({
+      purchase_units: [
+        // https://developer.paypal.com/docs/api/orders/v2/#definition-purchase_unit_request
+        {
+          amount: {
+            currency_code: "EUR",
+            value: {{ (order.total / 100)|json_encode }}
+          },
+          payee: {
+            merchant_id: "YWASA6GYFGXZY"
+          },
+          shipping: {
+            name: {
+              full_name: "Johnny John"
+            },
+            address: {
+              address_line_1: "23, av Claude Vellefaux",
+              // address_line_2: "",
+              // admin_area_1: "Paris",
+              admin_area_2: "Paris",
+              postal_code: "75010",
+              country_code: "FR"
+            }
+          }
+        },
+        // {
+        //   payee:{
+        //     merchant_id: "YWASA6GYFGXZY"
+        //   }
+        // }
+      ]
+    });
+  }
+}).render('#paypal-button-container');
 </script>
 {% endif %}
 {% endblock %}
