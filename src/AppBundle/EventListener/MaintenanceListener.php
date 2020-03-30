@@ -21,6 +21,7 @@ class MaintenanceListener
     private $patterns = [
         '#^/login#',
         '#^/api/routing#',
+        '#^/invitation/define-password#',
     ];
 
     public function __construct(
