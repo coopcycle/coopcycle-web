@@ -8,6 +8,8 @@ use AppBundle\Message\ImportTasks;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\SocketIoManager;
 use AppBundle\Utils\TaskSpreadsheetParser;
+use Doctrine\DBAL\Driver\PDOException;
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
@@ -94,15 +96,23 @@ class ImportTasksHandler implements MessageHandlerInterface
             return;
         }
 
-        foreach ($tasks as $task) {
-            $task->setGroup($taskGroup);
-            $this->objectManager->persist($task);
+        try {
+
+            foreach ($tasks as $task) {
+                $task->setGroup($taskGroup);
+                $this->objectManager->persist($task);
+            }
+            $this->objectManager->flush();
+
+        } catch (DriverException $e) {
+            $this->socketIoManager->toAdmins('task_import:failure', [
+                ['message' => $e->getMessage()]
+            ]);
+            unlink($tempnam);
+            return;
         }
 
-        $this->objectManager->flush();
-
         $this->logger->info(sprintf('Finished importing file %s', $message->getFilename()));
-
         $this->socketIoManager->toAdmins('task_import:success', ['token' => $message->getToken()]);
 
         unlink($tempnam);
