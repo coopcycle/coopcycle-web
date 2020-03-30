@@ -34,6 +34,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait AdminDashboardTrait
@@ -120,7 +121,8 @@ trait AdminDashboardTrait
                 $taskImportsFilesystem->write($filename, file_get_contents($file->getPathname()));
 
                 $messageBus->dispatch(
-                    new ImportTasks($encoded, $filename, $date)
+                    new ImportTasks($encoded, $filename, $date),
+                    [ new DelayStamp(15000) ]
                 );
 
                 return $this->redirectToDashboard($request, ['import' => $encoded]);
