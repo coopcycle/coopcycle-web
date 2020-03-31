@@ -25,6 +25,13 @@ class OrderTimeHelper
         $this->shippingTimeCalculator = $shippingTimeCalculator;
     }
 
+    private function filterChoices(OrderInterface $cart, array $choices)
+    {
+        return array_filter($choices, function ($date) use ($cart) {
+            return $this->shippingDateFilter->accept($cart, new \DateTime($date));
+        });
+    }
+
     public function getAvailabilities(OrderInterface $cart)
     {
         $hash = spl_object_hash($cart);
@@ -33,13 +40,13 @@ class OrderTimeHelper
 
             $restaurant = $cart->getRestaurant();
 
-            $availabilities = $restaurant->getAvailabilities();
+            $availabilities = $this->filterChoices($cart, $restaurant->getAvailabilities());
 
-            $availabilities = array_filter($availabilities, function ($date) use ($cart) {
-                $shippingDate = new \DateTime($date);
-
-                return $this->shippingDateFilter->accept($cart, $shippingDate);
-            });
+            if (empty($availabilities) && 1 === $restaurant->getShippingOptionsDays()) {
+                $restaurant->setShippingOptionsDays(2);
+                $availabilities = $this->filterChoices($cart, $restaurant->getAvailabilities());
+                $restaurant->setShippingOptionsDays(1);
+            }
 
             // Make sure to return a zero-indexed array
             $this->choicesCache[$hash] = array_values($availabilities);
