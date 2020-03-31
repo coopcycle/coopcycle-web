@@ -2,14 +2,12 @@
 
 namespace AppBundle\Utils;
 
-use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use League\Csv\Writer as CsvWriter;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 class RestaurantStats implements \IteratorAggregate, \Countable
 {
-    private $restaurant;
     private $orders;
 
     private $itemsTotal = 0;
@@ -18,9 +16,8 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     private $taxRates = [];
 
-    public function __construct(Restaurant $restaurant, $orders, RepositoryInterface $taxRateRepository)
+    public function __construct($orders, RepositoryInterface $taxRateRepository)
     {
-        $this->restaurant = $restaurant;
         $this->orders = $orders;
 
     	foreach ($orders as $order) {

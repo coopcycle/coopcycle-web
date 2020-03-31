@@ -975,7 +975,7 @@ trait RestaurantTrait
             return $order->getState() === 'fulfilled';
         });
 
-        $stats = new RestaurantStats($restaurant, $fulfilledOrders, $this->get('sylius.repository.tax_rate'));
+        $stats = new RestaurantStats($fulfilledOrders, $this->get('sylius.repository.tax_rate'));
 
         if ($request->isMethod('POST')) {
 
