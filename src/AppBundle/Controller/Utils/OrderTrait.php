@@ -55,6 +55,8 @@ trait OrderTrait
 
             $date = $orderExportForm->get('date')->getData();
 
+            $withMessenger = $orderExportForm->has('messenger') && $orderExportForm->get('messenger')->getData();
+
             $start = clone $date;
             $end = clone $date;
 
@@ -73,7 +75,8 @@ trait OrderTrait
                 $ordersToExport,
                 $this->get('sylius.repository.tax_rate'),
                 $translator,
-                true
+                true,
+                $withMessenger
             );
 
             $filename = sprintf('coopcycle-orders-%s.csv', $date->format('Y-m-d'));

@@ -42,6 +42,9 @@
       </div>
       <div class="modal-body">
         {{ form_row(order_export_form.date) }}
+        {% if order_export_form.messenger is defined %}
+          {{ form_row(order_export_form.messenger) }}
+        {% endif %}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'adminDashboard.dashboard.cancel'|trans }}</button>

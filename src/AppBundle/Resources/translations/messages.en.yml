@@ -832,3 +832,6 @@ order.export.heading.total_incl_tax: Total incl. tax
 order.export.heading.stripe_fee: Stripe fee
 order.export.heading.platform_fee: Platform fee
 order.export.heading.net_revenue: Net revenue
+order.export.heading.completed_by: Completed by
+form.order_export.date.label: Date
+form.order_export.messenger.label: Add column with messenger who completed the order

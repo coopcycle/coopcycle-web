@@ -12,6 +12,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
     private $orders;
     private $translator;
     private $withRestaurantName;
+    private $withMessenger;
 
     private $itemsTotal = 0;
     private $total = 0;
@@ -23,11 +24,13 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         $orders,
         RepositoryInterface $taxRateRepository,
         TranslatorInterface $translator,
-        bool $withRestaurantName = false)
+        bool $withRestaurantName = false,
+        bool $withMessenger = false)
     {
         $this->orders = $orders;
         $this->translator = $translator;
         $this->withRestaurantName = $withRestaurantName;
+        $this->withMessenger = $withMessenger;
 
     	foreach ($orders as $order) {
     		$this->itemsTotal += $order->getItemsTotal();
@@ -151,6 +154,9 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         if ($this->withRestaurantName) {
             $headings[] = $this->translator->trans('order.export.heading.restaurant_name');
         }
+        if ($this->withMessenger) {
+            $headings[] = $this->translator->trans('order.export.heading.completed_by');
+        }
         $headings[] = $this->translator->trans('order.export.heading.order_number');
         $headings[] = $this->translator->trans('order.export.heading.completed_at');
         $headings[] = $this->translator->trans('order.export.heading.total_products_excl_tax');
@@ -172,6 +178,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
             $record = [];
             if ($this->withRestaurantName) {
                 $record[] = null !== $order->getRestaurant() ? $order->getRestaurant()->getName() : '';
+            }
+            if ($this->withMessenger) {
+                $messenger = $order->getDelivery()->getDropoff()->getAssignedCourier();
+                $record[] = $messenger ? $messenger->getUsername() : '';
             }
             $record[] = $order->getNumber();
             $record[] = $order->getShippedAt()->format('Y-m-d H:i');

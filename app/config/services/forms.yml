@@ -172,3 +172,6 @@ services:
 
   AppBundle\Form\TimeSlotType:
     tags: [ form.type ]
+
+  AppBundle\Form\OrderExportType:
+    tags: [ form.type ]
