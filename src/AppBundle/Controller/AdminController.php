@@ -290,9 +290,9 @@ class AdminController extends Controller
         ]);
     }
 
-    public function orderListAction(Request $request)
+    public function orderListAction(Request $request, TranslatorInterface $translator)
     {
-        return $this->baseOrderListAction($request);
+        return $this->baseOrderListAction($request, $translator);
     }
 
     public function foodtechDashboardAction($date, Request $request, Redis $redis)

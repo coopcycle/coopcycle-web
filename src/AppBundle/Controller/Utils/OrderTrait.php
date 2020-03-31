@@ -4,14 +4,17 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Form\OrdersExportType;
+use AppBundle\Form\OrderExportType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\ReceiptGenerator;
+use AppBundle\Utils\RestaurantStats;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 trait OrderTrait
 {
@@ -29,7 +32,7 @@ trait OrderTrait
         return new JsonResponse($orderNormalized, 200);
     }
 
-    public function orderListAction(Request $request)
+    public function orderListAction(Request $request, TranslatorInterface $translator)
     {
         $response = new Response();
 
@@ -45,12 +48,52 @@ trait OrderTrait
 
         [ $orders, $pages, $page ] = $this->getOrderList($request);
 
+        $orderExportForm = $this->createForm(OrderExportType::class);
+        $orderExportForm->handleRequest($request);
+
+        if ($orderExportForm->isSubmitted() && $orderExportForm->isValid()) {
+
+            $date = $orderExportForm->get('date')->getData();
+
+            $start = clone $date;
+            $end = clone $date;
+
+            $start->setTime(0, 0, 1);
+            $end->setTime(23, 59, 59);
+
+            $ordersToExport = $this->getDoctrine()->getRepository(Order::class)
+                ->findFulfilledOrdersByDateRange(
+                    $start,
+                    $end
+                );
+
+            // TODO Manage empty list
+
+            $stats = new RestaurantStats(
+                $ordersToExport,
+                $this->get('sylius.repository.tax_rate'),
+                $translator,
+                true
+            );
+
+            $filename = sprintf('coopcycle-orders-%s.csv', $date->format('Y-m-d'));
+
+            $response = new Response($stats->toCsv());
+            $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                $filename
+            ));
+
+            return $response;
+        }
+
         return $this->render($request->attributes->get('template'), [
             'orders' => $orders,
             'pages' => $pages,
             'page' => $page,
             'routes' => $request->attributes->get('routes'),
             'show_canceled' => $showCanceled,
+            'order_export_form' => $orderExportForm->createView(),
         ], $response);
     }
 
