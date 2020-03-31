@@ -40,6 +40,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 
@@ -935,7 +936,7 @@ trait RestaurantTrait
         ]));
     }
 
-    public function statsAction($id, Request $request, SlugifyInterface $slugify)
+    public function statsAction($id, Request $request, SlugifyInterface $slugify, TranslatorInterface $translator)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)
@@ -975,7 +976,7 @@ trait RestaurantTrait
             return $order->getState() === 'fulfilled';
         });
 
-        $stats = new RestaurantStats($fulfilledOrders, $this->get('sylius.repository.tax_rate'));
+        $stats = new RestaurantStats($fulfilledOrders, $this->get('sylius.repository.tax_rate'), $translator);
 
         if ($request->isMethod('POST')) {
 

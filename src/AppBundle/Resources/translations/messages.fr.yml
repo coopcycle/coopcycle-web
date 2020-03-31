@@ -840,3 +840,13 @@ basics.none: Aucun
 basics.yes: Oui
 basics.no: Non
 notifications.messenger_approaching: Bonjour %customer% ! Votre livreur·se %messenger% est tout·e proche. Tenez-vous prêt·e !
+order.export.heading.restaurant_name: Restaurant
+order.export.heading.order_number: Numéro de commande
+order.export.heading.completed_at: Livrée le
+order.export.heading.total_products_excl_tax: Total produits HT
+order.export.heading.total_products_incl_tax: Total produits TTC
+order.export.heading.delivery_fee: Livraison
+order.export.heading.total_incl_tax: Total TTC
+order.export.heading.stripe_fee: Frais Stripe
+order.export.heading.platform_fee: Frais Plateforme
+order.export.heading.net_revenue: Revenu net

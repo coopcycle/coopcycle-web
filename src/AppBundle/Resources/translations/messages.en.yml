@@ -822,3 +822,13 @@ basics.none: None
 basics.yes: 'Yes'
 basics.no: 'No'
 notifications.messenger_approaching: Hey %customer%! Our messenger %messenger% is nearly with you. Get ready!
+order.export.heading.restaurant_name: Restaurant
+order.export.heading.order_number: Order number
+order.export.heading.completed_at: Completed at
+order.export.heading.total_products_excl_tax: Total products excl. tax
+order.export.heading.total_products_incl_tax: Total products incl. tax
+order.export.heading.delivery_fee: Delivery fee
+order.export.heading.total_incl_tax: Total incl. tax
+order.export.heading.stripe_fee: Stripe fee
+order.export.heading.platform_fee: Platform fee
+order.export.heading.net_revenue: Net revenue

@@ -5,10 +5,13 @@ namespace AppBundle\Utils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use League\Csv\Writer as CsvWriter;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RestaurantStats implements \IteratorAggregate, \Countable
 {
     private $orders;
+    private $translator;
+    private $withRestaurantName;
 
     private $itemsTotal = 0;
     private $total = 0;
@@ -16,9 +19,15 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     private $taxRates = [];
 
-    public function __construct($orders, RepositoryInterface $taxRateRepository)
+    public function __construct(
+        $orders,
+        RepositoryInterface $taxRateRepository,
+        TranslatorInterface $translator,
+        bool $withRestaurantName = false)
     {
         $this->orders = $orders;
+        $this->translator = $translator;
+        $this->withRestaurantName = $withRestaurantName;
 
     	foreach ($orders as $order) {
     		$this->itemsTotal += $order->getItemsTotal();
@@ -138,18 +147,22 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         $csv = CsvWriter::createFromString('');
 
         $headings = [];
-        $headings[] = 'Numéro de commande';
-        $headings[] = 'Livrée le';
-        $headings[] = 'Total produits HT';
+
+        if ($this->withRestaurantName) {
+            $headings[] = $this->translator->trans('order.export.heading.restaurant_name');
+        }
+        $headings[] = $this->translator->trans('order.export.heading.order_number');
+        $headings[] = $this->translator->trans('order.export.heading.completed_at');
+        $headings[] = $this->translator->trans('order.export.heading.total_products_excl_tax');
         foreach ($this->getTaxRates() as $taxRate) {
             $headings[] = $taxRate->getName();
         }
-        $headings[] = 'Total produits TTC';
-        $headings[] = 'Livraison';
-        $headings[] = 'Total TTC';
-        $headings[] = 'Frais Stripe';
-        $headings[] = 'Frais Plateforme';
-        $headings[] = 'Revenu net';
+        $headings[] = $this->translator->trans('order.export.heading.total_products_incl_tax');
+        $headings[] = $this->translator->trans('order.export.heading.delivery_fee');
+        $headings[] = $this->translator->trans('order.export.heading.total_incl_tax');
+        $headings[] = $this->translator->trans('order.export.heading.stripe_fee');
+        $headings[] = $this->translator->trans('order.export.heading.platform_fee');
+        $headings[] = $this->translator->trans('order.export.heading.net_revenue');
 
         $csv->insertOne($headings);
 
@@ -157,6 +170,9 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         foreach ($this->orders as $order) {
 
             $record = [];
+            if ($this->withRestaurantName) {
+                $record[] = null !== $order->getRestaurant() ? $order->getRestaurant()->getName() : '';
+            }
             $record[] = $order->getNumber();
             $record[] = $order->getShippedAt()->format('Y-m-d H:i');
             $record[] = number_format(($order->getItemsTotal() - $order->getItemsTaxTotal()) / 100, 2);
