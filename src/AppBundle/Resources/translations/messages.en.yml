@@ -835,3 +835,5 @@ order.export.heading.net_revenue: Net revenue
 order.export.heading.completed_by: Completed by
 form.order_export.date.label: Date
 form.order_export.messenger.label: Add column with messenger who completed the order
+basics.show: Show
+basics.hide: Hide
