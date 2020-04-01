@@ -4,6 +4,7 @@ namespace AppBundle\Sylius\Payment;
 
 use Stripe\Refund;
 use Stripe\PaymentIntent;
+use Stripe\Source;
 
 trait StripeTrait
 {
@@ -174,5 +175,35 @@ trait StripeTrait
     public function requiresCapture()
     {
         return $this->getPaymentIntentStatus() === 'requires_capture';
+    }
+
+    public function setSource(Source $source)
+    {
+        $this->details = array_merge($this->details, [
+            'source' => $source->id,
+            'source_client_secret' => $source->client_secret,
+            'source_redirect_url' => $source->redirect->url,
+        ]);
+    }
+
+    public function hasSource()
+    {
+        return isset($this->details['source']);
+    }
+
+    public function getSourceRedirectUrl()
+    {
+        if (isset($this->details['source_redirect_url'])) {
+
+            return $this->details['source_redirect_url'];
+        }
+    }
+
+    public function getSourceClientSecret()
+    {
+        if (isset($this->details['source_client_secret'])) {
+
+            return $this->details['source_client_secret'];
+        }
     }
 }
