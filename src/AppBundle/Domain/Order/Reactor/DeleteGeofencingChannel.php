@@ -26,7 +26,13 @@ class DeleteGeofencingChannel
     {
         $order = $event->getOrder();
 
-        $dropoff = $order->getDelivery()->getDropoff();
+        $delivery = $order->getDelivery();
+
+        if (null === $delivery) {
+            return;
+        }
+
+        $dropoff = $delivery->getDropoff();
 
         $this->tile38->executeRaw([
             'DELCHAN',
