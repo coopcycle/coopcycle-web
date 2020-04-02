@@ -23,6 +23,7 @@ $('#export-deliveries-modal').on('show.bs.modal', function () {
   if (!s) {
     s = new Spreadsheet("#spreadsheet", opts)
       .loadData({
+        name: 'Example',
         cols: {
           "0":{"width":126},
           "1":{"width":140},
