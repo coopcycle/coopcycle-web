@@ -75,11 +75,19 @@ class RemotePushNotificationManager
                 'sound' => 'default',
                 'channel_id' => 'coopcycle_important',
             ];
+
+            if (!empty($data) && array_key_exists('event', $data)) {
+                $event = $data['event'];
+                if (!empty($event['name'])) {
+                    // set a tag, only one notification per tag could be shown
+                    // in the notification center (new notifications replace old ones)
+                    $payload['android']['notification']['tag'] = $event['name'];
+                }
+            }
         }
 
         // TODO Make sure data are key/value pairs as strings
         if (!empty($data)) {
-
             $dataFlat = [];
             foreach ($data as $key => $value) {
                 if (!is_string($value)) {
@@ -189,12 +197,14 @@ class RemotePushNotificationManager
             return $token->getPlatform() === 'ios';
         });
 
-        //todo temporary send both "notification+data" and "data-only" messages on android
+        //todo send both "notification+data" and "data-only" messages on android
+        // until we figure out if we need to handle it differently
         // reasons:
-        // 1. backward compatibility with the old app-versions
-        // 2. app does not always handle the case when "notification+data" is delivered in
-        // the background
-        // when #2 is done and #1 is not relevant any more we should only send "data-only" messages
+        // 1. in the background android is able to handle only "data-only" messages
+        // impact:
+        // for the versions before this change - nothing, they don't handle "data-only" messages at all
+        // for the versions after this change - implementation should expect to receive
+        // both "notification+data" and "data-only" messages and handle them correctly
 
         $this->fcm($textMessage, $fcmTokens, $data); // send "notification+data" message
         $this->fcm(null, $fcmTokens, $data); // send "data-only" message
