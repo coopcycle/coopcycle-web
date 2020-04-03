@@ -27,6 +27,7 @@ final class RestaurantCollectionDataProvider extends CollectionDataProvider
         $extensions = [];
         foreach ($collectionExtensions as $key => $extension) {
             // We remove the PaginationExtension
+            // because the app doesn't manage pagination
             if ($extension instanceof QueryResultCollectionExtensionInterface) {
                 continue;
             }

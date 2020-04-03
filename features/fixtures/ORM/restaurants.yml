@@ -72,3 +72,8 @@ AppBundle\Entity\Restaurant:
     __calls:
       - setDeletedAt:
         - <identity(new \DateTime('2019-11-12 18:00:00'))>
+  restaurant_5:
+    name: 'I Want This Restaurant'
+    address: "@address_3"
+    enabled: true
+    state: pledge
