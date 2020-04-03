@@ -128,6 +128,12 @@ class TaskModalContent extends React.Component {
     this.props.closeNewTaskModal()
   }
 
+  onCancelClick(task) {
+    if (window.confirm(this.props.t('ADMIN_DASHBOARD_CANCEL_TASK_CONFIRM', { id: task.id }))) {
+      this.props.cancelTask(task)
+    }
+  }
+
   _validate(values) {
     let errors = {}
 
@@ -189,10 +195,10 @@ class TaskModalContent extends React.Component {
     return (
       <div className="modal-footer">
         { (!!task && task.status === 'TODO') && (
-          <button type="button" className="btn pull-left"
-            onClick={ () => this.props.cancelTask(task) }
+          <button type="button" className="btn btn-danger pull-left"
+            onClick={ () => this.onCancelClick(task) }
             disabled={ this.props.loading }>
-            <span className="text-danger">{ this.props.t('ADMIN_DASHBOARD_CANCEL_TASK') }</span>
+            <i className="fa fa-trash"></i> <span>{ this.props.t('ADMIN_DASHBOARD_CANCEL_TASK') }</span>
           </button>
         )}
         { (!!task && task.hasOwnProperty('@id')) && (
