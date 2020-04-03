@@ -22,6 +22,30 @@ Sylius\Component\Taxation\Model\TaxCategory:
     name: "TVA livraison"
     rates: [ "@tva_20" ]
 
+Sylius\Component\Product\Model\ProductAttribute:
+  attribute_restricted_diet:
+    code: RESTRICTED_DIETS
+    type: text
+    storageType: json
+  attribute_allergens:
+    code: ALLERGENS
+    type: text
+    storageType: json
+
+Sylius\Component\Product\Model\ProductAttributeValue:
+  attribute_value_halal:
+    attribute: '@attribute_restricted_diet'
+    localeCode: fr
+    __calls:
+      - setValue:
+        - [ 'HALAL_DIET' ]
+  attribute_value_nuts:
+    attribute: '@attribute_allergens'
+    localeCode: fr
+    __calls:
+      - setValue:
+        - [ 'NUTS' ]
+
 AppBundle\Entity\Sylius\ProductOptionValue:
   pizza_topping_pepperoni:
     code: PIZZA_TOPPING_PEPPERONI
@@ -108,6 +132,11 @@ AppBundle\Entity\Sylius\Product:
     slug: hamburger
     enabled: true
     variants: [ "@hamburger_default" ]
+    __calls:
+      - addAttribute:
+        - '@attribute_value_halal'
+      - addAttribute:
+        - '@attribute_value_nuts'
   salad:
     code: SALAD
     currentLocale: fr

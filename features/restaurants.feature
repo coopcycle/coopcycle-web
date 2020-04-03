@@ -221,6 +221,8 @@ Feature: Manage restaurants
               "description":null,
               "identifier":"HAMBURGER",
               "enabled":@boolean@,
+              "suitableForDiet":["http://schema.org/HalalDiet"],
+              "allergens":["NUTS"],
               "offers": {
                 "@type":"Offer",
                 "price":@integer@

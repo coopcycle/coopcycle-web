@@ -4,6 +4,8 @@ namespace AppBundle\Serializer\JsonLd;
 
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Taxon;
+use AppBundle\Enum\Allergen;
+use AppBundle\Enum\RestrictedDiet;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Sylius\Component\Locale\Provider\LocaleProvider;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
@@ -149,6 +151,24 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                     if ($product->hasOptions()) {
                         $item['menuAddOn'] = $this->normalizeOptions($product->getOptions());
                     }
+
+                    $restrictedDiets = $product->getRestrictedDiets();
+                    if (count($restrictedDiets) > 0) {
+                        // https://schema.org/suitableForDiet
+                        $item['suitableForDiet'] = array_map(function ($constantName) {
+                            $reflect = new \ReflectionClass(RestrictedDiet::class);
+                            return $reflect->getConstant($constantName);
+                        }, $restrictedDiets);
+                    }
+
+                    $allergens = $product->getAllergens();
+                    if (count($allergens) > 0) {
+                        $item['allergens'] = array_map(function ($constantName) {
+                            $reflect = new \ReflectionClass(Allergen::class);
+                            return $reflect->getConstant($constantName);
+                        }, $allergens);
+                    }
+
                     $section['hasMenuItem'][] = $item;
                 }
             }
