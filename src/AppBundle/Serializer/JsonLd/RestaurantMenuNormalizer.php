@@ -155,18 +155,18 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                     $restrictedDiets = $product->getRestrictedDiets();
                     if (count($restrictedDiets) > 0) {
                         // https://schema.org/suitableForDiet
-                        $item['suitableForDiet'] = array_map(function ($constantName) {
+                        $item['suitableForDiet'] = array_values(array_map(function ($constantName) {
                             $reflect = new \ReflectionClass(RestrictedDiet::class);
                             return $reflect->getConstant($constantName);
-                        }, $restrictedDiets);
+                        }, $restrictedDiets));
                     }
 
                     $allergens = $product->getAllergens();
                     if (count($allergens) > 0) {
-                        $item['allergens'] = array_map(function ($constantName) {
+                        $item['allergens'] = array_values(array_map(function ($constantName) {
                             $reflect = new \ReflectionClass(Allergen::class);
                             return $reflect->getConstant($constantName);
-                        }, $allergens);
+                        }, $allergens));
                     }
 
                     $section['hasMenuItem'][] = $item;
