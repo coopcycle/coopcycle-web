@@ -170,6 +170,13 @@ class TaskSpreadsheetParser
                 $address->setTelephone($phoneNumber);
             }
 
+            if (isset($record['address.contactName']) && !empty($record['address.contactName'])) {
+                $contactName = trim($record['address.contactName']);
+                if (!empty($contactName)) {
+                    $address->setContactName($record['address.contactName']);
+                }
+            }
+
             $task = new Task();
             $task->setAddress($address);
             $task->setDoneAfter($doneAfter);
