@@ -274,8 +274,8 @@ class TaskModalContent extends React.Component {
       address: {
         streetAddress: ''
       },
-      after: moment(this.props.date).add(1, 'hours').format(),
-      before: moment(this.props.date).add(2, 'hours').format(),
+      after: moment(this.props.date).set({ hour: 0, minute: 0, second: 0 }).format(),
+      before: moment(this.props.date).set({ hour: 23, minute: 59, second: 59 }).format(),
       comments: '',
       tags: [],
       assignedTo: null
