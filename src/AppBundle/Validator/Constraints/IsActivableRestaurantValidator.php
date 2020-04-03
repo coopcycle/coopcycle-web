@@ -9,7 +9,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Validation;
 
-
 class IsActivableRestaurantValidator extends ConstraintValidator
 {
     private $settingsManager;
@@ -30,7 +29,7 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($object->getState() === 'pledge') {
+        if ($object->getState() === Restaurant::STATE_PLEDGE) {
             return;
         }
 

@@ -216,7 +216,7 @@ class RestaurantController extends AbstractController
             }
         }
 
-        if ($restaurant->getState() === 'pledge') {
+        if ($restaurant->getState() === Restaurant::STATE_PLEDGE) {
 
             $numberOfVotes = count($restaurant->getPledge()->getVotes());
 

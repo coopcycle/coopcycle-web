@@ -215,9 +215,10 @@ class Pledge {
         $restaurant = new Restaurant();
         $restaurant->setName($this->getName());
         $restaurant->setAddress($this->getAddress());
-        $restaurant->setState('pledge');
+        $restaurant->setState(Restaurant::STATE_PLEDGE);
         $restaurant->setPledge($this);
         $restaurant->setEnabled(true);
+
         $this->setState('accepted');
 
         return $restaurant;

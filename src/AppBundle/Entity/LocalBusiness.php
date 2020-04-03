@@ -55,6 +55,7 @@ abstract class LocalBusiness extends BaseLocalBusiness
 
     const STATE_NORMAL = 'normal';
     const STATE_RUSH = 'rush';
+    const STATE_PLEDGE = 'pledge';
 
     /**
      * @var string The name of the item
