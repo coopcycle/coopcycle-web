@@ -91,7 +91,7 @@ class UnassignedTasks extends React.Component {
       })
       const grouped = _.reduce(dropoffTasks, (acc, task) => {
         if (task.previous) {
-          const prev = _.find(standaloneTasks, t => t['@id'] === task['@id'])
+          const prev = _.find(standaloneTasks, t => t['@id'] === task.previous)
           if (prev) {
             acc.push(prev)
           }
