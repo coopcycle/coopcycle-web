@@ -1,4 +1,5 @@
 import React from 'react'
+import { render } from 'react-dom'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
@@ -7,35 +8,44 @@ import Sortable from 'react-sortablejs'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
+import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
+
+const UnassignedTasksPopoverContentWithTrans = withTranslation()(UnassignedTasksPopoverContent)
 
 class UnassignedTasks extends React.Component {
 
-  constructor (props) {
-    super(props)
-    this.listRef = React.createRef()
-  }
+  toggleDisplay(e) {
+    e.preventDefault()
 
-  componentDidMount() {
+    const $target = $(e.currentTarget)
 
-    const $groupModeBtn = $('#task-list-group-mode')
+    if (!$target.data('bs.popover')) {
 
-    $(document).on('click', '#task-list-group-mode--group', () => {
-      this.props.setTaskListGroupMode('GROUP_MODE_FOLDERS')
-      $groupModeBtn.popover('hide')
-    })
+      const el = document.createElement('div')
 
-    $(document).on('click', '#task-list-group-mode--none', () => {
-      this.props.setTaskListGroupMode('GROUP_MODE_NONE')
-      $groupModeBtn.popover('hide')
-    })
+      const cb = () => {
+        $target.popover({
+          trigger: 'manual',
+          html: true,
+          container: 'body',
+          placement: 'left',
+          content: el,
+          template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>'
+        })
+        $target.popover('toggle')
+      }
 
-    $groupModeBtn.popover({
-      container: 'body',
-      html: true,
-      placement: 'left',
-      content: document.querySelector('#task-list-group-mode-template').textContent
-    })
+      render(<UnassignedTasksPopoverContentWithTrans
+        defaultValue={ this.props.taskListGroupMode }
+        onChange={ mode => {
+          this.props.setTaskListGroupMode(mode)
+          $target.popover('hide')
+        }} />, el, cb)
+
+    } else {
+      $target.popover('toggle')
+    }
   }
 
   renderGroup(group, tasks) {
@@ -50,7 +60,7 @@ class UnassignedTasks extends React.Component {
     let { unassignedTasks } = this.props
     const groupsMap = new Map()
     const groups = []
-    let standaloneTasks = []
+    let standaloneTasks = unassignedTasks
 
     if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
 
@@ -70,14 +80,33 @@ class UnassignedTasks extends React.Component {
       })
 
       standaloneTasks = _.filter(unassignedTasks, task => !task.hasOwnProperty('group') || !task.group)
-
-    } else {
-      standaloneTasks = unassignedTasks
     }
 
-    standaloneTasks.sort((a, b) => {
-      return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
-    })
+    // Order by dropoff desc, with pickup before
+    if (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC') {
+
+      const dropoffTasks = _.filter(standaloneTasks, t => t.type === 'DROPOFF')
+      dropoffTasks.sort((a, b) => {
+        return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
+      })
+      const grouped = _.reduce(dropoffTasks, (acc, task) => {
+        if (task.previous) {
+          const prev = _.find(standaloneTasks, t => t['@id'] === task['@id'])
+          if (prev) {
+            acc.push(prev)
+          }
+        }
+        acc.push(task)
+
+        return acc
+      }, [])
+
+      standaloneTasks = grouped
+    } else {
+      standaloneTasks.sort((a, b) => {
+        return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
+      })
+    }
 
     const classNames = ['dashboard__panel']
     if (this.props.hidden) {
@@ -103,7 +132,7 @@ class UnassignedTasks extends React.Component {
               <i className="fa fa-search"></i>
             </a>
             &nbsp;&nbsp;
-            <a href="#" id="task-list-group-mode" title={ this.props.t('ADMIN_DASHBOARD_DISPLAY') }>
+            <a href="#" onClick={ e => this.toggleDisplay(e) } title={ this.props.t('ADMIN_DASHBOARD_DISPLAY') }>
               <i className="fa fa-list"></i>
             </a>
           </span>
