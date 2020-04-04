@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 import {
   orderCreated,
   orderAccepted,
@@ -45,5 +47,30 @@ export const socketIO = ({ dispatch, getState }) => {
   return next => action => {
 
     return next(action)
+  }
+}
+
+const pageTitle = (state, initialTitle) => {
+
+  const { orders } = state
+  const newOrders = _.filter(orders, o => o.state === 'new')
+  if (newOrders.length > 0) {
+    return `(${newOrders.length}) ${initialTitle}`
+  }
+
+  return initialTitle
+}
+
+export const title = ({ dispatch, getState }) => {
+
+  const initialTitle = document.title
+  document.title = pageTitle(getState(), initialTitle)
+
+  return next => action => {
+
+    const result = next(action)
+    document.title = pageTitle(getState(), initialTitle)
+
+    return result
   }
 }
