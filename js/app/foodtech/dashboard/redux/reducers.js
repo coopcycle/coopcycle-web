@@ -18,6 +18,7 @@ import {
   REFUSE_ORDER_REQUEST_FAILURE,
   DELAY_ORDER_REQUEST_SUCCESS,
   DELAY_ORDER_REQUEST_FAILURE,
+  SEARCH_RESULTS,
 } from './actions'
 
 const initialState = {
@@ -34,6 +35,9 @@ const initialState = {
   currentRoute: 'admin_foodtech_dashboard',
   preparationDelay: 0,
   showSettings: true,
+  showSearch: false,
+  searchQuery: '',
+  searchResults: [],
 }
 
 function replaceOrder(orders, order) {
@@ -149,12 +153,32 @@ const isFetching = (state = initialState.isFetching, action) => {
   }
 }
 
+const searchResults = (state = initialState.searchResults, action) => {
+  if (action.type === SEARCH_RESULTS) {
+
+    return action.payload.results
+  }
+
+  return state
+}
+
+const searchQuery = (state = initialState.searchQuery, action) => {
+  if (action.type === SEARCH_RESULTS) {
+
+    return action.payload.q
+  }
+
+  return state
+}
+
 export default combineReducers({
   orders,
   order,
   date,
   jwt,
   isFetching,
+  searchQuery,
+  searchResults,
   acceptOrderRoute: (state = initialState.acceptOrderRoute) => state,
   refuseOrderRoute: (state = initialState.refuseOrderRoute) => state,
   delayOrderRoute: (state = initialState.delayOrderRoute) => state,
@@ -163,4 +187,5 @@ export default combineReducers({
   restaurant: (state = initialState.restaurant) => state,
   preparationDelay: (state = initialState.preparationDelay) => state,
   showSettings: (state = initialState.showSettings) => state,
+  showSearch: (state = initialState.showSearch) => state,
 })

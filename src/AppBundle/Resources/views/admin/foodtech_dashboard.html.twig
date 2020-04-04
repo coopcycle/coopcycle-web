@@ -19,7 +19,8 @@ new CoopCycle.FoodtechDashboard(document.querySelector('#foodtech-dashboard'), {
   orders: orders['hydra:member'],
   date: "{{ date|date('Y-m-d') }}",
   currentRoute: "{{ current_route }}",
-  preparationDelay: {{ preparation_delay }}
+  preparationDelay: {{ preparation_delay }},
+  showSearch: true,
 }, {
   onDateChange: function(date) {
     window.location.href =

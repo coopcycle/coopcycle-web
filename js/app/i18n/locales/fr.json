@@ -163,6 +163,7 @@
     "RESTAURANT_PREPARATION_AT": "Préparation à {{time}}",
     "RESTAURANT_PICKUP_AT": "Retrait à {{time}}",
     "RESTAURANT_DROPOFF_AT": "Dépôt à {{time}}",
+    "RESTAURANT_DASHBOARD_SEARCH_PLACEHOLDER": "Nom du restaurant, n° de commande…",
     "NOTIFICATIONS_EMPTY": "Pas de notification",
     "CROPPIE_CONFIRM": "Confirmer",
     "CROPPIE_CANCEL": "Annuler",

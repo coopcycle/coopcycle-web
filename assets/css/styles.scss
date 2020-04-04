@@ -1344,6 +1344,10 @@ form[name="store"] #store_imageFile_file {
     .ant-calendar-picker {
       margin-right: 0;
     }
+    &__Search {
+      flex: 1;
+      padding: 0 25px;
+    }
   }
 
   &__Columns {

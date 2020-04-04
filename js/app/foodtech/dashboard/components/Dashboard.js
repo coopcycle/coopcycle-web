@@ -7,6 +7,7 @@ import { DatePicker, Slider, Col, Row, Switch } from 'antd'
 import moment from 'moment'
 import Column from './Column'
 import ModalContent from './ModalContent'
+import Search from './Search'
 
 import { setCurrentOrder, orderCreated, setPreparationDelay, changeStatus } from '../redux/actions'
 
@@ -73,6 +74,11 @@ class Dashboard extends React.Component {
               </Row>
             </div>
           )}
+          { this.props.showSearch && (
+            <div className="FoodtechDashboard__Navbar__Search">
+              <Search />
+            </div>
+          )}
           { this.props.restaurant && (
             <div>
               <Switch
@@ -118,8 +124,12 @@ function mapStateToProps(state) {
 
   // Make sure orders are for the current date
   // TODO This should be managed at reducer level
-  const orders =
+  let orders =
     _.filter(state.orders, order => moment(order.shippedAt).format('YYYY-MM-DD') === state.date)
+
+  if (state.searchQuery.length > 0) {
+    orders = _.intersectionWith(state.orders, state.searchResults, (a, b) => a['@id'] === b['@id'])
+  }
 
   const newOrders =
     _.filter(orders, order => order.state === 'new')
@@ -142,6 +152,7 @@ function mapStateToProps(state) {
     cancelledOrders: cancelledOrders.sort(sortByShippedAt),
     preparationDelay: state.preparationDelay,
     showSettings: state.showSettings,
+    showSearch: state.showSearch,
     isRushEnabled: isRushEnabled,
     restaurant: state.restaurant,
   }

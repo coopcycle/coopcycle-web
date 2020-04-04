@@ -1,5 +1,6 @@
 import { createAction } from 'redux-actions'
 import axios from 'axios'
+import Fuse from 'fuse.js'
 
 export const SET_CURRENT_ORDER = 'SET_CURRENT_ORDER'
 export const ORDER_CREATED = 'ORDER_CREATED'
@@ -20,6 +21,8 @@ export const CANCEL_ORDER_REQUEST_FAILURE = 'CANCEL_ORDER_REQUEST_FAILURE'
 
 export const CHANGE_RESTAURANT_STATE = 'CHANGE_RESTAURANT_STATE'
 
+export const SEARCH_RESULTS = 'SEARCH_RESULTS'
+
 export const orderCreated = createAction(ORDER_CREATED)
 export const orderAccepted = createAction(ORDER_ACCEPTED)
 export const orderRefused = createAction(ORDER_REFUSED)
@@ -35,6 +38,8 @@ export const delayOrderRequestSuccess = createAction(DELAY_ORDER_REQUEST_SUCCESS
 export const delayOrderRequestFailure = createAction(DELAY_ORDER_REQUEST_FAILURE)
 export const cancelOrderRequestSuccess = createAction(CANCEL_ORDER_REQUEST_SUCCESS)
 export const cancelOrderRequestFailure = createAction(CANCEL_ORDER_REQUEST_FAILURE)
+
+export const searchResults = createAction(SEARCH_RESULTS, (q, results) => ({ q, results }))
 
 const _setCurrentOrder = createAction(SET_CURRENT_ORDER)
 
@@ -140,5 +145,50 @@ export function changeStatus(restaurant, state) {
       'Content-Type': 'application/ld+json'
     }
     })
+  }
+}
+
+const fuseOptions = {
+  shouldSort: true,
+  includeScore: true,
+  keys: [
+    {
+      name: 'restaurant.name',
+      weight: 0.6
+    },
+    {
+      name: 'shippingAddress.streetAddress',
+      weight: 0.6
+    },
+    {
+      name: 'number',
+      weight: 0.6
+    },
+    {
+      name: 'customer.username',
+      weight: 0.4
+    },
+    {
+      name: 'customer.email',
+      weight: 0.4
+    },
+    {
+      name: 'customer.givenName',
+      weight: 0.4
+    },
+    {
+      name: 'customer.familyName',
+      weight: 0.4
+    },
+  ]
+}
+
+export function search(q) {
+
+  return (dispatch, getState) => {
+    const { orders } = getState()
+    const fuse = new Fuse(orders, fuseOptions)
+    const results = fuse.search(q)
+    dispatch(searchResults(q, results.map(result => result.item)))
   }
 }
