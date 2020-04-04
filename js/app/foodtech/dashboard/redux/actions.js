@@ -153,15 +153,15 @@ const fuseOptions = {
   includeScore: true,
   keys: [
     {
+      name: 'number',
+      weight: 0.8
+    },
+    {
       name: 'restaurant.name',
       weight: 0.6
     },
     {
       name: 'shippingAddress.streetAddress',
-      weight: 0.6
-    },
-    {
-      name: 'number',
       weight: 0.6
     },
     {
