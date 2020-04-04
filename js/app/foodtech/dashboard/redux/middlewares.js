@@ -61,7 +61,7 @@ const pageTitle = (state, initialTitle) => {
   return initialTitle
 }
 
-export const title = ({ dispatch, getState }) => {
+export const title = ({ getState }) => {
 
   const initialTitle = document.title
   document.title = pageTitle(getState(), initialTitle)
