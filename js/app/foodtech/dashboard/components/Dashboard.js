@@ -20,6 +20,17 @@ function sortByShippedAt(a, b) {
 
 class Dashboard extends React.Component {
 
+  constructor(props) {
+    super(props)
+    this.sliderMarks = {
+      0: props.t('RESTAURANT_DASHBOARD_DELAY_MARK_NONE'),
+      15: '15min',
+      30: '30min',
+      60: '1h',
+      90: '1h30',
+    }
+  }
+
   componentDidMount() {
     $(function () {
       $('[data-toggle="popover"]').tooltip()
@@ -34,21 +45,10 @@ class Dashboard extends React.Component {
   }
 
   _tipFormatter(value) {
-    if (value === 0) {
-
-      return this.props.t('RESTAURANT_DASHBOARD_TIP_NO_DELAY')
-    }
-
-    return this.props.t('RESTAURANT_DASHBOARD_TIP_APPLY_DELAY', { delay: value })
+    return this.sliderMarks[value]
   }
 
   render() {
-
-    const sliderMarks = {
-      0: this.props.t('RESTAURANT_DASHBOARD_DELAY_MARK_NONE'),
-      15: '15 min',
-      30: '30 min',
-    }
 
     return (
       <div className="FoodtechDashboard">
@@ -63,9 +63,9 @@ class Dashboard extends React.Component {
                 </Col>
                 <Col span={ 18 }>
                   <Slider
-                    max={ 30 }
+                    max={ 90 }
                     defaultValue={ this.props.preparationDelay }
-                    marks={ sliderMarks }
+                    marks={ this.sliderMarks }
                     step={ null }
                     tipFormatter={ this._tipFormatter.bind(this) }
                     onChange={ delay => this.props.setPreparationDelay(delay) } />
