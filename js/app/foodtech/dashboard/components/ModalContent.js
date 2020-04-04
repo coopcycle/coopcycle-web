@@ -49,7 +49,7 @@ class ModalContent extends React.Component {
       <Timeline>
         <Timeline.Item dot={<i className="fa fa-cutlery"></i>}>
           <div>
-            <strong>Préparation à { moment(order.preparationExpectedAt).format('LT') }</strong>
+            <strong>{ this.props.t('RESTAURANT_PREPARATION_AT', { time: moment(order.preparationExpectedAt).format('LT') }) }</strong>
           </div>
           { order.reusablePackagingEnabled && (
             <span className="text-warning">{ this.props.t('ADMIN_DASHBOARD_ORDERS_PACKAGING_ALERT') }</span>
@@ -57,13 +57,13 @@ class ModalContent extends React.Component {
         </Timeline.Item>
         <Timeline.Item dot={<i className="fa fa-cube"></i>}>
           <div>
-            <strong>Pickup à { moment(order.pickupExpectedAt).format('LT') }</strong>
+            <strong>{ this.props.t('RESTAURANT_PICKUP_AT', { time: moment(order.pickupExpectedAt).format('LT') }) }</strong>
           </div>
           <span>{ order.restaurant.address.streetAddress }</span>
         </Timeline.Item>
         <Timeline.Item dot={<i className="fa fa-arrow-down"></i>}>
           <div>
-            <strong>Dropoff à { moment(order.shippedAt).format('LT') }</strong>
+            <strong>{ this.props.t('RESTAURANT_DROPOFF_AT', { time: moment(order.shippedAt).format('LT') }) }</strong>
           </div>
           <ul className="list-unstyled">
             <li>{ order.shippingAddress.streetAddress }</li>
