@@ -107,13 +107,10 @@ doctrine:
         types:
             geography:
                 class: 'Jsor\Doctrine\PostGIS\Types\GeographyType'
-                commented: false
             geometry:
                 class: 'Jsor\Doctrine\PostGIS\Types\GeometryType'
-                commented: false
             raster:
                 class: 'Jsor\Doctrine\PostGIS\Types\RasterType'
-                commented: false
             geojson:
                 class: 'AppBundle\Doctrine\DBAL\Types\GeoJSONType'
             uuid:  Ramsey\Uuid\Doctrine\UuidType
