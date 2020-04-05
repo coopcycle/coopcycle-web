@@ -47,7 +47,7 @@
     "@babel/preset-react": "^7.9.4",
     "@babel/register": "^7.9.0",
     "@symfony/webpack-encore": "^0.28.0",
-    "antd": "^3.26.11",
+    "antd": "^3.26.15",
     "autoprefixer": "^9.7.5",
     "axios": "^0.19.0",
     "babel-eslint": "^10.0.3",
