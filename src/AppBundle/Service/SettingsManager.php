@@ -94,6 +94,10 @@ class SettingsManager
                     try {
                         $value = $this->phoneNumberUtil->parse($value, strtoupper($this->country));
                     } catch (NumberParseException $e) {}
+                    break;
+                case 'sms_enabled':
+                    $value = (bool) $value;
+                    break;
             }
 
             $this->cache[$name] = $value;
@@ -145,6 +149,37 @@ class SettingsManager
         } catch (\RuntimeException $e) {
             return false;
         }
+    }
+
+    public function canSendSms()
+    {
+        if (!$this->get('sms_enabled')) {
+
+            return false;
+        }
+
+        $smsGateway = $this->get('sms_gateway');
+
+        if ('mailjet' !== $smsGateway) {
+
+            return false;
+        }
+
+        $smsGatewayConfig = $this->get('sms_gateway_config');
+
+        if (empty($smsGatewayConfig)) {
+
+            return false;
+        }
+
+        $smsGatewayConfig = json_decode($smsGatewayConfig, true);
+
+        if (empty($smsGatewayConfig)) {
+
+            return false;
+        }
+
+        return isset($smsGatewayConfig['api_token']);
     }
 
     public function set($name, $value, $section = null)
@@ -211,6 +246,11 @@ class SettingsManager
         foreach ($keys as $name) {
             try {
                 $value = $this->craueConfig->get($name);
+
+                if ($name === 'sms_enabled') {
+                    $value = (bool) $value;
+                }
+
                 $settings->$name = $value;
             } catch (\RuntimeException $e) {}
         }
