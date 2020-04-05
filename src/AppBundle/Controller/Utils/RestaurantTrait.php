@@ -510,7 +510,18 @@ trait RestaurantTrait
 
             $newSectionPositions = [];
 
+            $em = $this->getDoctrine()->getManagerForClass(ProductTaxon::class);
+
             foreach ($menuEditor->getChildren() as $child) {
+
+                // The section is empty
+                if (count($originalTaxonProducts[$child]) > 0 && count($child->getTaxonProducts()) === 0) {
+                    foreach ($originalTaxonProducts[$child] as $originalTaxonProduct) {
+                        $originalTaxonProducts[$child]->removeElement($originalTaxonProduct);
+                        $em->remove($originalTaxonProduct);
+                    }
+                    continue;
+                }
 
                 $newSectionPositions[$child->getPosition()] = $child->getId();
 
@@ -521,7 +532,7 @@ trait RestaurantTrait
                     foreach ($originalTaxonProducts[$child] as $originalTaxonProduct) {
                         if (!$child->getTaxonProducts()->contains($originalTaxonProduct)) {
                             $child->getTaxonProducts()->removeElement($originalTaxonProduct);
-                            $this->getDoctrine()->getManagerForClass(ProductTaxon::class)->remove($originalTaxonProduct);
+                            $em->remove($originalTaxonProduct);
                         }
                     }
                 }
