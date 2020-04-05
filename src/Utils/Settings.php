@@ -46,6 +46,12 @@ class Settings
      */
     public $stripe_live_connect_client_id;
 
+    public $sms_enabled;
+
+    public $sms_gateway;
+
+    public $sms_gateway_config;
+
     /**
      * @Assert\Choice({"yes", "no"})
      */

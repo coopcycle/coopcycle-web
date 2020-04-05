@@ -68,6 +68,30 @@
 
   <hr>
 
+  <h4>{% trans %}form.settings.sms.title{% endtrans %}</h4>
+
+  <div class="alert alert-warning">
+    <i class="fa fa-warning"></i> {{ 'form.settings.sms_enabled.label'|trans }}
+    <div class="pull-right">
+      <div id="sms_enabled_switch"></div>
+    </div>
+  </div>
+
+  <div class="collapse {% if form.vars.value.sms_enabled %}in{% endif %}" id="settings_sms_options">
+
+    {{ form_row(form.sms_enabled) }}
+    {{ form_row(form.sms_gateway) }}
+    {{ form_row(form.sms_gateway_config) }}
+
+    <div class="form-group {% if form.vars.value.sms_gateway != 'mailjet' %}in{% endif %}" id="mailjet_config">
+      <label class="control-label" for="mailjet_config_api_token">{{ 'form.settings.sms_gateway_config.mailjet.api_token.label'|trans }}</label>
+      <input type="text" id="mailjet_config_api_token" class="form-control">
+    </div>
+
+  </div>
+
+  <hr>
+
   {{ form_rest(form) }}
 
   <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
@@ -220,7 +244,7 @@
     var canEnableMercadopagoLivemode = {{ can_enable_mercadopago_livemode ? 'true' : 'false' }};
     var isDemo = {{ is_demo ? 'true' : 'false' }};
 
-    var maintenanceSwitch, bannerSwitch, stripeLiveModeSwitch, mercadopagoLiveModeSwitch;
+    var maintenanceSwitch, bannerSwitch, stripeLiveModeSwitch, mercadopagoLiveModeSwitch, smsEnableSwitch;
 
     /* Maintenance */
 
@@ -396,7 +420,36 @@
         format: 'png',
         enableResize: true
       }
+    });
+
+    var $smsEnabledCheckbox = $('#settings_sms_enabled');
+    $smsEnabledCheckbox.closest('.form-group').addClass('hidden');
+
+    $('#settings_sms_gateway').on('change', function() {
+      if ($(this).val() === 'mailjet') {
+        $('#mailjet_config').removeClass('hidden');
+      } else {
+        $('#mailjet_config').addClass('hidden');
+      }
     })
+
+    $('#mailjet_config_api_token').on('input', function() {
+      var configAsJSON = JSON.stringify({ api_token: $(this).val() });
+      $('#settings_sms_gateway_config').val(configAsJSON);
+    })
+
+    if ($('#settings_sms_gateway').val() === 'mailjet') {
+      var mailjetConfig = JSON.parse($('#settings_sms_gateway_config').val());
+      $('#mailjet_config_api_token').val(''.padStart(mailjetConfig.api_token.length, '•'));
+    }
+
+    smsEnableSwitch = new CoopCycle.Switch(document.querySelector('#sms_enabled_switch'), {
+      checked: $smsEnabledCheckbox.is(':checked'),
+      onChange: function(checked) {
+        $smsEnabledCheckbox.prop('checked', checked)
+        $('#settings_sms_options').collapse('toggle');
+      }
+    });
 
   })();
 
