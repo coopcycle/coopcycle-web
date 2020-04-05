@@ -24,7 +24,7 @@
         "php": "^7.2",
         "symfony/symfony": "^4.4",
         "api-platform/core": "2.5.3",
-        "doctrine/orm": "^2.5",
+        "doctrine/orm": "^2.7",
         "doctrine/doctrine-bundle": "^1.6",
         "symfony/swiftmailer-bundle": "^3.2",
         "symfony/monolog-bundle": "^3.5",

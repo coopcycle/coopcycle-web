@@ -100,13 +100,13 @@ class FlushTrackingCommand extends Command
 
             if ((++$i % $this->batchSize) === 0) {
                 $this->doctrine->flush();
-                $this->doctrine->clear(TrackingPosition::class);
+                $this->doctrine->clear();
                 $output->writeln('<info>Flushing data…</info>');
             }
         }
 
         $this->doctrine->flush();
-        $this->doctrine->clear(TrackingPosition::class);
+        $this->doctrine->clear();
 
         $output->writeln(sprintf('<info>Finished flushing data for user %s</info>', $user->getUsername()));
     }
