@@ -59,4 +59,21 @@ class DeleteGeofencingChannelTest extends TestCase
 
         call_user_func_array($this->reactor, [ new Event\OrderDropped($order->reveal()) ]);
     }
+
+    public function testDeletesChannelWithNewOrder()
+    {
+        $order = $this->prophesize(Order::class);
+        $order
+            ->getDelivery()
+            ->willReturn(null);
+
+        $this->tile38
+            ->executeRaw([
+                'DELCHAN',
+                Argument::type('string'),
+            ])
+            ->shouldNotBeCalled();
+
+        call_user_func_array($this->reactor, [ new Event\OrderDropped($order->reveal()) ]);
+    }
 }
