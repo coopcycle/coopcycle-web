@@ -17,10 +17,8 @@ resetting.email.reset: Reset password
 order.view: View order
 order.public_url: |
   To track the status of your order, <a href="%order.public_url%">click here</a>.
-order.foodtech.accepted: |
-  The cook begins to prepare your order.
-  <br>
-  A courier arrives to bring it to you!
+order.foodtech.accepted: "The restaurant is preparing your order.\n<br>\nA rider will\
+  \ arrive soon!"
 order.foodtech.cancelled: "The restaurant is unable to prepare your order %order.number%.\n\
   <br>\nYour account has not been charged.\n"
 admin.order.created.subject: New order to be confirmed
