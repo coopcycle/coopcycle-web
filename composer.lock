@@ -2953,12 +2953,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "a9e71b6e7b61e7f39ba77436ba3e9af954450c4b"
+                "reference": "cf7fe27b2f4e1f298ee6eadf537267f8c9f9b85c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/a9e71b6e7b61e7f39ba77436ba3e9af954450c4b",
-                "reference": "a9e71b6e7b61e7f39ba77436ba3e9af954450c4b",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/cf7fe27b2f4e1f298ee6eadf537267f8c9f9b85c",
+                "reference": "cf7fe27b2f4e1f298ee6eadf537267f8c9f9b85c",
                 "shasum": ""
             },
             "require": {
@@ -3022,7 +3022,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2020-01-08T18:06:24+00:00"
+            "time": "2020-03-31T10:59:53+00:00"
         },
         {
             "name": "fzaninotto/faker",
@@ -17055,16 +17055,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.5.2",
+            "version": "8.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "018b6ac3c8ab20916db85fa91bf6465acb64d1e0"
+                "reference": "67750516bc02f300e2742fed2f50177f8f37bedf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/018b6ac3c8ab20916db85fa91bf6465acb64d1e0",
-                "reference": "018b6ac3c8ab20916db85fa91bf6465acb64d1e0",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/67750516bc02f300e2742fed2f50177f8f37bedf",
+                "reference": "67750516bc02f300e2742fed2f50177f8f37bedf",
                 "shasum": ""
             },
             "require": {
@@ -17134,7 +17134,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2020-01-08T08:49:49+00:00"
+            "time": "2020-03-31T08:52:04+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
