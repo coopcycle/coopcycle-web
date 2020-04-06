@@ -17,16 +17,16 @@ const fuseOptions = {
   includeScore: true,
   keys: [{
     name: 'id',
-    weight: 0.6
+    weight: 0.7
   }, {
     name: 'tags.slug',
-    weight: 0.2
+    weight: 0.1
   }, {
     name: 'address.name',
-    weight: 0.2
+    weight: 0.1
   }, {
     name: 'address.streetAddress',
-    weight: 0.2
+    weight: 0.1
   }]
 }
 

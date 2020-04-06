@@ -154,31 +154,31 @@ const fuseOptions = {
   keys: [
     {
       name: 'number',
-      weight: 0.8
+      weight: 0.4
     },
     {
       name: 'restaurant.name',
-      weight: 0.6
+      weight: 0.1
     },
     {
       name: 'shippingAddress.streetAddress',
-      weight: 0.6
+      weight: 0.1
     },
     {
       name: 'customer.username',
-      weight: 0.4
+      weight: 0.1
     },
     {
       name: 'customer.email',
-      weight: 0.4
+      weight: 0.1
     },
     {
       name: 'customer.givenName',
-      weight: 0.4
+      weight: 0.1
     },
     {
       name: 'customer.familyName',
-      weight: 0.4
+      weight: 0.1
     },
   ]
 }
