@@ -10,6 +10,7 @@ use Kreait\Firebase\Messaging as FirebaseMessaging;
 use Kreait\Firebase\Messaging\CloudMessage;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Psr\Log\NullLogger;
 
 class RemotePushNotificationManagerTest extends TestCase
 {
@@ -45,7 +46,8 @@ class RemotePushNotificationManagerTest extends TestCase
         $this->remotePushNotificationManager = new RemotePushNotificationManager(
             $this->firebaseFactory->reveal(),
             $this->apns->reveal(),
-            'passphrase'
+            'passphrase',
+            new NullLogger()
         );
     }
 

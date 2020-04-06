@@ -499,6 +499,7 @@ services:
     arguments:
       $apns: "@apns_php.push"
       $apnsCertificatePassPhrase: "%apns_certificate_pass_phrase%"
+      $logger: "@logger"
 
   AppBundle\Service\Geocoder:
     arguments:

@@ -7,22 +7,26 @@ use AppBundle\Entity\RemotePushToken;
 use Kreait\Firebase\Factory as FirebaseFactory;
 use Kreait\Firebase\Exception\ServiceAccountDiscoveryFailed;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Psr\Log\LoggerInterface;
 
 class RemotePushNotificationManager
 {
     private $firebaseFactory;
     private $apns;
     private static $enabled = true;
+    private $logger;
 
     public function __construct(
         FirebaseFactory $firebaseFactory,
         \ApnsPHP_Push $apns,
-        string $apnsCertificatePassPhrase)
+        string $apnsCertificatePassPhrase,
+        LoggerInterface $logger)
     {
         $this->firebaseFactory = $firebaseFactory;
 
         $apns->setProviderCertificatePassphrase($apnsCertificatePassPhrase);
         $this->apns = $apns;
+        $this->logger = $logger;
     }
 
     public static function isEnabled()
@@ -43,7 +47,7 @@ class RemotePushNotificationManager
     /**
      * @see https://firebase.google.com/docs/cloud-messaging/http-server-ref
      */
-    private function fcm($message, array $tokens, $data)
+    private function fcm($notification, array $tokens, $data)
     {
         if (count($tokens) === 0) {
             return;
@@ -52,30 +56,38 @@ class RemotePushNotificationManager
         try {
             $firebaseMessaging = $this->firebaseFactory->createMessaging();
         } catch (ServiceAccountDiscoveryFailed $e) {
-            // TODO Log error
+            $this->logger->error($e);
             return;
         }
 
-
         // @see https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
         // @see https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels
-        $payload = [
-            'android' => [
-                'priority' => 'high',
-                'notification' => [
-                    'sound' => 'default',
-                    'channel_id' => 'coopcycle_important',
-                ],
-            ],
-            'notification' => [
-                'title' => $message,
-                'body' => $message,
-            ],
+        $payload['android'] = [
+            'priority' => 'high'
         ];
+
+        if (null !== $notification) {
+            $payload['notification'] = [
+                'title' => $notification,
+                'body' => $notification,
+            ];
+            $payload['android']['notification'] = [
+                'sound' => 'default',
+                'channel_id' => 'coopcycle_important',
+            ];
+
+            if (!empty($data) && array_key_exists('event', $data)) {
+                $event = $data['event'];
+                if (!empty($event['name'])) {
+                    // set a tag, only one notification per tag could be shown
+                    // in the notification center (new notifications replace old ones)
+                    $payload['android']['notification']['tag'] = $event['name'];
+                }
+            }
+        }
 
         // TODO Make sure data are key/value pairs as strings
         if (!empty($data)) {
-
             $dataFlat = [];
             foreach ($data as $key => $value) {
                 if (!is_string($value)) {
@@ -99,11 +111,11 @@ class RemotePushNotificationManager
         try {
             $firebaseMessaging->sendMulticast($message, $deviceTokens);
         } catch (\Exception $e) {
-            // TODO Log error
+            $this->logger->error($e);
         }
     }
 
-    private function apns($message, array $tokens, $data = [])
+    private function apns($text, array $tokens, $data = [])
     {
         if (count($tokens) === 0) {
             return;
@@ -113,7 +125,7 @@ class RemotePushNotificationManager
 
         // Instantiate a new Message with a single recipient
         $apnsMessage = new \ApnsPHP_Message();
-        $apnsMessage->setText($message);
+        $apnsMessage->setText($text);
         $apnsMessage->setSound();
 
         // Set a custom identifier. To get back this identifier use the getCustomIdentifier() method
@@ -151,10 +163,10 @@ class RemotePushNotificationManager
     }
 
     /**
-     * @param string $message
+     * @param string $textMessage
      * @param mixed $recipients
      */
-    public function send($message, $recipients, $data = [])
+    public function send($textMessage, $recipients, $data = [])
     {
         if (!is_array($recipients)) {
             $recipients = [ $recipients ];
@@ -185,7 +197,18 @@ class RemotePushNotificationManager
             return $token->getPlatform() === 'ios';
         });
 
-        $this->fcm($message, $fcmTokens, $data);
-        $this->apns($message, $apnsTokens, $data);
+        //todo send both "notification+data" and "data-only" messages on android
+        // until we figure out if we need to handle it differently
+        // reasons:
+        // 1. in the background android is able to handle only "data-only" messages
+        // impact:
+        // for the versions before this change - nothing, they don't handle "data-only" messages at all
+        // for the versions after this change - implementation should expect to receive
+        // both "notification+data" and "data-only" messages and handle them correctly
+
+        $this->fcm($textMessage, $fcmTokens, $data); // send "notification+data" message
+        $this->fcm(null, $fcmTokens, $data); // send "data-only" message
+
+        $this->apns($textMessage, $apnsTokens, $data);
     }
 }
