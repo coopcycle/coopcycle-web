@@ -2,10 +2,7 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Entity\Task;
-use AppBundle\Entity\Sylius\Order;
-use AppBundle\Message\PushNotification;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Command\Geofencing\Tile38MessageHandler;
 use Predis\Client as Redis;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -14,32 +11,24 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GeofencingCommand extends Command
 {
-    private $doctrine;
     private $tile38;
-    private $messageBus;
-    private $translator;
+    private $namespace;
+    private $messageHandler;
     private $logger;
-
     private $io;
 
     public function __construct(
-        EntityManagerInterface $doctrine,
         Redis $tile38,
-        string $doorstepChanNamespace,
-        MessageBusInterface $messageBus,
-        TranslatorInterface $translator,
+        string $namespace,
+        Tile38MessageHandler $messageHandler,
         LoggerInterface $logger)
     {
-        $this->doctrine = $doctrine;
         $this->tile38 = $tile38;
-        $this->doorstepChanNamespace = $doorstepChanNamespace;
-        $this->messageBus = $messageBus;
-        $this->translator = $translator;
+        $this->namespace = $namespace;
+        $this->messageHandler = $messageHandler;
         $this->logger = $logger;
 
         parent::__construct();
@@ -66,9 +55,6 @@ class GeofencingCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $taskRepository = $this->doctrine->getRepository(Task::class);
-        $orderRepository = $this->doctrine->getRepository(Order::class);
-
         $limit = (int) $input->getOption('limit');
         $messageCount = 0;
 
@@ -78,7 +64,7 @@ class GeofencingCommand extends Command
 
         $pubsub = $this->tile38->pubSubLoop();
 
-        $pubsub->psubscribe(sprintf('%s:dropoff:*', $this->doorstepChanNamespace));
+        $pubsub->psubscribe(sprintf('%s:dropoff:*', $this->namespace));
 
         foreach ($pubsub as $message) {
 
@@ -89,58 +75,9 @@ class GeofencingCommand extends Command
                     break;
 
                 case 'pmessage':
-
-                    // (
-                    //     [kind] => pmessage
-                    //     [channel] => coopcycle:dropoff:7395
-                    //     [payload] => {
-                    //         "command":"set",
-                    //         "group":"5e78da00fdee2e0001356871",
-                    //         "detect":"enter",
-                    //         "hook":"coopcycle:dropoff:7395",
-                    //         "key":"coopcycle:fleet",
-                    //         "time":"2020-03-23T15:47:12.1482893Z",
-                    //         "id":"bot_2",
-                    //         "object":{"type":"Point","coordinates":[2.3184081,48.8554067]}
-                    //     }
-                    // )
-
                     $this->logMessage(sprintf('Received pmessage on channel "%s"', $message->channel));
 
-                    $payload = json_decode($message->payload, true);
-
-                    $regexp = sprintf('/^%s:dropoff:([0-9]+)$/', $this->doorstepChanNamespace);
-
-                    preg_match($regexp, $payload['hook'], $matches);
-
-                    $taskId = (int) $matches[1];
-
-                    $task = $taskRepository->find($taskId);
-
-                    // This is not the assigned messenger
-                    if ($task->getAssignedCourier()->getUsername() !== $payload['id']) {
-                        break;
-                    }
-
-                    // There is no associated order
-                    if (!$order = $orderRepository->findOneByTask($task)) {
-                        break;
-                    }
-
-                    $customer = $order->getCustomer();
-
-                    $this->logMessage(sprintf('Sending push notification to "%s"', $customer->getUsername()));
-
-                    $notificationTitle = $this->translator->trans('notifications.messenger_approaching', [
-                        '%customer%' => $customer->getUsername(),
-                        '%messenger%' => $task->getAssignedCourier()->getUsername(),
-                    ]);
-
-                    $this->messageBus->dispatch(
-                        new PushNotification($notificationTitle, [ $customer->getUsername() ])
-                    );
-
-                    // TODO Send notification/SMS
+                    call_user_func_array($this->messageHandler, [ $message ]);
 
                     ++$messageCount;
 
