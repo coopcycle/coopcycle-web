@@ -125,11 +125,6 @@ class Store extends LocalBusiness
      */
     private $addresses;
 
-    /**
-     * @Groups({"store"})
-     */
-    private $timeSlot;
-
     private $packageSet;
 
     private $checkExpression;
@@ -344,18 +339,6 @@ class Store extends LocalBusiness
         $this->getAddresses()->add($address);
 
         return $this;
-    }
-
-    public function setTimeSlot($timeSlot)
-    {
-        $this->timeSlot = $timeSlot;
-
-        return $this;
-    }
-
-    public function getTimeSlot()
-    {
-        return $this->timeSlot;
     }
 
     public function setPackageSet($packageSet)

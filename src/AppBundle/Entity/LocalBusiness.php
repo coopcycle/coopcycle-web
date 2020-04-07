@@ -200,6 +200,9 @@ abstract class LocalBusiness extends BaseLocalBusiness
 
     protected $products;
 
+    /**
+     * @Groups({"store"})
+     */
     protected $timeSlot;
 
     public function __construct()
