@@ -184,6 +184,56 @@ Feature: Tasks
       }
       """
 
+  Scenario: Start a task
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/2/start" with body:
+      """
+      {}
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/2",
+        "@type":"Task",
+        "id":2,
+        "type":"DROPOFF",
+        "status":"DOING",
+        "address":@...@,
+        "after":"2018-03-02T11:30:00+01:00",
+        "before":"2018-03-02T12:00:00+01:00",
+        "doneAfter":"2018-03-02T11:30:00+01:00",
+        "doneBefore":"2018-03-02T12:00:00+01:00",
+        "comments":@string@,
+        "updatedAt":"@string@.isDateTime()",
+        "isAssigned":true,
+        "assignedTo":"bob",
+        "previous":null,
+        "group":{
+          "id":@integer@,
+          "name":"Group #1",
+          "tags":[{
+            "name":"Important",
+            "slug":"important",
+            "color":"#FF0000"
+          }]
+        },
+        "tags":@array@
+      }
+      """
+
   Scenario: Mark task as done with contact name
     Given the fixtures files are loaded:
       | sylius_channels.yml |
