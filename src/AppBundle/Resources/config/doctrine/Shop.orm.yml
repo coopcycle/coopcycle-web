@@ -1,3 +1,0 @@
-AppBundle\Entity\Shop:
-    type: entity
-    repositoryClass: AppBundle\Entity\ShopRepository
