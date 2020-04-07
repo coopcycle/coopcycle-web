@@ -15,7 +15,7 @@ import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
 import CourierSelect from './CourierSelect'
 
-import { closeNewTaskModal, createTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
+import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
 
 const locale = $('html').attr('lang')
 const antdLocale = locale === 'fr' ? fr_FR : en_GB
@@ -118,6 +118,13 @@ class TaskModalContent extends React.Component {
     )
   }
 
+  onStartClick(task, e) {
+    if (e) {
+      e.preventDefault()
+    }
+    this.props.startTask(task)
+  }
+
   onCompleteClick(e) {
     e.preventDefault()
     this.setState({ complete: true })
@@ -207,6 +214,30 @@ class TaskModalContent extends React.Component {
             disabled={ this.props.loading }>
             <span className="text-success">{ this.props.t('ADMIN_DASHBOARD_DUPLICATE_TASK') }</span>
           </button>
+        )}
+        { (!!task && task.status === 'TODO' && task.isAssigned) && (
+          <div className="btn-group dropup mr-3">
+            <button type="button" className="btn btn-default">
+              { this.props.t('ADMIN_DASHBOARD_MODIFY_TASK') }
+            </button>
+            <button type="button" className="btn btn-default dropdown-toggle"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span className="caret"></span>
+              <span className="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul className="dropdown-menu">
+              <li>
+                <a href="#" onClick={ e => this.onStartClick(task, e) }>
+                  <i className="fa fa-play mr-2"></i><span>{ this.props.t('ADMIN_DASHBOARD_START_TASK') }</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" onClick={ this.onCompleteClick.bind(this) }>
+                  <i className="fa fa-check mr-2"></i><span>{ this.props.t('ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS') }</span>
+                </a>
+              </li>
+            </ul>
+          </div>
         )}
         <button type="submit" className="btn btn-primary" disabled={ this.props.loading }>
           { this.props.loading && (
@@ -464,13 +495,6 @@ class TaskModalContent extends React.Component {
                     </div>
                   </div>
                 )}
-                { (values.status === 'TODO' && values.isAssigned) && (
-                  <div className="text-center">
-                    <a href="#" onClick={ this.onCompleteClick.bind(this) }>
-                      { this.props.t('ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS') }
-                    </a>
-                  </div>
-                )}
                 { (values.status === 'DONE' && values.type === 'DROPOFF') && (
                   <div className="text-center">
                     <a href={ window.Routing.generate('admin_task_receipt', { id: values.id }) } target="_blank" rel="noopener noreferrer">
@@ -526,6 +550,7 @@ function mapDispatchToProps(dispatch) {
   return {
     closeNewTaskModal: () => dispatch(closeNewTaskModal()),
     createTask: (task) => dispatch(createTask(task)),
+    startTask: (task) => dispatch(startTask(task)),
     completeTask: (task, notes, success) => dispatch(completeTask(task, notes, success)),
     cancelTask: (task) => dispatch(cancelTask(task)),
     duplicateTask: (task) => dispatch(duplicateTask(task)),
