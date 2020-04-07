@@ -15,13 +15,14 @@ use AppBundle\Api\Controller\Restaurant\ChangeState;
 use AppBundle\Api\Dto\RestaurantInput;
 // use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
+use AppBundle\Entity\Model\TimeSlotAwareTrait;
+use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\Timestampable;
-use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
@@ -44,6 +45,7 @@ abstract class LocalBusiness extends BaseLocalBusiness
     use Timestampable;
     use SoftDeleteableEntity;
     use LoopEatOAuthCredentialsTrait;
+    use TimeSlotAwareTrait;
 
     /**
      * @var int
@@ -199,11 +201,6 @@ abstract class LocalBusiness extends BaseLocalBusiness
     protected $orders;
 
     protected $products;
-
-    /**
-     * @Groups({"store"})
-     */
-    protected $timeSlot;
 
     public function __construct()
     {
@@ -961,17 +958,5 @@ abstract class LocalBusiness extends BaseLocalBusiness
         $this->loopeatEnabled = $loopeatEnabled;
 
         return $this;
-    }
-
-    public function setTimeSlot(?TimeSlot $timeSlot)
-    {
-        $this->timeSlot = $timeSlot;
-
-        return $this;
-    }
-
-    public function getTimeSlot(): ?TimeSlot
-    {
-        return $this->timeSlot;
     }
 }

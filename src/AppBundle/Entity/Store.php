@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\MyStores;
 use AppBundle\Entity\Base\LocalBusiness;
+use AppBundle\Entity\Model\TimeSlotAwareTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -50,6 +51,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class Store extends LocalBusiness
 {
+    use TimeSlotAwareTrait;
+
     /**
      * @var int
      */
