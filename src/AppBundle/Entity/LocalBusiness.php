@@ -200,6 +200,8 @@ abstract class LocalBusiness extends BaseLocalBusiness
 
     protected $products;
 
+    protected $timeSlot;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -956,5 +958,17 @@ abstract class LocalBusiness extends BaseLocalBusiness
         $this->loopeatEnabled = $loopeatEnabled;
 
         return $this;
+    }
+
+    public function setTimeSlot(?TimeSlot $timeSlot)
+    {
+        $this->timeSlot = $timeSlot;
+
+        return $this;
+    }
+
+    public function getTimeSlot(): ?TimeSlot
+    {
+        return $this->timeSlot;
     }
 }
