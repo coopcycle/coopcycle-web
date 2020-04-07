@@ -215,7 +215,7 @@ class TaskModalContent extends React.Component {
             <span className="text-success">{ this.props.t('ADMIN_DASHBOARD_DUPLICATE_TASK') }</span>
           </button>
         )}
-        { (!!task && task.status === 'TODO' && task.isAssigned) && (
+        { (!!task && task.isAssigned && (task.status === 'TODO' || task.status === 'DOING')) && (
           <div className="btn-group dropup mr-3">
             <button type="button" className="btn btn-default">
               { this.props.t('ADMIN_DASHBOARD_MODIFY_TASK') }
@@ -226,11 +226,13 @@ class TaskModalContent extends React.Component {
               <span className="sr-only">Toggle Dropdown</span>
             </button>
             <ul className="dropdown-menu">
+              { task.status === 'TODO' && (
               <li>
                 <a href="#" onClick={ e => this.onStartClick(task, e) }>
                   <i className="fa fa-play mr-2"></i><span>{ this.props.t('ADMIN_DASHBOARD_START_TASK') }</span>
                 </a>
               </li>
+              )}
               <li>
                 <a href="#" onClick={ this.onCompleteClick.bind(this) }>
                   <i className="fa fa-check mr-2"></i><span>{ this.props.t('ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS') }</span>
