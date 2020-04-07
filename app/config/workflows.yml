@@ -1,0 +1,31 @@
+framework:
+    workflows:
+        task:
+            type: 'state_machine'
+            audit_trail:
+                enabled: true
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - AppBundle\Entity\Task
+            initial_marking: TODO
+            places:
+                - TODO
+                - DOING
+                - DONE
+                - FAILED
+                - CANCELLED
+            transitions:
+                start:
+                    from: TODO
+                    to:   DOING
+                complete:
+                    from: [TODO,DOING]
+                    to:   DONE
+                fail:
+                    from: [TODO,DOING]
+                    to:   FAILED
+                reject:
+                    from: [TODO,DOING]
+                    to:   CANCELLED
