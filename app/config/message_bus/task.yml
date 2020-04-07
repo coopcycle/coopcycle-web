@@ -67,6 +67,8 @@ services:
       - name: event_subscriber
         subscribes_to: task:unassigned
       - name: event_subscriber
+        subscribes_to: task:started
+      - name: event_subscriber
         subscribes_to: task:done
       - name: event_subscriber
         subscribes_to: task:failed

@@ -53,6 +53,7 @@ export const socketIO = ({ dispatch, getState }) => {
       },
     })
 
+    socket.on('task:started', data => dispatch(updateTask(data.task)))
     socket.on('task:done', data => dispatch(updateTask(data.task)))
     socket.on('task:failed', data => dispatch(updateTask(data.task)))
     socket.on('task:cancelled', data => dispatch(updateTask(data.task)))
