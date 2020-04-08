@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
@@ -47,16 +48,16 @@ class OrderController extends AbstractController
         $this->logger = $logger;
     }
 
-    private function getShippingTime(OrderInterface $order)
+    private function getShippingRange(OrderInterface $order): TsRange
     {
-        $shippingTime = $order->getShippedAt();
+        $range = $order->getShippingTimeRange();
 
-        if (null !== $shippingTime) {
+        if (null !== $range) {
 
-            return $shippingTime;
+            return $range;
         }
 
-        return $this->orderTimeHelper->getAsap($order);
+        return $this->orderTimeHelper->getShippingTimeRange($order);
     }
 
     /**
@@ -148,7 +149,7 @@ class OrderController extends AbstractController
 
         return array(
             'order' => $order,
-            'shipping_time' => $this->getShippingTime($order),
+            'shipping_range' => $this->getShippingRange($order),
             'form' => $form->createView(),
             'loopeat_valid' => $isLoopEatValid,
         );
@@ -181,7 +182,7 @@ class OrderController extends AbstractController
         $parameters =  [
             'order' => $order,
             'restaurant' => $order->getRestaurant(),
-            'shipping_time' => $this->getShippingTime($order),
+            'shipping_range' => $this->getShippingRange($order),
         ];
 
         $form->handleRequest($request);

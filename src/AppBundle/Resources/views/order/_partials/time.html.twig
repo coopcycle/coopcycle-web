@@ -1,3 +1,3 @@
 <div class="text-center mb-4 p-4 border">
-  <strong class="text-success">{% trans with { '%time%': shipping_time|date_calendar } %}order.delivery_time{% endtrans %}</strong>
+  <strong class="text-success">{{ shipping_range|time_range_for_humans }}</strong>
 </div>
