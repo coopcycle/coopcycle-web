@@ -339,17 +339,21 @@ Feature: Orders
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
-    """
-    {
-      "preparation":"15 minutes",
-      "shipping":"1 minutes",
-      "asap":"2017-09-02T12:00:00+02:00",
-      "today":true,
-      "fast":false,
-      "diff":"60 - 65",
-      "choices":@array@
-    }
-    """
+      """
+      {
+        "preparation":"15 minutes",
+        "shipping":"1 minutes",
+        "asap":"2017-09-02T12:00:00+02:00",
+        "range":[
+          "2017-09-02T11:55:00+02:00",
+          "2017-09-02T12:05:00+02:00"
+        ],
+        "today":true,
+        "fast":false,
+        "diff":"55 - 65",
+        "choices":@array@
+      }
+      """
 
   Scenario: Get order timing
     Given the current time is "2017-09-02 11:00:00"
@@ -374,17 +378,18 @@ Feature: Orders
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
-    """
-    {
-      "preparation":"@string@.matchRegex('/^[0-9]+ minutes$/')",
-      "shipping":"@string@.matchRegex('/^[0-9]+ minutes$/')",
-      "asap":"@string@.isDateTime()",
-      "today":@boolean@,
-      "fast":@boolean@,
-      "diff":"@string@.matchRegex('/^[0-9]+ - [0-9]+$/')",
-      "choices":@array@
-    }
-    """
+      """
+      {
+        "preparation":"@string@.matchRegex('/^[0-9]+ minutes$/')",
+        "shipping":"@string@.matchRegex('/^[0-9]+ minutes$/')",
+        "asap":"@string@.isDateTime()",
+        "range": @array@,
+        "today":@boolean@,
+        "fast":@boolean@,
+        "diff":"@string@.matchRegex('/^[0-9]+ - [0-9]+$/')",
+        "choices":@array@
+      }
+      """
 
   Scenario: Get order timing with holidays
     Given the current time is "2017-09-02 11:00:00"
@@ -410,17 +415,18 @@ Feature: Orders
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
-    """
-    {
-      "preparation":"@string@.matchRegex('/^[0-9]+ minutes$/')",
-      "shipping":"@string@.matchRegex('/^[0-9]+ minutes$/')",
-      "asap":"@string@.startsWith('2017-09-04T11:45:00')",
-      "today":@boolean@,
-      "fast":@boolean@,
-      "diff":"@string@.matchRegex('/^[0-9]+ - [0-9]+$/')",
-      "choices":@array@
-    }
-    """
+      """
+      {
+        "preparation":"@string@.matchRegex('/^[0-9]+ minutes$/')",
+        "shipping":"@string@.matchRegex('/^[0-9]+ minutes$/')",
+        "asap":"@string@.startsWith('2017-09-04T11:45:00')",
+        "range": @array@,
+        "today":@boolean@,
+        "fast":@boolean@,
+        "diff":"@string@.matchRegex('/^[0-9]+ - [0-9]+$/')",
+        "choices":@array@
+      }
+      """
 
   Scenario: Create order with address
     Given the current time is "2017-09-02 11:00:00"
