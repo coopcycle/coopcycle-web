@@ -17,6 +17,7 @@ use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Action\MyOrders;
 use AppBundle\Api\Dto\CartItemInput;
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
@@ -244,6 +245,8 @@ class Order extends BaseOrder implements OrderInterface
      * @var int
      */
     protected $tipAmount = 0;
+
+    protected $shippingTimeRange;
 
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
@@ -767,5 +770,15 @@ class Order extends BaseOrder implements OrderInterface
     public function setTipAmount(int $tipAmount)
     {
         $this->tipAmount = $tipAmount;
+    }
+
+    public function getShippingTimeRange(): ?TsRange
+    {
+        return $this->shippingTimeRange;
+    }
+
+    public function setShippingTimeRange(?TsRange $shippingTimeRange)
+    {
+        $this->shippingTimeRange = $shippingTimeRange;
     }
 }

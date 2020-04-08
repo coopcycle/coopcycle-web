@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\Order;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
@@ -73,6 +74,11 @@ interface OrderInterface extends
      * @return \DateTime|null
      */
     public function getShippedAt(): ?\DateTime;
+
+    /**
+     * @return TsRange|null
+     */
+    public function getShippingTimeRange(): ?TsRange;
 
     /**
      * @return boolean
