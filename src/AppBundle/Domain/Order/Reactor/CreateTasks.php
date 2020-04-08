@@ -6,6 +6,7 @@ use AppBundle\Domain\Order\Event\OrderAccepted;
 use AppBundle\Entity\Delivery;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\OrderTextEncoder;
+use Carbon\Carbon;
 
 class CreateTasks
 {
@@ -36,20 +37,28 @@ class CreateTasks
             $dropoffAddress->getGeo()
         );
 
-        $dropoffDoneBefore = $order->getShippedAt();
+        $shippingTimeRange = $order->getShippingTimeRange();
 
-        $pickupDoneBefore = clone $dropoffDoneBefore;
-        $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
+        $pickupTime = Carbon::instance($shippingTimeRange->getLower())
+            ->average($shippingTimeRange->getUpper())
+            ->subSeconds($duration);
+
+        $pickupAfter = clone $pickupTime;
+        $pickupAfter->modify('-5 minutes');
+        $pickupBefore = clone $pickupTime;
+        $pickupBefore->modify('+5 minutes');
 
         $delivery = new Delivery();
 
         $pickup = $delivery->getPickup();
         $pickup->setAddress($pickupAddress);
-        $pickup->setDoneBefore($pickupDoneBefore);
+        $pickup->setAfter($pickupAfter);
+        $pickup->setBefore($pickupBefore);
 
         $dropoff = $delivery->getDropoff();
         $dropoff->setAddress($dropoffAddress);
-        $dropoff->setDoneBefore($dropoffDoneBefore);
+        $dropoff->setAfter($shippingTimeRange->getLower());
+        $dropoff->setBefore($shippingTimeRange->getUpper());
 
         $orderAsText = $this->orderTextEncoder->encode($order, 'txt');
 
