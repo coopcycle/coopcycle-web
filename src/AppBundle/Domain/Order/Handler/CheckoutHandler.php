@@ -35,6 +35,11 @@ class CheckoutHandler
             $asap = $this->orderTimeHelper->getAsap($order);
             $order->setShippedAt(new \DateTime($asap));
         }
+
+        if (null === $order->getShippingTimeRange()) {
+            $range = $this->orderTimeHelper->getShippingTimeRange($order);
+            $order->setShippingTimeRange($range);
+        }
     }
 
     public function __invoke(Checkout $command)

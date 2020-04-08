@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Domain\Order\Handler;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event\CheckoutFailed;
 use AppBundle\Domain\Order\Event\CheckoutSucceeded;
@@ -36,6 +37,7 @@ class CheckoutHandlerTest extends TestCase
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
 
         $this->asap = (new \DateTime())->format(\DateTime::ATOM);
+        $this->shippingTimeRange = new TsRange();
 
         $this->orderTimeHelper
             ->getAvailabilities(Argument::type(OrderInterface::class))
@@ -44,6 +46,10 @@ class CheckoutHandlerTest extends TestCase
         $this->orderTimeHelper
             ->getAsap(Argument::type(OrderInterface::class))
             ->willReturn($this->asap);
+
+        $this->orderTimeHelper
+            ->getShippingTimeRange(Argument::type(OrderInterface::class))
+            ->willReturn($this->shippingTimeRange);
 
         $this->handler = new CheckoutHandler(
             $this->eventRecorder->reveal(),
@@ -172,6 +178,9 @@ class CheckoutHandlerTest extends TestCase
         $order
             ->getShippedAt()
             ->willReturn(null);
+        $order
+            ->getShippingTimeRange()
+            ->willReturn(null);
 
         $this->stripeManager
             ->confirmIntent(Argument::type(Payment::class))
@@ -182,6 +191,9 @@ class CheckoutHandlerTest extends TestCase
 
         $order
             ->setShippedAt(new \DateTime($this->asap))
+            ->shouldBeCalled();
+        $order
+            ->setShippingTimeRange(Argument::type(TsRange::class))
             ->shouldBeCalled();
         $this->eventRecorder
             ->record(Argument::type(CheckoutSucceeded::class))
