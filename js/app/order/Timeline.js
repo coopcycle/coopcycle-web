@@ -1,20 +1,24 @@
 import React, { Component } from 'react'
 import moment from 'moment'
-import i18n from '../i18n'
 import _ from 'lodash'
+
+import i18n from '../i18n'
 import TimelineStep from './TimelineStep'
+import ShippingTimeRange from '../components/ShippingTimeRange'
 
 moment.locale($('html').attr('lang'))
+
+const dateComparator = (a, b) => moment(a.createdAt).isBefore(moment(b.createdAt)) ? -1 : 1
 
 export default class extends Component {
 
   constructor(props) {
     super(props)
 
-    const events = this.props.events.sort((a, b) => moment(a.createdAt).isBefore(moment(b.createdAt)) ? -1 : 1)
+    const events = this.props.events.sort(dateComparator)
 
     this.state = {
-      order: this.props.order,
+      order: props.order,
       events,
     }
   }
@@ -24,7 +28,8 @@ export default class extends Component {
 
     let newEvents = events.slice(0)
     newEvents.push(event)
-    newEvents = newEvents.sort((a, b) => moment(a.createdAt).isBefore(moment(b.createdAt)) ? -1 : 1)
+
+    newEvents = newEvents.sort(dateComparator)
 
     this.setState({ events: newEvents })
   }
@@ -34,20 +39,23 @@ export default class extends Component {
   }
 
   renderEvent(event, key) {
+
+    const date = moment(event.createdAt).format('LT')
+
     switch (event.name) {
     case 'order:created':
       return (
         <TimelineStep
           success
           key={ key }
-          title={ i18n.t('ORDER_TIMELINE_CREATED_TITLE', { date: moment(event.createdAt).format('LT') }) } />
+          title={ i18n.t('ORDER_TIMELINE_CREATED_TITLE', { date }) } />
       )
     case 'order:accepted':
       return (
         <TimelineStep
           success
           key={ key }
-          title={ i18n.t('ORDER_TIMELINE_ACCEPTED_TITLE', { date: moment(event.createdAt).format('LT') }) }
+          title={ i18n.t('ORDER_TIMELINE_ACCEPTED_TITLE', { date }) }
           description={ 'Description' } />
       )
     case 'order:refused':
@@ -55,7 +63,7 @@ export default class extends Component {
         <TimelineStep
           danger
           key={ key }
-          title={ i18n.t('ORDER_TIMELINE_REFUSED_TITLE', { date: moment(event.createdAt).format('LT') }) }
+          title={ i18n.t('ORDER_TIMELINE_REFUSED_TITLE', { date }) }
           description={ 'Description' } />
       )
     case 'order:cancelled':
@@ -63,14 +71,14 @@ export default class extends Component {
         <TimelineStep
           danger
           key={ key }
-          title={ i18n.t('ORDER_TIMELINE_CANCELLED_TITLE', { date: moment(event.createdAt).format('LT') }) } />
+          title={ i18n.t('ORDER_TIMELINE_CANCELLED_TITLE', { date  }) } />
       )
     case 'order:picked':
       return (
         <TimelineStep
           success
           key={ key }
-          title={ i18n.t('ORDER_TIMELINE_PICKED_TITLE', { date: moment(event.createdAt).format('LT') }) }
+          title={ i18n.t('ORDER_TIMELINE_PICKED_TITLE', { date }) }
           description={ 'Description' } />
       )
     case 'order:dropped':
@@ -78,7 +86,7 @@ export default class extends Component {
         <TimelineStep
           success
           key={ key }
-          title={ i18n.t('ORDER_TIMELINE_DROPPED_TITLE', { date: moment(event.createdAt).format('LT') }) }
+          title={ i18n.t('ORDER_TIMELINE_DROPPED_TITLE', { date }) }
           description={ 'Description' } />
       )
     }
@@ -124,24 +132,11 @@ export default class extends Component {
 
     const { order } = this.state
 
-    const deliveryMoment = moment(order.shippedAt)
-    const deliveryTime = deliveryMoment.format('LT')
-    const formattedDeliveryDate = deliveryMoment.format('dddd D MMMM')
-    const deliveryIsToday = formattedDeliveryDate === moment(Date.now()).format('dddd D MMMM')
-
-    let message
-    if (deliveryIsToday) {
-      message = i18n.t('ORDER_FOLLOW_DELIVERY_EXPECTED_AT', { deliveryTime: deliveryTime })
-    } else {
-      message = i18n.t('ORDER_FOLLOW_DELIVERY_EXPECTED_AT_WITH_DATE', {
-        deliveryTime: deliveryTime,
-        deliveryDate: formattedDeliveryDate
-      })
-    }
-
     return (
       <div className="border mb-3">
-        <h4 className="bg-light p-3 m-0">{ message }</h4>
+        <h4 className="bg-light p-3 m-0">
+          <ShippingTimeRange value={ order.shippingTimeRange } />
+        </h4>
         <div className="px-3 py-4">
           { this.renderTimeline() }
         </div>

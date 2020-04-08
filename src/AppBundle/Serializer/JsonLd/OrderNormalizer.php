@@ -182,6 +182,16 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 $data['shippedAt'] = $data['date'] = $shippedAt->format(\DateTime::ATOM);
             }
 
+            $shippingTimeRange = $object->getShippingTimeRange();
+            if (null === $shippingTimeRange) {
+                $data['shippingTimeRange'] = null;
+            } else {
+                $data['shippingTimeRange'] = [
+                    $shippingTimeRange->getLower()->format(\DateTime::ATOM),
+                    $shippingTimeRange->getUpper()->format(\DateTime::ATOM),
+                ];
+            }
+
             $customer = $object->getCustomer();
             if (null === $customer) {
                 $data['customer'] = null;
