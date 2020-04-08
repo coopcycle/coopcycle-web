@@ -2,7 +2,10 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Entity\TimeSlot;
+use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Sylius\Order\OrderInterface;
+// use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Utils\PreparationTimeCalculator;
 use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ShippingTimeCalculator;
@@ -34,11 +37,31 @@ class OrderTimeHelper
 
     public function getAvailabilities(OrderInterface $cart)
     {
+        $restaurant = $cart->getRestaurant();
         $hash = spl_object_hash($cart);
 
-        if (!isset($this->choicesCache[$hash])) {
+        // if ($restaurant->getOpeningHoursBehavior() === 'time_slot') {
+        if (true) {
+            $timeSlot = new TimeSlot();
+            $timeSlot->setOpeningHours($restaurant->getOpeningHours());
 
-            $restaurant = $cart->getRestaurant();
+            $choiceLoader = new TimeSlotChoiceLoader($timeSlot, 'fr');
+            $choiceList = $choiceLoader->loadChoiceList();
+
+            var_dump(count($choiceList->getChoices()));
+
+
+            foreach ($choiceList->getChoices() as $choice) {
+                var_dump((string) $choice);
+                # code...
+            }
+
+            // $openingHoursSpecification =
+            //     OpeningHoursSpecification::fromOpeningHours($restaurant->getOpeningHours());
+
+        }
+
+        if (!isset($this->choicesCache[$hash])) {
 
             $availabilities = $this->filterChoices($cart, $restaurant->getAvailabilities());
 
@@ -57,8 +80,10 @@ class OrderTimeHelper
 
     public function getTimeInfo(OrderInterface $cart)
     {
+        $restaurant = $cart->getRestaurant();
+
         $preparationTime = $this->preparationTimeCalculator
-            ->createForRestaurant($cart->getRestaurant())
+            ->createForRestaurant($restaurant)
             ->calculate($cart);
 
         $shippingTime = $this->shippingTimeCalculator->calculate($cart);
@@ -84,6 +109,7 @@ class OrderTimeHelper
         }
 
         return [
+            'behavior' => 'time_slot', /* null === $restaurant->getTimeSlot() ? 'asap' : 'time_slot'*/
             'preparation' => $preparationTime,
             'shipping' => $shippingTime,
             'asap' => $asap,

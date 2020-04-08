@@ -235,6 +235,9 @@ class RestaurantController extends AbstractController
 
         $cart = $cartContext->getCart();
 
+        $this->orderTimeHelper->getAvailabilities($cart);
+        exit;
+
         $isAnotherRestaurant =
             null !== $cart->getId() && $cart->getRestaurant() !== $restaurant;
 

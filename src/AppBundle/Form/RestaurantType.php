@@ -3,6 +3,8 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\TimeSlot;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -43,6 +45,12 @@ class RestaurantType extends LocalBusinessType
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
+                ->add('timeSlot', EntityType::class, [
+                    'label' => 'form.store_type.time_slot.label',
+                    'class' => TimeSlot::class,
+                    'choice_label' => 'name',
+                    'required' => false,
+                ])
                 ->add('exclusive', CheckboxType::class, [
                     'label' => 'restaurant.form.exclusive.label',
                     'required' => false

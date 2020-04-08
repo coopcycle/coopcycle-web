@@ -120,8 +120,12 @@
   {% endif %}
 
   {{ form_row(form.openingHours) }}
-
   <div id="opening-hours"></div>
+
+  {% if form.timeSlot is defined %}
+    {{ form_row(form.timeSlot) }}
+  {% endif %}
+
   <label class="control-label">{% trans %}localBusiness.form.orderingDelayMinutes{% endtrans %}</label>
   <div class="row">
     <div class="col-sm-3">
