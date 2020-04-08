@@ -180,7 +180,6 @@ class OrderController extends AbstractController
 
         $parameters =  [
             'order' => $order,
-            'deliveryAddress' => $order->getShippingAddress(),
             'restaurant' => $order->getRestaurant(),
             'shipping_time' => $this->getShippingTime($order),
         ];
