@@ -43,6 +43,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('date_calendar', array($this, 'dateCalendar'), ['needs_context' => true]),
             new TwigFilter('hashid', array($this, 'hashid')),
             new TwigFilter('local_business_type', array(LocalBusinessRuntime::class, 'type')),
+            new TwigFilter('time_range_for_humans', array(OrderRuntime::class, 'timeRangeForHumans')),
         );
     }
 
