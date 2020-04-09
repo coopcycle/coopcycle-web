@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <mapped-superclass name="AppBundle\Entity\Sylius\FrozenOrderLineItem" table="frozen_order_line_item">
+  <mapped-superclass name="AppBundle\Entity\Sylius\FrozenOrderLineItem">
     <field name="name" type="string" column="name"/>
     <field name="description" type="text" column="description" nullable="true"/>
     <field name="quantity" type="integer" column="quantity"/>
