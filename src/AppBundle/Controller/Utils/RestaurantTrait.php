@@ -260,10 +260,10 @@ trait RestaurantTrait
         $qb = $this->get('sylius.repository.order')
             ->createQueryBuilder('o')
             ->andWhere('o.restaurant = :restaurant')
-            ->andWhere('DATE(o.shippedAt) >= :date')
+            ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
             ->andWhere('o.state != :state')
             ->setParameter('restaurant', $restaurant)
-            ->setParameter('date', $date)
+            ->setParameter('range', sprintf('[%s, %s]', $date->format('Y-m-d 00:00:00'), $date->format('Y-m-d 23:59:59')))
             ->setParameter('state', OrderInterface::STATE_CART);
             ;
 

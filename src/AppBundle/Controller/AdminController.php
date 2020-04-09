@@ -162,7 +162,7 @@ class AdminController extends Controller
         $orders = (clone $qb)
             ->setMaxResults(self::ITEMS_PER_PAGE)
             ->setFirstResult($offset)
-            ->orderBy('o.shippedAt', 'DESC')
+            ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
             ->getQuery()
             ->getResult();
 
