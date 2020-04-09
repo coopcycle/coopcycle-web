@@ -596,82 +596,83 @@ Feature: Orders
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
-    """
-    {
-      "@context":"/api/contexts/Order",
-      "@id":"@string@.startsWith('/api/orders')",
-      "@type":"http://schema.org/Order",
-      "customer":{
-        "@id":"@string@.startsWith('/api/users')",
-        "@type":"User",
-        "username":"bob",
-        "email":"bob@coopcycle.org",
-        "telephone": "+33612345678",
-        "givenName":"Bob",
-        "familyName":"Doe"
-      },
-      "restaurant":{
-        "@id":"/api/restaurants/1",
-        "@type":"http://schema.org/Restaurant",
-        "name":"Nodaiwa",
-        "image":@string@,
-        "address":{
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"@string@.startsWith('/api/orders')",
+        "@type":"http://schema.org/Order",
+        "customer":{
+          "@id":"@string@.startsWith('/api/users')",
+          "@type":"User",
+          "username":"bob",
+          "email":"bob@coopcycle.org",
+          "telephone": "+33612345678",
+          "givenName":"Bob",
+          "familyName":"Doe"
+        },
+        "restaurant":{
+          "@id":"/api/restaurants/1",
+          "@type":"http://schema.org/Restaurant",
+          "name":"Nodaiwa",
+          "image":@string@,
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+            "name":null,
+            "telephone": null
+          },
+          "telephone": null
+        },
+        "shippingAddress":{
           "@id":"@string@.startsWith('/api/addresses')",
           "@type":"http://schema.org/Place",
           "geo":{
-            "latitude":@double@,
-            "longitude":@double@
+            "latitude": 48.863814,
+            "longitude": 2.3329
           },
-          "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+          "streetAddress":"190 Rue de Rivoli, Paris",
           "name":null,
           "telephone": null
         },
-        "telephone": null
-      },
-      "shippingAddress":{
-        "@id":"@string@.startsWith('/api/addresses')",
-        "@type":"http://schema.org/Place",
-        "geo":{
-          "latitude": 48.863814,
-          "longitude": 2.3329
-        },
-        "streetAddress":"190 Rue de Rivoli, Paris",
-        "name":null,
-        "telephone": null
-      },
-      "items":[
-        {
-          "id":@integer@,
-          "quantity":@integer@,
-          "unitPrice":@integer@,
-          "total":@integer@,
-          "name":@string@,
-          "adjustments":@...@
-        },
-        {
-          "id":@integer@,
-          "quantity":@integer@,
-          "unitPrice":@integer@,
-          "total":@integer@,
-          "name":@string@,
-          "adjustments":@...@
-        }
-      ],
-      "adjustments":@...@,
-      "id":@integer@,
-      "number":null,
-      "total":@integer@,
-      "itemsTotal":@integer@,
-      "taxTotal":@integer@,
-      "state":"cart",
-      "notes": null,
-      "createdAt":@string@,
-      "shippedAt":"@string@.isDateTime()",
-      "preparationExpectedAt":null,
-      "pickupExpectedAt":null,
-      "reusablePackagingEnabled": false
-    }
-    """
+        "items":[
+          {
+            "id":@integer@,
+            "quantity":@integer@,
+            "unitPrice":@integer@,
+            "total":@integer@,
+            "name":@string@,
+            "adjustments":@...@
+          },
+          {
+            "id":@integer@,
+            "quantity":@integer@,
+            "unitPrice":@integer@,
+            "total":@integer@,
+            "name":@string@,
+            "adjustments":@...@
+          }
+        ],
+        "adjustments":@...@,
+        "id":@integer@,
+        "number":null,
+        "total":@integer@,
+        "itemsTotal":@integer@,
+        "taxTotal":@integer@,
+        "state":"cart",
+        "notes": null,
+        "createdAt":@string@,
+        "shippedAt":"@string@.isDateTime()",
+        "shippingTimeRange":["2017-09-02T11:55:00+02:00","2017-09-02T12:05:00+02:00"],
+        "preparationExpectedAt":null,
+        "pickupExpectedAt":null,
+        "reusablePackagingEnabled": false
+      }
+      """
 
   Scenario: Create order with missing additional product option
     Given the current time is "2017-09-02 11:00:00"
