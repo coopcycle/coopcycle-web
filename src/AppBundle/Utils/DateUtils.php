@@ -23,7 +23,8 @@ class DateUtils
     }
 
     /**
-     * @param \DateTime|TsRange $date
+     * @param mixed $date
+     * @param \DateTime|null $now
      * @return bool
      */
     public static function isToday($date, \DateTime $now = null): bool
