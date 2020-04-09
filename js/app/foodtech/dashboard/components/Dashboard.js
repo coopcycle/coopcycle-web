@@ -4,20 +4,29 @@ import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import Modal from 'react-modal'
 import { DatePicker, Slider, Col, Row, Switch } from 'antd'
-import moment from 'moment'
+import Moment from 'moment'
+import { extendMoment } from 'moment-range'
+
 import Column from './Column'
 import ModalContent from './ModalContent'
 import Search from './Search'
-
 import { setCurrentOrder, orderCreated, setPreparationDelay, changeStatus } from '../redux/actions'
 
-function sortByShippedAt(a, b) {
-  if (moment(a.shippedAt).isSame(moment(b.shippedAt))) {
+const moment = extendMoment(Moment)
+
+const orderSort = (a, b) => {
+
+  const rangeA = moment.range(a.shippingTimeRange)
+  const rangeB = moment.range(b.shippingTimeRange)
+
+  if (rangeA.start.isSame(rangeB.start)) {
     return 0
   }
 
-  return moment(a.shippedAt).isBefore(moment(b.shippedAt)) ? -1 : 1
+  return rangeA.start.isBefore(rangeB.start) ? -1 : 1
 }
+
+const orderComparator = (a, b) => a['@id'] === b['@id']
 
 class Dashboard extends React.Component {
 
@@ -122,12 +131,10 @@ class Dashboard extends React.Component {
 
 function mapStateToProps(state) {
 
-  let orders = state.orders
+  const orders = state.searchQuery.length > 0 ?
+    _.intersectionWith(state.orders, state.searchResults, orderComparator) : state.orders
 
-  if (state.searchQuery.length > 0) {
-    orders = _.intersectionWith(state.orders, state.searchResults, (a, b) => a['@id'] === b['@id'])
-  }
-
+  // TODO Use Redux selectors
   const newOrders =
     _.filter(orders, order => order.state === 'new')
   const acceptedOrders =
@@ -143,10 +150,10 @@ function mapStateToProps(state) {
     date: state.date,
     order: state.order,
     modalIsOpen: state.order !== null,
-    newOrders: newOrders.sort(sortByShippedAt),
-    acceptedOrders: acceptedOrders.sort(sortByShippedAt),
-    fulfilledOrders: fulfilledOrders.sort(sortByShippedAt),
-    cancelledOrders: cancelledOrders.sort(sortByShippedAt),
+    newOrders: newOrders.sort(orderSort),
+    acceptedOrders: acceptedOrders.sort(orderSort),
+    fulfilledOrders: fulfilledOrders.sort(orderSort),
+    cancelledOrders: cancelledOrders.sort(orderSort),
     preparationDelay: state.preparationDelay,
     showSettings: state.showSettings,
     showSearch: state.showSearch,
