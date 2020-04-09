@@ -4,6 +4,7 @@ namespace AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\PreparationTimeCalculator;
 use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ShippingTimeCalculator;
@@ -68,7 +69,11 @@ class OrderTimeHelper
         return $this->choicesCache[$hash];
     }
 
-    // FIXME This method should return an object
+    /**
+     * FIXME This method should return an object
+     *
+     * @return array
+     */
     public function getTimeInfo(OrderInterface $cart)
     {
         $now = Carbon::now();
@@ -79,38 +84,34 @@ class OrderTimeHelper
 
         $shippingTime = $this->shippingTimeCalculator->calculate($cart);
 
-        $asap = $this->getAsap($cart);
-
-        if (null !== $cart->getShippedAt()) {
-            $today = $cart->getShippedAt()->format('Y-m-d') === $now->format('Y-m-d');
-        } else {
-            $today = (new \DateTime($asap))->format('Y-m-d') === $now->format('Y-m-d');
-        }
-
-        $diffInMinutes = $now->diffInMinutes(Carbon::parse($asap));
-
-        // We consider it is "fast" if it's less than 45 minutes
-        $fast = $diffInMinutes < 45;
-
         $shippingTimeRange = $this->getShippingTimeRange($cart);
 
-        $lowerDiff = $now->diffInMinutes(Carbon::instance($shippingTimeRange->getLower()));
-        $upperDiff = $now->diffInMinutes(Carbon::instance($shippingTimeRange->getUpper()));
+        $lowerDiff =
+            $now->diffInMinutes(Carbon::instance($shippingTimeRange->getLower()));
+        $upperDiff =
+            $now->diffInMinutes(Carbon::instance($shippingTimeRange->getUpper()));
+
+        $lowerDiff = $this->roundUp($lowerDiff, 5);
+        $upperDiff = $this->roundUp($upperDiff, 5);
+
+        // We see it as "fast" if it's less than max. 45 minutes
+        $fast = $upperDiff <= 45;
+
+        // Legacy
+        $asap = Carbon::instance($shippingTimeRange->getLower())
+            ->average($shippingTimeRange->getUpper());
 
         return [
             'preparation' => $preparationTime,
             'shipping' => $shippingTime,
-            'asap' => $asap,
+            'asap' => $asap->format(\DateTime::ATOM),
             'range' => [
                 $shippingTimeRange->getLower()->format(\DateTime::ATOM),
                 $shippingTimeRange->getUpper()->format(\DateTime::ATOM),
             ],
-            'today' => $today,
+            'today' => DateUtils::isToday($shippingTimeRange),
             'fast' => $fast,
-            'diff' => sprintf('%d - %d',
-                $this->roundUp($lowerDiff, 5),
-                $this->roundUp($upperDiff, 5)
-            ),
+            'diff' => sprintf('%d - %d', $lowerDiff, $upperDiff)
         ];
     }
 
@@ -133,16 +134,6 @@ class OrderTimeHelper
 
         $first = new \DateTime($choices[0]);
 
-        $lower = clone $first;
-        $upper = clone $first;
-
-        $lower->modify('-5 minutes');
-        $upper->modify('+5 minutes');
-
-        $range = new TsRange();
-        $range->setLower($lower);
-        $range->setUpper($upper);
-
-        return $range;
+        return DateUtils::dateTimeToTsRange($first, 5);
     }
 }
