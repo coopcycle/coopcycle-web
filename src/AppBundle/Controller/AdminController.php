@@ -299,7 +299,7 @@ class AdminController extends Controller
     {
         $date = new \DateTime($date);
 
-        $orders = $this->get('sylius.repository.order')->findByShippedAt($date);
+        $orders = $this->get('sylius.repository.order')->findByDate($date);
 
         $ordersNormalized = $this->get('serializer')->normalize($orders, 'jsonld', [
             'resource_class' => Order::class,
