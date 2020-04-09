@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux'
 import moment from 'moment'
 import _ from 'lodash'
 
@@ -21,7 +20,7 @@ import {
   SEARCH_RESULTS,
 } from './actions'
 
-const initialState = {
+export const initialState = {
   orders: [],
   order: null,
   date: moment().format('YYYY-MM-DD'),
@@ -53,139 +52,97 @@ function replaceOrder(orders, order) {
   return orders
 }
 
-const orders = (state = initialState.orders, action) => {
-  let newState
+export default (state = initialState, action = {}) => {
 
-  // TODO
-  // Make sure orders are for the current date
-  // We need to use a unique reducer to achieve this
-
-  switch (action.type) {
-  case ACCEPT_ORDER_REQUEST_SUCCESS:
-  case REFUSE_ORDER_REQUEST_SUCCESS:
-  case CANCEL_ORDER_REQUEST_SUCCESS:
-  case DELAY_ORDER_REQUEST_SUCCESS:
-
-    return replaceOrder(state, action.payload)
-
-  case ORDER_CREATED:
-
-    newState = state.slice()
-    newState.push(action.payload)
-
-    return newState
-
-  case ORDER_ACCEPTED:
-
-    return replaceOrder(state, Object.assign({}, action.payload, { state: 'accepted' }))
-
-  case ORDER_REFUSED:
-
-    return replaceOrder(state, Object.assign({}, action.payload, { state: 'refused' }))
-
-  case ORDER_CANCELLED:
-
-    return replaceOrder(state, Object.assign({}, action.payload, { state: 'cancelled' }))
-
-  case ORDER_FULFILLED:
-
-    return replaceOrder(state, Object.assign({}, action.payload, { state: 'fulfilled' }))
-
-  default:
-
-    return state
-  }
-}
-
-const order = (state = initialState.order, action) => {
-  switch (action.type) {
-  case ACCEPT_ORDER_REQUEST_SUCCESS:
-  case REFUSE_ORDER_REQUEST_SUCCESS:
-  case CANCEL_ORDER_REQUEST_SUCCESS:
-  case DELAY_ORDER_REQUEST_SUCCESS:
-
-    return null
-
-  case SET_CURRENT_ORDER:
-
-    return action.payload
-
-  default:
-
-    return state
-  }
-}
-
-const date = (state = initialState.date, action) => {
-  switch (action.type) {
-  default:
-
-    return state
-  }
-}
-
-const jwt = (state = initialState.jwt, action) => {
-  switch (action.type) {
-  default:
-
-    return state
-  }
-}
-
-const isFetching = (state = initialState.isFetching, action) => {
   switch (action.type) {
   case FETCH_REQUEST:
 
-    return true
-  case ACCEPT_ORDER_REQUEST_SUCCESS:
+    return {
+      ...state,
+      isFetching: true,
+    }
+
   case ACCEPT_ORDER_REQUEST_FAILURE:
-  case CANCEL_ORDER_REQUEST_SUCCESS:
   case CANCEL_ORDER_REQUEST_FAILURE:
-  case REFUSE_ORDER_REQUEST_SUCCESS:
   case REFUSE_ORDER_REQUEST_FAILURE:
-  case DELAY_ORDER_REQUEST_SUCCESS:
   case DELAY_ORDER_REQUEST_FAILURE:
 
-    return false
-  default:
+    return {
+      ...state,
+      isFetching: false,
+    }
 
-    return state
-  }
-}
+  case ACCEPT_ORDER_REQUEST_SUCCESS:
+  case REFUSE_ORDER_REQUEST_SUCCESS:
+  case CANCEL_ORDER_REQUEST_SUCCESS:
+  case DELAY_ORDER_REQUEST_SUCCESS:
 
-const searchResults = (state = initialState.searchResults, action) => {
-  if (action.type === SEARCH_RESULTS) {
+    return {
+      ...state,
+      isFetching: false,
+      orders: replaceOrder(state.orders, action.payload),
+      order: null,
+    }
 
-    return action.payload.results
+  case ORDER_CREATED:
+
+    // The order is not for the current date, skip
+    if (moment(action.payload.shippedAt).format('YYYY-MM-DD') !== state.date) {
+
+      return state
+    }
+
+    const newOrders = state.orders.slice()
+    newOrders.push(action.payload)
+
+    return {
+      ...state,
+      orders: newOrders,
+    }
+
+  case ORDER_ACCEPTED:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload, { state: 'accepted' })),
+    }
+
+  case ORDER_REFUSED:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload, { state: 'refused' })),
+    }
+
+  case ORDER_CANCELLED:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload, { state: 'cancelled' })),
+    }
+
+  case ORDER_FULFILLED:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload, { state: 'fulfilled' })),
+    }
+
+  case SET_CURRENT_ORDER:
+
+    return {
+      ...state,
+      order: action.payload,
+    }
+
+  case SEARCH_RESULTS:
+
+    return {
+      ...state,
+      searchResults: action.payload.results,
+      searchQuery: action.payload.q,
+    }
   }
 
   return state
 }
-
-const searchQuery = (state = initialState.searchQuery, action) => {
-  if (action.type === SEARCH_RESULTS) {
-
-    return action.payload.q
-  }
-
-  return state
-}
-
-export default combineReducers({
-  orders,
-  order,
-  date,
-  jwt,
-  isFetching,
-  searchQuery,
-  searchResults,
-  acceptOrderRoute: (state = initialState.acceptOrderRoute) => state,
-  refuseOrderRoute: (state = initialState.refuseOrderRoute) => state,
-  delayOrderRoute: (state = initialState.delayOrderRoute) => state,
-  cancelOrderRoute: (state = initialState.cancelOrderRoute) => state,
-  currentRoute: (state = initialState.currentRoute) => state,
-  restaurant: (state = initialState.restaurant) => state,
-  preparationDelay: (state = initialState.preparationDelay) => state,
-  showSettings: (state = initialState.showSettings) => state,
-  showSearch: (state = initialState.showSearch) => state,
-})

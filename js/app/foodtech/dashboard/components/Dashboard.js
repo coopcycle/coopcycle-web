@@ -122,10 +122,7 @@ class Dashboard extends React.Component {
 
 function mapStateToProps(state) {
 
-  // Make sure orders are for the current date
-  // TODO This should be managed at reducer level
-  let orders =
-    _.filter(state.orders, order => moment(order.shippedAt).format('YYYY-MM-DD') === state.date)
+  let orders = state.orders
 
   if (state.searchQuery.length > 0) {
     orders = _.intersectionWith(state.orders, state.searchResults, (a, b) => a['@id'] === b['@id'])
@@ -159,6 +156,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
+
   return {
     setCurrentOrder: order => dispatch(setCurrentOrder(order)),
     setPreparationDelay: delay => dispatch(setPreparationDelay(delay)),
