@@ -3,9 +3,13 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import Modal from 'react-modal'
+import Moment from 'moment'
+import { extendMoment } from 'moment-range'
 
 import DatePicker from './DatePicker'
 import { clearDate, changeDate, setDateModalOpen } from '../redux/actions'
+
+const moment = extendMoment(Moment)
 
 class DateModal extends Component {
 
@@ -69,9 +73,9 @@ class DateModal extends Component {
               value={ this.props.value }
               onChange={ (dateString) => this._updateDate(dateString) } />
           </div>
-          { !this.props.isAsap && (
+          { this.props.isPreOrder && (
             <div className="text-center">
-              <a className="ReactModal__Date__asap text-success" onClick={ this._onClickAsap.bind(this) }>
+              <a href="#" className="ReactModal__Date__asap text-success" onClick={ this._onClickAsap.bind(this) }>
                 { this.props.t('CART_DELIVERY_TIME_ASAP') }
               </a>
             </div>
@@ -97,14 +101,18 @@ class DateModal extends Component {
 
 function mapStateToProps(state) {
 
-  const value = !!state.cart.shippedAt ? state.cart.shippedAt : _.first(state.availabilities)
+  const isPreOrder =
+    false === _.isEmpty(state.cart.shippingTimeRange)
+
+  const value =
+    isPreOrder ? moment.range(state.cart.shippingTimeRange).center().format() : _.first(state.availabilities)
 
   return {
     isOpen: state.isDateModalOpen,
     availabilities: state.availabilities,
     datePickerDateInputName: state.datePickerDateInputName,
     datePickerTimeInputName: state.datePickerTimeInputName,
-    isAsap: !!state.cart.shippedAt ? false : true,
+    isPreOrder,
     value,
   }
 }

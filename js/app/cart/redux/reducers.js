@@ -22,6 +22,7 @@ const initialState = {
     adjustments: {},
     shippingAddress: null,
     shippedAt: null,
+    shippingTimeRange: null,
   },
   restaurant: null,
   isFetching: false,

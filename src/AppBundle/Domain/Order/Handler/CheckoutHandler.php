@@ -31,11 +31,6 @@ class CheckoutHandler
 
     private function setShippingDate(OrderInterface $order)
     {
-        if (null === $order->getShippedAt()) {
-            $asap = $this->orderTimeHelper->getAsap($order);
-            $order->setShippedAt(new \DateTime($asap));
-        }
-
         if (null === $order->getShippingTimeRange()) {
             $range = $this->orderTimeHelper->getShippingTimeRange($order);
             $order->setShippingTimeRange($range);

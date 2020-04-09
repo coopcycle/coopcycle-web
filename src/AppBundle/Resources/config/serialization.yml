@@ -28,6 +28,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order', 'order_create', 'cart', 'order_update']
     shippedAt:
       groups: ['order', 'order_create', 'cart', 'order_update']
+    shippingTimeRange:
+      groups: ['order', 'order_create', 'cart', 'order_update']
     customer:
       groups: ['order', 'cart']
     items:

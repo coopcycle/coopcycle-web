@@ -4,6 +4,7 @@ namespace AppBundle\Form\Order;
 
 use AppBundle\Form\AddressType;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\DateUtils;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -96,7 +97,9 @@ class CartType extends AbstractType
             $time = $form->get('time')->getData();
 
             if ($date && $time) {
-                $order->setShippedAt(new \DateTime(sprintf('%s %s', $date->format('Y-m-d'), $time->format('H:i:00'))));
+                $datetime =
+                    new \DateTime(sprintf('%s %s', $date->format('Y-m-d'), $time->format('H:i:00')));
+                $order->setShippingTimeRange(DateUtils::dateTimeToTsRange($datetime));
             }
 
             $this->orderProcessor->process($order);

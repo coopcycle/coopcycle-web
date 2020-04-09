@@ -254,7 +254,7 @@ class RestaurantController extends AbstractController
 
         if ($isAnotherRestaurant) {
             $cart->clearItems();
-            $cart->setShippedAt(null);
+            $cart->setShippingTimeRange(null);
             $cart->setRestaurant($restaurant);
         }
 
@@ -288,7 +288,7 @@ class RestaurantController extends AbstractController
         ];
         if (0 !== count($violations->findByCodes($violationCodes))) {
 
-            $cart->setShippedAt(null);
+            $cart->setShippingTimeRange(null);
 
             if (!$isAnotherRestaurant) {
                 $this->orderManager->persist($cart);
@@ -461,7 +461,7 @@ class RestaurantController extends AbstractController
 
         if ($clear) {
             $cart->clearItems();
-            $cart->setShippedAt(null);
+            $cart->setShippingTimeRange(null);
             $cart->setRestaurant($restaurant);
         }
 
@@ -522,7 +522,7 @@ class RestaurantController extends AbstractController
 
         $cart = $cartContext->getCart();
 
-        $cart->setShippedAt(null);
+        $cart->setShippingTimeRange(null);
 
         $this->orderManager->persist($cart);
         $this->orderManager->flush();
