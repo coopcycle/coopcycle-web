@@ -671,8 +671,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             $shippedAt->modify('+30 minutes');
         }
 
-        $order->setShippedAt($shippedAt);
-
         $rangeLower = clone $shippedAt;
         $rangeUpper = clone $shippedAt;
 
