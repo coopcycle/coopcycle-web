@@ -1,22 +1,22 @@
-global.changesSaved: ''
-navbar.login: ''
-navbar.myAccount: ''
-base.footer.contactUs: ''
-base.footer.help: ''
-base.footer.legal: ''
-base.footer.suggest: ''
-adminDashboard.title: ''
-adminDashboard.configuration: ''
-adminDashboard.tooltip.orders: ''
-adminDashboard.tooltip.deliveries: ''
-adminDashboard.tooltip.stores: ''
-adminDashboard.tooltip.restaurants: ''
-adminDashboard.tooltip.users: ''
-adminDashboard.dashboard.title: ''
-adminDashboard.dashboard.import: ''
-adminDashboard.dashboard.export: ''
-adminDashboard.dashboard.importTasks: ''
-adminDashboard.dashboard.exportTasks: ''
+global.changesSaved: Twoje zmiany zostały zapisane.
+navbar.login: Login
+navbar.myAccount: Moje Konto
+base.footer.contactUs: Kontakt
+base.footer.help: Pomoc
+base.footer.legal: Nota prawna
+base.footer.suggest: Zaproponuj restauracje
+adminDashboard.title: Panel administracyjny
+adminDashboard.configuration: Ustawienia
+adminDashboard.tooltip.orders: Zarządzaj zamówieniami restauracji
+adminDashboard.tooltip.deliveries: Zarządzaj dostawami
+adminDashboard.tooltip.stores: Zarządzaj sklepami
+adminDashboard.tooltip.restaurants: Zarządzaj restauracjami
+adminDashboard.tooltip.users: Zarządzaj kontami użytkowników
+adminDashboard.dashboard.title: Panel
+adminDashboard.dashboard.import: Import
+adminDashboard.dashboard.export: Export
+adminDashboard.dashboard.importTasks: Importuj zadania
+adminDashboard.dashboard.exportTasks: Exportuj zadania
 adminDashboard.dashboard.deleteTaskGroup: ''
 adminDashboard.dashboard.displayByGroups: ''
 adminDashboard.dashboard.displayAll: ''
