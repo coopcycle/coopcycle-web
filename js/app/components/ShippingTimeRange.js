@@ -17,9 +17,20 @@ function roundUp(n, x = 5) {
     return Math.trunc(value)
 }
 
-export default ({ value }) => {
+export default ({ value, short }) => {
 
   // FIXME Make sure that value is not null / an array of 2 strings
+  const range = moment.range(
+    moment(value[0]),
+    moment(value[1])
+  )
+
+  if (short === true) {
+
+    return (
+      <span>{ `${range.start.format('LT')} - ${range.end.format('LT')}` }</span>
+    )
+  }
 
   const today = moment.range(
     moment().set({ hour: 0, minute: 0, second: 0 }),
@@ -28,11 +39,6 @@ export default ({ value }) => {
   const tomorrow = moment.range(
     moment().add(1, 'day').set({ hour: 0, minute: 0, second: 0 }),
     moment().add(1, 'day').set({ hour: 23, minute: 59, second: 59 })
-  )
-
-  const range = moment.range(
-    moment(value[0]),
-    moment(value[1])
   )
 
   const isToday = range.overlaps(today)
