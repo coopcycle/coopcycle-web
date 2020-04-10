@@ -51,15 +51,6 @@ class OrderValidator extends ConstraintValidator
 
         $restaurant = $order->getRestaurant();
 
-        if (null !== $order->getShippedAt() && !$restaurant->isOpen($order->getShippedAt())) {
-            $this->context->buildViolation($constraint->restaurantClosedMessage)
-                ->setParameter('%date%', $order->getShippedAt()->format('Y-m-d H:i:s'))
-                ->atPath('shippedAt')
-                ->addViolation();
-
-            return;
-        }
-
         $minimumAmount = $restaurant->getMinimumCartAmount();
         $itemsTotal = $order->getItemsTotal();
 

@@ -17,7 +17,6 @@ class Order extends Constraint
     const CONTAINS_DISABLED_PRODUCT = 'Order::CONTAINS_DISABLED_PRODUCT';
 
     public $totalIncludingTaxTooLowMessage = 'order.totalIncludingTax.tooLow';
-    public $restaurantClosedMessage = 'delivery.date.restaurantClosed';
     public $addressTooFarMessage = 'address.tooFar';
     public $addressNotSetMessage = 'address.notSet';
     public $shippedAtExpiredMessage = 'order.shippedAt.expired';

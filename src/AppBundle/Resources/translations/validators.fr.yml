@@ -24,8 +24,6 @@ delivery.price.error.priceCalculation: Le prix de la course n'a pas pu être cal
 delivery.tasks.unexpectedCount: La entrega debe consistir en dos tareas.
 delivery.tasks.pickupAfterDropoff: La date de dépôt doit être postérieure à la date de retrait.
 
-delivery.date.restaurantClosed: Le restaurant est fermé à cette date
-
 delivery.check.notValid: Votre demande n'est pas réalisable
 
 time_range.empty: Vous n'avez sélectionné aucune valeur

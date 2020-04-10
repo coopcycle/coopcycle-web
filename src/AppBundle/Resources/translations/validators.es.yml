@@ -24,8 +24,6 @@ delivery.price.error.priceCalculation: El precio de la entrega no pudo ser calcu
 delivery.tasks.unexpectedCount: Delivery must consist of two tasks.
 delivery.tasks.pickupAfterDropoff: La fecha de presentación debe ser posterior a la fecha de retiro.
 
-delivery.date.restaurantClosed: El restaurante esta cerrado en esta fecha
-
 delivery.check.notValid: Su solicitud no es factible
 
 time_range.empty: No seleccionó ningún valor

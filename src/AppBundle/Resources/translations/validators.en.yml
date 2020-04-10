@@ -24,8 +24,6 @@ delivery.price.error.priceCalculation: The delivery price could not be calculate
 delivery.tasks.unexpectedCount: Delivery must consist of two tasks.
 delivery.tasks.pickupAfterDropoff: Dropoff date must be after pickup date.
 
-delivery.date.restaurantClosed: Restaurant is closed on this date
-
 delivery.check.notValid: Your request is not feasible
 delivery.check.noStore: You must provide a store
 

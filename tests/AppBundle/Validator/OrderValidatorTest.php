@@ -359,9 +359,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );
-        $restaurant
-            ->isOpen($shippedAt)
-            ->willReturn(false);
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
@@ -379,7 +376,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $this->shippingDateFilter
             ->accept($order, $shippedAt, Argument::type(\DateTime::class))
-            ->willReturn(true);
+            ->willReturn(false);
 
         $this->prophesizeGetRawResponse(
             $restaurantAddressCoords,
@@ -391,9 +388,9 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $constraint = new OrderConstraint();
         $violations = $this->validator->validate($order->reveal(), $constraint);
 
-        $this->buildViolation($constraint->restaurantClosedMessage)
+        $this->buildViolation($constraint->shippedAtNotAvailableMessage)
             ->atPath('property.path.shippedAt')
-            ->setParameter('%date%', $shippedAt->format('Y-m-d H:i:s'))
+            ->setCode(OrderConstraint::SHIPPED_AT_NOT_AVAILABLE)
             ->assertRaised();
     }
 
