@@ -115,6 +115,10 @@ class OrderTimelineCalculatorTest extends TestCase
             ->getDelivery()
             ->willReturn($delivery->reveal());
 
+        $order
+            ->setShippingTimeRange(Argument::type(TsRange::class))
+            ->shouldBeCalled();
+
         $calculator = new OrderTimelineCalculator(
             $this->preparationTimeResolver->reveal(),
             $this->pickupTimeResolver->reveal()
@@ -125,10 +129,6 @@ class OrderTimelineCalculatorTest extends TestCase
         $this->assertEquals(new \DateTime('2020-04-09 19:40:00'), $timeline->getPreparationExpectedAt());
         $this->assertEquals(new \DateTime('2020-04-09 19:55:00'), $timeline->getPickupExpectedAt());
         $this->assertEquals(new \DateTime('2020-04-09 20:10:00'), $timeline->getDropoffExpectedAt());
-
-        $order
-            ->setShippingTimeRange(Argument::type(TsRange::class))
-            ->shouldHaveBeenCalled();
 
         $this->assertEquals(new \DateTime('2020-04-09 19:50:00'), $pickup->getAfter());
         $this->assertEquals(new \DateTime('2020-04-09 20:00:00'), $pickup->getBefore());
