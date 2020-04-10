@@ -288,9 +288,9 @@ order.payment.card_number.label: Card number
 order.payment.total: Pay %total%
 order.payment.cvc: CVC
 order.delivery_time: Delivery %time%
-order.payment.card_number.help: 'A stripe <a href="https://stripe.com/docs/testing#cards"
+order.payment.card_number.help: A stripe <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will
-  be debited. '
+  be debited.
 order.state.cart: Cart
 order.state.accepted: Accepted
 order.state.refused: Refused
@@ -549,8 +549,8 @@ form.menu_editor.help: "Use the editor below to compose the menu items\n<br>\nDr
   \ and drop the products into the sections on the left\n<br>\nIf you want to remove\
   \ a product from the menu, drop it in the « Products » section on the right\n<br>\n\
   Do not forget to click on the « Save Changes » button below\n"
-form.menu_editor.products.help: "To add products to the list on the right, add them\
-  \ to the <a href=\"%products_url%\">catalog</a> first\n"
+form.menu_editor.products.help: To add products to the list on the right, add them
+  to the <a href="%products_url%">catalog</a> first
 form.menu_editor.taxon_modal.title: Modify a section
 form.product.name.label: Name
 form.product.description.label: Description
@@ -649,9 +649,9 @@ user.profile.familyName: Family name
 user.profile.givenName: Given name
 roles.ROLE_ADMIN.help: "Administrator: Full access to all features\n"
 roles.ROLE_COURIER.help: "Courier: view waiting tasks, modify assigned tasks…\n"
-roles.ROLE_RESTAURANT.help: "Restaurant owner: manage assigned restaurants, manage\
-  \ orders…\n"
-roles.ROLE_STORE.help: "Store owner: manage assigned stores, manage deliveries…\n"
+roles.ROLE_RESTAURANT.help: 'Restaurant owner: manage assigned restaurants, manage
+  orders…'
+roles.ROLE_STORE.help: 'Store owner: manage assigned stores, manage deliveries…'
 stores.form.save: Save
 stores.manage: Manage
 stores.settings: Settings
