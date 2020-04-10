@@ -219,7 +219,7 @@ restaurant.form.enabled.tooltip: "Wenn deaktiviert, ist eine Restaurant nicht au
 restaurant.form.allow_stripe_connect.label: Dem Restaurant erlauben, das Stripe-Konto
   lebst zu verwalten
 restaurant.form.temporaryClosingRule: Wenn sie eine temporäre Schließung Ihres Restaurants
-  wünschen, folgen Sie diesem Link
+  wünschen, folgen Sie diesem Link.
 restaurant.form.accessPlanning: Zugriffsplanung
 restaurant.form.createRestaurant: Restaurant erstellen
 restaurant.contract.title: Vertrag
@@ -301,8 +301,9 @@ demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help
   class="fa fa-info-circle"></i>  Wie benutze ich diese Demo?</a>
 form.delivery.store.label: Geschäft
 form.delivery.store.placeholder: Geschäft finden…
-adminDashboard.tags.confirm_delete: Sind Sie sicher, dass Sie diesen Tag löschen wollen
-  ? alle damit verknüpften Elemente können ihn nicht mehr anzeigen oder nach ihm gruppieren.
+adminDashboard.tags.confirm_delete: "Sind Sie sicher, dass Sie diesen Tag löschen\
+  \ wollen ? \nAlle damit verknüpften Elemente können ihn nicht mehr anzeigen oder\
+  \ nach ihm gruppieren."
 restaurant.stats.order_number: Bestellnummer
 restaurant.stats.delivered_on: Liefertermin
 restaurant.stats.total_products_including_all_taxes: Gesamtbetrag der Waren einschließlich
@@ -391,7 +392,7 @@ form.store_type.defaultAddress.label: Hauptadresse
 form.store_type.time_slot.label: Zeitraum
 form.store_type.package_set.label: Paketset
 form.delivery.vehicle.placeholder: Wähle Fahrzeugtyp aus
-form.delivery.vehicle.label: Fahrzeug
+form.delivery.vehicle.label: Fahrzeug order Cargobike?
 form.delivery.distance.label: Entfernung
 form.delivery.duration.label: Zeitdauer
 form.delivery.package.label: Verpackung
@@ -479,7 +480,7 @@ form.maintenance.message.label: Nachricht
 pledge.reject: Ablehnen
 pledge.accept: Annehmen
 restaurant.suggest.has_voted: Du hast für das  Restaurant schon gestimmt!
-form.task.recipient.help: Gib bitte den Namen der Ansprechperson an.
+form.task.recipient.help: Gib bitte den Namen der Ansprechperson an
 receipt.emitter_details: Bestellung beim Restaurant  <strong>%restaurant_name%</strong>
 receipt.total: Gesamt (Inkl. MwSt.)
 receipt.line_item.total: Gesamt
@@ -522,7 +523,7 @@ form.task.telephone.label: Telefon
 form.task.address.label: Adresse
 localBusiness.form.enabled: Aktiviert
 notifications.restaurant.new_order: Neue Bestellung zu bestätigen
-receipt.billing_details: "Bestellung am %date% mit Kredikarte bezahlt\n"
+receipt.billing_details: Bestellung am %date% mit Kredikarte bezahlt
 receipt.line_item.quantity: Stückzahl
 adminDashboard.activity.title: Aktivitäten
 index.map.tip: Benutze die Karte unten, um die Restaurants zu finden
@@ -531,9 +532,9 @@ stores.manage: Verwalten
 roles.ROLE_STORE.help: 'Laden-Besitzer*in: zugeordnete Läden verwalten, Sendungen
   verwalten, ...'
 roles.ROLE_RESTAURANT.help: 'Restaurant-Besitzer*in: zugeordnete Restaurants verwalten,
-  Bestellungen verwalten, ...'
+  Bestellungen verwalten, …'
 user.edit.enabled.help: Ein*e deaktivierte*r Benutzer*in wird ausgeloggt und wird
-  sich nicht weiter in die Plattform einloggen dürfen
+  sich nicht weiter in die Plattform einloggen dürfen.
 user.edit.roles.help: Zugangsrechte des Nutzers bestimmen
 roles.ROLE_STORE: Laden
 roles.ROLE_ADMIN: Administrator*in
@@ -549,11 +550,11 @@ form.product.restricted_diets.help: Passt dieses Produkt für die folgenden Diä
 form.product.restricted_diets.label: Kalorienbeschränkte Diäten
 form.menu_editor.products.help: Um Produkte in die Liste rechts hinzufügen, füge sie
   zuerst in das  <a href="%products_url%">Katalog</a> first
-form.maintenance.disable.alert: Du bist in Begriff den Wartung-Modus zu deaktivieren.
+form.maintenance.disable.alert: Du bist in Begriff den Wartung-Modus zu deaktivieren
 form.maintenance.enable.alert: Du bist in Begriff, den Wartung-Modus zu aktivieren.
   <br> Nur Administrator*innen werden Zugang zur Seite haben.
 form.maintenance.disable.label: Wartung-Modus deaktivieren
-restaurant.form.exclusive.label: 'Das Restaurant ist exklusiv. '
+restaurant.form.exclusive.label: Das Restaurant ist exklusiv
 form.maintenance.enable.label: Wartung erlauben
 pledge.vote_count_equals_one: '%username% hat für dieses Restaurant gestimmt'
 pledge.vote_count_equals_two: '%first_user% und %second_user% haben für das Restaurant
@@ -563,8 +564,8 @@ restaurant.suggest.banner_disclaimer: Dieses Restaurant ist noch nicht verfügba
 pledge.suggested_by: Vorgeschlagen von  @%username%
 restaurant.suggest.vote: Deine stimme für %name%
 restaurant.suggest.message: "Helfe uns,  zu überzeugen, %restaurant.name%  mit %brand_name%\
-  \ zusammen zu arbeiten!\n<br\nUm es auf der Plattform zu haben, brauchen wir dich\
-  \ und deine Stimme, um die Zusammenarbeit-Anfrage zu unterstützen!"
+  \ zusammen zu arbeiten!\n<br>\nUm es auf der Plattform zu haben, brauchen wir dich\
+  \ und deine Stimme, um die Zusammenarbeit-Anfrage zu unterstützen!\n"
 form.suggest.thank_you_message: Danke das Restaurant vorgeschlagen zu haben!
 form.settings.company_logo.help: Dieses Logo wird für Rechnungen und Zustellnachweise
   benutzt

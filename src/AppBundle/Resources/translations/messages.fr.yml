@@ -123,8 +123,8 @@ restaurant.quotes_disclaimer.not_authenticated: Ce restaurant accepte également
 restaurant.form.enabled.tooltip: "Un restaurant désactivé n'est ni visible ni référencé\
   \ sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée\
   \ n'est pas accessible par les visiteurs.\n"
-restaurant.form.noPricingRule: "Aucune règle de tarification n'a été instaurée, <a\
-  \ href=\"%editPricingRule%\">cliquez-ici pour en créer une</a>. "
+restaurant.form.noPricingRule: Aucune règle de tarification n'a été instaurée, <a
+  href="%editPricingRule%">cliquez-ici pour en créer une</a>.
 restaurant.form.allow_stripe_connect.label: Autoriser le restaurant à gérer lui-même
   son compte Stripe
 restaurant.form.deposit_refund_enabled.label: Activer le système de consignes
@@ -633,8 +633,8 @@ roles.ROLE_COURIER.help: "Coursier : visualiser les courses à faire, changer l'
   \ des courses qui lui sont assignées…\n"
 roles.ROLE_RESTAURANT.help: "Restaurant : gérer les restaurants qui lui sont assignés,\
   \ gérer les commandes…\n"
-roles.ROLE_STORE.help: "Magasin : gérer les magasins qui lui sont assignés, créer\
-  \ des courses…\n"
+roles.ROLE_STORE.help: 'Magasin : gérer les magasins qui lui sont assignés, créer
+  des courses…'
 stores.form.save: Enregistrer
 stores.manage: Gérer
 stores.settings: Paramètres

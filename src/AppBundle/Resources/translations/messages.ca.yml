@@ -122,23 +122,17 @@ localBusiness.form.openingHours: Horari d'obertura
 localBusiness.form.deliveryPerimeterExpression: Zona o distància màxima de lliurament
 restaurant.available: Disponible
 restaurant.unavailable: No disponible
-restaurant.disabledWarning: 'Aquest restaurant està desactivat de manera que els visitants
-  del lloc no poden veure aquesta pàgina. Si voleu, podeu <a target="_blank" href="%restaurantEditUrl%">
-  activar-lo a l''administrador </a>.
-
-  '
+restaurant.disabledWarning: "Aquest restaurant està desactivat de manera que els visitants\
+  \ del lloc no poden veure aquesta pàgina. Si voleu, podeu <a target=\"_blank\" href=\"\
+  %restaurantEditUrl%\"> activar-lo a l'administrador </a>.\n"
 restaurant.closedWarningWithDelay: Demana ara per més endavant. Comproveu com a mínim
   un %delay% per adelantat.
 restaurant.temporaryClosedWarning: Aquest restaurant està tancat fins a <strong>%
   date% </strong>. Encara podreu demanar més endavant!
-restaurant.noMenuWarning: 'Aquest restaurant no té cap menú de moment
-
-  '
-restaurant.form.enabled.tooltip: 'Si està desactivat, un restaurant no és visible
-  al lloc web. No es mostra als resultats de la cerca ni la seva pròpia pàgina no
-  és accessible pels visitants.
-
-  '
+restaurant.noMenuWarning: "Aquest restaurant no té cap menú de moment\n"
+restaurant.form.enabled.tooltip: "Si està desactivat, un restaurant no és visible\
+  \ al lloc web. No es mostra als resultats de la cerca ni la seva pròpia pàgina no\
+  \ és accessible pels visitants.\n"
 restaurant.form.allow_stripe_connect.label: Permet al restaurant gestionar el compte
   Stripe pel seu compte
 restaurant.form.temporaryClosingRule: Si voleu tancar temporalment el vostre restaurant,
@@ -189,19 +183,10 @@ restaurant.list.norestaurant: Encara no hi ha restaurants
 restaurant.list.createNewRestaurant: Crea un nou restaurant
 restaurant.list.preparationTime: Preparació
 restaurant.list.stats: Estadístiques
-restaurant.product_options.help: 'Opció que tots els productes siguin <strong> configurables
-  </strong>
-
-  <br>
-
-  Permeten, per exemple, afegir complements o triar els elements d’un menú (acompanyament,
-  beguda…)
-
-  <br>
-
-  Per a cada opció, podeu definir una llista de valors
-
-  '
+restaurant.product_options.help: "Opció que tots els productes siguin <strong> configurables\
+  \ </strong>\n<br>\nPermeten, per exemple, afegir complements o triar els elements\
+  \ d’un menú (acompanyament, beguda…)\n<br>\nPer a cada opció, podeu definir una\
+  \ llista de valors\n"
 restaurant.product_options.list.values: Valors
 restaurant.form.uploadImage: Carregueu una imatge
 profile.addresses.breadcrumb: Adreces
@@ -255,10 +240,9 @@ order.payment.card_number.label: Número de targeta
 order.payment.total: Pagament %total%
 order.payment.cvc: CVC
 order.delivery_time: Lliurament %time%
-order.payment.card_number.help: 'A stripe
-
-  <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1"> número
-  de targeta de prova </a>. No es debatrà cap compte. '
+order.payment.card_number.help: "A stripe\n<a href=\"https://stripe.com/docs/testing#cards\"\
+  \ target=\"_blank\" tabindex=\"-1\"> número de targeta de prova </a>. No es debatrà\
+  \ cap compte. "
 order.state.cart: Cistell de compra
 order.state.accepted: Acceptat
 order.state.refused: Refusat
@@ -310,9 +294,7 @@ form.task.status.label: Estat
 form.task_event.notes.placeholder: 'Ex: adreça no trobada, cap problema …'
 form.task_event.notes.help: Podeu editar el comentari
 form.task_upload.file: Arxiu
-form.task_upload.file.help: 'Formats de fitxers compatibles: csv, ods, xlsx
-
-  '
+form.task_upload.file.help: "Formats de fitxers compatibles: csv, ods, xlsx\n"
 form.task_complete.done.label: Completa
 form.task_complete.fail.label: Informe del problema
 task.type.PICKUP: Recollida
@@ -361,14 +343,9 @@ form.order.refund_modal.title: Devolució
 form.payment.refund_amount.label: Import
 form.payment.refund_amount.help: L’import que especifiqueu es retornarà al client
 form.payment.refund_application_fee.label: Comissions de devolució
-form.payment.refund_application_fee.help: 'Si marqueu aquesta casella, la comissió
-  que cobra la plataforma al soci es retornarà proporcionalment
-
-  <br>
-
-  <a href="https://stripe.com/docs/connect/direct-charges#issuing-refunds">Aprèn més</a>
-
-  '
+form.payment.refund_application_fee.help: "Si marqueu aquesta casella, la comissió\
+  \ que cobra la plataforma al soci es retornarà proporcionalment\n<br>\n<a href=\"\
+  https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Aprèn més</a>\n"
 form.address.addressLocality.label: Ciutat
 form.address.postalCode.label: Codi Postal
 form.address.floor.label: Pis
@@ -384,11 +361,9 @@ form.pricing_rule_set.rules.label: Normes
 form.pricing_rule.price.label: Preu
 form.preparation_time_rule.expression.label: Expressió
 form.preparation_time_rule.time.label: Temps
-form.preparation_time.defaults_warning: 'Aquest restaurant encara no té cap temps
-  de preparació personalitzada. A continuació s’han copiat les regles predeterminades,
-  les podeu canviar.
-
-  '
+form.preparation_time.defaults_warning: "Aquest restaurant encara no té cap temps\
+  \ de preparació personalitzada. A continuació s’han copiat les regles predeterminades,\
+  \ les podeu canviar.\n"
 form.settings.date_time: Data i hora
 form.settings.brand_name.label: Nom de la marca
 form.settings.stripe.title: Compte de Stripe
@@ -403,30 +378,22 @@ form.settings.stripe_testmode.help: 'En el mode «test», haureu d’utilitzar <
 form.settings.stripe_enable_livemode.help: Per activar el mode «en viu», primer heu
   de configurar les tecles «en viu».
 form.settings.stripe_publishable_key.label: Clau publicable de Stripe
-form.settings.stripe_publishable_key.help: 'Creeu un compte Stripe per obtenir-ne
-  <a href="https://stripe.com/docs/dashboard#api-keys">clau publicable</a>
-
-  '
+form.settings.stripe_publishable_key.help: "Creeu un compte Stripe per obtenir-ne\
+  \ <a href=\"https://stripe.com/docs/dashboard#api-keys\">clau publicable</a>\n"
 form.settings.stripe_secret_key.label: Clau secreta de Stripe
-form.settings.stripe_secret_key.help: 'Creeu un compte Stripe per obtenir-ne <a href="https://stripe.com/docs/dashboard#api-keys">clau
-  publicable</a>
-
-  '
+form.settings.stripe_secret_key.help: "Creeu un compte Stripe per obtenir-ne <a href=\"\
+  https://stripe.com/docs/dashboard#api-keys\">clau publicable</a>\n"
 form.settings.stripe_connect_client_id.label: Stripe Connect identificador
-form.settings.stripe_connect_client_id.help: 'Obteniu l''identificador a la secció
-  <a href="https://dashboard.stripe.com/account/applications/settings">pàgina de paràmetres</a>
-
-  '
+form.settings.stripe_connect_client_id.help: "Obteniu l'identificador a la secció\
+  \ <a href=\"https://dashboard.stripe.com/account/applications/settings\">pàgina\
+  \ de paràmetres</a>\n"
 form.settings.google_api_key.label: Clau de l’API de Google
-form.settings.google_api_key.help: 'Creeu un compte de Google per obtenir-ne <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">API
-  key</a>
-
-  '
+form.settings.google_api_key.help: "Creeu un compte de Google per obtenir-ne <a href=\"\
+  https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
+  >API key</a>\n"
 form.settings.latlng.label: Coordenades geogràfiques
-form.settings.latlng.help: 'Especifiqueu la latitud i la longitud predeterminades.
-  Podeu continuar <a href="https://www.latlong.net/">latlong.net</a>
-
-  '
+form.settings.latlng.help: "Especifiqueu la latitud i la longitud predeterminades.\
+  \ Podeu continuar <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
 form.settings.default_tax_category.label: Taxa d’IVA per Entregues
 form.settings.default_tax_category.help: Especifiqueu el tipus d’IVA a utilitzar per
   a Entregues
@@ -439,29 +406,15 @@ form.settings.enable_restaurant_pledges.label: Permet als clients suggerir resta
 form.suggest.name.label: Nom
 form.suggest.name.help: Indiqueu el nom exacte perquè el puguem trobar
 form.suggest.submit.label: Suggeriu ara
-form.suggest.message: 'No trobeu el vostre restaurant preferit?
-
-  <br>
-
-  Dona''ns el seu nom i adreça. Aleshores altres usuaris poden votar perque aparegui
-  a la llista de restaurants.
-
-  <br>
-
-  Això ens permetrà identificar millor els restaurants que s’han d’acostar i proporcionar-los
-  la prova d’una demanda real.
-
-  '
+form.suggest.message: "No trobeu el vostre restaurant preferit?\n<br>\nDona'ns el\
+  \ seu nom i adreça. Aleshores altres usuaris poden votar perque aparegui a la llista\
+  \ de restaurants.\n<br>\nAixò ens permetrà identificar millor els restaurants que\
+  \ s’han d’acostar i proporcionar-los la prova d’una demanda real.\n"
 form.suggest.thank_you_message: Gràcies per suggerir aquest restaurant!
-restaurant.suggest.message: 'Ajuda''ns a convèncer a %restaurant.name% per treballar
-  %brand_name%!
-
-  <br>
-
-  Per veure-la a la plataforma, necessitem que vosaltres i la vostra veu recolzeu
-  la nostra futura sol·licitud de col·laboració amb aquesta marca.
-
-  '
+restaurant.suggest.message: "Ajuda'ns a convèncer a %restaurant.name% per treballar\
+  \ %brand_name%!\n<br>\nPer veure-la a la plataforma, necessitem que vosaltres i\
+  \ la vostra veu recolzeu la nostra futura sol·licitud de col·laboració amb aquesta\
+  \ marca.\n"
 restaurant.suggest.vote: Vota per %name%
 pledge.suggested_by: Suggerida per @%username%
 restaurant.suggest.has_voted: Ja heu votat aquest restaurant!
@@ -498,33 +451,24 @@ form.delivery_embed.name.help: El vostre nom o nom de l'empresa
 form.delivery_embed.telephone.label: Número de telèfon
 form.delivery_embed.vehicle.disclaimer: Ens lliuren articles de bici de càrrega de
   més de 50x40x20 (cm) o el pes dels quals superi els 6kg
-form.registration.username.help: 'El vostre nom d’usuari no pot ser superior a 15
-  caràcters. Un nom d''usuari només pot contenir caràcters alfanumèrics (lletres A-Z,
-  números 0-9) a excepció dels guions baixos.
-
-  '
+form.registration.username.help: "El vostre nom d’usuari no pot ser superior a 15\
+  \ caràcters. Un nom d'usuari només pot contenir caràcters alfanumèrics (lletres\
+  \ A-Z, números 0-9) a excepció dels guions baixos.\n"
 form.local_business.stripe_account.title: Compte de Stripe
 form.local_business.stripe_account.help: Connecteu un compte Stripe per transferir
   diners a un altre compte bancari
 form.local_business.stripe_account.connect_button.text: Connecta amb Stripe
 form.local_business.stripe_account.not_configured: Encara no podeu connectar cap compte
 form.local_business.stripe_account.success: Compte de Stripe connectat correctament
-form.local_business.stripe_account.need_stripe_account: 'Encara no heu creat un compte
-  Stripe per a aquest restaurant. Stripe és una plataforma de pagaments que ens permet
-  gestionar de forma segura els pagaments amb targeta i les transferències al vostre
-  compte bancari.<br>
-
-  Per crear un compte Stripe per a aquest restaurant, si us plau <a href="%stripeAuthorizeURL%">clica
-  aquí</a>.
-
-  '
-form.local_business.stripe_account.link_ok: 'Aquest restaurant està enllaçat a un
-  compte Stripe i pot rebre pagaments de la plataforma.<br>
-
-  Per gestionar el vostre compte Stripe i les transferències al vostre compte, utilitzeu
-  el botó<a href="https://dashboard.stripe.com/" target="_blank">Stripe dashboard</a>.
-
-  '
+form.local_business.stripe_account.need_stripe_account: "Encara no heu creat un compte\
+  \ Stripe per a aquest restaurant. Stripe és una plataforma de pagaments que ens\
+  \ permet gestionar de forma segura els pagaments amb targeta i les transferències\
+  \ al vostre compte bancari.<br>\nPer crear un compte Stripe per a aquest restaurant,\
+  \ si us plau <a href=\"%stripeAuthorizeURL%\">clica aquí</a>.\n"
+form.local_business.stripe_account.link_ok: "Aquest restaurant està enllaçat a un\
+  \ compte Stripe i pot rebre pagaments de la plataforma.<br>\nPer gestionar el vostre\
+  \ compte Stripe i les transferències al vostre compte, utilitzeu el botó<a href=\"\
+  https://dashboard.stripe.com/\" target=\"_blank\">Stripe dashboard</a>.\n"
 form.menu_item.name.label: Nom
 form.menu_item.price.label: Preu
 form.menu_item_modifier.name.label: Nom
@@ -532,32 +476,15 @@ form.menu_item_modifier.price.label: Preu
 form.menu_item_modifier.calculusStrategy.label: Càlcul de preus
 form.menu_taxon.name.label: Nom
 form.menu_taxon.add_child.label: Afegeix una secció
-form.menu_taxon.child_name.placeholder: 'Exemple: plats principals, postres ...
-
-  '
+form.menu_taxon.child_name.placeholder: "Exemple: plats principals, postres ...\n"
 form.menu_editor.products_panel.title: Productes
 form.menu_editor.save.label: Guardar canvis
-form.menu_editor.help: 'Utilitzeu l''editor següent per escriure els elements del
-  menú
-
-  <br>
-
-  Drag and drop the products into the sections on the left
-
-  <br>
-
-  Si voleu eliminar un producte del menú, deixeu-lo a la secció "Productes" de la
-  dreta
-
-  <br>
-
-  No us oblideu de fer clic al botó «Desa els canvis» a continuació
-
-  '
-form.menu_editor.products.help: 'Per afegir productes a la llista de la dreta, afegiu-los
-  a la llista <a href="%products_url%">catàlog</a> primer
-
-  '
+form.menu_editor.help: "Utilitzeu l'editor següent per escriure els elements del menú\n\
+  <br>\nDrag and drop the products into the sections on the left\n<br>\nSi voleu eliminar\
+  \ un producte del menú, deixeu-lo a la secció \"Productes\" de la dreta\n<br>\n\
+  No us oblideu de fer clic al botó «Desa els canvis» a continuació\n"
+form.menu_editor.products.help: "Per afegir productes a la llista de la dreta, afegiu-los\
+  \ a la llista <a href=\"%products_url%\">catàlog</a> primer\n"
 form.menu_editor.taxon_modal.title: Modificar una secció
 form.product.name.label: Nom
 form.product.description.label: Descripció
@@ -569,15 +496,10 @@ form.product.allergens.help: Aquest producte conté els següents al·lèrgens?
 form.product.restricted_diets.label: Dietes restringides
 form.product.restricted_diets.help: Aquest producte s’adapta a les dietes següents?
 form.product.confirm.label: Confirmeu els canvis
-form.product.confirm.help: 'Heu canviat el nom del producte. Si és una <strong>minor
-  modification</strong> (misspelled, upper case…), fer clic a « Confirmar canvis ».
-
-  <br>
-
-  Si no, ho heu de fer <a href="%link%">create a new product</a>, de manera que pugueu
-  distingir els productes que veneu i mantenir-ne l’historial.
-
-  '
+form.product.confirm.help: "Heu canviat el nom del producte. Si és una <strong>minor\
+  \ modification</strong> (misspelled, upper case…), fer clic a « Confirmar canvis\
+  \ ».\n<br>\nSi no, ho heu de fer <a href=\"%link%\">create a new product</a>, de\
+  \ manera que pugueu distingir els productes que veneu i mantenir-ne l’historial.\n"
 form.product_option.name.label: Nom
 form.product_option.strategy.label: Càlcul de preus
 form.product_option.price.label: Preu
@@ -590,9 +512,7 @@ form.product_option.additional.help: El client pot triar diversos valors sense h
 form.product_option_value.value.label: Valor
 form.product_option_value.price.label: Preu
 form.checkout_address.notes.label: Una observació?
-form.checkout_address.notes.placeholder: 'Exemple: sense salsa, sense tomàquets ...
-
-  '
+form.checkout_address.notes.placeholder: "Exemple: sense salsa, sense tomàquets ...\n"
 form.checkout_address.notes.help: La vostra observació es reenviarà al restaurant
 form.checkout_address.promotion_coupon.label: Codi de cupó
 form.checkout_address.telephone.label: Número de telèfon
@@ -626,21 +546,13 @@ user.edit.enabled.help: Un usuari desactivat serà desconnectat i no es pot torn
   a iniciar a la plataforma.
 user.profile.familyName: Nom de familia
 user.profile.givenName: Nom donat
-roles.ROLE_ADMIN.help: 'Administrador: accés complet a totes les funcions
-
-  '
-roles.ROLE_COURIER.help: 'Repartidor: veure les tasques d’espera, modificar les tasques
-  assignades ...
-
-  '
-roles.ROLE_RESTAURANT.help: 'Propietari del restaurant: gestiona els restaurants assignats,
-  gestiona les comandes ...
-
-  '
+roles.ROLE_ADMIN.help: "Administrador: accés complet a totes les funcions\n"
+roles.ROLE_COURIER.help: "Repartidor: veure les tasques d’espera, modificar les tasques\
+  \ assignades ...\n"
+roles.ROLE_RESTAURANT.help: "Propietari del restaurant: gestiona els restaurants assignats,\
+  \ gestiona les comandes ...\n"
 roles.ROLE_STORE.help: 'Propietari de la botiga: gestiona les botigues assignades,
-  gestiona els enviaments ...
-
-  '
+  gestiona els enviaments …'
 stores.form.save: Desa
 stores.manage: Gestiona
 stores.settings: Configuració
@@ -653,11 +565,8 @@ stores.deliveries.heading: 'Entrega #%delivery_id% - %delivery_distance%'
 stores.deliveries.task_unassigned: No adscrit
 stores.addresses: Adreces
 meta.title: Plataforma de entrega per a empreses de treballadors
-admin.settings.missing_mandatory_settings: 'Falta la configuració obligatòria.
-
-  Anar a <a href="%settings_url%">pàgina de configuració</a>per configurar-les.
-
-  '
+admin.settings.missing_mandatory_settings: "Falta la configuració obligatòria.\nAnar\
+  \ a <a href=\"%settings_url%\">pàgina de configuració</a>per configurar-les.\n"
 index.map.tip: Utilitzeu el mapa següent per trobar restaurants
 index.banner: Deliciosos menjars entregats a domicili
 index.our_restaurants: Els nostres restaurants
@@ -665,42 +574,18 @@ index.view_all_restaurants: Veure tots els restaurants
 notifications.empty: No hi ha notificacions
 adminDashboard.statistics: Estadístiques
 adminDashboard.activity.title: Activitat
-activity.task.created: '@%owner% tasca creada #task/%aggregate_id%
-
-  '
-activity.task.assigned: '@%owner% tasca assignada #task/%aggregate_id%
-
-  '
-activity.task.unassigned: '@%owner% tasca no assignada #task/%aggregate_id%
-
-  '
-activity.task.done: '@%owner% tasca completada #task/%aggregate_id%
-
-  '
-activity.task.failed: '@%owner% no es pot completar task #task/%aggregate_id%
-
-  '
-activity.task.cancelled: '@%owner% ha cancel·lat la tasca #task/%aggregate_id%
-
-  '
-activity.order.created: 'Comanda #order/%aggregate_id% ha estat creat per @%owner%
-
-  '
-activity.order.accepted: 'Comanda #order/%aggregate_id% ha estat acceptada
-
-  '
-activity.order.refused: 'Comanda #order/%aggregate_id% ha estat rebutjada
-
-  '
-activity.order.picked: '@%owner% ha rebut la comanda #order/%aggregate_id%
-
-  '
-activity.order.dropped: '@%owner% ha entregat la comanda #order/%aggregate_id%
-
-  '
-activity.order.fulfilled: 'Comanda #order/#%aggregate_id% és complerta
-
-  '
+activity.task.created: "@%owner% tasca creada #task/%aggregate_id%\n"
+activity.task.assigned: "@%owner% tasca assignada #task/%aggregate_id%\n"
+activity.task.unassigned: "@%owner% tasca no assignada #task/%aggregate_id%\n"
+activity.task.done: "@%owner% tasca completada #task/%aggregate_id%\n"
+activity.task.failed: "@%owner% no es pot completar task #task/%aggregate_id%\n"
+activity.task.cancelled: "@%owner% ha cancel·lat la tasca #task/%aggregate_id%\n"
+activity.order.created: "Comanda #order/%aggregate_id% ha estat creat per @%owner%\n"
+activity.order.accepted: "Comanda #order/%aggregate_id% ha estat acceptada\n"
+activity.order.refused: "Comanda #order/%aggregate_id% ha estat rebutjada\n"
+activity.order.picked: "@%owner% ha rebut la comanda #order/%aggregate_id%\n"
+activity.order.dropped: "@%owner% ha entregat la comanda #order/%aggregate_id%\n"
+activity.order.fulfilled: "Comanda #order/#%aggregate_id% és complerta\n"
 social.sign_in_with_facebook: Inicieu la sessió amb Facebook
 embed.delivery.summary: 'Heu sol·licitat una cursa a la qual es deixarà anar <strong>%dropoff_date%</strong>
   a la següent adreça: <strong>%dropoff_address%</strong> <br> Hem calculat una distància
