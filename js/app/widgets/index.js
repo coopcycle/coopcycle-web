@@ -1,6 +1,5 @@
 import AddressAutosuggest from './AddressAutosuggest'
 import AddressInput from './AddressInput'
-import CheckoutDateTime from './CheckoutDateTime'
 import DatePicker from './DatePicker'
 import DateTimePicker from './DateTimePicker'
 import OpeningHoursInput from './OpeningHoursInput'
@@ -13,7 +12,6 @@ window.CoopCycle = window.CoopCycle || {}
 
 window.CoopCycle.AddressAutosuggest = AddressAutosuggest
 window.CoopCycle.AddressInput = AddressInput
-window.CoopCycle.CheckoutDateTime = CheckoutDateTime
 window.CoopCycle.DatePicker = DatePicker
 window.CoopCycle.DateTimePicker = DateTimePicker
 window.CoopCycle.OpeningHoursInput = OpeningHoursInput
