@@ -833,7 +833,7 @@ Feature: Orders
       "hydra:description":@string@,
       "violations":[
         {
-          "propertyPath":"shippedAt",
+          "propertyPath":"shippingTimeRange",
           "message":@string@
         }
       ]
@@ -1026,7 +1026,7 @@ Feature: Orders
       "hydra:description":@string@,
       "violations":[
         {
-          "propertyPath":"shippedAt",
+          "propertyPath":"shippingTimeRange",
           "message":@string@
         }
       ]
