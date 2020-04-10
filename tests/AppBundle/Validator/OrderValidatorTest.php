@@ -144,6 +144,10 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->containsDisabledProduct()
             ->willReturn(false);
 
+        $this->shippingDateFilter
+            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->willReturn(true);
+
         $this->prophesizeGetRawResponse(
             $restaurantAddressCoords,
             $shippingAddressCoords,
@@ -373,6 +377,10 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->containsDisabledProduct()
             ->willReturn(false);
 
+        $this->shippingDateFilter
+            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->willReturn(true);
+
         $this->prophesizeGetRawResponse(
             $restaurantAddressCoords,
             $shippingAddressCoords,
@@ -424,6 +432,10 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $order
             ->containsDisabledProduct()
             ->willReturn(false);
+
+        $this->shippingDateFilter
+            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->willReturn(true);
 
         $this->prophesizeGetRawResponse(
             $restaurantAddressCoords,
@@ -591,6 +603,10 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $order
             ->containsDisabledProduct()
             ->willReturn(false);
+
+        $this->shippingDateFilter
+            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->willReturn(true);
 
         $this->prophesizeGetRawResponse(
             $restaurantAddressCoords,
