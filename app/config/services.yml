@@ -375,12 +375,7 @@ services:
       $redis: "@snc_redis.default"
 
   AppBundle\Utils\ShippingDateFilter: ~
-
-  AppBundle\Utils\OrderTimelineCalculator:
-    arguments:
-      - '@coopcycle.preparation_time_calculator'
-      - '@coopcycle.shipping_time_calculator'
-
+  AppBundle\Utils\OrderTimelineCalculator: ~
   AppBundle\Utils\OrderTimeHelper: ~
 
   AppBundle\Entity\Listener\TaskListener:

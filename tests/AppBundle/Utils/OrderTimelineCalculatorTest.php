@@ -2,39 +2,29 @@
 
 namespace Tests\AppBundle\Utils;
 
-use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimelineCalculator;
-use AppBundle\Utils\PreparationTimeCalculator;
-use AppBundle\Utils\ShippingTimeCalculator;
+use AppBundle\Utils\PreparationTimeResolver;
+use AppBundle\Utils\PickupTimeResolver;
 use PHPUnit\Framework\TestCase;
 
 class OrderTimelineCalculatorTest extends TestCase
 {
-    private $preparationTimeCalculator;
-    private $shippingTimeCalculator;
+    private $preparationTimeResolver;
+    private $pickupTimeResolver;
 
     public function setUp(): void
     {
-        $this->preparationTimeCalculator = $this->prophesize(PreparationTimeCalculator::class);
-        $this->shippingTimeCalculator = $this->prophesize(ShippingTimeCalculator::class);
+        $this->preparationTimeResolver = $this->prophesize(PreparationTimeResolver::class);
+        $this->pickupTimeResolver = $this->prophesize(PickupTimeResolver::class);
     }
 
-    private function createOrder($total, $shippedAt, $state = 'normal')
+    private function createOrder(\DateTime $shippedAt)
     {
-        $restaurant = new Restaurant();
-        $restaurant->setState($state);
-
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
-        $order
-            ->getItemsTotal()
-            ->willReturn($total);
-        $order
             ->getShippedAt()
-            ->willReturn(new \DateTime($shippedAt));
+            ->willReturn($shippedAt);
 
         return $order->reveal();
     }
@@ -42,55 +32,20 @@ class OrderTimelineCalculatorTest extends TestCase
     public function calculateProvider()
     {
         return [
-            // state = normal
             [
-                $this->createOrder(1500, '2018-08-25 13:30:00'),
-                '10 minutes',
-                '15 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 13:05:00'),
             ],
             [
-                $this->createOrder(3000, '2018-08-25 13:30:00'),
-                '15 minutes',
-                '15 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 13:00:00'),
             ],
             [
-                $this->createOrder(6000, '2018-08-25 13:30:00'),
-                '30 minutes',
-                '15 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 12:45:00'),
-            ],
-            // state = rush
-            [
-                $this->createOrder(1500, '2018-08-25 13:30:00', 'rush'),
-                '20 minutes',
-                '15 minutes',
-                new \DateTime('2018-08-25 13:30:00'),
-                new \DateTime('2018-08-25 13:15:00'),
-                new \DateTime('2018-08-25 12:55:00'),
-            ],
-            [
-                $this->createOrder(3000, '2018-08-25 13:30:00', 'rush'),
-                '30 minutes',
-                '15 minutes',
-                new \DateTime('2018-08-25 13:30:00'),
-                new \DateTime('2018-08-25 13:15:00'),
-                new \DateTime('2018-08-25 12:45:00'),
-            ],
-            [
-                $this->createOrder(6000, '2018-08-25 13:30:00', 'rush'),
-                '45 minutes',
-                '15 minutes',
-                new \DateTime('2018-08-25 13:30:00'),
-                new \DateTime('2018-08-25 13:15:00'),
-                new \DateTime('2018-08-25 12:30:00'),
             ],
         ];
     }
@@ -99,34 +54,29 @@ class OrderTimelineCalculatorTest extends TestCase
      * @dataProvider calculateProvider
      */
     public function testCalculate(
-        OrderInterface $order,
-        $preparationTime,
-        $shippingTime,
-        \DateTime $dropoffExpectedAt,
-        \DateTime $pickupExpectedAt,
-        \DateTime $preparationExpectedAt)
+        \DateTime $dropoff,
+        \DateTime $pickup,
+        \DateTime $preparation)
     {
-        $this->preparationTimeCalculator
-            ->calculate($order)
-            ->willReturn($preparationTime);
+        $order = $this->createOrder($dropoff);
 
-        $this->preparationTimeCalculator
-            ->createForRestaurant($order->getRestaurant())
-            ->willReturn($this->preparationTimeCalculator->reveal());
+        $this->preparationTimeResolver
+            ->resolve($order, $dropoff)
+            ->willReturn($preparation);
 
-        $this->shippingTimeCalculator
-            ->calculate($order)
-            ->willReturn($shippingTime);
+        $this->pickupTimeResolver
+            ->resolve($order, $dropoff)
+            ->willReturn($pickup);
 
         $this->calculator = new OrderTimelineCalculator(
-            $this->preparationTimeCalculator->reveal(),
-            $this->shippingTimeCalculator->reveal()
+            $this->preparationTimeResolver->reveal(),
+            $this->pickupTimeResolver->reveal()
         );
 
         $timeline = $this->calculator->calculate($order);
 
-        $this->assertEquals($dropoffExpectedAt, $timeline->getDropoffExpectedAt());
-        $this->assertEquals($pickupExpectedAt, $timeline->getPickupExpectedAt());
-        $this->assertEquals($preparationExpectedAt, $timeline->getPreparationExpectedAt());
+        $this->assertEquals($dropoff, $timeline->getDropoffExpectedAt());
+        $this->assertEquals($pickup, $timeline->getPickupExpectedAt());
+        $this->assertEquals($preparation, $timeline->getPreparationExpectedAt());
     }
 }

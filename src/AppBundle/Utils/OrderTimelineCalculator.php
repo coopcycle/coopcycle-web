@@ -7,43 +7,33 @@ use AppBundle\Sylius\Order\OrderInterface;
 
 class OrderTimelineCalculator
 {
-    private $preparationTimeCalculator;
-    private $shippingTimeCalculator;
+    private $preparationTimeResolver;
+    private $pickupTimeResolver;
 
     /**
-     * @param PreparationTimeCalculator $preparationTimeCalculator
-     * @param ShippingTimeCalculator $shippingTimeCalculator
+     * @param PreparationTimeResolver $preparationTimeResolver
+     * @param PickupTimeResolver $pickupTimeResolver
      */
     public function __construct(
-        PreparationTimeCalculator $preparationTimeCalculator,
-        ShippingTimeCalculator $shippingTimeCalculator)
+        PreparationTimeResolver $preparationTimeResolver,
+        PickupTimeResolver $pickupTimeResolver)
     {
-        $this->preparationTimeCalculator = $preparationTimeCalculator;
-        $this->shippingTimeCalculator = $shippingTimeCalculator;
+        $this->preparationTimeResolver = $preparationTimeResolver;
+        $this->pickupTimeResolver = $pickupTimeResolver;
     }
 
     public function calculate(OrderInterface $order)
     {
         $timeline = new OrderTimeline();
 
-        $dropoffExpectedAt = clone $order->getShippedAt();
+        $dropoff = clone $order->getShippedAt();
+        $timeline->setDropoffExpectedAt($dropoff);
 
-        $timeline->setDropoffExpectedAt($dropoffExpectedAt);
+        $pickup = $this->pickupTimeResolver->resolve($order, $dropoff);
+        $timeline->setPickupExpectedAt($pickup);
 
-        $shippingTime = $this->shippingTimeCalculator->calculate($order);
-
-        $pickupExpectedAt = clone $dropoffExpectedAt;
-        $pickupExpectedAt->sub(date_interval_create_from_date_string($shippingTime));
-
-        $timeline->setPickupExpectedAt($pickupExpectedAt);
-
-        $preparationTime = $this->preparationTimeCalculator
-            ->createForRestaurant($order->getRestaurant())
-            ->calculate($order);
-        $preparationExpectedAt = clone $pickupExpectedAt;
-        $preparationExpectedAt->sub(date_interval_create_from_date_string($preparationTime));
-
-        $timeline->setPreparationExpectedAt($preparationExpectedAt);
+        $preparation = $this->preparationTimeResolver->resolve($order, $dropoff);
+        $timeline->setPreparationExpectedAt($preparation);
 
         return $timeline;
     }
