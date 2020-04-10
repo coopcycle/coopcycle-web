@@ -99,10 +99,6 @@
 $('#checkout_address_reusablePackagingEnabled').on('change', function(e) {
   $(this).closest('form').submit();
 });
-new CoopCycle.CheckoutDateTime(document.querySelector('#checkout_address_shippedAt'), {
-  dateElement: document.querySelector('#checkout_address_shippedAt_date'),
-  timeElement: document.querySelector('#checkout_address_shippedAt_time')
-});
 </script>
 {% endif %}
 {% endblock %}
