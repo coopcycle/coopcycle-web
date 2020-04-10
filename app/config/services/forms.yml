@@ -164,6 +164,9 @@ services:
       $locale: '%kernel.default_locale%'
     tags: [ form.type ]
 
+  AppBundle\Form\Type\MoneyType:
+    tags: [ form.type ]
+
   AppBundle\Form\DeliveryImportType:
     tags: [ form.type ]
 

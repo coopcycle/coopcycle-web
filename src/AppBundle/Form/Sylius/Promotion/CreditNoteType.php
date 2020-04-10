@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Sylius\Promotion;
 
 use AppBundle\Entity\Restaurant;
+use AppBundle\Form\Type\MoneyType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -10,7 +11,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -24,7 +24,6 @@ class CreditNoteType extends AbstractType
         $builder
             ->add('username', HiddenType::class)
             ->add('amount', MoneyType::class, [
-                'divisor' => 100,
                 'label' => 'form.credit_note.amount.label'
             ])
             ->add('name', TextType::class, [

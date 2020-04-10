@@ -2,13 +2,13 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Form\Type\MoneyType;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -47,7 +47,6 @@ class PaymentType extends AbstractType
                         $form->add('amount', MoneyType::class, [
                             'label' => 'form.payment.refund_amount.label',
                             'data' => $payment->getRefundAmount(),
-                            'divisor' => 100,
                             'mapped' => false,
                         ]);
 

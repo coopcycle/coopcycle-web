@@ -7,6 +7,7 @@ use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
+use AppBundle\Form\Type\MoneyType;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
@@ -25,7 +26,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -101,7 +101,6 @@ class ProductType extends AbstractType
         $builder
             ->add('price', MoneyType::class, [
                 'mapped' => false,
-                'divisor' => 100,
                 'label' => 'form.product.price.label'
             ])
             ->add('taxCategory', TaxCategoryChoiceType::class, [

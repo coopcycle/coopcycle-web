@@ -4,13 +4,13 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Form\Type\MinMaxType;
+use AppBundle\Form\Type\MoneyType;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -51,7 +51,6 @@ class ProductOptionType extends AbstractType
             ])
             ->add('price', MoneyType::class, [
                 'label' => 'form.product_option.price.label',
-                'divisor' => 100,
                 'required' => false
             ])
             ->add('valuesRange', MinMaxType::class)

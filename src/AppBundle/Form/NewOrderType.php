@@ -3,8 +3,8 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Form\Type\MoneyType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -30,7 +30,6 @@ class NewOrderType extends DeliveryType
             ->add('variantPrice', MoneyType::class, [
                 'label' => 'form.new_order.variant_price.label',
                 'mapped' => false,
-                'divisor' => 100,
             ]);
 
         $builder->remove('weight');
