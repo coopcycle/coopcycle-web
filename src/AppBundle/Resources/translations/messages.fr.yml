@@ -114,13 +114,17 @@ restaurant.closedWarningWithDelay: Commandez dès maintenant pour plus tard ! Co
 restaurant.temporaryClosedWarning: Ce restaurant est fermé jusqu'au <strong>%date%</strong>.
   Vous pouvez commander pour plus tard !
 restaurant.noMenuWarning: "Ce restaurant n'a pas de menu pour l'instant\n"
-restaurant.quotes_disclaimer.authenticated: Ce restaurant accepte également des commandes sur devis. Pour créer des devis, vous devez être un client référencé. <a href="%contact_us%">Contactez-nous</a> pour en savoir plus.
-restaurant.quotes_disclaimer.not_authenticated: Ce restaurant accepte également des commandes sur devis. Si vous êtes un client référencé, <a href="%login%">identifiez-vous</a> pour créer un devis. <a href="%contact_us%">Contactez-nous</a> pour en savoir plus.
+restaurant.quotes_disclaimer.authenticated: Ce restaurant accepte également des commandes
+  sur devis. Pour créer des devis, vous devez être un client référencé. <a href="%contact_us%">Contactez-nous</a>
+  pour en savoir plus.
+restaurant.quotes_disclaimer.not_authenticated: Ce restaurant accepte également des
+  commandes sur devis. Si vous êtes un client référencé, <a href="%login%">identifiez-vous</a>
+  pour créer un devis. <a href="%contact_us%">Contactez-nous</a> pour en savoir plus.
 restaurant.form.enabled.tooltip: "Un restaurant désactivé n'est ni visible ni référencé\
   \ sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée\
   \ n'est pas accessible par les visiteurs.\n"
-restaurant.form.noPricingRule: 'Aucune règle de tarification n''a été instaurée, <a href="%editPricingRule%">cliquez-ici pour en créer une</a>.
-  '
+restaurant.form.noPricingRule: "Aucune règle de tarification n'a été instaurée, <a\
+  \ href=\"%editPricingRule%\">cliquez-ici pour en créer une</a>. "
 restaurant.form.allow_stripe_connect.label: Autoriser le restaurant à gérer lui-même
   son compte Stripe
 restaurant.form.deposit_refund_enabled.label: Activer le système de consignes
@@ -129,7 +133,8 @@ restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement vo
 restaurant.form.accessPlanning: Accéder au planning
 restaurant.form.createRestaurant: Créer un restaurant
 restaurant.form.exclusive.label: Ce restaurant est une exclusivité
-restaurant.form.quotes_allowed.label: "Ce restaurant accepte également des commandes sur devis (ex : traiteur)"
+restaurant.form.quotes_allowed.label: 'Ce restaurant accepte également des commandes
+  sur devis (ex : traiteur)'
 restaurant.form.save: Enregistrer
 restaurant.form.loopeat_enabled.label: Activer le système de consignes LoopEat
 restaurant.deliveryPerimeterExpression.title: Périmètre de livraison
@@ -140,8 +145,8 @@ restaurant.contract.minimumCartAmount.label: Montant minimum du panier
 restaurant.contract.flatDeliveryPrice.label: Montant facturé par la plateforme pour
   la livraison
 restaurant.contract.flatDeliveryPrice.help: Ce montant sera versé à la société de
-  livraison pour ses services, peu importe le prix payé par le client. Il sera prélevé sur le paiement du client mais ne sera
-  pas affiché dans le panier
+  livraison pour ses services, peu importe le prix payé par le client. Il sera prélevé
+  sur le paiement du client mais ne sera pas affiché dans le panier
 restaurant.contract.customerAmount.label: Montant payé par le client pour la livraison
 restaurant.contract.customerAmount.help: Ce montant sera payé par le client pour la
   livraison. Il sera ajouté au prix des produits et affiché dans le panier
@@ -161,21 +166,30 @@ restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réserv
 restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez
   contacter un administrateur.
 restaurant.contract.showAdvanced: Montrer les réglages avancés
-restaurant.contract.variableDeliveryPrice.label: Montant variable facturé par la plateforme pour la livraison
-restaurant.contract.variableDeliveryPrice.help: Le montant facturé sera calculé en utilisant la tarification sélectionnée
+restaurant.contract.variableDeliveryPrice.label: Montant variable facturé par la plateforme
+  pour la livraison
+restaurant.contract.variableDeliveryPrice.help: Le montant facturé sera calculé en
+  utilisant la tarification sélectionnée
 restaurant.contract.variableDeliveryPrice.placeholder: Veuillez sélectionner une tarification
-restaurant.contract.variableDeliveryPriceEnabled.label: Le montant facturé par la plateforme est variable
-restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Le montant est calculé dynamiquement
-restaurant.contract.variableCustomerAmount.label: Montant variable payé par le client pour la livraison
-restaurant.contract.variableCustomerAmount.help: Le prix payé par le client sera calculé en utilisant la tarification sélectionnée
-restaurant.contract.variableCustomerAmount.placeholder: Veuillez sélectionner une tarification
-restaurant.contract.variableCustomerAmountEnabled.label: Le montant payé par le client est variable
-restaurant.contract.variableCustomerAmountEnabled.disclaimer: Le montant est calculé dynamiquement
-restaurant.contract.calculation_info: "Vous pouvez facturer au restaurant un montant différent de celui qui est payé par le client.
-<br>
-Par exemple, vous pouvez offrir la livraison au client tout en facturant une somme fixe au restaurant.
-<br>
-Vous pouvez également configurer un montant dynamique (par exemple, en fonction de la distance)."
+restaurant.contract.variableDeliveryPriceEnabled.label: Le montant facturé par la
+  plateforme est variable
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Le montant est calculé
+  dynamiquement
+restaurant.contract.variableCustomerAmount.label: Montant variable payé par le client
+  pour la livraison
+restaurant.contract.variableCustomerAmount.help: Le prix payé par le client sera calculé
+  en utilisant la tarification sélectionnée
+restaurant.contract.variableCustomerAmount.placeholder: Veuillez sélectionner une
+  tarification
+restaurant.contract.variableCustomerAmountEnabled.label: Le montant payé par le client
+  est variable
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: Le montant est calculé
+  dynamiquement
+restaurant.contract.calculation_info: Vous pouvez facturer au restaurant un montant
+  différent de celui qui est payé par le client. <br> Par exemple, vous pouvez offrir
+  la livraison au client tout en facturant une somme fixe au restaurant. <br> Vous
+  pouvez également configurer un montant dynamique (par exemple, en fonction de la
+  distance).
 restaurant.menus.noMenus: Vous n'avez pas créé de menu pour le moment.
 restaurant.menus.activate: Activer
 restaurant.menus.activated: Le menu « %menu_name% » a bien été activé. Il sera désormais
@@ -534,7 +548,8 @@ form.product.confirm.help: "Vous avez modifié le nom du produit. S'il s'agit d'
   \ sur « Confirmer la modification ».\n<br>\nDans le cas contraire, vous devez <a\
   \ href=\"%link%\">créer un nouveau produit</a>, afin de pouvoir distinguer les produits\
   \ vendus et conserver un historique.\n"
-form.product.reusable_packaging_enabled.label: 'Activer les emballages réutilisables pour ce produit'
+form.product.reusable_packaging_enabled.label: Activer les emballages réutilisables
+  pour ce produit
 form.product.reusable_packaging.label: Type d'emballage réutilisable
 form.product.reusable_packaging_unit.label: Nombre d'unités
 form.product_option.name.label: Nom
@@ -554,8 +569,10 @@ form.checkout_address.notes.placeholder: "Exemple : sans sauce, sans tomates…\
 form.checkout_address.notes.help: Votre remarque sera transmise au restaurant
 form.checkout_address.promotion_coupon.label: Code promotionnel
 form.checkout_address.telephone.label: Téléphone
-form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages réutilisables (%price%)
-form.checkout_address.reusable_packaging_loopeat_enabled.label: Je veux des emballages réutilisables LoopEat (%price%)
+form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages réutilisables
+  (%price%)
+form.checkout_address.reusable_packaging_loopeat_enabled.label: Je veux des emballages
+  réutilisables LoopEat (%price%)
 form.checkout_address.quote.label: Demander un devis
 form.checkout_address.add_promotion.label: Appliquer
 form.checkout_address.tip_amount.label: Pourboire
@@ -571,7 +588,8 @@ form.credit_note.user_search.help: La réduction ne sera utilisable que par cet 
 form.credit_note.amount.label: Montant
 form.credit_note.name.label: Nom
 form.credit_note.name.help: Le nom de la réduction qui sera affiché dans le panier
-form.credit_note.restaurant.help: La réduction ne sera utilisable qu'en cas de commande dans ce restaurant. Laissez vide pour appliquer à tous les restaurants.
+form.credit_note.restaurant.help: La réduction ne sera utilisable qu'en cas de commande
+  dans ce restaurant. Laissez vide pour appliquer à tous les restaurants.
 form.embed_settings.with_vehicle.label: Ajouter le choix du type de véhicule
 form.embed_settings.with_weight.label: Demander le poids de la marchandise
 form.resend_confirmation_email.submit.label: Renvoyer l'email
@@ -582,14 +600,17 @@ form.time_slot_choice.start_time.label: Date de début
 form.time_slot_choice.end_time.label: Date de fin
 form.time_slot.prior_notice.label: Délai de prévenance
 form.stripe_payment.cardholder_name.label: Nom du titulaire de la carte
-form.user.quotes_allowed.label: Autoriser cet utilisateur à faire des demandes de devis
+form.user.quotes_allowed.label: Autoriser cet utilisateur à faire des demandes de
+  devis
 form.reusable_packaging.name.label: Nom
 form.reusable_packaging.is_tracked.label: Suivi activé
 form.reusable_packaging.price.label: Prix
 form.reusable_packaging.on_hand.label: Stock
-form.deposit_refund_settings.deposit_refund_optin.label: Le système de consigne est optionnel
+form.deposit_refund_settings.deposit_refund_optin.label: Le système de consigne est
+  optionnel
 form.new_order.variant_name.label: Nom du produit
-form.new_order.variant_name.help: Le nom qui apparaîtra dans le résumé de la commande et la facture
+form.new_order.variant_name.help: Le nom qui apparaîtra dans le résumé de la commande
+  et la facture
 form.new_order.variant_price.label: Prix
 promotion_coupon.used.label: Nombre d'utilisations
 product_option.strategy.free: Gratuit
@@ -748,7 +769,7 @@ allergens.FISH: Poisson
 allergens.PEANUTS: Arachides
 allergens.SOYBEANS: Soja
 allergens.MILK: Lait
-allergens.NUTS: Noix
+allergens.NUTS: Fruits à coque
 allergens.CELERY: Céleri
 allergens.MUSTARD: Moutarde
 allergens.SESAME_SEEDS: Graines de sésame
@@ -813,7 +834,7 @@ form.min_max.infinity.label: Pas de maximum
 form.local_business.iso_code.fr.siret: Numéro de SIRET
 form.local_business.iso_code.fr.vat_number: Numéro d'identification à la TVA
 form.local_business.iso_code.fr.rcs_number: Numéro RCS
-receipt.title: 'Reçu pour votre commande n° %number%'
+receipt.title: Reçu pour votre commande n° %number%
 receipt.line_item.name: Produit
 receipt.line_item.unit_price: Prix unitaire
 receipt.line_item.quantity: Quantité
@@ -829,7 +850,8 @@ profile.loopeat.connect: Connecter mon compte LoopEat
 profile.loopeat.connected: Compte LoopEat connecté
 basics.free: gratuit
 task.receipt.greeting: Cher client, chère cliente,
-task.receipt.message: Par la présente, nous confirmons que nous avons bien livré votre colis à <strong>%address%</strong> le <strong>%date%</strong>
+task.receipt.message: Par la présente, nous confirmons que nous avons bien livré votre
+  colis à <strong>%address%</strong> le <strong>%date%</strong>
 task.receipt.received_by: Le colis a été reçu par <strong>%name%</strong>
 task.receipt.attached_images: Images jointes
 task.receipt.reference: 'Référence : <strong>%ref%</strong>'
@@ -839,7 +861,8 @@ basics.weeks: '%count% semaine|%count% semaines'
 basics.none: Aucun
 basics.yes: Oui
 basics.no: Non
-notifications.messenger_approaching: Bonjour %customer% ! Votre livreur·se %messenger% est tout·e proche. Tenez-vous prêt·e !
+notifications.messenger_approaching: Bonjour %customer% ! Votre livreur·se %messenger%
+  est tout·e proche. Tenez-vous prêt·e !
 order.export.heading.restaurant_name: Restaurant
 order.export.heading.order_number: Numéro de commande
 order.export.heading.completed_at: Livrée le
@@ -852,6 +875,7 @@ order.export.heading.platform_fee: Frais Plateforme
 order.export.heading.net_revenue: Revenu net
 order.export.heading.completed_by: Livrée par
 form.order_export.date.label: Date
-form.order_export.messenger.label: Inclure une colonne avec le coursier ayant livré la commande
+form.order_export.messenger.label: Inclure une colonne avec le coursier ayant livré
+  la commande
 basics.show: Afficher
 basics.hide: Masquer

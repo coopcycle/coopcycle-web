@@ -284,9 +284,9 @@ profile.task.complete: Fertigstellen
 profile.task.date: Datum
 profile.addresses.newAddress: Neue Adresse
 profile.addresses.add: Hinzufügen
-order.payment.card_number.help: 'Eine <a href="https://stripe.com/docs/testing#cards"
-  target="_blank" tabindex="-1">Testkartennummer</a> ist bereits vorausgefüllt. Es
-  wird kein Konto belastet. '
+order.payment.card_number.help: Eine <a href="https://stripe.com/docs/testing#cards"
+  target="_blank" tabindex="-1">Tkartennummer</a> ist bereits vorausgefüllt. Es wird
+  kein Konto belastet.
 order.state.cart: Warenkorb
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Willkommen auf der Demo der <a target="_blank"
   href="https://coopcycle.org">CoopCycle</a> Platform
@@ -521,3 +521,51 @@ form.task.recipient.label: Kontakt
 form.task.telephone.label: Telefon
 form.task.address.label: Adresse
 localBusiness.form.enabled: Aktiviert
+notifications.restaurant.new_order: Neue Bestellung zu bestätigen
+receipt.billing_details: "Bestellung am %date% mit Kredikarte bezahlt\n"
+receipt.line_item.quantity: Stückzahl
+adminDashboard.activity.title: Aktivitäten
+index.map.tip: Benutze die Karte unten, um die Restaurants zu finden
+stores.deliveries.task_unassigned: Nicht zugeteilt
+stores.manage: Verwalten
+roles.ROLE_STORE.help: 'Laden-Besitzer*in: zugeordnete Läden verwalten, Sendungen
+  verwalten, ...'
+roles.ROLE_RESTAURANT.help: 'Restaurant-Besitzer*in: zugeordnete Restaurants verwalten,
+  Bestellungen verwalten, ...'
+user.edit.enabled.help: Ein*e deaktivierte*r Benutzer*in wird ausgeloggt und wird
+  sich nicht weiter in die Plattform einloggen dürfen
+user.edit.roles.help: Zugangsrechte des Nutzers bestimmen
+roles.ROLE_STORE: Laden
+roles.ROLE_ADMIN: Administrator*in
+product_option.strategy.option_value: Preis abhängig von der Wahl
+form.new_order.variant_name.help: Der Name, der in der Bestellzusammenfassung und
+  in der Rechnung angezeigt wird
+form.product.confirm.help: "Du hast den Namen des Produkts geändert. Wenn sie eine\
+  \ <strong>unwesentliche Änderung</strong> (wie ein orthographischer Fehler) ist,\
+  \ klicke auf « Änderungen bestätigen».\n<br>\nWenn nicht, solltest du <a href=\"\
+  %link%\">ein neues Produkt erstellen</a>, sodass du die Produkte, die du verkaufst,\
+  \ unterscheiden kannst und die Geschichte erhalten. "
+form.product.restricted_diets.help: Passt dieses Produkt für die folgenden Diäten?
+form.product.restricted_diets.label: Kalorienbeschränkte Diäten
+form.menu_editor.products.help: Um Produkte in die Liste rechts hinzufügen, füge sie
+  zuerst in das  <a href="%products_url%">Katalog</a> first
+form.maintenance.disable.alert: Du bist in Begriff den Wartung-Modus zu deaktivieren.
+form.maintenance.enable.alert: Du bist in Begriff, den Wartung-Modus zu aktivieren.
+  <br> Nur Administrator*innen werden Zugang zur Seite haben.
+form.maintenance.disable.label: Wartung-Modus deaktivieren
+restaurant.form.exclusive.label: 'Das Restaurant ist exklusiv. '
+form.maintenance.enable.label: Wartung erlauben
+pledge.vote_count_equals_one: '%username% hat für dieses Restaurant gestimmt'
+pledge.vote_count_equals_two: '%first_user% und %second_user% haben für das Restaurant
+  gestimmt'
+restaurant.suggest.banner_disclaimer: Dieses Restaurant ist noch nicht verfügbar.
+  Gib deine Stimme für %restaurant.name%!
+pledge.suggested_by: Vorgeschlagen von  @%username%
+restaurant.suggest.vote: Deine stimme für %name%
+restaurant.suggest.message: "Helfe uns,  zu überzeugen, %restaurant.name%  mit %brand_name%\
+  \ zusammen zu arbeiten!\n<br\nUm es auf der Plattform zu haben, brauchen wir dich\
+  \ und deine Stimme, um die Zusammenarbeit-Anfrage zu unterstützen!"
+form.suggest.thank_you_message: Danke das Restaurant vorgeschlagen zu haben!
+form.settings.company_logo.help: Dieses Logo wird für Rechnungen und Zustellnachweise
+  benutzt
+localBusiness.form.shippingOptionsDays: Vorbestellung-Zeitraum (in Tagen)

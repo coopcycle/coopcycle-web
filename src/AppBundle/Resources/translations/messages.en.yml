@@ -1,4 +1,4 @@
-global.changesSaved: Your changes were saved.
+global.changesSaved: Your changes have been saved.
 navbar.login: Login
 navbar.myAccount: My Account
 base.footer.contactUs: Contact us
@@ -39,7 +39,7 @@ embed.delivery.iframe_code: Use the HTML code below to embed the form on your we
 embed.breadcrumb.start: Information
 embed.breadcrumb.summary: Summary
 embed.breadcrumb.confirm: Confirmation
-embed.delivery.summary.title: Summary of your order
+embed.delivery.summary.title: Order summary
 embed.delivery.use_form_below: Use the form below to pay for your order by credit
   card
 embed.delivery.paid_at: Payment made on %date%
@@ -56,7 +56,7 @@ adminDashboard.stores.createNew: Create a new store
 adminDashboard.stores.form.uploadImage: Upload an image
 adminDashboard.orders.title: Orders
 adminDashboard.orders.previousOrders: Previous orders
-adminDashboard.orders.showCanceled: Show canceled orders
+adminDashboard.orders.showCanceled: Show cancelled orders
 adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Create a new restaurant
 adminDashboard.restaurants.exclusive: Exclusive
@@ -83,8 +83,9 @@ adminDashboard.tags.save: Save
 adminDashboard.tags.createNew: Create new tag
 adminDashboard.tags.name: Name
 adminDashboard.tags.color: Color
-adminDashboard.tags.confirm_delete: Are you sure to delete this tag ? all elements
-  rely to it will not be able to show it or be grouped by it anymore.
+adminDashboard.tags.confirm_delete: "Are you sure you want to delete this tag ? \n\
+  The tag will be removed from the respective elements using it and won't be grouped\
+  \ by the tag anymore."
 adminDashboard.taxation.title: Taxation
 adminDashboard.taxation.button: Add taxation
 adminDashboard.zones.title: Zones
@@ -112,8 +113,8 @@ restaurants.placeholder.title: A bit of patience…
 restaurants.placeholder.text: New restaurants are coming soon!
 localBusiness.form.orderingDelayMinutes: Additional delay before ordering
 localBusiness.form.orderingDelayMinutes.help: Use this field to add some time before
-  the customer can order. This setting don't change the times kept for cooking (20
-  minutes) and cycling (25 minutes).
+  the customer can order. This setting doesn't change the time needed for cooking
+  (20 minutes) and cycling (25 minutes).
 localBusiness.form.enabled: Enabled
 localBusiness.form.orderingDelayDays: Day(s)
 localBusiness.form.orderingDelayHours: Hour(s)
@@ -144,7 +145,7 @@ restaurant.quotes_disclaimer.not_authenticated: This restaurant also accepts ord
 restaurant.form.noPricingRule: No pricing rules have been implemented, <a href="%editPricingRule%">click
   here to create one</a>.
 restaurant.form.enabled.tooltip: "When disabled, a restaurant is not visible on the\
-  \ website. It doesn't show in search results and its own page is not accessible\
+  \ website. It doesn't show in search results and the restaurant page is not accessible\
   \ by visitors.\n"
 restaurant.form.allow_stripe_connect.label: Allow the restaurant to manage Stripe
   account on its own
@@ -155,7 +156,8 @@ restaurant.form.accessPlanning: Access planning
 restaurant.form.createRestaurant: Create restaurant
 restaurant.form.save: Save
 restaurant.form.exclusive.label: This restaurant is exclusive
-restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (ex: catering)'
+restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (e.g.:
+  catering)'
 restaurant.form.loopeat_enabled.label: Enable LoopEat deposit-refund system
 restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
@@ -177,7 +179,7 @@ restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Amount is calculate
 restaurant.contract.customerAmount.label: Amount paid by the customer
 restaurant.contract.customerAmount.help: This amount will be displayed in the cart
   and will increase the total amount
-restaurant.contract.feeRate.label: Fee rate
+restaurant.contract.feeRate.label: Commission percentage
 restaurant.contract.feeRate.help: This percentage will be retained by the platform
   on the total of the products
 restaurant.contract.restaurantPaysStripeFee.label: Responsible for the cost of the
@@ -198,10 +200,10 @@ restaurant.contract.variableCustomerAmountEnabled.label: Enable variable amount 
   by the customer
 restaurant.contract.variableCustomerAmountEnabled.disclaimer: Amount is calculated
   dynamically
-restaurant.contract.calculation_info: You can charge the restaurant an amount different
+restaurant.contract.calculation_info: You can charge the restaurant a different amount
   from the amount paid by the customer. <br> For example, you can offer delivery to
   the customer while charging a fixed amount to the restaurant. <br> You can also
-  configure a dynamic amount (for example, based on distance).
+  configure a dynamic amount (e.g., based on distance).
 restaurant.menus.noMenus: You have not created any menu for the moment.
 restaurant.menus.activate: Activate
 restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now
@@ -222,10 +224,10 @@ restaurant.list.createNewRestaurant: Create a new restaurant
 restaurant.list.preparationTime: Preparation
 restaurant.list.stats: Statistics
 restaurant.list.depositRefund: Deposit-refund
-restaurant.product_options.help: "Options all products to be <strong>configurable</strong>\n\
-  <br>\nThey allow for example to add supplements, or to choose the elements of a\
-  \ menu (accompaniment, drink…)\n<br>\nFor each option, you can define a list of\
-  \ values\n"
+restaurant.product_options.help: "This section allows you to setup additional items\
+  \ for your <strong>products</strong>.\n<br>\nThey allow for example to add supplements,\
+  \ or to choose the elements of a menu (accompaniment, drink…)\n<br>\nFor each option,\
+  \ you can define a list of values\n"
 restaurant.product_options.list.values: Values
 restaurant.form.uploadImage: Upload an image
 restaurant.stats.order_number: Order number
@@ -271,10 +273,10 @@ profile.accountType: Account type
 order.cart.title: Cart
 order.items.products_with_count: Products (%count%)
 order.summary.heading: Order %number% (#%id%)
-order.total_excluding_tax: Total (tax excl.)
-order.total_including_tax: Total (tax incl.)
+order.total_excluding_tax: Total (excl. VAT)
+order.total_including_tax: Total (incl. VAT)
 order.items_total: Total products
-order.total_tax: Taxes
+order.total_tax: VAT
 order.total_tax_by_rate: Total %name%
 order.preparation_expected_at: Preparation expected at %date%
 order.shipping_date.title: Your shipping date
@@ -346,7 +348,7 @@ form.task.status.label: Status
 form.task.telephone.label: Telephone
 form.task.recipient.label: Contact
 form.task.recipient.help: Specify the name of the contact person
-form.task.dropoff.doorstep.label: "Doorstep dropoff"
+form.task.dropoff.doorstep.label: Doorstep dropoff
 form.task_event.notes.placeholder: 'Ex: address not found, no problem…'
 form.task_event.notes.help: You can edit the comment
 form.task_upload.file: File
@@ -377,15 +379,17 @@ form.store_type.defaultAddress.label: Default Address
 form.store_type.time_slot.label: Time slot
 form.store_type.package_set.label: Package set
 form.delivery.vehicle.placeholder: Choose a vehicle type
-form.delivery.pickup.label: Pickup
-form.delivery.pickup.address_placeholder: Enter pickup address
-form.delivery.dropoff.label: Dropoff
-form.delivery.dropoff.address_placeholder: Enter dropoff address
+form.delivery.pickup.label: Collection address
+form.delivery.pickup.address_placeholder: House number and street name, area, postcode,
+  city
+form.delivery.dropoff.label: Delivery address
+form.delivery.dropoff.address_placeholder: House number and street name, area, postcode,
+  city
 form.delivery.weight.label: Weight
 form.delivery.weight.help: Please indicate the weight in grams (1kg = 1000g)
-form.delivery.vehicle.label: Vehicle
-form.delivery.pickup.doneBefore.label: Pickup time
-form.delivery.dropoff.doneBefore.label: Dropoff time
+form.delivery.vehicle.label: Bike or cargo bike?
+form.delivery.pickup.doneBefore.label: Collection date and time
+form.delivery.dropoff.doneBefore.label: Delivery date and time
 form.delivery.distance.label: Distance
 form.delivery.duration.label: Duration
 form.delivery.store.label: Store
@@ -511,8 +515,8 @@ form.settings.currency_code.label: Currency
 form.delivery_embed.name.label: Name
 form.delivery_embed.name.help: Your name or company name
 form.delivery_embed.telephone.label: Phone number
-form.delivery_embed.vehicle.disclaimer: We deliver on cargo bike items of more than
-  50x40x20 (cm) or whose weight exceeds 6kg
+form.delivery_embed.vehicle.disclaimer: We deliver by cargo bike items larger than
+  50x40x20cm and/or over 6kg.
 form.registration.username.help: "Your username cannot be longer than 15 characters.\
   \ A username can only contain alphanumeric characters (letters A-Z, numbers 0-9)\
   \ with the exception of underscores.\n"
@@ -643,8 +647,8 @@ user.edit.enabled.help: A deactivated user will be logged out and can't login ba
   on the platform.
 user.profile.familyName: Family name
 user.profile.givenName: Given name
-roles.ROLE_ADMIN.help: "Administrator : Full access to all features\n"
-roles.ROLE_COURIER.help: "Courier : view waiting tasks, modify assigned tasks…\n"
+roles.ROLE_ADMIN.help: "Administrator: Full access to all features\n"
+roles.ROLE_COURIER.help: "Courier: view waiting tasks, modify assigned tasks…\n"
 roles.ROLE_RESTAURANT.help: "Restaurant owner: manage assigned restaurants, manage\
   \ orders…\n"
 roles.ROLE_STORE.help: "Store owner: manage assigned stores, manage deliveries…\n"
@@ -684,15 +688,16 @@ activity.order.picked: "@%owner% has picked order #order/%aggregate_id%\n"
 activity.order.dropped: "@%owner% has dropped order #order/%aggregate_id%\n"
 activity.order.fulfilled: "Order #order/#%aggregate_id% is fulfilled\n"
 social.sign_in_with_facebook: Sign in with Facebook
-embed.delivery.summary: 'You have requested a delivery that will be dropped off at
-  <strong>%dropoff_date%</strong> at the following address: <strong>%dropoff_address%</strong>
-  <br> We calculated a distance of <strong>%distance% kilometers</strong>. <br> According
-  to our prices, this delivery will cost you <strong>%total_excluding_tax% tax excl.</strong>
-  (%total_including_tax% tax incl.).'
-embed.delivery.submit.help: Click to confirm the quote and order the delivery.
-embed.delivery.confirm_message: We have registered your request. Your delivery is
-  waiting for validation. <br> We will send you an email in the next few minutes.
-  You will receive a second mail as soon as the delivery is confirmed.
+embed.delivery.summary: "You have requested a delivery on<strong>%dropoff_date%</strong>\
+  \ at the following address: <strong>%dropoff_address%</strong> <br> We calculated\
+  \ a distance of <strong>%distance% kilometers</strong>. <br> The delivery price\
+  \ is <strong>%total_excluding_tax% (excl. VAT); </strong> %total_including_tax%\
+  \ (excl. VAT). <br><br>If any of the above details are incorrect, please click the\
+  \ 'Edit' button. "
+embed.delivery.submit.help: Click to book the delivery.
+embed.delivery.confirm_message: Your delivery order has been placed and you will receive
+  a summary email shortly. We'll check your order and send a confirmation email as
+  soon as possible.
 pagination.previous: Previous
 pagination.next: Next
 basics.view: View
@@ -721,7 +726,7 @@ basics.stripe_fees: Stripe fees
 basics.platform_fees: Platform fees
 basics.net_income: Net income
 basics.send_invitation: Send an invitation
-basics.send_invitation.confirm: Your invitation has been sent ! You can now edit the
+basics.send_invitation.confirm: Your invitation has been sent! You can now edit the
   settings of the new user.
 profile.password.change: Change your password
 authentication.forgot_password: Forgot password?
@@ -753,11 +758,11 @@ allergens.FISH: Fish
 allergens.PEANUTS: Peanuts
 allergens.SOYBEANS: Soybeans
 allergens.MILK: Milk
-allergens.NUTS: Nuts
+allergens.NUTS: Tree nuts
 allergens.CELERY: Celery
 allergens.MUSTARD: Mustard
 allergens.SESAME_SEEDS: Sesame seeds
-allergens.SULPHUR_DIOXIDE_SULPHITES: Sulphur dioxide
+allergens.SULPHUR_DIOXIDE_SULPHITES: Sulphur dioxide and sulphites
 allergens.LUPIN: Lupin
 allergens.MOLLUSCS: Molluscs
 restricted_diets.DIABETIC_DIET: Diabetic
@@ -796,9 +801,9 @@ receipt.line_item.unit_price: Unit price
 receipt.line_item.quantity: Quantity
 receipt.line_item.total: Total
 receipt.line_item.total_products: Total products
-receipt.footer_item.total_excl_tax: Total excl. tax
-receipt.footer_item.total_incl_tax: Total incl. tax
-receipt.total: Total including tax
+receipt.footer_item.total_excl_tax: Total (excl. VAT)
+receipt.footer_item.total_incl_tax: Total (incl. VAT)
+receipt.total: Total (incl. VAT)
 receipt.billing_details: Order paid by credit card on %date%
 receipt.emitter_details: Order at restaurant <strong>%restaurant_name%</strong>
 delivery.import.success_message: Your file was successfully processed, %count% deliveries
@@ -819,16 +824,17 @@ basics.hours: '%count% hour|%count% hours'
 basics.days: '%count% day|%count% days'
 basics.weeks: '%count% week|%count% weeks'
 basics.none: None
-basics.yes: 'Yes'
-basics.no: 'No'
-notifications.messenger_approaching: Hey %customer%! Our messenger %messenger% is nearly with you. Get ready!
+basics.yes: Yes
+basics.no: No
+notifications.messenger_approaching: Hey %customer%! Our messenger %messenger% is
+  nearly with you. Get ready!
 order.export.heading.restaurant_name: Restaurant
 order.export.heading.order_number: Order number
 order.export.heading.completed_at: Completed at
-order.export.heading.total_products_excl_tax: Total products excl. tax
-order.export.heading.total_products_incl_tax: Total products incl. tax
+order.export.heading.total_products_excl_tax: Total products (excl. VAT)
+order.export.heading.total_products_incl_tax: Total products (incl. VAT)
 order.export.heading.delivery_fee: Delivery fee
-order.export.heading.total_incl_tax: Total incl. tax
+order.export.heading.total_incl_tax: Total (incl. VAT)
 order.export.heading.stripe_fee: Stripe fee
 order.export.heading.platform_fee: Platform fee
 order.export.heading.net_revenue: Net revenue
