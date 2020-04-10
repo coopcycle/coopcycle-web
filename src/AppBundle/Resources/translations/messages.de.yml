@@ -284,9 +284,9 @@ profile.task.complete: Fertigstellen
 profile.task.date: Datum
 profile.addresses.newAddress: Neue Adresse
 profile.addresses.add: Hinzufügen
-order.payment.card_number.help: 'Eine <a href="https://stripe.com/docs/testing#cards"
-  target="_blank" tabindex="-1">Testkartennummer</a> ist bereits vorausgefüllt. Es
-  wird kein Konto belastet. '
+order.payment.card_number.help: Eine <a href="https://stripe.com/docs/testing#cards"
+  target="_blank" tabindex="-1">Tkartennummer</a> ist bereits vorausgefüllt. Es wird
+  kein Konto belastet.
 order.state.cart: Warenkorb
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Willkommen auf der Demo der <a target="_blank"
   href="https://coopcycle.org">CoopCycle</a> Platform
