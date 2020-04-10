@@ -45,7 +45,8 @@ class SetupCommand extends Command
         'fr',
         'en',
         'es',
-        'de'
+        'de',
+        'pl',
     ];
 
     private $channels = [
@@ -58,7 +59,8 @@ class SetupCommand extends Command
         'fr' => 'Livraison à la demande',
         'en' => 'On demand delivery',
         'es' => 'Entrega bajo demanda',
-        'de' => 'Lieferung auf Anfrage'
+        'de' => 'Lieferung auf Anfrage',
+        'pl' => 'Dostawa na żądanie',
     ];
 
     private $allergenAttributeNames = [
@@ -67,6 +69,7 @@ class SetupCommand extends Command
         'en' => 'Allergens',
         'es' => 'Alérgenos',
         'de' => 'Allergene',
+        'pl' => 'Alergeny',
     ];
 
     private $restrictedDietsAttributeNames = [
@@ -75,6 +78,7 @@ class SetupCommand extends Command
         'en' => 'Restricted diets',
         'es' => 'Dietas restringidas',
         'de' => 'Eingeschränkte Ernährung',
+        'pl' => 'Ograniczone diety',
     ];
 
     private $freeDeliveryPromotionNames = [
@@ -83,6 +87,7 @@ class SetupCommand extends Command
         'en' => 'Free delivery',
         'es' => 'Entrega gratis',
         'de' => 'Gratisversand',
+        'pl' => 'Darmowa dostawa',
     ];
 
     private $currencies = [

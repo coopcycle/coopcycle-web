@@ -21,7 +21,8 @@ class SitemapController extends AbstractController
             ->getRepository(Restaurant::class)
             ->findBy(['enabled' => true]);
 
-        $locales = ['en', 'es', 'de', 'fr'];
+        // TODO Use locale_regex parameter
+        $locales = ['en', 'es', 'de', 'fr', 'pl'];
         $locale = $this->getParameter('locale');
         $otherLocales = array_diff($locales, [$locale]);
 
