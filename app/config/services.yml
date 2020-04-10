@@ -368,7 +368,9 @@ services:
     arguments:
       - '@routing_service'
 
-  AppBundle\Utils\PickupTimeCalculator:
+  AppBundle\Utils\PickupTimeResolver: ~
+
+  AppBundle\Utils\PreparationTimeResolver:
     arguments:
       $redis: "@snc_redis.default"
 

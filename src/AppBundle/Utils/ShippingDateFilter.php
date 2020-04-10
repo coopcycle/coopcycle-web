@@ -7,11 +7,11 @@ use Carbon\Carbon;
 
 class ShippingDateFilter
 {
-    private $pickupTimeCalculator;
+    private $preparationTimeResolver;
 
-    public function __construct(PickupTimeCalculator $pickupTimeCalculator)
+    public function __construct(PreparationTimeResolver $preparationTimeResolver)
     {
-        $this->pickupTimeCalculator = $pickupTimeCalculator;
+        $this->preparationTimeResolver = $preparationTimeResolver;
     }
 
     /**
@@ -31,13 +31,13 @@ class ShippingDateFilter
             return false;
         }
 
-        $pickup = $this->pickupTimeCalculator->calculate($order, $dropoff);
+        $preparation = $this->preparationTimeResolver->resolve($order, $dropoff);
 
-        if (!$order->getRestaurant()->isOpen($pickup)) {
+        if (!$order->getRestaurant()->isOpen($preparation)) {
             return false;
         }
 
-        if ($pickup <= $now) {
+        if ($preparation <= $now) {
             return false;
         }
 

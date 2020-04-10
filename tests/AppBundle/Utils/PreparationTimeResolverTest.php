@@ -5,13 +5,13 @@ namespace Tests\AppBundle\Utils;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\PreparationTimeCalculator;
-use AppBundle\Utils\ShippingTimeCalculator;
-use AppBundle\Utils\PickupTimeCalculator;
+use AppBundle\Utils\PreparationTimeResolver;
+use AppBundle\Utils\PickupTimeResolver;
 use PHPUnit\Framework\TestCase;
 use Predis\Client as Redis;
 use Prophecy\Argument;
 
-class PickupTimeCalculatorTest extends TestCase
+class PreparationTimeResolverTest extends TestCase
 {
     private $restaurant;
     private $preparationTimeCalculator;
@@ -25,50 +25,50 @@ class PickupTimeCalculatorTest extends TestCase
 
         $this->redis = $this->prophesize(Redis::class);
         $this->preparationTimeCalculator = $this->prophesize(PreparationTimeCalculator::class);
-        $this->shippingTimeCalculator = $this->prophesize(ShippingTimeCalculator::class);
+        $this->pickupTimeResolver = $this->prophesize(PickupTimeResolver::class);
 
-        $this->calculator = new PickupTimeCalculator(
+        $this->resolver = new PreparationTimeResolver(
             $this->preparationTimeCalculator->reveal(),
-            $this->shippingTimeCalculator->reveal(),
+            $this->pickupTimeResolver->reveal(),
             $this->redis->reveal()
         );
     }
 
-    public function calculateProvider()
+    public function resolveProvider()
     {
         return [
             [
-                new \DateTime('2020-04-10 12:30:00'),
-                '15 minutes',
-                '10 minutes',
-                new \DateTime('2020-04-10 12:05:00'),
+                $dropoff  = new \DateTime('2020-04-10 12:30:00'),
+                $pickup   = new \DateTime('2020-04-10 12:15:00'),
+                '20 minutes',
+                $expected = new \DateTime('2020-04-10 11:55:00'),
                 null
             ],
             [
-                new \DateTime('2020-04-10 12:30:00'),
-                '15 minutes',
-                '10 minutes',
-                new \DateTime('2020-04-10 12:05:00'),
+                $dropoff  = new \DateTime('2020-04-10 12:30:00'),
+                $pickup   = new \DateTime('2020-04-10 12:15:00'),
+                '20 minutes',
+                $expected = new \DateTime('2020-04-10 11:55:00'),
                 '0'
             ],
             [
-                new \DateTime('2020-04-10 12:30:00'),
-                '15 minutes',
-                '10 minutes',
-                new \DateTime('2020-04-10 11:55:00'),
+                $dropoff  = new \DateTime('2020-04-10 12:30:00'),
+                $pickup   = new \DateTime('2020-04-10 12:15:00'),
+                '20 minutes',
+                $expected = new \DateTime('2020-04-10 11:45:00'),
                 '10'
             ],
         ];
     }
 
     /**
-     * @dataProvider calculateProvider
+     * @dataProvider resolveProvider
      */
-    public function testCalculate(
+    public function testResolve(
         \DateTime $dropoff,
-        $preparationTime,
-        $shippingTime,
         \DateTime $pickup,
+        $preparationTime,
+        \DateTime $expected,
         $preparationDelay = null)
     {
         $this->redis
@@ -81,17 +81,17 @@ class PickupTimeCalculatorTest extends TestCase
             ->willReturn($this->restaurant->reveal());
 
         $this->preparationTimeCalculator
-            ->calculate(Argument::type(OrderInterface::class))
+            ->calculate($order->reveal())
             ->willReturn($preparationTime);
 
         $this->preparationTimeCalculator
-            ->createForRestaurant(Argument::type(Restaurant::class))
+            ->createForRestaurant($this->restaurant->reveal())
             ->willReturn($this->preparationTimeCalculator->reveal());
 
-        $this->shippingTimeCalculator
-            ->calculate(Argument::type(OrderInterface::class))
-            ->willReturn($shippingTime);
+        $this->pickupTimeResolver
+            ->resolve($order->reveal(), $dropoff)
+            ->willReturn($pickup);
 
-        $this->assertEquals($pickup, $this->calculator->calculate($order->reveal(), $dropoff));
+        $this->assertEquals($expected, $this->resolver->resolve($order->reveal(), $dropoff));
     }
 }

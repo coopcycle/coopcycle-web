@@ -6,19 +6,19 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Predis\Client as Redis;
 
-class PickupTimeCalculator
+class PreparationTimeResolver
 {
     private $preparationTimeCalculator;
-    private $shippingTimeCalculator;
+    private $pickupTimeResolver;
     private $redis;
 
     public function __construct(
         PreparationTimeCalculator $preparationTimeCalculator,
-        ShippingTimeCalculator $shippingTimeCalculator,
+        PickupTimeResolver $pickupTimeResolver,
         Redis $redis)
     {
         $this->preparationTimeCalculator = $preparationTimeCalculator;
-        $this->shippingTimeCalculator = $shippingTimeCalculator;
+        $this->pickupTimeResolver = $pickupTimeResolver;
         $this->redis = $redis;
     }
 
@@ -28,24 +28,23 @@ class PickupTimeCalculator
      *
      * @return \DateTime
      */
-    public function calculate(OrderInterface $order, \DateTime $dropoff): \DateTime
+    public function resolve(OrderInterface $order, \DateTime $dropoff): \DateTime
     {
         $preparationTime = $this->preparationTimeCalculator
             ->createForRestaurant($order->getRestaurant())
             ->calculate($order);
-
-        $shippingTime = $this->shippingTimeCalculator->calculate($order);
 
         $extraTime = '0 minutes';
         if ($preparationDelay = $this->redis->get('foodtech:preparation_delay')) {
             $extraTime = sprintf('%d minutes', intval($preparationDelay));
         }
 
-        $pickup = clone $dropoff;
-        $pickup->sub(date_interval_create_from_date_string($shippingTime));
-        $pickup->sub(date_interval_create_from_date_string($preparationTime));
-        $pickup->sub(date_interval_create_from_date_string($extraTime));
+        $pickup = $this->pickupTimeResolver->resolve($order, $dropoff);
 
-        return $pickup;
+        $preparation = clone $pickup;
+        $preparation->sub(date_interval_create_from_date_string($preparationTime));
+        $preparation->sub(date_interval_create_from_date_string($extraTime));
+
+        return $preparation;
     }
 }
