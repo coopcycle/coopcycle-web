@@ -89,6 +89,8 @@ class SetupCommand extends Command
         'CAD',
         'EUR',
         'GBP',
+        'PLN',
+        'USD',
     ];
 
     public function __construct(
