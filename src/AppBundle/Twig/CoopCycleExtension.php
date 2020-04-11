@@ -12,6 +12,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use Twig\TwigTest;
 
 class CoopCycleExtension extends AbstractExtension
 {
@@ -59,6 +60,13 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('coopcycle_asset', array(AssetsRuntime::class, 'asset')),
             new TwigFunction('coopcycle_asset_base64', array(AssetsRuntime::class, 'assetBase64')),
         );
+    }
+
+    public function getTests()
+    {
+        return [
+            new TwigTest('instanceof', [$this, 'isInstanceof'])
+        ];
     }
 
     public function metersToKilometers($meters)
@@ -126,5 +134,10 @@ class CoopCycleExtension extends AbstractExtension
         }
 
         throw new \InvalidArgumentException(sprintf('Object of class %s has no method getId()', get_class($object)));
+    }
+
+    public function isInstanceof($var, $class)
+    {
+        return $var instanceof $class;
     }
 }
