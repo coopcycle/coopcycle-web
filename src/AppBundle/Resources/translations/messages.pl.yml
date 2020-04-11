@@ -17,3 +17,80 @@ adminDashboard.dashboard.import: Import
 adminDashboard.dashboard.export: Export
 adminDashboard.dashboard.importTasks: Importuj zadania
 adminDashboard.dashboard.exportTasks: Exportuj zadania
+restaurant.noMenuWarning: "Restauracja nie ma jeszcze menu\n"
+restaurants.placeholder.title: ''
+restaurant.unavailable: Niedostępny
+restaurant.available: Dostępny
+localBusiness.form.deliveryPerimeterExpression: Strefy  lub maksymalna odległość dostawy
+localBusiness.form.openingHours: Godziny otwarcia
+localBusiness.form.telephone: Telefon
+localBusiness.form.website: Strona
+localBusiness.form.description: Opis
+localBusiness.form.name: Nazwa
+restaurants.placeholder.text: Wkrótce nowe restuaracje!
+restaurants.no_results: Nie znaleziono żadniej restauracji<br>Spróbuj inny adres
+help.title: Pomoc
+delivery.with_id: Nr dostawy %id%
+delivery.tracking_link: Śledź dostawę
+delivery.createNew: Dodaj nową dostawę
+deliveryForm.noPriceWarning: Nie można wyliczyć ceny. Wprowadzać cenę.
+adminDashboard.time_slots.title: Przedział czasowy
+adminDashboard.pledges.title: Sugestie
+adminDashboard.promotions.title: Promocje
+adminDashboard.back.title: Powrót
+adminDashboard.zones.send: Wyślij
+adminDashboard.zones.uploadGeoJSON: Dodaj plik GeoJSON
+adminDashboard.zones.delete: Usuń
+adminDashboard.zones.save: Zapisz
+adminDashboard.zones.cancel: Anuluj
+adminDashboard.zones.title: Strefy
+adminDashboard.tags.color: Kolor
+adminDashboard.tags.name: Nazwa
+adminDashboard.tags.save: Zapisz
+adminDashboard.pricing.manage: Zarządzaj
+adminDashboard.pricing.createNew: Dodaj nową wycenę
+adminDashboard.pricing.noPricings: Brak wycen
+adminDashboard.pricing.noRuleFound: Brak zasad wyceny. Zasady wyceny pozwalają wyliczyć
+  koszt dostawy.
+adminDashboard.pricing.addRule: Dodaj zasadę
+adminDashboard.pricing.title: Wycena
+adminDashboard.pricing.settings: Ustawienia
+adminDashboard.settings.title: Ustawienia
+adminDashboard.users.invite: Zaproś użytkownika
+adminDashboard.users.createNew: Dodaj użytkownika
+adminDashboard.users.edit.addRestaurant: Dodaj restuaracje
+adminDashboard.users.edit.addStore: Dodaj sklep
+adminDashboard.users.editUser: Edytuj użytkownika
+adminDashboard.users.edit: Edytuj
+adminDashboard.users.title: Użytkownicy
+adminDashboard.menuCategories.menu: Menu
+adminDashboard.menuCategories.addCategory: Dodaj kategorie
+adminDashboard.menuCategories.categories: Kategorie
+embed.delivery.billing_address: Adres rozliczeniowy
+adminDashboard.menuCategories.save: Zapisz
+adminDashboard.stores.createNew: Dodaj nowy sklep
+adminDashboard.stores.title: Sklepy
+adminDashboard.restaurants.createNew: Dodaj nową restauracje
+adminDashboard.restaurants.title: Restauracje
+adminDashboard.orders.showCanceled: Anulowane zamówienia
+adminDashboard.orders.previousOrders: Historia zamówień
+adminDashboard.orders.title: Zamówienia
+adminDashboard.stores.form.uploadImage: Dodaj zdjęcie
+embed.delivery.contact_heading: Kontakt
+embed.payment.heading: Opłać zamówienie
+embed.delivery.paid_at: Opłacono %date%
+embed.delivery.summary.title: Podsumowanie zamówienia
+embed.breadcrumb.confirm: Potwierdzenie
+embed.breadcrumb.summary: Podsumowanie
+adminDashboard.package_sets.title: Przesyłki
+adminDashboard.deliveries.save: Zapisz
+adminDashboard.deliveries.deliveryAddress: Adres doręczenia
+adminDashboard.deliveries.originAddress: Adres odbioru
+adminDashboard.deliveries.delivery: Dostawa
+adminDashboard.deliveries.courier: Kurier
+adminDashboard.deliveries.title: Dostawy
+adminDashboard.deliveries.dueDate: Termin realizacji
+adminDashboard.deliveries.type: Rodzaj
+adminDashboard.deliveries.address: Adres
+adminDashboard.dashboard.displayAll: Pokaż wszystkie
+adminDashboard.dashboard.cancel: Anuluj
