@@ -661,20 +661,6 @@ abstract class LocalBusiness extends BaseLocalBusiness
         $contract->setRestaurant($this);
     }
 
-    public function getFlatDeliveryPrice()
-    {
-        if ($this->contract) {
-            return $this->contract->getFlatDeliveryPrice();
-        }
-    }
-
-    public function getMinimumCartAmount()
-    {
-        if ($this->contract) {
-            return $this->contract->getMinimumCartAmount();
-        }
-    }
-
     public function getOwners()
     {
         return $this->owners;

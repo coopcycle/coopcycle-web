@@ -74,9 +74,12 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->getAddress()
             ->willReturn($address);
 
+        $contract = new Contract();
+        $contract->setMinimumCartAmount($minimumCartAmount);
+
         $restaurant
-            ->getMinimumCartAmount()
-            ->willReturn($minimumCartAmount);
+            ->getContract()
+            ->willReturn($contract);
 
         $restaurant
             ->getDeliveryPerimeterExpression()

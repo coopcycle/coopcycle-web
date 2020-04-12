@@ -51,7 +51,7 @@ class OrderValidator extends ConstraintValidator
 
         $restaurant = $order->getRestaurant();
 
-        $minimumAmount = $restaurant->getMinimumCartAmount();
+        $minimumAmount = $restaurant->getContract()->getMinimumCartAmount();
         $itemsTotal = $order->getItemsTotal();
 
         if ($itemsTotal < $minimumAmount) {
