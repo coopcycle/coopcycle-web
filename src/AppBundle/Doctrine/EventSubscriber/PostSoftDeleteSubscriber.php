@@ -2,7 +2,7 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Entity\Sylius\Product;
@@ -64,7 +64,7 @@ class PostSoftDeleteSubscriber implements EventSubscriber
             $unitOfWork->computeChangeSets();
         }
 
-        if ($entity instanceof Restaurant) {
+        if ($entity instanceof LocalBusiness) {
 
             // FIXME Use OrderInterface
             $orderRepository = $objectManager->getRepository(Order::class);

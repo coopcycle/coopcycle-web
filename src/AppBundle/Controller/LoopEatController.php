@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\ApiUser;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
@@ -96,8 +96,8 @@ class LoopEatController extends AbstractController
 
         $subject = $iriConverter->getItemFromIri($payload['sub']);
 
-        if (!$subject instanceof Restaurant && !$subject instanceof ApiUser) {
-            throw new BadRequestHttpException(sprintf('Subject should be an instance of "%s" or "%s"', Restaurant::class, ApiUser::class));
+        if (!$subject instanceof LocalBusiness && !$subject instanceof ApiUser) {
+            throw new BadRequestHttpException(sprintf('Subject should be an instance of "%s" or "%s"', LocalBusiness::class, ApiUser::class));
         }
 
         $data = $this->authorizationCode($request->query->get('code'));
@@ -115,7 +115,7 @@ class LoopEatController extends AbstractController
             $userManager->updateUser($subject);
         }
 
-        if ($subject instanceof Restaurant) {
+        if ($subject instanceof LocalBusiness) {
             $objectManager->flush();
         }
 

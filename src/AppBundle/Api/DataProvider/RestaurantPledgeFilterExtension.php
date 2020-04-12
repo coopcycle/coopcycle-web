@@ -4,7 +4,7 @@ namespace AppBundle\Api\DataProvider;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -18,7 +18,7 @@ class RestaurantPledgeFilterExtension implements QueryCollectionExtensionInterfa
         string $resourceClass,
         string $operationName = null)
     {
-        if (Restaurant::class !== $resourceClass) {
+        if (LocalBusiness::class !== $resourceClass) {
             return;
         }
 
@@ -30,6 +30,6 @@ class RestaurantPledgeFilterExtension implements QueryCollectionExtensionInterfa
 
         $queryBuilder
             ->andWhere(sprintf('o.%s != :%s', 'state', $parameterName))
-            ->setParameter($parameterName, Restaurant::STATE_PLEDGE);
+            ->setParameter($parameterName, LocalBusiness::STATE_PLEDGE);
     }
 }

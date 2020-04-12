@@ -4,8 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\UserTrait;
-use AppBundle\Entity\RestaurantRepository;
-use AppBundle\Entity\ShopRepository;
+use AppBundle\Entity\LocalBusinessRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,16 +19,14 @@ class IndexController extends AbstractController
      * @Template
      * @HideSoftDeleted
      */
-    public function indexAction(
-        RestaurantRepository $restautantRepository,
-        ShopRepository $shopRepository)
+    public function indexAction(LocalBusinessRepository $repository)
     {
-        $restaurants = $restautantRepository->findAllSorted();
-        $shops = $shopRepository->findAllSorted();
+        $restaurants = $repository->findAllSorted('restaurant');
+        $stores = $repository->findAllSorted('store');
 
         return array(
             'restaurants' => array_slice($restaurants, 0, self::MAX_RESULTS),
-            'shops' => array_slice($shops, 0, self::MAX_RESULTS),
+            'stores' => array_slice($stores, 0, self::MAX_RESULTS),
             'max_results' => self::MAX_RESULTS,
             'show_more' => count($restaurants) > self::MAX_RESULTS,
             'addresses_normalized' => $this->getUserAddresses(),

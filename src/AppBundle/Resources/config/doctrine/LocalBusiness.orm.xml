@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
-  <entity name="AppBundle\Entity\LocalBusiness" inheritance-type="SINGLE_TABLE" table="restaurant">
-    <discriminator-column name="type" type="string" />
-    <discriminator-map>
-        <discriminator-mapping value="restaurant" class="AppBundle\Entity\Restaurant" />
-        <discriminator-mapping value="shop" class="AppBundle\Entity\Shop" />
-    </discriminator-map>
+  <entity name="AppBundle\Entity\LocalBusiness" table="restaurant" repository-class="AppBundle\Entity\LocalBusinessRepository">
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
     <indexes>
       <index name="restaurant_enabled_index" columns="id,enabled"/>
     </indexes>
+    <field name="type" type="string" column="type"/>
     <field name="name" type="string" column="name" nullable="true"/>
     <field name="description" type="text" column="description" nullable="true"/>
     <field name="enabled" type="boolean" column="enabled" nullable="false">

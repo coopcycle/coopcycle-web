@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity\Restaurant;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 

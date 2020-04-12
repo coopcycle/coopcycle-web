@@ -4,7 +4,7 @@ namespace AppBundle\Action;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use AppBundle\ExpressionLanguage\ExpressionLanguage;
@@ -36,7 +36,7 @@ class CanDeliver
      */
     public function canDeliverAction($id, $latitude, $longitude, Request $request)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         // TODO Manage 404
 

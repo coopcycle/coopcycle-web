@@ -4,7 +4,7 @@ namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\ClosingRule;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Utils\PriceFormatter;
 use Cocur\Slugify\SlugifyInterface;
@@ -65,7 +65,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         return false;
     }
 
-    private function shouldAddOpeningHoursSpecification(Restaurant $object, array $context = array())
+    private function shouldAddOpeningHoursSpecification(LocalBusiness $object, array $context = array())
     {
         return isset($context['groups'])
             && $this->containsGroups($context, ['restaurant', 'store', 'restaurant_seo'])
@@ -75,6 +75,10 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
     public function normalize($object, $format = null, array $context = array())
     {
         $data = $this->normalizer->normalize($object, $format, $context);
+
+        if (isset($data['@type']) && $object->getType() === 'store') {
+            $data['@type'] = 'http://schema.org/Store';
+        }
 
         // FIXME Stop checking groups manually
         if ($this->shouldAddOpeningHoursSpecification($object, $context)) {
@@ -116,7 +120,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         return $data;
     }
 
-    private function normalizeForSeo(Restaurant $object, $data)
+    private function normalizeForSeo(LocalBusiness $object, $data)
     {
         $data['@context'] = 'http://schema.org';
 
@@ -177,7 +181,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function supportsNormalization($data, $format = null)
     {
-        return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Restaurant;
+        return $this->normalizer->supportsNormalization($data, $format) && $data instanceof LocalBusiness;
     }
 
     public function denormalize($data, $class, $format = null, array $context = array())
@@ -189,6 +193,6 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Restaurant::class;
+        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === LocalBusiness::class;
     }
 }

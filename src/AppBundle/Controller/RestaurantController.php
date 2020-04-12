@@ -11,12 +11,10 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Form\PledgeType;
-use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\RestaurantRepository;
-use AppBundle\Entity\Shop;
-use AppBundle\Entity\ShopRepository;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Form\Order\CartType;
@@ -74,7 +72,8 @@ class RestaurantController extends AbstractController
         $orderItemQuantityModifier,
         $orderModifier,
         OrderTimeHelper $orderTimeHelper,
-        SerializerInterface $serializer)
+        SerializerInterface $serializer,
+        LocalBusinessRepository $localBusinessRepository)
     {
         $this->orderManager = $orderManager;
         $this->seoPage = $seoPage;
@@ -89,6 +88,7 @@ class RestaurantController extends AbstractController
         $this->orderModifier = $orderModifier;
         $this->orderTimeHelper = $orderTimeHelper;
         $this->serializer = $serializer;
+        $this->localBusinessRepository = $localBusinessRepository;
     }
 
     private function jsonResponse(OrderInterface $cart, array $errors)
@@ -106,7 +106,7 @@ class RestaurantController extends AbstractController
         ]);
     }
 
-    private function customizeSeoPage(Restaurant $restaurant, Request $request)
+    private function customizeSeoPage(LocalBusiness $restaurant, Request $request)
     {
         $this->seoPage->addTitle($restaurant->getName());
 
@@ -147,8 +147,11 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/restaurants", name="restaurants")
      */
-    public function listAction(Request $request, RestaurantRepository $repository)
+    public function listAction(Request $request)
     {
+        $localBusinessType =
+            $request->attributes->get('_coopcycle_business_type', 'restaurant');
+
         $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * self::ITEMS_PER_PAGE;
 
@@ -161,9 +164,9 @@ class RestaurantController extends AbstractController
             $latitude = $decoded->getCoordinate()->getLatitude();
             $longitude = $decoded->getCoordinate()->getLongitude();
 
-            $matches = $repository->findByLatLng($latitude, $longitude);
+            $matches = $this->localBusinessRepository->findByLatLng($latitude, $longitude);
         } else {
-            $matches = $repository->findAllSorted();
+            $matches = $this->localBusinessRepository->findAllSorted($localBusinessType);
         }
 
         $count = count($matches);
@@ -180,13 +183,14 @@ class RestaurantController extends AbstractController
             'geohash' => $request->query->get('geohash'),
             'addresses_normalized' => $this->getUserAddresses(),
             'address' => $request->query->has('address') ? $request->query->get('address') : null,
+            'local_business_type' => $localBusinessType,
         ));
     }
 
     /**
      * @Route("/{type}/{id}-{slug}", name="restaurant",
      *   requirements={
-     *     "type"="(restaurant|shop)",
+     *     "type"="(restaurant|store)",
      *     "id"="(\d+|__RESTAURANT_ID__)",
      *     "slug"="([a-z0-9-]+)"
      *   },
@@ -203,7 +207,7 @@ class RestaurantController extends AbstractController
         IriConverterInterface $iriConverter)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)->find($id);
+            ->getRepository(LocalBusiness::class)->find($id);
 
         if (!$restaurant) {
             throw new NotFoundHttpException();
@@ -216,7 +220,7 @@ class RestaurantController extends AbstractController
             }
         }
 
-        if ($restaurant->getState() === Restaurant::STATE_PLEDGE) {
+        if ($restaurant->getState() === LocalBusiness::STATE_PLEDGE) {
 
             $numberOfVotes = count($restaurant->getPledge()->getVotes());
 
@@ -339,7 +343,7 @@ class RestaurantController extends AbstractController
         $this->customizeSeoPage($restaurant, $request);
 
         $structuredData = $this->serializer->normalize($restaurant, 'jsonld', [
-            'resource_class' => Restaurant::class,
+            'resource_class' => LocalBusiness::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
             'groups' => ['restaurant_seo', 'address']
@@ -407,7 +411,7 @@ class RestaurantController extends AbstractController
         TranslatorInterface $translator)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)->find($id);
+            ->getRepository(LocalBusiness::class)->find($id);
 
         $product = $this->productRepository->findOneByCode($code);
 
@@ -504,7 +508,7 @@ class RestaurantController extends AbstractController
     public function clearCartTimeAction($id, Request $request, CartContextInterface $cartContext)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)->find($id);
+            ->getRepository(LocalBusiness::class)->find($id);
 
         $cart = $cartContext->getCart();
 
@@ -527,7 +531,7 @@ class RestaurantController extends AbstractController
     public function updateCartItemQuantityAction($id, $itemId, Request $request, CartContextInterface $cartContext, OrderProcessorInterface $orderProcessor)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)->find($id);
+            ->getRepository(LocalBusiness::class)->find($id);
 
         $cart = $cartContext->getCart();
 
@@ -560,7 +564,7 @@ class RestaurantController extends AbstractController
     public function removeFromCartAction($id, $cartItemId, Request $request, CartContextInterface $cartContext)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)->find($id);
+            ->getRepository(LocalBusiness::class)->find($id);
 
         $cart = $cartContext->getCart();
         $cartItem = $this->orderItemRepository->find($cartItemId);
@@ -585,7 +589,7 @@ class RestaurantController extends AbstractController
      */
     public function mapAction(Request $request, SlugifyInterface $slugify)
     {
-        $restaurants = array_map(function (Restaurant $restaurant) use ($slugify) {
+        $restaurants = array_map(function (LocalBusiness $restaurant) use ($slugify) {
             return [
                 'name' => $restaurant->getName(),
                 'address' => [
@@ -599,7 +603,7 @@ class RestaurantController extends AbstractController
                     'slug' => $slugify->slugify($restaurant->getName())
                 ])
             ];
-        }, $this->getDoctrine()->getRepository(Restaurant::class)->findAll());
+        }, $this->getDoctrine()->getRepository(LocalBusiness::class)->findAll());
 
         return [
             'restaurants' => $this->serializer->serialize($restaurants, 'json'),
@@ -663,7 +667,7 @@ class RestaurantController extends AbstractController
         }
 
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)->find($id);
+            ->getRepository(LocalBusiness::class)->find($id);
 
         $user = $this->getUser();
 
@@ -676,10 +680,12 @@ class RestaurantController extends AbstractController
     }
 
     /**
-     * @Route("/shops", name="shops")
+     * @Route("/stores", name="stores")
      */
-    public function shopListAction(Request $request, ShopRepository $repository)
+    public function storeListAction(Request $request)
     {
-        return $this->listAction($request, $repository);
+        $request->attributes->set('_coopcycle_business_type', 'store');
+
+        return $this->listAction($request);
     }
 }

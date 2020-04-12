@@ -2,7 +2,7 @@
 
 namespace AppBundle\Validator\Constraints;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\SettingsManager;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -29,7 +29,7 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($object->getState() === Restaurant::STATE_PLEDGE) {
+        if ($object->getState() === LocalBusiness::STATE_PLEDGE) {
             return;
         }
 

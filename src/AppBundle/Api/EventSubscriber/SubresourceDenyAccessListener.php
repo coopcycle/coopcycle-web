@@ -3,7 +3,7 @@
 namespace AppBundle\Api\EventSubscriber;
 
 use AppBundle\Entity\ApiApp;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use ApiPlatform\Core\Security\EventListener\DenyAccessListener;

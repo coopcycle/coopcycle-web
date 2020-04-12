@@ -2,7 +2,7 @@
 
 namespace AppBundle\EventListener\Upload;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Service\SettingsManager;
 use Doctrine\Persistence\ManagerRegistry;
@@ -46,7 +46,7 @@ final class UploadListener
 
         $objectClass = null;
         if ($type === 'restaurant') {
-            $objectClass = Restaurant::class;
+            $objectClass = LocalBusiness::class;
         } elseif ($type === 'product') {
             $objectClass = Product::class;
         } else {

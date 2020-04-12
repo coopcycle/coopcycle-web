@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;

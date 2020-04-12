@@ -3,7 +3,7 @@
 namespace AppBundle\Entity\Sylius;
 
 use AppBundle\DataType\NumRange;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Validator\Constraints\ProductOption as AssertProductOption;
 use Sylius\Component\Product\Model\ProductOption as BaseProductOption;
@@ -80,7 +80,7 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
         return $this->additional;
     }
 
-    public function setRestaurant(Restaurant $restaurant)
+    public function setRestaurant(LocalBusiness $restaurant)
     {
         $restaurant->addProductOption($this);
     }

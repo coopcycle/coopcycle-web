@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Service\OrderManager;

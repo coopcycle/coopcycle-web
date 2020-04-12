@@ -3,7 +3,7 @@
 namespace AppBundle\LoopEat;
 
 use AppBundle\Entity\ApiUser;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use GuzzleHttp\Client as BaseClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
@@ -92,7 +92,7 @@ class Client extends BaseClient
         return json_decode((string) $response->getBody(), true);
     }
 
-    public function grab(ApiUser $customer, Restaurant $restaurant, $quantity = 1)
+    public function grab(ApiUser $customer, LocalBusiness $restaurant, $quantity = 1)
     {
         for ($i = 0; $i < $quantity; $i++) {
 

@@ -7,6 +7,8 @@ use AppBundle\DataType\NumRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\OrderItemInterface;
@@ -72,12 +74,12 @@ class RestaurantControllerTest extends WebTestCase
         $this->orderModifier = $this->prophesize(OrderModifierInterface::class);
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
 
-        $this->restaurantRepository = $this->prophesize(EntityRepository::class);
+        $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
         $this->doctrine = $this->prophesize(ManagerRegistry::class);
         $this->doctrine
-            ->getRepository(Restaurant::class)
-            ->willReturn($this->restaurantRepository->reveal());
+            ->getRepository(LocalBusiness::class)
+            ->willReturn($this->localBusinessRepository->reveal());
 
         // Use the "real" serializer
         $this->serializer = static::$kernel->getContainer()->get('serializer');
@@ -113,7 +115,8 @@ class RestaurantControllerTest extends WebTestCase
             $this->orderItemQuantityModifier->reveal(),
             $this->orderModifier->reveal(),
             $this->orderTimeHelper->reveal(),
-            $this->serializer
+            $this->serializer,
+            $this->localBusinessRepository->reveal()
         );
 
         $this->controller->setContainer($container->reveal());
@@ -166,7 +169,7 @@ class RestaurantControllerTest extends WebTestCase
 
         $restaurant->addProduct($product->reveal());
 
-        $this->restaurantRepository->find(1)->willReturn($restaurant);
+        $this->localBusinessRepository->find(1)->willReturn($restaurant);
 
         $cartContext = $this->prophesize(CartContextInterface::class);
         $translator = $this->prophesize(TranslatorInterface::class);

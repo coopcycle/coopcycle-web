@@ -14,7 +14,11 @@
 <div class="container">
 
   <div class="homepage-restaurants__show-more text-left">
-    <a href="{{ path('restaurants') }}">← {% trans %}index.view_all_restaurants{% endtrans %}</a>
+    {% if restaurant.type == 'store' %}
+      <a href="{{ path('stores') }}">← {% trans %}index.view_all_shops{% endtrans %}</a>
+    {% else %}
+      <a href="{{ path('restaurants') }}">← {% trans %}index.view_all_restaurants{% endtrans %}</a>
+    {% endif %}
   </div>
 
   {% if not restaurant.enabled %}

@@ -26,7 +26,7 @@
         <join-column name="channel_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
-    <many-to-many field="restaurants" target-entity="AppBundle\Entity\Restaurant" inversed-by="owners">
+    <many-to-many field="restaurants" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="owners">
       <cascade>
         <cascade-all/>
       </cascade>

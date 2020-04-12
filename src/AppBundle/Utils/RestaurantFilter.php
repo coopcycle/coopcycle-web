@@ -4,7 +4,7 @@ namespace AppBundle\Utils;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\RoutingInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -46,7 +46,7 @@ class RestaurantFilter
         }
 
         // Sort by distance
-        usort($matches, function (Restaurant $a, Restaurant $b) use ($hash) {
+        usort($matches, function (LocalBusiness $a, LocalBusiness $b) use ($hash) {
             return $hash[$a] < $hash[$b] ? -1 : 1;
         });
 

@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Sylius\Promotion\Checker\Rule;
 
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
@@ -17,7 +18,7 @@ class IsRestaurantRuleCheckerTest extends TestCase
         $this->objectRepository = $this->prophesize(ObjectRepository::class);
 
         $this->doctrine = $this->prophesize(ManagerRegistry::class);
-        $this->doctrine->getRepository(Restaurant::class)->willReturn($this->objectRepository->reveal());
+        $this->doctrine->getRepository(LocalBusiness::class)->willReturn($this->objectRepository->reveal());
 
         $this->ruleChecker = new IsRestaurantRuleChecker(
             $this->doctrine->reveal()

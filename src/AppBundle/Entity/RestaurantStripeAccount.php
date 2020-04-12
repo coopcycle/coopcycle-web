@@ -22,7 +22,7 @@ class RestaurantStripeAccount
         return $this->restaurant;
     }
 
-    public function setRestaurant(Restaurant $restaurant)
+    public function setRestaurant(LocalBusiness $restaurant)
     {
         $this->restaurant = $restaurant;
 

@@ -9,7 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-abstract class LocalBusinessRepository extends EntityRepository
+class LocalBusinessRepository extends EntityRepository
 {
     private $restaurantFilter;
 
@@ -149,9 +149,9 @@ abstract class LocalBusinessRepository extends EntityRepository
         return $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function findAllSorted()
+    public function findAllSorted($type = 'restaurant')
     {
-        $matches = $this->findAll();
+        $matches = $this->findBy(['type' => $type]);
 
         // 1 - opened restaurants
         // 2 - closed restaurants

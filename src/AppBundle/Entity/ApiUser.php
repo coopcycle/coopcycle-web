@@ -187,14 +187,14 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
         return $this;
     }
 
-    public function addRestaurant(Restaurant $restaurant)
+    public function addRestaurant(LocalBusiness $restaurant)
     {
         $this->restaurants->add($restaurant);
 
         return $this;
     }
 
-    public function ownsRestaurant(Restaurant $restaurant)
+    public function ownsRestaurant(LocalBusiness $restaurant)
     {
         return $this->restaurants->contains($restaurant);
     }

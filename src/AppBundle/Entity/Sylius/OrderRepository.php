@@ -3,7 +3,7 @@
 namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\Query\Expr\Join;
@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class OrderRepository extends BaseOrderRepository
 {
-    public function findCartsByRestaurant(Restaurant $restaurant)
+    public function findCartsByRestaurant(LocalBusiness $restaurant)
     {
         return $this->createQueryBuilder('o')
             ->andWhere('o.state = :state')
@@ -39,7 +39,7 @@ class OrderRepository extends BaseOrderRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findOrdersByRestaurantAndDateRange(Restaurant $restaurant, \DateTime $start, \DateTime $end)
+    public function findOrdersByRestaurantAndDateRange(LocalBusiness $restaurant, \DateTime $start, \DateTime $end)
     {
         $qb = $this->createQueryBuilder('o');
         $qb

@@ -2,7 +2,7 @@
 
 namespace AppBundle\EventSubscriber;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +21,7 @@ class ProfileSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @return Restaurant|Store
+     * @return LocalBusiness|Store
      */
     private function findResourceInSession(Request $request, Collection $items, $sessionKey)
     {

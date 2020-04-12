@@ -8,7 +8,7 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="livemode" type="boolean" column="livemode"/>
-    <many-to-one field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="stripeAccounts">
+    <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="stripeAccounts">
       <join-columns>
         <join-column name="restaurant_id" referenced-column-name="id"/>
       </join-columns>

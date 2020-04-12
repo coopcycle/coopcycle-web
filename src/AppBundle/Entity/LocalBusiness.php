@@ -4,7 +4,12 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Action\MyRestaurants;
+use AppBundle\Action\Restaurant\Close as CloseController;
+use AppBundle\Action\Restaurant\Menu;
+use AppBundle\Action\Restaurant\Menus;
 use AppBundle\Annotation\Enabled;
+use AppBundle\Api\Dto\RestaurantInput;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
 use AppBundle\Entity\LocalBusiness\FoodEstablishmentTrait;
@@ -24,11 +29,63 @@ use Symfony\Component\Validator\Validation;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
+ * @ApiResource(
+ *   shortName="Restaurant",
+ *   iri="http://schema.org/Restaurant",
+ *   attributes={
+ *     "denormalization_context"={"groups"={"order_create", "restaurant_update"}},
+ *     "normalization_context"={"groups"={"restaurant", "address", "order"}}
+ *   },
+ *   collectionOperations={
+ *     "get"={
+ *       "method"="GET"
+ *     },
+ *     "me_restaurants"={
+ *       "method"="GET",
+ *       "path"="/me/restaurants",
+ *       "controller"=MyRestaurants::class
+ *     }
+ *   },
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET"
+ *     },
+ *     "restaurant_menu"={
+ *       "method"="GET",
+ *       "path"="/restaurants/{id}/menu",
+ *       "controller"=Menu::class,
+ *       "normalization_context"={"groups"={"restaurant_menu"}}
+ *     },
+ *     "restaurant_menus"={
+ *       "method"="GET",
+ *       "path"="/restaurants/{id}/menus",
+ *       "controller"=Menus::class,
+ *       "normalization_context"={"groups"={"restaurant_menus"}}
+ *     },
+ *     "put"={
+ *       "method"="PUT",
+ *       "input"=RestaurantInput::class,
+ *       "denormalization_context"={"groups"={"restaurant_update"}},
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
+ *     },
+ *     "close"={
+ *       "method"="PUT",
+ *       "path"="/restaurants/{id}/close",
+ *       "controller"=CloseController::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
+ *     }
+ *   },
+ *   subresourceOperations={
+ *     "orders_get_subresource"={
+ *       "security"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
+ *     }
+ *   }
+ * )
  * @Vich\Uploadable
  * @CustomAssert\IsActivableRestaurant(groups="activable")
  * @Enabled
  */
-abstract class LocalBusiness extends BaseLocalBusiness
+class LocalBusiness extends BaseLocalBusiness
 {
     use Timestampable;
     use SoftDeleteableEntity;
@@ -43,7 +100,7 @@ abstract class LocalBusiness extends BaseLocalBusiness
      */
     protected $id;
 
-    protected $type;
+    protected $type = 'restaurant';
 
     const STATE_NORMAL = 'normal';
     const STATE_RUSH = 'rush';
@@ -785,5 +842,15 @@ abstract class LocalBusiness extends BaseLocalBusiness
         $this->loopeatEnabled = $loopeatEnabled;
 
         return $this;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
     }
 }
