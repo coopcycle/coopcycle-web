@@ -2,7 +2,7 @@
 
 namespace AppBundle\Sylius\Promotion\Checker\Rule;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use Doctrine\Persistence\ManagerRegistry;
 use Sylius\Component\Promotion\Checker\Rule\RuleCheckerInterface;
 use Sylius\Component\Promotion\Model\PromotionSubjectInterface;
@@ -31,7 +31,7 @@ class IsRestaurantRuleChecker implements RuleCheckerInterface
             return false;
         }
 
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($configuration['restaurant_id']);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($configuration['restaurant_id']);
 
         if (null === $restaurant) {
             return false;

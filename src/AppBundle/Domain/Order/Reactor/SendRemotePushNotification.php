@@ -4,7 +4,7 @@ namespace AppBundle\Domain\Order\Reactor;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event\OrderCreated;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Message\PushNotification;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -66,10 +66,10 @@ class SendRemotePushNotification
         }
     }
 
-    private function normalizeRestaurant(Restaurant $restaurant)
+    private function normalizeRestaurant(LocalBusiness $restaurant)
     {
         $restaurantNormalized = $this->serializer->normalize($restaurant, 'jsonld', [
-            'resource_class' => Restaurant::class,
+            'resource_class' => LocalBusiness::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get'
         ]);

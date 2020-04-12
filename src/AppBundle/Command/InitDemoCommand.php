@@ -515,7 +515,7 @@ class InitDemoCommand extends Command
         $this->createTaxCategory('TVA consommation différée', 'tva_conso_differee', 'TVA 5.5%', 'tva_5_5', 0.055);
         $this->createTaxCategory('TVA livraison', 'tva_livraison', 'TVA 20%', 'tva_20', 0.20);
 
-        $em = $this->doctrine->getManagerForClass(Entity\Restaurant::class);
+        $em = $this->doctrine->getManagerForClass(Entity\LocalBusiness::class);
 
         for ($i = 0; $i < 50; $i++) {
 

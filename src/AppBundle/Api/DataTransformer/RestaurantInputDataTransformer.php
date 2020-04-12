@@ -3,7 +3,7 @@
 namespace AppBundle\Api\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
 
@@ -38,10 +38,10 @@ class RestaurantInputDataTransformer implements DataTransformerInterface
      */
     public function supportsTransformation($data, string $to, array $context = []): bool
     {
-        if ($data instanceof Restaurant) {
+        if ($data instanceof LocalBusiness) {
           return false;
         }
 
-        return Restaurant::class === $to && null !== ($context['input']['class'] ?? null);
+        return LocalBusiness::class === $to && null !== ($context['input']['class'] ?? null);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace AppBundle\EventListener;
 
-use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\RestaurantRepository;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusinessRepository;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -24,7 +24,7 @@ class EnabledFilterConfigurator
     public function __construct(
         EntityManagerInterface $em,
         TokenStorageInterface $tokenStorage,
-        RestaurantRepository $restaurantRepository,
+        LocalBusinessRepository $restaurantRepository,
         Reader $reader,
         CacheInterface $enabledFilterConfiguratorCache)
     {
@@ -57,7 +57,7 @@ class EnabledFilterConfigurator
                     $restaurants = $this->restaurantRepository->findByCustomer($user);
                 }
 
-                return array_map(function (Restaurant $restaurant) {
+                return array_map(function (LocalBusiness $restaurant) {
                     return $restaurant->getId();
                 }, $restaurants);
             });

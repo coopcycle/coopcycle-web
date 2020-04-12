@@ -2,7 +2,7 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -119,7 +119,7 @@ class RestaurantType extends LocalBusinessType
         parent::configureOptions($resolver);
 
         $resolver->setDefaults(array(
-            'data_class' => Restaurant::class,
+            'data_class' => LocalBusiness::class,
             'loopeat_enabled' => $this->loopeatEnabled,
         ));
     }

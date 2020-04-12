@@ -2,7 +2,7 @@
 
 namespace AppBundle\Sylius\Cart;
 
-use AppBundle\Entity\RestaurantRepository;
+use AppBundle\Entity\LocalBusinessRepository;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -31,7 +31,7 @@ final class RestaurantCartContext implements CartContextInterface
         SessionInterface $session,
         OrderRepositoryInterface $orderRepository,
         FactoryInterface $orderFactory,
-        RestaurantRepository $restaurantRepository,
+        LocalBusinessRepository $restaurantRepository,
         string $sessionKeyName)
     {
         $this->session = $session;

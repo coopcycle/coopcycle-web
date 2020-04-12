@@ -13,7 +13,7 @@ class Contract
     private $id;
 
     /**
-     * @var Restaurant
+     * @var LocalBusiness
      */
     private $restaurant;
 
@@ -89,7 +89,7 @@ class Contract
     private $restaurantPaysStripeFee = true;
 
     /**
-     * @return Restaurant
+     * @return LocalBusiness
      */
     public function getRestaurant()
     {
@@ -97,9 +97,9 @@ class Contract
     }
 
     /**
-     * @param Restaurant $restaurant
+     * @param LocalBusiness $restaurant
      */
-    public function setRestaurant(Restaurant $restaurant)
+    public function setRestaurant(LocalBusiness $restaurant)
     {
         $this->restaurant = $restaurant;
     }

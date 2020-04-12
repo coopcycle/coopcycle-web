@@ -4,7 +4,7 @@ namespace AppBundle\Sylius\Order;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\OrderEvent;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
@@ -55,9 +55,9 @@ interface OrderInterface extends
     public function getRevenue(): int;
 
     /**
-     * @return Restaurant
+     * @return LocalBusiness|null
      */
-    public function getRestaurant(): ?Restaurant;
+    public function getRestaurant(): ?LocalBusiness;
 
     /**
      * @return Address|null

@@ -16,8 +16,8 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\PackageSet;
-use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Tag;
@@ -521,7 +521,7 @@ class AdminController extends Controller
 
     protected function getRestaurantList(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(Restaurant::class);
+        $repository = $this->getDoctrine()->getRepository(LocalBusiness::class);
 
         $countAll = $repository
             ->createQueryBuilder('r')->select('COUNT(r)')
@@ -898,13 +898,13 @@ class AdminController extends Controller
      */
     public function searchRestaurantsAction(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(Restaurant::class);
+        $repository = $this->getDoctrine()->getRepository(LocalBusiness::class);
 
         $results = $repository->search($request->query->get('q'));
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
 
-            $data = array_map(function (Restaurant $restaurant) {
+            $data = array_map(function (LocalBusiness $restaurant) {
                 return [
                     'id' => $restaurant->getId(),
                     'name' => $restaurant->getName(),
@@ -1327,7 +1327,7 @@ class AdminController extends Controller
 
             $promotion->addRule($promotionRule);
 
-            if (isset($data['restaurant']) && $data['restaurant'] instanceof Restaurant) {
+            if (isset($data['restaurant']) && $data['restaurant'] instanceof LocalBusiness) {
 
                 $isRestaurantRule = $this->get('sylius.factory.promotion_rule')->createNew();
                 $isRestaurantRule->setType(IsRestaurantRuleChecker::TYPE);

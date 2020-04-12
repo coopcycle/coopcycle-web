@@ -5,7 +5,7 @@ namespace AppBundle\Controller\Utils;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\ClosingRule;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant\PreparationTimeRule;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\StripeAccount;
@@ -84,7 +84,7 @@ trait RestaurantTrait
         return array_merge($params, $routeParams);
     }
 
-    protected function renderRestaurantForm(Restaurant $restaurant, Request $request,
+    protected function renderRestaurantForm(LocalBusiness $restaurant, Request $request,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter)
     {
@@ -100,7 +100,7 @@ trait RestaurantTrait
                         ->find($stripeAccountId);
                     if ($stripeAccount) {
                         $restaurant->addStripeAccount($stripeAccount);
-                        $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
+                        $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
 
                         $this->addFlash(
                             'notice',
@@ -125,8 +125,8 @@ trait RestaurantTrait
 
                 if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
 
-                    $this->getDoctrine()->getManagerForClass(Restaurant::class)->remove($restaurant);
-                    $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
+                    $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->remove($restaurant);
+                    $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
 
                     return $this->redirectToRoute($routes['restaurants']);
                 }
@@ -155,8 +155,8 @@ trait RestaurantTrait
                     }
                 }
 
-                $this->getDoctrine()->getManagerForClass(Restaurant::class)->persist($restaurant);
-                $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
+                $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->persist($restaurant);
+                $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
 
                 $this->addFlash(
                     'notice',
@@ -228,7 +228,7 @@ trait RestaurantTrait
 
     public function restaurantAction($id, Request $request, JWTEncoderInterface $jwtEncoder, IriConverterInterface $iriConverter)
     {
-        $repository = $this->getDoctrine()->getRepository(Restaurant::class);
+        $repository = $this->getDoctrine()->getRepository(LocalBusiness::class);
 
         $restaurant = $repository->find($id);
 
@@ -240,7 +240,7 @@ trait RestaurantTrait
     public function newRestaurantAction(Request $request, JWTEncoderInterface $jwtEncoder, IriConverterInterface $iriConverter)
     {
         // TODO Check roles
-        $restaurant = new Restaurant();
+        $restaurant = new LocalBusiness();
 
         return $this->renderRestaurantForm($restaurant, $request, $jwtEncoder, $iriConverter);
     }
@@ -248,7 +248,7 @@ trait RestaurantTrait
     protected function renderRestaurantDashboard(
         Request $request,
         JWTManagerInterface $jwtManager,
-        Restaurant $restaurant)
+        LocalBusiness $restaurant)
     {
         $this->accessControl($restaurant);
 
@@ -281,7 +281,7 @@ trait RestaurantTrait
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
-                'resource_class' => Restaurant::class,
+                'resource_class' => LocalBusiness::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
                 'groups' => ['restaurant']
@@ -307,7 +307,7 @@ trait RestaurantTrait
     public function restaurantDashboardAction($restaurantId, Request $request, JWTManagerInterface $jwtManager)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
         return $this->renderRestaurantDashboard($request, $jwtManager, $restaurant);
@@ -316,7 +316,7 @@ trait RestaurantTrait
     public function restaurantMenuTaxonsAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $routes = $request->attributes->get('routes');
@@ -338,7 +338,7 @@ trait RestaurantTrait
     public function activateRestaurantMenuTaxonAction($restaurantId, $menuId, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
         $menuTaxon = $this->get('sylius.repository.taxon')
@@ -346,7 +346,7 @@ trait RestaurantTrait
 
         $restaurant->setMenuTaxon($menuTaxon);
 
-        $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
+        $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
 
         $this->addFlash(
             'notice',
@@ -364,7 +364,7 @@ trait RestaurantTrait
     public function deleteRestaurantMenuTaxonChildAction($restaurantId, $menuId, $sectionId, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
         $menuTaxon = $this->get('sylius.repository.taxon')->find($menuId);
@@ -385,7 +385,7 @@ trait RestaurantTrait
     public function newRestaurantMenuTaxonAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $routes = $request->attributes->get('routes');
@@ -407,7 +407,7 @@ trait RestaurantTrait
             $this->get('sylius.repository.taxon')->add($menuTaxon);
 
             $restaurant->addTaxon($menuTaxon);
-            $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
+            $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
 
             return $this->redirectToRoute($routes['menu_taxon'], [
                 'restaurantId' => $restaurant->getId(),
@@ -434,7 +434,7 @@ trait RestaurantTrait
         $routes = $request->attributes->get('routes');
 
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
         $menuTaxon = $this->get('sylius.repository.taxon')
@@ -566,7 +566,7 @@ trait RestaurantTrait
     public function restaurantPlanningAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $form = $this->createForm(ClosingRuleType::class);
@@ -605,7 +605,7 @@ trait RestaurantTrait
     public function restaurantProductsAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $routes = $request->attributes->get('routes');
@@ -632,7 +632,7 @@ trait RestaurantTrait
     public function restaurantProductAction($restaurantId, $productId, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
         $product = $this->get('sylius.repository.product')
@@ -678,7 +678,7 @@ trait RestaurantTrait
     public function newRestaurantProductAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $product = $this->get('sylius.factory.product')
@@ -718,7 +718,7 @@ trait RestaurantTrait
     public function restaurantProductOptionsAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $routes = $request->attributes->get('routes');
@@ -733,7 +733,7 @@ trait RestaurantTrait
     public function restaurantProductOptionAction($restaurantId, $optionId, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
         $productOption = $this->get('sylius.repository.product_option')
@@ -782,7 +782,7 @@ trait RestaurantTrait
     public function newRestaurantProductOptionAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $productOption = $this->get('sylius.factory.product_option')
@@ -821,7 +821,7 @@ trait RestaurantTrait
         JWTEncoderInterface $jwtEncoder)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $redirectUri = $this->generateUrl(
@@ -892,7 +892,7 @@ trait RestaurantTrait
     public function preparationTimeAction($id, Request $request, PreparationTimeCalculator $calculator)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $routes = $request->attributes->get('routes');
@@ -933,7 +933,7 @@ trait RestaurantTrait
                 }
             }
 
-            $em = $this->getDoctrine()->getManagerForClass(Restaurant::class);
+            $em = $this->getDoctrine()->getManagerForClass(LocalBusiness::class);
             $em->flush();
 
             return $this->redirectToRoute($routes['success'], ['id' => $id]);
@@ -950,7 +950,7 @@ trait RestaurantTrait
     public function statsAction($id, Request $request, SlugifyInterface $slugify, TranslatorInterface $translator)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $this->accessControl($restaurant);
@@ -1018,7 +1018,7 @@ trait RestaurantTrait
     public function restaurantDepositRefundAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $this->accessControl($restaurant);
@@ -1028,7 +1028,7 @@ trait RestaurantTrait
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
+            $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
 
             $this->addFlash(
                 'notice',

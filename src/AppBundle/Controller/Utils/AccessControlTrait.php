@@ -3,7 +3,7 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\AccessControl;
@@ -25,7 +25,7 @@ trait AccessControlTrait
             }
         }
 
-        if ($object instanceof Restaurant) {
+        if ($object instanceof LocalBusiness) {
             if (!AccessControl::restaurant($this->getUser(), $object)) {
                 throw new AccessDeniedHttpException();
             }

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Form\Restaurant;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,7 +21,7 @@ class DepositRefundSettingsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => Restaurant::class,
+            'data_class' => LocalBusiness::class,
         ));
     }
 }

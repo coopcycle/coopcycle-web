@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use Cocur\Slugify\SlugifyInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +18,7 @@ class SitemapController extends AbstractController
     public function indexAction(SlugifyInterface $slugify)
     {
         $restaurants = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
+            ->getRepository(LocalBusiness::class)
             ->findBy(['enabled' => true]);
 
         // TODO Use locale_regex parameter

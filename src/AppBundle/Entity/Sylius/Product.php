@@ -4,7 +4,7 @@ namespace AppBundle\Entity\Sylius;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -78,7 +78,7 @@ class Product extends BaseProduct implements ProductInterface
     /**
      * {@inheritdoc}
      */
-    public function getRestaurant(): ?Restaurant
+    public function getRestaurant(): ?LocalBusiness
     {
         return $this->restaurant->get(0);
     }
@@ -86,7 +86,7 @@ class Product extends BaseProduct implements ProductInterface
     /**
      * {@inheritdoc}
      */
-    public function setRestaurant(?Restaurant $restaurant): void
+    public function setRestaurant(?LocalBusiness $restaurant): void
     {
         $this->restaurant->clear();
         $this->restaurant->add($restaurant);

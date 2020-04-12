@@ -3,7 +3,6 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 

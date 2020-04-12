@@ -3,7 +3,7 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
 use AppBundle\Sylius\Order\OrderInterface;
 use FOS\UserBundle\Model\UserInterface;
@@ -27,7 +27,7 @@ class AccessControl
         return $isAdmin || $ownsRestaurant || $isCustomer;
     }
 
-    public static function restaurant(UserInterface $user, Restaurant $restaurant)
+    public static function restaurant(UserInterface $user, LocalBusiness $restaurant)
     {
         $isAdmin = $user->hasRole('ROLE_ADMIN');
         $ownsRestaurant = $user->ownsRestaurant($restaurant);

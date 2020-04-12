@@ -2,7 +2,7 @@
 
 namespace AppBundle\Utils;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -11,7 +11,7 @@ class MenuEditor
     private $restaurant;
     private $menu;
 
-    public function __construct(Restaurant $restaurant, $menu)
+    public function __construct(LocalBusiness $restaurant, $menu)
     {
         $this->restaurant = $restaurant;
         $this->menu = $menu;

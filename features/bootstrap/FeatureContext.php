@@ -5,6 +5,7 @@ use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Order;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\DeliveryAddress;
@@ -574,7 +575,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function theRestaurantWithIdHasProducts($id, TableNode $table)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $productCodes = array_map(function ($row) {
             return $row['code'];
@@ -585,7 +586,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             $restaurant->addProduct($product);
         }
 
-        $this->doctrine->getManagerForClass(Restaurant::class)->flush();
+        $this->doctrine->getManagerForClass(LocalBusiness::class)->flush();
     }
 
     /**
@@ -593,7 +594,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function theRestaurantWithIdHasMenu($id, TableNode $table)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $menu = $this->getContainer()->get('sylius.factory.taxon')->createNew();
         $menu->setCode(Uuid::uuid4()->toString());
@@ -622,7 +623,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $restaurant->addTaxon($menu);
         $restaurant->setMenuTaxon($menu);
 
-        $this->doctrine->getManagerForClass(Restaurant::class)->flush();
+        $this->doctrine->getManagerForClass(LocalBusiness::class)->flush();
     }
 
     /**
@@ -647,7 +648,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $userManager = $this->getContainer()->get('fos_user.user_manager');
         $user = $userManager->findUserByUsername($username);
 
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $user->addRestaurant($restaurant);
         $userManager->updateUser($user);
@@ -656,7 +657,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     /**
      * FIXME Too complicated, too low level
      */
-    private function createRandomOrder(Restaurant $restaurant, UserInterface $user, \DateTime $shippedAt = null)
+    private function createRandomOrder(LocalBusiness $restaurant, UserInterface $user, \DateTime $shippedAt = null)
     {
         $order = $this->getContainer()->get('sylius.factory.order')
             ->createForRestaurant($restaurant);
@@ -700,7 +701,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $userManager = $this->getContainer()->get('fos_user.user_manager');
         $user = $userManager->findUserByUsername($username);
 
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $order = $this->createRandomOrder($restaurant, $user);
         $order->setState(OrderInterface::STATE_NEW);
@@ -717,7 +718,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $userManager = $this->getContainer()->get('fos_user.user_manager');
         $user = $userManager->findUserByUsername($username);
 
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $order = $this->createRandomOrder($restaurant, $user, new \DateTime($date));
         $order->setState(OrderInterface::STATE_NEW);
@@ -754,7 +755,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function theRestaurantWithIdShouldHaveClosingRules($id, $count)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         Assert::assertEquals($count, count($restaurant->getClosingRules()));
     }
@@ -854,7 +855,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $userManager = $this->getContainer()->get('fos_user.user_manager');
         $user = $userManager->findUserByUsername($username);
 
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $cart = $this->getContainer()->get('sylius.factory.order')
             ->createForRestaurant($restaurant);
@@ -870,7 +871,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function createCartAtRestaurantWithId($id)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $cart = $this->getContainer()->get('sylius.factory.order')
             ->createForRestaurant($restaurant);
@@ -881,7 +882,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         return $cart;
     }
 
-    private function getLastCartFromRestaurant(Restaurant $restaurant)
+    private function getLastCartFromRestaurant(LocalBusiness $restaurant)
     {
         $carts = $this->getContainer()->get('sylius.repository.order')
             ->findCartsByRestaurant($restaurant);
@@ -901,7 +902,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function thereIsATokenForTheLastCartAtRestaurantWithId($id)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
         $cart = $this->getLastCartFromRestaurant($restaurant);
 
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
@@ -917,7 +918,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function thereIsAnExpiredTokenForTheLastCartAtRestaurantWithId($id)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
         $cart = $this->getLastCartFromRestaurant($restaurant);
 
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
@@ -958,7 +959,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function theHeaderContainsATokenForTheLastCartAtRestaurantWithId($headerName, $id)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
         $cart = $this->getLastCartFromRestaurant($restaurant);
 
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
@@ -975,7 +976,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function theRestaurantWithIdIsClosedBetweenAnd($id, $start, $end)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $closingRule = new ClosingRule();
         $closingRule->setRestaurant($restaurant);
@@ -984,7 +985,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $restaurant->addClosingRule($closingRule);
 
-        $em = $this->doctrine->getManagerForClass(Restaurant::class);
+        $em = $this->doctrine->getManagerForClass(LocalBusiness::class);
         $em->flush();
     }
 
@@ -1041,10 +1042,10 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function enableDepositRefund($id)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
         $restaurant->setDepositRefundEnabled(true);
 
-        $em = $this->doctrine->getManagerForClass(Restaurant::class);
+        $em = $this->doctrine->getManagerForClass(LocalBusiness::class);
         $em->flush();
     }
 

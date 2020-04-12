@@ -175,7 +175,7 @@ AppBundle\Entity\Contract:
     flatDeliveryPrice: 350
     feeRate: 0.00
 
-AppBundle\Entity\Restaurant:
+AppBundle\Entity\LocalBusiness:
   crazy_hamburger:
     name: Crazy Hamburger
     address: "@address_1"

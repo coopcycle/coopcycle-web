@@ -302,11 +302,8 @@ services:
 
   AppBundle\Sylius\Cart\RestaurantCartContext:
     arguments:
-      - "@session"
-      - "@sylius.repository.order"
-      - "@sylius.factory.order"
-      - "@coopcycle.repository.restaurant"
-      - "%sylius_cart_restaurant_session_key_name%"
+      $orderFactory: "@sylius.factory.order"
+      $sessionKeyName: "%sylius_cart_restaurant_session_key_name%"
     tags:
       - { name: sylius.context.cart, priority: 32 }
 
@@ -392,19 +389,10 @@ services:
     arguments:
       - AppBundle\Entity\Task
 
-  AppBundle\Entity\RestaurantRepository:
+  AppBundle\Entity\LocalBusinessRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
-      - AppBundle\Entity\Restaurant
-    calls:
-      - method: setRestaurantFilter
-        arguments:
-            - '@coopcycle.utils.restaurant_filter'
-
-  AppBundle\Entity\ShopRepository:
-    factory: ['@doctrine.orm.default_entity_manager', getRepository]
-    arguments:
-      - AppBundle\Entity\Shop
+      - AppBundle\Entity\LocalBusiness
     calls:
       - method: setRestaurantFilter
         arguments:
@@ -574,11 +562,6 @@ services:
       $fleetKey: '%tile38_fleet_key%'
 
   AppBundle\EventListener\EnabledFilterConfigurator:
-    arguments:
-      - "@doctrine.orm.entity_manager"
-      - "@security.token_storage"
-      - "@coopcycle.repository.restaurant"
-      - "@annotation_reader"
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }
 

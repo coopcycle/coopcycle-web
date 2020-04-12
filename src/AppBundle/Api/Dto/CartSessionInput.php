@@ -2,12 +2,12 @@
 
 namespace AppBundle\Api\Dto;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 
 final class CartSessionInput
 {
     /**
-     * @var Restaurant
+     * @var LocalBusiness
      */
     public $restaurant;
 }

@@ -2,11 +2,10 @@
 
 namespace AppBundle\Entity\Restaurant;
 
+use AppBundle\Entity\Restaurant\PledgeVote;
+use AppBundle\Entity\LocalBusiness;
 use Doctrine\Common\Collections\ArrayCollection;
 use FOS\UserBundle\Model\UserInterface;
-use AppBundle\Entity\Restaurant\PledgeVote;
-use AppBundle\Entity\Restaurant;
-use Exception;
 
 class Pledge {
 
@@ -206,16 +205,16 @@ class Pledge {
         return false;
     }
 
-    public function accept(): Restaurant
+    public function accept(): LocalBusiness
     {
         if ($this->getState() !== 'new') {
-            throw new Exception('Unvalid pledge state, it should be set to new');
+            throw new \Exception('Unvalid pledge state, it should be set to new');
         }
 
-        $restaurant = new Restaurant();
+        $restaurant = new LocalBusiness();
         $restaurant->setName($this->getName());
         $restaurant->setAddress($this->getAddress());
-        $restaurant->setState(Restaurant::STATE_PLEDGE);
+        $restaurant->setState(LocalBusiness::STATE_PLEDGE);
         $restaurant->setPledge($this);
         $restaurant->setEnabled(true);
 

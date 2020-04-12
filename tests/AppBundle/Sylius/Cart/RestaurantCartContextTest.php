@@ -5,7 +5,7 @@ namespace Tests\AppBundle\Sylius\Cart;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\RestaurantRepository;
+use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Sylius\Cart\RestaurantCartContext;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Order\Context\CartNotFoundException;
@@ -27,7 +27,7 @@ class RestaurantCartContextTest extends TestCase
         $this->session = $this->prophesize(SessionInterface::class);
         $this->orderRepository = $this->prophesize(OrderRepositoryInterface::class);
         $this->orderFactory = $this->prophesize(OrderFactory::class);
-        $this->restaurantRepository = $this->prophesize(RestaurantRepository::class);
+        $this->restaurantRepository = $this->prophesize(LocalBusinessRepository::class);
 
         $this->context = new RestaurantCartContext(
             $this->session->reveal(),

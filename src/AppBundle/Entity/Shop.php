@@ -2,12 +2,15 @@
 
 namespace AppBundle\Entity;
 
-class Shop extends Restaurant
+/**
+ *
+ */
+class Shop extends LocalBusiness
 {
     public function __construct()
     {
-        parent::__construct();
-
         $this->type = 'shop';
+
+        parent::__construct();
     }
 }

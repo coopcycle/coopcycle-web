@@ -20,7 +20,7 @@ use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Filter\OrderDateFilter;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -384,12 +384,12 @@ class Order extends BaseOrder implements OrderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRestaurant(): ?Restaurant
+    public function getRestaurant(): ?LocalBusiness
     {
         return $this->restaurant;
     }
 
-    public function setRestaurant(?Restaurant $restaurant): void
+    public function setRestaurant(?LocalBusiness $restaurant): void
     {
         $this->restaurant = $restaurant;
     }

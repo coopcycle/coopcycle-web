@@ -41,39 +41,11 @@ AppBundle\Entity\Contract:
     feeRate: 0.00
 
 AppBundle\Entity\LocalBusiness:
-  restaurant_1:
-    name: 'Nodaiwa'
+  shop_1:
+    type: store
+    name: Flower Express
     address: "@address_1"
     orderingDelayMinutes: 0
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
     contract: "@contract_1"
-  restaurant_2:
-    name: 'Café Barjot'
-    address: "@address_2"
-    openingHours: ['Mo-Sa 11:30-14:30']
-    orderingDelayMinutes: 0
-    enabled: true
-    contract: "@contract_2"
-  restaurant_3:
-    name: 'La Cantina Clandestina'
-    orderingDelayMinutes: 0
-    address: "@address_3"
-    openingHours: ['Mo-Sa 11:30-14:30']
-    enabled: true
-    contract: "@contract_3"
-  restaurant_4:
-    name: 'Wild Buffet'
-    orderingDelayMinutes: 0
-    address: "@address_3"
-    openingHours: ['Mo-Sa 11:30-14:30']
-    enabled: true
-    contract: "@contract_3"
-    __calls:
-      - setDeletedAt:
-        - <identity(new \DateTime('2019-11-12 18:00:00'))>
-  restaurant_5:
-    name: 'I Want This Restaurant'
-    address: "@address_3"
-    enabled: true
-    state: pledge
