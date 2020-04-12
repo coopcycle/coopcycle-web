@@ -2,6 +2,7 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -61,7 +62,7 @@ class PreparationTimeCalculator
         return $preparation;
     }
 
-    public function createForRestaurant(Restaurant $restaurant)
+    public function createForRestaurant(LocalBusiness $restaurant)
     {
         $preparationTimeRules = $restaurant->getPreparationTimeRules();
 
