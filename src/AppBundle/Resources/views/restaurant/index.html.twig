@@ -14,7 +14,7 @@
 <div class="container">
 
   <div class="homepage-restaurants__show-more text-left">
-    {% if restaurant.type == 'store' %}
+    {% if restaurant.context == 'AppBundle\\Enum\\Store' %}
       <a href="{{ path('stores') }}">← {% trans %}index.view_all_shops{% endtrans %}</a>
     {% else %}
       <a href="{{ path('restaurants') }}">← {% trans %}index.view_all_restaurants{% endtrans %}</a>

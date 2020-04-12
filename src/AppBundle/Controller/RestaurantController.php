@@ -14,6 +14,8 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant\Pledge;
+use AppBundle\Enum\FoodEstablishment;
+use AppBundle\Enum\Store;
 use AppBundle\Form\PledgeType;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
@@ -72,8 +74,7 @@ class RestaurantController extends AbstractController
         $orderItemQuantityModifier,
         $orderModifier,
         OrderTimeHelper $orderTimeHelper,
-        SerializerInterface $serializer,
-        LocalBusinessRepository $localBusinessRepository)
+        SerializerInterface $serializer)
     {
         $this->orderManager = $orderManager;
         $this->seoPage = $seoPage;
@@ -88,7 +89,6 @@ class RestaurantController extends AbstractController
         $this->orderModifier = $orderModifier;
         $this->orderTimeHelper = $orderTimeHelper;
         $this->serializer = $serializer;
-        $this->localBusinessRepository = $localBusinessRepository;
     }
 
     private function jsonResponse(OrderInterface $cart, array $errors)
@@ -147,11 +147,8 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/restaurants", name="restaurants")
      */
-    public function listAction(Request $request)
+    public function listAction(Request $request, LocalBusinessRepository $repository)
     {
-        $localBusinessType =
-            $request->attributes->get('_coopcycle_business_type', 'restaurant');
-
         $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * self::ITEMS_PER_PAGE;
 
@@ -164,9 +161,9 @@ class RestaurantController extends AbstractController
             $latitude = $decoded->getCoordinate()->getLatitude();
             $longitude = $decoded->getCoordinate()->getLongitude();
 
-            $matches = $this->localBusinessRepository->findByLatLng($latitude, $longitude);
+            $matches = $repository->findByLatLng($latitude, $longitude);
         } else {
-            $matches = $this->localBusinessRepository->findAllSorted($localBusinessType);
+            $matches = $repository->findAllSorted();
         }
 
         $count = count($matches);
@@ -183,7 +180,7 @@ class RestaurantController extends AbstractController
             'geohash' => $request->query->get('geohash'),
             'addresses_normalized' => $this->getUserAddresses(),
             'address' => $request->query->has('address') ? $request->query->get('address') : null,
-            'local_business_type' => $localBusinessType,
+            'local_business_context' => $repository->getContext(),
         ));
     }
 
@@ -682,10 +679,8 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/stores", name="stores")
      */
-    public function storeListAction(Request $request)
+    public function storeListAction(Request $request, LocalBusinessRepository $repository)
     {
-        $request->attributes->set('_coopcycle_business_type', 'store');
-
-        return $this->listAction($request);
+        return $this->listAction($request, $repository->withContext(Store::class));
     }
 }
