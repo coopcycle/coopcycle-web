@@ -2,32 +2,21 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use AppBundle\Action\MyRestaurants;
-use AppBundle\Action\Restaurant\Close as CloseRestaurant;
-use AppBundle\Action\Restaurant\Menu;
-use AppBundle\Action\Restaurant\Menus;
 use AppBundle\Annotation\Enabled;
-use AppBundle\Api\Controller\Restaurant\ChangeState;
-use AppBundle\Api\Dto\RestaurantInput;
-// use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
+use AppBundle\Entity\LocalBusiness\CatalogTrait;
+use AppBundle\Entity\LocalBusiness\FoodEstablishmentTrait;
+use AppBundle\Entity\LocalBusiness\ImageTrait;
+use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\Timestampable;
-use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
-use Sylius\Component\Product\Model\ProductInterface;
-use Sylius\Component\Product\Model\ProductOptionInterface;
-use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -44,6 +33,9 @@ abstract class LocalBusiness extends BaseLocalBusiness
     use Timestampable;
     use SoftDeleteableEntity;
     use LoopEatOAuthCredentialsTrait;
+    use CatalogTrait;
+    use FoodEstablishmentTrait;
+    use ImageTrait;
 
     /**
      * @var int
@@ -72,13 +64,6 @@ abstract class LocalBusiness extends BaseLocalBusiness
     protected $description;
 
     /**
-     * @var mixed The cuisine of the restaurant.
-     *
-     * @ApiProperty(iri="https://schema.org/servesCuisine")
-     */
-    protected $servesCuisine;
-
-    /**
      * @var boolean Is the restaurant enabled?
      *
      * A disable restaurant is not shown to visitors, but remain accessible in preview to admins and owners.
@@ -105,7 +90,6 @@ abstract class LocalBusiness extends BaseLocalBusiness
 
     /**
      * @var integer Additional time to delay ordering
-     *
      */
     protected $orderingDelayMinutes = 0;
 
@@ -118,97 +102,69 @@ abstract class LocalBusiness extends BaseLocalBusiness
     protected $pledge;
 
     /**
-     * @Vich\UploadableField(mapping="restaurant_image", fileNameProperty="imageName")
-     * @Assert\File(
-     *   maxSize = "1024k",
-     *   mimeTypes = {"image/jpg", "image/jpeg", "image/png"}
-     * )
-     * @var File
-     */
-    private $imageFile;
-
-    /**
-     * @var string
-     */
-    private $imageName;
-
-    /**
      * @var Address
      *
      * @Groups({"restaurant", "order", "restaurant_seo"})
      */
-    private $address;
+    protected $address;
 
     /**
      * @var string The website of the restaurant.
      *
      * @ApiProperty(iri="https://schema.org/URL")
      */
-    private $website;
+    protected $website;
 
-    private $stripeAccounts;
+    protected $stripeAccounts;
 
     /**
      * @var string
      *
      * @Assert\Type(type="string")
      */
-    private $deliveryPerimeterExpression = 'distance < 3000';
+    protected $deliveryPerimeterExpression = 'distance < 3000';
 
     /**
      * @Groups({"restaurant"})
      */
-    private $closingRules;
+    protected $closingRules;
 
-    private $owners;
+    protected $owners;
 
-    private $productOptions;
-
-    private $taxons;
-
-    /**
-     * @Groups({"restaurant"})
-     */
-    private $activeMenuTaxon;
-
-    private $exclusive = false;
+    protected $exclusive = false;
 
     /**
      * @Groups({"restaurant", "restaurant_update"})
      */
-    private $state = self::STATE_NORMAL;
+    protected $state = self::STATE_NORMAL;
 
     /**
      * @var Contract|null
      * @Groups({"order_create"})
      * @Assert\Valid(groups={"Default", "activable"})
      */
-    private $contract;
+    protected $contract;
 
     /**
      * The roles needed to be able to manage Stripe Connect.
      */
-    private $stripeConnectRoles = ['ROLE_ADMIN'];
+    protected $stripeConnectRoles = ['ROLE_ADMIN'];
 
-    private $preparationTimeRules;
+    protected $preparationTimeRules;
 
-    private $nextOpeningDateCache = [];
+    protected $nextOpeningDateCache = [];
 
-    private $reusablePackagings;
-
-    protected $orders;
-
-    protected $products;
+    protected $reusablePackagings;
 
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
         $this->closingRules = new ArrayCollection();
         $this->owners = new ArrayCollection();
-        // $this->products = new ArrayCollection();
+        $this->products = new ArrayCollection();
         $this->productOptions = new ArrayCollection();
         $this->taxons = new ArrayCollection();
-        // $this->orders = new ArrayCollection();
+        $this->orders = new ArrayCollection();
         $this->stripeAccounts = new ArrayCollection();
         $this->preparationTimeRules = new ArrayCollection();
         $this->reusablePackagings = new ArrayCollection();
@@ -288,18 +244,6 @@ abstract class LocalBusiness extends BaseLocalBusiness
         return $this;
     }
 
-    public function setImageName($imageName)
-    {
-        $this->imageName = $imageName;
-
-        return $this;
-    }
-
-    public function getImageName()
-    {
-        return $this->imageName;
-    }
-
     public function getAddress()
     {
         return $this->address;
@@ -310,36 +254,6 @@ abstract class LocalBusiness extends BaseLocalBusiness
         $this->address = $address;
 
         return $this;
-    }
-
-    /**
-     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
-     * of 'UploadedFile' is injected into this setter to trigger the  update. If this
-     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
-     * must be able to accept an instance of 'File' as the bundle will inject one here
-     * during Doctrine hydration.
-     *
-     * @param File|UploadedFile|null $image
-     */
-    public function setImageFile(File $image = null)
-    {
-        $this->imageFile = $image;
-
-        if ($image) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new \DateTime();
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return File|null
-     */
-    public function getImageFile()
-    {
-        return $this->imageFile;
     }
 
     /**
@@ -533,25 +447,6 @@ abstract class LocalBusiness extends BaseLocalBusiness
         return $availabilities;
     }
 
-    public function setServesCuisine($servesCuisine)
-    {
-        $this->servesCuisine = $servesCuisine;
-
-        return $this;
-    }
-
-    public function addServesCuisine($servesCuisine)
-    {
-        $this->servesCuisine->add($servesCuisine);
-
-        return $this;
-    }
-
-    public function getServesCuisine()
-    {
-        return $this->servesCuisine;
-    }
-
     public function getStripeAccounts()
     {
         return $this->stripeAccounts;
@@ -574,26 +469,6 @@ abstract class LocalBusiness extends BaseLocalBusiness
                 return $stripeAccount->getStripeAccount();
             }
         }
-    }
-
-    public function getActiveMenuTaxon()
-    {
-        return $this->activeMenuTaxon;
-    }
-
-    public function getMenuTaxon()
-    {
-        return $this->activeMenuTaxon;
-    }
-
-    public function setMenuTaxon(TaxonInterface $taxon)
-    {
-        $this->activeMenuTaxon = $taxon;
-    }
-
-    public function hasMenu()
-    {
-        return null !== $this->activeMenuTaxon;
     }
 
     /**
@@ -666,36 +541,6 @@ abstract class LocalBusiness extends BaseLocalBusiness
         return $this->owners;
     }
 
-    public function getProductOptions()
-    {
-        return $this->productOptions;
-    }
-
-    public function addProductOption(ProductOptionInterface $productOption)
-    {
-        if (!$this->productOptions->contains($productOption)) {
-            $this->productOptions->add($productOption);
-        }
-    }
-
-    public function getTaxons()
-    {
-        return $this->taxons;
-    }
-
-    public function addTaxon(TaxonInterface $taxon)
-    {
-        // TODO Check if this is a root taxon
-        $this->taxons->add($taxon);
-    }
-
-    public function removeTaxon(TaxonInterface $taxon)
-    {
-        if ($this->getTaxons()->contains($taxon)) {
-            $this->getTaxons()->removeElement($taxon);
-        }
-    }
-
     public function canDeliverAddress(Address $address, $distance, ExpressionLanguage $language = null)
     {
         if (null === $language) {
@@ -759,8 +604,6 @@ abstract class LocalBusiness extends BaseLocalBusiness
 
         return $this;
     }
-
-
 
     /**
      * @return mixed
