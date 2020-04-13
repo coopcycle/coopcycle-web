@@ -5,6 +5,8 @@ namespace AppBundle\Serializer;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Enum\FoodEstablishment;
+use AppBundle\Enum\Store;
 use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Utils\PriceFormatter;
 use Cocur\Slugify\SlugifyInterface;
@@ -139,6 +141,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $urlTemplate = $this->urlGenerator->generate('restaurant', [
             'id' => $object->getId(),
             'slug' => $this->slugify->slugify($object->getName()),
+            'type' => $object->getContext() === Store::class ? 'store' : 'restaurant',
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $priceCurrency = $this->currencyContext->getCurrencyCode();
