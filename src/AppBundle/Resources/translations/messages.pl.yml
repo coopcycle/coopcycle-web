@@ -18,7 +18,7 @@ adminDashboard.dashboard.export: Export
 adminDashboard.dashboard.importTasks: Importuj zadania
 adminDashboard.dashboard.exportTasks: Exportuj zadania
 restaurant.noMenuWarning: "Restauracja nie ma jeszcze menu\n"
-restaurants.placeholder.title: ''
+restaurants.placeholder.title: Trochę cierpliwości…
 restaurant.unavailable: Niedostępny
 restaurant.available: Dostępny
 localBusiness.form.deliveryPerimeterExpression: Strefy  lub maksymalna odległość dostawy
@@ -94,3 +94,529 @@ adminDashboard.deliveries.type: Rodzaj
 adminDashboard.deliveries.address: Adres
 adminDashboard.dashboard.displayAll: Pokaż wszystkie
 adminDashboard.dashboard.cancel: Anuluj
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Kwota jest obliczana
+  dynamicznie
+roles.ROLE_ADMIN.help: "Administrator: Pełny dostęp do wszystkich funkcji\n"
+form.maintenance.enable.alert: Zamierzasz włączyć tryb konserwacji. <br>Tylko administratorzy
+  będą mieli dostęp do strony.
+restaurant.contract.customerAmount.help: Ta kwota zostanie wyświetlona w koszyku i
+  podwyższy kwotę całkowitą
+roles.ROLE_STORE.help: 'Właściciel sklepu: zarządzaj przypisanymi sklepami, zarządzaj
+  dostawami…'
+form.local_business.stripe_account.need_stripe_account: "Nie stworzyłeś jeszcze konta\
+  \ Stripe dla tej restauracji. Stripe jest platformą płatniczą, która umożliwia nam\
+  \ bezpiecznie obsługiwać płatności kartą i przelewy na twoje konto bankowe.<br>\n\
+  Aby stworzyć konto Stripe dla tej restauracji, proszę <a href=\"%stripeAuthorizeURL%\"\
+  >kliknij tutaj</a>.\n"
+restaurant.contract.restaurantPaysStripeFee.help: Wybierz kto będzie odpowiedzialny
+  za koszty opłat Stripe i zarządzanie zwrotami i obciążeniami zwrotnymi
+stores.deliveries.heading: 'Dostawa #%delivery_id% - %delivery_distance%'
+index.banner: Pyszne posiłki dostarczane do twojego domu.
+restaurant.contract.variableCustomerAmount.help: Zapłacona cena zostanie obliczona
+  przy użyciu wybranego zestawu wyceny
+index.our_restaurants: Nasze restauracje
+form.credit_note.restaurant.help: Promocja będzie używana tylko przy zamówieniu w
+  tej restauracji. Pozostaw puste pule, aby zastosować ją do wszystkich restauracji.
+restaurant.contract.calculation_info: Możesz obciążyć restaurację inną kwotą niż kwota
+  zapłacona przez klienta. <br> Na przykład, możesz zaoferować dostawę do klienta,
+  obciążając restaurację stałą kwotą. <br> Możesz również skonfigurować dynamiczną
+  kwotą (np. na podstawie odległości).
+activity.task.created: "@%owner% stworzone zadanie #task/%aggregate_id%\n"
+basics.import: Import
+form.task_complete.fail.label: Zgłoś problem
+activity.task.done: "@%owner% wykonane zadanie #task/%aggregate_id%\n"
+basics.net_income: Dochód netto
+order.adjustment_type.platform_fees: Opłata dla CoopCycles
+basics.send_invitation.confirm: Twoje zaproszenie zostało wysłane! Możesz teraz edytować
+  ustawienia nowego użytkownika.
+demo.disclaimer: <i class="fa fa-bullhorn"></i>  Witamy w wersji demo platformy <a
+  target="_blank" href="https://coopcycle.org">CoopCycle</a>
+delivery.table.heading.summary: Podsumowanie
+order.payment.card_number.help: ''
+search.users: Wyszukaj użytkownika…
+form.store_type.defaultAddress.label: Domyślny adres
+allergens.SULPHUR_DIOXIDE_SULPHITES: Dwutlenek siarki i siarczyny
+task.form.timeWindow: Przedział czasowy
+form.delivery.dropoff.address_placeholder: Nazwa ulicy i numer domu, dzielnica, kod
+  pocztowy, miasto
+task.form.details: Szczegóły zlecenie
+form.delivery.to_be_confirmed.warning: Musisz potwierdzić zamówienie
+form.order.accept.help: Po zaakceptowaniu zamówienia, klient zostanie powiadomiony
+  przez email.
+form.payment.refund_application_fee.help: "Jeśli zaznaczysz to pole, prowizja pobierana\
+  \ przez platformę od partnera zostanie zwrócona proporcjonalnie\n<br>\n<a href=\"\
+  https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Dowiedz się więcej</a>\n"
+form.settings.stripe.help: 'Stripe jest serwisem płatniczym, którego używamy do obsługi
+  kart kredytowych. Aby używać części e-commerce platformy należy skonfigurować tę
+  sekcję, a także Stripe Connect. Stripe pobiera opłatę w wysokości 0,25cts + 1,4%
+  za płatność (aktualne ceny <a href="https://stripe.com/fr/pricing">tutaj</a>), płaconą
+  przez właściciela sklepu. '
+form.suggest.message: "Nie możesz znaleźć ulubionej restauracji?\n<br>\nPodaj nam\
+  \ jej nazwę i adres. Wtedy inni użytkownicy będą mogli głosować, aby zobaczyć ją\
+  \ na liście restauracji.\n<br>\nTo umożliwi nam lepiej zidentyfikować restauracje,\
+  \ do których należy się zwrócić i dostarczy im dowód realnego zapotrzebowania.\n"
+adminDashboard.dashboard.deleteTaskGroup: Usuń grupę zadań
+adminDashboard.dashboard.displayByGroups: Wyświetl według grup
+adminDashboard.embed.title: Wyświetlacz zewnętrzny
+embed.delivery.configure_pricing_rule_set: Najpierw musisz skonfigurować zasady wyceny,
+  aby je aplikować
+embed.delivery.iframe_code: Użyj poniższego kodu HTML, aby umieścić formularz na swojej
+  stronie internetowej
+embed.breadcrumb.start: Informacje
+embed.delivery.use_form_below: Użyj poniższego formularza, aby zapłacić za zamówienie
+  kartą kredytową
+embed.delivery.specify_billing_address: Podaj adres rozliczeniowy
+embed.delivery.title: Formularz tworzenia dostawy
+adminDashboard.restaurants.exclusive: Ekskluzywny
+adminDashboard.users.roles: Role
+form.user.quotes_allowed.label: Pozwól temu użytkownikowi poprosić o wycenę
+adminDashboard.tags.title: Etykiety
+adminDashboard.tags.createNew: Utwórz nową etykietę
+adminDashboard.tags.confirm_delete: "Czy jesteś pewien/pewna, że chcesz usunąć tę\
+  \ etykietę?\nEtykieta zostanie usunięta z odpowiednich elementów, które jej używają\
+  \ i które nie będą już według niej grupowane."
+adminDashboard.taxation.title: Opodatkowanie
+adminDashboard.taxation.button: Dodaj opodatkowanie
+deliveryForm.noPriceFromPricingWarning: Ceny nie można ustalić na podstawie cennika.
+  Proszę wprowadź ją ręcznie lub edytuj cennik.
+help.home: Dom
+restaurants.visible_by_you_only: Widoczny tylko przez ciebie
+localBusiness.form.orderingDelayMinutes: Dodatkowe opóźnienie przed złożeniem zamówienia
+localBusiness.form.orderingDelayMinutes.help: Użyj tego pola, aby dodać trochę czasu
+  zanim klient będzie mógł złożyć zamówienie. To ustawienie nie zmienia czasu potrzebnego
+  do przygotowania zamówienia (20 minut) i jazdę rowerem (25 minut).
+localBusiness.form.orderingDelayDays: Dzień/Dni
+localBusiness.form.orderingDelayHours: Godzina/Godziny
+localBusiness.form.legalName: Nazwa prawna
+localBusiness.form.shippingOptionsDays: Liczba opcji dostaw (w dniach)
+localBusiness.form.enabled: Włączony
+restaurant.disabledWarning: "Ta restauracja jest nieaktywna, więc odwiedzający nie\
+  \ mogą zobaczyć jej strony. Jeśli chcesz, możesz <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
+  >aktywować ją w panelu administracyjnym</a>.\n"
+restaurant.closedWarningWithDelay: Zamów teraz na później. Zamów minimum %delay% wcześniej.
+restaurant.temporaryClosedWarning: Ta restauracja jest zamknięta od <strong>%date%</strong>.
+  Możesz jednak złożyć zamówienie na później!
+restaurant.quotes_disclaimer.authenticated: Ta restauracja akceptuje również zamówienia
+  do wyceny. By stworzyć wycenę, musisz być klientem referencyjnym. <a href="%contact_us%">Skontaktuj
+  się z nami</a> po więcej informacji.
+restaurant.quotes_disclaimer.not_authenticated: Ta restauracja akceptuje również zamówienia
+  do wyceny. Jeśli jesteś klientem referencyjnym, <a href="%login%">zaloguj się</a>
+  by stworzyć wycenę. <a href="%contact_us%">Skontaktuj się z nami</a> po więcej informacji.
+restaurant.form.noPricingRule: Zasady cenowe nie zostały zaimplementowane, <a href="%editPricingRule%">kliknij
+  tutaj, by stworzyć jakąś</a>.
+restaurant.form.enabled.tooltip: "Restauracja nieaktywna nie jest widoczna na stronie.\
+  \ Nie pokazuje się w wynikach wyszukiwania, a strona restauracji nie jest dostępna\
+  \ dla odwiedzających.\n"
+restaurant.form.allow_stripe_connect.label: Pozwól restauracji zarządzać kontem Stripe
+  na własną rękę
+restaurant.form.temporaryClosingRule: Kliknij tutaj, aby tymczasowo wyłączyć zamówienia
+  do twojej restauracji.
+restaurant.form.deposit_refund_enabled.label: Włącz system zwrotu kaucji
+restaurant.form.createRestaurant: Stwórz restaurację
+restaurant.form.save: Zapisz
+restaurant.form.exclusive.label: Ta restauracja jest ekskluzywna
+restaurant.form.quotes_allowed.label: Ta restauracja akceptuje również wyceny (np.
+  catering)
+restaurant.form.loopeat_enabled.label: Włącz system zwrotu kaucji LoopEat
+restaurant.contract.title: Umowa
+restaurant.deliveryPerimeterExpression.title: Perymetr dostawy
+restaurant.deliveryPerimeterExpression.help: Zdefiniuj przyjęty perymetr dla dostaw.
+  Możesz wybrać promień (w kilometrach) lub strefę
+restaurant.contract.minimumCartAmount.label: Minimalna kwota zamówienia
+restaurant.contract.flatDeliveryPrice.label: Kwota naliczona przez platformę
+restaurant.contract.flatDeliveryPrice.help: Ta kwota nie będzie wyświetlona w koszyku
+  i nie podwyższy kwoty całkowitej
+restaurant.contract.variableDeliveryPrice.help: Kwota naliczona zostanie obliczona
+  przy użyciu wybranego zestawu zasad wyceny
+restaurant.contract.variableDeliveryPrice.label: Kwota naliczona przez platformę (zmienna)
+restaurant.contract.variableDeliveryPrice.placeholder: Proszę wybrać zestaw zasad
+  wyceny
+restaurant.contract.variableDeliveryPriceEnabled.label: Umożliw zmienną kwotę naliczoną
+  przez platformę
+restaurant.contract.customerAmount.label: Kwota zapłacona przez klienta
+restaurant.contract.feeRate.label: Procent prowizji
+restaurant.contract.feeRate.help: Ten procent zostanie zachowany przez platformę na
+  wszystkich produktach
+restaurant.contract.restaurantPaysStripeFee.label: Odpowiedzialny za koszty opłat
+  Stripe, zwroty i obciążenia zwrotne
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restauracja
+restaurant.contract.restaurantPaysStripeFee.cooperative: Spółdzielnia
+restaurant.contract.onlyAdmin: Tylko administrator może edytować szczegóły umowy.
+restaurant.contract.noContract: Brak szczegółów umowy. Proszę skontaktuj się z administratorem.
+restaurant.contract.showAdvanced: Pokaż ustawienia zaawansowane
+restaurant.contract.variableCustomerAmount.label: Kwota płacona przez klienta (zmienna)
+restaurant.contract.variableCustomerAmount.placeholder: Proszę wybrać zestaw zasad
+  wyceny
+restaurant.contract.variableCustomerAmountEnabled.label: Włącz zmienną kwotę płaconą
+  przez klienta
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: Kwota jest obliczana
+  dynamicznie
+restaurant.menus.noMenus: Nie stworzyłeś żadnego menu na chwilę obecną.
+restaurant.menus.activate: Aktywuj
+restaurant.menus.activated: Manu « %menu_name% » zostało aktywowane. Teraz będzie
+  wyświetlane na stronie restauracji
+restaurant.closingForm.title: Dodaj tymczasowe zamknięcie
+restaurant.closingForm.reason.label: Powód
+restaurant.closingForm.dates.label: Zamknięte od/do
+restaurant.list.manage: Zarządzaj
+restaurant.list.orders: Zamówienia
+restaurant.list.products: Produkty
+restaurant.list.product_options: Opcje
+restaurant.list.menus: Lista menu
+restaurant.list.activeMenu: Aktywne menu
+restaurant.list.planning: Planowanie
+restaurant.list.settings: Ustawienia
+restaurant.list.norestaurant: Nie ma jeszcze żadnych restauracji
+restaurant.list.createNewRestaurant: Stwórz nową restaurację
+restaurant.list.preparationTime: Przygotowanie
+restaurant.list.stats: Statystyki
+restaurant.list.depositRefund: Zwrot kaucji
+restaurant.product_options.help: "Ta sekcja pozwala na dostosowanie twoich <strong>produktów</strong>.\n\
+  <br>\nPozwala na przykład na dodanie dodatków lub wybranie elementów menu (przystawka,\
+  \ napój...)\n<br>\nMożesz wprowadzić listę cech dla każdej opcji\n"
+restaurant.product_options.list.values: Cechy
+restaurant.form.uploadImage: Prześlij obraz
+restaurant.stats.order_number: Numer zamówienia
+restaurant.stats.delivered_on: Dostarczony
+restaurant.stats.total_products_including_all_taxes: Wszystkie produkty włącznie z
+  wszystkimi podatkami
+restaurant.stats.total_products_excluding_taxes: Wszystkie produkty wyłączając podatki
+restaurant.stats.delivery: Dostawa
+profile.addresses.breadcrumb: Adresy
+profile.addresses.empty: Nie zapisano jeszcze adresu!
+profile.orders.empty: Nie ma jeszcze zamówienia!
+profile.myDeliveries: Moje dostawy
+profile.myStores: Moje sklepy
+profile.myRestaurants: Moje restauracje
+profile.myRestaurants.noRestaurants: Nie posiadasz jeszcze żadnej restauracji
+profile.myAccount: Moje konto
+profile.myTracking: Moje położenie
+profile.myOrders: Moje zamówienia
+profile.myAddresses: Moje adresy
+profile.myPersonalInfo: Moje personalne informacje
+profile.payment: Płatność
+profile.task.cancel: Anuluj
+profile.task.noTasks: Brak zaplanowanych zadań
+profile.task.dueDate: Termin dostawy
+profile.task.address: Adres
+profile.task.complete: Zakończony
+profile.task.date: Data
+profile.edit.save: Zapisz
+profile.addresses.newAddress: Nowy adres
+profile.addresses.save: Zapisz
+profile.addresses.add: Dodaj
+profile.editProfile: Edytuj profil
+profile.payment.title: Płatność
+profile.payment.stripeConnected: Twoje konto Stripe jest połączone
+profile.username: Nazwa użytkownika
+profile.email: Email
+profile.telephone: Telefon
+profile.familyName: Nazwisko
+profile.givenName: Imię
+profile.managedStores: Sklepy zarządzane przez użytkownika
+profile.managedRestaurants: Restauracje zarządzane przez użytkownika
+profile.accountType: Typ konta
+order.cart.title: Koszyk
+order.items.products_with_count: Produkty (%count%)
+order.summary.heading: Zamówienie %number% (#%id%)
+order.total_excluding_tax: Łącznie (bez VAT)
+order.total_including_tax: Łącznie (z VAT)
+order.items_total: Wszystkie produkty
+order.total_tax: VAT
+order.total_tax_by_rate: Łącznie %name%
+order.preparation_expected_at: Przygotowanie oczekiwane na %date%
+order.shipping_date.title: Twoja data wysyłki
+order.payment.title: Twoje informacje o płatności
+order.payment.expiration.label: Wygaśnięcie
+order.payment.month.label: Miesiąc
+order.payment.year.label: Rok
+order.payment.card_number.label: Numer karty
+order.payment.total: Do zapłaty %total%
+order.payment.cvc: CVC
+order.delivery_time: Dostawa w %time%
+order.state.cart: Koszyk
+order.state.accepted: Potwierdzone
+order.state.refused: Odmówione
+order.state.new: Nowe
+order.state.fulfilled: Doręczone
+order.state.cancelled: Anulowane
+order.reusable_packaging.alert: Zamówienie w opakowaniu wielokrotnego użytku
+payment.state.cart: Koszyk
+payment.state.new: Nowa
+payment.state.completed: Zakończona
+payment.state.authorized: Zatwierdzona
+payment.state.refunded: Zwrot kosztów
+payment.state.refunded_partially: Częściowy zwrot kosztów
+payment.state.cancelled: Anulowana
+payment.state.failed: Nieudana
+order.adjustment_type.tip: Napiwek
+order.adjustment_type.reusable_packaging: Opakowanie
+order.adjustment_type.delivery: Dostawa
+order_item.adjustment_type.reusable_packaging: '%quantity% × opakowanie'
+order.list.total: Suma
+order.list.shippedAt: Czas dostawy
+order.list.cancel: Anuluj
+order.list.customer: Klient
+order.list.state: Status
+order.list.summary: Podsumowanie
+order.list.summary.delivery.text: Dostawa %distance%, %vehicle%
+order.list.receipt: Paragon
+order.list.generate_receipt: Wystaw
+vehicle.bike: Rower
+vehicle.cargo_bike: Rower cargo
+task.form.create: Utwórz zlecenie
+task.form.cancel: Anuluj
+task.form.showHistory: Pokaż poprzednie
+task.form.modal.moreOptions: Więcej opcji
+task.form.edit: Zmień zamówienie %id%
+task.form.finish: Zakończ zlecenie
+task.form.finish.DONE.info: Zlecenie zakończone powodzeniem
+task.form.finish.FAIL.info: Nie udało się zakończyć zlecenia
+form.task.address.label: Adres
+form.task.courier.label: Kurier/kurierka
+form.task.comments.label: Komentarze
+form.task.comments.placeholder: Podaj wszelkie przydatne szczegóły, aby wykonać zadanie
+form.task.status.label: Status
+form.task.telephone.label: Telefon
+form.task.recipient.label: Kontakt
+form.task.recipient.help: Podaj imię osoby kontaktowej
+form.task_event.notes.placeholder: 'Np.: adres nie znaleziony, żaden problem…'
+form.task_event.notes.help: Możesz edytować komentarz
+form.task_upload.file: Plik
+form.task_upload.file.help: "Obsługiwane formaty plików: csv, ods, xlsx\n"
+form.task_complete.done.label: Ukończone
+task.previous_task_not_completed_yet: Poprzednie zadanie nie jest jeszcze ukończone
+demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i
+  class="fa fa-info-circle"></i>  Jak używać tej wersji demo?</a>
+maintenance.disclaimer: Tryb utrzymania jest włączony
+cart.widget.title: Szczegóły twojej dostawy
+cart.widget.button: Zamówienie
+checkout.breadcrumb.address: Adres
+checkout.breadcrumb.payment: Płatność
+form.geojson_upload.file: Plik
+form.store_type.pricing_rule_set.label: Cennik
+form.store_type.create_orders.label: Utwórz zamówienia
+form.delivery.vehicle.VEHICLE_BIKE: Rower
+form.delivery.vehicle.VEHICLE_CARGO_BIKE: Rower cargo
+form.store_type.setAsDefault.label: Ustaw jako domyślny adres
+form.store_type.time_slot.label: Przedział czasu
+form.delivery.vehicle.placeholder: Wybierz rodzaj pojazdu
+task.type.PICKUP: ''
+form.store_type.pricing_rule_set.placeholder: Wybierz cennik
+form.delivery.pickup.label: Adres odbioru
+form.delivery.pickup.address_placeholder: Nazwa ulicy i numer domu, dzielnica, kod
+  pocztowy, miasto
+form.delivery.dropoff.label: Adres dostawy
+form.delivery.weight.label: Waga
+form.delivery.weight.help: Proszę wskazać wagę w gramach (1kg = 1000g)
+form.delivery.vehicle.label: Rowe czy rower cargo?
+form.delivery.pickup.doneBefore.label: Data i czas odbioru
+form.delivery.dropoff.doneBefore.label: Data i czas dostawy
+form.delivery.distance.label: Dystans
+form.delivery.duration.label: Czas trwania
+form.delivery.store.label: Sklep
+form.delivery.store.placeholder: Szukaj sklepu…
+form.delivery.price.label: Cena
+form.delivery.has_order.info: Dostaw jest połączona z zamówieniem
+form.delivery.package.label: Opakowanie
+form.delivery.packages.label: Opakowanie
+form.delivery.time_slot.label: Przedział czasu
+form.delivery.view_order: Zobacz zamówienie
+form.order.accept.label: Akceptuj
+form.order.cancel.label: Anuluj
+form.order.fulfill.label: Wypełnij
+form.order.payment_complete.label: Kompletny
+form.order.payment_refund.label: Zwrot
+form.order.refund_modal.title: Zwrot
+form.payment.refund_amount.label: Kwota
+form.payment.refund_amount.help: Kwota, którą określiłeś, zostanie zwrócona klientowi
+form.payment.refund_application_fee.label: Opłata za zwrot
+form.address.addressLocality.label: Miasto
+form.address.postalCode.label: Kod pocztowy
+form.address.floor.label: Piętro
+form.address.description.label: Instrukcje
+form.address.description.placeholder: Drugie drzwi po lewej…
+form.address.streetAddress.label: Adres
+form.address.streetAddress.error.noLatLng: Proszę wybierz adres w menu rozwijanym
+form.address.name.label: Imię
+form.address.name.placeholder: Dom, praca…
+form.address.company.label: Firma
+form.pricing_rule_set.name.label: Nazwa
+form.pricing_rule_set.rules.label: Zasady
+form.pricing_rule.price.label: Cena
+form.preparation_time_rule.time.label: Czas
+form.preparation_time.defaults_warning: "Ta restauracja nie ma jeszcze żadnego spersonalizowanego\
+  \ czasu potrzebnego na przygotowanie. Domyślne reguły zostały skopiowane poniżej,\
+  \ możesz je zmienić.\n"
+form.settings.date_time: Data i czas
+form.settings.brand_name.label: Nazwa marki
+form.settings.stripe.title: Konto Stripe
+form.settings.administrator_email.label: Email administratora
+form.settings.administrator_email.help: Powiadomienia będą wysyłane na ten adres email
+form.settings.phone_number.label: Numer telefonu
+form.settings.phone_number.help: Ten numer będzie wyświetlany klientom
+form.settings.enable_restaurant_pledges.label: Pozwól klientom sugerować restauracje
+form.settings.company_logo.label: Logo firmy
+form.settings.company_logo.help: To logo będzie używane na fakturach i dowodach dostawy
+form.suggest.name.label: Nazwa
+form.suggest.name.help: Podaj dokładną nazwę, abyśmy mogli ją znaleźć
+form.suggest.submit.label: Zaproponuj teraz
+form.suggest.thank_you_message: Dziękujemy za sugestię tej restauracji!
+restaurant.suggest.message: "Pomóż nam przekonać %restaurant.name% do współpracy z\
+  \  %brand_name%!\n<br>\nAby zobaczyć ją na platformie, potrzebujemy ciebie i twojego\
+  \ głosu, aby wesprzeć naszą przyszłą prośbę o współpracę z tą marką.\n"
+restaurant.suggest.vote: Zagłosuj na %name%
+restaurant.suggest.has_voted: Już zagłosowałeś na tę restaurację!
+restaurant.suggest.banner_disclaimer: Ta restauracja nie jest w tym momencie dostępna.
+  Zagłosuj na %restaurant.name%!
+pledge.vote_count_equals_two: '%first_user% i %second_user% zagłosowali na tę restaurację'
+pledge.vote_count_equals_one: '%username% zagłosował na tę restaurację'
+pledge.accept: Akceptuj
+pledge.reject: Odrzuć
+form.maintenance.enable.label: Włącz kontynuację
+form.maintenance.disable.label: Wyłącz kontynuację
+form.settings.latlng.label: Współrzędne geograficzne
+form.settings.latlng.help: "Określ domyślną szerokość i wysokość geograficzną. Możesz\
+  \ ją ustalić przez <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
+form.settings.default_tax_category.label: Stawka VAT dla dostaw
+form.settings.default_tax_category.help: Określ stawkę VAT, która ma być stosowana
+  dla dostaw
+pledge.suggested_by: Zgłoszony przez @%username%
+form.maintenance.disable.alert: Zamierzasz wyłączyć tryb konserwacji
+form.maintenance.message.label: Wiadomość
+mardown_formatting.help: Możesz sformatować tekst używając składni Markdown
+form.banner.enable.label: Włącz baner
+form.banner.disable.label: Wyłącz baner
+form.banner.enable.alert: Zamierzasz włączyć baner
+form.banner.disable.alert: Zamierzasz wyłączyć baner
+form.banner.message.label: Wiadomość do wyświetlenia na banerze
+form.stripe_livemode.enable.label: Użyj Stripe w trybie « live »
+form.stripe_livemode.enable.alert: W trybie  « live » , karty kredytowe zostaną obciążone.
+form.stripe_livemode.disable.label: Użyj Stripe w trybie  « test »
+form.stripe_livemode.disable.alert: W trybie  « test » karty kredytowe nie zostaną
+  obciążone.
+form.stripe_livemode.disable_and_enable_maintenance.label: Przejdź na tryb  « test
+  » i włącz konserwację
+form.stripe_livemode.disable_and_enable_maintenance.alert: Jesteś w trybie  « live
+  ».<br>Jeśli przełączysz się do trybu  « test », konserwacja zostanie włączona automatycznie.
+form.settings.currency_code.label: Waluta
+form.delivery_embed.name.label: Imię
+form.delivery_embed.name.help: Twoje imię lub nazwa firmy
+form.delivery_embed.telephone.label: Numer telefonu
+form.delivery_embed.vehicle.disclaimer: Rowerem cargo dostarczamy przedmioty większe
+  niż 50x40x20cm i/lub powyżej 6kg.
+form.registration.username.help: "Twoja nazwa użytkownika nie może być dłuższa niż\
+  \ 15 znaków. Nazwa użytkownika może zawierać tylko znaki alfanumeryczne (litery\
+  \ A-Z, cyfry 0-9) z wyjątkiem znaku podkreślenia.\n"
+form.local_business.stripe_account.title: Konto Stripe
+form.local_business.stripe_account.help: Połącz konto Stripe, aby przelać pieniądze
+  na inne konto bankowe
+form.local_business.stripe_account.connect_button.text: Połącz się z Stripe
+form.local_business.stripe_account.not_configured: Nie możesz jeszcze połączyć konta
+form.local_business.stripe_account.success: Konto Stripe zostało pomyślnie połączone
+form.local_business.stripe_account.link_ok: "Ta restauracja jest połączona z kontem\
+  \ Stripe i może otrzymywać płatności z platformy <br>\nAby zarządzać kontem Stripe\
+  \ i przelewami do twojego konta, proszę skorzystaj z<a href=\"https://dashboard.stripe.com/\"\
+  \ target=\"_blank\">pulpitu nawigacyjnego Stripe</a>.\n"
+form.product_option.values.title: Cechy
+form.product_option.values.help: Musisz określić listę cech dla tej opcji
+form.product_option.additional.label: Ta opcja jest dodatkowa
+form.product_option.additional.help: Klient może wybrać kilka cech, bez konieczności
+  wybrania co najmniej jednej
+form.product_option_value.value.label: Cecha
+form.product_option_value.price.label: Cena
+form.checkout_address.notes.label: Zostaw komentarz dla restauracji
+form.checkout_address.notes.placeholder: "Na przykład: bez sosu, bez pomidorów…\n"
+form.checkout_address.notes.help: Twoja notatka zostanie przekazana restauracji
+form.checkout_address.promotion_coupon.label: Kod kuponu
+form.api_app.name.label: Nazwa aplikacji
+form.api_app.store.label: Sklep
+form.api_app.client_id.label: Identyfikator
+form.api_app.client_secret.label: Sekretny klucz
+form.credit_note.user_search.help: Z promocji będzie mógł korzystać tylko ten użytkownik
+form.credit_note.amount.label: Kwota
+form.credit_note.name.label: Nazwa
+roles.ROLE_STORE: Sklep
+roles.ROLE_USER: Użytkownik
+user.edit.roles.help: Skonfiguruj uprawnienia tego użytkownika
+user.edit.enabled.help: Dezaktywowany użytkownik zostanie wylogowany i nie będzie
+  mógł ponownie zalogować się do platformy.
+user.profile.familyName: Nazwisko
+user.profile.givenName: Imię
+roles.ROLE_COURIER.help: "Kurier/Kurierka: zobacz zadania oczekujące, modyfikuj przypisane\
+  \ zadania…\n"
+roles.ROLE_RESTAURANT.help: 'Właściciel restauracji: zarządzaj przypisanymi restauracjami,
+  zarządzaj zamówieniami…'
+stores.form.save: Zapisz
+stores.manage: Zarządzaj
+stores.settings: Ustawienia
+form.credit_note.name.help: Nazwa promocji, która będzie wyświetlana w koszyku
+form.resend_confirmation_email.submit.label: Wyślij email ponownie
+form.embed_settings.with_vehicle.label: Dodaj wybór pojazdu
+form.embed_settings.with_weight.label: Zapytaj o wagę towarów
+form.time_slot.name.label: Nazwa
+form.time_slot.interval.label: Przedział
+form.time_slot.working_days_only.label: Pozwól wybrać tylko dni robocze
+form.time_slot.choices.label: Wybory
+form.time_slot_choice.start_time.label: Czas startu
+form.time_slot_choice.end_time.label: Czas finalizacji
+form.time_slot.prior_notice.label: Wstępne powiadomienie
+form.package_set.name.label: Nazwa
+form.package_set.packages.label: Paczki
+stores.createNewDelivery: Stwórz nową dostawę
+stores.users: Użytkownicy
+stores.pricing_rule_set: Cennik
+stores.api_keys: Klucze API
+stores.deliveries: Dostawy
+stores.deliveries.task_unassigned: Nieprzypisana
+stores.addresses: Adresy
+meta.title: Platforma dostawcza dla spółdzielców
+index.map.tip: Użyj poniższej mapy, aby znaleźć restauracje
+index.view_all_restaurants: Zobacz wszystkie restauracje
+index.our_shops: Nasze sklepy
+index.view_all_shops: Zobacz wszystkie sklepy
+notifications.empty: Brak powiadomień
+adminDashboard.statistics: Statystyki
+adminDashboard.activity.title: Aktywność
+activity.task.assigned: "@%owner% przypisane zadanie #task/%aggregate_id%\n"
+activity.task.unassigned: "@%owner% nieprzypisane zadanie #task/%aggregate_id%\n"
+activity.order.created: "Zamówienie #order/%aggregate_id% zostało złożone przez @%owner%\n"
+activity.order.accepted: "Zamówienie #order/%aggregate_id% zostało zaakceptowane\n"
+activity.order.refused: "Zamówienie  #order/%aggregate_id% zostało odrzucone\n"
+activity.order.picked: "@%owner% wybrał zamówienie #order/%aggregate_id%\n"
+social.sign_in_with_facebook: Zaloguj się przez Facebook
+embed.delivery.submit.help: Kliknij aby zarezerwować dostawę.
+basics.continue: Kontynuuj
+basics.add: Dodaj
+basics.edit: Edytuj
+basics.delete: Usuń
+basics.cancel: Zakończ
+basics.export: Eksport
+basics.name: Nazwa
+basics.today: Dzisiaj
+basics.are_you_sure: Jesteś pewien/pewna?
+basics.created_at: Utworzony dnia %date%
+basics.date_range: Od %start% do %end%
+basics.total_including_tax: Łącznie wliczając podatki
+basics.stripe_fees: Opłaty Stripe
+basics.platform_fees: Opłaty platformy
+basics.send_invitation: Wyślij zaproszenie
+profile.password.change: Zmień swoje hasło
+delivery.table.heading.courier: Kurier/Kurierka
+delivery.table.heading.order: Zamówienie
+allergens.PEANUTS: Orzeszki ziemne
+allergens.SOYBEANS: Soja
+allergens.MILK: Mleko
+allergens.NUTS: Orzechy
+allergens.CELERY: Seler
+allergens.MUSTARD: Gorczyca
+allergens.SESAME_SEEDS: Ziarna sezamu
+allergens.LUPIN: Łubin
+allergens.MOLLUSCS: Mięczaki
+restricted_diets.DIABETIC_DIET: Diabetyczny
+restricted_diets.GLUTEN_FREE_DIET: Bezglutenowy
+restricted_diets.HALAL_DIET: Halal
+restricted_diets.KOSHER_DIET: Koszerny
+restricted_diets.LOW_CALORIE_DIET: Niskokaloryczny
+restricted_diets.LOW_FAT_DIET: Niskotłuszczowy
+form.order_export.date.label: Data
