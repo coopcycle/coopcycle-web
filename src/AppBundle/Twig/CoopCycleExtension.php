@@ -42,6 +42,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('tax_rate_name', array(TaxRateRuntime::class, 'name')),
             new TwigFilter('date_calendar', array($this, 'dateCalendar'), ['needs_context' => true]),
             new TwigFilter('hashid', array($this, 'hashid')),
+            new TwigFilter('local_business_type', array(LocalBusinessRuntime::class, 'type')),
         );
     }
 
