@@ -3,8 +3,11 @@
     <tbody>
     {% for restaurant in restaurants %}
       <tr>
+        <td width="1%">
+          <i class="fa fa-circle {% if restaurant.enabled %}text-success{% else %}text-danger{% endif %}"></i>
+        </td>
+        <td width="1%">{% if restaurant.state == 'rush' %}<i class="fa fa-fire"></i>{% endif %}</td>
         <td width="5%"><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
-        <td width="5%">{% if restaurant.state == 'rush' %}<i class="fa fa-fire"></i>{% endif %}</td>
         <td width="20%">
           <span>{{ restaurant.name }}</span>
           <br>
