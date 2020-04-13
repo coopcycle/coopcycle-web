@@ -15,7 +15,7 @@ Feature: Manage shops
       {
         "@context":"/api/contexts/Restaurant",
         "@id":"/api/restaurants/1",
-        "@type":"http://schema.org/Store",
+        "@type":"http://schema.org/GroceryStore",
         "id":1,
         "name":"Flower Express",
         "description":null,

@@ -76,9 +76,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        if (isset($data['@type']) && $object->getType() === 'store') {
-            $data['@type'] = 'http://schema.org/Store';
-        }
+        $data['@type'] = $object->getType();
 
         // FIXME Stop checking groups manually
         if ($this->shouldAddOpeningHoursSpecification($object, $context)) {

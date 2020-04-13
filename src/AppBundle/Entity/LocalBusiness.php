@@ -33,7 +33,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 /**
  * @ApiResource(
  *   shortName="Restaurant",
- *   iri="http://schema.org/Restaurant",
  *   attributes={
  *     "denormalization_context"={"groups"={"order_create", "restaurant_update"}},
  *     "normalization_context"={"groups"={"restaurant", "address", "order"}}

@@ -42,7 +42,7 @@ AppBundle\Entity\Contract:
 
 AppBundle\Entity\LocalBusiness:
   shop_1:
-    type: store
+    type: <(AppBundle\Enum\Store::GROCERY_STORE)>
     name: Flower Express
     address: "@address_1"
     orderingDelayMinutes: 0
