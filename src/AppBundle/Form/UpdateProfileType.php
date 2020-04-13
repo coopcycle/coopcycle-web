@@ -3,6 +3,8 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Store;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -100,7 +102,7 @@ class UpdateProfileType extends AbstractType
                         'entry_type' => EntityType::class,
                         'entry_options' => array(
                             'label' => 'Restaurants',
-                            'class' => 'AppBundle:Restaurant',
+                            'class' => LocalBusiness::class,
                             'choice_label' => 'name',
                         ),
                         'allow_add' => true,
@@ -114,7 +116,7 @@ class UpdateProfileType extends AbstractType
                         'entry_type' => EntityType::class,
                         'entry_options' => array(
                             'label' => 'Stores',
-                            'class' => 'AppBundle:Store',
+                            'class' => Store::class,
                             'choice_label' => 'name',
                         ),
                         'allow_add' => true,
