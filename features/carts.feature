@@ -73,6 +73,7 @@ Feature: Carts
         "itemsTotal":0,
         "total":0,
         "shippedAt":null,
+        "shippingTimeRange":null,
         "adjustments":@...@
       }
       """
@@ -125,6 +126,7 @@ Feature: Carts
           "telephone": null
         },
         "shippedAt":null,
+        "shippingTimeRange":null,
         "reusablePackagingEnabled":false,
         "notes":null,
         "items":[],
@@ -187,6 +189,7 @@ Feature: Carts
           "telephone":null
         },
         "shippedAt":null,
+        "shippingTimeRange":null,
         "reusablePackagingEnabled":false,
         "notes":null,
         "items":[],
@@ -201,7 +204,7 @@ Feature: Carts
       }
       """
 
-  Scenario: Update cart shipping time
+  Scenario: Update cart shipping time (legacy)
     And the fixtures files are loaded:
       | sylius_channels.yml |
       | products.yml        |
@@ -232,6 +235,10 @@ Feature: Carts
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
         "shippedAt":"2020-04-09T20:00:00+02:00",
+        "shippingTimeRange":[
+          "2020-04-09T19:55:00+02:00",
+          "2020-04-09T20:05:00+02:00"
+        ],
         "reusablePackagingEnabled":false,
         "notes":null,
         "items":[],
@@ -278,6 +285,7 @@ Feature: Carts
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
         "shippedAt":null,
+        "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "notes":null,
         "items":[],
@@ -335,6 +343,7 @@ Feature: Carts
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
         "shippedAt":null,
+        "shippingTimeRange": null,
         "reusablePackagingEnabled":true,
         "notes":null,
         "items":[],
@@ -395,6 +404,7 @@ Feature: Carts
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
         "shippedAt":null,
+        "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "notes":null,
         "items":[
@@ -472,6 +482,7 @@ Feature: Carts
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
         "shippedAt":null,
+        "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "notes":null,
         "items":[
@@ -549,6 +560,7 @@ Feature: Carts
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
         "shippedAt":null,
+        "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "notes":null,
         "items":[
@@ -628,6 +640,7 @@ Feature: Carts
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
         "shippedAt":null,
+        "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "notes":null,
         "items":@array@,
@@ -696,6 +709,7 @@ Feature: Carts
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
         "shippedAt":null,
+        "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "notes":null,
         "items":[
@@ -765,6 +779,7 @@ Feature: Carts
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
         "shippedAt":null,
+        "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "notes":null,
         "items":[
@@ -829,6 +844,7 @@ Feature: Carts
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
         "shippedAt":null,
+        "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "notes":null,
         "items":[],
@@ -883,6 +899,7 @@ Feature: Carts
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
         "shippedAt":null,
+        "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "notes":null,
         "items":[],
@@ -919,6 +936,7 @@ Feature: Carts
           "restaurant":"/api/restaurants/1",
           "shippingAddress":null,
           "shippedAt":null,
+          "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "notes":null,
           "items":[],
@@ -951,6 +969,7 @@ Feature: Carts
           "restaurant":"/api/restaurants/2",
           "shippingAddress":null,
           "shippedAt":null,
+          "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "notes":null,
           "items":[],
@@ -993,6 +1012,7 @@ Feature: Carts
           "restaurant":"/api/restaurants/1",
           "shippingAddress":null,
           "shippedAt":null,
+          "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "notes":null,
           "items":[],
@@ -1025,6 +1045,7 @@ Feature: Carts
           "restaurant":"/api/restaurants/2",
           "shippingAddress":null,
           "shippedAt":null,
+          "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "notes":null,
           "items":[],
@@ -1140,11 +1161,10 @@ Feature: Carts
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
         "shippedAt":null,
+        "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "notes":null,
-        "items":[
-
-        ],
+        "items":[],
         "itemsTotal":0,
         "total":0,
         "adjustments":{

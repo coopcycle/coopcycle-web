@@ -17,6 +17,10 @@ services:
     arguments:
       $taxRateRepository: '@sylius.repository.tax_rate'
 
+  AppBundle\Twig\OrderRuntime:
+    arguments:
+      $locale: '%kernel.default_locale%'
+
   Twig_Extensions_Extension_Text:
     class: Twig_Extensions_Extension_Text
     tags:

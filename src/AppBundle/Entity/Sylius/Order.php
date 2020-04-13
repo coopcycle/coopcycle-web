@@ -17,6 +17,7 @@ use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Action\MyOrders;
 use AppBundle\Api\Dto\CartItemInput;
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
@@ -28,6 +29,7 @@ use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Validator\Constraints\IsOrderModifiable as AssertOrderIsModifiable;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
 use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelInterface;
@@ -244,6 +246,8 @@ class Order extends BaseOrder implements OrderInterface
      * @var int
      */
     protected $tipAmount = 0;
+
+    protected $shippingTimeRange;
 
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
@@ -767,5 +771,23 @@ class Order extends BaseOrder implements OrderInterface
     public function setTipAmount(int $tipAmount)
     {
         $this->tipAmount = $tipAmount;
+    }
+
+    public function getShippingTimeRange(): ?TsRange
+    {
+        return $this->shippingTimeRange;
+    }
+
+    public function setShippingTimeRange(?TsRange $shippingTimeRange)
+    {
+        $this->shippingTimeRange = $shippingTimeRange;
+
+        // Legacy
+        if (null !== $shippingTimeRange) {
+            $this->shippedAt =
+                Carbon::instance($shippingTimeRange->getLower())->average($shippingTimeRange->getUpper());
+        } else {
+            $this->shippedAt = null;
+        }
     }
 }

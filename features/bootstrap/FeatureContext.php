@@ -1,6 +1,7 @@
 <?php
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\ClosingRule;
@@ -669,7 +670,18 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             $shippedAt = clone $restaurant->getNextOpeningDate();
             $shippedAt->modify('+30 minutes');
         }
-        $order->setShippedAt($shippedAt);
+
+        $rangeLower = clone $shippedAt;
+        $rangeUpper = clone $shippedAt;
+
+        $rangeLower->modify('-5 minutes');
+        $rangeUpper->modify('+5 minutes');
+
+        $range = new TsRange();
+        $range->setLower($rangeLower);
+        $range->setUpper($rangeUpper);
+
+        $order->setShippingTimeRange($range);
 
         // FIXME Allow specifying an address in test
         $order->setShippingAddress($restaurant->getAddress());

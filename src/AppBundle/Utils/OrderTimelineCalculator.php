@@ -4,6 +4,8 @@ namespace AppBundle\Utils;
 
 use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\DateUtils;
+use Carbon\Carbon;
 
 class OrderTimelineCalculator
 {
@@ -26,7 +28,10 @@ class OrderTimelineCalculator
     {
         $timeline = new OrderTimeline();
 
-        $dropoff = clone $order->getShippedAt();
+        $shippingTimeRange = $order->getShippingTimeRange();
+
+        $dropoff = Carbon::instance($shippingTimeRange->getLower())
+            ->average($shippingTimeRange->getUpper());
         $timeline->setDropoffExpectedAt($dropoff);
 
         $pickup = $this->pickupTimeResolver->resolve($order, $dropoff);
@@ -54,20 +59,22 @@ class OrderTimelineCalculator
         $timeline->setPickupExpectedAt($pickupExpectedAt);
         $timeline->setDropoffExpectedAt($dropoffExpectedAt);
 
-        $order->setShippedAt($dropoffExpectedAt);
+        $order->setShippingTimeRange(
+            DateUtils::dateTimeToTsRange($dropoffExpectedAt, 5)
+        );
 
         $delivery = $order->getDelivery();
         if (null !== $delivery) {
             foreach ($delivery->getTasks() as $task) {
 
-                $doneAfter = clone $task->getDoneAfter();
-                $doneBefore = clone $task->getDoneBefore();
+                $after = clone $task->getAfter();
+                $before = clone $task->getBefore();
 
-                $doneAfter->modify(sprintf('+%d minutes', $delay));
-                $doneBefore->modify(sprintf('+%d minutes', $delay));
+                $after->modify(sprintf('+%d minutes', $delay));
+                $before->modify(sprintf('+%d minutes', $delay));
 
-                $task->setDoneAfter($doneAfter);
-                $task->setDoneBefore($doneBefore);
+                $task->setAfter($after);
+                $task->setBefore($before);
             }
         }
     }

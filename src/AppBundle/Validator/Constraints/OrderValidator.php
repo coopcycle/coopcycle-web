@@ -108,10 +108,10 @@ class OrderValidator extends ConstraintValidator
 
         if ($isNew) {
 
-            if (null !== $order->getShippedAt()) {
-                if ($order->getShippedAt() < $now) {
+            if (null !== $order->getShippingTimeRange()) {
+                if ($order->getShippingTimeRange()->getLower() < $now) {
                     $this->context->buildViolation($constraint->shippedAtExpiredMessage)
-                        ->atPath('shippedAt')
+                        ->atPath('shippingTimeRange')
                         ->setCode(Order::SHIPPED_AT_EXPIRED)
                         ->addViolation();
 
@@ -119,10 +119,10 @@ class OrderValidator extends ConstraintValidator
                 }
             }
 
-            if (null !== $order->getShippedAt() && null !== $order->getRestaurant()) {
-                if (false === $this->shippingDateFilter->accept($order, $order->getShippedAt(), $now)) {
+            if (null !== $order->getShippingTimeRange() && null !== $order->getRestaurant()) {
+                if (false === $this->shippingDateFilter->accept($order, $order->getShippingTimeRange()->getLower(), $now)) {
                     $this->context->buildViolation($constraint->shippedAtNotAvailableMessage)
-                        ->atPath('shippedAt')
+                        ->atPath('shippingTimeRange')
                         ->setCode(Order::SHIPPED_AT_NOT_AVAILABLE)
                         ->addViolation();
 
@@ -141,9 +141,9 @@ class OrderValidator extends ConstraintValidator
 
 
         } else {
-            if (null === $order->getShippedAt()) {
+            if (null === $order->getShippingTimeRange()) {
                 $this->context->buildViolation($constraint->shippedAtNotEmptyMessage)
-                    ->atPath('shippedAt')
+                    ->atPath('shippingTimeRange')
                     ->setCode(Order::SHIPPED_AT_NOT_EMPTY)
                     ->addViolation();
 

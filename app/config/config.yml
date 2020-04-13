@@ -117,6 +117,7 @@ doctrine:
             uuid:  Ramsey\Uuid\Doctrine\UuidType
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
             numrange: AppBundle\Doctrine\DBAL\Types\NumRangeType
+            tsrange: AppBundle\Doctrine\DBAL\Types\TsRangeType
         mapping_types:
             _text: string
             numrange: string

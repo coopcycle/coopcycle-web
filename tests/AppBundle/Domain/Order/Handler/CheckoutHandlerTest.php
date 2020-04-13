@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Domain\Order\Handler;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event\CheckoutFailed;
 use AppBundle\Domain\Order\Event\CheckoutSucceeded;
@@ -35,15 +36,19 @@ class CheckoutHandlerTest extends TestCase
 
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
 
-        $this->asap = (new \DateTime())->format(\DateTime::ATOM);
+        $this->shippingTimeRange = new TsRange();
+        $this->shippingTimeRange->setLower(new \DateTime('2020-04-09 19:55:00'));
+        $this->shippingTimeRange->setUpper(new \DateTime('2020-04-09 20:05:00'));
+
+        $this->asap = new \DateTime('2020-04-09 20:00:00');
 
         $this->orderTimeHelper
             ->getAvailabilities(Argument::type(OrderInterface::class))
             ->willReturn([]);
 
         $this->orderTimeHelper
-            ->getAsap(Argument::type(OrderInterface::class))
-            ->willReturn($this->asap);
+            ->getShippingTimeRange(Argument::type(OrderInterface::class))
+            ->willReturn($this->shippingTimeRange);
 
         $this->handler = new CheckoutHandler(
             $this->eventRecorder->reveal(),
@@ -77,8 +82,10 @@ class CheckoutHandlerTest extends TestCase
 
         call_user_func_array($this->handler, [$command]);
 
+        $this->assertNotNull($order->getShippingTimeRange());
+        $this->assertEquals($this->shippingTimeRange, $order->getShippingTimeRange());
         $this->assertNotNull($order->getShippedAt());
-        $this->assertEquals(new \DateTime($this->asap), $order->getShippedAt());
+        $this->assertEquals($this->asap, $order->getShippedAt());
         $this->assertEquals('ch_123456', $payment->getCharge());
     }
 
@@ -112,8 +119,10 @@ class CheckoutHandlerTest extends TestCase
 
         call_user_func_array($this->handler, [$command]);
 
+        $this->assertNotNull($order->getShippingTimeRange());
+        $this->assertEquals($this->shippingTimeRange, $order->getShippingTimeRange());
         $this->assertNotNull($order->getShippedAt());
-        $this->assertEquals(new \DateTime($this->asap), $order->getShippedAt());
+        $this->assertEquals($this->asap, $order->getShippedAt());
     }
 
     public function testCheckoutFailed()
@@ -150,6 +159,7 @@ class CheckoutHandlerTest extends TestCase
 
         call_user_func_array($this->handler, [$command]);
 
+        $this->assertNull($order->getShippingTimeRange());
         $this->assertNull($order->getShippedAt());
     }
 
@@ -170,7 +180,7 @@ class CheckoutHandlerTest extends TestCase
             ->getTotal()
             ->willReturn(0);
         $order
-            ->getShippedAt()
+            ->getShippingTimeRange()
             ->willReturn(null);
 
         $this->stripeManager
@@ -181,7 +191,7 @@ class CheckoutHandlerTest extends TestCase
             ->shouldNotBeCalled();
 
         $order
-            ->setShippedAt(new \DateTime($this->asap))
+            ->setShippingTimeRange(Argument::type(TsRange::class))
             ->shouldBeCalled();
         $this->eventRecorder
             ->record(Argument::type(CheckoutSucceeded::class))

@@ -8,6 +8,7 @@ use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\RoutingInterface;
+use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Order as OrderConstraint;
@@ -113,9 +114,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
     public function testDistanceValidation()
     {
-        $shippedAt = new \DateTime();
-        $shippedAt->modify('+1 day');
-
         $shippingAddressCoords = new GeoCoordinates();
         $restaurantAddressCoords = new GeoCoordinates();
 
@@ -129,17 +127,18 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = false
         );
-        $restaurant
-            ->isOpen($shippedAt)
-            ->willReturn(true);
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
             $shippingAddress->reveal()
         );
+
+        $shippingTimeRange =
+            DateUtils::dateTimeToTsRange(new \DateTime('+1 hour'), 5);
+
         $order
-            ->getShippedAt()
-            ->willReturn($shippedAt);
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
         $order
             ->getItemsTotal()
             ->willReturn(2500);
@@ -148,7 +147,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->willReturn(false);
 
         $this->shippingDateFilter
-            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->accept($order, Argument::type(\DateTime::class), Argument::type(\DateTime::class))
             ->willReturn(true);
 
         $this->prophesizeGetRawResponse(
@@ -167,11 +166,8 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testPastDateWithNewOrderValidation()
+    public function testPastDateWithUnsavedOrderValidation()
     {
-        $shippedAt = new \DateTime();
-        $shippedAt->modify('-1 hour');
-
         $shippingAddressCoords = new GeoCoordinates();
         $restaurantAddressCoords = new GeoCoordinates();
 
@@ -185,17 +181,18 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );
-        $restaurant
-            ->isOpen($shippedAt)
-            ->willReturn(true);
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
             $shippingAddress->reveal()
         );
+
+        $shippingTimeRange =
+            DateUtils::dateTimeToTsRange(new \DateTime('-1 hour'), 5);
+
         $order
-            ->getShippedAt()
-            ->willReturn($shippedAt);
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
         $order
             ->getItemsTotal()
             ->willReturn(2500);
@@ -210,23 +207,20 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $order = $order->reveal();
 
         $this->shippingDateFilter
-            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->accept($order, $shippingTimeRange->getLower(), Argument::type(\DateTime::class))
             ->willReturn(false);
 
         $constraint = new OrderConstraint();
         $violations = $this->validator->validate($order, $constraint);
 
         $this->buildViolation($constraint->shippedAtExpiredMessage)
-            ->atPath('property.path.shippedAt')
+            ->atPath('property.path.shippingTimeRange')
             ->setCode(OrderConstraint::SHIPPED_AT_EXPIRED)
             ->assertRaised();
     }
 
-    public function testPastDateWithExistingOrderValidation()
+    public function testPastDateWithNewSavedOrderValidation()
     {
-        $shippedAt = new \DateTime();
-        $shippedAt->modify('-1 hour');
-
         $shippingAddressCoords = new GeoCoordinates();
         $restaurantAddressCoords = new GeoCoordinates();
 
@@ -240,9 +234,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );
-        $restaurant
-            ->isOpen($shippedAt)
-            ->willReturn(true);
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
@@ -254,9 +245,13 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $order
             ->getState()
             ->willReturn(Order::STATE_CART);
+
+        $shippingTimeRange =
+            DateUtils::dateTimeToTsRange(new \DateTime('-1 hour'), 5);
+
         $order
-            ->getShippedAt()
-            ->willReturn($shippedAt);
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
         $order
             ->getItemsTotal()
             ->willReturn(2500);
@@ -271,23 +266,20 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $order = $order->reveal();
 
         $this->shippingDateFilter
-            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->accept($order, $shippingTimeRange->getLower(), Argument::type(\DateTime::class))
             ->willReturn(false);
 
         $constraint = new OrderConstraint();
         $violations = $this->validator->validate($order, $constraint);
 
         $this->buildViolation($constraint->shippedAtExpiredMessage)
-            ->atPath('property.path.shippedAt')
+            ->atPath('property.path.shippingTimeRange')
             ->setCode(OrderConstraint::SHIPPED_AT_EXPIRED)
             ->assertRaised();
     }
 
-    public function testShippedAtNotAvailableWithExistingOrderValidation()
+    public function testShippingTimeNotAvailableWithExistingOrderValidation()
     {
-        $shippedAt = new \DateTime();
-        $shippedAt->modify('+10 minutes');
-
         $shippingAddressCoords = new GeoCoordinates();
         $restaurantAddressCoords = new GeoCoordinates();
 
@@ -301,9 +293,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );
-        $restaurant
-            ->isOpen($shippedAt)
-            ->willReturn(true);
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
@@ -315,9 +304,13 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $order
             ->getState()
             ->willReturn(Order::STATE_CART);
+
+        $shippingTimeRange =
+            DateUtils::dateTimeToTsRange(new \DateTime('+1 hour'), 5);
+
         $order
-            ->getShippedAt()
-            ->willReturn($shippedAt);
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
         $order
             ->getItemsTotal()
             ->willReturn(2500);
@@ -332,23 +325,20 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $order = $order->reveal();
 
         $this->shippingDateFilter
-            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->accept($order, $shippingTimeRange->getLower(), Argument::type(\DateTime::class))
             ->willReturn(false);
 
         $constraint = new OrderConstraint();
         $violations = $this->validator->validate($order, $constraint);
 
         $this->buildViolation($constraint->shippedAtNotAvailableMessage)
-            ->atPath('property.path.shippedAt')
+            ->atPath('property.path.shippingTimeRange')
             ->setCode(OrderConstraint::SHIPPED_AT_NOT_AVAILABLE)
             ->assertRaised();
     }
 
     public function testRestaurantIsClosedValidation()
     {
-        $shippedAt = new \DateTime();
-        $shippedAt->modify('+1 hour');
-
         $shippingAddressCoords = new GeoCoordinates();
         $restaurantAddressCoords = new GeoCoordinates();
 
@@ -367,9 +357,13 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $restaurant->reveal(),
             $shippingAddress->reveal()
         );
+
+        $shippingTimeRange =
+            DateUtils::dateTimeToTsRange(new \DateTime('+1 hour'), 5);
+
         $order
-            ->getShippedAt()
-            ->willReturn($shippedAt);
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
         $order
             ->getItemsTotal()
             ->willReturn(2500);
@@ -378,7 +372,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->willReturn(false);
 
         $this->shippingDateFilter
-            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->accept($order, $shippingTimeRange->getLower(), Argument::type(\DateTime::class))
             ->willReturn(false);
 
         $this->prophesizeGetRawResponse(
@@ -392,16 +386,13 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $violations = $this->validator->validate($order->reveal(), $constraint);
 
         $this->buildViolation($constraint->shippedAtNotAvailableMessage)
-            ->atPath('property.path.shippedAt')
+            ->atPath('property.path.shippingTimeRange')
             ->setCode(OrderConstraint::SHIPPED_AT_NOT_AVAILABLE)
             ->assertRaised();
     }
 
     public function testMinimumAmountValidation()
     {
-        $shippedAt = new \DateTime();
-        $shippedAt->modify('+1 day');
-
         $shippingAddressCoords = new GeoCoordinates();
         $restaurantAddressCoords = new GeoCoordinates();
 
@@ -415,17 +406,18 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );
-        $restaurant
-            ->isOpen($shippedAt)
-            ->willReturn(true);
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
             $shippingAddress->reveal()
         );
+
+        $shippingTimeRange =
+            DateUtils::dateTimeToTsRange(new \DateTime('+1 hour'), 5);
+
         $order
-            ->getShippedAt()
-            ->willReturn($shippedAt);
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
         $order
             ->getItemsTotal()
             ->willReturn(500);
@@ -434,7 +426,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->willReturn(false);
 
         $this->shippingDateFilter
-            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->accept($order, Argument::type(\DateTime::class), Argument::type(\DateTime::class))
             ->willReturn(true);
 
         $this->prophesizeGetRawResponse(
@@ -455,9 +447,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
     public function testOrderWithStateNewCantHaveNullShippingTime()
     {
-        $shippedAt = new \DateTime();
-        $shippedAt->modify('+1 hour');
-
         $shippingAddressCoords = new GeoCoordinates();
         $restaurantAddressCoords = new GeoCoordinates();
 
@@ -471,9 +460,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );
-        $restaurant
-            ->isOpen($shippedAt)
-            ->willReturn(true);
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
@@ -490,7 +476,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->getState()
             ->willReturn(Order::STATE_NEW);
         $order
-            ->getShippedAt()
+            ->getShippingTimeRange()
             ->willReturn(null);
 
         $this->prophesizeGetRawResponse(
@@ -504,16 +490,13 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $violations = $this->validator->validate($order->reveal(), $constraint);
 
         $this->buildViolation($constraint->shippedAtNotEmptyMessage)
-            ->atPath('property.path.shippedAt')
+            ->atPath('property.path.shippingTimeRange')
             ->setCode(OrderConstraint::SHIPPED_AT_NOT_EMPTY)
             ->assertRaised();
     }
 
     public function testOrderWithStateCartCantContainDisabledProducts()
     {
-        $shippedAt = new \DateTime();
-        $shippedAt->modify('+1 hour');
-
         $shippingAddressCoords = new GeoCoordinates();
         $restaurantAddressCoords = new GeoCoordinates();
 
@@ -527,9 +510,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );
-        $restaurant
-            ->isOpen($shippedAt)
-            ->willReturn(true);
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
@@ -546,7 +526,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->getState()
             ->willReturn(Order::STATE_CART);
         $order
-            ->getShippedAt()
+            ->getShippingTimeRange()
             ->willReturn(null);
         $order
             ->containsDisabledProduct()
@@ -570,9 +550,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
     public function testOrderIsValid()
     {
-        $shippedAt = new \DateTime();
-        $shippedAt->modify('+1 hour');
-
         $shippingAddressCoords = new GeoCoordinates();
         $restaurantAddressCoords = new GeoCoordinates();
 
@@ -586,17 +563,18 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );
-        $restaurant
-            ->isOpen($shippedAt)
-            ->willReturn(true);
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
             $shippingAddress->reveal()
         );
+
+        $shippingTimeRange =
+            DateUtils::dateTimeToTsRange(new \DateTime('+1 hour'), 5);
+
         $order
-            ->getShippedAt()
-            ->willReturn($shippedAt);
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
         $order
             ->getItemsTotal()
             ->willReturn(2500);
@@ -605,7 +583,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->willReturn(false);
 
         $this->shippingDateFilter
-            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->accept($order, Argument::type(\DateTime::class), Argument::type(\DateTime::class))
             ->willReturn(true);
 
         $this->prophesizeGetRawResponse(

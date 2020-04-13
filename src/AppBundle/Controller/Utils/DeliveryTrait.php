@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
@@ -41,7 +42,18 @@ trait DeliveryTrait
         $order = $orderFactory->createNew();
         $order->setDelivery($delivery);
         $order->setShippingAddress($delivery->getDropoff()->getAddress());
-        $order->setShippedAt($delivery->getDropoff()->getDoneBefore());
+
+        $shippingTimeRange = new TsRange();
+
+        if (null === $delivery->getDropoff()->getAfter()) {
+            $dropoffAfter = clone $delivery->getDropoff()->getBefore();
+            $dropoffAfter->modify('-15 minutes');
+            $delivery->getDropoff()->setAfter($dropoffAfter);
+        }
+        $shippingTimeRange->setLower($delivery->getDropoff()->getAfter());
+        $shippingTimeRange->setUpper($delivery->getDropoff()->getBefore());
+
+        $order->setShippingTimeRange($shippingTimeRange);
 
         if (null !== $user) {
             $order->setCustomer($user);

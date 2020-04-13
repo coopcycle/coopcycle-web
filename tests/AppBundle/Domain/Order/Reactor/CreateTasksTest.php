@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Domain\Order\Reactor;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Order\Event\OrderAccepted;
 use AppBundle\Domain\Order\Reactor\CreateTasks;
 use AppBundle\Entity\Address;
@@ -63,7 +64,12 @@ class CreateTasksTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setAddress($restaurantAddress);
 
-        $shippedAt = new \DateTime();
+        $shippingTimeRangeLower = new \DateTime('2020-04-08 20:00:00');
+        $shippingTimeRangeUpper = new \DateTime('2020-04-08 20:10:00');
+
+        $shippingTimeRange = new TsRange();
+        $shippingTimeRange->setLower($shippingTimeRangeLower);
+        $shippingTimeRange->setUpper($shippingTimeRangeUpper);
 
         $order = $this->prophesize(OrderInterface::class);
 
@@ -71,8 +77,8 @@ class CreateTasksTest extends TestCase
             ->getDelivery()
             ->willReturn(null);
         $order
-            ->getShippedAt()
-            ->willReturn($shippedAt);
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
@@ -85,7 +91,8 @@ class CreateTasksTest extends TestCase
             ->willReturn(60 * 15); // 15 minutes
 
         $order
-            ->setDelivery(Argument::that(function (Delivery $delivery) use ($restaurantAddress, $shippingAddress, $shippedAt) {
+            ->setDelivery(Argument::that(function (Delivery $delivery) use (
+                $restaurantAddress, $shippingAddress, $shippingTimeRangeLower, $shippingTimeRangeUpper) {
 
                 $pickup = $delivery->getPickup();
                 $dropoff = $delivery->getDropoff();
@@ -93,11 +100,13 @@ class CreateTasksTest extends TestCase
                 $this->assertSame($restaurantAddress, $pickup->getAddress());
                 $this->assertSame($shippingAddress, $dropoff->getAddress());
 
-                $pickupDoneBefore = clone $shippedAt;
-                $pickupDoneBefore->modify('-15 minutes');
+                // Dropoff average = 20:05
+                // Pickup average  = 19:50 (20:05 - 15 minutes)
+                $this->assertEquals(new \DateTime('2020-04-08 19:45:00'), $pickup->getAfter());
+                $this->assertEquals(new \DateTime('2020-04-08 19:55:00'), $pickup->getBefore());
 
-                $this->assertEquals($pickupDoneBefore, $pickup->getDoneBefore());
-                $this->assertEquals($shippedAt, $dropoff->getDoneBefore());
+                $this->assertEquals($shippingTimeRangeLower, $dropoff->getAfter());
+                $this->assertEquals($shippingTimeRangeUpper, $dropoff->getBefore());
 
                 $this->assertEquals('Order XXX', $pickup->getComments());
                 $this->assertEquals('Order XXX', $dropoff->getComments());

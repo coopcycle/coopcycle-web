@@ -86,8 +86,15 @@ export default (state = initialState, action = {}) => {
 
   case ORDER_CREATED:
 
+    const range = moment.range(
+      moment(state.date).set({ hour: 0, minute: 0, second: 0 }),
+      moment(state.date).set({ hour: 23, minute: 59, second: 59 })
+    )
+
+    const shippingTimeRange = moment.range(action.payload.shippingTimeRange)
+
     // The order is not for the current date, skip
-    if (moment(action.payload.shippedAt).format('YYYY-MM-DD') !== state.date) {
+    if (!shippingTimeRange.overlaps(range)) {
 
       return state
     }

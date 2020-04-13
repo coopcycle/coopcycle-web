@@ -2,7 +2,9 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\PreparationTimeCalculator;
 use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ShippingTimeCalculator;
@@ -32,6 +34,16 @@ class OrderTimeHelper
         });
     }
 
+    /**
+     * @see https://stackoverflow.com/questions/4133859/round-up-to-nearest-multiple-of-five-in-php
+     */
+    private function roundUp($n, $x = 5): int
+    {
+        $value = (round($n) % $x === 0) ? round($n) : round(($n + $x / 2) / $x) * $x;
+
+        return (int) $value;
+    }
+
     public function getAvailabilities(OrderInterface $cart)
     {
         $hash = spl_object_hash($cart);
@@ -48,6 +60,8 @@ class OrderTimeHelper
                 $restaurant->setShippingOptionsDays(1);
             }
 
+            // FIXME Sort availabilities
+
             // Make sure to return a zero-indexed array
             $this->choicesCache[$hash] = array_values($availabilities);
         }
@@ -55,49 +69,76 @@ class OrderTimeHelper
         return $this->choicesCache[$hash];
     }
 
+    /**
+     * FIXME This method should return an object
+     *
+     * @return array
+     */
     public function getTimeInfo(OrderInterface $cart)
     {
+        $now = Carbon::now();
+
         $preparationTime = $this->preparationTimeCalculator
             ->createForRestaurant($cart->getRestaurant())
             ->calculate($cart);
 
         $shippingTime = $this->shippingTimeCalculator->calculate($cart);
 
-        $asap = $this->getAsap($cart);
+        $shippingTimeRange = $this->getShippingTimeRange($cart);
 
-        if (null !== $cart->getShippedAt()) {
-            $today = $cart->getShippedAt()->format('Y-m-d') === Carbon::now()->format('Y-m-d');
-        } else {
-            $today = (new \DateTime($asap))->format('Y-m-d') === Carbon::now()->format('Y-m-d');
-        }
+        $lowerDiff =
+            $now->diffInMinutes(Carbon::instance($shippingTimeRange->getLower()));
+        $upperDiff =
+            $now->diffInMinutes(Carbon::instance($shippingTimeRange->getUpper()));
 
-        $diffInMinutes = Carbon::now()->diffInMinutes(Carbon::parse($asap));
+        $lowerDiff = $this->roundUp($lowerDiff, 5);
+        $upperDiff = $this->roundUp($upperDiff, 5);
 
-        // We consider it is "fast" if it's less than 45 minutes
-        $fast = $diffInMinutes < 45;
+        // We see it as "fast" if it's less than max. 45 minutes
+        $fast = $upperDiff <= 45;
 
-        // Round the diff to be a multiple of 5
-        if (($diffInMinutes % 5) !== 0) {
-            do {
-                ++$diffInMinutes;
-            } while (($diffInMinutes % 5) !== 0);
-        }
+        // Legacy
+        $asap = Carbon::instance($shippingTimeRange->getLower())
+            ->average($shippingTimeRange->getUpper());
 
         return [
             'preparation' => $preparationTime,
             'shipping' => $shippingTime,
-            'asap' => $asap,
-            'today' => $today,
+            'asap' => $asap->format(\DateTime::ATOM),
+            'range' => [
+                $shippingTimeRange->getLower()->format(\DateTime::ATOM),
+                $shippingTimeRange->getUpper()->format(\DateTime::ATOM),
+            ],
+            'today' => DateUtils::isToday($shippingTimeRange),
             'fast' => $fast,
-            'diff' => sprintf('%d - %d', $diffInMinutes, ($diffInMinutes + 5)),
+            'diff' => sprintf('%d - %d', $lowerDiff, $upperDiff)
         ];
     }
 
+    /**
+     * @deprecated
+     * @return string
+     */
     public function getAsap(OrderInterface $cart)
+    {
+        $shippingTimeRange = $this->getShippingTimeRange($cart);
+
+        return Carbon::instance($shippingTimeRange->getLower())
+            ->average($shippingTimeRange->getUpper())
+            ->format(\DateTime::ATOM);
+    }
+
+    /**
+     * @return TsRange
+     */
+    public function getShippingTimeRange(OrderInterface $cart): TsRange
     {
         $choices = $this->getAvailabilities($cart);
 
-        // TODO Use sort
-        return $choices[0];
+        // FIXME Throw Exception when there are no choices (empty array)
+
+        $first = new \DateTime($choices[0]);
+
+        return DateUtils::dateTimeToTsRange($first, 5);
     }
 }

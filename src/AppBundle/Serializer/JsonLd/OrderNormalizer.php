@@ -7,6 +7,7 @@ use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
+use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\PriceFormatter;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Bundle\PromotionBundle\Doctrine\ORM\PromotionCouponRepository;
@@ -175,13 +176,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 $data['shippingAddress'] = null;
             }
 
-            $shippedAt = $object->getShippedAt();
-            if (null === $shippedAt) {
-                $data['shippedAt'] = $data['date'] = null;
-            } else {
-                $data['shippedAt'] = $data['date'] = $shippedAt->format(\DateTime::ATOM);
-            }
-
             $customer = $object->getCustomer();
             if (null === $customer) {
                 $data['customer'] = null;
@@ -274,6 +268,12 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             foreach ($orderItems as $orderItem) {
                 $this->orderModifier->addToOrder($order, $orderItem);
             }
+        }
+
+        // Legacy
+        if (isset($data['shippedAt'])) {
+            $shippingTimeRange = DateUtils::dateTimeToTsRange(new \DateTime($data['shippedAt']));
+            $order->setShippingTimeRange($shippingTimeRange);
         }
 
         return $order;

@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Service;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
@@ -84,14 +85,16 @@ class DeliveryManagerTest extends KernelTestCase
         // $order->addItem($this->createOrderItem(1000));
         $order->setShippingAddress($shippingAddress);
 
-        $asap = (new \DateTime('+3 hours'))->format(\DateTime::ATOM);
+        $shippingTimeRange = new TsRange();
+        $shippingTimeRange->setLower(new \DateTime('2020-04-09 19:55:00'));
+        $shippingTimeRange->setUpper(new \DateTime('2020-04-09 20:05:00'));
 
         $this->orderTimeHelper
-            ->getAsap($order)
-            ->willReturn($asap);
+            ->getShippingTimeRange($order)
+            ->willReturn($shippingTimeRange);
 
-        $expectedPickupBefore = new \DateTime($asap);
-        $expectedPickupBefore->modify('-900 seconds');
+        $expectedPickupAfter = new \DateTime('2020-04-09 19:40:00');
+        $expectedPickupBefore = new \DateTime('2020-04-09 19:50:00');
 
         $this->routing
             ->getDistance($restaurantAddressCoords, $shippingAddressCoords)
@@ -113,6 +116,7 @@ class DeliveryManagerTest extends KernelTestCase
         $dropoff = $delivery->getDropoff();
 
         $this->assertEquals(1200, $delivery->getDistance());
+        $this->assertEquals($expectedPickupAfter, $pickup->getAfter());
         $this->assertEquals($expectedPickupBefore, $pickup->getBefore());
         $this->assertEquals($restaurantAddress, $pickup->getAddress());
         $this->assertEquals($shippingAddress, $dropoff->getAddress());

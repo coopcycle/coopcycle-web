@@ -26,15 +26,16 @@ class OrderRepository extends BaseOrderRepository
         ;
     }
 
-    public function findByShippedAt(\DateTime $date)
+    public function findByDate(\DateTime $date)
     {
         $qb = $this->createQueryBuilder('o');
         $qb
             ->andWhere('o.restaurant IS NOT NULL')
             ->andWhere('o.state != :state')
-            ->andWhere('DATE(o.shippedAt) = :date')
+            ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
             ->setParameter('state', OrderInterface::STATE_CART)
-            ->setParameter('date', $date->format('Y-m-d'));
+            ->setParameter('range', sprintf('[%s, %s]', $date->format('Y-m-d 00:00:00'), $date->format('Y-m-d 23:59:59')))
+            ;
 
         return $qb->getQuery()->getResult();
     }
@@ -45,12 +46,11 @@ class OrderRepository extends BaseOrderRepository
         $qb
             ->andWhere('o.restaurant = :restaurant')
             ->andWhere('o.state != :state_cart')
-            ->andWhere('DATE(o.shippedAt) >= :start')
-            ->andWhere('DATE(o.shippedAt) <= :end')
+            ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
             ->setParameter('restaurant', $restaurant)
             ->setParameter('state_cart', OrderInterface::STATE_CART)
-            ->setParameter('start', $start->format('Y-m-d'))
-            ->setParameter('end', $end->format('Y-m-d'));
+            ->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')))
+            ;
 
         return $qb->getQuery()->getResult();
     }
@@ -107,22 +107,22 @@ class OrderRepository extends BaseOrderRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function addDateRangeClause(QueryBuilder $qb, \DateTime $start, \DateTime $end)
+    private function addDateRangeClause(QueryBuilder $qb, \DateTime $start, \DateTime $end)
     {
         $qb
-            ->andWhere('DATE(o.shippedAt) >= :start')
-            ->andWhere('DATE(o.shippedAt) <= :end')
-            ->setParameter('start', $start->format('Y-m-d'))
-            ->setParameter('end', $end->format('Y-m-d'));
+            ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
+            ->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')))
+            ;
 
         return $this;
     }
 
-    public function addDateClause(QueryBuilder $qb, \DateTime $date)
+    private function addDateClause(QueryBuilder $qb, \DateTime $date)
     {
         $qb
-            ->andWhere('DATE(o.shippedAt) = :date')
-            ->setParameter('date', $date->format('Y-m-d'));
+            ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
+            ->setParameter('range', sprintf('[%s, %s]', $date->format('Y-m-d 00:00:00'), $date->format('Y-m-d 23:59:59')))
+            ;
 
         return $this;
     }

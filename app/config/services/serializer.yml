@@ -62,3 +62,8 @@ services:
       - "@sylius.locale_provider"
       - "@sylius.product_variant_resolver.default"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\TsRangeNormalizer:
+    arguments:
+      $normalizer: "@serializer.normalizer.object"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]

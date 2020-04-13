@@ -16,11 +16,13 @@ final class OrderDateFilter extends AbstractContextAwareFilter
             return;
         }
 
+        $dateTime = new \DateTime($value);
+
         $queryBuilder
-            ->andWhere('DATE(o.shippedAt) = :date')
+            ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
             // FIXME Move this to another filter?
             ->andWhere('o.state != :state_cart')
-            ->setParameter('date', $value)
+            ->setParameter('range', sprintf('[%s, %s]', $dateTime->format('Y-m-d 00:00:00'), $dateTime->format('Y-m-d 23:59:59')))
             ->setParameter('state_cart', OrderInterface::STATE_CART);
     }
 

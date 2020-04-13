@@ -8,7 +8,9 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\OrderTimeHelper;
+use Carbon\Carbon;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class DeliveryManager
@@ -67,24 +69,29 @@ class DeliveryManager
             $dropoffAddress->getGeo()
         );
 
-        $dropoffDoneBefore = $order->getShippedAt();
-        if (null === $dropoffDoneBefore) {
-            $asap = $this->orderTimeHelper->getAsap($order);
-            $dropoffDoneBefore = new \DateTime($asap);
+        $dropoffTimeRange = $order->getShippingTimeRange();
+        if (null === $dropoffTimeRange) {
+            $dropoffTimeRange =
+                $this->orderTimeHelper->getShippingTimeRange($order);
         }
 
-        $pickupDoneBefore = clone $dropoffDoneBefore;
-        $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
+        $pickupTime = Carbon::instance($dropoffTimeRange->getLower())
+            ->average($dropoffTimeRange->getUpper())
+            ->subSeconds($duration);
+
+        $pickupTimeRange = DateUtils::dateTimeToTsRange($pickupTime, 5);
 
         $delivery = new Delivery();
 
         $pickup = $delivery->getPickup();
         $pickup->setAddress($pickupAddress);
-        $pickup->setDoneBefore($pickupDoneBefore);
+        $pickup->setAfter($pickupTimeRange->getLower());
+        $pickup->setBefore($pickupTimeRange->getUpper());
 
         $dropoff = $delivery->getDropoff();
         $dropoff->setAddress($dropoffAddress);
-        $dropoff->setDoneBefore($dropoffDoneBefore);
+        $dropoff->setAfter($dropoffTimeRange->getLower());
+        $dropoff->setBefore($dropoffTimeRange->getUpper());
 
         $delivery->setDistance($distance);
         $delivery->setDuration($duration);
