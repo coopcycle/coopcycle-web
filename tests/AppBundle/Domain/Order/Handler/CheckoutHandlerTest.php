@@ -46,10 +46,6 @@ class CheckoutHandlerTest extends TestCase
             ->getAvailabilities(Argument::type(OrderInterface::class))
             ->willReturn([]);
 
-        // $this->orderTimeHelper
-        //     ->getAsap(Argument::type(OrderInterface::class))
-        //     ->willReturn($this->asap);
-
         $this->orderTimeHelper
             ->getShippingTimeRange(Argument::type(OrderInterface::class))
             ->willReturn($this->shippingTimeRange);
