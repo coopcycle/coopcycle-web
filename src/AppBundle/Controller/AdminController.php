@@ -343,7 +343,7 @@ class AdminController extends Controller
     public function usersAction(Request $request)
     {
         $users = $this->getDoctrine()
-            ->getRepository('AppBundle:ApiUser')
+            ->getRepository(ApiUser::class)
             ->findBy([], ['id' => 'DESC']);
 
         return array(
