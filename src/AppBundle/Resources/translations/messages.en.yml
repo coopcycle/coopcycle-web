@@ -843,3 +843,46 @@ form.order_export.date.label: Date
 form.order_export.messenger.label: Add column with messenger who completed the order
 basics.show: Show
 basics.hide: Hide
+food_establishment.BAKERY: Bakery
+food_establishment.BAR_OR_PUB: BarOrPub
+food_establishment.BREWERY: Brewery
+food_establishment.CAFE_OR_COFFEE_SHOP: Café or coffee shop
+food_establishment.DISTILLERY: Distillery
+food_establishment.FAST_FOOD_RESTAURANT: Fast-food restaurant
+food_establishment.ICE_CREAM_SHOP: Ice-cream shop
+food_establishment.RESTAURANT: Restaurant
+food_establishment.WINERY: Winery
+store.AUTO_PARTS_STORE: Auto parts store
+store.BIKE_STORE: Bike store
+store.BOOK_STORE: Book store
+store.CLOTHING_STORE: Clothing store
+store.COMPUTER_STORE: Computer store
+store.CONVENIENCE_STORE: Convenience store
+store.DEPARTMENT_STORE: Department store
+store.ELECTRONIC_STORE: Electronics store
+store.FLORIST: Florist
+store.FURNITURE_STORE: Furniture store
+store.GARDEN_STORE: Garden store
+store.GROCERY_STORE: Grocery store
+store.HARDWARE_STORE: Hardware store
+store.HOBBY_SHOP: Hobby shop
+store.HOME_GOODS_STORE: Home goods store
+store.JEWELRY_STORE: Jewelry store
+store.LIQUOR_STORE: Liquor store
+store.MENS_CLOTHING_STORE: Mens clothing store
+store.MOBILE_PHONE_STORE: Mobile phone store
+store.MOVIE_RENTAL_STORE: Movie rental store
+store.MUSIC_STORE: Music store
+store.OFFICE_EQUIPMENT_STORE: Office equipment store
+store.OUTLET_STORE: Outlet store
+store.PAWN_SHOP: Pawn shop
+store.PET_STORE: Pet store
+store.SHOE_STORE: Shoe store
+store.SPORTING_GOODS_STORE: Sporting goods store
+store.TIRE_SHOP: Tire shop
+store.TOY_STORE: Toy store
+store.WHOLESALE_STORE: Wholesale store
+form.local_business_type.food_establishment: Food establishment
+form.local_business_type.store: Store
+form.local_business_type.label: Type of business
+form.local_business_type.help: The types are using the <a href="https://schema.org/">schema.org</a> vocabulary for <a href="https://schema.org/FoodEstablishment">food establishments</a> and <a href="https://schema.org/Store">stores</a>
