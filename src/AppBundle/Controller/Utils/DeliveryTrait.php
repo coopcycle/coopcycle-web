@@ -44,6 +44,12 @@ trait DeliveryTrait
         $order->setShippingAddress($delivery->getDropoff()->getAddress());
 
         $shippingTimeRange = new TsRange();
+
+        if (null === $delivery->getDropoff()->getAfter()) {
+            $dropoffAfter = clone $delivery->getDropoff()->getBefore();
+            $dropoffAfter->modify('-15 minutes');
+            $delivery->getDropoff()->setAfter($dropoffAfter);
+        }
         $shippingTimeRange->setLower($delivery->getDropoff()->getAfter());
         $shippingTimeRange->setUpper($delivery->getDropoff()->getBefore());
 
