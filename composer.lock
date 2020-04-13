@@ -2953,12 +2953,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "a9e71b6e7b61e7f39ba77436ba3e9af954450c4b"
+                "reference": "cf7fe27b2f4e1f298ee6eadf537267f8c9f9b85c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/a9e71b6e7b61e7f39ba77436ba3e9af954450c4b",
-                "reference": "a9e71b6e7b61e7f39ba77436ba3e9af954450c4b",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/cf7fe27b2f4e1f298ee6eadf537267f8c9f9b85c",
+                "reference": "cf7fe27b2f4e1f298ee6eadf537267f8c9f9b85c",
                 "shasum": ""
             },
             "require": {
@@ -3022,7 +3022,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2020-01-08T18:06:24+00:00"
+            "time": "2020-03-31T10:59:53+00:00"
         },
         {
             "name": "fzaninotto/faker",
@@ -11557,16 +11557,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.27.3",
+            "version": "v7.28.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "a6bbc392248f892123aed515b18a6360447cd658"
+                "reference": "0f4af8bd7dc2e143a4a6983a8451b96429e747e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/a6bbc392248f892123aed515b18a6360447cd658",
-                "reference": "a6bbc392248f892123aed515b18a6360447cd658",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/0f4af8bd7dc2e143a4a6983a8451b96429e747e1",
+                "reference": "0f4af8bd7dc2e143a4a6983a8451b96429e747e1",
                 "shasum": ""
             },
             "require": {
@@ -11610,7 +11610,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2020-03-18T20:32:13+00:00"
+            "time": "2020-04-10T17:05:40+00:00"
         },
         {
             "name": "superbalist/flysystem-google-storage",
@@ -13054,10 +13054,9 @@
                 "sylius/resource": "self.version"
             },
             "require-dev": {
-                "behat/transliterator": "dev-master",
                 "doctrine/orm": "^2.5",
                 "gedmo/doctrine-extensions": "^2.4",
-                "lchrusciel/api-test-case": "^4.1.0",
+                "lchrusciel/api-test-case": "^5.0",
                 "matthiasnoback/symfony-dependency-injection-test": "^3.0",
                 "pamil/phpspec-skip-example-extension": "^4.1",
                 "phpspec/phpspec": "^6.1",
