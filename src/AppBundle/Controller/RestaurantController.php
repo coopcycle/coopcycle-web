@@ -39,6 +39,7 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -144,6 +145,11 @@ class RestaurantController extends AbstractController
         $request->getSession()->set($sessionKeyName, $cart->getId());
     }
 
+    private function getContextSlug(LocalBusiness $business)
+    {
+        return $business->getContext() === Store::class ? 'store' : 'restaurant';
+    }
+
     /**
      * @Route("/restaurants", name="restaurants")
      */
@@ -210,11 +216,18 @@ class RestaurantController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        if ($slug) {
-            $expectedSlug = $slugify->slugify($restaurant->getName());
-            if ($slug !== $expectedSlug) {
-                return $this->redirectToRoute('restaurant', ['id' => $id, 'slug' => $expectedSlug]);
-            }
+        $contextSlug = $this->getContextSlug($restaurant);
+        $expectedSlug = $slugify->slugify($restaurant->getName());
+
+        $redirectToCanonicalRoute = ($contextSlug !== $type) || ($slug !== $expectedSlug);
+
+        if ($redirectToCanonicalRoute) {
+
+            return $this->redirectToRoute('restaurant', [
+                'id' => $id,
+                'slug' => $expectedSlug,
+                'type' => $contextSlug,
+            ], Response::HTTP_MOVED_PERMANENTLY);
         }
 
         if ($restaurant->getState() === LocalBusiness::STATE_PLEDGE) {
