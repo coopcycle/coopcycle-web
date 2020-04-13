@@ -844,7 +844,7 @@ form.order_export.messenger.label: Add column with messenger who completed the o
 basics.show: Show
 basics.hide: Hide
 food_establishment.BAKERY: Bakery
-food_establishment.BAR_OR_PUB: BarOrPub
+food_establishment.BAR_OR_PUB: Bar or pub
 food_establishment.BREWERY: Brewery
 food_establishment.CAFE_OR_COFFEE_SHOP: Café or coffee shop
 food_establishment.DISTILLERY: Distillery
