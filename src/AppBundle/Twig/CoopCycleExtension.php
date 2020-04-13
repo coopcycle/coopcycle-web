@@ -59,6 +59,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('coopcycle_company_logo', array(AppearanceRuntime::class, 'companyLogo')),
             new TwigFunction('coopcycle_asset', array(AssetsRuntime::class, 'asset')),
             new TwigFunction('coopcycle_asset_base64', array(AssetsRuntime::class, 'assetBase64')),
+            new TwigFunction('local_business_path', array(UrlGeneratorRuntime::class, 'localBusinessPath')),
         );
     }
 

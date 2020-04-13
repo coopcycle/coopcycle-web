@@ -178,3 +178,6 @@ services:
 
   AppBundle\Form\OrderExportType:
     tags: [ form.type ]
+
+  AppBundle\Form\Type\LocalBusinessTypeChoiceType:
+    tags: [ form.type ]

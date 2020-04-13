@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,6 +21,7 @@ class RestaurantType extends LocalBusinessType
         parent::buildForm($builder, $options);
 
         $builder
+            ->add('type', LocalBusinessTypeChoiceType::class)
             ->add('description', TextareaType::class, [
                 'required' => false,
                 'label' => 'localBusiness.form.description',

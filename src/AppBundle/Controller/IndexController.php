@@ -5,6 +5,8 @@ namespace AppBundle\Controller;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Enum\FoodEstablishment;
+use AppBundle\Enum\Store;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,8 +23,11 @@ class IndexController extends AbstractController
      */
     public function indexAction(LocalBusinessRepository $repository)
     {
-        $restaurants = $repository->findAllSorted('restaurant');
-        $stores = $repository->findAllSorted('store');
+        $restaurantRepository = $repository->withContext(FoodEstablishment::class);
+        $storeRepository = $repository->withContext(Store::class);
+
+        $restaurants = $restaurantRepository->findAllSorted();
+        $stores = $storeRepository->findAllSorted();
 
         return array(
             'restaurants' => array_slice($restaurants, 0, self::MAX_RESULTS),

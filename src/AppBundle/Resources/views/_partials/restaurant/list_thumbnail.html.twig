@@ -3,23 +3,15 @@
   {% set restaurant_image = '//via.placeholder.com/512.jpg' %}
 {% endif %}
 
-{% set restaurant_path_params = {
-  id: restaurant.id,
-  slug: restaurant.name|slugify
-} %}
-
+{% set restaurant_path_params = {} %}
 {% if address is defined and address is not empty %}
   {% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
-{% endif %}
-
-{% if local_business_type is defined %}
-  {% set restaurant_path_params = restaurant_path_params|merge({ type: local_business_type }) %}
 {% endif %}
 
 {% set isOpen = restaurant.isOpen %}
 
 <a class="thumbnail restaurant-item {% if not restaurant.enabled %}restaurant-item--disabled{% endif %}"
-  href="{{ path('restaurant', restaurant_path_params) }}">
+  href="{{ local_business_path(restaurant, restaurant_path_params) }}">
   <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
   <div class="caption text-center">
     <h4>{{ restaurant.name|truncate(24, false, '…') }}</h4>

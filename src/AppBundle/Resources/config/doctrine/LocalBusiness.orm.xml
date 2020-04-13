@@ -6,6 +6,7 @@
     </id>
     <indexes>
       <index name="restaurant_enabled_index" columns="id,enabled"/>
+      <index columns="type"/>
     </indexes>
     <field name="type" type="string" column="type"/>
     <field name="name" type="string" column="name" nullable="true"/>

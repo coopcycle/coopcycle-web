@@ -14,6 +14,8 @@ use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
 use AppBundle\Entity\LocalBusiness\FoodEstablishmentTrait;
 use AppBundle\Entity\LocalBusiness\ImageTrait;
+use AppBundle\Enum\FoodEstablishment;
+use AppBundle\Enum\Store;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Carbon\Carbon;
@@ -31,7 +33,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 /**
  * @ApiResource(
  *   shortName="Restaurant",
- *   iri="http://schema.org/Restaurant",
  *   attributes={
  *     "denormalization_context"={"groups"={"order_create", "restaurant_update"}},
  *     "normalization_context"={"groups"={"restaurant", "address", "order"}}
@@ -100,7 +101,7 @@ class LocalBusiness extends BaseLocalBusiness
      */
     protected $id;
 
-    protected $type = 'restaurant';
+    protected $type = FoodEstablishment::RESTAURANT;
 
     const STATE_NORMAL = 'normal';
     const STATE_RUSH = 'rush';
@@ -852,5 +853,14 @@ class LocalBusiness extends BaseLocalBusiness
     public function setType($type)
     {
         $this->type = $type;
+    }
+
+    public function getContext()
+    {
+        if ($found = Store::search($this->type)) {
+            return Store::class;
+        }
+
+        return FoodEstablishment::class;
     }
 }

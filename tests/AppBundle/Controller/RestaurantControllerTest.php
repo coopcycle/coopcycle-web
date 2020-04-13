@@ -115,8 +115,7 @@ class RestaurantControllerTest extends WebTestCase
             $this->orderItemQuantityModifier->reveal(),
             $this->orderModifier->reveal(),
             $this->orderTimeHelper->reveal(),
-            $this->serializer,
-            $this->localBusinessRepository->reveal()
+            $this->serializer
         );
 
         $this->controller->setContainer($container->reveal());

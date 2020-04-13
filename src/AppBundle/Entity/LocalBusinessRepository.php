@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Enum\FoodEstablishment;
+use AppBundle\Enum\Store;
 use AppBundle\Utils\RestaurantFilter;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
@@ -12,10 +14,32 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class LocalBusinessRepository extends EntityRepository
 {
     private $restaurantFilter;
+    private $context = FoodEstablishment::class;
+
+    public function withContext(string $context)
+    {
+        $repository = clone $this;
+
+        return $repository->setContext($context);
+    }
 
     public function setRestaurantFilter(RestaurantFilter $restaurantFilter)
     {
         $this->restaurantFilter = $restaurantFilter;
+
+        return $this;
+    }
+
+    public function setContext(string $context)
+    {
+        $this->context = $context;
+
+        return $this;
+    }
+
+    public function getContext(): string
+    {
+        return $this->context;
     }
 
     // TODO : fix this to check that restaurants are really in delivery/radius zone
@@ -149,9 +173,21 @@ class LocalBusinessRepository extends EntityRepository
         return $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function findAllSorted($type = 'restaurant')
+    public function findAllSorted()
     {
-        $matches = $this->findBy(['type' => $type]);
+        $qb = $this->createQueryBuilder('o');
+
+        $r = new \ReflectionClass($this->context);
+        $values = $r->getMethod('values')->invoke(null);
+
+        $types = [];
+        foreach ($values as $value) {
+            $types[] = $value->getValue();
+        }
+
+        $qb->add('where', $qb->expr()->in('o.type', $types));
+
+        $matches = $qb->getQuery()->getResult();
 
         // 1 - opened restaurants
         // 2 - closed restaurants
