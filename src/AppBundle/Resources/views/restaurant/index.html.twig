@@ -231,11 +231,10 @@ Iterating through all products, options… is a lot of database requests
                             max="{{ option.valuesRange.upper }}"
                             {% endif %}
                             value="0">
-                          <label for="{{ option_value_input_id }}" data-step-up>{{ option_value.value }}</label>
-                          {% if option.strategy == 'option_value' and option_value.price > 0 %}
-                            +{{ option_value.price|price_format }}
-                          {% endif %}
-                          <div>
+                          <label for="{{ option_value_input_id }}" data-step-up>
+                            {% include '@App/restaurant/_partials/option_value.html.twig' %}
+                          </label>
+                          <div class="product-option-item-range-buttons">
                             <button class="button-icon--decrement" data-stepper data-target="#{{ option_value_input_id }}" data-direction="down">
                               <i class="fa fa-lg fa-minus-circle"></i>
                             </button>
@@ -246,28 +245,22 @@ Iterating through all products, options… is a lot of database requests
                         </div>
                         {% else %}
                         <div class="checkbox nomargin">
-                          <label>
+                          <label class="d-flex align-items-center">
                             <input
                               name="options[{{ option_index }}][code]"
                               value="{{ option_value.code }}" type="checkbox">
-                            {{ option_value.value }}
-                            {% if option.strategy == 'option_value' and option_value.price > 0 %}
-                              +{{ option_value.price|price_format }}
-                            {% endif %}
+                            {% include '@App/restaurant/_partials/option_value.html.twig' %}
                           </label>
                         </div>
                         {% endif %}
                         {% set option_index = option_index + 1 %}
                       {% else %}
                         <div class="radio nomargin">
-                          <label>
+                          <label class="d-flex align-items-center">
                             <input
                               name="options[{{ option_index }}][code]"
                               value="{{ option_value.code }}" type="radio">
-                            {{ option_value.value }}
-                            {% if option.strategy == 'option_value' and option_value.price > 0 %}
-                              +{{ option_value.price|price_format }}
-                            {% endif %}
+                            {% include '@App/restaurant/_partials/option_value.html.twig' %}
                           </label>
                         </div>
                       {% endif %}

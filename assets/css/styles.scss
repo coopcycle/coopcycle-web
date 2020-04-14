@@ -759,17 +759,30 @@ button.menu-item:active {
   align-items: center;
   input[type="number"] {
     @extend .form-control;
-    width: 44px;
+    min-width: 10%;
+    width: 10%;
+    @media (max-width: $screen-xs-max) {
+      min-width: 20%;
+      width: 20%;
+    }
     padding: 3px 6px;
-    margin-right: 5px;
+    margin-right: 8px;
   }
   label {
     flex-grow: 1;
     margin: 0;
     font-weight: 400;
     padding: 6px 0;
+    hyphens: auto;
     &:hover {
       cursor: pointer;
+    }
+  }
+  &-buttons {
+    display: flex;
+    flex-direction: row;
+    @media (max-width: $screen-xs-max) {
+      flex-direction: column;
     }
   }
 }
