@@ -204,6 +204,7 @@ TestUtils.prototype.createRestaurant = function(name, coordinates) {
       Restaurant.create({
         type: 'restaurant',
         name: name,
+        openingHoursBehavior: 'asap',
         createdAt: new Date(),
         updatedAt: new Date(),
       }).then(function(restaurant) {
