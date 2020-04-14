@@ -214,6 +214,8 @@ class LocalBusiness extends BaseLocalBusiness
 
     protected $reusablePackagings;
 
+    protected $openingHoursBehavior = 'asap';
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -862,5 +864,10 @@ class LocalBusiness extends BaseLocalBusiness
         }
 
         return FoodEstablishment::class;
+    }
+
+    public function getOpeningHoursBehavior()
+    {
+        return $this->openingHoursBehavior;
     }
 }
