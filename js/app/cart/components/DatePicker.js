@@ -1,100 +1,66 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import _ from 'lodash'
 import moment from 'moment'
-import i18n from '../../i18n'
+import Select from 'react-select'
+import { withTranslation } from 'react-i18next'
 
-// FIXME Set locale dynamically
-moment.locale('fr')
+moment.locale($('html').attr('lang'))
 
-class DatePicker extends Component {
+const rangeAsTimeLabel = r => `${moment(r[0]).format('LT')} - ${moment(r[1]).format('LT')}`
 
-  constructor(props) {
-    super(props)
+const rangeAsDateValue = r => moment(r[0]).format('YYYY-MM-DD')
 
-    const { availabilities, value } = this.props
+const dateAsOption = (d, t) => ({
+  label: moment(d).calendar(null, {
+    sameDay: t('DATEPICKER_TODAY'),
+    nextDay: t('DATEPICKER_TOMORROW'),
+    nextWeek: 'dddd D MMM' // TODO localized format
+  }),
+  value: d
+})
 
-    const days = _.groupBy(availabilities, date => moment(date).format('YYYY-MM-DD'))
+const DatePicker = ({ choices, onChange, t, value }) => {
 
-    let times, date, time
+  const [ date, setDate ]   = useState(rangeAsDateValue(value))
+  const [ range, setRange ] = useState(value)
 
-    // we ignore the initial date if it is not in restaurant availabilities (in the past, set in another restaurant, aso)
-    if (value && _.find(availabilities, (date) => moment(value).isSame(date))) {
-      let day = moment(value).format('YYYY-MM-DD')
-      times = days[day].map(date => moment(date).format('HH:mm'))
-      const deliveryDateMoment = moment(value)
-      date = deliveryDateMoment.format('YYYY-MM-DD')
-      time = deliveryDateMoment.format('HH:mm')
-    } else {
-      times = days[Object.keys(days)[0]].map(date => moment(date).format('HH:mm'))
-      const first = availabilities[0]
-      const firstMoment = moment(first)
-      date = firstMoment.format('YYYY-MM-DD')
-      time = firstMoment.format('HH:mm')
-    }
+  const choicesByDate =
+    _.groupBy(choices, range => moment(range[0]).format('YYYY-MM-DD'))
 
-    this.state = {
-      times,
-      date,
-      dates: _.keys(days),
-      time
-    }
-  }
+  const dateOptions = _.keys(choicesByDate).map(d => dateAsOption(d, t))
+  const timeOptions = choicesByDate[date].map(r => ({
+    label: rangeAsTimeLabel(r),
+    value: r
+  }))
 
-  onChangeDate({ target: { value }}) {
+  const timeValue =
+    _.find(timeOptions, o => o.label === rangeAsTimeLabel(range)) || _.first(timeOptions)
 
-    const days = _.groupBy(this.props.availabilities, date => moment(date).format('YYYY-MM-DD'))
-
-    this.setState({
-      date: value,
-      times: days[value].map(date => moment(date).format('HH:mm')),
-    })
-    this.props.onChange(value + ' ' + this.state.time + ':00')
-  }
-
-  onChangeTime({ target: { value }}) {
-    this.setState({
-      time: value
-    })
-    this.props.onChange(this.state.date + ' ' + value + ':00')
-  }
-
-  render() {
-
-    const { times, date, dates, time } = this.state
-
-    return (
-      <div className="row" >
-        <div className="col-xs-6" >
-          <select name={ this.props.dateInputName }
-            value={ date }
-            className="form-control"
-            onChange={ e => this.onChangeDate(e) }>
-            {
-              dates.map(date => (
-                <option key={ date } value={ date }>
-                  { moment(date).calendar(null, { sameDay: i18n.t('DATEPICKER_TODAY'),  nextDay: i18n.t('DATEPICKER_TOMORROW'), nextWeek: 'dddd D MMM'}) }
-                </option>
-              ))
-            }
-          </select>
-        </div>
-        <div className="col-xs-6" >
-          <select name={ this.props.timeInputName }
-            value={ time }
-            className="form-control"
-            onChange={ e => this.onChangeTime(e) }>
-            {
-              times.map(time => (
-                <option key={ time }>
-                  { time }
-                </option>
-              ))
-            }
-          </select>
-        </div>
+  return (
+    <div className="cart__date-picker">
+      <div>
+        <Select
+          defaultValue={ _.find(dateOptions, o => o.value === date) }
+          options={ dateOptions }
+          onChange={ ({ value }) => {
+            const ranges = choicesByDate[value]
+            const r = _.find(ranges, r => rangeAsTimeLabel(r) === timeValue.label) || _.first(ranges)
+            setDate(value)
+            onChange(r)
+          }} />
       </div>
-    )
-  }
+      <div>
+        <Select
+          defaultValue={ _.find(timeOptions, o => o.value === range) }
+          value={ timeValue }
+          options={ timeOptions }
+          onChange={ ({ value }) => {
+            setRange(value)
+            onChange(value)
+          }} />
+      </div>
+    </div>
+  )
 }
 
-export default DatePicker
+export default withTranslation()(DatePicker)

@@ -44,6 +44,9 @@ class OrderTimeHelper
         return (int) $value;
     }
 
+    /**
+     * @deprecated
+     */
     public function getAvailabilities(OrderInterface $cart)
     {
         $hash = spl_object_hash($cart);
@@ -69,6 +72,14 @@ class OrderTimeHelper
         return $this->choicesCache[$hash];
     }
 
+    public function getShippingTimeRanges(OrderInterface $cart)
+    {
+        return array_map(function (string $date) {
+
+            return DateUtils::dateTimeToTsRange(new \DateTime($date), 5);
+        }, $this->getAvailabilities($cart));
+    }
+
     /**
      * FIXME This method should return an object
      *
@@ -84,12 +95,13 @@ class OrderTimeHelper
 
         $shippingTime = $this->shippingTimeCalculator->calculate($cart);
 
-        $shippingTimeRange = $this->getShippingTimeRange($cart);
+        $ranges = $this->getShippingTimeRanges($cart);
+        $range = $this->getShippingTimeRange($cart);
 
         $lowerDiff =
-            $now->diffInMinutes(Carbon::instance($shippingTimeRange->getLower()));
+            $now->diffInMinutes(Carbon::instance($range->getLower()));
         $upperDiff =
-            $now->diffInMinutes(Carbon::instance($shippingTimeRange->getUpper()));
+            $now->diffInMinutes(Carbon::instance($range->getUpper()));
 
         $lowerDiff = $this->roundUp($lowerDiff, 5);
         $upperDiff = $this->roundUp($upperDiff, 5);
@@ -98,20 +110,26 @@ class OrderTimeHelper
         $fast = $upperDiff <= 45;
 
         // Legacy
-        $asap = Carbon::instance($shippingTimeRange->getLower())
-            ->average($shippingTimeRange->getUpper());
+        $asap = Carbon::instance($range->getLower())
+            ->average($range->getUpper());
 
         return [
             'preparation' => $preparationTime,
             'shipping' => $shippingTime,
             'asap' => $asap->format(\DateTime::ATOM),
             'range' => [
-                $shippingTimeRange->getLower()->format(\DateTime::ATOM),
-                $shippingTimeRange->getUpper()->format(\DateTime::ATOM),
+                $range->getLower()->format(\DateTime::ATOM),
+                $range->getUpper()->format(\DateTime::ATOM),
             ],
-            'today' => DateUtils::isToday($shippingTimeRange),
+            'today' => DateUtils::isToday($range),
             'fast' => $fast,
-            'diff' => sprintf('%d - %d', $lowerDiff, $upperDiff)
+            'diff' => sprintf('%d - %d', $lowerDiff, $upperDiff),
+            'ranges' => array_map(function (TsRange $range) {
+                return [
+                    $range->getLower()->format(\DateTime::ATOM),
+                    $range->getUpper()->format(\DateTime::ATOM),
+                ];
+            }, $ranges),
         ];
     }
 
@@ -120,12 +138,10 @@ class OrderTimeHelper
      */
     public function getShippingTimeRange(OrderInterface $cart): TsRange
     {
-        $choices = $this->getAvailabilities($cart);
+        $ranges = $this->getShippingTimeRanges($cart);
 
         // FIXME Throw Exception when there are no choices (empty array)
 
-        $first = new \DateTime($choices[0]);
-
-        return DateUtils::dateTimeToTsRange($first, 5);
+        return current($ranges);
     }
 }

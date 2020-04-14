@@ -351,7 +351,8 @@ Feature: Orders
         "today":true,
         "fast":false,
         "diff":"55 - 65",
-        "choices":@array@
+        "choices":@array@,
+        "ranges":@array@
       }
       """
 
@@ -387,7 +388,8 @@ Feature: Orders
         "today":@boolean@,
         "fast":@boolean@,
         "diff":"@string@.matchRegex('/^[0-9]+ - [0-9]+$/')",
-        "choices":@array@
+        "choices":@array@,
+        "ranges":@array@
       }
       """
 
@@ -424,7 +426,8 @@ Feature: Orders
         "today":@boolean@,
         "fast":@boolean@,
         "diff":"@string@.matchRegex('/^[0-9]+ - [0-9]+$/')",
-        "choices":@array@
+        "choices":@array@,
+        "ranges":@array@
       }
       """
 

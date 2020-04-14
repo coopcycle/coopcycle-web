@@ -219,7 +219,6 @@ window.initMap = function() {
   const state = {
     cart,
     restaurant,
-    availabilities: restaurant.availabilities,
     datePickerDateInputName: 'cart[date]',
     datePickerTimeInputName: 'cart[time]',
     addressFormElements: {

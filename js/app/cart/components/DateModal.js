@@ -16,7 +16,7 @@ class DateModal extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      date: null
+      value: props.value
     }
   }
 
@@ -29,20 +29,16 @@ class DateModal extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.isOpen && !prevProps.isOpen) {
-      this.setState({ date: this.value })
+      this.setState({ value: this.props.value })
     }
   }
 
   componentDidMount() {
-    this.setState({ date: this.value })
-  }
-
-  _updateDate(dateString) {
-    this.setState({ date: dateString })
+    this.setState({ value: this.props.value })
   }
 
   _onClickSubmit() {
-    this.props.changeDate(this.state.date)
+    this.props.changeDate(this.state.value)
     this.props.setDateModalOpen(false)
   }
 
@@ -55,6 +51,8 @@ class DateModal extends Component {
 
   render() {
 
+    const avg = moment.range(this.state.value).center()
+
     return (
       <Modal
         isOpen={ this.props.isOpen }
@@ -64,14 +62,14 @@ class DateModal extends Component {
         contentLabel={ this.props.t('CART_CHANGE_TIME_MODAL_LABEL') }
         className="ReactModal__Content--date">
         <form name="cart_time">
+          <input type="hidden" name={ this.props.datePickerDateInputName } value={ avg.format('YYYY-MM-DD') } />
+          <input type="hidden" name={ this.props.datePickerTimeInputName } value={ avg.format('HH:mm') } />
           <h4 className="text-center">{ this.props.t('CART_CHANGE_TIME_MODAL_TITLE') }</h4>
           <div className="text-center">
             <DatePicker
-              dateInputName={ this.props.datePickerDateInputName }
-              timeInputName={ this.props.datePickerTimeInputName }
-              availabilities={ this.props.availabilities }
+              choices={ this.props.ranges }
               value={ this.props.value }
-              onChange={ (dateString) => this._updateDate(dateString) } />
+              onChange={ value => this.setState({ value }) } />
           </div>
           { this.props.isPreOrder && (
             <div className="text-center">
@@ -105,15 +103,15 @@ function mapStateToProps(state) {
     false === _.isEmpty(state.cart.shippingTimeRange)
 
   const value =
-    isPreOrder ? moment.range(state.cart.shippingTimeRange).center().format() : _.first(state.availabilities)
+    isPreOrder ? state.cart.shippingTimeRange : _.first(state.times.ranges)
 
   return {
     isOpen: state.isDateModalOpen,
-    availabilities: state.availabilities,
     datePickerDateInputName: state.datePickerDateInputName,
     datePickerTimeInputName: state.datePickerTimeInputName,
     isPreOrder,
     value,
+    ranges: state.times.ranges,
   }
 }
 

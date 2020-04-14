@@ -27,7 +27,6 @@ const initialState = {
   restaurant: null,
   isFetching: false,
   errors: [],
-  availabilities: [],
   addressFormElements: {},
   isNewAddressFormElement: null,
   datePickerDateInputName: 'date',
@@ -39,7 +38,9 @@ const initialState = {
     asap: null,
     fast: false,
     today: false,
-    diff: ''
+    diff: '',
+    range: null,
+    ranges: [],
   },
   isDateModalOpen: false,
   isAddressModalOpen: false,
@@ -74,18 +75,6 @@ const errors = (state = initialState.errors, action = {}) => {
       ...state,
       [propertyPath]: action.payload.errors
     }
-  default:
-
-    return state
-  }
-}
-
-const availabilities = (state = initialState.availabilities, action = {}) => {
-  switch (action.type) {
-  case FETCH_SUCCESS:
-  case FETCH_FAILURE:
-
-    return action.payload.availabilities
   default:
 
     return state
@@ -199,7 +188,6 @@ export default combineReducers({
   cart,
   restaurant,
   errors,
-  availabilities,
   addressFormElements,
   isNewAddressFormElement,
   datePickerDateInputName,

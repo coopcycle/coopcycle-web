@@ -590,13 +590,21 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   }
 }
 
+.cart__date-picker {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  > * {
+    width: 45%;
+  }
+}
+
 #map-wrapper {
   padding: 60px 0;
 }
 
 .restaurant-title {
   display:inline-block;
-
 }
 
 .restaurant-header {
@@ -934,6 +942,8 @@ form[name="store"] #store_imageFile_file {
   flex-direction: column;
   justify-content: center;
   padding: 20px;
+  // @see https://github.com/reactjs/react-modal/issues/177
+  overflow: visible;
   @media (min-width: $screen-lg-min) {
     width: 50%;
   }
