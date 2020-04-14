@@ -120,9 +120,11 @@
     </p>
   {% endif %}
 
-  {{ form_row(form.openingHours) }}
-
+  {{ form_row(form.openingHours, { label: false }) }}
   <div id="opening-hours"></div>
+
+  {{ form_row(form.openingHoursBehavior) }}
+
   <label class="control-label">{% trans %}localBusiness.form.orderingDelayMinutes{% endtrans %}</label>
   <div class="row">
     <div class="col-sm-3">
@@ -326,10 +328,15 @@
     {% endif %}
   {% endfor %}
 
-  new CoopCycle.OpeningHoursInput(document.querySelector('#restaurant_openingHours'), {
+  var openingHoursInput = new CoopCycle.OpeningHoursInput(document.querySelector('#restaurant_openingHours'), {
     locale: $('html').attr('lang'),
-    rowsWithErrors: rowsWithErrors
-  })
+    rowsWithErrors: rowsWithErrors,
+    behavior: $('input[name="restaurant[openingHoursBehavior]"]:checked').val()
+  });
+
+  $('input[name="restaurant[openingHoursBehavior]"]').on('change', function(e) {
+    openingHoursInput.setBehavior($(this).val())
+  });
 
   function initMap() {
     new CoopCycle.AddressInput(document.querySelector('#restaurant_address_streetAddress'), {

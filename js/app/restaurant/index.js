@@ -201,7 +201,8 @@ window.initMap = function() {
 
   new OpeningHoursParser(document.querySelector('#opening-hours'), {
     openingHours: restaurant.openingHours,
-    locale: $('html').attr('lang')
+    locale: $('html').attr('lang'),
+    behavior: restaurant.openingHoursBehavior,
   })
 
   if (!cart.shippingAddress) {
@@ -219,8 +220,7 @@ window.initMap = function() {
   const state = {
     cart,
     restaurant,
-    datePickerDateInputName: 'cart[date]',
-    datePickerTimeInputName: 'cart[time]',
+    datePickerTimeSlotInputName: 'cart[timeSlot]',
     addressFormElements: {
       streetAddress: document.querySelector('#cart_shippingAddress_streetAddress'),
       postalCode: document.querySelector('#cart_shippingAddress_postalCode'),

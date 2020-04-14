@@ -101,9 +101,12 @@ localBusiness.form.description: Description
 localBusiness.form.legalName: Nom légal
 localBusiness.form.website: Site web
 localBusiness.form.telephone: Numéro de téléphone
-localBusiness.form.openingHours: Heures d'ouvertures
+localBusiness.form.openingHours: Heures d'ouverture
 localBusiness.form.deliveryPerimeterExpression: Zone distance max de livraison
 localBusiness.form.shippingOptionsDays: Nombre de choix pour la livraison (en jours)
+localBusiness.form.openingHoursBehavior: Comportement des horaires
+localBusiness.form.openingHoursBehavior.asap: Au plus tôt
+localBusiness.form.openingHoursBehavior.time_slot: Tranche horaire
 restaurant.available: Disponible
 restaurant.unavailable: Indisponible
 restaurant.disabledWarning: "Ce restaurant n'est pas activé et n'est donc pas visible\

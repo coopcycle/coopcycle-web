@@ -81,14 +81,15 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $restaurant
             ->getContract()
             ->willReturn($contract);
-
         $restaurant
             ->getDeliveryPerimeterExpression()
             ->willReturn($maxDistanceExpression);
-
         $restaurant
             ->canDeliverAddress(Argument::any(), Argument::any(), Argument::any())
             ->willReturn($canDeliver);
+        $restaurant
+            ->getOpeningHoursBehavior()
+            ->willReturn('asap');
 
         return $restaurant;
     }

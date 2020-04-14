@@ -3,6 +3,8 @@
 namespace AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
+use AppBundle\Entity\TimeSlot;
+use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\PreparationTimeCalculator;
@@ -15,16 +17,19 @@ class OrderTimeHelper
     private $shippingDateFilter;
     private $preparationTimeCalculator;
     private $shippingTimeCalculator;
+    private $country;
     private $choicesCache = [];
 
     public function __construct(
         ShippingDateFilter $shippingDateFilter,
         PreparationTimeCalculator $preparationTimeCalculator,
-        ShippingTimeCalculator $shippingTimeCalculator)
+        ShippingTimeCalculator $shippingTimeCalculator,
+        string $country)
     {
         $this->shippingDateFilter = $shippingDateFilter;
         $this->preparationTimeCalculator = $preparationTimeCalculator;
         $this->shippingTimeCalculator = $shippingTimeCalculator;
+        $this->country = $country;
     }
 
     private function filterChoices(OrderInterface $cart, array $choices)
@@ -74,6 +79,37 @@ class OrderTimeHelper
 
     public function getShippingTimeRanges(OrderInterface $cart)
     {
+        if ($cart->getRestaurant()->getOpeningHoursBehavior() === 'time_slot') {
+
+            $ranges = [];
+
+            $timeSlot = new TimeSlot();
+            $timeSlot->setOpeningHours(
+                $cart->getRestaurant()->getOpeningHours()
+            );
+
+            $choiceLoader = new TimeSlotChoiceLoader($timeSlot, $this->country);
+            $choiceList = $choiceLoader->loadChoiceList();
+
+            foreach ($choiceList->getChoices() as $choice) {
+                $choiceText = (string) $choice;
+                if (1 === preg_match('/^(?<date>[0-9]{4}-[0-9]{2}-[0-9]{2}) (?<start_time>[0-9]{2}:[0-9]{2})-(?<end_time>[0-9]{2}:[0-9]{2})$/', $choiceText, $matches)) {
+
+                    $lower = new \DateTime(sprintf('%s %s:00', $matches['date'], $matches['start_time']));
+                    $upper = new \DateTime(sprintf('%s %s:00', $matches['date'], $matches['end_time']));
+
+                    $range = new TsRange();
+                    $range->setLower($lower);
+                    $range->setUpper($upper);
+
+                    $ranges[] = $range;
+                }
+
+            }
+
+            return $ranges;
+        }
+
         return array_map(function (string $date) {
 
             return DateUtils::dateTimeToTsRange(new \DateTime($date), 5);
@@ -119,6 +155,7 @@ class OrderTimeHelper
         }
 
         return [
+            'behavior' => $cart->getRestaurant()->getOpeningHoursBehavior(),
             'preparation' => $preparationTime,
             'shipping' => $shippingTime,
             'asap' => $asap,

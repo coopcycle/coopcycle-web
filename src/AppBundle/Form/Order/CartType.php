@@ -2,14 +2,13 @@
 
 namespace AppBundle\Form\Order;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Form\AddressType;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -30,17 +29,10 @@ class CartType extends AbstractType
             ->add('shippingAddress', AddressType::class, [
                 'label' => false
             ])
-            ->add('date', DateType::class, [
-                'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd',
+            ->add('timeSlot', HiddenType::class, [
                 'required' => false,
-                'mapped' => false
-            ])
-            ->add('time', TimeType::class, [
-                'widget' => 'single_text',
-                'with_seconds' => false,
-                'required' => false,
-                'mapped' => false
+                'mapped' => false,
+                // TODO Default value?
             ])
             ->add('isNewAddress', HiddenType::class, [
                 'mapped' => false,
@@ -93,13 +85,21 @@ class CartType extends AbstractType
             $form = $event->getForm();
             $order = $form->getData();
 
-            $date = $form->get('date')->getData();
-            $time = $form->get('time')->getData();
+            $timeSlot = $form->get('timeSlot')->getData();
 
-            if ($date && $time) {
-                $datetime =
-                    new \DateTime(sprintf('%s %s', $date->format('Y-m-d'), $time->format('H:i:00')));
-                $order->setShippingTimeRange(DateUtils::dateTimeToTsRange($datetime));
+            $pattern = '/^(?<date>[0-9]{4}-[0-9]{2}-[0-9]{2}) (?<start>[0-9]{2}:[0-9]{2})-(?<end>[0-9]{2}:[0-9]{2})$/';
+
+            if (1 === preg_match($pattern, $timeSlot, $matches)) {
+
+                $date = $matches['date'];
+                $start = $matches['start'];
+                $end = $matches['end'];
+
+                $range = new TsRange();
+                $range->setLower(new \DateTime(sprintf('%s %s:00', $matches['date'], $matches['start'])));
+                $range->setUpper(new \DateTime(sprintf('%s %s:00', $matches['date'], $matches['end'])));
+
+                $order->setShippingTimeRange($range);
             }
 
             $this->orderProcessor->process($order);

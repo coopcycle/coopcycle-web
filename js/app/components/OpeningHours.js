@@ -23,7 +23,8 @@ export default class extends React.Component {
     this.state = {
       weekdays: TimeRange.weekdaysShort(props.locale),
       rowsWithErrors: props.rowsWithErrors,
-      rows: []
+      rows: [],
+      behavior: props.behavior || 'asap',
     }
   }
 
@@ -48,6 +49,10 @@ export default class extends React.Component {
         return _.extend({ checked: _.includes(days, weekday.key) }, weekday)
       })
     }
+  }
+
+  setBehavior(behavior) {
+    this.setState({ behavior })
   }
 
   onStartChange(key, date, timeString) {
@@ -162,8 +167,8 @@ export default class extends React.Component {
 
     return (
       <tr key={key} className={rowClasses.join(' ')}>
-        <td>
-          <ConfigProvider locale={frBE}>
+        <td width="50%">
+          <span className="mr-3">
             <TimePicker
               disabledMinutes={this.disabledMinutes}
               onChange={this.onStartChange.bind(this, key)}
@@ -175,8 +180,6 @@ export default class extends React.Component {
                 <Button size="small" type="primary" onClick={() => panel.close()}>OK</Button>
               )}
             />
-          </ConfigProvider>
-          <ConfigProvider locale={frBE}>
             <TimePicker
               disabledMinutes={this.disabledMinutes}
               onChange={this.onEndChange.bind(this, key)}
@@ -188,7 +191,8 @@ export default class extends React.Component {
                 <Button size="small" type="primary" onClick={() => panel.close()}>OK</Button>
               )}
             />
-          </ConfigProvider>
+          </span>
+          <small className="text-muted">{ openingHourIntervalToReadable(this.rowToString(row), this.props.locale, this.state.behavior) }</small>
         </td>
         {_.map(weekdays, (weekday) => (
           <td key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>
@@ -234,39 +238,28 @@ export default class extends React.Component {
     this.props.onRowRemove(key)
   }
 
-  renderAsText() {
-    return (
-      <ul className="list-unstyled">
-        { this.toArray().map((item, index) =>
-          <li key={ index }>{ openingHourIntervalToReadable(item, this.props.locale) }</li>
-        )}
-      </ul>
-    )
-  }
-
   render() {
     const { weekdays } = this.state
     return (
-      <div>
+      <ConfigProvider locale={frBE}>
         <div>
-          { this.renderAsText() }
+          <table className="table">
+            <thead>
+              <tr>
+                <th>{i18n.t('DELIVERY_TIME_SLOTS')}</th>
+                {_.map(weekdays, (weekday) => (
+                  <th key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>{weekday.name}</th>
+                ))}
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {_.map(this.state.rows, (row, key) => this.renderRow(row, key))}
+            </tbody>
+          </table>
+          <button className="btn btn-sm btn-success" onClick={this.addRow.bind(this)}>{i18n.t('ADD_BUTON')}</button>
         </div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>{i18n.t('OPENING_HOURS_TITLE')}</th>
-              {_.map(weekdays, (weekday) => (
-                <th key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>{weekday.name}</th>
-              ))}
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {_.map(this.state.rows, (row, key) => this.renderRow(row, key))}
-          </tbody>
-        </table>
-        <button className="btn btn-sm btn-success" onClick={this.addRow.bind(this)}>{i18n.t('ADD_BUTON')}</button>
-      </div>
+      </ConfigProvider>
     )
   }
 }

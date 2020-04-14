@@ -96,7 +96,8 @@ $(document).ready(function() {
 
     new CoopCycle.OpeningHoursInput(document.querySelector('#time_slot_openingHours'), {
       locale: $('html').attr('lang'),
-      rowsWithErrors: []
+      rowsWithErrors: [],
+      behavior: 'time_slot'
     });
 
 });

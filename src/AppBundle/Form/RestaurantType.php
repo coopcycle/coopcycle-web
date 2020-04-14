@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -41,6 +42,15 @@ class RestaurantType extends LocalBusinessType
             ->add('orderingDelayHours', IntegerType::class, [
                 'label' => 'localBusiness.form.orderingDelayHours',
                 'mapped' => false
+            ])
+            ->add('openingHoursBehavior', ChoiceType::class, [
+                'label' => 'localBusiness.form.openingHoursBehavior',
+                'choices'  => [
+                    'localBusiness.form.openingHoursBehavior.asap' => 'asap',
+                    'localBusiness.form.openingHoursBehavior.time_slot' => 'time_slot',
+                ],
+                'expanded' => true,
+                'multiple' => false,
             ]);
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
