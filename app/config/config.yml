@@ -121,6 +121,7 @@ doctrine:
         mapping_types:
             _text: string
             numrange: string
+            tsrange: string
 
         # If you don't define this option and you haven't created your database yet,
         # you may get PDOException errors because Doctrine will try to guess
