@@ -116,19 +116,6 @@ class OrderTimeHelper
     }
 
     /**
-     * @deprecated
-     * @return string
-     */
-    public function getAsap(OrderInterface $cart)
-    {
-        $shippingTimeRange = $this->getShippingTimeRange($cart);
-
-        return Carbon::instance($shippingTimeRange->getLower())
-            ->average($shippingTimeRange->getUpper())
-            ->format(\DateTime::ATOM);
-    }
-
-    /**
      * @return TsRange
      */
     public function getShippingTimeRange(OrderInterface $cart): TsRange

@@ -25,7 +25,8 @@ class OrderTimeHelperTest extends TestCase
         $this->helper = new OrderTimeHelper(
             $this->shippingDateFilter->reveal(),
             $this->preparationTimeCalculator->reveal(),
-            $this->shippingTimeCalculator->reveal()
+            $this->shippingTimeCalculator->reveal(),
+            'fr'
         );
     }
 
@@ -107,9 +108,9 @@ class OrderTimeHelperTest extends TestCase
                 return true;
             });
 
-        $asap = $this->helper->getAsap($cart->reveal());
+        $shippingTimeRange = $this->helper->getShippingTimeRange($cart->reveal());
 
-        $this->assertNotNull($asap);
-        $this->assertEquals('2020-04-01T13:00:00+02:00', $asap);
+        $this->assertEquals(new \DateTime('2020-04-01 12:55:00'), $shippingTimeRange->getLower());
+        $this->assertEquals(new \DateTime('2020-04-01 13:05:00'), $shippingTimeRange->getUpper());
     }
 }
