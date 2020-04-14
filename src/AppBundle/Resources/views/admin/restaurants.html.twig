@@ -16,14 +16,3 @@
 {% include "@App/admin/pagination.html.twig" %}
 
 {% endblock %}
-
-{% block scripts %}
-  <script>
-  document.querySelectorAll('.restaurant-opening-hours').forEach(function(el) {
-    new CoopCycle.OpeningHoursParser(el, {
-      openingHours: JSON.parse(el.getAttribute('data-opening-hours')),
-      locale: $('html').attr('lang')
-    })
-  })
-  </script>
-{% endblock %}
