@@ -101,6 +101,11 @@ module.exports = function(sequelize) {
       defaultValue: ['ROLE_ADMIN'],
       field: 'stripe_connect_roles',
     },
+    openingHoursBehavior: {
+      type: Sequelize.STRING,
+      defaultValue: 'asap',
+      field: 'opening_hours_behavior',
+    },
     createdAt: {
       field: 'created_at',
       type: Sequelize.DATE
