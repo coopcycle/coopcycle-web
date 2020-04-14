@@ -16,7 +16,6 @@ use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use SimpleBus\Message\Bus\MessageBus;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -32,18 +31,15 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class OrderController extends AbstractController
 {
     private $objectManager;
-    private $commandBus;
     private $orderTimeHelper;
     private $logger;
 
     public function __construct(
         EntityManagerInterface $objectManager,
-        MessageBus $commandBus,
         OrderTimeHelper $orderTimeHelper,
         LoggerInterface $logger)
     {
         $this->objectManager = $objectManager;
-        $this->commandBus = $commandBus;
         $this->orderTimeHelper = $orderTimeHelper;
         $this->logger = $logger;
     }

@@ -96,7 +96,6 @@ services:
   AppBundle\Controller\OrderController:
     arguments:
       $objectManager: '@sylius.manager.order'
-      $commandBus: '@command_bus'
     tags:
       - { name: monolog.logger, channel: stripe }
 
