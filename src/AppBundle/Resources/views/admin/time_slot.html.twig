@@ -16,7 +16,7 @@
 {{ form_start(form) }}
   {{ form_row(form.name) }}
   {{ form_row(form.interval) }}
-  {{ form_row(form.priorNotice) }}
+  {{ form_row(form.priorNoticeHours) }}
   {% set time_slot = form.vars.data %}
   {% set is_advanced = (time_slot.id is not null and time_slot.hasOpeningHours()) %}
   <div class="text-right">

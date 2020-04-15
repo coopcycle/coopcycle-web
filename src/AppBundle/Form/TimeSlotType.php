@@ -8,8 +8,11 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -37,16 +40,6 @@ class TimeSlotType extends AbstractType
                     $this->translator->trans('basics.weeks', ['%count%' => 1]) => '1 week',
                 ],
             ])
-            ->add('priorNotice', ChoiceType::class, [
-                'label' => 'form.time_slot.prior_notice.label',
-                'choices'  => [
-                    $this->translator->trans('basics.none') => null,
-                    $this->translator->trans('basics.hours', ['%count%' => 1]) => '1 hour',
-                    $this->translator->trans('basics.hours', ['%count%' => 2]) => '2 hours',
-                    $this->translator->trans('basics.hours', ['%count%' => 3]) => '3 hours',
-                    $this->translator->trans('basics.hours', ['%count%' => 6]) => '6 hours',
-                ],
-            ])
             ->add('workingDaysOnly', CheckboxType::class, [
                 'label' => 'form.time_slot.working_days_only.label',
                 'required' => false,
@@ -72,6 +65,39 @@ class TimeSlotType extends AbstractType
                 'error_bubbling' => false,
             ])
             ;
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $timeSlot = $event->getData();
+
+            $priorNotice = $timeSlot->getPriorNotice();
+
+            $hours = 0;
+            if (null !== $priorNotice) {
+                if (1 === preg_match('/^(?<value>[0-9]+) hours?$/', $priorNotice, $matches)) {
+                    $hours = (int) $matches['value'];
+                }
+            }
+
+            $form->add('priorNoticeHours', IntegerType::class, [
+                'label' => 'form.time_slot.prior_notice_hours.label',
+                'mapped' => false,
+                'data' => $hours,
+                'attr' => [
+                    'min' => 0
+                ]
+            ]);
+        });
+
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $timeSlot = $event->getData();
+
+            $priorNoticeHours = $form->get('priorNoticeHours')->getData();
+            $timeSlot->setPriorNotice(sprintf('%d %s', $priorNoticeHours, ($priorNoticeHours > 1 ? 'hours' : 'hour')));
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)
