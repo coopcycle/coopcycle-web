@@ -1,8 +1,8 @@
 {
     "common": {
-        "CART_TITLE": "",
-        "CART_WIDGET_BUTTON": "",
-        "CART_EMPTY": "",
+        "CART_TITLE": "Koszyk",
+        "CART_WIDGET_BUTTON": "Zamówienie",
+        "CART_EMPTY": "Twój koszyk jest pusty",
         "OPENING_HOURS_SINGLE": "",
         "OPENING_HOURS_RANGE": "",
         "OPENING_HOURS_TITLE": "",
