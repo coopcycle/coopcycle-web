@@ -41,8 +41,11 @@ import {
   LOAD_TASK_EVENTS_SUCCESS,
   LOAD_TASK_EVENTS_FAILURE,
   SET_TASK_LISTS_LOADING,
-  SET_TASK_UPLOAD_FORM_ERRORS,
-  CLEAR_TASK_IMPORT_TOKEN,
+  ADD_IMPORT,
+  IMPORT_SUCCESS,
+  IMPORT_ERROR,
+  OPEN_IMPORT_MODAL,
+  CLOSE_IMPORT_MODAL,
 } from './actions'
 
 const moment = extendMoment(Moment)
@@ -119,8 +122,9 @@ const initialState = {
   tasksWithColor: {},
   isLoadingTaskEvents: false,
   taskEvents: {},
-  taskUploadFormErrors: [],
-  taskImportToken: null,
+  imports: {},
+  importModalIsOpen: false,
+  uploaderEndpoint: '',
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -541,6 +545,17 @@ const settingsModalIsOpen = (state = initialState.settingsModalIsOpen, action) =
   }
 }
 
+const importModalIsOpen = (state = false, action) => {
+  switch(action.type) {
+  case OPEN_IMPORT_MODAL:
+    return true
+  case CLOSE_IMPORT_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
 const combinedFilters = (state = initialState, action) => {
 
   switch (action.type) {
@@ -615,19 +630,22 @@ const taskEvents = (state = initialState.taskEvents, action) => {
   return state
 }
 
-const taskUploadFormErrors = (state = initialState.taskUploadFormErrors, action) => {
+const imports = (state = initialState.imports, action) => {
   switch (action.type) {
-  case SET_TASK_UPLOAD_FORM_ERRORS:
-    return action.errors
-  }
-
-  return state
-}
-
-const taskImportToken = (state = initialState.taskImportToken, action) => {
-  switch (action.type) {
-  case CLEAR_TASK_IMPORT_TOKEN:
-    return null
+  case ADD_IMPORT:
+    return {
+      ...state,
+      [ action.token ]: '',
+    }
+  case IMPORT_SUCCESS:
+    return _.omit(state, [ action.token ])
+  case IMPORT_ERROR:
+    return {
+      ...state,
+      [ action.token ]: action.message,
+    }
+  case OPEN_IMPORT_MODAL:
+    return {}
   }
 
   return state
@@ -664,7 +682,7 @@ export default (state = initialState, action) => {
     tasksWithColor,
     isLoadingTaskEvents: isLoadingTaskEvents(state.isLoadingTaskEvents, action),
     taskEvents: taskEvents(state.taskEvents, action),
-    taskUploadFormErrors: taskUploadFormErrors(state.taskUploadFormErrors, action),
-    taskImportToken: taskImportToken(state.taskImportToken, action),
+    imports: imports(state.imports, action),
+    importModalIsOpen: importModalIsOpen(state.importModalIsOpen, action),
   }
 }

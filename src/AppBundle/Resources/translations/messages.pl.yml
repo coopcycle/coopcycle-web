@@ -382,8 +382,6 @@ form.task.recipient.label: Kontakt
 form.task.recipient.help: Podaj imię osoby kontaktowej
 form.task_event.notes.placeholder: 'Np.: adres nie znaleziony, żaden problem…'
 form.task_event.notes.help: Możesz edytować komentarz
-form.task_upload.file: Plik
-form.task_upload.file.help: "Obsługiwane formaty plików: csv, ods, xlsx\n"
 form.task_complete.done.label: Ukończone
 task.previous_task_not_completed_yet: Poprzednie zadanie nie jest jeszcze ukończone
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i

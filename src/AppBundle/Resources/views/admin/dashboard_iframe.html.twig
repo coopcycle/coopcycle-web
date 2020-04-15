@@ -1,6 +1,5 @@
 {% extends "@App/base.html.twig" %}
 
-{% form_theme task_upload_form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% form_theme task_export_form '@App/form/task_export.html.twig' %}
 
 {% block banner %}{% endblock %}
@@ -23,30 +22,6 @@
   </div>
   <div class="dashboard__loader">
     <div id="dashboard__loader" style="margin: 0 auto;"></div>
-  </div>
-</div>
-
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="upload-modal-label" id="upload-modal">
-  <div class="modal-dialog" role="document">
-    {{ form_start(task_upload_form, { attr: { class: 'modal-content' } }) }}
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="upload-modal-label">{% trans %}adminDashboard.dashboard.importTasks{% endtrans %}</h4>
-      </div>
-      <div class="modal-body">
-        <div class="alert alert-info">
-          {% trans with { '%date%': date|localizeddate('medium', 'none') } %}Tasks matching %date% will be imported{% endtrans %}
-        </div>
-        <div class="form-horizontal">
-          {{ form_row(task_upload_form.file) }}
-        </div>
-        <span class="help-block">{% trans %}form.task_upload.file.help{% endtrans %}</span>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}adminDashboard.dashboard.cancel{% endtrans %}</button>
-        <button type="submit" class="btn btn-primary">{% trans %}adminDashboard.dashboard.import{% endtrans %}</button>
-      </div>
-    {{ form_end(task_upload_form) }}
   </div>
 </div>
 
@@ -104,10 +79,10 @@ window.AppData.Dashboard = {
   tasks: {{ tasks|json_encode()|raw }},
   taskLists: {{ task_lists|json_encode()|raw }},
   couriersList: {{ couriers|json_encode()|raw }},
-  taskImportToken: {{ task_import_token|json_encode()|raw }},
   tags: {{ tags|json_encode()|raw }},
   jwt: "{{ jwt }}",
-  nav: "{{ nav ? 'on' : 'off' }}"
+  nav: "{{ nav ? 'on' : 'off' }}",
+  uploaderEndpoint: "{{ oneup_uploader_endpoint('tasks') }}"
 };
 </script>
 {{ encore_entry_script_tags('dashboard') }}
@@ -133,7 +108,8 @@ window.AppData.Dashboard = {
   $('#task-group-modal').on('show.bs.modal', function (event) {
     var $btn = $(event.relatedTarget);
     $('#task_group_id').val($btn.data('group'));
-  })
+  });
+
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
   async defer></script>

@@ -90,7 +90,8 @@ class ImportTasksHandler implements MessageHandlerInterface
 
         } catch (\Exception $e) {
             $this->socketIoManager->toAdmins('task_import:failure', [
-                ['message' => $e->getMessage()]
+                'token' => $message->getToken(),
+                'message' => $e->getMessage(),
             ]);
             unlink($tempnam);
             return;
@@ -106,14 +107,17 @@ class ImportTasksHandler implements MessageHandlerInterface
 
         } catch (DriverException $e) {
             $this->socketIoManager->toAdmins('task_import:failure', [
-                ['message' => $e->getMessage()]
+                'token' => $message->getToken(),
+                'message' => $e->getMessage(),
             ]);
             unlink($tempnam);
             return;
         }
 
         $this->logger->info(sprintf('Finished importing file %s', $message->getFilename()));
-        $this->socketIoManager->toAdmins('task_import:success', ['token' => $message->getToken()]);
+        $this->socketIoManager->toAdmins('task_import:success', [
+            'token' => $message->getToken()
+        ]);
 
         unlink($tempnam);
     }

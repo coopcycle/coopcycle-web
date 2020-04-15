@@ -375,8 +375,6 @@ form.task.comments.label: Kommentare
 form.task.status.label: Status
 form.task_event.notes.placeholder: 'Beispiel: Adresse nicht gefunden, kein Problem…'
 form.task_event.notes.help: Du kannst den Kommentar bearbeiten
-form.task_upload.file: Datei
-form.task_upload.file.help: "Unterstützte Formate: csv, ods, xlsx\n"
 form.task_complete.done.label: Erledigt
 form.task_complete.fail.label: Melde ein Problem
 maintenance.disclaimer: Wartungsmodus ist aktiviert

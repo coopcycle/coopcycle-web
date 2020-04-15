@@ -351,8 +351,6 @@ form.task.recipient.help: Specify the name of the contact person
 form.task.dropoff.doorstep.label: Doorstep dropoff
 form.task_event.notes.placeholder: 'Ex: address not found, no problem…'
 form.task_event.notes.help: You can edit the comment
-form.task_upload.file: File
-form.task_upload.file.help: "Supported file formats: csv, ods, xlsx\n"
 form.task_complete.done.label: Complete
 form.task_complete.fail.label: Report problem
 task.type.PICKUP: Pickup

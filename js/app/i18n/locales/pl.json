@@ -2,6 +2,7 @@
     "common": {
         "CART_TITLE": "Koszyk",
         "CART_WIDGET_BUTTON": "Zamówienie",
-        "CART_EMPTY": "Twój koszyk jest pusty"
+        "CART_EMPTY": "Twój koszyk jest pusty",
+        "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Obsługiwane formaty plików: csv, ods, xlsx"
     }
 }

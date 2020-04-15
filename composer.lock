@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f0b0fb81a9aafafd32ba67d70f0c1a95",
+    "content-hash": "e0cacbf1e5bd1a8519d02ccd767f8e8e",
     "packages": [
         {
             "name": "api-platform/core",
@@ -8628,40 +8628,43 @@
         },
         {
             "name": "oneup/uploader-bundle",
-            "version": "2.2.0",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/1up-lab/OneupUploaderBundle.git",
-                "reference": "8bd74b2d5f07f9ee6280f0b90ed8199471f57f52"
+                "reference": "4c954cd2baf5531b91317bbe72f00f904d47e51d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/1up-lab/OneupUploaderBundle/zipball/8bd74b2d5f07f9ee6280f0b90ed8199471f57f52",
-                "reference": "8bd74b2d5f07f9ee6280f0b90ed8199471f57f52",
+                "url": "https://api.github.com/repos/1up-lab/OneupUploaderBundle/zipball/4c954cd2baf5531b91317bbe72f00f904d47e51d",
+                "reference": "4c954cd2baf5531b91317bbe72f00f904d47e51d",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1",
-                "symfony/asset": "^3.0|^4.0",
-                "symfony/finder": "^3.0|^4.0",
-                "symfony/framework-bundle": "^3.0|^4.0",
-                "symfony/http-foundation": "^3.0|^4.0",
-                "symfony/templating": "^3.0|^4.0",
-                "symfony/translation": "^3.0|^4.0",
-                "symfony/yaml": "^3.0|^4.0",
-                "twig/twig": "^1.41|^2.10|^3.0"
+                "php": "^7.2.5",
+                "symfony/asset": "^4.4|^5.0",
+                "symfony/event-dispatcher-contracts": "^1.0|^2.0",
+                "symfony/finder": "^4.4|^5.0",
+                "symfony/framework-bundle": "^4.4|^5.0",
+                "symfony/templating": "^4.4|^5.0",
+                "symfony/translation": "^4.4|^5.0",
+                "symfony/translation-contracts": "^1.0|^2.0",
+                "symfony/yaml": "^4.4|^5.0",
+                "twig/twig": "^2.4|^3.0"
             },
             "require-dev": {
                 "amazonwebservices/aws-sdk-for-php": "1.5.*",
+                "doctrine/common": "^2.12",
+                "friendsofphp/php-cs-fixer": "^2.16",
                 "knplabs/gaufrette": "^0.9",
                 "oneup/flysystem-bundle": "^1.2|^2.0|^3.0",
-                "phpunit/phpunit": "^7.5",
+                "phpstan/phpstan": "^0.12.10",
+                "phpunit/phpunit": "^8.5",
                 "sensio/framework-extra-bundle": "^5.0",
-                "symfony/browser-kit": "^3.0|^4.0",
-                "symfony/class-loader": "^3.0|^4.0",
+                "symfony/browser-kit": "^4.4|^5.0",
                 "symfony/phpunit-bridge": "^5.0",
-                "symfony/security-bundle": "^3.0|^4.0",
-                "symfony/var-dumper": "^3.0|^4.0",
+                "symfony/security-bundle": "^4.4|^5.0",
+                "symfony/var-dumper": "^4.4|^5.0",
                 "twistor/flysystem-stream-wrapper": "^1.0"
             },
             "suggest": {
@@ -8672,11 +8675,8 @@
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
-                    "Oneup\\UploaderBundle\\": ""
-                },
-                "classmap": [
-                    "Tests/App/AppKernel.php"
-                ]
+                    "Oneup\\UploaderBundle\\": "src"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -8686,18 +8686,18 @@
                 {
                     "name": "Jim Schmid",
                     "email": "js@1up.io",
-                    "homepage": "http://1up.io",
+                    "homepage": "https://1up.io",
                     "role": "Developer"
                 },
                 {
                     "name": "David Greminger",
                     "email": "dg@1up.io",
-                    "homepage": "http://1up.io",
+                    "homepage": "https://1up.io",
                     "role": "Developer"
                 }
             ],
             "description": "Handles multi file uploads in Symfony2. Features included: Chunked upload, Orphans management, Gaufrette support.",
-            "homepage": "http://1up.io",
+            "homepage": "https://1up.io",
             "keywords": [
                 "FancyUpload",
                 "FineUploader",
@@ -8711,7 +8711,7 @@
                 "plupload",
                 "upload"
             ],
-            "time": "2020-02-06T09:12:03+00:00"
+            "time": "2020-03-27T15:56:10+00:00"
         },
         {
             "name": "pagerfanta/pagerfanta",

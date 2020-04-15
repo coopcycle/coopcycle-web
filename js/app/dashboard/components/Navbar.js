@@ -1,47 +1,31 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import ReactDOMServer from 'react-dom/server'
 import moment from 'moment'
 import { ConfigProvider, DatePicker } from 'antd'
 import fr_FR from 'antd/es/locale/fr_FR'
 import en_GB from 'antd/es/locale/en_GB'
-import { toast } from 'react-toastify'
+import _ from 'lodash'
 
-import { openFiltersModal, resetFilters, openSettings } from '../redux/actions'
+import { openFiltersModal, resetFilters, openSettings, openImportModal } from '../redux/actions'
 
 const locale = $('html').attr('lang'),
   antdLocale = locale === 'fr' ? fr_FR : en_GB
 
 class Navbar extends React.Component {
 
-  componentDidMount() {
-    if (this.props.taskImportToken) {
-      toast(this.props.t('ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING'))
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    if (!prevProps.hasUploadErrors && this.props.hasUploadErrors) {
-      const $target = $('#task-upload-form-errors')
-      if (!$target.data('bs.popover')) {
+  componentDidUpdate() {
+    _.map(this.props.imports, (message, token) => {
+      const $target = $(`#task-import-${token}`)
+      if (message && !$target.data('bs.popover')) {
         $target.popover({
           html: true,
           container: 'body',
+          placement: 'bottom',
+          content: message
         })
       }
-    }
-  }
-
-  renderErrors() {
-
-    return (
-      <ul className="list-unstyled nomargin">
-        { this.props.uploadErrors.map((error, key) => (
-          <li key={ key }>{ error.message }</li>
-        )) }
-      </ul>
-    )
+    })
   }
 
   _onFiltersClick(e) {
@@ -57,6 +41,11 @@ class Navbar extends React.Component {
   _onClearClick(e) {
     e.preventDefault()
     this.props.resetFilters()
+  }
+
+  _onImportClick(e) {
+    e.preventDefault()
+    this.props.openImportModal()
   }
 
   renderFilters() {
@@ -91,22 +80,14 @@ class Navbar extends React.Component {
     )
   }
 
-  renderImportButton() {
-
-    if (this.props.taskImportToken && !this.props.hasUploadErrors) {
-      return (
-        <li>
-          <a>
-            <i className="fa fa-spinner fa-spin"></i> { this.props.t('ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING') }
-          </a>
-        </li>
-      )
-    }
+  renderImport(token, message) {
 
     return (
-      <li>
-        <a href="#" data-toggle="modal" data-target="#upload-modal">
-          <i className="fa fa-upload" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_IMPORT') }
+      <li key={ token } className="active">
+        <a href="#" className={ message ? 'text-danger': '' } id={ `task-import-${token}` }>
+          { !message && (<i className="fa fa-spinner fa-spin mr-2"></i>) }
+          { message && (<i className="fa fa-exclamation-circle mr-2"></i>) }
+          <span>{ token }</span>
         </a>
       </li>
     )
@@ -149,17 +130,12 @@ class Navbar extends React.Component {
                   <i className="fa fa-download" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_EXPORT') }
                 </a>
               </li>
-              { this.renderImportButton() }
-
-              { this.props.hasUploadErrors && (
-                <li>
-                  <a id="task-upload-form-errors" href="#"
-                    data-toggle="popover" data-placement="bottom"
-                    data-content={ ReactDOMServer.renderToString(this.renderErrors()) }>
-                    <span className="text-danger"><i className="fa fa-exclamation-circle" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_IMPORT_ERRORS') }</span>
-                  </a>
-                </li>
-              )}
+              <li>
+                <a href="#"  onClick={ this._onImportClick.bind(this) }>
+                  <i className="fa fa-upload" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_IMPORT') }
+                </a>
+              </li>
+              { _.size(this.props.imports) > 0 && _.map(this.props.imports, (message, token) => this.renderImport(token, message))}
               <li>
                 <a href="#" onClick={ this._onFiltersClick.bind(this) }>
                   { this.renderFilters() }
@@ -194,8 +170,7 @@ function mapStateToProps(state) {
       date: moment(state.date).add(1, 'days').format('YYYY-MM-DD'),
       nav: state.nav
     }),
-    hasUploadErrors: state.taskUploadFormErrors.length > 0,
-    uploadErrors: state.taskUploadFormErrors,
+    imports: state.imports,
     nav: state.nav,
     isDefaultFilters: state.isDefaultFilters,
     taskImportToken: state.taskImportToken,
@@ -207,7 +182,8 @@ function mapDispatchToProps(dispatch) {
   return {
     openFiltersModal: () => dispatch(openFiltersModal()),
     resetFilters: () => dispatch(resetFilters()),
-    openSettings: () => dispatch(openSettings())
+    openSettings: () => dispatch(openSettings()),
+    openImportModal: () => dispatch(openImportModal()),
   }
 }
 

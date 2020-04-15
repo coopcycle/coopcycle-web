@@ -627,11 +627,9 @@ services:
 
   AppBundle\EventListener\Upload\UploadListener:
     arguments:
-      - '@doctrine'
-      - '@vich_uploader.property_mapping_factory'
-      - '@vich_uploader.upload_handler'
-      - '@coopcycle.settings_manager'
-      - '@logger'
+      $mappingFactory: '@vich_uploader.property_mapping_factory'
+      $uploadHandler: '@vich_uploader.upload_handler'
+      $secret: '%secret%'
     tags:
       - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
 

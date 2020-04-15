@@ -293,8 +293,6 @@ form.task.comments.placeholder: Especifiqueu tots els detalls útils per realitz
 form.task.status.label: Estat
 form.task_event.notes.placeholder: 'Ex: adreça no trobada, cap problema …'
 form.task_event.notes.help: Podeu editar el comentari
-form.task_upload.file: Arxiu
-form.task_upload.file.help: "Formats de fitxers compatibles: csv, ods, xlsx\n"
 form.task_complete.done.label: Completa
 form.task_complete.fail.label: Informe del problema
 task.type.PICKUP: Recollida

@@ -24,7 +24,7 @@ let preloadedState = {
   tags: window.AppData.Dashboard.tags,
   nav: window.AppData.Dashboard.nav,
   couriersList: window.AppData.Dashboard.couriersList,
-  taskImportToken: window.AppData.Dashboard.taskImportToken,
+  uploaderEndpoint: window.AppData.Dashboard.uploaderEndpoint,
 }
 
 const key = date.format('YYYY-MM-DD')
