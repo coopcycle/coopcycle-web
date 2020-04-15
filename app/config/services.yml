@@ -535,9 +535,9 @@ services:
   AppBundle\Action\Settings:
     public: true
     arguments:
-      - '@coopcycle.settings_manager'
-      - '%country_iso%'
-      - '%kernel.default_locale%'
+      $assetsFilesystem: '@assets_s3_filesystem'
+      $country: '%country_iso%'
+      $locale: '%kernel.default_locale%'
 
   AppBundle\Action\Register:
     public: true
