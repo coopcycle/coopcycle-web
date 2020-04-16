@@ -570,3 +570,95 @@ form.suggest.thank_you_message: Danke das Restaurant vorgeschlagen zu haben!
 form.settings.company_logo.help: Dieses Logo wird für Rechnungen und Zustellnachweise
   benutzt
 localBusiness.form.shippingOptionsDays: Vorbestellung-Zeitraum (in Tagen)
+form.stripe_livemode.enable.label: Verwende Stripe im « live » Modus
+form.stripe_livemode.enable.alert: Im « live » Modus werden die Kreditkarten belastet
+form.stripe_livemode.disable.label: Verwende Striep im « test » Modus
+form.local_business.stripe_account.title: Stripe Konto
+form.local_business.stripe_account.help: Verbinden Sie ein Stripe Konto um Geld zu
+  einem anderen Bankkonto zu überweisen
+form.local_business.stripe_account.connect_button.text: Mit Stripe verbinden
+form.local_business.stripe_account.success: Stripe Konto erfolgreich verbunden
+form.menu_taxon.child_name.placeholder: "Zum Beispiel: Haupgerichte, Desserts, ...\n"
+form.menu_editor.save.label: Änderungen speichern
+form.menu_editor.taxon_modal.title: Ändern Sie einen Abschnitt
+form.product.reusable_packaging.label: Art des wiederverwendbaren Produktes
+form.product_option.strategy.label: Preis-Brechnung
+form.product_option.add_value.label: Wert hinzufügen
+form.product_option.additional.label: Diese Option ist optional
+form.banner.enable.label: Banner aktivieren
+form.banner.disable.label: Banner deaktivieren
+form.banner.disable.alert: Sie aktivieren gerade das Banner
+form.stripe_livemode.disable_and_enable_maintenance.label: In den « test» Modus wechseln
+  und die Wartung aktivieren
+restaurant.contract.variableDeliveryPrice.placeholder: Bitte wählen Sie die Bezahlregeln
+restaurant.contract.variableDeliveryPriceEnabled.label: Aktivieren Sie den von der
+  Plattform abzubuchenden Betrag
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Der Betrag ist dynamisch
+  berechnet
+restaurant.contract.variableCustomerAmount.placeholder: BItte wählen Sie die Preisregeln
+restaurant.list.depositRefund: Pfand-Rückerstattung
+form.product_option.values.title: Werte
+form.delivery.dropoff.address_placeholder: Straßenname und Hausnummer, Postleitzahl,
+  Stadt
+order.adjustment_type.tip: Trinkgeld
+form.settings.currency_code.label: Währung
+restaurant.quotes_disclaimer.authenticated: Dieses Restaurant nimmt mit Bestellungen
+  mit Konstenvoranschlag entgegen. <a href="%contact_us%">Kontaktieren Sie uns</a>
+  für mehr Informationen.
+restaurant.form.deposit_refund_enabled.label: Aktivieren Sie das Pfand-System.
+restaurant.contract.variableDeliveryPrice.help: Der abgebuchte Betrag wird durch die
+  gewählten Preisregeln festgelegt.
+restaurant.form.quotes_allowed.label: 'Dieses Restaurant nimmt Bestellungen mit Kostenvoranschlag
+  entgegen: Zum Beispiel Catering'
+restaurant.contract.variableDeliveryPrice.label: Der von der Plattform abgebuchte
+  Betrag (variabel)
+restaurant.contract.variableCustomerAmount.label: Betrag vom Kunden bezahlt (variabel)
+restaurant.contract.variableCustomerAmount.help: Der Preis wird durch die gewählten
+  Preisregeln festgesetzt
+restaurant.contract.variableCustomerAmountEnabled.label: Aktivieren Sie die variablen
+  Kunden-Liefergebühr
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: Der Betrag wird dynamisch
+  berechnet
+restaurant.contract.calculation_info: Sie können dem Restaurant einen anderen Betrag
+  in Rechnung stellen als der vom Kunden bezahlte Betrag. <br> Zum Beispiel können
+  Sie dem Kunden kostenfreie Lieferungen anbieten, obwohl dem Restaurant ein fester
+  Betrag abgebucht wird.  <br> Sie können auch einen dynamischen Betrag festlegen
+  (e.g.,  auf Distanz basiert).
+form.task.dropoff.doorstep.label: Türschwelle-Zustellung
+form.delivery.pickup.address_placeholder: Straßenname und Hausnummer, Postleitzahl,
+  Stadt
+form.suggest.message: "Ist ihr Lieblingsrestaurant nicht dabei?\n<br>\nTeilen Sie\
+  \ uns den Namen des Restaurants und seine Adresse mit, sodass andere Benutzer*innen\
+  \ es in der Liste der Wünschrestaurants es wählen können. \n<br>\nDas wird uns ermöglichen,\
+  \ die Restaurants mit dem Nachweis einer bereits bestehenden Nachfrage zu kontaktieren.\n"
+mardown_formatting.help: Sie können den Text mit Markdown formatieren
+form.local_business.stripe_account.link_ok: "Dieses Restaurant ist mit einem Stripe-Konto\
+  \ verbunden, und kann Bezahlungen von der Plattform annehmen. <br>\nUm ihren Stripe-Konto\
+  \ und Geldtransfer zu verwalten, bitte benutzen Sie <a href=\"https://dashboard.stripe.com/\"\
+  \ target=\"_blank\">das Stripe-Dashboard</a>.\n"
+form.menu_item_modifier.calculusStrategy.label: Preis-Berechnung
+form.banner.enable.alert: Sie aktivieren gerade das Banner
+form.banner.message.label: Angezeigte Nachricht im Banner
+form.stripe_livemode.disable.alert: Im « test» Modus werden die Kreditkarten nicht
+  belastet.
+form.stripe_livemode.disable_and_enable_maintenance.alert: Sie sind im «live» Modue  .
+  <br>Wenn sie in den «test» Modus wechseln, wird dadurch die Wartung automatisch
+  aktiviert.
+form.registration.username.help: "Ihr Benutzername darf nicht länger als 15 Zeichen\
+  \ lang sein. Ein Benutzername darf nur alphanumerische Zeichen enthalten (Buchstaben\
+  \ A-Z, Zahlen 0-9) mit der Ausnahme des Unterstriches.\n"
+form.local_business.stripe_account.not_configured: Sie können noch kein Konto verbinden
+form.local_business.stripe_account.need_stripe_account: "Sie haben noch kein Stripe-Konto\
+  \ für dieses Restaurant anlegen. Stripe ist eine Bezahl-Plattform, die uns sichere\
+  \ Kartenzahlungen und Bank-Überweisungen ermöglicht. <br>#\nUm ein Stripe-Account\
+  \ anzulegen für dieses Restaurant bitte <a href=\"%stripeAuthorizeURL%\">hier klicken</a>.\n"
+form.menu_editor.help: "Benutzen Sie den Editor um Menü-Elemente zu gestalten\n<br>\n\
+  Ziehen Sie die Produkte per Drag&Drop auf die linke Seite\n<br>\nWenn Sie ein Produkt\
+  \ aus dem Menü entfernen möchten, legen Sie es rechts im Abschnitt «Produkte» ab\n\
+  <br>\nVergessen Sie nicht, unten auf die Schaltfläche «Änderungen speichern» zu\
+  \ klicken\n"
+form.product.reusable_packaging_unit.label: Einheitsnummer
+form.menu_taxon.add_child.label: Fügen Sie einen neuen Abschnitt hinzu
+form.product.reusable_packaging_enabled.label: Aktivieren Sie wiederverwendbare Verpackung
+  für dieses Produkt
+form.product_option.values.help: Sie müssen eine Liste an Werte für diese Option festlegen
