@@ -39,10 +39,18 @@ const ImportModalContent = ({ addImport, closeImportModal, date, t, url }) => {
       // behaving differently on different operatin systems
       clickable: false,
       accept: function(file, done) {
+
+        // @see https://github.com/react-dropzone/react-dropzone/issues/276
+        if (file.type === '' && file.name.endsWith('\.csv')) {
+          done()
+          return
+        }
+
         if (!_.includes(mimeTypes, file.type)) {
           done(t('DROPZONE_INVALID_FILE_TYPE', { type: file.type }))
           return
         }
+
         done()
       },
       init: function() {
