@@ -1,7 +1,7 @@
 {% extends layout %}
 
 {% block subnav %}
-  <nav class="navbar">
+  <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#restaurant-navbar" aria-expanded="false">
@@ -23,44 +23,62 @@
         </span>
       </div>
       <div class="collapse navbar-collapse" id="restaurant-navbar">
+        {% if restaurant.id is not empty %}
         <div class="nav navbar-nav navbar-right">
-          {% if restaurant.id is not empty %}
-            <a href="{{ path(products_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
+          <li>
+            <a href="{{ path(products_route, { id: restaurant.id }) }}">
               <i class="fa fa-database"></i>  {% trans %}restaurant.list.products{% endtrans %}
             </a>
-            <a href="{{ path(product_options_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
+          </li>
+          <li>
+            <a href="{{ path(product_options_route, { id: restaurant.id }) }}">
               <i class="fa fa-sliders"></i>  {% trans %}restaurant.list.product_options{% endtrans %}
             </a>
-
-            {% if restaurant.menuTaxon is not null %}
-            <a href="{{ path(menu_taxon_route, { restaurantId: restaurant.id, menuId: restaurant.menuTaxon.id }) }}"
-              class="btn btn-default navbar-btn">
-              <i class="fa fa-cutlery"></i>  {% trans %}restaurant.list.activeMenu{% endtrans %}
-            </a>
-            {% endif %}
-            <a href="{{ path(menu_taxons_route, { id: restaurant.id }) }}"
-              class="btn btn-default navbar-btn">
-              <i class="fa fa-list"></i>  {% trans %}restaurant.list.menus{% endtrans %}
-            </a>
-
-            <a href="{{ path(dashboard_route, { restaurantId: restaurant.id }) }}" class="btn btn-default navbar-btn">
+          </li>
+          <li>
+            <a href="{{ path(dashboard_route, { restaurantId: restaurant.id }) }}">
               <i class="fa fa-cube"></i>  {% trans %}restaurant.list.orders{% endtrans %}
             </a>
-            <a href="{{ path(planning_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
-              <i class="fa fa-clock-o"></i>  {% trans %}restaurant.list.planning{% endtrans %}
-            </a>
-            <a href="{{ path(stats_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
-              <i class="fa fa-bar-chart"></i>  {% trans %}restaurant.list.stats{% endtrans %}
-            </a>
+          </li>
 
-            {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path(preparation_time_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
-              <i class="fa fa-clock-o"></i>  {% trans %}restaurant.list.preparationTime{% endtrans %}
+          <li>
+            <a href="{{ path(menu_taxons_route, { id: restaurant.id }) }}">
+              <i class="fa fa-list"></i>  {% trans %}restaurant.list.menus{% endtrans %}
             </a>
-            {% endif %}
-
+          </li>
+          {% if restaurant.menuTaxon is not null %}
+          <li>
+            <a href="{{ path(menu_taxon_route, { restaurantId: restaurant.id, menuId: restaurant.menuTaxon.id }) }}">
+              <i class="fa fa-cutlery"></i>  {% trans %}restaurant.list.activeMenu{% endtrans %}
+            </a>
+          </li>
           {% endif %}
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'task.form.modal.moreOptions'|trans }} <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="{{ path(planning_route, { id: restaurant.id }) }}">
+                  <i class="fa fa-clock-o"></i>  {% trans %}restaurant.list.planning{% endtrans %}
+                </a>
+              </li>
+              <li>
+                <a href="{{ path(stats_route, { id: restaurant.id }) }}">
+                  <i class="fa fa-bar-chart"></i>  {% trans %}restaurant.list.stats{% endtrans %}
+                </a>
+              </li>
+              {% if is_granted('ROLE_ADMIN') %}
+              <li>
+                <a href="{{ path(preparation_time_route, { id: restaurant.id }) }}">
+                  <i class="fa fa-clock-o"></i>  {% trans %}restaurant.list.preparationTime{% endtrans %}
+                </a>
+              </li>
+              {% endif %}
+            </ul>
+          </li>
+
         </div>
+        {% endif %}
       </div>
     </div>
   </nav>
