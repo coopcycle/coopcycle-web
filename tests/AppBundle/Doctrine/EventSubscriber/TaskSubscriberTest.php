@@ -3,6 +3,8 @@
 namespace Tests\AppBundle\Doctrine\EventSubscriber;
 
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber;
+use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor;
+use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskCreated;
@@ -66,10 +68,14 @@ class TaskSubscriberTest extends TestCase
 
         $eventStore = new EventStore($tokenStorage->reveal(), $requestStack->reveal());
 
+        $taskListProvider = new TaskListProvider($this->entityManager->reveal());
+        $changeSetProcessor = new EntityChangeSetProcessor($taskListProvider);
+
         $this->subscriber = new TaskSubscriber(
             $this->eventBus->reveal(),
             $eventStore,
             $this->messageBus->reveal(),
+            $changeSetProcessor,
             new NullLogger()
         );
     }
@@ -247,7 +253,7 @@ class TaskSubscriberTest extends TestCase
             ]);
         $unitOfWork
             ->computeChangeSets()
-            ->shouldBeCalledTimes(2);
+            ->shouldBeCalledTimes(1);
 
         $this->entityManager->getUnitOfWork()->willReturn($unitOfWork->reveal());
 

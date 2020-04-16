@@ -3,7 +3,6 @@
 namespace AppBundle\Doctrine\EventSubscriber;
 
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor;
-use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskCreated;
@@ -24,6 +23,7 @@ class TaskSubscriber implements EventSubscriber
     private $eventBus;
     private $eventStore;
     private $messageBus;
+    private $processor;
     private $logger;
     private $createdTasks = [];
     private $postFlushEvents = [];
@@ -33,11 +33,13 @@ class TaskSubscriber implements EventSubscriber
         MessageBus $eventBus,
         EventStore $eventStore,
         MessageBusInterface $messageBus,
+        EntityChangeSetProcessor $processor,
         LoggerInterface $logger)
     {
         $this->eventBus = $eventBus;
         $this->eventStore = $eventStore;
         $this->messageBus = $messageBus;
+        $this->processor = $processor;
         $this->logger = $logger;
         $this->usersToNotify = new \SplObjectStorage();
     }
@@ -57,9 +59,11 @@ class TaskSubscriber implements EventSubscriber
 
     public function onFlush(OnFlushEventArgs $args)
     {
+        // Cleanup
         $this->createdTasks = [];
         $this->postFlushEvents = [];
         $this->usersToNotify = [];
+        $this->processor->eraseMessages();
 
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
@@ -91,36 +95,24 @@ class TaskSubscriber implements EventSubscriber
             return;
         }
 
-        $provider = new TaskListProvider($em);
-
-        $allMessages = [];
-
-        $this->postFlushEvents = [];
-
         foreach ($tasks as $task) {
+            $this->processor->process($task, $uow->getEntityChangeSet($task));
+        }
 
-            $processor = new EntityChangeSetProcessor($provider, $this->logger);
-            $processor->process($task, $uow->getEntityChangeSet($task));
-
-            $messages = $processor->recordedMessages();
-
-            if (count($messages) > 0) {
-                foreach ($messages as $message) {
-                    if (null !== $task->getId()) {
-                        $this->eventBus->handle($message);
-                    } else {
-                        $this->postFlushEvents[] = $message;
-                    }
-                }
-
-                $uow->computeChangeSets();
+        foreach ($this->processor->recordedMessages() as $recordedMessage) {
+            if (null === $recordedMessage->getTask()->getId()) {
+                $this->postFlushEvents[] = $recordedMessage;
+                continue;
             }
+            $this->eventBus->handle($recordedMessage);
+        }
 
-            $allMessages = array_merge($allMessages, $messages);
+        if (count($this->processor->recordedMessages()) > 0) {
+            $uow->computeChangeSets();
         }
 
         $this->usersToNotify = new \SplObjectStorage();
-        foreach ($allMessages as $message) {
+        foreach ($this->processor->recordedMessages() as $message) {
             if ($message instanceof TaskAssigned || $message instanceof TaskUnassigned) {
                 // FIXME
                 // Using $task->getDoneBefore() causes problems with tasks spanning over several days

@@ -10,17 +10,17 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class TaskListProvider
 {
     private $objectManager;
-    private $taskListRepository;
     private $taskListCache = [];
 
     public function __construct(EntityManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
-        $this->taskListRepository = $objectManager->getRepository(TaskList::class);
     }
 
     public function getTaskList(Task $task, UserInterface $courier)
     {
+        $taskListRepository = $this->objectManager->getRepository(TaskList::class);
+
         // FIXME
         // Using $task->getDoneBefore() causes problems with tasks spanning over several days
         // Here it would assign the task to 2 distinct task lists
@@ -31,7 +31,7 @@ class TaskListProvider
 
         if (!isset($this->taskListCache[$taskListCacheKey])) {
 
-            $taskList = $this->taskListRepository->findOneBy([
+            $taskList = $taskListRepository->findOneBy([
                 'date' => $date,
                 'courier' => $courier,
             ]);

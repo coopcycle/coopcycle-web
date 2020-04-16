@@ -54,22 +54,24 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
                 $taskList = $this->taskListProvider->getTaskList($task, $newValue);
 
-                if (!$taskList->containsTask($task)) {
-
-                    $tasksToAdd = [];
-                    if ($task->hasPrevious() || $task->hasNext()) {
-                        if ($task->hasPrevious()) {
-                            $tasksToAdd = [ $task->getPrevious(), $task ];
-                        }
-                        if ($task->hasNext()) {
-                            $tasksToAdd = [ $task, $task->getNext() ];
-                        }
-                    } else {
-                        $tasksToAdd = [ $task ];
+                $tasksToAdd = [];
+                if ($task->hasPrevious() || $task->hasNext()) {
+                    if ($task->hasPrevious()) {
+                        $tasksToAdd = [ $task->getPrevious(), $task ];
                     }
+                    if ($task->hasNext()) {
+                        $tasksToAdd = [ $task, $task->getNext() ];
+                    }
+                } else {
+                    $tasksToAdd = [ $task ];
+                }
 
+                // WARNING
+                // When tasks have been assigned via the web interface
+                // $taskList->containsTask($task) will return true,
+                // Because $taskList->setTasks() has been used
+                if (!$taskList->containsTask($task)) {
                     $this->debug(sprintf('Adding %d tasks to TaskList', count($tasksToAdd)));
-
                     foreach ($tasksToAdd as $taskToAdd) {
                         $taskList->addTask($taskToAdd);
                     }
@@ -92,9 +94,24 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                     }
                 }
 
-                // No need to add an event for linked tasks,
-                // Another event will be trigerred
-                $this->record(new TaskAssigned($task, $newValue));
+                foreach ($tasksToAdd as $taskToAdd) {
+
+                    $event = new TaskAssigned($taskToAdd, $newValue);
+
+                    $exists = false;
+                    foreach ($this->recordedMessages() as $recordedMessage) {
+                        if ($recordedMessage instanceof TaskAssigned) {
+                            if ($recordedMessage->getTask() === $event->getTask() && $recordedMessage->getUser() === $event->getUser()) {
+                                $exists = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!$exists) {
+                        $this->record($event);
+                    }
+                }
             }
 
         } else {
