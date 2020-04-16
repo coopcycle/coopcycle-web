@@ -98,30 +98,35 @@ class OrderTimeHelper
         $ranges = $this->getShippingTimeRanges($cart);
         $range = $this->getShippingTimeRange($cart);
 
-        $lowerDiff =
-            $now->diffInMinutes(Carbon::instance($range->getLower()));
-        $upperDiff =
-            $now->diffInMinutes(Carbon::instance($range->getUpper()));
+        $asap = null;
+        $fast = false;
+        $lowerDiff = $upperDiff = 'N/A';
 
-        $lowerDiff = $this->roundUp($lowerDiff, 5);
-        $upperDiff = $this->roundUp($upperDiff, 5);
+        if ($range) {
+            $lowerDiff = $now->diffInMinutes(Carbon::instance($range->getLower()));
+            $upperDiff = $now->diffInMinutes(Carbon::instance($range->getUpper()));
 
-        // We see it as "fast" if it's less than max. 45 minutes
-        $fast = $upperDiff <= 45;
+            $lowerDiff = $this->roundUp($lowerDiff, 5);
+            $upperDiff = $this->roundUp($upperDiff, 5);
 
-        // Legacy
-        $asap = Carbon::instance($range->getLower())
-            ->average($range->getUpper());
+            // We see it as "fast" if it's less than max. 45 minutes
+            $fast = $upperDiff <= 45;
+
+            // Legacy
+            $asap = Carbon::instance($range->getLower())
+                ->average($range->getUpper())
+                ->format(\DateTime::ATOM);
+        }
 
         return [
             'preparation' => $preparationTime,
             'shipping' => $shippingTime,
-            'asap' => $asap->format(\DateTime::ATOM),
-            'range' => [
+            'asap' => $asap,
+            'range' => $range ? [
                 $range->getLower()->format(\DateTime::ATOM),
                 $range->getUpper()->format(\DateTime::ATOM),
-            ],
-            'today' => DateUtils::isToday($range),
+            ] : null,
+            'today' => $range ? DateUtils::isToday($range) : false,
             'fast' => $fast,
             'diff' => sprintf('%d - %d', $lowerDiff, $upperDiff),
             'ranges' => array_map(function (TsRange $range) {
@@ -134,13 +139,16 @@ class OrderTimeHelper
     }
 
     /**
-     * @return TsRange
+     * @return TsRange|null
      */
-    public function getShippingTimeRange(OrderInterface $cart): TsRange
+    public function getShippingTimeRange(OrderInterface $cart): ?TsRange
     {
         $ranges = $this->getShippingTimeRanges($cart);
 
-        // FIXME Throw Exception when there are no choices (empty array)
+        if (count($ranges) === 0) {
+
+            return null;
+        }
 
         return current($ranges);
     }
