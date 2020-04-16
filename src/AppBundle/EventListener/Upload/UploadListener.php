@@ -4,10 +4,17 @@ namespace AppBundle\EventListener\Upload;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Task\Group as TaskGroup;
+use AppBundle\Message\ImportTasks;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Utils\TaskSpreadsheetParser;
 use Doctrine\Persistence\ManagerRegistry;
+use Hashids\Hashids;
 use Oneup\UploaderBundle\Event\PostPersistEvent;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\UploadException;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Vich\UploaderBundle\Handler\UploadHandler;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
@@ -16,6 +23,9 @@ final class UploadListener
     private $doctrine;
     private $mappingFactory;
     private $uploadHandler;
+    private $settingsManager;
+    private $messageBus;
+    private $secret;
     private $logger;
 
     public function __construct(
@@ -23,12 +33,16 @@ final class UploadListener
         PropertyMappingFactory $mappingFactory,
         UploadHandler $uploadHandler,
         SettingsManager $settingsManager,
+        MessageBusInterface $messageBus,
+        string $secret,
         LoggerInterface $logger)
     {
         $this->doctrine = $doctrine;
         $this->mappingFactory = $mappingFactory;
         $this->uploadHandler = $uploadHandler;
         $this->settingsManager = $settingsManager;
+        $this->messageBus = $messageBus;
+        $this->secret = $secret;
         $this->logger = $logger;
     }
 
@@ -42,6 +56,10 @@ final class UploadListener
 
         if ($type === 'logo') {
             return $this->onLogoUpload($event);
+        }
+
+        if ($type === 'tasks') {
+            return $this->onTasksUpload($event);
         }
 
         $objectClass = null;
@@ -81,5 +99,67 @@ final class UploadListener
 
         $this->settingsManager->set('company_logo', $file->getBasename());
         $this->settingsManager->flush();
+    }
+
+    private function onTasksUpload(PostPersistEvent $event)
+    {
+        $file = $event->getFile();
+        $fileSystem = $file->getFilesystem();
+
+        $request = $event->getRequest();
+        $response = $event->getResponse();
+
+        $mimeType = $file->getMimeType();
+
+        $this->logger->debug(sprintf('UploadListener | file = %s', $file->getPathname()));
+        $this->logger->debug(sprintf('UploadListener | mime = %s', $mimeType));
+
+        // For CSV files, we need to make sure they are in UTF-8
+        if (in_array($mimeType, ['text/csv', 'text/plain'])) {
+
+            // Make sure the file is in UTF-8
+            $encoding = mb_detect_encoding($fileSystem->read($file->getPathname()), 'UTF-8', true);
+
+            $this->logger->debug(sprintf('UploadListener | encoding = %s', var_export($encoding, true)));
+
+            if ($encoding !== 'UTF-8') {
+                $fileSystem->delete($file->getPathname());
+
+                throw new UploadException('CSV files must be encoded in UTF-8');
+            }
+        }
+
+        $date = $request->get('date');
+        $hashids = new Hashids($this->secret, 8);
+
+        $taskGroup = new TaskGroup();
+        $taskGroup->setName(sprintf('Import %s', date('d/m H:i')));
+
+        // The TaskGroup will serve as a unique identifier
+        $this->doctrine
+            ->getManagerForClass(TaskGroup::class)
+            ->persist($taskGroup);
+        $this->doctrine
+            ->getManagerForClass(TaskGroup::class)
+            ->flush();
+
+        $encoded = $hashids->encode($taskGroup->getId());
+        $this->logger->debug(sprintf('UploadListener | hashid = %s', $encoded));
+
+        $filename = sprintf('%s.%s', $encoded, TaskSpreadsheetParser::getFileExtension($mimeType));
+        $this->logger->debug(sprintf('UploadListener | filename = %s', $filename));
+
+        $fileSystem->rename($file->getPathname(), $filename);
+
+        $this->messageBus->dispatch(
+            new ImportTasks($encoded, $filename, new \DateTime($date)),
+            [ new DelayStamp(15000) ]
+        );
+
+        $response['token'] = $encoded;
+        $response['success'] = true;
+        // $response['error'] = 'Bad encoding';
+
+        return $response;
     }
 }

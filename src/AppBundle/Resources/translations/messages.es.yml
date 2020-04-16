@@ -264,8 +264,6 @@ form.task.comments.placeholder: Especifique cualquier detalle útil para complet
 form.task.status.label: Estado
 form.task_event.notes.placeholder: 'Ejemplo : dirección no encontrada, no hay problema…'
 form.task_event.notes.help: Puedes editar el comentario
-form.task_upload.file: Archivo
-form.task_upload.file.help: "Formatos de archivo admitidos: csv, ods, xlsx\n"
 form.task_complete.done.label: Completada
 form.task_complete.fail.label: Informar del problema
 task.type.PICKUP: Recogida

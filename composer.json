@@ -86,7 +86,7 @@
         "symfony/webpack-encore-bundle": "^1.6",
         "sylius/channel-bundle": "^1.6.5",
         "liip/imagine-bundle": "^2.2",
-        "oneup/uploader-bundle": "^2.1",
+        "oneup/uploader-bundle": "^3.0",
         "trikoder/oauth2-bundle": "^2.1",
         "sylius/promotion-bundle": "^1.6.5",
         "notfloran/mjml-bundle": "^3.0",

@@ -79,6 +79,7 @@
         "ADMIN_DASHBOARD_SEARCH": "Buscar",
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Visualización de rutas",
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES": "A vuelo de pájaro",
+        "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Formatos de archivo admitidos: csv, ods, xlsx",
         "USER_EDIT_ENABLED_LABEL": "Activado",
         "USER_EDIT_DISABLED_LABEL": "Desactivado",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Pedido creado",

@@ -118,8 +118,11 @@ export const LOAD_TASK_EVENTS_FAILURE = 'LOAD_TASK_EVENTS_FAILURE'
 
 export const SET_TASK_LISTS_LOADING = 'SET_TASK_LISTS_LOADING'
 
-export const SET_TASK_UPLOAD_FORM_ERRORS = 'SET_TASK_UPLOAD_FORM_ERRORS'
-export const CLEAR_TASK_IMPORT_TOKEN = 'CLEAR_TASK_IMPORT_TOKEN'
+export const ADD_IMPORT = 'ADD_IMPORT'
+export const IMPORT_SUCCESS = 'IMPORT_SUCCESS'
+export const IMPORT_ERROR = 'IMPORT_ERROR'
+export const OPEN_IMPORT_MODAL = 'OPEN_IMPORT_MODAL'
+export const CLOSE_IMPORT_MODAL = 'CLOSE_IMPORT_MODAL'
 
 function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
@@ -194,8 +197,16 @@ function resetFilters() {
   return { type: RESET_FILTERS }
 }
 
-function setTaskUploadFormErrors(errors) {
-  return { type: SET_TASK_UPLOAD_FORM_ERRORS, errors }
+function addImport(token) {
+  return { type: ADD_IMPORT, token }
+}
+
+function importSuccess(token) {
+  return { type: IMPORT_SUCCESS, token }
+}
+
+function importError(token, message) {
+  return { type: IMPORT_ERROR, token, message }
 }
 
 function modifyTaskList(username, tasks) {
@@ -407,8 +418,12 @@ function loadTaskEventsFailure(error) {
   return { type: LOAD_TASK_EVENTS_FAILURE, error }
 }
 
-function clearTaskImportToken() {
-  return { type: CLEAR_TASK_IMPORT_TOKEN }
+function openImportModal() {
+  return { type: OPEN_IMPORT_MODAL }
+}
+
+function closeImportModal() {
+  return { type: CLOSE_IMPORT_MODAL }
 }
 
 function createTask(task) {
@@ -642,6 +657,9 @@ export {
   setTaskListsLoading,
   moveToTop,
   moveToBottom,
-  setTaskUploadFormErrors,
-  clearTaskImportToken,
+  openImportModal,
+  closeImportModal,
+  addImport,
+  importSuccess,
+  importError,
 }

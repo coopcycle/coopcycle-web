@@ -28,6 +28,7 @@ class TaskSpreadsheetParser
         'application/vnd.oasis.opendocument.spreadsheet'
     ];
     const MIME_TYPE_CSV = [
+        'text/csv',
         'text/plain'
     ];
     const MIME_TYPE_XLSX = [

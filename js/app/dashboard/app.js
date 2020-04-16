@@ -12,13 +12,15 @@ import {
   toggleSearch,
   closeSearch,
   openSettings,
-  closeSettings } from './redux/actions'
+  closeSettings,
+  closeImportModal } from './redux/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
 import ContextMenu from './components/ContextMenu'
 import TaskModalContent from './components/TaskModalContent'
 import FiltersModalContent from './components/FiltersModalContent'
 import SettingsModalContent from './components/SettingsModalContent'
+import ImportModalContent from './components/ImportModalContent'
 import SearchPanel from './components/SearchPanel'
 
 class DashboardApp extends React.Component {
@@ -71,6 +73,14 @@ class DashboardApp extends React.Component {
           shouldCloseOnOverlayClick={ true }>
           <SettingsModalContent />
         </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.importModalIsOpen }
+          onRequestClose={ () => this.props.closeImportModal() }
+          className="ReactModal__Content--import"
+          shouldCloseOnOverlayClick={ true }>
+          <ImportModalContent />
+        </Modal>
         <ToastContainer />
       </div>
     )
@@ -84,7 +94,8 @@ function mapStateToProps(state) {
     couriersList: state.couriersList,
     filtersModalIsOpen: state.filtersModalIsOpen,
     settingsModalIsOpen: state.settingsModalIsOpen,
-    searchIsOn: state.searchIsOn
+    searchIsOn: state.searchIsOn,
+    importModalIsOpen: state.importModalIsOpen,
   }
 }
 
@@ -98,6 +109,7 @@ function mapDispatchToProps (dispatch) {
     closeSearch: () => dispatch(closeSearch()),
     openSettings: () => dispatch(openSettings()),
     closeSettings: () => dispatch(closeSettings()),
+    closeImportModal: () => dispatch(closeImportModal()),
   }
 }
 
