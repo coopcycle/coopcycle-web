@@ -41,7 +41,7 @@ const ImportModalContent = ({ addImport, closeImportModal, date, t, url }) => {
       accept: function(file, done) {
 
         // @see https://github.com/react-dropzone/react-dropzone/issues/276
-        if (file.type === '' && file.name.endsWith('\.csv')) {
+        if (file.type === '' && file.name.endsWith('.csv')) {
           done()
           return
         }
