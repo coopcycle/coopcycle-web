@@ -536,6 +536,7 @@ services:
     public: true
     arguments:
       $assetsFilesystem: '@assets_s3_filesystem'
+      $phoneNumberNormalizer: '@misd_phone_number.serializer.normalizer'
       $country: '%country_iso%'
       $locale: '%kernel.default_locale%'
 

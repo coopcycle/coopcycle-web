@@ -6,6 +6,8 @@ Feature: Settings
     And the setting "stripe_test_publishable_key" has value "pk_1234567890"
     And the setting "google_api_key" has value "abc123456"
     And the setting "currency_code" has value "eur"
+    And the setting "phone_number" has value "+33612345678"
+    And the setting "administrator_email" has value "dev@coopcycle.org"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/settings"
@@ -20,6 +22,8 @@ Feature: Settings
         "stripe_publishable_key":"pk_1234567890",
         "google_api_key":"abc123456",
         "latlng":"48.856613,2.352222",
-        "currency_code":"eur"
+        "currency_code":"eur",
+        "phone_number":"+33612345678",
+        "administrator_email":"dev@coopcycle.org"
       }
       """
