@@ -3,6 +3,7 @@ import { withTranslation } from 'react-i18next'
 import { connect } from 'react-redux'
 import Dropzone from 'dropzone'
 import { toast } from 'react-toastify'
+import _ from 'lodash'
 
 Dropzone.autoDiscover = false
 
@@ -30,10 +31,19 @@ const ImportModalContent = ({ addImport, closeImportModal, date, t, url }) => {
       url,
       dictDefaultMessage: t('DROPZONE_DEFAULT_MESSAGE'),
       maxFiles: 1,
-      acceptedFiles: mimeTypes.join(','),
       params: {
         type: 'tasks',
         date: date.format('YYYY-MM-DD'),
+      },
+      // Set clickable = false, to avoid limiting file explorers
+      // behaving differently on different operatin systems
+      clickable: false,
+      accept: function(file, done) {
+        if (!_.includes(mimeTypes, file.type)) {
+          done(t('DROPZONE_INVALID_FILE_TYPE', { type: file.type }))
+          return
+        }
+        done()
       },
       init: function() {
 
