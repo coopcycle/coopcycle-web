@@ -41,6 +41,9 @@ class UnitOfWork
 
     public function computeChangeSets()
     {}
+
+    public function isScheduledForInsert($entity)
+    {}
 }
 
 class TaskSubscriberTest extends TestCase
@@ -103,6 +106,9 @@ class TaskSubscriberTest extends TestCase
                 $task
             ]);
         $unitOfWork
+            ->isScheduledForInsert($task)
+            ->willReturn(true);
+        $unitOfWork
             ->getScheduledEntityUpdates()
             ->willReturn([]);
         $unitOfWork
@@ -164,6 +170,9 @@ class TaskSubscriberTest extends TestCase
             ->willReturn([
                 $task
             ]);
+        $unitOfWork
+            ->isScheduledForInsert($task)
+            ->willReturn(true);
         $unitOfWork
             ->getScheduledEntityUpdates()
             ->willReturn([]);
@@ -238,6 +247,9 @@ class TaskSubscriberTest extends TestCase
             ->willReturn([
                 $task
             ]);
+        $unitOfWork
+            ->isScheduledForInsert($task)
+            ->willReturn(true);
         $unitOfWork
             ->getScheduledEntityUpdates()
             ->willReturn([]);
@@ -317,6 +329,9 @@ class TaskSubscriberTest extends TestCase
         $unitOfWork
             ->getScheduledEntityInsertions()
             ->willReturn([]);
+        $unitOfWork
+            ->isScheduledForInsert($task)
+            ->willReturn(false);
         $unitOfWork
             ->getScheduledEntityUpdates()
             ->willReturn([
@@ -404,6 +419,12 @@ class TaskSubscriberTest extends TestCase
             ->getScheduledEntityInsertions()
             ->willReturn([]);
         $unitOfWork
+            ->isScheduledForInsert($task1)
+            ->willReturn(false);
+        $unitOfWork
+            ->isScheduledForInsert($task2)
+            ->willReturn(false);
+        $unitOfWork
             ->getScheduledEntityUpdates()
             ->willReturn([
                 $task1,
@@ -477,6 +498,9 @@ class TaskSubscriberTest extends TestCase
             ->getScheduledEntityInsertions()
             ->willReturn([]);
         $unitOfWork
+            ->isScheduledForInsert($task)
+            ->willReturn(false);
+        $unitOfWork
             ->getScheduledEntityUpdates()
             ->willReturn([
                 $task
@@ -533,6 +557,9 @@ class TaskSubscriberTest extends TestCase
         $unitOfWork
             ->getScheduledEntityInsertions()
             ->willReturn([]);
+        $unitOfWork
+            ->isScheduledForInsert($task)
+            ->willReturn(false);
         $unitOfWork
             ->getScheduledEntityUpdates()
             ->willReturn([
@@ -636,6 +663,12 @@ class TaskSubscriberTest extends TestCase
         $unitOfWork
             ->getScheduledEntityInsertions()
             ->willReturn([]);
+        $unitOfWork
+            ->isScheduledForInsert($pickup)
+            ->willReturn(false);
+        $unitOfWork
+            ->isScheduledForInsert($dropoff)
+            ->willReturn(false);
         $unitOfWork
             ->getScheduledEntityUpdates()
             ->willReturn([ $pickup ]);
@@ -744,6 +777,12 @@ class TaskSubscriberTest extends TestCase
         $unitOfWork
             ->getScheduledEntityInsertions()
             ->willReturn([]);
+        $unitOfWork
+            ->isScheduledForInsert($pickup)
+            ->willReturn(false);
+        $unitOfWork
+            ->isScheduledForInsert($dropoff)
+            ->willReturn(false);
         $unitOfWork
             ->getScheduledEntityUpdates()
             ->willReturn([ $pickup ]);

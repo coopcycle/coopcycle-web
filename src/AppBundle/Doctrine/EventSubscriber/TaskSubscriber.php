@@ -108,8 +108,7 @@ class TaskSubscriber implements EventSubscriber
         foreach ($this->processor->recordedMessages() as $recordedMessage) {
             // If the task is not persisted yet (i.e entity insertions),
             // we handle the event in postFlush
-            // TODO Check if present in $tasksToInsert
-            if (null === $recordedMessage->getTask()->getId()) {
+            if ($uow->isScheduledForInsert($recordedMessage->getTask())) {
                 $this->postFlushEvents[] = $recordedMessage;
                 continue;
             }
