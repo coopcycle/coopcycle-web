@@ -53,7 +53,7 @@ adminDashboard.pricing.noPricings: Brak wycen
 adminDashboard.pricing.noRuleFound: Brak zasad wyceny. Zasady wyceny pozwalają wyliczyć
   koszt dostawy.
 adminDashboard.pricing.addRule: Dodaj zasadę
-adminDashboard.pricing.title: Wycena
+adminDashboard.pricing.title: Cennik
 adminDashboard.pricing.settings: Ustawienia
 adminDashboard.settings.title: Ustawienia
 adminDashboard.users.invite: Zaproś użytkownika
@@ -697,7 +697,7 @@ order.public_link: Link do udostępniania
 restaurant.form.accessPlanning: Dostęp do planowania
 form.checkout_address.reusable_packaging_enabled.label: Chcę opakowanie wielokrotnego
   użytku (%price%)
-form.local_business_type.help: Typy używają słownictwa <a href="https://schema.org/">schema.org</a>
+form.local_business_type.help: Typy bazują na słownictwie <a href="https://schema.org/">schema.org</a>
   dla <a href="https://schema.org/FoodEstablishment">zakładów spożywczych</a> i <a
   href="https://schema.org/Store">sklepów</a>
 form.local_business_type.label: Typ biznesu
