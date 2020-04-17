@@ -39,6 +39,13 @@ class Task extends React.Component {
           ><i className="fa fa-times"></i></a>
         )
       }
+      if (task.status === 'DOING') {
+        return (
+          <span className="task__icon task__icon--right">
+            <i className="fa fa-play"></i>
+          </span>
+        )
+      }
       if (task.status === 'DONE') {
         return (
           <span className="task__icon task__icon--right">
