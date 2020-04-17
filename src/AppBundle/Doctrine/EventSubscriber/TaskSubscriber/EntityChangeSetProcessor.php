@@ -122,22 +122,37 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
                 $taskList = $this->taskListProvider->getTaskList($task, $oldValue);
 
-                $taskList->removeTask($task);
+                $tasksToRemove = [ $task ];
 
                 if ($task->hasPrevious() || $task->hasNext()) {
                     if ($task->hasPrevious()) {
-                        $task->getPrevious()->unassign();
-                        $taskList->removeTask($task->getPrevious());
+                        $tasksToRemove[] = $task->getPrevious();
                     }
                     if ($task->hasNext()) {
-                        $task->getNext()->unassign();
-                        $taskList->removeTask($task->getNext());
+                        $tasksToRemove[] = $task->getNext();
                     }
                 }
 
-                // No need to add an event for linked tasks,
-                // Another event will be trigerred
-                $this->record(new TaskUnassigned($task, $oldValue));
+                foreach ($tasksToRemove as $taskToRemove) {
+
+                    $event = new TaskUnassigned($taskToRemove, $oldValue);
+
+                    $exists = false;
+                    foreach ($this->recordedMessages() as $recordedMessage) {
+                        if ($recordedMessage instanceof TaskUnassigned) {
+                            if ($recordedMessage->getTask() === $event->getTask() && $recordedMessage->getUser() === $event->getUser()) {
+                                $exists = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!$exists) {
+                        $taskToRemove->unassign();
+                        $taskList->removeTask($taskToRemove);
+                        $this->record($event);
+                    }
+                }
             }
         }
     }
