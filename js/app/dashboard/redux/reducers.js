@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
 
-import { createTaskList, removedTasks, taskComparator, withoutTasks } from './utils'
+import { createTaskList, removedTasks, withoutTasks } from './utils'
 import {
   UPDATE_TASK,
   OPEN_ADD_USER,
@@ -232,7 +232,7 @@ const rootReducer = (state = initialState, action) => {
       ...state,
       unassignedTasks: newUnassignedTasks,
       taskLists: newTaskLists,
-      allTasks: _.uniqBy(Array.prototype.concat(state.allTasks, [ action.task ]), '@id'),
+      allTasks: _.uniqBy(Array.prototype.concat(state.allTasks, [ action.task ]), '@id'),
     }
   }
 
