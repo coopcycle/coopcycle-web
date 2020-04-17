@@ -4,7 +4,6 @@ import { extendMoment } from 'moment-range'
 
 import { createTaskList, removedTasks, taskComparator, withoutTasks } from './utils'
 import {
-  ADD_CREATED_TASK,
   UPDATE_TASK,
   OPEN_ADD_USER,
   CLOSE_ADD_USER,
@@ -172,38 +171,6 @@ const rootReducer = (state = initialState, action) => {
       taskLists: Array.prototype.concat(state.taskLists, action.taskList),
     }
 
-  case ADD_CREATED_TASK:
-
-    if (!acceptTask(action.task, state.date)) {
-      return state
-    }
-
-    const pushToUnassignedTasks =
-      !action.task.isAssigned && !_.find(state.unassignedTasks, t => taskComparator(t, action.task))
-
-    if (action.task.isAssigned) {
-      taskListIndex = _.findIndex(state.taskLists, taskList => taskList.username === action.task.assignedTo)
-      if (-1 !== taskListIndex) {
-        if (!_.find(state.taskLists[taskListIndex].items, t => taskComparator(t, action.task))) {
-          newTaskLists.splice(taskListIndex, 1, {
-            ...state.taskLists[taskListIndex],
-            items: Array.prototype.concat(state.taskLists[taskListIndex].items, action.task)
-          })
-        }
-      } else {
-        newTaskLists.push(
-          createTaskList(action.task.assignedTo, [ action.task ])
-        )
-      }
-    }
-
-    return {
-      ...state,
-      unassignedTasks: pushToUnassignedTasks ? Array.prototype.concat(state.unassignedTasks, action.task) : state.unassignedTasks,
-      taskLists: action.task.isAssigned ? newTaskLists : state.taskLists,
-      allTasks: Array.prototype.concat(state.allTasks, action.task),
-    }
-
   case UPDATE_TASK:
 
     if (!acceptTask(action.task, state.date)) {
@@ -265,6 +232,7 @@ const rootReducer = (state = initialState, action) => {
       ...state,
       unassignedTasks: newUnassignedTasks,
       taskLists: newTaskLists,
+      allTasks: _.uniqBy(Array.prototype.concat(state.allTasks, [ action.task ]), '@id'),
     }
   }
 

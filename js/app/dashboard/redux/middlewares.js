@@ -1,5 +1,4 @@
 import {
-  addCreatedTask,
   setGeolocation,
   updateTask,
   setOffline,
@@ -57,7 +56,7 @@ export const socketIO = ({ dispatch, getState }) => {
     socket.on('task:done', data => dispatch(updateTask(data.task)))
     socket.on('task:failed', data => dispatch(updateTask(data.task)))
     socket.on('task:cancelled', data => dispatch(updateTask(data.task)))
-    socket.on('task:created', data => dispatch(addCreatedTask(data.task)))
+    socket.on('task:created', data => dispatch(updateTask(data.task)))
 
     socket.on('task:assigned', data => dispatch(updateTask(data.task)))
     socket.on('task:unassigned', data => dispatch(updateTask(data.task)))

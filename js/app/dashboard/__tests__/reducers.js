@@ -259,7 +259,7 @@ describe('combinedTasks reducer', () => {
         unassignedTasks: [],
         taskLists: []
       }, {
-        type: 'ADD_CREATED_TASK',
+        type: 'UPDATE_TASK',
         task: {
           '@id': 1,
           status: 'TODO',
@@ -295,7 +295,7 @@ describe('combinedTasks reducer', () => {
         unassignedTasks: [],
         taskLists: []
       }, {
-        type: 'ADD_CREATED_TASK',
+        type: 'UPDATE_TASK',
         task
       })
     ).toMatchObject({
@@ -326,7 +326,7 @@ describe('combinedTasks reducer', () => {
         unassignedTasks: [],
         taskLists: []
       }, {
-        type: 'ADD_CREATED_TASK',
+        type: 'UPDATE_TASK',
         task
       })
     ).toMatchObject({

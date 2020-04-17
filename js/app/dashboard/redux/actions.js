@@ -146,10 +146,6 @@ export function assignAfter(username, task, after) {
   }
 }
 
-function addCreatedTask(task) {
-  return {type: ADD_CREATED_TASK, task}
-}
-
 function removeTasks(username, tasks) {
 
   if (!Array.isArray(tasks)) {
@@ -630,7 +626,6 @@ export {
   closeAddUserModal,
   togglePolyline,
   setTaskListGroupMode,
-  addCreatedTask,
   toggleTask,
   selectTask,
   setGeolocation,
