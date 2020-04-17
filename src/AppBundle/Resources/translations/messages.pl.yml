@@ -695,3 +695,5 @@ order.list.summary.restaurant.text: Dostawa w restauracji <a href="%restaurant_u
 order.list.type: Typ
 order.public_link: Link do udostępniania
 restaurant.form.accessPlanning: Dostęp do planowania
+form.checkout_address.reusable_packaging_enabled.label: Chcę opakowanie wielokrotnego
+  użytku (%price%)
