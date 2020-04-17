@@ -132,7 +132,9 @@ basics.send_invitation.confirm: Twoje zaproszenie zostało wysłane! Możesz ter
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Witamy w wersji demo platformy <a
   target="_blank" href="https://coopcycle.org">CoopCycle</a>
 delivery.table.heading.summary: Podsumowanie
-order.payment.card_number.help: ''
+order.payment.card_number.help: Stripe <a href="https://stripe.com/docs/testing#cards"
+  target="_blank" tabindex="-1">numer karty testowej</a> jest wstępnie wypełniony.
+  Żadne konto nie zostanie obciążone.
 search.users: Wyszukaj użytkownika…
 form.store_type.defaultAddress.label: Domyślny adres
 allergens.SULPHUR_DIOXIDE_SULPHITES: Dwutlenek siarki i siarczyny
@@ -399,7 +401,7 @@ form.delivery.vehicle.VEHICLE_CARGO_BIKE: Rower cargo
 form.store_type.setAsDefault.label: Ustaw jako domyślny adres
 form.store_type.time_slot.label: Przedział czasu
 form.delivery.vehicle.placeholder: Wybierz rodzaj pojazdu
-task.type.PICKUP: ''
+task.type.PICKUP: Odbiór
 form.store_type.pricing_rule_set.placeholder: Wybierz cennik
 form.delivery.pickup.label: Adres odbioru
 form.delivery.pickup.address_placeholder: Nazwa ulicy i numer domu, dzielnica, kod
@@ -618,3 +620,78 @@ restricted_diets.KOSHER_DIET: Koszerny
 restricted_diets.LOW_CALORIE_DIET: Niskokaloryczny
 restricted_diets.LOW_FAT_DIET: Niskotłuszczowy
 form.order_export.date.label: Data
+form.checkout_address.telephone.label: Numer telefonu
+form.product_option.add_value.label: Dodaj wartość
+form.product_option.price.label: Cena
+form.product_option.strategy.label: Kalkulacja ceny
+form.product_option.name.label: Nazwa
+form.product.reusable_packaging_unit.label: Liczba jednostek
+form.product.reusable_packaging.label: Typ opakowania wielokrotnego użytku
+form.product.reusable_packaging_enabled.label: Aktywuj opakowania wielokrotnego użytku
+  dla tego produktu
+form.product.confirm.help: "Zmieniłeś/aś nazwę produktu. Jeśli jest to <stron>niewielka\
+  \ modyfikacja</strong> (błędnie napisana, wielkie litery…), kliknij « Potwierdź\
+  \ zmiany ».\n<br>\nJeśli nie, musisz <a href=\"%link%\">stworzyć nowy produkt</a>,\
+  \ co pozwoli ci rozróżnić sprzedawane produkty i zachować historię. "
+form.product.confirm.label: Potwierdź zmiany
+form.product.restricted_diets.help: Czy ten produkt pasuje do następujących diet?
+form.product.restricted_diets.label: Diety ograniczone
+form.product.allergens.help: Czy ten produkt zawiera następujące alergeny?
+form.product.allergens.label: Alergeny
+form.product.enabled.label: Aktywny
+form.product.taxCategory.label: Podatki
+form.product.price.label: Cena
+form.product.description.label: Opis
+form.product.name.label: Nazwa
+form.menu_editor.taxon_modal.title: Modyfikuj sekcję
+form.menu_editor.products.help: Aby dodać produkty do listy po prawej, dodaj je najpierw
+  do <a href="%products_url%">katalogu</a>
+form.menu_editor.help: "Użyj poniższego edytora, aby skomponować pozycje menu\n<br>\n\
+  Przeciągnij i upuść produkty do sekcji po lewej stronie\n<br>\nJeśli chcesz usunąć\
+  \ produkt z menu, upuść go w sekcji « Produkty » po prawej stronie\n<br>\nNie zapomnij\
+  \ kliknąć poniższego przycisku « Zapisz zmiany»\n"
+form.menu_editor.save.label: Zapisz zmiany
+form.menu_editor.products_panel.title: Produkty
+form.menu_taxon.child_name.placeholder: "Przykład: dania główne, deser…\n"
+form.menu_taxon.add_child.label: Dodaj sekcję
+form.menu_taxon.name.label: Nazwa
+form.menu_item_modifier.calculusStrategy.label: Kalkulacja ceny
+form.menu_item_modifier.price.label: Cena
+form.menu_item_modifier.name.label: Nazwa
+form.menu_item.price.label: Cena
+form.menu_item.name.label: Nazwa
+form.settings.google_api_key.help: "Stwórz konto Google, aby uzyskać swój <a href=\"\
+  https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
+  >klucz API</a>\n"
+form.settings.google_api_key.label: Klucz API Google
+form.settings.stripe_connect_client_id.help: "Uzyskaj identyfikator na <a href=\"\
+  https://dashboard.stripe.com/account/applications/settings\">stronie parametrów</a>\n"
+form.settings.stripe_connect_client_id.label: Identyfikator Połączenia Stripe
+form.settings.stripe_secret_key.help: "Stwórz konto Stripe, aby uzyskać swój <a href=\"\
+  https://stripe.com/docs/dashboard#api-keys\">klucz do upubliczniania / publishable\
+  \ key</a>\n"
+form.settings.stripe_secret_key.label: Tajny klucz Stripe / Stripe secret key
+form.settings.stripe_publishable_key.help: "Stwórz konto Stripe, aby uzyskać swój\
+  \ <a href=\"https://stripe.com/docs/dashboard#api-keys\">klucz do upubliczniania\
+  \ / publishable key</a>\n"
+form.settings.stripe_publishable_key.label: Klucze do udostępniania Stripe / Stripe
+  publishable key
+form.settings.stripe_enable_livemode.help: Aby włączyć tryb « live », musisz najpierw
+  skonfigurować klucze dostępu « live ».
+form.settings.stripe_testmode.help: 'W trybie « test », będziesz musiał użyć <a href="https://stripe.com/docs/testing">testowych
+  numerów kart kredytowych</a>, żeby zapłacić na platformie. <strong>Żadne pieniądze
+  nie zostaną wymienione.</strong> '
+form.preparation_time_rule.expression.label: Ekspresja
+form.store_type.package_set.label: Zestaw paczek
+form.store_type.prefill_pickup_address.label: Wypełnij automatycznie adres odbioru
+task.type.DROPOFF: Doręczenie
+form.task.dropoff.doorstep.label: Dostawa pod próg drzwi
+task.status.todo: Do zrobienia
+task.status.failed: Niepowodzenie
+task.status.done: Powodzenie
+task.form.dateRange: Zakres dat
+order.list.summary.deleted_restaurant.text: Dostawa w restauracji %restaurant_name%
+order.list.summary.restaurant.text: Dostawa w restauracji <a href="%restaurant_url%">%restaurant_name%</a>
+order.list.type: Typ
+order.public_link: Link do udostępniania
+restaurant.form.accessPlanning: Dostęp do planowania
