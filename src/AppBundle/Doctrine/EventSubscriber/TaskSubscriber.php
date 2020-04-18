@@ -14,9 +14,11 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
+use FOS\UserBundle\Model\UserInterface;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaskSubscriber implements EventSubscriber
 {
@@ -24,7 +26,9 @@ class TaskSubscriber implements EventSubscriber
     private $eventStore;
     private $messageBus;
     private $processor;
+    private $translator;
     private $logger;
+
     private $createdTasks = [];
     private $postFlushEvents = [];
     private $usersToNotify;
@@ -34,12 +38,14 @@ class TaskSubscriber implements EventSubscriber
         EventStore $eventStore,
         MessageBusInterface $messageBus,
         EntityChangeSetProcessor $processor,
+        TranslatorInterface $translator,
         LoggerInterface $logger)
     {
         $this->eventBus = $eventBus;
         $this->eventStore = $eventStore;
         $this->messageBus = $messageBus;
         $this->processor = $processor;
+        $this->translator = $translator;
         $this->logger = $logger;
         $this->usersToNotify = new \SplObjectStorage();
     }
@@ -100,7 +106,9 @@ class TaskSubscriber implements EventSubscriber
         }
 
         foreach ($this->processor->recordedMessages() as $recordedMessage) {
-            if (null === $recordedMessage->getTask()->getId()) {
+            // If the task is not persisted yet (i.e entity insertions),
+            // we handle the event in postFlush
+            if ($uow->isScheduledForInsert($recordedMessage->getTask())) {
                 $this->postFlushEvents[] = $recordedMessage;
                 continue;
             }
@@ -144,7 +152,18 @@ class TaskSubscriber implements EventSubscriber
 
                 $users = $this->usersToNotify[$date];
                 $users = array_unique($users);
-                $users = array_map(function ($user) {
+
+                // We do not send push notifications to users with role ROLE_ADMIN,
+                // they have WebSockets to get live updates
+                $users = array_filter($users, function (UserInterface $user) {
+                    return !$user->hasRole('ROLE_ADMIN');
+                });
+
+                if (count($users) === 0) {
+                    continue;
+                }
+
+                $usernames = array_map(function ($user) {
                     return $user->getUsername();
                 }, $users);
 
@@ -157,12 +176,13 @@ class TaskSubscriber implements EventSubscriber
                     ]
                 ];
 
-                // TODO Translate
-                $message = sprintf('Tasks for %s changed!', $date->format('Y-m-d'));
+                $message = $this->translator->trans('notifications.tasks_changed', [
+                    '%date%' => $date->format('Y-m-d'),
+                ]);
 
                 if (RemotePushNotificationManager::isEnabled()) {
                     $this->messageBus->dispatch(
-                        new PushNotification($message, $users, $data)
+                        new PushNotification($message, $usernames, $data)
                     );
                 }
             }
@@ -171,5 +191,6 @@ class TaskSubscriber implements EventSubscriber
         $this->createdTasks = [];
         $this->postFlushEvents = [];
         $this->usersToNotify = [];
+        $this->processor->eraseMessages();
     }
 }

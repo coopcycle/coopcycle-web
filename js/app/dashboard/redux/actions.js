@@ -146,10 +146,6 @@ export function assignAfter(username, task, after) {
   }
 }
 
-function addCreatedTask(task) {
-  return {type: ADD_CREATED_TASK, task}
-}
-
 function removeTasks(username, tasks) {
 
   if (!Array.isArray(tasks)) {
@@ -475,6 +471,35 @@ function createTask(task) {
   }
 }
 
+function startTask(task) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const url = task['@id'] + '/start'
+
+    createClient(dispatch).request({
+      method: 'put',
+      url,
+      data: {},
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        dispatch(createTaskSuccess())
+        dispatch(updateTask(response.data))
+        dispatch(closeNewTaskModal())
+      })
+      .catch(error => dispatch(completeTaskFailure(error)))
+  }
+}
+
 function completeTask(task, notes = '', success = true) {
 
   return function(dispatch, getState) {
@@ -630,7 +655,6 @@ export {
   closeAddUserModal,
   togglePolyline,
   setTaskListGroupMode,
-  addCreatedTask,
   toggleTask,
   selectTask,
   setGeolocation,
@@ -662,4 +686,5 @@ export {
   addImport,
   importSuccess,
   importError,
+  startTask,
 }

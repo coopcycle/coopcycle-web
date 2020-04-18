@@ -8,6 +8,7 @@ use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskCreated;
+use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
@@ -24,6 +25,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Avoid error "Returning by reference not supported" with Prophecy
 class UnitOfWork
@@ -38,6 +40,9 @@ class UnitOfWork
     {}
 
     public function computeChangeSets()
+    {}
+
+    public function isScheduledForInsert($entity)
     {}
 }
 
@@ -71,11 +76,20 @@ class TaskSubscriberTest extends TestCase
         $taskListProvider = new TaskListProvider($this->entityManager->reveal());
         $changeSetProcessor = new EntityChangeSetProcessor($taskListProvider);
 
+        $this->translator = $this->prophesize(TranslatorInterface::class);
+        $this->translator
+            ->trans('notifications.tasks_changed', Argument::type('array'))
+            ->will(function ($args) {
+
+                return sprintf('Tasks for %s changed!', $args[1]['%date%']);
+            });
+
         $this->subscriber = new TaskSubscriber(
             $this->eventBus->reveal(),
             $eventStore,
             $this->messageBus->reveal(),
             $changeSetProcessor,
+            $this->translator->reveal(),
             new NullLogger()
         );
     }
@@ -91,6 +105,9 @@ class TaskSubscriberTest extends TestCase
             ->willReturn([
                 $task
             ]);
+        $unitOfWork
+            ->isScheduledForInsert($task)
+            ->willReturn(true);
         $unitOfWork
             ->getScheduledEntityUpdates()
             ->willReturn([]);
@@ -136,6 +153,169 @@ class TaskSubscriberTest extends TestCase
         );
     }
 
+    public function testOnFlushWithNewAssignedTaskAndNonExistingTaskList()
+    {
+        $unitOfWork = $this->prophesize(UnitOfWork::class);
+
+        $user = new ApiUser();
+        $user->setUsername('bob');
+        $user->addRole('ROLE_COURIER');
+
+        $task = new Task();
+        $task->assignTo($user);
+        $task->setBefore(new \DateTime('2020-04-17 19:00:00'));
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([
+                $task
+            ]);
+        $unitOfWork
+            ->isScheduledForInsert($task)
+            ->willReturn(true);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([]);
+        $unitOfWork
+            ->getEntityChangeSet($task)
+            ->willReturn([
+                'assignedTo' => [ null, $user ]
+            ]);
+        $unitOfWork
+            ->computeChangeSets()
+            ->shouldBeCalledTimes(2);
+
+        $this->entityManager
+            ->getUnitOfWork()
+            ->willReturn($unitOfWork->reveal());
+
+        $this->entityManager
+            ->persist(Argument::type(TaskList::class))
+            ->shouldBeCalled();
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
+
+        $this->eventBus
+            ->handle(Argument::type(TaskCreated::class))
+            ->shouldHaveBeenCalledTimes(1);
+        $this->eventBus
+            ->handle(Argument::type(TaskAssigned::class))
+            ->shouldHaveBeenCalledTimes(1);
+
+        // Make sure it can be called several
+        // times during the same request cycle
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([]);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([]);
+        $unitOfWork
+            ->getEntityChangeSet($task)
+            ->willReturn([]);
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
+    }
+
+    public function testOnFlushWithNewAssignedTaskAndExistingTaskList()
+    {
+        $unitOfWork = $this->prophesize(UnitOfWork::class);
+
+        $date = new \DateTime('2020-04-17 19:00:00');
+
+        $user = new ApiUser();
+        $user->setUsername('bob');
+        $user->addRole('ROLE_COURIER');
+
+        $task = new Task();
+        $task->assignTo($user);
+        $task->setBefore($date);
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([
+                $task
+            ]);
+        $unitOfWork
+            ->isScheduledForInsert($task)
+            ->willReturn(true);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([]);
+        $unitOfWork
+            ->getEntityChangeSet($task)
+            ->willReturn([
+                'assignedTo' => [ null, $user ]
+            ]);
+        $unitOfWork
+            ->computeChangeSets()
+            ->shouldBeCalledTimes(2);
+
+        $this->entityManager
+            ->getUnitOfWork()
+            ->willReturn($unitOfWork->reveal());
+
+        $taskList = new TaskList();
+        $taskList->setCourier($user);
+        $taskList->setDate($date);
+
+        $this->taskListRepository
+            ->findOneBy([
+                'date' => $date,
+                'courier' => $user,
+            ])
+            ->willReturn($taskList);
+
+        $this->entityManager
+            ->persist(Argument::type(TaskList::class))
+            ->shouldNotBeCalled();
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
+
+        $this->eventBus
+            ->handle(Argument::type(TaskCreated::class))
+            ->shouldHaveBeenCalledTimes(1);
+        $this->eventBus
+            ->handle(Argument::type(TaskAssigned::class))
+            ->shouldHaveBeenCalledTimes(1);
+
+        // Make sure it can be called several
+        // times during the same request cycle
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([]);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([]);
+        $unitOfWork
+            ->getEntityChangeSet($task)
+            ->willReturn([]);
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
+    }
+
     public function testOnFlushWithAssignedTask()
     {
         $unitOfWork = $this->prophesize(UnitOfWork::class);
@@ -149,6 +329,9 @@ class TaskSubscriberTest extends TestCase
         $unitOfWork
             ->getScheduledEntityInsertions()
             ->willReturn([]);
+        $unitOfWork
+            ->isScheduledForInsert($task)
+            ->willReturn(false);
         $unitOfWork
             ->getScheduledEntityUpdates()
             ->willReturn([
@@ -236,6 +419,12 @@ class TaskSubscriberTest extends TestCase
             ->getScheduledEntityInsertions()
             ->willReturn([]);
         $unitOfWork
+            ->isScheduledForInsert($task1)
+            ->willReturn(false);
+        $unitOfWork
+            ->isScheduledForInsert($task2)
+            ->willReturn(false);
+        $unitOfWork
             ->getScheduledEntityUpdates()
             ->willReturn([
                 $task1,
@@ -288,5 +477,393 @@ class TaskSubscriberTest extends TestCase
         $this->eventBus
             ->handle(Argument::type(TaskCreated::class))
             ->shouldNotHaveBeenCalled();
+    }
+
+    /**
+     * When a task is assigned to a user with role ROLE_ADMIN,
+     * it should NOT send a push notification
+     */
+    public function testOnFlushWithAssignedTaskToAdmin()
+    {
+        $unitOfWork = $this->prophesize(UnitOfWork::class);
+
+        $user = new ApiUser();
+        $user->setUsername('bob');
+        $user->addRole('ROLE_ADMIN');
+
+        $task = new Task();
+        $task->setDoneBefore(new \DateTime('2019-11-21 19:00:00'));
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([]);
+        $unitOfWork
+            ->isScheduledForInsert($task)
+            ->willReturn(false);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([
+                $task
+            ]);
+        $unitOfWork
+            ->getEntityChangeSet($task)
+            ->willReturn([
+                'assignedTo' => [ null, $user ]
+            ]);
+        $unitOfWork
+            ->computeChangeSets()
+            ->shouldBeCalledTimes(1);
+
+        $this->entityManager->getUnitOfWork()->willReturn($unitOfWork->reveal());
+
+        $this->entityManager
+            ->persist(Argument::type(TaskList::class))
+            ->shouldBeCalled();
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
+
+        $this
+            ->messageBus
+            ->dispatch(Argument::type(PushNotification::class))
+            ->shouldNotHaveBeenCalled();
+
+        $this->assertCount(0, $task->getEvents());
+        $this->eventBus
+            ->handle(Argument::type(TaskCreated::class))
+            ->shouldNotHaveBeenCalled();
+        $this->eventBus
+            ->handle(Argument::type(TaskAssigned::class))
+            ->shouldHaveBeenCalledTimes(1);
+    }
+
+    public function testOnFlushWithUnassignedTask()
+    {
+        $unitOfWork = $this->prophesize(UnitOfWork::class);
+
+        $date = new \DateTime('2020-04-17 19:00:00');
+
+        $user = new ApiUser();
+        $user->setUsername('bob');
+        $user->addRole('ROLE_COURIER');
+
+        $task = new Task();
+        $task->setBefore($date);
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([]);
+        $unitOfWork
+            ->isScheduledForInsert($task)
+            ->willReturn(false);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([
+                $task
+            ]);
+        $unitOfWork
+            ->getEntityChangeSet($task)
+            ->willReturn([
+                'assignedTo' => [ $user, null ]
+            ]);
+        $unitOfWork
+            ->computeChangeSets()
+            ->shouldBeCalledTimes(1);
+
+        $this->entityManager
+            ->getUnitOfWork()
+            ->willReturn($unitOfWork->reveal());
+
+        $taskList = new TaskList();
+        $taskList->setCourier($user);
+        $taskList->setDate($date);
+
+        $this->taskListRepository
+            ->findOneBy([
+                'date' => $date,
+                'courier' => $user,
+            ])
+            ->willReturn($taskList);
+
+        $this->entityManager
+            ->persist(Argument::type(TaskList::class))
+            ->shouldNotBeCalled();
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
+
+        $this
+            ->messageBus
+            ->dispatch(new PushNotification(
+                sprintf('Tasks for %s changed!', $date->format('Y-m-d')),
+                [ 'bob' ],
+                [
+                    'event' => [
+                        'name' => 'tasks:changed',
+                        'data' => ['date' => $date->format('Y-m-d')]
+                    ]
+                ]
+            ))
+            ->shouldHaveBeenCalled();
+
+        $this->eventBus
+            ->handle(Argument::type(TaskUnassigned::class))
+            ->shouldHaveBeenCalledTimes(1);
+
+        // Make sure it can be called several
+        // times during the same request cycle
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([]);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([]);
+        $unitOfWork
+            ->getEntityChangeSet($task)
+            ->willReturn([]);
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
+    }
+
+    public function testOnFlushWithUnassignedLinkedTasks()
+    {
+        $unitOfWork = $this->prophesize(UnitOfWork::class);
+
+        $date = new \DateTime('2020-04-17 19:00:00');
+
+        $user = new ApiUser();
+        $user->setUsername('bob');
+        $user->addRole('ROLE_COURIER');
+
+        $pickup = new Task();
+        $pickup->setBefore($date);
+        $pickup->assignTo($user);
+
+        $dropoff = new Task();
+        $dropoff->setBefore($date);
+        $dropoff->assignTo($user);
+
+        $pickup->setNext($dropoff);
+        $dropoff->setPrevious($pickup);
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([]);
+        $unitOfWork
+            ->isScheduledForInsert($pickup)
+            ->willReturn(false);
+        $unitOfWork
+            ->isScheduledForInsert($dropoff)
+            ->willReturn(false);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([ $pickup ]);
+        $unitOfWork
+            ->getEntityChangeSet($pickup)
+            ->willReturn([
+                'assignedTo' => [ $user, null ]
+            ]);
+        $unitOfWork
+            ->computeChangeSets()
+            ->shouldBeCalledTimes(1);
+
+        $this->entityManager
+            ->getUnitOfWork()
+            ->willReturn($unitOfWork->reveal());
+
+        $taskList = new TaskList();
+        $taskList->setCourier($user);
+        $taskList->setDate($date);
+        $taskList->setTasks([ $pickup, $dropoff ]);
+
+        $this->taskListRepository
+            ->findOneBy([
+                'date' => $date,
+                'courier' => $user,
+            ])
+            ->willReturn($taskList);
+
+        $this->entityManager
+            ->persist(Argument::type(TaskList::class))
+            ->shouldNotBeCalled();
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
+
+        $this
+            ->messageBus
+            ->dispatch(new PushNotification(
+                sprintf('Tasks for %s changed!', $date->format('Y-m-d')),
+                [ 'bob' ],
+                [
+                    'event' => [
+                        'name' => 'tasks:changed',
+                        'data' => ['date' => $date->format('Y-m-d')]
+                    ]
+                ]
+            ))
+            ->shouldHaveBeenCalled();
+
+        $this->eventBus
+            ->handle(Argument::type(TaskUnassigned::class))
+            ->shouldHaveBeenCalledTimes(2);
+
+        $this->assertFalse($pickup->isAssigned());
+        $this->assertFalse($dropoff->isAssigned());
+
+        $this->assertFalse($taskList->containsTask($pickup));
+        $this->assertFalse($taskList->containsTask($dropoff));
+
+        // Make sure it can be called several
+        // times during the same request cycle
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([]);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([]);
+        $unitOfWork
+            ->getEntityChangeSet($pickup)
+            ->willReturn([]);
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
+    }
+
+    public function testOnFlushWithAssignedLinkedTasks()
+    {
+        $unitOfWork = $this->prophesize(UnitOfWork::class);
+
+        $date = new \DateTime('2020-04-17 19:00:00');
+
+        $user = new ApiUser();
+        $user->setUsername('bob');
+        $user->addRole('ROLE_COURIER');
+
+        $pickup = new Task();
+        $pickup->setBefore($date);
+        $pickup->assignTo($user);
+
+        $dropoff = new Task();
+        $dropoff->setBefore($date);
+        // $dropoff->assignTo($user);
+
+        $pickup->setNext($dropoff);
+        $dropoff->setPrevious($pickup);
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([]);
+        $unitOfWork
+            ->isScheduledForInsert($pickup)
+            ->willReturn(false);
+        $unitOfWork
+            ->isScheduledForInsert($dropoff)
+            ->willReturn(false);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([ $pickup ]);
+        $unitOfWork
+            ->getEntityChangeSet($pickup)
+            ->willReturn([
+                'assignedTo' => [ null, $user ]
+            ]);
+        $unitOfWork
+            ->computeChangeSets()
+            ->shouldBeCalledTimes(1);
+
+        $this->entityManager
+            ->getUnitOfWork()
+            ->willReturn($unitOfWork->reveal());
+
+        $taskList = new TaskList();
+        $taskList->setCourier($user);
+        $taskList->setDate($date);
+        // $taskList->setTasks([ $pickup, $dropoff ]);
+
+        $this->taskListRepository
+            ->findOneBy([
+                'date' => $date,
+                'courier' => $user,
+            ])
+            ->willReturn($taskList);
+
+        $this->entityManager
+            ->persist(Argument::type(TaskList::class))
+            ->shouldNotBeCalled();
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
+
+        $this
+            ->messageBus
+            ->dispatch(new PushNotification(
+                sprintf('Tasks for %s changed!', $date->format('Y-m-d')),
+                [ 'bob' ],
+                [
+                    'event' => [
+                        'name' => 'tasks:changed',
+                        'data' => ['date' => $date->format('Y-m-d')]
+                    ]
+                ]
+            ))
+            ->shouldHaveBeenCalled();
+
+        $this->eventBus
+            ->handle(Argument::type(TaskAssigned::class))
+            ->shouldHaveBeenCalledTimes(2);
+
+        $this->assertTrue($pickup->isAssigned());
+        $this->assertTrue($dropoff->isAssigned());
+
+        $this->assertTrue($taskList->containsTask($pickup));
+        $this->assertTrue($taskList->containsTask($dropoff));
+
+        // Make sure it can be called several
+        // times during the same request cycle
+
+        $unitOfWork
+            ->getScheduledEntityInsertions()
+            ->willReturn([]);
+        $unitOfWork
+            ->getScheduledEntityUpdates()
+            ->willReturn([]);
+        $unitOfWork
+            ->getEntityChangeSet($pickup)
+            ->willReturn([]);
+
+        $this->subscriber->onFlush(
+            new OnFlushEventArgs($this->entityManager->reveal())
+        );
+        $this->subscriber->postFlush(
+            new PostFlushEventArgs($this->entityManager->reveal())
+        );
     }
 }

@@ -72,23 +72,3 @@ winzou_state_machine:
             void:
                 from: [new, processing]
                 to: void
-    task:
-        class: AppBundle\Entity\Task
-        property_path: status
-        graph: task
-        state_machine_class: "%sylius.state_machine.class%"
-        states:
-            TODO: ~
-            DONE: ~
-            FAILED: ~
-            CANCELLED: ~
-        transitions:
-            markAsDone:
-                from: [TODO]
-                to: DONE
-            markAsFailed:
-                from: [TODO]
-                to: FAILED
-            cancel:
-                from: [TODO]
-                to: CANCELLED

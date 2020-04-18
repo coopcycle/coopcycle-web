@@ -23,6 +23,8 @@
         "ADMIN_DASHBOARD_CANCEL": "Annuler",
         "ADMIN_DASHBOARD_CANCEL_TASK": "Annuler",
         "ADMIN_DASHBOARD_DUPLICATE_TASK": "Dupliquer",
+        "ADMIN_DASHBOARD_START_TASK": "Démarrer",
+        "ADMIN_DASHBOARD_MODIFY_TASK": "Modifier",
         "ADMIN_DASHBOARD_ADD": "Ajouter",
         "ADMIN_DASHBOARD_DURATION": "Durée",
         "ADMIN_DASHBOARD_DROP_DELIVERIES": "Déposez les livraisons ici",

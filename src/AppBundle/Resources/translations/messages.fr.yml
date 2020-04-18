@@ -877,3 +877,4 @@ form.order_export.messenger.label: Inclure une colonne avec le coursier ayant li
   la commande
 basics.show: Afficher
 basics.hide: Masquer
+notifications.tasks_changed: Les tâches du %date% ont changé !

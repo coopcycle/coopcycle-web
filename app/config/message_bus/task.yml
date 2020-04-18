@@ -9,6 +9,15 @@ services:
   # Command Handlers
   #
 
+  coopcycle.domain.task.handler.start:
+    class: AppBundle\Domain\Task\Handler\StartHandler
+    arguments:
+      $eventRecorder: '@event_recorder'
+      $taskStateMachine: '@state_machine.task'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\Start
+
   coopcycle.domain.task.handler.mark_as_done:
     class: AppBundle\Domain\Task\Handler\MarkAsDoneHandler
     arguments:
@@ -57,6 +66,8 @@ services:
         subscribes_to: task:assigned
       - name: event_subscriber
         subscribes_to: task:unassigned
+      - name: event_subscriber
+        subscribes_to: task:started
       - name: event_subscriber
         subscribes_to: task:done
       - name: event_subscriber

@@ -38,6 +38,8 @@ const taskIcon = task => {
       return 'arrow-down'
     }
     break
+  case 'DOING':
+    return 'play'
   case 'DONE':
     return 'check'
   case 'FAILED':

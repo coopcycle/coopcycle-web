@@ -23,7 +23,13 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [],
+      allTasks: [
+        {
+          '@id': 1,
+          isAssigned: true,
+          assignedTo: 'bob'
+        }
+      ],
       unassignedTasks: [],
       taskLists: [
         { username: 'bob', items: [{
@@ -54,7 +60,13 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [],
+      allTasks: [
+        {
+          '@id': 1,
+          isAssigned: true,
+          assignedTo: 'bob'
+        }
+      ],
       unassignedTasks: [],
       taskLists: [
         { username: 'bob', items: [{
@@ -85,7 +97,13 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [],
+      allTasks: [
+        {
+          '@id': 2,
+          isAssigned: true,
+          assignedTo: 'bob'
+        }
+      ],
       unassignedTasks: [],
       taskLists: [
         { username: 'bob', items: [{
@@ -124,7 +142,13 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [],
+      allTasks: [
+        {
+          '@id': 1,
+          isAssigned: false,
+          assignedTo: null
+        }
+      ],
       unassignedTasks: [{
         '@id': 1,
         isAssigned: false,
@@ -155,7 +179,13 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [],
+      allTasks: [
+        {
+          '@id': 1,
+          isAssigned: false,
+          assignedTo: null
+        }
+      ],
       unassignedTasks: [{
         '@id': 1,
         isAssigned: false,
@@ -186,7 +216,13 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [],
+      allTasks: [
+        {
+          '@id': 2,
+          isAssigned: false,
+          assignedTo: null
+        }
+      ],
       unassignedTasks: [{
         '@id': 1,
         isAssigned: false,
@@ -230,7 +266,13 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [],
+      allTasks: [
+        {
+          '@id': 2,
+          isAssigned: true,
+          assignedTo: 'bob'
+        }
+      ],
       unassignedTasks: [],
       taskLists: [
         { username: 'bob', items: [{
@@ -259,7 +301,7 @@ describe('combinedTasks reducer', () => {
         unassignedTasks: [],
         taskLists: []
       }, {
-        type: 'ADD_CREATED_TASK',
+        type: 'UPDATE_TASK',
         task: {
           '@id': 1,
           status: 'TODO',
@@ -295,7 +337,7 @@ describe('combinedTasks reducer', () => {
         unassignedTasks: [],
         taskLists: []
       }, {
-        type: 'ADD_CREATED_TASK',
+        type: 'UPDATE_TASK',
         task
       })
     ).toMatchObject({
@@ -326,7 +368,7 @@ describe('combinedTasks reducer', () => {
         unassignedTasks: [],
         taskLists: []
       }, {
-        type: 'ADD_CREATED_TASK',
+        type: 'UPDATE_TASK',
         task
       })
     ).toMatchObject({

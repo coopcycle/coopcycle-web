@@ -11,6 +11,7 @@ use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
+use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskFilter;
@@ -68,6 +69,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="PUT",
  *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
  *       "denormalization_context"={"groups"={"task_edit"}}
+ *     },
+ *     "task_start"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/start",
+ *       "controller"=TaskStart::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+ *       "swagger_context"={
+ *         "summary"="Marks a Task as started"
+ *       }
  *     },
  *     "task_done"={
  *       "method"="PUT",
@@ -167,6 +177,7 @@ class Task implements TaggableInterface
     const TYPE_PICKUP = 'PICKUP';
 
     const STATUS_TODO = 'TODO';
+    const STATUS_DOING = 'DOING';
     const STATUS_FAILED = 'FAILED';
     const STATUS_DONE = 'DONE';
     const STATUS_CANCELLED = 'CANCELLED';
