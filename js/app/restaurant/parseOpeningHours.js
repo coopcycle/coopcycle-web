@@ -6,7 +6,7 @@ import i18n from '../i18n'
 /*
   Takes an opening interval as formatted in the DB and returns it as a human-readable string
  */
-function openingHourIntervalToReadable(openingHourInterval, locale) {
+function openingHourIntervalToReadable(openingHourInterval, locale, behavior = 'asap') {
 
   const { days, start, end } = TimeRange.parse(openingHourInterval)
 
@@ -25,10 +25,19 @@ function openingHourIntervalToReadable(openingHourInterval, locale) {
   const endFormatted = localeMoment.hour(endHour).minute(endMinute).format('LT')
 
   if (startDay === endDay) {
-    return i18n.t('OPENING_HOURS_SINGLE', {day: TimeRange.weekday(startDay, locale), open: startFormatted, close: endFormatted})
-  } else {
-    return i18n.t('OPENING_HOURS_RANGE', {fromDay: TimeRange.weekday(startDay, locale), toDay: TimeRange.weekday(endDay, locale), open: startFormatted, close: endFormatted})
+    return i18n.t(behavior === 'time_slot' ? 'OPENING_HOURS_SINGLE_TIME_SLOT' : 'OPENING_HOURS_SINGLE', {
+      day: TimeRange.weekday(startDay, locale),
+      open: startFormatted,
+      close: endFormatted
+    })
   }
+
+  return i18n.t(behavior === 'time_slot' ? 'OPENING_HOURS_RANGE_TIME_SLOT' : 'OPENING_HOURS_RANGE', {
+    fromDay: TimeRange.weekday(startDay, locale),
+    toDay: TimeRange.weekday(endDay, locale),
+    open: startFormatted,
+    close: endFormatted
+  })
 }
 
 export default openingHourIntervalToReadable

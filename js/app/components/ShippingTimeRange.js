@@ -17,7 +17,7 @@ function roundUp(n, x = 5) {
     return Math.trunc(value)
 }
 
-export default ({ value, short }) => {
+export const asText = (value, short) => {
 
   // FIXME Make sure that value is not null / an array of 2 strings
   const range = moment.range(
@@ -27,9 +27,7 @@ export default ({ value, short }) => {
 
   if (short === true) {
 
-    return (
-      <span>{ `${range.start.format('LT')} - ${range.end.format('LT')}` }</span>
-    )
+    return `${range.start.format('LT')} - ${range.end.format('LT')}`
   }
 
   const today = moment.range(
@@ -75,7 +73,9 @@ export default ({ value, short }) => {
     })
   }
 
-  return (
-    <span>{ text }</span>
-  )
+  return text
 }
+
+export default ({ value, short }) => (
+  <span>{ asText(value, short) }</span>
+)

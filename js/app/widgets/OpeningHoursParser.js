@@ -7,7 +7,7 @@ class OpeningHoursDisplay extends React.Component {
     return (
       <ul className="list-unstyled">
         { this.props.openingHours.map((item, index) => {
-          return ( <li key={ index }>{ openingHourIntervalToReadable(item, this.props.locale) }</li> )
+          return ( <li key={ index }>{ openingHourIntervalToReadable(item, this.props.locale, this.props.behavior) }</li> )
         })}
       </ul>
     )
@@ -15,5 +15,5 @@ class OpeningHoursDisplay extends React.Component {
 }
 
 export default function(el, options) {
-  render(<OpeningHoursDisplay openingHours={ options.openingHours } locale={ options.locale } />, el)
+  render(<OpeningHoursDisplay openingHours={ options.openingHours } locale={ options.locale } behavior={ options.behavior } />, el)
 }

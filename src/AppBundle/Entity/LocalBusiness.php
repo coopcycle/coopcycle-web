@@ -870,4 +870,9 @@ class LocalBusiness extends BaseLocalBusiness
     {
         return $this->openingHoursBehavior;
     }
+
+    public function setOpeningHoursBehavior($openingHoursBehavior)
+    {
+        $this->openingHoursBehavior = $openingHoursBehavior;
+    }
 }

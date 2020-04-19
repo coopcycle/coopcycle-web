@@ -89,6 +89,9 @@ class OrderTimeHelperTest extends TestCase
         $restaurant
             ->getShippingOptionsDays()
             ->willReturn(1);
+        $restaurant
+            ->getOpeningHoursBehavior()
+            ->willReturn('asap');
 
         $restaurant
             ->setShippingOptionsDays(2)

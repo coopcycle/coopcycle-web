@@ -3,9 +3,18 @@ import { render } from 'react-dom'
 import OpeningHours from '../components/OpeningHours'
 import _ from 'lodash'
 
+const defaultOptions = {
+  locale: 'en',
+  rowsWithErrors: [],
+  behavior: 'asap',
+}
+
 export default function(el, options) {
 
-  options = options || {}
+  options = {
+    ...defaultOptions,
+    ...options,
+  }
 
   const template = el.getAttribute('data-prototype')
 
@@ -21,7 +30,8 @@ export default function(el, options) {
 
   const value = _.map(el.querySelectorAll('input[type="hidden"]'), input => input.getAttribute('value'))
 
-  render(<OpeningHours
+  const c = render(<OpeningHours
+    behavior={ options.behavior }
     value={ value }
     locale={ options.locale }
     rowsWithErrors={ options.rowsWithErrors }
@@ -42,4 +52,8 @@ export default function(el, options) {
       _.each(values, (value, index) => addRow(index, value))
       if (typeof options.onRowRemove === 'function') options.onRowRemove(index)
     }} />, el)
+
+  return {
+    setBehavior: behavior => c.setBehavior(behavior)
+  }
 }

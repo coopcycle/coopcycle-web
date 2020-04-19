@@ -148,9 +148,6 @@
 
     <div class="col-xs-12 col-sm-4">
       {{ form_start(cart_form) }}
-        {# These inputs are managed with React  #}
-        {% do cart_form.date.setRendered %}
-        {% do cart_form.time.setRendered %}
         <div id="cart"></div>
       {{ form_end(cart_form) }}
     </div>
@@ -303,8 +300,8 @@ Iterating through all products, options… is a lot of database requests
 
 {% set restaurant_json = {
   id: restaurant.id,
-  availabilities: availabilities,
-  openingHours: restaurant.openingHours
+  openingHours: restaurant.openingHours,
+  openingHoursBehavior: restaurant.openingHoursBehavior
 } %}
 
 {% set cart = cart_provider.getCart() %}

@@ -119,7 +119,9 @@ class OrderValidator extends ConstraintValidator
                 }
             }
 
-            if (null !== $order->getShippingTimeRange() && null !== $order->getRestaurant()) {
+            $restaurant = $order->getRestaurant();
+
+            if (null !== $order->getShippingTimeRange() && null !== $restaurant && $restaurant->getOpeningHoursBehavior() === 'asap') {
                 if (false === $this->shippingDateFilter->accept($order, $order->getShippingTimeRange()->getLower(), $now)) {
                     $this->context->buildViolation($constraint->shippedAtNotAvailableMessage)
                         ->atPath('shippingTimeRange')

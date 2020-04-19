@@ -126,6 +126,9 @@ localBusiness.form.telephone: Telephone
 localBusiness.form.openingHours: Opening hours
 localBusiness.form.deliveryPerimeterExpression: Zone or max distance for delivery
 localBusiness.form.shippingOptionsDays: Number of shipping choices (in days)
+localBusiness.form.openingHoursBehavior: Behavior of opening hours
+localBusiness.form.openingHoursBehavior.asap: As soon as possible
+localBusiness.form.openingHoursBehavior.time_slot: Time slot
 restaurant.available: Available
 restaurant.unavailable: Unavailable
 restaurant.disabledWarning: "This restaurant is disabled so the site visitors can't\

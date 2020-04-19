@@ -372,7 +372,9 @@ services:
 
   AppBundle\Utils\ShippingDateFilter: ~
   AppBundle\Utils\OrderTimelineCalculator: ~
-  AppBundle\Utils\OrderTimeHelper: ~
+  AppBundle\Utils\OrderTimeHelper:
+    arguments:
+      $country: "%country_iso%"
 
   AppBundle\Entity\Listener\TaskListener:
     tags:

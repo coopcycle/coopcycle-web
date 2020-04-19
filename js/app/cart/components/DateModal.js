@@ -7,6 +7,7 @@ import Moment from 'moment'
 import { extendMoment } from 'moment-range'
 
 import DatePicker from './DatePicker'
+import TimeSlotPicker from './TimeSlotPicker'
 import { clearDate, changeDate, setDateModalOpen } from '../redux/actions'
 
 const moment = extendMoment(Moment)
@@ -51,7 +52,8 @@ class DateModal extends Component {
 
   render() {
 
-    const avg = moment.range(this.state.value).center()
+    const range = moment.range(this.state.value)
+    const timeSlotInputValue = `${range.start.format('YYYY-MM-DD')} ${range.start.format('HH:mm')}-${range.end.format('HH:mm')}`
 
     return (
       <Modal
@@ -62,14 +64,21 @@ class DateModal extends Component {
         contentLabel={ this.props.t('CART_CHANGE_TIME_MODAL_LABEL') }
         className="ReactModal__Content--date">
         <form name="cart_time">
-          <input type="hidden" name={ this.props.datePickerDateInputName } value={ avg.format('YYYY-MM-DD') } />
-          <input type="hidden" name={ this.props.datePickerTimeInputName } value={ avg.format('HH:mm') } />
+          <input type="hidden" name={ this.props.timeSlotInputName } value={ timeSlotInputValue } />
           <h4 className="text-center">{ this.props.t('CART_CHANGE_TIME_MODAL_TITLE') }</h4>
           <div className="text-center">
-            <DatePicker
-              choices={ this.props.ranges }
-              value={ this.props.value }
-              onChange={ value => this.setState({ value }) } />
+            { this.props.behavior === 'time_slot' && (
+              <TimeSlotPicker
+                choices={ this.props.ranges }
+                value={ this.props.value }
+                onChange={ value => this.setState({ value }) } />
+            )}
+            { this.props.behavior === 'asap' && (
+              <DatePicker
+                choices={ this.props.ranges }
+                value={ this.props.value }
+                onChange={ value => this.setState({ value }) } />
+            )}
           </div>
           { this.props.isPreOrder && (
             <div className="text-center">
@@ -107,11 +116,11 @@ function mapStateToProps(state) {
 
   return {
     isOpen: state.isDateModalOpen,
-    datePickerDateInputName: state.datePickerDateInputName,
-    datePickerTimeInputName: state.datePickerTimeInputName,
+    timeSlotInputName: state.datePickerTimeSlotInputName,
     isPreOrder,
     value,
     ranges: state.times.ranges,
+    behavior: state.times.behavior,
   }
 }
 
