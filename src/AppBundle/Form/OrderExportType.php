@@ -24,6 +24,7 @@ class OrderExportType extends AbstractType
                 'label' => 'form.order_export.date.label',
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
+                'data' => new \DateTime('now'),
             ]);
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
