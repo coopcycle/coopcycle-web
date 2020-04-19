@@ -887,5 +887,7 @@ store.WHOLESALE_STORE: Wholesale store
 form.local_business_type.food_establishment: Food establishment
 form.local_business_type.store: Store
 form.local_business_type.label: Type of business
-form.local_business_type.help: The types are using the <a href="https://schema.org/">schema.org</a> vocabulary for <a href="https://schema.org/FoodEstablishment">food establishments</a> and <a href="https://schema.org/Store">stores</a>
+form.local_business_type.help: The types are using the <a href="https://schema.org/">schema.org</a>
+  vocabulary for <a href="https://schema.org/FoodEstablishment">food establishments</a>
+  and <a href="https://schema.org/Store">stores</a>
 notifications.tasks_changed: Tasks for %date% changed!
