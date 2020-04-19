@@ -806,6 +806,7 @@ receipt.billing_details: Order paid by credit card on %date%
 receipt.emitter_details: Order at restaurant <strong>%restaurant_name%</strong>
 delivery.import.success_message: Your file was successfully processed, %count% deliveries
   have been created
+form.delivery_import.file.label: File
 form.delivery_import.store.label: Store
 basics.view_example: View example
 notifications.restaurant.new_order: New order to accept

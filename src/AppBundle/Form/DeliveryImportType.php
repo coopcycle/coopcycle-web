@@ -34,7 +34,7 @@ class DeliveryImportType extends AbstractType
             ->add('file', FileType::class, array(
                 'mapped' => false,
                 'required' => true,
-                'label' => 'form.task_upload.file'
+                'label' => 'form.delivery_import.file.label'
             ));
 
         if ($options['with_store']) {
