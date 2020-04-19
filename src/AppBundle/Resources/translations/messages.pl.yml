@@ -53,7 +53,7 @@ adminDashboard.pricing.noPricings: Brak wycen
 adminDashboard.pricing.noRuleFound: Brak zasad wyceny. Zasady wyceny pozwalają wyliczyć
   koszt dostawy.
 adminDashboard.pricing.addRule: Dodaj zasadę
-adminDashboard.pricing.title: Wycena
+adminDashboard.pricing.title: Cennik
 adminDashboard.pricing.settings: Ustawienia
 adminDashboard.settings.title: Ustawienia
 adminDashboard.users.invite: Zaproś użytkownika
@@ -132,7 +132,9 @@ basics.send_invitation.confirm: Twoje zaproszenie zostało wysłane! Możesz ter
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Witamy w wersji demo platformy <a
   target="_blank" href="https://coopcycle.org">CoopCycle</a>
 delivery.table.heading.summary: Podsumowanie
-order.payment.card_number.help: ''
+order.payment.card_number.help: Stripe <a href="https://stripe.com/docs/testing#cards"
+  target="_blank" tabindex="-1">numer karty testowej</a> jest wstępnie wypełniony.
+  Żadne konto nie zostanie obciążone.
 search.users: Wyszukaj użytkownika…
 form.store_type.defaultAddress.label: Domyślny adres
 allergens.SULPHUR_DIOXIDE_SULPHITES: Dwutlenek siarki i siarczyny
@@ -399,7 +401,7 @@ form.delivery.vehicle.VEHICLE_CARGO_BIKE: Rower cargo
 form.store_type.setAsDefault.label: Ustaw jako domyślny adres
 form.store_type.time_slot.label: Przedział czasu
 form.delivery.vehicle.placeholder: Wybierz rodzaj pojazdu
-task.type.PICKUP: ''
+task.type.PICKUP: Odbiór
 form.store_type.pricing_rule_set.placeholder: Wybierz cennik
 form.delivery.pickup.label: Adres odbioru
 form.delivery.pickup.address_placeholder: Nazwa ulicy i numer domu, dzielnica, kod
@@ -618,3 +620,272 @@ restricted_diets.KOSHER_DIET: Koszerny
 restricted_diets.LOW_CALORIE_DIET: Niskokaloryczny
 restricted_diets.LOW_FAT_DIET: Niskotłuszczowy
 form.order_export.date.label: Data
+form.checkout_address.telephone.label: Numer telefonu
+form.product_option.add_value.label: Dodaj wartość
+form.product_option.price.label: Cena
+form.product_option.strategy.label: Kalkulacja ceny
+form.product_option.name.label: Nazwa
+form.product.reusable_packaging_unit.label: Liczba jednostek
+form.product.reusable_packaging.label: Typ opakowania wielokrotnego użytku
+form.product.reusable_packaging_enabled.label: Aktywuj opakowania wielokrotnego użytku
+  dla tego produktu
+form.product.confirm.help: "Zmieniłeś/aś nazwę produktu. Jeśli jest to <stron>niewielka\
+  \ modyfikacja</strong> (błędnie napisana, wielkie litery…), kliknij « Potwierdź\
+  \ zmiany ».\n<br>\nJeśli nie, musisz <a href=\"%link%\">stworzyć nowy produkt</a>,\
+  \ co pozwoli ci rozróżnić sprzedawane produkty i zachować historię. "
+form.product.confirm.label: Potwierdź zmiany
+form.product.restricted_diets.help: Czy ten produkt pasuje do następujących diet?
+form.product.restricted_diets.label: Diety ograniczone
+form.product.allergens.help: Czy ten produkt zawiera następujące alergeny?
+form.product.allergens.label: Alergeny
+form.product.enabled.label: Aktywny
+form.product.taxCategory.label: Podatki
+form.product.price.label: Cena
+form.product.description.label: Opis
+form.product.name.label: Nazwa
+form.menu_editor.taxon_modal.title: Modyfikuj sekcję
+form.menu_editor.products.help: Aby dodać produkty do listy po prawej, dodaj je najpierw
+  do <a href="%products_url%">katalogu</a>
+form.menu_editor.help: "Użyj poniższego edytora, aby skomponować pozycje menu\n<br>\n\
+  Przeciągnij i upuść produkty do sekcji po lewej stronie\n<br>\nJeśli chcesz usunąć\
+  \ produkt z menu, upuść go w sekcji « Produkty » po prawej stronie\n<br>\nNie zapomnij\
+  \ kliknąć poniższego przycisku « Zapisz zmiany»\n"
+form.menu_editor.save.label: Zapisz zmiany
+form.menu_editor.products_panel.title: Produkty
+form.menu_taxon.child_name.placeholder: "Przykład: dania główne, deser…\n"
+form.menu_taxon.add_child.label: Dodaj sekcję
+form.menu_taxon.name.label: Nazwa
+form.menu_item_modifier.calculusStrategy.label: Kalkulacja ceny
+form.menu_item_modifier.price.label: Cena
+form.menu_item_modifier.name.label: Nazwa
+form.menu_item.price.label: Cena
+form.menu_item.name.label: Nazwa
+form.settings.google_api_key.help: "Stwórz konto Google, aby uzyskać swój <a href=\"\
+  https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
+  >klucz API</a>\n"
+form.settings.google_api_key.label: Klucz API Google
+form.settings.stripe_connect_client_id.help: "Uzyskaj identyfikator na <a href=\"\
+  https://dashboard.stripe.com/account/applications/settings\">stronie parametrów</a>\n"
+form.settings.stripe_connect_client_id.label: Identyfikator Połączenia Stripe
+form.settings.stripe_secret_key.help: "Stwórz konto Stripe, aby uzyskać swój <a href=\"\
+  https://stripe.com/docs/dashboard#api-keys\">klucz do upubliczniania / publishable\
+  \ key</a>\n"
+form.settings.stripe_secret_key.label: Tajny klucz Stripe / Stripe secret key
+form.settings.stripe_publishable_key.help: "Stwórz konto Stripe, aby uzyskać swój\
+  \ <a href=\"https://stripe.com/docs/dashboard#api-keys\">klucz do upubliczniania\
+  \ / publishable key</a>\n"
+form.settings.stripe_publishable_key.label: Klucze do udostępniania Stripe / Stripe
+  publishable key
+form.settings.stripe_enable_livemode.help: Aby włączyć tryb « live », musisz najpierw
+  skonfigurować klucze dostępu « live ».
+form.settings.stripe_testmode.help: 'W trybie « test », będziesz musiał użyć <a href="https://stripe.com/docs/testing">testowych
+  numerów kart kredytowych</a>, żeby zapłacić na platformie. <strong>Żadne pieniądze
+  nie zostaną wymienione.</strong> '
+form.preparation_time_rule.expression.label: Ekspresja
+form.store_type.package_set.label: Zestaw paczek
+form.store_type.prefill_pickup_address.label: Wypełnij automatycznie adres odbioru
+task.type.DROPOFF: Doręczenie
+form.task.dropoff.doorstep.label: Dostawa pod próg drzwi
+task.status.todo: Do zrobienia
+task.status.failed: Niepowodzenie
+task.status.done: Powodzenie
+task.form.dateRange: Zakres dat
+order.list.summary.deleted_restaurant.text: Dostawa w restauracji %restaurant_name%
+order.list.summary.restaurant.text: Dostawa w restauracji <a href="%restaurant_url%">%restaurant_name%</a>
+order.list.type: Typ
+order.public_link: Link do udostępniania
+restaurant.form.accessPlanning: Dostęp do planowania
+form.checkout_address.reusable_packaging_enabled.label: Chcę opakowanie wielokrotnego
+  użytku (%price%)
+form.local_business_type.help: Typy bazują na słownictwie <a href="https://schema.org/">schema.org</a>
+  dla <a href="https://schema.org/FoodEstablishment">zakładów spożywczych</a> i <a
+  href="https://schema.org/Store">sklepów</a>
+form.local_business_type.label: Typ biznesu
+form.local_business_type.store: Sklep
+form.local_business_type.food_establishment: Zakład spożywczy
+store.WHOLESALE_STORE: Hurtownia
+store.TOY_STORE: Sklep z zabawkami
+store.TIRE_SHOP: Sklep z oponami
+store.SPORTING_GOODS_STORE: Sklep sportowy
+store.SHOE_STORE: Sklep obuwniczy
+store.PET_STORE: Sklep zoologiczny
+store.PAWN_SHOP: Lombard
+store.OUTLET_STORE: Sklep z wyprzedażami / outlet
+store.OFFICE_EQUIPMENT_STORE: Sklep z wyposażeniem biurowym
+store.MUSIC_STORE: Sklep muzyczny
+store.MOVIE_RENTAL_STORE: Wypożyczalnia filmów
+store.MOBILE_PHONE_STORE: Sklep z telefonami komórkowymi
+store.MENS_CLOTHING_STORE: Sklep z odzieżą męską
+store.LIQUOR_STORE: Sklep alkoholowy
+store.JEWELRY_STORE: Jubiler
+store.HOME_GOODS_STORE: Sklep z artykułami domowymi
+store.HOBBY_SHOP: Sklep hobbistyczny
+store.HARDWARE_STORE: Sklep z narzędziami
+store.GROCERY_STORE: Sklep spożywczy
+store.GARDEN_STORE: Sklep ogrodniczy
+store.FURNITURE_STORE: Sklep z meblami
+store.FLORIST: Kwiaciarnia
+store.ELECTRONIC_STORE: Sklep z elektroniką
+store.DEPARTMENT_STORE: Dom towarowy
+store.CONVENIENCE_STORE: Sklep spożywczy
+store.COMPUTER_STORE: Sklep komputerowy
+store.CLOTHING_STORE: Sklep odzieżowy
+store.BOOK_STORE: Księgarnia
+store.BIKE_STORE: Sklep rowerowy
+store.AUTO_PARTS_STORE: Sklep z częściami samochodowymi
+food_establishment.WINERY: Winiarnia
+food_establishment.RESTAURANT: Restauracja
+food_establishment.ICE_CREAM_SHOP: Lodziarnia
+food_establishment.FAST_FOOD_RESTAURANT: Restauracja fast-food
+food_establishment.DISTILLERY: Destylarnia
+food_establishment.CAFE_OR_COFFEE_SHOP: Kawiarnia lub sklep z kawą
+food_establishment.BREWERY: Browar
+food_establishment.BAR_OR_PUB: Bar lub pub
+food_establishment.BAKERY: Piekarnia
+basics.hide: Ukryj
+basics.show: Pokaż
+form.order_export.messenger.label: Dodaj kolumnę z dostawcą/dostawczynią, który/a
+  zrealizował(a) zamówienie
+order.export.heading.completed_by: Ukończony przez
+order.export.heading.net_revenue: Przychód netto
+order.export.heading.platform_fee: Opłata za platformę
+order.export.heading.stripe_fee: Opłata Stripe
+order.export.heading.total_incl_tax: Łącznie (z VAT)
+order.export.heading.delivery_fee: Opłata za dostawę
+order.export.heading.total_products_incl_tax: Wszystkie produkty (z VAT)
+order.export.heading.total_products_excl_tax: Wszystkie produkty (bez VAT)
+order.export.heading.completed_at: Ukończone
+order.export.heading.order_number: Numer zamówienia
+order.export.heading.restaurant_name: Restauracja
+notifications.messenger_approaching: Hej %customer%! Nasz dostawca/dostawczyni %messenger%
+  jest w pobliżu. Przygotuj się!
+basics.no: Nie
+basics.yes: Tak
+basics.none: Brak
+basics.weeks: '%count% tydzień|%count% tygodnie'
+basics.days: '%count% dzień|%count% dni'
+basics.hours: '%count% godzina|%count% godziny'
+task.receipt.reference: 'Odniesienie: <strong>%ref%</strong>'
+task.receipt.attached_images: Załączone obrazki
+task.receipt.received_by: Paczka została odebrana przez  <strong>%name%</strong>
+task.receipt.message: Niniejszym potwierdzamy, że paczka została dostarczona pod adres
+  <strong>%address%</strong> dnia <strong>%date%</strong>
+task.receipt.greeting: Drogi Kliencie,
+basics.free: darmowy
+profile.loopeat.connected: Konto LoopEat połączone
+profile.loopeat.connect: Połącz moje konto LoopEat
+notifications.restaurant.new_order: Nowe zamówienie do zaakceptowania
+basics.view_example: Zobacz przykład
+form.delivery_import.store.label: Sklep
+delivery.import.success_message: Twój plik został pomyślnie przetworzony, %count%
+  dostaw zostało stworzonych
+receipt.emitter_details: Zamów w restauracji <strong>%restaurant_name%</strong>
+receipt.billing_details: Zamówienie opłacone kartą kredytową dnia %date%
+receipt.total: Łącznie (z VAT)
+receipt.footer_item.total_incl_tax: Łącznie (z VAT)
+receipt.footer_item.total_excl_tax: Łącznie (bez VAT)
+receipt.line_item.total_products: Wszystkie produkty
+receipt.line_item.total: Suma
+receipt.line_item.quantity: Ilość
+receipt.line_item.unit_price: Cena jednostkowa
+receipt.line_item.name: Produkt
+receipt.title: 'Paragon twojego zamówienia #%number%'
+form.local_business.iso_code.fr.rcs_number: Numer RCS
+form.local_business.iso_code.fr.vat_number: Numer VAT
+form.local_business.iso_code.fr.siret: Numer SIRET
+form.min_max.infinity.label: Brak maksimum
+form.min_max.upper.label: Max. numer
+form.min_max.lower.label: Min. numer
+orders.payment_refunded: Płatność została zwrócona pomyślnie
+orders.payment_link.sent: Email wysłany pomyślnie
+orders.payment_link.send_by_email: Wyślij link do płatności e-mailem
+basics.copy: Kopiuj
+orders.new: Nowe zamówienie
+deliveries.filter.clear: Pokaż wszystkie
+deliveries.sort.oldest: Najpierw najstarsze
+deliveries.sort.newest: Najpierw najnowsze
+sylius.form.promotion_coupon.per_customer_usage_limit: Limit wykorzystania na klienta
+sylius.ui.code: Kod
+resend_confirmation_email.disclaimer: Jeśli nie otrzymałeś e-maila z potwierdzeniem,
+  kliknij przycisk.
+time_slot.human_readable: '%day% pomiędzy %start% i %end%'
+restricted_diets.VEGETARIAN_DIET: Wegetariańskie
+restricted_diets.VEGAN_DIET: Wegańskie
+restricted_diets.LOW_SALT_DIET: Niski poziom soli
+restricted_diets.LOW_LACTOSE_DIET: Niska poziom laktozy
+restricted_diets.HINDU_DIET: Hinduskie
+allergens.FISH: Ryba
+allergens.EGGS: Jajka
+allergens.CRUSTACEANS: Skorupiaki
+allergens.CEREALS_CONTAINING_GLUTEN: Zboża zawierające gluten
+promotions.create_credit_note_coupon: Dodaj notę kredytową
+promotions.add_free_delivery_coupon: Dodaj kupon promocyjny « darmowa dostawa »
+promotions.promotion_coupon.success: Twój kod kuponu %code% został wzięty pod uwagę
+promotions.heading.credit_note.help: Stwórz unikalne noty kredytowe dla klientów
+promotions.heading.credit_note: Noty kredytowe
+promotions.heading.free_delivery.help: Utwórz kupony promocyjne, aby zaoferować dostawę
+promotions.heading.free_delivery: Darmowa dostawa
+promotions.breadcrumb.new_credit_note: Nowa nota kredytowa
+promotions.breadcrumb: Promocje
+api_apps.created.message: Klient został dodany. Użyj poniższych kwalifikacji w celu
+  uwierzytelnienia.
+api_apps.breadcrumb: Klienci API
+maintenance.text: Witryna w trakcie konserwacji - Wkrótce wrócimy
+authentication.sign_in: Zaloguj się
+authentication.already_registered: Już zarejestrowany/a?
+authentication.create_account: Stwórz konto
+authentication.not_registered_yet: Nie jesteś jeszcze zarejestrowany/a?
+authentication.forgot_password: Zapomniałe/aś hasła?
+basics.no_entries: Brak elementów
+basics.tax_category: VAT
+basics.price: Cena
+basics.tomorrow: Jutro
+basics.open: Otwarte
+basics.next: Następny
+basics.save: Zapisz
+basics.view: Widok
+pagination.next: Następna
+pagination.previous: Poprzednia
+embed.delivery.confirm_message: Twoje zamówienie dostawy zostało złożone i wkrótce
+  otrzymasz e-maila z podsumowaniem. Sprawdzimy twoje zamówienie i jak najszybciej
+  wyślemy wiadomość e-mail z potwierdzeniem.
+embed.delivery.summary: 'Poprosiłeś o dostawę dnia <strong>%dropoff_date%</strong>
+  na podany adres: <strong>%dropoff_address%</strong> <br> Obliczyliśmy dystans <strong>%distance%
+  kilometrów</strong>. <br> Cena dostawy wynosi <strong>%total_excluding_tax% (wyłączając
+  VAT); </strong> %total_including_tax% (włączając VAT). <br><br>Jeśli którakolwiek
+  z powyższych danych jest niepoprawna, proszę kliknij przycisk "Edytuj". '
+activity.order.fulfilled: "Zamówienie #order/#%aggregate_id% jest zrealizowane\n"
+activity.order.dropped: "@%owner% dostarczył(a) zamówienie /%aggregate_id%\n"
+activity.task.cancelled: "@%owner% ukończył(a) zadanie #task/%aggregate_id%\n"
+activity.task.failed: "@%owner% nie mógł/mogła ukończyć zadania #task/%aggregate_id%\n"
+admin.settings.missing_mandatory_settings: "Brakuje obowiązkowych ustawień.\nIdź do\
+  \  <a href=\"%settings_url%\">strony ustawień</a>, aby je skonfigurować.\n"
+roles.ROLE_RESTAURANT: Restauracja
+roles.ROLE_COURIER: Kurier/Kurierka
+roles.ROLE_ADMIN: Administrator
+product_option.strategy.option_value: Cena według wyboru
+product_option.strategy.option: Stała cena bez względu na wybór
+product_option.strategy.free: Darmowy
+promotion_coupon.used.label: Liczba zastosowań
+form.new_order.variant_price.label: Cena
+form.new_order.variant_name.help: Nazwa, która pojawi się w podsumowaniu zamówienia
+  i na fakturze
+form.new_order.variant_name.label: Nazwa produktu
+form.deposit_refund_settings.deposit_refund_optin.label: System zwrotu kaucji jest
+  opcjonalny
+form.reusable_packaging.on_hand.label: Asortyment
+form.reusable_packaging.price.label: Cena
+form.reusable_packaging.is_tracked.label: Śledzenie aktywowane
+form.reusable_packaging.name.label: Nazwa
+form.stripe_payment.cardholder_name.label: Imię i nazwisko posiadacza karty
+form.package.volume_units.label: Jednostki objętości
+form.package.name.label: Nazwa
+form.task_export.end.label: Koniec
+form.task_export.start.label: Start
+form.checkout_address.quote.label: Poproś o wycenę
+form.checkout_address.add_tip.label: Aplikuj
+form.checkout_address.tip_amount.help: Dziękuję ❤
+form.checkout_address.tip_amount.label: Napiwek
+form.checkout_address.add_promotion.label: Aplikuj
+form.checkout_address.reusable_packaging_loopeat_enabled.label: Chcę użyć pojemników
+  LoopEat  (%price%)
