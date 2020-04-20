@@ -79,11 +79,22 @@ class OrderTimeHelper
 
     public function getShippingTimeRanges(OrderInterface $cart)
     {
-        if ($cart->getRestaurant()->getOpeningHoursBehavior() === 'time_slot') {
+        $restaurant = $cart->getRestaurant();
+
+        if ($restaurant->getOpeningHoursBehavior() === 'time_slot') {
 
             $ranges = [];
 
+            // Convert the settings to a TimeSlot
             $timeSlot = new TimeSlot();
+            $timeSlot->setWorkingDaysOnly(false);
+
+            $minutes = $restaurant->getOrderingDelayMinutes();
+            if ($minutes > 0) {
+                $hours = (int) $minutes / 60;
+                $timeSlot->setPriorNotice(sprintf('%d %s', $hours, ($hours > 1 ? 'hours' : 'hour')));
+            }
+
             $timeSlot->setOpeningHours(
                 $cart->getRestaurant()->getOpeningHours()
             );
