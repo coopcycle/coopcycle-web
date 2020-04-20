@@ -12,7 +12,7 @@ address.notSet: Escribe tu dirección
 cart.address.empty: Por favor selecciona una dirección
 cart.empty: Tu cesta esta vacía
 
-order.totalIncludingTax.tooLow: El pedido mínimo es de %minimum_amount%€
+order.totalIncludingTax.tooLow: El pedido mínimo es de %minimum_amount%
 
 order.shippedAt.expired: El horario de entrega ya ha pasado
 order.shippedAt.notAvailable: El horario de entrega ya no está disponible

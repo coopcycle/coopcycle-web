@@ -1,0 +1,12 @@
+address.tooFar: Ten adres jest za daleko
+address.notSet: Proszę podać adres dostawy
+
+cart.address.empty: Wybierz adres
+cart.empty: Twój koszyk jest pusty
+
+order.totalIncludingTax.tooLow: Minimalna kwota to %minimum_amount%
+
+order.shippedAt.expired: Termin dostawy wygasł
+order.shippedAt.notAvailable: Data dostawy nie jest już dostępna
+order.shippedAt.notEmpty: Data dostawy nie może być pusta
+order.items.containsDisabledProduct: Zamówienie zawiera wyłączony produkt

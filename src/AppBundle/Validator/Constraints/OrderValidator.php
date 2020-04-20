@@ -5,6 +5,7 @@ namespace AppBundle\Validator\Constraints;
 use AppBundle\Entity\Address;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\RoutingInterface;
+use AppBundle\Utils\PriceFormatter;
 use AppBundle\Utils\ShippingDateFilter;
 use Carbon\Carbon;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -18,15 +19,18 @@ class OrderValidator extends ConstraintValidator
     private $routing;
     private $expressionLanguage;
     private $shippingDateFilter;
+    private $priceFormatter;
 
     public function __construct(
         RoutingInterface $routing,
         ExpressionLanguage $expressionLanguage,
-        ShippingDateFilter $shippingDateFilter)
+        ShippingDateFilter $shippingDateFilter,
+        PriceFormatter $priceFormatter)
     {
         $this->routing = $routing;
         $this->expressionLanguage = $expressionLanguage;
         $this->shippingDateFilter = $shippingDateFilter;
+        $this->priceFormatter = $priceFormatter;
     }
 
     private function isAddressValid(Address $address)
@@ -56,7 +60,7 @@ class OrderValidator extends ConstraintValidator
 
         if ($itemsTotal < $minimumAmount) {
             $this->context->buildViolation($constraint->totalIncludingTaxTooLowMessage)
-                ->setParameter('%minimum_amount%', number_format($minimumAmount / 100, 2))
+                ->setParameter('%minimum_amount%', $this->priceFormatter->formatWithSymbol($minimumAmount))
                 ->atPath('total')
                 ->addViolation();
 

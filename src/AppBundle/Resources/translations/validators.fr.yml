@@ -12,7 +12,7 @@ address.notSet: Veuillez entrer l'adresse de livraison
 cart.address.empty: Veuillez sélectionner une adresse
 cart.empty: Votre panier est vide
 
-order.totalIncludingTax.tooLow: Le montant minimum est de %minimum_amount%€
+order.totalIncludingTax.tooLow: Le montant minimum est de %minimum_amount%
 
 order.shippedAt.expired: L'horaire de livraison est dépassé
 order.shippedAt.notAvailable: L'horaire de livraison n'est plus disponible

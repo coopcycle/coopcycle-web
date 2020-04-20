@@ -12,7 +12,7 @@ address.notSet: Please enter the delivery address
 cart.address.empty: Please select an address
 cart.empty: Your cart is empty
 
-order.totalIncludingTax.tooLow: The minimum amount is %minimum_amount%€
+order.totalIncludingTax.tooLow: The minimum amount is %minimum_amount%
 
 order.shippedAt.expired: The delivery date is expired
 order.shippedAt.notAvailable: The delivery date is no longer available

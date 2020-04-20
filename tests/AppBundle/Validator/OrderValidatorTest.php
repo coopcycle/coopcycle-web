@@ -9,6 +9,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\DateUtils;
+use AppBundle\Utils\PriceFormatter;
 use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Order as OrderConstraint;
@@ -26,6 +27,13 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
     {
         $this->routing = $this->prophesize(RoutingInterface::class);
         $this->shippingDateFilter = $this->prophesize(ShippingDateFilter::class);
+        $this->priceFormatter = $this->prophesize(PriceFormatter::class);
+
+        $this->priceFormatter
+            ->formatWithSymbol(Argument::type('int'))
+            ->will(function ($args) {
+                return sprintf('%s €', number_format($args[0] / 100, 2));
+            });
 
         parent::setUp();
     }
@@ -36,7 +44,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $this->routing->reveal(),
             new ExpressionLanguage(),
             $this->shippingDateFilter->reveal(),
-            'en'
+            $this->priceFormatter->reveal()
         );
     }
 
@@ -442,7 +450,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation($constraint->totalIncludingTaxTooLowMessage)
             ->atPath('property.path.total')
-            ->setParameter('%minimum_amount%', 20.00)
+            ->setParameter('%minimum_amount%', '20.00 €')
             ->assertRaised();
     }
 
