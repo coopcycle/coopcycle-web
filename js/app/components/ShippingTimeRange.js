@@ -67,7 +67,12 @@ export const asText = (value, short) => {
     })
   } else {
     text = i18n.t('CART_DELIVERY_TIME_RANGE_LATER', {
-      date: moment(range.start).calendar(),
+      date: moment(range.start).calendar(null, {
+        sameDay: i18n.t('DATEPICKER_TODAY'),
+        nextDay: i18n.t('DATEPICKER_TOMORROW'),
+        nextWeek: 'LL',
+        sameElse: 'LL',
+      }),
       start: range.start.format('LT'),
       end: range.end.format('LT'),
     })
