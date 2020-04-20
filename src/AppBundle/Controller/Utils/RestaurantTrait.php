@@ -21,6 +21,7 @@ use AppBundle\Form\ProductOptionType;
 use AppBundle\Form\ProductType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Form\Restaurant\DepositRefundSettingsType;
+use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Utils\MenuEditor;
@@ -1045,5 +1046,77 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'form' => $form->createView(),
         ]));
+    }
+
+    public function restaurantPromotionsAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        $this->accessControl($restaurant);
+
+        return $this->render('@App/restaurant/promotions.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'promotions' => $restaurant->getPromotions(),
+        ]));
+    }
+
+    public function newRestaurantPromotionAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        $this->accessControl($restaurant);
+
+        $routes = $this->getRestaurantRoutes();
+
+        if ($request->query->has('type')) {
+
+            $type = $request->query->get('type');
+
+            if ($type === 'offer_delivery') {
+
+                $form = $this->createForm(OfferDeliveryType::class, null, [
+                    'local_business' => $restaurant
+                ]);
+
+                $form->handleRequest($request);
+                if ($form->isSubmitted() && $form->isValid()) {
+
+                    $promotion = $form->getData();
+
+                    $restaurant->addPromotion($promotion);
+
+                    $this->getDoctrine()
+                        ->getManagerForClass(LocalBusiness::class)->flush();
+
+                    // $this->addFlash(
+                    //     'notice',
+                    //     $this->get('translator')->trans('global.changesSaved')
+                    // );
+
+                    return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
+                }
+
+                return $this->render('@App/restaurant/promotion.html.twig', $this->withRoutes([
+                    'layout' => $request->attributes->get('layout'),
+                    'restaurant' => $restaurant,
+                    'form' => $form->createView(),
+                    'promotion_type' => $type,
+                ]));
+            }
+        }
+
+        return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
+    }
+
+    public function restaurantPromotionAction($restaurantId, $promotionId, Request $request)
+    {
+        // TODO Implement
+
+        throw $this->createNotFoundException();
     }
 }

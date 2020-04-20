@@ -12,11 +12,15 @@ use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
+use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use Prophecy\Argument;
 use Psr\Log\NullLogger;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
+use Sylius\Component\Promotion\Model\Promotion;
+use Sylius\Component\Promotion\Model\PromotionAction;
+use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -40,10 +44,13 @@ class OrderFeeProcessorTest extends KernelTestCase
         $this->adjustmentFactory = static::$kernel->getContainer()->get('sylius.factory.adjustment');
         $this->deliveryManager = $this->prophesize(DeliveryManager::class);
 
+        $this->promotionRepository = $this->prophesize(PromotionRepositoryInterface::class);
+
         $this->orderFeeProcessor = new OrderFeeProcessor(
             $this->adjustmentFactory,
             $this->translator->reveal(),
             $this->deliveryManager->reveal(),
+            $this->promotionRepository->reveal(),
             new NullLogger()
         );
     }
@@ -201,6 +208,21 @@ class OrderFeeProcessorTest extends KernelTestCase
         $order = new Order();
         $order->setRestaurant($restaurant);
         $order->addItem($this->createOrderItem(2500));
+
+        $promotion = new Promotion();
+        $promotion->setCode('FREE_DELIVERY');
+
+        $promotionAction = new PromotionAction();
+        $promotionAction->setType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
+        $promotionAction->setConfiguration([
+            'percentage' => 1.0,
+        ]);
+
+        $promotion->addAction($promotionAction);
+
+        $this->promotionRepository
+            ->findOneBy(['code' => 'FREE_DELIVERY'])
+            ->willReturn($promotion);
 
         $freeDeliveryAdjustment = new Adjustment();
         $freeDeliveryAdjustment->setType(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
@@ -364,5 +386,59 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $this->assertEquals(350, $order->getFeeTotal());
         $this->assertEquals(350, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+    }
+
+    public function testOrderWithDeliveryOfferedByLocalBusinessPromotion()
+    {
+        $contract = self::createContract(565, 350, 0.1860);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(2500));
+
+        $promotion = new Promotion();
+        $promotion->setCode('RESTO_OFFER');
+
+        $promotionAction = new PromotionAction();
+        $promotionAction->setType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
+        $promotionAction->setConfiguration([
+            'percentage' => 1.0,
+            'decrase_platform_fee' => false,
+        ]);
+
+        $promotion->addAction($promotionAction);
+
+        $this->promotionRepository
+            ->findOneBy(['code' => 'RESTO_OFFER'])
+            ->willReturn($promotion);
+
+        $freeDeliveryAdjustment = new Adjustment();
+        $freeDeliveryAdjustment->setType(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
+        $freeDeliveryAdjustment->setLabel('Free delivery');
+        $freeDeliveryAdjustment->setAmount(-350);
+        $freeDeliveryAdjustment->setOriginCode('RESTO_OFFER');
+
+        $order->addAdjustment($freeDeliveryAdjustment);
+
+        $deliveryAdjustment = new Adjustment();
+        $deliveryAdjustment->setType(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        $deliveryAdjustment->setLabel('Delivery');
+        $deliveryAdjustment->setAmount(350);
+
+        $order->addAdjustment($deliveryAdjustment);
+
+        $this->orderFeeProcessor->process($order);
+
+        // The customer pays 25 (delivery is free)
+        $this->assertEquals(2500, $order->getTotal());
+
+        $feeAdjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+        $deliveryAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+
+        $this->assertCount(1, $feeAdjustments);
+        $this->assertEquals(1030, $order->getFeeTotal());
     }
 }

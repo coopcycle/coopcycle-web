@@ -216,6 +216,8 @@ class LocalBusiness extends BaseLocalBusiness
 
     protected $openingHoursBehavior = 'asap';
 
+    protected $promotions;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -228,6 +230,7 @@ class LocalBusiness extends BaseLocalBusiness
         $this->stripeAccounts = new ArrayCollection();
         $this->preparationTimeRules = new ArrayCollection();
         $this->reusablePackagings = new ArrayCollection();
+        $this->promotions = new ArrayCollection();
     }
 
     /**
@@ -874,5 +877,17 @@ class LocalBusiness extends BaseLocalBusiness
     public function setOpeningHoursBehavior($openingHoursBehavior)
     {
         $this->openingHoursBehavior = $openingHoursBehavior;
+    }
+
+    public function addPromotion($promotion)
+    {
+        if (!$this->promotions->contains($promotion)) {
+            $this->promotions->add($promotion);
+        }
+    }
+
+    public function getPromotions()
+    {
+        return $this->promotions;
     }
 }

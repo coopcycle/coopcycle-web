@@ -7,10 +7,13 @@ use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
+use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
@@ -19,17 +22,20 @@ final class OrderFeeProcessor implements OrderProcessorInterface
     private $adjustmentFactory;
     private $translator;
     private $deliveryManager;
+    private $promotionRepository;
     private $logger;
 
     public function __construct(
         AdjustmentFactoryInterface $adjustmentFactory,
         TranslatorInterface $translator,
         DeliveryManager $deliveryManager,
+        PromotionRepositoryInterface $promotionRepository,
         LoggerInterface $logger)
     {
         $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
         $this->deliveryManager = $deliveryManager;
+        $this->promotionRepository = $promotionRepository;
         $this->logger = $logger;
     }
 
@@ -94,7 +100,9 @@ final class OrderFeeProcessor implements OrderProcessorInterface
 
         $deliveryPromotionAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
         foreach ($deliveryPromotionAdjustments as $deliveryPromotionAdjustment) {
-            $businessAmount += $deliveryPromotionAdjustment->getAmount();
+            if ($this->decreasePlatformFee($deliveryPromotionAdjustment)) {
+                $businessAmount += $deliveryPromotionAdjustment->getAmount();
+            }
         }
 
         if ($order->getTipAmount() > 0) {
@@ -127,6 +135,29 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         );
 
         $order->addAdjustment($deliveryAdjustment);
+    }
+
+    private function decreasePlatformFee(Adjustment $adjustment): bool
+    {
+        $promotion = $this->promotionRepository
+            ->findOneBy(['code' => $adjustment->getOriginCode()]);
+
+        if (!$promotion) {
+
+            return true;
+        }
+
+        foreach ($promotion->getActions() as $action) {
+            if ($action->getType() === DeliveryPercentageDiscountPromotionActionCommand::TYPE) {
+                $configuration = $action->getConfiguration();
+                if (isset($configuration['decrase_platform_fee'])) {
+
+                    return $configuration['decrase_platform_fee'];
+                }
+            }
+        }
+
+        return true;
     }
 
     private function getDelivery(OrderInterface $order)

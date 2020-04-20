@@ -227,6 +227,7 @@ restaurant.list.createNewRestaurant: Create a new restaurant
 restaurant.list.preparationTime: Preparation
 restaurant.list.stats: Statistics
 restaurant.list.depositRefund: Deposit-refund
+restaurant.list.promotions: Promotions
 restaurant.product_options.help: "This section allows you to setup additional items\
   \ for your <strong>products</strong>.\n<br>\nThey allow for example to add supplements,\
   \ or to choose the elements of a menu (accompaniment, drink…)\n<br>\nFor each option,\
@@ -891,3 +892,9 @@ form.local_business_type.help: The types are using the <a href="https://schema.o
   vocabulary for <a href="https://schema.org/FoodEstablishment">food establishments</a>
   and <a href="https://schema.org/Store">stores</a>
 notifications.tasks_changed: Tasks for %date% changed!
+restaurant_promotion.offer_delivery: Offer delivery fees
+restaurant_promotion.offer_delivery.help: "This allows you to offer the delivery fees <strong>on your own money</strong>.
+  Your margin will be diminished by the amount of the delivery fees.
+  This will <strong>not diminish</strong> the fees perceived by the platform."
+form.offer_delivery.coupon_code.error.exists: This code already exists
+form.offer_delivery.coupon_code.help: It is your responsibility to communicate this code to the customer, either personally or via social networks

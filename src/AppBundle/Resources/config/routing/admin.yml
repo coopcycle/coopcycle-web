@@ -303,6 +303,31 @@ admin_restaurant_deposit_refund:
             restaurant: admin_restaurant
     methods: [ GET, POST ]
 
+admin_restaurant_promotions:
+    path: /admin/restaurants/{id}/promotions
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantPromotionsAction
+        layout: '@App/admin.html.twig'
+    methods: [ GET ]
+
+admin_restaurant_new_promotion:
+    path: /admin/restaurants/{id}/promotions/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newRestaurantPromotionAction
+        layout: '@App/admin.html.twig'
+        routes:
+            restaurant_promotions: admin_restaurant_promotions
+    methods: [ GET, POST ]
+
+admin_restaurant_promotion:
+    path: /admin/restaurants/{restaurantId}/promotions/{promotionId}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantPromotionAction
+        layout: '@App/admin.html.twig'
+        routes:
+            restaurant_promotions: admin_restaurant_promotions
+    methods: [ GET, POST ]
+
 admin_order_accept:
     path: /admin/orders/{id}/accept
     defaults:

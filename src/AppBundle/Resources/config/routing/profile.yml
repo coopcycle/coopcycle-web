@@ -265,6 +265,31 @@ profile_restaurant_stripe_oauth_redirect:
         redirect_after: profile_restaurant
     methods: [ GET ]
 
+profile_restaurant_promotions:
+    path: /profile/restaurants/{id}/promotions
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::restaurantPromotionsAction
+        layout: '@App/profile.html.twig'
+    methods: [ GET ]
+
+profile_restaurant_new_promotion:
+    path: /profile/restaurants/{id}/promotions/new
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::newRestaurantPromotionAction
+        layout: '@App/profile.html.twig'
+        routes:
+            restaurant_promotions: profile_restaurant_promotions
+    methods: [ GET, POST ]
+
+profile_restaurant_promotion:
+    path: /profile/restaurants/{restaurantId}/promotions/{promotionId}
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::restaurantPromotionAction
+        layout: '@App/profile.html.twig'
+        routes:
+            restaurant_promotions: profile_restaurant_promotions
+    methods: [ GET, POST ]
+
 profile_delivery:
   path: /profile/deliveries/{id}
   defaults:

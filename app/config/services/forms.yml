@@ -181,3 +181,8 @@ services:
 
   AppBundle\Form\Type\LocalBusinessTypeChoiceType:
     tags: [ form.type ]
+
+  AppBundle\Form\Sylius\Promotion\OfferDeliveryType:
+    arguments:
+      $promotionRuleFactory: '@sylius.factory.promotion_rule'
+    tags: [ form.type ]

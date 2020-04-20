@@ -67,6 +67,11 @@
                   <i class="fa fa-bar-chart"></i>  {% trans %}restaurant.list.stats{% endtrans %}
                 </a>
               </li>
+              <li>
+                <a href="{{ path(promotions_route, { id: restaurant.id }) }}">
+                  <i class="fa fa-percent"></i>  {% trans %}restaurant.list.promotions{% endtrans %}
+                </a>
+              </li>
               {% if is_granted('ROLE_ADMIN') %}
               <li>
                 <a href="{{ path(preparation_time_route, { id: restaurant.id }) }}">

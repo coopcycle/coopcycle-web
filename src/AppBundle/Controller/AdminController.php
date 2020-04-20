@@ -117,6 +117,9 @@ class AdminController extends Controller
             'preparation_time' => 'admin_restaurant_preparation_time',
             'stats' => 'admin_restaurant_stats',
             'deposit_refund' => 'admin_restaurant_deposit_refund',
+            'promotions' => 'admin_restaurant_promotions',
+            'promotion_new' => 'admin_restaurant_new_promotion',
+            'promotion' => 'admin_restaurant_promotion',
         ];
     }
 

@@ -881,3 +881,9 @@ form.order_export.messenger.label: Inclure une colonne avec le coursier ayant li
 basics.show: Afficher
 basics.hide: Masquer
 notifications.tasks_changed: Les tâches du %date% ont changé !
+restaurant_promotion.offer_delivery: Offrir les frais de livraison
+restaurant_promotion.offer_delivery.help: "Cela vous permet d'offrir les frais de livraison <strong>sur votre propre part</strong>.
+  Votre marge sera réduite du montant des frais de livraison.
+  Cela ne <strong>diminuera pas</strong> les frais perçus par la plate-forme."
+form.offer_delivery.coupon_code.error.exists: Ce code existe déjà
+form.offer_delivery.coupon_code.help: Il est de votre responsabilité de communiquer ce code au client, soit personnellement, soit via les réseaux sociaux
