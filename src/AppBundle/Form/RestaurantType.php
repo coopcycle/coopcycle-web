@@ -55,6 +55,10 @@ class RestaurantType extends LocalBusinessType
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
+                ->add('featured', CheckboxType::class, [
+                    'label' => 'restaurant.form.featured.label',
+                    'required' => false
+                ])
                 ->add('exclusive', CheckboxType::class, [
                     'label' => 'restaurant.form.exclusive.label',
                     'required' => false

@@ -218,6 +218,8 @@ class LocalBusiness extends BaseLocalBusiness
 
     protected $promotions;
 
+    protected $featured = false;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -889,5 +891,15 @@ class LocalBusiness extends BaseLocalBusiness
     public function getPromotions()
     {
         return $this->promotions;
+    }
+
+    public function isFeatured(): bool
+    {
+        return $this->featured;
+    }
+
+    public function setFeatured(bool $featured)
+    {
+        $this->featured = $featured;
     }
 }

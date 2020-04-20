@@ -189,10 +189,14 @@ class LocalBusinessRepository extends EntityRepository
 
         $matches = $qb->getQuery()->getResult();
 
+        // 0 - featured restaurants
         // 1 - opened restaurants
         // 2 - closed restaurants
         // 3 - disabled restaurants
 
+        $featured = array_filter($matches, function (LocalBusiness $lb) {
+            return $lb->isFeatured();
+        });
         $opened = array_filter($matches, function (LocalBusiness $lb) {
             return $lb->isEnabled() && $lb->isOpen();
         });
@@ -208,16 +212,17 @@ class LocalBusinessRepository extends EntityRepository
             $aNextOpening = $a->getNextOpeningDate();
             $bNextOpening = $b->getNextOpeningDate();
 
-            $compareNextOpening = $aNextOpening === $bNextOpening ? 0 :
-                ($aNextOpening < $bNextOpening ? -1 : 1);
+            $compareNextOpening = $aNextOpening === $bNextOpening ?
+                0 : ($aNextOpening < $bNextOpening ? -1 : 1);
 
             return $compareNextOpening;
         };
 
+        usort($featured, $nextOpeningComparator);
         usort($opened, $nextOpeningComparator);
         usort($closed, $nextOpeningComparator);
         usort($others, $nextOpeningComparator);
 
-        return array_merge($opened, $closed, $others);
+        return array_merge($featured, $opened, $closed, $others);
     }
 }

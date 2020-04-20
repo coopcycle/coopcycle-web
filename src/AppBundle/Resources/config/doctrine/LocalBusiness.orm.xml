@@ -71,6 +71,7 @@
     </field>
     <field name="loopeatAccessToken" type="text" column="loopeat_access_token" nullable="true"/>
     <field name="loopeatRefreshToken" type="text" column="loopeat_refresh_token" nullable="true"/>
+    <field name="featured" type="boolean" column="featured"/>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <one-to-one field="contract" target-entity="AppBundle\Entity\Contract" mapped-by="restaurant">
       <cascade>

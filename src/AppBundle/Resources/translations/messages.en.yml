@@ -162,6 +162,7 @@ restaurant.form.exclusive.label: This restaurant is exclusive
 restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (e.g.:
   catering)'
 restaurant.form.loopeat_enabled.label: Enable LoopEat deposit-refund system
+restaurant.form.featured.label: Featured on homepage
 restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries.

@@ -87,6 +87,10 @@
       {% if form.exclusive is defined %}
         {{ form_row(form.exclusive) }}
       {% endif %}
+      {% if form.featured is defined %}
+        {{ form_row(form.featured) }}
+      {% endif %}
+
       {% if form.quotesAllowed is defined %}
         {{ form_row(form.quotesAllowed) }}
       {% endif %}
