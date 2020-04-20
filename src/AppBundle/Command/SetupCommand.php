@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
@@ -373,7 +374,7 @@ class SetupCommand extends Command
             $promotion->setPriority(1);
 
             $promotionAction = new PromotionAction();
-            $promotionAction->setType('delivery_percentage_discount');
+            $promotionAction->setType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
             $promotionAction->setConfiguration(['percentage' => 1.0]);
 
             $promotion->addAction($promotionAction);
