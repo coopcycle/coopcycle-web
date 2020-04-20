@@ -34,7 +34,7 @@ class TimeSlotChoice
         return $this->timeRange;
     }
 
-    public function hasBegun(\DateTimeInterface $now = null)
+    public function hasBegun(\DateTimeInterface $now = null, string $priorNotice = null)
     {
         if (null === $now) {
             $now = Carbon::now();
@@ -46,6 +46,10 @@ class TimeSlotChoice
         $after = clone $this->date;
 
         $after->setTime($hour, $minute);
+
+        if ($priorNotice) {
+            $after->modify(sprintf('-%s', $priorNotice));
+        }
 
         return $now >= $after;
     }

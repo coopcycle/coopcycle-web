@@ -121,7 +121,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                             sprintf('%s-%s', $spec->opens, $spec->closes)
                         );
 
-                        if (!$choice->hasBegun()) {
+                        if (!$choice->hasBegun($this->now, $this->timeSlot->getPriorNotice())) {
                             $choices[] = $choice;
                         }
                     }
@@ -133,7 +133,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                         $timeSlotChoice->toTimeRange()
                     );
 
-                    if (!$choice->hasBegun()) {
+                    if (!$choice->hasBegun($this->now, $this->timeSlot->getPriorNotice())) {
                         $choices[] = $choice;
                     }
                 }

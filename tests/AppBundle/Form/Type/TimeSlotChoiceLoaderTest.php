@@ -175,4 +175,79 @@ class TimeSlotChoiceLoaderTest extends TestCase
             $choices[1]
         );
     }
+
+    public function testWithOpeningHours()
+    {
+        $slot = new TimeSlot();
+        $slot->setWorkingDaysOnly(false);
+        $slot->setOpeningHours(['Mo-Fr 10:00-12:00']);
+
+        // Friday
+        Carbon::setTestNow(Carbon::parse('2019-10-25 19:00:00'));
+
+        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr');
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertCount(2, $choices);
+
+        $this->assertTimeSlotChoice(
+            new \DateTime('2019-10-28 10:00:00'),
+            new \DateTime('2019-10-28 12:00:00'),
+            $choices[0]
+        );
+        $this->assertTimeSlotChoice(
+            new \DateTime('2019-10-29 10:00:00'),
+            new \DateTime('2019-10-29 12:00:00'),
+            $choices[1]
+        );
+    }
+
+    public function testWithOpeningHoursWithPriorNotice()
+    {
+        $slot = new TimeSlot();
+        $slot->setWorkingDaysOnly(false);
+        $slot->setOpeningHours(['Mo-Fr 10:00-12:00']);
+        $slot->setPriorNotice('2 hours');
+
+        // Monday, too late
+        Carbon::setTestNow(Carbon::parse('2019-10-21 09:00:00'));
+
+        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr');
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertCount(2, $choices);
+
+        $this->assertTimeSlotChoice(
+            new \DateTime('2019-10-22 10:00:00'),
+            new \DateTime('2019-10-22 12:00:00'),
+            $choices[0]
+        );
+        $this->assertTimeSlotChoice(
+            new \DateTime('2019-10-23 10:00:00'),
+            new \DateTime('2019-10-23 12:00:00'),
+            $choices[1]
+        );
+
+        // Monday, on time
+        Carbon::setTestNow(Carbon::parse('2019-10-21 07:30:00'));
+
+        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr');
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertCount(2, $choices);
+
+        $this->assertTimeSlotChoice(
+            new \DateTime('2019-10-21 10:00:00'),
+            new \DateTime('2019-10-21 12:00:00'),
+            $choices[0]
+        );
+        $this->assertTimeSlotChoice(
+            new \DateTime('2019-10-22 10:00:00'),
+            new \DateTime('2019-10-22 12:00:00'),
+            $choices[1]
+        );
+    }
 }

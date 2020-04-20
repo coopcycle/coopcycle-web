@@ -35,6 +35,15 @@ class TimeSlotChoiceTest extends TestCase
         $this->assertTrue($choice->hasBegun(new \DateTime('2019-07-30 13:05:00')));
     }
 
+    public function testHasBegunWithPriorNotice()
+    {
+        $choice = new TimeSlotChoice(new \DateTime('2019-07-30'), '11:00:00-12:00:00');
+
+        $this->assertTrue($choice->hasBegun(new \DateTime('2019-07-30 09:00:00'), '3 hours'));
+        $this->assertTrue($choice->hasBegun(new \DateTime('2019-07-30 09:00:00'), '2 hours'));
+        $this->assertFalse($choice->hasBegun(new \DateTime('2019-07-30 09:00:00'), '1 hour'));
+    }
+
     public function testApplyToTask()
     {
         $task = new Task();
