@@ -106,6 +106,11 @@ module.exports = function(sequelize) {
       defaultValue: 'asap',
       field: 'opening_hours_behavior',
     },
+    featured: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+      field: 'featured',
+    },
     createdAt: {
       field: 'created_at',
       type: Sequelize.DATE
