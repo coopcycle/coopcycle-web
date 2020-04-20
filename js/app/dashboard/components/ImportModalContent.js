@@ -15,6 +15,7 @@ const mimeTypes = [
   'application/vnd.oasis.opendocument.spreadsheet',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'application/octet-stream',
+  'application/vnd.ms-excel',
   'text/csv',
   'text/plain'
 ]
