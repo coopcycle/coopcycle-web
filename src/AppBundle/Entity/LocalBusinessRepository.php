@@ -189,13 +189,13 @@ class LocalBusinessRepository extends EntityRepository
 
         $matches = $qb->getQuery()->getResult();
 
-        // 0 - featured restaurants
+        // 0 - featured & opened restaurants
         // 1 - opened restaurants
         // 2 - closed restaurants
         // 3 - disabled restaurants
 
         $featured = array_filter($matches, function (LocalBusiness $lb) {
-            return $lb->isFeatured();
+            return $lb->isFeatured() && $lb->isOpen();
         });
         $opened = array_filter($matches, function (LocalBusiness $lb) {
             return $lb->isEnabled() && $lb->isOpen();
