@@ -11,9 +11,11 @@ import { initReactI18next } from 'react-i18next'
 import moment from 'moment'
 import 'moment-timezone'
 
+import de from './locales/de.json'
 import en from './locales/en.json'
 import fr from './locales/fr.json'
 import es from './locales/es.json'
+import pl from './locales/pl.json'
 
 export const localeDetector = () => $('html').attr('lang')
 
@@ -30,7 +32,7 @@ i18next
   .use(initReactI18next)
   .init({
     fallbackLng: 'en',
-    resources: { en, fr, es },
+    resources: { de, en, fr, es, pl },
     ns: ['common'],
     defaultNS: 'common',
     debug: process.env.DEBUG
