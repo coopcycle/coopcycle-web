@@ -192,34 +192,32 @@ class LocalBusinessRepository extends EntityRepository
         // 1 - opened restaurants
         // 2 - closed restaurants
         // 3 - disabled restaurants
-        usort($matches, function (LocalBusiness $a, LocalBusiness $b) {
 
-            $isAEnabled = $a->isEnabled();
-            $isBEnabled = $b->isEnabled();
+        $opened = array_filter($matches, function (LocalBusiness $lb) {
+            return $lb->isEnabled() && $lb->isOpen();
+        });
+        $closed = array_filter($matches, function (LocalBusiness $lb) {
+            return $lb->isEnabled() && !$lb->isOpen();
+        });
+        $others = array_filter($matches, function (LocalBusiness $lb) {
+            return !$lb->isEnabled();
+        });
 
-            $compareIsEnabled = intval($isBEnabled) - intval($isAEnabled);
-
-            if ($compareIsEnabled !== 0) {
-                return $compareIsEnabled;
-            }
-
-            $isAOpen = $a->isOpen();
-            $isBOpen = $b->isOpen();
-
-            $compareIsOpen = intval($isBOpen) - intval($isAOpen);
-
-            if ($compareIsOpen !== 0) {
-                return $compareIsOpen;
-            }
+        $nextOpeningComparator = function (LocalBusiness $a, LocalBusiness $b) {
 
             $aNextOpening = $a->getNextOpeningDate();
             $bNextOpening = $b->getNextOpeningDate();
 
-            $compareNextOpening = $aNextOpening === $bNextOpening ? 0 : ($aNextOpening < $bNextOpening ? -1 : 1);
+            $compareNextOpening = $aNextOpening === $bNextOpening ? 0 :
+                ($aNextOpening < $bNextOpening ? -1 : 1);
 
             return $compareNextOpening;
-        });
+        };
 
-        return $matches;
+        usort($opened, $nextOpeningComparator);
+        usort($closed, $nextOpeningComparator);
+        usort($others, $nextOpeningComparator);
+
+        return array_merge($opened, $closed, $others);
     }
 }
