@@ -34,47 +34,32 @@ export const asText = (value, short) => {
     moment().set({ hour: 0, minute: 0, second: 0 }),
     moment().set({ hour: 23, minute: 59, second: 59 })
   )
-  const tomorrow = moment.range(
-    moment().add(1, 'day').set({ hour: 0, minute: 0, second: 0 }),
-    moment().add(1, 'day').set({ hour: 23, minute: 59, second: 59 })
-  )
 
   const isToday = range.overlaps(today)
-  const isTomorrow = range.overlaps(tomorrow)
+
+  const startDiff = roundUp(range.start.diff(moment(), 'minutes'), 5)
+  const endDiff   = roundUp(range.end.diff(moment(), 'minutes'), 5)
+
+  // We see it as "fast" if it's less than max. 45 minutes
+  const isFast = endDiff <= 45
 
   let text = ''
-  if (isToday) {
+  if (isToday && isFast) {
+    text = i18n.t('CART_DELIVERY_TIME_DIFF', {
+      diff: `${startDiff} - ${endDiff}`
+    })
+  } else {
 
-    const startDiff = roundUp(range.start.diff(moment(), 'minutes'), 5)
-    const endDiff   = roundUp(range.end.diff(moment(), 'minutes'), 5)
-
-    // We see it as "fast" if it's less than max. 45 minutes
-    if (endDiff <= 45) {
-      text = i18n.t('CART_DELIVERY_TIME_DIFF', {
-        diff: `${startDiff} - ${endDiff}`
-      })
-    } else {
-      text = i18n.t('CART_DELIVERY_TIME_RANGE_TODAY', {
-        start: range.start.format('LT'),
-        end: range.end.format('LT'),
-      })
-    }
-
-  } else if (isTomorrow) {
-    text = i18n.t('CART_DELIVERY_TIME_RANGE_TOMORROW', {
+    const rangeAsText = i18n.t('TIME_RANGE', {
       start: range.start.format('LT'),
       end: range.end.format('LT'),
     })
-  } else {
-    text = i18n.t('CART_DELIVERY_TIME_RANGE_LATER', {
-      date: moment(range.start).calendar(null, {
-        sameDay: i18n.t('DATEPICKER_TODAY'),
-        nextDay: i18n.t('DATEPICKER_TOMORROW'),
-        nextWeek: 'LL',
-        sameElse: 'LL',
-      }),
-      start: range.start.format('LT'),
-      end: range.end.format('LT'),
+
+    text = moment(range.start).calendar(null, {
+      sameDay:  i18n.t('CART_DELIVERY_TIME_RANGE_SAME_DAY', { range: rangeAsText }),
+      nextDay:  i18n.t('CART_DELIVERY_TIME_RANGE_NEXT_DAY', { range: rangeAsText }),
+      lastDay:  i18n.t('CART_DELIVERY_TIME_RANGE_LAST_DAY', { range: rangeAsText }),
+      sameElse: i18n.t('CART_DELIVERY_TIME_RANGE_SAME_ELSE', { range: rangeAsText }),
     })
   }
 

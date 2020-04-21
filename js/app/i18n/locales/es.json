@@ -128,9 +128,6 @@
         "CART_DELIVERY_TIME_ASAP": "Lo antes posible",
         "CART_DELIVERY_TIME_CANCEL": "Cancelar",
         "CART_DELIVERY_TIME_SUBMIT": "Cambiar",
-        "CART_DELIVERY_TIME_RANGE_TODAY": "Entrega hoy entre {{start}} y {{end}}",
-        "CART_DELIVERY_TIME_RANGE_TOMORROW": "Entrega mañana entre {{start}} y {{end}}",
-        "CART_DELIVERY_TIME_RANGE_LATER": "Entrega el {{- date}} entre {{start}} y {{end}}",
         "CART_CHANGE_TIME_MODAL_LABEL": "Cambiar el horario",
         "CART_CHANGE_TIME_MODAL_TITLE": "Elija un horario",
         "RESTAURANT_DASHBOARD_NEW_ORDERS": "Nuevos pedidos",
@@ -160,6 +157,11 @@
         "ADMIN_DASHBOARD_FILTERS_TAB_GENERAL": "General",
         "ADMIN_DASHBOARD_FILTERS_APPLY": "Aplicar",
         "ADMIN_DASHBOARD_RUSH": "Hora punta",
-        "ADMIN_DASHBOARD_NORMAL": "Normal"
+        "ADMIN_DASHBOARD_NORMAL": "Normal",
+        "TIME_RANGE": "entre {{start}} y {{end}}",
+        "CART_DELIVERY_TIME_RANGE_SAME_DAY": "[Entrega hoy] [{{range}}]",
+        "CART_DELIVERY_TIME_RANGE_NEXT_DAY": "[Entrega mañana] [{{range}}]",
+        "CART_DELIVERY_TIME_RANGE_LAST_DAY": "[Entrega ayer] [{{range}}]",
+        "CART_DELIVERY_TIME_RANGE_SAME_ELSE": "[Entrega el] LL [{{range}}]"
     }
 }

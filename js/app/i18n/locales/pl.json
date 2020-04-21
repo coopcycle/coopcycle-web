@@ -26,9 +26,6 @@
         "CART_DYNAMIC_DELIVERY_FEE": "Opłata za dostawę jest obliczana w oparciu o twój adres",
         "CART_CHANGE_TIME_MODAL_TITLE": "Wybierz harmonogram",
         "CART_CHANGE_TIME_MODAL_LABEL": "Zmień czas",
-        "CART_DELIVERY_TIME_RANGE_LATER": "Dostawa dnia {{- date}} pomiędzy {{start}} a {{end}}",
-        "CART_DELIVERY_TIME_RANGE_TOMORROW": "Dostawa jutro pomiędzy {{start}} a {{end}}",
-        "CART_DELIVERY_TIME_RANGE_TODAY": "Dostawa dziś pomiędzy {{start}} a {{end}}",
         "CART_DELIVERY_TIME_SUBMIT": "Aplikuj",
         "CART_DELIVERY_TIME_CANCEL": "Zakończ",
         "CART_DELIVERY_TIME_ASAP": "Najszybciej jak się da",
@@ -178,6 +175,11 @@
         "ADD_BUTON": "Dodaj",
         "OPENING_HOURS_TITLE": "Godziny otwarcia",
         "OPENING_HOURS_RANGE": "Otwarte od dnia {{fromDay}} do {{toDay}}, od {{open}} do {{close}}",
-        "OPENING_HOURS_SINGLE": "Otwarte dnia {{day}} od {{open}} do {{close}}"
+        "OPENING_HOURS_SINGLE": "Otwarte dnia {{day}} od {{open}} do {{close}}",
+        "TIME_RANGE": "pomiędzy {{start}} a {{end}}",
+        "CART_DELIVERY_TIME_RANGE_SAME_DAY": "[Dostawa dziś] [{{range}}]",
+        "CART_DELIVERY_TIME_RANGE_NEXT_DAY": "[Dostawa jutro] [{{range}}]",
+        "CART_DELIVERY_TIME_RANGE_LAST_DAY": "[Dostawa wczoraj] [{{range}}]",
+        "CART_DELIVERY_TIME_RANGE_SAME_ELSE": "[Dostawa dnia] LL [{{range}}]"
     }
 }
