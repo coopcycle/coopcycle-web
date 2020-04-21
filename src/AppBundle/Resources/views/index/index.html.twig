@@ -34,81 +34,23 @@
 </section>
 
 {% if restaurants|length > 0 %}
-<section class="homepage-restaurants">
-  <div class="container">
-    <h2 class="homepage-restaurants__title">{% trans %}index.our_restaurants{% endtrans %}</h2>
-    {% if show_more %}
-    <div class="homepage-restaurants__show-more text-left">
-      <a href="{{ path('restaurants') }}">{% trans %}index.view_all_restaurants{% endtrans %} →</a>
-    </div>
-    {% endif %}
-    <div class="row display-flex restaurant-list">
-      {% for restaurant in restaurants %}
-        <div class="col-xs-12 col-md-4 display-flex">
-          {% include "@App/_partials/restaurant/list_thumbnail.html.twig" %}
-        </div>
-      {% endfor %}
-      {% if restaurants|length < max_results %}
-        {% set pad = (max_results - restaurants|length) %}
-        {% for i in range(0, (pad - 1)) %}
-          <div class="col-xs-12 col-md-4 display-flex">
-            <div class="thumbnail restaurant-item">
-              <img class="restaurant-image restaurant-image--placeholder" src="{{ asset('img/restaurant/placeholder.png') }}">
-              <div class="caption">
-                <h4>{% trans %}restaurants.placeholder.title{% endtrans %}</h4>
-                <p class="text-muted">{% trans %}restaurants.placeholder.text{% endtrans %}</p>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      {% endif %}
-    </div>
-    {% if show_more %}
-    <div class="homepage-restaurants__show-more text-right">
-      <a href="{{ path('restaurants') }}">{% trans %}index.view_all_restaurants{% endtrans %} →</a>
-    </div>
-    {% endif %}
-  </div>
-</section>
+  {% include '@App/index/_partials/section.html.twig' with {
+    items: restaurants,
+    section_title: 'index.our_restaurants'|trans,
+    view_all: 'index.view_all_restaurants'|trans,
+    view_all_path: path('restaurants'),
+    show_more: show_more_restaurants
+  } %}
 {% endif %}
 
 {% if stores|length > 0 %}
-<section class="homepage-restaurants">
-  <div class="container">
-    <h2 class="homepage-restaurants__title">{% trans %}index.our_shops{% endtrans %}</h2>
-    {% if show_more %}
-    <div class="homepage-restaurants__show-more text-left">
-      <a href="{{ path('stores') }}">{% trans %}index.view_all_shops{% endtrans %} →</a>
-    </div>
-    {% endif %}
-    <div class="row display-flex restaurant-list">
-      {% for restaurant in stores %}
-        <div class="col-xs-12 col-md-4 display-flex">
-          {% include "@App/_partials/restaurant/list_thumbnail.html.twig" with { local_business_type: 'store' } %}
-        </div>
-      {% endfor %}
-      {% if stores|length < max_results %}
-        {% set pad = (max_results - stores|length) %}
-        {% for i in range(0, (pad - 1)) %}
-          <div class="col-xs-12 col-md-4 display-flex">
-            <div class="thumbnail restaurant-item">
-              <img class="restaurant-image restaurant-image--placeholder" src="{{ asset('img/restaurant/placeholder.png') }}">
-              <div class="caption">
-                <h4>{% trans %}restaurants.placeholder.title{% endtrans %}</h4>
-                <p class="text-muted">{% trans %}restaurants.placeholder.text{% endtrans %}</p>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      {% endif %}
-    </div>
-    {% if show_more %}
-    <div class="homepage-restaurants__show-more text-right">
-      <a href="{{ path('stores') }}">{% trans %}index.view_all_shops{% endtrans %} →</a>
-    </div>
-    {% endif %}
-  </div>
-</section>
+  {% include '@App/index/_partials/section.html.twig' with {
+    items: stores,
+    section_title: 'index.our_shops'|trans,
+    view_all: 'index.view_all_shops'|trans,
+    view_all_path: path('stores'),
+    show_more: show_more_stores
+  } %}
 {% endif %}
 
 <section class="homepage-map">

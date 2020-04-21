@@ -32,8 +32,9 @@ class IndexController extends AbstractController
         return array(
             'restaurants' => array_slice($restaurants, 0, self::MAX_RESULTS),
             'stores' => array_slice($stores, 0, self::MAX_RESULTS),
+            'show_more_restaurants' => count($restaurants) > self::MAX_RESULTS,
+            'show_more_stores' => count($stores) > self::MAX_RESULTS,
             'max_results' => self::MAX_RESULTS,
-            'show_more' => count($restaurants) > self::MAX_RESULTS,
             'addresses_normalized' => $this->getUserAddresses(),
         );
     }
