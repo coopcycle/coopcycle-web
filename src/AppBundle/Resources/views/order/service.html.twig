@@ -128,7 +128,7 @@
   </div>
 </div>
 
-{% if pickup_address is not empty and dropoff_address is not empty %}
+{% if delivery is not empty %}
 
 <hr>
 
@@ -148,14 +148,14 @@
             <i class="fa fa-cube"></i>  {{ 'task.type.PICKUP'|trans }}
           </span>
           <span class="pull-right">
-            <i class="fa fa-clock-o"></i>  {{ pickup_at|localizeddate('medium', 'short') }}
+            <i class="fa fa-clock-o"></i>  {{ delivery.pickup.getTimeRange()|time_range_for_humans }}
           </span>
         </h4>
       </div>
       <div class="panel-body">
-        {{ pickup_address.streetAddress }}
-        {% if pickup_address.description is not empty %}
-        <textarea class="form-control" disabled>{{ pickup_address.description }}</textarea>
+        {{ delivery.pickup.address.streetAddress }}
+        {% if delivery.pickup.address.description is not empty %}
+        <textarea class="form-control" disabled>{{ delivery.pickup.address.description }}</textarea>
         {% endif %}
       </div>
     </div>
@@ -166,14 +166,14 @@
             <i class="fa fa-flag"></i>  {{ 'task.type.DROPOFF'|trans }}
           </span>
           <span class="pull-right">
-            <i class="fa fa-clock-o"></i>  {{ dropoff_at|localizeddate('medium', 'short') }}
+            <i class="fa fa-clock-o"></i>  {{ delivery.dropoff.getTimeRange()|time_range_for_humans }}
           </span>
         </h4>
       </div>
       <div class="panel-body">
-        {{ dropoff_address.streetAddress }}
-        {% if dropoff_address.description is not empty %}
-        <textarea class="form-control" disabled>{{ dropoff_address.description }}</textarea>
+        {{ delivery.dropoff.address.streetAddress }}
+        {% if delivery.dropoff.address.description is not empty %}
+        <textarea class="form-control" disabled>{{ delivery.dropoff.address.description }}</textarea>
         {% endif %}
       </div>
     </div>
@@ -220,10 +220,10 @@
 {{ encore_entry_script_tags('delivery-map') }}
 <script>
 new ClipboardJS('#copy');
-{% if pickup_address is not empty and dropoff_address is not empty %}
+{% if delivery is not empty %}
 new CoopCycle.DeliveryMap('map', {
-  pickup: [ {{ pickup_address.geo.latitude }}, {{ pickup_address.geo.longitude }} ],
-  dropoff: [ {{ dropoff_address.geo.latitude }}, {{ dropoff_address.geo.longitude }} ]
+  pickup: [ {{ delivery.pickup.address.geo.latitude }}, {{ delivery.pickup.address.geo.longitude }} ],
+  dropoff: [ {{ delivery.dropoff.address.geo.latitude }}, {{ delivery.dropoff.address.geo.longitude }} ]
 });
 {% endif %}
 $('[data-change-state] button[type="submit"]').on('click', function(e) {

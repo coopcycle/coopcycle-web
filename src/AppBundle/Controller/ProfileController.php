@@ -18,6 +18,7 @@ use AppBundle\Form\AddressType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\SocketIoManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
@@ -227,7 +228,10 @@ class ProfileController extends Controller
         return [ $orders, $pages, $page ];
     }
 
-    public function orderAction($id, Request $request, OrderManager $orderManager, JWTManagerInterface $jwtManager)
+    public function orderAction($id, Request $request,
+        OrderManager $orderManager,
+        DeliveryManager $deliveryManager,
+        JWTManagerInterface $jwtManager)
     {
         $order = $this->container->get('sylius.repository.order')->find($id);
 
@@ -282,21 +286,17 @@ class ProfileController extends Controller
             }
         }
 
-        $pickupAddress = $order->getDelivery()->getPickup()->getAddress();
-        $dropoffAddress = $order->getDelivery()->getDropoff()->getAddress();
-
-        $pickupAt = $order->getDelivery()->getPickup()->getDoneBefore();
-        $dropoffAt = $order->getDelivery()->getDropoff()->getDoneBefore();
+        // When the order is in state "new", it does not have a delivery
+        $delivery = $order->getDelivery();
+        if (null === $delivery) {
+            $delivery = $deliveryManager->createFromOrder($order);
+        }
 
         return $this->render('@App/order/service.html.twig', [
             'layout' => '@App/profile.html.twig',
             'order' => $order,
-            'delivery' => $order->getDelivery(),
+            'delivery' => $delivery,
             'form' => $form->createView(),
-            'pickup_address' => $pickupAddress,
-            'dropoff_address' => $dropoffAddress,
-            'pickup_at' => $pickupAt,
-            'dropoff_at' => $dropoffAt,
         ]);
     }
 

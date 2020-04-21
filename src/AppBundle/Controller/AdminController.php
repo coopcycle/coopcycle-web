@@ -45,6 +45,7 @@ use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\TaxationType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\ActivityManager;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
@@ -176,7 +177,10 @@ class AdminController extends Controller
      * @Route("/admin/orders/{id}", name="admin_order")
      * @Template
      */
-    public function orderAction($id, Request $request, OrderManager $orderManager, EmailManager $emailManager)
+    public function orderAction($id, Request $request,
+        OrderManager $orderManager,
+        DeliveryManager $deliveryManager,
+        EmailManager $emailManager)
     {
         $order = $this->container->get('sylius.repository.order')->find($id);
 
@@ -264,30 +268,16 @@ class AdminController extends Controller
             }
         }
 
-        $pickupAddress = null;
-        $dropoffAddress = null;
-        $pickupAt = null;
-        $dropoffAt = null;
-
-        if ($order->isFoodtech()) {
-            $pickupAddress = $order->getRestaurant()->getAddress();
-            $dropoffAddress = $order->getShippingAddress();
-            $pickupAt = $order->getTimeline()->getPickupExpectedAt();
-            $dropoffAt = $order->getTimeline()->getDropoffExpectedAt();
-        } elseif (null !== $order->getDelivery()) {
-            $pickupAddress = $order->getDelivery()->getPickup()->getAddress();
-            $dropoffAddress = $order->getDelivery()->getDropoff()->getAddress();
-            $pickupAt = $order->getDelivery()->getPickup()->getDoneBefore();
-            $dropoffAt = $order->getDelivery()->getDropoff()->getDoneBefore();
+        // When the order is in state "new", it does not have a delivery
+        $delivery = $order->getDelivery();
+        if (null === $delivery) {
+            $delivery = $deliveryManager->createFromOrder($order);
         }
 
         return $this->render('@App/order/service.html.twig', [
             'layout' => '@App/admin.html.twig',
             'order' => $order,
-            'pickup_address' => $pickupAddress,
-            'dropoff_address' => $dropoffAddress,
-            'pickup_at' => $pickupAt,
-            'dropoff_at' => $dropoffAt,
+            'delivery' => $delivery,
             'form' => $form->createView(),
             'email_form' => $emailForm->createView(),
         ]);
