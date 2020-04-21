@@ -809,6 +809,11 @@ sylius.ui.code: Kod
 resend_confirmation_email.disclaimer: Jeśli nie otrzymałeś e-maila z potwierdzeniem,
   kliknij przycisk.
 time_slot.human_readable: '%day% pomiędzy %start% i %end%'
+time_range: 'pomiędzy %start% i %end%'
+time_range.same_day: "[Dziś] [%range%]"
+time_range.next_day: '[Jutro] [%range%]'
+time_range.last_day: '[Wczoraj] [%range%]'
+time_range.same_else: '[Dnia] LL [%range%]'
 restricted_diets.VEGETARIAN_DIET: Wegetariańskie
 restricted_diets.VEGAN_DIET: Wegańskie
 restricted_diets.LOW_SALT_DIET: Niski poziom soli

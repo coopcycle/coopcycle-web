@@ -783,6 +783,11 @@ restricted_diets.LOW_SALT_DIET: Low salt
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Vegetarian
 time_slot.human_readable: '%day% between %start% and %end%'
+time_range: 'between %start% and %end%'
+time_range.same_day: '[Today] [%range%]'
+time_range.next_day: '[Tomorrow] [%range%]'
+time_range.last_day: '[Yesterday] [%range%]'
+time_range.same_else: '[On] LL [%range%]'
 resend_confirmation_email.disclaimer: If you have not received the confirmation email,
   click on the button.
 sylius.ui.code: Code

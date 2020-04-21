@@ -20,18 +20,23 @@ class OrderRuntime implements RuntimeExtensionInterface
 
     public function timeRangeForHumans(TsRange $range)
     {
-        $calendar = Carbon::instance($range->getLower())
-            ->locale($this->locale)
-            ->calendar(null, [
-                'sameDay' => '[' . $this->translator->trans('basics.today') . ']',
-                'nextDay' => '[' . $this->translator->trans('basics.tomorrow') . ']',
-                'nextWeek' => 'dddd',
-            ]);
-
-        return $this->translator->trans('time_slot.human_readable', [
-            '%day%'   => ucfirst(strtolower($calendar)),
+        $rangeAsText = $this->translator->trans('time_range', [
             '%start%' => Carbon::instance($range->getLower())->locale($this->locale)->isoFormat('LT'),
             '%end%'   => Carbon::instance($range->getUpper())->locale($this->locale)->isoFormat('LT'),
         ]);
+
+        $sameElse =
+            $this->translator->trans('time_range.same_else', ['%range%' => $rangeAsText]);
+
+        return Carbon::instance($range->getLower())
+            ->locale($this->locale)
+            ->calendar(null, [
+                'sameDay'  => $this->translator->trans('time_range.same_day', ['%range%' => $rangeAsText]),
+                'nextDay'  => $this->translator->trans('time_range.next_day', ['%range%' => $rangeAsText]),
+                'nextWeek' => $sameElse,
+                'lastDay'  => $this->translator->trans('time_range.last_day', ['%range%' => $rangeAsText]),
+                'lastWeek' => $sameElse,
+                'sameElse' => $sameElse,
+            ]);
     }
 }
