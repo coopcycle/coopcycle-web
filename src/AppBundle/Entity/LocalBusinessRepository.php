@@ -197,8 +197,8 @@ class LocalBusinessRepository extends EntityRepository
         $featured = array_filter($matches, function (LocalBusiness $lb) {
             return $lb->isFeatured() && $lb->isOpen();
         });
-        $opened = array_filter($matches, function (LocalBusiness $lb) {
-            return $lb->isEnabled() && $lb->isOpen();
+        $opened = array_filter($matches, function (LocalBusiness $lb) use ($featured) {
+            return !in_array($lb, $featured) && $lb->isEnabled() && $lb->isOpen();
         });
         $closed = array_filter($matches, function (LocalBusiness $lb) {
             return $lb->isEnabled() && !$lb->isOpen();
