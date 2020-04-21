@@ -39,7 +39,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   },
  *   collectionOperations={
  *     "get"={
- *       "method"="GET"
+ *       "method"="GET",
+ *       "pagination_enabled"=false
  *     },
  *     "me_restaurants"={
  *       "method"="GET",

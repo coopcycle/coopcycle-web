@@ -568,13 +568,14 @@ services:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }
 
   AppBundle\Api\DataProvider\RestaurantCollectionDataProvider:
+    parent: 'api_platform.doctrine.orm.collection_data_provider'
     arguments:
-      $managerRegistry: '@doctrine'
-      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
       $restaurantFilter: '@coopcycle.utils.restaurant_filter'
     tags:
       - { name: 'api_platform.collection_data_provider', priority: 2 }
     autoconfigure: false
+    autowire: false
+    public: false
 
   AppBundle\Api\DataProvider\RestaurantPledgeFilterExtension:
     tags:

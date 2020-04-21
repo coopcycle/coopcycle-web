@@ -14,27 +14,10 @@ final class RestaurantCollectionDataProvider extends CollectionDataProvider
 
     public function __construct(
         ManagerRegistry $managerRegistry,
-        /* iterable */ $collectionExtensions = [],
+        iterable $collectionExtensions = [],
         RestaurantFilter $restaurantFilter)
     {
-        // Pop the PaginationExtension
-
-        // ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\EagerLoadingExtension
-        // ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\FilterExtension
-        // ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\FilterEagerLoadingExtension
-        // ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\OrderExtension
-        // ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\PaginationExtension
-        $extensions = [];
-        foreach ($collectionExtensions as $key => $extension) {
-            // We remove the PaginationExtension
-            // because the app doesn't manage pagination
-            if ($extension instanceof QueryResultCollectionExtensionInterface) {
-                continue;
-            }
-            $extensions[] = $extension;
-        }
-
-        parent::__construct($managerRegistry, $extensions);
+        parent::__construct($managerRegistry, $collectionExtensions);
 
         $this->restaurantFilter = $restaurantFilter;
     }
