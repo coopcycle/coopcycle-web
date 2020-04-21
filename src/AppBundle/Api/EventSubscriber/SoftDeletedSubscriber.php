@@ -25,7 +25,7 @@ final class SoftDeletedSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => ['enableSoftDeleted', EventPriorities::POST_DESERIALIZE],
+            KernelEvents::REQUEST => ['enableSoftDeleted', EventPriorities::PRE_READ],
         ];
     }
 
