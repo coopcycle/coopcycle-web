@@ -293,6 +293,8 @@ order.adjustment_type.platform_fees: Frais CoopCycle
 order.adjustment_type.tip: Pourboire
 order.delivery_time: Livraison %time%
 order.public_link: Lien public
+order.payments: Paiements
+order.notes: Commentaires du client
 payment.state.cart: Panier
 payment.state.new: Nouveau
 payment.state.authorized: Autorisé

@@ -304,6 +304,8 @@ order.state.fulfilled: Delivered
 order.state.cancelled: Cancelled
 order.reusable_packaging.alert: This order must be packed in reusable packaging
 order.public_link: Shareable link
+order.payments: Payments
+order.notes: Customer notes
 payment.state.cart: Cart
 payment.state.new: New
 payment.state.authorized: Authorized
@@ -723,6 +725,7 @@ basics.today: Today
 basics.are_you_sure: Are you sure?
 basics.no_entries: No element yet
 basics.created_at: Created at %date%
+basics.updated_at: Updated at %date%
 basics.date_range: From %start% to %end%
 basics.total_including_tax: Total including all taxes
 basics.stripe_fees: Stripe fees

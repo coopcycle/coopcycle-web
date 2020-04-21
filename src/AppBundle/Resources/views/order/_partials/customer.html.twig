@@ -1,0 +1,16 @@
+<div class="d-flex flex-row justify-content-between border mb-4 p-4">
+  <div>
+    <i class="fa fa-user"></i>
+    <a href="{{ path('admin_user_details', { username: order.customer.username }) }}">
+      {{ order.customer.username }}
+    </a>
+  </div>
+  <div>
+    <a href="mailto:{{ order.customer.email }}"><i class="fa fa-envelope"></i>  {{ order.customer.email }}</a>
+  </div>
+  {% if order.customer.telephone is not empty %}
+  <div>
+    <i class="fa fa-phone"></i>  {{ order.customer.telephone|phone_number_format('NATIONAL') }}
+  </div>
+  {% endif %}
+</div>

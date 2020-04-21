@@ -1,0 +1,13 @@
+<div class="d-flex flex-row justify-content-between py-4">
+  {% if form.cancel is defined %}
+    {{ form_widget(form.cancel, { attr: { class: 'btn btn-danger' } }) }}
+  {% endif %}
+  {% if is_granted('ROLE_ADMIN') %}
+    {% if form.accept is defined %}
+      {{ form_widget(form.accept, { attr: { class: 'btn btn-success' } }) }}
+    {% endif %}
+    {% if form.fulfill is defined %}
+      {{ form_widget(form.fulfill, { attr: { class: 'btn btn-success' } }) }}
+    {% endif %}
+  {% endif %}
+</div>
