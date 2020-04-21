@@ -18,11 +18,28 @@ class PublishToRedis
     {
         try {
 
-            $customer = $event->getOrder()->getCustomer();
+            $order = $event->getOrder();
+            $customer = $order->getCustomer();
+
             if (null !== $customer) {
                 $this->socketIoManager->toUserAndAdmins($customer, $event);
             } else {
                 $this->socketIoManager->toAdmins($event);
+            }
+
+            if (!$order->isFoodtech()) {
+                return;
+            }
+
+            $restaurant = $order->getRestaurant();
+            $owners = $restaurant->getOwners();
+
+            if (count($owners) === 0) {
+                return;
+            }
+
+            foreach ($owners as $owner) {
+                $this->socketIoManager->toUser($owner, $event);
             }
 
         } catch (\Exception $e) {
