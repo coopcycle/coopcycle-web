@@ -16,7 +16,7 @@ export default function(selector, options) {
   const map = MapHelper.init(selector)
 
   const pickup = MapHelper.createMarker(options.pickup, 'cube', 'marker', '#E74C3C')
-  const dropoff = MapHelper.createMarker(options.dropoff, 'flag', 'marker', '#2ECC71')
+  const dropoff = MapHelper.createMarker(options.dropoff, 'arrow-down', 'marker', '#2ECC71')
 
   pickup.addTo(map)
   dropoff.addTo(map)
