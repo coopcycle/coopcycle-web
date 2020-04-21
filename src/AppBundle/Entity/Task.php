@@ -15,6 +15,7 @@ use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskFilter;
+use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Model\TaggableInterface;
@@ -627,6 +628,16 @@ class Task implements TaggableInterface
         if ($this->hasEvent(TaskDomainEvent\TaskFailed::messageName())) {
             return $this->getLastEvent(TaskDomainEvent\TaskFailed::messageName())->getCreatedAt();
         }
+    }
+
+    public function getTimeRange(): TsRange
+    {
+        $range = new TsRange();
+
+        $range->setLower($this->getAfter());
+        $range->setUpper($this->getBefore());
+
+        return $range;
     }
 
     /* Legacy */
