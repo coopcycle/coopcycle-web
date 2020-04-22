@@ -221,6 +221,8 @@ class LocalBusiness extends BaseLocalBusiness
 
     protected $featured = false;
 
+    protected $stripePaymentMethods = [];
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -902,5 +904,17 @@ class LocalBusiness extends BaseLocalBusiness
     public function setFeatured(bool $featured)
     {
         $this->featured = $featured;
+    }
+
+    /**
+     * @param string $paymentMethod
+     */
+    public function enableStripePaymentMethod($paymentMethod)
+    {
+        $paymentMethods = $this->stripePaymentMethods;
+
+        $paymentMethods[] = $paymentMethod;
+
+        $this->stripePaymentMethods = array_unique($paymentMethods);
     }
 }
