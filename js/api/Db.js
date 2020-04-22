@@ -101,6 +101,11 @@ module.exports = function(sequelize) {
       defaultValue: ['ROLE_ADMIN'],
       field: 'stripe_connect_roles',
     },
+    stripePaymentMethods: {
+      type: Sequelize.JSON,
+      defaultValue: [],
+      field: 'stripe_payment_methods',
+    },
     openingHoursBehavior: {
       type: Sequelize.STRING,
       defaultValue: 'asap',
