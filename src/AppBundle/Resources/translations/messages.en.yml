@@ -163,6 +163,7 @@ restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (e.g.
   catering)'
 restaurant.form.loopeat_enabled.label: Enable LoopEat deposit-refund system
 restaurant.form.featured.label: This restaurant is featured on homepage
+restaurant.form.giropay_enabled.label: Enable Giropay
 restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries.
@@ -296,6 +297,11 @@ order.delivery_time: Delivery %time%
 order.payment.card_number.help: A stripe <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will
   be debited.
+order.payment.redirect.help: You will be redirected to the banking site to complete your payment
+order.payment.waiting_for_confirmation: Waiting for the confirmation of your bank…
+order.payment.do_not_close: Do not close this page
+order.payment.waiting_success: Your bank has confirmed the payment
+order.payment.waiting_failure: Your bank has declined the payment
 order.state.cart: Cart
 order.state.accepted: Accepted
 order.state.refused: Refused
@@ -600,6 +606,7 @@ form.checkout_address.tip_amount.label: Tip
 form.checkout_address.tip_amount.help: Thank you ❤
 form.checkout_address.add_tip.label: Apply
 form.checkout_address.quote.label: Request a quote
+form.checkout_payment.method.label: Please choose a payment option
 form.task_export.start.label: Start
 form.task_export.end.label: End
 form.api_app.name.label: App name

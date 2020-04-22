@@ -65,6 +65,7 @@ class CheckoutHandlerTest extends TestCase
 
         $charge = Stripe\Charge::constructFrom([
             'id' => 'ch_123456',
+            'captured' => true,
         ]);
 
         $order = new Order();
@@ -169,6 +170,9 @@ class CheckoutHandlerTest extends TestCase
 
         $order
             ->getLastPayment(PaymentInterface::STATE_CART)
+            ->willReturn(null);
+        $order
+            ->getLastPayment(PaymentInterface::STATE_PROCESSING)
             ->willReturn(null);
         $order
             ->isEmpty()

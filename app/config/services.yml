@@ -132,6 +132,10 @@ services:
       $loopeatClientId: '%loopeat_client_id%'
       $loopeatClientSecret: '%loopeat_client_secret%'
 
+  AppBundle\Controller\PaymentController:
+    arguments:
+      $secret: '%secret%'
+
   AppBundle\EventListener\LocaleListener:
     arguments: ['%kernel.default_locale%']
     tags:
@@ -694,7 +698,8 @@ services:
       $orderFactory: "@sylius.factory.order"
 
   AppBundle\Twig\CoopCycleExtension:
-    $secret: '%secret%'
+    arguments:
+      $secret: '%secret%'
 
   AppBundle\Security\TokenStoreExtractor: ~
 
@@ -715,6 +720,8 @@ services:
           use_path_style_endpoint: true
 
   AppBundle\Service\StripeManager:
+    arguments:
+      $secret: '%secret%'
     tags:
       - { name: monolog.logger, channel: stripe }
 

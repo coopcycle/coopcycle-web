@@ -24,17 +24,20 @@ abstract class LocalBusinessType extends AbstractType
     protected $tokenStorage;
     protected $country;
     protected $loopeatEnabled;
+    protected $debug;
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage,
         string $country,
-        bool $loopeatEnabled = false)
+        bool $loopeatEnabled = false,
+        bool $debug = false)
     {
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
         $this->country = $country;
         $this->loopeatEnabled = $loopeatEnabled;
+        $this->debug = $debug;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

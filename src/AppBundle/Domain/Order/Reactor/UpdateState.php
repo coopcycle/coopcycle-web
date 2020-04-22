@@ -83,11 +83,15 @@ class UpdateState
         if ($event instanceof Event\CheckoutSucceeded) {
 
             $payment = $event->getPayment();
+            $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
 
             if (null !== $payment) {
                 // TODO Create class constant for "authorize" transition
-                $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
-                $stateMachine->apply('authorize');
+                if ($stateMachine->can('authorize')) {
+                    $stateMachine->apply('authorize');
+                } elseif ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
+                    $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+                }
             }
 
             // Trigger an order:created event
@@ -97,9 +101,9 @@ class UpdateState
         } elseif ($event instanceof Event\CheckoutFailed) {
 
             $payment = $event->getPayment();
-            $payment->setLastError($event->getReason());
-
             $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+
+            $payment->setLastError($event->getReason());
             $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
 
             // Call OrderProcessor to create a new payment

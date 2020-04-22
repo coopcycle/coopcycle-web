@@ -182,6 +182,14 @@
           </div>
         </div>
       {% endif %}
+      {% if form.enableGiropay is defined %}
+        <div class="alert alert-warning">
+          {{ 'restaurant.form.giropay_enabled.label'|trans }}
+          <div class="pull-right">
+            {{ form_widget(form.enableGiropay, { attr: { class: 'checkbox switch' }}) }}
+          </div>
+        </div>
+      {% endif %}
     {% endif %}
 
     {% if restaurant.loopeatEnabled and loopeat_authorize_url is defined %}

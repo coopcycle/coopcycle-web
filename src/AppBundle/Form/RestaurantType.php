@@ -93,8 +93,10 @@ class RestaurantType extends LocalBusinessType
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
             $restaurant = $event->getData();
             $form = $event->getForm();
+
             $orderingDelayMinutes = $restaurant->getOrderingDelayMinutes();
             $orderingDelayDays = $orderingDelayMinutes / (60 * 24);
             $remainder = $orderingDelayMinutes % (60 * 24);
@@ -106,24 +108,47 @@ class RestaurantType extends LocalBusinessType
             if ($form->has('allowStripeConnect') && in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())) {
                 $form->get('allowStripeConnect')->setData(true);
             }
+
+            if ($this->debug || 'de' === $this->country) {
+                $form
+                    ->add('enableGiropay', CheckboxType::class, [
+                        'label' => 'restaurant.form.giropay_enabled.label',
+                        'mapped' => false,
+                        'required' => false,
+                        'data' => $restaurant->isStripePaymentMethodEnabled('giropay'),
+                    ]);
+            }
+
         });
 
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) {
+
+                $form = $event->getForm();
                 $restaurant = $event->getForm()->getData();
+
                 $orderingDelayDays = $event->getForm()->get('orderingDelayDays')->getData();
                 $orderingDelayHours = $event->getForm()->get('orderingDelayHours')->getData();
                 $restaurant->setOrderingDelayMinutes($orderingDelayDays * 60 * 24 + $orderingDelayHours * 60);
 
-                if ($event->getForm()->has('allowStripeConnect')) {
-                    $allowStripeConnect = $event->getForm()->get('allowStripeConnect')->getData();
+                if ($form->has('allowStripeConnect')) {
+                    $allowStripeConnect = $form->get('allowStripeConnect')->getData();
                     if ($allowStripeConnect) {
                         $stripeConnectRoles = $restaurant->getStripeConnectRoles();
                         if (!in_array('ROLE_RESTAURANT', $stripeConnectRoles)) {
                             $stripeConnectRoles[] = 'ROLE_RESTAURANT';
                             $restaurant->setStripeConnectRoles($stripeConnectRoles);
                         }
+                    }
+                }
+
+                if ($form->has('enableGiropay')) {
+                    $enableGiropay = $form->get('enableGiropay')->getData();
+                    if ($enableGiropay) {
+                        $restaurant->enableStripePaymentMethod('giropay');
+                    } else {
+                        $restaurant->disableStripePaymentMethod('giropay');
                     }
                 }
             }
