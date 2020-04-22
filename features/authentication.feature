@@ -105,7 +105,8 @@ Feature: Authenticate
       "@context":"/api/contexts/ApiApp",
       "@type":"http://schema.org/SoftwareApplication",
       "@id":"/api/api_apps/1",
-      "store":"/api/stores/1"
+      "store":"/api/stores/1",
+      "name":"Acme"
     }
     """
 
