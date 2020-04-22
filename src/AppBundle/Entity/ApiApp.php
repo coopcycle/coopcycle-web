@@ -29,6 +29,10 @@ class ApiApp
     use Timestampable;
 
     private $id;
+
+    /**
+     * @Groups({"api_app"})
+     */
     private $name;
     private $oauth2Client;
 
