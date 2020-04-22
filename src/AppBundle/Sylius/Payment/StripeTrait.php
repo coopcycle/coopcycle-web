@@ -181,9 +181,20 @@ trait StripeTrait
     {
         $this->details = array_merge($this->details, [
             'source' => $source->id,
+            'source_type' => $source->type,
             'source_client_secret' => $source->client_secret,
             'source_redirect_url' => $source->redirect->url,
         ]);
+    }
+
+    public function clearSource()
+    {
+        unset(
+            $this->details['source'],
+            $this->details['source_type'],
+            $this->details['source_client_secret'],
+            $this->details['source_redirect_url']
+        );
     }
 
     public function hasSource()
@@ -204,6 +215,22 @@ trait StripeTrait
         if (isset($this->details['source_client_secret'])) {
 
             return $this->details['source_client_secret'];
+        }
+    }
+
+    public function getSource()
+    {
+        if (isset($this->details['source'])) {
+
+            return $this->details['source'];
+        }
+    }
+
+    public function getSourceType()
+    {
+        if (isset($this->details['source_type'])) {
+
+            return $this->details['source_type'];
         }
     }
 }

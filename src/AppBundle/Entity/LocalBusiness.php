@@ -917,4 +917,22 @@ class LocalBusiness extends BaseLocalBusiness
 
         $this->stripePaymentMethods = array_unique($paymentMethods);
     }
+
+    /**
+     * @param string $paymentMethod
+     */
+    public function disableStripePaymentMethod($paymentMethod)
+    {
+        $this->stripePaymentMethods = array_filter($this->stripePaymentMethods, function ($method) use ($paymentMethod) {
+            return $method !== $paymentMethod;
+        });
+    }
+
+    /**
+     * @param string $paymentMethod
+     */
+    public function isStripePaymentMethodEnabled($paymentMethod)
+    {
+        return in_array($paymentMethod, $this->stripePaymentMethods);
+    }
 }
