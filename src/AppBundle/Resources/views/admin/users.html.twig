@@ -5,14 +5,64 @@
 {% endblock %}
 
 {% block content %}
-<p class="text-right">
-  <a href="{{ path('admin_users_invite') }}" class="btn btn-info">
-    <i class="fa fa-plus"></i> {% trans %}adminDashboard.users.invite{% endtrans %}
-  </a>
-  <a href="{{ path('admin_users_add') }}" class="btn btn-success">
-    <i class="fa fa-plus"></i> {% trans %}adminDashboard.users.createNew{% endtrans %}
-  </a>
-</p>
+
+<div class="d-flex flex-row mb-4">
+  <div class="w-50">
+    <div id="user-search"></div>
+  </div>
+  <div class="w-50 text-right">
+    <a href="{{ path('admin_users_invite') }}" class="btn btn-info">
+      <i class="fa fa-plus"></i> {% trans %}adminDashboard.users.invite{% endtrans %}
+    </a>
+    <a href="{{ path('admin_users_add') }}" class="btn btn-success">
+      <i class="fa fa-plus"></i> {% trans %}adminDashboard.users.createNew{% endtrans %}
+    </a>
+  </div>
+</div>
+
+{% set tab_items = [
+  {
+    title: 'users.all'|trans,
+    icon: 'user',
+    active: ((users.params.filterField is not defined) or (users.params.filterField == 'u.username')),
+    path: path('admin_users')
+  },
+  {
+    title: 'users.couriers'|trans,
+    icon: 'bicycle',
+    active: (users.params.filterField is defined and users.params.filterField == 'u.roles' and users.params.filterValue == '*ROLE_COURIER*'),
+    path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_COURIER*' })
+  },
+  {
+    title: 'users.restaurant_owners'|trans,
+    icon: 'cutlery',
+    active: (users.params.filterField is defined and users.params.filterField == 'u.roles' and users.params.filterValue == '*ROLE_RESTAURANT*'),
+    path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_RESTAURANT*' })
+  },
+  {
+    title: 'users.store_owners'|trans,
+    icon: 'shopping-cart',
+    active: (users.params.filterField is defined and users.params.filterField == 'u.roles' and users.params.filterValue == '*ROLE_STORE*'),
+    path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_STORE*' })
+  },
+  {
+    title: 'users.administrators'|trans,
+    icon: 'lock',
+    active: (users.params.filterField is defined and users.params.filterField == 'u.roles' and users.params.filterValue == '*ROLE_ADMIN*'),
+    path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_ADMIN*' })
+  }
+] %}
+
+<ul class="nav nav-tabs">
+  {% for tab_item in tab_items %}
+  <li role="presentation" class="{% if tab_item.active %}active{% endif %}">
+    <a href="{{ tab_item.path }}">
+      <i class="fa fa-{{ tab_item.icon }}"></i> {{ tab_item.title }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+
 <table class="table">
 <thead>
   <th>#</th>
@@ -53,4 +103,14 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+new CoopCycle.Search(document.querySelector('#user-search'), {
+  url: "{{ path('admin_users_search', { format: 'json'  }) }}",
+  placeholder: "{{ 'search.users'|trans }}",
+  onSuggestionSelected: function(suggestion) {
+    window.location.href =
+      "{{ path('admin_users', { filterField: 'u.username', filterValue: '' })|raw }}".replace('filterValue=', 'filterValue=' + suggestion.username);
+  }
+});
+</script>
 {% endblock %}

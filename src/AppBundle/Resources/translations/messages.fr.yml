@@ -895,3 +895,8 @@ restaurant_promotion.offer_delivery.help: "Cela vous permet d'offrir les frais d
   Cela ne <strong>diminuera pas</strong> les frais perçus par la plate-forme."
 form.offer_delivery.coupon_code.error.exists: Ce code existe déjà
 form.offer_delivery.coupon_code.help: Il est de votre responsabilité de communiquer ce code au client, soit personnellement, soit via les réseaux sociaux
+users.all: Tous les utilisateurs
+users.couriers: Coursiers
+users.restaurant_owners: Restaurants
+users.store_owners: Magasins
+users.administrators: Administrateurs

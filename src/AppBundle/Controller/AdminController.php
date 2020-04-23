@@ -347,6 +347,7 @@ class AdminController extends Controller
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'u.username',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
                 PaginatorInterface::SORT_FIELD_WHITELIST => ['u.username'],
+                PaginatorInterface::FILTER_FIELD_WHITELIST => ['u.roles', 'u.username']
             ]
         );
 

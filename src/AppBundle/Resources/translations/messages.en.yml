@@ -907,3 +907,8 @@ restaurant_promotion.offer_delivery.help: "This allows you to offer the delivery
   This will <strong>not diminish</strong> the fees perceived by the platform."
 form.offer_delivery.coupon_code.error.exists: This code already exists
 form.offer_delivery.coupon_code.help: It is your responsibility to communicate this code to the customer, either personally or via social networks
+users.all: All users
+users.couriers: Couriers
+users.restaurant_owners: Restaurant owners
+users.store_owners: Store owners
+users.administrators: Administrators
