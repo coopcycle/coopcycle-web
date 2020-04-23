@@ -184,6 +184,7 @@
         "CART_DELIVERY_TIME_RANGE_SAME_DAY": "[Livraison aujourd'hui] [{{range}}]",
         "CART_DELIVERY_TIME_RANGE_NEXT_DAY": "[Livraison demain] [{{range}}]",
         "CART_DELIVERY_TIME_RANGE_LAST_DAY": "[Livraison hier] [{{range}}]",
-        "CART_DELIVERY_TIME_RANGE_SAME_ELSE": "[Livraison le] LL [{{range}}]"
+        "CART_DELIVERY_TIME_RANGE_SAME_ELSE": "[Livraison le] LL [{{range}}]",
+        "NOTIFICATIONS_ENABLED": "Les notifications sont maintenant activées !"
     }
 }
