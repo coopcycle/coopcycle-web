@@ -47,6 +47,9 @@
 {% endfor %}
 </table>
 </tbody>
+<nav class="text-center">
+  {{ knp_pagination_render(users) }}
+</nav>
 {% endblock %}
 
 {% block scripts %}

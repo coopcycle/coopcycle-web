@@ -335,9 +335,20 @@ class AdminController extends Controller
      */
     public function usersAction(Request $request)
     {
-        $users = $this->getDoctrine()
+        $qb = $this->getDoctrine()
             ->getRepository(ApiUser::class)
-            ->findBy([], ['id' => 'DESC']);
+            ->createQueryBuilder('u');
+
+        $users = $this->get('knp_paginator')->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'u.username',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
+                PaginatorInterface::SORT_FIELD_WHITELIST => ['u.username'],
+            ]
+        );
 
         return array(
             'users' => $users,
