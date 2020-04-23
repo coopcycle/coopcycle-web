@@ -32,6 +32,16 @@
     {% endif %}
   </div>
 
+  {% if delivery_import_form.vars.submitted and (not delivery_import_form.vars.valid and not delivery_import_form.file.vars.valid) %}
+    <div class="alert alert-danger">
+      <ul class="list-unstyled">
+      {% for error in delivery_import_form.file.vars.errors %}
+        <li>{{ error.message }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
   {% include '@App/_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %}
 
   <nav class="text-center">
