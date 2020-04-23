@@ -36,7 +36,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')"
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "pagination_enabled"=false
  *     },
  *     "post"={
  *       "method"="POST",
