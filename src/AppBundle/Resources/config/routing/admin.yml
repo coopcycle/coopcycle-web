@@ -407,7 +407,7 @@ admin_store_deliveries:
         routes:
             stores: admin_stores
             store: admin_store
-    methods:  [ GET ]
+    methods:  [ GET, POST ]
 
 admin_store_delivery_new:
     path: /admin/stores/{id}/deliveries/new

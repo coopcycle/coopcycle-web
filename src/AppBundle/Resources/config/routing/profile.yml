@@ -329,7 +329,7 @@ profile_store_deliveries:
         routes:
             stores: profile_stores
             store: profile_store
-    methods:  [ GET ]
+    methods:  [ GET, POST ]
 
 profile_store_delivery_new:
     path: /profile/stores/{id}/deliveries/new
