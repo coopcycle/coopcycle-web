@@ -697,8 +697,8 @@ embed.delivery.summary: "You have requested a delivery on<strong>%dropoff_date%<
   \ at the following address: <strong>%dropoff_address%</strong> <br> We calculated\
   \ a distance of <strong>%distance% kilometers</strong>. <br> The delivery price\
   \ is <strong>%total_excluding_tax% (excl. VAT); </strong> %total_including_tax%\
-  \ (excl. VAT). <br><br>If any of the above details are incorrect, please click the\
-  \ 'Edit' button. "
+  \ (excl. VAT). <br><br>If any of the above details are incorrect, please change\
+  \ them by clicking the 'Edit' button. "
 embed.delivery.submit.help: Click to book the delivery.
 embed.delivery.confirm_message: Your delivery order has been placed and you will receive
   a summary email shortly. We'll check your order and send a confirmation email as
