@@ -109,10 +109,6 @@ services:
       $loopeatEnabled: '%loopeat_enabled%'
     tags: [ form.type ]
 
-  AppBundle\Form\ProductOptionType:
-    arguments: [ '@translator' ]
-    tags: [ form.type ]
-
   AppBundle\Form\MenuEditor\TaxonProductType:
     arguments: [ '@sylius.repository.product' ]
     tags: [ form.type ]

@@ -17,17 +17,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductOptionType extends AbstractType
 {
-    private $translator;
-
-    public function __construct(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $strategies = [
@@ -37,7 +29,7 @@ class ProductOptionType extends AbstractType
 
         $strategyChoices = [];
         foreach ($strategies as $strategy) {
-            $strategyChoices[$this->translator->trans(sprintf('product_option.strategy.%s', $strategy))] = $strategy;
+            $strategyChoices[sprintf('product_option.strategy.%s', $strategy)] = $strategy;
         }
 
         $builder
