@@ -192,10 +192,7 @@ Iterating through all products, options… is a lot of database requests
                 data-product-options>
                 {% set option_index = 0 %}
                 {% for option in product.options %}
-                <h4>
-                  {{ option.name }}
-                  {% if option.strategy == 'option' %} - {{ option.price|price_format }}{% endif %}
-                </h4>
+                <h4>{{ option.name }}</h4>
                 <div class="list-group"
                   data-product-options-group
                   {% if not option.additional %}
