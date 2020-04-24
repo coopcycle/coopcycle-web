@@ -88,9 +88,6 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
 
             $price = 0;
             switch ($option->getStrategy()) {
-                case ProductOptionInterface::STRATEGY_OPTION:
-                    $price = $option->getPrice();
-                    break;
                 case ProductOptionInterface::STRATEGY_OPTION_VALUE:
                     $price = $optionValue->getPrice();
                     break;

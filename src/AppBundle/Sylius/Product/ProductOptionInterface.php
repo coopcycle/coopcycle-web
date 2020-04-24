@@ -8,7 +8,6 @@ use Sylius\Component\Product\Model\ProductOptionInterface as BaseProductOptionIn
 interface ProductOptionInterface extends BaseProductOptionInterface
 {
     const STRATEGY_FREE = 'free';
-    const STRATEGY_OPTION = 'option';
     const STRATEGY_OPTION_VALUE = 'option_value';
 
     /**
@@ -20,16 +19,6 @@ interface ProductOptionInterface extends BaseProductOptionInterface
      * @param string $strategy
      */
     public function setStrategy(string $strategy): void;
-
-    /**
-     * @return int|null
-     */
-    public function getPrice(): ?int;
-
-    /**
-     * @param int|null $price
-     */
-    public function setPrice(?int $price): void;
 
     /**
      * @param boolean $additional

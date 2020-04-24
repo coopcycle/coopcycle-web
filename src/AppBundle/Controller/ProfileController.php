@@ -69,6 +69,7 @@ class ProfileController extends Controller
             'promotions' => 'profile_restaurant_promotions',
             'promotion_new' => 'profile_restaurant_new_promotion',
             'promotion' => 'profile_restaurant_promotion',
+            'product_option_preview' => 'profile_restaurant_product_option_preview',
         ];
     }
 

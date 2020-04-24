@@ -622,7 +622,6 @@ restricted_diets.LOW_FAT_DIET: Niskotłuszczowy
 form.order_export.date.label: Data
 form.checkout_address.telephone.label: Numer telefonu
 form.product_option.add_value.label: Dodaj wartość
-form.product_option.price.label: Cena
 form.product_option.strategy.label: Kalkulacja ceny
 form.product_option.name.label: Nazwa
 form.product.reusable_packaging_unit.label: Liczba jednostek
@@ -868,8 +867,7 @@ admin.settings.missing_mandatory_settings: "Brakuje obowiązkowych ustawień.\nI
 roles.ROLE_RESTAURANT: Restauracja
 roles.ROLE_COURIER: Kurier/Kurierka
 roles.ROLE_ADMIN: Administrator
-product_option.strategy.option_value: Cena według wyboru
-product_option.strategy.option: Stała cena bez względu na wybór
+product_option.strategy.option_value: Każda opcja ma inną cenę
 product_option.strategy.free: Darmowy
 promotion_coupon.used.label: Liczba zastosowań
 form.new_order.variant_price.label: Cena

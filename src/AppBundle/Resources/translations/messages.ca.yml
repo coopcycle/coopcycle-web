@@ -500,7 +500,6 @@ form.product.confirm.help: "Heu canviat el nom del producte. Si és una <strong>
   \ manera que pugueu distingir els productes que veneu i mantenir-ne l’historial.\n"
 form.product_option.name.label: Nom
 form.product_option.strategy.label: Càlcul de preus
-form.product_option.price.label: Preu
 form.product_option.add_value.label: Valor afegit
 form.product_option.values.title: Valors
 form.product_option.values.help: Heu de definir una llista de valors per aquesta opció
@@ -532,7 +531,6 @@ form.time_slot_choice.start_time.label: Hora d'inici
 form.time_slot_choice.end_time.label: Temps de finalització
 promotion_coupon.used.label: Nombre d’usos
 product_option.strategy.free: Gratuït
-product_option.strategy.option: Preu fix qualsevol que sigui l’opció
 product_option.strategy.option_value: Preu segons la tria
 roles.ROLE_ADMIN: Administrador
 roles.ROLE_COURIER: Repartidor

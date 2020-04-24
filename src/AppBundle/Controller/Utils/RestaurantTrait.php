@@ -33,6 +33,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Ramsey\Uuid\Uuid;
+use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
@@ -40,6 +41,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -778,6 +780,38 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'form' => $form->createView(),
         ], $routes));
+    }
+
+    public function restaurantProductOptionPreviewAction(Request $request, LocaleProviderInterface $localeProvider)
+    {
+        $productOption = $this->get('sylius.factory.product_option')
+            ->createNew();
+
+        $form = $this->createForm(ProductOptionType::class, $productOption);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $productOption = $form->getData();
+
+            foreach ($productOption->getValues() as $optionValue) {
+                // FIXME We shouldn't need to call setCurrentLocale
+                $optionValue->setCurrentLocale($localeProvider->getDefaultLocaleCode());
+                if (null === $optionValue->getCode()) {
+                    $optionValue->setCode(Uuid::uuid4()->toString());
+                }
+            }
+
+            return $this->render('@App/restaurant/_partials/option.html.twig', $this->withRoutes([
+                'product' => [
+                    'code' => Uuid::uuid4()->toString()
+                ],
+                'option_index' => 0,
+                'option' => $productOption,
+            ]));
+        }
+
+        throw new BadRequestHttpException();
     }
 
     public function newRestaurantProductOptionAction($id, Request $request)

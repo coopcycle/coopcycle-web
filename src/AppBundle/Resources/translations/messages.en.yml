@@ -577,13 +577,13 @@ form.product.reusable_packaging.label: Type of reusable packaging
 form.product.reusable_packaging_unit.label: Number of units
 form.product_option.name.label: Name
 form.product_option.strategy.label: Price calculation
-form.product_option.price.label: Price
 form.product_option.add_value.label: Add value
 form.product_option.values.title: Values
 form.product_option.values.help: You must define a list of values for this option
 form.product_option.additional.label: This option is additional
 form.product_option.additional.help: The customer can choose several values, without
   having to choose at least one
+form.product_option.preview_title: Option preview
 form.product_option_value.value.label: Value
 form.product_option_value.price.label: Price
 form.checkout_address.notes.label: Leave a note for the restaurant
@@ -640,8 +640,7 @@ form.new_order.variant_name.help: The name that will appear in the order summary
 form.new_order.variant_price.label: Price
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
-product_option.strategy.option: Fixed price whatever the choice
-product_option.strategy.option_value: Price according to the choice
+product_option.strategy.option_value: Each option has a different price
 roles.ROLE_ADMIN: Administrator
 roles.ROLE_COURIER: Courier
 roles.ROLE_RESTAURANT: Restaurant
