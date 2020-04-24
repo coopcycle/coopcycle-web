@@ -121,6 +121,7 @@ class AdminController extends Controller
             'promotions' => 'admin_restaurant_promotions',
             'promotion_new' => 'admin_restaurant_new_promotion',
             'promotion' => 'admin_restaurant_promotion',
+            'product_option_preview' => 'admin_restaurant_product_option_preview',
         ];
     }
 

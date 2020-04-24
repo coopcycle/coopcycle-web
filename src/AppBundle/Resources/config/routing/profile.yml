@@ -258,6 +258,12 @@ profile_restaurant_product_option:
             product_options: profile_restaurant_product_options
     methods: [ GET, POST ]
 
+profile_restaurant_product_option_preview:
+    path: /profile/restaurants/product-options/preview
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::restaurantProductOptionPreviewAction
+    methods: [ POST ]
+
 profile_restaurant_stripe_oauth_redirect:
     path: /profile/restaurants/{id}/stripe-oauth-redirect
     defaults:

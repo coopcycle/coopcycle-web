@@ -254,6 +254,12 @@ admin_restaurant_product_option:
             product_options: admin_restaurant_product_options
     methods: [ GET, POST ]
 
+admin_restaurant_product_option_preview:
+    path: /admin/restaurants/product-options/preview
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantProductOptionPreviewAction
+    methods: [ POST ]
+
 admin_restaurant_dashboard:
     path: /admin/restaurants/{restaurantId}/dashboard
     defaults:

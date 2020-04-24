@@ -22,100 +22,55 @@
 
 {% block content %}
 
-{{ form_start(form) }}
+<div class="d-sm-flex flex-row">
+  <div class="w-75 mr-4">
+  {{ form_start(form) }}
 
-  {{ form_errors(form) }}
+    {{ form_errors(form) }}
 
-  {{ form_row(form.name) }}
-  {{ form_row(form.strategy) }}
-  {{ form_row(form.additional) }}
-  <hr>
+    {{ form_row(form.name) }}
+    {{ form_row(form.strategy) }}
+    {{ form_row(form.additional) }}
+    <hr>
 
-  <div>
+    <div>
+      <div class="row">
+        <div class="col-sm-9">
+          <h4>{{ 'form.product_option.values.title'|trans }}</h4>
+          <p class="help-block">{{ 'form.product_option.values.help'|trans }}</p>
+        </div>
+        <div class="col-sm-3">
+          {{ form_row(form.valuesRange, { label: false }) }}
+        </div>
+      </div>
+      {{ form_widget(form.values) }}
+    </div>
+    <hr>
+
     <div class="row">
-      <div class="col-sm-9">
-        <h4>{{ 'form.product_option.values.title'|trans }}</h4>
-        <p class="help-block">{{ 'form.product_option.values.help'|trans }}</p>
-      </div>
       <div class="col-sm-3">
-        {{ form_row(form.valuesRange, { label: false }) }}
+        {{ form_widget(form.delete, { attr: { class: 'btn-block btn-danger' } }) }}
+      </div>
+      <div class="col-sm-9">
+        <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
       </div>
     </div>
-    {{ form_widget(form.values) }}
-  </div>
-  <hr>
 
-  <div class="row">
-    <div class="col-sm-3">
-      {{ form_widget(form.delete, { attr: { class: 'btn-block btn-danger' } }) }}
-    </div>
-    <div class="col-sm-9">
-      <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
-    </div>
+  {{ form_end(form) }}
   </div>
-
-{{ form_end(form) }}
+  <div class="w-25 d-flex flex-column border">
+    <h4 class="bg-light p-3 m-0">
+      <span>{{ 'form.product_option.preview_title'|trans }}</span>
+      <span class="pull-right">
+        <i class="fa fa-spinner fa-pulse fa-fw hidden" id="preview-loader"></i>
+      </span>
+    </h4>
+    <div class="w-100 p-4" id="preview"
+      data-url="{{ path(product_option_preview_route) }}"></div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-<script>
-
-if ($('#product_option_strategy').val() !== 'option_value') {
-  $('#product_option_values').find("input[name$='[price]']").closest('.form-group').hide();
-}
-
-$('#product_option_strategy').on('change', function(e) {
-  var value = $(this).val();
-  if (value === 'option_value') {
-    $('#product_option_values').find("input[name$='[price]']").closest('.form-group').show();
-  } else {
-    $('#product_option_values').find("input[name$='[price]']").closest('.form-group').hide();
-  }
-});
-
-$(document).on('click', '[data-delete-row]', function(e) {
-  var target = $(this).data('target');
-  $(target).remove();
-});
-
-$('#add-option-value').on('click', function(e) {
-
-  e.preventDefault();
-
-  var prototype = $('#product_option_values').data('prototype');
-  var index = $('#product_option_values').children().length;
-
-  var form = prototype.replace(/__name__/g, index);
-  var $form = $(form);
-
-  if ($('#product_option_strategy').val() !== 'option_value') {
-    $form.find("input[name$='[price]']").closest('.form-group').hide();
-  }
-
-  $('#product_option_values').append($form);
-
-});
-
-$('#product_option_valuesRange_infinity').on('change', function(e) {
-  $('#product_option_valuesRange_upper').prop('disabled', $(this).is(':checked'));
-});
-
-$('#product_option_additional').on('change', function(e) {
-  var $valuesRange = $('#product_option_valuesRange');
-  if ($(this).is(':checked')) {
-    $valuesRange.show();
-  } else {
-    $valuesRange.hide();
-  }
-});
-
-if (!$('#product_option_additional').is(':checked')) {
-  $('#product_option_valuesRange').hide();
-}
-
-if ($('#product_option_valuesRange_infinity').is(':checked')) {
-  $('#product_option_valuesRange_upper').prop('disabled', true);
-}
-
-</script>
+{{ encore_entry_script_tags('product-option-form') }}
 {% endblock %}

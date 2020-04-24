@@ -23,7 +23,7 @@ class ProductOptionValueType extends AbstractType
             ])
             ->add('price', MoneyType::class, [
                 'label' => 'form.product_option_value.price.label',
-                'required' => false,
+                'empty_data' => 0,
             ]);
     }
 

@@ -583,6 +583,7 @@ form.product_option.values.help: You must define a list of values for this optio
 form.product_option.additional.label: This option is additional
 form.product_option.additional.help: The customer can choose several values, without
   having to choose at least one
+form.product_option.preview_title: Option preview
 form.product_option_value.value.label: Value
 form.product_option_value.price.label: Price
 form.checkout_address.notes.label: Leave a note for the restaurant
