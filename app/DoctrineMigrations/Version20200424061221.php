@@ -51,6 +51,13 @@ final class Version20200424061221 extends AbstractMigration
                             'id' => $productOption['id'],
                         ]);
                         break;
+                    case 'option_value':
+                        if ($productOptionValue['price'] === null) {
+                            $this->addSql('UPDATE sylius_product_option_value SET price = 0 WHERE id = :id', [
+                                'id' => $productOptionValue['id'],
+                            ]);
+                        }
+                        break;
                 }
             }
         }
