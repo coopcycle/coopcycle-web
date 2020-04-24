@@ -169,7 +169,7 @@
 
 {#
 WARNING
-We cache the follwing block for performance
+We cache the following block for performance
 Iterating through all products, options… is a lot of database requests
 #}
 {% cache ('restaurant_' ~ restaurant.id ~ '_modals_v0.3') restaurant %}
@@ -192,78 +192,10 @@ Iterating through all products, options… is a lot of database requests
                 data-product-options>
                 {% set option_index = 0 %}
                 {% for option in product.options %}
-                <h4>{{ option.name }}</h4>
-                <div class="list-group"
-                  data-product-options-group
+                  {% include '@App/restaurant/_partials/option.html.twig' %}
                   {% if not option.additional %}
-                  data-product-options-group-min="1"
-                  data-product-options-group-max="1"
-                  {% else %}
-                    {% if option.valuesRange is not null %}
-                    data-product-options-group-min="{{ option.valuesRange.lower }}"
-                      {% if not option.valuesRange.upperInfinite %}
-                        data-product-options-group-max="{{ option.valuesRange.upper }}"
-                      {% endif %}
-                    {% else %}
-                    data-product-options-group-min="0"
-                    {% endif %}
-                  {% endif %}>
-                  {% for option_value in option.values %}
-                    {% set option_value_input_id = ('product-' ~ product.code ~ '-option-' ~ option.code ~ '-value-' ~ option_value.code) %}
-                    <div class="list-group-item product-option-item">
-                      {% if option.additional %}
-                        {% if option.valuesRange is not null %}
-                        <div class="product-option-item-range">
-                          <input type="hidden" name="options[{{ option_index }}][code]" value="{{ option_value.code }}">
-                          <input
-                            id="{{ option_value_input_id }}"
-                            name="options[{{ option_index }}][quantity]"
-                            type="number"
-                            step="1"
-                            min="0"
-                            {% if not option.valuesRange.upperInfinite %}
-                            max="{{ option.valuesRange.upper }}"
-                            {% endif %}
-                            value="0">
-                          <label for="{{ option_value_input_id }}" data-step-up>
-                            {% include '@App/restaurant/_partials/option_value.html.twig' %}
-                          </label>
-                          <div class="product-option-item-range-buttons">
-                            <button class="button-icon--decrement" data-stepper data-target="#{{ option_value_input_id }}" data-direction="down">
-                              <i class="fa fa-lg fa-minus-circle"></i>
-                            </button>
-                            <button class="button-icon--increment" data-stepper data-target="#{{ option_value_input_id }}" data-direction="up">
-                              <i class="fa fa-lg fa-plus-circle"></i>
-                            </button>
-                          </div>
-                        </div>
-                        {% else %}
-                        <div class="checkbox nomargin">
-                          <label class="d-flex align-items-center">
-                            <input
-                              name="options[{{ option_index }}][code]"
-                              value="{{ option_value.code }}" type="checkbox">
-                            {% include '@App/restaurant/_partials/option_value.html.twig' %}
-                          </label>
-                        </div>
-                        {% endif %}
-                        {% set option_index = option_index + 1 %}
-                      {% else %}
-                        <div class="radio nomargin">
-                          <label class="d-flex align-items-center">
-                            <input
-                              name="options[{{ option_index }}][code]"
-                              value="{{ option_value.code }}" type="radio">
-                            {% include '@App/restaurant/_partials/option_value.html.twig' %}
-                          </label>
-                        </div>
-                      {% endif %}
-                    </div>
-                  {% endfor %}
-                </div>
-                {% if not option.additional %}
-                  {% set option_index = option_index + 1 %}
-                {% endif %}
+                    {% set option_index = option_index + 1 %}
+                  {% endif %}
                 {% endfor %}
                 {% set product_quantity_input_id = ('product-' ~ product.code ~ '-quantity') %}
                 <div class="row">
