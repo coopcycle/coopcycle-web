@@ -477,8 +477,7 @@ form.resend_confirmation_email.submit.label: Reenviar correo electrónico
 form.stripe_payment.cardholder_name.label: Nombre del titular de la tarjeta
 promotion_coupon.used.label: Número de usos
 product_option.strategy.free: Gratis
-product_option.strategy.option: Precio fijo sea cual sea la elección
-product_option.strategy.option_value: Precio según la elección
+product_option.strategy.option_value: Cada opción tiene un precio diferente
 roles.ROLE_ADMIN: Administrador
 roles.ROLE_COURIER: Mensajero
 roles.ROLE_RESTAURANT: Restaurante

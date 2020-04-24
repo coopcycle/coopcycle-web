@@ -497,7 +497,6 @@ stores.settings: Einstellungen
 user.profile.givenName: Vorname
 user.profile.familyName: Nachname
 roles.ROLE_USER: Benutzer*in
-product_option.strategy.option: Fester Preis unabhängig von der Wahl
 product_option.strategy.free: Frei
 promotion_coupon.used.label: Anzahl der Vewendungen
 form.new_order.variant_price.label: Preis
@@ -535,7 +534,7 @@ user.edit.enabled.help: Ein*e deaktivierte*r Benutzer*in wird ausgeloggt und wir
 user.edit.roles.help: Zugangsrechte des Nutzers bestimmen
 roles.ROLE_STORE: Laden
 roles.ROLE_ADMIN: Administrator*in
-product_option.strategy.option_value: Preis abhängig von der Wahl
+product_option.strategy.option_value: Jede Option hat einen anderen Preis
 form.new_order.variant_name.help: Der Name, der in der Bestellzusammenfassung und
   in der Rechnung angezeigt wird
 form.product.confirm.help: "Du hast den Namen des Produkts geändert. Wenn sie eine\

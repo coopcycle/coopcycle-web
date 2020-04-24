@@ -639,8 +639,7 @@ form.new_order.variant_name.help: The name that will appear in the order summary
 form.new_order.variant_price.label: Price
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
-product_option.strategy.option: Fixed price whatever the choice
-product_option.strategy.option_value: Price according to the choice
+product_option.strategy.option_value: Each option has a different price
 roles.ROLE_ADMIN: Administrator
 roles.ROLE_COURIER: Courier
 roles.ROLE_RESTAURANT: Restaurant
