@@ -6,7 +6,6 @@
         <option name="default">free</option>
       </options>
     </field>
-    <field name="price" type="integer" column="price" nullable="true"/>
     <field name="additional" type="boolean" column="additional"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <field name="valuesRange" type="numrange" column="values_range" nullable="true"/>

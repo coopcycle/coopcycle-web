@@ -500,7 +500,6 @@ form.product.confirm.help: "Heu canviat el nom del producte. Si és una <strong>
   \ manera que pugueu distingir els productes que veneu i mantenir-ne l’historial.\n"
 form.product_option.name.label: Nom
 form.product_option.strategy.label: Càlcul de preus
-form.product_option.price.label: Preu
 form.product_option.add_value.label: Valor afegit
 form.product_option.values.title: Valors
 form.product_option.values.help: Heu de definir una llista de valors per aquesta opció

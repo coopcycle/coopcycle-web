@@ -10,12 +10,12 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
     /**
      * @var int
      */
-    protected $price;
+    protected $price = 0;
 
     /**
      * {@inheritdoc}
      */
-    public function getPrice(): ?int
+    public function getPrice(): int
     {
         return $this->price;
     }
@@ -23,7 +23,7 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
     /**
      * {@inheritdoc}
      */
-    public function setPrice(?int $price): void
+    public function setPrice(int $price): void
     {
         $this->price = $price;
     }

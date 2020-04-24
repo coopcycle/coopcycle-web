@@ -7,12 +7,12 @@ use Sylius\Component\Product\Model\ProductOptionValueInterface as BaseProductOpt
 interface ProductOptionValueInterface extends BaseProductOptionValueInterface
 {
     /**
-     * @return int|null
+     * @return int
      */
-    public function getPrice(): ?int;
+    public function getPrice(): int;
 
     /**
-     * @param int|null $price
+     * @param int $price
      */
-    public function setPrice(?int $price): void;
+    public function setPrice(int $price): void;
 }

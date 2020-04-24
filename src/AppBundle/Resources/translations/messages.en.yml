@@ -577,7 +577,6 @@ form.product.reusable_packaging.label: Type of reusable packaging
 form.product.reusable_packaging_unit.label: Number of units
 form.product_option.name.label: Name
 form.product_option.strategy.label: Price calculation
-form.product_option.price.label: Price
 form.product_option.add_value.label: Add value
 form.product_option.values.title: Values
 form.product_option.values.help: You must define a list of values for this option

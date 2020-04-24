@@ -88,7 +88,6 @@ form.menu_taxon.name.label: Name
 form.product.name.label: Name
 form.product.price.label: Preis
 form.product_option.name.label: Name
-form.product_option.price.label: Preis
 form.product_option_value.price.label: Preis
 form.task_export.end.label: Ende
 form.credit_note.name.label: Name

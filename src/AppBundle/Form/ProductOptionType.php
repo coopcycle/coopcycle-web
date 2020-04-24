@@ -32,7 +32,6 @@ class ProductOptionType extends AbstractType
     {
         $strategies = [
             ProductOptionInterface::STRATEGY_FREE,
-            ProductOptionInterface::STRATEGY_OPTION,
             ProductOptionInterface::STRATEGY_OPTION_VALUE
         ];
 
@@ -48,10 +47,6 @@ class ProductOptionType extends AbstractType
             ->add('strategy', ChoiceType::class, [
                 'choices' => $strategyChoices,
                 'label' => 'form.product_option.strategy.label'
-            ])
-            ->add('price', MoneyType::class, [
-                'label' => 'form.product_option.price.label',
-                'required' => false
             ])
             ->add('valuesRange', MinMaxType::class)
             ->add('values', CollectionType::class, [

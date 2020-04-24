@@ -29,7 +29,6 @@
   {{ form_row(form.name) }}
   {{ form_row(form.strategy) }}
   {{ form_row(form.additional) }}
-  {{ form_row(form.price) }}
   <hr>
 
   <div>
@@ -61,21 +60,12 @@
 {% block scripts %}
 <script>
 
-if ($('#product_option_strategy').val() !== 'option') {
-  $('#product_option_price').closest('.form-group').hide();
-}
-
 if ($('#product_option_strategy').val() !== 'option_value') {
   $('#product_option_values').find("input[name$='[price]']").closest('.form-group').hide();
 }
 
 $('#product_option_strategy').on('change', function(e) {
   var value = $(this).val();
-  if (value === 'option') {
-    $('#product_option_price').closest('.form-group').show();
-  } else {
-    $('#product_option_price').closest('.form-group').hide();
-  }
   if (value === 'option_value') {
     $('#product_option_values').find("input[name$='[price]']").closest('.form-group').show();
   } else {

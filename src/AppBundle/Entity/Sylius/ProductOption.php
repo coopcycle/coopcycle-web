@@ -19,11 +19,6 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
     protected $strategy = ProductOptionInterface::STRATEGY_FREE;
 
     /**
-     * @var int
-     */
-    protected $price;
-
-    /**
      * @var boolean
      */
     protected $additional = false;
@@ -46,22 +41,6 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
     public function setStrategy(string $strategy): void
     {
         $this->strategy = $strategy;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPrice(): ?int
-    {
-        return $this->price;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPrice(?int $price): void
-    {
-        $this->price = $price;
     }
 
     /**

@@ -97,15 +97,12 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         return $orderItem->reveal();
     }
 
-    private function createProductOption($strategy, $price = null)
+    private function createProductOption($strategy)
     {
         $option = $this->prophesize(ProductOptionInterface::class);
         $option
             ->getStrategy()
             ->willReturn($strategy);
-        $option
-            ->getPrice()
-            ->willReturn($price);
 
         return $option->reveal();
     }
@@ -148,9 +145,9 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $this->compositeProcessor->addProcessor($this->orderFeeProcessor, 64);
         $this->compositeProcessor->addProcessor($this->orderOptionsProcessor, 48);
 
-        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION, 250);
-        $coffee = $this->createProductOptionValue($drinks, 'Coffee');
-        $tea = $this->createProductOptionValue($drinks, 'Tea');
+        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION_VALUE);
+        $coffee = $this->createProductOptionValue($drinks, 'Coffee', 250);
+        $tea = $this->createProductOptionValue($drinks, 'Tea', 250);
 
         $cookieVariant = $this->createProductVariant([ $coffee ]);
 
@@ -192,9 +189,9 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $this->compositeProcessor->addProcessor($this->orderFeeProcessor, 48);
         $this->compositeProcessor->addProcessor($this->orderOptionsProcessor, 64);
 
-        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION, 250);
-        $coffee = $this->createProductOptionValue($drinks, 'Coffee');
-        $tea = $this->createProductOptionValue($drinks, 'Tea');
+        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION_VALUE);
+        $coffee = $this->createProductOptionValue($drinks, 'Coffee', 250);
+        $tea = $this->createProductOptionValue($drinks, 'Tea', 250);
 
         $cookieVariant = $this->createProductVariant([ $coffee ]);
 
@@ -236,9 +233,9 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $this->compositeProcessor->addProcessor($this->orderFeeProcessor, 48);
         $this->compositeProcessor->addProcessor($this->orderOptionsProcessor, 64);
 
-        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION, 250);
-        $coffee = $this->createProductOptionValue($drinks, 'Coffee');
-        $tea = $this->createProductOptionValue($drinks, 'Tea');
+        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION_VALUE);
+        $coffee = $this->createProductOptionValue($drinks, 'Coffee', 250);
+        $tea = $this->createProductOptionValue($drinks, 'Tea', 250);
 
         $cookieVariant = $this->createProductVariant([ $coffee ]);
 
