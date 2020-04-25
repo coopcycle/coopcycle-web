@@ -27,6 +27,7 @@ class ActivityManager
         TaskEvents\TaskCreated::class,
         TaskEvents\TaskAssigned::class,
         TaskEvents\TaskUnassigned::class,
+        TaskEvents\TaskStarted::class,
         TaskEvents\TaskDone::class,
         TaskEvents\TaskFailed::class,
         TaskEvents\TaskCancelled::class,

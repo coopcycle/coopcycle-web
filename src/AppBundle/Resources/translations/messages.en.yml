@@ -682,6 +682,7 @@ adminDashboard.activity.title: Activity
 activity.task.created: "@%owner% created task #task/%aggregate_id%\n"
 activity.task.assigned: "@%owner% assigned task #task/%aggregate_id%\n"
 activity.task.unassigned: "@%owner% unassigned task #task/%aggregate_id%\n"
+activity.task.started: "@%owner% started task #task/%aggregate_id%\n"
 activity.task.done: "@%owner% completed task #task/%aggregate_id%\n"
 activity.task.failed: "@%owner% could not complete task #task/%aggregate_id%\n"
 activity.task.cancelled: "@%owner% has cancelled task #task/%aggregate_id%\n"
