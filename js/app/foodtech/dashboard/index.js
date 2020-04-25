@@ -10,6 +10,8 @@ import Dashboard from './components/Dashboard'
 
 import 'antd/lib/tooltip/style/index.css'
 
+import './index.scss'
+
 window.CoopCycle = window.CoopCycle || {}
 window.CoopCycle.FoodtechDashboard = (el, preloadedState, options) => {
 

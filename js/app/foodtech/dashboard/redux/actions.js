@@ -23,6 +23,8 @@ export const CHANGE_RESTAURANT_STATE = 'CHANGE_RESTAURANT_STATE'
 
 export const SEARCH_RESULTS = 'SEARCH_RESULTS'
 
+export const ACTIVE_TAB = 'ACTIVE_TAB'
+
 export const orderCreated = createAction(ORDER_CREATED)
 export const orderAccepted = createAction(ORDER_ACCEPTED)
 export const orderRefused = createAction(ORDER_REFUSED)
@@ -40,6 +42,8 @@ export const cancelOrderRequestSuccess = createAction(CANCEL_ORDER_REQUEST_SUCCE
 export const cancelOrderRequestFailure = createAction(CANCEL_ORDER_REQUEST_FAILURE)
 
 export const searchResults = createAction(SEARCH_RESULTS, (q, results) => ({ q, results }))
+
+export const setActiveTab = createAction(ACTIVE_TAB)
 
 const _setCurrentOrder = createAction(SET_CURRENT_ORDER)
 

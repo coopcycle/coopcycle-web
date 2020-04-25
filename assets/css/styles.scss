@@ -14,14 +14,6 @@ html, body {
   top: 6px;
 }
 
-.FoodtechDashboard__Navbar > div > .ant-switch {
-  background-color: green;
-}
-
-.FoodtechDashboard__Navbar > div > .ant-switch-checked {
-  background-color: red;
-}
-
 .content {
   flex: 1;
 }
@@ -974,22 +966,6 @@ form[name="store"] #store_imageFile_file {
   }
 }
 
-.ReactModal__Content--foodtech {
-  width: 440px;
-  height: 80%;
-  padding: 0;
-  border: none;
-  > .panel {
-    margin-bottom: 0;
-  }
-  .ant-timeline-item.ant-timeline-item-last {
-    padding-bottom: 0;
-  }
-  .ant-timeline-item-last .ant-timeline-item-content {
-    min-height: inherit;
-  }
-}
-
 // Prevent scroll on html/body
 // https://github.com/reactjs/react-modal/blob/master/docs/styles/classes.md#for-the-documentbody-and-html-tag
 .ReactModal__Html--open,
@@ -1347,61 +1323,6 @@ form[name="store"] #store_imageFile_file {
 
 .restaurant-opening-hours {
   font-size: 12px;
-}
-
-.FoodtechDashboard {
-
-  padding: 0 15px 15px 15px;
-  height: calc(100vh - 70px);
-  display: flex;
-  flex-direction: column;
-
-  &__Navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    > div:first-child {
-      width: 50%;
-    }
-    .ant-calendar-picker {
-      margin-right: 0;
-    }
-    &__Search {
-      flex: 1;
-      padding: 0 25px;
-    }
-  }
-
-  &__Columns {
-    flex: 1;
-    flex-direction: row;
-    justify-content: space-between;
-    display: flex;
-  }
-
-  &__Column {
-    display: flex;
-    flex-direction: column;
-    min-width: 24%;
-    overflow: hidden;
-    &.panel {
-      margin-bottom: 0;
-    }
-    & > .panel-body {
-      overflow-y: scroll;
-    }
-  }
-
-  &__OrderCard {
-    cursor: pointer;
-  }
-
-  &__OrderCard:active,
-  &__OrderCard:hover {
-    border: 1px solid #bbb;
-  }
-
 }
 
 // Make sure Google Place Autocomplete is always on top

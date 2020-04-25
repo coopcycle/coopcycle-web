@@ -18,6 +18,7 @@ import {
   DELAY_ORDER_REQUEST_SUCCESS,
   DELAY_ORDER_REQUEST_FAILURE,
   SEARCH_RESULTS,
+  ACTIVE_TAB,
 } from './actions'
 
 export const initialState = {
@@ -37,6 +38,7 @@ export const initialState = {
   showSearch: false,
   searchQuery: '',
   searchResults: [],
+  activeTab: 'new',
 }
 
 function replaceOrder(orders, order) {
@@ -148,6 +150,13 @@ export default (state = initialState, action = {}) => {
       ...state,
       searchResults: action.payload.results,
       searchQuery: action.payload.q,
+    }
+
+  case ACTIVE_TAB:
+
+    return {
+      ...state,
+      activeTab: action.payload,
     }
   }
 
