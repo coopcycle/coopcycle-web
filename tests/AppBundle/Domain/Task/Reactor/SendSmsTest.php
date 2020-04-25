@@ -50,7 +50,7 @@ class SendSmsTest extends TestCase
 
     public function testSendsSmsWithSmsDisabled()
     {
-        $this->settingsManager->get('sms_enabled')->willReturn(false);
+        $this->settingsManager->canSendSms()->willReturn(false);
 
         $pickup = new Task();
         $pickup->setType(Task::TYPE_PICKUP);
@@ -66,7 +66,7 @@ class SendSmsTest extends TestCase
 
     public function testSendsSmsForFoodtechOrder()
     {
-        $this->settingsManager->get('sms_enabled')->willReturn(true);
+        $this->settingsManager->canSendSms()->willReturn(true);
 
         $pickup = new Task();
         $pickup->setType(Task::TYPE_PICKUP);
@@ -89,7 +89,7 @@ class SendSmsTest extends TestCase
 
     public function testSendsSmsWithoutTelephone()
     {
-        $this->settingsManager->get('sms_enabled')->willReturn(true);
+        $this->settingsManager->canSendSms()->willReturn(true);
 
         $pickup = new Task();
         $pickup->setType(Task::TYPE_PICKUP);
@@ -109,7 +109,7 @@ class SendSmsTest extends TestCase
 
     public function testSendSimpleSmsToRecipient()
     {
-        $this->settingsManager->get('sms_enabled')->willReturn(true);
+        $this->settingsManager->canSendSms()->willReturn(true);
 
         $phoneNumber = new PhoneNumber();
 
@@ -148,7 +148,7 @@ class SendSmsTest extends TestCase
 
     public function testSendSmsWithTrackingToRecipient()
     {
-        $this->settingsManager->get('sms_enabled')->willReturn(true);
+        $this->settingsManager->canSendSms()->willReturn(true);
 
         $phoneNumber = new PhoneNumber();
 

@@ -39,9 +39,7 @@ class SendSms
 
     public function __invoke(TaskStarted $event)
     {
-        $smsEnabled = $this->settingsManager->get('sms_enabled');
-
-        if (!$smsEnabled) {
+        if (!$this->settingsManager->canSendSms()) {
             return;
         }
 
