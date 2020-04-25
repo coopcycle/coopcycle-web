@@ -179,6 +179,13 @@ class SettingsManager
             return false;
         }
 
+        $whitelist = ['be', 'es', 'de', 'fr'];
+
+        if (!in_array($this->country, $whitelist)) {
+
+            return false;
+        }
+
         return isset($smsGatewayConfig['api_token']);
     }
 

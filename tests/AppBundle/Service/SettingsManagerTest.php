@@ -38,31 +38,43 @@ class SettingsManagerTest extends TestCase
                 false,
                 false,
                 null,
-                null
+                null,
+                'fr'
             ],
             [
                 false,
                 true,
                 'foo',
-                null
+                null,
+                'fr'
             ],
             [
                 false,
                 true,
                 'mailjet',
-                null
+                null,
+                'fr'
             ],
             [
                 false,
                 true,
                 'mailjet',
-                json_encode(['foo' => 'bar'])
+                json_encode(['foo' => 'bar']),
+                'fr'
             ],
             [
                 true,
                 true,
                 'mailjet',
-                json_encode(['api_token' => 'bar'])
+                json_encode(['api_token' => 'bar']),
+                'fr'
+            ],
+            [
+                false,
+                true,
+                'mailjet',
+                json_encode(['api_token' => 'bar']),
+                'gb'
             ],
         ];
     }
@@ -70,12 +82,22 @@ class SettingsManagerTest extends TestCase
     /**
      * @dataProvider canSendSmsProvider
      */
-    public function testCanSendSms($expected, $smsEnabled, $smsGateway, $smsGatewayConfig)
+    public function testCanSendSms($expected, $smsEnabled, $smsGateway, $smsGatewayConfig, $country)
     {
         $this->craueConfig->get('sms_enabled')->willReturn($smsEnabled);
         $this->craueConfig->get('sms_gateway')->willReturn($smsGateway);
         $this->craueConfig->get('sms_gateway_config')->willReturn($smsGatewayConfig);
 
-        $this->assertEquals($expected, $this->settingsManager->canSendSms());
+        $settingsManager = new SettingsManager(
+            $this->craueConfig->reveal(),
+            Setting::class,
+            $this->doctrine->reveal(),
+            $this->phoneNumberUtil->reveal(),
+            $country,
+            true,
+            new NullLogger()
+        );
+
+        $this->assertEquals($expected, $settingsManager->canSendSms());
     }
 }
