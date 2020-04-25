@@ -159,6 +159,20 @@ window.initMap = function() {
         $(this).removeClass('disabled')
       })
     }
+
+    const total = $optionsGroup.children().toArray().reduce((total, el) => {
+
+      const $quantity = $(el).find('input[type="number"]')
+      const quantity = parseInt($quantity.val(), 10)
+      const price = $(el).data('option-value-price')
+
+      return total + (price * quantity)
+
+    }, $form.data('product-price'))
+
+    $form
+      .find('[data-product-total]')
+      .text((total / 100).formatMoney(2, window.AppData.currencySymbol))
   })
 
   $('form[data-product-options]').on('submit', function(e) {
@@ -174,6 +188,17 @@ window.initMap = function() {
 
     $(this).closest('.modal').modal('hide')
     resetForm($(this).closest('form'))
+  })
+
+  // We update the base price on "show.bs.modal" to avoid flickering
+  $('.modal').on('show.bs.modal', function() {
+    var $form = $(this).find('form[data-product-options]')
+    if ($form.length === 1) {
+      const price = $form.data('product-price')
+      $form
+        .find('button[type="submit"] [data-total]')
+        .text((price / 100).formatMoney(2, window.AppData.currencySymbol))
+    }
   })
 
   $('.modal').on('shown.bs.modal', function() {

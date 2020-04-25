@@ -98,7 +98,7 @@
 
     {#
     WARNING
-    We cache the follwing block for performance
+    We cache the following block for performance
     Iterating through all products, options… is a lot of database requests
     #}
     {% cache ('restaurant_' ~ restaurant.id ~ '_menu_v0.3') restaurant %}
@@ -187,9 +187,11 @@ Iterating through all products, options… is a lot of database requests
               <h4 class="modal-title">{{ product.name }}</h4>
             </div>
             <div class="modal-body">
+              {% set variant = product|sylius_resolve_variant %}
               <form
                 action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
-                data-product-options>
+                data-product-options
+                data-product-price="{{ variant.price }}">
                 {% set option_index = 0 %}
                 {% for option in product.options %}
                   {% include '@App/restaurant/_partials/option.html.twig' %}
@@ -215,7 +217,9 @@ Iterating through all products, options… is a lot of database requests
                     </div>
                   </div>
                 </div>
-                <button type="submit" class="btn btn-block btn-primary" disabled>{{ 'basics.add'|trans }}</button>
+                <button type="submit" class="btn btn-block btn-primary" disabled>
+                  <span data-product-total>{{ variant.price|price_format }}</span>
+                </button>
               </form>
             </div>
           </div>

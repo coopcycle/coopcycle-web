@@ -16,7 +16,7 @@
   {% endif %}>
   {% for option_value in option.values %}
     {% set option_value_input_id = ('product-' ~ product.code ~ '-option-' ~ option.code ~ '-value-' ~ option_value.code) %}
-    <div class="list-group-item product-option-item">
+    <div class="list-group-item product-option-item" data-option-value-price="{{ option_value.price }}">
       {% if option.additional %}
         {% if option.valuesRange is not null %}
         <div class="product-option-item-range">
