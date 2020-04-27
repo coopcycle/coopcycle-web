@@ -15,10 +15,8 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
-use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
-use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\SocketIoManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
@@ -231,10 +229,13 @@ class ProfileController extends Controller
 
     public function orderAction($id, Request $request,
         OrderManager $orderManager,
-        DeliveryManager $deliveryManager,
         JWTManagerInterface $jwtManager)
     {
         $order = $this->container->get('sylius.repository.order')->find($id);
+
+        if (null === $order) {
+            throw $this->createNotFoundException();
+        }
 
         if ($order->getCustomer() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
@@ -271,34 +272,7 @@ class ProfileController extends Controller
             ]);
         }
 
-        $form = $this->createForm(OrderType::class, $order);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->getClickedButton()) {
-
-                if ('cancel' === $form->getClickedButton()->getName()) {
-                    $orderManager->cancel($order);
-                }
-
-                $this->get('sylius.manager.order')->flush();
-
-                return $this->redirectToRoute('profile_orders');
-            }
-        }
-
-        // When the order is in state "new", it does not have a delivery
-        $delivery = $order->getDelivery();
-        if (null === $delivery) {
-            $delivery = $deliveryManager->createFromOrder($order);
-        }
-
-        return $this->render('@App/order/service.html.twig', [
-            'layout' => '@App/profile.html.twig',
-            'order' => $order,
-            'delivery' => $delivery,
-            'form' => $form->createView(),
-        ]);
+        throw $this->createNotFoundException();
     }
 
     /**
