@@ -34,7 +34,14 @@
           <i class="fa fa-quote-left"></i>  {{ order.notes }}
         </div>
       {% endif %}
-      {% include '@App/order/_partials/buttons.html.twig' %}
+      {% if show_buttons ?? true %}
+        {% include '@App/order/_partials/buttons.html.twig' %}
+      {% else %}
+        {# Avoid rendering buttons #}
+        {% for child_form in form %}
+          {% do child_form.setRendered %}
+        {% endfor %}
+      {% endif %}
     </div>
   </div>
   <div class="flex-fill ml-md-4">

@@ -273,20 +273,6 @@ class ProfileController extends Controller
 
         $form = $this->createForm(OrderType::class, $order);
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->getClickedButton()) {
-
-                if ('cancel' === $form->getClickedButton()->getName()) {
-                    $orderManager->cancel($order);
-                }
-
-                $this->get('sylius.manager.order')->flush();
-
-                return $this->redirectToRoute('profile_orders');
-            }
-        }
-
         // When the order is in state "new", it does not have a delivery
         $delivery = $order->getDelivery();
         if (null === $delivery) {
@@ -298,6 +284,7 @@ class ProfileController extends Controller
             'order' => $order,
             'delivery' => $delivery,
             'form' => $form->createView(),
+            'show_buttons' => false,
         ]);
     }
 
