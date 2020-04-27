@@ -282,6 +282,8 @@ order.payment.card_number.help: 'Un <a href="https://stripe.com/docs/testing#car
   target="_blank" tabindex="-1">numéro de test</a> Stripe est pré-rempli. Aucun compte
   ne sera débité. '
 order.payment.cvc: CVC
+order.payment.redirect.help: Vous serez redirigé·e vers le site Internet de votre banque pour compléter la transaction
+order.payment.waiting_for_confirmation: En attente de la confirmation de votre banque…
 order.state.cart: Panier
 order.state.accepted: Accepté
 order.state.refused: Refusé
@@ -383,6 +385,7 @@ form.order.accept.label: Accepter
 form.order.accept.help: Lorsque vous aurez accepté la commande, le client sera notifié
   par email.
 form.order.cancel.label: Annuler
+form.order.refuse.label: Refuser
 form.order.fulfill.label: Terminer
 form.order.payment_complete.label: Valider
 form.order.payment_refund.label: Rembourser
@@ -581,6 +584,7 @@ form.checkout_address.add_promotion.label: Appliquer
 form.checkout_address.tip_amount.label: Pourboire
 form.checkout_address.tip_amount.help: Merci ❤
 form.checkout_address.add_tip.label: Appliquer
+form.checkout_payment.method.label: Veuillez choisir un moyen de paiement
 form.task_export.start.label: Début
 form.task_export.end.label: Fin
 form.api_app.name.label: Nom de l'application

@@ -21,6 +21,7 @@ use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Tests\AppBundle\StripeTrait;
 
 class StripeManagerTest extends TestCase
@@ -45,8 +46,12 @@ class StripeManagerTest extends TestCase
             ->get('stripe_secret_key')
             ->willReturn(self::$stripeApiKey);
 
+        $this->urlGenerator = $this->prophesize(UrlGeneratorInterface::class);
+
         $this->stripeManager = new StripeManager(
             $this->settingsManager->reveal(),
+            $this->urlGenerator->reveal(),
+            'secret',
             new NullLogger()
         );
     }
@@ -417,5 +422,53 @@ class StripeManagerTest extends TestCase
         $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_intents/pi_12345678/confirm', 'acct_123456');
 
         $this->stripeManager->confirmIntent($payment);
+    }
+
+    public function testAuthorizeWithSourceCreatesDirectChargeWithConnectAccount()
+    {
+        $source = Stripe\Source::constructFrom([
+            'id' => 'src_12345678',
+            'type' => 'giropay',
+            'client_secret' => '',
+            'redirect' => [
+                'url' => 'http://example.com'
+            ]
+        ]);
+
+        $payment = new Payment();
+        $payment->setAmount(3000);
+        $payment->setCurrencyCode('EUR');
+        $payment->setSource($source);
+
+        $stripeAccount = $this->prophesize(StripeAccount::class);
+        $order = $this->prophesize(OrderInterface::class);
+        $restaurant = $this->prophesize(Restaurant::class);
+        $contract = $this->prophesize(Contract::class);
+
+        $restaurant = $this->createRestaurant('acct_123');
+
+        $order
+            ->getNumber()
+            ->willReturn('000001');
+        $order
+            ->getFeeTotal()
+            ->willReturn(750);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+
+        $payment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequestForAccount('GET',  '/v1/sources/src_12345678', 'acct_123');
+        $this->shouldSendStripeRequestForAccount('POST', '/v1/charges', 'acct_123', [
+            'amount' => 3000,
+            'currency' => 'eur',
+            'source' => 'src_12345678',
+            'description' => 'Order 000001',
+            'capture' => 'true',
+            'application_fee' => 750
+        ]);
+
+        $this->stripeManager->authorize($payment);
     }
 }

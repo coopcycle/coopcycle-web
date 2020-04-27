@@ -40,6 +40,10 @@
 
             {{ form_errors(form) }}
 
+            {% if form.method is defined %}
+              {{ form_row(form.method) }}
+            {% endif %}
+
             {{ form_widget(form.stripePayment.stripeToken) }}
 
             {{ form_row(form.stripePayment.cardholderName) }}
@@ -51,6 +55,7 @@
               <div id="card-element">
                 <!-- a Stripe Element will be inserted here. -->
               </div>
+              {# <div id="payment-method-picker"></div> #}
               <!-- Used to display form errors -->
               <div id="card-errors" role="alert"></div>
             </div>
@@ -59,6 +64,10 @@
               <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
                 <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
               </button>
+            </div>
+
+            <div class="text-center hidden mt-3" id="payment-redirect-help">
+              <span class="help-block">{{ 'order.payment.redirect.help'|trans }}</span>
             </div>
 
           </div>

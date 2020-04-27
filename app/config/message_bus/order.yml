@@ -56,6 +56,7 @@ services:
   coopcycle.domain.order.handler.refuse_order:
     class: AppBundle\Domain\Order\Handler\RefuseOrderHandler
     arguments:
+      - '@coopcycle.stripe_manager'
       - '@event_recorder'
     tags:
       - name: command_handler

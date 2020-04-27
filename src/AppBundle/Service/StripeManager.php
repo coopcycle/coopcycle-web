@@ -2,22 +2,30 @@
 
 namespace AppBundle\Service;
 
+use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class StripeManager
 {
     private $settingsManager;
+    private $urlGenerator;
+    private $secret;
     private $logger;
 
     const STRIPE_API_VERSION = '2019-09-09';
 
     public function __construct(
         SettingsManager $settingsManager,
+        UrlGeneratorInterface $urlGenerator,
+        string $secret,
         LoggerInterface $logger)
     {
         $this->settingsManager = $settingsManager;
+        $this->urlGenerator = $urlGenerator;
+        $this->secret = $secret;
         $this->logger = $logger;
     }
 
@@ -158,6 +166,41 @@ class StripeManager
         return $intent;
     }
 
+    private function resolveSource(PaymentInterface $payment)
+    {
+        if ($stripeToken = $payment->getStripeToken()) {
+
+            return $stripeToken;
+        }
+
+        if ($source = $payment->getSource()) {
+
+            return $source;
+        }
+
+        throw new \Exception(sprintf('No Stripe source found in payment #%d', $payment->getId()));
+    }
+
+    public function shouldCapture(PaymentInterface $payment): bool
+    {
+        if ($sourceId = $payment->getSource()) {
+
+            $source =
+                Stripe\Source::retrieve($sourceId, $this->getStripeOptions($payment));
+
+            // @see https://stripe.com/docs/api/sources/object#source_object-type
+
+            return in_array($source->type, [
+                'giropay',
+                // We need to add this for unit tests
+                // because stripe-mock always returns this type
+                'ach_credit_transfer',
+            ]);
+        }
+
+        return false;
+    }
+
     /**
      * @return Stripe\Charge
      */
@@ -165,23 +208,19 @@ class StripeManager
     {
         $this->configure();
 
-        $stripeToken = $payment->getStripeToken();
-
-        if (null === $stripeToken) {
-            throw new \Exception('No Stripe token provided');
-        }
-
         $order = $payment->getOrder();
 
         $stripeParams = [
             'amount' => $payment->getAmount(),
             'currency' => strtolower($payment->getCurrencyCode()),
-            'source' => $stripeToken,
+            'source' => $this->resolveSource($payment),
             'description' => sprintf('Order %s', $order->getNumber()),
-            // To authorize a payment without capturing it,
-            // make a charge request that also includes the capture parameter with a value of false.
-            // This instructs Stripe to only authorize the amount on the customer’s card.
-            'capture' => false
+            // @see https://stripe.com/docs/api/charges/create#create_charge-capture
+            // Whether to immediately capture the charge. Defaults to true.
+            // When false, the charge issues an authorization (or pre-authorization),
+            // and will need to be captured later.
+            // Uncaptured charges expire in seven days.
+            'capture' => $this->shouldCapture($payment),
         ];
 
         $stripeOptions = [];
@@ -243,10 +282,11 @@ class StripeManager
             $this->getStripeOptions($payment)
         );
 
+        // When we are using sources (like giropay),
+        // the charge is already captured
         if ($charge->captured) {
-            // FIXME
-            // If we land here, there is a severe problem
-            throw new \Exception('Charge already captured');
+
+            return $charge;
         }
 
         $charge->capture();
@@ -291,5 +331,33 @@ class StripeManager
         $args['refund_application_fee'] = $refundApplicationFee;
 
         return Stripe\Refund::create($args, $stripeOptions);
+    }
+
+    /**
+     * @return Stripe\Source
+     */
+    public function createGiropaySource(PaymentInterface $payment, string $ownerName)
+    {
+        $this->configure();
+
+        $hashids = new Hashids($this->secret, 8);
+
+        $returnUrl = $this->urlGenerator->generate('payment_confirm', [
+            'hashId' => $hashids->encode($payment->getId()),
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $stripeOptions = $this->getStripeOptions($payment);
+
+        return Stripe\Source::create([
+            'type' => 'giropay',
+            'amount' => $payment->getAmount(),
+            'currency' => strtolower($payment->getCurrencyCode()),
+            'owner' => [
+                'name' => $ownerName
+            ],
+            'redirect' => [
+                'return_url' => $returnUrl
+            ]
+        ], $stripeOptions);
     }
 }

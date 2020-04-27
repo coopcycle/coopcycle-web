@@ -37,12 +37,28 @@ class CheckoutHandler
         }
     }
 
+    private function getLastPayment(OrderInterface $order): ?PaymentInterface
+    {
+        if ($payment = $order->getLastPayment(PaymentInterface::STATE_CART)) {
+
+            return $payment;
+        }
+
+        if ($payment = $order->getLastPayment(PaymentInterface::STATE_PROCESSING)) {
+
+            return $payment;
+        }
+
+        return null;
+    }
+
     public function __invoke(Checkout $command)
     {
         $order = $command->getOrder();
         $stripeToken = $command->getStripeToken();
 
-        $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
+        $payment = $this->getLastPayment($order);
+
         $isFreeOrder = null === $payment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
 
         if ($isFreeOrder) {

@@ -98,7 +98,8 @@ new CoopCycle.DeliveryMap('map', {
 });
 {% endif %}
 $('[data-change-state] button[type="submit"]').on('click', function(e) {
-  if (!window.confirm('{{ 'basics.are_you_sure'|trans }}')) {
+  var message = $(e.target).data('message');
+  if (!window.confirm(message || '{{ 'basics.are_you_sure'|trans }}')) {
     e.preventDefault();
   }
 });

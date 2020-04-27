@@ -40,6 +40,15 @@ class CapturePayment
             return;
         }
 
+        $completedPayment =
+            $order->getLastPayment(PaymentInterface::STATE_COMPLETED);
+
+        if (null !== $completedPayment && $completedPayment->hasSource()
+            && 'giropay' === $completedPayment->getSourceType()) {
+            $this->eventBus->handle(new OrderFulfilled($order, $completedPayment));
+            return;
+        }
+
         // TODO Handle error if payment is NULL
 
         try {
