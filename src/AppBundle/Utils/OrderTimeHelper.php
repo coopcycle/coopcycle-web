@@ -95,6 +95,11 @@ class OrderTimeHelper
                 $timeSlot->setPriorNotice(sprintf('%d %s', $hours, ($hours > 1 ? 'hours' : 'hour')));
             }
 
+            $shippingOptionsDays = $restaurant->getShippingOptionsDays();
+            if ($shippingOptionsDays > 0) {
+                $timeSlot->setInterval(sprintf('%d days', $shippingOptionsDays));
+            }
+
             $timeSlot->setOpeningHours(
                 $cart->getRestaurant()->getOpeningHours()
             );
