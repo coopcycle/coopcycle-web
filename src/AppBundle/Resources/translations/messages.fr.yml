@@ -385,6 +385,7 @@ form.order.accept.label: Accepter
 form.order.accept.help: Lorsque vous aurez accepté la commande, le client sera notifié
   par email.
 form.order.cancel.label: Annuler
+form.order.refuse.label: Refuser
 form.order.fulfill.label: Terminer
 form.order.payment_complete.label: Valider
 form.order.payment_refund.label: Rembourser

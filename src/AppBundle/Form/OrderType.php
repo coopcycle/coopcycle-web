@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Sylius\Order\OrderTransitions;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -14,18 +15,22 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrderType extends AbstractType
 {
     private $stateMachineFactory;
     private $authorizationChecker;
+    private $translator;
 
     public function __construct(
         StateMachineFactoryInterface $stateMachineFactory,
-        AuthorizationCheckerInterface $authorizationChecker)
+        AuthorizationCheckerInterface $authorizationChecker,
+        TranslatorInterface $translator)
     {
         $this->stateMachineFactory = $stateMachineFactory;
         $this->authorizationChecker = $authorizationChecker;
+        $this->translator = $translator;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -57,17 +62,31 @@ class OrderType extends AbstractType
                             'disabled' => $order->isFoodtech(),
                         ]);
                     }
-                }
+                    if ($stateMachine->can(OrderTransitions::TRANSITION_REFUSE)) {
 
-                if ($stateMachine->can(OrderTransitions::TRANSITION_CANCEL)) {
-                    $form->add('cancel', SubmitType::class, [
-                        'label' => 'form.order.cancel.label'
-                    ]);
-                }
+                        $attr = [];
 
+                        $completedPayment =
+                            $order->getLastPayment(PaymentInterface::STATE_COMPLETED);
+
+                        if (null !== $completedPayment && $completedPayment->hasSource()
+                            && 'giropay' === $completedPayment->getSourceType()) {
+                            $attr['data-message'] = $this->translator->trans('form.order.refuse.refund.alert');
+                        }
+
+                        $form->add('refuse', SubmitType::class, [
+                            'label' => 'form.order.refuse.label',
+                            'attr' => $attr
+                        ]);
+
+                    } elseif ($stateMachine->can(OrderTransitions::TRANSITION_CANCEL)) {
+                        $form->add('cancel', SubmitType::class, [
+                            'label' => 'form.order.cancel.label'
+                        ]);
+                    }
+                }
             }
         );
-
     }
 
     public function configureOptions(OptionsResolver $resolver)

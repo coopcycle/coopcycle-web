@@ -259,6 +259,10 @@ class AdminController extends Controller
                     $orderManager->fulfill($order);
                 }
 
+                if ('refuse' === $form->getClickedButton()->getName()) {
+                    $orderManager->refuse($order);
+                }
+
                 if ('cancel' === $form->getClickedButton()->getName()) {
                     $orderManager->cancel($order);
                 }

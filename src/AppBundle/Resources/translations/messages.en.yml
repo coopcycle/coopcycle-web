@@ -416,10 +416,13 @@ form.order.accept.label: Accept
 form.order.accept.help: Once you have accepted the order, the customer will be notified
   by email.
 form.order.cancel.label: Cancel
+form.order.refuse.label: Refuse
 form.order.fulfill.label: Fulfill
 form.order.payment_complete.label: Complete
 form.order.payment_refund.label: Refund
 form.order.refund_modal.title: Refund
+form.order.refuse.refund.alert: This order was paid with a payment method that does not manage pre-authorizations.
+  If you refuse it, the payment will be refunded. Are you sure?
 form.payment.refund_amount.label: Amount
 form.payment.refund_amount.help: The amount you specify will be refunded to the customer
 form.payment.refund_application_fee.label: Refund fees
