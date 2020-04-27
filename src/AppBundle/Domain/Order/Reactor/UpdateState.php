@@ -65,7 +65,9 @@ class UpdateState
 
         if ($event instanceof Event\OrderFulfilled && null !== $event->getPayment()) {
             $stateMachine = $this->stateMachineFactory->get($event->getPayment(), PaymentTransitions::GRAPH);
-            $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+            if ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
+                $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+            }
         }
 
         if ($event instanceof Event\OrderCancelled) {
