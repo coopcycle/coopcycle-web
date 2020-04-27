@@ -158,14 +158,6 @@ class CheckoutAddressType extends AbstractType
                 $customer->setTelephone($form->get('telephone')->getData());
             }
 
-            $shippingAddress = $order->getShippingAddress();
-
-            // Copy customer data into address
-            $shippingAddress->setContactName(
-                trim(sprintf('%s %s', $customer->getGivenName(), $customer->getFamilyName()))
-            );
-            $shippingAddress->setTelephone($customer->getTelephone());
-
             if ($form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName()) {
                 $tipAmount = $form->get('tipAmount')->getData();
                 $order->setTipAmount((int) ($tipAmount * 100));

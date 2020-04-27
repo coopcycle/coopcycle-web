@@ -224,6 +224,12 @@ services:
         - name: event_subscriber
           subscribes_to: order:created
 
+  coopcycle.domain.order.reactor.enhance_shipping_address:
+    class: AppBundle\Domain\Order\Reactor\EnhanceShippingAddress
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:created
+
   coopcycle.domain.order.reactor.publish_to_redis:
     class: AppBundle\Domain\Order\Reactor\PublishToRedis
     arguments:
