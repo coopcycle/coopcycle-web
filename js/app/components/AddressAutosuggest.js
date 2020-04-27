@@ -9,15 +9,16 @@ import _ from 'lodash'
 
 import '../i18n'
 import { placeToAddress } from '../utils/GoogleMaps'
-
 import PoweredByGoogle from './powered_by_google_on_white.png'
+import {
+  placeholder as placeholderGB,
+  getInitialState as getInitialStateGB,
+  onSuggestionsFetchRequested as onSuggestionsFetchRequestedGB,
+  onSuggestionSelected as onSuggestionSelectedGB,
+  theme as themeGB,
+  poweredBy as poweredByGB } from './AddressAutosuggest/gb'
 
-const autocompleteOptions = {
-  types: ['address'],
-  componentRestrictions: {
-    country: window.AppData.countryIso || 'fr'
-  }
-}
+const COUNTRY = window.AppData.countryIso
 
 const theme = {
   container:                'react-autosuggest__container address-autosuggest__container',
@@ -36,6 +37,13 @@ const theme = {
   sectionTitle:             'react-autosuggest__section-title address-autosuggest__section-title'
 }
 
+const autocompleteOptions = {
+  types: ['address'],
+  componentRestrictions: {
+    country: COUNTRY || 'fr'
+  }
+}
+
 const defaultFuseOptions = {
   shouldSort: true,
   includeScore: true,
@@ -51,6 +59,107 @@ const defaultFuseOptions = {
 
 const defaultFuseSearchOptions = {
   limit: 5
+}
+
+const localized = {
+  gb: {
+    placeholder: placeholderGB,
+    getInitialState: getInitialStateGB,
+    onSuggestionsFetchRequested: onSuggestionsFetchRequestedGB,
+    onSuggestionSelected: onSuggestionSelectedGB,
+    theme: themeGB,
+    poweredBy: poweredByGB,
+  }
+}
+
+// WARNING
+// Do *NOT* use arrow functions, to allow binding
+const generic = {
+  placeholder: function() {
+    return this.props.placeholder || this.props.t('ENTER_YOUR_ADDRESS')
+  },
+  getInitialState: function () {
+
+    return {
+      value: _.isObject(this.props.address) ?
+        (this.props.address.streetAddress || '') : '',
+      suggestions: [],
+      multiSection: false,
+    }
+  },
+  onSuggestionsFetchRequested: function({ value }) {
+    // @see https://developers.google.com/maps/documentation/javascript/places-autocomplete#place_autocomplete_service
+    // @see https://developers.google.com/maps/documentation/javascript/reference/#AutocompleteService
+    this.autocompleteService.getPlacePredictions({
+      ...autocompleteOptions,
+      input: value,
+    }, this._autocompleteCallback.bind(this))
+  },
+  onSuggestionSelected: function (event, { suggestion }) {
+
+    if (suggestion.type === 'prediction') {
+      const { placeId } = suggestion
+
+      this.geocoder.geocode({ placeId }, (results, status) => {
+        if (status === this.geocoderOK && results.length === 1) {
+
+          const place = results[0]
+          const lat = place.geometry.location.lat()
+          const lng = place.geometry.location.lng()
+          const geohash = ngeohash.encode(lat, lng, 11)
+
+          const address = {
+            ...placeToAddress(place, this.state.value),
+            geohash,
+          }
+
+          // If the component was configured for,
+          // report validity if the address is not precise enough
+          if (this.props.reportValidity && this.props.preciseOnly && !address.isPrecise) {
+            this.autosuggest.input.setCustomValidity(this.props.t('CART_ADDRESS_NOT_ENOUGH_PRECISION'))
+            if (HTMLInputElement.prototype.reportValidity) {
+              this.autosuggest.input.reportValidity()
+            }
+          }
+
+          this.props.onAddressSelected(this.state.value, address, suggestion.type)
+        }
+      })
+    }
+
+    if (suggestion.type === 'address') {
+
+      const geohash = ngeohash.encode(
+        suggestion.address.geo.latitude,
+        suggestion.address.geo.longitude,
+        11
+      )
+
+      const address = {
+        ...suggestion.address,
+        geohash,
+      }
+
+      this.props.onAddressSelected(suggestion.value, address, suggestion.type)
+    }
+  },
+  theme: function(theme) {
+    return theme
+  },
+  poweredBy: function() {
+    return (
+      <img src={ PoweredByGoogle } />
+    )
+  }
+}
+
+const localize = (func, thisArg) => {
+  if (Object.prototype.hasOwnProperty.call(localized, COUNTRY)
+  &&  Object.prototype.hasOwnProperty.call(localized[COUNTRY], func)) {
+    return localized[COUNTRY][func].bind(thisArg)
+  }
+
+  return generic[func].bind(thisArg)
 }
 
 const getSuggestionValue = suggestion => suggestion.value
@@ -74,14 +183,18 @@ class AddressAutosuggest extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      value: _.isObject(this.props.address) ?
-        (this.props.address.streetAddress || '') : '',
-      suggestions: [],
-      multiSection: false,
-    }
+    // Localized methods
+    this.onSuggestionsFetchRequested = debounce(
+      localize('onSuggestionsFetchRequested', this),
+      350
+    )
+    this.getInitialState = localize('getInitialState', this)
+    this.onSuggestionSelected = localize('onSuggestionSelected', this)
+    this.placeholder = localize('placeholder', this)
+    this.poweredBy = localize('poweredBy', this)
+    this.theme = localize('theme', this)
 
-    this.onSuggestionsFetchRequested = debounce(this.onSuggestionsFetchRequested.bind(this), 350)
+    this.state = this.getInitialState()
   }
 
   componentDidMount() {
@@ -213,80 +326,32 @@ class AddressAutosuggest extends Component {
     })
   }
 
-  onSuggestionsFetchRequested({ value }) {
-    // @see https://developers.google.com/maps/documentation/javascript/places-autocomplete#place_autocomplete_service
-    // @see https://developers.google.com/maps/documentation/javascript/reference/#AutocompleteService
-    this.autocompleteService.getPlacePredictions({
-      ...autocompleteOptions,
-      input: value,
-    }, this._autocompleteCallback.bind(this))
-  }
-
   onSuggestionsClearRequested() {
     this.setState({
       suggestions: []
     })
   }
 
-  onSuggestionSelected(event, { suggestion }) {
-
-    if (suggestion.type === 'prediction') {
-      const { placeId } = suggestion
-
-      this.geocoder.geocode({ placeId }, (results, status) => {
-        if (status === this.geocoderOK && results.length === 1) {
-
-          const place = results[0]
-          const lat = place.geometry.location.lat()
-          const lng = place.geometry.location.lng()
-          const geohash = ngeohash.encode(lat, lng, 11)
-
-          const address = {
-            ...placeToAddress(place, this.state.value),
-            geohash,
-          }
-
-          // If the component was configured for,
-          // report validity if the address is not precise enough
-          if (this.props.reportValidity && this.props.preciseOnly && !address.isPrecise) {
-            this.autosuggest.input.setCustomValidity(this.props.t('CART_ADDRESS_NOT_ENOUGH_PRECISION'))
-            if (HTMLInputElement.prototype.reportValidity) {
-              this.autosuggest.input.reportValidity()
-            }
-          }
-
-          this.props.onAddressSelected(this.state.value, address, suggestion.type)
-        }
-      })
-    }
-
-    if (suggestion.type === 'address') {
-
-      const geohash = ngeohash.encode(
-        suggestion.address.geo.latitude,
-        suggestion.address.geo.longitude,
-        11
-      )
-
-      const address = {
-        ...suggestion.address,
-        geohash,
-      }
-
-      this.props.onAddressSelected(suggestion.value, address, suggestion.type)
-    }
-  }
-
   renderInputComponent(inputProps) {
 
     return (
-      <div>
-        <input { ...inputProps } />
-        { this.state.value && (
-          <button className="address-autosuggest__clear" onClick={ () => this.onClear() }>
-            <i className="fa fa-times-circle"></i>
-          </button>
-        )}
+      <div className="address-autosuggest__input-container">
+        <div className="address-autosuggest__input-wrapper">
+          <input { ...inputProps } />
+          { this.state.value && (
+            <button className="address-autosuggest__close-button address-autosuggest__clear" onClick={ () => this.onClear() }>
+              <i className="fa fa-times-circle"></i>
+            </button>
+          )}
+        </div>
+        { this.state.postcode && (
+          <div className="address-autosuggest__addon">
+            <span>{ this.state.postcode.postcode }</span>
+            <button className="address-autosuggest__close-button" onClick={ () => this.setState({ postcode: null }) }>
+              <i className="fa fa-times-circle"></i>
+            </button>
+          </div>
+        ) }
       </div>
     )
   }
@@ -298,7 +363,7 @@ class AddressAutosuggest extends Component {
         { children }
         <div className="address-autosuggest__suggestions-container__footer">
           <div>
-            <img src={ PoweredByGoogle } />
+            { this.poweredBy() }
           </div>
         </div>
       </div>
@@ -310,7 +375,7 @@ class AddressAutosuggest extends Component {
     const { value, suggestions, multiSection } = this.state
 
     const inputProps = {
-      placeholder: this.props.placeholder || this.props.t('ENTER_YOUR_ADDRESS'),
+      placeholder: this.placeholder(),
       value,
       onChange: this.onChange.bind(this),
       type: "search",
@@ -320,7 +385,7 @@ class AddressAutosuggest extends Component {
     return (
       <Autosuggest
         ref={ autosuggest => this.autosuggest = autosuggest }
-        theme={ theme }
+        theme={ this.theme(theme) }
         suggestions={ suggestions }
         onSuggestionsFetchRequested={ this.onSuggestionsFetchRequested }
         onSuggestionsClearRequested={ this.onSuggestionsClearRequested.bind(this) }
