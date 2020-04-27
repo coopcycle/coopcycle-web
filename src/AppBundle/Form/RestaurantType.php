@@ -109,7 +109,7 @@ class RestaurantType extends LocalBusinessType
                 $form->get('allowStripeConnect')->setData(true);
             }
 
-            if ($this->debug || 'de' === $this->country) {
+            if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && ($this->debug || 'de' === $this->country)) {
                 $form
                     ->add('enableGiropay', CheckboxType::class, [
                         'label' => 'restaurant.form.giropay_enabled.label',
