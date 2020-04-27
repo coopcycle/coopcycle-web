@@ -184,6 +184,7 @@
         "TIME_RANGE": "between {{start}} and {{end}}",
         "CART_DELIVERY_TIME_RANGE_SAME_DAY": "[Delivery today] [{{range}}]",
         "CART_DELIVERY_TIME_RANGE_NEXT_DAY": "[Delivery tomorrow] [{{range}}]",
+        "CART_DELIVERY_TIME_RANGE_NEXT_WEEK": "[Delivery] dddd [{{range}}]",
         "CART_DELIVERY_TIME_RANGE_LAST_DAY": "[Delivery yesterday] [{{range}}]",
         "CART_DELIVERY_TIME_RANGE_SAME_ELSE": "[Delivery on] LL [{{range}}]",
         "NOTIFICATIONS_ENABLED": "Notifications are now enabled!"

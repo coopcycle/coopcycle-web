@@ -55,11 +55,16 @@ export const asText = (value, short) => {
       end: range.end.format('LT'),
     })
 
+    const sameElse =
+      i18n.t('CART_DELIVERY_TIME_RANGE_SAME_ELSE', { range: rangeAsText })
+
     text = moment(range.start).calendar(null, {
       sameDay:  i18n.t('CART_DELIVERY_TIME_RANGE_SAME_DAY', { range: rangeAsText }),
       nextDay:  i18n.t('CART_DELIVERY_TIME_RANGE_NEXT_DAY', { range: rangeAsText }),
+      nextWeek: i18n.t('CART_DELIVERY_TIME_RANGE_NEXT_WEEK', { range: rangeAsText }),
       lastDay:  i18n.t('CART_DELIVERY_TIME_RANGE_LAST_DAY', { range: rangeAsText }),
-      sameElse: i18n.t('CART_DELIVERY_TIME_RANGE_SAME_ELSE', { range: rangeAsText }),
+      lastWeek: sameElse,
+      sameElse: sameElse,
     })
   }
 

@@ -33,7 +33,7 @@ class OrderRuntime implements RuntimeExtensionInterface
             ->calendar(null, [
                 'sameDay'  => $this->translator->trans('time_range.same_day', ['%range%' => $rangeAsText]),
                 'nextDay'  => $this->translator->trans('time_range.next_day', ['%range%' => $rangeAsText]),
-                'nextWeek' => $sameElse,
+                'nextWeek' => sprintf('dddd [%s]', $rangeAsText),
                 'lastDay'  => $this->translator->trans('time_range.last_day', ['%range%' => $rangeAsText]),
                 'lastWeek' => $sameElse,
                 'sameElse' => $sameElse,

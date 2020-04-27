@@ -794,7 +794,7 @@ restricted_diets.LOW_SALT_DIET: Sans sel
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Végétarien
 time_slot.human_readable: '%day% entre %start% et %end%'
-time_range: 'entre %start% and %end%'
+time_range: 'entre %start% et %end%'
 time_range.same_day: "[Aujourd'hui] [%range%]"
 time_range.next_day: '[Demain] [%range%]'
 time_range.last_day: '[Hier] [%range%]'

@@ -179,6 +179,7 @@
         "TIME_RANGE": "pomiędzy {{start}} a {{end}}",
         "CART_DELIVERY_TIME_RANGE_SAME_DAY": "[Dostawa dziś] [{{range}}]",
         "CART_DELIVERY_TIME_RANGE_NEXT_DAY": "[Dostawa jutro] [{{range}}]",
+        "CART_DELIVERY_TIME_RANGE_NEXT_WEEK": "[Dostawa] dddd [{{range}}]",
         "CART_DELIVERY_TIME_RANGE_LAST_DAY": "[Dostawa wczoraj] [{{range}}]",
         "CART_DELIVERY_TIME_RANGE_SAME_ELSE": "[Dostawa dnia] LL [{{range}}]"
     }
