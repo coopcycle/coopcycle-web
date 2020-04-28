@@ -8,6 +8,8 @@ import { includes, filter, debounce } from 'lodash'
 import i18n from '../i18n'
 import { placeToAddress } from '../utils/GoogleMaps'
 
+import PoweredByGoogle from './powered_by_google_on_white.png'
+
 const autocompleteOptions = {
   types: ['address'],
   componentRestrictions: {
@@ -293,7 +295,7 @@ class AddressAutosuggest extends Component {
         { children }
         <div className="address-autosuggest__suggestions-container__footer">
           <div>
-            <img src={ require('./powered_by_google_on_white.png') } />
+            <img src={ PoweredByGoogle } />
           </div>
         </div>
       </div>
