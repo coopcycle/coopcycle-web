@@ -4,8 +4,9 @@ import PropTypes from 'prop-types'
 import ngeohash from 'ngeohash'
 import Fuse from 'fuse.js'
 import { includes, filter, debounce } from 'lodash'
+import { withTranslation } from 'react-i18next'
 
-import i18n from '../i18n'
+import '../i18n'
 import { placeToAddress } from '../utils/GoogleMaps'
 
 import PoweredByGoogle from './powered_by_google_on_white.png'
@@ -184,7 +185,7 @@ class AddressAutosuggest extends Component {
         const addressesValues = addressesAsSuggestions.map(suggestion => suggestion.value)
 
         suggestions.push({
-          title: i18n.t('SAVED_ADDRESSES'),
+          title: this.props.t('SAVED_ADDRESSES'),
           suggestions: addressesAsSuggestions
         })
 
@@ -193,7 +194,7 @@ class AddressAutosuggest extends Component {
 
         if (predictionsAsSuggestions.length > 0) {
           suggestions.push({
-            title: i18n.t('ADDRESS_SUGGESTIONS'),
+            title: this.props.t('ADDRESS_SUGGESTIONS'),
             suggestions: filter(predictionsAsSuggestions, suggestion => !includes(addressesValues, suggestion.value))
           })
         }
@@ -246,7 +247,7 @@ class AddressAutosuggest extends Component {
           // If the component was configured for,
           // report validity if the address is not precise enough
           if (this.props.reportValidity && this.props.preciseOnly && !address.isPrecise) {
-            this.autosuggest.input.setCustomValidity(i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION'))
+            this.autosuggest.input.setCustomValidity(this.props.t('CART_ADDRESS_NOT_ENOUGH_PRECISION'))
             if (HTMLInputElement.prototype.reportValidity) {
               this.autosuggest.input.reportValidity()
             }
@@ -307,7 +308,7 @@ class AddressAutosuggest extends Component {
     const { value, suggestions, multiSection } = this.state
 
     const inputProps = {
-      placeholder: this.props.placeholder,
+      placeholder: this.props.placeholder || this.props.t('ENTER_YOUR_ADDRESS'),
       value,
       onChange: this.onChange.bind(this),
       type: "search",
@@ -340,7 +341,6 @@ AddressAutosuggest.defaultProps = {
   required: false,
   reportValidity: false,
   preciseOnly: false,
-  placeholder: i18n.t('ENTER_YOUR_ADDRESS'),
   fuseSearchOptions: {},
 }
 
@@ -357,4 +357,4 @@ AddressAutosuggest.propTypes = {
   fuseSearchOptions: PropTypes.object,
 }
 
-export default AddressAutosuggest
+export default withTranslation()(AddressAutosuggest)
