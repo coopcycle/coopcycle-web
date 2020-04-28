@@ -23,7 +23,7 @@ export default function(selector, options) {
 
   const layers = [ pickup, dropoff ]
 
-  if (options.hasOwnProperty('polyline')) {
+  if (Object.prototype.hasOwnProperty.call(options, 'polyline')) {
     const polyline = L.polyline(MapHelper.decodePolyline(options.polyline), polylineOptions)
     polyline.addTo(map)
     layers.push(polyline)

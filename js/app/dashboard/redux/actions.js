@@ -437,8 +437,8 @@ function createTask(task) {
       tags: _.map(task.tags, tag => tag.slug)
     }
 
-    const url = task.hasOwnProperty('@id') ? task['@id'] : '/api/tasks'
-    const method = task.hasOwnProperty('@id') ? 'put' : 'post'
+    const url = Object.prototype.hasOwnProperty.call(task, '@id') ? task['@id'] : '/api/tasks'
+    const method = Object.prototype.hasOwnProperty.call(task, '@id') ? 'put' : 'post'
 
     const payload = _.omit(data, [
       '@context',

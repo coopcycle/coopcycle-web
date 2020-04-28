@@ -261,7 +261,7 @@ export function changeAddress(address) {
         isNewAddressFormElement.value = '1'
 
         _.forEach(addressFormElements, (el, key) => {
-          if (address.hasOwnProperty(key)) {
+          if (Object.prototype.hasOwnProperty.call(address, key)) {
             el.value = address[key]
           }
         })

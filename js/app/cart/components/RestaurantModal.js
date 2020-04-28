@@ -55,7 +55,7 @@ class RestaurantModal extends Component {
 
 function mapStateToProps(state) {
 
-  const hasError = state.errors.hasOwnProperty('restaurant')
+  const hasError = Object.prototype.hasOwnProperty.call(state.errors, 'restaurant')
 
   return {
     isOpen: hasError,

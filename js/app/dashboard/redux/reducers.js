@@ -455,7 +455,7 @@ const completeTaskErrorMessage = (state = null, action) => {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       if (error.response.status === 400) {
-        if (error.response.data.hasOwnProperty('@type') && error.response.data['@type'] === 'hydra:Error') {
+        if (Object.prototype.hasOwnProperty.call(error.response.data, '@type') && error.response.data['@type'] === 'hydra:Error') {
           return error.response.data['hydra:description']
         }
       }
@@ -551,14 +551,14 @@ const combinedFilters = (state = initialState, action) => {
   }
 
   let isDefaultFilters = initialState.isDefaultFilters
-  if (state.hasOwnProperty('filters') && !state.hasOwnProperty('isDefaultFilters')) {
+  if (Object.prototype.hasOwnProperty.call(state, 'filters') && !Object.prototype.hasOwnProperty.call(state, 'isDefaultFilters')) {
     isDefaultFilters = _.isEqual(state.filters, defaultFilters)
   }
 
   return {
     ...state,
-    filters: state.hasOwnProperty('filters') ? state.filters : initialState.filters,
-    isDefaultFilters: state.hasOwnProperty('isDefaultFilters') ? state.isDefaultFilters : isDefaultFilters,
+    filters: Object.prototype.hasOwnProperty.call(state, 'filters') ? state.filters : initialState.filters,
+    isDefaultFilters: Object.prototype.hasOwnProperty.call(state, 'isDefaultFilters') ? state.isDefaultFilters : isDefaultFilters,
   }
 }
 

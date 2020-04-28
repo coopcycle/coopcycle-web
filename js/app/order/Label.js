@@ -13,7 +13,7 @@ class Label extends React.Component {
   render() {
 
     const classes = ['label']
-    if (map.hasOwnProperty(this.props.order.state)) {
+    if (Object.prototype.hasOwnProperty.call(map, this.props.order.state)) {
       classes.push(map[this.props.order.state])
     } else {
       classes.push('label-default')

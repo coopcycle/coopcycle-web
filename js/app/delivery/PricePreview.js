@@ -77,7 +77,7 @@ class PricePreview {
           let message = ''
 
           if (e.response && e.response.status === 400) {
-            if (e.response.data.hasOwnProperty('@type') && e.response.data['@type'] === 'hydra:Error') {
+            if (Object.prototype.hasOwnProperty.call(e.response.data, '@type') && e.response.data['@type'] === 'hydra:Error') {
               $container.addClass('delivery-price--error')
               message = e.response.data['hydra:description']
             }

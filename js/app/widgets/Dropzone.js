@@ -11,7 +11,7 @@ export default function(el, options) {
 
   const [ width, height ] = options.size
 
-  const croppieFormat = options.hasOwnProperty('croppie') ? options.croppie.format : 'jpeg'
+  const croppieFormat = Object.prototype.hasOwnProperty.call(options, 'croppie') ? options.croppie.format : 'jpeg'
 
   const $dropzoneContainer = $('<div>')
   $dropzoneContainer.addClass('dropzone')

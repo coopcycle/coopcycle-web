@@ -186,7 +186,7 @@ function mapStateToProps(state, ownProps) {
 
   const tasksWithColor = selectTasksWithColor(state)
 
-  const color = tasksWithColor.hasOwnProperty(ownProps.task['@id']) ?
+  const color = Object.prototype.hasOwnProperty.call(tasksWithColor, ownProps.task['@id']) ?
     tasksWithColor[ownProps.task['@id']] : '#ffffff'
 
   return {

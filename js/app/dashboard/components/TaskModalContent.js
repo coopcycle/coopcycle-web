@@ -51,7 +51,7 @@ class TaskModalContent extends React.Component {
   }
 
   renderHeaderText(task) {
-    if (!!task && task.hasOwnProperty('@id')) {
+    if (!!task && Object.prototype.hasOwnProperty.call(task, '@id')) {
       return this.props.t('ADMIN_DASHBOARD_TASK_TITLE', { id: task.id })
     }
 
@@ -144,7 +144,7 @@ class TaskModalContent extends React.Component {
   _validate(values) {
     let errors = {}
 
-    if (!values.address.hasOwnProperty('geo')) {
+    if (!Object.prototype.hasOwnProperty.call(values.address, 'geo')) {
       errors.address = {
         ...errors.address,
         streetAddress: this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_ERROR')
@@ -169,7 +169,7 @@ class TaskModalContent extends React.Component {
 
     const { task } = this.props
 
-    if (!!task && task.hasOwnProperty('@id') && task.address.hasOwnProperty('@id')) {
+    if (!!task && Object.prototype.hasOwnProperty.call(task, '@id') && Object.prototype.hasOwnProperty.call(task.address, '@id')) {
       values = {
         ...values,
         address: {
@@ -208,7 +208,7 @@ class TaskModalContent extends React.Component {
             <i className="fa fa-trash"></i> <span>{ this.props.t('ADMIN_DASHBOARD_CANCEL_TASK') }</span>
           </button>
         )}
-        { (!!task && task.hasOwnProperty('@id')) && (
+        { (!!task && Object.prototype.hasOwnProperty.call(task, '@id')) && (
           <button type="button" className="btn pull-left"
             onClick={ () => this.props.duplicateTask(task) }
             disabled={ this.props.loading }>
@@ -358,11 +358,11 @@ class TaskModalContent extends React.Component {
                     <Radio.Button value="DROPOFF">Dropoff</Radio.Button>
                   </Radio.Group>
                 </div>
-                { values.hasOwnProperty('@id') && this.renderTimeline(values) }
+                { Object.prototype.hasOwnProperty.call(values, '@id') && this.renderTimeline(values) }
                 <div className={ errors.address && touched.address && errors.address.streetAddress && touched.address.streetAddress ? 'form-group form-group-sm has-error' : 'form-group form-group-sm' }>
                   <label className="control-label required">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_STREET_ADDRESS_LABEL') }</label>
                   <AddressAutosuggest
-                    autofocus={ !values.hasOwnProperty('@id') }
+                    autofocus={ !Object.prototype.hasOwnProperty.call(values, '@id') }
                     address={ values.address.streetAddress }
                     addresses={ [] }
                     geohash={ '' }
@@ -530,7 +530,7 @@ function mapStateToProps (state) {
   const country = (window.AppData.countryIso || 'fr').toUpperCase()
   const phoneNumber = getExampleNumber(country, phoneNumberExamples)
 
-  const events = state.currentTask && state.taskEvents.hasOwnProperty(state.currentTask['@id']) ? state.taskEvents[state.currentTask['@id']] : []
+  const events = state.currentTask && Object.prototype.hasOwnProperty.call(state.taskEvents, state.currentTask['@id']) ? state.taskEvents[state.currentTask['@id']] : []
 
   return {
     task: state.currentTask,

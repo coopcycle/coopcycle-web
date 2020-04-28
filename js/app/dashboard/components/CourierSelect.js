@@ -44,10 +44,10 @@ class CourierSelect extends Component {
         onChange={ this.props.onChange }
         placeholder={ this.props.t('ADMIN_DASHBOARD_COURIER_SELECT_PLACEHOLDER') }
         components={{ Option, SingleValue }}
-        menuPlacement={ this.props.hasOwnProperty('menuPlacement') ? this.props.menuPlacement : 'auto' }
-        isDisabled={ this.props.hasOwnProperty('isDisabled') ? this.props.isDisabled : false }
+        menuPlacement={ Object.prototype.hasOwnProperty.call(this.props, 'menuPlacement') ? this.props.menuPlacement : 'auto' }
+        isDisabled={ Object.prototype.hasOwnProperty.call(this.props, 'isDisabled') ? this.props.isDisabled : false }
         maxMenuHeight={ 160 }
-        isClearable={ this.props.hasOwnProperty('isClearable') ? this.props.isClearable : false } />
+        isClearable={ Object.prototype.hasOwnProperty.call(this.props, 'isClearable') ? this.props.isClearable : false } />
     )
   }
 }
@@ -56,7 +56,7 @@ function mapStateToProps(state, ownProps) {
 
   let couriers = state.couriersList
 
-  if (ownProps.hasOwnProperty('exclude') && ownProps.exclude) {
+  if (Object.prototype.hasOwnProperty.call(ownProps, 'exclude') && ownProps.exclude) {
     const usernames = _.map(state.taskLists, taskList => taskList.username)
     couriers = _.filter(couriers, courier => !_.includes(usernames, courier.username))
   }

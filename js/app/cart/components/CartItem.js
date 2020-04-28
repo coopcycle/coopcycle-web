@@ -14,7 +14,7 @@ class CartItem extends React.Component {
   renderAdjustments() {
     const { adjustments } = this.props
 
-    if (adjustments.hasOwnProperty('menu_item_modifier')) {
+    if (Object.prototype.hasOwnProperty.call(adjustments, 'menu_item_modifier')) {
       return (
         <div className="cart__item__adjustments">
           { adjustments.menu_item_modifier.map(adjustment =>

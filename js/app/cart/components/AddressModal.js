@@ -58,7 +58,7 @@ class AddressModal extends Component {
 
 function mapStateToProps(state) {
 
-  const hasError = state.errors.hasOwnProperty('shippingAddress')
+  const hasError = Object.prototype.hasOwnProperty.call(state.errors, 'shippingAddress')
 
   let titleText = ''
   let isAddressTooFar = false

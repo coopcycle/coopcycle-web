@@ -64,7 +64,7 @@ class UnassignedTasks extends React.Component {
 
     if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
 
-      const tasksWithGroup = _.filter(unassignedTasks, task => task.hasOwnProperty('group') && task.group)
+      const tasksWithGroup = _.filter(unassignedTasks, task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group)
 
       _.forEach(tasksWithGroup, task => {
         const keys = Array.from(groupsMap.keys())
@@ -79,7 +79,7 @@ class UnassignedTasks extends React.Component {
         groups.push(this.renderGroup(group, tasks))
       })
 
-      standaloneTasks = _.filter(unassignedTasks, task => !task.hasOwnProperty('group') || !task.group)
+      standaloneTasks = _.filter(unassignedTasks, task => !Object.prototype.hasOwnProperty.call(task, 'group') || !task.group)
     }
 
     // Order by dropoff desc, with pickup before

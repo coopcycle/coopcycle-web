@@ -165,7 +165,7 @@ const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}
   case FETCH_FAILURE:
     const { errors } = action.payload
 
-    return errors.hasOwnProperty('shippingAddress')
+    return Object.prototype.hasOwnProperty.call(errors, 'shippingAddress')
   case REPLACE_ERRORS:
     const { propertyPath } = action.payload
 

@@ -2,8 +2,8 @@ import React from 'react'
 import { withTranslation } from 'react-i18next'
 
 const hasAdjustments = (item) => {
-  const hasOptions = item.adjustments.hasOwnProperty('menu_item_modifier') && item.adjustments['menu_item_modifier'].length > 0
-  const hasPackaging = item.adjustments.hasOwnProperty('reusable_packaging') && item.adjustments['reusable_packaging'].length > 0
+  const hasOptions = Object.prototype.hasOwnProperty.call(item.adjustments, 'menu_item_modifier') && item.adjustments['menu_item_modifier'].length > 0
+  const hasPackaging = Object.prototype.hasOwnProperty.call(item.adjustments, 'reusable_packaging') && item.adjustments['reusable_packaging'].length > 0
 
   return hasOptions || hasPackaging
 }
@@ -14,11 +14,11 @@ class OrderItems extends React.Component {
 
     let adjustments = []
 
-    if (item.adjustments.hasOwnProperty('menu_item_modifier')) {
+    if (Object.prototype.hasOwnProperty.call(item.adjustments, 'menu_item_modifier')) {
       adjustments = adjustments.concat(item.adjustments['menu_item_modifier'])
     }
 
-    if (item.adjustments.hasOwnProperty('reusable_packaging')) {
+    if (Object.prototype.hasOwnProperty.call(item.adjustments, 'reusable_packaging')) {
       adjustments = adjustments.concat(item.adjustments['reusable_packaging'])
     }
 

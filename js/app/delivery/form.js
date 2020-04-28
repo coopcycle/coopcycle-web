@@ -78,7 +78,7 @@ function markAddressChecked(addressType) {
 }
 
 function serializeAddress(address) {
-  if (address.hasOwnProperty('@id')) {
+  if (Object.prototype.hasOwnProperty.call(address, '@id')) {
     return address['@id']
   }
 

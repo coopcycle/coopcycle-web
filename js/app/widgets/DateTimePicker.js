@@ -20,7 +20,7 @@ const localeMap = {
 }
 
 const locale = $('html').attr('lang')
-const antdLocale = localeMap.hasOwnProperty(locale) ? localeMap[locale] : en_US
+const antdLocale = Object.prototype.hasOwnProperty.call(localeMap, locale) ? localeMap[locale] : en_US
 
 const today = moment().startOf('day')
 
@@ -94,14 +94,14 @@ class DateTimePicker extends React.Component {
     } : {}
 
     let datePickerProps = {}
-    if (this.props.hasOwnProperty('getDatePickerContainer') && typeof this.props.getDatePickerContainer === 'function') {
+    if (Object.prototype.hasOwnProperty.call(this.props, 'getDatePickerContainer') && typeof this.props.getDatePickerContainer === 'function') {
       datePickerProps = {
         getCalendarContainer: this.props.getDatePickerContainer
       }
     }
 
     let timePickerProps = {}
-    if (this.props.hasOwnProperty('getTimePickerContainer') && typeof this.props.getTimePickerContainer === 'function') {
+    if (Object.prototype.hasOwnProperty.call(this.props, 'getTimePickerContainer') && typeof this.props.getTimePickerContainer === 'function') {
       timePickerProps = {
         getPopupContainer: this.props.getTimePickerContainer
       }

@@ -37,7 +37,7 @@ function createAddressWidget(name, type, cb) {
     },
     onChange: address => {
 
-      if (address.hasOwnProperty('@id')) {
+      if (Object.prototype.hasOwnProperty.call(address, '@id')) {
         if (telephone) {
           telephone.value = ''
           telephone.removeAttribute('required')
