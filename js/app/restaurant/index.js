@@ -73,6 +73,36 @@ function validateRange($el) {
   return true
 }
 
+function updateTotal($form) {
+
+  const $optionsGroups = $form.find('[data-product-options-group]')
+
+  const totalPerUnit = $optionsGroups.toArray().reduce((total, optionsGroup) => {
+
+    const subTotal = $(optionsGroup).children().toArray().reduce((subTotal, el) => {
+
+      const $quantity = $(el).find('input[type="number"]')
+      const quantity = $quantity.length === 1 ? parseInt($quantity.val(), 10) : 1
+
+      const price = $(el).data('option-value-price')
+
+      return subTotal + (price * quantity)
+
+    }, 0)
+
+    return total + subTotal
+
+  }, $form.data('product-price'))
+
+  const $quantity = $form.find('[data-product-quantity]')
+  const quantity = parseInt($quantity.val(), 10)
+  const total = totalPerUnit * quantity
+
+  $form
+    .find('[data-product-total]')
+    .text((total / 100).formatMoney(2, window.AppData.currencySymbol))
+}
+
 window.initMap = function() {
 
   $('form[data-product-simple]').on('submit', function(e) {
@@ -160,19 +190,11 @@ window.initMap = function() {
       })
     }
 
-    const total = $optionsGroup.children().toArray().reduce((total, el) => {
+    updateTotal($form)
+  })
 
-      const $quantity = $(el).find('input[type="number"]')
-      const quantity = parseInt($quantity.val(), 10)
-      const price = $(el).data('option-value-price')
-
-      return total + (price * quantity)
-
-    }, $form.data('product-price'))
-
-    $form
-      .find('[data-product-total]')
-      .text((total / 100).formatMoney(2, window.AppData.currencySymbol))
+  $('form[data-product-options] [data-product-quantity]').on('change', function() {
+    updateTotal($(this).closest('[data-product-options]'))
   })
 
   $('form[data-product-options]').on('submit', function(e) {
