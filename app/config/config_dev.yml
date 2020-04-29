@@ -78,6 +78,12 @@ services:
             - method: setLogger
               arguments:
                   - '@apns_php.logger'
+    twig.cache_extension:
+        class: Twig\CacheExtension\Extension
+        arguments:
+            $cacheStrategy: '@twig.cache_extension.strategy.black_hole'
+        tags:
+            - { name: twig.extension }
 
 # Uncomment to send emails in dev
 # fos_user:
