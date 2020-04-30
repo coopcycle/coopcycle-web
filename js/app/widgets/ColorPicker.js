@@ -1,6 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { render } from 'react-dom'
 import SketchPicker from 'react-color/lib/Sketch'
+
+const ColorPicker = ({ value, onChange }) => {
+
+  const [ color, setColor ] = useState(value)
+
+  return (
+    <SketchPicker
+      color={ color }
+      onChangeComplete={ color => {
+        setColor(color.hex)
+        onChange(color.hex)
+      } } />
+  )
+}
 
 export default function(el) {
 
@@ -14,8 +28,5 @@ export default function(el) {
     .attr('type', 'hidden')
     .insertBefore($div)
 
-  render(<SketchPicker
-    color={ $(el).val() || '#fff' }
-    onChangeComplete={ color => $(el).val(color.hex) } />, $div.get(0))
-
+  render(<ColorPicker value={ $(el).val() || '#fff' } onChange={ hex => $(el).val(hex) } />, $div.get(0))
 }
