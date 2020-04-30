@@ -20,7 +20,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     private $taxRates = [];
 
+    private $numberFormatter;
+
     public function __construct(
+        string $locale,
         $orders,
         RepositoryInterface $taxRateRepository,
         TranslatorInterface $translator,
@@ -53,6 +56,13 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         foreach ($taxRateCodes as $taxRateCode) {
             $this->taxRates[] = $taxRateRepository->findOneByCode($taxRateCode);
         }
+
+        $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
+    }
+
+    private function formatNumber(int $amount)
+    {
+        return $this->numberFormatter->format($amount / 100);
     }
 
     public function getItemsTotal(): int
@@ -185,16 +195,16 @@ class RestaurantStats implements \IteratorAggregate, \Countable
             }
             $record[] = $order->getNumber();
             $record[] = $order->getShippedAt()->format('Y-m-d H:i');
-            $record[] = number_format(($order->getItemsTotal() - $order->getItemsTaxTotal()) / 100, 2);
+            $record[] = $this->formatNumber($order->getItemsTotal() - $order->getItemsTaxTotal());
             foreach ($this->getTaxRates() as $taxRate) {
-                $record[] = number_format($order->getItemsTaxTotalByRate($taxRate) / 100, 2);
+                $record[] = $this->formatNumber($order->getItemsTaxTotalByRate($taxRate));
             }
-            $record[] = number_format($order->getItemsTotal() / 100, 2);
-            $record[] = number_format($order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT) / 100, 2);
-            $record[] = number_format($order->getTotal() / 100, 2);
-            $record[] = number_format($order->getStripeFeeTotal() / 100, 2);
-            $record[] = number_format($order->getFeeTotal() / 100, 2);
-            $record[] = number_format($order->getRevenue() / 100, 2);
+            $record[] = $this->formatNumber($order->getItemsTotal());
+            $record[] = $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+            $record[] = $this->formatNumber($order->getTotal());
+            $record[] = $this->formatNumber($order->getStripeFeeTotal());
+            $record[] = $this->formatNumber($order->getFeeTotal());
+            $record[] = $this->formatNumber($order->getRevenue());
 
             $records[] = $record;
         }

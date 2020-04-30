@@ -1022,7 +1022,12 @@ trait RestaurantTrait
             return $order->getState() === 'fulfilled';
         });
 
-        $stats = new RestaurantStats($fulfilledOrders, $this->get('sylius.repository.tax_rate'), $translator);
+        $stats = new RestaurantStats(
+            $this->getParameter('kernel.default_locale'),
+            $fulfilledOrders,
+            $this->get('sylius.repository.tax_rate'),
+            $translator
+        );
 
         if ($request->isMethod('POST')) {
 

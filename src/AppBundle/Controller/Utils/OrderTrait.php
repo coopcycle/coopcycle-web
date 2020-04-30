@@ -72,6 +72,7 @@ trait OrderTrait
             // TODO Manage empty list
 
             $stats = new RestaurantStats(
+                $this->getParameter('kernel.default_locale'),
                 $ordersToExport,
                 $this->get('sylius.repository.tax_rate'),
                 $translator,
