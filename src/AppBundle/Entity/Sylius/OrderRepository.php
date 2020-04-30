@@ -50,6 +50,7 @@ class OrderRepository extends BaseOrderRepository
             ->setParameter('restaurant', $restaurant)
             ->setParameter('state_cart', OrderInterface::STATE_CART)
             ->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')))
+            ->addOrderBy('o.shippingTimeRange', 'DESC')
             ;
 
         return $qb->getQuery()->getResult();
