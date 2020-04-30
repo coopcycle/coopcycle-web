@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
+import storage from 'store'
 
 import OpeningHoursParser from '../widgets/OpeningHoursParser'
 import i18n from '../i18n'
@@ -253,7 +254,7 @@ window.initMap = function() {
   })
 
   if (!cart.shippingAddress) {
-    const searchAddress = sessionStorage.getItem('search_address')
+    const searchAddress = storage.get('search_address')
     if (searchAddress) {
       cart = {
         ...cart,

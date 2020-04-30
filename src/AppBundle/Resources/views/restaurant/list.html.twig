@@ -2,11 +2,13 @@
 
 {% block body %}
 
-<header class="restaurant-list-header">
+<header class="restaurant-list-header" data-search="address"
+  data-addresses="{{ addresses_normalized|json_encode()|e('html') }}"
+  data-tracking-category="RestaurantList">
   <div class="container">
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
-        <div id="address-search">
+        <div data-element>
           <!-- This will be replaced by React -->
           <div class="form-group">
             <input class="form-control" />
@@ -16,7 +18,7 @@
     </div>
   </div>
   <!-- Do NOT put the search component inside the form -->
-  <form method="GET" id="restaurant-search-form" action="{{ path('restaurants') }}">
+  <form method="GET" action="{{ path('restaurants') }}" data-form>
     <input type="hidden" name="geohash" value="{{ geohash }}">
   </form>
 </header>
@@ -51,49 +53,7 @@
 {% endblock %}
 
 {% block scripts %}
-  <script>
-  var initialGeohash = "{{ geohash }}";
-  function initMap() {
-    var $searchForm = $('#restaurant-search-form');
-    new CoopCycle.AddressAutosuggest(document.querySelector('#address-search'), {
-      address: sessionStorage.getItem('search_address') || '',
-      addresses: {{ addresses_normalized|json_encode()|raw }},
-      geohash: initialGeohash,
-      onAddressSelected: function(value, address, type) {
-
-        var $addressInput = $searchForm.find('input[name="address"]');
-        var $geohashInput = $searchForm.find('input[name="geohash"]');
-
-        if (address.geohash !== initialGeohash) {
-
-          if (type === 'address') {
-            if ($addressInput.length === 0) {
-              var $newAddressInput = $('<input>');
-              $newAddressInput.attr('type', 'hidden');
-              $newAddressInput.attr('name', 'address');
-              $newAddressInput.val(btoa(address['@id']));
-              $searchForm.append($newAddressInput);
-            }
-          }
-
-          if (type === 'prediction') {
-            if ($addressInput.length > 0) {
-              $addressInput.remove();
-            }
-          }
-
-          sessionStorage.setItem('search_geohash', address.geohash);
-          sessionStorage.setItem('search_address', value);
-
-          _paq.push(['trackEvent', 'RestaurantList', 'searchAddress', value]);
-
-          $geohashInput.val(address.geohash);
-          $searchForm.submit();
-        }
-      }
-    });
-  }
-  </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
+{{ encore_entry_script_tags('search-address') }}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
 {% endblock %}
 

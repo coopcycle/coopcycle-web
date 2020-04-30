@@ -128,10 +128,10 @@ context('Checkout', () => {
 
     cy.location('pathname').should('eq', '/fr/')
 
-    cy.get('#address-search input[type="search"]')
+    cy.get('[data-search="address"] input[type="search"]')
       .type('1 rue de', { timeout: 5000 })
 
-    cy.get('#address-search')
+    cy.get('[data-search="address"]')
       .find('.react-autosuggest__suggestions-container')
       .find('.react-autosuggest__section-container')
       // There should be 2 sections
@@ -148,7 +148,7 @@ context('Checkout', () => {
       })
 
     // Click on the first suggestion
-    cy.get('#address-search')
+    cy.get('[data-search="address"]')
       .find('.react-autosuggest__suggestions-container')
       .find('.react-autosuggest__section-container')
       .eq(0)
@@ -173,10 +173,10 @@ context('Checkout', () => {
 
     cy.visit('/fr/')
 
-    cy.get('#address-search input[type="search"]')
+    cy.get('[data-search="address"] input[type="search"]')
       .type('rue de rivoli paris', { timeout: 5000, delay: 30 })
 
-    cy.get('#address-search')
+    cy.get('[data-search="address"]')
       .find('ul[role="listbox"] li', { timeout: 5000 })
       .contains('Rue de Rivoli, Paris, France')
       .click()

@@ -112,6 +112,7 @@
     "reselect": "^4.0.0",
     "sass-loader": "^7.3.1",
     "sortablejs": "^1.10.1",
+    "store": "^2.0.12",
     "x-data-spreadsheet": "^1.0.36"
   }
 }
