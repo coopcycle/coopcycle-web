@@ -22,7 +22,7 @@
 <tr>
   <td><a href="{{ path('admin_tag', { slug: tag.slug }) }}">#{{ tag.id }}</a></td>
   <td>{{ tag.name }}</td>
-  <td><span class="label label-default" style="background-color: {{ tag.color }};">{{ tag.color }}</span></td>
+  <td><span class="label label-default" style="background-color: {{ tag.color }};">{{ tag.slug }}</span></td>
   <td>
   	<form method="POST">
   	 <input type="hidden" name="tag" value="{{ tag.id }}">
