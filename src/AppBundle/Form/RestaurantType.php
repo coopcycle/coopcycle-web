@@ -96,7 +96,7 @@ class RestaurantType extends LocalBusinessType
             }
         }
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $restaurant = $event->getData();
             $form = $event->getForm();
@@ -123,6 +123,12 @@ class RestaurantType extends LocalBusinessType
                     ]);
             }
 
+            if ($options['loopeat_enabled'] && $restaurant->hasLoopEatCredentials()) {
+                $form
+                    ->add('loopeatDisconnect', SubmitType::class, [
+                        'label' => 'restaurant.form.loopeat_disconnect.label',
+                    ]);
+            }
         });
 
         $builder->addEventListener(
@@ -154,6 +160,10 @@ class RestaurantType extends LocalBusinessType
                     } else {
                         $restaurant->disableStripePaymentMethod('giropay');
                     }
+                }
+
+                if ($form->getClickedButton() && 'loopeatDisconnect' === $form->getClickedButton()->getName()) {
+                    $restaurant->clearLoopEatCredentials();
                 }
             }
         );
