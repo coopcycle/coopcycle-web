@@ -1,4 +1,3 @@
-import AddressAutosuggest from './AddressAutosuggest'
 import AddressInput from './AddressInput'
 import DatePicker from './DatePicker'
 import DateTimePicker from './DateTimePicker'
@@ -9,7 +8,6 @@ import Search from './Search'
 
 window.CoopCycle = window.CoopCycle || {}
 
-window.CoopCycle.AddressAutosuggest = AddressAutosuggest
 window.CoopCycle.AddressInput = AddressInput
 window.CoopCycle.DatePicker = DatePicker
 window.CoopCycle.DateTimePicker = DateTimePicker
