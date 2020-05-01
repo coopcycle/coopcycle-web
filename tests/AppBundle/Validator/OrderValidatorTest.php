@@ -72,7 +72,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
     private function createRestaurantProphecy(
         Address $address,
-        Address $shippingAddress,
         $minimumCartAmount,
         $maxDistanceExpression,
         $canDeliver)
@@ -131,7 +130,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $shippingAddress->reveal(),
             $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = false
@@ -185,7 +183,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $shippingAddress->reveal(),
             $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
@@ -238,7 +235,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $shippingAddress->reveal(),
             $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
@@ -297,7 +293,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $shippingAddress->reveal(),
             $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
@@ -356,7 +351,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $shippingAddress->reveal(),
             $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
@@ -410,7 +404,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $shippingAddress->reveal(),
             $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
@@ -464,7 +457,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $shippingAddress->reveal(),
             $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
@@ -514,7 +506,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $shippingAddress->reveal(),
             $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
@@ -567,7 +558,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $shippingAddress->reveal(),
             $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true

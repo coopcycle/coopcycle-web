@@ -70,15 +70,7 @@ class Cart extends Component {
 
 function mapStateToProps(state) {
 
-  const { cart, restaurant } = state
-
-  let items = cart.items
-  if (cart.restaurant.id !== restaurant.id) {
-    items = []
-  }
-
   return {
-    items,
     shippingAddress: state.cart.shippingAddress,
     streetAddress: state.cart.shippingAddress ? state.cart.shippingAddress.streetAddress : '',
     isMobileCartVisible: state.isMobileCartVisible,
