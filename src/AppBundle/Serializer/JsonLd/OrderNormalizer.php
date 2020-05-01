@@ -166,6 +166,11 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
             if (null !== $shippingAddress && null !== $shippingAddress->getGeo()) {
                 $data['shippingAddress'] = [
+                    'geo' => [
+                        'latitude' => $shippingAddress->getGeo()->getLatitude(),
+                        'longitude' => $shippingAddress->getGeo()->getLongitude(),
+                    ],
+                    // Deprecated
                     'latlng' => [
                         $shippingAddress->getGeo()->getLatitude(),
                         $shippingAddress->getGeo()->getLongitude(),
