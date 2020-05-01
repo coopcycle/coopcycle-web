@@ -5,6 +5,7 @@ import ngeohash from 'ngeohash'
 import Fuse from 'fuse.js'
 import { includes, filter, debounce } from 'lodash'
 import { withTranslation } from 'react-i18next'
+import _ from 'lodash'
 
 import '../i18n'
 import { placeToAddress } from '../utils/GoogleMaps'
@@ -74,7 +75,7 @@ class AddressAutosuggest extends Component {
     super(props)
 
     this.state = {
-      value: props.address,
+      value: _.isObject(props.address) ? props.address.streetAddress : props.address,
       suggestions: [],
       multiSection: false,
     }
@@ -337,6 +338,7 @@ class AddressAutosuggest extends Component {
 }
 
 AddressAutosuggest.defaultProps = {
+  address: '',
   addresses: [],
   required: false,
   reportValidity: false,
@@ -345,7 +347,7 @@ AddressAutosuggest.defaultProps = {
 }
 
 AddressAutosuggest.propTypes = {
-  address: PropTypes.string.isRequired,
+  address: PropTypes.oneOfType([ PropTypes.object, PropTypes.string ]).isRequired,
   addresses: PropTypes.array.isRequired,
   geohash: PropTypes.string.isRequired,
   onAddressSelected: PropTypes.func.isRequired,
