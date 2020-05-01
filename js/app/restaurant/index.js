@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
+import _ from 'lodash'
 
 import engine  from 'store/src/store-engine'
 import session from 'store/storages/sessionStorage'
@@ -245,9 +246,8 @@ window.initMap = function() {
   const addressesDataElement = document.querySelector('#js-addresses-data')
 
   const restaurant = JSON.parse(restaurantDataElement.dataset.restaurant)
-  let cart = JSON.parse(restaurantDataElement.dataset.cart)
-  const times = JSON.parse(restaurantDataElement.dataset.times)
 
+  const times = JSON.parse(restaurantDataElement.dataset.times)
   const addresses = JSON.parse(addressesDataElement.dataset.addresses)
 
   // FIXME Check parse errors
@@ -258,9 +258,20 @@ window.initMap = function() {
     behavior: restaurant.openingHoursBehavior,
   })
 
+  let cart = JSON.parse(restaurantDataElement.dataset.cart)
+
   if (!cart.shippingAddress) {
+
     const searchAddress = storage.get('search_address')
-    if (searchAddress) {
+
+    if (_.isObject(searchAddress)) {
+      cart = {
+        ...cart,
+        shippingAddress: {
+          ...searchAddress
+        }
+      }
+    } else {
       cart = {
         ...cart,
         shippingAddress: {

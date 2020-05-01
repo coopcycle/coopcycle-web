@@ -14,21 +14,14 @@ import CartTotal from './CartTotal'
 import CartButton from './CartButton'
 import Time from './Time'
 
-import { changeAddress, sync, geocodeAndSync } from '../redux/actions'
+import { changeAddress, sync } from '../redux/actions'
 
 let isXsDevice = $('.visible-xs').is(':visible')
 
 class Cart extends Component {
 
   componentDidMount() {
-
-    const { streetAddress, shippingAddress } = this.props
-
-    if (streetAddress && shippingAddress && !Array.isArray(shippingAddress.latlng)) {
-      this.props.geocodeAndSync()
-    } else {
-      this.props.sync()
-    }
+    this.props.sync()
   }
 
   render() {
@@ -83,7 +76,6 @@ function mapDispatchToProps(dispatch) {
   return {
     changeAddress: address => dispatch(changeAddress(address)),
     sync: () => dispatch(sync()),
-    geocodeAndSync: () => dispatch(geocodeAndSync()),
   }
 }
 

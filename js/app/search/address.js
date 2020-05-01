@@ -1,5 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
+import _ from 'lodash'
 
 import engine  from 'store/src/store-engine'
 import session from 'store/storages/sessionStorage'
@@ -8,6 +9,20 @@ import cookie  from 'store/storages/cookieStorage'
 const store = engine.createStore([ session, cookie ])
 
 import AddressAutosuggest from '../components/AddressAutosuggest'
+
+// We used to store a string in "search_address", but now, we want objects
+// This function will cleanup legacy behavior
+function resolveAddress() {
+
+  const address = store.get('search_address')
+
+  if (_.isObject(address)) {
+
+    return address
+  }
+
+  store.remove('search_address')
+}
 
 window._paq = window._paq || []
 
@@ -25,7 +40,7 @@ window.initMap = function() {
 
       render(
         <AddressAutosuggest
-          address={ store.get('search_address', '') }
+          address={ resolveAddress() }
           addresses={ addresses }
           geohash={ store.get('search_geohash', '') }
           onAddressSelected={ (value, address, type) => {
@@ -52,7 +67,7 @@ window.initMap = function() {
               }
 
               store.set('search_geohash', address.geohash)
-              store.set('search_address', value)
+              store.set('search_address', address)
 
               const trackingCategory = container.dataset.trackingCategory
               if (trackingCategory) {

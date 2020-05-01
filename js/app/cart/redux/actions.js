@@ -174,41 +174,45 @@ export function removeItem(itemID) {
   }
 }
 
-export function sync() {
-
-  return (dispatch) => {
-
-    dispatch(fetchRequest())
-
-    postForm()
-      .then(res => handleAjaxResponse(res, dispatch))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
-  }
-}
-
-export function geocodeAndSync() {
+function geocodeAndSync() {
 
   const geocoder = new window.google.maps.Geocoder()
   const geocoderOK = window.google.maps.GeocoderStatus.OK
 
   return (dispatch, getState) => {
 
-    const streetAddress = getState().cart.shippingAddress.streetAddress
+    const { cart } = getState()
 
     dispatch(fetchRequest())
 
-    geocoder.geocode({ address: streetAddress }, (results, status) => {
+    geocoder.geocode({ address: cart.shippingAddress.streetAddress }, (results, status) => {
 
       $('#menu').LoadingOverlay('hide')
 
       if (status === geocoderOK && results.length > 0) {
         const place = results[0]
-        const address = placeToAddress(place, streetAddress)
+        const address = placeToAddress(place, cart.shippingAddress.streetAddress)
         dispatch(changeAddress(address))
       } else {
         // TODO Set loading to FALSE
       }
     })
+  }
+}
+
+export function sync() {
+
+  return (dispatch, getState) => {
+
+    const { cart } = getState()
+
+    if (cart.shippingAddress && !cart.shippingAddress.streetAddress) {
+      postForm()
+        .then(res => handleAjaxResponse(res, dispatch))
+        .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+    } else {
+      dispatch(geocodeAndSync())
+    }
   }
 }
 
@@ -223,6 +227,20 @@ export function changeDate() {
     postFormWithTime()
       .then(res => handleAjaxResponse(res, dispatch))
       .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+  }
+}
+
+export function mapAddressFields(address) {
+
+  return (dispatch, getState) => {
+
+    const { addressFormElements } = getState()
+
+    _.forEach(addressFormElements, (el, key) => {
+      if (Object.prototype.hasOwnProperty.call(address, key)) {
+        el.value = address[key]
+      }
+    })
   }
 }
 
