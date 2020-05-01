@@ -46,6 +46,32 @@ class OpeningHoursSpecificationTest extends TestCase
         $this->assertEquals('20:30', $openingHoursSpecification[1]->closes);
     }
 
+    public function testFromOpeningHoursWithDiscontinuedRange()
+    {
+        $openingHours = ['Tu-Th,Sa 16:00-18:00'];
+
+        $openingHoursSpecification = OpeningHoursSpecification::fromOpeningHours($openingHours);
+
+        $this->assertCount(1, $openingHoursSpecification);
+
+        $this->assertEquals(['Tuesday', 'Wednesday', 'Thursday', 'Saturday'], $openingHoursSpecification[0]->dayOfWeek);
+        $this->assertEquals('16:00', $openingHoursSpecification[0]->opens);
+        $this->assertEquals('18:00', $openingHoursSpecification[0]->closes);
+    }
+
+    public function testFromOpeningHoursWithSingleDay()
+    {
+        $openingHours = ['Tu 16:00-18:00'];
+
+        $openingHoursSpecification = OpeningHoursSpecification::fromOpeningHours($openingHours);
+
+        $this->assertCount(1, $openingHoursSpecification);
+
+        $this->assertEquals(['Tuesday'], $openingHoursSpecification[0]->dayOfWeek);
+        $this->assertEquals('16:00', $openingHoursSpecification[0]->opens);
+        $this->assertEquals('18:00', $openingHoursSpecification[0]->closes);
+    }
+
     public function testFromClosingRule()
     {
         $closingRule = new ClosingRule();

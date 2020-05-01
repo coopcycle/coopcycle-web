@@ -34,26 +34,29 @@ class OpeningHoursSpecification implements \JsonSerializable
 
         $openingHoursSpecification = new self();
 
-        if (false !== strpos($days, '-')) {
-            [ $start, $end ] = explode('-', $days);
-            $append = false;
-            foreach (self::$daysOfWeek as $short => $long) {
-                if ($start === $short) {
-                    $append = true;
-                }
-                if ($append) {
-                    $openingHoursSpecification->dayOfWeek[] = $long;
-                }
-                if ($end === $short) {
-                    $append = false;
-                }
-            }
-        } elseif (false !== strpos($days, ',')) {
-            foreach (explode(',', $days) as $d) {
-                $openingHoursSpecification->dayOfWeek[] = self::$daysOfWeek[$d];
-            }
-        } else {
+        // It is a single day
+        if (false === strpos($days, '-') && false === strpos($days, ',')) {
             $openingHoursSpecification->dayOfWeek[] = self::$daysOfWeek[$days];
+        } else {
+            foreach (explode(',', $days) as $part) {
+                if (false !== strpos($part, '-')) {
+                    [ $start, $end ] = explode('-', $part);
+                    $append = false;
+                    foreach (self::$daysOfWeek as $short => $long) {
+                        if ($start === $short) {
+                            $append = true;
+                        }
+                        if ($append) {
+                            $openingHoursSpecification->dayOfWeek[] = $long;
+                        }
+                        if ($end === $short) {
+                            $append = false;
+                        }
+                    }
+                } else {
+                    $openingHoursSpecification->dayOfWeek[] = self::$daysOfWeek[$part];
+                }
+            }
         }
 
         preg_match('/([0-9]{2}:[0-9]{2})-([0-9]{2}:[0-9]{2})/', $text, $matches);
