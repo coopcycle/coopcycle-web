@@ -1,6 +1,11 @@
 import React from 'react'
 import { render } from 'react-dom'
-import store from 'store'
+
+import engine  from 'store/src/store-engine'
+import session from 'store/storages/sessionStorage'
+import cookie  from 'store/storages/cookieStorage'
+
+const store = engine.createStore([ session, cookie ])
 
 import AddressAutosuggest from '../components/AddressAutosuggest'
 

@@ -3,7 +3,10 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
-import storage from 'store'
+
+import engine  from 'store/src/store-engine'
+import session from 'store/storages/sessionStorage'
+import cookie  from 'store/storages/cookieStorage'
 
 import OpeningHoursParser from '../widgets/OpeningHoursParser'
 import i18n from '../i18n'
@@ -12,6 +15,8 @@ import { addItem, addItemWithOptions, queueAddItem } from '../cart/redux/actions
 import Cart from '../cart/components/Cart'
 
 require('gasparesganga-jquery-loading-overlay')
+
+const storage = engine.createStore([ session, cookie ])
 
 window._paq = window._paq || []
 
