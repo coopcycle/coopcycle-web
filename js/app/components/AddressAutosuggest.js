@@ -16,7 +16,8 @@ import {
   onSuggestionsFetchRequested as onSuggestionsFetchRequestedGB,
   onSuggestionSelected as onSuggestionSelectedGB,
   theme as themeGB,
-  poweredBy as poweredByGB } from './AddressAutosuggest/gb'
+  poweredBy as poweredByGB,
+  highlightFirstSuggestion as highlightFirstSuggestionGB } from './AddressAutosuggest/gb'
 
 const COUNTRY = window.AppData.countryIso
 
@@ -69,6 +70,7 @@ const localized = {
     onSuggestionSelected: onSuggestionSelectedGB,
     theme: themeGB,
     poweredBy: poweredByGB,
+    highlightFirstSuggestion: highlightFirstSuggestionGB,
   }
 }
 
@@ -150,6 +152,9 @@ const generic = {
     return (
       <img src={ PoweredByGoogle } />
     )
+  },
+  highlightFirstSuggestion: function() {
+    return false
   }
 }
 
@@ -193,6 +198,7 @@ class AddressAutosuggest extends Component {
     this.placeholder = localize('placeholder', this)
     this.poweredBy = localize('poweredBy', this)
     this.theme = localize('theme', this)
+    this.highlightFirstSuggestion = localize('highlightFirstSuggestion', this)
 
     this.state = this.getInitialState()
   }
@@ -382,6 +388,8 @@ class AddressAutosuggest extends Component {
       required: this.props.required
     }
 
+    const highlightFirstSuggestion = this.highlightFirstSuggestion()
+
     return (
       <Autosuggest
         ref={ autosuggest => this.autosuggest = autosuggest }
@@ -396,6 +404,7 @@ class AddressAutosuggest extends Component {
         renderSuggestion={ renderSuggestion }
         shouldRenderSuggestions={ shouldRenderSuggestions }
         renderSectionTitle={ renderSectionTitle }
+        highlightFirstSuggestion={ highlightFirstSuggestion }
         getSectionSuggestions={ getSectionSuggestions }
         multiSection={ multiSection }
         inputProps={ inputProps } />

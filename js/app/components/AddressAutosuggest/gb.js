@@ -129,3 +129,8 @@ export function poweredBy() {
     <img src={ IdealPostcodes } />
   )
 }
+
+export function highlightFirstSuggestion() {
+
+  return true
+}
