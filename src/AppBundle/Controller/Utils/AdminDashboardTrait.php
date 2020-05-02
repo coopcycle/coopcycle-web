@@ -129,7 +129,7 @@ trait AdminDashboardTrait
                 'resource_class' => Task::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
-                'groups' => ['task', 'delivery', 'address']
+                'groups' => ['task', 'delivery', 'address', sprintf('address_%s', $this->getParameter('country_iso'))]
             ]);
         }, $allTasks);
 
@@ -138,7 +138,7 @@ trait AdminDashboardTrait
                 'resource_class' => TaskList::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
-                'groups' => ['task_collection', 'task', 'delivery', 'address']
+                'groups' => ['task_collection', 'task', 'delivery', 'address', sprintf('address_%s', $this->getParameter('country_iso'))]
             ]);
         }, $taskLists);
 
