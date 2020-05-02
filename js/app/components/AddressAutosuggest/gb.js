@@ -72,7 +72,7 @@ export function onSuggestionsFetchRequested({ value }) {
       url: `https://api.postcodes.io/postcodes/${value.replace(/\s/g, '')}/autocomplete`,
     })
       .then(response => {
-        if (response.data.status === 200 && response.data.result.length > 0) {
+        if (response.data.status === 200 && Array.isArray(response.data.result)) {
           const suggestions = response.data.result.map(postcode => ({
             type: 'postcode',
             value: postcode,
