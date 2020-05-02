@@ -366,11 +366,17 @@ class RestaurantController extends AbstractController
         ]);
 
         $delay = null;
+
+
+        Carbon::setLocale($request->attributes->get('_locale'));
+
+        $now = Carbon::now();
+
+        $future = clone $now;
+        $future->addMinutes($restaurant->getOrderingDelayMinutes());
+
         if ($restaurant->getOrderingDelayMinutes() > 0) {
-            Carbon::setLocale($request->attributes->get('_locale'));
-            $delay = Carbon::now()
-                ->addMinutes($restaurant->getOrderingDelayMinutes())
-                ->diffForHumans(['syntax' => CarbonInterface::DIFF_ABSOLUTE]);
+            $delay = $now->diffForHumans($future, ['syntax' => CarbonInterface::DIFF_ABSOLUTE]);
         }
 
         return array(
