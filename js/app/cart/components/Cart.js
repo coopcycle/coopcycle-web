@@ -42,7 +42,7 @@ class Cart extends Component {
             <div className="cart">
               <AddressAutosuggest
                 addresses={ this.props.addresses }
-                address={ this.props.streetAddress }
+                address={ this.props.shippingAddress }
                 geohash={ '' }
                 key={ this.props.streetAddress }
                 onAddressSelected={ (value, address) => this.props.changeAddress(address) } />

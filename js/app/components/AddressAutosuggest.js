@@ -75,7 +75,8 @@ class AddressAutosuggest extends Component {
     super(props)
 
     this.state = {
-      value: _.isObject(props.address) ? props.address.streetAddress : props.address,
+      value: _.isObject(this.props.address) ?
+        (this.props.address.streetAddress || '') : '',
       suggestions: [],
       multiSection: false,
     }
