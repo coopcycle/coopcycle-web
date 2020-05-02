@@ -38,7 +38,6 @@ class CartHeading extends React.Component {
   }
 
   headingTitle(warnings, errors) {
-    const { loading } = this.props
 
     if (errors.length > 0) {
       return _.first(errors)
@@ -47,7 +46,7 @@ class CartHeading extends React.Component {
       return _.first(warnings)
     }
 
-    return !loading ? this.props.t('CART_WIDGET_BUTTON') : this.props.t('CART_TITLE')
+    return (this.props.total / 100).formatMoney(2, window.AppData.currencySymbol)
   }
 
   render() {
@@ -114,6 +113,7 @@ function mapStateToProps (state) {
     dangerAlerts,
     warningAlerts,
     items,
+    total: state.cart.total,
   }
 }
 

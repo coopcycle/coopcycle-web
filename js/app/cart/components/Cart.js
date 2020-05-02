@@ -40,16 +40,20 @@ class Cart extends Component {
           <div className="panel-body">
             <CartErrors />
             <div className="cart">
-              <AddressAutosuggest
-                addresses={ this.props.addresses }
-                address={ this.props.shippingAddress }
-                geohash={ '' }
-                key={ this.props.streetAddress }
-                onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
-              <Time />
+              <div>
+                <AddressAutosuggest
+                  addresses={ this.props.addresses }
+                  address={ this.props.shippingAddress }
+                  geohash={ '' }
+                  key={ this.props.streetAddress }
+                  onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
+                <Time />
+              </div>
               <CartItems />
-              <CartTotal />
-              <CartButton />
+              <div>
+                <CartTotal />
+                <CartButton />
+              </div>
             </div>
           </div>
         </div>

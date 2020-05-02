@@ -9,7 +9,7 @@ class CartButton extends Component {
 
     const { hasErrors, items, loading } = this.props
 
-    const btnClasses = ['btn', 'btn-block', 'btn-primary']
+    const btnClasses = ['btn', 'btn-lg', 'btn-block', 'btn-primary']
     let btnProps = {}
     if (hasErrors || items.length === 0 || loading) {
       btnClasses.push('disabled')
