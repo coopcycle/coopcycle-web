@@ -353,7 +353,7 @@ class AddressAutosuggest extends Component {
         { this.state.postcode && (
           <div className="address-autosuggest__addon">
             <span>{ this.state.postcode.postcode }</span>
-            <button className="address-autosuggest__close-button" onClick={ () => this.setState({ postcode: null }) }>
+            <button className="address-autosuggest__close-button" onClick={ () => this.setState({ value: '', postcode: null }) }>
               <i className="fa fa-times-circle"></i>
             </button>
           </div>
