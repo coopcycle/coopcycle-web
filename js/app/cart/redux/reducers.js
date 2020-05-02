@@ -11,6 +11,7 @@ import {
   CLEAR_LAST_ADD_ITEM_REQUEST,
   SET_DATE_MODAL_OPEN,
   CLOSE_ADDRESS_MODAL,
+  GEOCODING_FAILURE,
 } from './actions'
 
 const initialState = {
@@ -51,6 +52,7 @@ const isFetching = (state = initialState.isFetching, action = {}) => {
     return true
   case FETCH_SUCCESS:
   case FETCH_FAILURE:
+  case GEOCODING_FAILURE:
     return false
   default:
     return state
@@ -94,6 +96,14 @@ const cart = (state = initialState.cart, action = {}) => {
         ...state.shippingAddress,
         streetAddress: action.payload
       }
+    }
+  case GEOCODING_FAILURE:
+
+    return {
+      ...state,
+      shippingAddress: {
+        streetAddress: ''
+      },
     }
   default:
 

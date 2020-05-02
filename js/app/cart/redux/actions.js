@@ -16,6 +16,7 @@ export const TOGGLE_MOBILE_CART = 'TOGGLE_MOBILE_CART'
 export const REPLACE_ERRORS = 'REPLACE_ERRORS'
 export const SET_DATE_MODAL_OPEN = 'SET_DATE_MODAL_OPEN'
 export const CLOSE_ADDRESS_MODAL = 'CLOSE_ADDRESS_MODAL'
+export const GEOCODING_FAILURE = 'GEOCODING_FAILURE'
 
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const fetchSuccess = createAction(FETCH_SUCCESS)
@@ -29,6 +30,8 @@ export const setLastAddItemRequest = createAction(SET_LAST_ADD_ITEM_REQUEST, (ur
 export const clearLastAddItemRequest = createAction(CLEAR_LAST_ADD_ITEM_REQUEST)
 export const setDateModalOpen = createAction(SET_DATE_MODAL_OPEN)
 export const closeAddressModal = createAction(CLOSE_ADDRESS_MODAL)
+
+export const geocodingFailure = createAction(GEOCODING_FAILURE)
 
 function postForm() {
 
@@ -194,7 +197,7 @@ function geocodeAndSync() {
         const address = placeToAddress(place, cart.shippingAddress.streetAddress)
         dispatch(changeAddress(address))
       } else {
-        // TODO Set loading to FALSE
+        dispatch(geocodingFailure())
       }
     })
   }
