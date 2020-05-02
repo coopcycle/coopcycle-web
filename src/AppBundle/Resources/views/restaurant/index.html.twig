@@ -10,6 +10,16 @@
 </script>
 {% endblock %}
 
+{% block banner %}
+  {% if restaurant.orderingDelayMinutes > 0 %}
+  <nav class="restaurant-banner">
+    <div class="alert alert-warning text-center">
+      {{ 'restaurant.closedWarningWithDelay'|trans({ '%delay%': delay }) }}
+    </div>
+  </nav>
+  {% endif %}
+{% endblock %}
+
 {% block body %}
 <div class="container">
 
@@ -36,12 +46,6 @@
     <div class="alert alert-danger text-center">
       {% trans with { '%date%': restaurant.getNextOpeningDate|localizeddate('medium', 'none') } %}
       restaurant.temporaryClosedWarning
-      {% endtrans %}
-    </div>
-    {% elseif restaurant.orderingDelayMinutes > 0 %}
-    <div class="alert alert-warning text-center">
-      {% trans with { '%delay%': delay } %}
-      restaurant.closedWarningWithDelay
       {% endtrans %}
     </div>
     {% endif %}
