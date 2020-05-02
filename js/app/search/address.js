@@ -71,7 +71,7 @@ window.initMap = function() {
 
               const trackingCategory = container.dataset.trackingCategory
               if (trackingCategory) {
-                window._paq.push(['trackEvent', 'Homepage', 'searchAddress', value])
+                window._paq.push(['trackEvent', trackingCategory, 'searchAddress', value])
               }
 
               geohashInput.value = address.geohash
