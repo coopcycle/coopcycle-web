@@ -109,8 +109,8 @@ restaurants.placeholder.title: Una mica de paciència …
 restaurants.placeholder.text: Properament arribaran nous restaurants!
 localBusiness.form.orderingDelayMinutes: Retard addicional abans de fer la comanda
 localBusiness.form.orderingDelayMinutes.help: Utilitzeu aquest camp per afegir una
-  estona abans de la comanda del client. Aquest paràmetre no canvia els temps de cocció
-  (20 minuts) i ciclisme (25 minuts).
+  estona abans de permetre comandes del client. Aquest paràmetre no canvia els temps
+  de cocció (20 minuts) i ciclisme (25 minuts).
 localBusiness.form.orderingDelayDays: Dia/Dies
 localBusiness.form.orderingDelayHours: Hora/Hores
 localBusiness.form.name: Nom
@@ -670,8 +670,9 @@ adminDashboard.package_sets.title: Paquets
 form.store_type.package_set.label: Conjunt de paquets
 form.delivery.package.label: Paquet
 form.delivery.packages.label: Paquets
-adminDashboard.tags.confirm_delete: Segur que voleu suprimir aquesta etiqueta? Tots
-  els elements que es basen en això ja no podran mostrar-lo ni agrupar-lo.
+adminDashboard.tags.confirm_delete: Segur que voleu suprimir aquesta etiqueta? Aquesta
+  serà eliminada dels respectius elements que l'utilitzen i l'etiqueta ja no els agruparà
+  més.
 restaurant.stats.order_number: Número d'ordre
 restaurant.stats.delivered_on: Entregat el
 restaurant.stats.total_products_including_all_taxes: Total de productes incloent tots
@@ -688,3 +689,5 @@ basics.total_including_tax: Total, inclosos tots els impostos
 basics.stripe_fees: Comissions de Stripe
 basics.platform_fees: Comissions de la plataforma
 basics.net_income: Ingressos nets
+localBusiness.form.openingHoursBehavior.asap: Tan aviat com sigui possible
+localBusiness.form.shippingOptionsDays: Opcions d'entrega (en dies)
