@@ -5,6 +5,8 @@ import _ from 'lodash'
 
 import IdealPostcodes from './ideal-postcodes.svg'
 
+window._paq = window._paq || []
+
 export function placeholder() {
 
   if (!this.state.postcode) {
@@ -67,6 +69,9 @@ export function onSuggestionsFetchRequested({ value }) {
   // @see http://postcodes.io/docs
 
   if (!this.state.postcode) {
+
+    window._paq.push(['trackEvent', 'AddressAutosuggest', 'searchPostcode', value])
+
     axios({
       method: 'get',
       url: `https://api.postcodes.io/postcodes/${value.replace(/\s/g, '')}/autocomplete`,
