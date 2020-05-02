@@ -139,7 +139,6 @@ class RestaurantController extends AbstractController
 
         $imagePath = $this->uploaderHelper->asset($restaurant, 'imageFile');
         if (null !== $imagePath) {
-            ;
             $this->seoPage->addMeta('property', 'og:image',
                 $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail'));
         }
