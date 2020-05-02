@@ -363,7 +363,7 @@ class TaskModalContent extends React.Component {
                   <label className="control-label required">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_STREET_ADDRESS_LABEL') }</label>
                   <AddressAutosuggest
                     autofocus={ !Object.prototype.hasOwnProperty.call(values, '@id') }
-                    address={ values.address.streetAddress }
+                    address={ values.address }
                     addresses={ [] }
                     geohash={ '' }
                     onAddressSelected={ (value, address) => {
