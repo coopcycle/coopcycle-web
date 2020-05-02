@@ -33,6 +33,8 @@ export const closeAddressModal = createAction(CLOSE_ADDRESS_MODAL)
 
 export const geocodingFailure = createAction(GEOCODING_FAILURE)
 
+const COUNTRY = window.AppData.countryIso
+
 function postForm() {
 
   const $form = $('form[name="cart"]')
@@ -187,6 +189,15 @@ function geocodeAndSync() {
     const { cart } = getState()
 
     dispatch(fetchRequest())
+
+    if (COUNTRY === 'gb' && cart.shippingAddress.geo) {
+      dispatch(changeAddress({
+        ...cart.shippingAddress,
+        isPrecise: true,
+      }))
+
+      return
+    }
 
     geocoder.geocode({ address: cart.shippingAddress.streetAddress }, (results, status) => {
 
