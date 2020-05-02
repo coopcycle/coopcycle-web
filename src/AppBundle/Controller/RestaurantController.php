@@ -29,6 +29,7 @@ use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
+use Liip\ImagineBundle\Service\FilterService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
@@ -75,7 +76,8 @@ class RestaurantController extends AbstractController
         $orderItemQuantityModifier,
         $orderModifier,
         OrderTimeHelper $orderTimeHelper,
-        SerializerInterface $serializer)
+        SerializerInterface $serializer,
+        FilterService $imagineFilter)
     {
         $this->orderManager = $orderManager;
         $this->seoPage = $seoPage;
@@ -90,6 +92,7 @@ class RestaurantController extends AbstractController
         $this->orderModifier = $orderModifier;
         $this->orderTimeHelper = $orderTimeHelper;
         $this->serializer = $serializer;
+        $this->imagineFilter = $imagineFilter;
     }
 
     private function jsonResponse(OrderInterface $cart, array $errors)
@@ -136,7 +139,9 @@ class RestaurantController extends AbstractController
 
         $imagePath = $this->uploaderHelper->asset($restaurant, 'imageFile');
         if (null !== $imagePath) {
-            $this->seoPage->addMeta('property', 'og:image', $request->getUriForPath($imagePath));
+            ;
+            $this->seoPage->addMeta('property', 'og:image',
+                $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail'));
         }
     }
 

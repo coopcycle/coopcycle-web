@@ -22,6 +22,7 @@ use AppBundle\Service\SettingsManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Liip\ImagineBundle\Service\FilterService;
 use Prophecy\Argument;
 use Psr\Container\ContainerInterface;
 use Ramsey\Uuid\Uuid;
@@ -73,6 +74,7 @@ class RestaurantControllerTest extends WebTestCase
         $this->orderItemQuantityModifier = $this->prophesize(OrderItemQuantityModifierInterface::class);
         $this->orderModifier = $this->prophesize(OrderModifierInterface::class);
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
+        $this->imagineFilter = $this->prophesize(FilterService::class);
 
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
@@ -116,7 +118,8 @@ class RestaurantControllerTest extends WebTestCase
             $this->orderItemQuantityModifier->reveal(),
             $this->orderModifier->reveal(),
             $this->orderTimeHelper->reveal(),
-            $this->serializer
+            $this->serializer,
+            $this->imagineFilter->reveal()
         );
 
         $this->controller->setContainer($container->reveal());
