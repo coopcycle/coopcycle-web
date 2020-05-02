@@ -94,9 +94,11 @@ class RestaurantController extends AbstractController
 
     private function jsonResponse(OrderInterface $cart, array $errors)
     {
+        $country = $this->getParameter('country_iso');
+
         $serializerContext = [
             'is_web' => true,
-            'groups' => ['order']
+            'groups' => ['order', 'address', sprintf('address_%s', $country)]
         ];
 
         return new JsonResponse([

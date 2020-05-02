@@ -162,25 +162,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 ];
             }
 
-            $shippingAddress = $object->getShippingAddress();
-
-            if (null !== $shippingAddress && null !== $shippingAddress->getGeo()) {
-                $data['shippingAddress'] = [
-                    'geo' => [
-                        'latitude' => $shippingAddress->getGeo()->getLatitude(),
-                        'longitude' => $shippingAddress->getGeo()->getLongitude(),
-                    ],
-                    // Deprecated
-                    'latlng' => [
-                        $shippingAddress->getGeo()->getLatitude(),
-                        $shippingAddress->getGeo()->getLongitude(),
-                    ],
-                    'streetAddress' => $shippingAddress->getStreetAddress()
-                ];
-            } else {
-                $data['shippingAddress'] = null;
-            }
-
             $customer = $object->getCustomer();
             if (null === $customer) {
                 $data['customer'] = null;

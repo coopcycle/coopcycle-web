@@ -9,13 +9,14 @@ use Symfony\Component\Serializer\SerializerInterface;
 class CartProviderService
 {
     private $cartContext;
-
     private $serializer;
+    private $country;
 
-    public function __construct(CartContextInterface $cartContext, SerializerInterface $serializer)
+    public function __construct(CartContextInterface $cartContext, SerializerInterface $serializer, string $country)
     {
         $this->cartContext = $cartContext;
         $this->serializer = $serializer;
+        $this->country = $country;
     }
 
     public function getCart()
@@ -27,7 +28,7 @@ class CartProviderService
     {
         return $this->serializer->normalize($cart, 'jsonld', [
             'is_web' => true,
-            'groups' => ['order']
+            'groups' => ['order', 'address', sprintf('address_%s', $this->country)]
         ]);
     }
 }

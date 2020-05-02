@@ -763,3 +763,7 @@ services:
 
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider: ~
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor: ~
+
+  AppBundle\Service\CartProviderService:
+    arguments:
+      $country: "%country_iso%"

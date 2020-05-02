@@ -93,6 +93,7 @@ class RestaurantControllerTest extends WebTestCase
             ->willReturn($this->doctrine->reveal());
 
         $parameterBag = $this->prophesize(ParameterBagInterface::class);
+        $parameterBag->get('country_iso')->willReturn('fr');
         $parameterBag->get('sylius_cart_restaurant_session_key_name')->willReturn('foo');
 
         $container
