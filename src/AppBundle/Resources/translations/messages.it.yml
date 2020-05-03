@@ -1,4 +1,4 @@
-global.changesSaved: Le tue modfiche sono state salvate.
+global.changesSaved: Le tue modifiche sono state salvate.
 navbar.login: Accesso
 navbar.myAccount: Il mio account
 base.footer.contactUs: Contattaci
@@ -74,3 +74,21 @@ adminDashboard.tooltip.users: Gestisci account utente
 adminDashboard.tooltip.restaurants: Gestisci ristoranti
 adminDashboard.tooltip.stores: Gestisci negozi
 adminDashboard.tooltip.deliveries: Gestisci consegne
+adminDashboard.promotions.title: Promozioni
+adminDashboard.back.title: Torna al sito web
+adminDashboard.zones.send: Invia
+adminDashboard.zones.uploadGeoJSON: 'Carica il file GeoJSON '
+adminDashboard.zones.delete: Cancella
+adminDashboard.zones.save: Salva
+adminDashboard.zones.cancel: Cancella
+adminDashboard.zones.title: Zone
+adminDashboard.taxation.button: Aggiungi tassazione
+adminDashboard.taxation.title: Tassazione
+adminDashboard.tags.color: Colore
+adminDashboard.tags.name: Nome
+adminDashboard.tags.createNew: Crea un nuovo tag
+adminDashboard.tags.save: Salva
+adminDashboard.tags.title: Tags
+adminDashboard.pricing.addRule: Aggiungere regole
+adminDashboard.pricing.createNew: Create nuovi prezzi
+adminDashboard.pricing.noPricings: Non ci sono ancora i prezzi
