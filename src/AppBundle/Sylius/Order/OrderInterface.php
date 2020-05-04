@@ -111,4 +111,9 @@ interface OrderInterface extends
      * @return boolean
      */
     public function containsDisabledProduct(): bool;
+
+    /**
+     * @return boolean
+     */
+    public function isTakeaway(): bool;
 }
