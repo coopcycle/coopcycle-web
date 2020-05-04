@@ -112,7 +112,7 @@ TestUtils.prototype.cleanDb = function() {
 
 TestUtils.prototype.createUser = function(username, roles) {
 
-  const { User } = this.db
+  const { Customer, User } = this.db
 
   var params = {
     'username': username,
@@ -125,13 +125,28 @@ TestUtils.prototype.createUser = function(username, roles) {
   }
 
   return new Promise(function (resolve, reject) {
-    User.create(params)
-      .then(function(user) {
-        resolve(user)
+
+    Customer.create({
+      email: username + '@coopcycle.dev',
+      email_canonical: username + '@coopcycle.dev',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .then(customer => {
+      const user = User.build({
+        ...params,
+        customerId: customer.id,
       })
-      .catch(function(e) {
-        reject(e.errors)
-      })
+      user.save()
+        .then(u => resolve(u))
+        .catch(function(e) {
+          reject(e)
+        })
+
+    })
+    .catch(function(e) {
+      reject(e)
+    })
   })
 };
 

@@ -44,6 +44,25 @@ module.exports = function(sequelize) {
     },
   }));
 
+  Db.Customer = sequelize.define('customer', {
+    email: Sequelize.STRING,
+    email_canonical: Sequelize.STRING,
+    subscribed_to_newsletter: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
+    },
+    createdAt: {
+      field: 'created_at',
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      field: 'updated_at',
+      type: Sequelize.DATE
+    },
+  }, _.extend(sequelizeOptions, {
+    tableName: 'sylius_customer',
+  }));
+
   Db.UserAddress = sequelize.define('user_address', {}, _.extend(sequelizeOptions, {
     tableName: 'api_user_address'
   }));
@@ -207,6 +226,9 @@ module.exports = function(sequelize) {
 
   Db.User.belongsToMany(Db.Address, { through: Db.UserAddress, foreignKey: 'api_user_id' });
   Db.User.belongsToMany(Db.Restaurant, { through: Db.UserRestaurant, foreignKey: 'api_user_id' });
+
+  Db.Customer.hasOne(Db.User)
+
   Db.Address.belongsToMany(Db.User, { through: Db.UserAddress });
 
   return Db;
