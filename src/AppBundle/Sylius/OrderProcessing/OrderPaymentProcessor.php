@@ -39,7 +39,7 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         }
 
         if (0 === $order->getTotal()) {
-            foreach ($order->getPayments(PaymentInterface::STATE_CART) as $payment) {
+            foreach ($order->getPayments() as $payment) {
                 $order->removePayment($payment);
             }
 
