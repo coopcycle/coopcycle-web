@@ -8,6 +8,11 @@
         <option name="default">0</option>
       </options>
     </field>
+    <field name="takeaway" type="boolean" column="takeaway">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <one-to-one field="delivery" target-entity="AppBundle\Entity\Delivery" mapped-by="order">
       <cascade>
         <cascade-persist/>

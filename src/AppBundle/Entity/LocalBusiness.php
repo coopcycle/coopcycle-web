@@ -223,6 +223,8 @@ class LocalBusiness extends BaseLocalBusiness
 
     protected $stripePaymentMethods = [];
 
+    protected $takeawayEnabled = false;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -934,5 +936,15 @@ class LocalBusiness extends BaseLocalBusiness
     public function isStripePaymentMethodEnabled($paymentMethod)
     {
         return in_array($paymentMethod, $this->stripePaymentMethods);
+    }
+
+    public function isTakeawayEnabled(): bool
+    {
+        return $this->takeawayEnabled;
+    }
+
+    public function setTakeawayEnabled(bool $takeawayEnabled)
+    {
+        $this->takeawayEnabled = $takeawayEnabled;
     }
 }

@@ -249,6 +249,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $shippingTimeRange;
 
+    protected $takeaway = false;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -789,5 +791,18 @@ class Order extends BaseOrder implements OrderInterface
         } else {
             $this->shippedAt = null;
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isTakeaway(): bool
+    {
+        return $this->takeaway;
+    }
+
+    public function setTakeaway(bool $takeaway): void
+    {
+        $this->takeaway = $takeaway;
     }
 }

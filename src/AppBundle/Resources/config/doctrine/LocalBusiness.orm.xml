@@ -73,6 +73,11 @@
     <field name="loopeatRefreshToken" type="text" column="loopeat_refresh_token" nullable="true"/>
     <field name="featured" type="boolean" column="featured"/>
     <field name="stripePaymentMethods" type="json_array" column="stripe_payment_methods"/>
+    <field name="takeawayEnabled" type="boolean" column="takeaway_enabled">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <one-to-one field="contract" target-entity="AppBundle\Entity\Contract" mapped-by="restaurant">
       <cascade>
