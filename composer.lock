@@ -11560,16 +11560,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.28.1",
+            "version": "v7.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "0f4af8bd7dc2e143a4a6983a8451b96429e747e1"
+                "reference": "993b58f73572b415c476548134e71e07d96ac3f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/0f4af8bd7dc2e143a4a6983a8451b96429e747e1",
-                "reference": "0f4af8bd7dc2e143a4a6983a8451b96429e747e1",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/993b58f73572b415c476548134e71e07d96ac3f0",
+                "reference": "993b58f73572b415c476548134e71e07d96ac3f0",
                 "shasum": ""
             },
             "require": {
@@ -11579,7 +11579,7 @@
                 "php": ">=5.6.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.15",
+                "friendsofphp/php-cs-fixer": "2.16.1",
                 "php-coveralls/php-coveralls": "^2.1",
                 "phpunit/phpunit": "^5.7",
                 "squizlabs/php_codesniffer": "^3.3",
@@ -11613,7 +11613,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2020-04-10T17:05:40+00:00"
+            "time": "2020-05-01T19:45:41+00:00"
         },
         {
             "name": "superbalist/flysystem-google-storage",
