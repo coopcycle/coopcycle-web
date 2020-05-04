@@ -500,7 +500,12 @@ sylius_taxonomy:
             classes:
                 model: AppBundle\Entity\Sylius\Taxon
                 repository: AppBundle\Entity\Sylius\TaxonRepository
-                # interface: Sylius\Component\Taxonomy\Model\TaxonInterface
+
+sylius_customer:
+    resources:
+        customer:
+            classes:
+                model: AppBundle\Entity\Sylius\Customer
 
 sylius_locale:
     locale: "%locale%"

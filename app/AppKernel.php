@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Sylius\Bundle\ChannelBundle\SyliusChannelBundle(),
             new Sylius\Bundle\PromotionBundle\SyliusPromotionBundle(),
             new Sylius\Bundle\PaymentBundle\SyliusPaymentBundle(),
+            new Sylius\Bundle\CustomerBundle\SyliusCustomerBundle(),
             // Sylius bundles need to be registered before DoctrineBundle
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),

@@ -2,12 +2,16 @@
 
 namespace AppBundle\Entity;
 
+use libphonenumber\PhoneNumber;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Me as MeController;
 use AppBundle\Api\Filter\UserRoleFilter;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
+use AppBundle\Sylius\Customer\CustomerInterface;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
@@ -88,8 +92,6 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
 
     private $stores;
 
-    private $addresses;
-
     private $stripeAccounts;
 
     private $remotePushTokens;
@@ -102,9 +104,13 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
 
     protected $quotesAllowed = false;
 
+    /**
+     * @var CustomerInterface|null
+     */
+    protected $customer;
+
     public function __construct()
     {
-        $this->addresses = new ArrayCollection();
         $this->restaurants = new ArrayCollection();
         $this->stores = new ArrayCollection();
         $this->stripeAccounts = new ArrayCollection();
@@ -127,6 +133,10 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     public function setGivenName($givenName)
     {
         $this->givenName = $givenName;
+
+        if (null !== $this->customer) {
+            $this->customer->setFirstName($givenName);
+        }
     }
 
     /**
@@ -143,6 +153,10 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     public function setFamilyName($familyName)
     {
         $this->familyName = $familyName;
+
+        if (null !== $this->customer) {
+            $this->customer->setLastName($familyName);
+        }
     }
 
     /**
@@ -159,6 +173,16 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     public function setTelephone($telephone)
     {
         $this->telephone = $telephone;
+
+        if (null !== $this->customer) {
+            if ($telephone instanceof PhoneNumber) {
+                $this->customer->setPhoneNumber(
+                    PhoneNumberUtil::getInstance()->format($telephone, PhoneNumberFormat::E164)
+                );
+            } else {
+                $this->customer->setPhoneNumber($telephone);
+            }
+        }
     }
 
     public function setFacebookId($facebookId)
@@ -229,23 +253,23 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
         return $this->stores;
     }
 
-    public function addAddress(Address $addresses)
+    public function addAddress(Address $address)
     {
-        $this->addresses->add($addresses);
+        $this->customer->addAddress($address);
 
         return $this;
     }
 
-    public function setAddresses($addresses)
+    public function removeAddress(Address $address)
     {
-        $this->addresses = $addresses;
+        $this->customer->removeAddress($address);
 
         return $this;
     }
 
     public function getAddresses()
     {
-        return $this->addresses;
+        return $this->customer->getAddresses();
     }
 
     public function getStripeAccounts()
@@ -325,5 +349,48 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
         $this->quotesAllowed = $quotesAllowed;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCustomer(): ?CustomerInterface
+    {
+        return $this->customer;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCustomer(?CustomerInterface $customer): void
+    {
+        if ($this->customer === $customer) {
+            return;
+        }
+
+        $previousCustomer = $this->customer;
+        $this->customer = $customer;
+
+        if ($previousCustomer instanceof CustomerInterface) {
+            $previousCustomer->setUser(null);
+        }
+
+        if ($customer instanceof CustomerInterface) {
+            $customer->setUser($this);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setEmail($email)
+    {
+        $value = parent::setEmail($email);
+
+        if (null !== $this->customer) {
+            $this->customer->setEmail($email);
+        }
+
+        return $value;
     }
 }
