@@ -62,6 +62,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('coopcycle_asset', array(AssetsRuntime::class, 'asset')),
             new TwigFunction('coopcycle_asset_base64', array(AssetsRuntime::class, 'assetBase64')),
             new TwigFunction('local_business_path', array(UrlGeneratorRuntime::class, 'localBusinessPath')),
+            new TwigFunction('product_option_index', array($this, 'productOptionIndex')),
         );
     }
 
@@ -142,5 +143,10 @@ class CoopCycleExtension extends AbstractExtension
     public function isInstanceof($var, $class)
     {
         return $var instanceof $class;
+    }
+
+    public function productOptionIndex()
+    {
+        return new ProductOptionIndex();
     }
 }

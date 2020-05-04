@@ -806,7 +806,6 @@ trait RestaurantTrait
                 'product' => [
                     'code' => Uuid::uuid4()->toString()
                 ],
-                'option_index' => 0,
                 'option' => $productOption,
             ]));
         }

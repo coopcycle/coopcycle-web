@@ -1,3 +1,7 @@
+{% if option_index is not defined %}
+  {% set option_index = product_option_index() %}
+{% endif %}
+
 <h4>{{ option.name }}</h4>
 <div class="list-group"
   data-product-options-group
@@ -53,7 +57,6 @@
           </label>
         </div>
         {% endif %}
-        {% set option_index = option_index + 1 %}
       {% else %}
         <div class="radio nomargin">
           <label class="d-flex align-items-center">
@@ -64,9 +67,8 @@
           </label>
         </div>
       {% endif %}
+      {{ option_index.incrementValue(option_value) }}
     </div>
   {% endfor %}
 </div>
-{% if not option.additional %}
-  {% set option_index = option_index + 1 %}
-{% endif %}
+{{ option_index.incrementOption(option) }}

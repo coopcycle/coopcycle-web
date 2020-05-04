@@ -196,12 +196,9 @@ Iterating through all products, options… is a lot of database requests
                 action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
                 data-product-options
                 data-product-price="{{ variant.price }}">
-                {% set option_index = 0 %}
+                {% set option_index = product_option_index() %}
                 {% for option in product.options %}
-                  {% include '@App/restaurant/_partials/option.html.twig' %}
-                  {% if not option.additional %}
-                    {% set option_index = option_index + 1 %}
-                  {% endif %}
+                  {% include '@App/restaurant/_partials/option.html.twig' with { option_index: option_index } %}
                 {% endfor %}
                 {% set product_quantity_input_id = ('product-' ~ product.code ~ '-quantity') %}
                 <div class="row">
