@@ -21,13 +21,11 @@ class EnhanceShippingAddress
         $telephone = $shippingAddress->getTelephone();
 
         if (empty($contactName)) {
-            $shippingAddress->setContactName(
-                trim(sprintf('%s %s', $customer->getGivenName(), $customer->getFamilyName()))
-            );
+            $shippingAddress->setContactName($customer->getFullName());
         }
 
         if (empty($telephone)) {
-            $shippingAddress->setTelephone($customer->getTelephone());
+            $shippingAddress->setTelephone($customer->getPhoneNumber());
         }
     }
 }

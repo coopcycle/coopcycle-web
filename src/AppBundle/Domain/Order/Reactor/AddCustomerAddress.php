@@ -3,6 +3,8 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\OrderCreated;
+use AppBundle\Sylius\Customer\CustomerInterface;
+use Webmozart\Assert\Assert;
 
 class AddCustomerAddress
 {
@@ -17,8 +19,8 @@ class AddCustomerAddress
         $customer = $order->getCustomer();
         $shippingAddress = $order->getShippingAddress();
 
-        if (!$customer->getAddresses()->contains($shippingAddress)) {
-            $customer->addAddress($shippingAddress);
-        }
+        Assert::isInstanceOf($customer, CustomerInterface::class);
+
+        $customer->addAddress($shippingAddress);
     }
 }

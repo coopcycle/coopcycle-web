@@ -3,6 +3,7 @@
 namespace AppBundle\Validator\Constraints;
 
 use AppBundle\LoopEat\Client as LoopEatClient;
+use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Log\LoggerInterface;
@@ -10,6 +11,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Validation;
+use Webmozart\Assert\Assert as WebmozartAssert;
 
 class LoopEatOrderValidator extends ConstraintValidator
 {
@@ -46,7 +48,16 @@ class LoopEatOrderValidator extends ConstraintValidator
         }
 
         try {
-            $currentCustomer = $this->client->currentCustomer($object->getCustomer());
+
+            $customer = $object->getCustomer();
+
+            WebmozartAssert::isInstanceOf($customer, CustomerInterface::class);
+
+            if (!$customer->hasUser()) {
+                return;
+            }
+
+            $currentCustomer = $this->client->currentCustomer($customer->getUser());
             $loopeatBalance = $currentCustomer['loopeatBalance'];
 
             if ($loopeatBalance < $quantity) {

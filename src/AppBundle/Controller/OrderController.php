@@ -79,8 +79,8 @@ class OrderController extends AbstractController
         // At this step, we are pretty sure the customer is logged in
         // Make sure the order actually has a customer, if not set previously
         // @see AppBundle\EventListener\WebAuthenticationListener
-        if ($user !== $order->getCustomer()) {
-            $order->setCustomer($user);
+        if ($user !== $order->getUser()) {
+            $order->setCustomer($user->getCustomer());
             $this->objectManager->flush();
         }
 

@@ -119,7 +119,8 @@
         "behatch/contexts": "dev-master",
         "coduo/php-matcher": "^4.0",
         "phpstan/phpstan": "^0.12",
-        "phpstan/phpstan-symfony": "^0.12"
+        "phpstan/phpstan-symfony": "^0.12",
+        "phpstan/phpstan-webmozart-assert": "^0.12.3"
     },
     "scripts": {
         "post-install-cmd": [

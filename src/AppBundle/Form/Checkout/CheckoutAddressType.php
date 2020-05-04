@@ -94,7 +94,7 @@ class CheckoutAddressType extends AbstractType
             $order = $event->getData();
 
             // Add a "telephone" field when the customer does not have telephone
-            if (empty($order->getCustomer()->getTelephone())) {
+            if (empty($order->getCustomer()->getPhoneNumber())) {
                 $form->add('telephone', PhoneNumberType::class, [
                     'format' => PhoneNumberFormat::NATIONAL,
                     'default_region' => $this->country,

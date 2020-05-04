@@ -16,6 +16,12 @@
         <option name="default">0</option>
       </options>
     </field>
+    <one-to-one field="customer" target-entity="Sylius\Component\Customer\Model\CustomerInterface" inversed-by="user">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-column name="customer_id" referenced-column-name="id" nullable="false" />
+    </one-to-one>
     <one-to-many field="remotePushTokens" target-entity="AppBundle\Entity\RemotePushToken" mapped-by="user">
       <cascade>
         <cascade-persist/>
@@ -52,6 +58,7 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
+    <!--
     <many-to-many field="addresses" target-entity="AppBundle\Entity\Address">
       <cascade>
         <cascade-all/>
@@ -65,6 +72,7 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
+    -->
     <many-to-many field="stripeAccounts" target-entity="AppBundle\Entity\StripeAccount">
       <cascade>
         <cascade-all/>
