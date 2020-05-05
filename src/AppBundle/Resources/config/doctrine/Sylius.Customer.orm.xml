@@ -6,12 +6,14 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
-    <one-to-one field="defaultAddress" target-entity="AppBundle\Entity\Address">
-      <join-column name="default_address_id" on-delete="SET NULL" />
+    <many-to-one field="defaultAddress" target-entity="AppBundle\Entity\Address">
+      <join-columns>
+        <join-column name="default_address_id" referenced-column-name="id" on-delete="SET NULL"/>
+      </join-columns>
       <cascade>
         <cascade-persist />
       </cascade>
-    </one-to-one>
+    </many-to-one>
     <many-to-many field="addresses" target-entity="AppBundle\Entity\Address">
       <cascade>
         <cascade-all/>
