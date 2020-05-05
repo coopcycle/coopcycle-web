@@ -132,7 +132,6 @@ services:
     tags:
         - name: event_subscriber
           subscribes_to: order:accepted
-          priority: 255
 
   coopcycle.domain.order.reactor.cancel_tasks:
     class: AppBundle\Domain\Order\Reactor\CancelTasks
@@ -151,19 +150,14 @@ services:
     tags:
         - name: event_subscriber
           subscribes_to: order:created
-          priority: -255
         - name: event_subscriber
           subscribes_to: order:accepted
-          priority: -255
         - name: event_subscriber
           subscribes_to: order:refused
-          priority: -255
         - name: event_subscriber
           subscribes_to: order:cancelled
-          priority: -255
         - name: event_subscriber
           subscribes_to: order:delayed
-          priority: -255
 
   coopcycle.domain.order.reactor.send_remote_push_notification:
     class: AppBundle\Domain\Order\Reactor\SendRemotePushNotification
@@ -184,7 +178,6 @@ services:
     tags:
         - name: event_subscriber
           subscribes_to: order:checkout_succeeded
-          priority: -255
 
   coopcycle.domain.order.reactor.pick_or_drop:
     class: AppBundle\Domain\Order\Reactor\PickOrDrop
@@ -210,7 +203,6 @@ services:
     tags:
         - name: event_subscriber
           subscribes_to: order:created
-          priority: -255
         - name: event_subscriber
           subscribes_to: order:delayed
         - name: event_subscriber
