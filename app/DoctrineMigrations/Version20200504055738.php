@@ -30,6 +30,7 @@ final class Version20200504055738 extends AbstractMigration
 
         $this->addSql('ALTER TABLE sylius_customer ADD default_address_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE sylius_customer ADD CONSTRAINT FK_7E82D5E6BD94FB16 FOREIGN KEY (default_address_id) REFERENCES address (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('DROP INDEX IF EXISTS uniq_7e82d5e6bd94fb16');
         $this->addSql('CREATE INDEX IDX_7E82D5E6BD94FB16 ON sylius_customer (default_address_id)');
 
         $stmts = [];
