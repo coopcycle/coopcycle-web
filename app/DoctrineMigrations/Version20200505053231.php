@@ -23,7 +23,7 @@ final class Version20200505053231 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('DROP INDEX IF EXISTS uniq_7e82d5e6bd94fb16');
-        $this->addSql('CREATE INDEX IDX_7E82D5E6BD94FB16 ON sylius_customer (default_address_id)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_7E82D5E6BD94FB16 ON sylius_customer (default_address_id)');
     }
 
     public function down(Schema $schema) : void
