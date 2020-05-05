@@ -28,6 +28,12 @@ winzou_state_machine:
             refuse:
                 from: [new]
                 to: refused
+        callbacks:
+            guard:
+                guard_on_fulfill:
+                    on:   'fulfill'
+                    do:   ['@AppBundle\Domain\Order\Workflow\Guard', 'isFulfillable']
+                    args: ['object']
     sylius_payment:
         class: "%sylius.model.payment.class%"
         property_path: state

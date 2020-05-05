@@ -766,3 +766,6 @@ services:
   AppBundle\Service\CartProviderService:
     arguments:
       $country: "%country_iso%"
+
+  AppBundle\Domain\Order\Workflow\Guard:
+    public: true
