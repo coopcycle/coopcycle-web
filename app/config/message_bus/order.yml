@@ -101,29 +101,6 @@ services:
   # Event Reactors
   #
 
-  coopcycle.domain.order.reactor.update_state:
-    class: AppBundle\Domain\Order\Reactor\UpdateState
-    arguments:
-      - '@sm.factory'
-      - '@sylius.order_processing.order_payment_processor'
-      - '@serializer'
-      - '@event_bus'
-    tags:
-        - name: event_subscriber
-          subscribes_to: order:created
-        - name: event_subscriber
-          subscribes_to: order:accepted
-        - name: event_subscriber
-          subscribes_to: order:refused
-        - name: event_subscriber
-          subscribes_to: order:cancelled
-        - name: event_subscriber
-          subscribes_to: order:fulfilled
-        - name: event_subscriber
-          subscribes_to: order:checkout_succeeded
-        - name: event_subscriber
-          subscribes_to: order:checkout_failed
-
   coopcycle.domain.order.reactor.create_tasks:
     class: AppBundle\Domain\Order\Reactor\CreateTasks
     arguments:
@@ -194,7 +171,7 @@ services:
       - '@event_bus'
     tags:
         - name: event_subscriber
-          subscribes_to: order:dropped
+          subscribes_to: order:fulfilled
 
   coopcycle.domain.order.reactor.calculate_timeline:
     class: AppBundle\Domain\Order\Reactor\CalculateTimeline
@@ -284,3 +261,31 @@ services:
           subscribes_to: order:dropped
         - name: event_subscriber
           subscribes_to: order:cancelled
+
+  # WARNING
+  # Event subscribers are registered using the same order as they are declared in this file.
+  # The "priority" attribute has no effect.
+  # The reactor to update state *MUST* be registered last in the chain.
+  # @see https://github.com/SimpleBus/SimpleBus/blob/master/Bundle/SymfonyBridge/src/DependencyInjection/Compiler/RegisterSubscribers.php
+  coopcycle.domain.order.reactor.update_state:
+    class: AppBundle\Domain\Order\Reactor\UpdateState
+    arguments:
+      - '@sm.factory'
+      - '@sylius.order_processing.order_payment_processor'
+      - '@serializer'
+      - '@event_bus'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:created
+        - name: event_subscriber
+          subscribes_to: order:accepted
+        - name: event_subscriber
+          subscribes_to: order:refused
+        - name: event_subscriber
+          subscribes_to: order:cancelled
+        - name: event_subscriber
+          subscribes_to: order:fulfilled
+        - name: event_subscriber
+          subscribes_to: order:checkout_succeeded
+        - name: event_subscriber
+          subscribes_to: order:checkout_failed

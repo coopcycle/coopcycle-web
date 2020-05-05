@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\Domain\Order\Reactor;
 
-use AppBundle\Domain\Order\Event\OrderDropped;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Order\Reactor\CapturePayment;
 use AppBundle\Entity\Sylius\Payment;
@@ -12,7 +11,6 @@ use AppBundle\Service\StripeManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use SimpleBus\Message\Bus\MessageBus;
 use Stripe;
 
 class CapturePaymentTest extends TestCase
@@ -22,11 +20,9 @@ class CapturePaymentTest extends TestCase
     public function setUp(): void
     {
         $this->stripeManager = $this->prophesize(StripeManager::class);
-        $this->eventBus = $this->prophesize(MessageBus::class);
 
         $this->capturePayment = new CapturePayment(
-            $this->stripeManager->reveal(),
-            $this->eventBus->reveal()
+            $this->stripeManager->reveal()
         );
     }
 
@@ -73,11 +69,7 @@ class CapturePaymentTest extends TestCase
             ->capture(Argument::type(PaymentInterface::class))
             ->shouldNotBeCalled();
 
-        $this->eventBus
-            ->handle(new OrderFulfilled($order->reveal(), $payment))
-            ->shouldBeCalled();
-
-        call_user_func_array($this->capturePayment, [ new OrderDropped($order->reveal()) ]);
+        call_user_func_array($this->capturePayment, [ new OrderFulfilled($order->reveal()) ]);
     }
 
     public function testCapturesPayment()
@@ -113,10 +105,6 @@ class CapturePaymentTest extends TestCase
             ->capture($payment)
             ->shouldBeCalled();
 
-        $this->eventBus
-            ->handle(new OrderFulfilled($order->reveal(), $payment))
-            ->shouldBeCalled();
-
-        call_user_func_array($this->capturePayment, [ new OrderDropped($order->reveal()) ]);
+        call_user_func_array($this->capturePayment, [ new OrderFulfilled($order->reveal()) ]);
     }
 }

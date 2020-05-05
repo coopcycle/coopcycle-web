@@ -4,6 +4,7 @@ namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\OrderPicked;
 use AppBundle\Domain\Order\Event\OrderDropped;
+use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Task\Event\TaskDone;
 use SimpleBus\Message\Bus\MessageBus;
 
@@ -36,5 +37,9 @@ class PickOrDrop
         }
 
         $this->eventBus->handle($task->isDropoff() ? new OrderDropped($order) : new OrderPicked($order));
+
+        if ($task->isDropoff()) {
+            $this->eventBus->handle(new OrderFulfilled($order));
+        }
     }
 }

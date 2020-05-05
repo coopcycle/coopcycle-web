@@ -2,26 +2,20 @@
 
 namespace AppBundle\Domain\Order\Reactor;
 
-use AppBundle\Domain\Order\Event\OrderDropped;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Service\StripeManager;
-use SimpleBus\Message\Bus\MessageBus;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
 class CapturePayment
 {
     private $stripeManager;
-    private $eventBus;
 
-    public function __construct(
-        StripeManager $stripeManager,
-        MessageBus $eventBus)
+    public function __construct(StripeManager $stripeManager)
     {
         $this->stripeManager = $stripeManager;
-        $this->eventBus = $eventBus;
     }
 
-    public function __invoke(OrderDropped $event)
+    public function __invoke(OrderFulfilled $event)
     {
         $order = $event->getOrder();
 
@@ -29,14 +23,12 @@ class CapturePayment
 
         // This happens when a B2B customer has placed an order
         if (null === $payment && null === $order->getRestaurant()) {
-            $this->eventBus->handle(new OrderFulfilled($order));
             return;
         }
 
         $isFreeOrder = null === $payment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
 
         if ($isFreeOrder) {
-            $this->eventBus->handle(new OrderFulfilled($order));
             return;
         }
 
@@ -45,7 +37,6 @@ class CapturePayment
 
         if (null !== $completedPayment && $completedPayment->hasSource()
             && 'giropay' === $completedPayment->getSourceType()) {
-            $this->eventBus->handle(new OrderFulfilled($order, $completedPayment));
             return;
         }
 
@@ -54,7 +45,6 @@ class CapturePayment
         try {
 
             $this->stripeManager->capture($payment);
-            $this->eventBus->handle(new OrderFulfilled($order, $payment));
 
         } catch (\Exception $e) {
             // FIXME
