@@ -221,12 +221,12 @@ restaurant.form.temporaryClosingRule: Wenn sie eine temporäre Schließung Ihres
   wünschen, folgen Sie diesem Link.
 restaurant.form.accessPlanning: Zugriffsplanung
 restaurant.form.createRestaurant: Restaurant erstellen
-restaurant.contract.title: Vertrag
+restaurant.contract.title: Deal
 restaurant.deliveryPerimeterExpression.title: Lieferradius
 restaurant.deliveryPerimeterExpression.help: Definieren Sie den maximalen Lieferradius.
   Sie können diesen in Kilometern oder als Zone festlegen
-restaurant.contract.minimumCartAmount.label: Minimaler Gesamtbetrag
-restaurant.contract.flatDeliveryPrice.label: Betrag berechnet von der Plattform
+restaurant.contract.minimumCartAmount.label: Mindestbestellwert
+restaurant.contract.flatDeliveryPrice.label: Liefergebühr Kunde + Liefergebühr Resto
 restaurant.contract.flatDeliveryPrice.help: Der Betrag wird nicht im Warenkorb angezeigt
   und den Gesamtwert nicht erhöhen
 restaurant.contract.customerAmount.label: Betrag vom Kunden bezahlt
