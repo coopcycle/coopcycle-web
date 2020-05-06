@@ -129,9 +129,7 @@ class CheckoutAddressType extends AbstractType
                 // FIXME
                 // We need to check if $order->getReusablePackagingQuantity() > 0
 
-                $attr = [
-                    'data-loopeat' => json_encode($restaurant->isLoopeatEnabled()),
-                ];
+                $attr = [];
 
                 $isLoopeat = false;
                 if ($restaurant->isLoopeatEnabled()) {
@@ -164,6 +162,8 @@ class CheckoutAddressType extends AbstractType
                         $isLoopeat = true;
                     }
                 }
+
+                $attr['data-loopeat'] = $isLoopeat;
 
                 $key = $isLoopeat ?
                     'reusable_packaging_loopeat_enabled' : 'reusable_packaging_enabled';
