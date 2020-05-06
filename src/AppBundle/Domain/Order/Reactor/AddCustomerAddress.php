@@ -14,6 +14,10 @@ class AddCustomerAddress
             return;
         }
 
+        if ($order->isTakeaway()) {
+            return;
+        }
+
         $customer = $order->getCustomer();
         $shippingAddress = $order->getShippingAddress();
 

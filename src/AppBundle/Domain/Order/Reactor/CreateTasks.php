@@ -29,6 +29,10 @@ class CreateTasks
             return;
         }
 
+        if ($order->isTakeaway()) {
+            return;
+        }
+
         $pickupAddress = $order->getRestaurant()->getAddress();
         $dropoffAddress = $order->getShippingAddress();
 

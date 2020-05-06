@@ -34,7 +34,7 @@ class CreateTasksTest extends TestCase
         );
     }
 
-    public function testDoesNothing()
+    public function testDoesNothingWhenDeliveryAlreadyExists()
     {
         $delivery = new Delivery();
 
@@ -42,6 +42,25 @@ class CreateTasksTest extends TestCase
         $order
             ->getDelivery()
             ->willReturn($delivery);
+
+        $order
+            ->setDelivery(Argument::type(Delivery::class))
+            ->shouldNotBeCalled();
+
+        call_user_func_array($this->createTasks, [ new OrderAccepted($order->reveal()) ]);
+    }
+
+    public function testDoesNothingWhenOrderIsTakeaway()
+    {
+        $delivery = new Delivery();
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getDelivery()
+            ->willReturn(null);
+        $order
+            ->isTakeaway()
+            ->willReturn(true);
 
         $order
             ->setDelivery(Argument::type(Delivery::class))
@@ -76,6 +95,9 @@ class CreateTasksTest extends TestCase
         $order
             ->getDelivery()
             ->willReturn(null);
+        $order
+            ->isTakeaway()
+            ->willReturn(false);
         $order
             ->getShippingTimeRange()
             ->willReturn($shippingTimeRange);
