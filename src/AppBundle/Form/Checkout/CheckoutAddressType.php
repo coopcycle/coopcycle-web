@@ -163,7 +163,8 @@ class CheckoutAddressType extends AbstractType
                     }
                 }
 
-                $attr['data-loopeat'] = $isLoopeat;
+                // Make sure to use a string, or it will be data-loopeat="data-loopeat"
+                $attr['data-loopeat'] = var_export($isLoopeat, true);
 
                 $key = $isLoopeat ?
                     'reusable_packaging_loopeat_enabled' : 'reusable_packaging_enabled';
