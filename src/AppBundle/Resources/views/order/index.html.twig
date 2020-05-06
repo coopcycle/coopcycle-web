@@ -153,8 +153,8 @@
   $('#checkout_address_reusablePackagingEnabled').on('change', function(e) {
     var isChecked = $(this).is(':checked');
     var isLoopeat = $(this).data('loopeat') === true;
-    if (isChecked && isLoopeat) {
-      var iframeUrl = $(this).data('loopeatAuthorizeUrl');
+    var iframeUrl = $(this).data('loopeatAuthorizeUrl');
+    if (isChecked && isLoopeat && iframeUrl) {
       $('#modal-loopeat iframe').attr('src', iframeUrl);
       $('#modal-loopeat').modal('show');
     } else {
