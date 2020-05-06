@@ -10,7 +10,7 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
-    <field name="dropoffExpectedAt" type="datetime" column="dropoff_expected_at" nullable="false"/>
+    <field name="dropoffExpectedAt" type="datetime" column="dropoff_expected_at" nullable="true"/>
     <field name="pickupExpectedAt" type="datetime" column="pickup_expected_at" nullable="false"/>
     <field name="preparationExpectedAt" type="datetime" column="preparation_expected_at" nullable="false"/>
     <one-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="timeline">
