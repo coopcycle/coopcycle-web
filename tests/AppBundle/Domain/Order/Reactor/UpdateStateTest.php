@@ -4,8 +4,11 @@ namespace Tests\AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Reactor\UpdateState;
+use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
+use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -14,11 +17,12 @@ use SM\Factory\FactoryInterface;
 use SM\StateMachine\StateMachineInterface;
 use SM\SMException;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class UpdateStateTest extends TestCase
+class UpdateStateTest extends KernelTestCase
 {
-    private $stateMachineFactory;
     private $orderProcessor;
     private $serializer;
     private $eventBus;
@@ -27,12 +31,12 @@ class UpdateStateTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->stateMachineFactory = $this->prophesize(FactoryInterface::class);
-        $this->stateMachine = $this->prophesize(StateMachineInterface::class);
+        parent::setUp();
 
-        $this->stateMachineFactory
-            ->get(Argument::type('object'), Argument::type('string'))
-            ->willReturn($this->stateMachine->reveal());
+        self::bootKernel();
+
+        // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
+        $this->stateMachineFactory = self::$container->get(FactoryInterface::class);
 
         $this->orderProcessor = $this->prophesize(OrderProcessorInterface::class);
         $this->serializer = $this->prophesize(SerializerInterface::class);
@@ -43,7 +47,7 @@ class UpdateStateTest extends TestCase
             ->willReturn(json_encode(['foo' => 'bar']));
 
         $this->updateState = new UpdateState(
-            $this->stateMachineFactory->reveal(),
+            $this->stateMachineFactory,
             $this->orderProcessor->reveal(),
             $this->serializer->reveal(),
             $this->eventBus->reveal()
@@ -55,14 +59,6 @@ class UpdateStateTest extends TestCase
         $order = new Order();
         $payment = new Payment();
 
-        $this->stateMachine
-            ->can('authorize')
-            ->willReturn(true);
-
-        $this->stateMachine
-            ->apply('authorize')
-            ->shouldBeCalled();
-
         $this->eventBus
             ->handle(Argument::that(function (Event\OrderCreated $event) use ($order) {
                 return $event->getOrder() === $order;
@@ -70,6 +66,8 @@ class UpdateStateTest extends TestCase
             ->shouldBeCalled();
 
         call_user_func_array($this->updateState, [ new Event\CheckoutSucceeded($order, $payment) ]);
+
+        $this->assertEquals(PaymentInterface::STATE_AUTHORIZED, $payment->getState());
     }
 
     public function testCheckoutFailed()
@@ -83,7 +81,7 @@ class UpdateStateTest extends TestCase
 
         call_user_func_array($this->updateState, [ new Event\CheckoutFailed($order, $payment, 'Lorem ipsum') ]);
 
-        $this->stateMachine->apply('fail')->shouldHaveBeenCalled();
+        // $this->stateMachine->apply('fail')->shouldHaveBeenCalled();
     }
 
     public function testOrderCreated()
@@ -93,7 +91,7 @@ class UpdateStateTest extends TestCase
 
         call_user_func_array($this->updateState, [ new Event\OrderCreated($order) ]);
 
-        $this->stateMachine->apply('create', true)->shouldHaveBeenCalled();
+        $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
     }
 
     public function testOrderAccepted()
@@ -103,16 +101,50 @@ class UpdateStateTest extends TestCase
 
         call_user_func_array($this->updateState, [ new Event\OrderAccepted($order) ]);
 
-        $this->stateMachine->apply('accept', true)->shouldHaveBeenCalled();
+        $this->assertEquals(OrderInterface::STATE_ACCEPTED, $order->getState());
     }
 
-    public function testOrderFulfilled()
+    public function testFulfillOrderWithCompletedTasks()
     {
+        $restaurant = new Restaurant();
+
         $order = new Order();
         $order->setState(OrderInterface::STATE_ACCEPTED);
+        $order->setRestaurant($restaurant);
+
+        $delivery = new Delivery();
+        $delivery->getPickup()->setStatus(Task::STATUS_DONE);
+        $delivery->getDropoff()->setStatus(Task::STATUS_DONE);
+
+        $order->setDelivery($delivery);
+
+        $sm = $this->stateMachineFactory->get($order, \AppBundle\Sylius\Order\OrderTransitions::GRAPH);
 
         call_user_func_array($this->updateState, [ new Event\OrderFulfilled($order) ]);
 
-        $this->stateMachine->apply('fulfill', true)->shouldHaveBeenCalled();
+        $this->assertEquals(OrderInterface::STATE_FULFILLED, $order->getState());
+    }
+
+    public function testFulfillOrderWithUncompletedTasks()
+    {
+        $this->expectException(SMException::class);
+
+        $restaurant = new Restaurant();
+
+        $order = new Order();
+        $order->setState(OrderInterface::STATE_ACCEPTED);
+        $order->setRestaurant($restaurant);
+
+        $delivery = new Delivery();
+        $delivery->getPickup()->setStatus(Task::STATUS_DONE);
+        $delivery->getDropoff()->setStatus(Task::STATUS_TODO);
+
+        $order->setDelivery($delivery);
+
+        $sm = $this->stateMachineFactory->get($order, \AppBundle\Sylius\Order\OrderTransitions::GRAPH);
+
+        call_user_func_array($this->updateState, [ new Event\OrderFulfilled($order) ]);
+
+        $this->assertEquals(OrderInterface::STATE_FULFILLED, $order->getState());
     }
 }

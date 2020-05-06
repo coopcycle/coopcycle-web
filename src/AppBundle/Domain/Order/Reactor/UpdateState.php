@@ -63,10 +63,12 @@ class UpdateState
             }
         }
 
-        if ($event instanceof Event\OrderFulfilled && null !== $event->getPayment()) {
-            $stateMachine = $this->stateMachineFactory->get($event->getPayment(), PaymentTransitions::GRAPH);
-            if ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
-                $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+        if ($event instanceof Event\OrderFulfilled) {
+            foreach ($order->getPayments() as $payment) {
+                $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+                if ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
+                    $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+                }
             }
         }
 
@@ -122,7 +124,8 @@ class UpdateState
             $transition = $this->eventNameToTransition[$event::messageName()];
 
             $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
-            $stateMachine->apply($transition, true);
+
+            $stateMachine->apply($transition);
         }
     }
 }
