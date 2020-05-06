@@ -163,32 +163,37 @@ class CheckoutAddressType extends AbstractType
                     }
                 }
 
-                // Make sure to use a string, or it will be data-loopeat="data-loopeat"
-                $attr['data-loopeat'] = var_export($isLoopeat, true);
+                $hasReusablePackaging = $isLoopeat || $restaurant->isDepositRefundEnabled();
 
-                $key = $isLoopeat ?
-                    'reusable_packaging_loopeat_enabled' : 'reusable_packaging_enabled';
+                if ($hasReusablePackaging) {
 
-                $packagingAmount = $order->getReusablePackagingAmount();
+                    // Make sure to use a string, or it will be data-loopeat="data-loopeat"
+                    $attr['data-loopeat'] = var_export($isLoopeat, true);
 
-                if ($packagingAmount > 0) {
-                    $packagingPrice = sprintf('+ %s', $this->priceFormatter->formatWithSymbol($packagingAmount));
-                } else {
-                    $packagingPrice = $this->translator->trans('basics.free');
+                    $key = $isLoopeat ?
+                        'reusable_packaging_loopeat_enabled' : 'reusable_packaging_enabled';
+
+                    $packagingAmount = $order->getReusablePackagingAmount();
+
+                    if ($packagingAmount > 0) {
+                        $packagingPrice = sprintf('+ %s', $this->priceFormatter->formatWithSymbol($packagingAmount));
+                    } else {
+                        $packagingPrice = $this->translator->trans('basics.free');
+                    }
+
+                    $attr['data-packaging-amount'] = $packagingAmount;
+
+                    $opts = [
+                        'required' => false,
+                        'label' => sprintf('form.checkout_address.%s.label', $key),
+                        'label_translation_parameters' => [
+                            '%price%' => $packagingPrice,
+                        ],
+                        'attr' => $attr,
+                    ];
+
+                    $form->add('reusablePackagingEnabled', CheckboxType::class, $opts);
                 }
-
-                $attr['data-packaging-amount'] = $packagingAmount;
-
-                $opts = [
-                    'required' => false,
-                    'label' => sprintf('form.checkout_address.%s.label', $key),
-                    'label_translation_parameters' => [
-                        '%price%' => $packagingPrice,
-                    ],
-                    'attr' => $attr,
-                ];
-
-                $form->add('reusablePackagingEnabled', CheckboxType::class, $opts);
             }
 
             // When the restaurant accepts quotes and the customer is allowed,
