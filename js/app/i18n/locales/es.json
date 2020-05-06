@@ -159,10 +159,10 @@
         "ADMIN_DASHBOARD_RUSH": "Hora punta",
         "ADMIN_DASHBOARD_NORMAL": "Normal",
         "TIME_RANGE": "entre {{start}} y {{end}}",
-        "CART_DELIVERY_TIME_RANGE_SAME_DAY": "[Entrega hoy] [{{range}}]",
-        "CART_DELIVERY_TIME_RANGE_NEXT_DAY": "[Entrega mañana] [{{range}}]",
-        "CART_DELIVERY_TIME_RANGE_NEXT_WEEK": "[Entrega] dddd [{{range}}]",
-        "CART_DELIVERY_TIME_RANGE_LAST_DAY": "[Entrega ayer] [{{range}}]",
-        "CART_DELIVERY_TIME_RANGE_SAME_ELSE": "[Entrega el] LL [{{range}}]"
+        "CART_DELIVERY_TIME_RANGE_SAME_DAY": "[Hoy] [{{range}}]",
+        "CART_DELIVERY_TIME_RANGE_NEXT_DAY": "[Mañana] [{{range}}]",
+        "CART_DELIVERY_TIME_RANGE_NEXT_WEEK": "dddd [{{range}}]",
+        "CART_DELIVERY_TIME_RANGE_LAST_DAY": "[Ayer] [{{range}}]",
+        "CART_DELIVERY_TIME_RANGE_SAME_ELSE": "[El] LL [{{range}}]"
     }
 }
