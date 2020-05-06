@@ -89,6 +89,13 @@ class Contract
     private $restaurantPaysStripeFee = true;
 
     /**
+     * @var float
+     * @Assert\NotBlank
+     * @Assert\Type("float")
+     */
+    private $takeAwayFeeRate = 0.00;
+
+    /**
      * @return LocalBusiness
      */
     public function getRestaurant()
@@ -178,7 +185,7 @@ class Contract
 
     /**
      * @param float $feeRate
-     * @return Contract;
+     * @return Contract
      */
     public function setFeeRate(float $feeRate)
     {
@@ -251,6 +258,25 @@ class Contract
     public function setVariableCustomerAmountEnabled($variableCustomerAmountEnabled)
     {
         $this->variableCustomerAmountEnabled = $variableCustomerAmountEnabled;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTakeAwayFeeRate()
+    {
+        return $this->takeAwayFeeRate;
+    }
+
+    /**
+     * @param float $takeAwayFeeRate
+     * @return Contract
+     */
+    public function setTakeAwayFeeRate(float $takeAwayFeeRate)
+    {
+        $this->takeAwayFeeRate = $takeAwayFeeRate;
 
         return $this;
     }

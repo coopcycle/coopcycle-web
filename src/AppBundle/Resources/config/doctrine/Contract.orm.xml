@@ -19,6 +19,7 @@
         <option name="default">0</option>
       </options>
     </field>
+    <field name="takeAwayFeeRate" type="float" column="take_away_fee_rate"/>
     <one-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="contract">
       <cascade>
         <cascade-persist/>
