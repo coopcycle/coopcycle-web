@@ -137,17 +137,10 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order_payment');
         }
 
-        // $isLoopEatValid = true;
-        // if ($order->getRestaurant()->isLoopeatEnabled()) {
-        //     $violations = $validator->validate($order, null, ['loopeat']);
-        //     $isLoopEatValid = count($violations) === 0;
-        // }
-
         return array(
             'order' => $order,
             'shipping_range' => $this->getShippingRange($order),
             'form' => $form->createView(),
-            // 'loopeat_valid' => $isLoopEatValid,
         );
     }
 
