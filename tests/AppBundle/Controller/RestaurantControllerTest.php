@@ -238,7 +238,8 @@ class RestaurantControllerTest extends WebTestCase
             'variableCustomerAmountEnabled' => false,
             'address' => [
                 'latlng' => [48.856613, 2.352222]
-            ]
+            ],
+            'takeawayEnabled' => false,
         ];
 
         $this->assertEquals($expectedRestaurant, $data['cart']['restaurant']);
