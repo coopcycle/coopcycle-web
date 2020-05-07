@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import { Timeline } from 'antd'
 import moment from 'moment'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
@@ -15,6 +14,7 @@ import {
 
 import OrderItems from './OrderItems'
 import OrderTotal from './OrderTotal'
+import Timeline from './Timeline'
 
 class ModalContent extends React.Component {
 
@@ -40,45 +40,6 @@ class ModalContent extends React.Component {
     const { order } = this.props
 
     this.props.acceptOrder(order)
-  }
-
-  renderTimeline() {
-    const { order } = this.props
-
-    return (
-      <Timeline>
-        <Timeline.Item dot={<i className="fa fa-cutlery"></i>}>
-          <div>
-            <strong>{ this.props.t('RESTAURANT_DASHBOARD_PREPARATION_AT', { time: moment(order.preparationExpectedAt).format('LT') }) }</strong>
-          </div>
-          { order.reusablePackagingEnabled && (
-            <span className="text-warning">{ this.props.t('ADMIN_DASHBOARD_ORDERS_PACKAGING_ALERT') }</span>
-          )}
-        </Timeline.Item>
-        <Timeline.Item dot={<i className="fa fa-cube"></i>}>
-          <div>
-            <strong>{ this.props.t('RESTAURANT_DASHBOARD_PICKUP_AT', { time: moment(order.pickupExpectedAt).format('LT') }) }</strong>
-          </div>
-          <span>{ order.restaurant.address.streetAddress }</span>
-        </Timeline.Item>
-        <Timeline.Item dot={<i className="fa fa-arrow-down"></i>}>
-          <div>
-            <strong>{ this.props.t('RESTAURANT_DASHBOARD_DROPOFF_AT', { time: moment(order.shippedAt).format('LT') }) }</strong>
-          </div>
-          <ul className="list-unstyled">
-            <li>{ order.shippingAddress.streetAddress }</li>
-            { order.shippingAddress.floor && (
-              <li>Étage : { order.shippingAddress.floor }</li>
-            ) }
-          </ul>
-          { order.shippingAddress.description && (
-            <div className="speech-bubble">
-              <i className="fa fa-quote-left"></i>  { order.shippingAddress.description }
-            </div>
-          ) }
-        </Timeline.Item>
-      </Timeline>
-    )
   }
 
   renderButtons() {
@@ -267,7 +228,7 @@ class ModalContent extends React.Component {
           <OrderTotal order={ order } />
           { order.notes && this.renderNotes() }
           <h5>Timeline</h5>
-          { this.renderTimeline() }
+          <Timeline order={ order } />
           { this.renderButtons() }
         </div>
       </div>
