@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import moment from 'moment'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import {
