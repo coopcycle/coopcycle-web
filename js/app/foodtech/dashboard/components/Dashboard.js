@@ -101,22 +101,26 @@ class Dashboard extends React.Component {
             orders={ this.props.newOrders }
             title={ this.props.t('RESTAURANT_DASHBOARD_NEW_ORDERS') }
             context="warning"
-            active={ this.props.activeTab == 'new' } />
+            active={ this.props.activeTab == 'new' }
+            onCardClick={ order => this.props.setCurrentOrder(order) } />
           <Column
             orders={ this.props.acceptedOrders }
             title={ this.props.t('RESTAURANT_DASHBOARD_ACCEPTED_ORDERS') }
             context="info"
-            active={ this.props.activeTab == 'accepted' } />
+            active={ this.props.activeTab == 'accepted' }
+            onCardClick={ order => this.props.setCurrentOrder(order) } />
           <Column
             orders={ this.props.fulfilledOrders }
             title={ this.props.t('RESTAURANT_DASHBOARD_FULFILLED_ORDERS') }
             context="success"
-            active={ this.props.activeTab == 'fulfilled' } />
+            active={ this.props.activeTab == 'fulfilled' }
+            onCardClick={ order => this.props.setCurrentOrder(order) } />
           <Column
             orders={ this.props.cancelledOrders }
             title={ this.props.t('RESTAURANT_DASHBOARD_CANCELLED_REFUSED_ORDERS') }
             context="danger"
-            active={ this.props.activeTab == 'cancelled' } />
+            active={ this.props.activeTab == 'cancelled' }
+            onCardClick={ order => this.props.setCurrentOrder(order) } />
         </div>
         <nav className="FoodtechDashboard__TabNav">
           <Tab

@@ -3,7 +3,7 @@ import classNames from 'classnames'
 
 import OrderCard from './OrderCard'
 
-export default ({ title, orders, active, context }) => {
+export default ({ title, orders, active, context, onCardClick }) => {
 
   return (
     <div className={ classNames({
@@ -16,7 +16,7 @@ export default ({ title, orders, active, context }) => {
         </div>
         <div className="panel-body">
           { orders.map((order, key) => (
-            <OrderCard key={ key } order={ order } />
+            <OrderCard key={ key } order={ order } onClick={ onCardClick } />
           )) }
         </div>
       </div>
