@@ -136,7 +136,7 @@
         "RESTAURANT_DASHBOARD_CANCELLED_REFUSED_ORDERS": "Pedidos cancelados/rechazados",
         "RESTAURANT_DASHBOARD_DELAY_SETTING": "Retraso",
         "RESTAURANT_DASHBOARD_DELAY_MARK_NONE": "Ninguno",
-        "RESTAURANT_DASHBOARD_ORDER_TITLE": "Pedido {{number}} (#{{id}})",
+        "RESTAURANT_DASHBOARD_ORDER_TITLE": "Pedido {{number}}",
         "NOTIFICATIONS_EMPTY": "Ninguna notificación",
         "CROPPIE_CONFIRM": "Confirmar",
         "CROPPIE_CANCEL": "Cancelar",

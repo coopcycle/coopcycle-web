@@ -15,7 +15,7 @@
         "RESTAURANT_DASHBOARD_DROPOFF_AT": "Doręczenie o {{time}}",
         "RESTAURANT_DASHBOARD_PICKUP_AT": "Odbiór o {{time}}",
         "RESTAURANT_DASHBOARD_PREPARATION_AT": "Przygotowanie powinno zacząć się o {{time}}",
-        "RESTAURANT_DASHBOARD_ORDER_TITLE": "Zamówienie {{number}} (#{{id}})",
+        "RESTAURANT_DASHBOARD_ORDER_TITLE": "Zamówienie {{number}}",
         "RESTAURANT_DASHBOARD_DELAY_MARK_NONE": "Brak",
         "RESTAURANT_DASHBOARD_DELAY_SETTING": "Opóźnienie",
         "RESTAURANT_DASHBOARD_CANCELLED_REFUSED_ORDERS": "Anulowane/odrzucone zamówienia",

@@ -161,7 +161,7 @@
         "RESTAURANT_DASHBOARD_CANCELLED_REFUSED_ORDERS": "Commandes annulées / refusées",
         "RESTAURANT_DASHBOARD_DELAY_SETTING": "Retard",
         "RESTAURANT_DASHBOARD_DELAY_MARK_NONE": "Aucun",
-        "RESTAURANT_DASHBOARD_ORDER_TITLE": "Commande {{number}} (#{{id}})",
+        "RESTAURANT_DASHBOARD_ORDER_TITLE": "Commande {{number}}",
         "RESTAURANT_DASHBOARD_PREPARATION_AT": "Préparation à {{time}}",
         "RESTAURANT_DASHBOARD_PICKUP_AT": "Retrait à {{time}}",
         "RESTAURANT_DASHBOARD_DROPOFF_AT": "Dépôt à {{time}}",
