@@ -58,22 +58,36 @@
 
           <h4 class="bg-light p-3 m-0">{% trans %}cart.widget.title{% endtrans %}</h4>
           <div class="p-3 border-bottom">
+
+            {% if order.takeaway %}
+              <div class="alert alert-warning">
+                <i class="fa fa-warning mr-2"></i>
+                {{ 'form.checkout_address.takeaway.disclaimer'|trans }}
+                {% if order.restaurant.telephone %}
+                  {{ 'form.checkout_address.takeaway.contact'|trans({ '%telephone%': (order.restaurant.telephone|phone_number_format('NATIONAL')) }) }}
+                {% endif %}
+                <span class="text-danger">{{ 'form.checkout_address.takeaway.no_show_disclaimer'|trans }}</span>
+              </div>
+            {% endif %}
+
             {% if form.telephone is defined %}
               {{ form_row(form.telephone) }}
             {% endif %}
-            {{ form_row(form.shippingAddress.streetAddress) }}
-            {{ form_row(form.shippingAddress.floor) }}
 
-            {# FIXME Are these fields really needed? #}
-            {{ form_row(form.shippingAddress.postalCode) }}
-            {{ form_row(form.shippingAddress.addressLocality) }}
+            {% if form.shippingAddress is defined %}
+              {{ form_row(form.shippingAddress.streetAddress) }}
+              {{ form_row(form.shippingAddress.floor) }}
 
-            {{ form_row(form.shippingAddress.description) }}
+              {{ form_row(form.shippingAddress.description) }}
+            {% endif %}
+
           </div>
           <div class="p-3 border-bottom">
             {{ form_row(form.notes) }}
             <div class="text-center">
-              <button class="btn btn-block btn-lg btn-primary" type="submit">{% trans %}cart.widget.button{% endtrans %}</button>
+              <button class="btn btn-block btn-lg btn-primary" type="submit">
+                {% trans %}cart.widget.button{% endtrans %}
+              </button>
               {% if form.quote is defined %}
                 {{ form_widget(form.quote, { attr: { class: 'btn-block btn-lg btn-default' } }) }}
               {% endif %}

@@ -80,12 +80,11 @@ class CheckoutAddressType extends AbstractType
             ]);
 
         $builder->get('shippingAddress')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
             $form = $event->getForm();
 
-            // Disable streetAddress, postalCode & addressLocality
+            // Disable shippingAddress.streetAddress
             $this->disableChildForm($form, 'streetAddress');
-            $this->disableChildForm($form, 'postalCode');
-            $this->disableChildForm($form, 'addressLocality');
         });
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
@@ -104,6 +103,10 @@ class CheckoutAddressType extends AbstractType
                         new AssertPhoneNumber()
                     ],
                 ]);
+            }
+
+            if ($order->isTakeaway()) {
+                $form->remove('shippingAddress');
             }
 
             $restaurant = $order->getRestaurant();

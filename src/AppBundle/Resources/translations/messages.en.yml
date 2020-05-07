@@ -164,6 +164,7 @@ restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (e.g.
 restaurant.form.loopeat_enabled.label: Enable LoopEat deposit-refund system
 restaurant.form.featured.label: This restaurant is featured on homepage
 restaurant.form.giropay_enabled.label: Enable Giropay
+restaurant.form.takeaway_enabled.label: Enable take away
 restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries.
@@ -184,7 +185,7 @@ restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Amount is calculate
 restaurant.contract.customerAmount.label: Amount paid by the customer
 restaurant.contract.customerAmount.help: This amount will be displayed in the cart
   and will increase the total amount
-restaurant.contract.feeRate.label: Commission percentage
+restaurant.contract.feeRate.label: Platform fee for deliveries
 restaurant.contract.feeRate.help: This percentage will be retained by the platform
   on the total of the products
 restaurant.contract.restaurantPaysStripeFee.label: Responsible for the cost of the
@@ -209,6 +210,9 @@ restaurant.contract.calculation_info: You can charge the restaurant a different 
   from the amount paid by the customer. <br> For example, you can offer delivery to
   the customer while charging a fixed amount to the restaurant. <br> You can also
   configure a dynamic amount (e.g., based on distance).
+restaurant.contract.takeAwayFeeRate.label: Platform fee for take away
+restaurant.contract.takeAwayFeeRate.help: This percentage will be retained by the platform
+  on the total of the products
 restaurant.menus.noMenus: You have not created any menu for the moment.
 restaurant.menus.activate: Activate
 restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now
@@ -609,6 +613,10 @@ form.checkout_address.tip_amount.label: Tip
 form.checkout_address.tip_amount.help: Thank you ❤
 form.checkout_address.add_tip.label: Apply
 form.checkout_address.quote.label: Request a quote
+form.checkout_address.takeaway.disclaimer: You have opted for on-site collection of your order.
+  You are responsible for picking up your order on the day and time indicated.
+form.checkout_address.takeaway.contact: If you have a problem, contact the establishment at %telephone%.
+form.checkout_address.takeaway.no_show_disclaimer: If you do not show up, we will charge the entire order.
 form.checkout_payment.method.label: Please choose a payment option
 form.task_export.start.label: Start
 form.task_export.end.label: End
