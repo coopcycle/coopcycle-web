@@ -118,14 +118,14 @@ export function delayOrder(order) {
   }
 }
 
-export function cancelOrder(order) {
+export function cancelOrder(order, reason) {
 
   return (dispatch, getState) => {
     dispatch(fetchRequest())
 
     const url = window.Routing.generate(getState().cancelOrderRoute, { id: order.id })
 
-    $.post(url)
+    $.post(url, { reason })
       .then(res => dispatch(cancelOrderRequestSuccess(res)))
       .fail(e => dispatch(cancelOrderRequestFailure(e)))
   }

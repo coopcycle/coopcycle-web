@@ -201,12 +201,12 @@ trait OrderTrait
         }
     }
 
-    private function cancelOrderById($id, OrderManager $orderManager)
+    private function cancelOrderById($id, OrderManager $orderManager, $reason = null)
     {
         $order = $this->get('sylius.repository.order')->find($id);
         $this->accessControl($order->getRestaurant());
 
-        $orderManager->cancel($order);
+        $orderManager->cancel($order, $reason);
         $this->get('sylius.manager.order')->flush();
 
         return $order;
@@ -214,7 +214,9 @@ trait OrderTrait
 
     public function cancelOrderAction($id, Request $request, OrderManager $orderManager)
     {
-        $order = $this->cancelOrderById($id, $orderManager);
+        $reason = $request->request->get('reason', null);
+
+        $order = $this->cancelOrderById($id, $orderManager, $reason);
 
         if ($request->isXmlHttpRequest()) {
 

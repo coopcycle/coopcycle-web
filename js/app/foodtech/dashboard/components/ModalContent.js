@@ -21,12 +21,16 @@ class ModalContent extends React.Component {
 
   constructor(props) {
     super(props)
+    this.state = {
+      mode: 'default'
+    }
+    this.cancelOrder = this.cancelOrder.bind(this)
   }
 
-  cancelOrder() {
+  cancelOrder(reason) {
     const { order } = this.props
 
-    this.props.cancelOrder(order)
+    this.props.cancelOrder(order, reason)
   }
 
   delayOrder() {
@@ -48,9 +52,34 @@ class ModalContent extends React.Component {
   }
 
   renderButtons() {
+
     const { loading, order } = this.props
+    const { mode } = this.state
+
+    if (mode === 'cancel') {
+
+      return (
+        <div>
+          <div className="d-flex flex-row justify-content-between py-4 border-top">
+            <Button onClick={ () => this.cancelOrder('CUSTOMER') } loading={ loading } icon="user" danger>
+              { this.props.t('cancel.reason.CUSTOMER') }
+            </Button>
+            <Button onClick={ () => this.cancelOrder('SOLD_OUT') } loading={ loading } icon="times" danger>
+              { this.props.t('cancel.reason.SOLD_OUT') }
+            </Button>
+            <Button onClick={ () => this.cancelOrder('RUSH_HOUR') } loading={ loading } icon="fire" danger>
+              { this.props.t('cancel.reason.RUSH_HOUR') }
+            </Button>
+          </div>
+          <div className="text-center text-danger">
+            <span>{ this.props.t('ADMIN_DASHBOARD_ORDERS_CANCEL_REASON') }</span>
+          </div>
+        </div>
+      )
+    }
 
     if (order.state === 'new') {
+
       return (
         <div className="d-flex flex-row justify-content-between py-4 border-top">
           <Button onClick={ this.refuseOrder.bind(this) } loading={ loading } icon="ban" danger>
@@ -64,9 +93,10 @@ class ModalContent extends React.Component {
     }
 
     if (order.state === 'accepted') {
+
       return (
         <div className="d-flex flex-row justify-content-between py-4 border-top">
-          <Button onClick={ this.cancelOrder.bind(this) } loading={ loading } icon="ban" danger>
+          <Button onClick={ () => this.setState({ mode: 'cancel' }) } loading={ loading } icon="ban" danger>
             { this.props.t('ADMIN_DASHBOARD_ORDERS_CANCEL') }
           </Button>
           <Button onClick={ this.delayOrder.bind(this) } loading={ loading } icon="clock-o" primary>
@@ -217,7 +247,7 @@ function mapDispatchToProps(dispatch) {
     acceptOrder: order => dispatch(acceptOrder(order)),
     refuseOrder: order => dispatch(refuseOrder(order)),
     delayOrder: order => dispatch(delayOrder(order)),
-    cancelOrder: order => dispatch(cancelOrder(order)),
+    cancelOrder: (order, reason) => dispatch(cancelOrder(order, reason)),
   }
 }
 
