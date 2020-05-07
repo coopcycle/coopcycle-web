@@ -100,7 +100,11 @@ class UpdateState
 
             // Trigger an order:created event
             // The event will be handled by this very same class
-            $this->eventBus->handle(new Event\OrderCreated($event->getOrder()));
+
+            $createdEvent = new Event\OrderCreated($event->getOrder());
+
+            $this->handleStateChange($createdEvent);
+            $this->eventBus->handle($createdEvent);
 
         } elseif ($event instanceof Event\CheckoutFailed) {
 
@@ -125,7 +129,7 @@ class UpdateState
 
             $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
 
-            $stateMachine->apply($transition);
+            $stateMachine->apply($transition, true);
         }
     }
 }

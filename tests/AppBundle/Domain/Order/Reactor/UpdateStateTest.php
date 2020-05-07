@@ -67,6 +67,7 @@ class UpdateStateTest extends KernelTestCase
 
         call_user_func_array($this->updateState, [ new Event\CheckoutSucceeded($order, $payment) ]);
 
+        $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
         $this->assertEquals(PaymentInterface::STATE_AUTHORIZED, $payment->getState());
     }
 
@@ -88,6 +89,16 @@ class UpdateStateTest extends KernelTestCase
     {
         $order = new Order();
         $order->setState(OrderInterface::STATE_CART);
+
+        call_user_func_array($this->updateState, [ new Event\OrderCreated($order) ]);
+
+        $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
+    }
+
+    public function testOrderCreatedWithStateNew()
+    {
+        $order = new Order();
+        $order->setState(OrderInterface::STATE_NEW);
 
         call_user_func_array($this->updateState, [ new Event\OrderCreated($order) ]);
 
@@ -127,8 +138,6 @@ class UpdateStateTest extends KernelTestCase
 
     public function testFulfillOrderWithUncompletedTasks()
     {
-        $this->expectException(SMException::class);
-
         $restaurant = new Restaurant();
 
         $order = new Order();
@@ -145,6 +154,6 @@ class UpdateStateTest extends KernelTestCase
 
         call_user_func_array($this->updateState, [ new Event\OrderFulfilled($order) ]);
 
-        $this->assertEquals(OrderInterface::STATE_FULFILLED, $order->getState());
+        $this->assertEquals(OrderInterface::STATE_ACCEPTED, $order->getState());
     }
 }
