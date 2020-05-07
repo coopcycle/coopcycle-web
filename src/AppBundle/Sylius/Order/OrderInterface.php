@@ -26,6 +26,24 @@ interface OrderInterface extends
     public const STATE_REFUSED = 'refused';
 
     /**
+     * @var string
+     * The order was cancelled because customer contacted us to cancel.
+     */
+    public const CANCEL_REASON_CUSTOMER = 'CUSTOMER';
+
+    /**
+     * @var string
+     * The order was cancelled because the establishment is sold out.
+     */
+    public const CANCEL_REASON_SOLD_OUT = 'SOLD_OUT';
+
+    /**
+     * @var string
+     * The order was cancelled because the establishment is in "rush" mode and can't cope.
+     */
+    public const CANCEL_REASON_RUSH_HOUR = 'RUSH_HOUR';
+
+    /**
      * @return int
      */
     public function getTaxTotal(): int;
