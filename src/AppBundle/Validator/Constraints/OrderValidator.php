@@ -73,6 +73,11 @@ class OrderValidator extends ConstraintValidator
 
         $shippingAddress = $order->getShippingAddress();
 
+        if ($order->isTakeaway()) {
+
+            return;
+        }
+
         if (null === $shippingAddress || !$this->isAddressValid($shippingAddress)) {
             $this->context->buildViolation($constraint->addressNotSetMessage)
                 ->atPath('shippingAddress')
