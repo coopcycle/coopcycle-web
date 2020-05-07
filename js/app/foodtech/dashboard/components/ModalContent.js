@@ -15,8 +15,13 @@ import OrderItems from './OrderItems'
 import OrderTotal from './OrderTotal'
 import OrderNumber from './OrderNumber'
 import Timeline from './Timeline'
+import Button from './Button'
 
 class ModalContent extends React.Component {
+
+  constructor(props) {
+    super(props)
+  }
 
   cancelOrder() {
     const { order } = this.props
@@ -45,66 +50,28 @@ class ModalContent extends React.Component {
   renderButtons() {
     const { loading, order } = this.props
 
-    let btnAttrs = {}
-    if (loading) {
-      btnAttrs = {
-        ...btnAttrs,
-        disabled: true
-      }
-    }
-
     if (order.state === 'new') {
       return (
-        <div>
-          <hr />
-          <div className="row">
-            <div className="col-sm-4">
-              <button onClick={ this.refuseOrder.bind(this) } className="btn btn-block btn-danger" { ...btnAttrs }>
-                { loading && (
-                  <span>
-                    <i className="fa fa-spinner fa-spin"></i>  </span>
-                )}
-                <i className="fa fa-ban" aria-hidden="true"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_REFUSE') }
-              </button>
-            </div>
-            <div className="col-sm-8">
-              <button onClick={ this.acceptOrder.bind(this) } className="btn btn-block btn-primary" { ...btnAttrs }>
-                { loading && (
-                  <span>
-                    <i className="fa fa-spinner fa-spin"></i>  </span>
-                )}
-                <i className="fa fa-check" aria-hidden="true"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_ACCEPT') }
-              </button>
-            </div>
-          </div>
+        <div className="d-flex flex-row justify-content-between py-4 border-top">
+          <Button onClick={ this.refuseOrder.bind(this) } loading={ loading } icon="ban" danger>
+            { this.props.t('ADMIN_DASHBOARD_ORDERS_REFUSE') }
+          </Button>
+          <Button onClick={ this.acceptOrder.bind(this) } loading={ loading } icon="check" primary>
+            { this.props.t('ADMIN_DASHBOARD_ORDERS_ACCEPT') }
+          </Button>
         </div>
       )
     }
 
     if (order.state === 'accepted') {
       return (
-        <div>
-          <hr />
-          <div className="row">
-            <div className="col-sm-4">
-              <button onClick={ this.cancelOrder.bind(this) } className="btn btn-block btn-danger" { ...btnAttrs }>
-                { loading && (
-                  <span>
-                    <i className="fa fa-spinner fa-spin"></i>  </span>
-                )}
-                <i className="fa fa-ban" aria-hidden="true"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_CANCEL') }
-              </button>
-            </div>
-            <div className="col-sm-8">
-              <button onClick={ this.delayOrder.bind(this) } className="btn btn-block btn-primary" { ...btnAttrs }>
-                { loading && (
-                  <span>
-                    <i className="fa fa-spinner fa-spin"></i>  </span>
-                )}
-                <i className="fa fa-clock-o" aria-hidden="true"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_DELAY') }
-              </button>
-            </div>
-          </div>
+        <div className="d-flex flex-row justify-content-between py-4 border-top">
+          <Button onClick={ this.cancelOrder.bind(this) } loading={ loading } icon="ban" danger>
+            { this.props.t('ADMIN_DASHBOARD_ORDERS_CANCEL') }
+          </Button>
+          <Button onClick={ this.delayOrder.bind(this) } loading={ loading } icon="clock-o" primary>
+            { this.props.t('ADMIN_DASHBOARD_ORDERS_DELAY') }
+          </Button>
         </div>
       )
     }
