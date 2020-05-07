@@ -676,7 +676,8 @@ Feature: Orders
         "shippingTimeRange":["2017-09-02T11:55:00+02:00","2017-09-02T12:05:00+02:00"],
         "preparationExpectedAt":null,
         "pickupExpectedAt":null,
-        "reusablePackagingEnabled": false
+        "reusablePackagingEnabled": false,
+        "takeaway":false
       }
       """
 

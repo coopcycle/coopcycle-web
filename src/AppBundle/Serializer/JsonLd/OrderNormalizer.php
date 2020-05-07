@@ -158,7 +158,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                             $restaurant->getAddress()->getGeo()->getLatitude(),
                             $restaurant->getAddress()->getGeo()->getLongitude(),
                         ]
-                    ]
+                    ],
+                    'takeawayEnabled' => $restaurant->isTakeawayEnabled(),
                 ];
             }
 
@@ -170,6 +171,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                     'username' => $customer->getUsername()
                 ];
             }
+
+            $data['takeaway'] = $object->isTakeaway();
         }
 
         return $data;
