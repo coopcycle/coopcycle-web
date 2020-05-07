@@ -1,5 +1,8 @@
-import moment from 'moment'
 import _ from 'lodash'
+import Moment from 'moment'
+import { extendMoment } from 'moment-range'
+
+const moment = extendMoment(Moment)
 
 import {
   SET_CURRENT_ORDER,

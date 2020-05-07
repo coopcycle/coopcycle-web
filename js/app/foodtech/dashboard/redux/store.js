@@ -5,6 +5,9 @@ import { socketIO, title, notification } from './middlewares'
 
 const middlewares = [ thunk, socketIO, title, notification ]
 
+const composeEnhancers = (typeof window !== 'undefined' &&
+  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
+
 export const createStoreFromPreloadedState = preloadedState => {
   return createStore(
     reducers,
@@ -12,7 +15,7 @@ export const createStoreFromPreloadedState = preloadedState => {
       ...initialState,
       ...preloadedState,
     },
-    compose(
+    composeEnhancers(
       applyMiddleware(...middlewares)
     )
   )
