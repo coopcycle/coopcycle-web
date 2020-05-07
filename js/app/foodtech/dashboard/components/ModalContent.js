@@ -14,6 +14,7 @@ import {
 
 import OrderItems from './OrderItems'
 import OrderTotal from './OrderTotal'
+import OrderNumber from './OrderNumber'
 import Timeline from './Timeline'
 
 class ModalContent extends React.Component {
@@ -195,7 +196,7 @@ class ModalContent extends React.Component {
     return (
       <div className="panel panel-default">
         <div className="panel-heading">
-          <span>{ this.props.t('RESTAURANT_DASHBOARD_ORDER_TITLE', { number: order.number, id: order.id }) }</span>
+          <OrderNumber order={ order } />
           <a className="pull-right" onClick={ () => this.props.setCurrentOrder(null) }>
             <i className="fa fa-close"></i>
           </a>

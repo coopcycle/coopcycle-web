@@ -1,20 +1,15 @@
 import React from 'react'
 import { withTranslation } from 'react-i18next'
 
+import OrderNumber from './OrderNumber'
 import ShippingTimeRange from '../../../components/ShippingTimeRange'
 
-export default withTranslation()(({ order, onClick, t }) => {
+export default withTranslation()(({ order, onClick }) => {
 
   return (
     <div className="panel panel-default FoodtechDashboard__OrderCard" onClick={ () => onClick(order) }>
       <div className="panel-heading">
-        <span className="mr-2">
-          { !order.takeaway && (<i className="fa fa-bicycle"></i>) }
-          { order.takeaway && (<i className="fa fa-cube"></i>) }
-        </span>
-        <span className="order-number">
-          { t('RESTAURANT_DASHBOARD_ORDER_TITLE', { number: order.number }) }
-        </span>
+        <OrderNumber order={ order } />
         <span className="pull-right">
           <i className="fa fa-clock-o mr-2"></i>
           <small>
