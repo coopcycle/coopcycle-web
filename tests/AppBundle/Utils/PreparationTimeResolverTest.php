@@ -38,25 +38,36 @@ class PreparationTimeResolverTest extends TestCase
     {
         return [
             [
-                $dropoff  = new \DateTime('2020-04-10 12:30:00'),
+                $takeaway = false,
                 $pickup   = new \DateTime('2020-04-10 12:15:00'),
                 '20 minutes',
                 $expected = new \DateTime('2020-04-10 11:55:00'),
-                null
+                $dropoff  = new \DateTime('2020-04-10 12:30:00'),
+                $delay    = null,
             ],
             [
-                $dropoff  = new \DateTime('2020-04-10 12:30:00'),
+                $takeaway = false,
                 $pickup   = new \DateTime('2020-04-10 12:15:00'),
                 '20 minutes',
                 $expected = new \DateTime('2020-04-10 11:55:00'),
-                '0'
+                $dropoff  = new \DateTime('2020-04-10 12:30:00'),
+                $delay    = '0',
             ],
             [
-                $dropoff  = new \DateTime('2020-04-10 12:30:00'),
+                $takeaway = false,
                 $pickup   = new \DateTime('2020-04-10 12:15:00'),
                 '20 minutes',
                 $expected = new \DateTime('2020-04-10 11:45:00'),
-                '10'
+                $dropoff  = new \DateTime('2020-04-10 12:30:00'),
+                $delay    = '10',
+            ],
+            [
+                $takeaway = true,
+                $pickup   = new \DateTime('2020-04-10 12:15:00'),
+                '30 minutes',
+                $expected = new \DateTime('2020-04-10 11:45:00'),
+                $dropoff  = new \DateTime('2020-04-10 12:15:00'),
+                $delay    = null,
             ],
         ];
     }
@@ -65,10 +76,11 @@ class PreparationTimeResolverTest extends TestCase
      * @dataProvider resolveProvider
      */
     public function testResolve(
-        \DateTime $dropoff,
+        bool $takeaway,
         \DateTime $pickup,
         $preparationTime,
         \DateTime $expected,
+        \DateTime $dropoff = null,
         $preparationDelay = null)
     {
         $this->redis
@@ -79,6 +91,9 @@ class PreparationTimeResolverTest extends TestCase
         $order
             ->getRestaurant()
             ->willReturn($this->restaurant->reveal());
+        $order
+            ->isTakeaway()
+            ->willReturn($takeaway);
 
         $this->preparationTimeCalculator
             ->calculate($order->reveal())

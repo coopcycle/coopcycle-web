@@ -30,6 +30,9 @@ class OrderTimelineCalculatorTest extends TestCase
     {
         $order = $this->prophesize(OrderInterface::class);
         $order
+            ->isTakeaway()
+            ->willReturn(false);
+        $order
             ->getShippingTimeRange()
             ->willReturn(DateUtils::dateTimeToTsRange($shippedAt, 5));
 
@@ -83,6 +86,39 @@ class OrderTimelineCalculatorTest extends TestCase
         $timeline = $calculator->calculate($order);
 
         $this->assertEquals($dropoff, $timeline->getDropoffExpectedAt());
+        $this->assertEquals($pickup, $timeline->getPickupExpectedAt());
+        $this->assertEquals($preparation, $timeline->getPreparationExpectedAt());
+    }
+
+    public function testCalculateForTakeaway()
+    {
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->isTakeaway()
+            ->willReturn(true);
+        $order
+            ->getShippingTimeRange()
+            ->willReturn(DateUtils::dateTimeToTsRange(new \DateTime('2018-08-25 13:30:00'), 5));
+
+        $pickup = new \DateTime('2018-08-25 13:30:00');
+        $preparation = new \DateTime('2018-08-25 13:10:00');
+
+        $this->preparationTimeResolver
+            ->resolve($order->reveal(), $pickup)
+            ->willReturn($preparation);
+
+        $this->pickupTimeResolver
+            ->resolve($order->reveal(), $pickup)
+            ->willReturn($pickup);
+
+        $calculator = new OrderTimelineCalculator(
+            $this->preparationTimeResolver->reveal(),
+            $this->pickupTimeResolver->reveal()
+        );
+
+        $timeline = $calculator->calculate($order->reveal());
+
+        $this->assertNull($timeline->getDropoffExpectedAt());
         $this->assertEquals($pickup, $timeline->getPickupExpectedAt());
         $this->assertEquals($preparation, $timeline->getPreparationExpectedAt());
     }

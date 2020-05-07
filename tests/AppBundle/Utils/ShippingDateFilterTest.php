@@ -34,6 +34,7 @@ class ShippingDateFilterTest extends TestCase
                 $dropoff = new \DateTime('2018-10-14 12:30:00'),
                 $preparation = new \DateTime('2018-10-14 12:05:00'),
                 $isOpen = false,
+                $takeaway = false,
                 false,
             ],
             [
@@ -42,6 +43,7 @@ class ShippingDateFilterTest extends TestCase
                 $dropoff = new \DateTime('2018-10-12 19:00:00'),
                 $preparation = new \DateTime('2018-10-12 18:30:00'),
                 $isOpen = true,
+                $takeaway = false,
                 false,
             ],
             [
@@ -50,6 +52,16 @@ class ShippingDateFilterTest extends TestCase
                 $dropoff = new \DateTime('2018-10-12 19:45:00'),
                 $preparation = new \DateTime('2018-10-12 19:30:00'),
                 $isOpen = true,
+                $takeaway = false,
+                true,
+            ],
+            [
+                // Takeaway
+                $now = new \DateTime('2018-10-12 19:15:00'),
+                $dropoff = new \DateTime('2018-10-12 19:45:00'),
+                $preparation = new \DateTime('2018-10-12 19:30:00'),
+                $isOpen = true,
+                $takeaway = true,
                 true,
             ],
         ];
@@ -63,6 +75,7 @@ class ShippingDateFilterTest extends TestCase
         \DateTime $dropoff,
         \DateTime $preparation,
         bool $isOpen,
+        bool $takeaway,
         $expected)
     {
         $this->restaurant
@@ -73,6 +86,9 @@ class ShippingDateFilterTest extends TestCase
         $order
             ->getRestaurant()
             ->willReturn($this->restaurant->reveal());
+        $order
+            ->isTakeaway()
+            ->willReturn($takeaway);
 
         $this->preparationTimeResolver
             ->resolve($order->reveal(), $dropoff)

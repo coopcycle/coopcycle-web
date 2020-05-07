@@ -32,7 +32,10 @@ class OrderTimelineCalculator
 
         $dropoff = Carbon::instance($shippingTimeRange->getLower())
             ->average($shippingTimeRange->getUpper());
-        $timeline->setDropoffExpectedAt($dropoff);
+
+        if (!$order->isTakeaway()) {
+            $timeline->setDropoffExpectedAt($dropoff);
+        }
 
         $pickup = $this->pickupTimeResolver->resolve($order, $dropoff);
         $timeline->setPickupExpectedAt($pickup);

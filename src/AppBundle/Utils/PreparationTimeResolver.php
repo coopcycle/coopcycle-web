@@ -24,11 +24,11 @@ class PreparationTimeResolver
 
     /**
      * @param OrderInterface $order
-     * @param \DateTime $dropoff
+     * @param \DateTime $pickupOrDropoff
      *
      * @return \DateTime
      */
-    public function resolve(OrderInterface $order, \DateTime $dropoff): \DateTime
+    public function resolve(OrderInterface $order, \DateTime $pickupOrDropoff): \DateTime
     {
         $preparationTime = $this->preparationTimeCalculator
             ->createForRestaurant($order->getRestaurant())
@@ -39,7 +39,7 @@ class PreparationTimeResolver
             $extraTime = sprintf('%d minutes', intval($preparationDelay));
         }
 
-        $pickup = $this->pickupTimeResolver->resolve($order, $dropoff);
+        $pickup = $this->pickupTimeResolver->resolve($order, $pickupOrDropoff);
 
         $preparation = clone $pickup;
         $preparation->sub(date_interval_create_from_date_string($preparationTime));

@@ -15,13 +15,18 @@ class PickupTimeResolver
 
     /**
      * @param OrderInterface $order
-     * @param \DateTime $dropoff
+     * @param \DateTime $pickupOrDropoff
      *
      * @return \DateTime
      */
-    public function resolve(OrderInterface $order, \DateTime $dropoff): \DateTime
+    public function resolve(OrderInterface $order, \DateTime $pickupOrDropoff): \DateTime
     {
-        $pickup = clone $dropoff;
+        if ($order->isTakeaway()) {
+
+            return $pickupOrDropoff;
+        }
+
+        $pickup = clone $pickupOrDropoff;
         $pickup->sub(
             date_interval_create_from_date_string(
                 $this->shippingTimeCalculator->calculate($order)
