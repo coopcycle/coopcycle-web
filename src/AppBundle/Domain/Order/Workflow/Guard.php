@@ -12,7 +12,12 @@ class Guard
 
             $delivery = $order->getDelivery();
 
-            if ($delivery->getPickup()->isDone() && $delivery->getDropoff()->isDone()) {
+            if (null === $delivery) {
+
+                return false;
+            }
+
+            if ($delivery->getDropoff()->isDone()) {
 
                 return true;
             }
