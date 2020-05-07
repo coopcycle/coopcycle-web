@@ -14,6 +14,10 @@ class OrderCard extends React.Component {
     return (
       <div className="panel panel-default FoodtechDashboard__OrderCard" onClick={ () => this.props.setCurrentOrder(order) }>
         <div className="panel-heading">
+          <span className="mr-2">
+            { !order.takeaway && (<i className="fa fa-bicycle"></i>) }
+            { order.takeaway && (<i className="fa fa-cube"></i>) }
+          </span>
           <span className="order-number">
             { this.props.t('RESTAURANT_DASHBOARD_ORDER_TITLE', { number: order.number }) }
           </span>
