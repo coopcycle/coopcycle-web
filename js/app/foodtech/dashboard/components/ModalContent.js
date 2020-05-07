@@ -228,7 +228,7 @@ class ModalContent extends React.Component {
           <OrderItems order={ order } />
           <OrderTotal order={ order } />
           { order.notes && this.renderNotes() }
-          <h5>Timeline</h5>
+          <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_TIMELINE') }</h5>
           <Timeline order={ order } />
           { this.renderButtons() }
         </div>
