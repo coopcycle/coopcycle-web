@@ -11,3 +11,6 @@
 *.ttf binary
 *.ods binary
 *.wav binary
+*.eot binary
+*.woff binary
+*.woff2 binary
