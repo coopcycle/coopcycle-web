@@ -20,7 +20,7 @@ monolog:
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
             max_files: 3
-            channels: ["!event", "!api", "!stripe"]
+            channels: ["!event", "!api", "!stripe", "!loopeat"]
         console:
             type:   console
             channels: ["!event", "!doctrine"]
@@ -51,6 +51,12 @@ monolog:
             level: info
             max_files: 3
             channels: [stripe]
+        loopeat:
+            type: rotating_file
+            path: "%kernel.logs_dir%/loopeat.%kernel.environment%.log"
+            level: info
+            max_files: 3
+            channels: [loopeat]
         mailer:
             level:    debug
             type:     stream

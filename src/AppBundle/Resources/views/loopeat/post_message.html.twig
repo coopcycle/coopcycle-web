@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+  <head>
+  </head>
+  <body>
+    <script>
+    (function() {
+      if (window.parent) {
+        var data = {
+          loopeat: {
+            success: {{ loopeat_success|json_encode() }}
+          }
+        };
+        window.parent.postMessage(JSON.stringify(data), '*');
+      }
+    })();
+    </script>
+  </body>
+</html>

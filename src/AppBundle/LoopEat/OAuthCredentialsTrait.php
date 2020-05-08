@@ -52,4 +52,10 @@ trait OAuthCredentialsTrait
     {
         return null !== $this->loopeatAccessToken && null !== $this->loopeatRefreshToken;
     }
+
+    public function clearLoopEatCredentials()
+    {
+        $this->loopeatAccessToken = null;
+        $this->loopeatRefreshToken = null;
+    }
 }

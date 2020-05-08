@@ -210,6 +210,7 @@ trait RestaurantTrait
                 'client_id' => $this->getParameter('loopeat_client_id'),
                 'response_type' => 'code',
                 'state' => $state,
+                'restaurant' => 'true',
                 // FIXME redirect_uri doesn't work yet
                 // 'redirect_uri' => $redirectUri,
             ]);

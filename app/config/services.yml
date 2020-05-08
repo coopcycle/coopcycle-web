@@ -100,7 +100,8 @@ services:
       - { name: monolog.logger, channel: stripe }
 
   AppBundle\LoopEat\Client:
-    arguments: [ { base_uri: "%loopeat_base_url%", timeout: 5.0 } ]
+    arguments:
+      $config: { base_uri: "%loopeat_base_url%", timeout: 5.0 }
     calls:
       - method: setLoopEatClientId
         arguments:
@@ -110,6 +111,7 @@ services:
             - '%loopeat_client_secret%'
     tags:
       - { name: csa_guzzle.client }
+      - { name: monolog.logger, channel: loopeat }
 
   AppBundle\Controller\RestaurantController:
     arguments:
