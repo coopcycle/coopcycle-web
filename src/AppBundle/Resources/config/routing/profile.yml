@@ -65,6 +65,7 @@ profile_restaurant_dashboard:
             order_refuse: profile_order_refuse
             order_cancel: profile_order_cancel
             order_delay: profile_order_delay
+            order_fulfill: profile_order_fulfill
             user_details: user
     methods: [ GET ]
 
@@ -110,6 +111,12 @@ profile_order_cancel:
     path: /profile/orders/{id}/cancel
     defaults:
         _controller: AppBundle\Controller\ProfileController::cancelOrderAction
+    methods: [ POST ]
+
+profile_order_fulfill:
+    path: /profile/orders/{id}/fulfill
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::fulfillOrderAction
     methods: [ POST ]
 
 profile_restaurant_menu_taxons:

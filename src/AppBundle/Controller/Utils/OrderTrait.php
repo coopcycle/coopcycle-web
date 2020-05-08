@@ -223,4 +223,24 @@ trait OrderTrait
             return $this->orderAsJson($order);
         }
     }
+
+    public function fulfillOrderAction($id, Request $request, OrderManager $orderManager)
+    {
+        $order = $this->get('sylius.repository.order')->find($id);
+        $this->accessControl($order->getRestaurant());
+
+        try {
+
+            $orderManager->fulfill($order);
+            $this->get('sylius.manager.order')->flush();
+
+        } catch (\Exception $e) {
+            // TODO Add flash message
+        }
+
+        if ($request->isXmlHttpRequest()) {
+
+            return $this->orderAsJson($order);
+        }
+    }
 }

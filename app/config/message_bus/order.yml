@@ -97,6 +97,14 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\Refund
 
+  coopcycle.domain.order.handler.fulfill:
+    class: AppBundle\Domain\Order\Handler\FulfillHandler
+    arguments:
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Order\Command\Fulfill
+
   #
   # Event Reactors
   #

@@ -3,7 +3,6 @@
 namespace AppBundle\Service;
 
 use AppBundle\Domain\Order\Command as OrderCommand;
-use AppBundle\Sylius\Order\OrderTransitions;
 use AppBundle\Sylius\Order\OrderInterface;
 use SimpleBus\SymfonyBridge\Bus\CommandBus;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
@@ -50,8 +49,7 @@ class OrderManager
 
     public function fulfill(OrderInterface $order)
     {
-        $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
-        $stateMachine->apply(OrderTransitions::TRANSITION_FULFILL);
+        $this->commandBus->handle(new OrderCommand\Fulfill($order));
     }
 
     public function cancel(OrderInterface $order, $reason = null)
