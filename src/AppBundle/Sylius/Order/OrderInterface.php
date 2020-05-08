@@ -44,6 +44,12 @@ interface OrderInterface extends
     public const CANCEL_REASON_RUSH_HOUR = 'RUSH_HOUR';
 
     /**
+     * @var string
+     * The order was cancelled because the customer didn't show up.
+     */
+    public const CANCEL_REASON_NO_SHOW = 'NO_SHOW';
+
+    /**
      * @return int
      */
     public function getTaxTotal(): int;

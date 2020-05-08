@@ -2,9 +2,11 @@
 
 namespace AppBundle\Domain\Order\Reactor;
 
-use AppBundle\Domain\Order\Event\OrderFulfilled;
+use AppBundle\Domain\Order\Event;
 use AppBundle\Service\StripeManager;
+use AppBundle\Sylius\Order\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Webmozart\Assert\Assert;
 
 class CapturePayment
 {
@@ -15,8 +17,19 @@ class CapturePayment
         $this->stripeManager = $stripeManager;
     }
 
-    public function __invoke(OrderFulfilled $event)
+    public function __invoke(Event $event)
     {
+        Assert::isInstanceOfAny($event, [
+            Event\OrderFulfilled::class,
+            Event\OrderCancelled::class,
+        ]);
+
+        if ($event instanceof Event\OrderCancelled) {
+            if ($event->getReason() !== OrderInterface::CANCEL_REASON_NO_SHOW) {
+                return;
+            }
+        }
+
         $order = $event->getOrder();
 
         $payment = $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED);

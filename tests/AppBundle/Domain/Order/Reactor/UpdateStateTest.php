@@ -156,4 +156,19 @@ class UpdateStateTest extends KernelTestCase
 
         $this->assertEquals(OrderInterface::STATE_ACCEPTED, $order->getState());
     }
+
+    public function testOrderCancelledWithReasonNoShow()
+    {
+        $order = new Order();
+        $order->setState(OrderInterface::STATE_ACCEPTED);
+
+        $payment = new Payment();
+        $payment->setState(PaymentInterface::STATE_AUTHORIZED);
+        $order->addPayment($payment);
+
+        call_user_func_array($this->updateState, [ new Event\OrderCancelled($order, OrderInterface::CANCEL_REASON_NO_SHOW) ]);
+
+        $this->assertEquals(OrderInterface::STATE_CANCELLED, $order->getState());
+        $this->assertNotEquals(PaymentInterface::STATE_CANCELLED, $payment->getState());
+    }
 }

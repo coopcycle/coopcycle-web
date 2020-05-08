@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Domain\Order\Reactor;
 
+use AppBundle\Domain\Order\Event\OrderCancelled;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Order\Reactor\CapturePayment;
 use AppBundle\Entity\Sylius\Payment;
@@ -72,7 +73,7 @@ class CapturePaymentTest extends TestCase
         call_user_func_array($this->capturePayment, [ new OrderFulfilled($order->reveal()) ]);
     }
 
-    public function testCapturesPayment()
+    public function testCapturesPaymentForFulfilledOrders()
     {
         $restaurant = new Restaurant();
 
@@ -106,5 +107,77 @@ class CapturePaymentTest extends TestCase
             ->shouldBeCalled();
 
         call_user_func_array($this->capturePayment, [ new OrderFulfilled($order->reveal()) ]);
+    }
+
+    public function testDoesNothingForCancelledOrders()
+    {
+        $restaurant = new Restaurant();
+
+        $payment = new Payment();
+        $payment->setAmount(3350);
+        $payment->setCurrencyCode('EUR');
+
+        $order = $this->prophesize(OrderInterface::class);
+
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->isEmpty()
+            ->willReturn(false);
+        $order
+            ->getItemsTotal()
+            ->willReturn(3000);
+        $order
+            ->getTotal()
+            ->willReturn(3350);
+        $order
+            ->getLastPayment(PaymentInterface::STATE_AUTHORIZED)
+            ->willReturn($payment);
+        $order
+            ->getLastPayment(PaymentInterface::STATE_COMPLETED)
+            ->willReturn(null);
+
+        $this->stripeManager
+            ->capture($payment)
+            ->shouldNotBeCalled();
+
+        call_user_func_array($this->capturePayment, [ new OrderCancelled($order->reveal()) ]);
+    }
+
+    public function testCapturesPaymentForCancelledOrdersWithNoShowReason()
+    {
+        $restaurant = new Restaurant();
+
+        $payment = new Payment();
+        $payment->setAmount(3350);
+        $payment->setCurrencyCode('EUR');
+
+        $order = $this->prophesize(OrderInterface::class);
+
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->isEmpty()
+            ->willReturn(false);
+        $order
+            ->getItemsTotal()
+            ->willReturn(3000);
+        $order
+            ->getTotal()
+            ->willReturn(3350);
+        $order
+            ->getLastPayment(PaymentInterface::STATE_AUTHORIZED)
+            ->willReturn($payment);
+        $order
+            ->getLastPayment(PaymentInterface::STATE_COMPLETED)
+            ->willReturn(null);
+
+        $this->stripeManager
+            ->capture($payment)
+            ->shouldBeCalled();
+
+        call_user_func_array($this->capturePayment, [ new OrderCancelled($order->reveal(), OrderInterface::CANCEL_REASON_NO_SHOW) ]);
     }
 }
