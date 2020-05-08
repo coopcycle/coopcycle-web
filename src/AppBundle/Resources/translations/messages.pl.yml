@@ -196,7 +196,7 @@ restaurant.disabledWarning: "Ta restauracja jest nieaktywna, więc odwiedzający
   \ mogą zobaczyć jej strony. Jeśli chcesz, możesz <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
   >aktywować ją w panelu administracyjnym</a>.\n"
 restaurant.closedWarningWithDelay: Zamów teraz na później. Zamów minimum %delay% wcześniej.
-restaurant.temporaryClosedWarning: Ta restauracja jest zamknięta od <strong>%date%</strong>.
+restaurant.temporaryClosedWarning: Ta restauracja jest zamknięta do <strong>%date%</strong>.
   Możesz jednak złożyć zamówienie na później!
 restaurant.quotes_disclaimer.authenticated: Ta restauracja akceptuje również zamówienia
   do wyceny. By stworzyć wycenę, musisz być klientem referencyjnym. <a href="%contact_us%">Skontaktuj
@@ -433,8 +433,9 @@ form.payment.refund_amount.help: Kwota, którą określiłeś, zostanie zwrócon
 form.payment.refund_application_fee.label: Opłata za zwrot
 form.address.addressLocality.label: Miasto
 form.address.postalCode.label: Kod pocztowy
-form.address.floor.label: Piętro
-form.address.description.label: Instrukcje
+form.address.floor.label: Nr lokalu
+form.address.description.label: 'Informacje dotyczące adresu: np. piętro, nazwa firmy,
+  nr pokoju'
 form.address.description.placeholder: Drugie drzwi po lewej…
 form.address.streetAddress.label: Adres
 form.address.streetAddress.error.noLatLng: Proszę wybierz adres w menu rozwijanym
@@ -526,7 +527,8 @@ form.product_option.additional.help: Klient może wybrać kilka cech, bez koniec
 form.product_option_value.value.label: Cecha
 form.product_option_value.price.label: Cena
 form.checkout_address.notes.label: Zostaw komentarz dla restauracji
-form.checkout_address.notes.placeholder: "Na przykład: bez sosu, bez pomidorów…\n"
+form.checkout_address.notes.placeholder: "Na przykład: bez sosu, bez pomidorów, bez\
+  \ sztućców…\n"
 form.checkout_address.notes.help: Twoja notatka zostanie przekazana restauracji
 form.checkout_address.promotion_coupon.label: Kod kuponu
 form.api_app.name.label: Nazwa aplikacji
@@ -808,8 +810,8 @@ sylius.ui.code: Kod
 resend_confirmation_email.disclaimer: Jeśli nie otrzymałeś e-maila z potwierdzeniem,
   kliknij przycisk.
 time_slot.human_readable: '%day% pomiędzy %start% i %end%'
-time_range: 'pomiędzy %start% i %end%'
-time_range.same_day: "[Dziś] [%range%]"
+time_range: pomiędzy %start% i %end%
+time_range.same_day: '[Dziś] [%range%]'
 time_range.next_day: '[Jutro] [%range%]'
 time_range.last_day: '[Wczoraj] [%range%]'
 time_range.same_else: '[Dnia] LL [%range%]'
