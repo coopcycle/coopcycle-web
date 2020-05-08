@@ -19,8 +19,18 @@ export default withTranslation()(({ order, t }) => {
         <div>
           <strong>{ t('RESTAURANT_DASHBOARD_PICKUP_AT', { time: moment(order.pickupExpectedAt).format('LT') }) }</strong>
         </div>
-        <span>{ order.restaurant.address.streetAddress }</span>
+        <ul className="list-unstyled">
+          <li>
+            <span>{ order.restaurant.address.streetAddress }</span>
+          </li>
+          { order.takeaway && (
+          <li>
+            <span className="text-warning">{ t('ADMIN_DASHBOARD_ORDERS_TAKEAWAY_ALERT') }</span>
+          </li>
+          )}
+        </ul>
       </Timeline.Item>
+      { !order.takeaway && (
       <Timeline.Item dot={<i className="fa fa-arrow-down"></i>}>
         <div>
           <strong>{ t('RESTAURANT_DASHBOARD_DROPOFF_AT', { time: moment(order.shippedAt).format('LT') }) }</strong>
@@ -37,6 +47,7 @@ export default withTranslation()(({ order, t }) => {
           </div>
         ) }
       </Timeline.Item>
+      )}
     </Timeline>
   )
 })
