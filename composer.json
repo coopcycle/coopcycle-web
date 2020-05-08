@@ -189,6 +189,9 @@
         "shared-package": {
             "vendor-dir": "../vendor-shared",
             "package-list": [
+                "aws/aws-sdk-php",
+                "giggsey/libphonenumber-for-php",
+                "sylius/*",
                 "symfony/symfony"
             ]
         }
