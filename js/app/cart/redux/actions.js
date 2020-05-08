@@ -18,6 +18,9 @@ export const SET_DATE_MODAL_OPEN = 'SET_DATE_MODAL_OPEN'
 export const CLOSE_ADDRESS_MODAL = 'CLOSE_ADDRESS_MODAL'
 export const GEOCODING_FAILURE = 'GEOCODING_FAILURE'
 
+export const ENABLE_TAKEAWAY = 'ENABLE_TAKEAWAY'
+export const DISABLE_TAKEAWAY = 'DISABLE_TAKEAWAY'
+
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const fetchSuccess = createAction(FETCH_SUCCESS)
 export const fetchFailure = createAction(FETCH_FAILURE)
@@ -339,6 +342,51 @@ export function clearDate() {
       .then(res => handleAjaxResponse(res, dispatch))
       .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
 
+  }
+}
+
+const _enableTakeaway = createAction(ENABLE_TAKEAWAY)
+const _disableTakeaway = createAction(DISABLE_TAKEAWAY)
+
+export function enableTakeaway() {
+
+  return (dispatch) => {
+
+    const $form = $('form[name="cart"]')
+    const $takeaway = $form.find('input[name="cart[takeaway]"]')
+
+    if ($takeaway.length === 1) {
+
+      $takeaway.prop('checked', true)
+
+      dispatch(_enableTakeaway())
+      dispatch(fetchRequest())
+
+      postForm()
+        .then(res => handleAjaxResponse(res, dispatch))
+        .fail(e   => handleAjaxResponse(e.responseJSON, dispatch))
+    }
+  }
+}
+
+export function disableTakeaway() {
+
+  return (dispatch) => {
+
+    const $form = $('form[name="cart"]')
+    const $takeaway = $form.find('input[name="cart[takeaway]"]')
+
+    if ($takeaway.length === 1) {
+
+      $takeaway.prop('checked', false)
+
+      dispatch(_disableTakeaway())
+      dispatch(fetchRequest())
+
+      postForm()
+        .then(res => handleAjaxResponse(res, dispatch))
+        .fail(e   => handleAjaxResponse(e.responseJSON, dispatch))
+    }
   }
 }
 

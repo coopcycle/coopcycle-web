@@ -3,3 +3,9 @@
 {% block _cart_shippingAddress_streetAddress_row %}
   {{ block('hidden_widget') }}
 {% endblock %}
+
+{% block _cart_takeaway_row %}
+  <div class="d-none">
+    {{ form_widget(form) }}
+  </div>
+{% endblock %}

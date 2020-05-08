@@ -154,6 +154,8 @@
         "CART_DELIVERY_TIME_SUBMIT": "Valider",
         "CART_CHANGE_TIME_MODAL_LABEL": "Modifier l'horaire",
         "CART_CHANGE_TIME_MODAL_TITLE": "Choisissez un horaire",
+        "CART_TAKE_AWAY": "Retrait sur place",
+        "CART_ADDRESS_MODAL_NO_THANKS_TAKEAWAY": "Je viendrai retirer la commande sur place",
         "RESTAURANT_DASHBOARD_INFO_RUSH": "Utilisez ce bouton pour activer le mode 'rush'",
         "RESTAURANT_DASHBOARD_NEW_ORDERS": "Nouvelles commandes",
         "RESTAURANT_DASHBOARD_ACCEPTED_ORDERS": "Commandes acceptées",

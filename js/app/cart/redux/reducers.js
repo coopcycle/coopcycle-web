@@ -12,6 +12,8 @@ import {
   SET_DATE_MODAL_OPEN,
   CLOSE_ADDRESS_MODAL,
   GEOCODING_FAILURE,
+  ENABLE_TAKEAWAY,
+  DISABLE_TAKEAWAY,
 } from './actions'
 
 const initialState = {
@@ -24,6 +26,7 @@ const initialState = {
     shippingAddress: null,
     shippedAt: null,
     shippingTimeRange: null,
+    takeaway: false,
   },
   restaurant: null,
   isFetching: false,
@@ -104,6 +107,18 @@ const cart = (state = initialState.cart, action = {}) => {
       shippingAddress: {
         streetAddress: ''
       },
+    }
+  case ENABLE_TAKEAWAY:
+
+    return {
+      ...state,
+      takeaway: true,
+    }
+  case DISABLE_TAKEAWAY:
+
+    return {
+      ...state,
+      takeaway: false,
     }
   default:
 
