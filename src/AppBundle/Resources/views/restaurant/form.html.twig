@@ -100,6 +100,9 @@
       {% if form.loopeatEnabled is defined %}
         {{ form_row(form.loopeatEnabled) }}
       {% endif %}
+      {% if form.takeawayEnabled is defined %}
+        {{ form_row(form.takeawayEnabled) }}
+      {% endif %}
     </div>
   </div>
 
@@ -246,6 +249,8 @@
     </div>
 
     {{ form_row(form.contract.feeRate) }}
+    {{ form_row(form.contract.takeAwayFeeRate) }}
+
     <p>
       <a class="help-block collapsed" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_advanced">
         <i class="fa fa-plus"></i><i class="fa fa-minus"></i> {% trans %}restaurant.contract.showAdvanced{% endtrans %}
@@ -282,6 +287,10 @@
             <tr>
               <th>{% trans %}restaurant.contract.feeRate.label{% endtrans %}</th>
               <td class="text-right">{{ (restaurant.contract.feeRate * 100) }}%</td>
+            </tr>
+            <tr>
+              <th>{% trans %}restaurant.contract.takeAwayFeeRate.label{% endtrans %}</th>
+              <td class="text-right">{{ (restaurant.contract.takeAwayFeeRate * 100) }}%</td>
             </tr>
             <tr>
               <th>{% trans %}restaurant.contract.restaurantPaysStripeFee.label{% endtrans %}</th>

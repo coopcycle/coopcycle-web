@@ -80,6 +80,10 @@ class RestaurantType extends LocalBusinessType
                     'label' => 'restaurant.form.deposit_refund_enabled.label',
                     'required' => false,
                 ])
+                ->add('takeawayEnabled', CheckboxType::class, [
+                    'label' => 'restaurant.form.takeaway_enabled.label',
+                    'required' => false,
+                ])
                 ->add('delete', SubmitType::class, [
                     'label' => 'basics.delete',
                 ]);

@@ -79,6 +79,12 @@ class ContractType extends AbstractType
                     'restaurant.contract.restaurantPaysStripeFee.restaurant' => true,
                     'restaurant.contract.restaurantPaysStripeFee.cooperative' => false
                 )
+            ])
+            ->add('takeAwayFeeRate', PercentType::class, [
+                'label' => 'restaurant.contract.takeAwayFeeRate.label',
+                'help' => 'restaurant.contract.takeAwayFeeRate.help',
+                'scale' => 2,
+                'type' => 'fractional',
             ]);
     }
 
