@@ -13,6 +13,7 @@
 !var/SymfonyRequirements.php
 !var/sql
 /vendor/
+/vendor-shared/
 /.phpunit.result.cache
 
 # Build with webpack

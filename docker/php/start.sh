@@ -18,9 +18,9 @@ if [ ! -f var/jwt/public.pem ]; then
 fi
 
 if [ "$SYMFONY_ENV" = 'prod' ]; then
-    composer install --prefer-dist --no-dev --no-progress --no-suggest --optimize-autoloader --classmap-authoritative
+    composer install --prefer-dist --no-plugins --no-progress --no-suggest --no-dev --optimize-autoloader --classmap-authoritative
 else
-    composer install --prefer-dist --no-progress --no-suggest
+    composer install --prefer-dist --no-plugins --no-progress --no-suggest
 fi
 
 php bin/console doctrine:database:create --if-not-exists --env=$SYMFONY_ENV

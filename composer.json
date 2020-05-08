@@ -106,7 +106,8 @@
         "twig/cache-extension": "^1.4",
         "kreait/firebase-bundle": "^1.9",
         "phpdocumentor/reflection-docblock": "^4.0",
-        "sylius/customer-bundle": "^1.6"
+        "sylius/customer-bundle": "^1.6",
+        "letudiant/composer-shared-package-plugin": "^4.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -184,6 +185,12 @@
             ],
             "symfony/webpack-encore-bundle": ["tests"],
             "willdurand/hateoas": ["tests"]
+        },
+        "shared-package": {
+            "vendor-dir": "../vendor-shared",
+            "package-list": [
+                "symfony/symfony"
+            ]
         }
     }
 }
