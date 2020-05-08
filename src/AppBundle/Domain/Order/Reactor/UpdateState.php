@@ -4,6 +4,7 @@ namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Command\AcceptOrder;
 use AppBundle\Domain\Order\Event;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use SimpleBus\Message\Bus\MessageBus;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
@@ -73,10 +74,14 @@ class UpdateState
         }
 
         if ($event instanceof Event\OrderCancelled) {
+
+            $transition = $event->getReason() === OrderInterface::CANCEL_REASON_NO_SHOW ?
+                PaymentTransitions::TRANSITION_COMPLETE : PaymentTransitions::TRANSITION_CANCEL;
+
             foreach ($order->getPayments() as $payment) {
                 $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
-                if ($stateMachine->can(PaymentTransitions::TRANSITION_CANCEL)) {
-                    $stateMachine->apply(PaymentTransitions::TRANSITION_CANCEL);
+                if ($stateMachine->can($transition)) {
+                    $stateMachine->apply($transition);
                 }
             }
         }

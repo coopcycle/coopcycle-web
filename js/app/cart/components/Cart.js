@@ -13,8 +13,9 @@ import CartHeading from './CartHeading'
 import CartTotal from './CartTotal'
 import CartButton from './CartButton'
 import Time from './Time'
+import Takeaway from './Takeaway'
 
-import { changeAddress, sync } from '../redux/actions'
+import { changeAddress, sync, disableTakeaway, enableTakeaway } from '../redux/actions'
 
 let isXsDevice = $('.visible-xs').is(':visible')
 
@@ -41,12 +42,22 @@ class Cart extends Component {
             <CartErrors />
             <div className="cart">
               <div>
+                { !this.props.takeaway && (
                 <AddressAutosuggest
                   addresses={ this.props.addresses }
                   address={ this.props.shippingAddress }
                   geohash={ '' }
                   key={ this.props.streetAddress }
                   onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
+                )}
+                { this.props.takeawayEnabled && (
+                <div className="text-center">
+                  <Takeaway
+                    checked={ this.props.takeaway }
+                    onChange={ enabled => enabled ? this.props.enableTakeaway() : this.props.disableTakeaway() }
+                    disabled={ this.props.loading } />
+                </div>
+                )}
                 <Time />
               </div>
               <CartItems />
@@ -72,6 +83,9 @@ function mapStateToProps(state) {
     streetAddress: state.cart.shippingAddress ? state.cart.shippingAddress.streetAddress : '',
     isMobileCartVisible: state.isMobileCartVisible,
     addresses: state.addresses,
+    takeawayEnabled: state.cart.restaurant.takeawayEnabled,
+    takeaway: state.cart.takeaway,
+    loading: state.isFetching,
   }
 }
 
@@ -80,6 +94,8 @@ function mapDispatchToProps(dispatch) {
   return {
     changeAddress: address => dispatch(changeAddress(address)),
     sync: () => dispatch(sync()),
+    enableTakeaway: () => dispatch(enableTakeaway()),
+    disableTakeaway: () => dispatch(disableTakeaway()),
   }
 }
 

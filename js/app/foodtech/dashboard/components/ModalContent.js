@@ -8,7 +8,8 @@ import {
   acceptOrder,
   refuseOrder,
   delayOrder,
-  cancelOrder
+  cancelOrder,
+  fulfillOrder,
 } from '../redux/actions'
 
 import OrderItems from './OrderItems'
@@ -51,6 +52,12 @@ class ModalContent extends React.Component {
     this.props.acceptOrder(order)
   }
 
+  fulfillOrder() {
+    const { order } = this.props
+
+    this.props.fulfillOrder(order)
+  }
+
   renderButtons() {
 
     const { loading, order } = this.props
@@ -70,6 +77,11 @@ class ModalContent extends React.Component {
             <Button onClick={ () => this.cancelOrder('RUSH_HOUR') } loading={ loading } icon="fire" danger>
               { this.props.t('cancel.reason.RUSH_HOUR') }
             </Button>
+            { order.takeaway && (
+            <Button onClick={ () => this.cancelOrder('NO_SHOW') } loading={ loading } icon="user-times" danger>
+              { this.props.t('cancel.reason.NO_SHOW') }
+            </Button>
+            )}
           </div>
           <div className="text-center text-danger">
             <span>{ this.props.t('ADMIN_DASHBOARD_ORDERS_CANCEL_REASON') }</span>
@@ -99,9 +111,16 @@ class ModalContent extends React.Component {
           <Button onClick={ () => this.setState({ mode: 'cancel' }) } loading={ loading } icon="ban" danger>
             { this.props.t('ADMIN_DASHBOARD_ORDERS_CANCEL') }
           </Button>
+          { !order.takeaway && (
           <Button onClick={ this.delayOrder.bind(this) } loading={ loading } icon="clock-o" primary>
             { this.props.t('ADMIN_DASHBOARD_ORDERS_DELAY') }
           </Button>
+          )}
+          { order.takeaway && (
+          <Button onClick={ this.fulfillOrder.bind(this) } loading={ loading } icon="check" success>
+            { this.props.t('ADMIN_DASHBOARD_ORDERS_FULFILL') }
+          </Button>
+          )}
         </div>
       )
     }
@@ -248,6 +267,7 @@ function mapDispatchToProps(dispatch) {
     refuseOrder: order => dispatch(refuseOrder(order)),
     delayOrder: order => dispatch(delayOrder(order)),
     cancelOrder: (order, reason) => dispatch(cancelOrder(order, reason)),
+    fulfillOrder: order => dispatch(fulfillOrder(order)),
   }
 }
 

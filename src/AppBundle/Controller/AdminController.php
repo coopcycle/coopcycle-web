@@ -275,7 +275,7 @@ class AdminController extends Controller
 
         // When the order is in state "new", it does not have a delivery
         $delivery = $order->getDelivery();
-        if (null === $delivery) {
+        if (!$order->isTakeaway() && null === $delivery) {
             $delivery = $deliveryManager->createFromOrder($order);
         }
 

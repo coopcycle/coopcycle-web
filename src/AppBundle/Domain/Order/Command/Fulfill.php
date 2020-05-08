@@ -4,7 +4,7 @@ namespace AppBundle\Domain\Order\Command;
 
 use AppBundle\Sylius\Order\OrderInterface;
 
-class FulfillOrder
+class Fulfill
 {
     private $order;
 

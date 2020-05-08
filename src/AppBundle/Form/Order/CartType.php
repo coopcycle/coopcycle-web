@@ -8,6 +8,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -51,12 +52,20 @@ class CartType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
+            $cart = $event->getData();
 
             $shippingAddress = $form->get('shippingAddress')->getData();
 
             if ($shippingAddress && null !== $shippingAddress->getId()) {
                 $form->get('isNewAddress')->setData(false);
             }
+
+            if ($cart->getRestaurant()->isTakeawayEnabled()) {
+                $form->add('takeaway', CheckboxType::class, [
+                    'required' => false,
+                ]);
+            }
+
         });
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($removeAddressFields) {

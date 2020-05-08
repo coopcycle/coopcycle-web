@@ -20,6 +20,8 @@ import {
   REFUSE_ORDER_REQUEST_FAILURE,
   DELAY_ORDER_REQUEST_SUCCESS,
   DELAY_ORDER_REQUEST_FAILURE,
+  FULFILL_ORDER_REQUEST_SUCCESS,
+  FULFILL_ORDER_REQUEST_FAILURE,
   SEARCH_RESULTS,
   ACTIVE_TAB,
 } from './actions'
@@ -35,6 +37,7 @@ export const initialState = {
   refuseOrderRoute: 'admin_order_refuse',
   delayOrderRoute: 'admin_order_delay',
   cancelOrderRoute: 'admin_order_cancel',
+  fulfillOrderRoute: 'admin_order_fulfill',
   currentRoute: 'admin_foodtech_dashboard',
   preparationDelay: 0,
   showSettings: true,
@@ -71,6 +74,7 @@ export default (state = initialState, action = {}) => {
   case CANCEL_ORDER_REQUEST_FAILURE:
   case REFUSE_ORDER_REQUEST_FAILURE:
   case DELAY_ORDER_REQUEST_FAILURE:
+  case FULFILL_ORDER_REQUEST_FAILURE:
 
     return {
       ...state,
@@ -81,6 +85,7 @@ export default (state = initialState, action = {}) => {
   case REFUSE_ORDER_REQUEST_SUCCESS:
   case CANCEL_ORDER_REQUEST_SUCCESS:
   case DELAY_ORDER_REQUEST_SUCCESS:
+  case FULFILL_ORDER_REQUEST_SUCCESS:
 
     return {
       ...state,

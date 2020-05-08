@@ -5,7 +5,7 @@ import _ from 'lodash'
 import Modal from 'react-modal'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
-import { changeAddress, closeAddressModal } from '../redux/actions'
+import { changeAddress, closeAddressModal, enableTakeaway } from '../redux/actions'
 
 const ADDRESS_TOO_FAR = 'Order::ADDRESS_TOO_FAR'
 
@@ -50,7 +50,11 @@ class AddressModal extends Component {
             </a>
           </div>
         ) }
-
+        { this.props.takeawayEnabled && (
+          <button type="button" className="btn btn-default" onClick={ () => this.props.enableTakeaway() }>
+            { this.props.t('CART_ADDRESS_MODAL_NO_THANKS_TAKEAWAY') }
+          </button>
+        ) }
       </Modal>
     )
   }
@@ -77,6 +81,7 @@ function mapStateToProps(state) {
     titleText,
     isAddressTooFar,
     addresses: state.addresses,
+    takeawayEnabled: state.cart.restaurant.takeawayEnabled,
   }
 }
 
@@ -85,6 +90,7 @@ function mapDispatchToProps(dispatch) {
   return {
     changeAddress: address => dispatch(changeAddress(address)),
     closeAddressModal: () => dispatch(closeAddressModal()),
+    enableTakeaway: () => dispatch(enableTakeaway()),
   }
 }
 

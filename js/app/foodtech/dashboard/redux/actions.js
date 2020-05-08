@@ -18,6 +18,8 @@ export const DELAY_ORDER_REQUEST_SUCCESS = 'DELAY_ORDER_REQUEST_SUCCESS'
 export const DELAY_ORDER_REQUEST_FAILURE = 'DELAY_ORDER_REQUEST_FAILURE'
 export const CANCEL_ORDER_REQUEST_SUCCESS = 'CANCEL_ORDER_REQUEST_SUCCESS'
 export const CANCEL_ORDER_REQUEST_FAILURE = 'CANCEL_ORDER_REQUEST_FAILURE'
+export const FULFILL_ORDER_REQUEST_SUCCESS = 'FULFILL_ORDER_REQUEST_SUCCESS'
+export const FULFILL_ORDER_REQUEST_FAILURE = 'FULFILL_ORDER_REQUEST_FAILURE'
 
 export const CHANGE_RESTAURANT_STATE = 'CHANGE_RESTAURANT_STATE'
 
@@ -40,6 +42,8 @@ export const delayOrderRequestSuccess = createAction(DELAY_ORDER_REQUEST_SUCCESS
 export const delayOrderRequestFailure = createAction(DELAY_ORDER_REQUEST_FAILURE)
 export const cancelOrderRequestSuccess = createAction(CANCEL_ORDER_REQUEST_SUCCESS)
 export const cancelOrderRequestFailure = createAction(CANCEL_ORDER_REQUEST_FAILURE)
+export const fulfillOrderRequestSuccess = createAction(FULFILL_ORDER_REQUEST_SUCCESS)
+export const fulfillOrderRequestFailure = createAction(FULFILL_ORDER_REQUEST_FAILURE)
 
 export const searchResults = createAction(SEARCH_RESULTS, (q, results) => ({ q, results }))
 
@@ -128,6 +132,19 @@ export function cancelOrder(order, reason) {
     $.post(url, { reason })
       .then(res => dispatch(cancelOrderRequestSuccess(res)))
       .fail(e => dispatch(cancelOrderRequestFailure(e)))
+  }
+}
+
+export function fulfillOrder(order) {
+
+  return (dispatch, getState) => {
+    dispatch(fetchRequest())
+
+    const url = window.Routing.generate(getState().fulfillOrderRoute, { id: order.id })
+
+    $.post(url)
+      .then(res => dispatch(fulfillOrderRequestSuccess(res)))
+      .fail(e => dispatch(fulfillOrderRequestFailure(e)))
   }
 }
 
