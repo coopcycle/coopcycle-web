@@ -60,7 +60,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         $feeRate = $contract->getFeeRate();
 
         $delivery = null;
-        if ($contract->isVariableDeliveryPriceEnabled() || $contract->isVariableCustomerAmountEnabled()) {
+        if (!$order->isTakeAway() && ($contract->isVariableDeliveryPriceEnabled() || $contract->isVariableCustomerAmountEnabled())) {
             try {
                 $delivery = $this->getDelivery($order);
             } catch (ShippingAddressMissingException $e) {
@@ -68,34 +68,48 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             }
         }
 
-        $customerAmount = $contract->getCustomerAmount();
-        if ($contract->isVariableCustomerAmountEnabled() && null !== $delivery) {
-            $customerAmount = $this->deliveryManager->getPrice(
-                $delivery,
-                $contract->getVariableCustomerAmount()
-            );
-            if (null === $customerAmount) {
-                $this->logger->error('OrderFeeProcessor | could not calculate price, falling back to flat price');
-                $customerAmount = $contract->getCustomerAmount();
-            } else {
-                $this->logger->info(sprintf('Order #%d | customer amount  | matched rule "%s"',
-                    $order->getId(), $this->deliveryManager->getLastMatchedRule()->getExpression()));
+        $customerAmount = 0;
+
+        if (!$order->isTakeAway()) {
+
+            $customerAmount = $contract->getCustomerAmount();
+
+            if ($contract->isVariableCustomerAmountEnabled() && null !== $delivery) {
+                $customerAmount = $this->deliveryManager->getPrice(
+                    $delivery,
+                    $contract->getVariableCustomerAmount()
+                );
+                if (null === $customerAmount) {
+                    $this->logger->error('OrderFeeProcessor | could not calculate price, falling back to flat price');
+                    $customerAmount = $contract->getCustomerAmount();
+                } else {
+                    $this->logger->info(sprintf('Order #%d | customer amount  | matched rule "%s"',
+                        $order->getId(), $this->deliveryManager->getLastMatchedRule()->getExpression()));
+                }
             }
         }
 
-        $businessAmount = $contract->getFlatDeliveryPrice();
-        if ($contract->isVariableDeliveryPriceEnabled() && null !== $delivery) {
-            $businessAmount = $this->deliveryManager->getPrice(
-                $delivery,
-                $contract->getVariableDeliveryPrice()
-            );
-            if (null === $businessAmount) {
-                $this->logger->error('OrderFeeProcessor | could not calculate price, falling back to flat price');
-                $businessAmount = $contract->getFlatDeliveryPrice();
-            } else {
-                $this->logger->info(sprintf('Order #%d | business amount | matched rule "%s"',
-                    $order->getId(), $this->deliveryManager->getLastMatchedRule()->getExpression()));
+        $businessAmount = 0;
+
+        if (!$order->isTakeAway()) {
+
+            $businessAmount = $contract->getFlatDeliveryPrice();
+
+            if ($contract->isVariableDeliveryPriceEnabled() && null !== $delivery) {
+                $businessAmount = $this->deliveryManager->getPrice(
+                    $delivery,
+                    $contract->getVariableDeliveryPrice()
+                );
+                if (null === $businessAmount) {
+                    $this->logger->error('OrderFeeProcessor | could not calculate price, falling back to flat price');
+                    $businessAmount = $contract->getFlatDeliveryPrice();
+                } else {
+                    $this->logger->info(sprintf('Order #%d | business amount | matched rule "%s"',
+                        $order->getId(), $this->deliveryManager->getLastMatchedRule()->getExpression()));
+                }
             }
+        } else {
+            $feeRate = $contract->getTakeAwayFeeRate();
         }
 
         $deliveryPromotionAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
@@ -116,7 +130,9 @@ final class OrderFeeProcessor implements OrderProcessorInterface
 
             $order->addAdjustment($tipAdjustment);
 
-            $businessAmount += $order->getTipAmount();
+            if (!$order->isTakeAway()) {
+                $businessAmount += $order->getTipAmount();
+            }
         }
 
         $feeAdjustment = $this->adjustmentFactory->createWithData(
@@ -127,14 +143,16 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         );
         $order->addAdjustment($feeAdjustment);
 
-        $deliveryAdjustment = $this->adjustmentFactory->createWithData(
-            AdjustmentInterface::DELIVERY_ADJUSTMENT,
-            $this->translator->trans('order.adjustment_type.delivery'),
-            $customerAmount,
-            $neutral = false
-        );
+        if ($customerAmount > 0) {
+            $deliveryAdjustment = $this->adjustmentFactory->createWithData(
+                AdjustmentInterface::DELIVERY_ADJUSTMENT,
+                $this->translator->trans('order.adjustment_type.delivery'),
+                $customerAmount,
+                $neutral = false
+            );
 
-        $order->addAdjustment($deliveryAdjustment);
+            $order->addAdjustment($deliveryAdjustment);
+        }
     }
 
     private function decreasePlatformFee(Adjustment $adjustment): bool

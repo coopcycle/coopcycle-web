@@ -57,7 +57,8 @@ class OrderFeeProcessorTest extends KernelTestCase
 
     private static function createContract($flatDeliveryPrice, $customerAmount, $feeRate,
         $variableDeliveryPriceEnabled = false, $variableDeliveryPrice = null,
-        $variableCustomerAmountEnabled = false, $variableCustomerAmount = null)
+        $variableCustomerAmountEnabled = false, $variableCustomerAmount = null,
+        $takeAwayFeeRate = 0)
     {
         $contract = new Contract();
         $contract->setFlatDeliveryPrice($flatDeliveryPrice);
@@ -67,6 +68,7 @@ class OrderFeeProcessorTest extends KernelTestCase
         $contract->setVariableDeliveryPrice($variableDeliveryPrice);
         $contract->setVariableCustomerAmountEnabled($variableCustomerAmountEnabled);
         $contract->setVariableCustomerAmount($variableCustomerAmount);
+        $contract->setTakeAwayFeeRate($takeAwayFeeRate);
 
         return $contract;
     }
@@ -440,5 +442,69 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $this->assertCount(1, $feeAdjustments);
         $this->assertEquals(1030, $order->getFeeTotal());
+    }
+
+    public function testTakeAwayOrderWithFees()
+    {
+        $contract = self::createContract(0, 0, 0.00, false, null, false, null, 0.10);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->setTakeAway(true);
+        $order->addItem($this->createOrderItem(1000));
+
+        $this->orderFeeProcessor->process($order);
+
+        $adjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+
+        $this->assertCount(1, $adjustments);
+        $this->assertEquals(100, $order->getFeeTotal());
+    }
+
+    public function testTakeAwayOrderWithNoFees()
+    {
+        $contract = self::createContract(0, 0, 0.00, false, null, false, null, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->setTakeAway(true);
+        $order->addItem($this->createOrderItem(1000));
+
+        $this->orderFeeProcessor->process($order);
+
+        $adjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+
+        $this->assertCount(1, $adjustments);
+        $this->assertEquals(0, $order->getFeeTotal());
+    }
+
+    public function testTakeAwayOrderWithNoFeesAndTip()
+    {
+        $contract = self::createContract(0, 0, 0.00, false, null, false, null, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->setTakeAway(true);
+        $order->addItem($this->createOrderItem(1000));
+        $order->setTipAmount(300);
+
+        $this->orderFeeProcessor->process($order);
+
+        $adjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+
+        $this->assertCount(1, $adjustments);
+        $this->assertEquals(0, $order->getFeeTotal());
+
+        $tipTotal = $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT);
+        $this->assertEquals(300, $tipTotal);
     }
 }
