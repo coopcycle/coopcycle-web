@@ -18,6 +18,7 @@ use AppBundle\Entity\LocalBusiness\ImageTrait;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
+use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -26,6 +27,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validation;
@@ -1042,5 +1044,16 @@ class LocalBusiness extends BaseLocalBusiness
         }
 
         return $this;
+    }
+
+    /**
+     * @SerializedName("openingHoursSpecification")
+     * @Groups({"restaurant", "restaurant_seo"})
+     */
+    public function getOpeningHoursSpecification()
+    {
+        return array_map(function (OpeningHoursSpecification $openingHoursSpecification) {
+            return $openingHoursSpecification->jsonSerialize();
+        }, OpeningHoursSpecification::fromOpeningHours($this->getOpeningHours()));
     }
 }

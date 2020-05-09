@@ -67,25 +67,11 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         return false;
     }
 
-    private function shouldAddOpeningHoursSpecification(LocalBusiness $object, array $context = array())
-    {
-        return isset($context['groups'])
-            && $this->containsGroups($context, ['restaurant', 'store', 'restaurant_seo'])
-            && count($object->getOpeningHours()) > 0;
-    }
-
     public function normalize($object, $format = null, array $context = array())
     {
         $data = $this->normalizer->normalize($object, $format, $context);
 
         $data['@type'] = $object->getType();
-
-        // FIXME Stop checking groups manually
-        if ($this->shouldAddOpeningHoursSpecification($object, $context)) {
-            $data['openingHoursSpecification'] = array_map(function (OpeningHoursSpecification $openingHoursSpecification) {
-                return $openingHoursSpecification->jsonSerialize();
-            }, OpeningHoursSpecification::fromOpeningHours($object->getOpeningHours()));
-        }
 
         if (isset($data['closingRules'])) {
             $data['specialOpeningHoursSpecification'] = $data['closingRules'];
