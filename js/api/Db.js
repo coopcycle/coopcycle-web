@@ -71,43 +71,6 @@ module.exports = function(sequelize) {
     tableName: 'api_user_restaurant'
   }));
 
-  Db.Order = sequelize.define('order', {
-    status: Sequelize.STRING,
-    uuid: Sequelize.STRING,
-    createdAt: {
-      field: 'created_at',
-      type: Sequelize.DATE
-    },
-    updatedAt: {
-      field: 'updated_at',
-      type: Sequelize.DATE
-    },
-    readyAt: {
-      field: 'ready_at',
-      type: Sequelize.DATE
-    },
-    totalExcludingTax: {
-      field: 'total_excluding_tax',
-      type: Sequelize.FLOAT
-    },
-    totalTax: {
-      field: 'total_tax',
-      type: Sequelize.FLOAT
-    },
-    totalIncludingTax: {
-      field: 'total_including_tax',
-      type: Sequelize.FLOAT
-    },
-  }, _.extend(sequelizeOptions, {
-    tableName: 'order_'
-  }));
-
-  Db.OrderItem = sequelize.define('order_item', {
-    quantity: Sequelize.INTEGER
-  }, _.extend(sequelizeOptions, {
-    tableName: 'order_item'
-  }));
-
   Db.Restaurant = sequelize.define('restaurant', {
     type: Sequelize.STRING,
     name: Sequelize.STRING,
@@ -150,22 +113,7 @@ module.exports = function(sequelize) {
   Db.Delivery = sequelize.define('delivery', {
     distance: Sequelize.INTEGER,
     duration: Sequelize.INTEGER,
-    date: Sequelize.DATE,
-    status: Sequelize.STRING,
-    price: Sequelize.FLOAT,
     polyline: Sequelize.STRING,
-    totalExcludingTax: {
-      field: 'total_excluding_tax',
-      type: Sequelize.FLOAT
-    },
-    totalTax: {
-      field: 'total_tax',
-      type: Sequelize.FLOAT
-    },
-    totalIncludingTax: {
-      field: 'total_including_tax',
-      type: Sequelize.FLOAT
-    },
   }, _.extend(sequelizeOptions, {
     tableName: 'delivery',
   }));
@@ -192,21 +140,6 @@ module.exports = function(sequelize) {
     },
   }));
 
-  Db.TaxCategory = sequelize.define('tax_category', {
-    name: Sequelize.STRING,
-    code: Sequelize.STRING,
-    createdAt: {
-      field: 'created_at',
-      type: Sequelize.DATE
-    },
-    updatedAt: {
-      field: 'updated_at',
-      type: Sequelize.DATE
-    },
-  }, _.extend(sequelizeOptions, {
-    tableName: 'sylius_tax_category'
-  }));
-
   Db.TaskCollection = sequelize.define('task_collection', {
     type: Sequelize.STRING,
   }, _.extend(sequelizeOptions, {
@@ -214,15 +147,6 @@ module.exports = function(sequelize) {
   }));
 
   Db.Restaurant.belongsTo(Db.Address);
-
-  Db.Delivery.belongsTo(Db.Address, { as: 'originAddress', foreignKey : 'origin_address_id' });
-  Db.Delivery.belongsTo(Db.Address, { as: 'deliveryAddress', foreignKey : 'delivery_address_id' });
-  Db.Delivery.belongsTo(Db.Order);
-  Db.Delivery.belongsTo(Db.TaxCategory, { as: 'taxCategory', foreignKey : 'tax_category_id' });
-
-  Db.Order.belongsTo(Db.Restaurant);
-  Db.Order.belongsTo(Db.User, {as: 'customer', foreignKey : 'customer_id' });
-  Db.Order.hasOne(Db.Delivery);
 
   Db.User.belongsToMany(Db.Address, { through: Db.UserAddress, foreignKey: 'api_user_id' });
   Db.User.belongsToMany(Db.Restaurant, { through: Db.UserRestaurant, foreignKey: 'api_user_id' });
