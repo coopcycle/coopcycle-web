@@ -36,7 +36,7 @@ final class Version20200509100405 extends AbstractMigration
             }
 
             foreach ($fulfillmentMethods as $fulfillmentMethod) {
-                $this->addSql('INSERT INTO restaurant_fulfillment_method (restaurant_id, type, opening_hours, opening_hours_behavior, enabled) VALUES (:restaurant_id, :type, :opening_hours, :opening_hours_behavior, :enabled)' , [
+                $this->addSql('INSERT INTO restaurant_fulfillment_method (restaurant_id, type, opening_hours, opening_hours_behavior, enabled) VALUES (:restaurant_id, :type, :opening_hours, :opening_hours_behavior, \'true\')' , [
                     'restaurant_id' => $restaurant['id'],
                     'type' => $fulfillmentMethod,
                     'opening_hours' => $restaurant['opening_hours'],
