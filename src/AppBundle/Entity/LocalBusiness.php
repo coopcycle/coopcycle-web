@@ -241,7 +241,8 @@ class LocalBusiness extends BaseLocalBusiness
         $this->promotions = new ArrayCollection();
 
         $this->fulfillmentMethods = new ArrayCollection();
-        $this->addFulfillmentMethod('delivery');
+        $this->addFulfillmentMethod('delivery', true);
+        $this->addFulfillmentMethod('collection', false);
     }
 
     /**
@@ -954,34 +955,20 @@ class LocalBusiness extends BaseLocalBusiness
         return in_array($paymentMethod, $this->stripePaymentMethods);
     }
 
+    /**
+     * @deprecated
+     */
     public function isTakeawayEnabled(): bool
     {
-        foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
-            if ('collection' === $fulfillmentMethod->getType()) {
-
-                return $fulfillmentMethod->isEnabled();
-            }
-        }
-
-        return false;
+        return $this->isFulfillmentMethodEnabled('collection');
     }
 
+    /**
+     * @deprecated
+     */
     public function setTakeawayEnabled(bool $takeawayEnabled)
     {
-        $collectionMethod = $this->fulfillmentMethods->filter(function (FulfillmentMethod $fulfillmentMethod): bool {
-            return 'collection' === $fulfillmentMethod->getType();
-        })->first();
-
-        if (!$collectionMethod) {
-
-            $collectionMethod = new FulfillmentMethod();
-            $collectionMethod->setRestaurant($this);
-            $collectionMethod->setType('collection');
-
-            $this->fulfillmentMethods->add($collectionMethod);
-        }
-
-        $collectionMethod->setEnabled($takeawayEnabled);
+        $this->addFulfillmentMethod('collection', $takeawayEnabled);
     }
 
     public function getFulfillmentMethods()
@@ -989,23 +976,22 @@ class LocalBusiness extends BaseLocalBusiness
         return $this->fulfillmentMethods;
     }
 
-    public function addFulfillmentMethod($method)
+    public function addFulfillmentMethod($method, $enabled = true)
     {
-        $exists = false;
-        foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
-            if ($method === $fulfillmentMethod->getType()) {
-                $exists = true;
-                break;
-            }
-        }
+        $fulfillmentMethod = $this->fulfillmentMethods->filter(function (FulfillmentMethod $fulfillmentMethod) use ($method): bool {
+            return $method === $fulfillmentMethod->getType();
+        })->first();
 
-        if (!$exists) {
+        if (!$fulfillmentMethod) {
+
             $fulfillmentMethod = new FulfillmentMethod();
             $fulfillmentMethod->setRestaurant($this);
             $fulfillmentMethod->setType($method);
 
             $this->fulfillmentMethods->add($fulfillmentMethod);
         }
+
+        $fulfillmentMethod->setEnabled($enabled);
     }
 
     public function getOpeningHours($method = 'delivery')
@@ -1055,5 +1041,17 @@ class LocalBusiness extends BaseLocalBusiness
         return array_map(function (OpeningHoursSpecification $openingHoursSpecification) {
             return $openingHoursSpecification->jsonSerialize();
         }, OpeningHoursSpecification::fromOpeningHours($this->getOpeningHours()));
+    }
+
+    public function isFulfillmentMethodEnabled($method)
+    {
+        foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
+            if ($method === $fulfillmentMethod->getType()) {
+
+                return $fulfillmentMethod->isEnabled();
+            }
+        }
+
+        return false;
     }
 }
