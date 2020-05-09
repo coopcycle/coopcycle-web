@@ -225,6 +225,8 @@ class LocalBusiness extends BaseLocalBusiness
 
     protected $takeawayEnabled = false;
 
+    protected $fulfillmentMethods;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -238,6 +240,7 @@ class LocalBusiness extends BaseLocalBusiness
         $this->preparationTimeRules = new ArrayCollection();
         $this->reusablePackagings = new ArrayCollection();
         $this->promotions = new ArrayCollection();
+        $this->fulfillmentMethods = new ArrayCollection();
     }
 
     /**
@@ -946,5 +949,15 @@ class LocalBusiness extends BaseLocalBusiness
     public function setTakeawayEnabled(bool $takeawayEnabled)
     {
         $this->takeawayEnabled = $takeawayEnabled;
+    }
+
+    public function getFulfillmentMethods()
+    {
+        return $this->fulfillmentMethods;
+    }
+
+    public function addFulfillmentMethod($fulfillmentMethod)
+    {
+        // $this->fulfillmentMethods = $type;
     }
 }
