@@ -59,7 +59,7 @@ class ProfileController extends Controller
             'menu_taxon' => 'profile_restaurant_menu_taxon',
             'products' => 'profile_restaurant_products',
             'product_options' => 'profile_restaurant_product_options',
-            'product_new' => 'admin_restaurant_product_new',
+            'product_new' => 'profile_restaurant_product_new',
             'dashboard' => 'profile_restaurant_dashboard',
             'planning' => 'profile_restaurant_planning',
             'stripe_oauth_redirect' => 'profile_restaurant_stripe_oauth_redirect',
