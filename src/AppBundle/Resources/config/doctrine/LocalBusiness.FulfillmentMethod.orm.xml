@@ -9,6 +9,12 @@
     </id>
     <field name="type" type="string" column="type"/>
     <field name="openingHours" type="json_array" column="opening_hours"/>
+    <field name="openingHoursBehavior" type="string" column="opening_hours_behavior" length="16" />
+    <field name="enabled" type="boolean" column="enabled">
+      <options>
+        <option name="default">1</option>
+      </options>
+    </field>
     <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="fulfillmentMethods">
       <join-columns>
         <join-column name="restaurant_id" referenced-column-name="id" on-delete="SET NULL"/>

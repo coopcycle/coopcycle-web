@@ -13,6 +13,7 @@ use AppBundle\Api\Dto\RestaurantInput;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
 use AppBundle\Entity\LocalBusiness\FoodEstablishmentTrait;
+use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ImageTrait;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
@@ -215,15 +216,11 @@ class LocalBusiness extends BaseLocalBusiness
 
     protected $reusablePackagings;
 
-    protected $openingHoursBehavior = 'asap';
-
     protected $promotions;
 
     protected $featured = false;
 
     protected $stripePaymentMethods = [];
-
-    protected $takeawayEnabled = false;
 
     protected $fulfillmentMethods;
 
@@ -240,7 +237,9 @@ class LocalBusiness extends BaseLocalBusiness
         $this->preparationTimeRules = new ArrayCollection();
         $this->reusablePackagings = new ArrayCollection();
         $this->promotions = new ArrayCollection();
+
         $this->fulfillmentMethods = new ArrayCollection();
+        $this->addFulfillmentMethod('delivery');
     }
 
     /**
@@ -879,14 +878,26 @@ class LocalBusiness extends BaseLocalBusiness
         return FoodEstablishment::class;
     }
 
-    public function getOpeningHoursBehavior()
+    public function getOpeningHoursBehavior($method = 'delivery')
     {
-        return $this->openingHoursBehavior;
+        foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
+            if ($method === $fulfillmentMethod->getType()) {
+
+                return $fulfillmentMethod->getOpeningHoursBehavior();
+            }
+        }
+
+        return 'asap';
     }
 
-    public function setOpeningHoursBehavior($openingHoursBehavior)
+    public function setOpeningHoursBehavior($openingHoursBehavior, $method = 'delivery')
     {
-        $this->openingHoursBehavior = $openingHoursBehavior;
+        foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
+            if ($method === $fulfillmentMethod->getType()) {
+
+                return $fulfillmentMethod->setOpeningHoursBehavior($openingHoursBehavior);
+            }
+        }
     }
 
     public function addPromotion($promotion)
@@ -943,12 +954,32 @@ class LocalBusiness extends BaseLocalBusiness
 
     public function isTakeawayEnabled(): bool
     {
-        return $this->takeawayEnabled;
+        foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
+            if ('collection' === $fulfillmentMethod->getType()) {
+
+                return $fulfillmentMethod->isEnabled();
+            }
+        }
+
+        return false;
     }
 
     public function setTakeawayEnabled(bool $takeawayEnabled)
     {
-        $this->takeawayEnabled = $takeawayEnabled;
+        $collectionMethod = $this->fulfillmentMethods->filter(function (FulfillmentMethod $fulfillmentMethod): bool {
+            return 'collection' === $fulfillmentMethod->getType();
+        })->first();
+
+        if (!$collectionMethod) {
+
+            $collectionMethod = new FulfillmentMethod();
+            $collectionMethod->setRestaurant($this);
+            $collectionMethod->setType('collection');
+
+            $this->fulfillmentMethods->add($collectionMethod);
+        }
+
+        $collectionMethod->setEnabled($takeawayEnabled);
     }
 
     public function getFulfillmentMethods()
@@ -956,8 +987,60 @@ class LocalBusiness extends BaseLocalBusiness
         return $this->fulfillmentMethods;
     }
 
-    public function addFulfillmentMethod($fulfillmentMethod)
+    public function addFulfillmentMethod($method)
     {
-        // $this->fulfillmentMethods = $type;
+        $exists = false;
+        foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
+            if ($method === $fulfillmentMethod->getType()) {
+                $exists = true;
+                break;
+            }
+        }
+
+        if (!$exists) {
+            $fulfillmentMethod = new FulfillmentMethod();
+            $fulfillmentMethod->setRestaurant($this);
+            $fulfillmentMethod->setType($method);
+
+            $this->fulfillmentMethods->add($fulfillmentMethod);
+        }
+    }
+
+    public function getOpeningHours($method = 'delivery')
+    {
+        foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
+            if ($method === $fulfillmentMethod->getType()) {
+
+                return $fulfillmentMethod->getOpeningHours();
+            }
+        }
+
+        return [];
+    }
+
+    public function setOpeningHours($openingHours, $method = 'delivery')
+    {
+        foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
+            if ($method === $fulfillmentMethod->getType()) {
+                $fulfillmentMethod->setOpeningHours($openingHours);
+
+                break;
+            }
+        }
+
+        return $this;
+    }
+
+    public function addOpeningHour($openingHour, $method = 'delivery')
+    {
+        foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
+            if ($method === $fulfillmentMethod->getType()) {
+                $fulfillmentMethod->addOpeningHour($openingHour);
+
+                break;
+            }
+        }
+
+        return $this;
     }
 }

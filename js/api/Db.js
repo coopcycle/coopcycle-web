@@ -88,11 +88,6 @@ module.exports = function(sequelize) {
       defaultValue: [],
       field: 'stripe_payment_methods',
     },
-    openingHoursBehavior: {
-      type: Sequelize.STRING,
-      defaultValue: 'asap',
-      field: 'opening_hours_behavior',
-    },
     featured: {
       type: Sequelize.BOOLEAN,
       defaultValue: false,

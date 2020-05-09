@@ -2,12 +2,18 @@
 
 namespace AppBundle\Entity\LocalBusiness;
 
-class FulfillmentMethod
+use Sylius\Component\Resource\Model\ToggleableInterface;
+use Sylius\Component\Resource\Model\ToggleableTrait;
+
+class FulfillmentMethod implements ToggleableInterface
 {
+    use ToggleableTrait;
+
     private $id;
     private $restaurant;
-    private $type;
+    private $type = 'delivery';
     private $openingHours = [];
+    private $openingHoursBehavior = 'asap';
 
     /**
      * @return mixed
@@ -57,23 +63,30 @@ class FulfillmentMethod
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getOpeningHours()
     {
         return $this->openingHours;
     }
 
-    /**
-     * @param mixed $openingHours
-     *
-     * @return self
-     */
     public function setOpeningHours($openingHours)
     {
         $this->openingHours = $openingHours;
 
         return $this;
+    }
+
+    public function addOpeningHour($openingHour)
+    {
+        $this->openingHours[] = $openingHour;
+    }
+
+    public function getOpeningHoursBehavior()
+    {
+        return $this->openingHoursBehavior;
+    }
+
+    public function setOpeningHoursBehavior($openingHoursBehavior)
+    {
+        $this->openingHoursBehavior = $openingHoursBehavior;
     }
 }

@@ -47,8 +47,6 @@
         <option name="default">distance &lt; 3000</option>
       </options>
     </field>
-    <field name="openingHours" type="json_array" column="opening_hours" nullable="true"/>
-    <field name="openingHoursBehavior" type="string" column="opening_hours_behavior" length="16" />
     <field name="vatID" type="string" column="vat_id" nullable="true"/>
     <field name="additionalProperties" type="json_array" column="additional_properties" nullable="true"/>
     <field name="state" type="string" column="state"/>
@@ -73,11 +71,6 @@
     <field name="loopeatRefreshToken" type="text" column="loopeat_refresh_token" nullable="true"/>
     <field name="featured" type="boolean" column="featured"/>
     <field name="stripePaymentMethods" type="json_array" column="stripe_payment_methods"/>
-    <field name="takeawayEnabled" type="boolean" column="takeaway_enabled">
-      <options>
-        <option name="default">0</option>
-      </options>
-    </field>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <one-to-one field="contract" target-entity="AppBundle\Entity\Contract" mapped-by="restaurant">
       <cascade>
@@ -89,6 +82,11 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
+    <one-to-many field="fulfillmentMethods" target-entity="AppBundle\Entity\LocalBusiness\FulfillmentMethod" mapped-by="restaurant">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
     <one-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule" mapped-by="restaurant">
       <cascade>
         <cascade-all/>
