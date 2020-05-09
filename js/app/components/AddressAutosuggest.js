@@ -385,7 +385,8 @@ class AddressAutosuggest extends Component {
       value,
       onChange: this.onChange.bind(this),
       type: "search",
-      required: this.props.required
+      required: this.props.required,
+      disabled: this.props.disabled,
     }
 
     const highlightFirstSuggestion = this.highlightFirstSuggestion()
@@ -419,6 +420,7 @@ AddressAutosuggest.defaultProps = {
   reportValidity: false,
   preciseOnly: false,
   fuseSearchOptions: {},
+  disabled: false,
 }
 
 AddressAutosuggest.propTypes = {
@@ -432,6 +434,7 @@ AddressAutosuggest.propTypes = {
   placeholder: PropTypes.string,
   fuseOptions: PropTypes.object,
   fuseSearchOptions: PropTypes.object,
+  disabled: PropTypes.bool,
 }
 
 export default withTranslation()(AddressAutosuggest)
