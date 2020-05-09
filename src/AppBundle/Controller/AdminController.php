@@ -349,9 +349,9 @@ class AdminController extends Controller
             $request->query->getInt('page', 1),
             self::ITEMS_PER_PAGE,
             [
-                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'u.username',
-                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
-                PaginatorInterface::SORT_FIELD_WHITELIST => ['u.username'],
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'u.id',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
+                PaginatorInterface::SORT_FIELD_WHITELIST => ['u.username', 'u.id'],
                 PaginatorInterface::FILTER_FIELD_WHITELIST => ['u.roles', 'u.username']
             ]
         );

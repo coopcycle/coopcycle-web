@@ -11,6 +11,22 @@
     <div id="user-search"></div>
   </div>
   <div class="w-50 text-right">
+    <div class="dropdown pull-right ml-2">
+      <button class="btn btn-default dropdown-toggle" type="button" id="users-sort"
+        data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="true">
+        {% if users.isSorted('u.username') and users.direction == 'asc' %}
+          {{ 'users.sort.alphabetically'|trans }}
+        {% else %}
+          {{ 'users.sort.newest'|trans }}
+        {% endif %}
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="users-sort">
+        <li>{{ knp_pagination_sortable(users, 'users.sort.newest'|trans, 'u.id', {}, { direction: 'desc' } )|raw }}</li>
+        <li>{{ knp_pagination_sortable(users, 'users.sort.alphabetically'|trans, 'u.username', {}, { direction: 'asc' } )|raw }}</li>
+      </ul>
+    </div>
     <a href="{{ path('admin_users_invite') }}" class="btn btn-info">
       <i class="fa fa-plus"></i> {% trans %}adminDashboard.users.invite{% endtrans %}
     </a>

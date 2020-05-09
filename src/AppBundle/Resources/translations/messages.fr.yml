@@ -906,6 +906,8 @@ users.couriers: Coursiers
 users.restaurant_owners: Restaurants
 users.store_owners: Magasins
 users.administrators: Administrateurs
+users.sort.alphabetically: Par ordre alphabétique
+users.sort.newest: Inscrit·es récemment
 sms.simple: |
   Bonjour,
   Notre coursier se dirige vers %address%.

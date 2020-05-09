@@ -931,6 +931,8 @@ users.couriers: Couriers
 users.restaurant_owners: Restaurant owners
 users.store_owners: Store owners
 users.administrators: Administrators
+users.sort.alphabetically: Alphabetically
+users.sort.newest: Registered recently
 sms.simple: |
   Hello,
   Our messenger is on its way to %address%.
