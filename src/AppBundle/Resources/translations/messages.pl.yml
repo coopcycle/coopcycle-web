@@ -351,7 +351,7 @@ payment.state.refunded: Zwrot kosztów
 payment.state.refunded_partially: Częściowy zwrot kosztów
 payment.state.cancelled: Anulowana
 payment.state.failed: Nieudana
-order.adjustment_type.tip: Napiwek
+order.adjustment_type.tip: Napiwek dla kuriera/kurierki
 order.adjustment_type.reusable_packaging: Opakowanie
 order.adjustment_type.delivery: Dostawa
 order_item.adjustment_type.reusable_packaging: '%quantity% × opakowanie'
@@ -474,7 +474,7 @@ pledge.vote_count_equals_two: '%first_user% i %second_user% zagłosowali na tę 
 pledge.vote_count_equals_one: '%username% zagłosował na tę restaurację'
 pledge.accept: Akceptuj
 pledge.reject: Odrzuć
-form.maintenance.enable.label: Włącz kontynuację
+form.maintenance.enable.label: Włącz tryb konserwacji
 form.maintenance.disable.label: Wyłącz kontynuację
 form.settings.latlng.label: Współrzędne geograficzne
 form.settings.latlng.help: "Określ domyślną szerokość i wysokość geograficzną. Możesz\
@@ -890,7 +890,10 @@ form.task_export.start.label: Start
 form.checkout_address.quote.label: Poproś o wycenę
 form.checkout_address.add_tip.label: Aplikuj
 form.checkout_address.tip_amount.help: Dziękuję ❤
-form.checkout_address.tip_amount.label: Napiwek
+form.checkout_address.tip_amount.label: Napiwek dla kuriera/kurierki
 form.checkout_address.add_promotion.label: Aplikuj
 form.checkout_address.reusable_packaging_loopeat_enabled.label: Chcę użyć pojemników
   LoopEat  (%price%)
+basics.updated_at: Zaktualizowane %date%
+order.notes: Informacje od klienta
+order.payments: Płatności
