@@ -149,6 +149,14 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             if (null === $restaurant) {
                 $data['restaurant'] = null;
             } else {
+
+                $fulfillmentMethods = [];
+                foreach ($restaurant->getFulfillmentMethods() as $fulfillmentMethod) {
+                    if ($fulfillmentMethod->isEnabled()) {
+                        $fulfillmentMethods[] = $fulfillmentMethod->getType();
+                    }
+                }
+
                 $data['restaurant'] = [
                     'id' => $restaurant->getId(),
                     'variableCustomerAmountEnabled' =>
@@ -160,6 +168,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                         ]
                     ],
                     'takeawayEnabled' => $restaurant->isTakeawayEnabled(),
+                    'fulfillmentMethods' => $fulfillmentMethods,
                 ];
             }
 

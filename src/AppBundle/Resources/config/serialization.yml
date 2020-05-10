@@ -91,3 +91,12 @@ Sylius\Component\Product\Model\Product:
       groups: ['product']
     enabled:
       groups: ['product', 'product_update']
+
+AppBundle\Entity\LocalBusiness\FulfillmentMethod:
+  attributes:
+    type:
+      groups: ['restaurant']
+    openingHours:
+      groups: ['restaurant']
+    enabled:
+      groups: ['restaurant']

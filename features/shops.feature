@@ -52,6 +52,7 @@ Feature: Manage shops
         ],
         "specialOpeningHoursSpecification":[],
         "availabilities":@array@,
-        "image":@string@
+        "image":@string@,
+        "fulfillmentMethods":@array@
       }
       """

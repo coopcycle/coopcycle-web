@@ -224,6 +224,9 @@ class LocalBusiness extends BaseLocalBusiness
 
     protected $stripePaymentMethods = [];
 
+    /**
+     * @Groups({"restaurant"})
+     */
     protected $fulfillmentMethods;
 
     public function __construct()

@@ -73,7 +73,8 @@ Feature: Manage restaurants
           ],
           "specialOpeningHoursSpecification":[],
           "availabilities":"@*@",
-          "image":@string@
+          "image":@string@,
+          "fulfillmentMethods":@array@
         }
       ],
       "hydra:totalItems":1,
@@ -136,7 +137,8 @@ Feature: Manage restaurants
         }
       ],
       "specialOpeningHoursSpecification":[],
-      "availabilities":@array@
+      "availabilities":@array@,
+      "fulfillmentMethods":@array@
     }
     """
 
