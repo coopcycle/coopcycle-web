@@ -21,7 +21,7 @@
         "process-timeout":0
     },
     "require": {
-        "php": "^7.2",
+        "php": "^7.4",
         "symfony/symfony": "^4.4",
         "api-platform/core": "2.5.3",
         "doctrine/orm": "^2.7",
@@ -111,7 +111,7 @@
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
-        "phpunit/phpunit": "^8.0",
+        "phpunit/phpunit": "^9.0",
         "behat/behat": "^3.1",
         "behat/symfony2-extension": "dev-master",
         "behat/mink": "dev-master",

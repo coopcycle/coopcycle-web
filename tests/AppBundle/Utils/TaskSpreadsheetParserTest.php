@@ -86,7 +86,7 @@ class TaskSpreadsheetParserTest extends TestCase
     public function testCsvWithGeocoderError()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageRegExp('/^Could not geocode address/');
+        $this->expectExceptionMessageMatches('/^Could not geocode address/');
 
         $this->geocoder
             ->geocode(Argument::type('string'))
@@ -109,7 +109,7 @@ class TaskSpreadsheetParserTest extends TestCase
     public function testXlsxWithGeocoderError()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageRegExp('/^Could not geocode address/');
+        $this->expectExceptionMessageMatches('/^Could not geocode address/');
 
         $this->geocoder
             ->geocode(Argument::type('string'))
@@ -132,7 +132,7 @@ class TaskSpreadsheetParserTest extends TestCase
     public function testOdsWithGeocoderError()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageRegExp('/^Could not geocode address/');
+        $this->expectExceptionMessageMatches('/^Could not geocode address/');
 
         $this->geocoder
             ->geocode(Argument::type('string'))

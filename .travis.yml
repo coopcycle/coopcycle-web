@@ -23,7 +23,7 @@ addons:
 
 language: php
 php:
-  - '7.3.12'
+  - '7.4.5'
 
 cache:
   apt: true
@@ -116,7 +116,7 @@ script:
   # - curl 'http://localhost:5000/route/v1/bicycle/2.3706188,48.877821;2.385706,48.887031?overview=full'
   - php vendor/bin/phpstan analyse
   - node node_modules/.bin/eslint --quiet js/app/
-  - phpunit
+  - php vendor/bin/phpunit
   - npm run jest
   - php bin/console doctrine:schema:validate --skip-sync --env=test
   - php vendor/bin/behat -f progress
