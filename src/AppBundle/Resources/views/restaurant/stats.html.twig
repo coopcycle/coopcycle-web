@@ -8,19 +8,18 @@
 
 {% block content %}
 
-<div class="row">
-  <div class="col-xs-6">
-    <h3 class="nomargin">
-      {% trans with {
-        '%start%': start|localizeddate('medium', 'none'),
-        '%end%': end|localizeddate('medium', 'none'),
-        }%} basics.date_range {% endtrans %}
-      </h3>
-  </div>
-  <div class="col-xs-6">
-    <div class="text-right">
-      <div id="month-picker"></div>
-    </div>
+<div class="d-flex justify-content-between mb-4">
+  <h3 class="nomargin">
+  {% trans with {
+    '%start%': start|localizeddate('medium', 'none'),
+    '%end%': end|localizeddate('medium', 'none'),
+  } %}basics.date_range{% endtrans %}
+  </h3>
+  <div class="d-flex align-items-center">
+    <form method="post" class="d-inline-block mr-2">
+      <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-download"></i> {{ 'basics.export'|trans }}</button>
+    </form>
+    <div id="month-picker" class="d-inline-block"></div>
   </div>
 </div>
 
@@ -53,12 +52,6 @@
     </tr>
   </tfoot>
 </table>
-
-<div class="text-center">
-  <form method="post">
-    <button type="submit" class="btn btn-success"><i class="fa fa-download"></i> {{ 'basics.export'|trans }}</button>
-  </form>
-</div>
 
 {% endblock %}
 
