@@ -214,7 +214,9 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
 
     public function addRestaurant(LocalBusiness $restaurant)
     {
-        $this->restaurants->add($restaurant);
+        if (!$this->restaurants->contains($restaurant)) {
+            $this->restaurants->add($restaurant);
+        }
 
         return $this;
     }

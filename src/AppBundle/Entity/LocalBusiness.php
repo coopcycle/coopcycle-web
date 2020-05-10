@@ -1057,4 +1057,11 @@ class LocalBusiness extends BaseLocalBusiness
 
         return false;
     }
+
+    public function addOwner(ApiUser $owner)
+    {
+        $owner->addRestaurant($this);
+
+        $this->owners->add($owner);
+    }
 }
