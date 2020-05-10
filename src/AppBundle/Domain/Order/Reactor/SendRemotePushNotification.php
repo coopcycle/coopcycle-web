@@ -71,7 +71,8 @@ class SendRemotePushNotification
         $restaurantNormalized = $this->serializer->normalize($restaurant, 'jsonld', [
             'resource_class' => LocalBusiness::class,
             'operation_type' => 'item',
-            'item_operation_name' => 'get'
+            'item_operation_name' => 'get',
+            'groups' => ['restaurant'],
         ]);
 
         return [
