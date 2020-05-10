@@ -112,6 +112,16 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         return $total;
     }
 
+    public function getAdjustmentsTotalRecursively(?string $type = null): int
+    {
+        $total = 0;
+        foreach ($this->orders as $order) {
+            $total += $order->getAdjustmentsTotalRecursively($type);
+        }
+
+        return $total;
+    }
+
     public function getFeeTotal(): int
     {
         $total = 0;
@@ -175,6 +185,8 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         }
         $headings[] = 'total_products_incl_tax';
         $headings[] = 'delivery_fee';
+        $headings[] = 'packaging_fee';
+        $headings[] = 'tip';
         $headings[] = 'total_incl_tax';
         $headings[] = 'stripe_fee';
         $headings[] = 'platform_fee';
@@ -226,6 +238,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
                 return $this->formatNumber($order->getItemsTotal());
             case 'delivery_fee':
                 return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+            case 'packaging_fee':
+                return $this->formatNumber($order->getAdjustmentsTotalRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT));
+            case 'tip':
+                return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT));
             case 'total_incl_tax':
                 return $this->formatNumber($order->getTotal());
             case 'stripe_fee':
@@ -257,6 +273,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
                 return $this->formatNumber($this->getItemsTotal());
             case 'delivery_fee':
                 return $this->formatNumber($this->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+            case 'packaging_fee':
+                return $this->formatNumber($this->getAdjustmentsTotalRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT));
+            case 'tip':
+                return $this->formatNumber($this->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT));
             case 'total_incl_tax':
                 return $this->formatNumber($this->getTotal());
             case 'stripe_fee':
@@ -281,6 +301,8 @@ class RestaurantStats implements \IteratorAggregate, \Countable
             'total_products_excl_tax',
             'total_products_incl_tax',
             'delivery_fee',
+            'packaging_fee',
+            'tip',
             'total_incl_tax',
             'stripe_fee',
             'platform_fee',

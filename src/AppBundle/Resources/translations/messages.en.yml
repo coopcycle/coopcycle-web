@@ -865,6 +865,8 @@ order.export.heading.completed_at: Completed at
 order.export.heading.total_products_excl_tax: Total products (excl. VAT)
 order.export.heading.total_products_incl_tax: Total products (incl. VAT)
 order.export.heading.delivery_fee: Delivery fee
+order.export.heading.packaging_fee: Packaging
+order.export.heading.tip: Tip
 order.export.heading.total_incl_tax: Total (incl. VAT)
 order.export.heading.stripe_fee: Stripe fee
 order.export.heading.platform_fee: Platform fee
