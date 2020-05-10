@@ -141,7 +141,7 @@ restaurant.form.quotes_allowed.label: 'Ce restaurant accepte également des comm
 restaurant.form.save: Enregistrer
 restaurant.form.loopeat_enabled.label: Activer le système de consignes LoopEat
 restaurant.form.featured.label: Ce restaurant apparaît sur la page d'accueil
-restaurant.form.takeaway_enabled.label: Activer la vente à emporter
+restaurant.form.fulfillment_methods.label: Modes d'exécution
 restaurant.deliveryPerimeterExpression.title: Périmètre de livraison
 restaurant.deliveryPerimeterExpression.help: Définit le périmètre de livraison accepté.
   Vous pouvez choisir un rayon (en km) ou une zone
@@ -916,3 +916,5 @@ sms.with_tracking: |
   Bonjour,
   Notre coursier se dirige vers %address%.
   Suivez l'avancement sur %link%
+fulfillment_method.delivery: Livraison
+fulfillment_method.collection: Retrait sur place

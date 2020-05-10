@@ -165,7 +165,7 @@ restaurant.form.loopeat_enabled.label: Enable LoopEat deposit-refund system
 restaurant.form.loopeat_disconnect.label: Disconnect LoopEat
 restaurant.form.featured.label: This restaurant is featured on homepage
 restaurant.form.giropay_enabled.label: Enable Giropay
-restaurant.form.takeaway_enabled.label: Enable take away
+restaurant.form.fulfillment_methods.label: Fulfillment methods
 restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries.
@@ -941,3 +941,5 @@ sms.with_tracking: |
   Our messenger is on its way to %address%.
   Track it on %link%
 basics.close: Close
+fulfillment_method.delivery: Delivery
+fulfillment_method.collection: Collection

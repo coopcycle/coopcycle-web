@@ -80,9 +80,16 @@ class RestaurantType extends LocalBusinessType
                     'label' => 'restaurant.form.deposit_refund_enabled.label',
                     'required' => false,
                 ])
-                ->add('takeawayEnabled', CheckboxType::class, [
-                    'label' => 'restaurant.form.takeaway_enabled.label',
+                ->add('fulfillmentMethods', ChoiceType::class, [
+                    'choices'  => [
+                        'fulfillment_method.delivery' => 'delivery',
+                        'fulfillment_method.collection' => 'collection',
+                    ],
+                    'label' => 'restaurant.form.fulfillment_methods.label',
                     'required' => false,
+                    'expanded' => true,
+                    'multiple' => true,
+                    'mapped' => false,
                 ])
                 ->add('delete', SubmitType::class, [
                     'label' => 'basics.delete',
@@ -113,6 +120,19 @@ class RestaurantType extends LocalBusinessType
                 $form->get('allowStripeConnect')->setData(true);
             }
 
+            if ($form->has('fulfillmentMethods')) {
+
+                $fulfillmentMethods = [];
+                if ($restaurant->isFulfillmentMethodEnabled('delivery')) {
+                    $fulfillmentMethods[] = 'delivery';
+                }
+                if ($restaurant->isFulfillmentMethodEnabled('collection')) {
+                    $fulfillmentMethods[] = 'collection';
+                }
+
+                $form->get('fulfillmentMethods')->setData($fulfillmentMethods);
+            }
+
             if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && ($this->debug || 'de' === $this->country)) {
                 $form
                     ->add('enableGiropay', CheckboxType::class, [
@@ -141,6 +161,13 @@ class RestaurantType extends LocalBusinessType
                 $orderingDelayDays = $event->getForm()->get('orderingDelayDays')->getData();
                 $orderingDelayHours = $event->getForm()->get('orderingDelayHours')->getData();
                 $restaurant->setOrderingDelayMinutes($orderingDelayDays * 60 * 24 + $orderingDelayHours * 60);
+
+                if ($form->has('fulfillmentMethods')) {
+                    $fulfillmentMethods = $form->get('fulfillmentMethods')->getData();
+
+                    $restaurant->addFulfillmentMethod('delivery', in_array('delivery', $fulfillmentMethods));
+                    $restaurant->addFulfillmentMethod('collection', in_array('collection', $fulfillmentMethods));
+                }
 
                 if ($form->has('allowStripeConnect')) {
                     $allowStripeConnect = $form->get('allowStripeConnect')->getData();
