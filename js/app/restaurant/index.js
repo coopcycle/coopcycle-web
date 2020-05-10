@@ -112,6 +112,13 @@ function updateTotal($form) {
 
 window.initMap = function() {
 
+  const container = document.getElementById('cart')
+
+  if (!container) {
+
+    return
+  }
+
   $('form[data-product-simple]').on('submit', function(e) {
     e.preventDefault()
     store.dispatch(queueAddItem($(this).attr('action'), 1))
@@ -298,8 +305,6 @@ window.initMap = function() {
   }
 
   store = createStoreFromPreloadedState(state)
-
-  const container = document.getElementById('cart')
 
   Modal.setAppElement(container)
 

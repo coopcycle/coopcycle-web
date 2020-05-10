@@ -18,6 +18,7 @@ order.shippedAt.expired: L'horaire de livraison est dépassé
 order.shippedAt.notAvailable: L'horaire de livraison n'est plus disponible
 order.shippedAt.notEmpty: L'horaire de livraison ne peut pas être vide
 order.items.containsDisabledProduct: La commande contient un produit désactivé
+order.fulfillment_methods.empty: Cet établissement est actuellement indisponible
 
 delivery.price.error.priceCalculation: Le prix de la course n'a pas pu être calculé.
 

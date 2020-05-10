@@ -4,11 +4,15 @@ import { withTranslation } from 'react-i18next'
 
 import 'antd/es/checkbox/style/index.css'
 
-export default withTranslation()(({ checked, onChange, disabled }) => {
+export default withTranslation()(({ checked, onChange, disabled, defaultChecked, t }) => {
 
   return (
-    <Checkbox checked={ checked } onChange={ e => onChange(e.target.checked) } disabled={ disabled }>
-      Retrait sur place
+    <Checkbox
+        checked={ checked }
+        defaultChecked={ defaultChecked }
+        onChange={ e => onChange(e.target.checked) }
+        disabled={ disabled }>
+      { t('CART_TAKE_AWAY') }
     </Checkbox>
   )
 })

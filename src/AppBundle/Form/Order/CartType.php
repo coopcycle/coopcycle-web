@@ -60,12 +60,16 @@ class CartType extends AbstractType
                 $form->get('isNewAddress')->setData(false);
             }
 
-            if ($cart->getRestaurant()->isTakeawayEnabled()) {
+            $restaurant = $cart->getRestaurant();
+            $isCollectionOnly =
+                $restaurant->isFulfillmentMethodEnabled('collection') && !$restaurant->isFulfillmentMethodEnabled('delivery');
+
+            if ($restaurant->isFulfillmentMethodEnabled('collection')) {
                 $form->add('takeaway', CheckboxType::class, [
                     'required' => false,
+                    'data' => $isCollectionOnly ? true : $cart->isTakeaway(),
                 ]);
             }
-
         });
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($removeAddressFields) {

@@ -16,6 +16,7 @@ import Time from './Time'
 import Takeaway from './Takeaway'
 
 import { changeAddress, sync, disableTakeaway, enableTakeaway } from '../redux/actions'
+import { selectIsDeliveryEnabled, selectIsCollectionEnabled } from '../redux/selectors'
 
 let isXsDevice = $('.visible-xs').is(':visible')
 
@@ -42,20 +43,20 @@ class Cart extends Component {
             <CartErrors />
             <div className="cart">
               <div>
-                { !this.props.takeaway && (
                 <AddressAutosuggest
                   addresses={ this.props.addresses }
                   address={ this.props.shippingAddress }
                   geohash={ '' }
                   key={ this.props.streetAddress }
-                  onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
-                )}
-                { this.props.takeawayEnabled && (
+                  onAddressSelected={ (value, address) => this.props.changeAddress(address) }
+                  disabled={ this.props.isCollectionOnly || this.props.takeaway } />
+                { this.props.isCollectionEnabled && (
                 <div className="text-center">
                   <Takeaway
-                    checked={ this.props.takeaway }
+                    defaultChecked={ this.props.isCollectionOnly }
+                    checked={ this.props.takeaway || this.props.isCollectionOnly }
                     onChange={ enabled => enabled ? this.props.enableTakeaway() : this.props.disableTakeaway() }
-                    disabled={ this.props.loading } />
+                    disabled={ this.props.loading || this.props.isCollectionOnly } />
                 </div>
                 )}
                 <Time />
@@ -83,7 +84,9 @@ function mapStateToProps(state) {
     streetAddress: state.cart.shippingAddress ? state.cart.shippingAddress.streetAddress : '',
     isMobileCartVisible: state.isMobileCartVisible,
     addresses: state.addresses,
-    takeawayEnabled: state.cart.restaurant.takeawayEnabled,
+    isDeliveryEnabled: selectIsDeliveryEnabled(state),
+    isCollectionEnabled: selectIsCollectionEnabled(state),
+    isCollectionOnly: (selectIsCollectionEnabled(state) && !selectIsDeliveryEnabled(state)),
     takeaway: state.cart.takeaway,
     loading: state.isFetching,
   }

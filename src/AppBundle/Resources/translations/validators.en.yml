@@ -18,6 +18,7 @@ order.shippedAt.expired: The delivery date is expired
 order.shippedAt.notAvailable: The delivery date is no longer available
 order.shippedAt.notEmpty: The delivery date can't be empty
 order.items.containsDisabledProduct: The order contains a disabled product
+order.fulfillment_methods.empty: This establishment is currently unavailable
 
 delivery.price.error.priceCalculation: The delivery price could not be calculated.
 

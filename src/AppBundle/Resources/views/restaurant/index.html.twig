@@ -150,11 +150,19 @@
     </div>
     {% endcache %}
 
+    {% if restaurant.isFulfillmentMethodEnabled('delivery') or restaurant.isFulfillmentMethodEnabled('collection') %}
     <div class="col-xs-12 col-sm-4">
       {{ form_start(cart_form) }}
         <div id="cart"></div>
       {{ form_end(cart_form) }}
     </div>
+    {% else %}
+      <div class="col-xs-12 col-sm-4">
+        <div class="alert alert-warning">
+          {% trans from 'validators' %}order.fulfillment_methods.empty{% endtrans %}
+        </div>
+      </div>
+    {% endif %}
 
     <div class="visible-xs">
     </div>
