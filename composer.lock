@@ -8654,34 +8654,35 @@
         },
         {
             "name": "ocramius/package-versions",
-            "version": "1.4.2",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ocramius/PackageVersions.git",
-                "reference": "44af6f3a2e2e04f2af46bcb302ad9600cba41c7d"
+                "reference": "421679846270a5772534828013a93be709fb13df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/44af6f3a2e2e04f2af46bcb302ad9600cba41c7d",
-                "reference": "44af6f3a2e2e04f2af46bcb302ad9600cba41c7d",
+                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/421679846270a5772534828013a93be709fb13df",
+                "reference": "421679846270a5772534828013a93be709fb13df",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^1.0.0",
-                "php": "^7.1.0"
+                "composer-plugin-api": "^1.1.0 || ^2.0",
+                "php": "^7.4.0"
             },
             "require-dev": {
-                "composer/composer": "^1.6.3",
-                "doctrine/coding-standard": "^5.0.1",
-                "ext-zip": "*",
-                "infection/infection": "^0.7.1",
-                "phpunit/phpunit": "^7.5.17"
+                "composer/composer": "^1.9.3 || ^2.0@dev",
+                "doctrine/coding-standard": "^7.0.2",
+                "ext-zip": "^1.15.0",
+                "infection/infection": "^0.15.3",
+                "phpunit/phpunit": "^9.0.1",
+                "vimeo/psalm": "^3.9.3"
             },
             "type": "composer-plugin",
             "extra": {
                 "class": "PackageVersions\\Installer",
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "1.99.x-dev"
                 }
             },
             "autoload": {
@@ -8700,7 +8701,17 @@
                 }
             ],
             "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
-            "time": "2019-11-15T16:17:10+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/Ocramius",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/ocramius/package-versions",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-04-06T17:43:35+00:00"
         },
         {
             "name": "ocramius/proxy-manager",
@@ -11234,16 +11245,16 @@
         },
         {
             "name": "sentry/sentry-symfony",
-            "version": "3.4.4",
+            "version": "3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-symfony.git",
-                "reference": "d48d50dfdcb93df1eb00719418a43f5976743f71"
+                "reference": "b5d6407d4127b0be5b315768ee197e086b71f234"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/d48d50dfdcb93df1eb00719418a43f5976743f71",
-                "reference": "d48d50dfdcb93df1eb00719418a43f5976743f71",
+                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/b5d6407d4127b0be5b315768ee197e086b71f234",
+                "reference": "b5d6407d4127b0be5b315768ee197e086b71f234",
                 "shasum": ""
             },
             "require": {
@@ -11257,17 +11268,22 @@
                 "symfony/http-kernel": "^3.4||^4.0||^5.0",
                 "symfony/security-core": "^3.4||^4.0||^5.0"
             },
+            "conflict": {
+                "ocramius/package-versions": "<1.3"
+            },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.8",
-                "jangregor/phpstan-prophecy": "^0.3.0",
+                "jangregor/phpstan-prophecy": "^0.6.2",
                 "monolog/monolog": "^1.11||^2.0",
                 "php-http/mock-client": "^1.0",
-                "phpstan/phpstan-phpunit": "^0.11",
-                "phpstan/phpstan-shim": "^0.11",
+                "phpstan/extension-installer": "^1.0",
+                "phpstan/phpstan": "^0.12.19",
+                "phpstan/phpstan-phpunit": "^0.12.8",
                 "phpunit/phpunit": "^7.5||^8.5",
                 "symfony/browser-kit": "^3.4||^4.0||^5.0",
                 "symfony/expression-language": "^3.4||^4.0||^5.0",
                 "symfony/framework-bundle": "^3.4||^4.0||^5.0",
+                "symfony/messenger": "^4.3||^5.0",
                 "symfony/monolog-bundle": "^3.4",
                 "symfony/phpunit-bridge": "^5.0",
                 "symfony/yaml": "^3.4||^4.0||^5.0"
@@ -11313,6 +11329,7 @@
             ],
             "funding": [
                 {
+                    "url": "https://sentry.io/",
                     "type": "custom"
                 },
                 {
@@ -11320,7 +11337,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2020-03-16T09:07:07+00:00"
+            "time": "2020-05-07T13:11:22+00:00"
         },
         {
             "name": "simple-bus/message-bus",
@@ -14604,16 +14621,16 @@
         },
         {
             "name": "symfony/polyfill-uuid",
-            "version": "v1.14.0",
+            "version": "v1.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-uuid.git",
-                "reference": "80781e68dbd85373eb36a1b67608b1a731931000"
+                "reference": "6bb7ba3890d777d69d529000bf8dd2948a56c14c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-uuid/zipball/80781e68dbd85373eb36a1b67608b1a731931000",
-                "reference": "80781e68dbd85373eb36a1b67608b1a731931000",
+                "url": "https://api.github.com/repos/symfony/polyfill-uuid/zipball/6bb7ba3890d777d69d529000bf8dd2948a56c14c",
+                "reference": "6bb7ba3890d777d69d529000bf8dd2948a56c14c",
                 "shasum": ""
             },
             "require": {
@@ -14626,7 +14643,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.14-dev"
+                    "dev-master": "1.16-dev"
                 }
             },
             "autoload": {
@@ -14659,7 +14676,21 @@
                 "portable",
                 "uuid"
             ],
-            "time": "2020-01-13T11:15:53+00:00"
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-05-08T17:27:24+00:00"
         },
         {
             "name": "symfony/psr-http-message-bridge",
