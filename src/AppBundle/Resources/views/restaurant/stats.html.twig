@@ -26,66 +26,30 @@
 
 <table class="table table-condensed">
   <thead>
-    <th>{% trans %} restaurant.stats.order_number {% endtrans %}</th>
-    <th>{% trans %} restaurant.stats.delivered_on {% endtrans %}</th>
-    <th class="text-right">{% trans %} restaurant.stats.total_products_excluding_taxes {% endtrans %}</th>
-    {% for taxRate in stats.taxRates %}
-    <th class="text-right">{{ taxRate.name }}</th>
+    {% for column in stats.columns %}
+      <th class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
+        {{ stats.getColumnLabel(column) }}
+      </th>
     {% endfor %}
-    <th class="text-right">{% trans %} restaurant.stats.total_products_including_all_taxes {% endtrans %}</th>
-    <th class="text-right">{% trans %} restaurant.stats.delivery {% endtrans %}</th>
-    <th class="text-right">{% trans %} basics.total_including_tax {% endtrans %}</th>
-    <th class="text-right">{% trans %} basics.stripe_fees {% endtrans %}</th>
-    <th class="text-right">{% trans %} basics.platform_fees {% endtrans %}</th>
-    <th class="text-right">{% trans %} basics.net_income {% endtrans %}</th>
   </thead>
   <tbody>
     {% for order in stats %}
       <tr>
-        <td width="10%">{{ order.number }}</td>
-        <td width="10%">{{ order.shippedAt|localizeddate('short', 'short') }}</td>
-        <td class="text-right" width="10%">{{ (order.itemsTotal - order.itemsTaxTotal)|price_format }}</td>
-        {% for taxRate in stats.taxRates %}
-        <td class="text-right" width="5%">{{ order.getItemsTaxTotalByRate(taxRate)|price_format }}</td>
+        {% for column in stats.columns %}
+        <td class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
+          {{ stats.getRowValue(column, loop.parent.loop.index0) }}
+        </td>
         {% endfor %}
-        <td class="text-right" width="10%">{{ order.itemsTotal|price_format }}</td>
-        <td class="text-right" width="10%">{{ order.getAdjustmentsTotal('delivery')|price_format }}</td>
-        <td class="text-right" width="10%">{{ order.total|price_format }}</td>
-        <td class="text-right" width="10%">{{ (order.stripeFeeTotal * -1)|price_format }}</td>
-        <td class="text-right" width="10%">{{ (order.feeTotal * -1)|price_format }}</td>
-        <td class="text-right" width="10%">{{ order.revenue|price_format }}</td>
       </tr>
     {% endfor %}
   </tbody>
   <tfoot>
     <tr>
-      <th colspan="2">Total ({{ stats|length }})</th>
-      <td class="text-right">
-        <strong>{{ (stats.itemsTotal - stats.itemsTaxTotal)|price_format }}</strong>
-      </td>
-      {% for taxRate in stats.taxRates %}
-      <td class="text-right">
-        <strong>{{ stats.getItemsTaxTotalByRate(taxRate)|price_format }}</strong>
-      </td>
+      {% for column in stats.columns %}
+        <td class="text-right">
+          <strong>{{ stats.getColumnTotal(column) }}</strong>
+        </td>
       {% endfor %}
-      <td class="text-right">
-        <strong>{{ stats.itemsTotal|price_format }}</strong>
-      </td>
-      <td class="text-right">
-        <strong>{{ stats.getAdjustmentsTotal('delivery')|price_format }}</strong>
-      </td>
-      <td class="text-right">
-        <strong>{{ stats.total|price_format }}</strong>
-      </td>
-      <td class="text-right">
-        <strong>{{ (stats.stripeFeeTotal * -1)|price_format }}</strong>
-      </td>
-      <td class="text-right">
-        <strong>{{ (stats.feeTotal * -1)|price_format }}</strong>
-      </td>
-      <td class="text-right">
-        <strong>{{ stats.revenue|price_format }}</strong>
-      </td>
     </tr>
   </tfoot>
 </table>

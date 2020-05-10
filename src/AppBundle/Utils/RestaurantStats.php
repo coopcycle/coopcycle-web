@@ -30,7 +30,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         bool $withRestaurantName = false,
         bool $withMessenger = false)
     {
-        $this->orders = $orders;
+        $this->orders = array_values($orders);
         $this->translator = $translator;
         $this->withRestaurantName = $withRestaurantName;
         $this->withMessenger = $withMessenger;
@@ -58,6 +58,8 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         }
 
         $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
+        $this->numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
+        $this->numberFormatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
     }
 
     private function formatNumber(int $amount)
@@ -155,56 +157,155 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         return $this->taxRates;
     }
 
+    public function getColumns()
+    {
+        $headings = [];
+
+        if ($this->withRestaurantName) {
+            $headings[] = 'restaurant_name';
+        }
+        if ($this->withMessenger) {
+            $headings[] = 'completed_by';
+        }
+        $headings[] = 'order_number';
+        $headings[] = 'completed_at';
+        $headings[] = 'total_products_excl_tax';
+        foreach ($this->getTaxRates() as $taxRate) {
+            $headings[] = sprintf('vat.%s', $taxRate->getCode()); //$taxRate->getName();
+        }
+        $headings[] = 'total_products_incl_tax';
+        $headings[] = 'delivery_fee';
+        $headings[] = 'total_incl_tax';
+        $headings[] = 'stripe_fee';
+        $headings[] = 'platform_fee';
+        $headings[] = 'net_revenue';
+
+        return $headings;
+    }
+
+    public function getColumnLabel($column)
+    {
+        if (0 === strpos($column, 'vat.')) {
+            $code = str_replace('vat.', '', $column);
+            foreach ($this->getTaxRates() as $rate) {
+                if ($rate->getCode() === $code) {
+                    return $rate->getName();
+                }
+            }
+        }
+
+        return $this->translator->trans(sprintf('order.export.heading.%s', $column));
+    }
+
+    public function getRowValue($column, $index)
+    {
+        $order = $this->orders[$index];
+
+        if (0 === strpos($column, 'vat.')) {
+            $code = str_replace('vat.', '', $column);
+            foreach ($this->getTaxRates() as $rate) {
+                if ($rate->getCode() === $code) {
+                    return $this->formatNumber($order->getItemsTaxTotalByRate($rate));
+                }
+            }
+        }
+
+        switch ($column) {
+            case 'restaurant_name';
+                return null !== $order->getRestaurant() ? $order->getRestaurant()->getName() : '';
+            case 'order_number';
+                return $order->getNumber();
+            case 'completed_by';
+                $messenger = $order->getDelivery()->getDropoff()->getAssignedCourier();
+                return $messenger ? $messenger->getUsername() : '';
+            case 'completed_at';
+                return $order->getShippedAt()->format('Y-m-d H:i');
+            case 'total_products_excl_tax':
+                return $this->formatNumber($order->getItemsTotal() - $order->getItemsTaxTotal());
+            case 'total_products_incl_tax':
+                return $this->formatNumber($order->getItemsTotal());
+            case 'delivery_fee':
+                return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+            case 'total_incl_tax':
+                return $this->formatNumber($order->getTotal());
+            case 'stripe_fee':
+                return $this->formatNumber($order->getStripeFeeTotal());
+            case 'platform_fee':
+                return $this->formatNumber($order->getFeeTotal());
+            case 'net_revenue':
+                return $this->formatNumber($order->getRevenue());
+        }
+
+        return '';
+    }
+
+    public function getColumnTotal($column)
+    {
+        if (0 === strpos($column, 'vat.')) {
+            $code = str_replace('vat.', '', $column);
+            foreach ($this->getTaxRates() as $rate) {
+                if ($rate->getCode() === $code) {
+                    return $this->formatNumber($this->getTaxTotalByRate($rate));
+                }
+            }
+        }
+
+        switch ($column) {
+            case 'total_products_excl_tax':
+                return $this->formatNumber($this->getItemsTotal() - $this->getItemsTaxTotal());
+            case 'total_products_incl_tax':
+                return $this->formatNumber($this->getItemsTotal());
+            case 'delivery_fee':
+                return $this->formatNumber($this->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+            case 'total_incl_tax':
+                return $this->formatNumber($this->getTotal());
+            case 'stripe_fee':
+                return $this->formatNumber($this->getStripeFeeTotal());
+            case 'platform_fee':
+                return $this->formatNumber($this->getFeeTotal());
+            case 'net_revenue':
+                return $this->formatNumber($this->getRevenue());
+        }
+
+        return '';
+    }
+
+    public function isNumericColumn($column)
+    {
+        if (0 === strpos($column, 'vat.')) {
+
+            return true;
+        }
+
+        return in_array($column, [
+            'total_products_excl_tax',
+            'total_products_incl_tax',
+            'delivery_fee',
+            'total_incl_tax',
+            'stripe_fee',
+            'platform_fee',
+            'net_revenue',
+        ]);
+    }
+
     public function toCsv()
     {
         $csv = CsvWriter::createFromString('');
 
         $headings = [];
-
-        if ($this->withRestaurantName) {
-            $headings[] = $this->translator->trans('order.export.heading.restaurant_name');
+        foreach ($this->getColumns() as $column) {
+            $headings[] = $this->getColumnLabel($column);
         }
-        if ($this->withMessenger) {
-            $headings[] = $this->translator->trans('order.export.heading.completed_by');
-        }
-        $headings[] = $this->translator->trans('order.export.heading.order_number');
-        $headings[] = $this->translator->trans('order.export.heading.completed_at');
-        $headings[] = $this->translator->trans('order.export.heading.total_products_excl_tax');
-        foreach ($this->getTaxRates() as $taxRate) {
-            $headings[] = $taxRate->getName();
-        }
-        $headings[] = $this->translator->trans('order.export.heading.total_products_incl_tax');
-        $headings[] = $this->translator->trans('order.export.heading.delivery_fee');
-        $headings[] = $this->translator->trans('order.export.heading.total_incl_tax');
-        $headings[] = $this->translator->trans('order.export.heading.stripe_fee');
-        $headings[] = $this->translator->trans('order.export.heading.platform_fee');
-        $headings[] = $this->translator->trans('order.export.heading.net_revenue');
 
         $csv->insertOne($headings);
 
         $records = [];
-        foreach ($this->orders as $order) {
+        foreach ($this->orders as $index => $order) {
 
             $record = [];
-            if ($this->withRestaurantName) {
-                $record[] = null !== $order->getRestaurant() ? $order->getRestaurant()->getName() : '';
+            foreach ($this->getColumns() as $column) {
+                $record[] = $this->getRowValue($column, $index);
             }
-            if ($this->withMessenger) {
-                $messenger = $order->getDelivery()->getDropoff()->getAssignedCourier();
-                $record[] = $messenger ? $messenger->getUsername() : '';
-            }
-            $record[] = $order->getNumber();
-            $record[] = $order->getShippedAt()->format('Y-m-d H:i');
-            $record[] = $this->formatNumber($order->getItemsTotal() - $order->getItemsTaxTotal());
-            foreach ($this->getTaxRates() as $taxRate) {
-                $record[] = $this->formatNumber($order->getItemsTaxTotalByRate($taxRate));
-            }
-            $record[] = $this->formatNumber($order->getItemsTotal());
-            $record[] = $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
-            $record[] = $this->formatNumber($order->getTotal());
-            $record[] = $this->formatNumber($order->getStripeFeeTotal());
-            $record[] = $this->formatNumber($order->getFeeTotal());
-            $record[] = $this->formatNumber($order->getRevenue());
 
             $records[] = $record;
         }
