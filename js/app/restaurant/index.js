@@ -17,6 +17,8 @@ import Cart from '../cart/components/Cart'
 
 require('gasparesganga-jquery-loading-overlay')
 
+import './index.scss'
+
 const storage = engine.createStore([ session, cookie ])
 
 window._paq = window._paq || []

@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
+import classNames from 'classnames'
+
+import { selectItems } from '../redux/selectors'
 
 class CartButton extends Component {
 
@@ -9,18 +12,17 @@ class CartButton extends Component {
 
     const { hasErrors, items, loading } = this.props
 
-    const btnClasses = ['btn', 'btn-lg', 'btn-block', 'btn-primary']
-    let btnProps = {}
-    if (hasErrors || items.length === 0 || loading) {
-      btnClasses.push('disabled')
-      btnProps = {
-        ...btnProps,
-        disabled: true
-      }
-    }
+    const disabled = (hasErrors || items.length === 0 || loading)
+    const btnProps = disabled ? { disabled: true } : {}
 
     return (
-      <button type="submit" className={ btnClasses.join(' ') } { ...btnProps }>
+      <button type="submit" className={ classNames({
+        'btn': true,
+        'btn-lg': true,
+        'btn-block': true,
+        'btn-primary': true,
+        'disabled': disabled }) }
+        { ...btnProps }>
         <span>{ this.props.loading && <i className="fa fa-spinner fa-spin"></i> }</span>  <span>{ this.props.t('CART_WIDGET_BUTTON') }</span>
       </button>
     )
@@ -29,15 +31,8 @@ class CartButton extends Component {
 
 function mapStateToProps(state) {
 
-  const { cart, restaurant } = state
-
-  let items = cart.items
-  if (cart.restaurant.id !== restaurant.id) {
-    items = []
-  }
-
   return {
-    items,
+    items: selectItems(state),
     loading: state.isFetching,
     hasErrors: _.size(state.errors) > 0,
   }

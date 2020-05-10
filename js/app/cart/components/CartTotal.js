@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
+import { selectIsSameRestaurant } from '../redux/selectors'
+
 const Adjustment = ({ adjustment, tooltip }) => (
   <div>
     <span>{ adjustment.label }</span>
@@ -98,17 +100,12 @@ class CartTotal extends React.Component {
 
 function mapStateToProps (state) {
 
-  const { cart, restaurant } = state
+  const { cart } = state
+  const isSameRestaurant = selectIsSameRestaurant(state)
 
-  let itemsTotal = cart.itemsTotal
-  let total = cart.total
-  let adjustments = cart.adjustments
-
-  if (cart.restaurant.id !== restaurant.id) {
-    itemsTotal = 0
-    total = 0
-    adjustments = {}
-  }
+  let itemsTotal  = isSameRestaurant ? cart.itemsTotal : 0
+  let total       = isSameRestaurant ? cart.total : 0
+  let adjustments = isSameRestaurant ? cart.adjustments : {}
 
   return {
     itemsTotal,

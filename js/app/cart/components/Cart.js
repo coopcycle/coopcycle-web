@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import Sticky from 'react-stickynode'
+import classNames from 'classnames'
 
 import AddressModal from './AddressModal'
 import DateModal from './DateModal'
 import RestaurantModal from './RestaurantModal'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
-import CartErrors from './CartErrors'
 import CartItems from './CartItems'
 import CartHeading from './CartHeading'
 import CartTotal from './CartTotal'
@@ -17,8 +17,6 @@ import Takeaway from './Takeaway'
 
 import { changeAddress, sync, disableTakeaway, enableTakeaway } from '../redux/actions'
 import { selectIsDeliveryEnabled, selectIsCollectionEnabled } from '../redux/selectors'
-
-let isXsDevice = $('.visible-xs').is(':visible')
 
 class Cart extends Component {
 
@@ -30,17 +28,15 @@ class Cart extends Component {
 
     const { isMobileCartVisible } = this.props
 
-    const panelClasses = ['panel', 'panel-default', 'cart-wrapper']
-    if (isMobileCartVisible) {
-      panelClasses.push('cart-wrapper--show')
-    }
-
     return (
-      <Sticky enabled={ !isXsDevice }>
-        <div className={ panelClasses.join(' ') }>
+      <Sticky>
+        <div className={ classNames({
+          'panel': true,
+          'panel-default': true,
+          'cart-wrapper': true,
+          'cart-wrapper--show': isMobileCartVisible }) }>
           <CartHeading />
           <div className="panel-body">
-            <CartErrors />
             <div className="cart">
               <div>
                 <AddressAutosuggest

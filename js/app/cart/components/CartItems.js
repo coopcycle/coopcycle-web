@@ -5,6 +5,7 @@ import _ from 'lodash'
 
 import CartItem from './CartItem'
 import { removeItem, updateItemQuantity } from '../redux/actions'
+import { selectItems } from '../redux/selectors'
 
 class CartItems extends React.Component {
 
@@ -49,12 +50,7 @@ class CartItems extends React.Component {
 
 function mapStateToProps (state) {
 
-  const { cart, restaurant } = state
-
-  let items = cart.items
-  if (cart.restaurant.id !== restaurant.id) {
-    items = []
-  }
+  const items = selectItems(state)
 
   // Make sure items are always in the same order
   // We order them by id asc
