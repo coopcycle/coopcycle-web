@@ -3,6 +3,7 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimelineCalculator;
 use SimpleBus\Message\Bus\MessageBus;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -16,6 +17,18 @@ class CalculateTimeline
         $this->calculator = $calculator;
     }
 
+    private function getTimeline(OrderInterface $order)
+    {
+        $timeline = $order->getTimeline();
+
+        if (null === $timeline) {
+            $timeline = $this->calculator->calculate($order);
+            $order->setTimeline($timeline);
+        }
+
+        return $timeline;
+    }
+
     public function __invoke(Event $event)
     {
         $order = $event->getOrder();
@@ -24,10 +37,7 @@ class CalculateTimeline
             return;
         }
 
-        if ($event instanceof Event\OrderCreated) {
-            $timeline = $this->calculator->calculate($order);
-            $order->setTimeline($timeline);
-        }
+        $timeline = $this->getTimeline($order);
 
         if ($event instanceof Event\OrderDelayed) {
             $this->calculator->delay($order, $event->getDelay());
@@ -35,12 +45,12 @@ class CalculateTimeline
 
         if ($event instanceof Event\OrderPicked) {
             // TODO Resolve the date from the event
-            $order->getTimeline()->setPickupAt(new \DateTime());
+            $timeline->setPickupAt(new \DateTime());
         }
 
         if ($event instanceof Event\OrderDropped) {
             // TODO Resolve the date from the event
-            $order->getTimeline()->setDropoffAt(new \DateTime());
+            $timeline->setDropoffAt(new \DateTime());
         }
     }
 }
