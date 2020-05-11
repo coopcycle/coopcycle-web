@@ -1246,3 +1246,22 @@ form[name="restaurant"] {
 .restaurant-banner {
   margin-top: -20px;
 }
+
+#modal-loopeat {
+  @media (max-width: $screen-xs-max) {
+    .modal-dialog {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 10px;
+      .modal-content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        .modal-body {
+          flex: 1;
+        }
+      }
+    }
+  }
+}

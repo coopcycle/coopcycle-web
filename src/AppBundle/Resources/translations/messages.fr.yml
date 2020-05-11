@@ -925,3 +925,4 @@ sms.with_tracking: |
   Suivez l'avancement sur %link%
 fulfillment_method.delivery: Livraison
 fulfillment_method.collection: Retrait sur place
+basics.close: Fermer
