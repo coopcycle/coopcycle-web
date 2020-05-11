@@ -50,6 +50,8 @@ function renderSwitch($input) {
 
 $(function() {
 
+  const formData = document.querySelector('#restaurant-form-data')
+
   // Render Switch on page load
   $('form[name="restaurant"]').find('.switch').each((index, el) => renderSwitch($(el)))
 
@@ -58,8 +60,8 @@ $(function() {
     window.CoopCycle.DeliveryZonePicker(
       zonePickerEl,
       {
-        zones: window.AppData.zones,
-        expression: window.AppData.deliveryPerimeterExpression,
+        zones: JSON.parse(formData.dataset.zones),
+        expression: formData.dataset.restaurantDeliveryPerimeterExpression,
         onExprChange: (expr) => { $('#restaurant_deliveryPerimeterExpression').val(expr)}
       }
     )
@@ -70,8 +72,6 @@ $(function() {
   const $formGroup = $('#restaurant_imageFile_file').closest('.form-group')
 
   $formGroup.empty()
-
-  const formData = document.querySelector('#restaurant-form-data')
 
   new DropzoneWidget($formGroup, {
     dropzone: {

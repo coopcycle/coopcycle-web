@@ -1,0 +1,41 @@
+{% if form.fulfillmentMethods is defined %}
+  {{ form_row(form.fulfillmentMethods) }}
+{% endif %}
+
+{% if restaurant.id is not null %}
+  <p class="help-block">
+    <i class="fa fa-info-circle"></i> {% trans %}restaurant.form.temporaryClosingRule{% endtrans %}  
+    <a href="{{ path(planning_route, { id: restaurant.id }) }}">{% trans %}restaurant.form.accessPlanning{% endtrans %}</a>
+  </p>
+{% endif %}
+
+{{ form_row(form.openingHours, { label: false }) }}
+<div id="opening-hours"></div>
+
+{{ form_row(form.openingHoursBehavior) }}
+
+<label class="control-label">{% trans %}localBusiness.form.orderingDelayMinutes{% endtrans %}</label>
+<div class="row">
+  <div class="col-sm-3">
+    {{ form_row(form.orderingDelayDays) }}
+  </div>
+  <div class="col-sm-3">
+    {{ form_row(form.orderingDelayHours) }}
+  </div>
+</div>
+
+<span class="help-block">
+  <i class="fa fa-info-circle"></i>&nbsp;{{ "localBusiness.form.orderingDelayMinutes.help" | trans | raw }}
+</span>
+
+{{ form_row(form.shippingOptionsDays) }}
+
+{% if form.deliveryPerimeterExpression is defined %}
+  <h4>{% trans %}restaurant.deliveryPerimeterExpression.title{% endtrans %}</h4>
+  {{ form_widget(form.deliveryPerimeterExpression) }}
+  <div id="restaurant_deliveryPerimeterExpression__picker">
+  </div>
+  <span class="help-block">
+    <i class="fa fa-info-circle"></i> {{ 'restaurant.deliveryPerimeterExpression.help'|trans|raw }}
+  </span>
+{% endif %}

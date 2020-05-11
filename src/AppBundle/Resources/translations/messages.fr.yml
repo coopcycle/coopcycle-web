@@ -142,6 +142,11 @@ restaurant.form.save: Enregistrer
 restaurant.form.loopeat_enabled.label: Activer le système de consignes LoopEat
 restaurant.form.featured.label: Ce restaurant apparaît sur la page d'accueil
 restaurant.form.fulfillment_methods.label: Modes d'exécution
+restaurant.form.section.general: Général
+restaurant.form.section.options: Options
+restaurant.form.section.fulfillment: Exécution
+restaurant.form.section.payment: Paiement
+restaurant.form.section.settlement: Conditions
 restaurant.deliveryPerimeterExpression.title: Périmètre de livraison
 restaurant.deliveryPerimeterExpression.help: Définit le périmètre de livraison accepté.
   Vous pouvez choisir un rayon (en km) ou une zone

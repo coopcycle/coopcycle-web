@@ -67,11 +67,6 @@ class RestaurantType extends LocalBusinessType
                 ->add('deliveryPerimeterExpression', HiddenType::class, [
                     'label' => 'localBusiness.form.deliveryPerimeterExpression'
                 ])
-                ->add('allowStripeConnect', CheckboxType::class, [
-                    'label' => 'restaurant.form.allow_stripe_connect.label',
-                    'mapped' => false,
-                    'required' => false,
-                ])
                 ->add('quotesAllowed', CheckboxType::class, [
                     'label' => 'restaurant.form.quotes_allowed.label',
                     'required' => false,
@@ -116,10 +111,6 @@ class RestaurantType extends LocalBusinessType
             $form->get('orderingDelayHours')->setData($orderingDelayHours);
             $form->get('orderingDelayDays')->setData($orderingDelayDays);
 
-            if ($form->has('allowStripeConnect') && in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())) {
-                $form->get('allowStripeConnect')->setData(true);
-            }
-
             if ($form->has('fulfillmentMethods')) {
 
                 $fulfillmentMethods = [];
@@ -133,21 +124,33 @@ class RestaurantType extends LocalBusinessType
                 $form->get('fulfillmentMethods')->setData($fulfillmentMethods);
             }
 
-            if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && ($this->debug || 'de' === $this->country)) {
-                $form
-                    ->add('enableGiropay', CheckboxType::class, [
-                        'label' => 'restaurant.form.giropay_enabled.label',
-                        'mapped' => false,
-                        'required' => false,
-                        'data' => $restaurant->isStripePaymentMethodEnabled('giropay'),
-                    ]);
-            }
-
             if ($options['loopeat_enabled'] && $restaurant->hasLoopEatCredentials()) {
                 $form
                     ->add('loopeatDisconnect', SubmitType::class, [
                         'label' => 'restaurant.form.loopeat_disconnect.label',
                     ]);
+            }
+
+            if (null !== $restaurant->getId()) {
+
+                $form->add('allowStripeConnect', CheckboxType::class, [
+                    'label' => 'restaurant.form.allow_stripe_connect.label',
+                    'mapped' => false,
+                    'required' => false,
+                ]);
+                if ($form->has('allowStripeConnect') && in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())) {
+                    $form->get('allowStripeConnect')->setData(true);
+                }
+
+                if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && ($this->debug || 'de' === $this->country)) {
+                    $form
+                        ->add('enableGiropay', CheckboxType::class, [
+                            'label' => 'restaurant.form.giropay_enabled.label',
+                            'mapped' => false,
+                            'required' => false,
+                            'data' => $restaurant->isStripePaymentMethodEnabled('giropay'),
+                        ]);
+                }
             }
         });
 

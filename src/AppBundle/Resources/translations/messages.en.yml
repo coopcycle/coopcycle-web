@@ -166,6 +166,11 @@ restaurant.form.loopeat_disconnect.label: Disconnect LoopEat
 restaurant.form.featured.label: This restaurant is featured on homepage
 restaurant.form.giropay_enabled.label: Enable Giropay
 restaurant.form.fulfillment_methods.label: Fulfillment methods
+restaurant.form.section.general: General
+restaurant.form.section.options: Options
+restaurant.form.section.fulfillment: Fulfillment
+restaurant.form.section.payment: Payment
+restaurant.form.section.settlement: Settlement
 restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries.

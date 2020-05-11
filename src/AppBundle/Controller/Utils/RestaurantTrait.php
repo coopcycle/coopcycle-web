@@ -219,13 +219,12 @@ trait RestaurantTrait
         }
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
-            'zoneNames' => json_encode($zoneNames),
+            'zoneNames' => $zoneNames,
             'restaurant' => $restaurant,
             'activationErrors' => $activationErrors,
             'formErrors' => $formErrors,
             'form' => $form->createView(),
             'layout' => $request->attributes->get('layout'),
-            'deliveryPerimeterExpression' => json_encode($restaurant->getDeliveryPerimeterExpression()),
             'loopeat_authorize_url' => $loopeatAuthorizeUrl,
         ], $routes));
     }

@@ -10,103 +10,128 @@
 {% block content %}
 
 {% if formErrors is not empty %}
-  <div class="row margin-bottom-md">
-    <div class="col-sm-6 col-md-offset-3">
-      <div class="alert alert-danger">
-        <ul class="restaurant-availability-errors">
-          {% for field, errors in formErrors %}
-            {% if field != 'enabled' and field != 'data.enabled' %}
-              <li class="margin-left-l">
-                {{ errors|first }}
-              </li>
-            {% endif %}
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
+  <div class="alert alert-danger">
+    <ul class="restaurant-availability-errors">
+      {% for field, errors in formErrors %}
+        {% if field != 'enabled' and field != 'data.enabled' %}
+          <li class="margin-left-l">
+            {{ errors|first }}
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
   </div>
 {% endif %}
 
 {% if activationErrors is not empty %}
-  <div class="row margin-bottom-md">
-    <div class="col-sm-6 col-md-offset-3">
-      <div class="alert alert-warning">
-        {% trans from 'validators' %}restaurant.notActivable{% endtrans %}
-        <ul class="restaurant-availability-errors">
-          {% for field, errors in activationErrors %}
-            {% if field != 'enabled' and field != 'data.enabled' %}
-            <li class="margin-left-l">
-              {{ errors|first }}
-            </li>
-            {% endif %}
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
+  <div class="alert alert-warning">
+    {% trans from 'validators' %}restaurant.notActivable{% endtrans %}
+    <ul class="restaurant-availability-errors">
+      {% for field, errors in activationErrors %}
+        {% if field != 'enabled' and field != 'data.enabled' %}
+        <li class="margin-left-l">
+          {{ errors|first }}
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
   </div>
-{% endif  %}
+{% endif %}
 
 {% set cannot_be_enabled = ('enabled' in activationErrors|keys or 'data.enabled' in activationErrors|keys) %}
 
+{% set show_stripe_connect = false %}
+
+{% if restaurant.id is not null %}
+  {% for role in restaurant.stripeConnectRoles %}
+    {% if is_granted(role) %}
+      {% set show_stripe_connect = true %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% set show_payment = (restaurant.id is not null and show_stripe_connect) %}
+
 {{ form_start(form) }}
+
+  <nav class="d-flex align-items-center justify-content-between">
+    <span class="text-muted">
+      <i class="fa fa-info-circle"></i>&nbsp;{{ "restaurant.form.enabled.tooltip" | trans | raw }}
+    </span>
+    <div class="switch-wrapper">
+      {% set enabled_checkbox_attr = { class: 'checkbox switch' } %}
+      {% if cannot_be_enabled %}
+        {% set enabled_checkbox_attr = enabled_checkbox_attr|merge({ disabled: 'disabled' }) %}
+      {% endif %}
+      {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: enabled_checkbox_attr }) }}
+    </div>
+  </nav>
+
+  <hr>
 
   <div class="row">
     <div class="col-sm-3">
       {% if form.imageFile is defined %}
         {{ form_row(form.imageFile) }}
       {% endif %}
+      <ul class="nav nav-pills nav-stacked">
+        <li role="presentation" class="active">
+          <a role="tab" data-toggle="tab" href="#general" aria-controls="general">
+            {{ 'restaurant.form.section.general'|trans }}
+          </a>
+        </li>
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#options" aria-controls="options">
+            {{ 'restaurant.form.section.options'|trans }}
+          </a>
+        </li>
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#fulfillment" aria-controls="fulfillment">
+            {{ 'restaurant.form.section.fulfillment'|trans }}
+          </a>
+        </li>
+        {% if show_payment %}
+        <li role="presentation" {% if restaurant.id is null %}class="disabled"{% endif %}>
+          {% if restaurant.id is not null %}
+            <a role="tab" data-toggle="tab" href="#payment" aria-controls="payment">
+              {{ 'restaurant.form.section.payment'|trans }}
+            </a>
+          {% else %}
+            <a role="tab" href="#">
+              {{ 'restaurant.form.section.payment'|trans }}
+            </a>
+          {% endif %}
+        </li>
+        {% endif %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#settlement" aria-controls="settlement">
+            {{ 'restaurant.form.section.settlement'|trans }}
+          </a>
+        </li>
+      </ul>
     </div>
     <div class="col-sm-9">
-      <div class="switch-wrapper">
-        {% set enabled_checkbox_attr = { class: 'checkbox switch' } %}
-        {% if cannot_be_enabled %}
-          {% set enabled_checkbox_attr = enabled_checkbox_attr|merge({ disabled: 'disabled' }) %}
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="general">
+          {% include "@App/restaurant/form/_partials/general.html.twig" %}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="options">
+          {% include "@App/restaurant/form/_partials/options.html.twig" %}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="fulfillment">
+          {% include "@App/restaurant/form/_partials/fulfillment.html.twig" %}
+        </div>
+        {% if show_payment %}
+        <div role="tabpanel" class="tab-pane" id="payment">
+          {% include "@App/restaurant/form/_partials/payment.html.twig" %}
+        </div>
         {% endif %}
-        {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: enabled_checkbox_attr }) }}
+        <div role="tabpanel" class="tab-pane" id="settlement">
+          {% include "@App/restaurant/form/_partials/settlement.html.twig" %}
+        </div>
       </div>
-      <span class="help-block">
-          <i class="fa fa-info-circle"></i>&nbsp;{{ "restaurant.form.enabled.tooltip" | trans | raw }}
-      </span>
-      {{ form_row(form.type) }}
-      {{ form_row(form.name) }}
-      {{ form_row(form.description) }}
-      {{ form_row(form.legalName) }}
-      {{ form_row(form.website) }}
-      {{ form_row(form.telephone) }}
-
-      {% if form.siret is defined %}
-        {{ form_row(form.siret) }}
-      {% endif %}
-      {% if form.vat_number is defined %}
-        {{ form_row(form.vat_number) }}
-      {% endif %}
-      {% if form.rcs_number is defined %}
-        {{ form_row(form.rcs_number) }}
-      {% endif %}
-
-      {% if form.exclusive is defined %}
-        {{ form_row(form.exclusive) }}
-      {% endif %}
-      {% if form.featured is defined %}
-        {{ form_row(form.featured) }}
-      {% endif %}
-
-      {% if form.quotesAllowed is defined %}
-        {{ form_row(form.quotesAllowed) }}
-      {% endif %}
-      {% if form.depositRefundEnabled is defined %}
-        {{ form_row(form.depositRefundEnabled) }}
-      {% endif %}
-      {% if form.loopeatEnabled is defined %}
-        {{ form_row(form.loopeatEnabled) }}
-      {% endif %}
-      {% if form.fulfillmentMethods is defined %}
-        {{ form_row(form.fulfillmentMethods) }}
-      {% endif %}
     </div>
   </div>
-
-  <hr>
 
   {#
   <div id="cuisines" data-prototype="{{ form_widget(form.servesCuisine.vars.prototype)|e('html_attr') }}">
@@ -120,198 +145,6 @@
   <hr>
   #}
 
-  {% if restaurant.id is not null %}
-    <p class="help-block">
-      <i class="fa fa-info-circle"></i> {% trans %}restaurant.form.temporaryClosingRule{% endtrans %}  
-      <a href="{{ path(planning_route, { id: restaurant.id }) }}">{% trans %}restaurant.form.accessPlanning{% endtrans %}</a>
-    </p>
-  {% endif %}
-
-  {{ form_row(form.openingHours, { label: false }) }}
-  <div id="opening-hours"></div>
-
-  {{ form_row(form.openingHoursBehavior) }}
-
-  <label class="control-label">{% trans %}localBusiness.form.orderingDelayMinutes{% endtrans %}</label>
-  <div class="row">
-    <div class="col-sm-3">
-      {{ form_row(form.orderingDelayDays) }}
-    </div>
-    <div class="col-sm-3">
-      {{ form_row(form.orderingDelayHours) }}
-    </div>
-  </div>
-
-  <span class="help-block">
-    <i class="fa fa-info-circle"></i>&nbsp;{{ "localBusiness.form.orderingDelayMinutes.help" | trans | raw }}
-  </span>
-
-  <hr>
-
-  <div class="row">
-    <div class="col-sm-12">
-      {{ form_row(form.shippingOptionsDays) }}
-    </div>
-  </div>
-
-  <hr>
-
-  {{ form_row(form.address.streetAddress) }}
-  {{ form_row(form.address.postalCode) }}
-  {{ form_row(form.address.addressLocality) }}
-  {{ form_widget(form.address.longitude) }}
-  {{ form_widget(form.address.latitude) }}
-  {# http://stackoverflow.com/questions/10570002/how-to-make-form-rest-not-display-a-field-with-symfony2 #}
-  {% do form.address.setRendered %}
-
-  {% if restaurant.id is not null %}
-
-    {% set show_stripe_connect = false %}
-
-    {% for role in restaurant.stripeConnectRoles %}
-      {% if is_granted(role) %}
-        {% set show_stripe_connect = true %}
-      {% endif %}
-    {% endfor %}
-
-    {% if show_stripe_connect %}
-      <hr>
-      {% include "@App/_partials/restaurant/stripe_accounts.html.twig" %}
-      {% if form.allowStripeConnect is defined %}
-        <div class="alert alert-warning">
-          {{ 'restaurant.form.allow_stripe_connect.label'|trans }}
-          <div class="pull-right">
-            {{ form_widget(form.allowStripeConnect, { attr: { class: 'checkbox switch' }}) }}
-          </div>
-        </div>
-      {% endif %}
-      {% if form.enableGiropay is defined %}
-        <div class="alert alert-warning">
-          {{ 'restaurant.form.giropay_enabled.label'|trans }}
-          <div class="pull-right">
-            {{ form_widget(form.enableGiropay, { attr: { class: 'checkbox switch' }}) }}
-          </div>
-        </div>
-      {% endif %}
-    {% endif %}
-
-    {% if restaurant.loopeatEnabled and loopeat_authorize_url is defined %}
-      <h4>LoopEat</h4>
-      {% if restaurant.hasLoopEatCredentials() %}
-        <p>
-          <a class="btn btn-default btn-sm"><i class="fa fa-check"></i> {% trans %}profile.loopeat.connected{% endtrans %}</a>
-          {{ form_widget(form.loopeatDisconnect, { attr: { class: 'btn-sm btn-danger' } }) }}
-        </p>
-      {% else %}
-        <p><a href="{{ loopeat_authorize_url }}" class="btn btn-success btn-sm">{% trans %}profile.loopeat.connect{% endtrans %}</a></p>
-      {% endif %}
-    {% endif %}
-
-  {% else %}
-    {% if form.allowStripeConnect is defined %}
-      {% do form.allowStripeConnect.setRendered %}
-    {% endif %}
-  {% endif %}
-
-  <hr>
-
-  {% if form.deliveryPerimeterExpression is defined %}
-  <h4>{% trans %}restaurant.deliveryPerimeterExpression.title{% endtrans %}</h4>
-  {{ form_widget(form.deliveryPerimeterExpression) }}
-  <div id="restaurant_deliveryPerimeterExpression__picker">
-  </div>
-  <span class="help-block">
-    <i class="fa fa-info-circle"></i> {{ 'restaurant.deliveryPerimeterExpression.help'|trans|raw }}
-  </span>
-  <hr>
-  {% endif %}
-
-  {% if form.contract is defined or restaurant.id is not null %}
-    <h4>{% trans %}restaurant.contract.title{% endtrans %}</h4>
-  {% endif %}
-
-  {% if form.contract is defined %}
-    {{ form_row(form.contract.minimumCartAmount) }}
-
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <div class="alert alert-info">{% trans %}restaurant.contract.calculation_info{% endtrans %}</div>
-        <div class="row">
-          <div class="col-sm-6">
-            {{ form_row(form.contract.variableDeliveryPriceEnabled) }}
-            {{ form_row(form.contract.flatDeliveryPrice) }}
-            {{ form_row(form.contract.variableDeliveryPrice) }}
-          </div>
-          <div class="col-sm-6">
-            {{ form_row(form.contract.variableCustomerAmountEnabled) }}
-            {{ form_row(form.contract.customerAmount) }}
-            {{ form_row(form.contract.variableCustomerAmount) }}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {{ form_row(form.contract.feeRate) }}
-    {{ form_row(form.contract.takeAwayFeeRate) }}
-
-    <p>
-      <a class="help-block collapsed" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_advanced">
-        <i class="fa fa-plus"></i><i class="fa fa-minus"></i> {% trans %}restaurant.contract.showAdvanced{% endtrans %}
-      </a>
-    </p>
-    <div class="collapse" id="{{ form.vars.id }}_advanced">
-      {{ form_row(form.contract.restaurantPaysStripeFee, { help: 'restaurant.contract.restaurantPaysStripeFee.help' }) }}
-    </div>
-  {% else %}
-    {% if restaurant.id is not null %}
-    <div class="row margin-bottom-md">
-      {% if restaurant.contract is not empty %}
-        <div class="col-md-12">
-          <div class="alert alert-warning">
-            {% trans %}restaurant.contract.onlyAdmin{% endtrans %}
-          </div>
-          <table class="table">
-            <tr>
-              <th>{% trans %}restaurant.contract.minimumCartAmount.label{% endtrans %}</th>
-              <td class="text-right">{{ restaurant.contract.minimumCartAmount|price_format }}</td>
-            </tr>
-            <tr>
-              <th>{% trans %}restaurant.contract.customerAmount.label{% endtrans %}</th>
-              <td class="text-right">{{ restaurant.contract.customerAmount|price_format }}</td>
-            </tr>
-            {% if restaurant.contract.variableDeliveryPriceEnabled %}
-              {{ 'restaurant.contract.variableDeliveryPriceEnabled.disclaimer'|trans }}
-            {% else %}
-              <tr>
-                <th>{% trans %}restaurant.contract.flatDeliveryPrice.label{% endtrans %}</th>
-                <td class="text-right">{{ restaurant.contract.flatDeliveryPrice|price_format }}</td>
-              </tr>
-            {% endif %}
-            <tr>
-              <th>{% trans %}restaurant.contract.feeRate.label{% endtrans %}</th>
-              <td class="text-right">{{ (restaurant.contract.feeRate * 100) }}%</td>
-            </tr>
-            <tr>
-              <th>{% trans %}restaurant.contract.takeAwayFeeRate.label{% endtrans %}</th>
-              <td class="text-right">{{ (restaurant.contract.takeAwayFeeRate * 100) }}%</td>
-            </tr>
-            <tr>
-              <th>{% trans %}restaurant.contract.restaurantPaysStripeFee.label{% endtrans %}</th>
-              <td class="text-right">{{ restaurant.contract.restaurantPaysStripeFee ? 'restaurant.contract.restaurantPaysStripeFee.restaurant' | trans : 'restaurant.contract.restaurantPaysStripeFee.cooperative' | trans }}</td>
-            </tr>
-          </table>
-        </div>
-      {% else %}
-        <div class="col-md-12">
-          <div class="alert alert-danger">
-            {% trans %}restaurant.contract.noContract{% endtrans %}
-          </div>
-        </div>
-      {% endif %}
-    </div>
-    {% endif %}
-  {% endif %}
-
   <hr>
 
   <div class="row">
@@ -324,7 +157,7 @@
     </div>
     <div class="col-sm-3">
       {% if form.delete is defined %}
-      {{ form_widget(form.delete, { attr: { class: 'btn-block btn-danger' } }) }}
+        {{ form_widget(form.delete, { attr: { class: 'btn-block btn-danger' } }) }}
       {% endif %}
     </div>
   </div>
@@ -334,7 +167,9 @@
 <div id="restaurant-form-data"
   data-action-url="{{ oneup_uploader_endpoint('restaurant') }}"
   data-restaurant-id="{{ restaurant.id }}"
-  data-restaurant-image="{{ coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') }}"></div>
+  data-restaurant-image="{{ coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') }}"
+  data-restaurant-delivery-perimeter-expression="{{ restaurant.deliveryPerimeterExpression|e('html_attr') }}"
+  data-zones="{{ zoneNames|json_encode|e('html_attr') }}"></div>
 
 {% endblock %}
 
@@ -344,10 +179,6 @@
 
 {% block scripts %}
 <script type="text/javascript">
-
-  window.AppData = window.AppData || {};
-  window.AppData.deliveryPerimeterExpression = {{ deliveryPerimeterExpression|raw }};
-  window.AppData.zones = {{ zoneNames|raw }};
 
   var rowsWithErrors = [];
   {% for key, value in form.openingHours %}
