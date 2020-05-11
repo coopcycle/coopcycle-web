@@ -2013,20 +2013,6 @@
                 "uppercase",
                 "words"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finflector",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-06T11:01:57+00:00"
         },
         {
@@ -2480,17 +2466,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-vendor-hardening.git",
-                "reference": "909bf65c92a5f6612950111eb0e015a25cd289f1"
+                "reference": "2d384e7d01bcba7706baa65ed155f652a7f29e31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/909bf65c92a5f6612950111eb0e015a25cd289f1",
-                "reference": "909bf65c92a5f6612950111eb0e015a25cd289f1",
+                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/2d384e7d01bcba7706baa65ed155f652a7f29e31",
+                "reference": "2d384e7d01bcba7706baa65ed155f652a7f29e31",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^1.1",
-                "php": ">=7.2.3"
+                "composer-plugin-api": "^1.1 || ^2",
+                "php": ">=7.3.0"
             },
             "type": "composer-plugin",
             "extra": {
@@ -2510,7 +2496,7 @@
             "keywords": [
                 "drupal"
             ],
-            "time": "2020-01-16T10:35:54+00:00"
+            "time": "2020-05-05T12:56:43+00:00"
         },
         {
             "name": "duccio/apns-php",
@@ -8701,16 +8687,6 @@
                 }
             ],
             "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
-            "funding": [
-                {
-                    "url": "https://github.com/Ocramius",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/ocramius/package-versions",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-04-06T17:43:35+00:00"
         },
         {
@@ -10924,12 +10900,6 @@
                 "unidiff",
                 "unified diff"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
-            ],
             "time": "2020-05-08T05:01:12+00:00"
         },
         {
@@ -11326,16 +11296,6 @@
                 "logging",
                 "sentry",
                 "symfony"
-            ],
-            "funding": [
-                {
-                    "url": "https://sentry.io/",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://sentry.io/pricing/",
-                    "type": "custom"
-                }
             ],
             "time": "2020-05-07T13:11:22+00:00"
         },
@@ -12762,24 +12722,24 @@
         },
         {
             "name": "sylius/money-bundle",
-            "version": "v1.6.6",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusMoneyBundle.git",
-                "reference": "4eba6f04275f4ec7d00e6fc4bf346298f6da7ae8"
+                "reference": "9f5761b2a4dc5fb0b704116d16a4c94d9f0d01d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusMoneyBundle/zipball/4eba6f04275f4ec7d00e6fc4bf346298f6da7ae8",
-                "reference": "4eba6f04275f4ec7d00e6fc4bf346298f6da7ae8",
+                "url": "https://api.github.com/repos/Sylius/SyliusMoneyBundle/zipball/9f5761b2a4dc5fb0b704116d16a4c94d9f0d01d7",
+                "reference": "9f5761b2a4dc5fb0b704116d16a4c94d9f0d01d7",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2",
+                "php": "^7.3",
                 "sylius/resource-bundle": "^1.2",
-                "symfony/framework-bundle": "^3.4|^4.3",
-                "symfony/intl": "^3.4|^4.3",
-                "symfony/templating": "^3.4|^4.3",
+                "symfony/framework-bundle": "^4.4",
+                "symfony/intl": "^4.4",
+                "symfony/templating": "^4.4",
                 "webmozart/assert": "^1.0"
             },
             "conflict": {
@@ -12791,9 +12751,9 @@
                 "phpunit/phpunit": "^7.0",
                 "polishsymfonycommunity/symfony-mocker-container": "^1.0",
                 "sylius/currency-bundle": "^1.2",
-                "symfony/browser-kit": "^3.4|^4.3",
-                "symfony/dependency-injection": "^3.4|^4.3",
-                "symfony/form": "^3.4|^4.3",
+                "symfony/browser-kit": "^4.4",
+                "symfony/dependency-injection": "^4.4",
+                "symfony/form": "^4.4",
                 "twig/twig": "^2.0"
             },
             "type": "symfony-bundle",
@@ -12833,24 +12793,24 @@
                 "currency",
                 "money"
             ],
-            "time": "2019-06-25T08:09:35+00:00"
+            "time": "2020-01-17T11:15:10+00:00"
         },
         {
             "name": "sylius/order",
-            "version": "v1.6.6",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Order.git",
-                "reference": "6b5b173e5f7a380a24ef7c6ea6b02d0bfc1c44f9"
+                "reference": "cceef707980e8a85ebe676ce3bac2002b5579d7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/Order/zipball/6b5b173e5f7a380a24ef7c6ea6b02d0bfc1c44f9",
-                "reference": "6b5b173e5f7a380a24ef7c6ea6b02d0bfc1c44f9",
+                "url": "https://api.github.com/repos/Sylius/Order/zipball/cceef707980e8a85ebe676ce3bac2002b5579d7c",
+                "reference": "cceef707980e8a85ebe676ce3bac2002b5579d7c",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2",
+                "php": "^7.3",
                 "sylius/resource": "^1.2",
                 "webmozart/assert": "^1.1",
                 "zendframework/zend-stdlib": "^3.1"
@@ -12896,44 +12856,42 @@
                 "shop",
                 "webshop"
             ],
-            "time": "2019-10-07T14:51:38+00:00"
+            "time": "2020-01-17T11:15:10+00:00"
         },
         {
             "name": "sylius/order-bundle",
-            "version": "v1.6.6",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusOrderBundle.git",
-                "reference": "196337022d20acca455d90f09b81a692ec271f98"
+                "reference": "5a10e17f096e983d3fb0211a5f5e3c70a6618c43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusOrderBundle/zipball/196337022d20acca455d90f09b81a692ec271f98",
-                "reference": "196337022d20acca455d90f09b81a692ec271f98",
+                "url": "https://api.github.com/repos/Sylius/SyliusOrderBundle/zipball/5a10e17f096e983d3fb0211a5f5e3c70a6618c43",
+                "reference": "5a10e17f096e983d3fb0211a5f5e3c70a6618c43",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2",
+                "php": "^7.3",
                 "stof/doctrine-extensions-bundle": "^1.2",
                 "sylius/money-bundle": "^1.2",
                 "sylius/order": "^1.2",
                 "sylius/resource-bundle": "^1.2",
-                "symfony/framework-bundle": "^3.4|^4.3",
-                "symfony/templating": "^3.4|^4.3"
+                "symfony/framework-bundle": "^4.4",
+                "symfony/templating": "^4.4"
             },
             "conflict": {
-                "twig/twig": "^1.0"
+                "twig/twig": "^1.0|^3.0"
             },
             "require-dev": {
                 "doctrine/orm": "^2.5",
                 "matthiasnoback/symfony-dependency-injection-test": "^3.0",
                 "phpspec/phpspec": "^5.0",
                 "phpunit/phpunit": "^7.0",
-                "polishsymfonycommunity/symfony-mocker-container": "^1.0",
-                "symfony/browser-kit": "^3.4|^4.3",
-                "symfony/dependency-injection": "^3.4|^4.3",
-                "symfony/form": "^3.4|^4.3",
-                "symfony/validator": "^3.4|^4.3"
+                "symfony/browser-kit": "^4.4",
+                "symfony/form": "^4.4",
+                "symfony/validator": "^4.4"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -12974,7 +12932,7 @@
                 "shop",
                 "sylius"
             ],
-            "time": "2020-01-14T15:04:34+00:00"
+            "time": "2020-01-23T08:56:37+00:00"
         },
         {
             "name": "sylius/payment",
@@ -13967,16 +13925,16 @@
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.15.0",
+            "version": "v1.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14"
+                "reference": "1aab00e39cebaef4d8652497f46c15c1b7e45294"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
-                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/1aab00e39cebaef4d8652497f46c15c1b7e45294",
+                "reference": "1aab00e39cebaef4d8652497f46c15c1b7e45294",
                 "shasum": ""
             },
             "require": {
@@ -13988,7 +13946,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.15-dev"
+                    "dev-master": "1.16-dev"
                 }
             },
             "autoload": {
@@ -14021,7 +13979,7 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2020-02-27T09:26:54+00:00"
+            "time": "2020-05-08T16:50:20+00:00"
         },
         {
             "name": "symfony/polyfill-iconv",
@@ -14382,20 +14340,6 @@
                 "portable",
                 "shim"
             ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-08T16:50:20+00:00"
         },
         {
@@ -14675,20 +14619,6 @@
                 "polyfill",
                 "portable",
                 "uuid"
-            ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-05-08T17:27:24+00:00"
         },
@@ -17083,20 +17013,6 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "funding": [
-                {
-                    "url": "https://github.com/ondrejmirtes",
-                    "type": "github"
-                },
-                {
-                    "url": "https://www.patreon.com/phpstan",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-05T12:55:44+00:00"
         },
         {
@@ -17281,12 +17197,6 @@
                 "filesystem",
                 "iterator"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
-            ],
             "time": "2020-04-18T05:02:12+00:00"
         },
         {
@@ -17435,12 +17345,6 @@
             "keywords": [
                 "timer"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
-            ],
             "time": "2020-04-20T06:00:37+00:00"
         },
         {
@@ -17489,12 +17393,6 @@
             "homepage": "https://github.com/sebastianbergmann/php-token-stream/",
             "keywords": [
                 "tokenizer"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
             ],
             "time": "2020-05-06T09:56:31+00:00"
         },
@@ -17584,16 +17482,6 @@
                 "testing",
                 "xunit"
             ],
-            "funding": [
-                {
-                    "url": "https://phpunit.de/donate.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
-            ],
             "time": "2020-04-30T06:32:53+00:00"
         },
         {
@@ -17640,12 +17528,6 @@
             ],
             "description": "Collection of value objects that represent the PHP code units",
             "homepage": "https://github.com/sebastianbergmann/code-unit",
-            "funding": [
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
-            ],
             "time": "2020-04-30T05:58:10+00:00"
         },
         {
@@ -17743,12 +17625,6 @@
                 "Xdebug",
                 "environment",
                 "hhvm"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
             ],
             "time": "2020-04-14T13:36:52+00:00"
         },
@@ -18156,6 +18032,5 @@
     "platform": {
         "php": "^7.4"
     },
-    "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "platform-dev": []
 }
