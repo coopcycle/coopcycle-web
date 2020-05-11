@@ -624,6 +624,7 @@ form.checkout_address.takeaway.disclaimer: You have opted for on-site collection
 form.checkout_address.takeaway.contact: If you have a problem, contact the establishment at %telephone%.
 form.checkout_address.takeaway.no_show_disclaimer: If you do not show up, we will charge the entire order.
 form.checkout_payment.method.label: Please choose a payment option
+form.checkout_address.reusable_packaging.loopeat.learn_more: Learn more about LoopEat
 form.task_export.start.label: Start
 form.task_export.end.label: End
 form.api_app.name.label: App name

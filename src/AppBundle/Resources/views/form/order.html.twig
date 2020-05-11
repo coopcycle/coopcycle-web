@@ -66,3 +66,19 @@
   {% endif %}
   {{ block('form_row') }}
 {% endblock %}
+
+{% block _checkout_address_reusablePackagingEnabled_row %}
+  <div class="p-3">
+    <div class="alert alert-info py-0 m-0">
+      {{ form_widget(form) }}
+    </div>
+    {% if attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}
+      <div class="text-right my-2">
+        <a href="https://loopeat.fr/en-savoir-plus/" target="_blank">
+          <span class="mr-2">{{ 'form.checkout_address.reusable_packaging.loopeat.learn_more'|trans }}</span>
+          <i class="fa fa-external-link"></i>
+        </a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

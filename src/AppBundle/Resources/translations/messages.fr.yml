@@ -595,6 +595,7 @@ form.checkout_address.takeaway.disclaimer: Vous avez opté pour le retrait sur p
   Vous vous engagez à venir récupérer votre commande le jour et l'heure indiqués.
 form.checkout_address.takeaway.contact: En cas de problème, contactez l'établissement au %telephone%.
 form.checkout_address.takeaway.no_show_disclaimer: Si vous ne vous présentez pas, nous encaisseront la commande dans son intégralité.
+form.checkout_address.reusable_packaging.loopeat.learn_more: En savoir plus sur LoopEat
 form.task_export.start.label: Début
 form.task_export.end.label: Fin
 form.api_app.name.label: Nom de l'application

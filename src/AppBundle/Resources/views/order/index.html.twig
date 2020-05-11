@@ -24,11 +24,7 @@
           <div class="border-bottom" id="items">
             {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
             {% if form.reusablePackagingEnabled is defined %}
-            <div class="p-3">
-              <div class="alert alert-info py-0 m-0">
-                {{ form_widget(form.reusablePackagingEnabled) }}
-              </div>
-            </div>
+              {{ form_row(form.reusablePackagingEnabled) }}
             {% endif %}
           </div>
 
