@@ -2013,20 +2013,6 @@
                 "uppercase",
                 "words"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finflector",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-06T11:01:57+00:00"
         },
         {
@@ -2480,17 +2466,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-vendor-hardening.git",
-                "reference": "909bf65c92a5f6612950111eb0e015a25cd289f1"
+                "reference": "2d384e7d01bcba7706baa65ed155f652a7f29e31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/909bf65c92a5f6612950111eb0e015a25cd289f1",
-                "reference": "909bf65c92a5f6612950111eb0e015a25cd289f1",
+                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/2d384e7d01bcba7706baa65ed155f652a7f29e31",
+                "reference": "2d384e7d01bcba7706baa65ed155f652a7f29e31",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^1.1",
-                "php": ">=7.2.3"
+                "composer-plugin-api": "^1.1 || ^2",
+                "php": ">=7.3.0"
             },
             "type": "composer-plugin",
             "extra": {
@@ -2510,7 +2496,7 @@
             "keywords": [
                 "drupal"
             ],
-            "time": "2020-01-16T10:35:54+00:00"
+            "time": "2020-05-05T12:56:43+00:00"
         },
         {
             "name": "duccio/apns-php",
@@ -8701,16 +8687,6 @@
                 }
             ],
             "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
-            "funding": [
-                {
-                    "url": "https://github.com/Ocramius",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/ocramius/package-versions",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-04-06T17:43:35+00:00"
         },
         {
@@ -10924,12 +10900,6 @@
                 "unidiff",
                 "unified diff"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
-            ],
             "time": "2020-05-08T05:01:12+00:00"
         },
         {
@@ -11326,16 +11296,6 @@
                 "logging",
                 "sentry",
                 "symfony"
-            ],
-            "funding": [
-                {
-                    "url": "https://sentry.io/",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://sentry.io/pricing/",
-                    "type": "custom"
-                }
             ],
             "time": "2020-05-07T13:11:22+00:00"
         },
@@ -13689,21 +13649,21 @@
         },
         {
             "name": "sylius/taxonomy",
-            "version": "v1.6.6",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Taxonomy.git",
-                "reference": "f859cd2b664841686b08d38fc6eb0f3314135c1e"
+                "reference": "3eee83e1a8e61a0ebe529e5fb932df1a34e0d459"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/Taxonomy/zipball/f859cd2b664841686b08d38fc6eb0f3314135c1e",
-                "reference": "f859cd2b664841686b08d38fc6eb0f3314135c1e",
+                "url": "https://api.github.com/repos/Sylius/Taxonomy/zipball/3eee83e1a8e61a0ebe529e5fb932df1a34e0d459",
+                "reference": "3eee83e1a8e61a0ebe529e5fb932df1a34e0d459",
                 "shasum": ""
             },
             "require": {
                 "behat/transliterator": "^1.1",
-                "php": "^7.2",
+                "php": "^7.3",
                 "sylius/resource": "^1.2",
                 "webmozart/assert": "^1.0"
             },
@@ -13748,37 +13708,38 @@
                 "taxon",
                 "taxonomy"
             ],
-            "time": "2019-06-13T11:43:49+00:00"
+            "time": "2020-01-17T11:15:10+00:00"
         },
         {
             "name": "sylius/taxonomy-bundle",
-            "version": "v1.6.6",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusTaxonomyBundle.git",
-                "reference": "6190a8bb31788dd566e12b67c3502665d2ccb005"
+                "reference": "1e0d8dbe4e6c6f6fc3a73fe10e4de27b333860a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusTaxonomyBundle/zipball/6190a8bb31788dd566e12b67c3502665d2ccb005",
-                "reference": "6190a8bb31788dd566e12b67c3502665d2ccb005",
+                "url": "https://api.github.com/repos/Sylius/SyliusTaxonomyBundle/zipball/1e0d8dbe4e6c6f6fc3a73fe10e4de27b333860a8",
+                "reference": "1e0d8dbe4e6c6f6fc3a73fe10e4de27b333860a8",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2",
+                "php": "^7.3",
                 "stof/doctrine-extensions-bundle": "^1.2",
                 "sylius/resource-bundle": "^1.2",
                 "sylius/taxonomy": "^1.2",
-                "symfony/framework-bundle": "^3.4|^4.3"
+                "symfony/framework-bundle": "^4.4"
             },
             "conflict": {
-                "symfony/dependency-injection": "3.4.22"
+                "symfony/dependency-injection": "3.4.22",
+                "twig/twig": "^3.0"
             },
             "require-dev": {
                 "doctrine/orm": "^2.5",
                 "phpspec/phpspec": "^5.0",
                 "phpunit/phpunit": "^7.0",
-                "symfony/dependency-injection": "^3.4|^4.3"
+                "symfony/dependency-injection": "^4.4"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -13823,7 +13784,7 @@
                 "taxonomies",
                 "taxonomy"
             ],
-            "time": "2019-06-25T08:09:35+00:00"
+            "time": "2020-01-17T11:15:10+00:00"
         },
         {
             "name": "symfony/contracts",
@@ -13967,16 +13928,16 @@
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.15.0",
+            "version": "v1.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14"
+                "reference": "1aab00e39cebaef4d8652497f46c15c1b7e45294"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
-                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/1aab00e39cebaef4d8652497f46c15c1b7e45294",
+                "reference": "1aab00e39cebaef4d8652497f46c15c1b7e45294",
                 "shasum": ""
             },
             "require": {
@@ -13988,7 +13949,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.15-dev"
+                    "dev-master": "1.16-dev"
                 }
             },
             "autoload": {
@@ -14021,7 +13982,7 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2020-02-27T09:26:54+00:00"
+            "time": "2020-05-08T16:50:20+00:00"
         },
         {
             "name": "symfony/polyfill-iconv",
@@ -14382,20 +14343,6 @@
                 "portable",
                 "shim"
             ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-08T16:50:20+00:00"
         },
         {
@@ -14675,20 +14622,6 @@
                 "polyfill",
                 "portable",
                 "uuid"
-            ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-05-08T17:27:24+00:00"
         },
@@ -17083,20 +17016,6 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "funding": [
-                {
-                    "url": "https://github.com/ondrejmirtes",
-                    "type": "github"
-                },
-                {
-                    "url": "https://www.patreon.com/phpstan",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-05T12:55:44+00:00"
         },
         {
@@ -17281,12 +17200,6 @@
                 "filesystem",
                 "iterator"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
-            ],
             "time": "2020-04-18T05:02:12+00:00"
         },
         {
@@ -17435,12 +17348,6 @@
             "keywords": [
                 "timer"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
-            ],
             "time": "2020-04-20T06:00:37+00:00"
         },
         {
@@ -17489,12 +17396,6 @@
             "homepage": "https://github.com/sebastianbergmann/php-token-stream/",
             "keywords": [
                 "tokenizer"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
             ],
             "time": "2020-05-06T09:56:31+00:00"
         },
@@ -17584,16 +17485,6 @@
                 "testing",
                 "xunit"
             ],
-            "funding": [
-                {
-                    "url": "https://phpunit.de/donate.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
-            ],
             "time": "2020-04-30T06:32:53+00:00"
         },
         {
@@ -17640,12 +17531,6 @@
             ],
             "description": "Collection of value objects that represent the PHP code units",
             "homepage": "https://github.com/sebastianbergmann/code-unit",
-            "funding": [
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
-            ],
             "time": "2020-04-30T05:58:10+00:00"
         },
         {
@@ -17743,12 +17628,6 @@
                 "Xdebug",
                 "environment",
                 "hhvm"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
             ],
             "time": "2020-04-14T13:36:52+00:00"
         },
@@ -18156,6 +18035,5 @@
     "platform": {
         "php": "^7.4"
     },
-    "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "platform-dev": []
 }
