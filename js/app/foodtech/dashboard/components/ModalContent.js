@@ -10,10 +10,10 @@ import {
   delayOrder,
   cancelOrder,
   fulfillOrder,
+  decrementItem
 } from '../redux/actions'
 
 import OrderItems from './OrderItems'
-import OrderTotal from './OrderTotal'
 import OrderNumber from './OrderNumber'
 import Timeline from './Timeline'
 import Button from './Button'
@@ -265,8 +265,16 @@ class ModalContent extends React.Component {
             ) }
           </div>
           <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_DISHES') }</h5>
-          <OrderItems order={ order } />
-          <OrderTotal order={ order } />
+          <OrderItems
+            order={ order }
+            edit={ this.state.mode === 'edit' }
+            onDecrement={ (item) => this.props.decrementItem(order, item) } />
+          { order.state === 'new' && (
+            <div className="text-center">
+              <button type="button" className="btn btn-sm btn-default"
+                onClick={ () => this.setState({ mode: 'edit' }) }>Edit</button>
+            </div>
+          )}
           { order.notes && this.renderNotes() }
           <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_TIMELINE') }</h5>
           <Timeline order={ order } />
@@ -293,6 +301,7 @@ function mapDispatchToProps(dispatch) {
     delayOrder: order => dispatch(delayOrder(order)),
     cancelOrder: (order, reason) => dispatch(cancelOrder(order, reason)),
     fulfillOrder: order => dispatch(fulfillOrder(order)),
+    decrementItem: (order, item) => dispatch(decrementItem(order, item)),
   }
 }
 

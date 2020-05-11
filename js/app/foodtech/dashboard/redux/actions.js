@@ -27,6 +27,8 @@ export const SEARCH_RESULTS = 'SEARCH_RESULTS'
 
 export const ACTIVE_TAB = 'ACTIVE_TAB'
 
+export const DECREMENT_ITEM = 'DECREMENT_ITEM'
+
 export const orderCreated = createAction(ORDER_CREATED)
 export const orderAccepted = createAction(ORDER_ACCEPTED)
 export const orderRefused = createAction(ORDER_REFUSED)
@@ -48,6 +50,8 @@ export const fulfillOrderRequestFailure = createAction(FULFILL_ORDER_REQUEST_FAI
 export const searchResults = createAction(SEARCH_RESULTS, (q, results) => ({ q, results }))
 
 export const setActiveTab = createAction(ACTIVE_TAB)
+
+export const decrementItem = createAction(DECREMENT_ITEM, (order, item) => ({ order, item }))
 
 const _setCurrentOrder = createAction(SET_CURRENT_ORDER)
 

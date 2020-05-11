@@ -24,6 +24,7 @@ import {
   FULFILL_ORDER_REQUEST_FAILURE,
   SEARCH_RESULTS,
   ACTIVE_TAB,
+  DECREMENT_ITEM,
 } from './actions'
 
 export const initialState = {
@@ -165,6 +166,32 @@ export default (state = initialState, action = {}) => {
     return {
       ...state,
       activeTab: action.payload,
+    }
+
+  case DECREMENT_ITEM:
+
+    const newItems = _.map(action.payload.order.items, it => {
+      if (it.id === action.payload.item.id) {
+
+        return {
+          ...it,
+          quantity: (it.quantity - 1),
+          total: (it.unitPrice) * (it.quantity - 1)
+        }
+      }
+
+      return it
+    })
+
+    const newOrder = {
+      ...action.payload.order,
+      items: newItems,
+    }
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, newOrder),
+      order: state.order['@id'] === action.payload.order['@id'] ? newOrder : state.order,
     }
   }
 
