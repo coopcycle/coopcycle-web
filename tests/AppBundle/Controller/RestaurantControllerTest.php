@@ -239,7 +239,6 @@ class RestaurantControllerTest extends WebTestCase
             'address' => [
                 'latlng' => [48.856613, 2.352222]
             ],
-            'takeawayEnabled' => false,
             'fulfillmentMethods' => ['delivery']
         ];
 

@@ -6,6 +6,7 @@ import Modal from 'react-modal'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import { changeAddress, closeAddressModal, enableTakeaway } from '../redux/actions'
+import { selectIsCollectionEnabled } from '../redux/selectors'
 
 const ADDRESS_TOO_FAR = 'Order::ADDRESS_TOO_FAR'
 
@@ -50,7 +51,7 @@ class AddressModal extends Component {
             </a>
           </div>
         ) }
-        { this.props.takeawayEnabled && (
+        { this.props.isCollectionEnabled && (
           <button type="button" className="btn btn-default" onClick={ () => this.props.enableTakeaway() }>
             { this.props.t('CART_ADDRESS_MODAL_NO_THANKS_TAKEAWAY') }
           </button>
@@ -81,7 +82,7 @@ function mapStateToProps(state) {
     titleText,
     isAddressTooFar,
     addresses: state.addresses,
-    takeawayEnabled: state.cart.restaurant.takeawayEnabled,
+    isCollectionEnabled: selectIsCollectionEnabled(state),
   }
 }
 

@@ -167,7 +167,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                             $restaurant->getAddress()->getGeo()->getLongitude(),
                         ]
                     ],
-                    'takeawayEnabled' => $restaurant->isTakeawayEnabled(),
                     'fulfillmentMethods' => $fulfillmentMethods,
                 ];
             }
