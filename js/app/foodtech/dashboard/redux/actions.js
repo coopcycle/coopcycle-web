@@ -96,14 +96,14 @@ export function acceptOrder(order) {
   }
 }
 
-export function refuseOrder(order) {
+export function refuseOrder(order, reason) {
 
   return (dispatch, getState) => {
     dispatch(fetchRequest())
 
     const url = window.Routing.generate(getState().refuseOrderRoute, { id: order.id })
 
-    $.post(url)
+    $.post(url, { reason })
       .then(res => dispatch(refuseOrderRequestSuccess(res)))
       .fail(e => dispatch(refuseOrderRequestFailure(e)))
   }

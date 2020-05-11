@@ -18,6 +18,28 @@ import OrderNumber from './OrderNumber'
 import Timeline from './Timeline'
 import Button from './Button'
 
+const Reasons = withTranslation()(({ order, onClick, loading, t }) => {
+
+  return (
+    <div className="d-flex flex-row justify-content-between py-4 border-top">
+      <Button onClick={ () => onClick('CUSTOMER') } loading={ loading } icon="user" danger>
+        { t('cancel.reason.CUSTOMER') }
+      </Button>
+      <Button onClick={ () => onClick('SOLD_OUT') } loading={ loading } icon="times" danger>
+        { t('cancel.reason.SOLD_OUT') }
+      </Button>
+      <Button onClick={ () => onClick('RUSH_HOUR') } loading={ loading } icon="fire" danger>
+        { t('cancel.reason.RUSH_HOUR') }
+      </Button>
+      { order.takeaway && (
+      <Button onClick={ () => onClick('NO_SHOW') } loading={ loading } icon="user-times" danger>
+        { t('cancel.reason.NO_SHOW') }
+      </Button>
+      )}
+    </div>
+  )
+})
+
 class ModalContent extends React.Component {
 
   constructor(props) {
@@ -40,10 +62,10 @@ class ModalContent extends React.Component {
     this.props.delayOrder(order)
   }
 
-  refuseOrder() {
+  refuseOrder(reason) {
     const { order } = this.props
 
-    this.props.refuseOrder(order)
+    this.props.refuseOrder(order, reason)
   }
 
   acceptOrder() {
@@ -67,24 +89,27 @@ class ModalContent extends React.Component {
 
       return (
         <div>
-          <div className="d-flex flex-row justify-content-between py-4 border-top">
-            <Button onClick={ () => this.cancelOrder('CUSTOMER') } loading={ loading } icon="user" danger>
-              { this.props.t('cancel.reason.CUSTOMER') }
-            </Button>
-            <Button onClick={ () => this.cancelOrder('SOLD_OUT') } loading={ loading } icon="times" danger>
-              { this.props.t('cancel.reason.SOLD_OUT') }
-            </Button>
-            <Button onClick={ () => this.cancelOrder('RUSH_HOUR') } loading={ loading } icon="fire" danger>
-              { this.props.t('cancel.reason.RUSH_HOUR') }
-            </Button>
-            { order.takeaway && (
-            <Button onClick={ () => this.cancelOrder('NO_SHOW') } loading={ loading } icon="user-times" danger>
-              { this.props.t('cancel.reason.NO_SHOW') }
-            </Button>
-            )}
-          </div>
+          <Reasons
+            order={ order }
+            loading={ loading }
+            onClick={ reason => this.cancelOrder(reason) } />
           <div className="text-center text-danger">
             <span>{ this.props.t('ADMIN_DASHBOARD_ORDERS_CANCEL_REASON') }</span>
+          </div>
+        </div>
+      )
+    }
+
+    if (mode === 'refuse') {
+
+      return (
+        <div>
+          <Reasons
+            order={ order }
+            loading={ loading }
+            onClick={ reason => this.refuseOrder(reason) } />
+          <div className="text-center text-danger">
+            <span>{ this.props.t('ADMIN_DASHBOARD_ORDERS_REFUSE_REASON') }</span>
           </div>
         </div>
       )
@@ -94,7 +119,7 @@ class ModalContent extends React.Component {
 
       return (
         <div className="d-flex flex-row justify-content-between py-4 border-top">
-          <Button onClick={ this.refuseOrder.bind(this) } loading={ loading } icon="ban" danger>
+          <Button onClick={ () => this.setState({ mode: 'refuse' }) } loading={ loading } icon="ban" danger>
             { this.props.t('ADMIN_DASHBOARD_ORDERS_REFUSE') }
           </Button>
           <Button onClick={ this.acceptOrder.bind(this) } loading={ loading } icon="check" primary>
@@ -264,7 +289,7 @@ function mapDispatchToProps(dispatch) {
   return {
     setCurrentOrder: order => dispatch(setCurrentOrder(order)),
     acceptOrder: order => dispatch(acceptOrder(order)),
-    refuseOrder: order => dispatch(refuseOrder(order)),
+    refuseOrder: (order, reason) => dispatch(refuseOrder(order, reason)),
     delayOrder: order => dispatch(delayOrder(order)),
     cancelOrder: (order, reason) => dispatch(cancelOrder(order, reason)),
     fulfillOrder: order => dispatch(fulfillOrder(order)),

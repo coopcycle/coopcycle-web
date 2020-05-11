@@ -169,8 +169,10 @@ trait OrderTrait
 
         $this->accessControl($order->getRestaurant());
 
+        $reason = $request->request->get('reason', null);
+
         try {
-            $orderManager->refuse($order);
+            $orderManager->refuse($order, $reason);
             $this->get('sylius.manager.order')->flush();
         } catch (\Exception $e) {
             // TODO Add flash message
