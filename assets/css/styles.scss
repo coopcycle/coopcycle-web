@@ -1260,6 +1260,10 @@ form[name="restaurant"] {
         flex-direction: column;
         .modal-body {
           flex: 1;
+          .embed-responsive.embed-responsive-16by9 {
+            height: 100%;
+            padding-bottom: 0;
+          }
         }
       }
     }
