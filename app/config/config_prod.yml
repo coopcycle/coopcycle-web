@@ -115,6 +115,8 @@ sentry:
         # https://docs.sentry.io/platforms/php/#php-specific-options
         excluded_exceptions:
             - Symfony\Component\Security\Core\Exception\AccessDeniedException
+            - Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+            - ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException
 
 # see
 # https://github.com/liip/LiipImagineBundle/issues/1018
