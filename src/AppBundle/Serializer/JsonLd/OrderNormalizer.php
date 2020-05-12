@@ -140,6 +140,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['potentialAction'] = [ $enableReusablePackagingAction ];
         }
 
+        $data['fulfillmentMethod'] = $object->isTakeaway() ? 'collection' : 'delivery';
+
         if (isset($context['is_web']) && $context['is_web']) {
 
             // Make sure the array is zero-indexed
@@ -206,6 +208,14 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if (isset($data['reusablePackagingEnabled'])) {
             $this->orderProcessor->process($order);
+        }
+
+        if (isset($data['fulfillmentMethod'])) {
+            if ($data['fulfillmentMethod'] === 'collection') {
+                $order->setTakeaway(true);
+            } else {
+                $order->setTakeaway(false);
+            }
         }
 
         if (isset($data['items'])) {
