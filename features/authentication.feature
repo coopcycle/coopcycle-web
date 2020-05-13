@@ -167,6 +167,68 @@ Feature: Authenticate
     }
     """
 
+  Scenario: Register failure (existing canonical username)
+    Given the user is loaded:
+      | email    | bob@coopcycle.org |
+      | username | bob               |
+      | password | 123456            |
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/register" with parameters:
+      | key         | value              |
+      | _email      | bob2@coopcycle.org |
+      | _username   | Bob                |
+      | _password   | 123456             |
+      | _givenName  | Bob                |
+      | _familyName | Doe                |
+      | _telephone  | +33612345678       |
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "type":"https:\/\/tools.ietf.org\/html\/rfc2616#section-10",
+      "title":@string@,
+      "detail":@string@,
+      "violations":[
+        {
+          "propertyPath":"data.username",
+          "message":@string@
+        }
+      ]
+    }
+    """
+
+  Scenario: Register failure (existing canonical email)
+    Given the user is loaded:
+      | email    | bob@coopcycle.org |
+      | username | bob               |
+      | password | 123456            |
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/register" with parameters:
+      | key         | value              |
+      | _email      | BOB@CoopCycle.org  |
+      | _username   | bob2               |
+      | _password   | 123456             |
+      | _givenName  | Bob                |
+      | _familyName | Doe                |
+      | _telephone  | +33612345678       |
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "type":"https:\/\/tools.ietf.org\/html\/rfc2616#section-10",
+      "title":@string@,
+      "detail":@string@,
+      "violations":[
+        {
+          "propertyPath":"data.email",
+          "message":@string@
+        }
+      ]
+    }
+    """
+
   Scenario: Confirm registration success
     Given the user is loaded:
       | email             | bob@coopcycle.org |

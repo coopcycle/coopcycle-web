@@ -44,7 +44,9 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  * )
  * @ApiFilter(UserRoleFilter::class, properties={"roles"})
  * @UniqueEntity("email")
+ * @UniqueEntity(fields={"emailCanonical"}, errorPath="email")
  * @UniqueEntity("username")
+ * @UniqueEntity(fields={"usernameCanonical"}, errorPath="username")
  * @UniqueEntity("facebookId")
  */
 class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterface
