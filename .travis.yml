@@ -64,7 +64,8 @@ install:
   - npm install -g pm2@^4.2
   # Install OSRM
   - mkdir -p var/osrm
-  - wget https://coopcycle.org/osm/paris-france.osm.pbf -P var/osrm
+  - curl https://coopcycle.org/osm/paris-france.osm.pbf -o var/osrm/paris-france.osm.pbf
+  # - wget https://coopcycle.org/osm/paris-france.osm.pbf -P var/osrm
   - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:$OSRM_VERSION osrm-extract -p /opt/bicycle.lua /data/paris-france.osm.pbf
   - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:$OSRM_VERSION osrm-partition /data/paris-france.osrm
   - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:$OSRM_VERSION osrm-customize /data/paris-france.osrm
