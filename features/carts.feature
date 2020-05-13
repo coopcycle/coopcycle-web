@@ -137,7 +137,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[]
-        }
+        },
+        "fulfillmentMethod":"delivery"
       }
       """
 
@@ -200,7 +201,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[]
-        }
+        },
+        "fulfillmentMethod":"delivery"
       }
       """
 
@@ -249,7 +251,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[]
-        }
+        },
+        "fulfillmentMethod":"delivery"
       }
       """
 
@@ -308,7 +311,8 @@ Feature: Carts
           ],
           "order_promotion":[],
           "reusable_packaging":[]
-        }
+        },
+        "fulfillmentMethod":"delivery"
       }
       """
 
@@ -438,7 +442,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[]
-        }
+        },
+        "fulfillmentMethod":"delivery"
       }
       """
 
@@ -594,7 +599,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[]
-        }
+        },
+        "fulfillmentMethod":"delivery"
       }
       """
 
@@ -1172,7 +1178,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[]
-        }
+        },
+        "fulfillmentMethod":"delivery"
       }
       """
 
