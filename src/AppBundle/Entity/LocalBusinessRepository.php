@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Utils\RestaurantFilter;
@@ -224,5 +225,17 @@ class LocalBusinessRepository extends EntityRepository
         usort($others, $nextOpeningComparator);
 
         return array_merge($featured, $opened, $closed, $others);
+    }
+
+    public function findByOption(ProductOptionInterface $option)
+    {
+        // @see https://stackoverflow.com/questions/33346113/doctrine2-manytomany-inverse-querybuilder
+        $qb = $this->createQueryBuilder('r')
+            ->innerJoin('r.productOptions', 'o')
+            ->andWhere('o.id = :option')
+            ->setParameter('option', $option)
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 }

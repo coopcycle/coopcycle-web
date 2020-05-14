@@ -74,6 +74,15 @@ trait CatalogTrait
         }
     }
 
+    public function removeProductOption(ProductOptionInterface $productOption)
+    {
+        if ($this->productOptions->contains($productOption)) {
+            $this->productOptions->removeElement($productOption);
+        }
+    }
+
+    /* Menus / Taxons */
+
     public function getActiveMenuTaxon()
     {
         return $this->activeMenuTaxon;

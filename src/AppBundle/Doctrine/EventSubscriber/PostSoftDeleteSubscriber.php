@@ -53,6 +53,7 @@ class PostSoftDeleteSubscriber implements EventSubscriber
 
             // FIXME Use ProductInterface
             $productRepository = $objectManager->getRepository(Product::class);
+            $restaurantRepository = $objectManager->getRepository(LocalBusiness::class);
 
             $products = $productRepository->findByOption($entity);
             foreach ($products as $product) {
@@ -61,6 +62,11 @@ class PostSoftDeleteSubscriber implements EventSubscriber
                         $unitOfWork->scheduleForDelete($productOption);
                     }
                 }
+            }
+
+            $restaurants = $restaurantRepository->findByOption($entity);
+            foreach ($restaurants as $restaurant) {
+                $restaurant->removeProductOption($entity);
             }
 
             $unitOfWork->computeChangeSets();
