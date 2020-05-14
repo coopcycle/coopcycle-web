@@ -64,7 +64,7 @@ winzou_state_machine:
                 from: [new, authorized, processing]
                 to: completed
             fail:
-                from: [cart, new, authorized]
+                from: [cart, new, authorized, processing]
                 to: failed
             cancel:
                 from: [cart, new, authorized]
