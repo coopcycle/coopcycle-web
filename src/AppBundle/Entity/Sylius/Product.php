@@ -26,7 +26,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "put"={
  *       "method"="PUT",
  *       "denormalization_context"={"groups"={"product_update"}},
- *       "access_control"="is_granted('ROLE_RESTAURANT') and null != object.getRestaurant() and user.ownsRestaurant(object.getRestaurant())"
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsProduct(object)"
  *     },
  *   },
  *   attributes={
@@ -37,8 +37,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class Product extends BaseProduct implements ProductInterface
 {
-    protected $restaurant;
-
     /**
      * @Vich\UploadableField(mapping="product_image", fileNameProperty="imageName")
      * @Assert\File(
@@ -71,25 +69,6 @@ class Product extends BaseProduct implements ProductInterface
     public function __construct()
     {
         parent::__construct();
-
-        $this->restaurant = new ArrayCollection();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRestaurant(): ?LocalBusiness
-    {
-        return $this->restaurant->get(0);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRestaurant(?LocalBusiness $restaurant): void
-    {
-        $this->restaurant->clear();
-        $this->restaurant->add($restaurant);
     }
 
     public function setImageName($imageName)
@@ -226,12 +205,19 @@ class Product extends BaseProduct implements ProductInterface
     public function setReusablePackaging(?ReusablePackaging $reusablePackaging)
     {
         if (null !== $reusablePackaging) {
-            $restaurant = $this->getRestaurant();
 
-            if (!$restaurant->hasReusablePackaging($reusablePackaging)) {
+            $restaurant = $reusablePackaging->getRestaurant();
+
+            if (null === $restaurant) {
+                throw new \InvalidArgumentException(
+                    sprintf('Reusable packaging #%d is not associated with any restaurant', $reusablePackaging->getId())
+                );
+            }
+
+            if (!$restaurant->hasProduct($this)) {
                 throw new \LogicException(
-                    sprintf('Product #%d belongs to restaurant #%d, but reusable packaging #%d is not associated to this restaurant',
-                        $this->getId(), $restaurant->getId(), $reusablePackaging->getId())
+                    sprintf('Reusable packaging #%d is associated with restaurant #%d, but product #%d is not',
+                        $reusablePackaging->getId(), $restaurant->getId(), $this->getId())
                 );
             }
         }

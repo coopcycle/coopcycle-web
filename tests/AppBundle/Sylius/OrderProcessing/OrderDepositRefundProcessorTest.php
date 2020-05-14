@@ -57,14 +57,15 @@ class OrderDepositRefundProcessorTest extends TestCase
         $variant = $this->prophesize(ProductVariant::class);
 
         $product = new Product();
-        $product->setRestaurant($restaurant);
         $product->setReusablePackagingEnabled($enabled);
         $product->setReusablePackagingUnit($units);
-        $product->setReusablePackaging($reusablePackaging);
 
         $variant->getProduct()->willReturn($product);
         $orderItem->getVariant()->willReturn($variant->reveal());
         $orderItem->getQuantity()->willReturn($quantity);
+
+        $restaurant->addProduct($product);
+        $product->setReusablePackaging($reusablePackaging);
 
         return $orderItem;
     }

@@ -30,10 +30,7 @@ class ProductOptionWithPositionType extends AbstractType
                 'attr' => [
                     'data-name' => 'position'
                 ]
-            ])
-            ;
-
-        $productOptionRepository = $this->doctrine->getRepository(ProductOption::class);
+            ]);
 
         $builder
             ->get('option')
@@ -43,12 +40,12 @@ class ProductOptionWithPositionType extends AbstractType
                         return $entity->getId();
                     }
                 },
-                function ($id) use ($productOptionRepository) {
+                function ($id) {
                     if (!$id) {
                         return null;
                     }
 
-                    return $productOptionRepository->find($id);
+                    return $this->doctrine->getRepository(ProductOption::class)->find($id);
                 }
             ));
 

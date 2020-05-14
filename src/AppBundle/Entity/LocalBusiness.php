@@ -11,6 +11,7 @@ use AppBundle\Action\Restaurant\Menus;
 use AppBundle\Annotation\Enabled;
 use AppBundle\Api\Dto\RestaurantInput;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
+use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
 use AppBundle\Entity\LocalBusiness\FoodEstablishmentTrait;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
@@ -18,6 +19,7 @@ use AppBundle\Entity\LocalBusiness\ImageTrait;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
+use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Carbon\Carbon;
@@ -90,7 +92,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @CustomAssert\IsActivableRestaurant(groups="activable")
  * @Enabled
  */
-class LocalBusiness extends BaseLocalBusiness
+class LocalBusiness extends BaseLocalBusiness implements CatalogInterface
 {
     use Timestampable;
     use SoftDeleteableEntity;

@@ -34,6 +34,8 @@ trait CatalogTrait
         return $this->orders;
     }
 
+    /* Products */
+
     public function getProducts()
     {
         return $this->products;
@@ -46,12 +48,19 @@ trait CatalogTrait
 
     public function addProduct(ProductInterface $product)
     {
-        $product->setRestaurant($this);
-
-        if (!$this->products->contains($product)) {
+        if (!$this->hasProduct($product)) {
             $this->products->add($product);
         }
     }
+
+    public function removeProduct(ProductInterface $product)
+    {
+        if ($this->hasProduct($product)) {
+            $this->products->removeElement($product);
+        }
+    }
+
+    /* Options */
 
     public function getProductOptions()
     {

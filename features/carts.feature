@@ -1065,10 +1065,6 @@ Feature: Carts
       | code      |
       | PIZZA     |
       | HAMBURGER |
-    And the restaurant with id "2" has products:
-      | code      |
-      | PIZZA     |
-      | HAMBURGER |
     Given there is a cart at restaurant with id "1"
     And there is a cart at restaurant with id "1"
     And there is a token for the last cart at restaurant with id "1"

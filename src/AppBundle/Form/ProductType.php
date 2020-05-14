@@ -3,11 +3,14 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\ReusablePackaging;
+use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
 use AppBundle\Form\Type\MoneyType;
+use AppBundle\Sylius\Product\ProductInterface;
+use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
@@ -95,6 +98,29 @@ class ProductType extends AbstractType
             'mapped' => false
         ]);
 
+        if ($options['with_reusable_packaging'] && count($options['reusable_packaging_choices']) > 0) {
+            $builder
+                ->add('reusablePackagingEnabled', CheckboxType::class, [
+                    'required' => false,
+                    'label' => 'form.product.reusable_packaging_enabled.label',
+                ])
+                ->add('reusablePackaging', EntityType::class, [
+                    'label' => 'form.product.reusable_packaging.label',
+                    'class' => ReusablePackaging::class,
+                    'choices' => $options['reusable_packaging_choices'],
+                    'choice_label' => 'name',
+                ])
+                ->add('reusablePackagingUnit', NumberType::class, [
+                    'label' => 'form.product.reusable_packaging_unit.label',
+                    'html5' => true,
+                    'attr'  => array(
+                        'min'  => 0,
+                        'max'  => 3,
+                        'step' => 0.5,
+                    )
+                ]);
+        }
+
         // While price & tax category are defined in ProductVariant,
         // we display the fields at the Product level
         // For now, all variants share the same values
@@ -108,7 +134,7 @@ class ProductType extends AbstractType
                 'label' => 'form.product.taxCategory.label'
             ]);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
             $product = $event->getData();
@@ -117,31 +143,8 @@ class ProductType extends AbstractType
                 'entry_type' => ProductOptionWithPositionType::class,
                 'entry_options' => [ 'label' => false ],
                 'mapped' => false,
-                'data' => $this->getSortedOptions($product),
+                'data' => $this->getSortedOptions($product, $options),
             ]);
-
-            if ($product->getRestaurant()->isDepositRefundEnabled() || $product->getRestaurant()->isLoopeatEnabled()) {
-                $form
-                    ->add('reusablePackagingEnabled', CheckboxType::class, [
-                        'required' => false,
-                        'label' => 'form.product.reusable_packaging_enabled.label',
-                    ])
-                    ->add('reusablePackaging', EntityType::class, [
-                        'label' => 'form.product.reusable_packaging.label',
-                        'class' => ReusablePackaging::class,
-                        'choices' => $product->getRestaurant()->getReusablePackagings(),
-                        'choice_label' => 'name',
-                    ])
-                    ->add('reusablePackagingUnit', NumberType::class, [
-                        'label' => 'form.product.reusable_packaging_unit.label',
-                        'html5' => true,
-                        'attr'  => array(
-                            'min'  => 0,
-                            'max'  => 3,
-                            'step' => 0.5,
-                        )
-                    ]);
-            }
 
             if (null !== $product->getId()) {
 
@@ -208,7 +211,7 @@ class ProductType extends AbstractType
             }
         });
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
             $product = $event->getData();
@@ -260,6 +263,10 @@ class ProductType extends AbstractType
             $this->postSubmitEnumAttribute($product, 'ALLERGENS', $form->get('allergens')->getData());
 
             $this->postSubmitEnumAttribute($product, 'RESTRICTED_DIETS', $form->get('restrictedDiets')->getData());
+
+            if (null !== $options['owner']) {
+                $options['owner']->addProduct($product);
+            }
         });
     }
 
@@ -306,31 +313,31 @@ class ProductType extends AbstractType
         $product->addAttribute($attributeValue);
     }
 
-    private function getSortedOptions(Product $product)
+    private function getSortedOptions(ProductInterface $product, array $options)
     {
-        $opts = [];
-        foreach ($product->getRestaurant()->getProductOptions() as $opt) {
-            $opts[] = [
-                'product'  => $product,
-                'option'   => $opt,
-                'position' => $product->getPositionForOption($opt)
-            ];
+        if (is_callable($options['options_loader'])) {
+
+            return call_user_func_array($options['options_loader'], [ $product ]);
         }
 
-        uasort($opts, function ($a, $b) {
-            if ($a['position'] === $b['position']) return 0;
-            if ($a['position'] === -1) return 1;
-            if ($b['position'] === -1) return -1;
-            return $a['position'] < $b['position'] ? -1 : 1;
-        });
-
-        return $opts;
+        return [];
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => Product::class,
+            'owner' => null,
+            'with_reusable_packaging' => false,
+            'reusable_packaging_choices' => [],
+            'options_loader' => null,
         ));
+        $resolver->setAllowedTypes('owner', CatalogInterface::class);
+        $resolver->setAllowedTypes('with_reusable_packaging', 'bool');
+        $resolver->setAllowedTypes('reusable_packaging_choices', [
+            Collection::class,
+            sprintf('%s[]', ReusablePackaging::class)
+        ]);
+        $resolver->setAllowedTypes('options_loader', ['null', 'callable']);
     }
 }

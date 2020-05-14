@@ -24,6 +24,7 @@ use AppBundle\Form\Restaurant\DepositRefundSettingsType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
+use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Utils\MenuEditor;
 use AppBundle\Utils\PreparationTimeCalculator;
 use AppBundle\Utils\RestaurantStats;
@@ -602,6 +603,36 @@ trait RestaurantTrait
         ], $routes));
     }
 
+    private function createRestaurantProductForm(LocalBusiness $restaurant, ProductInterface $product)
+    {
+        return $this->createForm(ProductType::class, $product, [
+            'owner' => $restaurant,
+            'with_reusable_packaging' =>
+                $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled(),
+            'reusable_packaging_choices' => $restaurant->getReusablePackagings(),
+            'options_loader' => function (ProductInterface $product) use ($restaurant) {
+
+                $opts = [];
+                foreach ($restaurant->getProductOptions() as $opt) {
+                    $opts[] = [
+                        'product'  => $product,
+                        'option'   => $opt,
+                        'position' => $product->getPositionForOption($opt)
+                    ];
+                }
+
+                uasort($opts, function ($a, $b) {
+                    if ($a['position'] === $b['position']) return 0;
+                    if ($a['position'] === -1) return 1;
+                    if ($b['position'] === -1) return -1;
+                    return $a['position'] < $b['position'] ? -1 : 1;
+                });
+
+                return $opts;
+            }
+        ]);
+    }
+
     /**
      * @HideSoftDeleted
      */
@@ -621,7 +652,8 @@ trait RestaurantTrait
 
         $forms = [];
         foreach ($products as $product) {
-            $forms[$product->getId()] = $this->createForm(ProductType::class, $product)->createView();
+            $forms[$product->getId()] =
+                $this->createRestaurantProductForm($restaurant, $product)->createView();
         }
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
@@ -641,11 +673,8 @@ trait RestaurantTrait
         $product = $this->get('sylius.repository.product')
             ->find($productId);
 
-        // FIXME
-        // Configure mapping to avoid having to call this
-        $product->setRestaurant($restaurant);
-
-        $form = $this->createForm(ProductType::class, $product);
+        $form =
+            $this->createRestaurantProductForm($restaurant, $product);
 
         $routes = $request->attributes->get('routes');
 
@@ -689,11 +718,8 @@ trait RestaurantTrait
 
         $product->setEnabled(false);
 
-        // FIXME
-        // Configure mapping to avoid having to call this
-        $product->setRestaurant($restaurant);
-
-        $form = $this->createForm(ProductType::class, $product);
+        $form =
+            $this->createRestaurantProductForm($restaurant, $product);
 
         $routes = $request->attributes->get('routes');
 

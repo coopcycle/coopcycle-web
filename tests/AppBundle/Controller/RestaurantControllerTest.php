@@ -166,9 +166,7 @@ class RestaurantControllerTest extends WebTestCase
 
         $product = $this->prophesize(ProductInterface::class);
         $product->isEnabled()->willReturn(true);
-        $product->getRestaurant()->willReturn($restaurant);
         $product->hasOptions()->willReturn(true);
-        $product->setRestaurant(Argument::type(Restaurant::class))->shouldBeCalled();
 
         $restaurant->addProduct($product->reveal());
 

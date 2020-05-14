@@ -17,12 +17,16 @@ class ProductTest extends TestCase
         $reusablePackaging = new ReusablePackaging();
         $otherReusablePackaging = new ReusablePackaging();
 
+        $otherRestaurant = new Restaurant();
+        $otherRestaurant->addReusablePackaging($otherReusablePackaging);
+
+        $product = new Product();
+
         $restaurant = new Restaurant();
         $restaurant->setDepositRefundEnabled(true);
         $restaurant->addReusablePackaging($reusablePackaging);
+        $restaurant->addProduct($product);
 
-        $product = new Product();
-        $product->setRestaurant($restaurant);
         $product->setReusablePackaging($otherReusablePackaging);
     }
 }
