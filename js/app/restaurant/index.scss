@@ -2,8 +2,6 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 @import "../../../assets/css/vars.scss";
 
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_type.scss";
-
 // $panel-heading-padding is 10px 15px !default;
 // nth() allows to extract individual values
 $panel-heading-padding-vertical: nth($panel-heading-padding, 1);
@@ -195,7 +193,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   &__item {
     padding: 10px 0;
     &__adjustments {
-      @extend .text-muted;
+      color: $text-muted;
     }
     &__content {
       display: flex;
@@ -239,14 +237,14 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     display: block;
     margin: 15px 0;
     text-align: center;
-    @extend .text-success;
+    color: $state-success-text;
     &:hover,
     &:visited,
     &:focus {
       text-decoration: none;
     }
     &--not-today {
-      @extend .text-danger;
+      color: $state-danger-text;
     }
     &__text,
     &__edit {
