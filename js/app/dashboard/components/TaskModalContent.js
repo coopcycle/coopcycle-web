@@ -4,21 +4,17 @@ import moment from 'moment'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { ConfigProvider, DatePicker, Form, Radio, Timeline } from 'antd'
-import fr_FR from 'antd/es/locale/fr_FR'
-import en_GB from 'antd/es/locale/en_GB'
 import { Formik } from 'formik'
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import phoneNumberExamples from 'libphonenumber-js/examples.mobile.json'
 import { getExampleNumber } from 'libphonenumber-js'
 
+import { antdLocale } from '../../i18n'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
 import CourierSelect from './CourierSelect'
 
 import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
-
-const locale = $('html').attr('lang')
-const antdLocale = locale === 'fr' ? fr_FR : en_GB
 
 const itemColor = event => {
   switch (event.name) {

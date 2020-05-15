@@ -3,14 +3,10 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import moment from 'moment'
 import { ConfigProvider, DatePicker } from 'antd'
-import fr_FR from 'antd/es/locale/fr_FR'
-import en_GB from 'antd/es/locale/en_GB'
 import _ from 'lodash'
 
+import { antdLocale } from '../../i18n'
 import { openFiltersModal, resetFilters, openSettings, openImportModal } from '../redux/actions'
-
-const locale = $('html').attr('lang'),
-  antdLocale = locale === 'fr' ? fr_FR : en_GB
 
 class Navbar extends React.Component {
 

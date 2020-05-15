@@ -3,19 +3,15 @@ import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { ConfigProvider, Form, Slider, Switch } from 'antd'
-import fr_FR from 'antd/es/locale/fr_FR'
-import en_GB from 'antd/es/locale/en_GB'
 import { Formik } from 'formik'
 
+import { antdLocale } from '../../i18n'
 import TagsSelect from '../../components/TagsSelect'
 import Avatar from './Avatar'
 import {
   closeFiltersModal,
   setFilterValue } from '../redux/actions'
 import { selectBookedUsernames } from '../redux/selectors'
-
-const locale = $('html').attr('lang')
-const antdLocale = locale === 'fr' ? fr_FR : en_GB
 
 function isHidden(hiddenCouriers, username) {
   return !!_.find(hiddenCouriers, u => u === username)

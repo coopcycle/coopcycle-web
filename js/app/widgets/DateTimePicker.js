@@ -5,22 +5,9 @@ import { ConfigProvider, Form, Button, DatePicker, TimePicker } from 'antd'
 
 import 'antd/es/input/style/index.css'
 
-import de_DE from 'antd/es/locale/de_DE'
-import en_US from 'antd/es/locale/en_US'
-import es_ES from 'antd/es/locale/es_ES'
-import fr_FR from 'antd/es/locale/fr_FR'
+import { antdLocale } from '../i18n'
 
 const FormItem = Form.Item
-
-const localeMap = {
-  'de': de_DE,
-  'en': en_US,
-  'es': es_ES,
-  'fr': fr_FR,
-}
-
-const locale = $('html').attr('lang')
-const antdLocale = Object.prototype.hasOwnProperty.call(localeMap, locale) ? localeMap[locale] : en_US
 
 const today = moment().startOf('day')
 

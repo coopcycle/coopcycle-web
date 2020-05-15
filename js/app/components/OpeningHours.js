@@ -3,11 +3,11 @@ import moment from 'moment'
 import _ from 'lodash'
 import i18n from '../i18n'
 import { Button, ConfigProvider, TimePicker } from 'antd'
-import frBE from 'antd/es/locale/fr_BE'
 import classNames from 'classnames'
 
 import openingHourIntervalToReadable from '../restaurant/parseOpeningHours'
 import TimeRange from '../utils/TimeRange'
+import { antdLocale } from '../i18n'
 
 const timeFormat = 'HH:mm'
 
@@ -240,7 +240,7 @@ export default class extends React.Component {
   render() {
     const { weekdays } = this.state
     return (
-      <ConfigProvider locale={frBE}>
+      <ConfigProvider locale={ antdLocale }>
         <div>
           <table className="table">
             <thead>

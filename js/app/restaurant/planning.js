@@ -2,12 +2,12 @@ import React from 'react'
 import { render } from 'react-dom'
 import { ConfigProvider, Calendar, DatePicker } from 'antd'
 import moment from 'moment'
-import frFR from 'antd/es/locale/fr_FR'
-import enGB from 'antd/es/locale/en_GB'
 import _ from 'lodash'
 import axios from 'axios'
 
 import 'antd/es/select/style/index.css'
+
+import { antdLocale, localeDetector } from '../i18n'
 
 const baseURL = location.protocol + '//' + location.hostname
 
@@ -18,8 +18,7 @@ const { RangePicker } = DatePicker,
     'width': '100%'
   }
 
-let antdLocale,
-  locale = $('html').attr('lang'),
+let locale = localeDetector(),
   selectedClosingStartDate,
   selectedClosingEndDate,
   $closingRuleForm = $('#closing-rules-form'),
@@ -36,12 +35,6 @@ closingRules = _.map(closingRules, function (item) {
 })
 
 moment.locale(locale)
-
-if (locale === 'fr') {
-  antdLocale = frFR
-} else {
-  antdLocale = enGB
-}
 
 function onChange(dates) {
   if (dates.length === 2) {
