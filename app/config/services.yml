@@ -444,8 +444,8 @@ services:
     class: Mailjet\MailjetSwiftMailer\SwiftMailer\MailjetTransport
     arguments:
         - "@swiftmailer.transport.eventdispatcher.mailjet"
-        - "%mailjet.api_key%"
-        - "%mailjet.secret_key%"
+        - "%env(COOPCYCLE_MAILJET_API_KEY)%"
+        - "%env(COOPCYCLE_MAILJET_API_SECRET)%"
 
   swiftmailer.mailer.default.transport.mailjet: '@swiftmailer.mailer.transport.mailjet'
   mailjet: '@swiftmailer.mailer.default.transport.mailjet'
