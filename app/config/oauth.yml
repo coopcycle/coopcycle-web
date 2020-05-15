@@ -26,8 +26,8 @@ hwi_oauth:
     resource_owners:
         facebook:
             type:           facebook
-            client_id:     '%oauth.facebook.client_id%'
-            client_secret: '%oauth.facebook.client_secret%'
+            client_id:     '%env(COOPCYCLE_OAUTH_FACEBOOK_CLIENT_ID)%'
+            client_secret: '%env(COOPCYCLE_OAUTH_FACEBOOK_CLIENT_SECRET)%'
             scope:         'email'
 
 

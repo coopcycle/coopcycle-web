@@ -60,7 +60,4 @@ parameters:
 
     mjml_server_base_uri: 'http://mjml'
 
-    oauth.facebook.client_id: 'YourFacebookClientId'
-    oauth.facebook.client_secret: 'YourFacebookClientSecret'
-
     host: nginx

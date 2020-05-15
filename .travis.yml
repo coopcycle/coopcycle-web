@@ -46,6 +46,8 @@ env:
     - COOPCYCLE_DB_NAME=coopcycle
     - COOPCYCLE_DB_USER=postgres
     - COOPCYCLE_DB_PASSWORD=
+    - COOPCYCLE_OAUTH_FACEBOOK_CLIENT_ID=YourFacebookClientId
+    - COOPCYCLE_OAUTH_FACEBOOK_CLIENT_SECRET=YourFacebookClientSecret
     - COOPCYCLE_REDIS_DSN=redis://127.0.0.1:6379/0
     - COOPCYCLE_TILE38_DSN=redis://127.0.0.1:9851
     # https://docs.travis-ci.com/user/encryption-keys
