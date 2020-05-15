@@ -4,6 +4,8 @@ import _ from 'lodash'
 import i18n from '../i18n'
 import { Button, ConfigProvider, TimePicker } from 'antd'
 import frBE from 'antd/es/locale/fr_BE'
+import classNames from 'classnames'
+
 import openingHourIntervalToReadable from '../restaurant/parseOpeningHours'
 import TimeRange from '../utils/TimeRange'
 
@@ -25,6 +27,7 @@ export default class extends React.Component {
       rowsWithErrors: props.rowsWithErrors,
       rows: [],
       behavior: props.behavior || 'asap',
+      rev: 0,
     }
   }
 
@@ -154,24 +157,20 @@ export default class extends React.Component {
     return minutes
   }
 
-  renderRow(row, key) {
+  renderRow(row, index) {
 
-    const { weekdays } = this.state
+    const { weekdays, rev } = this.state
     const startValue = row.start ? moment(row.start + ':00', 'HH:mm:ss') : null
     const endValue = row.end ? moment(row.end + ':00', 'HH:mm:ss') : null
 
-    const rowClasses = []
-    if (-1 !== this.props.rowsWithErrors.indexOf(key)) {
-      rowClasses.push('danger')
-    }
-
     return (
-      <tr key={key} className={rowClasses.join(' ')}>
+      <tr key={ `${index}-${rev}` }
+        className={ classNames({ 'danger': (-1 !== this.props.rowsWithErrors.indexOf(index)) }) }>
         <td width="50%">
           <span className="mr-3">
             <TimePicker
               disabledMinutes={this.disabledMinutes}
-              onChange={this.onStartChange.bind(this, key)}
+              onChange={this.onStartChange.bind(this, index)}
               defaultValue={startValue}
               format={timeFormat}
               hideDisabledOptions
@@ -182,7 +181,7 @@ export default class extends React.Component {
             />
             <TimePicker
               disabledMinutes={this.disabledMinutes}
-              onChange={this.onEndChange.bind(this, key)}
+              onChange={this.onEndChange.bind(this, index)}
               defaultValue={endValue}
               format={timeFormat}
               hideDisabledOptions
@@ -197,13 +196,13 @@ export default class extends React.Component {
         {_.map(weekdays, (weekday) => (
           <td key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>
             <input type="checkbox"
-              onChange={this.onCheckboxChange.bind(this, key, weekday.key)}
+              onChange={this.onCheckboxChange.bind(this, index, weekday.key)}
               checked={this.isWeekdayChecked(row, weekday.key)}
               className="form-input" />
           </td>
         ))}
         <td>
-          <button onClick={this.removeRow.bind(this, key)} type="button" className="close" data-dismiss="alert" aria-label="Close">
+          <button onClick={this.removeRow.bind(this, index)} type="button" className="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </td>
@@ -226,16 +225,16 @@ export default class extends React.Component {
     e.preventDefault()
     const { rows } = this.state
     rows.push(this.createRowData())
-    this.setState({ rows })
+    this.setState({ rows, rev: this.state.rev + 1 })
     this.props.onRowAdd()
   }
 
-  removeRow(key, e) {
+  removeRow(index, e) {
     e.preventDefault()
-    let rows = this.state.rows
-    rows.splice(key, 1)
-    this.setState({ rows })
-    this.props.onRowRemove(key)
+    const rows = this.state.rows.slice()
+    rows.splice(index, 1)
+    this.setState({ rows, rev: this.state.rev + 1 })
+    this.props.onRowRemove(index)
   }
 
   render() {
@@ -254,7 +253,7 @@ export default class extends React.Component {
               </tr>
             </thead>
             <tbody>
-              {_.map(this.state.rows, (row, key) => this.renderRow(row, key))}
+              {_.map(this.state.rows, (row, index) => this.renderRow(row, index))}
             </tbody>
           </table>
           <button className="btn btn-sm btn-success" onClick={this.addRow.bind(this)}>{i18n.t('ADD_BUTON')}</button>
