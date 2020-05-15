@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import { Switch } from 'antd'
 import Dropzone from 'dropzone'
+import _ from 'lodash'
 
 import i18n from '../i18n'
 import DropzoneWidget from '../widgets/Dropzone'
@@ -47,6 +48,40 @@ function renderSwitch($input) {
       disabled={disabled} />, $switch.get(0)
   )
 }
+
+/**
+ * When an element uses the Constraint validation API, but is not visible,
+ * Chrome trigger the error "An invalid form control with name='…' is not focusable."
+ */
+
+let afterAll
+
+const handleFirstInvalid = function(e) {
+  const target = e.target
+  const tabPane = target.closest('.tab-pane')
+  const anchor = '#' + tabPane.getAttribute('id')
+
+  // Make the tab pane visible, and re-trigger validity
+  $(`a[href="${anchor}"]`).tab('show')
+  target.reportValidity()
+
+  afterAll = _.once(handleFirstInvalid)
+}
+
+afterAll = _.once(handleFirstInvalid)
+
+const onInvalid = function(e) {
+  if (!$(e.target).is(':visible')) {
+    e.preventDefault()
+    _.defer(afterAll, e)
+  }
+}
+
+document.querySelector('form[name="restaurant"]')
+  .querySelectorAll('input,select,textarea')
+  .forEach(el => el.addEventListener('invalid', onInvalid))
+
+/* --- */
 
 $(function() {
 
