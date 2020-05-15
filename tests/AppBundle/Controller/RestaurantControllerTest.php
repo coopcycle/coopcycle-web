@@ -242,4 +242,74 @@ class RestaurantControllerTest extends WebTestCase
 
         $this->assertEquals($expectedRestaurant, $data['cart']['restaurant']);
     }
+
+    public function testAddProductToCartActionWithRestaurantMismatch(): void
+    {
+        $productCode = Uuid::uuid4()->toString();
+        $productOptionValueCode = Uuid::uuid4()->toString();
+
+        $session = new Session(new MockArraySessionStorage());
+
+        $request = Request::create('/restaurant/{id}/cart/product/{code}', 'POST', [
+            'options' => [
+                [
+                    'code' => $productOptionValueCode,
+                    'quantity' => 3,
+                ]
+            ]
+        ]);
+        $request->setSession($session);
+
+        $restaurantAddress = new Address();
+        $restaurantAddress->setGeo(new GeoCoordinates(48.856613, 2.352222));
+        $this->setId($restaurantAddress, 1);
+
+        $restaurant = new Restaurant();
+        $restaurant->setAddress($restaurantAddress);
+        $restaurant->setContract(new Contract());
+        $this->setId($restaurant, 1);
+
+        $otherRestaurant = new Restaurant();
+        $otherRestaurant->setAddress($restaurantAddress);
+        $this->setId($otherRestaurant, 2);
+
+        // Don't use a mock for the cart
+        // because annotation reader won't work (for serialization)
+        // https://github.com/doctrine/annotations/issues/186
+        $cart = new Order();
+        $cart->setRestaurant($otherRestaurant);
+
+        $product = $this->prophesize(ProductInterface::class);
+        $product->isEnabled()->willReturn(true);
+        $product->hasOptions()->willReturn(true);
+
+        $restaurant->addProduct($product->reveal());
+
+        $this->localBusinessRepository->find(1)->willReturn($restaurant);
+
+        $cartContext = $this->prophesize(CartContextInterface::class);
+        $translator = $this->prophesize(TranslatorInterface::class);
+
+        $cartContext
+            ->getCart()
+            ->willReturn($cart);
+
+        $this->productRepository
+            ->findOneByCode($productCode)
+            ->willReturn($product->reveal());
+
+        $response = $this->controller->addProductToCartAction(1, $productCode, $request, $cartContext->reveal(), $translator->reveal());
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+
+        $data = json_decode((string) $response->getContent(), true);
+
+        $this->assertArrayHasKey('cart', $data);
+        $this->assertArrayHasKey('times', $data);
+        $this->assertArrayHasKey('errors', $data);
+
+        $this->assertArrayHasKey('restaurant', $data['errors']);
+        $this->assertCount(1, $data['errors']['restaurant']);
+        $this->assertEquals('Restaurant mismatch', $data['errors']['restaurant'][0]['message']);
+    }
 }

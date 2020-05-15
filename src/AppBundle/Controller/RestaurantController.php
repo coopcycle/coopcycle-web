@@ -461,7 +461,7 @@ class RestaurantController extends AbstractController
 
         $clear = $request->request->getBoolean('_clear', false);
 
-        if (!$restaurant->hasProduct($product) && !$clear) {
+        if ($cart->getRestaurant() !== $restaurant && !$clear) {
             $errors = [
                 'restaurant' => [
                     [ 'message' => sprintf('Restaurant mismatch') ]
