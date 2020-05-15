@@ -29,8 +29,6 @@ parameters:
     app.tracking_port: "8001"
     is_demo: false
     sentry_public_dsn: "https://<public>@sentry.io/********"
-    statsd_host: graphite
-    statsd_port: '8125'
     fcm_server_api_key: ''
     apns_certificate_file: ''
     apns_certificate_pass_phrase: ''
