@@ -8,11 +8,14 @@ use AppBundle\Validator\Constraints\TaskValidator;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Component\Validator\ValidatorBuilder;
 
 class TaskValidatorTest extends ConstraintValidatorTestCase
 {
+    use ProphecyTrait;
+
     private $unitOfWork;
     private $doctrine;
 

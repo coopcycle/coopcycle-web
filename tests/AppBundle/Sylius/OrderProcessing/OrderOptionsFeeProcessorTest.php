@@ -16,6 +16,7 @@ use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
@@ -26,6 +27,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class OrderOptionsFeeProcessorTest extends KernelTestCase
 {
+    use ProphecyTrait;
+
     private $adjustmentFactory;
     private $orderItemQuantityModifier;
 

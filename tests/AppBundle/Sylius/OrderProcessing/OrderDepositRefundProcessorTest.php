@@ -10,6 +10,7 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderDepositRefundProcessor;
 use AppBundle\Entity\Sylius\ProductVariant;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Order\Model\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use PHPUnit\Framework\TestCase;
@@ -21,6 +22,8 @@ use AppBundle\Entity\Sylius\Product;
 
 class OrderDepositRefundProcessorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $adjustmentFactory;
     private $orderDepositRefundProcessor;
 

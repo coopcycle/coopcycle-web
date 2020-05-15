@@ -19,6 +19,7 @@ use libphonenumber\PhoneNumberUtil;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -26,6 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SendSmsTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $sendEmail;
 
     public function setUp(): void

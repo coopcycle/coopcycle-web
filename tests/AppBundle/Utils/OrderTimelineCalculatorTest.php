@@ -14,9 +14,12 @@ use AppBundle\Utils\PreparationTimeResolver;
 use AppBundle\Utils\PickupTimeResolver;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class OrderTimelineCalculatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $preparationTimeResolver;
     private $pickupTimeResolver;
 

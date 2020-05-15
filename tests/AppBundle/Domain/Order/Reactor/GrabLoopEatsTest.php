@@ -10,10 +10,13 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
 
 class GrabLoopEatsTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $grabLoopEats;
 
     public function setUp(): void

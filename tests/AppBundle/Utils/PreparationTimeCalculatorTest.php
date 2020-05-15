@@ -6,9 +6,12 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\PreparationTimeCalculator;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class PreparationTimeCalculatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $config;
 
     public function setUp(): void

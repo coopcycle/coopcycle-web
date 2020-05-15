@@ -10,12 +10,15 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\StripeManager;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Stripe;
 
 class CapturePaymentTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $capturePayment;
 
     public function setUp(): void

@@ -11,6 +11,7 @@ use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -18,6 +19,7 @@ use Tests\AppBundle\StripeTrait;
 
 class RefuseOrderHandlerTest extends TestCase
 {
+    use ProphecyTrait;
     use StripeTrait {
         setUp as setUpStripe;
     }

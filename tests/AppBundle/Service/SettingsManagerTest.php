@@ -8,10 +8,13 @@ use Craue\ConfigBundle\Entity\Setting;
 use Doctrine\Persistence\ManagerRegistry;
 use libphonenumber\PhoneNumberUtil;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 
 class SettingsManagerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $innerGeocoder;
 
     public function setUp(): void

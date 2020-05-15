@@ -10,10 +10,13 @@ use Kreait\Firebase\Messaging as FirebaseMessaging;
 use Kreait\Firebase\Messaging\CloudMessage;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 
 class RemotePushNotificationManagerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $remotePushNotificationManager;
 
     private function assertArrayIsZeroIndexed(array $value)

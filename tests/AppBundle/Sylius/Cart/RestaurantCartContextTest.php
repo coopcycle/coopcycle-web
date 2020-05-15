@@ -8,12 +8,15 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Sylius\Cart\RestaurantCartContext;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class RestaurantCartContextTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $session;
     private $orderRepository;
     private $orderFactory;

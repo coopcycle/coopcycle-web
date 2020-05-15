@@ -18,6 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Prophecy\Argument;
 use SimpleBus\Message\Bus\MessageBus;
@@ -48,6 +49,8 @@ class UnitOfWork
 
 class TaskSubscriberTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function setUp(): void
     {
         $this->eventBus = $this->prophesize(MessageBus::class);

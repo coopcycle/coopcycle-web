@@ -10,9 +10,12 @@ use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ShippingTimeCalculator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class OrderTimeHelperTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $preparationTimeCalculator;
     private $shippingTimeCalculator;
 

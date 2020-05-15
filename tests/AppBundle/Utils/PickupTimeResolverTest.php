@@ -8,9 +8,12 @@ use AppBundle\Utils\ShippingTimeCalculator;
 use AppBundle\Utils\PickupTimeResolver;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class PickupTimeResolverTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $shippingTimeCalculator;
     private $resolver;
 

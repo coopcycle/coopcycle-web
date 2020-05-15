@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Sylius\Promotion\Checker\Rule;
 
 use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Promotion\Model\PromotionSubjectInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -11,6 +12,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class IsCustomerRuleCheckerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $lazyVariantResolver;
     private $variantFactory;
     private $defaultVariantResolver;

@@ -13,11 +13,14 @@ use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class OrderOptionsProcessorTest extends KernelTestCase
 {
+    use ProphecyTrait;
+
     private $adjustmentFactory;
     private $orderOptionsProcessor;
     private $orderItemQuantityModifier;

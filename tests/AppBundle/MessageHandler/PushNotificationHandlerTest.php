@@ -8,9 +8,12 @@ use AppBundle\MessageHandler\PushNotificationHandler;
 use AppBundle\Service\RemotePushNotificationManager;
 use FOS\UserBundle\Model\UserManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class PushNotificationHandlerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function setUp(): void
     {
         $this->remotePushNotificationManager = $this->prophesize(RemotePushNotificationManager::class);

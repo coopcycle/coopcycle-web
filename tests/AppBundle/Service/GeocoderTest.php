@@ -10,9 +10,12 @@ use Geocoder\Model\AddressCollection;
 use Geocoder\Model\Coordinates;
 use Geocoder\Model\Country;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class GeocoderTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $innerGeocoder;
 
     public function setUp(): void

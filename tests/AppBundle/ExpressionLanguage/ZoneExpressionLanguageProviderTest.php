@@ -7,10 +7,13 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Zone;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ZoneExpressionLanguageProviderTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $language;
     private $zone;
 

@@ -13,6 +13,7 @@ use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -21,6 +22,8 @@ use Prophecy\Argument;
 
 class CheckoutHandlerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $eventRecorder;
     private $orderNumberAssigner;
     private $stripeManager;

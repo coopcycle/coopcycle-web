@@ -8,9 +8,12 @@ use AppBundle\Utils\PreparationTimeResolver;
 use AppBundle\Utils\ShippingDateFilter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class ShippingDateFilterTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $restaurant;
     private $preparationTimeResolver;
     private $filter;

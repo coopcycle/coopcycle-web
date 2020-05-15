@@ -15,11 +15,14 @@ use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Order as OrderConstraint;
 use AppBundle\Validator\Constraints\OrderValidator;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class OrderValidatorTest extends ConstraintValidatorTestCase
 {
+    use ProphecyTrait;
+
     protected $routing;
     protected $shippingDateFilter;
 

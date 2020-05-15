@@ -12,6 +12,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use SimpleBus\Message\Bus\MessageBus;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
@@ -26,6 +27,7 @@ use Tests\AppBundle\StripeTrait;
 
 class StripeManagerTest extends TestCase
 {
+    use ProphecyTrait;
     use StripeTrait {
         setUp as setUpStripe;
     }

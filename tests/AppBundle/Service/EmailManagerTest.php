@@ -6,11 +6,14 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
 class EmailManagerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function setUp(): void
     {
         $this->mailer = $this->prophesize(\Swift_Mailer::class);

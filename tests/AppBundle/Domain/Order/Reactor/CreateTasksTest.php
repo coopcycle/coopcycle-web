@@ -13,10 +13,13 @@ use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTextEncoder;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
 
 class CreateTasksTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $createTasks;
 
     public function setUp(): void

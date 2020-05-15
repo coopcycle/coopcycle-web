@@ -5,9 +5,12 @@ namespace Tests\AppBundle\Entity\Sylius;
 use AppBundle\Entity\Sylius\ProductVariant;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class ProductVariantTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testAddOptionValueWithQuantity()
     {
         $variant = new ProductVariant();

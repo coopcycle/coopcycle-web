@@ -10,9 +10,12 @@ use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\ShippingTimeCalculator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class ShippingTimeCalculatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $routing;
     private $calculator;
 

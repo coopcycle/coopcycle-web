@@ -12,6 +12,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use SimpleBus\Message\Bus\MessageBus;
 use SM\Factory\FactoryInterface;
 use SM\StateMachine\StateMachineInterface;
@@ -23,6 +24,8 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class UpdateStateTest extends KernelTestCase
 {
+    use ProphecyTrait;
+
     private $orderProcessor;
     private $serializer;
     private $eventBus;

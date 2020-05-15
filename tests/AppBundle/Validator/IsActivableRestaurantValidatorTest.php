@@ -7,11 +7,15 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Validator\Constraints\IsActivableRestaurant;
 use AppBundle\Validator\Constraints\IsActivableRestaurantValidator;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class IsActivableRestaurantValidatorTest extends ConstraintValidatorTestCase
 {
+    use ProphecyTrait;
+
 	private $settingsManager;
+
 	public function setUp() :void
     {
         $this->settingsManager = $this->prophesize(SettingsManager::class);

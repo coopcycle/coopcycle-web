@@ -8,6 +8,7 @@ use AppBundle\Service\StripeManager;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -15,6 +16,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ImportStripeFeeCommandTest extends KernelTestCase
 {
+    use ProphecyTrait;
+
     public function setUp(): void
     {
         $this->orderRepository = $this->prophesize(OrderRepository::class);

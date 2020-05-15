@@ -7,9 +7,12 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class OsrmTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function setUp(): void
     {
         $this->client = $this->prophesize(Client::class);

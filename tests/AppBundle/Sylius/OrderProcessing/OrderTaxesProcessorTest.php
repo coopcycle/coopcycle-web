@@ -10,6 +10,7 @@ use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Taxation\Model\TaxCategory;
 use Sylius\Component\Taxation\Model\TaxRate;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
@@ -20,6 +21,8 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class OrderTaxesProcessorTest extends KernelTestCase
 {
+    use ProphecyTrait;
+
     private $settingsManager;
     private $taxCategoryRepository;
     private $orderTaxesProcessor;

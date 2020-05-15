@@ -14,9 +14,12 @@ use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class TaskSpreadsheetParserTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $geocoder;
     private $tagManager;
 

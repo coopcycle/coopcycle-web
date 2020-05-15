@@ -14,6 +14,7 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -26,6 +27,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class OrderFeeProcessorTest extends KernelTestCase
 {
+    use ProphecyTrait;
+
     private $adjustmentFactory;
     private $orderFeeProcessor;
 

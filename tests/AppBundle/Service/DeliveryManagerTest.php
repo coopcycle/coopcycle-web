@@ -17,9 +17,12 @@ use AppBundle\Utils\OrderTimeHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class DeliveryManagerTest extends KernelTestCase
 {
+    use ProphecyTrait;
+
     private $expressionLanguage;
 
     protected function setUp(): void

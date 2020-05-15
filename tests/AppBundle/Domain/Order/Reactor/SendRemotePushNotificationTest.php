@@ -10,6 +10,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Message\PushNotification;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\Envelope;
@@ -18,6 +19,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class SendRemotePushNotificationTest extends KernelTestCase
 {
+    use ProphecyTrait;
+
     private $eventBus;
     private $reactor;
 

@@ -9,10 +9,13 @@ use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Promotion\Model\PromotionSubjectInterface;
 
 class IsRestaurantRuleCheckerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function setUp(): void
     {
         $this->objectRepository = $this->prophesize(ObjectRepository::class);

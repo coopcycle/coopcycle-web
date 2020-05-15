@@ -6,11 +6,14 @@ use AppBundle\Action\Order\Refuse;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\OrderManager;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class RefuseTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testOrderCanBeRefusedWithReason()
     {
         $orderManager = $this->prophesize(OrderManager::class);

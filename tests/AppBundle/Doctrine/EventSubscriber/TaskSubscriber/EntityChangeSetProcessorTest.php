@@ -8,9 +8,12 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class EntityChangeSetProcessorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $taskListProvider;
 
     public function setUp(): void

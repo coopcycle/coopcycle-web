@@ -8,9 +8,12 @@ use AppBundle\Entity\TaskImage;
 use AppBundle\Utils\TaskImageNamer;
 use Cocur\Slugify\Slugify;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class TaskImageNamerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testGetImageDownloadFileName()
     {
         $taskImageNamer = new TaskImageNamer(new Slugify());

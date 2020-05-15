@@ -7,11 +7,14 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\OrderManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PayTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testMissingStripeTokenThrowsException()
     {
         $this->expectException(BadRequestHttpException::class);

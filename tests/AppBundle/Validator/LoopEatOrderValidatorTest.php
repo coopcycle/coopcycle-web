@@ -9,12 +9,15 @@ use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\Validator\Constraints\LoopEatOrder as LoopEatOrderConstraint;
 use AppBundle\Validator\Constraints\LoopEatOrderValidator;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
 {
+    use ProphecyTrait;
+
     protected $tokenStorage;
     protected $loopeatClient;
 

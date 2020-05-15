@@ -10,9 +10,12 @@ use AppBundle\Entity\Sylius\ProductVariant;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class LazyProductVariantResolverTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $lazyVariantResolver;
     private $variantFactory;
     private $defaultVariantResolver;

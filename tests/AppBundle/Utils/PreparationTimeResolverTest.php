@@ -10,9 +10,12 @@ use AppBundle\Utils\PickupTimeResolver;
 use PHPUnit\Framework\TestCase;
 use Predis\Client as Redis;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class PreparationTimeResolverTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $restaurant;
     private $preparationTimeCalculator;
     private $shippingTimeCalculator;

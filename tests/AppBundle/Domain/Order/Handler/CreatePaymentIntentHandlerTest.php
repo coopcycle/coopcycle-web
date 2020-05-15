@@ -9,6 +9,7 @@ use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
 use Stripe\Exception\CardException;
@@ -18,6 +19,8 @@ use Prophecy\Argument;
 
 class CreatePaymentIntentHandlerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $eventRecorder;
     private $orderNumberAssigner;
 

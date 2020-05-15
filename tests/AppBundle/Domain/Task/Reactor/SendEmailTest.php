@@ -14,9 +14,12 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class SendEmailTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $sendEmail;
 
     public function setUp(): void

@@ -11,12 +11,15 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Predis\Client as Redis;
 use Prophecy\Argument;
 use Psr\Log\NullLogger;
 
 class CreateGeofencingChannelTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $reactor;
 
     public function setUp(): void

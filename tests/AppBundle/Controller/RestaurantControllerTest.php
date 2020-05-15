@@ -24,6 +24,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Liip\ImagineBundle\Service\FilterService;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 use Ramsey\Uuid\Uuid;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
@@ -54,6 +55,8 @@ class FindOneByCodeRepository extends SyliusEntityRepository
 
 class RestaurantControllerTest extends WebTestCase
 {
+    use ProphecyTrait;
+
     public function setUp(): void
     {
         parent::setUp();
