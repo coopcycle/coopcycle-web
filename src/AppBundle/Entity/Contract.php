@@ -22,7 +22,7 @@ class Contract
      * @Assert\NotBlank
      * @Assert\Type("integer")
      */
-    private $minimumCartAmount;
+    private $minimumCartAmount = 0;
 
     /**
      * @var int
@@ -30,7 +30,7 @@ class Contract
      * @Assert\NotBlank
      * @Assert\Type("integer")
      */
-    private $flatDeliveryPrice;
+    private $flatDeliveryPrice = 0;
 
     /**
      * @var bool
@@ -79,7 +79,7 @@ class Contract
      * @Assert\NotBlank
      * @Assert\Type("float")
      */
-    private $feeRate;
+    private $feeRate = 0.00;
 
     /**
      * @var bool

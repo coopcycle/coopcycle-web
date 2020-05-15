@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Utils;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\ClosingRule;
+use AppBundle\Entity\Contract;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant\PreparationTimeRule;
 use AppBundle\Entity\ReusablePackaging;
@@ -245,6 +246,7 @@ trait RestaurantTrait
     {
         // TODO Check roles
         $restaurant = new LocalBusiness();
+        $restaurant->setContract(new Contract());
 
         return $this->renderRestaurantForm($restaurant, $request, $jwtEncoder, $iriConverter);
     }
