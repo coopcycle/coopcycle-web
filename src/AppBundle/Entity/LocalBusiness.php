@@ -999,6 +999,12 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface
         $fulfillmentMethod->setEnabled($enabled);
     }
 
+    /**
+     * @var array
+     * @Assert\All({
+     *   @CustomAssert\TimeRange(),
+     * })
+     */
     public function getOpeningHours($method = 'delivery')
     {
         foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {

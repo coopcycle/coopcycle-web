@@ -11,10 +11,10 @@
 
 {% if formErrors is not empty %}
   <div class="alert alert-danger">
-    <ul class="restaurant-availability-errors">
+    <ul class="list-unstyled">
       {% for field, errors in formErrors %}
         {% if field != 'enabled' and field != 'data.enabled' %}
-          <li class="margin-left-l">
+          <li>
             {{ errors|first }}
           </li>
         {% endif %}
@@ -26,10 +26,10 @@
 {% if activationErrors is not empty %}
   <div class="alert alert-warning">
     {% trans from 'validators' %}restaurant.notActivable{% endtrans %}
-    <ul class="restaurant-availability-errors">
+    <ul class="list-unstyled">
       {% for field, errors in activationErrors %}
         {% if field != 'enabled' and field != 'data.enabled' %}
-        <li class="margin-left-l">
+        <li>
           {{ errors|first }}
         </li>
         {% endif %}
