@@ -71,7 +71,7 @@ export class DeliveryZonePicker extends React.Component {
       )
     case 'distance':
       return (
-        <input type="number" value={ value } onChange={this.onChange} className="form-control" />
+        <input type="number" value={ value } onChange={this.onChange} className="form-control" min="0" required />
       )
     }
   }
