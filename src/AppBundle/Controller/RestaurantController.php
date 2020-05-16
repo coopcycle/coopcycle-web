@@ -106,7 +106,6 @@ class RestaurantController extends AbstractController
 
         return new JsonResponse([
             'cart'   => $this->serializer->normalize($cart, 'jsonld', $serializerContext),
-            'availabilities' => $this->orderTimeHelper->getAvailabilities($cart),
             'times' => $this->orderTimeHelper->getTimeInfo($cart),
             'errors' => $errors,
         ]);
@@ -382,7 +381,6 @@ class RestaurantController extends AbstractController
         return array(
             'restaurant' => $restaurant,
             'structured_data' => $structuredData,
-            'availabilities' => $this->orderTimeHelper->getAvailabilities($cart),
             'times' => $this->orderTimeHelper->getTimeInfo($cart),
             'delay' => $delay,
             'cart_form' => $cartForm->createView(),
