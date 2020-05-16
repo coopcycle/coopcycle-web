@@ -30,7 +30,7 @@
         "CART_DELIVERY_TIME_CANCEL": "Zakończ",
         "CART_DELIVERY_TIME_ASAP": "Najszybciej jak się da",
         "CART_DELIVERY_TIME_EDIT": "Zmień",
-        "CART_DELIVERY_TIME_DIFF": "Dostawa w ciągu {{diff}} minut",
+        "CART_DELIVERY_TIME_DIFF": "W ciągu {{diff}} minut",
         "CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS": "Wróć do listy restauracji",
         "CART_ADDRESS_MODAL_HELP_TEXT": "Proszę podaj swój adres dokładnie, z numerem i nazwą ulicy",
         "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Wróć do poprzedniego zamówienia",
