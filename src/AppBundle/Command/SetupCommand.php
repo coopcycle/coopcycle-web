@@ -47,6 +47,7 @@ class SetupCommand extends Command
         'en',
         'es',
         'de',
+        'it',
         'pl',
     ];
 
@@ -61,6 +62,7 @@ class SetupCommand extends Command
         'en' => 'On demand delivery',
         'es' => 'Entrega bajo demanda',
         'de' => 'Lieferung auf Anfrage',
+        'it' => 'Consegna su richiesta',
         'pl' => 'Dostawa na żądanie',
     ];
 
@@ -70,6 +72,7 @@ class SetupCommand extends Command
         'en' => 'Allergens',
         'es' => 'Alérgenos',
         'de' => 'Allergene',
+        'it' => 'Allergeni',
         'pl' => 'Alergeny',
     ];
 
@@ -79,6 +82,7 @@ class SetupCommand extends Command
         'en' => 'Restricted diets',
         'es' => 'Dietas restringidas',
         'de' => 'Eingeschränkte Ernährung',
+        'it' => 'Piani ristretti',
         'pl' => 'Ograniczone diety',
     ];
 
@@ -88,6 +92,7 @@ class SetupCommand extends Command
         'en' => 'Free delivery',
         'es' => 'Entrega gratis',
         'de' => 'Gratisversand',
+        'it' => 'Consegna gratuita',
         'pl' => 'Darmowa dostawa',
     ];
 
