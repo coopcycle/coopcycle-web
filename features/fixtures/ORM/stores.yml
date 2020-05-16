@@ -73,7 +73,6 @@ AppBundle\Entity\Store:
   store_1:
     name: 'Acme'
     address: "@address_1"
-    openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
@@ -82,7 +81,6 @@ AppBundle\Entity\Store:
   store_2:
     name: 'Acme2'
     address: "@address_2"
-    openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
