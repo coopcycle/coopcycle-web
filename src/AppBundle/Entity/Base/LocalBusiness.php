@@ -2,8 +2,6 @@
 
 namespace AppBundle\Entity\Base;
 
-use AppBundle\Utils\TimeRange;
-use AppBundle\Validator\Constraints\TimeRange as AssertTimeRange;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Carbon\Carbon;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -23,19 +21,6 @@ abstract class LocalBusiness
     protected $legalName;
 
     /**
-     * @var array The opening hours for a business. Opening hours can be specified as a weekly time range, starting with days, then times per day. Multiple days can be listed with commas ',' separating each day. Day or time ranges are specified using a hyphen '-'.
-     *             - Days are specified using the following two-letter combinations: `Mo`, `Tu`, `We`, `Th`, `Fr`, `Sa`, `Su`.
-     *             - Times are specified using 24:00 time. For example, 3pm is specified as `15:00`.
-     *             - Here is an example: `<time itemprop="openingHours" datetime="Tu,Th 16:00-20:00">Tuesdays and Thursdays 4-8pm</time>`.
-     *             - If a business is open 7 days a week, then it can be specified as `<time itemprop="openingHours" datetime="Mo-Su">Monday through Sunday, all day</time>`.
-     *
-     * @Assert\All({
-     *   @AssertTimeRange,
-     * })
-     */
-    protected $openingHours = [];
-
-    /**
      * @var string The telephone number.
      * @Groups({"order", "restaurant"})
      * @AssertPhoneNumber
@@ -49,8 +34,6 @@ abstract class LocalBusiness
 
     protected $additionalProperties = [];
 
-    private $timeRanges = [];
-
     public function getLegalName()
     {
         return $this->legalName;
@@ -61,95 +44,6 @@ abstract class LocalBusiness
         $this->legalName = $legalName;
 
         return $this;
-    }
-
-    /**
-     * Sets openingHours.
-     *
-     * @param array $openingHours
-     *
-     * @return $this
-     */
-    public function setOpeningHours($openingHours)
-    {
-        $this->openingHours = $openingHours;
-
-        return $this;
-    }
-
-    public function addOpeningHour($openingHour)
-    {
-        $this->openingHours[] = $openingHour;
-
-        return $this;
-    }
-
-    /**
-     * Gets openingHours.
-     *
-     * @return array
-     */
-    public function getOpeningHours()
-    {
-        return $this->openingHours;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isOpen(\DateTime $now = null)
-    {
-        if (!$now) {
-            $now = Carbon::now();
-        }
-
-        foreach ($this->getTimeRanges() as $timeRange) {
-            if ($timeRange->isOpen($now)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get the next date the LocalBusiness will be opened at.
-     *
-     * @param \DateTime|null $now
-     * @return mixed
-     */
-    public function getNextOpeningDate(\DateTime $now = null)
-    {
-        if (!$now) {
-            $now = Carbon::now();
-        }
-
-        $dates = [];
-
-        foreach ($this->getTimeRanges() as $timeRange) {
-            $dates[] = $timeRange->getNextOpeningDate($now);
-        }
-
-        sort($dates);
-
-        return array_shift($dates);
-    }
-
-    public function getNextClosingDate(\DateTime $now = null)
-    {
-        if (!$now) {
-            $now = Carbon::now();
-        }
-
-        $dates = [];
-
-        foreach ($this->getTimeRanges() as $timeRange) {
-            $dates[] = $timeRange->getNextClosingDate($now);
-        }
-
-        sort($dates);
-
-        return array_shift($dates);
     }
 
     public function getTelephone()
@@ -234,27 +128,5 @@ abstract class LocalBusiness
         }
 
         return $this;
-    }
-
-    private function computeTimeRanges(array $openingHours)
-    {
-        if (count($openingHours) === 0) {
-            $this->timeRanges = [];
-            return;
-        }
-
-        foreach ($openingHours as $openingHour) {
-            $this->timeRanges[] = new TimeRange($openingHour);
-        }
-    }
-
-    private function getTimeRanges()
-    {
-        $openingHours = $this->getOpeningHours();
-        if (count($openingHours) !== count($this->timeRanges)) {
-            $this->computeTimeRanges($openingHours);
-        }
-
-        return $this->timeRanges;
     }
 }

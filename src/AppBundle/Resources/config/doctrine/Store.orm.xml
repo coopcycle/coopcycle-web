@@ -20,7 +20,6 @@
       <gedmo:timestampable on="update"/>
     </field>
     <field name="legalName" type="string" column="legal_name" nullable="true"/>
-    <field name="openingHours" type="json_array" column="opening_hours" nullable="true"/>
     <field name="vatID" type="string" column="vat_id" nullable="true"/>
     <field name="additionalProperties" type="json_array" column="additional_properties" nullable="true"/>
     <field name="prefillPickupAddress" type="boolean" column="prefill_pickup_address"/>

@@ -21,6 +21,7 @@ use AppBundle\Enum\Store;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
+use AppBundle\Utils\TimeRange;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -226,6 +227,8 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface
 
     protected $stripePaymentMethods = [];
 
+    private $timeRanges = [];
+
     /**
      * @Groups({"restaurant"})
      */
@@ -380,6 +383,28 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface
         return false;
     }
 
+    private function computeTimeRanges(array $openingHours)
+    {
+        if (count($openingHours) === 0) {
+            $this->timeRanges = [];
+            return;
+        }
+
+        foreach ($openingHours as $openingHour) {
+            $this->timeRanges[] = new TimeRange($openingHour);
+        }
+    }
+
+    private function getTimeRanges()
+    {
+        $openingHours = $this->getOpeningHours();
+        if (count($openingHours) !== count($this->timeRanges)) {
+            $this->computeTimeRanges($openingHours);
+        }
+
+        return $this->timeRanges;
+    }
+
     public function isOpen(\DateTime $now = null)
     {
         if (!$now) {
@@ -391,7 +416,48 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface
             return false;
         }
 
-        return parent::isOpen($now);
+        foreach ($this->getTimeRanges() as $timeRange) {
+            if ($timeRange->isOpen($now)) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function _getNextOpeningDate(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = Carbon::now();
+        }
+
+        $dates = [];
+
+        foreach ($this->getTimeRanges() as $timeRange) {
+            $dates[] = $timeRange->getNextOpeningDate($now);
+        }
+
+        sort($dates);
+
+        return array_shift($dates);
+    }
+
+    private function _getNextClosingDate(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = Carbon::now();
+        }
+
+        $dates = [];
+
+        foreach ($this->getTimeRanges() as $timeRange) {
+            $dates[] = $timeRange->getNextClosingDate($now);
+        }
+
+        sort($dates);
+
+        return array_shift($dates);
     }
 
     public function getNextOpeningDate(\DateTime $now = null)
@@ -408,14 +474,14 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface
                 foreach ($this->getClosingRules() as $closingRule) {
                     if ($now >= $closingRule->getStartDate() && $now <= $closingRule->getEndDate()) {
 
-                        $nextOpeningDate = parent::getNextOpeningDate($closingRule->getEndDate());
+                        $nextOpeningDate = $this->_getNextOpeningDate($closingRule->getEndDate());
                         break;
                     }
                 }
             }
 
             if (null === $nextOpeningDate) {
-                $nextOpeningDate = parent::getNextOpeningDate($now);
+                $nextOpeningDate = $this->_getNextOpeningDate($now);
             }
 
             $this->nextOpeningDateCache[$now->getTimestamp()] = $nextOpeningDate;
@@ -431,7 +497,7 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface
         }
 
         $nextClosingDates = [];
-        if ($nextClosingDate = parent::getNextClosingDate($now)) {
+        if ($nextClosingDate = $this->_getNextClosingDate($now)) {
             $nextClosingDates[] = $nextClosingDate;
         }
 
