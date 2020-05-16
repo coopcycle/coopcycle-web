@@ -3,12 +3,14 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Form\Restaurant\FulfillmentMethodType;
 use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -43,15 +45,16 @@ class RestaurantType extends LocalBusinessType
                 'label' => 'localBusiness.form.orderingDelayHours',
                 'mapped' => false
             ])
-            ->add('openingHoursBehavior', ChoiceType::class, [
-                'label' => 'localBusiness.form.openingHoursBehavior',
-                'choices'  => [
-                    'localBusiness.form.openingHoursBehavior.asap' => 'asap',
-                    'localBusiness.form.openingHoursBehavior.time_slot' => 'time_slot',
+            ->add('fulfillmentMethods', CollectionType::class, [
+                'entry_type' => FulfillmentMethodType::class,
+                'entry_options' => [
+                    'label' => false,
                 ],
-                'expanded' => true,
-                'multiple' => false,
-            ]);
+                'allow_add' => false,
+                'allow_delete' => false,
+                'prototype' => false,
+            ])
+            ;
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
@@ -75,7 +78,7 @@ class RestaurantType extends LocalBusinessType
                     'label' => 'restaurant.form.deposit_refund_enabled.label',
                     'required' => false,
                 ])
-                ->add('fulfillmentMethods', ChoiceType::class, [
+                ->add('enabledFulfillmentMethods', ChoiceType::class, [
                     'choices'  => [
                         'fulfillment_method.delivery' => 'delivery',
                         'fulfillment_method.collection' => 'collection',
@@ -111,17 +114,17 @@ class RestaurantType extends LocalBusinessType
             $form->get('orderingDelayHours')->setData($orderingDelayHours);
             $form->get('orderingDelayDays')->setData($orderingDelayDays);
 
-            if ($form->has('fulfillmentMethods')) {
+            if ($form->has('enabledFulfillmentMethods')) {
 
-                $fulfillmentMethods = [];
+                $enabledFulfillmentMethods = [];
                 if ($restaurant->isFulfillmentMethodEnabled('delivery')) {
-                    $fulfillmentMethods[] = 'delivery';
+                    $enabledFulfillmentMethods[] = 'delivery';
                 }
                 if ($restaurant->isFulfillmentMethodEnabled('collection')) {
-                    $fulfillmentMethods[] = 'collection';
+                    $enabledFulfillmentMethods[] = 'collection';
                 }
 
-                $form->get('fulfillmentMethods')->setData($fulfillmentMethods);
+                $form->get('enabledFulfillmentMethods')->setData($enabledFulfillmentMethods);
             }
 
             if ($options['loopeat_enabled'] && $restaurant->hasLoopEatCredentials()) {
@@ -159,17 +162,23 @@ class RestaurantType extends LocalBusinessType
             function (FormEvent $event) {
 
                 $form = $event->getForm();
-                $restaurant = $event->getForm()->getData();
+                $restaurant = $form->getData();
 
-                $orderingDelayDays = $event->getForm()->get('orderingDelayDays')->getData();
-                $orderingDelayHours = $event->getForm()->get('orderingDelayHours')->getData();
-                $restaurant->setOrderingDelayMinutes($orderingDelayDays * 60 * 24 + $orderingDelayHours * 60);
+                // Make sure there is no NULL value in the openingHours array
+                $openingHours = array_filter($restaurant->getOpeningHours());
+                $restaurant->setOpeningHours($openingHours);
 
-                if ($form->has('fulfillmentMethods')) {
-                    $fulfillmentMethods = $form->get('fulfillmentMethods')->getData();
+                $orderingDelayDays = $form->get('orderingDelayDays')->getData();
+                $orderingDelayHours = $form->get('orderingDelayHours')->getData();
+                $restaurant->setOrderingDelayMinutes(
+                    ($orderingDelayDays * 60 * 24) + ($orderingDelayHours * 60)
+                );
 
-                    $restaurant->addFulfillmentMethod('delivery', in_array('delivery', $fulfillmentMethods));
-                    $restaurant->addFulfillmentMethod('collection', in_array('collection', $fulfillmentMethods));
+                if ($form->has('enabledFulfillmentMethods')) {
+                    $enabledFulfillmentMethods = $form->get('enabledFulfillmentMethods')->getData();
+
+                    $restaurant->addFulfillmentMethod('delivery', in_array('delivery', $enabledFulfillmentMethods));
+                    $restaurant->addFulfillmentMethod('collection', in_array('collection', $enabledFulfillmentMethods));
                 }
 
                 if ($form->has('allowStripeConnect')) {

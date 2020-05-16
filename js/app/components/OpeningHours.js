@@ -1,9 +1,10 @@
 import React from 'react'
 import moment from 'moment'
 import _ from 'lodash'
-import i18n from '../i18n'
-import { Button, ConfigProvider, TimePicker } from 'antd'
+import { Button, ConfigProvider, Radio, TimePicker } from 'antd'
 import classNames from 'classnames'
+import PropTypes from 'prop-types'
+import { withTranslation } from 'react-i18next'
 
 import openingHourIntervalToReadable from '../restaurant/parseOpeningHours'
 import TimeRange from '../utils/TimeRange'
@@ -18,7 +19,7 @@ for (let i = 0; i <= 60; i++) {
   }
 }
 
-export default class extends React.Component {
+class OpeningHours extends React.Component {
 
   constructor(props) {
     super(props)
@@ -28,6 +29,7 @@ export default class extends React.Component {
       rows: [],
       behavior: props.behavior || 'asap',
       rev: 0,
+      disabled: Object.prototype.hasOwnProperty.call(props, 'disabled') ? props.disabled : false
     }
   }
 
@@ -56,6 +58,14 @@ export default class extends React.Component {
 
   setBehavior(behavior) {
     this.setState({ behavior })
+  }
+
+  enable() {
+    this.setState({ disabled: false })
+  }
+
+  disable() {
+    this.setState({ disabled: true })
   }
 
   onStartChange(key, date, timeString) {
@@ -167,8 +177,9 @@ export default class extends React.Component {
       <tr key={ `${index}-${rev}` }
         className={ classNames({ 'danger': (-1 !== this.props.rowsWithErrors.indexOf(index)) }) }>
         <td width="50%">
-          <span className="mr-3">
+          <span className="d-block mr-3">
             <TimePicker
+              disabled={ this.state.disabled }
               disabledMinutes={this.disabledMinutes}
               onChange={this.onStartChange.bind(this, index)}
               defaultValue={startValue}
@@ -180,6 +191,7 @@ export default class extends React.Component {
               )}
             />
             <TimePicker
+              disabled={ this.state.disabled }
               disabledMinutes={this.disabledMinutes}
               onChange={this.onEndChange.bind(this, index)}
               defaultValue={endValue}
@@ -196,15 +208,23 @@ export default class extends React.Component {
         {_.map(weekdays, (weekday) => (
           <td key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>
             <input type="checkbox"
+              disabled={ this.state.disabled }
               onChange={this.onCheckboxChange.bind(this, index, weekday.key)}
               checked={this.isWeekdayChecked(row, weekday.key)}
               className="form-input" />
           </td>
         ))}
-        <td>
-          <button onClick={this.removeRow.bind(this, index)} type="button" className="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+        <td className="text-center">
+          { !this.state.disabled && (
+          <button type="button" className="button-icon" onClick={this.removeRow.bind(this, index)}>
+            <i className="fa fa-times"></i>
           </button>
+          )}
+          { this.state.disabled && (
+          <button type="button" className="button-icon">
+            <i className="fa fa-times text-muted"></i>
+          </button>
+          )}
         </td>
       </tr>
     )
@@ -245,7 +265,7 @@ export default class extends React.Component {
           <table className="table">
             <thead>
               <tr>
-                <th>{i18n.t('DELIVERY_TIME_SLOTS')}</th>
+                <th>{this.props.t('DELIVERY_TIME_SLOTS')}</th>
                 {_.map(weekdays, (weekday) => (
                   <th key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>{weekday.name}</th>
                 ))}
@@ -256,9 +276,40 @@ export default class extends React.Component {
               {_.map(this.state.rows, (row, index) => this.renderRow(row, index))}
             </tbody>
           </table>
-          <button className="btn btn-sm btn-success" onClick={this.addRow.bind(this)}>{i18n.t('ADD_BUTON')}</button>
+          <div className="d-flex flex-row align-items-center justify-content-between">
+            <div>
+              { this.props.withBehavior && (
+                <Radio.Group
+                  disabled={ this.state.disabled }
+                  onChange={ (e) => {
+                    this.setState({ behavior: e.target.value })
+                    if (this.props.onChangeBehavior && typeof this.props.onChangeBehavior === 'function') {
+                      this.props.onChangeBehavior(e.target.value)
+                    }
+                  }}
+                  value={ this.state.behavior }>
+                  <Radio value={ 'asap' }>{ this.props.t('OPENING_HOURS_BEHAVIOR.asap') }</Radio>
+                  <Radio value={ 'time_slot' }>{ this.props.t('OPENING_HOURS_BEHAVIOR.time_slot') }</Radio>
+                </Radio.Group>
+              )}
+            </div>
+            <button className="btn btn-sm btn-success" onClick={ this.addRow.bind(this) } disabled={ this.state.disabled }>
+              { this.props.t('ADD_BUTON') }
+            </button>
+          </div>
         </div>
       </ConfigProvider>
     )
   }
 }
+
+OpeningHours.defaultProps = {
+  withBehavior: false
+}
+
+OpeningHours.propTypes = {
+  onChangeBehavior: PropTypes.func,
+  withBehavior: PropTypes.bool,
+}
+
+export default withTranslation('common', { withRef: true })(OpeningHours)

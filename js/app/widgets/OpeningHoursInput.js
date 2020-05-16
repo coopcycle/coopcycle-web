@@ -7,9 +7,14 @@ const defaultOptions = {
   locale: 'en',
   rowsWithErrors: [],
   behavior: 'asap',
+  disabled: false,
+  onChangeBehavior: () => {},
+  withBehavior: false,
 }
 
 export default function(el, options) {
+
+  const ref = React.createRef()
 
   options = {
     ...defaultOptions,
@@ -30,9 +35,12 @@ export default function(el, options) {
 
   const value = _.map(el.querySelectorAll('input[type="hidden"]'), input => input.getAttribute('value'))
 
-  const c = render(<OpeningHours
+  render(<OpeningHours
+    ref={ ref }
     behavior={ options.behavior }
+    withBehavior={ options.withBehavior }
     value={ value }
+    disabled={ options.disabled }
     locale={ options.locale }
     rowsWithErrors={ options.rowsWithErrors }
     onLoad={rows => _.each(rows, (value, index) => addRow(index, value))}
@@ -51,9 +59,12 @@ export default function(el, options) {
       el.querySelectorAll('[data-opening-hour]').forEach(input => input.remove())
       _.each(values, (value, index) => addRow(index, value))
       if (typeof options.onRowRemove === 'function') options.onRowRemove(index)
-    }} />, el)
+    }}
+    onChangeBehavior={ behavior => options.onChangeBehavior(behavior) } />, el)
 
   return {
-    setBehavior: behavior => c.setBehavior(behavior)
+    setBehavior: behavior => ref.current.setBehavior(behavior),
+    enable: () => ref.current.enable(),
+    disable: () => ref.current.disable(),
   }
 }

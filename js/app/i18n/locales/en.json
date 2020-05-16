@@ -203,6 +203,10 @@
                 "RUSH_HOUR": "Rush hour",
                 "NO_SHOW": "No show"
             }
+        },
+        "OPENING_HOURS_BEHAVIOR": {
+            "asap": "As soon as possible",
+            "time_slot": "Time slot"
         }
     }
 }

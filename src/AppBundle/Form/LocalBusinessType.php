@@ -9,7 +9,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
@@ -47,27 +46,15 @@ abstract class LocalBusinessType extends AbstractType
                 'label' => 'localBusiness.form.enabled',
                 'required' => false
             ])
-            ->add('name', TextType::class, ['label' => 'localBusiness.form.name',])
+            ->add('name', TextType::class, ['label' => 'localBusiness.form.name'])
             ->add('legalName', TextType::class, ['required' => false, 'label' => 'localBusiness.form.legalName',])
             ->add('website', UrlType::class, ['required' => false, 'label' => 'localBusiness.form.website',])
             ->add('address', AddressType::class)
-            ->add('telephone',
-                PhoneNumbertype::class,
-                [   'default_region' => strtoupper($this->country),
-                    'format' => PhoneNumberFormat::NATIONAL,
-                    'required' => false,
-                    'label' => 'localBusiness.form.telephone',])
-            ->add('openingHours', CollectionType::class, [
-                'entry_type' => HiddenType::class,
-                'entry_options' => [
-                    'error_bubbling' => false
-                ],
+            ->add('telephone', PhoneNumbertype::class, [
+                'default_region' => strtoupper($this->country),
+                'format' => PhoneNumberFormat::NATIONAL,
                 'required' => false,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'prototype' => true,
-                'label' => 'localBusiness.form.openingHours',
-                'error_bubbling' => false
+                'label' => 'localBusiness.form.telephone',
             ]);
 
         foreach ($options['additional_properties'] as $key) {
@@ -102,10 +89,6 @@ abstract class LocalBusinessType extends AbstractType
             function (FormEvent $event) use ($options) {
 
                 $localBusiness = $event->getForm()->getData();
-
-                // Make sure there is no NULL value in the openingHours array
-                $openingHours = array_filter($localBusiness->getOpeningHours());
-                $localBusiness->setOpeningHours($openingHours);
 
                 foreach ($options['additional_properties'] as $key) {
                     $value = $event->getForm()->get($key)->getData();

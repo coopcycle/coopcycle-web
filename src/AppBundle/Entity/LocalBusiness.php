@@ -22,7 +22,7 @@ use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Utils\TimeRange;
-use AppBundle\Validator\Constraints as CustomAssert;
+use AppBundle\Validator\Constraints\IsActivableRestaurant as AssertIsActivableRestaurant;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -90,7 +90,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   }
  * )
  * @Vich\Uploadable
- * @CustomAssert\IsActivableRestaurant(groups="activable")
+ * @AssertIsActivableRestaurant(groups="activable")
  * @Enabled
  */
 class LocalBusiness extends BaseLocalBusiness implements CatalogInterface
@@ -231,6 +231,7 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface
 
     /**
      * @Groups({"restaurant"})
+     * @Assert\Valid()
      */
     protected $fulfillmentMethods;
 
@@ -1065,12 +1066,6 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface
         $fulfillmentMethod->setEnabled($enabled);
     }
 
-    /**
-     * @var array
-     * @Assert\All({
-     *   @CustomAssert\TimeRange(),
-     * })
-     */
     public function getOpeningHours($method = 'delivery')
     {
         foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {

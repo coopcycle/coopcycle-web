@@ -27,8 +27,6 @@ class StoreType extends LocalBusinessType
     {
         parent::buildForm($builder, $options);
 
-        $builder->remove('openingHours');
-
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
                 ->add('pricingRuleSet', EntityType::class, array(

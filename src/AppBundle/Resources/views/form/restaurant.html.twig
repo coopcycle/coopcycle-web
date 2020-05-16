@@ -29,3 +29,41 @@
   {{ form_row(form.delete) }}
   {% endif %}
 {% endblock %}
+
+{% block _restaurant_fulfillmentMethods_entry_row %}
+<div class="panel panel-default">
+  <div class="panel-heading">{{ ('fulfillment_method.' ~ form.vars.value.type)|trans }}</div>
+  <div class="panel-body">
+    {{ form_row(form) }}
+  </div>
+</div>
+{% endblock %}
+
+{% block _restaurant_fulfillmentMethods_entry_widget %}
+<div id="{{ form.vars.id }}">
+
+  {% set method = form.vars.value.type %}
+
+  {% set method_disabled = (not form.vars.value.enabled ) %}
+  {# Only admins can modify "delivery" fulfillment method #}
+  {% if method == 'delivery' %}
+    {% set method_disabled = (not is_granted('ROLE_ADMIN')) %}
+  {% endif %}
+
+  {% set opening_hours_errors = [] %}
+  {% for key, value in form.openingHours %}
+    {% if not value.vars.valid %}
+      {% set opening_hours_errors = opening_hours_errors|merge([ key ]) %}
+    {% endif %}
+  {% endfor %}
+  {{ form_row(form.openingHours, { label: false, attr: {
+    'data-widget': 'opening-hours',
+    'data-errors': opening_hours_errors|json_encode,
+    'data-disabled': method_disabled|json_encode,
+    'data-behavior': form.vars.value.openingHoursBehavior|e('html_attr'),
+    'data-behavior-selector': ('#' ~ form.openingHoursBehavior.vars.id),
+    'data-method': method|e('html_attr'),
+  }}) }}
+  {{ form_row(form.openingHoursBehavior, { row_attr: { class: 'd-none' } }) }}
+</div>
+{% endblock %}

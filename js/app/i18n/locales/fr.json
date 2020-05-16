@@ -189,6 +189,10 @@
         "CART_DELIVERY_TIME_RANGE_NEXT_WEEK": "dddd [{{range}}]",
         "CART_DELIVERY_TIME_RANGE_LAST_DAY": "[Hier] [{{range}}]",
         "CART_DELIVERY_TIME_RANGE_SAME_ELSE": "[Le] LL [{{range}}]",
-        "NOTIFICATIONS_ENABLED": "Les notifications sont maintenant activées !"
+        "NOTIFICATIONS_ENABLED": "Les notifications sont maintenant activées !",
+        "OPENING_HOURS_BEHAVIOR": {
+            "asap": "Au plus tôt",
+            "time_slot": "Tranche horaire"
+        }
     }
 }

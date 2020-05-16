@@ -1,18 +1,8 @@
-{% if form.fulfillmentMethods is defined %}
-  {{ form_row(form.fulfillmentMethods) }}
+{% if form.enabledFulfillmentMethods is defined %}
+  {{ form_row(form.enabledFulfillmentMethods) }}
 {% endif %}
 
-{% if restaurant.id is not null %}
-  <p class="help-block">
-    <i class="fa fa-info-circle"></i> {% trans %}restaurant.form.temporaryClosingRule{% endtrans %}  
-    <a href="{{ path(planning_route, { id: restaurant.id }) }}">{% trans %}restaurant.form.accessPlanning{% endtrans %}</a>
-  </p>
-{% endif %}
-
-{{ form_row(form.openingHours, { label: false }) }}
-<div id="opening-hours"></div>
-
-{{ form_row(form.openingHoursBehavior) }}
+{{ form_row(form.fulfillmentMethods, { label: false }) }}
 
 <label class="control-label">{% trans %}localBusiness.form.orderingDelayMinutes{% endtrans %}</label>
 <div class="row">

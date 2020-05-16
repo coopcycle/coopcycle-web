@@ -180,23 +180,6 @@
 {% block scripts %}
 <script type="text/javascript">
 
-  var rowsWithErrors = [];
-  {% for key, value in form.openingHours %}
-    {% if not value.vars.valid %}
-      rowsWithErrors.push({{ key }});
-    {% endif %}
-  {% endfor %}
-
-  var openingHoursInput = new CoopCycle.OpeningHoursInput(document.querySelector('#restaurant_openingHours'), {
-    locale: $('html').attr('lang'),
-    rowsWithErrors: rowsWithErrors,
-    behavior: $('input[name="restaurant[openingHoursBehavior]"]:checked').val()
-  });
-
-  $('input[name="restaurant[openingHoursBehavior]"]').on('change', function(e) {
-    openingHoursInput.setBehavior($(this).val())
-  });
-
   function initMap() {
     new CoopCycle.AddressInput(document.querySelector('#restaurant_address_streetAddress'), {
       elements: {
