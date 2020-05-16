@@ -13,7 +13,7 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: "%coopcycle.locale%"
-    locale_regex: ca|fr|en|es|de|pl
+    locale_regex: ca|fr|en|es|de|it|pl
     router.request_context.host: '%host%'
     loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
     loopeat_base_url: '%env(LOOPEAT_BASE_URL)%'
