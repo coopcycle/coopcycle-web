@@ -805,4 +805,9 @@ class Order extends BaseOrder implements OrderInterface
     {
         $this->takeaway = $takeaway;
     }
+
+    public function getFulfillmentMethod(): string
+    {
+        return $this->isTakeaway() ? 'collection' : 'delivery';
+    }
 }

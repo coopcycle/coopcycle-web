@@ -140,4 +140,9 @@ interface OrderInterface extends
      * @return boolean
      */
     public function isTakeaway(): bool;
+
+    /**
+     * @return string
+     */
+    public function getFulfillmentMethod(): string;
 }
