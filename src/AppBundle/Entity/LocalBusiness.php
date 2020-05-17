@@ -18,6 +18,7 @@ use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ImageTrait;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
+use AppBundle\Form\Type\AsapChoiceLoader;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
@@ -26,7 +27,6 @@ use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Utils\TimeRange;
 use AppBundle\Validator\Constraints\IsActivableRestaurant as AssertIsActivableRestaurant;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\Timestampable;
@@ -364,71 +364,17 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
      */
     public function getAvailabilities(\DateTime $now = null)
     {
-        if (!$now) {
-            $now = Carbon::now();
-        }
+        $choiceLoader = new AsapChoiceLoader(
+            $this->getOpeningHours(/* $fulfillmentMethod */),
+            $this->getClosingRules(),
+            $this->getShippingOptionsDays(),
+            $this->getOrderingDelayMinutes(),
+            $now
+        );
 
-        if ($this->getOrderingDelayMinutes() > 0) {
-            $now->modify(sprintf('+%d minutes', $this->getOrderingDelayMinutes()));
-        }
+        $choiceList = $choiceLoader->loadChoiceList();
 
-        $nextOpeningDate = $this->getNextOpeningDate($now);
-
-        if (is_null($nextOpeningDate)) {
-            return [];
-        }
-
-        $availabilities = [];
-
-        $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
-
-        $shippingOptionsDays = $this->shippingOptionsDays ?? 2;
-
-        if ($shippingOptionsDays > 30) {
-            $shippingOptionsDays = 30;
-        }
-
-        if (!$nextClosingDate) { // It is open 24/7
-            $nextClosingDate = Carbon::instance($now)->add($shippingOptionsDays, 'days');
-
-            $period = CarbonPeriod::create(
-                $nextOpeningDate, '15 minutes', $nextClosingDate,
-                CarbonPeriod::EXCLUDE_END_DATE
-            );
-            foreach ($period as $date) {
-                $availabilities[] = $date->format(\DateTime::ATOM);
-            }
-
-            return $availabilities;
-        }
-
-        $numberOfDays = 0;
-        $days = [];
-        while ($numberOfDays < $shippingOptionsDays) {
-            while (true) {
-
-                $period = CarbonPeriod::create(
-                    $nextOpeningDate, '15 minutes', $nextClosingDate,
-                    CarbonPeriod::EXCLUDE_END_DATE
-                );
-                foreach ($period as $date) {
-                    $availabilities[] = $date->format(\DateTime::ATOM);
-                    $days[] = $date->format('Y-m-d');
-                    $numberOfDays = count(array_unique($days));
-                }
-
-                $nextOpeningDate = $this->getNextOpeningDate($nextClosingDate);
-
-                if (!Carbon::instance($nextOpeningDate)->isSameDay($nextClosingDate)) {
-                    $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
-                    break;
-                }
-
-                $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
-            }
-        }
-
-        return $availabilities;
+        return $choiceList->getValues();
     }
 
     public function getStripeAccounts()

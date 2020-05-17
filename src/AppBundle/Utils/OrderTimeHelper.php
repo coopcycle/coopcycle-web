@@ -4,6 +4,7 @@ namespace AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\TimeSlot;
+use AppBundle\Form\Type\AsapChoiceLoader;
 use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
@@ -54,24 +55,35 @@ class OrderTimeHelper
      */
     public function getAvailabilities(OrderInterface $cart)
     {
-        $hash = spl_object_hash($cart);
+        $hash = sprintf('%s-%s', $cart->getFulfillmentMethod(), spl_object_hash($cart));
 
         if (!isset($this->choicesCache[$hash])) {
 
             $restaurant = $cart->getRestaurant();
 
-            $availabilities = $this->filterChoices($cart, $restaurant->getAvailabilities());
+            $choiceLoader = new AsapChoiceLoader(
+                $restaurant->getOpeningHours($cart->getFulfillmentMethod()),
+                $restaurant->getClosingRules(),
+                $restaurant->getShippingOptionsDays(),
+                $restaurant->getOrderingDelayMinutes(),
+            );
 
-            if (empty($availabilities) && 1 === $restaurant->getShippingOptionsDays()) {
-                $restaurant->setShippingOptionsDays(2);
-                $availabilities = $this->filterChoices($cart, $restaurant->getAvailabilities());
-                $restaurant->setShippingOptionsDays(1);
+            $choiceList = $choiceLoader->loadChoiceList();
+            $values = $this->filterChoices($cart, $choiceList->getValues());
+
+            if (empty($values) && 1 === $restaurant->getShippingOptionsDays()) {
+
+                $choiceLoader->setShippingOptionsDays(2);
+                $choiceList = $choiceLoader->loadChoiceList();
+                $values = $choiceList->getValues();
+
+                $values = $this->filterChoices($cart, $choiceList->getValues());
             }
 
             // FIXME Sort availabilities
 
             // Make sure to return a zero-indexed array
-            $this->choicesCache[$hash] = array_values($availabilities);
+            $this->choicesCache[$hash] = array_values($values);
         }
 
         return $this->choicesCache[$hash];
@@ -81,7 +93,7 @@ class OrderTimeHelper
     {
         $restaurant = $cart->getRestaurant();
 
-        if ($restaurant->getOpeningHoursBehavior() === 'time_slot') {
+        if ($restaurant->getOpeningHoursBehavior($cart->getFulfillmentMethod()) === 'time_slot') {
 
             $ranges = [];
 
