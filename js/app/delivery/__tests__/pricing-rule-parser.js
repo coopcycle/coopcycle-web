@@ -72,6 +72,16 @@ describe('Pricing rule parser', function() {
     }])
   })
 
+  it('should parse distance with comparison to zero', function() {
+    const expression = 'distance > 0'
+    const result = parsePricingRule(expression)
+    expect(result).toEqual([{
+      left: 'distance',
+      operator: '>',
+      right: 0
+    }])
+  })
+
   it('should parse weight with bounds', function() {
     const expression = 'weight in 4000..6000'
     const result = parsePricingRule(expression)
@@ -89,6 +99,16 @@ describe('Pricing rule parser', function() {
       left: 'weight',
       operator: '>',
       right: 4000
+    }])
+  })
+
+  it('should parse doorstep dropoff', function() {
+    const expression = 'dropoff.doorstep == true'
+    const result = parsePricingRule(expression)
+    expect(result).toEqual([{
+      left: 'dropoff.doorstep',
+      operator: '==',
+      right: 'true'
     }])
   })
 
