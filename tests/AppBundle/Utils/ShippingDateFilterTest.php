@@ -32,39 +32,48 @@ class ShippingDateFilterTest extends TestCase
     {
         return [
             [
-                // We want to order when the restaurant is closed
-                $now = new \DateTime('2018-10-12 19:15:00'),
-                $dropoff = new \DateTime('2018-10-14 12:30:00'),
-                $preparation = new \DateTime('2018-10-14 12:05:00'),
-                $isOpen = false,
-                $takeaway = false,
+                // $preparation = 11:15, restaurant is closed
+                $now = new \DateTime('2018-10-12 11:00:00'),
+                $dropoff = new \DateTime('2018-10-12 11:30:00'),
+                $preparation = new \DateTime('2018-10-12 11:15:00'),
+                $openingHours = ['Mo-Su 11:30-14:30'],
+                $hasClosingRuleForNow = false,
                 false,
             ],
             [
-                // We want to order in the past
-                $now = new \DateTime('2018-10-12 19:15:00'),
-                $dropoff = new \DateTime('2018-10-12 19:00:00'),
-                $preparation = new \DateTime('2018-10-12 18:30:00'),
-                $isOpen = true,
-                $takeaway = false,
+                // $dropoff < $now
+                $now = new \DateTime('2018-10-12 12:00:00'),
+                $dropoff = new \DateTime('2018-10-12 11:55:00'),
+                $preparation = new \DateTime('2018-10-12 11:45:00'),
+                $openingHours = ['Mo-Su 11:30-14:30'],
+                $hasClosingRuleForNow = false,
+                false,
+            ],
+            [
+                // $preparation < $now
+                $now = new \DateTime('2018-10-12 12:00:00'),
+                $dropoff = new \DateTime('2018-10-12 12:05:00'),
+                $preparation = new \DateTime('2018-10-12 11:50:00'),
+                $openingHours = ['Mo-Su 11:30-14:30'],
+                $hasClosingRuleForNow = false,
+                false,
+            ],
+            [
+                // closing rule
+                $now = new \DateTime('2018-10-12 11:00:00'),
+                $dropoff = new \DateTime('2018-10-12 12:45:00'),
+                $preparation = new \DateTime('2018-10-12 12:30:00'),
+                $openingHours = ['Mo-Su 11:30-14:30'],
+                $hasClosingRuleForNow = true,
                 false,
             ],
             [
                 // No problem
-                $now = new \DateTime('2018-10-12 19:15:00'),
-                $dropoff = new \DateTime('2018-10-12 19:45:00'),
-                $preparation = new \DateTime('2018-10-12 19:30:00'),
-                $isOpen = true,
-                $takeaway = false,
-                true,
-            ],
-            [
-                // Takeaway
-                $now = new \DateTime('2018-10-12 19:15:00'),
-                $dropoff = new \DateTime('2018-10-12 19:45:00'),
-                $preparation = new \DateTime('2018-10-12 19:30:00'),
-                $isOpen = true,
-                $takeaway = true,
+                $now = new \DateTime('2018-10-12 11:00:00'),
+                $dropoff = new \DateTime('2018-10-12 12:45:00'),
+                $preparation = new \DateTime('2018-10-12 12:30:00'),
+                $openingHours = ['Mo-Su 11:30-14:30'],
+                $hasClosingRuleForNow = false,
                 true,
             ],
         ];
@@ -77,21 +86,25 @@ class ShippingDateFilterTest extends TestCase
         \DateTime $now,
         \DateTime $dropoff,
         \DateTime $preparation,
-        bool $isOpen,
-        bool $takeaway,
+        array $openingHours,
+        bool $hasClosingRuleForNow,
         $expected)
     {
         $this->restaurant
-            ->isOpen($preparation)
-            ->willReturn($isOpen);
+            ->hasClosingRuleForNow($preparation)
+            ->willReturn($hasClosingRuleForNow);
+
+        $this->restaurant
+            ->getOpeningHours('delivery')
+            ->willReturn($openingHours);
 
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getRestaurant()
             ->willReturn($this->restaurant->reveal());
         $order
-            ->isTakeaway()
-            ->willReturn($takeaway);
+            ->getFulfillmentMethod()
+            ->willReturn('delivery');
 
         $this->preparationTimeResolver
             ->resolve($order->reveal(), $dropoff)

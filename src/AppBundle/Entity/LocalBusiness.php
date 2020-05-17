@@ -356,9 +356,7 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
     }
 
     /**
-     * Return potential delivery times for a restaurant, pickables by the customer.
-     * WARNING This function may be called a *LOT* of times, it needs to be *FAST*.
-     *
+     * @deprecated
      * @param \DateTime|null $now
      * @return array
      */
