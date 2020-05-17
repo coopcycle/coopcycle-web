@@ -3,6 +3,7 @@
 namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Service\SettingsManager;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -40,11 +41,18 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        $openingHoursErrors = $validator->validate($object->getOpeningHours(), new Assert\NotBlank());
-        if (count($openingHoursErrors) > 0) {
-            $this->context->buildViolation($constraint->openingHoursMessage)
-                ->atPath('openingHours')
-                ->addViolation();
+        foreach ($object->getFulfillmentMethods() as $index => $fulfillmentMethod) {
+            if ($fulfillmentMethod->isEnabled()) {
+                $openingHoursErrors = $validator->validate(
+                    $fulfillmentMethod->getOpeningHours(),
+                    new Assert\NotBlank()
+                );
+                if (count($openingHoursErrors) > 0) {
+                    $this->context->buildViolation($constraint->openingHoursMessage)
+                        ->atPath(sprintf('fulfillmentMethods[%d].openingHours', $index))
+                        ->addViolation();
+                }
+            }
         }
 
         $contractErrors = $validator->validate($object->getContract(), [
