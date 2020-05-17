@@ -8,6 +8,8 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FulfillmentMethodType extends AbstractType
@@ -37,6 +39,17 @@ class FulfillmentMethodType extends AbstractType
                 'multiple' => false,
             ])
             ;
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $fulfillmentMethod = $form->getData();
+
+            // Make sure there is no NULL value in the openingHours array
+            $fulfillmentMethod->setOpeningHours(
+                array_filter($fulfillmentMethod->getOpeningHours())
+            );
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -164,10 +164,6 @@ class RestaurantType extends LocalBusinessType
                 $form = $event->getForm();
                 $restaurant = $form->getData();
 
-                // Make sure there is no NULL value in the openingHours array
-                $openingHours = array_filter($restaurant->getOpeningHours());
-                $restaurant->setOpeningHours($openingHours);
-
                 $orderingDelayDays = $form->get('orderingDelayDays')->getData();
                 $orderingDelayHours = $form->get('orderingDelayHours')->getData();
                 $restaurant->setOrderingDelayMinutes(
