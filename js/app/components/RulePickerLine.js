@@ -91,13 +91,28 @@ class RulePickerLine extends React.Component {
   }
 
   onOperatorSelect (ev) {
+
     ev.preventDefault()
+
     const operator = ev.target.value
-    let newState = { operator }
+
+    let state = { operator }
+
     if ('in' === operator) {
-      newState = Object.assign(newState, { value: ['', ''] })
+      state = {
+        ...state,
+        value: ['', '']
+      }
     }
-    this.setState(newState)
+
+    if (_.includes(['==', '<', '>'], operator) && Array.isArray(this.state.value)) {
+      state = {
+        ...state,
+        value: ''
+      }
+    }
+
+    this.setState(state)
   }
 
   delete (evt) {
@@ -106,9 +121,8 @@ class RulePickerLine extends React.Component {
   }
 
   renderNumberInput() {
-
     return (
-      <input className="form-control input-sm" value={this.state.value} onChange={this.handleValueChange} type="number"></input>
+      <input className="form-control input-sm" value={this.state.value} onChange={this.handleValueChange} type="number" min="0" required></input>
     )
   }
 
@@ -160,10 +174,10 @@ class RulePickerLine extends React.Component {
       return (
         <div className="row">
           <div className="col-md-6">
-            <input className="form-control input-sm" value={this.state.value[0]} onChange={this.handleFirstBoundChange} type="number"></input>
+            <input className="form-control input-sm" value={this.state.value[0]} onChange={this.handleFirstBoundChange} type="number" min="0" required></input>
           </div>
           <div className="col-md-6">
-            <input className="form-control input-sm" value={this.state.value[1]} onChange={this.handleSecondBoundChange} type="number"></input>
+            <input className="form-control input-sm" value={this.state.value[1]} onChange={this.handleSecondBoundChange} type="number" min="0" required></input>
           </div>
         </div>
       )
