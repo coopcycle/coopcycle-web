@@ -50,10 +50,7 @@ class OrderTimeHelper
         return (int) $value;
     }
 
-    /**
-     * @deprecated
-     */
-    public function getAvailabilities(OrderInterface $cart)
+    private function getChoices(OrderInterface $cart)
     {
         $hash = sprintf('%s-%s', $cart->getFulfillmentMethod(), spl_object_hash($cart));
 
@@ -142,7 +139,7 @@ class OrderTimeHelper
         return array_map(function (string $date) {
 
             return DateUtils::dateTimeToTsRange(new \DateTime($date), 5);
-        }, $this->getAvailabilities($cart));
+        }, $this->getChoices($cart));
     }
 
     /**

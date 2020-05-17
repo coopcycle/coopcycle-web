@@ -46,10 +46,6 @@ class CheckoutHandlerTest extends TestCase
         $this->asap = new \DateTime('2020-04-09 20:00:00');
 
         $this->orderTimeHelper
-            ->getAvailabilities(Argument::type(OrderInterface::class))
-            ->willReturn([]);
-
-        $this->orderTimeHelper
             ->getShippingTimeRange(Argument::type(OrderInterface::class))
             ->willReturn($this->shippingTimeRange);
 

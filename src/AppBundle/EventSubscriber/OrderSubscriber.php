@@ -7,6 +7,7 @@ use AppBundle\Utils\OrderTimeHelper;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use ApiPlatform\Core\Validator\ValidatorInterface;
+use Carbon\Carbon;
 use Doctrine\Persistence\ManagerRegistry;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Psr\Log\LoggerInterface;
@@ -143,11 +144,15 @@ final class OrderSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $choices = $this->orderTimeHelper->getAvailabilities($order);
         $timing = $this->orderTimeHelper->getTimeInfo($order);
 
-        unset($timing['availabilities']);
-        $timing['choices'] = $choices;
+        $timing['choices'] = array_map(function ($range) {
+            [ $lower, $upper ] = $range;
+
+            return Carbon::instance(Carbon::parse($lower))
+                ->average(Carbon::parse($upper))
+                ->format(\DateTime::ATOM);
+        }, $timing['ranges']);
 
         $event->setControllerResult(new JsonResponse($timing));
     }
