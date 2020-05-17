@@ -23,13 +23,17 @@ class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
     public function __construct(
         array $openingHours,
         Collection $closingRules = null,
-        int $numberOfDays = 2,
+        ?int $numberOfDays = null,
         int $orderingDelayMinutes = 0,
         \DateTime $now = null)
     {
         $this->openingHours = $openingHours;
         $this->closingRules = $closingRules ?? new ArrayCollection();
         $this->orderingDelayMinutes = $orderingDelayMinutes;
+
+        if (null === $numberOfDays) {
+            $numberOfDays = 2;
+        }
 
         if ($numberOfDays > 6) {
             $numberOfDays = 6;
