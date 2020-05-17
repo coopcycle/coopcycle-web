@@ -11,6 +11,7 @@ class PreparationTimeResolver
     private $preparationTimeCalculator;
     private $pickupTimeResolver;
     private $redis;
+    private $extraTime;
 
     public function __construct(
         PreparationTimeCalculator $preparationTimeCalculator,
@@ -20,6 +21,21 @@ class PreparationTimeResolver
         $this->preparationTimeCalculator = $preparationTimeCalculator;
         $this->pickupTimeResolver = $pickupTimeResolver;
         $this->redis = $redis;
+        $this->extraTime = null;
+    }
+
+    private function getExtraTime()
+    {
+        if (null === $this->extraTime) {
+            $extraTime = '0 minutes';
+            if ($preparationDelay = $this->redis->get('foodtech:preparation_delay')) {
+                $extraTime = sprintf('%d minutes', intval($preparationDelay));
+            }
+
+            $this->extraTime = $extraTime;
+        }
+
+        return $this->extraTime;
     }
 
     /**
@@ -34,10 +50,7 @@ class PreparationTimeResolver
             ->createForRestaurant($order->getRestaurant())
             ->calculate($order);
 
-        $extraTime = '0 minutes';
-        if ($preparationDelay = $this->redis->get('foodtech:preparation_delay')) {
-            $extraTime = sprintf('%d minutes', intval($preparationDelay));
-        }
+        $extraTime = $this->getExtraTime();
 
         $pickup = $this->pickupTimeResolver->resolve($order, $pickupOrDropoff);
 
