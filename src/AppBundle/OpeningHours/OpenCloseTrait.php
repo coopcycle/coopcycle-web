@@ -4,8 +4,6 @@ namespace AppBundle\OpeningHours;
 
 use AppBundle\Utils\TimeRange;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
-// use Doctrine\Common\Collections\Collection;
 
 trait OpenCloseTrait
 {
