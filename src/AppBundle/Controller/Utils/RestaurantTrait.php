@@ -598,7 +598,6 @@ trait RestaurantTrait
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'closing_rules_json' => $this->get('serializer')->serialize($restaurant->getClosingRules(), 'json', ['groups' => ['planning']]),
-            'opening_hours_json' => json_encode($restaurant->getOpeningHours()),
             'restaurant' => $restaurant,
             'routes' => $routes,
             'form' => $form->createView()
