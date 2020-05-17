@@ -829,6 +829,18 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
         return $this->fulfillmentMethods;
     }
 
+    public function getFulfillmentMethod(string $method)
+    {
+        foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
+            if ($method === $fulfillmentMethod->getType()) {
+
+                return $fulfillmentMethod;
+            }
+        }
+
+        return null;
+    }
+
     public function addFulfillmentMethod($method, $enabled = true)
     {
         $fulfillmentMethod = $this->fulfillmentMethods->filter(function (FulfillmentMethod $fulfillmentMethod) use ($method): bool {
