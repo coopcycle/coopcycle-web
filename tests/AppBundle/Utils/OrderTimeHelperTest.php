@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Utils;
 
+use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
@@ -78,15 +79,24 @@ class OrderTimeHelperTest extends TestCase
             ->getFulfillmentMethod()
             ->willReturn('delivery');
 
-        $restaurant
-            ->getOpeningHours('delivery')
-            ->willReturn(["Mo-Su 13:00-15:00"]);
+        $fulfillmentMethod = new FulfillmentMethod();
+        $fulfillmentMethod->setOpeningHours(["Mo-Su 13:00-15:00"]);
+        $fulfillmentMethod->setOpeningHoursBehavior('asap');
+
         $restaurant
             ->getShippingOptionsDays()
             ->willReturn(1);
+
+        $restaurant
+            ->getOpeningHours('delivery')
+            ->willReturn($fulfillmentMethod->getOpeningHours());
         $restaurant
             ->getOpeningHoursBehavior('delivery')
-            ->willReturn('asap');
+            ->willReturn($fulfillmentMethod->getOpeningHoursBehavior());
+        $restaurant
+            ->getFulfillmentMethod('delivery')
+            ->willReturn($fulfillmentMethod);
+
         $restaurant
             ->getOrderingDelayMinutes()
             ->willReturn(0);

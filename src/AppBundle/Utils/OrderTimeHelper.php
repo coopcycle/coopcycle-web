@@ -92,8 +92,9 @@ class OrderTimeHelper
     public function getShippingTimeRanges(OrderInterface $cart)
     {
         $restaurant = $cart->getRestaurant();
+        $fulfillmentMethod = $restaurant->getFulfillmentMethod($cart->getFulfillmentMethod());
 
-        if ($restaurant->getOpeningHoursBehavior($cart->getFulfillmentMethod()) === 'time_slot') {
+        if ($fulfillmentMethod->getOpeningHoursBehavior() === 'time_slot') {
 
             $ranges = [];
 
@@ -113,7 +114,7 @@ class OrderTimeHelper
             }
 
             $timeSlot->setOpeningHours(
-                $cart->getRestaurant()->getOpeningHours()
+                $fulfillmentMethod->getOpeningHours()
             );
 
             $choiceLoader = new TimeSlotChoiceLoader($timeSlot, $this->country);
@@ -182,8 +183,11 @@ class OrderTimeHelper
                 ->format(\DateTime::ATOM);
         }
 
+        $restaurant = $cart->getRestaurant();
+        $fulfillmentMethod = $restaurant->getFulfillmentMethod($cart->getFulfillmentMethod());
+
         return [
-            'behavior' => $cart->getRestaurant()->getOpeningHoursBehavior(),
+            'behavior' => $fulfillmentMethod->getOpeningHoursBehavior(),
             'preparation' => $preparationTime,
             'shipping' => $shippingTime,
             'asap' => $asap,
