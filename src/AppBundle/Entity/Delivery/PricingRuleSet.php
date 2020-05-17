@@ -14,6 +14,9 @@ class PricingRuleSet
      */
     protected $id;
 
+    /**
+     * @Assert\Valid()
+     */
     protected $rules;
 
     protected $name;

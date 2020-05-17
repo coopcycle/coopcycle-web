@@ -9,6 +9,8 @@
 
   {{ form_start(form) }}
 
+    {{ form_errors(form) }}
+
     {{ form_row(form.name) }}
 
     <div class="alert alert-warning {% if form.rules|length > 0 %}hidden{% endif %}">

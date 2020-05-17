@@ -44,3 +44,7 @@ services:
   AppBundle\Validator\Constraints\LoopEatOrderValidator:
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\PricingRuleValidator:
+    tags:
+      - { name: validator.constraint_validator }

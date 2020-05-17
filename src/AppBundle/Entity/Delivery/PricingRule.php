@@ -8,6 +8,7 @@ use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\YesNoOutput;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
+use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -33,6 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     }
  *   }
  * )
+ * @AssertPricingRule
  */
 class PricingRule
 {
