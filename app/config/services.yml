@@ -289,11 +289,10 @@ services:
       - "@translator"
     public: false
 
-  coopcycle.sylius.factory.order:
-    class: AppBundle\Sylius\Order\OrderFactory
+  AppBundle\Sylius\Order\OrderFactory:
     decorates: sylius.factory.order
     arguments:
-      - "@coopcycle.sylius.factory.order.inner"
+      - '@AppBundle\Sylius\Order\OrderFactory.inner'
       - "@sylius.context.channel"
     public: false
 

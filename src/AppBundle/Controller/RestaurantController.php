@@ -16,10 +16,11 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
+use AppBundle\Form\Order\CartType;
 use AppBundle\Form\PledgeType;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
-use AppBundle\Form\Order\CartType;
+use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Order as OrderConstraint;
@@ -386,6 +387,48 @@ class RestaurantController extends AbstractController
             'cart_form' => $cartForm->createView(),
             'addresses_normalized' => $this->getUserAddresses(),
         );
+    }
+
+    /**
+     * @Route("/restaurant/{id}/timing", name="restaurant_fulfillment_timing", methods={"GET"})
+     */
+    public function fulfillmentTimingAction($id, Request $request, OrderFactory $orderFactory)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)->find($id);
+
+
+        $data = [];
+
+        if ($restaurant->isFulfillmentMethodEnabled('delivery')) {
+
+            $cart = $orderFactory->createForRestaurant($restaurant);
+            $cart->setTakeaway(false);
+
+            $timeInfo = $this->orderTimeHelper->getTimeInfo($cart);
+            $data['delivery'] = [
+                'range'  => $timeInfo['range'],
+                'today' => $timeInfo['today'],
+                'fast'  => $timeInfo['fast'],
+                'diff'  => $timeInfo['diff'],
+            ];
+        }
+
+        if ($restaurant->isFulfillmentMethodEnabled('collection')) {
+
+            $cart = $orderFactory->createForRestaurant($restaurant);
+            $cart->setTakeaway(true);
+
+            $timeInfo = $this->orderTimeHelper->getTimeInfo($cart);
+            $data['collection'] = [
+                'range'  => $timeInfo['range'],
+                'today' => $timeInfo['today'],
+                'fast'  => $timeInfo['fast'],
+                'diff'  => $timeInfo['diff'],
+            ];
+        }
+
+        return new JsonResponse($data);
     }
 
     /**

@@ -8,8 +8,6 @@
   {% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
 {% endif %}
 
-{% set isOpen = restaurant.isOpen %}
-
 <a class="thumbnail restaurant-item {% if not restaurant.enabled %}restaurant-item--disabled{% endif %}"
   href="{{ local_business_path(restaurant, restaurant_path_params) }}">
   <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
@@ -21,31 +19,9 @@
       <p class="text-muted">{{ restaurant.address.streetAddress }}</p>
     {% endif %}
   </div>
-  <div class="restaurant-item__top-right">
-    {% if isOpen %}
-      <span class="btn btn-sm btn-success">
-        <i class="fa fa-check"></i>
-        <span>
-          {{ 'basics.open'|trans }}
-        </span>
-      </span>
-    {% else %}
-      <span class="btn btn-sm btn-warning">
-        <i class="fa fa-clock-o"></i>
-        <span>
-          {% set nextOpeningDate = restaurant.nextOpeningDate %}
-          {# Open later on same day #}
-          {% if nextOpeningDate|date('Y-m-d') == 'now'|date('Y-m-d') %}
-            {{ nextOpeningDate|localizeddate('none', 'short') }}
-          {# Open tomorrow #}
-          {% elseif nextOpeningDate|date('Y-m-d') == 'tomorrow'|date('Y-m-d') %}
-            {{ 'basics.tomorrow'|trans }} {{ nextOpeningDate|localizeddate('none', 'short') }}
-          {% else %}
-            {{ time_diff(nextOpeningDate) }}
-          {% endif %}
-        </span>
-      </span>
-    {% endif %}
+  <div class="restaurant-item__top-right"
+    data-fulfillment="{{ path('restaurant_fulfillment_timing', { id: restaurant.id }) }}">
+    {# Managed with React #}
   </div>
   {% if not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) %}
     <div class="restaurant-item__top-left">
