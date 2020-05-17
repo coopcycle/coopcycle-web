@@ -1,6 +1,7 @@
 import React from 'react'
 import i18n from '../i18n'
 import _ from 'lodash'
+import isScalar from 'locutus/php/var/is_scalar'
 
 /*
 
@@ -38,7 +39,7 @@ class RulePickerLine extends React.Component {
     this.state = {
       type: props.type || '',         // the variable the rule is built upon
       operator: props.operator || '', // the operator/function used to build the rule
-      value: props.value || '',       // the value(s) which complete the rule
+      value: isScalar(props.value) ? `${props.value}` : (props.value || ''),       // the value(s) which complete the rule
     }
 
     this.onTypeSelect = this.onTypeSelect.bind(this)
