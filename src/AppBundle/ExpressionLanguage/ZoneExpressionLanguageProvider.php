@@ -26,7 +26,11 @@ class ZoneExpressionLanguageProvider implements ExpressionFunctionProviderInterf
             return sprintf('($zone = $zoneRepository->findOneBy([\'name\' => %1$s]) && $zone->containsAddress($address))', $zoneName);
         };
 
-        $inZoneEvaluator = function ($arguments, Address $address, $zoneName) use ($zoneRepository) {
+        $inZoneEvaluator = function ($arguments, ?Address $address, $zoneName) use ($zoneRepository) {
+
+            if (null === $address) {
+                return false;
+            }
 
             if ($zone = $zoneRepository->findOneBy(['name' => $zoneName])) {
                 return $zone->containsAddress($address);
@@ -40,7 +44,11 @@ class ZoneExpressionLanguageProvider implements ExpressionFunctionProviderInterf
             return sprintf('($zone = $zoneRepository->findOneBy([\'name\' => %1$s]) && !$zone->containsAddress($address))', $zoneName);
         };
 
-        $outZoneEvaluator = function ($arguments, Address $address, $zoneName) use ($zoneRepository) {
+        $outZoneEvaluator = function ($arguments, ?Address $address, $zoneName) use ($zoneRepository) {
+
+            if (null === $address) {
+                return false;
+            }
 
             if ($zone = $zoneRepository->findOneBy(['name' => $zoneName])) {
                 return !$zone->containsAddress($address);

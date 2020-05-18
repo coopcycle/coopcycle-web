@@ -145,4 +145,19 @@ class ZoneExpressionLanguageProviderTest extends TestCase
             'address' => $address,
         ]));
     }
+
+    public function testNullAddress()
+    {
+        $this->language->registerProvider(new ZoneExpressionLanguageProvider($this->zoneRepository->reveal()));
+
+        $this->assertFalse($this->language->evaluate('in_zone(address, zone)', [
+            'address' => null,
+            'zone' => 'paris_south_area',
+        ]));
+
+        $this->assertFalse($this->language->evaluate('out_zone(address, zone)', [
+            'address' => null,
+            'zone' => 'paris_south_area',
+        ]));
+    }
 }
