@@ -23,6 +23,13 @@ import es_ES from 'antd/es/locale/es_ES'
 import fr_FR from 'antd/es/locale/fr_FR'
 import pl_PL from 'antd/es/locale/pl_PL'
 
+import numbro from 'numbro'
+import deDE from 'numbro/languages/de-DE'
+import enGB from 'numbro/languages/en-GB'
+import esES from 'numbro/languages/es-ES'
+import frFR from 'numbro/languages/fr-FR'
+import plPL from 'numbro/languages/pl-PL'
+
 export const localeDetector = () => $('html').attr('lang')
 
 // https://www.i18next.com/misc/creating-own-plugins.html#languagedetector
@@ -55,6 +62,15 @@ const antdLocaleMap = {
   'fr': fr_FR,
   'pl': pl_PL,
 }
+
+// Load Numbro locales
+numbro.registerLanguage(deDE)
+numbro.registerLanguage(enGB)
+numbro.registerLanguage(esES)
+numbro.registerLanguage(frFR)
+numbro.registerLanguage(plPL)
+
+numbro.setLanguage(localeDetector())
 
 export const antdLocale =
   Object.prototype.hasOwnProperty.call(antdLocaleMap, localeDetector()) ? antdLocaleMap[localeDetector()] : en_US

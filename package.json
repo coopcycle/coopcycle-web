@@ -88,6 +88,7 @@
     "mocha": "^7.1.1",
     "moment-range": "^4.0.2",
     "node-sass": "^4.13.0",
+    "numbro": "^2.2.0",
     "payment-icons": "^1.2.1",
     "postcss-loader": "^3.0.0",
     "prop-types": "^15.7.2",
