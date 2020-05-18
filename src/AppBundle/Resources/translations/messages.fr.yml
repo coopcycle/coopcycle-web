@@ -594,7 +594,7 @@ form.checkout_payment.method.label: Veuillez choisir un moyen de paiement
 form.checkout_address.takeaway.disclaimer: Vous avez opté pour le retrait sur place de votre commande.
   Vous vous engagez à venir récupérer votre commande le jour et l'heure indiqués.
 form.checkout_address.takeaway.contact: En cas de problème, contactez l'établissement au %telephone%.
-form.checkout_address.takeaway.no_show_disclaimer: Si vous ne vous présentez pas, nous encaisseront la commande dans son intégralité.
+form.checkout_address.takeaway.no_show_disclaimer: Si vous ne vous présentez pas, nous encaisserons la commande dans son intégralité.
 form.checkout_address.reusable_packaging.loopeat.learn_more: En savoir plus sur LoopEat
 form.task_export.start.label: Début
 form.task_export.end.label: Fin
