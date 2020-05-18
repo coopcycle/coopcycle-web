@@ -1,6 +1,10 @@
 import Dropzone from 'dropzone'
 import DropzoneWidget from '../widgets/Dropzone'
 import Sortable from 'sortablejs'
+import _ from 'lodash'
+import numbro from 'numbro'
+
+import '../i18n'
 
 Dropzone.autoDiscover = false
 
@@ -50,4 +54,69 @@ new Sortable(document.querySelector('#product_options'), {
       pos.value = enabled.checked ? i++ : -1
     })
   },
+})
+
+const getRateAmount = (el) => {
+
+  const taxCategories = JSON.parse(el.dataset.taxCategories)
+  const value = el.options[el.selectedIndex].value
+  const rates = taxCategories[value]
+  const rate = _.first(rates)
+
+  return rate.amount
+}
+
+document.querySelectorAll('[data-tax-categories]').forEach(el => {
+
+  const taxIncludedEl = document.querySelector(el.dataset.included)
+  const taxExcludedEl = document.querySelector(el.dataset.excluded)
+
+  el.addEventListener('change', (e) => {
+
+    const amount = getRateAmount(e.target)
+
+    let taxIncluded = taxIncludedEl.value
+    taxIncluded = taxIncluded.replace(',', '.')
+    taxIncluded = parseFloat(taxIncluded)
+    taxIncluded = parseInt(taxIncluded * 100, 10)
+
+    const vatAmount = Math.round(taxIncluded - (taxIncluded / (1 + amount)))
+    const taxExcluded = taxIncluded - vatAmount
+
+    taxExcludedEl.value = numbro(taxExcluded / 100).format({ mantissa: 2 })
+
+  })
+
+  taxExcludedEl.addEventListener('input', (e) => {
+    const value = numbro.unformat(e.target.value)
+
+    if (!value || _.isNaN(value)) {
+      taxIncludedEl.value = '0'
+      return
+    }
+
+    const valueInCents = parseInt(value * 100, 10)
+    const rateAmount = getRateAmount(el)
+
+    const taxIncluded = valueInCents * (1 + rateAmount)
+
+    taxIncludedEl.value = numbro(taxIncluded / 100).format({ mantissa: 2 })
+  })
+
+  taxIncludedEl.addEventListener('input', (e) => {
+    const value = numbro.unformat(e.target.value)
+
+    if (!value || _.isNaN(value)) {
+      taxExcludedEl.value = '0'
+      return
+    }
+
+    const valueInCents = parseInt(value * 100, 10)
+    const rateAmount = getRateAmount(el)
+
+    const vatAmount = Math.round(valueInCents - (valueInCents / (1 + rateAmount)))
+    const taxExcluded = valueInCents - vatAmount
+
+    taxExcludedEl.value = numbro(taxExcluded / 100).format({ mantissa: 2 })
+  })
 })

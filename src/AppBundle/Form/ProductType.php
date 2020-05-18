@@ -8,11 +8,10 @@ use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
-use AppBundle\Form\Type\MoneyType;
+use AppBundle\Form\Type\PriceWithTaxType;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\Uuid;
-use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Model\ProductAttributeValue;
@@ -40,7 +39,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 class ProductType extends AbstractType
 {
     private $variantFactory;
-    private $variantResolver;
     private $productAttributeRepository;
     private $productAttributeValueFactory;
     private $localeProvider;
@@ -48,14 +46,12 @@ class ProductType extends AbstractType
 
     public function __construct(
         ProductVariantFactoryInterface $variantFactory,
-        ProductVariantResolverInterface $variantResolver,
         RepositoryInterface $productAttributeRepository,
         FactoryInterface $productAttributeValueFactory,
         LocaleProviderInterface $localeProvider,
         TranslatorInterface $translator)
     {
         $this->variantFactory = $variantFactory;
-        $this->variantResolver = $variantResolver;
         $this->productAttributeRepository = $productAttributeRepository;
         $this->productAttributeValueFactory = $productAttributeValueFactory;
         $this->localeProvider = $localeProvider;
@@ -101,15 +97,9 @@ class ProductType extends AbstractType
         // While price & tax category are defined in ProductVariant,
         // we display the fields at the Product level
         // For now, all variants share the same values
-        $builder
-            ->add('price', MoneyType::class, [
-                'mapped' => false,
-                'label' => 'form.product.price.label'
-            ])
-            ->add('taxCategory', TaxCategoryChoiceType::class, [
-                'mapped' => false,
-                'label' => 'form.product.taxCategory.label'
-            ]);
+        $builder->add('priceWithTax', PriceWithTaxType::class, [
+            'mapped' => false,
+        ]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
@@ -148,11 +138,6 @@ class ProductType extends AbstractType
                         ]);
                 }
 
-                $variant = $this->variantResolver->getVariant($product);
-
-                // To keep things simple, all variants have the same price & tax category
-                $form->get('price')->setData($variant->getPrice());
-                $form->get('taxCategory')->setData($variant->getTaxCategory());
             }
 
             $this->postSetDataEnumAttribute($product, 'ALLERGENS', $form->get('allergens'));
@@ -165,7 +150,7 @@ class ProductType extends AbstractType
             $form = $event->getForm();
             $data = $event->getData();
 
-            // This is a delete button
+            // This is a delete button (used in list of products)
             if (count($data) === 1 && isset($data['delete'])) {
                 foreach (array_keys($form->all()) as $key) {
                     if ($key !== 'delete') {
@@ -227,14 +212,14 @@ class ProductType extends AbstractType
                 }
             }
 
-            // This is a delete button
-            if (!$form->has('price') && !$form->has('taxCategory')) {
+            // This is a delete button (used in list of products)
+            if (count($form) === 1 && $form->has('delete')) {
 
                 return;
             }
 
-            $price = $form->get('price')->getData();
-            $taxCategory = $form->get('taxCategory')->getData();
+            $price = $form->get('priceWithTax')->get('taxIncluded')->getData();
+            $taxCategory = $form->get('priceWithTax')->get('taxCategory')->getData();
 
             if (null === $product->getId()) {
 

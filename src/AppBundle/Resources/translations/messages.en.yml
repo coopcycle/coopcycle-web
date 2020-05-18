@@ -958,3 +958,5 @@ basics.close: Close
 fulfillment_method.delivery: Delivery
 fulfillment_method.collection: Collection
 basics.allow_edit: Allow editing
+form.price_with_tax.tax_excl.label: Price (tax excl.)
+form.price_with_tax.tax_incl.label: Price (tax incl.)

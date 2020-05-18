@@ -117,7 +117,6 @@ services:
   AppBundle\Form\ProductType:
     arguments:
       - '@sylius.factory.product_variant'
-      - '@sylius.product_variant_resolver.default'
       - '@sylius.repository.product_attribute'
       - '@sylius.factory.product_attribute_value'
       - '@sylius.locale_provider'
@@ -185,4 +184,7 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\Checkout\CheckoutPaymentType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Type\PriceWithTaxType:
     tags: [ form.type ]

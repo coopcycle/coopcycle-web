@@ -61,14 +61,7 @@
 
   <hr>
 
-  <div class="row">
-    <div class="col-sm-6">
-      {{ form_row(form.price) }}
-    </div>
-    <div class="col-sm-6">
-      {{ form_row(form.taxCategory) }}
-    </div>
-  </div>
+  {{ form_widget(form.priceWithTax) }}
 
   {{ form_row(form.options, { attr: { class: "product__form__options--sortable" } }) }}
 
