@@ -162,8 +162,8 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
     protected $orderingDelayMinutes = 0;
 
     /**
-     * @Assert\GreaterThan(0)
-     * @Assert\LessThanOrEqual(30)
+     * @Assert\GreaterThan(1)
+     * @Assert\LessThanOrEqual(6)
      */
     protected $shippingOptionsDays = 2;
 
