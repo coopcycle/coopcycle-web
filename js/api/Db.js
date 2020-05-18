@@ -88,6 +88,11 @@ module.exports = function(sequelize) {
       defaultValue: [],
       field: 'stripe_payment_methods',
     },
+    shippingOptionsDays: {
+      type: Sequelize.INTEGER,
+      defaultValue: 2,
+      field: 'shipping_options_days',
+    },
     featured: {
       type: Sequelize.BOOLEAN,
       defaultValue: false,
