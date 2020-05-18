@@ -265,7 +265,7 @@ snc_redis:
                 # https://github.com/nrk/predis/issues/33
                 read_write_timeout: 0
         session:
-            type: predis
+            type: phpredis
             alias: session
             dsn: "%redis_dsn%"
             options:
@@ -282,11 +282,12 @@ snc_redis:
     session:
         client: session
         prefix: "session:"
-        # Disable session locking for performance
+        # Disable session locking for performance (?)
         # https://github.com/snc/SncRedisBundle/issues/132
         # https://github.com/snc/SncRedisBundle/issues/182
         # https://github.com/snc/SncRedisBundle/issues/250
-        locking: false
+        # https://github.com/snc/SncRedisBundle/pull/404
+        # locking: false
 
 oneup_flysystem:
     adapters:
