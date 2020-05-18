@@ -257,13 +257,11 @@ gesdinet_jwt_refresh_token:
 snc_redis:
     clients:
         default:
-            type: predis
+            type: phpredis
             alias: default
             dsn: "%redis_dsn%"
             options:
                 prefix: "%database_name%:"
-                # https://github.com/nrk/predis/issues/33
-                read_write_timeout: 0
         session:
             type: phpredis
             alias: session

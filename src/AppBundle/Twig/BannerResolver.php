@@ -2,7 +2,7 @@
 
 namespace AppBundle\Twig;
 
-use Predis\Client as Redis;
+use Redis;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class BannerResolver implements RuntimeExtensionInterface

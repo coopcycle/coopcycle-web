@@ -8,7 +8,7 @@ use AppBundle\Domain\Task\Event as TaskEvent;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use FOS\UserBundle\Model\UserManagerInterface;
-use Predis\Client as Redis;
+use Redis;
 use Ramsey\Uuid\Uuid;
 use SimpleBus\Message\Name\NamedMessage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;

@@ -4,7 +4,7 @@ namespace AppBundle\Api\EventSubscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use AppBundle\Service\MaintenanceManager;
-use Predis\Client as Redis;
+use Redis;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

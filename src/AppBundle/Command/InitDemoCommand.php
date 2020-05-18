@@ -17,7 +17,7 @@ use Fidry\AliceDataFixtures\LoaderInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use FOS\UserBundle\Util\UserManipulator;
 use libphonenumber\PhoneNumberUtil;
-use Predis\Client as Redis;
+use Redis;
 use Sylius\Component\Locale\Model\Locale;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;

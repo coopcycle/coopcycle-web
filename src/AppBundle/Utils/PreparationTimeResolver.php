@@ -4,7 +4,7 @@ namespace AppBundle\Utils;
 
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
-use Predis\Client as Redis;
+use Redis;
 
 class PreparationTimeResolver
 {

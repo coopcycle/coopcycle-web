@@ -4,7 +4,7 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Service\MaintenanceManager;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
-use Predis\Client as Redis;
+use Redis;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;

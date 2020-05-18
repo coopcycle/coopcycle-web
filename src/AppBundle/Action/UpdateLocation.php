@@ -4,7 +4,8 @@ namespace AppBundle\Action;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
 use Doctrine\Persistence\ManagerRegistry;
-use Predis\Client as Redis;
+use Redis;
+use Predis\Client as Tile38Client;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,7 +26,7 @@ class UpdateLocation
         TokenStorageInterface $tokenStorage,
         ManagerRegistry $doctrine,
         Redis $redis,
-        Redis $tile38,
+        Tile38Client $tile38,
         string $fleetKey,
         LoggerInterface $logger)
     {

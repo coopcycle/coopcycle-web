@@ -2,7 +2,7 @@
 
 namespace AppBundle\Form;
 
-use Predis\Client as Redis;
+use Redis;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;

@@ -52,9 +52,9 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use DMore\ChromeDriver\ChromeDriver;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Exception\TransportException;
-use Predis\Client as Redis;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Predis\Client as Tile38Client;
 
 /**
  * Defines application features from the specific context.
@@ -112,7 +112,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         Redis $redis,
         IriConverterInterface $iriConverter,
         HttpMessageFactoryInterface $httpMessageFactory,
-        Redis $tile38)
+        Tile38Client $tile38)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];

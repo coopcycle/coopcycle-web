@@ -63,7 +63,7 @@ use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Predis\Client as Redis;
+use Redis;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;

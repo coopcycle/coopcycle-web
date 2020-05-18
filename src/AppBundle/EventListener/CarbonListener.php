@@ -3,7 +3,7 @@
 namespace AppBundle\EventListener;
 
 use Carbon\Carbon;
-use Predis\Client as Redis;
+use Redis;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 class CarbonListener

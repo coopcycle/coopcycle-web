@@ -8,7 +8,7 @@ use AppBundle\Utils\PreparationTimeCalculator;
 use AppBundle\Utils\PreparationTimeResolver;
 use AppBundle\Utils\PickupTimeResolver;
 use PHPUnit\Framework\TestCase;
-use Predis\Client as Redis;
+use Redis;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 

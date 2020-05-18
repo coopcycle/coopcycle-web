@@ -2,7 +2,6 @@
 
 namespace AppBundle\Twig;
 
-use Predis\Client as Redis;
 use Twig\Extension\RuntimeExtensionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
