@@ -270,8 +270,6 @@ snc_redis:
             dsn: "%redis_dsn%"
             options:
                 prefix: "%database_name%:"
-                # https://github.com/nrk/predis/issues/33
-                read_write_timeout: 0
         tile38:
             type: predis
             alias: tile38
