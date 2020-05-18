@@ -282,6 +282,11 @@ snc_redis:
     session:
         client: session
         prefix: "session:"
+        # Disable session locking for performance
+        # https://github.com/snc/SncRedisBundle/issues/132
+        # https://github.com/snc/SncRedisBundle/issues/182
+        # https://github.com/snc/SncRedisBundle/issues/250
+        locking: false
 
 oneup_flysystem:
     adapters:
