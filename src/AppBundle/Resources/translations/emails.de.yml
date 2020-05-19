@@ -15,8 +15,10 @@ resetting.email.reset: Passwort zurücksetzen
 order.view: Bestellung anschauen
 order.public_url: "Um Ihre Sendung zu verfolgen, bitte <a href=\"%order.public_url%\"\
   >hier klicken</a>.\n"
-order.foodtech.accepted: "Die Köchin oder der Koch beginnt mit der Zubereitung.\n\
-  <br>\nEine KurierIn macht sich dann auf den Weg!"
+order.foodtech.accepted.delivery: "Sie wird Ihnen zu folgender Zeit zugestellt:"
+order.foodtech.accepted.delivery.disclaimer: "Wir werden Sie im Falle eines Problems kontaktieren, um Ihre Adresse zu finden"
+order.foodtech.accepted.collection: "Sie müssen es zu der folgenden Zeit abholen:"
+order.foodtech.accepted.collection.disclaimer: "Wenn Sie ein Problem haben, kontaktieren Sie <strong>%name%</strong> unter <strong>%telefon_nummer%</strong> im Voraus genug, um Ihre Bestellung zu stornieren."
 order.foodtech.cancelled: "Das Restaurant konnte die Bestellung %order.number% leider\
   \ nicht annehmen.\n<br>\nIhr Konto wurde nicht belastet.\n"
 admin.order.created.subject: Neue Bestellung zum Bestätigen

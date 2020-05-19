@@ -17,8 +17,10 @@ resetting.email.reset: Reset password
 order.view: View order
 order.public_url: |
   To track the status of your order, <a href="%order.public_url%">click here</a>.
-order.foodtech.accepted: "The restaurant is preparing your order.\n<br>\nA rider will\
-  \ arrive soon!"
+order.foodtech.accepted.delivery: "It will be delivered to you at the following time:"
+order.foodtech.accepted.delivery.disclaimer: "We will contact you in case of a problem to find your address"
+order.foodtech.accepted.collection: "You will have to collect it at the following time:"
+order.foodtech.accepted.collection.disclaimer: "If you have a problem, contact <strong>%name%</strong> at <strong>%phone_number%</strong> in advance enough to cancel your order."
 order.foodtech.cancelled: "The restaurant is unable to prepare your order %order.number%.\n\
   <br>\nYour account has not been charged.\n"
 admin.order.created.subject: New order to be confirmed
@@ -55,8 +57,7 @@ order.created.subject: Order %order.number% has been received
 order.created.body: "Hello,\n<br>\nWe have received your order.\n<br>\nWe will check\
   \ your order as soon as possible and send you an email when it is confirmed.\n"
 order.accepted.subject: Order %order.number% has been confirmed for delivery
-order.accepted.body.intro: "Hello,\n<br>\nYour order is confirmed, it will be delivered\
-  \ as scheduled.\n"
+order.accepted.body.intro: "Hello,\n<br>\nYour order is confirmed."
 order.cancelled.subject: Your order %order.number% has been cancelled
 order.cancelled.body.intro: |
   Hello,

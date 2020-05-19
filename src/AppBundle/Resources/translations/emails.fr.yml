@@ -18,8 +18,10 @@ resetting.email.reset: Réinitialiser mon mot de passe
 order.view: Voir la commande
 order.public_url: |
   Pour suivre l'état de votre commande, <a href="%order.public_url%">cliquez ici</a>.
-order.foodtech.accepted: "Le cuisinier commence à préparer votre commande.\n<br>\n\
-  Un coursier arrive pour vous l'apporter !"
+order.foodtech.accepted.delivery: "Elle vous sera livrée à l'horaire suivant :"
+order.foodtech.accepted.delivery.disclaimer: "Nous vous recontacterons en cas de problème pour trouver votre adresse"
+order.foodtech.accepted.collection: "Vous devrez venir la chercher à l'horaire suivant :"
+order.foodtech.accepted.collection.disclaimer: "Si vous avez un empêchement, contactez <strong>%name%</strong> au <strong>%phone_number%</strong> suffisamment à l'avance pour annuler votre commande."
 order.foodtech.cancelled: |
   Le restaurateur n'est pas en mesure de préparer votre commande %order.number%.
   <br>

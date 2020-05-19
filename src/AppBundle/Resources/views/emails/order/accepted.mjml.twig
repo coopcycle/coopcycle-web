@@ -4,15 +4,26 @@
 <mj-column>
   <mj-text align="left" line-height="20px">
   {{ 'order.accepted.body.intro' | trans({}, 'emails') | raw }}
-  <br>
-  <br>
+  </mj-text>
   {% if order.foodtech %}
-  {{ 'order.foodtech.accepted' | trans({}, 'emails') | raw }}
+  <mj-text align="left" line-height="20px">
+  {{ ('order.foodtech.accepted.' ~ order.fulfillmentMethod)|trans({}, 'emails')|raw }}
+  </mj-text>
+  <mj-text align="center" line-height="20px" font-weight="700" container-background-color="#f7d794">
+  {{ order.shippingTimeRange|time_range_for_humans }}
+  </mj-text>
+  <mj-text align="left" line-height="20px">
+  {{ ('order.foodtech.accepted.' ~ order.fulfillmentMethod ~ '.disclaimer')|trans({
+    '%name%': order.restaurant.name,
+    '%phone_number%': order.restaurant.telephone|phone_number_format('NATIONAL')
+  }, 'emails')|raw }}
+  </mj-text>
   {% else %}
+  <mj-text align="left" line-height="20px">
   {{ 'order.public_url' | trans({
     '%order.public_url%': url('public_order', { number: order.number }),
   }, 'emails') | raw }}
-  {% endif %}
   </mj-text>
+  {% endif %}
 </mj-column>
 {% endblock %}

@@ -29,13 +29,6 @@ order.public_url: 'Per fer el seguiment de l’estat de la comanda, <a href="%or
   aquí</a>.
 
   '
-order.foodtech.accepted: 'El cuiner comença a preparar la teva comanda.
-
-  <br>
-
-  Arriba un Mensakas per portar-lo!
-
-  '
 order.foodtech.cancelled: 'El restaurant no pot preparar la vostra comanda %order.number%.
 
   <br>

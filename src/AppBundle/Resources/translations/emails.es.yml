@@ -15,8 +15,10 @@ resetting.email.reset: Restablecer mi contraseña
 order.view: Ver el pedido
 order.public_url: "Para seguir el estado de tu pedido, <a href=\"%order.public_url%\"\
   >haga clic aquí</a>.\n"
-order.foodtech.accepted: "El cocinero comienza a preparar tu pedido.\n<br>\n¡Un mensajero\
-  \ llega para llevártelo!\n"
+order.foodtech.accepted.delivery: "Se le entregará en el siguiente horario:"
+order.foodtech.accepted.delivery.disclaimer: "Se le entregará en el siguiente horario:"
+order.foodtech.accepted.collection: "Tendrá que recogerlo en el siguiente horario:"
+order.foodtech.accepted.collection.disclaimer: "Si tiene algún problema, contacte con <strong>%name%</strong> en <strong>%phone_number%</strong> con suficiente antelación para cancelar su pedido."
 order.foodtech.cancelled: "El restaurador no puede preparar tu pedido %order.number%.\n\
   <br>\nTu cuenta no ha sido cargada.\n"
 admin.order.created.subject: Nuevo pedido para confirmar
