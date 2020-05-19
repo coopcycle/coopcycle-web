@@ -632,7 +632,7 @@ Feature: Orders
             "name":null,
             "telephone": null
           },
-          "telephone": null
+          "telephone":"+33612345678"
         },
         "shippingAddress":{
           "@id":"@string@.startsWith('/api/addresses')",

@@ -48,6 +48,7 @@ AppBundle\Entity\LocalBusiness:
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
     contract: "@contract_1"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
   restaurant_2:
     name: 'Café Barjot'
     address: "@address_2"
@@ -55,6 +56,7 @@ AppBundle\Entity\LocalBusiness:
     orderingDelayMinutes: 0
     enabled: true
     contract: "@contract_2"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
   restaurant_3:
     name: 'La Cantina Clandestina'
     orderingDelayMinutes: 0
@@ -62,6 +64,7 @@ AppBundle\Entity\LocalBusiness:
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
     contract: "@contract_3"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
   restaurant_4:
     name: 'Wild Buffet'
     orderingDelayMinutes: 0
@@ -69,6 +72,7 @@ AppBundle\Entity\LocalBusiness:
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
     contract: "@contract_3"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
     __calls:
       - setDeletedAt:
         - <identity(new \DateTime('2019-11-12 18:00:00'))>

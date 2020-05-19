@@ -43,7 +43,7 @@ Feature: Manage restaurants
           "enabled":true,
           "depositRefundEnabled":false,
           "depositRefundOptin":true,
-          "telephone":null,
+          "telephone":"+33612345678",
           "address":{
             "@id":"/api/addresses/2",
             "@type":"http://schema.org/Place",
@@ -125,7 +125,7 @@ Feature: Manage restaurants
         "name":null,
         "telephone": null
       },
-      "telephone": null,
+      "telephone":"+33612345678",
       "image":@string@,
       "hasMenu":"@string@.startsWith('/api/restaurants/menus')",
       "openingHoursSpecification":[
