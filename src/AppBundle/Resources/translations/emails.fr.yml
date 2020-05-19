@@ -34,7 +34,7 @@ admin.order.created.body: |
 admin.order_foodtech.created.body: |
   Bonjour,
   <br>
-  Une nouvelle commande a été créée pour le restaurant <strong>%restaurant.name%</strong>.
+  Une nouvelle commande a été créée pour <strong>%restaurant.name%</strong>.
 admin.send_invitation.subject: Invitation à CoopCycle !
 admin.send_invitation.body: |
   Bonjour %username%,
@@ -55,7 +55,7 @@ owner.order.created.subject: Nouvelle commande à confirmer
 owner.order.created.body: |
   Bonjour,
   <br>
-  Une nouvelle commande a été créée pour votre restaurant <strong>%restaurant.name%</strong>.
+  Une nouvelle commande a été créée pour <strong>%restaurant.name%</strong>.
 order.created.subject: Confirmation de votre commande %order.number%
 order.created.body: |
   Bonjour,

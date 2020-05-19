@@ -31,7 +31,7 @@ admin.order.created.body: |
 admin.order_foodtech.created.body: |
   Hello,
   <br>
-  A new order has been created for the restaurant <strong>%restaurant.name%</strong>.
+  A new order has been created for <strong>%restaurant.name%</strong>.
 admin.pledge.subject: A new suggestion has been sent!
 admin.send_invitation.subject: Invitation to CoopCycle!
 admin.send_invitation.body: |
@@ -52,7 +52,7 @@ owner.order.created.subject: New order to confirm
 owner.order.created.body: |
   Hi,
   <br>
-  A new order has been placed for your restaurant <strong>%restaurant.name%</strong>.
+  A new order has been placed for <strong>%restaurant.name%</strong>.
 order.created.subject: Order %order.number% has been received
 order.created.body: "Hello,\n<br>\nWe have received your order.\n<br>\nWe will check\
   \ your order as soon as possible and send you an email when it is confirmed.\n"

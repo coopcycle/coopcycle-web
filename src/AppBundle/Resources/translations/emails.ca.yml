@@ -48,7 +48,7 @@ admin.order_foodtech.created.body: 'Hola,
 
   <br>
 
-  S''ha creat una nova comanda per al restaurant <strong>%restaurant.name%</strong>.
+  S''ha creat una nova comanda per <strong>%restaurant.name%</strong>.
 
   '
 admin.pledge.subject: S'ha enviat un nou suggeriment!
@@ -88,7 +88,7 @@ owner.order.created.body: 'Hola,
 
   <br>
 
-  S''ha efectuat una nova comanda al restaurant <strong>%restaurant.name%</strong>.
+  S''ha efectuat una nova comanda per <strong>%restaurant.name%</strong>.
 
   '
 order.created.subject: Confirmació de la comanda %order.number%

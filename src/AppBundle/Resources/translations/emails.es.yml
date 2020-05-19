@@ -24,10 +24,9 @@ order.foodtech.cancelled: "El restaurador no puede preparar tu pedido %order.num
 admin.order.created.subject: Nuevo pedido para confirmar
 admin.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido.\n"
 admin.order_foodtech.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido\
-  \ para el restaurante <strong>%restaurant.name%</strong>.\n"
+  \ para <strong>%restaurant.name%</strong>.\n"
 owner.order.created.subject: Nuevo pedido para confirmar
-owner.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido para vuestro\
-  \ restaurante <strong>%restaurant.name%</strong>.\n"
+owner.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido para <strong>%restaurant.name%</strong>.\n"
 order.created.subject: Confirmación de tu pedido %order.number%
 order.created.body: "Buenos dias,\n<br>\nHemos registrado su pedido.\n<br>\nComprobamos\
   \ su pedido lo antes posible y nos pondremos en contacto contigo cuando esta confirmado.\n"

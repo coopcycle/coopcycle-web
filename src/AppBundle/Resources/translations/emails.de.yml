@@ -23,11 +23,9 @@ order.foodtech.cancelled: "Das Restaurant konnte die Bestellung %order.number% l
   \ nicht annehmen.\n<br>\nIhr Konto wurde nicht belastet.\n"
 admin.order.created.subject: Neue Bestellung zum Bestätigen
 admin.order.created.body: "Hallo,\n<br>\nDie neue Bestellung ist eingegangen.\n"
-admin.order_foodtech.created.body: "Hallo,\n<br>\nEine neue Bestellung für folgendes\
-  \ Restaurant ist eingegangen: <strong>%restaurant.name%</strong>.\n"
+admin.order_foodtech.created.body: "Hallo,\n<br>\nEine neue Bestellung für <strong>%restaurant.name%</strong> ist eingegangen."
 owner.order.created.subject: Neue Bestellung zu bestätigen
-owner.order.created.body: "Hallo,\n<br>\nfür Ihr Restaurant wurde eine neue Bestellung\
-  \ aufgenommen: <strong>%restaurant.name%</strong>.\n"
+owner.order.created.body: "Hallo,\n<br>\nfür <strong>%restaurant.name%</strong> wurde eine neue Bestellung aufgenommen.\n"
 order.created.subject: Bestätigung Ihrer Bestellung %order.number%
 order.created.body: "Hallo,\n<br>\nIhre Bestellung wurde erfasst.\n<br>\nWir werden\
   \ die Bestellung schnellstmöglich bearbeiten und kontaktieren Sie, sobald sie bestätigt\
