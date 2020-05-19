@@ -31,7 +31,7 @@ const Reasons = withTranslation()(({ order, onClick, loading, t }) => {
       <Button onClick={ () => onClick('RUSH_HOUR') } loading={ loading } icon="fire" danger>
         { t('cancel.reason.RUSH_HOUR') }
       </Button>
-      { order.takeaway && (
+      { (order.state === 'accepted' && order.takeaway) && (
       <Button onClick={ () => onClick('NO_SHOW') } loading={ loading } icon="user-times" danger>
         { t('cancel.reason.NO_SHOW') }
       </Button>
