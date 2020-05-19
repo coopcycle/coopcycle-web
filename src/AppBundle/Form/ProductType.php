@@ -98,29 +98,6 @@ class ProductType extends AbstractType
             'mapped' => false
         ]);
 
-        if ($options['with_reusable_packaging'] && count($options['reusable_packaging_choices']) > 0) {
-            $builder
-                ->add('reusablePackagingEnabled', CheckboxType::class, [
-                    'required' => false,
-                    'label' => 'form.product.reusable_packaging_enabled.label',
-                ])
-                ->add('reusablePackaging', EntityType::class, [
-                    'label' => 'form.product.reusable_packaging.label',
-                    'class' => ReusablePackaging::class,
-                    'choices' => $options['reusable_packaging_choices'],
-                    'choice_label' => 'name',
-                ])
-                ->add('reusablePackagingUnit', NumberType::class, [
-                    'label' => 'form.product.reusable_packaging_unit.label',
-                    'html5' => true,
-                    'attr'  => array(
-                        'min'  => 0,
-                        'max'  => 3,
-                        'step' => 0.5,
-                    )
-                ]);
-        }
-
         // While price & tax category are defined in ProductVariant,
         // we display the fields at the Product level
         // For now, all variants share the same values
@@ -147,6 +124,29 @@ class ProductType extends AbstractType
             ]);
 
             if (null !== $product->getId()) {
+
+                if ($options['with_reusable_packaging'] && count($options['reusable_packaging_choices']) > 0) {
+                    $form
+                        ->add('reusablePackagingEnabled', CheckboxType::class, [
+                            'required' => false,
+                            'label' => 'form.product.reusable_packaging_enabled.label',
+                        ])
+                        ->add('reusablePackaging', EntityType::class, [
+                            'label' => 'form.product.reusable_packaging.label',
+                            'class' => ReusablePackaging::class,
+                            'choices' => $options['reusable_packaging_choices'],
+                            'choice_label' => 'name',
+                        ])
+                        ->add('reusablePackagingUnit', NumberType::class, [
+                            'label' => 'form.product.reusable_packaging_unit.label',
+                            'html5' => true,
+                            'attr'  => array(
+                                'min'  => 0,
+                                'max'  => 3,
+                                'step' => 0.5,
+                            )
+                        ]);
+                }
 
                 $variant = $this->variantResolver->getVariant($product);
 
