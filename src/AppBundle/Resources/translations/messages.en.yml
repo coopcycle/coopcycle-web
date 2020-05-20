@@ -217,8 +217,8 @@ restaurant.contract.calculation_info: You can charge the restaurant a different 
   the customer while charging a fixed amount to the restaurant. <br> You can also
   configure a dynamic amount (e.g., based on distance).
 restaurant.contract.takeAwayFeeRate.label: Platform fee for take away
-restaurant.contract.takeAwayFeeRate.help: This percentage will be retained by the platform
-  on the total of the products
+restaurant.contract.takeAwayFeeRate.help: This percentage will be retained by the
+  platform on the total of the products
 restaurant.menus.noMenus: You have not created any menu for the moment.
 restaurant.menus.activate: Activate
 restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now
@@ -307,7 +307,8 @@ order.delivery_time: Delivery %time%
 order.payment.card_number.help: A stripe <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will
   be debited.
-order.payment.redirect.help: You will be redirected to the banking site to complete your payment
+order.payment.redirect.help: You will be redirected to the banking site to complete
+  your payment
 order.payment.waiting_for_confirmation: Waiting for the confirmation of your bank…
 order.payment.do_not_close: Do not close this page
 order.payment.waiting_success: Your bank has confirmed the payment
@@ -431,8 +432,9 @@ form.order.fulfill.label: Fulfill
 form.order.payment_complete.label: Complete
 form.order.payment_refund.label: Refund
 form.order.refund_modal.title: Refund
-form.order.refuse.refund.alert: This order was paid with a payment method that does not manage pre-authorizations.
-  If you refuse it, the payment will be refunded. Are you sure?
+form.order.refuse.refund.alert: This order was paid with a payment method that does
+  not manage pre-authorizations. If you refuse it, the payment will be refunded. Are
+  you sure?
 form.payment.refund_amount.label: Amount
 form.payment.refund_amount.help: The amount you specify will be refunded to the customer
 form.payment.refund_application_fee.label: Refund fees
@@ -619,10 +621,12 @@ form.checkout_address.tip_amount.label: Tip
 form.checkout_address.tip_amount.help: Thank you ❤
 form.checkout_address.add_tip.label: Apply
 form.checkout_address.quote.label: Request a quote
-form.checkout_address.takeaway.disclaimer: You have opted for on-site collection of your order.
-  You are responsible for picking up your order on the day and time indicated.
-form.checkout_address.takeaway.contact: If you have a problem, contact the establishment at %telephone%.
-form.checkout_address.takeaway.no_show_disclaimer: If you do not show up, we will charge the entire order.
+form.checkout_address.takeaway.disclaimer: You have opted for click&collect. You are
+  responsible for collecting your order on the day and time selected.
+form.checkout_address.takeaway.contact: If you have a problem, contact the establishment
+  at %telephone%.
+form.checkout_address.takeaway.no_show_disclaimer: Please note - If you do not collect,
+  you will be charged the full amount for the order.
 form.checkout_payment.method.label: Please choose a payment option
 form.checkout_address.reusable_packaging.loopeat.learn_more: Learn more about LoopEat
 form.task_export.start.label: Start
@@ -808,7 +812,7 @@ restricted_diets.LOW_SALT_DIET: Low salt
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Vegetarian
 time_slot.human_readable: '%day% between %start% and %end%'
-time_range: 'between %start% and %end%'
+time_range: between %start% and %end%
 time_range.same_day: '[Today] [%range%]'
 time_range.next_day: '[Tomorrow] [%range%]'
 time_range.last_day: '[Yesterday] [%range%]'
@@ -929,11 +933,13 @@ form.local_business_type.help: The types are using the <a href="https://schema.o
   and <a href="https://schema.org/Store">stores</a>
 notifications.tasks_changed: Tasks for %date% changed!
 restaurant_promotion.offer_delivery: Offer delivery fees
-restaurant_promotion.offer_delivery.help: "This allows you to offer the delivery fees <strong>on your own money</strong>.
-  Your margin will be diminished by the amount of the delivery fees.
-  This will <strong>not diminish</strong> the fees perceived by the platform."
+restaurant_promotion.offer_delivery.help: This allows you to offer the delivery fees
+  <strong>on your own money</strong>. Your margin will be diminished by the amount
+  of the delivery fees. This will <strong>not diminish</strong> the fees perceived
+  by the platform.
 form.offer_delivery.coupon_code.error.exists: This code already exists
-form.offer_delivery.coupon_code.help: It is your responsibility to communicate this code to the customer, either personally or via social networks
+form.offer_delivery.coupon_code.help: It is your responsibility to communicate this
+  code to the customer, either personally or via social networks
 users.all: All users
 users.couriers: Couriers
 users.restaurant_owners: Restaurant owners
