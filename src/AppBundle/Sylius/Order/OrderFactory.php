@@ -45,6 +45,10 @@ class OrderFactory implements FactoryInterface
         $order = $this->createNew();
         $order->setRestaurant($restaurant);
 
+        if (!$restaurant->isFulfillmentMethodEnabled('delivery') && $restaurant->isFulfillmentMethodEnabled('collection')) {
+            $order->setTakeaway(true);
+        }
+
         return $order;
     }
 }

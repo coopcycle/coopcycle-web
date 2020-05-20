@@ -798,6 +798,20 @@ class Order extends BaseOrder implements OrderInterface
      */
     public function isTakeaway(): bool
     {
+        // HOTFIX
+        // Shit can happen when:
+        // - only "collection" fulfillment method is available
+        // - the order was saved in session with "delivery" fulfillment method
+
+        if ($this->getState() === self::STATE_CART) {
+            $restaurant = $this->getRestaurant();
+            if (null !== $restaurant) {
+                if (!$restaurant->isFulfillmentMethodEnabled('delivery') && $restaurant->isFulfillmentMethodEnabled('collection')) {
+                    $this->setTakeaway(true);
+                }
+            }
+        }
+
         return $this->takeaway;
     }
 
