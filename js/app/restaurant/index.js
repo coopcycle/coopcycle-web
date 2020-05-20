@@ -144,6 +144,7 @@ window.initMap = function() {
   })
 
   $('form[data-product-options] input[type="checkbox"]').on('click', function() {
+    const $form = $(this).closest('form')
     window._paq.push(['trackEvent', 'Checkout', 'addExtra'])
     updateTotal($form)
   })
