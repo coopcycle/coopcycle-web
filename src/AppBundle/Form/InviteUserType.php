@@ -10,6 +10,7 @@ class InviteUserType extends CreateUserType
     {
         parent::buildForm($builder, $options);
 
+        $builder->remove('telephone');
         $builder->remove('plainPassword');
     }
 }
