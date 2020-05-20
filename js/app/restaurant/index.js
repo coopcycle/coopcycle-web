@@ -90,9 +90,16 @@ function updateTotal($form) {
 
     const subTotal = $(optionsGroup).children().toArray().reduce((subTotal, el) => {
 
+      const $radioOrCheckbox = $(el).find('input[type="radio"],input[type="checkbox"]')
+      const isChecked = $radioOrCheckbox.length === 1 ? $radioOrCheckbox.is(':checked') : true
+
+      if (!isChecked) {
+
+        return subTotal
+      }
+
       const $quantity = $(el).find('input[type="number"]')
       const quantity = $quantity.length === 1 ? parseInt($quantity.val(), 10) : 1
-
       const price = $(el).data('option-value-price')
 
       return subTotal + (price * quantity)
@@ -133,10 +140,12 @@ window.initMap = function() {
     if (isValid($form)) {
       $form.find('button[type="submit"]').removeAttr('disabled')
     }
+    updateTotal($form)
   })
 
   $('form[data-product-options] input[type="checkbox"]').on('click', function() {
     window._paq.push(['trackEvent', 'Checkout', 'addExtra'])
+    updateTotal($form)
   })
 
   $('button[data-stepper]').on('click', function(e) {
