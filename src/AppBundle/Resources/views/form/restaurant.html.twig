@@ -42,12 +42,13 @@
 {% block _restaurant_fulfillmentMethods_entry_widget %}
 <div id="{{ form.vars.id }}">
 
-  {% set method = form.vars.value.type %}
+  {% set fulfillment_method = form.vars.value %}
+  {% set method = fulfillment_method.type %}
 
   {% set method_disabled = (not form.vars.value.enabled ) %}
   {# Only admins can modify "delivery" fulfillment method #}
   {% if method == 'delivery' %}
-    {% set method_disabled = (not is_granted('ROLE_ADMIN')) %}
+    {% set method_disabled = ( not is_granted('ROLE_ADMIN') and not (fulfillment_method.hasOption('allow_edit') and fulfillment_method.getOption('allow_edit') == true) ) %}
   {% endif %}
 
   {% set opening_hours_errors = [] %}
@@ -65,5 +66,9 @@
     'data-method': method|e('html_attr'),
   }}) }}
   {{ form_row(form.openingHoursBehavior, { row_attr: { class: 'd-none' } }) }}
+
+  {% if is_granted('ROLE_ADMIN') and method == 'delivery' %}
+    {{ form_row(form.allowEdit) }}
+  {% endif %}
 </div>
 {% endblock %}

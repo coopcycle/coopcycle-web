@@ -957,3 +957,4 @@ sms.with_tracking: |
 basics.close: Close
 fulfillment_method.delivery: Delivery
 fulfillment_method.collection: Collection
+basics.allow_edit: Allow editing

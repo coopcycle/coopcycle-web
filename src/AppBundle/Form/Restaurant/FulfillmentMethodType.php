@@ -4,6 +4,7 @@ namespace AppBundle\Form\Restaurant;
 
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -38,7 +39,22 @@ class FulfillmentMethodType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
             ])
+            ->add('allowEdit', CheckboxType::class, [
+                'label' => 'basics.allow_edit',
+                'required' => false,
+                'mapped' => false,
+            ])
             ;
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+            $form = $event->getForm();
+            $fulfillmentMethod = $event->getData();
+
+            $allowEdit = $fulfillmentMethod->hasOption('allow_edit')
+                && true === $fulfillmentMethod->getOption('allow_edit');
+
+            $form->get('allowEdit')->setData($allowEdit);
+        });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
 
@@ -48,6 +64,11 @@ class FulfillmentMethodType extends AbstractType
             // Make sure there is no NULL value in the openingHours array
             $fulfillmentMethod->setOpeningHours(
                 array_filter($fulfillmentMethod->getOpeningHours())
+            );
+
+            $fulfillmentMethod->setOption(
+                'allow_edit',
+                $form->get('allowEdit')->getData()
             );
         });
     }
