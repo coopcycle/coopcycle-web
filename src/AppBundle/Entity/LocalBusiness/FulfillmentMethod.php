@@ -24,6 +24,8 @@ class FulfillmentMethod implements ToggleableInterface
     private $openingHours = [];
     private $openingHoursBehavior = 'asap';
 
+    private $options = [];
+
     /**
      * @return mixed
      */
@@ -97,5 +99,41 @@ class FulfillmentMethod implements ToggleableInterface
     public function setOpeningHoursBehavior($openingHoursBehavior)
     {
         $this->openingHoursBehavior = $openingHoursBehavior;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param mixed $options
+     *
+     * @return self
+     */
+    public function setOption($name, $value)
+    {
+        $this->options[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOption($name)
+    {
+        return isset($this->options[$name]) ? $this->options[$name] : null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function hasOption($name)
+    {
+        return isset($this->options[$name]);
     }
 }
