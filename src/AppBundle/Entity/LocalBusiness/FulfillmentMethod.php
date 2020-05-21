@@ -110,11 +110,12 @@ class FulfillmentMethod implements ToggleableInterface
     }
 
     /**
-     * @param mixed $options
+     * @param string $name
+     * @param mixed $value
      *
      * @return self
      */
-    public function setOption($name, $value)
+    public function setOption(string $name, $value)
     {
         $this->options[$name] = $value;
 
