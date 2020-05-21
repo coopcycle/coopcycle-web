@@ -13,6 +13,7 @@ use AppBundle\Action\Order\Accept as OrderAccept;
 use AppBundle\Action\Order\Assign as OrderAssign;
 use AppBundle\Action\Order\Cancel as OrderCancel;
 use AppBundle\Action\Order\Delay as OrderDelay;
+use AppBundle\Action\Order\Fulfill as OrderFulfill;
 use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Action\MyOrders;
@@ -115,6 +116,15 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())",
  *       "swagger_context"={
  *         "summary"="Delays a Order resource."
+ *       }
+ *     },
+ *     "fulfill"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/fulfill",
+ *       "controller"=OrderFulfill::class,
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())",
+ *       "swagger_context"={
+ *         "summary"="Fulfills a Order resource."
  *       }
  *     },
  *     "cancel"={
