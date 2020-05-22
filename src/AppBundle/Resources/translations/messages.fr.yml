@@ -928,3 +928,5 @@ fulfillment_method.delivery: Livraison
 fulfillment_method.collection: Retrait sur place
 basics.close: Fermer
 basics.allow_edit: Permettre de modifier
+form.price_with_tax.tax_excl.label: Prix (HT)
+form.price_with_tax.tax_incl.label: Prix (TTC)
