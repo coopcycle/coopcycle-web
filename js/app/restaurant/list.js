@@ -10,10 +10,9 @@ const FulfillmentBadge = ({ delivery }) => {
     <span className={ classNames({
       'btn': true,
       'btn-sm': true,
-      'btn-success': delivery.today && delivery.fast,
-      'btn-warning': !(delivery.today && delivery.fast),
+      'btn-default': true,
     }) }>
-      <i className="fa fa-bicycle mr-2"></i>
+      <i className="fa fa-clock-o mr-2"></i>
       <span>{ asText(delivery.range) }</span>
     </span>
   )
