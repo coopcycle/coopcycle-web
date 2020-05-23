@@ -222,6 +222,12 @@ class RestaurantController extends AbstractController
             throw new NotFoundHttpException();
         }
 
+        if (!$restaurant->isEnabled()) {
+            if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_RESTAURANT')) {
+                throw new NotFoundHttpException();
+            }
+        }
+
         $contextSlug = $this->getContextSlug($restaurant);
         $expectedSlug = $slugify->slugify($restaurant->getName());
 
