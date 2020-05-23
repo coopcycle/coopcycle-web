@@ -142,6 +142,31 @@ Feature: Manage restaurants
     }
     """
 
+  Scenario: Disabled restaurant can't be found
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "3" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "3" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burger  | HAMBURGER |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    And the setting "default_tax_category" has value "tva_livraison"
+    Given the user "bob" has ordered something for "2018-08-27 12:30:00" at the restaurant with id "3"
+    And the user "bob" is authenticated
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/restaurants/3"
+    Then the response status code should be 404
+
   Scenario: Retrieve a restaurant's menu
     Given the fixtures files are loaded:
       | sylius_channels.yml |
