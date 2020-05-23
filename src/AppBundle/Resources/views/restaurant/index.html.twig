@@ -1,4 +1,5 @@
 {% extends "@App/base.html.twig" %}
+
 {% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'profile_restaurant' %}
 {% set restaurant_edit_url = path(restaurant_edit_route, { id: restaurant.id }) %}
 
@@ -11,13 +12,23 @@
 {% endblock %}
 
 {% block banner %}
-  {% if restaurant.orderingDelayMinutes > 0 %}
+
+  {% set disabled_warning = ( not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) ) %}
+  {% set preorder_warning = ( restaurant.orderingDelayMinutes > 0 ) %}
+
+  {% if disabled_warning or preorder_warning %}
   <nav class="restaurant-banner">
     <div class="alert alert-warning text-center">
-      {{ 'restaurant.closedWarningWithDelay'|trans({ '%delay%': delay }) }}
+      {% if disabled_warning %}
+      <p class="mb-0">{{ 'restaurant.disabledWarning'|trans({ '%restaurantEditUrl%': restaurant_edit_url}) | raw }}</p>
+      {% endif %}
+      {% if preorder_warning %}
+      <p class="mb-0">{{ 'restaurant.closedWarningWithDelay'|trans({ '%delay%': delay }) }}</p>
+      {% endif %}
     </div>
   </nav>
   {% endif %}
+
 {% endblock %}
 
 {% block body %}
@@ -30,16 +41,6 @@
       <a href="{{ path('restaurants') }}">← {% trans %}index.view_all_restaurants{% endtrans %}</a>
     {% endif %}
   </div>
-
-  {% if not restaurant.enabled %}
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3">
-        <div class="alert alert-danger">
-        {{ "restaurant.disabledWarning" | trans({'%restaurantEditUrl%': restaurant_edit_url}) | raw }}
-        </div>
-      </div>
-    </div>
-  {% endif %}
 
   {% if not restaurant.isOpen %}
     {% if restaurant.hasClosingRuleForNow %}
