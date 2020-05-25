@@ -1,10 +1,10 @@
 {
     "common": {
-        "CART_TITLE": "",
-        "CART_WIDGET_BUTTON": "",
-        "CART_EMPTY": "",
-        "OPENING_HOURS_SINGLE": "",
-        "OPENING_HOURS_RANGE": "",
+        "CART_TITLE": "Košík",
+        "CART_WIDGET_BUTTON": "Objednávka",
+        "CART_EMPTY": "Váš košík je prázdný",
+        "OPENING_HOURS_SINGLE": "{{Day}} od {{open}} do {{close}}",
+        "OPENING_HOURS_RANGE": "Od {{fromDay}} do {{toDay}}, od {{open}} do {{close}}",
         "OPENING_HOURS_SINGLE_TIME_SLOT": "",
         "OPENING_HOURS_RANGE_TIME_SLOT": "",
         "DELIVERY_TIME_SLOTS": "",
