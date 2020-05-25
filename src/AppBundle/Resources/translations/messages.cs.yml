@@ -1,234 +1,280 @@
 global.changesSaved: Vaše změny byly uloženy.
-navbar.login: ''
-navbar.myAccount: ''
-base.footer.contactUs: ''
-base.footer.help: ''
-base.footer.legal: ''
-base.footer.suggest: ''
-adminDashboard.title: ''
-adminDashboard.configuration: ''
-adminDashboard.tooltip.orders: ''
-adminDashboard.tooltip.deliveries: ''
-adminDashboard.tooltip.stores: ''
-adminDashboard.tooltip.restaurants: ''
-adminDashboard.tooltip.users: ''
-adminDashboard.dashboard.title: ''
-adminDashboard.dashboard.import: ''
-adminDashboard.dashboard.export: ''
-adminDashboard.dashboard.importTasks: ''
-adminDashboard.dashboard.exportTasks: ''
-adminDashboard.dashboard.deleteTaskGroup: ''
-adminDashboard.dashboard.displayByGroups: ''
-adminDashboard.dashboard.displayAll: ''
-adminDashboard.dashboard.cancel: ''
-adminDashboard.deliveries.title: ''
-adminDashboard.deliveries.type: ''
-adminDashboard.deliveries.dueDate: ''
-adminDashboard.deliveries.courier: ''
-adminDashboard.deliveries.address: ''
-adminDashboard.deliveries.delivery: ''
-adminDashboard.deliveries.originAddress: ''
-adminDashboard.deliveries.deliveryAddress: ''
-adminDashboard.deliveries.save: ''
-adminDashboard.embed.title: ''
-adminDashboard.package_sets.title: ''
-embed.delivery.title: ''
-embed.delivery.configure_pricing_rule_set: ''
-embed.delivery.iframe_code: ''
-embed.breadcrumb.start: ''
-embed.breadcrumb.summary: ''
-embed.breadcrumb.confirm: ''
-embed.delivery.summary.title: ''
-embed.delivery.use_form_below: ''
-embed.delivery.paid_at: ''
-embed.payment.heading: ''
-embed.delivery.contact_heading: ''
-embed.delivery.specify_billing_address: ''
-embed.delivery.billing_address: ''
-adminDashboard.menuCategories.menu: ''
-adminDashboard.menuCategories.categories: ''
-adminDashboard.menuCategories.addCategory: ''
-adminDashboard.menuCategories.save: ''
-adminDashboard.stores.title: ''
-adminDashboard.stores.createNew: ''
-adminDashboard.stores.form.uploadImage: ''
-adminDashboard.orders.title: ''
-adminDashboard.orders.previousOrders: ''
-adminDashboard.orders.showCanceled: ''
-adminDashboard.restaurants.title: ''
-adminDashboard.restaurants.createNew: ''
-adminDashboard.restaurants.exclusive: ''
-adminDashboard.users.title: ''
-adminDashboard.users.edit: ''
-adminDashboard.users.roles: ''
-adminDashboard.users.editUser: ''
-adminDashboard.users.edit.addStore: ''
-adminDashboard.users.edit.addRestaurant: ''
-adminDashboard.users.createNew: ''
-adminDashboard.users.invite: ''
-form.user.quotes_allowed.label: ''
-adminDashboard.settings.title: ''
-adminDashboard.pricing.title: ''
-adminDashboard.pricing.manage: ''
-adminDashboard.pricing.settings: ''
-adminDashboard.pricing.noPricings: ''
-adminDashboard.pricing.createNew: ''
-adminDashboard.pricing.noRuleFound: ''
-adminDashboard.pricing.addRule: ''
-adminDashboard.tags.title: ''
-adminDashboard.tags.save: ''
-adminDashboard.tags.createNew: ''
-adminDashboard.tags.name: ''
-adminDashboard.tags.color: ''
-adminDashboard.tags.confirm_delete: ''
-adminDashboard.taxation.title: ''
-adminDashboard.taxation.button: ''
-adminDashboard.zones.title: ''
-adminDashboard.zones.cancel: ''
-adminDashboard.zones.save: ''
-adminDashboard.zones.delete: ''
-adminDashboard.zones.uploadGeoJSON: ''
-adminDashboard.zones.send: ''
-adminDashboard.back.title: ''
-adminDashboard.promotions.title: ''
-adminDashboard.pledges.title: ''
-adminDashboard.time_slots.title: ''
-deliveryForm.noPriceWarning: ''
-deliveryForm.noPriceFromPricingWarning: ''
-delivery.createNew: ''
-delivery.tracking_link: ''
-delivery.with_id: ''
-help.title: ''
-help.home: ''
-restaurants.no_results: ''
-restaurants.visible_by_you_only: ''
-restaurants.placeholder.title: ''
-restaurants.placeholder.text: ''
-localBusiness.form.orderingDelayMinutes: ''
-localBusiness.form.orderingDelayMinutes.help: ''
-localBusiness.form.enabled: ''
-localBusiness.form.orderingDelayDays: ''
-localBusiness.form.orderingDelayHours: ''
-localBusiness.form.name: ''
-localBusiness.form.description: ''
-localBusiness.form.legalName: ''
-localBusiness.form.website: ''
-localBusiness.form.telephone: ''
-localBusiness.form.openingHours: ''
-localBusiness.form.deliveryPerimeterExpression: ''
-localBusiness.form.shippingOptionsDays: ''
-localBusiness.form.openingHoursBehavior: ''
-localBusiness.form.openingHoursBehavior.asap: ''
-localBusiness.form.openingHoursBehavior.time_slot: ''
-restaurant.available: ''
-restaurant.unavailable: ''
-restaurant.disabledWarning: ''
-restaurant.closedWarningWithDelay: ''
-restaurant.temporaryClosedWarning: ''
-restaurant.noMenuWarning: ''
-restaurant.quotes_disclaimer.authenticated: ''
-restaurant.quotes_disclaimer.not_authenticated: ''
-restaurant.form.noPricingRule: ''
-restaurant.form.enabled.tooltip: ''
-restaurant.form.allow_stripe_connect.label: ''
-restaurant.form.temporaryClosingRule: ''
-restaurant.form.deposit_refund_enabled.label: ''
-restaurant.form.accessPlanning: ''
-restaurant.form.createRestaurant: ''
-restaurant.form.save: ''
-restaurant.form.exclusive.label: ''
-restaurant.form.quotes_allowed.label: ''
-restaurant.form.loopeat_enabled.label: ''
-restaurant.form.loopeat_disconnect.label: ''
-restaurant.form.featured.label: ''
-restaurant.form.giropay_enabled.label: ''
-restaurant.form.fulfillment_methods.label: ''
-restaurant.form.section.general: ''
-restaurant.form.section.options: ''
-restaurant.form.section.fulfillment: ''
-restaurant.form.section.payment: ''
-restaurant.form.section.settlement: ''
-restaurant.contract.title: ''
-restaurant.deliveryPerimeterExpression.title: ''
-restaurant.deliveryPerimeterExpression.help: ''
-restaurant.contract.minimumCartAmount.label: ''
-restaurant.contract.flatDeliveryPrice.label: ''
-restaurant.contract.flatDeliveryPrice.help: ''
-restaurant.contract.variableDeliveryPrice.label: ''
-restaurant.contract.variableDeliveryPrice.help: ''
-restaurant.contract.variableDeliveryPrice.placeholder: ''
-restaurant.contract.variableDeliveryPriceEnabled.label: ''
-restaurant.contract.variableDeliveryPriceEnabled.disclaimer: ''
-restaurant.contract.customerAmount.label: ''
-restaurant.contract.customerAmount.help: ''
-restaurant.contract.feeRate.label: ''
-restaurant.contract.feeRate.help: ''
-restaurant.contract.restaurantPaysStripeFee.label: ''
-restaurant.contract.restaurantPaysStripeFee.help: ''
-restaurant.contract.restaurantPaysStripeFee.restaurant: ''
-restaurant.contract.restaurantPaysStripeFee.cooperative: ''
-restaurant.contract.onlyAdmin: ''
-restaurant.contract.noContract: ''
-restaurant.contract.showAdvanced: ''
-restaurant.contract.variableCustomerAmount.label: ''
-restaurant.contract.variableCustomerAmount.help: ''
-restaurant.contract.variableCustomerAmount.placeholder: ''
-restaurant.contract.variableCustomerAmountEnabled.label: ''
-restaurant.contract.variableCustomerAmountEnabled.disclaimer: ''
-restaurant.contract.calculation_info: ''
-restaurant.contract.takeAwayFeeRate.label: ''
-restaurant.contract.takeAwayFeeRate.help: ''
-restaurant.menus.noMenus: ''
-restaurant.menus.activate: ''
-restaurant.menus.activated: ''
-restaurant.closingForm.title: ''
-restaurant.closingForm.reason.label: ''
-restaurant.closingForm.dates.label: ''
-restaurant.list.manage: ''
-restaurant.list.orders: ''
-restaurant.list.products: ''
-restaurant.list.product_options: ''
-restaurant.list.menus: ''
-restaurant.list.activeMenu: ''
-restaurant.list.planning: ''
-restaurant.list.settings: ''
-restaurant.list.norestaurant: ''
-restaurant.list.createNewRestaurant: ''
-restaurant.list.preparationTime: ''
-restaurant.list.stats: ''
-restaurant.list.depositRefund: ''
-restaurant.list.promotions: ''
-restaurant.product_options.help: ''
-restaurant.product_options.list.values: ''
-restaurant.form.uploadImage: ''
-restaurant.stats.order_number: ''
-restaurant.stats.delivered_on: ''
-restaurant.stats.total_products_including_all_taxes: ''
-restaurant.stats.total_products_excluding_taxes: ''
-restaurant.stats.delivery: ''
-profile.addresses.breadcrumb: ''
-profile.addresses.empty: ''
-profile.orders.empty: ''
-profile.myDeliveries: ''
-profile.myStores: ''
-profile.myRestaurants: ''
-profile.myRestaurants.noRestaurants: ''
-profile.myAccount: ''
-profile.myTracking: ''
-profile.myOrders: ''
-profile.myAddresses: ''
-profile.myPersonalInfo: ''
-profile.payment: ''
-profile.task.cancel: ''
-profile.task.noTasks: ''
-profile.task.dueDate: ''
-profile.task.address: ''
-profile.task.complete: ''
-profile.task.date: ''
-profile.edit.save: ''
-profile.addresses.newAddress: ''
-profile.addresses.save: ''
-profile.addresses.add: ''
+navbar.login: Přihlásit se
+navbar.myAccount: Můj účet
+base.footer.contactUs: Kontaktujte nás
+base.footer.help: Nápověda
+base.footer.legal: Zákonné oznámení
+base.footer.suggest: Navrhněte restauraci
+adminDashboard.title: Řídicí panel administrátora
+adminDashboard.configuration: Konfigurace
+adminDashboard.tooltip.orders: Správa objednávek restaurací
+adminDashboard.tooltip.deliveries: Spravovat dodávky
+adminDashboard.tooltip.stores: Spravovat obchody
+adminDashboard.tooltip.restaurants: Spravovat restaurace
+adminDashboard.tooltip.users: Spravovat uživatelské účty
+adminDashboard.dashboard.title: Řídící panel
+adminDashboard.dashboard.import: Import
+adminDashboard.dashboard.export: Export
+adminDashboard.dashboard.importTasks: Importovat úkoly
+adminDashboard.dashboard.exportTasks: Exportovat úkoly
+adminDashboard.dashboard.deleteTaskGroup: Smazat skupinu úloh
+adminDashboard.dashboard.displayByGroups: Zobrazit podle skupin
+adminDashboard.dashboard.displayAll: Zobrazit vše
+adminDashboard.dashboard.cancel: Zrušit
+adminDashboard.deliveries.title: Dodávky
+adminDashboard.deliveries.type: Typ
+adminDashboard.deliveries.dueDate: Datum vypršení
+adminDashboard.deliveries.courier: Kurýr
+adminDashboard.deliveries.address: Adresa
+adminDashboard.deliveries.delivery: Dodávka
+adminDashboard.deliveries.originAddress: Původní adresa
+adminDashboard.deliveries.deliveryAddress: Doručovací adresa
+adminDashboard.deliveries.save: Uložit
+adminDashboard.embed.title: Externí obrazovka
+adminDashboard.package_sets.title: Balíčky
+embed.delivery.title: Formulář pro vytvoření dodávky
+embed.delivery.configure_pricing_rule_set: Nejprve musíte nakonfigurovat pravidlo
+  stanovení cen, aby se použilo
+embed.delivery.iframe_code: Pomocí níže uvedeného kódu HTML vložte formulář na svůj
+  web
+embed.breadcrumb.start: Informace
+embed.breadcrumb.summary: Souhrn
+embed.breadcrumb.confirm: Potvrzení
+embed.delivery.summary.title: Shrnutí objednávky
+embed.delivery.use_form_below: Použijte následující formulář k úhradě objednávky kreditní
+  kartou
+embed.delivery.paid_at: Platba provedena %date%
+embed.payment.heading: Zaplatit moji objednávku
+embed.delivery.contact_heading: Kontakt
+embed.delivery.specify_billing_address: Zadejte fakturační adresu
+embed.delivery.billing_address: Fakturační adresa
+adminDashboard.menuCategories.menu: Nabídka
+adminDashboard.menuCategories.categories: Kategorie
+adminDashboard.menuCategories.addCategory: Přidat kategorii
+adminDashboard.menuCategories.save: Uložit
+adminDashboard.stores.title: Obchody
+adminDashboard.stores.createNew: Vytvořit nový obchod
+adminDashboard.stores.form.uploadImage: Nahrát obrázek
+adminDashboard.orders.title: Objednávky
+adminDashboard.orders.previousOrders: Předchozí objednávky
+adminDashboard.orders.showCanceled: Zobrazit zrušené objednávky
+adminDashboard.restaurants.title: Restaurace
+adminDashboard.restaurants.createNew: Vytvořit novou restauraci
+adminDashboard.restaurants.exclusive: Výhradní
+adminDashboard.users.title: Uživatelé
+adminDashboard.users.edit: Upravit
+adminDashboard.users.roles: Role
+adminDashboard.users.editUser: Upravit uživatele
+adminDashboard.users.edit.addStore: Přidat obchod
+adminDashboard.users.edit.addRestaurant: Přidat restauraci
+adminDashboard.users.createNew: Přidat uživatele
+adminDashboard.users.invite: Pozvat uživatele
+form.user.quotes_allowed.label: Povolit tomuto uživateli požádat o nabídku
+adminDashboard.settings.title: Nastavení
+adminDashboard.pricing.title: Ceny
+adminDashboard.pricing.manage: Spravovat
+adminDashboard.pricing.settings: Nastavení
+adminDashboard.pricing.noPricings: Nejsou zatím žádné ceny
+adminDashboard.pricing.createNew: Vytvořit nové ceny
+adminDashboard.pricing.noRuleFound: Nebylo nalezeno žádné cenové pravidlo. Pravidla
+  tvorby cen definují způsob výpočtu nákladů na doručení.
+adminDashboard.pricing.addRule: Přidat pravidlo
+adminDashboard.tags.title: Značky
+adminDashboard.tags.save: Uložit
+adminDashboard.tags.createNew: Vytvořit novou značku
+adminDashboard.tags.name: Název
+adminDashboard.tags.color: Barva
+adminDashboard.tags.confirm_delete: "Opravdu chcete tuto značku smazat?\nVšechny prvky,\
+  \ které na ní odkazují, ji již nebudou moci ukázat, nebo podle ní třídít."
+adminDashboard.taxation.title: Zdanění
+adminDashboard.taxation.button: Přidat zdanění
+adminDashboard.zones.title: Oblasti
+adminDashboard.zones.cancel: Zrušit
+adminDashboard.zones.save: Uložit
+adminDashboard.zones.delete: Smazat
+adminDashboard.zones.uploadGeoJSON: Nahrát GeoJSON soubor
+adminDashboard.zones.send: Poslat
+adminDashboard.back.title: Zpět na web
+adminDashboard.promotions.title: Propagace
+adminDashboard.pledges.title: Návrhy
+adminDashboard.time_slots.title: Časové sloty
+deliveryForm.noPriceWarning: Nelze vypočítat žádnou cenu. Zadejte ji.
+deliveryForm.noPriceFromPricingWarning: Z ceníku nebylo možné vypočítat žádnou cenu.
+  Zadejte ji ručně, nebo upravte ceny.
+delivery.createNew: Vytvořit nové doručení
+delivery.tracking_link: Odkaz na sledování
+delivery.with_id: "'Doručení #%id%'"
+help.title: Nápověda
+help.home: Úvodní strana
+restaurants.no_results: Nebyly nalezeny žádné restaurace odpovídající vašemu hledání.
+  ☹<br> Zkuste jinou adresu
+restaurants.visible_by_you_only: Viditelné pouze vámi
+restaurants.placeholder.title: Mějte strpení …
+restaurants.placeholder.text: Nové restaurace už se chystají!
+localBusiness.form.orderingDelayMinutes: Další zpoždění před objednáním
+localBusiness.form.orderingDelayMinutes.help: Pomocí tohoto pole můžete přidat nějaký
+  čas, než si zákazník může objednat. Toto nastavení nemění čas potřebný pro vaření
+  (20 minut) a dovoz (25 minut).
+localBusiness.form.enabled: Povoleno
+localBusiness.form.orderingDelayDays: Den (dny)
+localBusiness.form.orderingDelayHours: Hodina(y)
+localBusiness.form.name: Název
+localBusiness.form.description: Popis
+localBusiness.form.legalName: Oficiální název
+localBusiness.form.website: Webová strana
+localBusiness.form.telephone: Telefon
+localBusiness.form.openingHours: Otevírací doba
+localBusiness.form.deliveryPerimeterExpression: Zóna nebo maximální vzdálenost pro
+  dodání
+localBusiness.form.shippingOptionsDays: Počet možností dopravy (přes den)
+localBusiness.form.openingHoursBehavior: Pravidla otevírací doby
+localBusiness.form.openingHoursBehavior.asap: Co nejdříve
+localBusiness.form.openingHoursBehavior.time_slot: Časový slot
+restaurant.available: Dostupné
+restaurant.unavailable: Nedostupné
+restaurant.disabledWarning: "Tato restaurace je neaktivní, takže návštěvníci webu\
+  \ nemohou tuto stránku vidět. Pokud chcete, můžete ji <a target=\"_blank\" href=\"\
+  %restaurantEditUrl%\"> aktivovat v administraci</a>.\n"
+restaurant.closedWarningWithDelay: Objednejte nyní na později. Objednávejte alespoň  %delay%
+  předem.
+restaurant.temporaryClosedWarning: Tato restaurace je uzavřena do <strong>% date%
+  </strong>. I přesto si můžete objednat na později!
+restaurant.noMenuWarning: "Tato restaurace zatím nemá nabídku\n"
+restaurant.quotes_disclaimer.authenticated: Tato restaurace také přijímá objednávky
+  na nabídky. Chcete-li vytvořit nabídky, musíte být referenčním zákazníkem. <a href="%contact_us%">
+  Kontaktujte nás </a> pro více informací.
+restaurant.quotes_disclaimer.not_authenticated: Tato restaurace také přijímá objednávky
+  na nabídky. Pokud jste referenční zákazník,  <a href="%login%"> přihlašte se</a>
+  abyste vytvořil nabídku.  <a href="%contact_us%">Kontaktujte nás </a> pro více informací.
+restaurant.form.noPricingRule: Nebyla nastavena žádná cenová pravidla, <a href="%editPricingRule%">
+  kliknutím zde vytvořte první</a>.
+restaurant.form.enabled.tooltip: "Pokud je deaktivováno, restaurace není na webu viditelná.\
+  \ Nezobrazuje se ve výsledcích vyhledávání a stránka restaurace není přístupná návštěvníkům.\n"
+restaurant.form.allow_stripe_connect.label: Umožnit restauraci spravovat účet Stripe
+  samostatně
+restaurant.form.temporaryClosingRule: Kliknutím sem dočasně deaktivujete objednávky
+  do vaší restaurace.
+restaurant.form.deposit_refund_enabled.label: Povolit systém vložení a vrácení peněz
+restaurant.form.accessPlanning: Plánování přístupu
+restaurant.form.createRestaurant: Vytvořit restauraci
+restaurant.form.save: Uložit
+restaurant.form.exclusive.label: Tato restaurace je exkluzivní
+restaurant.form.quotes_allowed.label: 'Tato restaurace také přijímá nabídky (např.:
+  catering)'
+restaurant.form.loopeat_enabled.label: Povolit systém vkladu a vrácení peněz LoopEat
+restaurant.form.loopeat_disconnect.label: Odpojit LoopEat
+restaurant.form.featured.label: Tato restaurace je uvedena na domovské stránce
+restaurant.form.giropay_enabled.label: Povolit Giropay
+restaurant.form.fulfillment_methods.label: Způsoby plnění
+restaurant.form.section.general: Obecné
+restaurant.form.section.options: Možnosti
+restaurant.form.section.fulfillment: Plnění
+restaurant.form.section.payment: Platba
+restaurant.form.section.settlement: Vyrovnání
+restaurant.contract.title: Smlouva
+restaurant.deliveryPerimeterExpression.title: Obvod dodávky
+restaurant.deliveryPerimeterExpression.help: Definujte přijatý obvod pro dodávky.
+  Můžete si vybrat poloměr (v km) nebo zónu
+restaurant.contract.minimumCartAmount.label: Minimální částka v objednávce
+restaurant.contract.flatDeliveryPrice.label: Částka účtovaná platformou
+restaurant.contract.flatDeliveryPrice.help: Tato částka nebude zobrazena v košíku
+  a nezvýší celkovou částku
+restaurant.contract.variableDeliveryPrice.label: Částka účtovaná platformou (proměnná)
+restaurant.contract.variableDeliveryPrice.help: Účtovaná částka bude vypočítána pomocí
+  vybrané sady pravidel pro stanovení cen
+restaurant.contract.variableDeliveryPrice.placeholder: Vyberte sadu pravidel pro stanovení
+  cen
+restaurant.contract.variableDeliveryPriceEnabled.label: Povolit variabilní částku
+  účtovanou platformou
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Částka se vypočítává
+  dynamicky
+restaurant.contract.customerAmount.label: Částka placená zákazníkem
+restaurant.contract.customerAmount.help: Tato částka se zobrazí v košíku a zvýší celkovou
+  částku
+restaurant.contract.feeRate.label: Poplatek platformy za doručení
+restaurant.contract.feeRate.help: Tímto procentem z celkového počtu produktů bude
+  platforma udržována
+restaurant.contract.restaurantPaysStripeFee.label: Odpovědný za náklady na poplatky
+  Stripe, vrácení peněz a zpětné zúčtování
+restaurant.contract.restaurantPaysStripeFee.help: Vyberte, kdo bude odpovědný za náklady
+  na poplatky Stripe a správu refundací a zpětných zúčtování
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurace
+restaurant.contract.restaurantPaysStripeFee.cooperative: kooperativní
+restaurant.contract.onlyAdmin: Podrobnosti smlouvy může upravovat pouze správce.
+restaurant.contract.noContract: Žádné podrobnosti smlouvy. Obraťte se na správce.
+restaurant.contract.showAdvanced: Zobrazit pokročilá nastavení
+restaurant.contract.variableCustomerAmount.label: Částka placená zákazníkem (proměnná)
+restaurant.contract.variableCustomerAmount.help: Vyplacená cena bude vypočítána pomocí
+  vybrané sady pravidel pro stanovení cen
+restaurant.contract.variableCustomerAmount.placeholder: Vyberte sadu pravidel pro
+  stanovení cen
+restaurant.contract.variableCustomerAmountEnabled.label: Povolit variabilní částku
+  placenou zákazníkem
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: Částka se vypočítává
+  dynamicky
+restaurant.contract.calculation_info: Můžete restauraci účtovat jinou částku, než
+  je částka zaplacená zákazníkem. <br> Například můžete nabídnout doručení zákazníkovi
+  při zaplacení pevné částky do restaurace. <br> Můžete také nakonfigurovat dynamickou
+  částku (např. na základě vzdálenosti).
+restaurant.contract.takeAwayFeeRate.label: Poplatek platformy za odnos s sebou
+restaurant.contract.takeAwayFeeRate.help: Tolik procent bude platformou vyhrazeno
+  z celkového součtu ceny  produktů
+restaurant.menus.noMenus: Zatím jste nevytvořili žádnou nabídku.
+restaurant.menus.activate: Aktivovat
+restaurant.menus.activated: Bylo aktivováno menu « %menu_name% » . Nyní se zobrazí
+  na stránce restaurace
+restaurant.closingForm.title: Přidat dočasné uzavření
+restaurant.closingForm.reason.label: Důvod
+restaurant.closingForm.dates.label: Zavřeno od/do
+restaurant.list.manage: Spravovat
+restaurant.list.orders: Objednávky
+restaurant.list.products: Produkty
+restaurant.list.product_options: Možnosti
+restaurant.list.menus: Nabídky
+restaurant.list.activeMenu: Aktivní nabídka
+restaurant.list.planning: Plánování
+restaurant.list.settings: Nastavení
+restaurant.list.norestaurant: Nejsou zatím žádné restaurace
+restaurant.list.createNewRestaurant: Vytvořit novou restauraci
+restaurant.list.preparationTime: Příprava
+restaurant.list.stats: Statistika
+restaurant.list.depositRefund: Vrácení vkladu
+restaurant.list.promotions: Propagace
+restaurant.product_options.help: "Tato část vám umožňuje nastavit další položky pro\
+  \ <strong> produkty </strong>.\n<br>\nUmožňují například přidávat doplňky nebo vybírat\
+  \ prvky menu (přílohy, nápoj…)\n<br>\nPro každou možnost můžete definovat seznam\
+  \ hodnot\n"
+restaurant.product_options.list.values: Hodnoty
+restaurant.form.uploadImage: Nahraát obrázek
+restaurant.stats.order_number: Číslo objednávky
+restaurant.stats.delivered_on: Doručeno v
+restaurant.stats.total_products_including_all_taxes: Cena produktů celkem včetně všech
+  daní
+restaurant.stats.total_products_excluding_taxes: Cena produků celkem bez daně
+restaurant.stats.delivery: Doručení
+profile.addresses.breadcrumb: Adresy
+profile.addresses.empty: Zatím nebyla uložena žádná adresa!
+profile.orders.empty: Zatím žádná objednávka!
+profile.myDeliveries: Moje dodávky
+profile.myStores: Mé obchody
+profile.myRestaurants: Mé restaurace
+profile.myRestaurants.noRestaurants: Zatím nemáte žádné restaurace
+profile.myAccount: Můj účet
+profile.myTracking: Moje sledování
+profile.myOrders: Mé objednávky
+profile.myAddresses: Mé adresy
+profile.myPersonalInfo: Moje osobní údaje
+profile.payment: Způsob platby
+profile.task.cancel: Zrušit
+profile.task.noTasks: Žádné naplánované úkoly
+profile.task.dueDate: Datum splatnosti
+profile.task.address: Adresa
+profile.task.complete: Dokončit
+profile.task.date: Datum
+profile.edit.save: Uložit
+profile.addresses.newAddress: Nová adresa
+profile.addresses.save: Uložit
+profile.addresses.add: Přidat
 profile.editProfile: ''
 profile.payment.title: ''
 profile.payment.stripeConnected: ''
