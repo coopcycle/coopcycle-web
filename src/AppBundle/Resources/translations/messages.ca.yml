@@ -692,3 +692,4 @@ basics.net_income: Ingressos nets
 localBusiness.form.openingHoursBehavior.asap: Tan aviat com sigui possible
 localBusiness.form.shippingOptionsDays: Opcions d'entrega (en dies)
 adminDashboard.users.invite: Convida a un usuari
+form.user.quotes_allowed.label: Permet a aquest usuari sol·licitar un pressupost
