@@ -15,11 +15,14 @@ resetting.email.reset: Restablecer mi contraseña
 order.view: Ver el pedido
 order.public_url: "Para seguir el estado de tu pedido, <a href=\"%order.public_url%\"\
   >haga clic aquí</a>.\n"
-order.foodtech.accepted.delivery: "Se le entregará en el siguiente horario:"
-order.foodtech.accepted.delivery.disclaimer: "Se le entregará en el siguiente horario:"
-order.foodtech.accepted.collection: "Tendrá que recogerlo en el siguiente horario:"
-order.foodtech.accepted.collection.disclaimer: "Si tiene algún problema, contacte con <strong>%name%</strong> en <strong>%phone_number%</strong> con suficiente antelación para cancelar su pedido."
-order.foodtech.cancelled: "El restaurador no puede preparar tu pedido %order.number%.\n\
+order.foodtech.accepted.delivery: 'Se le entregará en el siguiente horario:'
+order.foodtech.accepted.delivery.disclaimer: Nos pondremos en contacto en el caso
+  de encontrar problemas con su dirección
+order.foodtech.accepted.collection: 'Tendrá que recogerlo en el siguiente horario:'
+order.foodtech.accepted.collection.disclaimer: Si tiene algún problema, contacte con
+  <strong>%name%</strong> en <strong>%phone_number%</strong> con suficiente antelación
+  para cancelar su pedido.
+order.foodtech.cancelled: "El restaurante no puede preparar tu pedido %order.number%.\n\
   <br>\nTu cuenta no ha sido cargada.\n"
 admin.order.created.subject: Nuevo pedido para confirmar
 admin.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido.\n"
@@ -27,11 +30,11 @@ admin.order_foodtech.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pe
   \ para <strong>%restaurant.name%</strong>.\n"
 owner.order.created.subject: Nuevo pedido para confirmar
 owner.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido para <strong>%restaurant.name%</strong>.\n"
-order.created.subject: Confirmación de tu pedido %order.number%
-order.created.body: "Buenos dias,\n<br>\nHemos registrado su pedido.\n<br>\nComprobamos\
-  \ su pedido lo antes posible y nos pondremos en contacto contigo cuando esta confirmado.\n"
-order.accepted.subject: Tu pedido %order.number% ha sido aceptado
-order.accepted.body.intro: "Buenos dias,\n<br>\nTu pedido esta confirmado.\n"
+order.created.subject: El pedido%order.number%ha sido recibido
+order.created.body: "Hola,\n<br>\nHemos recibido su pedido.\n<br>\nComprobamos su\
+  \ pedido lo antes posible y nos pondremos en contacto contigo cuando esté confirmado.\n"
+order.accepted.subject: Tu pedido %order.number% ha sido confirmado para entregar
+order.accepted.body.intro: "Hola,\n<br>\nTu pedido esta confirmado."
 order.cancelled.subject: Tu pedido %order.number% ha sido cancelado
 order.cancelled.body.intro: "Buenos dias,\n<br>\nLo sentimos, pero tu pedido ha sido\
   \ cancelado.\n"
@@ -43,12 +46,28 @@ task.done.body: "Buenos dias,\n<br>\nLa tarea #%task.id% ha sido completada.\n"
 task.failed.subject: 'La tarea #%task.id% no se pudo completar'
 task.failed.body: "Buenos dias,\n<br>\nLa tarea #%task.id% no se pudo completar.\n"
 admin.pledge.subject: ¡Se ha enviado una nueva sugerencia!
-admin.pledge.body: "Hola,\n<br>\n%username% le gustaría ver %pledge.name% en CoopCycle!\n"
-user.pledge.subject: Su sugerencia ahora está en CoopCycle!
-user.pledge.body: "Hola,\n<br>\nGracias a ti, %pledge.name% ahora está en CoopCycle!\n"
-admin.send_invitation.create_password: Crear my contraseña
+admin.pledge.body: "Hola,\n<br>\n%username% le gustaría %pledge.name% estar en CoopCycle!\n"
+user.pledge.subject: ¡Su sugerencia ahora está en CoopCycle!
+user.pledge.body: "Hola,\n<br>\n¡Gracias a ti, %pledge.name% ahora está en CoopCycle!\n"
+admin.send_invitation.create_password: Crear mi contraseña
 admin.send_invitation.body: "Hola %username%,\n<br>\nEste correo es una invitación\
   \ a tu espacio CoopCycle, para terminar la creación de su cuenta, por favor haga\
   \ un clic en el siguiente enlace.\n"
 admin.send_invitation.subject: ¡Invitación a CoopCycle!
 covid_19.subject: COVID-19 | Instrucciones importantes para tu pedido
+covid_19.body: "<h1>instrucciones a seguir para su entrega</h1>\n<p>Dada la pandemia\
+  \ actual de COVID-19 (Coronavirus), usted <strong>must strictly</strong> siga las\
+  \ siguientes instrucciones:</p>\n<h2>1. Manten distancia solcial</h2>\n<p>Dejaremos\
+  \ su pedido en su puerta, para que no tenga que acercarse a la persona que viene\
+  \ a entregar. Puede o no dejar propina.</p>\n<h2>2. Desembale su pedido después\
+  \ de recibirlo</h2>\n<p>El virus puede sobrevivir en superficies de cartón y plástico\
+  \ durante varios días. El empaquetado es, por lo tanto, una ruta de alto riesgo\
+  \ de transmisión del virus.\nPor lo tanto, le pedimos que <strong>desempaquete su\
+  \ pedido y transfiera el contenido a platos</strong>.</p>\n<h2>3. Tire el embalaje.</h2>\n\
+  <p>Una vez que su pedido esté desempaquetado, asegúrese de <strong>tirar el envoltorio\
+  \ a una basura cerrada</strong> Para evitar tocarla inadvertidamente más tarde.</p>\n\
+  <h2>4. Limpiese las manos!</h2>\n<p>Una vez que haya desempacado su pedido y desechado\
+  \ el embalaje,<strong>limpiese las manos!</strong></p>\n"
+order.payment.body: "Hola,\n<br>\nHemos completado una entrega que nos ha pedido.\n\
+  <br>\nA continuación encontrará un enlace que le permite pagar con tarjeta de crédito.\n"
+order.payment.subject: Pago de tu pedido %order.number%
