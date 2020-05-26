@@ -188,3 +188,8 @@ services:
 
   AppBundle\Form\Type\PriceWithTaxType:
     tags: [ form.type ]
+
+  AppBundle\Form\CustomizeType:
+    arguments:
+      $assetsFilesystem: '@assets_s3_filesystem'
+    tags: [ form.type ]

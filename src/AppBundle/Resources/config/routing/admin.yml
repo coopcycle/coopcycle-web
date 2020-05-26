@@ -481,3 +481,10 @@ admin_task_receipt:
     path:     /admin/tasks/{id}/receipt.pdf
     defaults: { _controller: AppBundle\Controller\AdminController::taskReceiptAction }
     methods:  [ GET ]
+
+admin_customize:
+    path: /admin/customize
+    defaults:
+        _controller: AppBundle\Controller\AdminController::customizeAction
+        layout: '@App/admin.html.twig'
+    methods:  [ GET, POST ]

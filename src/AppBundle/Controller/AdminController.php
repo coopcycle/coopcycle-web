@@ -28,6 +28,7 @@ use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
 use AppBundle\Form\CreateUserType;
+use AppBundle\Form\CustomizeType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\InviteUserType;
@@ -1730,5 +1731,25 @@ class AdminController extends Controller
         ]);
 
         return $response;
+    }
+
+    public function customizeAction(Request $request)
+    {
+        $form = $this->createForm(CustomizeType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_customize');
+        }
+
+        return $this->render('@App/admin/customize.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

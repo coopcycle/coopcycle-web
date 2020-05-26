@@ -32,6 +32,7 @@ adminDashboard.deliveries.deliveryAddress: Delivery address
 adminDashboard.deliveries.save: Save
 adminDashboard.embed.title: External Display
 adminDashboard.package_sets.title: Packages
+adminDashboard.customize.title: Customize
 embed.delivery.title: Delivery creation form
 embed.delivery.configure_pricing_rule_set: You must first configure a pricing rule
   to apply
@@ -667,6 +668,7 @@ form.new_order.variant_name.label: Product name
 form.new_order.variant_name.help: The name that will appear in the order summary and
   invoice
 form.new_order.variant_price.label: Price
+form.customize.about_us.label: About us page content
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option_value: Each option has a different price
