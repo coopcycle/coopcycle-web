@@ -1,4 +1,4 @@
-global.changesSaved: S'han desat els canvis.
+global.changesSaved: Els teus canvis han estat guardats.
 navbar.login: Iniciar sessió
 navbar.myAccount: El meu compte
 base.footer.contactUs: Contacteu-nos
@@ -691,3 +691,4 @@ basics.platform_fees: Comissions de la plataforma
 basics.net_income: Ingressos nets
 localBusiness.form.openingHoursBehavior.asap: Tan aviat com sigui possible
 localBusiness.form.shippingOptionsDays: Opcions d'entrega (en dies)
+adminDashboard.users.invite: Convidar usuari
