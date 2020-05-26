@@ -37,13 +37,23 @@ class UpdateProfileType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', TextType::class, array('label' => 'profile.username'))
-            ->add('familyName', TextType::class, array('label' => 'profile.familyName'))
-            ->add('givenName', TextType::class, array('label' => 'profile.givenName'))
+            ->add('username', TextType::class, [
+                'label' => 'profile.username',
+                'required' => false,
+            ])
+            ->add('familyName', TextType::class, [
+                'label' => 'profile.familyName',
+                'required' => false,
+            ])
+            ->add('givenName', TextType::class, [
+                'label' => 'profile.givenName',
+                'required' => false,
+            ])
             ->add('telephone', PhoneNumberType::class, [
                 'label' => 'profile.telephone',
                 'format' => PhoneNumberFormat::NATIONAL,
-                'default_region' => strtoupper($this->countryIso)
+                'default_region' => strtoupper($this->countryIso),
+                'required' => false,
             ]);
 
         $isAdmin = false;
