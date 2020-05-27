@@ -1,5 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
+import numbro from 'numbro'
 
 // @see http://symfony.com/doc/3.4/frontend/encore/legacy-apps.html
 const $ = require('jquery')
@@ -9,7 +10,8 @@ import '../../assets/css/main.scss'
 
 require('bootstrap-sass')
 
-import { setTimezone } from './i18n'
+import './i18n'
+import { setTimezone, getCurrencySymbol } from './i18n'
 import CartTop from './cart/CartTop'
 
 global.ClipboardJS = require('clipboard')
@@ -39,27 +41,26 @@ if (!Element.prototype.closest)
     return null
   }
 
-// additional method to format currencies
-Number.prototype.formatMoney = function(places, symbol, thousand, decimal) {
-  places = !isNaN(places = Math.abs(places)) ? places : 2
-  symbol = symbol !== undefined ? symbol : '€'
-  thousand = thousand || '.'
-  decimal = decimal || ','
-  var number = this,
-    negative = number < 0 ? '-' : '',
-    i = parseInt(number = Math.abs(+number || 0).toFixed(places), 10) + '',
-    j = (j = i.length) > 3 ? j % 3 : 0
-  return negative + (j ? i.substr(0, j) + thousand : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : '') + symbol
+Number.prototype.formatMoney = function() {
+
+  return numbro(this).formatCurrency({
+    mantissa: 2,
+    currencySymbol: getCurrencySymbol()
+  })
 }
 
-window.CoopCycle = window.CoopCycle || {}
-window.CoopCycle.setTimezone = setTimezone
+// Initialize Matomo
+window._paq = [];
 
 /* Top cart */
 document.addEventListener('DOMContentLoaded', function() {
 
   const cartTopElement = document.querySelector('#cart-top')
   const cartDataElement = document.querySelector('#js-cart-data')
+
+  // Set global timezone used in Moment.js
+  const timezone = document.querySelector('body').dataset.timezone
+  setTimezone(timezone)
 
   if (cartTopElement && cartDataElement) {
 

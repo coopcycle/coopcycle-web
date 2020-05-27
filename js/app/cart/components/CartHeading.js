@@ -44,7 +44,7 @@ const HeadingTitle = ({ total, warnings, errors }) => {
   }
 
   return (
-    <span>{ (total / 100).formatMoney(2, window.AppData.currencySymbol) }</span>
+    <span>{ (total / 100).formatMoney() }</span>
   )
 }
 

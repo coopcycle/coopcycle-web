@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
+import { getCountry } from '../../../i18n'
 import {
   setCurrentOrder,
   acceptOrder,
@@ -280,7 +281,7 @@ class ModalContent extends React.Component {
 function mapStateToProps(state) {
 
   return {
-    countryCode: (window.AppData.countryIso || 'fr').toUpperCase(),
+    countryCode: (getCountry() || 'fr').toUpperCase(),
     loading: state.isFetching
   }
 }

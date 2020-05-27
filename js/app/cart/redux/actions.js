@@ -1,7 +1,7 @@
 import { createAction } from 'redux-actions'
 import _ from 'lodash'
 
-import i18n from '../../i18n'
+import i18n, { getCountry } from '../../i18n'
 import { placeToAddress } from '../../utils/GoogleMaps'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
@@ -35,8 +35,6 @@ export const setDateModalOpen = createAction(SET_DATE_MODAL_OPEN)
 export const closeAddressModal = createAction(CLOSE_ADDRESS_MODAL)
 
 export const geocodingFailure = createAction(GEOCODING_FAILURE)
-
-const COUNTRY = window.AppData.countryIso
 
 function postForm() {
 
@@ -193,7 +191,7 @@ function geocodeAndSync() {
 
     dispatch(fetchRequest())
 
-    if (COUNTRY === 'gb' && cart.shippingAddress.geo) {
+    if (getCountry() === 'gb' && cart.shippingAddress.geo) {
       dispatch(changeAddress({
         ...cart.shippingAddress,
         isPrecise: true,

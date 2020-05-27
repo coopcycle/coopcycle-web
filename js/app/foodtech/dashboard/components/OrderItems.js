@@ -47,7 +47,7 @@ class OrderItems extends React.Component {
                 { hasAdjustments(item) && ( <br /> ) }
                 { hasAdjustments(item) && this.renderOrderItemAdjustments(item) }
               </td>
-              <td className="text-right">{ (item.total / 100).formatMoney(2, window.AppData.currencySymbol) }</td>
+              <td className="text-right">{ (item.total / 100).formatMoney() }</td>
             </tr>
           ) }
         </tbody>

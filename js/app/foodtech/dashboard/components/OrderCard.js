@@ -21,7 +21,7 @@ export default withTranslation()(({ order, onClick }) => {
         <ul className="list-unstyled">
           <li><i className="fa fa-cutlery"></i> { order.restaurant.name }</li>
           <li><i className="fa fa-user"></i> { order.customer.username }</li>
-          <li><i className="fa fa-money"></i> { (order.total / 100).formatMoney(2, window.AppData.currencySymbol) }</li>
+          <li><i className="fa fa-money"></i> { (order.total / 100).formatMoney() }</li>
         </ul>
       </div>
     </div>

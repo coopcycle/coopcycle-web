@@ -74,3 +74,23 @@ numbro.setLanguage(localeDetector())
 
 export const antdLocale =
   Object.prototype.hasOwnProperty.call(antdLocaleMap, localeDetector()) ? antdLocaleMap[localeDetector()] : en_US
+
+let country
+
+export function getCountry() {
+  if (!country) {
+    country = document.querySelector('body').dataset.country
+  }
+
+  return country
+}
+
+let currencySymbol
+
+export function getCurrencySymbol() {
+  if (!currencySymbol) {
+    currencySymbol = document.querySelector('body').dataset.currencySymbol
+  }
+
+  return currencySymbol
+}

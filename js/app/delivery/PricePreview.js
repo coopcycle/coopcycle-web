@@ -57,7 +57,7 @@ class PricePreview {
     $container.removeClass('delivery-price--error')
     $container.addClass('delivery-price--loading')
     $('#delivery_price_error').text('')
-    $('#delivery_price').text((0).formatMoney(2, window.AppData.currencySymbol))
+    $('#delivery_price').text((0).formatMoney())
 
     $('#pricing-rules-debug li')
       .removeClass('list-group-item-success')
@@ -95,7 +95,7 @@ class PricePreview {
         const priceResult = values[0]
 
         if (priceResult.success) {
-          $('#delivery_price').text((priceResult.price / 100).formatMoney(2, window.AppData.currencySymbol))
+          $('#delivery_price').text((priceResult.price / 100).formatMoney())
         } else {
           $('#delivery_price_error').text(priceResult.message)
         }

@@ -1,9 +1,10 @@
 import _ from 'lodash'
+import { getCountry } from '../i18n'
 
 const mapsOptions = {
   types: ['address'],
   componentRestrictions: {
-    country: (window.AppData.countryIso || 'fr').toUpperCase()
+    country: (getCountry() || 'fr').toUpperCase()
   }
 }
 

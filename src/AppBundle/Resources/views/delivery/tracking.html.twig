@@ -9,7 +9,7 @@
     {% block styles %}{% endblock %}
     {% block structured_data %}{% endblock %}
   </head>
-  <body>
+  <body data-country="{{ country_iso }}" data-currency-symbol="{{ currency_context.currencyCode|sylius_currency_symbol }}" data-timezone="{{ coopcycle_setting('timezone') }}">
 
     <div class="delivery__tracking">
       <div class="delivery__tracking__topnav">
@@ -47,17 +47,11 @@
       </script>
     {% endif %}
 
-    <script src="{{ path('js_data') }}"></script>
     <script src="/tracking/socket.io/socket.io.js"></script>
     <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 
     {{ encore_entry_script_tags('common') }}
-
-    <script>
-      {# Set global timezone used in Moment.js #}
-      CoopCycle.setTimezone("{{ coopcycle_setting('timezone') }}");
-    </script>
 
     <div id="delivery"
       data-pickup="{{ [ delivery.pickup.address.geo.latitude, delivery.pickup.address.geo.longitude ]|json_encode|e('html_attr') }}"

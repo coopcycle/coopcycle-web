@@ -116,7 +116,7 @@ function updateTotal($form) {
 
   $form
     .find('[data-product-total]')
-    .text((total / 100).formatMoney(2, window.AppData.currencySymbol))
+    .text((total / 100).formatMoney())
 }
 
 window.initMap = function() {
@@ -245,7 +245,7 @@ window.initMap = function() {
       const price = $form.data('product-price')
       $form
         .find('button[type="submit"] [data-total]')
-        .text((price / 100).formatMoney(2, window.AppData.currencySymbol))
+        .text((price / 100).formatMoney())
     }
   })
 

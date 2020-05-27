@@ -13,7 +13,7 @@ const Adjustment = ({ adjustment, tooltip }) => (
         <i className="fa fa-info-circle"></i>
       </span>
     ) }
-    <strong className="pull-right">{ (adjustment.amount / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
+    <strong className="pull-right">{ (adjustment.amount / 100).formatMoney() }</strong>
   </div>
 )
 
@@ -79,12 +79,12 @@ class CartTotal extends React.Component {
         <div>
           <div>
             <span>{ this.props.t('CART_TOTAL_PRODUCTS') }</span>
-            <strong className="pull-right">{ (itemsTotal / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
+            <strong className="pull-right">{ (itemsTotal / 100).formatMoney() }</strong>
           </div>
           { this.renderAdjustments() }
           <div>
             <span>{ this.props.t('CART_TOTAL') }</span>
-            <strong className="pull-right">{ (total / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
+            <strong className="pull-right">{ (total / 100).formatMoney() }</strong>
           </div>
           <hr />
         </div>

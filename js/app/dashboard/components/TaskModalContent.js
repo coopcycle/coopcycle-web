@@ -9,7 +9,7 @@ import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import phoneNumberExamples from 'libphonenumber-js/examples.mobile.json'
 import { getExampleNumber } from 'libphonenumber-js'
 
-import { antdLocale } from '../../i18n'
+import { antdLocale, getCountry } from '../../i18n'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
 import CourierSelect from './CourierSelect'
@@ -523,7 +523,7 @@ class TaskModalContent extends React.Component {
 
 function mapStateToProps (state) {
 
-  const country = (window.AppData.countryIso || 'fr').toUpperCase()
+  const country = (getCountry() || 'fr').toUpperCase()
   const phoneNumber = getExampleNumber(country, phoneNumberExamples)
 
   const events = state.currentTask && Object.prototype.hasOwnProperty.call(state.taskEvents, state.currentTask['@id']) ? state.taskEvents[state.currentTask['@id']] : []

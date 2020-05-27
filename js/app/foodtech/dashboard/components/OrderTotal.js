@@ -8,11 +8,11 @@ export default withTranslation()(({ order, t }) => {
       <tbody>
         <tr>
           <td><strong>{ t('CART_TOTAL_PRODUCTS') }</strong></td>
-          <td className="text-right"><strong>{ (order.itemsTotal / 100).formatMoney(2, window.AppData.currencySymbol) }</strong></td>
+          <td className="text-right"><strong>{ (order.itemsTotal / 100).formatMoney() }</strong></td>
         </tr>
         <tr>
           <td><strong>{ t('CART_TOTAL') }</strong></td>
-          <td className="text-right"><strong>{ (order.total / 100).formatMoney(2, window.AppData.currencySymbol) }</strong></td>
+          <td className="text-right"><strong>{ (order.total / 100).formatMoney() }</strong></td>
         </tr>
       </tbody>
     </table>
