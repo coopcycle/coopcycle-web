@@ -881,3 +881,11 @@ restaurant.stats.delivered_on: Consegna il
 restaurant.stats.total_products_including_all_taxes: Totale prodotti tasse incluso
 restaurant.stats.total_products_excluding_taxes: Totale prodotti escluso tasse
 profile.addresses.empty: Nessun indirizzo salvato!
+profile.myRestaurants: I miei ristoranti
+profile.myRestaurants.noRestaurants: Non hai ancora ristoranti
+profile.myAccount: I miei accont
+profile.myTracking: I miei tracking
+profile.myOrders: I miei ordini
+profile.orders.empty: Ancora nessun ordine!
+profile.myDeliveries: Le mie consegne
+profile.myStores: I miei negozi
