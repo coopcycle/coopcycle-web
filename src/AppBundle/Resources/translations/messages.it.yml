@@ -919,3 +919,55 @@ order.list.shippedAt: Data di spedizione
 form.delivery.pickup.doneBefore.label: Data e ora di presa
 form.deposit_refund_settings.deposit_refund_optin.label: Rimborso deposito è opzionale
 food_establishment.CAFE_OR_COFFEE_SHOP: Caffe o teteria
+order.payment.do_not_close: Non chiudere questa pagine
+order.payment.waiting_success: La tua banca ha confermato il pagamento
+order.payment.waiting_failure: La tua banca non ha accettato il pagamento
+profile.task.dueDate: Data di scadenza
+order.total_tax: IVA
+order.total_tax_by_rate: Totale %name%
+profile.task.noTasks: Nessun compito programmato
+profile.managedRestaurants: Ristorante gestito dall'utente
+order.summary.heading: Ordine %number% (#%id%)
+order.total_excluding_tax: Totale (escluso IVA)
+order.total_including_tax: Totale (incl. IVA)
+order.preparation_expected_at: Preparazione aspettata alle %date%
+order.shipping_date.title: Orario di consegna
+order.payment.title: Informazioni di pagamento
+order.payment.card_number.label: Numero carta
+order.items_total: Totale prodotti
+order.payment.total: Paga  %total%
+order.payment.month.label: Mese
+order.payment.year.label: Anno
+order.payment.expiration.label: Scadenza
+order.delivery_time: Consegna %time%
+profile.editProfile: Modifica profilo
+profile.payment.title: Pagamento
+profile.payment.stripeConnected: Il tuo account Stripe è connesso
+profile.email: Email
+profile.telephone: Telefono
+profile.username: Username
+order.cart.title: Carrello
+order.items.products_with_count: Prodotti (%count%)
+order.state.cart: Carrello
+order.state.accepted: Accettato
+order.state.fulfilled: Consegnato
+order.state.new: Nuovo
+order.state.refused: Rifiutato
+profile.accountType: Tipo di account
+order.payment.cvc: CVC
+profile.task.address: Indirizzo
+profile.task.complete: Completato
+profile.task.date: Data
+profile.edit.save: Salva
+profile.addresses.newAddress: Nuovo indirizzo
+profile.addresses.save: Salva
+profile.addresses.add: Aggiungi
+profile.familyName: Cognome
+order.payment.redirect.help: Verrai reindirizzato al sito della banca per completare
+  il tuo pagamento
+order.payment.waiting_for_confirmation: Aspettando la conferma dalla tua banca…
+profile.givenName: Nome
+profile.managedStores: Negozio gestito dall'utente
+order.payment.card_number.help: Una numero Stripe <a href="https://stripe.com/docs/testing#cards"
+  target="_blank" tabindex="-1">di una carta test</a> è stato pre-inserito. Non verrà
+  effettuato nessun addebito.
