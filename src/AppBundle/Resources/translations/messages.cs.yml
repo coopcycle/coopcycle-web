@@ -275,211 +275,240 @@ profile.edit.save: Uložit
 profile.addresses.newAddress: Nová adresa
 profile.addresses.save: Uložit
 profile.addresses.add: Přidat
-profile.editProfile: ''
-profile.payment.title: ''
-profile.payment.stripeConnected: ''
-profile.username: ''
-profile.email: ''
-profile.telephone: ''
-profile.familyName: ''
-profile.givenName: ''
-profile.managedStores: ''
-profile.managedRestaurants: ''
-profile.accountType: ''
-order.cart.title: ''
-order.items.products_with_count: ''
-order.summary.heading: ''
-order.total_excluding_tax: ''
-order.total_including_tax: ''
-order.items_total: ''
-order.total_tax: ''
-order.total_tax_by_rate: ''
-order.preparation_expected_at: ''
-order.shipping_date.title: ''
-order.payment.title: ''
-order.payment.expiration.label: ''
-order.payment.month.label: ''
-order.payment.year.label: ''
-order.payment.card_number.label: ''
-order.payment.total: ''
-order.payment.cvc: ''
-order.delivery_time: ''
-order.payment.card_number.help: ''
-order.payment.redirect.help: ''
-order.payment.waiting_for_confirmation: ''
-order.payment.do_not_close: ''
-order.payment.waiting_success: ''
-order.payment.waiting_failure: ''
-order.state.cart: ''
-order.state.accepted: ''
-order.state.refused: ''
-order.state.new: ''
-order.state.fulfilled: ''
-order.state.cancelled: ''
-order.reusable_packaging.alert: ''
-order.public_link: ''
-order.payments: ''
-order.notes: ''
-payment.state.cart: ''
-payment.state.new: ''
-payment.state.authorized: ''
-payment.state.completed: ''
-payment.state.failed: ''
-payment.state.cancelled: ''
-payment.state.refunded: ''
-payment.state.refunded_partially: ''
-order.adjustment_type.delivery: ''
-order.adjustment_type.platform_fees: ''
-order.adjustment_type.reusable_packaging: ''
-order.adjustment_type.tip: ''
-order_item.adjustment_type.reusable_packaging: ''
-order.list.total: ''
-order.list.shippedAt: ''
-order.list.cancel: ''
-order.list.type: ''
-order.list.customer: ''
-order.list.state: ''
-order.list.summary: ''
-order.list.summary.restaurant.text: ''
-order.list.summary.deleted_restaurant.text: ''
-order.list.summary.delivery.text: ''
-order.list.receipt: ''
-order.list.generate_receipt: ''
-vehicle.bike: ''
-vehicle.cargo_bike: ''
-task.form.create: ''
-task.form.timeWindow: ''
-task.form.cancel: ''
-task.form.showHistory: ''
-task.form.modal.moreOptions: ''
-task.form.edit: ''
-task.form.dateRange: ''
-task.form.finish: ''
-task.form.details: ''
-task.form.finish.DONE.info: ''
-task.form.finish.FAIL.info: ''
-task.status.done: ''
-task.status.failed: ''
-task.status.todo: ''
-form.task.address.label: ''
-form.task.courier.label: ''
-form.task.comments.label: ''
-form.task.comments.placeholder: ''
-form.task.status.label: ''
-form.task.telephone.label: ''
-form.task.recipient.label: ''
-form.task.recipient.help: ''
-form.task.dropoff.doorstep.label: ''
-form.task_event.notes.placeholder: ''
-form.task_event.notes.help: ''
-form.task_complete.done.label: ''
-form.task_complete.fail.label: ''
-task.type.PICKUP: ''
-task.type.DROPOFF: ''
-task.previous_task_not_completed_yet: ''
-demo.disclaimer: ''
-demo.disclaimer.subtitle: ''
-maintenance.disclaimer: ''
-cart.widget.title: ''
-cart.widget.button: ''
-checkout.breadcrumb.address: ''
-checkout.breadcrumb.payment: ''
-form.geojson_upload.file: ''
-form.store_type.pricing_rule_set.label: ''
-form.store_type.prefill_pickup_address.label: ''
-form.store_type.create_orders.label: ''
-form.delivery.vehicle.VEHICLE_BIKE: ''
-form.delivery.vehicle.VEHICLE_CARGO_BIKE: ''
-form.store_type.pricing_rule_set.placeholder: ''
-form.store_type.setAsDefault.label: ''
-form.store_type.defaultAddress.label: ''
-form.store_type.time_slot.label: ''
-form.store_type.package_set.label: ''
-form.delivery.vehicle.placeholder: ''
-form.delivery.pickup.label: ''
-form.delivery.pickup.address_placeholder: ''
-form.delivery.dropoff.label: ''
-form.delivery.dropoff.address_placeholder: ''
-form.delivery.weight.label: ''
-form.delivery.weight.help: ''
-form.delivery.vehicle.label: ''
-form.delivery.pickup.doneBefore.label: ''
-form.delivery.dropoff.doneBefore.label: ''
-form.delivery.distance.label: ''
-form.delivery.duration.label: ''
-form.delivery.store.label: ''
-form.delivery.store.placeholder: ''
-form.delivery.price.label: ''
-form.delivery.to_be_confirmed.warning: ''
-form.delivery.has_order.info: ''
-form.delivery.package.label: ''
-form.delivery.packages.label: ''
-form.delivery.time_slot.label: ''
-form.delivery.view_order: ''
-form.order.accept.label: ''
-form.order.accept.help: ''
-form.order.cancel.label: ''
-form.order.refuse.label: ''
-form.order.fulfill.label: ''
-form.order.payment_complete.label: ''
-form.order.payment_refund.label: ''
-form.order.refund_modal.title: ''
-form.order.refuse.refund.alert: ''
-form.payment.refund_amount.label: ''
-form.payment.refund_amount.help: ''
-form.payment.refund_application_fee.label: ''
-form.payment.refund_application_fee.help: ''
-form.address.addressLocality.label: ''
-form.address.postalCode.label: ''
-form.address.floor.label: ''
-form.address.description.label: ''
-form.address.description.placeholder: ''
-form.address.streetAddress.label: ''
-form.address.streetAddress.error.noLatLng: ''
-form.address.name.label: ''
-form.address.name.placeholder: ''
-form.address.company.label: ''
-form.pricing_rule_set.name.label: ''
-form.pricing_rule_set.rules.label: ''
-form.pricing_rule.price.label: ''
-form.preparation_time_rule.expression.label: ''
-form.preparation_time_rule.time.label: ''
-form.preparation_time.defaults_warning: ''
-form.settings.date_time: ''
-form.settings.brand_name.label: ''
-form.settings.stripe.title: ''
-form.settings.stripe.help: ''
-form.settings.stripe_testmode.help: ''
-form.settings.stripe_enable_livemode.help: ''
-form.settings.stripe_publishable_key.label: ''
-form.settings.stripe_publishable_key.help: ''
-form.settings.stripe_secret_key.label: ''
-form.settings.stripe_secret_key.help: ''
-form.settings.stripe_connect_client_id.label: ''
-form.settings.stripe_connect_client_id.help: ''
-form.settings.google_api_key.label: ''
-form.settings.google_api_key.help: ''
-form.settings.latlng.label: ''
-form.settings.latlng.help: ''
-form.settings.default_tax_category.label: ''
-form.settings.default_tax_category.help: ''
-form.settings.administrator_email.label: ''
-form.settings.administrator_email.help: ''
-form.settings.phone_number.label: ''
-form.settings.phone_number.help: ''
-form.settings.enable_restaurant_pledges.label: ''
-form.settings.company_logo.label: ''
-form.settings.company_logo.help: ''
-form.suggest.name.label: ''
-form.suggest.name.help: ''
-form.suggest.submit.label: ''
-form.suggest.message: ''
-form.suggest.thank_you_message: ''
+profile.editProfile: Upravit profil
+profile.payment.title: Platba
+profile.payment.stripeConnected: Váš účet Stripe je připojen
+profile.username: Uživatelské jméno
+profile.email: E-mail
+profile.telephone: Telefon
+profile.familyName: Příjmení
+profile.givenName: Křestní jméno
+profile.managedStores: Obchody spravované uživatelem
+profile.managedRestaurants: Restaurace spravovaná uživatelem
+profile.accountType: Typ účtu
+order.cart.title: Košík
+order.items.products_with_count: Produkty (%count%)
+order.summary.heading: Objednávka %number% (#%id%)
+order.total_excluding_tax: Celkem (bez DPH)
+order.total_including_tax: Celkem  (vč. DPH)
+order.items_total: Celkem produktů
+order.total_tax: DPH
+order.total_tax_by_rate: Celkem %name%
+order.preparation_expected_at: Očekává se příprava v %date%
+order.shipping_date.title: Vaše datum dodání
+order.payment.title: Vaše platební údaje
+order.payment.expiration.label: Vypršení
+order.payment.month.label: Měsíc
+order.payment.year.label: Rok
+order.payment.card_number.label: Číslo karty
+order.payment.total: Zaplatit %total%
+order.payment.cvc: CVC
+order.delivery_time: Čas doručení %time%
+order.payment.card_number.help: Je předvyplněno <a href="https://stripe.com/docs/testing#cards"
+  target="_blank" tabindex="-1"> číslo testovací karty </a> služby Stripe. Žádný účet
+  nebude dotčen.
+order.payment.redirect.help: K dokončení platby budete přesměrováni na stránku banky
+order.payment.waiting_for_confirmation: Čekáme na potvrzení od vaší banky…
+order.payment.do_not_close: Nezavírejte tuto stránku
+order.payment.waiting_success: Vaše banka potvrdila platbu
+order.payment.waiting_failure: Vaše banka platbu odmítla
+order.state.cart: Košík
+order.state.accepted: Přijato
+order.state.refused: Odmítnuto
+order.state.new: Nový
+order.state.fulfilled: Doručeno
+order.state.cancelled: Zrušeno
+order.reusable_packaging.alert: Tato objednávka musí být zabalena do opakovaně použitelném
+  obalu
+order.public_link: Sdílený odkaz
+order.payments: Platby
+order.notes: Poznámky zákazníka
+payment.state.cart: Košík
+payment.state.new: Nový
+payment.state.authorized: Autorizovaný
+payment.state.completed: Dokončeno
+payment.state.failed: Selhalo
+payment.state.cancelled: Zrušeno
+payment.state.refunded: Vráceno
+payment.state.refunded_partially: Částečně vráceno
+order.adjustment_type.delivery: Doručení
+order.adjustment_type.platform_fees: poplatky CoopCycle
+order.adjustment_type.reusable_packaging: Balení
+order.adjustment_type.tip: Spropitné
+order_item.adjustment_type.reusable_packaging: '%quantity% × obal(y)'
+order.list.total: Celkem
+order.list.shippedAt: Čas  doručení
+order.list.cancel: Zrušit
+order.list.type: Typ
+order.list.customer: Zákazník
+order.list.state: Stav
+order.list.summary: Shrnutí
+order.list.summary.restaurant.text: Doručení v restauraci  <a href="%restaurant_url%">%restaurant_name%</a>
+order.list.summary.deleted_restaurant.text: Doručení v restauraci %restaurant_name%
+order.list.summary.delivery.text: Doručení %distance%, %vehicle%
+order.list.receipt: Účtenka
+order.list.generate_receipt: Vytvořit
+vehicle.bike: Kolo
+vehicle.cargo_bike: Kolo s nosičem
+task.form.create: Vytvořit úlohu
+task.form.timeWindow: Časové okno
+task.form.cancel: Zrušit
+task.form.showHistory: Zobrazit historii
+task.form.modal.moreOptions: Více možností
+task.form.edit: Změnit úlohu  %id%
+task.form.dateRange: Časové období
+task.form.finish: Dokončit úlohu
+task.form.details: Detaily úlohy
+task.form.finish.DONE.info: Úloha byla úspěšně dokončena
+task.form.finish.FAIL.info: Úlohu nelze dokončit
+task.status.done: Úspěch
+task.status.failed: Selhalo
+task.status.todo: K vyřízení
+form.task.address.label: Adresa
+form.task.courier.label: Kurýr
+form.task.comments.label: Komentáře
+form.task.comments.placeholder: Zadejte všechny užitečné podrobnosti k dokončení úlohy
+form.task.status.label: Stav
+form.task.telephone.label: Telefon
+form.task.recipient.label: Kontakt
+form.task.recipient.help: Zadejte jméno kontaktní osoby
+form.task.dropoff.doorstep.label: Zanechání zásilky u dveří
+form.task_event.notes.placeholder: 'Příklad:  adresa nebyla nalezena, žádný problém…'
+form.task_event.notes.help: Komentář můžete upravit
+form.task_complete.done.label: Hotovo
+form.task_complete.fail.label: Nahlásit problém
+task.type.PICKUP: Vyzvednutí
+task.type.DROPOFF: Zanechání zásilky
+task.previous_task_not_completed_yet: Předchozí úloha ještě není dokončena
+demo.disclaimer: <i class="fa fa-bullhorn"></i> Vítejte na ukázce platformy  <a target="_blank"
+  href="https://coopcycle.org">CoopCycle</a>
+demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i
+  class="fa fa-info-circle"></i>  Jak používat tuto ukázku?</a>
+maintenance.disclaimer: Režim údržby je povolen
+cart.widget.title: Vaše dodací údaje
+cart.widget.button: Objednávka
+checkout.breadcrumb.address: Adresa
+checkout.breadcrumb.payment: Platba
+form.geojson_upload.file: Soubor
+form.store_type.pricing_rule_set.label: Ceny
+form.store_type.prefill_pickup_address.label: Automaticky předvyplnit adresu pro vyzvednutí
+form.store_type.create_orders.label: Vytvořit objednávky
+form.delivery.vehicle.VEHICLE_BIKE: Kolo
+form.delivery.vehicle.VEHICLE_CARGO_BIKE: Kolo s nosičem
+form.store_type.pricing_rule_set.placeholder: Vybrat si cenu
+form.store_type.setAsDefault.label: Nastavit jako výchozí adresu
+form.store_type.defaultAddress.label: Výchozí adresa
+form.store_type.time_slot.label: Časový slot
+form.store_type.package_set.label: Sada balíčků
+form.delivery.vehicle.placeholder: Vybrat typ vozidla
+form.delivery.pickup.label: Adresa vyzvednutí
+form.delivery.pickup.address_placeholder: Číslo domu a název ulice, oblast, PSČ, město
+form.delivery.dropoff.label: Doručovací adresa
+form.delivery.dropoff.address_placeholder: Číslo domu a název ulice, oblast, PSČ,
+  město
+form.delivery.weight.label: Hmotnost
+form.delivery.weight.help: Uveďte hmotnost v gramech (1 kg = 1 000 g)
+form.delivery.vehicle.label: Kolo nebo kolo s nosičem?
+form.delivery.pickup.doneBefore.label: Datum a čas vyzvednutí
+form.delivery.dropoff.doneBefore.label: Datum a čas dodání
+form.delivery.distance.label: Vzdálenost
+form.delivery.duration.label: Trvání
+form.delivery.store.label: Obchod
+form.delivery.store.placeholder: Hledat Obchod …
+form.delivery.price.label: Cena
+form.delivery.to_be_confirmed.warning: Musíte potvrdit objednávku
+form.delivery.has_order.info: Tato dodávka je spojena s objednávkou
+form.delivery.package.label: Balíček
+form.delivery.packages.label: Balíčky
+form.delivery.time_slot.label: Časový slot
+form.delivery.view_order: Zobrazit objednávku
+form.order.accept.label: Přijmout
+form.order.accept.help: Po přijetí objednávky bude zákazník informován e-mailem.
+form.order.cancel.label: Zrušit
+form.order.refuse.label: Odmítnout
+form.order.fulfill.label: Splnit
+form.order.payment_complete.label: Dokončit
+form.order.payment_refund.label: Vrátit peníze
+form.order.refund_modal.title: Vrátit peníze
+form.order.refuse.refund.alert: Tato objednávka byla placena platební metodou, která
+  nespravuje předautorizace. Pokud ji odmítnete, bude platba vrácena. Jste si jist?
+form.payment.refund_amount.label: Částka
+form.payment.refund_amount.help: Částka, kterou určíte, bude vrácena zákazníkovi
+form.payment.refund_application_fee.label: Vrácení poplatků
+form.payment.refund_application_fee.help: "Pokud zaškrtnete toto políčko, bude provize,\
+  \ kterou platforma účtuje partnerovi, vrácena proporčně\n<br>\n<a href=\"https://stripe.com/docs/connect/direct-charges#issuing-refunds\"\
+  > Další informace </a>\n"
+form.address.addressLocality.label: Město
+form.address.postalCode.label: PSČ
+form.address.floor.label: Patro
+form.address.description.label: Instrukce
+form.address.description.placeholder: 2. dveře vlevo…
+form.address.streetAddress.label: Adresa
+form.address.streetAddress.error.noLatLng: V rozbalovací nabídce vyberte adresu
+form.address.name.label: Jméno
+form.address.name.placeholder: Domov, Práce…
+form.address.company.label: Firma
+form.pricing_rule_set.name.label: Název
+form.pricing_rule_set.rules.label: Pravidla
+form.pricing_rule.price.label: Cena
+form.preparation_time_rule.expression.label: Vyjádření
+form.preparation_time_rule.time.label: Čas
+form.preparation_time.defaults_warning: "Tato restaurace zatím nemá vlastní čas na\
+  \ přípravu. Výchozí pravidla byla zkopírována níže, můžete je změnit.\n"
+form.settings.date_time: Datum a čas
+form.settings.brand_name.label: Jméno  značky
+form.settings.stripe.title: Účet Stripe
+form.settings.stripe.help: 'Stripe je platební služba, kterou používáme ke zpracování
+  kreditních karet. Chcete-li použít část platformy pro elektronický obchod, je nutné
+  tuto část nakonfigurovat a Stripe Connect nakonfigurovat. Stripe bere v obchodě
+  poplatek 0,25cts + 1,4% za platbu (aktuální ceny, <a href="https://stripe.com/fr/pricing">
+  zde </a>), které zaplatí majitel obchodu. '
+form.settings.stripe_testmode.help: 'V režimu «test» budete muset platit na platformě
+  pomocí <a href="https://stripe.com/docs/testing"> testovacích kreditních karet </a>.
+  <strong> Nebudou zaplaceny  žádné peníze. </strong> '
+form.settings.stripe_enable_livemode.help: Chcete-li aktivovat režim «live», musíte
+  nejprve nakonfigurovat tlačítka «live».
+form.settings.stripe_publishable_key.label: Stripe veřejný klíč
+form.settings.stripe_publishable_key.help: "Vytvořte si účet Stripe a získejte <a\
+  \ href=\"https://stripe.com/docs/dashboard#api-keys\"> veřejný klíč </a>\n"
+form.settings.stripe_secret_key.label: Stripe tajný klíč
+form.settings.stripe_secret_key.help: "Vytvořte si účet Stripe a získejte <a href=\"\
+  https://stripe.com/docs/dashboard#api-keys\"> veřejný klíč </a>\n"
+form.settings.stripe_connect_client_id.label: identifikátor Stripe Connect
+form.settings.stripe_connect_client_id.help: "Identifikátor získáte na stránce <a\
+  \ href=\"https://dashboard.stripe.com/account/applications/settings\"> parametry\
+  \ </a>\n"
+form.settings.google_api_key.label: Google API klíč
+form.settings.google_api_key.help: "Vytvořte si účet Google a získejte <a href=\"\
+  https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
+  > klíč API </a>\n"
+form.settings.latlng.label: Zeměpisné souřadnice
+form.settings.latlng.help: "Určete výchozí zeměpisnou šířku a délku. Můžete  ji získat\
+  \ na <a href=\"https://www.latlong.net/\"> latlong.net </a>\n"
+form.settings.default_tax_category.label: Sazba DPH za dodávky
+form.settings.default_tax_category.help: Určete sazbu DPH, která se použije pro dodávky
+form.settings.administrator_email.label: E-mail správce
+form.settings.administrator_email.help: Na tento e-mail budou zaslána oznámení
+form.settings.phone_number.label: Telefonní číslo
+form.settings.phone_number.help: Toto číslo se zobrazí zákazníkům
+form.settings.enable_restaurant_pledges.label: Umožněte zákazníkům navrhnout restaurace
+form.settings.company_logo.label: Logo firmy
+form.settings.company_logo.help: Toto logo bude použito na fakturách a dokladech o
+  doručení
+form.suggest.name.label: Název
+form.suggest.name.help: Uveďte přesný název, abychom jej mohli najít
+form.suggest.submit.label: Navrhněte
+form.suggest.message: "Nemůžete najít svou oblíbenou restauraci?\n<br>\nSdělte nám\
+  \ její jméno a adresu. Poté mohou ostatní uživatelé hlasovat, aby se zobrazila v\
+  \ seznamu restaurací.\n<br>\nTo nám umožní lépe identifikovat restaurace, které\
+  \ mají být osloveny, a poskytnout jim důkaz skutečné poptávky.\n"
+form.suggest.thank_you_message: Děkujeme za doporučení této restaurace!
 restaurant.suggest.message: ''
-restaurant.suggest.vote: ''
-pledge.suggested_by: ''
-restaurant.suggest.has_voted: ''
-restaurant.suggest.banner_disclaimer: ''
+restaurant.suggest.vote: Hlasovat pro %name%
+pledge.suggested_by: Navrženo od @%username%
+restaurant.suggest.has_voted: Už jste pro tuto restauraci hlasovali!
+restaurant.suggest.banner_disclaimer: Tato restaurace není momentálně k dispozici.
+  Hlasujte pro %restaurant.name%!
 pledge.vote_count_equals_two: ''
 pledge.vote_count_equals_one: ''
 pledge.accept: ''
@@ -865,3 +894,4 @@ sms.with_tracking: ''
 basics.close: ''
 fulfillment_method.delivery: ''
 fulfillment_method.collection: ''
+adminDashboard.customize.title: Přizpůsobit
