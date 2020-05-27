@@ -874,3 +874,9 @@ restaurant.product_options.help: "Questa sezione ti permette di aggiungere altri
   \ ai tuoi <strong>prodotti</strong>.\n<br>\nTi permettono ad esempio di aggiungere\
   \ supplementi, o scegliere tra gli elementi del menù (contorni, bevande..)\n<br>\n\
   Per ogni opzione puoi definire una lista di valori\n"
+restaurant.product_options.list.values: Valori
+restaurant.form.uploadImage: Upload immagine
+restaurant.stats.order_number: Numero ordine
+restaurant.stats.delivered_on: Consegna il
+restaurant.stats.total_products_including_all_taxes: Totale prodotti tasse incluso
+restaurant.stats.total_products_excluding_taxes: Totale prodotti escluso tasse
