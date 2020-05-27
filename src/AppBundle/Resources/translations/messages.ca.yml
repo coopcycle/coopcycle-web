@@ -947,3 +947,26 @@ form.order.refuse.refund.alert: Aquesta comanda es va pagar amb un mètode de pa
   Estàs segur?
 form.checkout_payment.method.label: Triï un mètode de pagament
 restaurant_promotion.offer_delivery: Oferir tarifes de lliurament
+basics.close: A prop
+basics.allow_edit: Permetre edició
+form.price_with_tax.tax_excl.label: Preu (sense IVA)
+form.offer_delivery.coupon_code.error.exists: Aquest codi ja existeix
+users.all: Tots els usuaris
+users.restaurant_owners: Amos de restaurants
+users.store_owners: Amos de botigues
+users.administrators: Administradors
+users.couriers: Missatgers
+users.sort.alphabetically: Alfabèticament
+users.sort.newest: Registrat recentment
+sms.simple: "Hola,\nEl nostre missatger aquesta en camí a %address%.\n"
+sms.with_tracking: "Hola,\nEl nostre missatger aquesta en camí a %address%.\nSegueix-ho\
+  \ en %link%\n"
+fulfillment_method.delivery: Lliurament
+fulfillment_method.collection: recollida
+form.price_with_tax.tax_incl.label: Preu (amb IVA)
+restaurant_promotion.offer_delivery.help: Això li permet oferir les despeses d'enviament
+  <strong>amb els teus propis diners</strong>. El seu marge es veurà disminuït per
+  la suma de les despeses d'enviament. Això<strong>no disminuirà</strong> les tarifes
+  percebudes per la plataforma.
+form.offer_delivery.coupon_code.help: És la seva responsabilitat comunicar aquest
+  codi al client, ja sigui personalment o a través de les xarxes socials
