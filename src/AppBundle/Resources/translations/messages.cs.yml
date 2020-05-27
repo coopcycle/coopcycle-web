@@ -1,0 +1,867 @@
+global.changesSaved: Vaše změny byly uloženy.
+navbar.login: Přihlásit se
+navbar.myAccount: Můj účet
+base.footer.contactUs: Kontaktujte nás
+base.footer.help: Nápověda
+base.footer.legal: Zákonné oznámení
+base.footer.suggest: Navrhněte restauraci
+adminDashboard.title: Řídicí panel administrátora
+adminDashboard.configuration: Konfigurace
+adminDashboard.tooltip.orders: Správa objednávek restaurací
+adminDashboard.tooltip.deliveries: Spravovat dodávky
+adminDashboard.tooltip.stores: Spravovat obchody
+adminDashboard.tooltip.restaurants: Spravovat restaurace
+adminDashboard.tooltip.users: Spravovat uživatelské účty
+adminDashboard.dashboard.title: Řídící panel
+adminDashboard.dashboard.import: Import
+adminDashboard.dashboard.export: Export
+adminDashboard.dashboard.importTasks: Importovat úkoly
+adminDashboard.dashboard.exportTasks: Exportovat úkoly
+adminDashboard.dashboard.deleteTaskGroup: Smazat skupinu úloh
+adminDashboard.dashboard.displayByGroups: Zobrazit podle skupin
+adminDashboard.dashboard.displayAll: Zobrazit vše
+adminDashboard.dashboard.cancel: Zrušit
+adminDashboard.deliveries.title: Dodávky
+adminDashboard.deliveries.type: Typ
+adminDashboard.deliveries.dueDate: Datum vypršení
+adminDashboard.deliveries.courier: Kurýr
+adminDashboard.deliveries.address: Adresa
+adminDashboard.deliveries.delivery: Dodávka
+adminDashboard.deliveries.originAddress: Původní adresa
+adminDashboard.deliveries.deliveryAddress: Doručovací adresa
+adminDashboard.deliveries.save: Uložit
+adminDashboard.embed.title: Externí obrazovka
+adminDashboard.package_sets.title: Balíčky
+embed.delivery.title: Formulář pro vytvoření dodávky
+embed.delivery.configure_pricing_rule_set: Nejprve musíte nakonfigurovat pravidlo
+  stanovení cen, aby se použilo
+embed.delivery.iframe_code: Pomocí níže uvedeného kódu HTML vložte formulář na svůj
+  web
+embed.breadcrumb.start: Informace
+embed.breadcrumb.summary: Souhrn
+embed.breadcrumb.confirm: Potvrzení
+embed.delivery.summary.title: Shrnutí objednávky
+embed.delivery.use_form_below: Použijte následující formulář k úhradě objednávky kreditní
+  kartou
+embed.delivery.paid_at: Platba provedena %date%
+embed.payment.heading: Zaplatit moji objednávku
+embed.delivery.contact_heading: Kontakt
+embed.delivery.specify_billing_address: Zadejte fakturační adresu
+embed.delivery.billing_address: Fakturační adresa
+adminDashboard.menuCategories.menu: Nabídka
+adminDashboard.menuCategories.categories: Kategorie
+adminDashboard.menuCategories.addCategory: Přidat kategorii
+adminDashboard.menuCategories.save: Uložit
+adminDashboard.stores.title: Obchody
+adminDashboard.stores.createNew: Vytvořit nový obchod
+adminDashboard.stores.form.uploadImage: Nahrát obrázek
+adminDashboard.orders.title: Objednávky
+adminDashboard.orders.previousOrders: Předchozí objednávky
+adminDashboard.orders.showCanceled: Zobrazit zrušené objednávky
+adminDashboard.restaurants.title: Restaurace
+adminDashboard.restaurants.createNew: Vytvořit novou restauraci
+adminDashboard.restaurants.exclusive: Výhradní
+adminDashboard.users.title: Uživatelé
+adminDashboard.users.edit: Upravit
+adminDashboard.users.roles: Role
+adminDashboard.users.editUser: Upravit uživatele
+adminDashboard.users.edit.addStore: Přidat obchod
+adminDashboard.users.edit.addRestaurant: Přidat restauraci
+adminDashboard.users.createNew: Přidat uživatele
+adminDashboard.users.invite: Pozvat uživatele
+form.user.quotes_allowed.label: Povolit tomuto uživateli požádat o nabídku
+adminDashboard.settings.title: Nastavení
+adminDashboard.pricing.title: Ceny
+adminDashboard.pricing.manage: Spravovat
+adminDashboard.pricing.settings: Nastavení
+adminDashboard.pricing.noPricings: Nejsou zatím žádné ceny
+adminDashboard.pricing.createNew: Vytvořit nové ceny
+adminDashboard.pricing.noRuleFound: Nebylo nalezeno žádné cenové pravidlo. Pravidla
+  tvorby cen definují způsob výpočtu nákladů na doručení.
+adminDashboard.pricing.addRule: Přidat pravidlo
+adminDashboard.tags.title: Značky
+adminDashboard.tags.save: Uložit
+adminDashboard.tags.createNew: Vytvořit novou značku
+adminDashboard.tags.name: Název
+adminDashboard.tags.color: Barva
+adminDashboard.tags.confirm_delete: "Opravdu chcete tuto značku smazat?\nVšechny prvky,\
+  \ které na ní odkazují, ji již nebudou moci ukázat, nebo podle ní třídít."
+adminDashboard.taxation.title: Zdanění
+adminDashboard.taxation.button: Přidat zdanění
+adminDashboard.zones.title: Oblasti
+adminDashboard.zones.cancel: Zrušit
+adminDashboard.zones.save: Uložit
+adminDashboard.zones.delete: Smazat
+adminDashboard.zones.uploadGeoJSON: Nahrát GeoJSON soubor
+adminDashboard.zones.send: Poslat
+adminDashboard.back.title: Zpět na web
+adminDashboard.promotions.title: Propagace
+adminDashboard.pledges.title: Návrhy
+adminDashboard.time_slots.title: Časové sloty
+deliveryForm.noPriceWarning: Nelze vypočítat žádnou cenu. Zadejte ji.
+deliveryForm.noPriceFromPricingWarning: Z ceníku nebylo možné vypočítat žádnou cenu.
+  Zadejte ji ručně, nebo upravte ceny.
+delivery.createNew: Vytvořit nové doručení
+delivery.tracking_link: Odkaz na sledování
+delivery.with_id: "'Doručení #%id%'"
+help.title: Nápověda
+help.home: Úvodní strana
+restaurants.no_results: Nebyly nalezeny žádné restaurace odpovídající vašemu hledání.
+  ☹<br> Zkuste jinou adresu
+restaurants.visible_by_you_only: Viditelné pouze vámi
+restaurants.placeholder.title: Mějte strpení …
+restaurants.placeholder.text: Nové restaurace už se chystají!
+localBusiness.form.orderingDelayMinutes: Další zpoždění před objednáním
+localBusiness.form.orderingDelayMinutes.help: Pomocí tohoto pole můžete přidat nějaký
+  čas, než si zákazník může objednat. Toto nastavení nemění čas potřebný pro vaření
+  (20 minut) a dovoz (25 minut).
+localBusiness.form.enabled: Povoleno
+localBusiness.form.orderingDelayDays: Den (dny)
+localBusiness.form.orderingDelayHours: Hodina(y)
+localBusiness.form.name: Název
+localBusiness.form.description: Popis
+localBusiness.form.legalName: Oficiální název
+localBusiness.form.website: Webová strana
+localBusiness.form.telephone: Telefon
+localBusiness.form.openingHours: Otevírací doba
+localBusiness.form.deliveryPerimeterExpression: Zóna nebo maximální vzdálenost pro
+  dodání
+localBusiness.form.shippingOptionsDays: Počet možností dopravy (přes den)
+localBusiness.form.openingHoursBehavior: Pravidla otevírací doby
+localBusiness.form.openingHoursBehavior.asap: Co nejdříve
+localBusiness.form.openingHoursBehavior.time_slot: Časový slot
+restaurant.available: Dostupné
+restaurant.unavailable: Nedostupné
+restaurant.disabledWarning: "Tato restaurace je neaktivní, takže návštěvníci webu\
+  \ nemohou tuto stránku vidět. Pokud chcete, můžete ji <a target=\"_blank\" href=\"\
+  %restaurantEditUrl%\"> aktivovat v administraci</a>.\n"
+restaurant.closedWarningWithDelay: Objednejte nyní na později. Objednávejte alespoň  %delay%
+  předem.
+restaurant.temporaryClosedWarning: Tato restaurace je uzavřena do <strong>% date%
+  </strong>. I přesto si můžete objednat na později!
+restaurant.noMenuWarning: "Tato restaurace zatím nemá nabídku\n"
+restaurant.quotes_disclaimer.authenticated: Tato restaurace také přijímá objednávky
+  na nabídky. Chcete-li vytvořit nabídky, musíte být referenčním zákazníkem. <a href="%contact_us%">
+  Kontaktujte nás </a> pro více informací.
+restaurant.quotes_disclaimer.not_authenticated: Tato restaurace také přijímá objednávky
+  na nabídky. Pokud jste referenční zákazník,  <a href="%login%"> přihlašte se</a>
+  abyste vytvořil nabídku.  <a href="%contact_us%">Kontaktujte nás </a> pro více informací.
+restaurant.form.noPricingRule: Nebyla nastavena žádná cenová pravidla, <a href="%editPricingRule%">
+  kliknutím zde vytvořte první</a>.
+restaurant.form.enabled.tooltip: "Pokud je deaktivováno, restaurace není na webu viditelná.\
+  \ Nezobrazuje se ve výsledcích vyhledávání a stránka restaurace není přístupná návštěvníkům.\n"
+restaurant.form.allow_stripe_connect.label: Umožnit restauraci spravovat účet Stripe
+  samostatně
+restaurant.form.temporaryClosingRule: Kliknutím sem dočasně deaktivujete objednávky
+  do vaší restaurace.
+restaurant.form.deposit_refund_enabled.label: Povolit systém vložení a vrácení peněz
+restaurant.form.accessPlanning: Plánování přístupu
+restaurant.form.createRestaurant: Vytvořit restauraci
+restaurant.form.save: Uložit
+restaurant.form.exclusive.label: Tato restaurace je exkluzivní
+restaurant.form.quotes_allowed.label: 'Tato restaurace také přijímá nabídky (např.:
+  catering)'
+restaurant.form.loopeat_enabled.label: Povolit systém vkladu a vrácení peněz LoopEat
+restaurant.form.loopeat_disconnect.label: Odpojit LoopEat
+restaurant.form.featured.label: Tato restaurace je uvedena na domovské stránce
+restaurant.form.giropay_enabled.label: Povolit Giropay
+restaurant.form.fulfillment_methods.label: Způsoby plnění
+restaurant.form.section.general: Obecné
+restaurant.form.section.options: Možnosti
+restaurant.form.section.fulfillment: Plnění
+restaurant.form.section.payment: Platba
+restaurant.form.section.settlement: Vyrovnání
+restaurant.contract.title: Smlouva
+restaurant.deliveryPerimeterExpression.title: Obvod dodávky
+restaurant.deliveryPerimeterExpression.help: Definujte přijatý obvod pro dodávky.
+  Můžete si vybrat poloměr (v km) nebo zónu
+restaurant.contract.minimumCartAmount.label: Minimální částka v objednávce
+restaurant.contract.flatDeliveryPrice.label: Částka účtovaná platformou
+restaurant.contract.flatDeliveryPrice.help: Tato částka nebude zobrazena v košíku
+  a nezvýší celkovou částku
+restaurant.contract.variableDeliveryPrice.label: Částka účtovaná platformou (proměnná)
+restaurant.contract.variableDeliveryPrice.help: Účtovaná částka bude vypočítána pomocí
+  vybrané sady pravidel pro stanovení cen
+restaurant.contract.variableDeliveryPrice.placeholder: Vyberte sadu pravidel pro stanovení
+  cen
+restaurant.contract.variableDeliveryPriceEnabled.label: Povolit variabilní částku
+  účtovanou platformou
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Částka se vypočítává
+  dynamicky
+restaurant.contract.customerAmount.label: Částka placená zákazníkem
+restaurant.contract.customerAmount.help: Tato částka se zobrazí v košíku a zvýší celkovou
+  částku
+restaurant.contract.feeRate.label: Poplatek platformy za doručení
+restaurant.contract.feeRate.help: Tímto procentem z celkového počtu produktů bude
+  platforma udržována
+restaurant.contract.restaurantPaysStripeFee.label: Odpovědný za náklady na poplatky
+  Stripe, vrácení peněz a zpětné zúčtování
+restaurant.contract.restaurantPaysStripeFee.help: Vyberte, kdo bude odpovědný za náklady
+  na poplatky Stripe a správu refundací a zpětných zúčtování
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurace
+restaurant.contract.restaurantPaysStripeFee.cooperative: kooperativní
+restaurant.contract.onlyAdmin: Podrobnosti smlouvy může upravovat pouze správce.
+restaurant.contract.noContract: Žádné podrobnosti smlouvy. Obraťte se na správce.
+restaurant.contract.showAdvanced: Zobrazit pokročilá nastavení
+restaurant.contract.variableCustomerAmount.label: Částka placená zákazníkem (proměnná)
+restaurant.contract.variableCustomerAmount.help: Vyplacená cena bude vypočítána pomocí
+  vybrané sady pravidel pro stanovení cen
+restaurant.contract.variableCustomerAmount.placeholder: Vyberte sadu pravidel pro
+  stanovení cen
+restaurant.contract.variableCustomerAmountEnabled.label: Povolit variabilní částku
+  placenou zákazníkem
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: Částka se vypočítává
+  dynamicky
+restaurant.contract.calculation_info: Můžete restauraci účtovat jinou částku, než
+  je částka zaplacená zákazníkem. <br> Například můžete nabídnout doručení zákazníkovi
+  při zaplacení pevné částky do restaurace. <br> Můžete také nakonfigurovat dynamickou
+  částku (např. na základě vzdálenosti).
+restaurant.contract.takeAwayFeeRate.label: Poplatek platformy za odnos s sebou
+restaurant.contract.takeAwayFeeRate.help: Tolik procent bude platformou vyhrazeno
+  z celkového součtu ceny  produktů
+restaurant.menus.noMenus: Zatím jste nevytvořili žádnou nabídku.
+restaurant.menus.activate: Aktivovat
+restaurant.menus.activated: Bylo aktivováno menu « %menu_name% » . Nyní se zobrazí
+  na stránce restaurace
+restaurant.closingForm.title: Přidat dočasné uzavření
+restaurant.closingForm.reason.label: Důvod
+restaurant.closingForm.dates.label: Zavřeno od/do
+restaurant.list.manage: Spravovat
+restaurant.list.orders: Objednávky
+restaurant.list.products: Produkty
+restaurant.list.product_options: Možnosti
+restaurant.list.menus: Nabídky
+restaurant.list.activeMenu: Aktivní nabídka
+restaurant.list.planning: Plánování
+restaurant.list.settings: Nastavení
+restaurant.list.norestaurant: Nejsou zatím žádné restaurace
+restaurant.list.createNewRestaurant: Vytvořit novou restauraci
+restaurant.list.preparationTime: Příprava
+restaurant.list.stats: Statistika
+restaurant.list.depositRefund: Vrácení vkladu
+restaurant.list.promotions: Propagace
+restaurant.product_options.help: "Tato část vám umožňuje nastavit další položky pro\
+  \ <strong> produkty </strong>.\n<br>\nUmožňují například přidávat doplňky nebo vybírat\
+  \ prvky menu (přílohy, nápoj…)\n<br>\nPro každou možnost můžete definovat seznam\
+  \ hodnot\n"
+restaurant.product_options.list.values: Hodnoty
+restaurant.form.uploadImage: Nahraát obrázek
+restaurant.stats.order_number: Číslo objednávky
+restaurant.stats.delivered_on: Doručeno v
+restaurant.stats.total_products_including_all_taxes: Cena produktů celkem včetně všech
+  daní
+restaurant.stats.total_products_excluding_taxes: Cena produků celkem bez daně
+restaurant.stats.delivery: Doručení
+profile.addresses.breadcrumb: Adresy
+profile.addresses.empty: Zatím nebyla uložena žádná adresa!
+profile.orders.empty: Zatím žádná objednávka!
+profile.myDeliveries: Moje dodávky
+profile.myStores: Mé obchody
+profile.myRestaurants: Mé restaurace
+profile.myRestaurants.noRestaurants: Zatím nemáte žádné restaurace
+profile.myAccount: Můj účet
+profile.myTracking: Moje sledování
+profile.myOrders: Mé objednávky
+profile.myAddresses: Mé adresy
+profile.myPersonalInfo: Moje osobní údaje
+profile.payment: Způsob platby
+profile.task.cancel: Zrušit
+profile.task.noTasks: Žádné naplánované úkoly
+profile.task.dueDate: Datum splatnosti
+profile.task.address: Adresa
+profile.task.complete: Dokončit
+profile.task.date: Datum
+profile.edit.save: Uložit
+profile.addresses.newAddress: Nová adresa
+profile.addresses.save: Uložit
+profile.addresses.add: Přidat
+profile.editProfile: ''
+profile.payment.title: ''
+profile.payment.stripeConnected: ''
+profile.username: ''
+profile.email: ''
+profile.telephone: ''
+profile.familyName: ''
+profile.givenName: ''
+profile.managedStores: ''
+profile.managedRestaurants: ''
+profile.accountType: ''
+order.cart.title: ''
+order.items.products_with_count: ''
+order.summary.heading: ''
+order.total_excluding_tax: ''
+order.total_including_tax: ''
+order.items_total: ''
+order.total_tax: ''
+order.total_tax_by_rate: ''
+order.preparation_expected_at: ''
+order.shipping_date.title: ''
+order.payment.title: ''
+order.payment.expiration.label: ''
+order.payment.month.label: ''
+order.payment.year.label: ''
+order.payment.card_number.label: ''
+order.payment.total: ''
+order.payment.cvc: ''
+order.delivery_time: ''
+order.payment.card_number.help: ''
+order.payment.redirect.help: ''
+order.payment.waiting_for_confirmation: ''
+order.payment.do_not_close: ''
+order.payment.waiting_success: ''
+order.payment.waiting_failure: ''
+order.state.cart: ''
+order.state.accepted: ''
+order.state.refused: ''
+order.state.new: ''
+order.state.fulfilled: ''
+order.state.cancelled: ''
+order.reusable_packaging.alert: ''
+order.public_link: ''
+order.payments: ''
+order.notes: ''
+payment.state.cart: ''
+payment.state.new: ''
+payment.state.authorized: ''
+payment.state.completed: ''
+payment.state.failed: ''
+payment.state.cancelled: ''
+payment.state.refunded: ''
+payment.state.refunded_partially: ''
+order.adjustment_type.delivery: ''
+order.adjustment_type.platform_fees: ''
+order.adjustment_type.reusable_packaging: ''
+order.adjustment_type.tip: ''
+order_item.adjustment_type.reusable_packaging: ''
+order.list.total: ''
+order.list.shippedAt: ''
+order.list.cancel: ''
+order.list.type: ''
+order.list.customer: ''
+order.list.state: ''
+order.list.summary: ''
+order.list.summary.restaurant.text: ''
+order.list.summary.deleted_restaurant.text: ''
+order.list.summary.delivery.text: ''
+order.list.receipt: ''
+order.list.generate_receipt: ''
+vehicle.bike: ''
+vehicle.cargo_bike: ''
+task.form.create: ''
+task.form.timeWindow: ''
+task.form.cancel: ''
+task.form.showHistory: ''
+task.form.modal.moreOptions: ''
+task.form.edit: ''
+task.form.dateRange: ''
+task.form.finish: ''
+task.form.details: ''
+task.form.finish.DONE.info: ''
+task.form.finish.FAIL.info: ''
+task.status.done: ''
+task.status.failed: ''
+task.status.todo: ''
+form.task.address.label: ''
+form.task.courier.label: ''
+form.task.comments.label: ''
+form.task.comments.placeholder: ''
+form.task.status.label: ''
+form.task.telephone.label: ''
+form.task.recipient.label: ''
+form.task.recipient.help: ''
+form.task.dropoff.doorstep.label: ''
+form.task_event.notes.placeholder: ''
+form.task_event.notes.help: ''
+form.task_complete.done.label: ''
+form.task_complete.fail.label: ''
+task.type.PICKUP: ''
+task.type.DROPOFF: ''
+task.previous_task_not_completed_yet: ''
+demo.disclaimer: ''
+demo.disclaimer.subtitle: ''
+maintenance.disclaimer: ''
+cart.widget.title: ''
+cart.widget.button: ''
+checkout.breadcrumb.address: ''
+checkout.breadcrumb.payment: ''
+form.geojson_upload.file: ''
+form.store_type.pricing_rule_set.label: ''
+form.store_type.prefill_pickup_address.label: ''
+form.store_type.create_orders.label: ''
+form.delivery.vehicle.VEHICLE_BIKE: ''
+form.delivery.vehicle.VEHICLE_CARGO_BIKE: ''
+form.store_type.pricing_rule_set.placeholder: ''
+form.store_type.setAsDefault.label: ''
+form.store_type.defaultAddress.label: ''
+form.store_type.time_slot.label: ''
+form.store_type.package_set.label: ''
+form.delivery.vehicle.placeholder: ''
+form.delivery.pickup.label: ''
+form.delivery.pickup.address_placeholder: ''
+form.delivery.dropoff.label: ''
+form.delivery.dropoff.address_placeholder: ''
+form.delivery.weight.label: ''
+form.delivery.weight.help: ''
+form.delivery.vehicle.label: ''
+form.delivery.pickup.doneBefore.label: ''
+form.delivery.dropoff.doneBefore.label: ''
+form.delivery.distance.label: ''
+form.delivery.duration.label: ''
+form.delivery.store.label: ''
+form.delivery.store.placeholder: ''
+form.delivery.price.label: ''
+form.delivery.to_be_confirmed.warning: ''
+form.delivery.has_order.info: ''
+form.delivery.package.label: ''
+form.delivery.packages.label: ''
+form.delivery.time_slot.label: ''
+form.delivery.view_order: ''
+form.order.accept.label: ''
+form.order.accept.help: ''
+form.order.cancel.label: ''
+form.order.refuse.label: ''
+form.order.fulfill.label: ''
+form.order.payment_complete.label: ''
+form.order.payment_refund.label: ''
+form.order.refund_modal.title: ''
+form.order.refuse.refund.alert: ''
+form.payment.refund_amount.label: ''
+form.payment.refund_amount.help: ''
+form.payment.refund_application_fee.label: ''
+form.payment.refund_application_fee.help: ''
+form.address.addressLocality.label: ''
+form.address.postalCode.label: ''
+form.address.floor.label: ''
+form.address.description.label: ''
+form.address.description.placeholder: ''
+form.address.streetAddress.label: ''
+form.address.streetAddress.error.noLatLng: ''
+form.address.name.label: ''
+form.address.name.placeholder: ''
+form.address.company.label: ''
+form.pricing_rule_set.name.label: ''
+form.pricing_rule_set.rules.label: ''
+form.pricing_rule.price.label: ''
+form.preparation_time_rule.expression.label: ''
+form.preparation_time_rule.time.label: ''
+form.preparation_time.defaults_warning: ''
+form.settings.date_time: ''
+form.settings.brand_name.label: ''
+form.settings.stripe.title: ''
+form.settings.stripe.help: ''
+form.settings.stripe_testmode.help: ''
+form.settings.stripe_enable_livemode.help: ''
+form.settings.stripe_publishable_key.label: ''
+form.settings.stripe_publishable_key.help: ''
+form.settings.stripe_secret_key.label: ''
+form.settings.stripe_secret_key.help: ''
+form.settings.stripe_connect_client_id.label: ''
+form.settings.stripe_connect_client_id.help: ''
+form.settings.google_api_key.label: ''
+form.settings.google_api_key.help: ''
+form.settings.latlng.label: ''
+form.settings.latlng.help: ''
+form.settings.default_tax_category.label: ''
+form.settings.default_tax_category.help: ''
+form.settings.administrator_email.label: ''
+form.settings.administrator_email.help: ''
+form.settings.phone_number.label: ''
+form.settings.phone_number.help: ''
+form.settings.enable_restaurant_pledges.label: ''
+form.settings.company_logo.label: ''
+form.settings.company_logo.help: ''
+form.suggest.name.label: ''
+form.suggest.name.help: ''
+form.suggest.submit.label: ''
+form.suggest.message: ''
+form.suggest.thank_you_message: ''
+restaurant.suggest.message: ''
+restaurant.suggest.vote: ''
+pledge.suggested_by: ''
+restaurant.suggest.has_voted: ''
+restaurant.suggest.banner_disclaimer: ''
+pledge.vote_count_equals_two: ''
+pledge.vote_count_equals_one: ''
+pledge.accept: ''
+pledge.reject: ''
+form.maintenance.enable.label: ''
+form.maintenance.disable.label: ''
+form.maintenance.enable.alert: ''
+form.maintenance.disable.alert: ''
+form.maintenance.message.label: ''
+mardown_formatting.help: ''
+form.banner.enable.label: ''
+form.banner.disable.label: ''
+form.banner.enable.alert: ''
+form.banner.disable.alert: ''
+form.banner.message.label: ''
+form.stripe_livemode.enable.label: ''
+form.stripe_livemode.enable.alert: ''
+form.stripe_livemode.disable.label: ''
+form.stripe_livemode.disable.alert: ''
+form.stripe_livemode.disable_and_enable_maintenance.label: ''
+form.stripe_livemode.disable_and_enable_maintenance.alert: ''
+form.settings.currency_code.label: ''
+form.delivery_embed.name.label: ''
+form.delivery_embed.name.help: ''
+form.delivery_embed.telephone.label: ''
+form.delivery_embed.vehicle.disclaimer: ''
+form.registration.username.help: ''
+form.local_business.stripe_account.title: ''
+form.local_business.stripe_account.help: ''
+form.local_business.stripe_account.connect_button.text: ''
+form.local_business.stripe_account.not_configured: ''
+form.local_business.stripe_account.success: ''
+form.local_business.stripe_account.need_stripe_account: ''
+form.local_business.stripe_account.link_ok: ''
+form.menu_item.name.label: ''
+form.menu_item.price.label: ''
+form.menu_item_modifier.name.label: ''
+form.menu_item_modifier.price.label: ''
+form.menu_item_modifier.calculusStrategy.label: ''
+form.menu_taxon.name.label: ''
+form.menu_taxon.add_child.label: ''
+form.menu_taxon.child_name.placeholder: ''
+form.menu_editor.products_panel.title: ''
+form.menu_editor.save.label: ''
+form.menu_editor.help: ''
+form.menu_editor.products.help: ''
+form.menu_editor.taxon_modal.title: ''
+form.product.name.label: ''
+form.product.description.label: ''
+form.product.price.label: ''
+form.product.taxCategory.label: ''
+form.product.enabled.label: ''
+form.product.allergens.label: ''
+form.product.allergens.help: ''
+form.product.restricted_diets.label: ''
+form.product.restricted_diets.help: ''
+form.product.confirm.label: ''
+form.product.confirm.help: ''
+form.product.reusable_packaging_enabled.label: ''
+form.product.reusable_packaging.label: ''
+form.product.reusable_packaging_unit.label: ''
+form.product_option.name.label: ''
+form.product_option.strategy.label: ''
+form.product_option.add_value.label: ''
+form.product_option.values.title: ''
+form.product_option.values.help: ''
+form.product_option.additional.label: ''
+form.product_option.additional.help: ''
+form.product_option.preview_title: ''
+form.product_option_value.value.label: ''
+form.product_option_value.price.label: ''
+form.checkout_address.notes.label: ''
+form.checkout_address.notes.placeholder: ''
+form.checkout_address.notes.help: ''
+form.checkout_address.promotion_coupon.label: ''
+form.checkout_address.telephone.label: ''
+form.checkout_address.reusable_packaging_enabled.label: ''
+form.checkout_address.reusable_packaging_loopeat_enabled.label: ''
+form.checkout_address.add_promotion.label: ''
+form.checkout_address.tip_amount.label: ''
+form.checkout_address.tip_amount.help: ''
+form.checkout_address.add_tip.label: ''
+form.checkout_address.quote.label: ''
+form.checkout_address.takeaway.disclaimer: ''
+form.checkout_address.takeaway.contact: ''
+form.checkout_address.takeaway.no_show_disclaimer: ''
+form.checkout_payment.method.label: ''
+form.checkout_address.reusable_packaging.loopeat.learn_more: ''
+form.task_export.start.label: ''
+form.task_export.end.label: ''
+form.api_app.name.label: ''
+form.api_app.store.label: ''
+form.api_app.client_id.label: ''
+form.api_app.client_secret.label: ''
+form.credit_note.user_search.help: ''
+form.credit_note.amount.label: ''
+form.credit_note.name.label: ''
+form.credit_note.name.help: ''
+form.credit_note.restaurant.help: ''
+form.resend_confirmation_email.submit.label: ''
+form.embed_settings.with_vehicle.label: ''
+form.embed_settings.with_weight.label: ''
+form.time_slot.name.label: ''
+form.time_slot.interval.label: ''
+form.time_slot.working_days_only.label: ''
+form.time_slot.choices.label: ''
+form.time_slot_choice.start_time.label: ''
+form.time_slot_choice.end_time.label: ''
+form.time_slot.prior_notice_hours.label: ''
+form.package_set.name.label: ''
+form.package_set.packages.label: ''
+form.package.name.label: ''
+form.package.volume_units.label: ''
+form.stripe_payment.cardholder_name.label: ''
+form.reusable_packaging.name.label: ''
+form.reusable_packaging.is_tracked.label: ''
+form.reusable_packaging.price.label: ''
+form.reusable_packaging.on_hand.label: ''
+form.deposit_refund_settings.deposit_refund_optin.label: ''
+form.new_order.variant_name.label: ''
+form.new_order.variant_name.help: ''
+form.new_order.variant_price.label: ''
+promotion_coupon.used.label: ''
+product_option.strategy.free: ''
+product_option.strategy.option_value: ''
+roles.ROLE_ADMIN: ''
+roles.ROLE_COURIER: ''
+roles.ROLE_RESTAURANT: ''
+roles.ROLE_STORE: ''
+roles.ROLE_USER: ''
+user.edit.roles.help: ''
+user.edit.enabled.help: ''
+user.profile.familyName: ''
+user.profile.givenName: ''
+roles.ROLE_ADMIN.help: ''
+roles.ROLE_COURIER.help: ''
+roles.ROLE_RESTAURANT.help: ''
+roles.ROLE_STORE.help: ''
+stores.form.save: ''
+stores.manage: ''
+stores.settings: ''
+stores.createNewDelivery: ''
+stores.users: ''
+stores.pricing_rule_set: ''
+stores.api_keys: ''
+stores.deliveries: ''
+stores.deliveries.heading: ''
+stores.deliveries.task_unassigned: ''
+stores.addresses: ''
+meta.title: ''
+admin.settings.missing_mandatory_settings: ''
+index.map.tip: ''
+index.banner: ''
+index.our_restaurants: ''
+index.view_all_restaurants: ''
+index.our_shops: ''
+index.view_all_shops: ''
+notifications.empty: ''
+adminDashboard.statistics: ''
+adminDashboard.activity.title: ''
+activity.task.created: ''
+activity.task.assigned: ''
+activity.task.unassigned: ''
+activity.task.started: ''
+activity.task.done: ''
+activity.task.failed: ''
+activity.task.cancelled: ''
+activity.order.created: ''
+activity.order.accepted: ''
+activity.order.refused: ''
+activity.order.picked: ''
+activity.order.dropped: ''
+activity.order.fulfilled: ''
+social.sign_in_with_facebook: ''
+embed.delivery.summary: ''
+embed.delivery.submit.help: ''
+embed.delivery.confirm_message: ''
+pagination.previous: ''
+pagination.next: ''
+basics.view: ''
+basics.save: ''
+basics.next: ''
+basics.continue: ''
+basics.powered_by: ''
+basics.add: ''
+basics.edit: ''
+basics.delete: ''
+basics.cancel: ''
+basics.open: ''
+basics.tomorrow: ''
+basics.price: ''
+basics.tax_category: ''
+basics.export: ''
+basics.import: ''
+basics.name: ''
+basics.today: ''
+basics.are_you_sure: ''
+basics.no_entries: ''
+basics.created_at: ''
+basics.updated_at: ''
+basics.date_range: ''
+basics.total_including_tax: ''
+basics.stripe_fees: ''
+basics.platform_fees: ''
+basics.net_income: ''
+basics.send_invitation: ''
+basics.send_invitation.confirm: ''
+profile.password.change: ''
+authentication.forgot_password: ''
+authentication.not_registered_yet: ''
+authentication.create_account: ''
+authentication.already_registered: ''
+authentication.sign_in: ''
+maintenance.text: ''
+api_apps.breadcrumb: ''
+api_apps.created.message: ''
+promotions.breadcrumb: ''
+promotions.breadcrumb.new_credit_note: ''
+promotions.heading.free_delivery: ''
+promotions.heading.free_delivery.help: ''
+promotions.heading.credit_note: ''
+promotions.heading.credit_note.help: ''
+promotions.promotion_coupon.success: ''
+promotions.add_free_delivery_coupon: ''
+promotions.create_credit_note_coupon: ''
+delivery.table.heading.summary: ''
+delivery.table.heading.courier: ''
+delivery.table.heading.order: ''
+search.users: ''
+allergens.CEREALS_CONTAINING_GLUTEN: ''
+allergens.CRUSTACEANS: ''
+allergens.EGGS: ''
+allergens.FISH: ''
+allergens.PEANUTS: ''
+allergens.SOYBEANS: ''
+allergens.MILK: ''
+allergens.NUTS: ''
+allergens.CELERY: ''
+allergens.MUSTARD: ''
+allergens.SESAME_SEEDS: ''
+allergens.SULPHUR_DIOXIDE_SULPHITES: ''
+allergens.LUPIN: ''
+allergens.MOLLUSCS: ''
+restricted_diets.DIABETIC_DIET: ''
+restricted_diets.GLUTEN_FREE_DIET: ''
+restricted_diets.HALAL_DIET: ''
+restricted_diets.HINDU_DIET: ''
+restricted_diets.KOSHER_DIET: ''
+restricted_diets.LOW_CALORIE_DIET: ''
+restricted_diets.LOW_FAT_DIET: ''
+restricted_diets.LOW_LACTOSE_DIET: ''
+restricted_diets.LOW_SALT_DIET: ''
+restricted_diets.VEGAN_DIET: ''
+restricted_diets.VEGETARIAN_DIET: ''
+time_slot.human_readable: ''
+time_range: ''
+time_range.same_day: ''
+time_range.next_day: ''
+time_range.last_day: ''
+time_range.same_else: ''
+resend_confirmation_email.disclaimer: ''
+sylius.ui.code: ''
+sylius.form.promotion_coupon.per_customer_usage_limit: ''
+deliveries.sort.newest: ''
+deliveries.sort.oldest: ''
+deliveries.filter.clear: ''
+orders.new: ''
+basics.copy: ''
+orders.payment_link.send_by_email: ''
+orders.payment_link.sent: ''
+orders.payment_refunded: ''
+form.min_max.lower.label: ''
+form.min_max.upper.label: ''
+form.min_max.infinity.label: ''
+form.local_business.iso_code.fr.siret: ''
+form.local_business.iso_code.fr.vat_number: ''
+form.local_business.iso_code.fr.rcs_number: ''
+receipt.title: ''
+receipt.line_item.name: ''
+receipt.line_item.unit_price: ''
+receipt.line_item.quantity: ''
+receipt.line_item.total: ''
+receipt.line_item.total_products: ''
+receipt.footer_item.total_excl_tax: ''
+receipt.footer_item.total_incl_tax: ''
+receipt.total: ''
+receipt.billing_details: ''
+receipt.emitter_details: ''
+delivery.import.success_message: ''
+form.delivery_import.file.label: ''
+form.delivery_import.store.label: ''
+basics.view_example: ''
+notifications.restaurant.new_order: ''
+profile.loopeat.connect: ''
+profile.loopeat.connected: ''
+basics.free: ''
+task.receipt.greeting: ''
+task.receipt.message: ''
+task.receipt.received_by: ''
+task.receipt.attached_images: ''
+task.receipt.reference: ''
+basics.hours: ''
+basics.days: ''
+basics.weeks: ''
+basics.none: ''
+basics.yes: ''
+basics.no: ''
+notifications.messenger_approaching: ''
+order.export.heading.restaurant_name: ''
+order.export.heading.order_number: ''
+order.export.heading.completed_at: ''
+order.export.heading.total_products_excl_tax: ''
+order.export.heading.total_products_incl_tax: ''
+order.export.heading.delivery_fee: ''
+order.export.heading.packaging_fee: ''
+order.export.heading.tip: ''
+order.export.heading.total_incl_tax: ''
+order.export.heading.stripe_fee: ''
+order.export.heading.platform_fee: ''
+order.export.heading.net_revenue: ''
+order.export.heading.completed_by: ''
+form.order_export.date.label: ''
+form.order_export.messenger.label: ''
+basics.show: ''
+basics.hide: ''
+food_establishment.BAKERY: ''
+food_establishment.BAR_OR_PUB: ''
+food_establishment.BREWERY: ''
+food_establishment.CAFE_OR_COFFEE_SHOP: ''
+food_establishment.DISTILLERY: ''
+food_establishment.FAST_FOOD_RESTAURANT: ''
+food_establishment.ICE_CREAM_SHOP: ''
+food_establishment.RESTAURANT: ''
+food_establishment.WINERY: ''
+store.AUTO_PARTS_STORE: ''
+store.BIKE_STORE: ''
+store.BOOK_STORE: ''
+store.CLOTHING_STORE: ''
+store.COMPUTER_STORE: ''
+store.CONVENIENCE_STORE: ''
+store.DEPARTMENT_STORE: ''
+store.ELECTRONIC_STORE: ''
+store.FLORIST: ''
+store.FURNITURE_STORE: ''
+store.GARDEN_STORE: ''
+store.GROCERY_STORE: ''
+store.HARDWARE_STORE: ''
+store.HOBBY_SHOP: ''
+store.HOME_GOODS_STORE: ''
+store.JEWELRY_STORE: ''
+store.LIQUOR_STORE: ''
+store.MENS_CLOTHING_STORE: ''
+store.MOBILE_PHONE_STORE: ''
+store.MOVIE_RENTAL_STORE: ''
+store.MUSIC_STORE: ''
+store.OFFICE_EQUIPMENT_STORE: ''
+store.OUTLET_STORE: ''
+store.PAWN_SHOP: ''
+store.PET_STORE: ''
+store.SHOE_STORE: ''
+store.SPORTING_GOODS_STORE: ''
+store.TIRE_SHOP: ''
+store.TOY_STORE: ''
+store.WHOLESALE_STORE: ''
+form.local_business_type.food_establishment: ''
+form.local_business_type.store: ''
+form.local_business_type.label: ''
+form.local_business_type.help: ''
+notifications.tasks_changed: ''
+restaurant_promotion.offer_delivery: ''
+restaurant_promotion.offer_delivery.help: ''
+form.offer_delivery.coupon_code.error.exists: ''
+form.offer_delivery.coupon_code.help: ''
+users.all: ''
+users.couriers: ''
+users.restaurant_owners: ''
+users.store_owners: ''
+users.administrators: ''
+users.sort.alphabetically: ''
+users.sort.newest: ''
+sms.simple: ''
+sms.with_tracking: ''
+basics.close: ''
+fulfillment_method.delivery: ''
+fulfillment_method.collection: ''
