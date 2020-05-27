@@ -86,8 +86,8 @@ restaurants.placeholder.title: Un poco de paciencia…
 restaurants.placeholder.text: ¡Nuevos restaurantes llegarán pronto!
 localBusiness.form.orderingDelayMinutes: Tiempo adicional antes del pedido
 localBusiness.form.orderingDelayMinutes.help: Usa éstos campos para añadir un tiempo
-  adicional antes del pedido de un usuario. Esta opción no cambia los tiempos considerados
-  para la preparación de la comida (20 minutos) y el reparto (25 minutos).
+  adicional antes del pedido de un usuario. Esta opción no cambia los tiempos de preparación
+  de la comida (20 minutos) y ni de entrega (25 minutos).
 localBusiness.form.orderingDelayDays: Día(s)
 localBusiness.form.orderingDelayHours: Hora(s)
 localBusiness.form.name: Nombre
@@ -108,12 +108,13 @@ restaurant.closedWarningWithDelay: Pide ahora para más tarde. Pedidos minimo %d
 restaurant.temporaryClosedWarning: Éste restaurante está cerrado hasta el <strong>%date%</strong>
   pero puedes hacer un pedido para más tarde
 restaurant.noMenuWarning: "Este restaurante no tiene menú por ahora\n"
-restaurant.form.enabled.tooltip: "Un restaurante desactivado no és visible en la plataforma,\
-  \ no aparece en los resultados de búsqueda ni es accesible para los visitantes.\n"
+restaurant.form.enabled.tooltip: "Cuando está desactivado, un restaurante no está\
+  \ visible en el sitio web. No aparece en los resultados de búsqueda y los visitantes\
+  \ no pueden acceder a la página del restaurante.\n"
 restaurant.form.allow_stripe_connect.label: Permitir que el restaurante administre
   la cuenta Stripe por sí mismo
-restaurant.form.temporaryClosingRule: Si desea cerrar el restaurante temporalmente
-  siga el siguiente enlace
+restaurant.form.temporaryClosingRule: Haga clic aquí para desactivar temporalmente
+  los pedidos a su restaurante.
 restaurant.form.accessPlanning: Acceder al calendario
 restaurant.form.createRestaurant: Crear restaurante
 restaurant.form.save: Guardar
@@ -128,7 +129,7 @@ restaurant.contract.flatDeliveryPrice.help: Esta suma no se mostrará en el carr
 restaurant.contract.customerAmount.label: Suma pagada por el cliente
 restaurant.contract.customerAmount.help: Esta suma se mostrará en el carrito y aumentará
   el precio total
-restaurant.contract.feeRate.label: Porcentaje de comisión
+restaurant.contract.feeRate.label: Porcentaje de comisión de entregas
 restaurant.contract.feeRate.help: Este porcentaje será retenido por la plataforma
   en el total de los productos
 restaurant.contract.restaurantPaysStripeFee.label: Responsable de la comisión Stripe,
@@ -161,10 +162,10 @@ restaurant.list.norestaurant: Aún no existen restaurantes
 restaurant.list.createNewRestaurant: Crear restaurante
 restaurant.list.preparationTime: Preparación
 restaurant.list.stats: Estadísticas
-restaurant.product_options.help: "Las opciones hacen que los productos sean <strong>configurables</strong>\n\
-  <br>\nPermiten, por ejemplo, agregar suplementos o elegir los elementos de un menú\
-  \ (acompañamiento, bebida…)\n<br>\nPara cada opción, puede definir una lista de\
-  \ valores\n"
+restaurant.product_options.help: "Esta sección le permite configurar elementos adicionales\
+  \ para <strong>configurables</strong>\n<br>\nPermiten, por ejemplo, agregar suplementos\
+  \ o elegir los elementos de un menú (acompañamiento, bebida…)\n<br>\nPara cada opción,\
+  \ puede definir una lista de valores\n"
 restaurant.product_options.list.values: Valores
 restaurant.form.uploadImage: Subir una imagen
 restaurant.form.add: Añadir
@@ -211,7 +212,7 @@ order.total_tax: IVA
 order.total_tax_by_rate: Total %name%
 order.preparation_expected_at: Preparación esperada a las %date%
 order.shipping_date.title: Tu horario de entrega
-order.payment.title: Tu información de pago
+order.payment.title: Información de tú pago
 order.payment.expiration.label: Caducidad
 order.payment.month.label: Mes
 order.payment.year.label: Año
@@ -290,13 +291,13 @@ form.store_type.pricing_rule_set.placeholder: Escoge una tarifa
 form.store_type.setAsDefault.label: Establecer como dirección predeterminada
 form.store_type.defaultAddress.label: Dirección predeterminada
 form.delivery.vehicle.placeholder: Escoge un vehículo
-form.delivery.pickup.label: Recogida
-form.delivery.dropoff.label: Entrega
+form.delivery.pickup.label: Dirección de recogida
+form.delivery.dropoff.label: Dirección de entrega
 form.delivery.weight.label: Peso
 form.delivery.weight.help: Por favor, indique el peso en gramos (1kg = 1000g)
-form.delivery.vehicle.label: Vehículo
-form.delivery.pickup.doneBefore.label: Horario de recogida
-form.delivery.dropoff.doneBefore.label: Horario de entrega
+form.delivery.vehicle.label: ¿Bicicleta normal o bicicleta de carga?
+form.delivery.pickup.doneBefore.label: Fecha y horario de recogida
+form.delivery.dropoff.doneBefore.label: Fecha y horario de entrega
 form.delivery.distance.label: Distancia
 form.delivery.duration.label: Duración
 form.delivery.store.label: Tienda
@@ -420,8 +421,8 @@ form.menu_editor.help: "Use el editor a continuación para componer los elemento
   \ menú\n<br>\nArrastra y suelta los productos en las secciones de la izquierda\n\
   <br>\nSi desea retirar un producto del menú, deposítelo en la sección \"Productos\"\
   \ a la derecha\n<br>\nNo olvides hacer clic en el botón « Guardar cambios » a continuación\n"
-form.menu_editor.products.help: "Para añadir productos en la lista de la derecha,\
-  \ primero tiene que modificar el <a href=\"%products_url%\">catálogo</a>\n"
+form.menu_editor.products.help: Para añadir productos en la lista de la derecha, agregalos
+  al <a href="%products_url%">catálogo</a>primero
 form.menu_editor.taxon_modal.title: Modificar una seccion
 form.product.name.label: Nombre
 form.product.description.label: Descripción
@@ -433,10 +434,10 @@ form.product.allergens.help: ¿Este producto contiene los siguientes alérgenos?
 form.product.restricted_diets.label: Dietas restringidas
 form.product.restricted_diets.help: ¿Este producto se ajusta a las siguientes dietas?
 form.product.confirm.label: Confirmar cambios
-form.product.confirm.help: "Has cambiado el nombre del producto. Si es una <strong>modificación\
+form.product.confirm.help: "Has cambiado el nombre del producto. Si es un <strong>modificación\
   \ menor</strong> (error de ortografía, mayúscula…), haga clic en « Confirmar cambios\
   \ ».\n<br>\nSi no, debe <a href=\"%link%\">crear un nuevo producto</a>, para que\
-  \ pueda distinguir los productos que vende y mantener un historial.\n"
+  \ pueda distinguir los productos que vende y mantener un historial. "
 form.product_option.name.label: Nombre
 form.product_option.strategy.label: Cálculo del precio
 form.product_option.add_value.label: Añadir valor
@@ -447,12 +448,13 @@ form.product_option_value.price.label: Precio
 form.product_option.additional.label: Esta opción es adicional
 form.product_option.additional.help: El cliente puede elegir varios valores, sin tener
   que elegir al menos uno
-form.checkout_address.notes.label: ¿Un comentario?
+form.checkout_address.notes.label: Deja un comentario para el restaurante
 form.checkout_address.notes.placeholder: "Ejemplo: sin salsa, sin tomates…\n"
 form.checkout_address.notes.help: Tu comentario será enviado al restaurante
 form.checkout_address.promotion_coupon.label: Código promocional
 form.checkout_address.telephone.label: Teléfono
 form.checkout_address.reusable_packaging_enabled.label: Quiero envases reutilizables
+  (%precio%)
 form.checkout_address.add_promotion.label: Aplicar
 form.task_export.start.label: Inicio
 form.task_export.end.label: Final
@@ -465,14 +467,14 @@ form.credit_note.amount.label: Suma
 form.credit_note.name.label: Nombre
 form.credit_note.name.help: El nombre del descuento que se mostrará en la cesta
 form.credit_note.restaurant.help: El descuento sólo se podrá utilizar para pedir en
-  este restaurante. Deje vacio para aplicar a todos los restaurantes.
+  este restaurante. Deje vacío para aplicar a todos los restaurantes.
 form.embed_settings.with_vehicle.label: Añadir la posibilidad de elegir el tipo de
   vehículo
 form.delivery_embed.name.label: Nombre
 form.delivery_embed.name.help: Vuestro nombre o el nombre de la empresa
 form.delivery_embed.telephone.label: Número de teléfono
 form.delivery_embed.vehicle.disclaimer: Entregamos en bicicleta de carga artículos
-  de más de 50x40x20 (cm) o cuyo peso exceda los 6 kg
+  de más de 50x40x20 (cm) y/o cuyo peso exceda los 6 kg.
 form.resend_confirmation_email.submit.label: Reenviar correo electrónico
 form.stripe_payment.cardholder_name.label: Nombre del titular de la tarjeta
 promotion_coupon.used.label: Número de usos
@@ -490,10 +492,10 @@ user.edit.enabled.help: Un usuario desactivado sera desconectado y no podrá vol
   a iniciar sesión en la plataforma.
 user.profile.familyName: Apellidos
 user.profile.givenName: Nombre
-roles.ROLE_ADMIN.help: "Administrador : Acceso total a todas las opciones\n"
-roles.ROLE_COURIER.help: "Mensajero : ver tareas pendientes, modificar tareas asignadas…\n"
-roles.ROLE_RESTAURANT.help: "Propietario de restaurante: gestionar restaurantes asignados,\
-  \ gestionar pedidos…\n"
+roles.ROLE_ADMIN.help: "Administrador : Acceso completo a todas las opciones\n"
+roles.ROLE_COURIER.help: "Mensajero: ver tareas pendientes, modificar tareas asignadas…\n"
+roles.ROLE_RESTAURANT.help: 'Propietario de restaurante: gestionar restaurantes asignados,
+  gestionar pedidos…'
 roles.ROLE_STORE.help: 'Propietario de tienda: gestionar tiendas asignadas, gestionar
   entregas…'
 stores.form.save: Guardar
@@ -578,7 +580,7 @@ allergens.NUTS: Nueces
 allergens.CELERY: Apio
 allergens.MUSTARD: Mostaza
 allergens.SESAME_SEEDS: Semillas de sésamo
-allergens.SULPHUR_DIOXIDE_SULPHITES: Dióxido de azufre
+allergens.SULPHUR_DIOXIDE_SULPHITES: Dióxido de azufre y sulfitos
 allergens.LUPIN: Altramuz
 allergens.MOLLUSCS: Moluscos
 restricted_diets.DIABETIC_DIET: Diabético
@@ -604,26 +606,27 @@ delivery.table.heading.courier: Mensajero
 delivery.table.heading.order: Pedido
 embed.delivery.iframe_code: Utilice el código HTML a continuación para insertar el
   formulario en su sitio web
-embed.breadcrumb.start: Informaciones
+embed.breadcrumb.start: Información
 embed.breadcrumb.summary: Resumen
 embed.breadcrumb.confirm: Confirmación
 embed.delivery.summary.title: Resumen de tu pedido
-embed.delivery.use_form_below: Utiliza el siguiente formulario para pagar tu pedido
-  con tarjeta de crédito
+embed.delivery.use_form_below: Usa el siguiente formulario para pagar tu pedido con
+  tarjeta de crédito
 embed.delivery.paid_at: Pago realizado en %date%
 embed.payment.heading: Pagar mi pedido
 embed.delivery.contact_heading: Contacto
 embed.delivery.specify_billing_address: Especifica una dirección de facturación
 embed.delivery.billing_address: Dirección de Envio
 embed.delivery.summary: "Has solicitado un pedido que será entregado en <strong>%dropoff_date%</strong>\
-  \ \nA la siguiente dirección: <strong>%dropoff_address%</strong> <br> Calculamos\
-  \ una distancia de <strong>%distance% kilometers</strong>. <br> Según nuestros precios,\
-  \ este pedido te costará <strong>%total_excluding_tax% tax excl.</strong> (%total_including_tax%\
-  \ tax incl.)."
+  \ a la siguiente dirección: <strong>%dropoff_address%</strong> <br> Calculamos la\
+  \ distancia de <strong>%distance% kilometers</strong>. <br> El prescio del pedido\
+  \ es <strong>%total_excluding_tax% (sin IVA); </strong> %total_including_tax% (sin\
+  \ IVA). <br><br>If any of the above details are incorrect, please change them by\
+  \ clicking the 'Edit' button. "
 embed.delivery.submit.help: Haz clic para confirmar el pedido y realizar la entrega.
-embed.delivery.confirm_message: Hemos registrado su solicitud. Tu pedido está a la
-  espera de validación. <br> Te enviaremos un correo electrónico en unos minutos.
-  Recibirás un segundo correo cuando se confirme el pedido.
+embed.delivery.confirm_message: Su pedido de entrega se ha realizado y recibirá un
+  resumen por correo electrónico en breve. Verificaremos su pedido y le enviaremos
+  un correo electrónico de confirmación lo antes posible.
 basics.next: Siguiente
 basics.continue: Continuar
 basics.created_at: Creado el %date%
@@ -633,8 +636,8 @@ base.footer.suggest: Sugerir un restaurante
 adminDashboard.package_sets.title: Paquetes
 adminDashboard.restaurants.exclusive: Exclusivo
 adminDashboard.pledges.title: Sugerencias
-adminDashboard.tags.confirm_delete: ¿Estás seguro de eliminar esta etiqueta? Todos
-  los elementos relacionados ya no podrán mostrar ni a agrupar.
+adminDashboard.tags.confirm_delete: "¿Estás seguro de eliminar esta etiqueta? \nTodos\
+  \ los elementos relacionados ya no se podrán mostrar ni a agrupar."
 adminDashboard.time_slots.title: Franja horaria
 delivery.tracking_link: Enlace de seguimiento
 delivery.with_id: 'Entrega #%id%'
@@ -664,7 +667,7 @@ form.settings.enable_restaurant_pledges.label: Permitir a los clientes sugerir r
 form.suggest.name.label: Nombre
 form.suggest.name.help: Indique el nombre exacto para que podamos encontrarlo
 form.suggest.submit.label: Sugerir ahora
-form.suggest.message: "¿No encuentras tu restaurante favorito?\n<br>\nDanos su nombre\
+form.suggest.message: "¿No encuentras tu restaurante favorito?\n<br>\nDinos su nombre\
   \ y dirección. Luego, otros usuarios pueden votar para verlo aparecer en la lista\
   \ de restaurantes.\n<br>\nEsto nos permitirá identificar mejor los restaurantes\
   \ a los que nos dirigiremos y proporcionarles la prueba de una demanda real.\n"
@@ -699,25 +702,25 @@ basics.stripe_fees: Tarifas de Stripe
 basics.platform_fees: Tarifas de plataforma
 basics.net_income: Ingresos netos
 time_slot.human_readable: '%day% entre %start% y %end%'
-time_range: 'entre %start% y %end%'
+time_range: entre %start% y %end%
 time_range.same_day: '[Hoy] [%range%]'
 time_range.next_day: '[Mañana] [%range%]'
 time_range.last_day: '[Ayer] [%range%]'
 time_range.same_else: '[El] LL [%range%]'
 resend_confirmation_email.disclaimer: Si no ha recibido el correo electrónico de confirmación,
   haga clic en el botón.
-basics.send_invitation.confirm: ¡ Tu  invitación ha sido enviada ! Ahora puede editar
-  los ajustes del nuevo usario.
+basics.send_invitation.confirm: ¡Tu invitación ha sido enviada! Ahora puede editar
+  los ajustes del nuevo usuario.
 basics.send_invitation: Enviar una invitación
-form.delivery.view_order: Ver la orden
+form.delivery.view_order: Ver pedido
 form.delivery.time_slot.label: Intervalo de tiempo
 form.delivery.has_order.info: Esta entrega esta vinculada a una orden
-form.delivery.to_be_confirmed.warning: Uste debe confirmar la orden
+form.delivery.to_be_confirmed.warning: Usted debe confirmar la orden
 order_item.adjustment_type.reusable_packaging: '%quantity% × paquete(s)'
 order.adjustment_type.reusable_packaging: Embalaje
-order.reusable_packaging.alert: Esta orden debe estar empacada en un paquete reutilizable
-form.user.quotes_allowed.label: Permitir a este cliente solicitar una cita
-restaurant.form.quotes_allowed.label: 'Este restaurante tambien accepta pedidos en
+order.reusable_packaging.alert: Este pedido debe estar en un paquete reutilizable
+form.user.quotes_allowed.label: Permitir a este cliente solicitar un presupuesto
+restaurant.form.quotes_allowed.label: 'Este restaurante también accepta pedidos en
   citas (ej: catering)'
 restaurant.form.exclusive.label: Este restaurante es exclusivo
 restaurant.form.noPricingRule: Ninguna tarificación ha sido implementada, <a href="%editPricingRule%">haga
@@ -727,13 +730,248 @@ restaurant.quotes_disclaimer.not_authenticated: Éste restaurante tabmien accept
   crear una cita. <a href="%contact_us%">Contáctenos</a> para más información.
 receipt.title: 'Recibo del pedido #%number%'
 receipt.line_item.name: Producto
-receipt.line_item.unit_price: Precio unitario
+receipt.line_item.unit_price: Precio por unidad
 receipt.line_item.quantity: Cantidad
 receipt.line_item.total: Total
 receipt.line_item.total_products: Total productos
-receipt.footer_item.total_excl_tax: Total excl. impuestos
-receipt.footer_item.total_incl_tax: Total incl. impuestos
-receipt.total: Total incl. impuestos
+receipt.footer_item.total_excl_tax: Total (sin IVA)
+receipt.footer_item.total_incl_tax: Total (IVA incl.)
+receipt.total: Total (IVA incl.)
 receipt.billing_details: Pedido pagado con tarjeta de crédito el %date%
 receipt.emitter_details: Pedido en el restaurante <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nuevo pedido por confirmar
+form.checkout_address.quote.label: Solicitar presupuesto
+form.reusable_packaging.name.label: Nombre
+order.export.heading.restaurant_name: Restaurante
+order.export.heading.net_revenue: Ingresos netos
+order.export.heading.completed_by: Completado por
+form.order_export.date.label: Fecha
+basics.show: Mostrar
+basics.import: Importar
+form.min_max.lower.label: Número mínimo
+order.adjustment_type.tip: Propina
+basics.copy: Copiar
+adminDashboard.users.invite: Invitar usuario
+order.export.heading.total_products_excl_tax: Productos totales (sin IVA)
+users.couriers: Mensajeros
+users.restaurant_owners: Dueños de restaurantes
+order.total_excluding_tax: Total (sin IVA)
+order.public_link: Enlace para compartir
+order.payments: Pagos
+order.notes: Notas de los clientes
+localBusiness.form.enabled: Habilitado
+restaurant.form.deposit_refund_enabled.label: Habilitar el sistema de depósito y reembolso
+restaurant.contract.variableDeliveryPrice.label: Cantidad cobrada por la plataforma
+  (variable)
+form.price_with_tax.tax_excl.label: Precio (sin IVA)
+form.price_with_tax.tax_incl.label: Precio (IVA incl.)
+deliveries.filter.clear: Mostrar todo
+restaurant.form.loopeat_enabled.label: Habilite el sistema de depósito y reembolso
+  de LoopEat
+food_establishment.BAKERY: Panadería
+restaurant.contract.variableDeliveryPrice.placeholder: Por favor seleccione un conjunto
+  de reglas de precios
+restaurant.contract.variableDeliveryPriceEnabled.label: Habilite la cantidad variable
+  que cobra la plataforma
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: La cantidad se calcula
+  dinámicamente
+form.delivery_import.store.label: Tienda
+basics.view_example: Ver ejemplo
+task.receipt.greeting: Querido cliente,
+basics.close: Cerca
+form.time_slot.prior_notice_hours.label: Aviso previo (horas)
+restaurant.form.loopeat_disconnect.label: Desconertar LoopEat
+restaurant.form.featured.label: Este restaurante aparece en la página de inicio
+restaurant.form.fulfillment_methods.label: Métodos de cumplimiento
+restaurant.form.section.settlement: Liquidación
+restaurant.contract.variableDeliveryPrice.help: El importe cobrado se calculará utilizando
+  el conjunto de reglas de precios seleccionados
+localBusiness.form.openingHoursBehavior: Comportamiento del horario de apertura
+localBusiness.form.openingHoursBehavior.asap: Lo antes posible
+localBusiness.form.openingHoursBehavior.time_slot: Intervalo de tiempo
+restaurant.quotes_disclaimer.authenticated: Este restaurante también acepta pedidos
+  de cotización. Para crear presupuestos, debe ser un cliente referenciado.<a href="%contact_us%">Contact
+  us</a>para más información.
+form.task.dropoff.doorstep.label: Umbral de entrega
+form.reusable_packaging.is_tracked.label: Seguimiento habilitado
+form.new_order.variant_name.help: El nombre que aparecerá en el resumen del pedido
+  y la factura
+basics.view: Ver
+deliveries.sort.newest: La más nueva primero
+orders.payment_refunded: Pago reembolsado con éxito
+delivery.import.success_message: Su archivo se procesó correctamente, se crearon %count%
+  entregas
+basics.free: gratis
+task.receipt.message: Por la presente confirmamos que hemos entregado su paquete en
+  <strong>%address%</strong> en <strong>%date%</strong>
+order.export.heading.total_products_incl_tax: Producto total (IVA incl.)
+order.export.heading.packaging_fee: Embalaje
+form.order_export.messenger.label: Agregar una columna con el/la mensajero que completó
+  el pedido
+food_establishment.BAR_OR_PUB: Bar o Pub
+store.AUTO_PARTS_STORE: Tienda de recambios
+store.COMPUTER_STORE: Tienda de informática
+store.CONVENIENCE_STORE: Tienda de conveniencia
+store.DEPARTMENT_STORE: Grandes almacenes
+store.ELECTRONIC_STORE: Tienda de electrónica
+store.FURNITURE_STORE: Mueblería
+store.GARDEN_STORE: Tienda de jardinería
+store.GROCERY_STORE: Tienda de alimentación
+store.HARDWARE_STORE: Ferretería
+store.HOBBY_SHOP: Tienda de pasatiempos
+store.HOME_GOODS_STORE: Tienda de artículos para el hogar
+store.JEWELRY_STORE: Joyería
+store.LIQUOR_STORE: Licorería
+store.MENS_CLOTHING_STORE: Tienda de ropa de hombre
+store.MOBILE_PHONE_STORE: Tienda de telefonía
+store.MOVIE_RENTAL_STORE: Video club
+store.SPORTING_GOODS_STORE: Tienda de deporte
+form.local_business_type.help: Los tipos están usando el<a href="https://schema.org/">schema.org</a>
+  vocabulario para <a href="https://schema.org/FoodEstablishment">establecimientos
+  de comida</a> y <a href="https://schema.org/Store">tiendas</a>
+restaurant_promotion.offer_delivery.help: Esto le permite ofrecer los gastos de envío
+  <strong>con tu propio dinero</strong>. Su margen se verá disminuido por el monto
+  de los gastos de envío. Esto<strong>no disminuirá</strong> las tarifas percibidas
+  por la plataforma.
+form.offer_delivery.coupon_code.help: Es su responsabilidad comunicar este código
+  al cliente, ya sea personalmente o a través de las redes sociales
+users.all: Todos los usuarios
+basics.allow_edit: Permitir edición
+restaurant.form.giropay_enabled.label: Habilitar Giropay
+restaurant.form.section.general: General
+restaurant.form.section.options: Opciones
+restaurant.form.section.fulfillment: Cumplimiento
+restaurant.form.section.payment: Pago
+restaurant.contract.variableCustomerAmount.label: Importe pagado por la cliente (variable)
+restaurant.contract.variableCustomerAmount.help: El precio pagado se calculará utilizando
+  el conjunto de reglas de precios seleccionado
+restaurant.contract.variableCustomerAmount.placeholder: Por favor seleccione un conjunto
+  de reglas de precios
+restaurant.contract.takeAwayFeeRate.label: Tarifa de plataforma para llevar
+restaurant.contract.takeAwayFeeRate.help: Este porcentaje será retenido por la plataforma
+  en el total de los productos
+restaurant.contract.variableCustomerAmountEnabled.label: Habilitar la cantidad variable
+  pagado por la cliente
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: La cantidad se calcula
+  dinámicamente
+restaurant.contract.calculation_info: Puede cobrar al restaurante una cantidad diferente
+  de la cantidad pagada por el cliente. <br> Por ejemplo, puede ofrecer la entrega
+  al cliente mientras cobra una cantidad fija al restaurante. <br> También puede configurar
+  una cantidad dinámica (por ejemplo, en función de la distancia).
+restaurant.list.depositRefund: Reembolso de depósito
+restaurant.list.promotions: Promociones
+order.payment.redirect.help: Será redirigido a la entidad bancaria para completar
+  su pago
+order.payment.waiting_for_confirmation: Esperando la confirmación de su banco…
+order.payment.do_not_close: No cierre esta página
+order.payment.waiting_success: Su banco a confirmado el pago
+order.payment.waiting_failure: Su banco a rechazado el pago
+form.task.telephone.label: Teléfono
+form.task.recipient.label: Contacto
+form.task.recipient.help: Especifique nombre de la persona de contacto
+form.delivery.pickup.address_placeholder: Número de casa y nombre de la calle, área,
+  código postal, ciudad
+form.delivery.dropoff.address_placeholder: Número de casa y nombre de la calle, área,
+  código postal, ciudad
+form.order.refuse.label: Rechazar
+form.order.refuse.refund.alert: Este pedido se pagó con un método de pago que no gestiona
+  las autorizaciones previas. Si lo rechaza, se reembolsará el pago. ¿Estás seguro?
+form.settings.company_logo.label: Logo de empresa
+form.settings.company_logo.help: Este logo se usará para facturas y comprobantes de
+  entrega
+form.product.reusable_packaging_enabled.label: Habilite el envoltorio reutilizable
+  para este producto
+form.product.reusable_packaging.label: Tipo de envoltorio reutilizable
+form.product.reusable_packaging_unit.label: Número de unidades
+form.product_option.preview_title: Opción vista previa
+form.checkout_address.reusable_packaging_loopeat_enabled.label: Quiero usar contenedores
+  LoopEat
+form.checkout_address.tip_amount.label: Propina
+form.checkout_address.tip_amount.help: Muchas gracias❤
+form.checkout_address.add_tip.label: Aplicar
+form.checkout_address.takeaway.disclaimer: Has optado por hacer clic y recoger. Usted
+  es responsable de recoger su pedido el día y la hora seleccionados.
+form.checkout_address.takeaway.contact: Si tiene algún problema, contacte con el establecimiento
+  %teléfono%.
+form.checkout_payment.method.label: Elija un método de pago
+form.checkout_address.reusable_packaging.loopeat.learn_more: Saber más sobre LoopEat
+form.embed_settings.with_weight.label: Consultar peso de bienes
+form.time_slot.working_days_only.label: Permitir seleccionar sólo días laborales
+form.reusable_packaging.price.label: Precio
+form.reusable_packaging.on_hand.label: Cantidad
+form.deposit_refund_settings.deposit_refund_optin.label: El sistema de reembolso es
+  opcional
+form.new_order.variant_name.label: Nombre del producto
+form.new_order.variant_price.label: Precio
+index.our_shops: Tiendas locales
+index.view_all_shops: Ver todas las tiendas
+activity.task.started: "@%owner% comenzó tarea #task/%aggregate_id%\n"
+basics.updated_at: Actualizado en %date%
+deliveries.sort.oldest: Los más viejos primero
+orders.new: Nuevo pedido
+orders.payment_link.send_by_email: Enviar enlace de pago por correo electrónico
+orders.payment_link.sent: Email enviado con éxito
+form.min_max.upper.label: Número máximo
+form.min_max.infinity.label: Sin máximo
+form.local_business.iso_code.fr.siret: Número SIRET
+form.local_business.iso_code.fr.vat_number: Número IVA
+form.local_business.iso_code.fr.rcs_number: Número RCS
+form.delivery_import.file.label: Archivo
+profile.loopeat.connect: Conectar mi cuenta de LoopEat
+profile.loopeat.connected: Cuenta de LoopEat conectada
+task.receipt.received_by: El paquete fue recibido por <strong>%name%</strong>
+task.receipt.attached_images: Imágenes adjuntas
+task.receipt.reference: 'Referencia: <strong>%ref%</strong>'
+basics.hours: '%count% hour|%count% horas'
+basics.days: '%count% day|%count% días'
+basics.weeks: '%count% week|%count% semanas'
+basics.none: Ninguna
+basics.yes: Si
+basics.no: No
+notifications.messenger_approaching: Hey %customer%! Nuestro mensajero %messenger%
+  está casi contigo. Prepárate!
+order.export.heading.order_number: Número de pedido
+order.export.heading.completed_at: Completado en
+order.export.heading.delivery_fee: Gastos de envío
+order.export.heading.tip: Propina
+order.export.heading.total_incl_tax: Total (IVA incl.)
+order.export.heading.stripe_fee: Comisión Stripe
+order.export.heading.platform_fee: Comisión plataforma
+basics.hide: Ocultar
+food_establishment.BREWERY: Cervecería
+food_establishment.CAFE_OR_COFFEE_SHOP: Cafetería
+food_establishment.DISTILLERY: Destilería
+food_establishment.FAST_FOOD_RESTAURANT: Restaurante de comida rápida
+food_establishment.ICE_CREAM_SHOP: Heladería
+food_establishment.RESTAURANT: Restaurante
+food_establishment.WINERY: Bodega
+store.BIKE_STORE: Tienda de bicicletas
+store.BOOK_STORE: Librería
+store.CLOTHING_STORE: Tienda de ropa
+store.FLORIST: Floristería
+store.MUSIC_STORE: Tienda de música
+store.OFFICE_EQUIPMENT_STORE: Tienda material de oficina
+store.OUTLET_STORE: Tienda Outlet
+store.PAWN_SHOP: Casa de empeños
+store.PET_STORE: Tienda de mascotas
+store.SHOE_STORE: Zapatería
+store.TIRE_SHOP: Tienda de neumáticos
+store.TOY_STORE: Juguetería
+store.WHOLESALE_STORE: Almacén al por mayor
+form.local_business_type.food_establishment: Establecimiento de comida
+form.local_business_type.store: Tienda
+form.local_business_type.label: Tipo de negocio
+notifications.tasks_changed: Tarea para %date% cambiada!
+restaurant_promotion.offer_delivery: Ofrecer tarifas de entrega
+form.offer_delivery.coupon_code.error.exists: Este código ya existe
+users.store_owners: Dueños de tiendas
+users.administrators: Administradores
+users.sort.alphabetically: Alfabeticamente
+users.sort.newest: Registrado recientemente
+sms.simple: "Hola,\nNuestro mensajero esta en camino a %address%.\n"
+sms.with_tracking: "Hola,\nnuestro mensajero esta en camino a %address%.\nSiguelo\
+  \ en %link%\n"
+fulfillment_method.delivery: Entrega
+fulfillment_method.collection: colecta
+form.checkout_address.takeaway.no_show_disclaimer: 'Tenga en cuenta: si no recoge,
+  se le cobrará el importe total del pedido.'

@@ -1,150 +1,74 @@
-registration.email.subject: 'Confirmació per correu electrònic
-
-  '
-registration.email.message: '<h2>Benvingut a %brand_name%, %username%</h2>
-
-  Has rebut aquest missatge perquè t''has registrat recentment a un compte %brand_name%.
-
-  <br>
-
-  Confirma la teva adreça de correu electrònic fent clic al botó següent.
-
-  '
+registration.email.subject: "Confirmació per correu electrònic\n"
+registration.email.message: "<h2>Benvingut a %brand_name%, %username%</h2>\nHas rebut\
+  \ aquest missatge perquè t'has registrat recentment a un compte %brand_name%.\n\
+  <br>\nConfirma la teva adreça de correu electrònic fent clic al botó següent.\n"
 registration.email.confirm: Confirma el correu electrònic
 registration.email.disclaimer: Aquest enllaç només es pot utilitzar una vegada per
   validar el vostre compte
-registration.email.textMessage: 'Benvingut a %brand_name%, %username%,\n\n
-
-  Heu rebut aquest missatge perquè us heu registrat recentment a un compte %brand_name%.\n
-
-  Per confirmar el correu electrònic, feu clic a l’enllaç següent: <a href="%confirmationUrl%"
-  rel="notrack">%confirmationUrl%</a>.
-
-  '
+registration.email.textMessage: "Benvingut a %brand_name%, %username%,\\n\\n\nHeu\
+  \ rebut aquest missatge perquè us heu registrat recentment a un compte %brand_name%.\\\
+  n\nPer confirmar el correu electrònic, feu clic a l’enllaç següent: <a href=\"%confirmationUrl%\"\
+  \ rel=\"notrack\">%confirmationUrl%</a>.\n"
 resetting.email.message: <h2>Hola %username%</h2> Per restablir la vostra contrasenya,
   feu clic al botó següent.
 resetting.email.reset: Restablir la contrasenya
 order.view: Veure comanda
-order.public_url: 'Per fer el seguiment de l’estat de la comanda, <a href="%order.public_url%">clica
-  aquí</a>.
-
-  '
-order.foodtech.cancelled: 'El restaurant no pot preparar la vostra comanda %order.number%.
-
-  <br>
-
-  No s’ha carregat el vostre compte.
-
-  '
+order.public_url: "Per fer el seguiment de l’estat de la comanda, <a href=\"%order.public_url%\"\
+  >clica aquí</a>.\n"
+order.foodtech.cancelled: "El restaurant no pot preparar la vostra comanda %order.number%.\n\
+  <br>\nNo s’ha carregat el vostre compte.\n"
 admin.order.created.subject: S'ha de confirmar la nova comanda
-admin.order.created.body: 'Hola,
-
-  <br>
-
-  S''ha creat una nova comanda.
-
-  '
-admin.order_foodtech.created.body: 'Hola,
-
-  <br>
-
-  S''ha creat una nova comanda per <strong>%restaurant.name%</strong>.
-
-  '
+admin.order.created.body: "Hola,\n<br>\nS'ha creat una nova comanda.\n"
+admin.order_foodtech.created.body: "Hola,\n<br>\nS'ha creat una nova comanda per <strong>%restaurant.name%</strong>.\n"
 admin.pledge.subject: S'ha enviat un nou suggeriment!
-admin.pledge.body: 'Hola,
-
-  <br>
-
-  %username% li agradaria %pledge.name% estar a CoopCycle !
-
-  <br>
-
-  Gràcies!
-
-  <br>
-
-  L’equip de CoopCycle.
-
-  '
+admin.pledge.body: "Hola,\n<br>\n%username% li agradaria %pledge.name% estar a CoopCycle\
+  \ !\n"
 user.pledge.subject: El vostre suggeriment és ara a CoopCycle!
-user.pledge.body: 'Hola,
-
-  <br>
-
-  Gràcies a tu, %pledge.name% ara és a CoopCycle!!
-
-  <br>
-
-  Atentament,
-
-  <br>
-
-  Equip de CoopCycle.
-
-  '
+user.pledge.body: "Hola,\n<br>\nGràcies a tu, %pledge.name% ara és a CoopCycle!!\n"
 owner.order.created.subject: Nova comanda per confirmar
-owner.order.created.body: 'Hola,
-
-  <br>
-
-  S''ha efectuat una nova comanda per <strong>%restaurant.name%</strong>.
-
-  '
-order.created.subject: Confirmació de la comanda %order.number%
-order.created.body: 'Hola,
-
-  <br>
-
-  Hem registrat la vostra comanda.
-
-  <br>
-
-  Comprobarem la vostra comanda tan aviat com sigui possible i ens posarem en contacte
-  amb tu quan es confirmi.
-
-  '
-order.accepted.subject: La teva comanda %order.number% ha estat acceptada
-order.accepted.body.intro: 'Hola,
-
-  <br>
-
-  La vostra comanda està confirmada.
-
-  '
+owner.order.created.body: "Hola,\n<br>\nS'ha efectuat una nova comanda per <strong>%restaurant.name%</strong>.\n"
+order.created.subject: La comanda %order.number% ha estat rebuda
+order.created.body: "Hola,\n<br>\nHem registrat la vostra comanda.\n<br>\nComprobarem\
+  \ la vostra comanda tan aviat com sigui possible i ens posarem en contacte amb tu\
+  \ quan es confirmi.\n"
+order.accepted.subject: La teva comanda %order.number% ha estat confirmat per a lliurar
+order.accepted.body.intro: "Hola,\n<br>\nLa vostra comanda està confirmada."
 order.cancelled.subject: La teva comanda %order.number% ha estat cancel·lat
-order.cancelled.body.intro: 'Hola,
-
-  <br>
-
-  Ho sentim, però s''ha cancel·lat la vostra comanda.
-
-  '
+order.cancelled.body.intro: "Hola,\n<br>\nHo sentim, però s'ha cancel·lat la vostra\
+  \ comanda.\n"
 order.delayed.subject: La teva comanda %order.number% s'ha endarrerit
-order.delayed.body: 'Hola,
-
-  <br>
-
-  Ho sentim, però la vostra comanda es retardarà %delay% minuts.
-
-  <br>
-
-  Demanem disculpes per les molèsties.
-
-  '
+order.delayed.body: "Hola,\n<br>\nHo sentim, però la vostra comanda es retardarà %delay%\
+  \ minuts.\n<br>\nDemanem disculpes per les molèsties.\n"
 task.done.subject: 'Tasca #%task.id% finalitzat'
-task.done.body: 'Hola,
-
-  <br>
-
-  Tasca #%task.id% s’ha completat
-
-  '
-task.failed.subject: 'Tasca #%task.id% no s''ha pogut completar'
-task.failed.body: 'Hola,
-
-  <br>
-
-  Tasca #%task.id% no s''ha pogut completar.
-
-  '
+task.done.body: "Hola,\n<br>\nTasca #%task.id% s’ha completat\n"
+task.failed.subject: "Tasca #%task.id% no s'ha pogut completar"
+task.failed.body: "Hola,\n<br>\nTasca #%task.id% no s'ha pogut completar.\n"
+covid_19.body: "<h1>instruccions a seguir per al seu lliurament</h1>\n<p>Donada la\
+  \ pandèmia actual de COVID-19 (Coronavirus), vostè <strong>must strictly</strong>\
+  \ segueixi les següents instruccions:</p>\n<h2>1. Manten distància solcial</h2>\n\
+  <p>Deixarem la seva comanda a la seva porta, perquè no hagi d'acostar-se a la persona\
+  \ que ve a lliurar. Pot o no deixar propina.</p>\n<h2>2. Desembale la seva comanda\
+  \ després de rebre'l</h2>\n<p>El virus pot sobreviure en superfícies de cartó i\
+  \ plàstic durant diversos dies. L'empaquetat és, per tant, una ruta d'alt risc de\
+  \ transmissió del virus.\nPer tant, li demanem que <strong>desempaqueti la seva\
+  \ comanda i transfereixi el contingut a plats</strong>.</p>\n<h2>3. Tiri l'embalatge.</h2>\n\
+  <p>Una vegada que la seva comanda estigui desempaquetada, asseguri's de tirar <strong>l'embolcall\
+  \ a unes escombraries tancades</strong> Per a evitar tocar-la inadvertidament més\
+  \ tard.</p>\n<h2>4. Netella les mans!</h2>\n<p>Una vegada que hi hagi desempacado\
+  \ la seva comanda i rebutjat l'embalatge,<strong>netella les mans!</strong></p>\n"
+covid_19.subject: COVID-19 | Instruccions importants per a la teva comanda
+order.payment.body: "Hola,\n<br>\nHem completat un lliurament que ens ha demanat.\n\
+  <br>\nA continuació trobarà un enllaç que li permet pagar amb targeta de crèdit.\n"
+order.payment.subject: Pagament de la teva comanda %order.number%
+admin.send_invitation.create_password: Crear la meva contrasenya
+admin.send_invitation.body: "Hola %username%,\n<br>\nAquest correu és una invitació\
+  \ al teu espai CoopCycle, per a acabar la creació del seu compte, si us plau faci\
+  \ un clic en el següent enllaç.\n"
+admin.send_invitation.subject: Invitació a CoopCycle!
+order.foodtech.accepted.collection.disclaimer: Si té algun problema, contacti amb
+  <strong>%name%</strong> a <strong>%phone_number%</strong> amb suficient antelació
+  per a cancel·lar la seva comanda.
+order.foodtech.accepted.collection: 'Haurà de recollir-ho en el següent horari:'
+order.foodtech.accepted.delivery.disclaimer: Ens posarem en contacte en el cas de
+  trobar problemes amb la seva adreça
+order.foodtech.accepted.delivery: 'Se li lliurarà en el següent horari:'

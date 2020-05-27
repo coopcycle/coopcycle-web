@@ -25,7 +25,7 @@ adminDashboard.users.title: Utenti
 adminDashboard.restaurants.exclusive: Esclusivo
 adminDashboard.restaurants.createNew: Crea un nuovo ristorante
 adminDashboard.restaurants.title: Ristoranti
-adminDashboard.orders.showCanceled: Gestisci gli ordini dei ristoranti
+adminDashboard.orders.showCanceled: Mostra gli ordini dei ristoranti
 adminDashboard.orders.previousOrders: Ordini precedenti
 adminDashboard.orders.title: Ordini
 adminDashboard.stores.form.uploadImage: Upload immagine
@@ -92,3 +92,22 @@ adminDashboard.tags.title: Tags
 adminDashboard.pricing.addRule: Aggiungere regole
 adminDashboard.pricing.createNew: Create nuovi prezzi
 adminDashboard.pricing.noPricings: Non ci sono ancora i prezzi
+adminDashboard.pricing.noRuleFound: Nessuna regola di prezzo trovata. Le regole di
+  prezzo definiscono come i costi di consegna sono calcolati.
+adminDashboard.tags.confirm_delete: "Sei sicuro di voler rimuovere il tag? \nIl tag\
+  \ verrà rimosso dai rispettivi elementi e non sarà più disponibile."
+adminDashboard.time_slots.title: Fasce orarie
+deliveryForm.noPriceFromPricingWarning: Non è possibile calcolare un prezzo a partire
+  dalle regole di tariffazione. Introdurre manualmente il prezzo o editare la tariffazione.
+delivery.createNew: Crea una nuova consegna
+delivery.tracking_link: Link di tracciamento
+delivery.with_id: 'Consegna #%id%'
+help.title: Aiuto
+help.home: Home
+restaurants.visible_by_you_only: Visibile solo a te
+restaurants.placeholder.title: Un attimo di pazienza…
+adminDashboard.pledges.title: Suggerimenti
+deliveryForm.noPriceWarning: Non è possibile calcolare il prezzo. Per favore introdurre
+  un prezzo.
+restaurants.no_results: Non abbiamo trovato ristoranti che coincidono con la tua ricerca
+  ☹<br>prova un indirizzo diverso
