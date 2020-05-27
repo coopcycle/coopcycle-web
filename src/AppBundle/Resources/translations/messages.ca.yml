@@ -946,3 +946,4 @@ form.order.refuse.refund.alert: Aquesta comanda es va pagar amb un mètode de pa
   que no gestiona les autoritzacions prèvies. Si ho rebutja, es reemborsarà el pagament.
   Estàs segur?
 form.checkout_payment.method.label: Triï un mètode de pagament
+restaurant_promotion.offer_delivery: Oferir tarifes de lliurament
