@@ -41,6 +41,7 @@
 
 {% block scripts %}
   <script>
+    window.AppData = window.AppData || {};
     window.AppData.closingRules = {{ closing_rules_json|raw }};
   </script>
   {{ encore_entry_script_tags('restaurant-planning') }}
