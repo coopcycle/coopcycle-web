@@ -840,3 +840,11 @@ sms.with_tracking: "Ciao;\nIl nostro corriere è partito verso %address%.\nTracc
 basics.close: Chiudi
 fulfillment_method.delivery: Consegna
 fulfillment_method.collection: Collezione
+restaurant.menus.activate: Attivato
+restaurant.contract.takeAwayFeeRate.label: Addebito della piattaforma per il take
+  away
+restaurant.contract.takeAwayFeeRate.help: Questa percentuale verrà trattenuta dalla
+  piattaforme sul totale dei prodotti
+restaurant.menus.noMenus: Non hai creato ancora nessun menu al momento.
+restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now
+  be displayed on the restaurant page
