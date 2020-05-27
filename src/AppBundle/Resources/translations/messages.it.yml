@@ -25,7 +25,7 @@ adminDashboard.users.title: Utenti
 adminDashboard.restaurants.exclusive: Esclusivo
 adminDashboard.restaurants.createNew: Crea un nuovo ristorante
 adminDashboard.restaurants.title: Ristoranti
-adminDashboard.orders.showCanceled: Mostra gli ordini dei ristoranti
+adminDashboard.orders.showCanceled: Mostra gli ordini cancellati
 adminDashboard.orders.previousOrders: Ordini precedenti
 adminDashboard.orders.title: Ordini
 adminDashboard.stores.form.uploadImage: Upload immagine
@@ -72,7 +72,7 @@ adminDashboard.dashboard.import: Importa
 adminDashboard.dashboard.title: Dashboard
 adminDashboard.tooltip.users: Gestisci account utente
 adminDashboard.tooltip.restaurants: Gestisci ristoranti
-adminDashboard.tooltip.stores: Gestisci negozi
+adminDashboard.tooltip.stores: Gestisci Esercizi
 adminDashboard.tooltip.deliveries: Gestisci consegne
 adminDashboard.promotions.title: Promozioni
 adminDashboard.back.title: Torna al sito web
@@ -641,7 +641,7 @@ form.product.taxCategory.label: Tasse
 form.product.enabled.label: Abilitato
 form.product.allergens.label: Allergeni
 form.product.allergens.help: Questo prodotto contiene i seguenti allergeni?
-form.product.restricted_diets.label: Diete limitata
+form.product.restricted_diets.label: Diete
 form.product.restricted_diets.help: Questo prodotto è compatibile con la seguente
   dieta?
 form.product.confirm.label: Conferma cambiamenti
@@ -892,4 +892,30 @@ profile.myStores: I miei negozi
 profile.myAddresses: I miei indirizzo
 profile.myPersonalInfo: Le mie informazioni personali
 profile.task.cancel: Cancella
-profile.payment: Pagamenti
+profile.payment: Pagamento
+order.list.summary.restaurant.text: Consegna al ristorante <a href="%restaurant_url%">%restaurant_name%</a>
+order.list.state: Stato
+order.list.summary: Sommario
+order.adjustment_type.tip: Suggerimenti
+order.list.customer: Cliente
+payment.state.refunded_partially: Parzialmente rimborsato
+order.adjustment_type.delivery: Consegna
+order.adjustment_type.platform_fees: Tariffe CoopCycle
+form.settings.stripe_connect_client_id.label: Identificativo di connessione Stripe
+order.list.total: Totale
+order.list.cancel: Cancella
+payment.state.completed: Completato
+payment.state.failed: Fallito
+payment.state.cancelled: Cancellato
+payment.state.refunded: Risarcito
+payment.state.new: Nuovo
+order.list.type: Tipo
+order.list.summary.deleted_restaurant.text: Consegna al ristorante %restaurant_name%
+order.list.summary.delivery.text: Consegna %distance%, %vehicle%
+order.list.receipt: Ricevuta
+payment.state.authorized: Autorizzato
+order.adjustment_type.reusable_packaging: Imballaggio
+order.list.shippedAt: Data di spedizione
+form.delivery.pickup.doneBefore.label: Data e ora di presa
+form.deposit_refund_settings.deposit_refund_optin.label: Rimborso deposito è opzionale
+food_establishment.CAFE_OR_COFFEE_SHOP: Caffe o teteria
