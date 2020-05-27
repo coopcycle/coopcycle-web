@@ -966,12 +966,12 @@ restaurant_promotion.offer_delivery: Ofrecer tarifas de entrega
 form.offer_delivery.coupon_code.error.exists: Este código ya existe
 users.store_owners: Dueños de tiendas
 users.administrators: Administradores
-users.sort.alphabetically: Alfabeticamente
+users.sort.alphabetically: Alfabéticamente
 users.sort.newest: Registrado recientemente
 sms.simple: "Hola,\nNuestro mensajero esta en camino a %address%.\n"
-sms.with_tracking: "Hola,\nnuestro mensajero esta en camino a %address%.\nSiguelo\
+sms.with_tracking: "Hola,\nnuestro mensajero esta en camino a %address%.\nSíguelo\
   \ en %link%\n"
 fulfillment_method.delivery: Entrega
-fulfillment_method.collection: colecta
+fulfillment_method.collection: Recogida
 form.checkout_address.takeaway.no_show_disclaimer: 'Tenga en cuenta: si no recoge,
   se le cobrará el importe total del pedido.'
