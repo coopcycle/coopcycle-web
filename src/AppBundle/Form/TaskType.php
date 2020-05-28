@@ -126,7 +126,7 @@ class TaskType extends AbstractType
             });
         }
 
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
 
             $form = $event->getForm();
             $task = $event->getData();
@@ -136,12 +136,14 @@ class TaskType extends AbstractType
                 $choice->applyToTask($task);
             }
 
-            if ($form->has('telephone')) {
-                $task->getAddress()->setTelephone($form->get('telephone')->getData());
+            $address = $task->getAddress();
+
+            if ($address && $form->has('telephone')) {
+                $address->setTelephone($form->get('telephone')->getData());
             }
 
-            if ($form->has('recipient')) {
-                $task->getAddress()->setContactName($form->get('recipient')->getData());
+            if ($address && $form->has('recipient')) {
+                $address->setContactName($form->get('recipient')->getData());
             }
         });
     }
