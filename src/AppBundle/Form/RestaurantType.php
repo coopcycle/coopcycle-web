@@ -135,13 +135,13 @@ class RestaurantType extends LocalBusinessType
 
             if (null !== $restaurant->getId()) {
 
-                $form->add('allowStripeConnect', CheckboxType::class, [
-                    'label' => 'restaurant.form.allow_stripe_connect.label',
-                    'mapped' => false,
-                    'required' => false,
-                ]);
-                if ($form->has('allowStripeConnect') && in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())) {
-                    $form->get('allowStripeConnect')->setData(true);
+                if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                    $form->add('allowStripeConnect', CheckboxType::class, [
+                        'label' => 'restaurant.form.allow_stripe_connect.label',
+                        'mapped' => false,
+                        'required' => false,
+                        'data' => in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())
+                    ]);
                 }
 
                 if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && ($this->debug || 'de' === $this->country)) {
