@@ -119,6 +119,16 @@ class AddressBookType extends AbstractType
                 $event->setData($existingAddress);
             }
         });
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+
+            $form = $event->getForm();
+
+            $isNewAddress = $form->get('isNewAddress')->getData();
+            if (!$isNewAddress) {
+                $form->get('newAddress')->clearErrors(true);
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)
