@@ -206,6 +206,7 @@
                 "RUSH_HOUR": "Hora Punta",
                 "NO_SHOW": "No mostrar"
             }
-        }
+        },
+        "PLEASE_SELECT_ADDRESS": "Selecciona una dirección en el menú desplegable"
     }
 }

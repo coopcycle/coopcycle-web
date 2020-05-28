@@ -207,6 +207,7 @@
         "RESTAURANT_DASHBOARD_INFO_RUSH": "Usa questo bottone per attivare la modalità \"ora di punta\"",
         "RESTAURANT_DASHBOARD_NEW_ORDERS": "Nuovi ordini",
         "RESTAURANT_DASHBOARD_ACCEPTED_ORDERS": "Ordini accettati",
-        "RESTAURANT_DASHBOARD_FULFILLED_ORDERS": "Ordini completati"
+        "RESTAURANT_DASHBOARD_FULFILLED_ORDERS": "Ordini completati",
+        "PLEASE_SELECT_ADDRESS": "Selezioni un indirizzo nel menù a tendina"
     }
 }

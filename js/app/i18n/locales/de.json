@@ -66,6 +66,7 @@
         "ADMIN_DASHBOARD_TASK_TITLE_NEW": "Neuer Aufgabe",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_STREET_ADDRESS_LABEL": "Adresse",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_MORE_OPTIONS": "Mehr Optionen",
-        "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Unterstützte Formate: csv, ods, xlsx"
+        "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Unterstützte Formate: csv, ods, xlsx",
+        "PLEASE_SELECT_ADDRESS": "Bitte wählen Sie eine Adresse aus dem Auswahlfeld"
     }
 }
