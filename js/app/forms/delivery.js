@@ -296,21 +296,29 @@ export default function(name, options) {
 
     el.addEventListener('submit', (e) => {
 
-      const searchInput = document.querySelector(`#${name}_dropoff_address input[type="search"]`);
-      const latInput = document.querySelector(`#${name}_dropoff_address [data-address-prop="latitude"]`)
-      const lngInput = document.querySelector(`#${name}_dropoff_address [data-address-prop="longitude"]`)
-      const streetAddrInput = document.querySelector(`#${name}_dropoff_address_newAddress_streetAddress`)
+      _.find(['pickup', 'dropoff'], type => {
 
-      if (searchInput.validity.valid) {
-        if (_.isEmpty(latInput.value) || _.isEmpty(lngInput.value)
-        || (searchInput.value !== streetAddrInput.value)) {
-          e.preventDefault();
-          searchInput.setCustomValidity(i18n.t('PLEASE_SELECT_ADDRESS'))
-          if (HTMLInputElement.prototype.reportValidity) {
-            searchInput.reportValidity()
+        const searchInput = document.querySelector(`#${name}_${type}_address input[type="search"]`);
+        const latInput = document.querySelector(`#${name}_${type}_address [data-address-prop="latitude"]`)
+        const lngInput = document.querySelector(`#${name}_${type}_address [data-address-prop="longitude"]`)
+        const streetAddrInput = document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`)
+
+        if (searchInput.validity.valid) {
+          if (_.isEmpty(latInput.value) || _.isEmpty(lngInput.value)
+          || (searchInput.value !== streetAddrInput.value)) {
+            e.preventDefault();
+            searchInput.setCustomValidity(i18n.t('PLEASE_SELECT_ADDRESS'))
+            if (HTMLInputElement.prototype.reportValidity) {
+              searchInput.reportValidity()
+            }
+
+            return true
           }
         }
-      }
+
+        return false
+
+      })
 
     }, false)
 
