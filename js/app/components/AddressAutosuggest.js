@@ -82,9 +82,14 @@ const generic = {
   },
   getInitialState: function () {
 
+    if (_.isString(this.props.address)) {
+      // eslint-disable-next-line no-console
+      console.warn('Using a string for the "address" prop is deprecated, use an object instead.')
+    }
+
     return {
       value: _.isObject(this.props.address) ?
-        (this.props.address.streetAddress || '') : '',
+        (this.props.address.streetAddress || '') : (_.isString(this.props.address) ? this.props.address : ''),
       suggestions: [],
       multiSection: false,
     }
