@@ -374,7 +374,9 @@ services:
     arguments:
       $redis: "@snc_redis.default"
 
-  AppBundle\Utils\ShippingDateFilter: ~
+  AppBundle\Utils\ShippingDateFilter:
+    tags:
+      - { name: monolog.logger, channel: timing }
   AppBundle\Utils\OrderTimelineCalculator: ~
   AppBundle\Utils\OrderTimeHelper:
     arguments:
