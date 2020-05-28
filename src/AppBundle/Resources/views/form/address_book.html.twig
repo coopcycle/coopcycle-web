@@ -3,6 +3,7 @@
 
     {{ form_widget(form.existingAddress) }}
     {{ form_widget(form.newAddress.streetAddress) }}
+    {{ form_errors(form.newAddress.streetAddress) }}
 
     {{ form_widget(form.newAddress.postalCode, { attr: { 'data-address-prop': 'postalCode' } }) }}
     {{ form_widget(form.newAddress.addressLocality, { attr: { 'data-address-prop': 'addressLocality' } }) }}
