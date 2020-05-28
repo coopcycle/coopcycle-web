@@ -22,6 +22,7 @@ use AppBundle\Form\ProductOptionType;
 use AppBundle\Form\ProductType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Form\Restaurant\DepositRefundSettingsType;
+use AppBundle\Form\Restaurant\ReusablePackagingType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -54,6 +55,13 @@ trait RestaurantTrait
     abstract protected function getRestaurantList(Request $request);
 
     abstract protected function getRestaurantRoutes();
+
+    protected function getRestaurantRoute($name)
+    {
+        $routes = $this->getRestaurantRoutes();
+
+        return $routes[$name];
+    }
 
     /**
      * @HideSoftDeleted
@@ -117,6 +125,7 @@ trait RestaurantTrait
         }
 
         $wasLoopEatEnabled = $restaurant->isLoopeatEnabled();
+        $wasDepositRefundEnabled = $restaurant->isDepositRefundEnabled();
 
         $activationErrors = [];
         $formErrors = [];
@@ -163,10 +172,19 @@ trait RestaurantTrait
                 $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->persist($restaurant);
                 $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
 
-                $this->addFlash(
-                    'notice',
-                    $this->get('translator')->trans('global.changesSaved')
-                );
+                if (!$wasDepositRefundEnabled && $restaurant->isDepositRefundEnabled()) {
+                    $this->addFlash(
+                        'notice',
+                        $this->get('translator')->trans('confirm.deposit_refund_enabled', [
+                            '%url%' => $this->generateUrl($this->getRestaurantRoute('deposit_refund'), ['id' => $restaurant->getId()])
+                        ])
+                    );
+                } else {
+                    $this->addFlash(
+                        'notice',
+                        $this->get('translator')->trans('global.changesSaved')
+                    );
+                }
 
                 return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
             } else {
@@ -1078,6 +1096,40 @@ trait RestaurantTrait
             'stats' => $stats,
             'start' => $start,
             'end' => $end
+        ]));
+    }
+
+    public function newRestaurantReusablePackagingAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        $this->accessControl($restaurant);
+
+        $form = $this->createForm(ReusablePackagingType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $reusablePackaging = $form->getData();
+
+            $restaurant->addReusablePackaging($reusablePackaging);
+
+            $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute($this->getRestaurantRoute('deposit_refund'), ['id' => $id]);
+        }
+
+        return $this->render('@App/restaurant/reusable_packaging.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
         ]));
     }
 

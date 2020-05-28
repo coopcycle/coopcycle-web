@@ -300,6 +300,13 @@ admin_restaurant_stats:
             restaurant: admin_restaurant
     methods: [ GET, POST ]
 
+admin_restaurant_new_reusable_packaging:
+    path: /admin/restaurants/{id}/deposit-refund/packagings/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newRestaurantReusablePackagingAction
+        layout: '@App/admin.html.twig'
+    methods: [ GET, POST ]
+
 admin_restaurant_deposit_refund:
     path: /admin/restaurants/{id}/deposit-refund
     defaults:

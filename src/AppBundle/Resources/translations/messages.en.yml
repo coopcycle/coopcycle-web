@@ -664,6 +664,9 @@ form.reusable_packaging.price.label: Price
 form.reusable_packaging.on_hand.label: Stock
 form.deposit_refund_settings.deposit_refund_optin.label: Deposit-refund system is
   optional
+form.deposit_refund_settings.deposit_refund_optin.help: When the deposit-refund system is
+  optional, will be able to choose whether or not he or she wants the packagings. When it is
+  mandatory, the packagings will be added to the order total automatically.
 form.new_order.variant_name.label: Product name
 form.new_order.variant_name.help: The name that will appear in the order summary and
   invoice
@@ -962,3 +965,5 @@ fulfillment_method.collection: Collection
 basics.allow_edit: Allow editing
 form.price_with_tax.tax_excl.label: Price (tax excl.)
 form.price_with_tax.tax_incl.label: Price (tax incl.)
+confirm.deposit_refund_enabled: The deposit-refund system is enabled, you can now <a href="%url%">configure the packagings</a>.
+info.deposit_refund: Each entry in the list below represents a type of packaging (small, large…). Once the packagings have been created, you can configure them for each product.

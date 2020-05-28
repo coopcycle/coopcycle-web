@@ -626,6 +626,9 @@ form.reusable_packaging.price.label: Prix
 form.reusable_packaging.on_hand.label: Stock
 form.deposit_refund_settings.deposit_refund_optin.label: Le système de consigne est
   optionnel
+form.deposit_refund_settings.deposit_refund_optin.help: Lorsque le système de consignes est
+  optionnel, le client pourra choisir s'il veut ou non des emballages. Lorsqu'il est
+  obligatoire, les emballages seront automatiquement ajoutés au total de la commande.
 form.new_order.variant_name.label: Nom du produit
 form.new_order.variant_name.help: Le nom qui apparaîtra dans le résumé de la commande
   et la facture
@@ -931,3 +934,5 @@ basics.close: Fermer
 basics.allow_edit: Permettre de modifier
 form.price_with_tax.tax_excl.label: Prix (HT)
 form.price_with_tax.tax_incl.label: Prix (TTC)
+confirm.deposit_refund_enabled: Le système de consignes est activé, vous pouvez maintenant <a href="%url%">configurer les types d'emballages</a>.
+info.deposit_refund: Chaque entrée de la liste ci-dessous représente un type d'emballage (petit, grand, etc…). Une fois les types d'emballages créés, vous pouvez les configurer pour chaque produit.

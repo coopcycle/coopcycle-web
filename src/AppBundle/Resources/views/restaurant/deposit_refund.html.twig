@@ -10,16 +10,20 @@
 
 {% block content %}
 
+<div class="alert alert-info">
+  {{ 'info.deposit_refund'|trans }}
+</div>
+
 {{ form_start(form) }}
-  {{ form_widget(form) }}
+  <div class="alert alert-warning">
+  {{ form_row(form.depositRefundOptin) }}
+  </div>
 {{ form_end(form) }}
 
 <table class="table">
   <thead>
-    <th>{{ 'form.reusable_packaging.name.label'|trans }}</th>
-    <th>{{ 'form.reusable_packaging.is_tracked.label'|trans }}</th>
-    <th class="text-right">{{ 'form.reusable_packaging.price.label'|trans }}</th>
-    <th class="text-right">{{ 'form.reusable_packaging.on_hand.label'|trans }}</th>
+    <th>{{ 'basics.name'|trans }}</th>
+    <th class="text-right">{{ 'basics.price'|trans }}</th>
   </thead>
   <tbody>
   {% for reusablePackaging in restaurant.reusablePackagings %}
@@ -27,19 +31,19 @@
       <td>
         {{ reusablePackaging.name }}
       </td>
-      <td>
-        {% if reusablePackaging.isTracked %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-times"></i>{% endif %}
-      </td>
       <td class="text-right">
         {{ reusablePackaging.price|price_format }}
-      </td>
-      <td class="text-right">
-        {{ reusablePackaging.onHand }}
       </td>
     </tr>
   {% endfor %}
   </tbody>
 </table>
+
+<p class="text-right">
+  <a href="{{ path(reusable_packaging_new_route, { id: restaurant.id }) }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
+  </a>
+</p>
 
 {% endblock %}
 

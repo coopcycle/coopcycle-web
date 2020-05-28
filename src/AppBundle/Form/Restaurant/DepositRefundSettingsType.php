@@ -14,7 +14,8 @@ class DepositRefundSettingsType extends AbstractType
     {
         $builder
             ->add('depositRefundOptin', CheckboxType::class, [
-                'label' => 'form.deposit_refund_settings.deposit_refund_optin.label'
+                'label' => 'form.deposit_refund_settings.deposit_refund_optin.label',
+                'help' => 'form.deposit_refund_settings.deposit_refund_optin.help',
             ]);
     }
 
