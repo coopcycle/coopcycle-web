@@ -72,8 +72,10 @@ export default function(el, options) {
   }
 
   // Callback with initial data
+  let address
   if (existingAddressControlSelected.dataset.address) {
-    options.onReady(JSON.parse(existingAddressControlSelected.dataset.address))
+    address = JSON.parse(existingAddressControlSelected.dataset.address)
+    options.onReady(address)
   }
 
   const reactContainer = document.createElement('div')
@@ -83,7 +85,7 @@ export default function(el, options) {
   render(
     <AddressAutosuggest
       addresses={ addresses }
-      address={ existingAddressControlSelected.text }
+      address={ address }
       geohash={ '' }
       required={ true }
       reportValidity={ true }
