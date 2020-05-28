@@ -207,6 +207,7 @@
         "OPENING_HOURS_BEHAVIOR": {
             "asap": "As soon as possible",
             "time_slot": "Time slot"
-        }
+        },
+        "PLEASE_SELECT_ADDRESS": "Please select an address in the dropdown"
     }
 }

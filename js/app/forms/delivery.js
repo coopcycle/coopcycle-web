@@ -6,6 +6,7 @@ import _ from 'lodash'
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 import TagsInput from '../widgets/TagsInput'
+import i18n from '../i18n'
 
 class DeliveryForm {
   disable() {
@@ -292,6 +293,26 @@ export default function(name, options) {
         setPackages(name)
       })
     }
+
+    el.addEventListener('submit', (e) => {
+
+      const searchInput = document.querySelector(`#${name}_dropoff_address input[type="search"]`);
+      const latInput = document.querySelector(`#${name}_dropoff_address [data-address-prop="latitude"]`)
+      const lngInput = document.querySelector(`#${name}_dropoff_address [data-address-prop="longitude"]`)
+      const streetAddrInput = document.querySelector(`#${name}_dropoff_address_newAddress_streetAddress`)
+
+      if (searchInput.validity.valid) {
+        if (_.isEmpty(latInput.value) || _.isEmpty(lngInput.value)
+        || (searchInput.value !== streetAddrInput.value)) {
+          e.preventDefault();
+          searchInput.setCustomValidity(i18n.t('PLEASE_SELECT_ADDRESS'))
+          if (HTMLInputElement.prototype.reportValidity) {
+            searchInput.reportValidity()
+          }
+        }
+      }
+
+    }, false)
 
   }
 

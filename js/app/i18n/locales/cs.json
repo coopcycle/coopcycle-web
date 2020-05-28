@@ -4,6 +4,7 @@
         "CART_WIDGET_BUTTON": "Objednávka",
         "CART_EMPTY": "Váš košík je prázdný",
         "OPENING_HOURS_SINGLE": "{{Day}} od {{open}} do {{close}}",
-        "OPENING_HOURS_RANGE": "Od {{fromDay}} do {{toDay}}, od {{open}} do {{close}}"
+        "OPENING_HOURS_RANGE": "Od {{fromDay}} do {{toDay}}, od {{open}} do {{close}}",
+        "PLEASE_SELECT_ADDRESS": "V rozbalovací nabídce vyberte adresu"
     }
 }

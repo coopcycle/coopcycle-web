@@ -39,6 +39,7 @@ export default function(el, options) {
 
   const newAddressControlName = newAddressControl.name
   const newAddressControlValue = newAddressControl.value
+  const newAddressControlId = newAddressControl.id
 
   if (newAddressControl.hasAttribute('placeholder')) {
     autosuggestProps = {
@@ -50,6 +51,7 @@ export default function(el, options) {
   newAddressControlHidden.setAttribute('type', 'hidden')
   newAddressControlHidden.setAttribute('name', newAddressControlName)
   newAddressControlHidden.setAttribute('value', newAddressControlValue)
+  newAddressControlHidden.setAttribute('id', newAddressControlId)
 
   newAddressControl.remove()
   el.appendChild(newAddressControlHidden)

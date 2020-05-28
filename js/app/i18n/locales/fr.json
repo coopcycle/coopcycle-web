@@ -193,6 +193,7 @@
         "OPENING_HOURS_BEHAVIOR": {
             "asap": "Au plus tôt",
             "time_slot": "Tranche horaire"
-        }
+        },
+        "PLEASE_SELECT_ADDRESS": "Veuillez sélectionner une adresse dans la liste déroulante"
     }
 }
