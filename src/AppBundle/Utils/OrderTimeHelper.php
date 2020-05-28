@@ -103,8 +103,7 @@ class OrderTimeHelper
         $restaurant = $cart->getRestaurant();
         $fulfillmentMethod = $restaurant->getFulfillmentMethod($cart->getFulfillmentMethod());
 
-        $this->logger->info(sprintf('Cart #%d has fulfillment method "%s" and behavior "%s"',
-            $cart->getId(),
+        $this->logger->info(sprintf('Cart has fulfillment method "%s" and behavior "%s"',
             $fulfillmentMethod->getType(),
             $fulfillmentMethod->getOpeningHoursBehavior()
         ));
