@@ -379,6 +379,8 @@ services:
   AppBundle\Utils\OrderTimeHelper:
     arguments:
       $country: "%country_iso%"
+    tags:
+      - { name: monolog.logger, channel: timing }
 
   AppBundle\Entity\Listener\TaskListener:
     tags:

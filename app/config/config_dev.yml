@@ -38,6 +38,13 @@ monolog:
             formatter: monolog.formatter.json
             max_files: 3
             channels: [fee_calculation]
+        timing:
+            type: rotating_file
+            path: "%kernel.logs_dir%/timing.%kernel.environment%.log"
+            level: info
+            formatter: monolog.formatter.json
+            max_files: 3
+            channels: [timing]
         geofencing:
             type: rotating_file
             path: "%kernel.logs_dir%/geofencing.%kernel.environment%.log"

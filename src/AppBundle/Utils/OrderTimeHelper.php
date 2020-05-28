@@ -12,6 +12,8 @@ use AppBundle\Utils\PreparationTimeCalculator;
 use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ShippingTimeCalculator;
 use Carbon\Carbon;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class OrderTimeHelper
 {
@@ -25,18 +27,28 @@ class OrderTimeHelper
         ShippingDateFilter $shippingDateFilter,
         PreparationTimeCalculator $preparationTimeCalculator,
         ShippingTimeCalculator $shippingTimeCalculator,
-        string $country)
+        string $country,
+        LoggerInterface $logger = null)
     {
         $this->shippingDateFilter = $shippingDateFilter;
         $this->preparationTimeCalculator = $preparationTimeCalculator;
         $this->shippingTimeCalculator = $shippingTimeCalculator;
         $this->country = $country;
+        $this->logger = $logger ?? new NullLogger();
     }
 
     private function filterChoices(OrderInterface $cart, array $choices)
     {
         return array_filter($choices, function ($date) use ($cart) {
-            return $this->shippingDateFilter->accept($cart, new \DateTime($date));
+
+            $result = $this->shippingDateFilter->accept($cart, new \DateTime($date));
+
+            $this->logger->info(sprintf('ShippingDateFilter::accept() returned %s for %s',
+                var_export($result, true),
+                (new \DateTime($date))->format(\DateTime::ATOM))
+            );
+
+            return $result;
         });
     }
 
@@ -62,7 +74,7 @@ class OrderTimeHelper
                 $restaurant->getOpeningHours($cart->getFulfillmentMethod()),
                 $restaurant->getClosingRules(),
                 $restaurant->getShippingOptionsDays(),
-                $restaurant->getOrderingDelayMinutes(),
+                $restaurant->getOrderingDelayMinutes()
             );
 
             $choiceList = $choiceLoader->loadChoiceList();
@@ -90,6 +102,12 @@ class OrderTimeHelper
     {
         $restaurant = $cart->getRestaurant();
         $fulfillmentMethod = $restaurant->getFulfillmentMethod($cart->getFulfillmentMethod());
+
+        $this->logger->info(sprintf('Cart #%d has fulfillment method "%s" and behavior "%s"',
+            $cart->getId(),
+            $fulfillmentMethod->getType(),
+            $fulfillmentMethod->getOpeningHoursBehavior()
+        ));
 
         if ($fulfillmentMethod->getOpeningHoursBehavior() === 'time_slot') {
 
