@@ -298,6 +298,11 @@ export default function(name, options) {
 
       _.find(['pickup', 'dropoff'], type => {
 
+        const isNewAddrInput = document.querySelector(`#${name}_${type}_address_isNewAddress`)
+        if (!isNewAddrInput) {
+          return false
+        }
+
         const searchInput = document.querySelector(`#${name}_${type}_address input[type="search"]`);
         const latInput = document.querySelector(`#${name}_${type}_address [data-address-prop="latitude"]`)
         const lngInput = document.querySelector(`#${name}_${type}_address [data-address-prop="longitude"]`)

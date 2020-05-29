@@ -61,10 +61,12 @@ export default function(el, options) {
 
   const isNewAddressControlName = isNewAddressControl.name
   const isNewAddressControlValue = isNewAddressControl.value
+  const isNewAddressControlId = isNewAddressControl.id
 
   isNewAddressControlHidden.setAttribute('type', 'hidden')
   isNewAddressControlHidden.setAttribute('name', isNewAddressControlName)
   isNewAddressControlHidden.setAttribute('value', isNewAddressControlValue)
+  isNewAddressControlHidden.setAttribute('id', isNewAddressControlId)
 
   isNewAddressControl.closest('.checkbox').remove()
   if (isNewAddressControl.checked) {
