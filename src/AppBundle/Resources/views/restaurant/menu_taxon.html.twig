@@ -2,9 +2,9 @@
 
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 {% form_theme menu_editor_form '@App/form/menu_editor.html.twig' %}
+{% form_theme menu_editor_form.name 'bootstrap_3_layout.html.twig' %}
 
 {% block breadcrumb %}
-  {% set menu = form.vars.value %}
   <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
   <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
   <li><a href="{{ path(menu_taxons_route, { id: restaurant.id }) }}">Menus</a></li>
@@ -12,39 +12,6 @@
 {% endblock %}
 
 {% block content %}
-
-  {% set menu = form.vars.value %}
-
-  {{ form_start(form) }}
-
-    {{ form_errors(form) }}
-
-    <div class="form-group row">
-      <div class="col-md-10">
-        {{ form_row(form.name) }}
-      </div>
-      <div class="col-md-2">
-        <label> </label>
-        <button id="menu_taxon_save" type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
-      </div>
-    </div>
-
-    {% if form.childName is defined and form.addChild is defined %}
-      <div class="form-group row">
-        <div class="col-md-10">
-          {{ form_widget(form.childName) }}
-        </div>
-        <div class="col-md-2">
-          {{ form_widget(form.addChild, { attr: { class: 'btn btn-block btn-success' } }) }}
-        </div>
-      </div>
-    {% endif %}
-
-    {% if form.delete is defined %}
-      {% do form.delete.setRendered %}
-    {% endif %}
-
-  {{ form_end(form) }}
 
   {% if menu.id is not null %}
 
@@ -54,10 +21,12 @@
       <i class="fa fa-info-circle"></i> {% trans %}form.menu_editor.help{% endtrans %}
     </div>
 
-    <div class="menuEditor">
+    {{ form_row(menu_editor_form.name) }}
+
+    <div class="menuEditor mb-4">
       <div class="menuEditor__left">
         {% for child in menu_editor_form.children %}
-          <div class="menuEditor__panel" data-taxon-id="{{ child.vars.value.id }}">
+          <div class="menuEditor__panel mb-4" data-taxon-id="{{ child.vars.value.id }}">
             <h4 class="menuEditor__panel__title">
               <i class="fa fa-arrows" aria-hidden="true"></i>  
                 <a href="#"
@@ -86,6 +55,12 @@
             </div>
           </div>
         {% endfor %}
+        <div class="d-flex flex-row align-items-center justify-content-between border p-4">
+          <strong>{{ 'form.menu_taxon.add_child.label'|trans }}</strong>
+          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newChildTaxonModal">
+            <i class="fa fa-plus mr-2"></i><span>{{ 'basics.add'|trans }}</span>
+          </button>
+        </div>
       </div>
       <div class="menuEditor__right">
         <div class="menuEditor__panel menuEditor__productList">
@@ -145,8 +120,32 @@
       </div>
     </div>
 
+    <div class="modal fade" id="newChildTaxonModal" tabindex="-1" role="dialog" aria-labelledby="newChildTaxonModalLabel">
+      <div class="modal-dialog" role="document">
+        {{ form_start(form, { attr: { 'class': 'modal-content' } }) }}
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="newChildTaxonModalLabel">{{ 'form.menu_taxon.add_child.label'|trans }}</h4>
+          </div>
+          <div class="modal-body">
+            {{ form_row(form.name, { attr: { 'placeholder': 'form.menu_taxon.child_name.placeholder' } }) }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+            <button type="submit" class="btn btn-primary">{{ 'basics.save'|trans }}</button>
+          </div>
+        {{ form_end(form) }}
+      </div>
+    </div>
+
   {% endif %}
 
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('restaurant-menu-editor') }}
 {% endblock %}
 
 {% block scripts %}

@@ -8,7 +8,8 @@
 
 {% block content %}
   <p class="text-right">
-    <a class="btn btn-success" href="{{ path(new_menu_route, { id: restaurant.id }) }}">
+    <a class="btn btn-success" href="{{ path(new_menu_route, { id: restaurant.id }) }}"
+      data-toggle="modal" data-target="#newTaxonModal">
       <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
     </a>
   </p>
@@ -69,10 +70,31 @@
     <div class="alert alert-warning">{% trans %}restaurant.menus.noMenus{% endtrans %}</div>
   {% endif %}
 
+  <div class="modal fade" id="newTaxonModal" tabindex="-1" role="dialog" aria-labelledby="newTaxonModalLabel">
+    <div class="modal-dialog" role="document">
+      {{ form_start(form, { attr: { 'class': 'modal-content' } }) }}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="newTaxonModalLabel">{{ 'basics.add'|trans }}</h4>
+        </div>
+        <div class="modal-body">
+          {{ form_row(form.name, { help: 'form.menu_editor.name.help' }) }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+          <button type="submit" class="btn btn-primary">{{ 'basics.save'|trans }}</button>
+        </div>
+      {{ form_end(form) }}
+    </div>
+    </div>
+
 {% endblock %}
 
 {% block scripts %}
 <script>
   new CoopCycle.ConfirmDelete('[data-confirm="delete"]');
+
 </script>
 {% endblock %}

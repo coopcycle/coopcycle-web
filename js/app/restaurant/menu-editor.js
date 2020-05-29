@@ -1,5 +1,7 @@
 import Sortable from 'sortablejs'
 
+import './menu-editor.scss'
+
 const childrenContainer = document.querySelector('#menu_editor_children')
 const source = document.querySelector('[data-draggable-source]')
 

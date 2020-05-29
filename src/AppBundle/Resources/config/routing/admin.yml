@@ -121,7 +121,8 @@ admin_restaurant_menu_taxons:
             menu: admin_restaurant_menu_taxon
             menu_activate: admin_restaurant_menu_taxon_activate
             new_menu: admin_restaurant_new_menu_taxon
-    methods: [ GET ]
+            menu_taxon: admin_restaurant_menu_taxon
+    methods: [ GET, POST ]
 
 admin_restaurant_new_menu_taxon:
     path: /admin/restaurants/{id}/menus/new

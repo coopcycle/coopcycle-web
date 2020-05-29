@@ -38,6 +38,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -351,11 +352,39 @@ trait RestaurantTrait
             $forms[$menu->getId()] = $this->createForm(MenuTaxonType::class, $menu)->createView();
         }
 
+        $form = $this->createFormBuilder()
+            ->add('name', TextType::class)
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $name = $form->get('name')->getData();
+
+            $menuTaxon = $this->get('sylius.factory.taxon')->createNew();
+
+            $uuid = Uuid::uuid1()->toString();
+
+            $menuTaxon->setCode($uuid);
+            $menuTaxon->setSlug($uuid);
+            $menuTaxon->setName($name);
+
+            $restaurant->addTaxon($menuTaxon);
+
+            $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+
+            return $this->redirectToRoute($routes['menu_taxon'], [
+                'restaurantId' => $restaurant->getId(),
+                'menuId' => $menuTaxon->getId()
+            ]);
+        }
+
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'menus' => $menus,
             'restaurant' => $restaurant,
             'forms' => $forms,
+            'form' => $form->createView(),
         ], $routes));
     }
 
@@ -406,50 +435,6 @@ trait RestaurantTrait
         ]);
     }
 
-    public function newRestaurantMenuTaxonAction($id, Request $request)
-    {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(LocalBusiness::class)
-            ->find($id);
-
-        $routes = $request->attributes->get('routes');
-
-        $menuTaxon = $this->get('sylius.factory.taxon')->createNew();
-
-        $uuid = Uuid::uuid1()->toString();
-
-        $menuTaxon->setCode($uuid);
-        $menuTaxon->setSlug($uuid);
-
-        $form = $this->createForm(MenuTaxonType::class, $menuTaxon);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $menuTaxon = $form->getData();
-
-            $this->get('sylius.repository.taxon')->add($menuTaxon);
-
-            $restaurant->addTaxon($menuTaxon);
-            $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
-
-            return $this->redirectToRoute($routes['menu_taxon'], [
-                'restaurantId' => $restaurant->getId(),
-                'menuId' => $menuTaxon->getId()
-            ]);
-        }
-
-        $menuEditor = new MenuEditor($restaurant, $menuTaxon);
-        $menuEditorForm = $this->createForm(MenuEditorType::class, $menuEditor);
-
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
-            'layout' => $request->attributes->get('layout'),
-            'restaurant' => $restaurant,
-            'form' => $form->createView(),
-            'menu_editor_form' => $menuEditorForm->createView(),
-        ], $routes));
-    }
-
     /**
      * @HideSoftDeleted
      */
@@ -464,46 +449,31 @@ trait RestaurantTrait
         $menuTaxon = $this->get('sylius.repository.taxon')
             ->find($menuId);
 
-        $form = $this->createForm(MenuTaxonType::class, $menuTaxon);
+        $form = $this->createFormBuilder()
+            ->add('name', TextType::class)
+            ->getForm();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $menuTaxon = $form->getData();
+            $name = $form->get('name')->getData();
 
-            if ($form->getClickedButton()) {
+            $uuid = Uuid::uuid1()->toString();
 
-                if ('addChild' === $form->getClickedButton()->getName()) {
-                    $childName = $form->get('childName')->getData();
+            $child = $this->get('sylius.factory.taxon')->createNew();
+            $child->setCode($uuid);
+            $child->setSlug($uuid);
+            $child->setName($name);
 
-                    $uuid = Uuid::uuid1()->toString();
-
-                    $childTaxon = $this->get('sylius.factory.taxon')->createNew();
-                    $childTaxon->setCode($uuid);
-                    $childTaxon->setSlug($uuid);
-                    $childTaxon->setName($childName);
-
-                    $menuTaxon->addChild($childTaxon);
-                    $this->get('sylius.manager.taxon')->flush();
-
-                    $this->addFlash(
-                        'notice',
-                        $this->get('translator')->trans('global.changesSaved')
-                    );
-                }
-
-                if ('delete' === $form->getClickedButton()->getName()) {
-                    $restaurant->removeTaxon($menuTaxon);
-                    $this->get('sylius.manager.taxon')->remove($menuTaxon);
-                    $this->get('sylius.manager.taxon')->flush();
-                }
-
-                return $this->redirect($request->headers->get('referer'));
-            }
-
+            $menuTaxon->addChild($child);
             $this->get('sylius.manager.taxon')->flush();
 
-            return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('global.changesSaved')
+            );
+
+            return $this->redirect($request->headers->get('referer'));
         }
 
         $menuEditor = new MenuEditor($restaurant, $menuTaxon);
@@ -582,6 +552,7 @@ trait RestaurantTrait
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
+            'menu' => $menuTaxon,
             'form' => $form->createView(),
             'menu_editor_form' => $menuEditorForm->createView(),
         ], $routes));

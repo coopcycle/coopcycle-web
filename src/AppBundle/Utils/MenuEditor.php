@@ -17,6 +17,16 @@ class MenuEditor
         $this->menu = $menu;
     }
 
+    public function getName()
+    {
+        return $this->menu->getName();
+    }
+
+     public function setName($name)
+    {
+        return $this->menu->setName($name);
+    }
+
     public function getChildren()
     {
         return $this->menu->getChildren();

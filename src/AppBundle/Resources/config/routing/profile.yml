@@ -131,7 +131,8 @@ profile_restaurant_menu_taxons:
             menu: profile_restaurant_menu_taxon
             menu_activate: profile_restaurant_menu_taxon_activate
             new_menu: profile_restaurant_new_menu_taxon
-    methods: [ GET ]
+            menu_taxon: profile_restaurant_menu_taxon
+    methods: [ GET, POST ]
 
 profile_restaurant_new_menu_taxon:
     path: /profile/restaurants/{id}/menus/new

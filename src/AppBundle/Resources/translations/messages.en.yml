@@ -579,6 +579,7 @@ form.menu_editor.help: "Use the editor below to compose the menu items\n<br>\nDr
 form.menu_editor.products.help: To add products to the list on the right, add them
   to the <a href="%products_url%">catalog</a> first
 form.menu_editor.taxon_modal.title: Modify a section
+form.menu_editor.name.help: This is only for you to distinguish menus. This is not displayed to the customer.
 form.product.name.label: Name
 form.product.description.label: Description
 form.product.price.label: Price
