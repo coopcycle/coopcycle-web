@@ -228,17 +228,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .homepage-restaurants {
-  &__title {
-    text-align: center;
-    margin: 20px 0;
-  }
   &__show-more {
     font-size: $font-size-large;
-    margin-bottom: 15px;
-    > a {
-      padding: 5px 0;
-      display: block;
-      width: 100%;
+    color: #585858;
+    text-decoration: underline;
+    text-align: right;
+    &:hover {
+      color: lighten(#585858, 10%);
     }
   }
 }
@@ -399,7 +395,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .restaurant-item {
+
   position: relative;
+  color: #212121;
+  &:hover {
+    color: lighten(#212121, 10%);
+  }
+  margin-bottom: $line-height-computed;
+
   &--disabled > * {
     opacity: 0.6;
   }
@@ -417,6 +420,24 @@ h1, h2, h3, h4, h5, h6 {
   }
   &__top-right {
     right: 12px;
+  }
+
+  &__title {
+    font-weight: 700;
+  }
+
+  &__time-range {
+    font-size: $font-size-small;
+    background: #E5E5E5;
+    border-radius: 4px;
+    padding: 5px 10px;
+  }
+
+  > img,
+  a > img {
+    @include img-responsive;
+    margin-right: auto;
+    margin-left: auto;
   }
 }
 

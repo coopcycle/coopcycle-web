@@ -7,11 +7,7 @@ import { asText } from '../components/ShippingTimeRange'
 const FulfillmentBadge = ({ delivery }) => {
 
   return (
-    <span className={ classNames({
-      'btn': true,
-      'btn-sm': true,
-      'btn-default': true,
-    }) }>
+    <span className="restaurant-item__time-range">
       <i className="fa fa-clock-o mr-2"></i>
       <span>{ asText(delivery.range) }</span>
     </span>
@@ -29,8 +25,6 @@ document.querySelectorAll('[data-fulfillment]').forEach(el => {
       return
     }
 
-    const container = document.createElement('span')
-    render(<FulfillmentBadge { ...data } />, container)
-    el.appendChild(container)
+    render(<FulfillmentBadge { ...data } />, el)
   })
 })
