@@ -2,7 +2,9 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Cuisine;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
+use AppBundle\Taxonomy\CuisineProvider;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
@@ -119,6 +121,7 @@ class SetupCommand extends Command
         FactoryInterface $currencyFactory,
         PromotionRepositoryInterface $promotionRepository,
         FactoryInterface $promotionFactory,
+        CuisineProvider $cuisineProvider,
         ManagerRegistry $doctrine,
         SlugifyInterface $slugify,
         string $locale)
@@ -142,8 +145,12 @@ class SetupCommand extends Command
         $this->promotionRepository = $promotionRepository;
         $this->promotionFactory = $promotionFactory;
 
+        $this->cuisineProvider = $cuisineProvider;
+
         $this->paymentMethodRepository =
             $doctrine->getRepository(PaymentMethod::class);
+
+        $this->doctrine = $doctrine;
 
         $this->slugify = $slugify;
 
@@ -190,6 +197,9 @@ class SetupCommand extends Command
 
         $output->writeln('<info>Checking Sylius free delivery promotion is present…</info>');
         $this->createFreeDeliveryPromotion($output);
+
+        $output->writeln('<info>Checking cuisines are present…</info>');
+        $this->createCuisines($output);
 
         return 0;
     }
@@ -390,6 +400,37 @@ class SetupCommand extends Command
 
         } else {
             $output->writeln('Promotion « FREE_DELIVERY » already exists');
+        }
+    }
+
+    private function createCuisines(OutputInterface $output)
+    {
+        $slugs = $this->cuisineProvider->getSlugs();
+
+        $cuisineRepository = $this->doctrine->getRepository(Cuisine::class);
+
+        $flush = false;
+        foreach ($slugs as $slug) {
+
+            $cuisine = $cuisineRepository->findOneByName($slug);
+
+            if (null === $cuisine) {
+
+                $cuisine = new Cuisine();
+                $cuisine->setName($slug);
+
+                $this->doctrine->getManagerForClass(Cuisine::class)->persist($cuisine);
+                $flush = true;
+
+                $output->writeln(sprintf('Creating cuisine « %s »', $slug));
+
+            } else {
+                $output->writeln(sprintf('Cuisine « %s » already exists', $slug));
+            }
+        }
+
+        if ($flush) {
+            $this->doctrine->getManagerForClass(Cuisine::class)->flush();
         }
     }
 }
