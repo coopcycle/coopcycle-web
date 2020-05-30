@@ -774,3 +774,5 @@ services:
 
   AppBundle\Domain\Order\Workflow\Guard:
     public: true
+
+  AppBundle\Taxonomy\CuisineProvider: ~
