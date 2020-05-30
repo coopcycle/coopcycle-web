@@ -408,7 +408,7 @@ form.local_business.stripe_account.need_stripe_account: "Non hai ancora creato u
 store.TIRE_SHOP: Gommista
 store.TOY_STORE: Negozio di giocattoli
 store.WHOLESALE_STORE: Ingrosso
-form.local_business_type.food_establishment: Food establishment
+form.local_business_type.food_establishment: Stabilimento alimentare
 form.local_business_type.store: Magazzino
 form.local_business_type.label: Tipo di azienda
 form.settings.stripe_publishable_key.label: Chiave pubblicabile stripe
@@ -820,7 +820,7 @@ store.FLORIST: Negozio di fiori
 store.FURNITURE_STORE: Negozio di mobili
 store.GARDEN_STORE: Vivaio
 store.HARDWARE_STORE: Negozio hardware
-store.HOBBY_SHOP: Hobby shop
+store.HOBBY_SHOP: Negozio di Hobbistica
 store.JEWELRY_STORE: Gioielleria
 store.LIQUOR_STORE: Negozio di liquori
 store.MENS_CLOTHING_STORE: Negozio di abbigliamento maschile
@@ -897,7 +897,7 @@ profile.payment: Pagamento
 order.list.summary.restaurant.text: Consegna al ristorante <a href="%restaurant_url%">%restaurant_name%</a>
 order.list.state: Stato
 order.list.summary: Sommario
-order.adjustment_type.tip: Suggerimenti
+order.adjustment_type.tip: Suggerimento
 order.list.customer: Cliente
 payment.state.refunded_partially: Parzialmente rimborsato
 order.adjustment_type.delivery: Consegna
@@ -981,3 +981,10 @@ form.deposit_refund_settings.deposit_refund_optin.help: Quando il sistema di rim
   del deposito è facoltativo, sarà in grado di scegliere se desidera o meno gli imballaggi.
   Quando è obbligatorio, gli imballaggi verranno aggiunti automaticamente al totale
   dell'ordine.
+form.receipt.billing_address.help: Se vuoi usare un indirizzo differente per la fatturazione,
+  inseriscilo qui
+form.receipt.billing_address.label: Indirizzo di fatturazione
+form.menu_editor.name.help: Questo serve solo a te per distinguere i menù. Non verrà
+  mostrato al cliente.
+restaurant.form.cuisines.label: Cucine
+restaurant.form.section.taxonomy: Tassonomia
