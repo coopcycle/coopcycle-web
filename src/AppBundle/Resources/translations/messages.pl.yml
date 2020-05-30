@@ -785,7 +785,7 @@ receipt.billing_details: Zamówienie opłacone kartą kredytową dnia %date%
 receipt.total: Łącznie (z VAT)
 receipt.footer_item.total_incl_tax: Łącznie (z VAT)
 receipt.footer_item.total_excl_tax: Łącznie (bez VAT)
-receipt.line_item.total_products: Wszystkie produkty
+receipt.footer_item.total_products: Wszystkie produkty
 receipt.line_item.total: Suma
 receipt.line_item.quantity: Ilość
 receipt.line_item.unit_price: Cena jednostkowa

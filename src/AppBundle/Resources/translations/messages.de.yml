@@ -460,7 +460,7 @@ order.adjustment_type.reusable_packaging: Verpackung
 order.reusable_packaging.alert: Diese Bestellung muss in einem wiederverwendbaren
   Behälter verpackt werden
 form.user.quotes_allowed.label: Erlaube diesem Kunden, ein Angebot anzufordern
-receipt.line_item.total_products: Gesamtbetrag
+receipt.footer_item.total_products: Gesamtbetrag
 receipt.footer_item.total_excl_tax: Nettobetrag
 receipt.footer_item.total_incl_tax: Gesamtbetrag
 order.list.generate_receipt: Erstellen

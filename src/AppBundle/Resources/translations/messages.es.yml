@@ -733,7 +733,7 @@ receipt.line_item.name: Producto
 receipt.line_item.unit_price: Precio por unidad
 receipt.line_item.quantity: Cantidad
 receipt.line_item.total: Total
-receipt.line_item.total_products: Total productos
+receipt.footer_item.total_products: Total productos
 receipt.footer_item.total_excl_tax: Total (sin IVA)
 receipt.footer_item.total_incl_tax: Total (IVA incl.)
 receipt.total: Total (IVA incl.)

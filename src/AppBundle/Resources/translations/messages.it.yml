@@ -779,7 +779,7 @@ form.local_business.iso_code.fr.rcs_number: Numero RCS
 receipt.line_item.name: Prodotto
 receipt.line_item.unit_price: Prezzo unitario
 receipt.line_item.quantity: Quantità
-receipt.line_item.total_products: Prodotti totali
+receipt.footer_item.total_products: Prodotti totali
 receipt.footer_item.total_excl_tax: Totale (esclusa IVA)
 receipt.footer_item.total_incl_tax: Totale (inclusa IVA)
 form.delivery_import.store.label: Deposito

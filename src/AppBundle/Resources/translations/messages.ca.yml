@@ -807,7 +807,7 @@ receipt.line_item.name: Producte
 receipt.line_item.unit_price: preu d'unitat
 receipt.line_item.quantity: Quantia
 receipt.line_item.total: Total
-receipt.line_item.total_products: Total de productes
+receipt.footer_item.total_products: Total de productes
 receipt.footer_item.total_excl_tax: Total (sense IVA)
 receipt.footer_item.total_incl_tax: Total (amb IVA)
 receipt.total: Total (amb IVA)

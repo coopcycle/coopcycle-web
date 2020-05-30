@@ -848,7 +848,7 @@ receipt.line_item.name: Product
 receipt.line_item.unit_price: Unit price
 receipt.line_item.quantity: Quantity
 receipt.line_item.total: Total
-receipt.line_item.total_products: Total products
+receipt.footer_item.total_products: Total products
 receipt.footer_item.total_excl_tax: Total (excl. VAT)
 receipt.footer_item.total_incl_tax: Total (incl. VAT)
 receipt.total: Total (incl. VAT)
