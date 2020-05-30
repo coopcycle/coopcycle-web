@@ -402,6 +402,7 @@ h1, h2, h3, h4, h5, h6 {
     color: lighten(#212121, 10%);
   }
   margin-bottom: $line-height-computed;
+  width: 100%;
 
   &--disabled > * {
     opacity: 0.6;

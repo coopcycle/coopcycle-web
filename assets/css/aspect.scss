@@ -1,0 +1,54 @@
+.aspect {
+  position: relative;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%;
+}
+
+.aspect-inner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.aspect-inner img {
+  max-width: 100%;
+  width: 100%;
+  object-fit: cover;
+  height: 100%;
+}
+
+.aspect-16x9 {
+  padding-bottom: 56.25%;
+}
+
+.aspect-9x16 {
+  padding-bottom: 177.77778%;
+}
+
+.aspect-4x3 {
+  padding-bottom: 75%;
+}
+
+.aspect-3x4 {
+  padding-bottom: 133.33333%;
+}
+
+.aspect-3x2 {
+  padding-bottom: 66.66667%;
+}
+
+.aspect-2x3 {
+  padding-bottom: 150%;
+}
+
+.aspect-5x4 {
+  padding-bottom: (4 / 5) * 100%;
+}
+
+.aspect-1x1 {
+  padding-bottom: 100%;
+}

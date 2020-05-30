@@ -10,7 +10,14 @@
 
 <a class="restaurant-item {% if not restaurant.enabled %}restaurant-item--disabled{% endif %}"
   href="{{ local_business_path(restaurant, restaurant_path_params) }}">
-  <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
+  {# <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}"> #}
+
+  <div class="aspect aspect-5x4">
+    <div class="aspect-inner">
+      <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
+    </div>
+  </div>
+
   <div>
     <h4 class="restaurant-item__title">{{ restaurant.name|truncate(48, false, '…') }}</h4>
     {% if restaurant.servesCuisine|length > 0 %}
