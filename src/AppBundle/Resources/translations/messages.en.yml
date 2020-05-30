@@ -172,6 +172,8 @@ restaurant.form.section.options: Options
 restaurant.form.section.fulfillment: Fulfillment
 restaurant.form.section.payment: Payment
 restaurant.form.section.settlement: Settlement
+restaurant.form.section.taxonomy: Taxonomy
+restaurant.form.cuisines.label: Cuisines
 restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries.

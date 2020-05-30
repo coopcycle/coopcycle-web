@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\LocalBusiness;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
+use AppBundle\Entity\Cuisine;
 
 trait FoodEstablishmentTrait
 {
@@ -20,9 +21,9 @@ trait FoodEstablishmentTrait
         return $this;
     }
 
-    public function addServesCuisine($servesCuisine)
+    public function addServesCuisine(Cuisine $cuisine)
     {
-        $this->servesCuisine->add($servesCuisine);
+        $this->servesCuisine->add($cuisine);
 
         return $this;
     }

@@ -3,12 +3,19 @@ import { render } from 'react-dom'
 import { Switch } from 'antd'
 import Dropzone from 'dropzone'
 import _ from 'lodash'
+import Select from 'react-select'
 
 import i18n from '../i18n'
 import DropzoneWidget from '../widgets/Dropzone'
 import OpeningHoursInput from '../widgets/OpeningHoursInput'
 
 Dropzone.autoDiscover = false
+
+const cuisineAsOption = cuisine => ({
+  ...cuisine,
+  value: cuisine.id,
+  label: cuisine.name
+})
 
 function renderSwitch($input) {
 
@@ -156,4 +163,21 @@ $(function() {
     image: formData.dataset.restaurantImage,
     size: [ 512, 512 ]
   })
+
+  const cuisinesEl = document.querySelector('#cuisines')
+  if (cuisinesEl) {
+
+    const cuisines = JSON.parse(cuisinesEl.dataset.values)
+    const cuisinesTargetEl = document.querySelector(cuisinesEl.dataset.target)
+
+    render(
+      <Select
+        defaultValue={ _.map(JSON.parse(cuisinesTargetEl.value || '[]'), cuisineAsOption) }
+        isMulti
+        options={ _.map(cuisines, cuisineAsOption) }
+        onChange={ cuisines => {
+          cuisinesTargetEl.value = JSON.stringify(cuisines || [])
+        }} />, cuisinesEl)
+  }
+
 })

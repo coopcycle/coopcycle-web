@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
@@ -15,12 +16,15 @@ use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 abstract class LocalBusinessType extends AbstractType
 {
     protected $authorizationChecker;
     protected $tokenStorage;
+    protected $entityManager;
+    protected $serializer;
     protected $country;
     protected $loopeatEnabled;
     protected $debug;
@@ -28,12 +32,16 @@ abstract class LocalBusinessType extends AbstractType
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage,
+        EntityManagerInterface $entityManager,
+        SerializerInterface $serializer,
         string $country,
         bool $loopeatEnabled = false,
         bool $debug = false)
     {
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
+        $this->entityManager = $entityManager;
+        $this->serializer = $serializer;
         $this->country = $country;
         $this->loopeatEnabled = $loopeatEnabled;
         $this->debug = $debug;

@@ -2,7 +2,9 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Form\Restaurant\FulfillmentMethodType;
 use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
 use Symfony\Component\Form\FormEvent;
@@ -153,6 +155,23 @@ class RestaurantType extends LocalBusinessType
                             'data' => $restaurant->isStripePaymentMethodEnabled('giropay'),
                         ]);
                 }
+
+                $isFoodEstablishment = false;
+                foreach (FoodEstablishment::values() as $value) {
+                    if ($value->getValue() === $restaurant->getType()) {
+                        $isFoodEstablishment = true;
+                        break;
+                    }
+                }
+
+                if ($isFoodEstablishment) {
+                    $form
+                        ->add('cuisines', HiddenType::class, [
+                            'mapped' => false,
+                            'required' => false,
+                            'data' => $this->serializer->serialize($restaurant->getServesCuisine(), 'jsonld')
+                        ]);
+                }
             }
         });
 
@@ -193,6 +212,21 @@ class RestaurantType extends LocalBusinessType
                         $restaurant->enableStripePaymentMethod('giropay');
                     } else {
                         $restaurant->disableStripePaymentMethod('giropay');
+                    }
+                }
+
+                if ($form->has('cuisines')) {
+
+                    $cuisines = $form->get('cuisines')->getData();
+                    $cuisines = json_decode($cuisines, true);
+
+                    $cuisineRepository = $this->entityManager->getRepository(Cuisine::class);
+
+                    foreach ($cuisines as $c) {
+                        $cuisine = $cuisineRepository->find($c['id']);
+                        if ($cuisine) {
+                            $restaurant->addServesCuisine($cuisine);
+                        }
                     }
                 }
 

@@ -110,6 +110,13 @@
             {{ 'restaurant.form.section.settlement'|trans }}
           </a>
         </li>
+        {% if restaurant.id is not null %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#taxonomy" aria-controls="taxonomy">
+            {{ 'restaurant.form.section.taxonomy'|trans }}
+          </a>
+        </li>
+        {% endif %}
       </ul>
     </div>
     <div class="col-sm-9">
@@ -133,21 +140,14 @@
         <div role="tabpanel" class="tab-pane" id="settlement">
           {% include "@App/restaurant/form/_partials/settlement.html.twig" %}
         </div>
+        {% if restaurant.id is not null %}
+        <div role="tabpanel" class="tab-pane" id="taxonomy">
+          {% include "@App/restaurant/form/_partials/taxonomy.html.twig" %}
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>
-
-  {#
-  <div id="cuisines" data-prototype="{{ form_widget(form.servesCuisine.vars.prototype)|e('html_attr') }}">
-    {{ form_label(form.servesCuisine) }}
-    {% for cuisine in form.servesCuisine %}
-      {{ form_widget(cuisine) }}
-    {% endfor %}
-  </div>
-  <button class="btn btn-sm btn-success" data-toggle="add-cuisine" data-target="#cuisines">Ajouter</button>
-  {% do form.servesCuisine.setRendered %}
-  <hr>
-  #}
 
   <hr>
 
@@ -184,7 +184,6 @@
 
 {% block scripts %}
 <script type="text/javascript">
-
   function initMap() {
     new CoopCycle.AddressInput(document.querySelector('#restaurant_address_streetAddress'), {
       elements: {
@@ -195,34 +194,6 @@
       }
     })
   }
-
-  function addForm($container) {
-    var prototype = $container.data('prototype');
-    var index = $container
-      .find('select')
-      .filter(function() {
-        return this.name.match(/^restaurant\[servesCuisine\]/);
-      })
-      .length;
-
-    var form = prototype.replace(/__name__/g, index);
-
-    $container.append(form);
-  }
-
-  $(function() {
-    $(document).on('click', '[data-remove]', function(e) {
-      e.preventDefault();
-      $(e.target).closest('.form-group').remove();
-    });
-
-    $('[data-toggle="add-cuisine"]').on('click', function(e) {
-      e.preventDefault();
-      var selector = $(e.target).data('target');
-      var $target = $(selector);
-      addForm($target);
-    });
-  });
 </script>
 {{ encore_entry_script_tags('restaurant-form') }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>

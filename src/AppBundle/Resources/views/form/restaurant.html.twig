@@ -1,18 +1,5 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
-{% block _restaurant_servesCuisine_entry_widget %}
-{% spaceless %}
-<div class="form-group row">
-  <div class="col-sm-11">
-  {{ form_widget(form) }}
-  </div>
-  <div class="col-sm-1">
-    <button type="button" class="btn btn-danger pull-right" data-remove><span class="glyphicon glyphicon-remove-sign"></span></button>
-  </div>
-</div>
-{% endspaceless %}
-{% endblock %}
-
 {% block _restaurant_imageFile_row %}
   {% set image_url = coopcycle_asset(form.parent.vars.value, 'imageFile', 'restaurant_thumbnail') %}
   <div class="form-group {% if not form.vars.valid %}has-error{% endif %}">

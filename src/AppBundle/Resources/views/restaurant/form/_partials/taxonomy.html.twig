@@ -1,0 +1,9 @@
+{% if form.cuisines is defined %}
+  <div class="form-group">
+    <label class="control-label required" for="cuisines">{{ 'restaurant.form.cuisines.label'|trans }}</label>
+    <div id="cuisines"
+      data-values="{{ cuisines|json_encode|e('html_attr') }}"
+      data-target="{{ ('#' ~ form.cuisines.vars.id) }}"></div>
+    {{ form_widget(form.cuisines) }}
+  </div>
+{% endif %}

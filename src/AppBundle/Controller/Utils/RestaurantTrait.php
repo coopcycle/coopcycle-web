@@ -6,6 +6,7 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Contract;
+use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant\PreparationTimeRule;
 use AppBundle\Entity\ReusablePackaging;
@@ -239,6 +240,8 @@ trait RestaurantTrait
             $loopeatAuthorizeUrl = sprintf('%s/oauth/authorize?%s', $this->getParameter('loopeat_base_url'), $queryString);
         }
 
+        $cuisines = $this->getDoctrine()->getRepository(Cuisine::class)->findAll();
+
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'zoneNames' => $zoneNames,
             'restaurant' => $restaurant,
@@ -247,6 +250,7 @@ trait RestaurantTrait
             'form' => $form->createView(),
             'layout' => $request->attributes->get('layout'),
             'loopeat_authorize_url' => $loopeatAuthorizeUrl,
+            'cuisines' => $this->get('serializer')->normalize($cuisines, 'jsonld'),
         ], $routes));
     }
 

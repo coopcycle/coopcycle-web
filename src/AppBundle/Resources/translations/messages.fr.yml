@@ -147,6 +147,7 @@ restaurant.form.section.options: Options
 restaurant.form.section.fulfillment: Exécution
 restaurant.form.section.payment: Paiement
 restaurant.form.section.settlement: Conditions
+restaurant.form.cuisines.label: Styles de cuisine
 restaurant.deliveryPerimeterExpression.title: Périmètre de livraison
 restaurant.deliveryPerimeterExpression.help: Définit le périmètre de livraison accepté.
   Vous pouvez choisir un rayon (en km) ou une zone
