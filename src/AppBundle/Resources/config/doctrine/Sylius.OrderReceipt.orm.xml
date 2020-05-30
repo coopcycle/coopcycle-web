@@ -4,6 +4,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
+    <field name="billingAddress" type="text" column="billing_address" nullable="true"/>
     <one-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="receipt">
       <cascade>
         <cascade-remove/>
