@@ -15,23 +15,28 @@ resetting.email.reset: Passwort zurücksetzen
 order.view: Bestellung anschauen
 order.public_url: "Um Ihre Sendung zu verfolgen, bitte <a href=\"%order.public_url%\"\
   >hier klicken</a>.\n"
-order.foodtech.accepted.delivery: "Sie wird Ihnen zu folgender Zeit zugestellt:"
-order.foodtech.accepted.delivery.disclaimer: "Wir werden Sie im Falle eines Problems kontaktieren, um Ihre Adresse zu finden"
-order.foodtech.accepted.collection: "Sie müssen es zu der folgenden Zeit abholen:"
-order.foodtech.accepted.collection.disclaimer: "Wenn Sie ein Problem haben, kontaktieren Sie <strong>%name%</strong> unter <strong>%telefon_nummer%</strong> im Voraus genug, um Ihre Bestellung zu stornieren."
+order.foodtech.accepted.delivery: 'Sie wird Ihnen zu folgender Zeit zugestellt:'
+order.foodtech.accepted.delivery.disclaimer: Wir werden Sie im Falle eines Problems
+  kontaktieren, um Ihre Adresse zu finden
+order.foodtech.accepted.collection: 'Sie müssen es zu der folgenden Zeit abholen:'
+order.foodtech.accepted.collection.disclaimer: Wenn Sie ein Problem haben, kontaktieren
+  Sie <strong>%name%</strong> unter <strong>%telefon_nummer%</strong> im Voraus genug,
+  um Ihre Bestellung zu stornieren.
 order.foodtech.cancelled: "Das Restaurant konnte die Bestellung %order.number% leider\
   \ nicht annehmen.\n<br>\nIhr Konto wurde nicht belastet.\n"
 admin.order.created.subject: Neue Bestellung zum Bestätigen
 admin.order.created.body: "Hallo,\n<br>\nDie neue Bestellung ist eingegangen.\n"
-admin.order_foodtech.created.body: "Hallo,\n<br>\nEine neue Bestellung für <strong>%restaurant.name%</strong> ist eingegangen."
+admin.order_foodtech.created.body: "Hallo,\n<br>\nEine neue Bestellung für <strong>%restaurant.name%</strong>\
+  \ ist eingegangen."
 owner.order.created.subject: Neue Bestellung zu bestätigen
-owner.order.created.body: "Hallo,\n<br>\nfür <strong>%restaurant.name%</strong> wurde eine neue Bestellung aufgenommen.\n"
+owner.order.created.body: "Hallo,\n<br>\nfür <strong>%restaurant.name%</strong> wurde\
+  \ eine neue Bestellung aufgenommen.\n"
 order.created.subject: Bestätigung Ihrer Bestellung %order.number%
 order.created.body: "Hallo,\n<br>\nIhre Bestellung wurde erfasst.\n<br>\nWir werden\
   \ die Bestellung schnellstmöglich bearbeiten und kontaktieren Sie, sobald sie bestätigt\
   \ ist.\n"
 order.accepted.subject: Ihre Bestellung %order.number% wurde angenommen
-order.accepted.body.intro: "Hallo,\n<br>\nIhre Bestellung wurde bestätigt.\n"
+order.accepted.body.intro: "Hallo,\n<br>\nIhre Bestellung wurde bestätigt."
 order.cancelled.subject: Ihre Bestellung %order.number% wurde storniert
 order.cancelled.body.intro: "Hallo,\n<br>\nEs tut uns Leid, aber Ihre Bestellung wurde\
   \ storniert.\n"
@@ -67,3 +72,5 @@ covid_19.body: |
   <h2>4. Waschen Sie Ihre Hände!</h2>
   <p>Wenn Sie Ihre Bestellung ausgepackt und die Verpackung entsorgt haben, <strong>waschen Sie Ihre Hände!</strong></p>
 order.payment.subject: Bezahlung der Bestellung %order.number%
+order.payment.body: "Hallo\nDie von Ihnen bei uns abgegeben Bestellung wurde fertiggestellt.\n\
+  Unten finden Sie einen Link zur Kartenzahlung\n"
