@@ -265,7 +265,8 @@ form.menu_editor.products.help: Per aggiungere prodotti all'elenco a destra, agg
   prima al <a href="%products_url%"> catalogo </a>
 form.product.name.label: Nome
 form.task.recipient.help: Specificare il nome della persona da contattare
-form.task_event.notes.placeholder: 'Esempio: indirizzo non trovato, nessun problema...'
+form.task_event.notes.placeholder: 'Esempio: indirizzo non trovato, nessun problema.
+  . .'
 activity.order.dropped: "@%owner% ha consegnato l'ordine #order/%aggregate_id%\n"
 activity.order.fulfilled: "Ordine #order/#%aggregate_id% è completato\n"
 task.previous_task_not_completed_yet: L'incarico precedente non è stato ancora completato
@@ -971,3 +972,12 @@ profile.managedStores: Negozio gestito dall'utente
 order.payment.card_number.help: Una numero Stripe <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">di una carta test</a> è stato pre-inserito. Non verrà
   effettuato nessun addebito.
+info.deposit_refund: Ogni voce nell'elenco seguente rappresenta un tipo di imballaggio
+  (piccolo, grande ...). Una volta creati sarà possibile configurarli per ciascun
+  prodotto.
+confirm.deposit_refund_enabled: Il sistema di rimborso del deposito è abilitato, ora
+  puoi <a href="%url%">definire gli imballaggi</a>.
+form.deposit_refund_settings.deposit_refund_optin.help: Quando il sistema di rimborso
+  del deposito è facoltativo, sarà in grado di scegliere se desidera o meno gli imballaggi.
+  Quando è obbligatorio, gli imballaggi verranno aggiunti automaticamente al totale
+  dell'ordine.
