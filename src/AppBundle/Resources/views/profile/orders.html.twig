@@ -9,8 +9,12 @@
     </div>
   {% else %}
     {% include "@App/_partials/order/list.html.twig" %}
+    {% include "@App/_partials/order/receipt_modal.html.twig" %}
   {% endif %}
 {% endblock %}
 
 {% block scripts %}
+<script>
+{% include "@App/_partials/order/receipt_modal.js.twig" %}
+</script>
 {% endblock %}

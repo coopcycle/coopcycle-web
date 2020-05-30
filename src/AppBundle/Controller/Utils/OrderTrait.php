@@ -101,6 +101,22 @@ trait OrderTrait
         ], $response);
     }
 
+    public function orderReceiptPreviewAction($id, Request $request, ReceiptGenerator $generator)
+    {
+        $order = $this->get('sylius.repository.order')->find($id);
+
+        $this->accessControl($order);
+
+        $receipt = $generator->create($order);
+        $order->setReceipt($receipt);
+
+        $output = $generator->render($receipt);
+
+        return new Response($output, 200, [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
+
     public function orderReceiptAction($orderNumber, Request $request)
     {
         $order = $this->get('sylius.repository.order')->findOneBy([
@@ -128,6 +144,8 @@ trait OrderTrait
 
     public function generateOrderReceiptAction($orderNumber, Request $request, ReceiptGenerator $generator)
     {
+        $billingAddress = $request->request->get('billingAddress');
+
         $order = $this->get('sylius.repository.order')->findOneBy([
             'number'=> $orderNumber
         ]);
@@ -135,6 +153,11 @@ trait OrderTrait
         $this->accessControl($order);
 
         $receipt = $generator->create($order);
+
+        if (!empty($billingAddress)) {
+            $receipt->setBillingAddress($billingAddress);
+        }
+
         $order->setReceipt($receipt);
 
         $this->getDoctrine()->getManager()->flush();

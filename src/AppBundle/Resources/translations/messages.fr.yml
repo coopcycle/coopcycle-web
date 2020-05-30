@@ -937,3 +937,5 @@ form.price_with_tax.tax_excl.label: Prix (HT)
 form.price_with_tax.tax_incl.label: Prix (TTC)
 confirm.deposit_refund_enabled: Le système de consignes est activé, vous pouvez maintenant <a href="%url%">configurer les types d'emballages</a>.
 info.deposit_refund: Chaque entrée de la liste ci-dessous représente un type d'emballage (petit, grand, etc…). Une fois les types d'emballages créés, vous pouvez les configurer pour chaque produit.
+form.receipt.billing_address.label: Adresse de facturation
+form.receipt.billing_address.help: Si vous souhaitez utiliser une adresse de facturation, indiquez-la ici

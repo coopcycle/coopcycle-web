@@ -79,6 +79,15 @@ class ReceiptGenerator
 
     public function generate(OrderReceipt $receipt, $filename): bool
     {
+        if ($this->filesystem->has($filename)) {
+            $this->filesystem->delete($filename);
+        }
+
+        return $this->filesystem->write($filename, $this->render($receipt));
+    }
+
+    public function render(OrderReceipt $receipt): string
+    {
         $html = $this->twig->render('@App/order/receipt.pdf.twig', [
             'receipt'      => $receipt,
             'order_number' => $receipt->getOrder()->getNumber(),
@@ -91,11 +100,7 @@ class ReceiptGenerator
             'json' => ['html' => $html]
         ]);
 
-        if ($this->filesystem->has($filename)) {
-            $this->filesystem->delete($filename);
-        }
-
-        return $this->filesystem->write($filename, (string) $response->getBody());
+        return (string) $response->getBody();
     }
 
     private function addAdjustmentFooterItem(OrderReceipt $receipt, Adjustment $adjustment)

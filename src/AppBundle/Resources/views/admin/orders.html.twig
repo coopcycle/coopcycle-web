@@ -49,6 +49,8 @@
   </div>
 </div>
 
+{% include "@App/_partials/order/receipt_modal.html.twig" %}
+
 {% endblock %}
 
 {% block scripts %}
@@ -75,5 +77,8 @@ new CoopCycle.Switch(document.querySelector('#show-cancelled-switch'), {
   }
 });
 
+</script>
+<script>
+{% include "@App/_partials/order/receipt_modal.js.twig" %}
 </script>
 {% endblock %}

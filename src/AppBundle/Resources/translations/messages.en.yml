@@ -970,3 +970,5 @@ form.price_with_tax.tax_excl.label: Price (tax excl.)
 form.price_with_tax.tax_incl.label: Price (tax incl.)
 confirm.deposit_refund_enabled: The deposit-refund system is enabled, you can now <a href="%url%">configure the packagings</a>.
 info.deposit_refund: Each entry in the list below represents a type of packaging (small, large…). Once the packagings have been created, you can configure them for each product.
+form.receipt.billing_address.label: Billing address
+form.receipt.billing_address.help: If you want to use a different address for billing, enter it here

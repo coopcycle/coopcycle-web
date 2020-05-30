@@ -43,6 +43,11 @@ admin_order_new:
     defaults: { _controller: AppBundle\Controller\AdminController::newOrderAction }
     methods:  [ GET, POST ]
 
+admin_order_receipt_preview:
+    path:     /admin/orders/{id}/receipt/preview
+    defaults: { _controller: AppBundle\Controller\AdminController::orderReceiptPreviewAction }
+    methods:  [ GET ]
+
 admin_order:
     path:     /admin/orders/{id}
     defaults: { _controller: AppBundle\Controller\AdminController::orderAction }

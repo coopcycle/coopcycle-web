@@ -1,0 +1,23 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="order-receipt-modal">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="" class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">{{ 'order.list.generate_receipt'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="control-label required" for="receipt_billing_address">{{ 'form.receipt.billing_address.label'|trans }}</label>
+          <textarea class="form-control" id="receipt_billing_address" name="billingAddress"></textarea>
+          <span class="help-block">{{ 'form.receipt.billing_address.help'|trans }}</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+        <button type="submit" class="btn btn-primary">{{ 'order.list.generate_receipt'|trans }}</button>
+      </div>
+    </form>
+  </div>
+</div>

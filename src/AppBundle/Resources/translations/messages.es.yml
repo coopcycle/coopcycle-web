@@ -975,3 +975,5 @@ fulfillment_method.delivery: Entrega
 fulfillment_method.collection: Recogida
 form.checkout_address.takeaway.no_show_disclaimer: 'Tenga en cuenta: si no recoge,
   se le cobrará el importe total del pedido.'
+form.receipt.billing_address.label: Dirección de facturación
+form.receipt.billing_address.help: Si desea utilizar una dirección de facturación diferente, introdúzcala aquí

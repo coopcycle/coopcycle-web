@@ -78,8 +78,9 @@
         <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
       </a>
       {% elseif order.foodtech and order.state == 'fulfilled' %}
-        <form method="post" action="{{ path(routes.order_receipt_generate, { orderNumber: order.number }) }}">
-          <button type="submit" class="btn btn-xs btn-default">{{ 'order.list.generate_receipt'|trans }}</button>
+        <button type="button" class="btn btn-xs btn-default"
+          data-toggle="modal" data-target="#order-receipt-modal"
+          data-action="{{ path(routes.order_receipt_generate, { orderNumber: order.number }) }}">{{ 'order.list.generate_receipt'|trans }}</button>
         </form>
       {% endif %}
     </td>
