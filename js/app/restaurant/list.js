@@ -1,6 +1,5 @@
 import React from 'react'
 import { render } from 'react-dom'
-import classNames from 'classnames'
 
 import { asText } from '../components/ShippingTimeRange'
 
