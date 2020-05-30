@@ -669,9 +669,18 @@ localBusiness.form.openingHoursBehavior.asap: So schnell wie möglich
 localBusiness.form.openingHoursBehavior: Art der Öffnungszeiten
 adminDashboard.customize.title: Personalisiere
 restaurant.contract.takeAwayFeeRate.label: Plattformgebühr bei Abholung
-restaurant.form.section.settlement: Einigung
+restaurant.form.section.settlement: Deal
 restaurant.form.section.payment: Bezahlung
 restaurant.form.section.fulfillment: Ausführung
-restaurant.form.section.general: Im Allgemeinen
+restaurant.form.section.general: Allgemein
 restaurant.form.section.options: Optionen
 restaurant.form.noPricingRule: Es wurden keine Bezahlungsvorschriften eingebaut
+form.order.refuse.label: Ablehnen
+order.payments: Bezahlung
+order.payment.waiting_failure: Deine Bank hat die Überweisung abgelehnt
+order.payment.waiting_success: Deine Bank hat die Überweisung bestätigt
+order.payment.do_not_close: Bitte diese Seite nicht schließen
+order.payment.waiting_for_confirmation: Wir warten auf die Bestätigung deiner Bank…
+order.payment.redirect.help: Du wirst zur Seite deiner Bank weitergeleitet, um die
+  Bezahlung zu vervollständigen
+restaurant.list.promotions: Werbeaktionen
