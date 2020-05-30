@@ -658,3 +658,13 @@ form.menu_taxon.add_child.label: Fügen Sie einen neuen Abschnitt hinzu
 form.product.reusable_packaging_enabled.label: Aktivieren Sie wiederverwendbare Verpackung
   für dieses Produkt
 form.product_option.values.help: Sie müssen eine Liste an Werte für diese Option festlegen
+restaurant.form.loopeat_disconnect.label: LoopEat trennen
+restaurant.form.giropay_enabled.label: Aktiviere Giropay
+restaurant.form.featured.label: Dieses Restaurant soll auf dem Homepage gezeigt werden
+restaurant.quotes_disclaimer.not_authenticated: Dieses Restaurant bietet auch Caterings.
+  Melde dich ein <a href="%login%">Einmelden</a> um ein Kostenvoranschlag anzufragen.
+  <a href="%contact_us%">Kontaktiere uns</a> für mehr Informationen.
+localBusiness.form.openingHoursBehavior.time_slot: Vorbestellungen
+localBusiness.form.openingHoursBehavior.asap: So schnell wie möglich
+localBusiness.form.openingHoursBehavior: Art der Öffnungszeiten
+adminDashboard.customize.title: Personalisiere
