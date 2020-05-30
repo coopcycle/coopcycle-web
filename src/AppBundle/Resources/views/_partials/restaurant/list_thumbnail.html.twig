@@ -13,7 +13,9 @@
   <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
   <div>
     <h4 class="restaurant-item__title">{{ restaurant.name|truncate(48, false, '…') }}</h4>
-    {% if restaurant.description is not empty %}
+    {% if restaurant.servesCuisine|length > 0 %}
+      <p class="text-muted">{{ restaurant.servesCuisine|map(c => ("#{c.name}"|trans({}, 'cuisines')))|join(' · ') }}</p>
+    {% elseif restaurant.description is not empty %}
       <p class="text-muted">{{ restaurant.description|truncate(42, false, '…') }}</p>
     {% else %}
       <p class="text-muted">{{ restaurant.address.streetAddress }}</p>
