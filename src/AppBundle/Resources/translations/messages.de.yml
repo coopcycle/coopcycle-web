@@ -232,7 +232,7 @@ restaurant.contract.flatDeliveryPrice.help: Der Betrag wird nicht im Warenkorb a
 restaurant.contract.customerAmount.label: Betrag vom Kunden bezahlt
 restaurant.contract.customerAmount.help: Dieser Betrag wird im Warenkorb angezeigt
   und wird den Gesamtbetrag erhöhen
-restaurant.contract.feeRate.label: Kostenlose Rate
+restaurant.contract.feeRate.label: Plattformgebühr für Lieferungen
 restaurant.contract.feeRate.help: Dieser Prozentsatz wird seitens der Plattform vom
   Gesamtbetrag einbehalten
 restaurant.contract.restaurantPaysStripeFee.label: Verantwortlich für die Kosten von
@@ -611,8 +611,8 @@ restaurant.contract.variableDeliveryPrice.label: Der von der Plattform abgebucht
 restaurant.contract.variableCustomerAmount.label: Betrag vom Kunden bezahlt (variabel)
 restaurant.contract.variableCustomerAmount.help: Der Preis wird durch die gewählten
   Preisregeln festgesetzt
-restaurant.contract.variableCustomerAmountEnabled.label: Aktivieren Sie die variablen
-  Kunden-Liefergebühr
+restaurant.contract.variableCustomerAmountEnabled.label: Aktivieren eines variablen
+  Betrags der vom Kunden bezahlt wird
 restaurant.contract.variableCustomerAmountEnabled.disclaimer: Der Betrag wird dynamisch
   berechnet
 restaurant.contract.calculation_info: Sie können dem Restaurant einen anderen Betrag
@@ -658,3 +658,29 @@ form.menu_taxon.add_child.label: Fügen Sie einen neuen Abschnitt hinzu
 form.product.reusable_packaging_enabled.label: Aktivieren Sie wiederverwendbare Verpackung
   für dieses Produkt
 form.product_option.values.help: Sie müssen eine Liste an Werte für diese Option festlegen
+restaurant.form.loopeat_disconnect.label: LoopEat trennen
+restaurant.form.giropay_enabled.label: Aktiviere Giropay
+restaurant.form.featured.label: Dieses Restaurant soll auf dem Homepage gezeigt werden
+restaurant.quotes_disclaimer.not_authenticated: Dieses Restaurant bietet auch Caterings.
+  Melde dich ein <a href="%login%">Einmelden</a> um ein Kostenvoranschlag anzufragen.
+  <a href="%contact_us%">Kontaktiere uns</a> für mehr Informationen.
+localBusiness.form.openingHoursBehavior.time_slot: Vorbestellungen
+localBusiness.form.openingHoursBehavior.asap: So schnell wie möglich
+localBusiness.form.openingHoursBehavior: Art der Öffnungszeiten
+adminDashboard.customize.title: Personalisiere
+restaurant.contract.takeAwayFeeRate.label: Plattformgebühr bei Abholung
+restaurant.form.section.settlement: Deal
+restaurant.form.section.payment: Bezahlung
+restaurant.form.section.fulfillment: Ausführung
+restaurant.form.section.general: Allgemein
+restaurant.form.section.options: Optionen
+restaurant.form.noPricingRule: Es wurden keine Bezahlungsvorschriften eingebaut
+form.order.refuse.label: Ablehnen
+order.payments: Bezahlung
+order.payment.waiting_failure: Deine Bank hat die Überweisung abgelehnt
+order.payment.waiting_success: Deine Bank hat die Überweisung bestätigt
+order.payment.do_not_close: Bitte diese Seite nicht schließen
+order.payment.waiting_for_confirmation: Wir warten auf die Bestätigung deiner Bank…
+order.payment.redirect.help: Du wirst zur Seite deiner Bank weitergeleitet, um die
+  Bezahlung zu vervollständigen
+restaurant.list.promotions: Werbeaktionen
