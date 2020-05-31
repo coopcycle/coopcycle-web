@@ -7,6 +7,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Form\Restaurant\FulfillmentMethodType;
 use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -217,16 +218,30 @@ class RestaurantType extends LocalBusinessType
 
                 if ($form->has('cuisines')) {
 
+                    $cuisineRepository = $this->entityManager->getRepository(Cuisine::class);
+
+                    $originalCuisines = new ArrayCollection();
+                    foreach ($restaurant->getServesCuisine() as $c) {
+                        $originalCuisines->add($c);
+                    }
+
                     $cuisines = $form->get('cuisines')->getData();
                     $cuisines = json_decode($cuisines, true);
 
-                    $cuisineRepository = $this->entityManager->getRepository(Cuisine::class);
-
+                    $newCuisines = new ArrayCollection();
                     foreach ($cuisines as $c) {
-                        $cuisine = $cuisineRepository->find($c['id']);
-                        if ($cuisine) {
-                            $restaurant->addServesCuisine($cuisine);
+                        if ($cuisine = $cuisineRepository->find($c['id'])) {
+                            $newCuisines->add($cuisine);
                         }
+                    }
+
+                    foreach ($originalCuisines as $c) {
+                        if (!$newCuisines->contains($c)) {
+                            $restaurant->removeServesCuisine($c);
+                        }
+                    }
+                    foreach ($newCuisines as $c) {
+                        $restaurant->addServesCuisine($c);
                     }
                 }
 

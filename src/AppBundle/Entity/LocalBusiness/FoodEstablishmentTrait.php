@@ -23,7 +23,18 @@ trait FoodEstablishmentTrait
 
     public function addServesCuisine(Cuisine $cuisine)
     {
-        $this->servesCuisine->add($cuisine);
+        if (!$this->servesCuisine->contains($cuisine)) {
+            $this->servesCuisine->add($cuisine);
+        }
+
+        return $this;
+    }
+
+    public function removeServesCuisine(Cuisine $cuisine)
+    {
+        if ($this->servesCuisine->contains($cuisine)) {
+            $this->servesCuisine->removeElement($cuisine);
+        }
 
         return $this;
     }
