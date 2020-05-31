@@ -2,15 +2,6 @@
 
 {% block body %}
 
-{# {% set examples = {
-  'Oberkampf': path('restaurants', { geohash: 'u09typ9kp93' }),
-  'Châtelet': path('restaurants', { geohash: 'u09tvqjrnvr' }),
-  'Opéra': path('restaurants', { geohash: 'u09tvpgsem8' }),
-  'République': path('restaurants', { geohash: 'u09wjb108ub' }),
-} %} #}
-
-{% set examples = {} %}
-
 <section class="homepage-search" data-search="address"
   data-addresses="{{ addresses_normalized|json_encode()|e('html') }}"
   data-tracking-category="Homepage">
