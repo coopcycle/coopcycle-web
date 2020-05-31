@@ -25,8 +25,6 @@ parameters:
     redis_dsn: redis://%redis_host%:6379/0
     osrm_host: "127.0.0.1:5000"
     app.name: default
-    app.dispatch_port: "8000"
-    app.tracking_port: "8001"
     is_demo: false
     sentry_public_dsn: "https://<public>@sentry.io/********"
     fcm_server_api_key: ''

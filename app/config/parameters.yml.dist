@@ -42,8 +42,6 @@ parameters:
     osrm_host: "osrm:5000"
 
     app.name: default
-    app.dispatch_port: "8000"
-    app.tracking_port: "8001"
 
     is_demo: false
 
