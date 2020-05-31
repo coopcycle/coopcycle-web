@@ -24,10 +24,8 @@ burmese: Birmana
 cafe: Cafetería
 cajun: Cajún
 californian: Californiana
-calzones: ''
 cambodian: Camboyana
 caribbean: Caribeña
-cheesesteaks: ''
 chicken: Pollería
 chilean: Chilena
 chinese: China
@@ -56,8 +54,6 @@ ecuadorean: Ecuatoriana
 european: Europea
 fast_food: Comida Rápida
 filipino: Filipina
-fish_and_chips: ''
-fondue: ''
 french: Francesa
 frozen_yogurt: Yogurt helado
 fusion: Fusión
@@ -65,9 +61,7 @@ gastropub: Pub Gastronómico
 german: Alemana
 greek: Griega
 grill: Parrilla
-gyros: ''
 haitian: Haitiana
-halal: ''
 hawaiian: Hawaiana
 healthy: Saludable
 hot_dogs: Perritos Calientes
@@ -83,11 +77,9 @@ japanese: Japonesa
 juices: Zumos
 korean: Coreano
 korean_barbeque: Barbacoa Coreana
-kosher: ''
 latin: Latina
 latin_american: Latinoamericana
 lebanese: Libanesa
-lyonnais: ''
 malaysian: Malasia
 mediterranean: Mediterránea
 mexican: Mexicana
@@ -95,31 +87,25 @@ middle_eastern: Medio Este
 mongolian: Mongola
 moroccan: Marroquí
 nepalese: Nepalí
-noodle_bar: ''
 norwegian: Noruega
 organic: Orgánica
 oysters: Ostras
 pacific_rim: La costa del Pacífico
 pakistani: Pakistaní
-pan_asian: ''
-pasta: ''
 pastries: Pastelería
 persian: Persa
 peruvian: Peruana
-pho: ''
 pizza: Pizzería
 polish: Polaca
 polynesian: Polinesia
 portuguese: Portuguesa
 provencal: Provenzal
-pub_food: ''
 puerto_rican: Puertorriqueña
 raw: Cruda
 ribs: Costillas
 russian: Rusa
 salad: Ensalada
 salvadoran: Salvadoreña
-sandwiches: ''
 savoy: Saboya
 scandinavian: Escandinava
 seafood: Pesado y marisco
@@ -135,14 +121,8 @@ southern: Sureña
 southwestern: Del Suroeste
 spanish: Española
 steak: Filete
-steakhouse: ''
-subs: ''
-sushi: ''
 taiwanese: Taiwanesa
-tapas: ''
 tea: Té
-tex_mex: ''
-thai: ''
 tibetan: Tibetana
 traditional: Tradicional
 tunisian: Tunecina
@@ -153,4 +133,3 @@ vegetarian: Vegetariana
 venezuelan: Venezolana
 vietnamese: vietnamita
 wings: Alitas
-wraps: ''
