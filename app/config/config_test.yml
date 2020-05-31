@@ -28,7 +28,7 @@ snc_redis:
         default:
             type: phpredis
             alias: default
-            dsn: redis://%redis_host%:6379/1
+            dsn: "%env(COOPCYCLE_REDIS_DSN)%/1"
             options:
                 prefix: "%database_name%_test:"
 

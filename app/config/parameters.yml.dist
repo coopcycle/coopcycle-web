@@ -36,9 +36,6 @@ parameters:
     transactional_address: transactional@coopcycle.dev
     transactional_sender_name: CoopCycle
 
-    redis_host: redis
-    redis_dsn: redis://%redis_host%:6379
-
     osrm_host: "osrm:5000"
 
     app.name: default

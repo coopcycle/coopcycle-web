@@ -21,8 +21,6 @@ parameters:
     jwt_token_ttl: 3600
     transactional_address: test@coopcycle.org
     transactional_sender_name: CoopCycle
-    redis_host: 127.0.0.1
-    redis_dsn: redis://%redis_host%:6379/0
     osrm_host: "127.0.0.1:5000"
     app.name: default
     is_demo: false
