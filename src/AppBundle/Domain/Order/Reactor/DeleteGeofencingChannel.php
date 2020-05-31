@@ -3,7 +3,7 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event;
-use Predis\Client as Redis;
+use Redis;
 use Psr\Log\LoggerInterface;
 
 class DeleteGeofencingChannel
@@ -34,9 +34,9 @@ class DeleteGeofencingChannel
 
         $dropoff = $delivery->getDropoff();
 
-        $this->tile38->executeRaw([
+        $this->tile38->rawCommand(
             'DELCHAN',
-            sprintf('%s:dropoff:%d', $this->doorstepChanNamespace, $dropoff->getId()),
-        ]);
+            sprintf('%s:dropoff:%d', $this->doorstepChanNamespace, $dropoff->getId())
+        );
     }
 }

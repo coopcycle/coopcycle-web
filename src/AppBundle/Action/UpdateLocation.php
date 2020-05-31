@@ -5,7 +5,6 @@ namespace AppBundle\Action;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use Doctrine\Persistence\ManagerRegistry;
 use Redis;
-use Predis\Client as Tile38Client;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +25,7 @@ class UpdateLocation
         TokenStorageInterface $tokenStorage,
         ManagerRegistry $doctrine,
         Redis $redis,
-        Tile38Client $tile38,
+        Redis $tile38,
         string $fleetKey,
         LoggerInterface $logger)
     {
@@ -83,19 +82,20 @@ class UpdateLocation
         // SET fleet truck1 POINT 3.5123 -12.2693
 
         $response =
-            $this->tile38->executeRaw(['SET',
+            $this->tile38->rawCommand(
+                'SET',
                 $this->fleetKey,
                 $username,
                 'POINT',
                 $lastLocation['latitude'],
                 $lastLocation['longitude'],
-                $lastLocation['time'],
-            ]);
+                $lastLocation['time']
+            );
 
         // EXPIRE fleet truck 10
 
         $response =
-            $this->tile38->executeRaw(['EXPIRE', $this->fleetKey, $username, 60 * 30]);
+            $this->tile38->rawCommand('EXPIRE', $this->fleetKey, $username, (60 * 30));
 
         return new JsonResponse([]);
     }

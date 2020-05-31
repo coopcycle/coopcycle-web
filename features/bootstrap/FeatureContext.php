@@ -54,7 +54,6 @@ use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Predis\Client as Tile38Client;
 
 /**
  * Defines application features from the specific context.
@@ -112,7 +111,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         Redis $redis,
         IriConverterInterface $iriConverter,
         HttpMessageFactoryInterface $httpMessageFactory,
-        Tile38Client $tile38)
+        Redis $tile38)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -1007,7 +1006,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     public function assertTile38CollectionContainsKeyWithPoint($collectionName, $keyName, $value)
     {
         $response =
-            $this->tile38->executeRaw(['GET', $collectionName, $keyName]);
+            $this->tile38->rawCommand('GET', $collectionName, $keyName);
 
         [ $latitude, $longitude, $timestamp ] = explode(',', $value);
 

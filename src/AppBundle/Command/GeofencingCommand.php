@@ -6,7 +6,8 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Message\PushNotification;
 use Doctrine\ORM\EntityManagerInterface;
-use Predis\Client as Redis;
+use Redis;
+use RedisException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -26,6 +27,7 @@ class GeofencingCommand extends Command
     private $logger;
 
     private $io;
+    private $messageCount = 0;
 
     public function __construct(
         EntityManagerInterface $doctrine,
@@ -66,48 +68,48 @@ class GeofencingCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // @see https://github.com/phpredis/phpredis/issues/1727
+        // ini_set('default_socket_timeout', -1);
+
         $taskRepository = $this->doctrine->getRepository(Task::class);
         $orderRepository = $this->doctrine->getRepository(Order::class);
 
         $limit = (int) $input->getOption('limit');
-        $messageCount = 0;
+        $this->messageCount = 0;
 
         $this->logMessage(sprintf('Consumer will process %d messages', $limit));
 
-        // @see https://github.com/nrk/predis/blob/v1.1/examples/pubsub_consumer.php
+        $pattern = sprintf('%s:dropoff:*', $this->doorstepChanNamespace);
 
-        $pubsub = $this->tile38->pubSubLoop();
+        $this->logMessage(sprintf('Subscribing to channels with pattern %s', $pattern));
 
-        $pubsub->psubscribe(sprintf('%s:dropoff:*', $this->doorstepChanNamespace));
+        try {
 
-        foreach ($pubsub as $message) {
+            $this->tile38->pSubscribe(
+                [ $pattern ],
+                function(Redis $redis, $pattern, $channel, $message) use ($taskRepository, $orderRepository, $limit) {
 
-            switch ($message->kind) {
+                    // {
+                    //   "command":"set",
+                    //   "group":"5ed36b0268c82400015ee98e",
+                    //   "detect":"enter",
+                    //   "hook":"coopcycle:dropoff:7428",
+                    //   "key":"coopcycle:fleet",
+                    //   "time":"2020-05-31T08:29:54.8237726Z",
+                    //   "id":"bot_1",
+                    //   "object":{
+                    //     "type":"Point",
+                    //     "coordinates":[
+                    //       2.3413644,
+                    //       48.8606107,
+                    //       123456789
+                    //     ]
+                    //   }
+                    // }
 
-                case 'psubscribe':
-                    $this->logMessage(sprintf('Subscribed to channels matching "%s"', $message->channel));
-                    break;
+                    $this->logMessage(sprintf('Received pmessage on channel "%s"', $channel));
 
-                case 'pmessage':
-
-                    // (
-                    //     [kind] => pmessage
-                    //     [channel] => coopcycle:dropoff:7395
-                    //     [payload] => {
-                    //         "command":"set",
-                    //         "group":"5e78da00fdee2e0001356871",
-                    //         "detect":"enter",
-                    //         "hook":"coopcycle:dropoff:7395",
-                    //         "key":"coopcycle:fleet",
-                    //         "time":"2020-03-23T15:47:12.1482893Z",
-                    //         "id":"bot_2",
-                    //         "object":{"type":"Point","coordinates":[2.3184081,48.8554067]}
-                    //     }
-                    // )
-
-                    $this->logMessage(sprintf('Received pmessage on channel "%s"', $message->channel));
-
-                    $payload = json_decode($message->payload, true);
+                    $payload = json_decode($message, true);
 
                     $regexp = sprintf('/^%s:dropoff:([0-9]+)$/', $this->doorstepChanNamespace);
 
@@ -119,12 +121,12 @@ class GeofencingCommand extends Command
 
                     // This is not the assigned messenger
                     if ($task->getAssignedCourier()->getUsername() !== $payload['id']) {
-                        break;
+                        return;
                     }
 
                     // There is no associated order
                     if (!$order = $orderRepository->findOneByTask($task)) {
-                        break;
+                        return;
                     }
 
                     $customer = $order->getCustomer();
@@ -142,21 +144,20 @@ class GeofencingCommand extends Command
 
                     // TODO Send notification/SMS
 
-                    ++$messageCount;
+                    $this->messageCount = $this->messageCount + 1;
 
-                    if ($messageCount >= $limit) {
-                        $this->logMessage(sprintf('Unsubscribing after processing %d messages', $messageCount));
-                        $pubsub->punsubscribe('coopcycle:dropoff:*');
+                    if ($this->messageCount >= $limit) {
+                        $this->logMessage(sprintf('Unsubscribing after processing %d messages', $this->messageCount));
+                        $redis->pUnsubscribe([ 'coopcycle:dropoff:*' ]);
+                        $redis->close();
                     }
 
-                    break;
-            }
-        }
+                }
+            );
 
-        // Always unset the pubsub consumer instance when you are done! The
-        // class destructor will take care of cleanups and prevent protocol
-        // desynchronizations between the client and the server.
-        unset($pubsub);
+        } catch (RedisException $e) {
+            $this->logMessage($e->getMessage());
+        }
 
         $this->logMessage('Consumer exited');
 

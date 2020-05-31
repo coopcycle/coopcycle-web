@@ -270,12 +270,12 @@ snc_redis:
             options:
                 prefix: "%database_name%:"
         tile38:
-            type: predis
+            type: phpredis
             alias: tile38
             dsn: "%env(COOPCYCLE_TILE38_DSN)%"
             options:
-                # https://github.com/nrk/predis/issues/33
-                read_write_timeout: 0
+                # https://github.com/phpredis/phpredis/issues/70#issuecomment-348997806
+                read_write_timeout: -1
     session:
         client: session
         prefix: "session:"

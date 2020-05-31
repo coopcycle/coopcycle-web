@@ -12,7 +12,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Predis\Client as Redis;
+use Redis;
 use Prophecy\Argument;
 use Psr\Log\NullLogger;
 
@@ -61,7 +61,7 @@ class CreateGeofencingChannelTest extends TestCase
             ->willReturn($delivery->reveal());
 
         $this->tile38
-            ->executeRaw([
+            ->rawCommand(
                 'SETCHAN',
                 'coopcycle:dropoff:42',
                 'NEARBY',
@@ -74,8 +74,8 @@ class CreateGeofencingChannelTest extends TestCase
                 'POINT',
                 48.856613,
                 2.352222,
-                (string) Task::GEOFENCING_RADIUS,
-            ])
+                (string) Task::GEOFENCING_RADIUS
+            )
             ->shouldBeCalled();
 
         call_user_func_array($this->reactor, [ new OrderPicked($order->reveal()) ]);

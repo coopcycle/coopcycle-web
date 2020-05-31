@@ -4,7 +4,7 @@ namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\OrderPicked;
 use AppBundle\Entity\Task;
-use Predis\Client as Redis;
+use Redis;
 use Psr\Log\LoggerInterface;
 
 class CreateGeofencingChannel
@@ -36,7 +36,7 @@ class CreateGeofencingChannel
         //     return;
         // }
 
-        $this->tile38->executeRaw([
+        $this->tile38->rawCommand(
             'SETCHAN',
             sprintf('%s:dropoff:%d', $this->doorstepChanNamespace, $dropoff->getId()),
             'NEARBY',
@@ -49,7 +49,7 @@ class CreateGeofencingChannel
             'POINT',
             $dropoff->getAddress()->getGeo()->getLatitude(),
             $dropoff->getAddress()->getGeo()->getLongitude(),
-            (string) Task::GEOFENCING_RADIUS,
-        ]);
+            (string) Task::GEOFENCING_RADIUS
+        );
     }
 }

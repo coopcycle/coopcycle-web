@@ -12,7 +12,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Predis\Client as Redis;
+use Redis;
 use Prophecy\Argument;
 use Psr\Log\NullLogger;
 
@@ -54,10 +54,10 @@ class DeleteGeofencingChannelTest extends TestCase
             ->willReturn($delivery->reveal());
 
         $this->tile38
-            ->executeRaw([
+            ->rawCommand(
                 'DELCHAN',
-                'coopcycle:dropoff:42',
-            ])
+                'coopcycle:dropoff:42'
+            )
             ->shouldBeCalled();
 
         call_user_func_array($this->reactor, [ new Event\OrderDropped($order->reveal()) ]);
@@ -71,10 +71,10 @@ class DeleteGeofencingChannelTest extends TestCase
             ->willReturn(null);
 
         $this->tile38
-            ->executeRaw([
+            ->rawCommand(
                 'DELCHAN',
-                Argument::type('string'),
-            ])
+                Argument::type('string')
+            )
             ->shouldNotBeCalled();
 
         call_user_func_array($this->reactor, [ new Event\OrderDropped($order->reveal()) ]);
