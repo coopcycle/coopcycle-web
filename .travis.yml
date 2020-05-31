@@ -39,10 +39,11 @@ env:
     - SYMFONY_ENV=test
     - APP_ENV=test
     - APP_DEBUG=1
+    - APP_HOST=test.coopcycle.org
     - NODE_ENV=test
     - BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"http://test.coopcycle.org"}}}'
-    - ASSETS_BASE_URL=http://test.coopcycle.org
     - COOPCYCLE_DB_HOST=127.0.0.1
+    - COOPCYCLE_DB_PORT=5432
     - COOPCYCLE_DB_NAME=coopcycle
     - COOPCYCLE_DB_USER=postgres
     - COOPCYCLE_DB_PASSWORD=
@@ -50,6 +51,15 @@ env:
     - COOPCYCLE_OAUTH_FACEBOOK_CLIENT_SECRET=YourFacebookClientSecret
     - COOPCYCLE_REDIS_DSN=redis://127.0.0.1:6379
     - COOPCYCLE_TILE38_DSN=redis://127.0.0.1:9851
+    - COOPCYCLE_MJML_HOST=http://localhost:8889
+    - COOPCYCLE_OSRM_HOST=127.0.0.1:5000
+    - COOPCYCLE_DEMO=0
+    - COOPCYCLE_PUBLIC_KEY_FILE=var/jwt/public.pem
+    - COOPCYCLE_PRIVATE_KEY_FILE=var/jwt/private.pem
+    - APNS_CERTIFICATE_FILE=/dev/null
+    - COOPCYCLE_OAUTH_ENCRYPTION_KEY=RY890EuDb7heQhhI6GOsXC09v1aYCnMwL4M4uhM5Ewk=
+    - COOPCYCLE_MAIL_TRANSPORT=smtp
+    - COOPCYCLE_MAIL_HOST=127.0.0.1
     # https://docs.travis-ci.com/user/encryption-keys
     # GOOGLE_API_KEY
     - secure: "QQdL4x+Ht2/qUv+qhtyR/9effGz2P6PyJ0+8lGWycu0K5sKmtcUO/6xK7il4/uK5nogm4YcON1Pcmm665NhfCSu1gicNgd0bYR0KIWIYPeWUM9pjC1yzZhh2MOl9p0NWo6ulI1Ex7WTmN8sXc5AuNhpnKuQXR8mZPu5Tg9YTodkglKARdO11Nk1rU4dLefvlmncWHgtZ4DTYINe0jHWLH0RnmLKtKVzwLpeSt/AEplRAl25fh+qp6fw61qoHMLLyUGTJpli+mvEUruAKupc4bERBOaL9uEa+J0X0eOumK5tQLyXPGjibPRjwJWxBq7OHZOWtX4CvbWU6xoF/MM0hp9HRdH6i06tlo68BTR+dBviQWw7s2JLqCWrYtb6ifsmg+FVY4cKTDQG9mEJ6ZEMa8OAIaIltaXj3MyrrbsnkJIbweXn6OfsJBxzeIO8VaNJ++XA5uFD/RH1ClY9je6P635eFU2KSOoj58i3ElNl8Mn1/hwaBUZlfmytwLMmDmjyNr0EpuLohep6+FLv5vksgea0Nj1wI7HUJ0kY8bX6+BkFL1AWVrDJX3ZW38GvAArRWs+HHF7PN35agwSwOhih8SRtn/DpOWBNfG1Q+/PN1Yf6tWsPWc6aGCWNFiWjTOOtrkTTo1RO2uVuYaprsbW9nzMu69wlq82z/0ZxmKenxAYM="
@@ -102,7 +112,7 @@ before_script:
   - psql -U postgres -d coopcycle_test -c 'CREATE EXTENSION postgis_topology;'
   - psql -U postgres -d coopcycle_test -c 'CREATE EXTENSION pg_trgm;'
   # Install PHP app
-  - cp app/config/parameters.yml.travis app/config/parameters.yml
+  # - cp app/config/parameters.yml.travis app/config/parameters.yml
   - composer install --prefer-dist --no-plugins
   - php bin/console doctrine:schema:create --env=test
   - node_modules/.bin/encore dev

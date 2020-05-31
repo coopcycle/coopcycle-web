@@ -1,5 +1,4 @@
 imports:
-    - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: oauth.yml }
     - { resource: services.yml }
@@ -12,15 +11,41 @@ imports:
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    secret: "%env(APP_SECRET)%"
+    country_iso: "%env(COOPCYCLE_COUNTRY)%"
+    coopcycle.locale: "%env(COOPCYCLE_LOCALE)%"
+    database_driver:   pdo_pgsql
+    database_host:     "%env(COOPCYCLE_DB_HOST)%"
+    database_port:     "%env(COOPCYCLE_DB_PORT)%"
+    database_name:     "%env(COOPCYCLE_DB_NAME)%"
+    database_user:     "%env(COOPCYCLE_DB_USER)%"
+    database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
     locale: "%coopcycle.locale%"
     locale_regex: ca|fr|en|es|de|it|pl
-    router.request_context.host: '%host%'
+    router.request_context.host: "%env(APP_HOST)%"
     loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
     loopeat_base_url: '%env(LOOPEAT_BASE_URL)%'
     loopeat_client_id: '%env(LOOPEAT_CLIENT_ID)%'
     loopeat_client_secret: '%env(LOOPEAT_CLIENT_SECRET)%'
     tile38_fleet_key: '%database_name%:fleet'
     tile38_doorstep_chan_namespace: '%database_name%'
+    mailer_transport: "%env(COOPCYCLE_MAIL_TRANSPORT)%"
+    mailer_host: "%env(COOPCYCLE_MAIL_HOST)%"
+    mailer_user: "%env(COOPCYCLE_MAIL_USER)%"
+    mailer_password: "%env(COOPCYCLE_MAIL_PASSWORD)%"
+    mailer_port: "%env(COOPCYCLE_MAIL_PORT)%"
+    mailer_encryption: "%env(COOPCYCLE_MAIL_ENCRYPTION)%"
+    cors_allow_origin: http://localhost
+    jwt_public_key_path: "%kernel.project_dir%/%env(COOPCYCLE_PUBLIC_KEY_FILE)%"
+    jwt_private_key_path: "%kernel.project_dir%/%env(COOPCYCLE_PRIVATE_KEY_FILE)%"
+    transactional_address: "%env(COOPCYCLE_MAIL_SENDER_ADDRESS)%"
+    transactional_sender_name: "%env(COOPCYCLE_MAIL_SENDER_NAME)%"
+    osrm_host: "%env(COOPCYCLE_OSRM_HOST)%"
+    is_demo: "%env(bool:COOPCYCLE_DEMO)%"
+    sentry_public_dsn: "%env(COOPCYCLE_SENTRY_DSN)%"
+    apns_certificate_file: "%env(APNS_CERTIFICATE_FILE)%"
+    apns_certificate_pass_phrase: "%env(APNS_CERTIFICATE_PASS_PHRASE)%"
+    foodtech_enabled: "%env(bool:COOPCYCLE_FOODTECH_ENABLED)%"
 
 services:
     tag_manager.cache:
@@ -114,12 +139,12 @@ twig:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver:   "%database_driver%"
-        host:     "%database_host%"
-        port:     "%database_port%"
-        dbname:   "%database_name%"
-        user:     "%database_user%"
-        password: "%database_password%"
+        driver:   pdo_pgsql
+        host:     "%env(COOPCYCLE_DB_HOST)%"
+        port:     "%env(COOPCYCLE_DB_PORT)%"
+        dbname:   "%env(COOPCYCLE_DB_NAME)%"
+        user:     "%env(COOPCYCLE_DB_USER)%"
+        password: "%env(COOPCYCLE_DB_PASSWORD)%"
         sslmode: "%env(COOPCYCLE_POSTGRES_SSLMODE)%"
         charset:  UTF8
         types:
@@ -240,8 +265,8 @@ fos_user:
 lexik_jwt_authentication:
     secret_key:  "%jwt_private_key_path%"
     public_key:  "%jwt_public_key_path%"
-    pass_phrase: "%jwt_key_pass_phrase%"
-    token_ttl:   "%jwt_token_ttl%"
+    pass_phrase: "%env(COOPCYCLE_PRIVATE_KEY_PASSPHRASE)%"
+    token_ttl:   "%env(COOPCYCLE_JWT_TTL)%"
     token_extractors:
         authorization_header:      # look for a token as Authorization Header
             enabled: true
@@ -456,11 +481,11 @@ csa_guzzle:
                 lazy: true
         browserless:
             config:
-                base_uri: "%browserless_base_uri%"
+                base_uri: "%env(COOPCYCLE_BROWSERLESS_HOST)%"
                 lazy: true
         mjml_server:
             config:
-                base_uri: "%mjml_server_base_uri%"
+                base_uri: "%env(COOPCYCLE_MJML_HOST)%"
                 lazy: true
         api:
             config:
@@ -744,8 +769,8 @@ oneup_uploader:
 trikoder_oauth2:
     authorization_server:
         private_key: "%jwt_private_key_path%"
-        private_key_passphrase: "%jwt_key_pass_phrase%"
-        encryption_key: "%trikoder_encryption_key%"
+        private_key_passphrase: "%env(COOPCYCLE_PRIVATE_KEY_PASSPHRASE)%"
+        encryption_key: "%env(COOPCYCLE_OAUTH_ENCRYPTION_KEY)%"
         access_token_ttl: PT1H
         refresh_token_ttl: P1M
         enable_client_credentials_grant: true

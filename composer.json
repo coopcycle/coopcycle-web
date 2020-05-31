@@ -29,7 +29,6 @@
         "symfony/swiftmailer-bundle": "^3.2",
         "symfony/monolog-bundle": "^3.5",
         "sensio/framework-extra-bundle": "^5.4",
-        "incenteev/composer-parameter-handler": "^2.0",
         "nelmio/cors-bundle": "~2.0",
         "lexik/jwt-authentication-bundle": "^2.6.2",
         "jsor/doctrine-postgis": "^1.1",
@@ -124,12 +123,10 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "@php bin/console cache:clear --no-warmup",
             "@php bin/console assets:install --symlink --relative web"
         ],
         "post-update-cmd": [
-            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "@php bin/console cache:clear --no-warmup",
             "@php bin/console assets:install --symlink --relative web"
         ]
@@ -141,9 +138,6 @@
         "symfony-web-dir": "web",
         "symfony-tests-dir": "tests",
         "symfony-assets-install": "relative",
-        "incenteev-parameters": {
-            "file": "app/config/parameters.yml"
-        },
         "drupal-core-vendor-hardening": {
             "api-platform/core": ["features", "tests"],
             "aws/aws-sdk-php": [".changes"],
