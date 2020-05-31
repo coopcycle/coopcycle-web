@@ -265,7 +265,8 @@ form.menu_editor.products.help: Per aggiungere prodotti all'elenco a destra, agg
   prima al <a href="%products_url%"> catalogo </a>
 form.product.name.label: Nome
 form.task.recipient.help: Specificare il nome della persona da contattare
-form.task_event.notes.placeholder: 'Esempio: indirizzo non trovato, nessun problema...'
+form.task_event.notes.placeholder: 'Esempio: indirizzo non trovato, nessun problema.
+  . .'
 activity.order.dropped: "@%owner% ha consegnato l'ordine #order/%aggregate_id%\n"
 activity.order.fulfilled: "Ordine #order/#%aggregate_id% è completato\n"
 task.previous_task_not_completed_yet: L'incarico precedente non è stato ancora completato
@@ -407,7 +408,7 @@ form.local_business.stripe_account.need_stripe_account: "Non hai ancora creato u
 store.TIRE_SHOP: Gommista
 store.TOY_STORE: Negozio di giocattoli
 store.WHOLESALE_STORE: Ingrosso
-form.local_business_type.food_establishment: Food establishment
+form.local_business_type.food_establishment: Stabilimento alimentare
 form.local_business_type.store: Magazzino
 form.local_business_type.label: Tipo di azienda
 form.settings.stripe_publishable_key.label: Chiave pubblicabile stripe
@@ -819,7 +820,7 @@ store.FLORIST: Negozio di fiori
 store.FURNITURE_STORE: Negozio di mobili
 store.GARDEN_STORE: Vivaio
 store.HARDWARE_STORE: Negozio hardware
-store.HOBBY_SHOP: Hobby shop
+store.HOBBY_SHOP: Negozio di Hobbistica
 store.JEWELRY_STORE: Gioielleria
 store.LIQUOR_STORE: Negozio di liquori
 store.MENS_CLOTHING_STORE: Negozio di abbigliamento maschile
@@ -896,7 +897,7 @@ profile.payment: Pagamento
 order.list.summary.restaurant.text: Consegna al ristorante <a href="%restaurant_url%">%restaurant_name%</a>
 order.list.state: Stato
 order.list.summary: Sommario
-order.adjustment_type.tip: Suggerimenti
+order.adjustment_type.tip: Suggerimento
 order.list.customer: Cliente
 payment.state.refunded_partially: Parzialmente rimborsato
 order.adjustment_type.delivery: Consegna
@@ -971,3 +972,19 @@ profile.managedStores: Negozio gestito dall'utente
 order.payment.card_number.help: Una numero Stripe <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">di una carta test</a> è stato pre-inserito. Non verrà
   effettuato nessun addebito.
+info.deposit_refund: Ogni voce nell'elenco seguente rappresenta un tipo di imballaggio
+  (piccolo, grande ...). Una volta creati sarà possibile configurarli per ciascun
+  prodotto.
+confirm.deposit_refund_enabled: Il sistema di rimborso del deposito è abilitato, ora
+  puoi <a href="%url%">definire gli imballaggi</a>.
+form.deposit_refund_settings.deposit_refund_optin.help: Quando il sistema di rimborso
+  del deposito è facoltativo, sarà in grado di scegliere se desidera o meno gli imballaggi.
+  Quando è obbligatorio, gli imballaggi verranno aggiunti automaticamente al totale
+  dell'ordine.
+form.receipt.billing_address.help: Se vuoi usare un indirizzo differente per la fatturazione,
+  inseriscilo qui
+form.receipt.billing_address.label: Indirizzo di fatturazione
+form.menu_editor.name.help: Questo serve solo a te per distinguere i menù. Non verrà
+  mostrato al cliente.
+restaurant.form.cuisines.label: Cucine
+restaurant.form.section.taxonomy: Tassonomia

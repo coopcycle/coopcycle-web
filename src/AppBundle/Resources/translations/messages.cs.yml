@@ -503,10 +503,16 @@ form.suggest.message: "Nemůžete najít svou oblíbenou restauraci?\n<br>\nSdě
   \ seznamu restaurací.\n<br>\nTo nám umožní lépe identifikovat restaurace, které\
   \ mají být osloveny, a poskytnout jim důkaz skutečné poptávky.\n"
 form.suggest.thank_you_message: Děkujeme za doporučení této restaurace!
-restaurant.suggest.message: ''
+restaurant.suggest.message: "Pomozte nám přesvědčit %restaurant.name%, aby pracoval\
+  \ s %brand_name%!\n<br>\nAbychom to viděli na platformě, potřebujeme vás a váš hlas,\
+  \ abyste podpořili naši budoucí žádost o spolupráci s touto značkou.\n"
 restaurant.suggest.vote: Hlasovat pro %name%
 pledge.suggested_by: Navrženo od @%username%
 restaurant.suggest.has_voted: Už jste pro tuto restauraci hlasovali!
 restaurant.suggest.banner_disclaimer: Tato restaurace není momentálně k dispozici.
   Hlasujte pro %restaurant.name%!
 adminDashboard.customize.title: Přizpůsobit
+pledge.vote_count_equals_two: '%first_user% a %second_user% hlasovali pro tuto restauraci'
+pledge.vote_count_equals_one: '%username% hlasoval pro tuto restauraci'
+pledge.accept: Přijmout
+pledge.reject: Odmítnout
