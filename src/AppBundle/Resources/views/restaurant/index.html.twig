@@ -93,8 +93,16 @@
     </section>
     <section class="restaurant-header-right">
       <p>{{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
-      <div id="opening-hours">
-      </div>
+      {% if restaurant.isFulfillmentMethodEnabled('delivery') %}
+      <div
+        data-opening-hours="{{ restaurant.getOpeningHours('delivery')|json_encode|e('html_attr') }}"
+        data-opening-hours-behavior="{{ restaurant.getOpeningHoursBehavior('delivery')|e('html_attr') }}"></div>
+      {% endif %}
+      {% if restaurant.isFulfillmentMethodEnabled('collection') %}
+      <div
+        data-opening-hours="{{ restaurant.getOpeningHours('collection')|json_encode|e('html_attr') }}"
+        data-opening-hours-behavior="{{ restaurant.getOpeningHoursBehavior('collection')|e('html_attr') }}"></div>
+      {% endif %}
     </section>
   </header>
 

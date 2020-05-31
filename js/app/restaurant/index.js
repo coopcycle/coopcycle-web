@@ -265,16 +265,16 @@ window.initMap = function() {
   const addressesDataElement = document.querySelector('#js-addresses-data')
 
   const restaurant = JSON.parse(restaurantDataElement.dataset.restaurant)
-
   const times = JSON.parse(restaurantDataElement.dataset.times)
   const addresses = JSON.parse(addressesDataElement.dataset.addresses)
 
-  // FIXME Check parse errors
-
-  new OpeningHoursParser(document.querySelector('#opening-hours'), {
-    openingHours: restaurant.openingHours,
-    locale: $('html').attr('lang'),
-    behavior: restaurant.openingHoursBehavior,
+  document.querySelectorAll('[data-opening-hours]').forEach(el => {
+    // FIXME Check parse errors
+    new OpeningHoursParser(el, {
+      openingHours: JSON.parse(el.dataset.openingHours),
+      locale: $('html').attr('lang'),
+      behavior: el.dataset.openingHoursBehavior,
+    })
   })
 
   let cart = JSON.parse(restaurantDataElement.dataset.cart)
