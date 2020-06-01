@@ -13,6 +13,7 @@ imports:
 parameters:
     env(COOPCYCLE_MAIL_USER): ~
     env(COOPCYCLE_MAIL_PASSWORD): ~
+    env(COOPCYCLE_MAIL_PORT): ~
     env(COOPCYCLE_MAIL_ENCRYPTION): ~
     secret: "%env(APP_SECRET)%"
     country_iso: "%env(COOPCYCLE_COUNTRY)%"
