@@ -70,21 +70,14 @@
 <table class="table">
   <thead>
     <th>{% trans %}sylius.ui.code{% endtrans %}</th>
-    <th>{% trans %}profile.username{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion.rules{% endtrans %}</th>
     <th>{% trans %}form.credit_note.amount.label{% endtrans %}</th>
     <th class="text-right">{% trans %}promotion_coupon.used.label{% endtrans %}</th>
   </thead>
   <tbody>
   {% for coupon in credit_note_coupons %}
-    {% set promotion_rules = coupon.promotion.rules %}
-    {% set promotion_actions = coupon.promotion.actions %}
 
-    {% set username = '' %}
-    {% for promotion_rule in promotion_rules %}
-      {% if promotion_rule.type == 'is_customer' %}
-        {% set username = promotion_rule.configuration.username %}
-      {% endif %}
-    {% endfor %}
+    {% set promotion_actions = coupon.promotion.actions %}
 
     {% set amount = 0 %}
     {% for promotion_action in promotion_actions %}
@@ -99,8 +92,15 @@
           {{ coupon.code }}
         </a>
       </td>
-      <td width="20%">
-        {{ username }}
+
+      <td width="60%">
+        <ul class="list-unstyled">
+        {% for promotion_rule in coupon.promotion.rules %}
+          <li>
+            <small>{{ promotion_rule|promotion_rule_for_humans }}</small>
+          </li>
+        {% endfor %}
+        </ul>
       </td>
       <td width="20%">
         {{ amount|price_format }}
