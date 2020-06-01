@@ -130,23 +130,7 @@ profile_restaurant_menu_taxons:
             restaurant: profile_restaurant
             menu: profile_restaurant_menu_taxon
             menu_activate: profile_restaurant_menu_taxon_activate
-            new_menu: profile_restaurant_new_menu_taxon
             menu_taxon: profile_restaurant_menu_taxon
-    methods: [ GET, POST ]
-
-profile_restaurant_new_menu_taxon:
-    path: /profile/restaurants/{id}/menus/new
-    defaults:
-        _controller: AppBundle\Controller\ProfileController::newRestaurantMenuTaxonAction
-        layout: '@App/profile.html.twig'
-        template: '@App/restaurant/menu_taxon.html.twig'
-        routes:
-            restaurants: profile_restaurants
-            restaurant: profile_restaurant
-            menu_taxons: profile_restaurant_menu_taxons
-            menu_taxon: profile_restaurant_menu_taxon
-            products: profile_restaurant_products
-            success: profile_restaurant_menu_taxons
     methods: [ GET, POST ]
 
 profile_restaurant_menu_taxon:
