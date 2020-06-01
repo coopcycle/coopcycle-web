@@ -35,6 +35,14 @@ class IndexController extends AbstractController
             return array_map(fn(LocalBusiness $lb) => $lb->getId(), $items);
         });
 
+        foreach (array_slice($itemsIds, 0, self::MAX_RESULTS) as $id) {
+            if (null === $typeRepository->find($id)) {
+                $cache->delete($cacheKey);
+
+                return $this->getItems($repository, $type, $cache, $cacheKey);
+            }
+        }
+
         $count = count($itemsIds);
         $items = array_map(
             fn(int $id): LocalBusiness => $typeRepository->find($id),
