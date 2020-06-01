@@ -12,11 +12,11 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
 {
     public function getFunctions()
     {
-        $compiler = function (Address $address, $zoneName) {
+        $daysCompiler = function (Address $address, $zoneName) {
             // FIXME Need to test compilation
         };
 
-        $evaluator = function ($arguments, $task) {
+        $daysEvaluator = function ($arguments, $task) {
 
             $now = Carbon::now();
 
@@ -34,8 +34,26 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
             return $diff;
         };
 
+        $hoursCompiler = function (Address $address, $zoneName) {
+            // FIXME Need to test compilation
+        };
+
+        $hoursEvaluator = function ($arguments, $task) {
+
+            $now = Carbon::now();
+
+            if (isset($task->createdAt) && null !== $task->createdAt) {
+                $now = Carbon::instance($task->createdAt);
+            }
+
+            $before = Carbon::instance($task->before);
+
+            return $before->floatDiffInHours($now);
+        };
+
         return array(
-            new ExpressionFunction('diff_days', $compiler, $evaluator),
+            new ExpressionFunction('diff_days', $daysCompiler, $daysEvaluator),
+            new ExpressionFunction('diff_hours', $hoursCompiler, $hoursEvaluator),
         );
     }
 }

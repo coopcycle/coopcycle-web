@@ -85,6 +85,64 @@ class PickupExpressionLanguageProviderTest extends TestCase
         $this->assertEquals($expectedValue, $value);
     }
 
+    public function diffHoursProvider()
+    {
+        return [
+            [ '2019-08-19 09:00:00', '2019-08-19 12:00:00', 3 ],
+            [ '2019-08-19 09:00:00', '2019-08-19 10:30:00', 1.5 ],
+            [ '2019-08-19 09:00:00', '2019-08-19 14:30:00', 5.5 ],
+            [ '2019-08-19 09:00:00', '2019-08-19 11:30:00', 2.5 ],
+        ];
+    }
+
+    /**
+     * @dataProvider diffHoursProvider
+     */
+    public function testDiffHoursReturnValue($now, $before, $expectedValue)
+    {
+        Carbon::setTestNow(Carbon::parse($now));
+
+        $this->language->registerProvider(new PickupExpressionLanguageProvider());
+
+        $pickup = new \stdClass();
+        $pickup->before = new \DateTime($before);
+
+        $value = $this->language->evaluate('diff_hours(pickup)', [
+            'pickup' => $pickup,
+        ]);
+
+        $this->assertEquals($expectedValue, $value);
+    }
+
+    public function diffDaysWithOperatorProvider()
+    {
+        return [
+            [ '2019-08-19 09:00:00', '2019-08-19 12:00:00', 'diff_hours(pickup) == 3', true ],
+            [ '2019-08-19 09:00:00', '2019-08-19 12:00:00', 'diff_hours(pickup) >= 3', true ],
+            [ '2019-08-19 09:00:00', '2019-08-19 10:30:00', 'diff_hours(pickup) > 1',  true ],
+        ];
+    }
+
+    /**
+     * @dataProvider diffDaysWithOperatorProvider
+     */
+    public function testDiffDaysWithOperator($now, $before, $expression, $expectedValue)
+    {
+        Carbon::setTestNow(Carbon::parse($now));
+
+        $this->language->registerProvider(new PickupExpressionLanguageProvider());
+
+        $pickup = new \stdClass();
+        $pickup->before = new \DateTime($before);
+
+        $value = $this->language->evaluate($expression, [
+            'pickup' => $pickup,
+        ]);
+
+        $this->assertThat($value, $this->isType('boolean'));
+        $this->assertEquals($expectedValue, $value);
+    }
+
     public function existingTaskProvider()
     {
         return [
