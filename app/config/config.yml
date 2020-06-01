@@ -11,6 +11,7 @@ imports:
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    env(COOPCYCLE_MAIL_HOST): localhost
     env(COOPCYCLE_MAIL_USER): ~
     env(COOPCYCLE_MAIL_PASSWORD): ~
     env(COOPCYCLE_MAIL_PORT): ~
