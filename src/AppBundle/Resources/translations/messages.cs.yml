@@ -826,7 +826,7 @@ form.embed_settings.with_vehicle.label: Přidat výběr vozidla
 form.resend_confirmation_email.submit.label: Odeslat e-mail znovu
 form.credit_note.restaurant.help: Promo akce bude použitelná pouze při objednání v
   této restauraci. Nechte prázdné, aby se vztahovalo na všechny restaurace.
-form.credit_note.name.help: Název promo akce, která se zobrazí v košíku
+form.credit_note.name.help: Název propagační akce, která se zobrazí v košíku
 form.credit_note.name.label: Název
 form.credit_note.amount.label: Částka
 form.credit_note.user_search.help: Promo akci  bude moci použít pouze tento uživatel
@@ -952,3 +952,20 @@ form.maintenance.disable.label: Zakázat údržbu
 form.maintenance.enable.label: Povolit údržbu
 restaurant.form.cuisines.label: Kuchyně
 restaurant.form.section.taxonomy: Taxonomie
+form.receipt.billing_address.help: Pokud chcete pro fakturaci použít jinou adresu,
+  zadejte ji sem
+form.receipt.billing_address.label: Fakturační adresa
+info.deposit_refund: Každá položka v níže uvedeném seznamu představuje typ balení
+  (malé, velké…). Jakmile jsou balení vytvořené, můžete je nakonfigurovat pro každý
+  produkt.
+confirm.deposit_refund_enabled: Systém vrácení peněz je povolen, nyní můžete <a href="%url%">
+  konfigurovat balení </a>.
+form.price_with_tax.tax_incl.label: Cena (včetně daně)
+form.price_with_tax.tax_excl.label: Cena (bez daně)
+basics.allow_edit: Umožnit úpravy
+fulfillment_method.collection: Vyzvednutí
+fulfillment_method.delivery: Doručení
+basics.close: Zavřít
+sms.with_tracking: "Dobrý den,\nNáš kurýr  je na cestě do %address%.\nSledujte jej\
+  \ na %link%\n"
+sms.simple: "Dobrý den,\nNáš kurýr  je na cestě do %address%.\n"
