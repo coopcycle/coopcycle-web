@@ -440,19 +440,6 @@ services:
     arguments:
       $properties: []
 
-  swiftmailer.transport.eventdispatcher.mailjet:
-    class: Swift_Events_SimpleEventDispatcher
-
-  swiftmailer.mailer.transport.mailjet:
-    class: Mailjet\MailjetSwiftMailer\SwiftMailer\MailjetTransport
-    arguments:
-        - "@swiftmailer.transport.eventdispatcher.mailjet"
-        - "%env(COOPCYCLE_MAILJET_API_KEY)%"
-        - "%env(COOPCYCLE_MAILJET_API_SECRET)%"
-
-  swiftmailer.mailer.default.transport.mailjet: '@swiftmailer.mailer.transport.mailjet'
-  mailjet: '@swiftmailer.mailer.default.transport.mailjet'
-
   AppBundle\Service\MailLoggerService:
     arguments: ["@logger"]
     tags:

@@ -54,7 +54,6 @@
         "misd/phone-number-bundle": "^1.2",
         "nesbot/carbon": "^2.0",
         "sylius/taxation-bundle": "^1.6.5",
-        "mailjet/mailjet-swiftmailer": "dev-upgradeToSwiftmailer6",
         "knplabs/knp-markdown-bundle": "^1.6",
         "craue/config-bundle": "~2.0",
         "knplabs/knp-paginator-bundle": "^5.0",
@@ -105,7 +104,8 @@
         "kreait/firebase-bundle": "^1.9",
         "phpdocumentor/reflection-docblock": "^4.0",
         "sylius/customer-bundle": "^1.6",
-        "letudiant/composer-shared-package-plugin": "^4.0"
+        "letudiant/composer-shared-package-plugin": "^4.0",
+        "mailjet/mailjet-apiv3-php": "^1.4"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

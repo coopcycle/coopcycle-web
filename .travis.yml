@@ -59,6 +59,7 @@ env:
     - APNS_CERTIFICATE_FILE=/dev/null
     - COOPCYCLE_OAUTH_ENCRYPTION_KEY=RY890EuDb7heQhhI6GOsXC09v1aYCnMwL4M4uhM5Ewk=
     - COOPCYCLE_MAIL_TRANSPORT=smtp
+    - COOPCYCLE_MAIL_URL=smtp://localhost:25
     - COOPCYCLE_MAIL_HOST=127.0.0.1
     # https://docs.travis-ci.com/user/encryption-keys
     # GOOGLE_API_KEY
