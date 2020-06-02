@@ -5,6 +5,7 @@
         "CART_EMPTY": "Váš košík je prázdný",
         "OPENING_HOURS_SINGLE": "{{Day}} od {{open}} do {{close}}",
         "OPENING_HOURS_RANGE": "Od {{fromDay}} do {{toDay}}, od {{open}} do {{close}}",
-        "PLEASE_SELECT_ADDRESS": "V rozbalovací nabídce vyberte adresu"
+        "PLEASE_SELECT_ADDRESS": "V rozbalovací nabídce vyberte adresu",
+        "OPENING_HOURS_SINGLE_TIME_SLOT": "V {{day}} mezi {{open}} a {{close}}"
     }
 }
