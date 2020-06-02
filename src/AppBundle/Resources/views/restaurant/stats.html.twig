@@ -30,15 +30,24 @@
         {{ stats.getColumnLabel(column) }}
       </th>
     {% endfor %}
+    <th></th>
   </thead>
   <tbody>
     {% for order in stats %}
-      <tr>
+      <tr class="{{ order.hasRefunds() ? 'text-danger' : '' }}">
         {% for column in stats.columns %}
         <td class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
           {{ stats.getRowValue(column, loop.parent.loop.index0) }}
         </td>
         {% endfor %}
+        <td class="text-right">
+          {% if order.hasRefunds() %}
+            <button class="button-icon" data-toggle="tooltip" data-placement="left"
+              title="{{ 'order.refund.total_amount'|trans({ '%amount%': order.refundTotal|price_format }) }}">
+              <i class="fa fa-exclamation-circle"></i>
+            </button>
+          {% endif %}
+        </td>
       </tr>
     {% endfor %}
   </tbody>
@@ -62,6 +71,9 @@
       onChange: function(date, dateString) {
         window.location.href = Routing.generate("{{ stats_route }}", { id: {{ restaurant.id }}, month: dateString });
       }
+    });
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
     });
   </script>
 {% endblock %}

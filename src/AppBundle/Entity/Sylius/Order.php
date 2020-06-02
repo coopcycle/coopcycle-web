@@ -834,4 +834,31 @@ class Order extends BaseOrder implements OrderInterface
     {
         return $this->isTakeaway() ? 'collection' : 'delivery';
     }
+
+    public function getRefundTotal(): int
+    {
+        $refundTotal = 0;
+
+        foreach ($this->getPayments() as $payment) {
+            if (PaymentInterface::STATE_COMPLETED === $payment->getState()) {
+                $refundTotal += $payment->getRefundTotal();
+            }
+        }
+
+        return $refundTotal;
+    }
+
+    public function hasRefunds(): bool
+    {
+        foreach ($this->getPayments() as $payment) {
+            if (PaymentInterface::STATE_COMPLETED === $payment->getState()) {
+                if ($payment->hasRefunds()) {
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

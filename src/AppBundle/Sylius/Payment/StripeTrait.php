@@ -76,6 +76,11 @@ trait StripeTrait
         $this->details = array_merge($this->details, ['refunds' => $refunds]);
     }
 
+    public function hasRefunds()
+    {
+        return isset($this->details['refunds']) && is_array($this->details['refunds']) && count($this->details['refunds']) > 0;
+    }
+
     public function getRefunds()
     {
         if (isset($this->details['refunds'])) {

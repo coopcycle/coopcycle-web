@@ -939,3 +939,4 @@ confirm.deposit_refund_enabled: Le système de consignes est activé, vous pouve
 info.deposit_refund: Chaque entrée de la liste ci-dessous représente un type d'emballage (petit, grand, etc…). Une fois les types d'emballages créés, vous pouvez les configurer pour chaque produit.
 form.receipt.billing_address.label: Adresse de facturation
 form.receipt.billing_address.help: Si vous souhaitez utiliser une adresse de facturation, indiquez-la ici
+order.refund.total_amount: Cette commande a été remboursée d'un montant de %amount%
