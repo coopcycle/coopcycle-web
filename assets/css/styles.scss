@@ -354,9 +354,6 @@ h1, h2, h3, h4, h5, h6 {
 
   &-body {
     flex: 8;
-    @media (max-width: $screen-xs-max) {
-      text-align: center;
-    }
   }
   &-right {
     flex: 4;

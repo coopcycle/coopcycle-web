@@ -31,6 +31,8 @@ class RestaurantType extends LocalBusinessType
             ->add('description', TextareaType::class, [
                 'required' => false,
                 'label' => 'localBusiness.form.description',
+                'help' => 'mardown_formatting.help',
+                'attr' => ['rows' => '5']
             ])
             ->add('orderingDelayDays', IntegerType::class, [
                 'label' => 'localBusiness.form.orderingDelayDays',

@@ -87,8 +87,9 @@
       </p>
       {% endif %}
       {% if restaurant.description is defined and restaurant.description is not empty %}
-      <p class="text-muted">
-        <i class="fa fa-quote-left"></i> {{ restaurant.description }}</p>
+      <div class="restaurant-description text-muted">
+        {{ restaurant.description|markdown }}
+      </div>
       {% endif %}
     </section>
     <section class="restaurant-header-right">
