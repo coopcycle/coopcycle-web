@@ -58,10 +58,18 @@ class IndexController extends AbstractController
      */
     public function indexAction(LocalBusinessRepository $repository, CacheInterface $appCache)
     {
+        $user = $this->getUser();
+
+        if ($user && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_RESTAURANT'))) {
+            $cacheKeySuffix = $user->getUsername();
+        } else {
+            $cacheKeySuffix = 'anonymous';
+        }
+
         [ $restaurants, $restaurantsCount ] =
-            $this->getItems($repository, FoodEstablishment::class, $appCache, 'homepage.restaurants');
+            $this->getItems($repository, FoodEstablishment::class, $appCache, sprintf('homepage.restaurants.%s', $cacheKeySuffix));
         [ $stores, $storesCount ] =
-            $this->getItems($repository, Store::class, $appCache, 'homepage.stores');
+            $this->getItems($repository, Store::class, $appCache, sprintf('homepage.stores.%s', $cacheKeySuffix));
 
         return array(
             'restaurants' => $restaurants,
