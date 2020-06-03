@@ -86,6 +86,11 @@
         "ADMIN_DASHBOARD_START_TASK": "Anfang",
         "DELIVERY_TIME_SLOTS": "Lieferzeitraum",
         "OPENING_HOURS_RANGE_TIME_SLOT": "Vom {{fromDay}} bis {{toDay}}, zwischen {{open}} und {{close}}",
-        "OPENING_HOURS_SINGLE_TIME_SLOT": "Am {{day}} zwischen {{open}} und {{close}}"
+        "OPENING_HOURS_SINGLE_TIME_SLOT": "Am {{day}} zwischen {{open}} und {{close}}",
+        "ADMIN_DASHBOARD_TASK_FORM_COMMENTS_LABEL": "Anmerkungen",
+        "ADMIN_DASHBOARD_TASK_FORM_TIME_RANGE_LABEL": "Zeitfenster",
+        "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_CONTACT_NAME_PLACEHOLDER": "John Doe",
+        "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_CONTACT_NAME_LABEL": "Kontaktperson",
+        "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_DESCRIPTION_PLACEHOLDER": "2. Tür links …"
     }
 }
