@@ -176,6 +176,7 @@
         "TAGS_SELECT_PLACEHOLDER": "Sélectionnez les tags…",
         "ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS": "Dé-assigner toutes les tâches ?",
         "CART_DYNAMIC_DELIVERY_FEE": "Les frais de livraison sont calculés en fonction de votre adresse",
+        "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Différence (heures)",
         "RULE_PICKER_LINE_PICKUP_DIFF_DAYS": "Différence (jours)",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "Afficher par dépôt décroissant",
         "ADMIN_DASHBOARD_VIEW_MODE_BY_GROUP": "Afficher par groupes",

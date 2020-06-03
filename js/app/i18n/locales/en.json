@@ -138,6 +138,7 @@
         "RULE_PICKER_LINE_PICKUP_ADDRESS": "Pickup address",
         "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Drop-off address",
         "RULE_PICKER_LINE_PICKUP_DIFF_DAYS": "Difference (days)",
+        "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Difference (hours)",
         "RULE_PICKER_LINE_DROPOFF_DOORSTEP": "Doorstep dropoff",
         "ORDER_LIST_STATE": "State",
         "ORDER_LIST_PREPARATION_TIME": "Preparation time",

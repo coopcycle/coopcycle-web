@@ -28,6 +28,7 @@ const typeToOperators = {
   'pickup.address': ['in_zone', 'out_zone'],
   'dropoff.address': ['in_zone', 'out_zone'],
   'diff_days(pickup)': ['==', '<', '>', 'in'],
+  'diff_hours(pickup)': ['==', '<', '>'],
   'dropoff.doorstep': ['=='],
 }
 
@@ -155,7 +156,7 @@ class RulePickerLine extends React.Component {
       )
     // vehicle, diff_days(pickup)
     case '==':
-      if (this.state.type === 'diff_days(pickup)') {
+      if (this.state.type === 'diff_days(pickup)' || this.state.type === 'diff_hours(pickup)') {
         return this.renderNumberInput()
       }
 
@@ -200,6 +201,7 @@ class RulePickerLine extends React.Component {
             <option value="vehicle">{ i18n.t('RULE_PICKER_LINE_BIKE_TYPE') }</option>
             <option value="pickup.address">{ i18n.t('RULE_PICKER_LINE_PICKUP_ADDRESS') }</option>
             <option value="dropoff.address">{ i18n.t('RULE_PICKER_LINE_DROPOFF_ADDRESS') }</option>
+            <option value="diff_hours(pickup)">{ i18n.t('RULE_PICKER_LINE_PICKUP_DIFF_HOURS') }</option>
             <option value="diff_days(pickup)">{ i18n.t('RULE_PICKER_LINE_PICKUP_DIFF_DAYS') }</option>
             <option value="dropoff.doorstep">{ i18n.t('RULE_PICKER_LINE_DROPOFF_DOORSTEP') }</option>
           </select>
