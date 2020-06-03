@@ -16,6 +16,8 @@ services:
       - "@libphonenumber.phone_number_util"
       - "%country_iso%"
 
+  AppBundle\Spreadsheet\ProductSpreadsheetParser: ~
+
   AppBundle\Form\ApiRegistrationType:
     arguments: ['%country_iso%']
     tags:

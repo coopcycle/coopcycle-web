@@ -8,6 +8,9 @@
 
 {% block content %}
 <p class="text-right">
+  <a href="#" class="btn btn-success mr-2" data-toggle="modal" data-target="#products-import-modal">
+    <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
+  </a>
   <a href="{{ path(new_product_route, { id: restaurant.id }) }}"
     class="btn btn-success"><i class="fa fa-plus"></i> {{ 'basics.add'|trans }}</a>
 </p>
@@ -57,9 +60,37 @@
     {% endfor %}
   </tbody>
 </table>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="products-import-modal-label" id="products-import-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="products-import-modal-label">{% trans %}adminDashboard.dashboard.deleteTaskGroup{% endtrans %}</h4>
+      </div>
+      <div class="modal-body">
+        <div data-spreadsheet-dropzone
+          data-url="{{ oneup_uploader_endpoint('products') }}"
+          data-params="{{ { restaurant: restaurant_iri }|json_encode|e('html_attr') }}"></div>
+        <div class="text-center">
+          <a href="{{ path('spreadsheet_example_products') }}">{{ 'spreadsheet.download_example'|trans }}</a>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}adminDashboard.dashboard.cancel{% endtrans %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+{{ encore_entry_link_tags('product-list') }}
 {% endblock %}
 
 {% block scripts %}
+{{ encore_entry_script_tags('product-list') }}
 <script>
   new CoopCycle.ConfirmDelete('[data-confirm="delete"]');
 </script>

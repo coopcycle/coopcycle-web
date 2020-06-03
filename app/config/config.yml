@@ -359,6 +359,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: task_imports
+        product_imports:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: product_imports
     filesystems:
         assets:
             adapter: assets_local
@@ -416,6 +421,10 @@ oneup_flysystem:
             adapter: task_imports
             alias: task_imports_filesystem
             mount: task_imports_filesystem
+        product_imports:
+            adapter: product_imports
+            alias: product_imports_filesystem
+            mount: product_imports_filesystem
 
 vich_uploader:
     db_driver: orm
@@ -748,6 +757,18 @@ oneup_uploader:
             storage:
                 type: flysystem
                 filesystem: oneup_flysystem.task_imports_filesystem
+            allowed_mimetypes:
+                application/vnd.oasis.opendocument.spreadsheet: []
+                application/vnd.openxmlformats-officedocument.spreadsheetml.sheet: []
+                application/vnd.ms-excel: []
+                application/octet-stream: []
+                text/csv: []
+                text/plain: []
+        products:
+            frontend: dropzone
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.product_imports_filesystem
             allowed_mimetypes:
                 application/vnd.oasis.opendocument.spreadsheet: []
                 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet: []

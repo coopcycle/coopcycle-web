@@ -975,3 +975,4 @@ form.receipt.billing_address.help: If you want to use a different address for bi
 promotion_rule.is_restaurant: Restaurant is %restaurant%
 promotion_rule.is_customer: Customer is %username%
 order.refund.total_amount: This order was refunded by an amount of %amount%
+spreadsheet.download_example: Download an example spreadsheet

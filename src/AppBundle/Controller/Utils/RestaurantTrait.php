@@ -630,7 +630,7 @@ trait RestaurantTrait
     /**
      * @HideSoftDeleted
      */
-    public function restaurantProductsAction($id, Request $request)
+    public function restaurantProductsAction($id, Request $request, IriConverterInterface $iriConverter)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -654,6 +654,7 @@ trait RestaurantTrait
             'layout' => $request->attributes->get('layout'),
             'products' => $products,
             'restaurant' => $restaurant,
+            'restaurant_iri' => $iriConverter->getIriFromItem($restaurant),
             'forms' => $forms,
         ], $routes));
     }

@@ -2,10 +2,12 @@
 
 namespace AppBundle\EventListener\Upload;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Message\ImportTasks;
+use AppBundle\Spreadsheet\ProductSpreadsheetParser;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Utils\TaskSpreadsheetParser;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,6 +17,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Serializer\SerializerInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
@@ -25,6 +28,7 @@ final class UploadListener
     private $uploadHandler;
     private $settingsManager;
     private $messageBus;
+    private $productSpreadsheetParser;
     private $secret;
     private $logger;
 
@@ -34,6 +38,9 @@ final class UploadListener
         UploadHandler $uploadHandler,
         SettingsManager $settingsManager,
         MessageBusInterface $messageBus,
+        ProductSpreadsheetParser $productSpreadsheetParser,
+        SerializerInterface $serializer,
+        IriConverterInterface $iriConverter,
         string $secret,
         LoggerInterface $logger)
     {
@@ -42,6 +49,9 @@ final class UploadListener
         $this->uploadHandler = $uploadHandler;
         $this->settingsManager = $settingsManager;
         $this->messageBus = $messageBus;
+        $this->productSpreadsheetParser = $productSpreadsheetParser;
+        $this->serializer = $serializer;
+        $this->iriConverter = $iriConverter;
         $this->secret = $secret;
         $this->logger = $logger;
     }
@@ -51,6 +61,33 @@ final class UploadListener
         $request = $event->getRequest();
         $response = $event->getResponse();
         $file = $event->getFile();
+
+        if ('products' === $event->getType()) {
+
+            try {
+
+                $restaurant = $this->iriConverter->getItemFromIri($request->get('restaurant'));
+
+                $products = $this->productSpreadsheetParser->parse($file);
+                foreach ($products as $product) {
+                    $restaurant->addProduct($product);
+                }
+
+                $this->doctrine->getManagerForClass(LocalBusiness::class)->flush();
+
+                $file->getFilesystem()->delete($file->getPathname());
+
+            } catch (\Exception $e) {
+
+                $file->getFilesystem()->delete($file->getPathname());
+
+                throw new UploadException($e->getMessage());
+            }
+
+            // $response['products'] = $this->serializer->normalize($products, 'json', ['iri' => '']);
+
+            return $response;
+        }
 
         $type = $request->get('type');
 

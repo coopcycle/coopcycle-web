@@ -940,3 +940,4 @@ info.deposit_refund: Chaque entrée de la liste ci-dessous représente un type d
 form.receipt.billing_address.label: Adresse de facturation
 form.receipt.billing_address.help: Si vous souhaitez utiliser une adresse de facturation, indiquez-la ici
 order.refund.total_amount: Cette commande a été remboursée d'un montant de %amount%
+spreadsheet.download_example: Télécharger un exemple de feuille de calcul
