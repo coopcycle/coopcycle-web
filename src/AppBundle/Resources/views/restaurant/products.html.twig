@@ -66,18 +66,17 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="products-import-modal-label">{% trans %}adminDashboard.dashboard.deleteTaskGroup{% endtrans %}</h4>
+        <h4 class="modal-title" id="products-import-modal-label">{% trans %}basics.import{% endtrans %}</h4>
       </div>
       <div class="modal-body">
-        <div data-spreadsheet-dropzone
+        <div
+          data-spreadsheet-dropzone
           data-url="{{ oneup_uploader_endpoint('products') }}"
           data-params="{{ { restaurant: restaurant_iri }|json_encode|e('html_attr') }}"></div>
-        <div class="text-center">
-          <a href="{{ path('spreadsheet_example_products') }}">{{ 'spreadsheet.download_example'|trans }}</a>
-        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}adminDashboard.dashboard.cancel{% endtrans %}</button>
+        <a class="mr-4" href="{{ path('spreadsheet_example_products') }}">{{ 'spreadsheet.download_example'|trans }}</a>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
       </div>
     </div>
   </div>
