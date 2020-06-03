@@ -101,8 +101,12 @@ class ProductSpreadsheetParser extends AbstractSpreadsheetParser
                 'description' => 'The most famous pizza',
                 'price_tax_incl' => 900,
                 'tax_category' => 'Food',
-                'allergens' => '',
-                'restricted_diets' => '',
+            ],
+            [
+                'name' => 'Pizza Regina',
+                'description' => 'Another pizza',
+                'price_tax_incl' => 1000,
+                'tax_category' => 'Food',
             ]
         ];
     }
