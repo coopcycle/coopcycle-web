@@ -75,15 +75,16 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             $customerAmount = $contract->getCustomerAmount();
 
             if ($contract->isVariableCustomerAmountEnabled() && null !== $delivery) {
+
                 $customerAmount = $this->deliveryManager->getPrice(
                     $delivery,
                     $contract->getVariableCustomerAmount()
                 );
                 if (null === $customerAmount) {
-                    $this->logger->error('OrderFeeProcessor | could not calculate price, falling back to flat price');
+                    $this->logger->error('OrderFeeProcessor | customer amount | could not calculate price, falling back to flat price');
                     $customerAmount = $contract->getCustomerAmount();
                 } else {
-                    $this->logger->info(sprintf('Order #%d | customer amount  | matched rule "%s"',
+                    $this->logger->info(sprintf('Order #%d | customer amount | matched rule "%s"',
                         $order->getId(), $this->deliveryManager->getLastMatchedRule()->getExpression()));
                 }
             }
@@ -101,7 +102,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
                     $contract->getVariableDeliveryPrice()
                 );
                 if (null === $businessAmount) {
-                    $this->logger->error('OrderFeeProcessor | could not calculate price, falling back to flat price');
+                    $this->logger->error('OrderFeeProcessor | business amount | could not calculate price, falling back to flat price');
                     $businessAmount = $contract->getFlatDeliveryPrice();
                 } else {
                     $this->logger->info(sprintf('Order #%d | business amount | matched rule "%s"',
