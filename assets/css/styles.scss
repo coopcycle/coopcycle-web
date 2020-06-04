@@ -232,15 +232,13 @@ h1, h2, h3, h4, h5, h6 {
   color: #ccc;
 }
 
-.homepage-restaurants {
-  &__show-more {
-    font-size: $font-size-large;
-    color: #585858;
-    text-decoration: underline;
-    text-align: right;
-    &:hover {
-      color: lighten(#585858, 10%);
-    }
+.restaurant-show-more {
+  font-size: $font-size-large;
+  color: #585858;
+  text-decoration: underline;
+  text-align: right;
+  &:hover {
+    color: lighten(#585858, 10%);
   }
 }
 
