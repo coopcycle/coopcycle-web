@@ -808,7 +808,7 @@ class AdminController extends Controller
 
         return [
             'form' => $form->createView(),
-            'zoneNames' => json_encode($zoneNames),
+            'zones' => $zoneNames,
             'packages' => $packageNames,
         ];
     }

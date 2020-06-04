@@ -120,6 +120,13 @@ class RulePicker extends React.Component {
   }
 }
 
+RulePicker.defaultProps = {
+  expression: '',
+  onExpressionChange: () => {},
+  zones: [],
+  packages: [],
+}
+
 RulePicker.propTypes = {
   expression: PropTypes.string.isRequired,
   onExpressionChange: PropTypes.func.isRequired,

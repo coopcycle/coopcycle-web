@@ -27,6 +27,8 @@
         id="rule-set"
         class="delivery-pricing-ruleset"
         data-prototype="{{ form_widget(form.rules.vars.prototype)|e }}"
+        data-zones="{{ zones|json_encode|e('html_attr') }}"
+        data-packages="{{ packages|json_encode|e('html_attr') }}"
     >
         {% for rule in form.rules %}
           <li class="delivery-pricing-ruleset__rule">
@@ -55,10 +57,5 @@
 {% endblock %}
 
 {% block scripts %}
-  <script>
-    window.AppData = window.AppData || {};
-    window.AppData.zones = {{ zoneNames|raw }};
-    window.AppData.packages = {{ packages|json_encode|raw }};
-  </script>
   {{ encore_entry_script_tags('delivery-pricing-rules') }}
 {% endblock %}

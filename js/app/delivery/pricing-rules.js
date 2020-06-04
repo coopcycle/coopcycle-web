@@ -1,9 +1,17 @@
-import dragula from 'dragula'
+import React from 'react'
+import { render } from 'react-dom'
+import RulePicker from '../components/RulePicker'
 
+import dragula from 'dragula'
 import '../../../assets/css/dragula.scss'
 
 const ruleSet = $('#rule-set'),
   warning = $('form[name="pricing_rule_set"] .alert-warning')
+
+const wrapper = document.getElementById('rule-set')
+
+const zones = JSON.parse(wrapper.dataset.zones)
+const packages = JSON.parse(wrapper.dataset.packages)
 
 dragula([document.querySelector('.delivery-pricing-ruleset')], {
   moves: (el, container, handle) => {
@@ -39,7 +47,14 @@ $('#add-pricing-rule').on('click', function(e) {
     $input.val(newExpression)
   }
 
-  window.CoopCycle.RulePicker(newLi.find('.rule-expression-container')[0], {onExpressionChange: onExpressionChange, zones: window.AppData.zones})
+  render(
+    <RulePicker
+      zones={ zones }
+      packages={ packages }
+      onExpressionChange={ onExpressionChange }
+    />,
+    newLi.find('.rule-expression-container')[0]
+  )
   newLi.appendTo(ruleSet)
 
   onListChange()
@@ -57,10 +72,13 @@ $('.delivery-pricing-ruleset__rule__expression').each(function(index, item) {
   function onExpressionChange(newExpression) {
     $input.val(newExpression)
   }
-  window.CoopCycle.RulePicker($(item).find('.rule-expression-container')[0], {
-    expression: $input.val(),
-    onExpressionChange: onExpressionChange,
-    zones: window.AppData.zones,
-    packages: window.AppData.packages,
-  })
+  render(
+    <RulePicker
+      zones={ zones }
+      packages={ packages }
+      expression={ $input.val() }
+      onExpressionChange={ onExpressionChange }
+    />,
+    $(item).find('.rule-expression-container')[0]
+  )
 })
