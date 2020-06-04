@@ -2,8 +2,8 @@ const zoneRegexp = /(in_zone|out_zone)\(([^,]+), ['|"](.+)['|"]\)/
 const diffDaysRegexp = /diff_days\(pickup\) (<|>|==) ([\d]+)/
 const diffHoursRegexp = /diff_hours\(pickup\) (<|>|==) ([\d]+)/
 const vehicleRegexp = /(vehicle)\s+== "(cargo_bike|bike)"/
-const inRegexp = /([\w]+) in ([\d]+)\.\.([\d]+)/
-const comparatorRegexp = /([\w]+) (<|>) ([\d]+)/
+const inRegexp = /([\w.]+) in ([\d]+)\.\.([\d]+)/
+const comparatorRegexp = /([\w.]+) (<|>) ([\d]+)/
 const doorstepDropoffRegexp = /(dropoff.doorstep)\s+== (true|false)/
 const packagesContainsAtLeastOneRegexp = /packages\.containsAtLeastOne\(['|"](.+)['|"]\)/
 

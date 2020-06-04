@@ -142,7 +142,25 @@ describe('Pricing rule parser', function() {
     }])
   })
 
+  it('should parse order.itemsTotal with comparator', function() {
+    const expression = 'order.itemsTotal > 3000'
+    const result = parsePricingRule(expression)
+    expect(result).toEqual([{
+      left: 'order.itemsTotal',
+      operator: '>',
+      right: 3000
+    }])
+  })
 
+  it('should parse order.itemsTotal with range', function() {
+    const expression = 'order.itemsTotal in 3000..5000'
+    const result = parsePricingRule(expression)
+    expect(result).toEqual([{
+      left: 'order.itemsTotal',
+      operator: 'in',
+      right: [ 3000, 5000 ]
+    }])
+  })
 
   it('should return empty array', function() {
     const result = parsePricingRule('')
