@@ -36,8 +36,9 @@ class CartTop extends React.Component
     const amount = itemsTotal > 0 ? total : itemsTotal
 
     return (
-      <a ref={ this.anchorRef } href={ anchorURL } className="btn btn-default" data-cart-listener>
-        { i18n.t('CART_TITLE') } <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  { (amount / 100).formatMoney() }
+      <a ref={ this.anchorRef } href={ anchorURL } data-cart-listener>
+        <i className="fa fa-shopping-basket mr-2" aria-hidden="true"></i>
+        <span>{ (amount / 100).formatMoney() }</span>
       </a>
     )
   }

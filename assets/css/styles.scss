@@ -52,7 +52,7 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   padding: $base-margin 0;
   margin-top: $base-margin-l;
-  background-color: $main-blue;
+  background-color: #212121;
   color: $white;
 
   a.footer-link {
@@ -76,6 +76,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .navbar-brand {
   font-family: "Raleway", Helvetica, Arial, sans-serif;
+}
+
+.navbar-coopcycle {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 0;
+  border-bottom: 2px solid #ecf0f1;
 }
 
 .page-header {
@@ -222,8 +229,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .homepage-map {
   margin-bottom: -40px;
-  background-color: #111;
-  padding: 30px 0;
   color: #ccc;
 }
 

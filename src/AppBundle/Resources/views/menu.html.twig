@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default navbar-coopcycle">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main" aria-expanded="false">
@@ -7,11 +7,23 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="{{ path('homepage') }}"><img src="https://coopcycle.org/images/logo.svg" width="20" height="20" /></a>
       <a class="navbar-brand" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
     </div>
 
     <div class="collapse navbar-collapse" id="navbar-main">
+
+      <ul class="nav navbar-nav">
+        {% if is_granted('ROLE_ADMIN') %}
+        <li>
+          <p class="navbar-btn">
+            <a class="btn btn-primary" href="{{ path('admin_index') }}">
+              {% trans %}adminDashboard.title{% endtrans %}
+            </a>
+          </p>
+        </li>
+        {% endif %}
+      </ul>
+
       {% set default_locale = 'en' %}
       {% set locales = {
         'ca': 'Català',
@@ -44,20 +56,14 @@
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <li>
-          <p class="navbar-btn" id="cart-top"></p>
+        <li id="cart-top">
+          <a href="#">
+            <i class="fa fa-shopping-basket mr-2" aria-hidden="true"></i>
+            <span>{{ 0|price_format }}</span>
+          </a>
         </li>
         {% if app.user %}
           {% include '@App/_partials/user/account_dropdown.html.twig' %}
-          {% if is_granted('ROLE_ADMIN') %}
-          <li>
-            <p class="navbar-btn">
-              <a class="btn btn-primary" href="{{ path('admin_index') }}">
-                {% trans %}adminDashboard.title{% endtrans %}
-              </a>
-            </p>
-          </li>
-          {% endif %}
         {% else %}
           <li>
             <a href="{{ path('fos_user_security_login') }}">{% trans %}navbar.login{% endtrans %}</a>

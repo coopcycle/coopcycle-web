@@ -47,12 +47,8 @@
 {% endif %}
 
 <section class="homepage-map">
-  <div class="container">
-    <p class="text-center">{% trans %}index.map.tip{% endtrans %}</p>
-    <p class="text-center"><i class="fa fa-chevron-down"></i></p>
-    <div class="embed-responsive embed-responsive-16by9">
-      <iframe class="embed-responsive-item" src="{{ path('restaurants_map', { zoom: 13 }) }}"></iframe>
-    </div>
+  <div class="embed-responsive embed-responsive-16by9">
+    <iframe class="embed-responsive-item" src="{{ path('restaurants_map', { zoom: 13 }) }}"></iframe>
   </div>
 </section>
 
