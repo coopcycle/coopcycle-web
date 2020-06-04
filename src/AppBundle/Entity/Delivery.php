@@ -390,13 +390,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     private static function createOrderObject(?Order $order)
     {
-        if (null === $order) {
-
-            return null;
-        }
-
         $object = new \stdClass();
-        $object->itemsTotal = $order->getItemsTotal();
+        if ($order) {
+            $object->itemsTotal = $order->getItemsTotal();
+        } else {
+            $object->itemsTotal = 0;
+        }
 
         return $object;
     }
