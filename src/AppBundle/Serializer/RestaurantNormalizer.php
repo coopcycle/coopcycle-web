@@ -149,7 +149,10 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
         $contract = $object->getContract();
 
-        if (!$contract->isVariableCustomerAmountEnabled()) {
+        if ($object->isFulfillmentMethodEnabled('delivery') && !$contract->isVariableCustomerAmountEnabled()) {
+
+            $fulfillmentMethod = $object->getFulfillmentMethod('delivery');
+
             $data['potentialAction']['priceSpecification'] = [
                 '@type' => 'DeliveryChargeSpecification',
                 'appliesToDeliveryMethod' => 'http://purl.org/goodrelations/v1#DeliveryModeOwnFleet',
@@ -158,7 +161,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
                 'eligibleTransactionVolume' => [
                     '@type' => 'PriceSpecification',
                     'priceCurrency' => $priceCurrency,
-                    'price' => $this->priceFormatter->format($contract->getMinimumCartAmount())
+                    'price' => $this->priceFormatter->format($fulfillmentMethod->getMinimumAmount())
                 ]
             ];
         }

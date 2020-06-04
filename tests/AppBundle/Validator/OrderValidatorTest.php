@@ -4,7 +4,7 @@ namespace AppBundle\Validator;
 
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\Contract;
+use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\RoutingInterface;
@@ -85,12 +85,9 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->getAddress()
             ->willReturn($address);
 
-        $contract = new Contract();
-        $contract->setMinimumCartAmount($minimumCartAmount);
+        $fulfillmentMethod = new FulfillmentMethod();
+        $fulfillmentMethod->setMinimumAmount($minimumCartAmount);
 
-        $restaurant
-            ->getContract()
-            ->willReturn($contract);
         $restaurant
             ->getDeliveryPerimeterExpression()
             ->willReturn($maxDistanceExpression);
@@ -100,6 +97,9 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $restaurant
             ->getOpeningHoursBehavior()
             ->willReturn('asap');
+        $restaurant
+            ->getFulfillmentMethod(Argument::type('string'))
+            ->willReturn($fulfillmentMethod);
 
         return $restaurant;
     }
@@ -123,6 +123,10 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $order
             ->isTakeaway()
             ->willReturn($takeaway);
+
+        $order
+            ->getFulfillmentMethod()
+            ->willReturn($takeaway ? 'collection' : 'delivery');
 
         return $order;
     }

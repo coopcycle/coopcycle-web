@@ -65,7 +65,6 @@ class IsActivableRestaurantValidatorTest extends ConstraintValidatorTestCase
         $contract = new Contract();
         $contract->setFeeRate(20.00);
         $contract->setCustomerAmount(350);
-        $contract->setMinimumCartAmount(1500);
         $contract->setFlatDeliveryPrice(350);
 
         $restaurant = new Restaurant();
@@ -85,7 +84,6 @@ class IsActivableRestaurantValidatorTest extends ConstraintValidatorTestCase
         $contract = new Contract();
         $contract->setFeeRate(20.00);
         $contract->setCustomerAmount(350);
-        $contract->setMinimumCartAmount(1500);
         $contract->setFlatDeliveryPrice(350);
 
         $restaurant = new Restaurant();
