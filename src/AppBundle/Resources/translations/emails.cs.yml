@@ -1,1 +1,27 @@
-registration.email.subject: 'Potvrzení e-mailem'
+registration.email.subject: "Potvrzení e-mailem\n"
+admin.order.created.body: "Dobrý den,\n<br>\nByla vytvořena nová objednávka.\n"
+admin.order.created.subject: Nová objednávka bude potvrzena
+order.foodtech.cancelled: "Restaurace nedokáže připravit vaši objednávku %order.number%.\n\
+  <br>\nPeníze z vašeho účtu nebyly vyplaceny.\n"
+order.foodtech.accepted.collection.disclaimer: Máte-li problém, kontaktujte předem
+  <strong>%name% </strong> na <strong>%phone_number% </strong>  a zrušte svou objednávku.
+order.foodtech.accepted.collection: 'Budete jej muset vyzvednout v následujícím čase:'
+order.foodtech.accepted.delivery.disclaimer: V případě problému s nalezením adresy
+  vás budeme kontaktovat
+order.foodtech.accepted.delivery: 'Bude vám doručena v následující době:'
+order.public_url: "Chcete-li sledovat stav své objednávky, <a href=\"%order.public_url%\"\
+  > klikněte sem </a>.\n"
+order.view: Zobrazit objednávku
+resetting.email.reset: Resetovat heslo
+resetting.email.message: <h2>Dobrý den, %username%</h2> Chcete-li obnovit své heslo,
+  klikněte na tlačítko níže.
+registration.email.textMessage: "Vítejte v %brand_name%, %username%,\\n\\n\nTuto zprávu\
+  \ jste obdrželi, protože jste se nedávno zaregistrovali k účtu %brand_name%. \\\
+  n\nChcete-li svůj e-mail potvrdit, klikněte na následující odkaz: <a href=\"%confirmationUrl%\"\
+  \ rel=\"notrack\">%confirmationUrl%</a>.\n"
+registration.email.disclaimer: Tento odkaz lze použít pouze jednou k ověření vašeho
+  účtu
+registration.email.confirm: Potvrdit e-mail
+registration.email.message: "<h2> Vítejte v %brand_name%, %username%</h2>\nTuto zprávu\
+  \ jste obdrželi, protože jste se nedávno zaregistrovali k  %brand_name%.\n<br>\n\
+  Potvrďte svou e-mailovou adresu kliknutím na tlačítko níže.\n"
