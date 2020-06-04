@@ -175,7 +175,6 @@ h1, h2, h3, h4, h5, h6 {
 .banner-title {
   color: $white;
   font-weight: 700;
-  margin-bottom: $bs-base-margin;
   @media (max-width: $screen-xs-max) {
     font-size: 26px;
     text-align: center;
@@ -214,22 +213,39 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .homepage-search {
+  position: relative;
   margin-top: -20px;
-  padding: 100px 0;
   background-color: $main-blue-light;
   background-image: url(../pattern.svg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  @media (max-width: $screen-xs-max) {
-    padding: 30px 0;
-  }
-
 }
 
 .homepage-map {
   margin-bottom: -40px;
   color: #ccc;
+}
+
+.homepage-searchbox-container {
+  margin: 0 auto;
+  @media (min-width: $screen-sm-min) {
+    max-width: 50%;
+    width: 50%;
+  }
+}
+
+.homepage-searchbox {
+
+  padding: 20px 25px;
+  background-color: #ffff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.08);
+
+  .address-autosuggest__container {
+    margin: 0;
+  }
+
 }
 
 .restaurant-show-more {

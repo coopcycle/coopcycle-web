@@ -6,16 +6,12 @@
   data-addresses="{{ addresses_normalized|json_encode()|e('html') }}"
   data-tracking-category="Homepage">
   <div class="container">
-    <div class="row">
-      <div class="col-xs-12 col-md-4 col-md-offset-2">
-        <h1 class="banner-title">{% trans %}index.banner{% endtrans %}</h1>
-      </div>
-      <div class="col-xs-12 col-md-4 banner-search">
-        <div data-element>
-          <!-- This will be replaced by React -->
-          <div class="form-group">
-            <input class="form-control" />
-          </div>
+    <h1 class="banner-title text-center">{% trans %}index.banner{% endtrans %}</h1>`
+    <div class="homepage-searchbox-container mb-4">
+      <div class="homepage-searchbox" data-element>
+        <!-- This will be replaced by React -->
+        <div class="form-group m-0">
+          <input class="form-control" />
         </div>
       </div>
     </div>
