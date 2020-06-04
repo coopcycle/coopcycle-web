@@ -27,6 +27,13 @@ class FulfillmentMethod implements ToggleableInterface
     private $options = [];
 
     /**
+     * @var int
+     * @Assert\NotBlank
+     * @Assert\Type("integer")
+     */
+    private $minimumAmount = 0;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -136,5 +143,25 @@ class FulfillmentMethod implements ToggleableInterface
     public function hasOption($name)
     {
         return isset($this->options[$name]);
+    }
+
+    /**
+     * @return int
+     */
+    public function getMinimumAmount()
+    {
+        return $this->minimumAmount;
+    }
+
+    /**
+     * @param int $minimumAmount
+     *
+     * @return self
+     */
+    public function setMinimumAmount($minimumAmount)
+    {
+        $this->minimumAmount = $minimumAmount;
+
+        return $this;
     }
 }
