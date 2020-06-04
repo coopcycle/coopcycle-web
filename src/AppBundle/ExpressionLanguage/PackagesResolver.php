@@ -23,4 +23,15 @@ class PackagesResolver
 
         return 0;
     }
+
+    public function containsAtLeastOne($name): bool
+    {
+        foreach ($this->delivery->getPackages() as $package) {
+            if ($package->getPackage()->getName() === $name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
