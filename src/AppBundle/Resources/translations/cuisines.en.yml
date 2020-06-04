@@ -4,9 +4,12 @@ albanian: Albanian
 algerian: Algerian
 alsatian: Alsatian
 american: American
-armenian: Armenian
+andalusian: Andalusian
+aragonese: Aragonese
 argentine: Argentine
+armenian: Armenian
 asian: Asian
+asturian: Asturian
 australian: Australian
 austrian: Austrian
 auvergne: Auvergne
@@ -14,6 +17,7 @@ bagels: Bagels
 bakery: Bakery
 bangladeshi: Bangladeshi
 barbecue: Barbecue
+basque: Basque
 belgian: Belgian
 bistro: Bistro
 brazilian: Brazilian
@@ -26,7 +30,10 @@ cajun: Cajun
 californian: Californian
 calzones: Calzones
 cambodian: Cambodian
+canary: Canary
 caribbean: Caribbean
+castiza: Castiza
+catalan: Catalan
 cheesesteaks: Cheesesteaks
 chicken: Chicken
 chilean: Chilean
@@ -49,11 +56,12 @@ donuts: Donuts
 dutch: Dutch
 eastern_european: Eastern European
 eclectic: Eclectic
+ecuadorean: Ecuadorean
 egyptian: Egyptian
 english: English
 ethiopian: Ethiopian
-ecuadorean: Ecuadorean
 european: European
+extremaduran: Extremaduran
 fast_food: Fast Food
 filipino: Filipino
 fish_and_chips: Fish and Chips
@@ -61,15 +69,19 @@ fondue: Fondue
 french: French
 frozen_yogurt: Frozen Yogurt
 fusion: Fusion
+galician: Galician
 gastropub: Gastropub
 german: German
+gluten_free: Gluten Free
 greek: Greek
 grill: Grill
 gyros: Gyros
 haitian: Haitian
 halal: Halal
+hand_made: Hand Made
 hawaiian: Hawaiian
 healthy: Healthy
+home_made: Home Made
 hot_dogs: Hot Dogs
 ice_cream: Ice Cream
 indian: Indian
@@ -81,14 +93,16 @@ italian: Italian
 jamaican: Jamaican
 japanese: Japanese
 juices: Juices
-korean: Korean
 korean_barbeque: Korean Barbeque
+korean: Korean
 kosher: Kosher
-latin: Latin
 latin_american: Latin American
+latin: Latin
 lebanese: Lebanese
+levantine: Levantine
 lyonnais: Lyonnais
 malaysian: Malaysian
+manchega: Manchega
 mediterranean: Mediterranean
 mexican: Mexican
 middle_eastern: Middle Eastern
@@ -108,6 +122,7 @@ persian: Persian
 peruvian: Peruvian
 pho: Pho
 pizza: Pizza
+plant_based: Plant Based
 polish: Polish
 polynesian: Polynesian
 portuguese: Portuguese
@@ -116,6 +131,7 @@ pub_food: Pub Food
 puerto_rican: Puerto Rican
 raw: Raw
 ribs: Ribs
+rice_based: Rice Based
 russian: Russian
 salad: Salad
 salvadoran: Salvadoran
@@ -128,8 +144,8 @@ singaporean: Singaporean
 smoothies: Smoothies
 soul_food: Soul Food
 soup: Soup
-south_american: South American
 south_african: South African
+south_american: South American
 south_pacific: South Pacific
 southern: Southern
 southwestern: Southwestern
