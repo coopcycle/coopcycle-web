@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import i18n from '../i18n'
+import { withTranslation } from 'react-i18next'
+
 import RulePickerLine from './RulePickerLine'
 import parsePricingRule from '../delivery/pricing-rule-parser'
 
@@ -108,7 +109,7 @@ class RulePicker extends React.Component {
         <div className="row">
           <div className="col-xs-12 text-right">
             <button className="btn btn-xs btn-primary" onClick={this.addLine}>
-              <i className="fa fa-plus"></i> { i18n.t('RULE_PICKER_ADD_CONDITION') }
+              <i className="fa fa-plus"></i> { this.props.t('RULE_PICKER_ADD_CONDITION') }
             </button>
           </div>
         </div>
@@ -134,4 +135,4 @@ RulePicker.propTypes = {
   packages: PropTypes.arrayOf(PropTypes.string),
 }
 
-export default RulePicker
+export default withTranslation()(RulePicker)

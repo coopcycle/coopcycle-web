@@ -1,7 +1,7 @@
 import React from 'react'
-import i18n from '../i18n'
 import _ from 'lodash'
 import isScalar from 'locutus/php/var/is_scalar'
+import { withTranslation } from 'react-i18next'
 
 /*
 
@@ -206,15 +206,15 @@ class RulePickerLine extends React.Component {
         <div className="col-md-3 form-group">
           <select value={this.state.type} onChange={this.onTypeSelect} className="form-control input-sm">
             <option value="">-</option>
-            <option value="distance">{ i18n.t('RULE_PICKER_LINE_DISTANCE') }</option>
-            <option value="weight">{ i18n.t('RULE_PICKER_LINE_WEIGHT') }</option>
-            <option value="vehicle">{ i18n.t('RULE_PICKER_LINE_BIKE_TYPE') }</option>
-            <option value="pickup.address">{ i18n.t('RULE_PICKER_LINE_PICKUP_ADDRESS') }</option>
-            <option value="dropoff.address">{ i18n.t('RULE_PICKER_LINE_DROPOFF_ADDRESS') }</option>
-            <option value="diff_hours(pickup)">{ i18n.t('RULE_PICKER_LINE_PICKUP_DIFF_HOURS') }</option>
-            <option value="diff_days(pickup)">{ i18n.t('RULE_PICKER_LINE_PICKUP_DIFF_DAYS') }</option>
-            <option value="dropoff.doorstep">{ i18n.t('RULE_PICKER_LINE_DROPOFF_DOORSTEP') }</option>
-            <option value="packages">{ i18n.t('RULE_PICKER_LINE_PACKAGES') }</option>
+            <option value="distance">{ this.props.t('RULE_PICKER_LINE_DISTANCE') }</option>
+            <option value="weight">{ this.props.t('RULE_PICKER_LINE_WEIGHT') }</option>
+            <option value="vehicle">{ this.props.t('RULE_PICKER_LINE_BIKE_TYPE') }</option>
+            <option value="pickup.address">{ this.props.t('RULE_PICKER_LINE_PICKUP_ADDRESS') }</option>
+            <option value="dropoff.address">{ this.props.t('RULE_PICKER_LINE_DROPOFF_ADDRESS') }</option>
+            <option value="diff_hours(pickup)">{ this.props.t('RULE_PICKER_LINE_PICKUP_DIFF_HOURS') }</option>
+            <option value="diff_days(pickup)">{ this.props.t('RULE_PICKER_LINE_PICKUP_DIFF_DAYS') }</option>
+            <option value="dropoff.doorstep">{ this.props.t('RULE_PICKER_LINE_DROPOFF_DOORSTEP') }</option>
+            <option value="packages">{ this.props.t('RULE_PICKER_LINE_PACKAGES') }</option>
           </select>
         </div>
         <div className="col-md-3">
@@ -242,5 +242,4 @@ class RulePickerLine extends React.Component {
   }
 }
 
-
-export default RulePickerLine
+export default withTranslation()(RulePickerLine)
