@@ -4,7 +4,6 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="minimumCartAmount" type="integer" column="minimum_cart_amount"/>
     <field name="flatDeliveryPrice" type="integer" column="flat_delivery_price"/>
     <field name="variableDeliveryPriceEnabled" type="boolean" column="variable_delivery_price_enabled"/>
     <field name="variableCustomerAmountEnabled" type="boolean" column="variable_customer_amount_enabled"/>

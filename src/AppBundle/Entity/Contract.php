@@ -19,13 +19,6 @@ class Contract
 
     /**
      * @var int
-     * @Assert\NotBlank
-     * @Assert\Type("integer")
-     */
-    private $minimumCartAmount = 0;
-
-    /**
-     * @var int
      * The amount (in cents) charged by the platform.
      * @Assert\NotBlank
      * @Assert\Type("integer")
@@ -109,22 +102,6 @@ class Contract
     public function setRestaurant(LocalBusiness $restaurant)
     {
         $this->restaurant = $restaurant;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMinimumCartAmount()
-    {
-        return $this->minimumCartAmount;
-    }
-
-    /**
-     * @param int $minimumCartAmount
-     */
-    public function setMinimumCartAmount(int $minimumCartAmount)
-    {
-        $this->minimumCartAmount = $minimumCartAmount;
     }
 
     /**
