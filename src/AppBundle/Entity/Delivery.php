@@ -11,6 +11,7 @@ use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Entity\Delivery\Package as DeliveryPackage;
 use AppBundle\Entity\Package;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
@@ -387,10 +388,24 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         return $taskObject;
     }
 
+    private static function createOrderObject(?Order $order)
+    {
+        if (null === $order) {
+
+            return null;
+        }
+
+        $object = new \stdClass();
+        $object->itemsTotal = $order->getItemsTotal();
+
+        return $object;
+    }
+
     public static function toExpressionLanguageValues(Delivery $delivery)
     {
         $pickup = self::createTaskObject($delivery->getPickup());
         $dropoff = self::createTaskObject($delivery->getDropoff());
+        $order = self::createOrderObject($delivery->getOrder());
 
         return [
             'distance' => $delivery->getDistance(),
@@ -399,6 +414,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
             'pickup' => $pickup,
             'dropoff' => $dropoff,
             'packages' => new PackagesResolver($delivery),
+            'order' => $order,
         ];
     }
 
