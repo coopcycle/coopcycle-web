@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Restaurant;
 
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
+use AppBundle\Form\Type\MoneyType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -38,6 +39,9 @@ class FulfillmentMethodType extends AbstractType
                 ],
                 'expanded' => true,
                 'multiple' => false,
+            ])
+            ->add('minimumAmount', MoneyType::class, [
+                'label' => 'restaurant.contract.minimumCartAmount.label',
             ])
             ->add('allowEdit', CheckboxType::class, [
                 'label' => 'basics.allow_edit',

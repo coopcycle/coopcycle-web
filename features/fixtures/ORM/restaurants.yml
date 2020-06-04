@@ -25,17 +25,14 @@ AppBundle\Entity\Address:
 
 AppBundle\Entity\Contract:
   contract_1:
-    minimumCartAmount: 1500
     flatDeliveryPrice: 350
     customerAmount: 350
     feeRate: 0.00
   contract_2:
-    minimumCartAmount: 1500
     flatDeliveryPrice: 350
     customerAmount: 350
     feeRate: 0.00
   contract_3:
-    minimumCartAmount: 1500
     flatDeliveryPrice: 350
     customerAmount: 350
     feeRate: 0.00
@@ -49,6 +46,9 @@ AppBundle\Entity\LocalBusiness:
     enabled: true
     contract: "@contract_1"
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
   restaurant_2:
     name: 'Café Barjot'
     address: "@address_2"
@@ -57,6 +57,9 @@ AppBundle\Entity\LocalBusiness:
     enabled: true
     contract: "@contract_2"
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
   restaurant_3:
     name: 'La Cantina Clandestina'
     orderingDelayMinutes: 0
@@ -65,6 +68,9 @@ AppBundle\Entity\LocalBusiness:
     enabled: true
     contract: "@contract_3"
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
   restaurant_4:
     name: 'Wild Buffet'
     orderingDelayMinutes: 0
@@ -76,6 +82,8 @@ AppBundle\Entity\LocalBusiness:
     __calls:
       - setDeletedAt:
         - <identity(new \DateTime('2019-11-12 18:00:00'))>
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
   restaurant_5:
     name: 'I Want This Restaurant'
     address: "@address_3"
@@ -89,3 +97,6 @@ AppBundle\Entity\LocalBusiness:
     enabled: false
     contract: "@contract_3"
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]

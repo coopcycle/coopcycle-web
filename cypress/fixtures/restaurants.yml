@@ -163,15 +163,12 @@ AppBundle\Entity\Sylius\Taxon:
 
 AppBundle\Entity\Contract:
   contract_1:
-    minimumCartAmount: 1500
     flatDeliveryPrice: 350
     feeRate: 0.00
   contract_2:
-    minimumCartAmount: 1500
     flatDeliveryPrice: 350
     feeRate: 0.00
   contract_3:
-    minimumCartAmount: 1500
     flatDeliveryPrice: 350
     feeRate: 0.00
 
@@ -184,6 +181,8 @@ AppBundle\Entity\LocalBusiness:
     enabled: true
     contract: "@contract_1"
     __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
       - addProduct: [ "@hamburger" ]
       - addProduct: [ "@cheeseburger" ]
       - addProduct: [ "@cheesecake" ]
@@ -198,6 +197,8 @@ AppBundle\Entity\LocalBusiness:
     enabled: true
     contract: "@contract_2"
     __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
       - addProduct: [ "@pizza_margherita" ]
       - addProduct: [ "@pizza_reina" ]
       - addTaxon: [ "@pizza_express_menu" ]

@@ -920,6 +920,14 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
         return false;
     }
 
+    public function setMinimumAmount($method, $amount)
+    {
+        $fulfillmentMethod = $this->getFulfillmentMethod($method);
+        if ($fulfillmentMethod) {
+            $fulfillmentMethod->setMinimumAmount($amount);
+        }
+    }
+
     public function addOwner(ApiUser $owner)
     {
         $owner->addRestaurant($this);

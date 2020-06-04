@@ -1,7 +1,5 @@
 {% if form.contract is defined %}
 
-  {{ form_row(form.contract.minimumCartAmount) }}
-
   <div class="panel panel-default">
     <div class="panel-body">
       <div class="alert alert-info">{% trans %}restaurant.contract.calculation_info{% endtrans %}</div>
@@ -42,10 +40,6 @@
           {% trans %}restaurant.contract.onlyAdmin{% endtrans %}
         </div>
         <table class="table">
-          <tr>
-            <th>{% trans %}restaurant.contract.minimumCartAmount.label{% endtrans %}</th>
-            <td class="text-right">{{ restaurant.contract.minimumCartAmount|price_format }}</td>
-          </tr>
           <tr>
             <th>{% trans %}restaurant.contract.customerAmount.label{% endtrans %}</th>
             <td class="text-right">

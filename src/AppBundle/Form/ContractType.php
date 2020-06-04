@@ -18,9 +18,6 @@ class ContractType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('minimumCartAmount', MoneyType::class, [
-                'label' => 'restaurant.contract.minimumCartAmount.label',
-            ])
             ->add('flatDeliveryPrice', MoneyType::class, [
                 'label' => 'restaurant.contract.flatDeliveryPrice.label',
                 'help' => 'restaurant.contract.flatDeliveryPrice.help',

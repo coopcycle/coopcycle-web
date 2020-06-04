@@ -29,7 +29,6 @@ class FulfillmentMethod implements ToggleableInterface
     /**
      * @var int
      * @Assert\NotBlank
-     * @Assert\Type("integer")
      */
     private $minimumAmount = 0;
 

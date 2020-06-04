@@ -57,5 +57,8 @@
   {% if is_granted('ROLE_ADMIN') and method == 'delivery' %}
     {{ form_row(form.allowEdit) }}
   {% endif %}
+
+  {{ form_row(form.minimumAmount) }}
+
 </div>
 {% endblock %}

@@ -453,7 +453,6 @@ class InitDemoCommand extends Command
     private function createRestaurant(Entity\Address $address, TaxCategoryInterface $taxCategory)
     {
         $contract = new Entity\Contract();
-        $contract->setMinimumCartAmount(1500);
         $contract->setFlatDeliveryPrice(350);
         $contract->setCustomerAmount(350);
         $contract->setFeeRate(0);
@@ -471,6 +470,10 @@ class InitDemoCommand extends Command
         $restaurant->addOpeningHour('Sa-Su ' . $this->createRandomTimeRange('08:30', '15:30'));
         $restaurant->addOpeningHour('Sa-Su ' . $this->createRandomTimeRange('19:00', '01:30'));
         $restaurant->setContract($contract);
+
+        foreach ($restaurant->getFulfillmentMethods() as $fulfillmentMethod) {
+            $fulfillmentMethod->setMinimumAmount(1500);
+        }
 
         $appetizers = $this->createAppetizers($taxCategory);
         $dishes = $this->createDishes($taxCategory);
