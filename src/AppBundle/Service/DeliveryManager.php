@@ -96,6 +96,8 @@ class DeliveryManager
         $delivery->setDistance($distance);
         $delivery->setDuration($duration);
 
+        $delivery->setOrder($order);
+
         return $delivery;
     }
 }
