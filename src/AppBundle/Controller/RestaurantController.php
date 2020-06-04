@@ -48,6 +48,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 /**
@@ -656,23 +658,39 @@ class RestaurantController extends AbstractController
      * @Route("/restaurants/map", name="restaurants_map")
      * @Template()
      */
-    public function mapAction(Request $request, SlugifyInterface $slugify)
+    public function mapAction(Request $request, SlugifyInterface $slugify, CacheInterface $appCache)
     {
-        $restaurants = array_map(function (LocalBusiness $restaurant) use ($slugify) {
-            return [
-                'name' => $restaurant->getName(),
-                'address' => [
-                    'geo' => [
-                        'latitude'  => $restaurant->getAddress()->getGeo()->getLatitude(),
-                        'longitude' => $restaurant->getAddress()->getGeo()->getLongitude(),
-                    ]
-                ],
-                'url' => $this->generateUrl('restaurant', [
-                    'id' => $restaurant->getId(),
-                    'slug' => $slugify->slugify($restaurant->getName())
-                ])
-            ];
-        }, $this->getDoctrine()->getRepository(LocalBusiness::class)->findAll());
+        $user = $this->getUser();
+
+        if ($user && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_RESTAURANT'))) {
+            $cacheKeySuffix = $user->getUsername();
+        } else {
+            $cacheKeySuffix = 'anonymous';
+        }
+
+        $cacheKey = sprintf('homepage.map.%s', $cacheKeySuffix);
+
+        $restaurants = $appCache->get($cacheKey, function (ItemInterface $item) use ($slugify) {
+
+            $item->expiresAfter(60 * 30);
+
+            return array_map(function (LocalBusiness $restaurant) use ($slugify) {
+
+                return [
+                    'name' => $restaurant->getName(),
+                    'address' => [
+                        'geo' => [
+                            'latitude'  => $restaurant->getAddress()->getGeo()->getLatitude(),
+                            'longitude' => $restaurant->getAddress()->getGeo()->getLongitude(),
+                        ]
+                    ],
+                    'url' => $this->generateUrl('restaurant', [
+                        'id' => $restaurant->getId(),
+                        'slug' => $slugify->slugify($restaurant->getName())
+                    ])
+                ];
+            }, $this->getDoctrine()->getRepository(LocalBusiness::class)->findAll());
+        });
 
         return [
             'restaurants' => $this->serializer->serialize($restaurants, 'json'),
