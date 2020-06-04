@@ -123,10 +123,14 @@ class DeliveryTest extends TestCase
         $delivery->addPackageWithQuantity($mediumPackage, 2);
         $delivery->getDropoff()->setDoorstep(true);
 
+        $language = new ExpressionLanguage();
+
         $values = Delivery::toExpressionLanguageValues($delivery);
 
         $this->assertArrayHasKey('order', $values);
-        $this->assertNull($values['order']);
+        $this->assertNotNull($values['order']);
+
+        $this->assertEquals(0, $language->evaluate('order.itemsTotal', $values));
 
         $order = $this->prophesize(Order::class);
         $order->getItemsTotal()->willReturn(3000);
@@ -136,8 +140,6 @@ class DeliveryTest extends TestCase
         $values = Delivery::toExpressionLanguageValues($delivery);
 
         $this->assertNotNull($values['order']);
-
-        $language = new ExpressionLanguage();
 
         $this->assertEquals(3000, $language->evaluate('order.itemsTotal', $values));
     }
