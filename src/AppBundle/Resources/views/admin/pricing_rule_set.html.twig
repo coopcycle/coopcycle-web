@@ -58,6 +58,7 @@
   <script>
     window.AppData = window.AppData || {};
     window.AppData.zones = {{ zoneNames|raw }};
+    window.AppData.packages = {{ packages|json_encode|raw }};
   </script>
   {{ encore_entry_script_tags('delivery-pricing-rules') }}
 {% endblock %}

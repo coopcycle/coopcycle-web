@@ -5,6 +5,7 @@ const vehicleRegexp = /(vehicle)\s+== "(cargo_bike|bike)"/
 const inRegexp = /([\w]+) in ([\d]+)\.\.([\d]+)/
 const comparatorRegexp = /([\w]+) (<|>) ([\d]+)/
 const doorstepDropoffRegexp = /(dropoff.doorstep)\s+== (true|false)/
+const packagesContainsAtLeastOneRegexp = /packages\.containsAtLeastOne\(['|"](.+)['|"]\)/
 
 const parseToken = token => {
 
@@ -14,6 +15,15 @@ const parseToken = token => {
       left: zoneTest[2],
       operator: zoneTest[1],
       right: zoneTest[3]
+    }
+  }
+
+  const packagesContainsAtLeastOneTest = packagesContainsAtLeastOneRegexp.exec(token)
+  if (packagesContainsAtLeastOneTest) {
+    return {
+      left: 'packages',
+      operator: 'containsAtLeastOne',
+      right: packagesContainsAtLeastOneTest[1],
     }
   }
 

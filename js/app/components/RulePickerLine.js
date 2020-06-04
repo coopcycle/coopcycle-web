@@ -30,6 +30,7 @@ const typeToOperators = {
   'diff_days(pickup)': ['==', '<', '>', 'in'],
   'diff_hours(pickup)': ['==', '<', '>'],
   'dropoff.doorstep': ['=='],
+  'packages': ['containsAtLeastOne']
 }
 
 class RulePickerLine extends React.Component {
@@ -186,6 +187,15 @@ class RulePickerLine extends React.Component {
     case '<':
     case '>':
       return this.renderNumberInput()
+    case 'containsAtLeastOne':
+      return (
+        <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
+          <option value="">-</option>
+          { this.props.packages.map((item, index) => {
+            return (<option value={item} key={index}>{item}</option>)
+          })}
+        </select>
+      )
     }
   }
 
@@ -204,6 +214,7 @@ class RulePickerLine extends React.Component {
             <option value="diff_hours(pickup)">{ i18n.t('RULE_PICKER_LINE_PICKUP_DIFF_HOURS') }</option>
             <option value="diff_days(pickup)">{ i18n.t('RULE_PICKER_LINE_PICKUP_DIFF_DAYS') }</option>
             <option value="dropoff.doorstep">{ i18n.t('RULE_PICKER_LINE_DROPOFF_DOORSTEP') }</option>
+            <option value="packages">{ i18n.t('RULE_PICKER_LINE_PACKAGES') }</option>
           </select>
         </div>
         <div className="col-md-3">

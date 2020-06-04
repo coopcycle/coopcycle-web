@@ -14,6 +14,10 @@ const lineToString = state => {
     return `${state.left} in ${state.right[0]}..${state.right[1]}`
   }
 
+  if (state.left === 'packages' && state.operator === 'containsAtLeastOne') {
+    return `packages.containsAtLeastOne("${state.right}")`
+  }
+
   if (state.left === 'diff_days(pickup)') {
     return `diff_days(pickup) ${state.operator} ${state.right}`
   }
@@ -97,6 +101,7 @@ class RulePicker extends React.Component {
             operator={ line.operator }
             value={ line.right }
             zones={ this.props.zones }
+            packages={ this.props.packages }
             onUpdate={ this.updateLine }
             onDelete={ this.deleteLine } />
         )) }
@@ -118,7 +123,8 @@ class RulePicker extends React.Component {
 RulePicker.propTypes = {
   expression: PropTypes.string.isRequired,
   onExpressionChange: PropTypes.func.isRequired,
-  zones: PropTypes.arrayOf(PropTypes.string)
+  zones: PropTypes.arrayOf(PropTypes.string),
+  packages: PropTypes.arrayOf(PropTypes.string),
 }
 
 export default RulePicker

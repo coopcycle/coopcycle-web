@@ -132,6 +132,18 @@ describe('Pricing rule parser', function() {
     }])
   })
 
+  it('should parse packages', function() {
+    const expression = 'packages.containsAtLeastOne("XL")'
+    const result = parsePricingRule(expression)
+    expect(result).toEqual([{
+      left: 'packages',
+      operator: 'containsAtLeastOne',
+      right: 'XL'
+    }])
+  })
+
+
+
   it('should return empty array', function() {
     const result = parsePricingRule('')
     expect(result).toEqual([])

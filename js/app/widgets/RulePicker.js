@@ -5,7 +5,8 @@ import RulePicker from '../components/RulePicker'
 export default function(el, options) {
 
   let defaults = {
-    zones: ['Test zone', 'Test2'],
+    zones: [],
+    packages: [],
     expression: '',
     onExpressionChange: () => {}
   }
@@ -15,6 +16,7 @@ export default function(el, options) {
   render(
     <RulePicker
       zones={options.zones}
+      packages={options.packages}
       expression={options.expression}
       onExpressionChange={options.onExpressionChange}
     />,

@@ -57,5 +57,10 @@ $('.delivery-pricing-ruleset__rule__expression').each(function(index, item) {
   function onExpressionChange(newExpression) {
     $input.val(newExpression)
   }
-  window.CoopCycle.RulePicker($(item).find('.rule-expression-container')[0], {'expression': $input.val(), onExpressionChange: onExpressionChange, zones: window.AppData.zones})
+  window.CoopCycle.RulePicker($(item).find('.rule-expression-container')[0], {
+    expression: $input.val(),
+    onExpressionChange: onExpressionChange,
+    zones: window.AppData.zones,
+    packages: window.AppData.packages,
+  })
 })
