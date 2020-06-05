@@ -29,10 +29,6 @@
 !web/media/.gitkeep
 /web/media/cache/*
 !web/media/cache/.gitkeep
-/web/invoices/*
-!web/invoices/.gitkeep
-/web/receipts/*
-!web/receipts/.gitkeep
 
 /node_modules/
 .DS_Store
