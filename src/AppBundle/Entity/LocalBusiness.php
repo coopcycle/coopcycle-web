@@ -48,7 +48,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "pagination_enabled"=false
+ *       "pagination_enabled"=false,
+ *       "normalization_context"={"groups"={"restaurant", "restaurant_legacy", "address", "order"}}
  *     },
  *     "me_restaurants"={
  *       "method"="GET",
@@ -58,7 +59,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   },
  *   itemOperations={
  *     "get"={
- *       "method"="GET"
+ *       "method"="GET",
+ *       "normalization_context"={"groups"={"restaurant", "restaurant_legacy", "address", "order"}}
  *     },
  *     "restaurant_menu"={
  *       "method"="GET",
@@ -356,6 +358,8 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
     }
 
     /**
+     * @SerializedName("availabilities")
+     * @Groups({"restaurant_legacy"})
      * @deprecated
      * @param \DateTime|null $now
      * @return array

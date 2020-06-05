@@ -377,7 +377,6 @@ Feature: Manage restaurants
         "openingHoursSpecification":@array@,
         "specialOpeningHoursSpecification":@array@,
         "hasMenu":"/api/restaurants/menus/2",
-        "availabilities":@array@,
         "image":@string@
       }
       """
@@ -457,7 +456,6 @@ Feature: Manage restaurants
         "telephone":null,
         "openingHoursSpecification":@array@,
         "specialOpeningHoursSpecification":@array@,
-        "availabilities":@array@,
         "image":@string@
       }
       """

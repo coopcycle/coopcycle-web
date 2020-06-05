@@ -90,8 +90,6 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         }
         unset($data['activeMenuTaxon']);
 
-        $data['availabilities'] = $object->getAvailabilities();
-
         $imagePath = $this->uploaderHelper->asset($object, 'imageFile');
         if (empty($imagePath)) {
             $imagePath = '/img/cuisine/default.jpg';

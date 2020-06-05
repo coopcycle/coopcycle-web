@@ -107,10 +107,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             $data = $this->normalizer->normalize($object, $format, $context);
         }
 
-        if (isset($data['restaurant']) && is_array($data['restaurant'])) {
-            unset($data['restaurant']['availabilities']);
-        }
-
         $data['adjustments'] = $this->normalizeAdjustments($object);
 
         $restaurant = $object->getRestaurant();
