@@ -2,8 +2,6 @@ import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import reducer from './reducers'
 import { socketIO, persistFilters } from './middlewares'
-import moment from 'moment'
-import _ from 'lodash'
 
 const middlewares = [ thunk, socketIO, persistFilters ]
 
@@ -13,33 +11,13 @@ const middlewares = [ thunk, socketIO, persistFilters ]
 const composeEnhancers = (typeof window !== 'undefined' &&
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 
-const date = moment(window.AppData.Dashboard.date)
+export const createStoreFromPreloadedState = preloadedState => {
 
-let preloadedState = {
-  date,
-  jwt: window.AppData.Dashboard.jwt,
-  unassignedTasks: _.filter(window.AppData.Dashboard.tasks, task => !task.isAssigned),
-  allTasks: window.AppData.Dashboard.tasks,
-  taskLists: window.AppData.Dashboard.taskLists,
-  tags: window.AppData.Dashboard.tags,
-  nav: window.AppData.Dashboard.nav,
-  couriersList: window.AppData.Dashboard.couriersList,
-  uploaderEndpoint: window.AppData.Dashboard.uploaderEndpoint,
+  return createStore(
+    reducer,
+    preloadedState,
+    composeEnhancers(
+      applyMiddleware(...middlewares)
+    )
+  )
 }
-
-const key = date.format('YYYY-MM-DD')
-const persistedFilters = window.sessionStorage.getItem(`cpccl__dshbd__fltrs__${key}`)
-if (persistedFilters) {
-  preloadedState = {
-    ...preloadedState,
-    filters: JSON.parse(persistedFilters)
-  }
-}
-
-let store = createStore(
-  reducer,
-  preloadedState,
-  composeEnhancers(applyMiddleware(...middlewares))
-)
-
-export default store

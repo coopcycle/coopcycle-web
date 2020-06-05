@@ -13,7 +13,15 @@
 {% block body %}
 
 <div class="dashboard {% if nav %}dashboard--nav{% endif %}">
-  <div class="dashboard__wrapper" id="dashboard">
+  <div class="dashboard__wrapper" id="dashboard"
+    data-jwt="{{ jwt }}"
+    data-date="{{ date|date('Y-m-d') }}"
+    data-tags="{{ tags|json_encode|e('html_attr') }}"
+    data-couriers-list="{{ couriers|json_encode|e('html_attr') }}"
+    data-tasks="{{ tasks|json_encode|e('html_attr') }}"
+    data-task-lists="{{ task_lists|json_encode|e('html_attr') }}"
+    data-uploader-endpoint="{{ oneup_uploader_endpoint('tasks') }}"
+    data-nav="{{ nav ? 'on' : 'off' }}">
     <div class="dashboard__map">
       <div class="dashboard__toolbar-container"></div>
       <div class="dashboard__map-container"></div>
@@ -72,19 +80,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-window.AppData = window.AppData || {};
-window.AppData.Dashboard = {
-  date: "{{ date|date('Y-m-d') }}",
-  tasks: {{ tasks|json_encode()|raw }},
-  taskLists: {{ task_lists|json_encode()|raw }},
-  couriersList: {{ couriers|json_encode()|raw }},
-  tags: {{ tags|json_encode()|raw }},
-  jwt: "{{ jwt }}",
-  nav: "{{ nav ? 'on' : 'off' }}",
-  uploaderEndpoint: "{{ oneup_uploader_endpoint('tasks') }}"
-};
-</script>
 {{ encore_entry_script_tags('dashboard') }}
 <script>
 
@@ -96,7 +91,7 @@ window.AppData.Dashboard = {
       }
     }
   });
-   new CoopCycle.DatePicker(document.querySelector('#task_export_end_widget'), {
+  new CoopCycle.DatePicker(document.querySelector('#task_export_end_widget'), {
     defaultValue: document.querySelector('#task_export_end').value,
     onChange: function(date, dateString) {
       if (date) {

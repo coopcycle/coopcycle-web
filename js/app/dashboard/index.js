@@ -3,9 +3,11 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
+import moment from 'moment'
+import _ from 'lodash'
 
 import i18n from '../i18n'
-import store from './redux/store'
+import { createStoreFromPreloadedState } from './redux/store'
 import DashboardApp from './app'
 import LeafletMap from './components/LeafletMap'
 import Navbar from './components/Navbar'
@@ -21,6 +23,34 @@ const navbarLoaded = new Promise((resolve) => navbarLoadedResolve = resolve)
 const dashboardLoaded = new Promise((resolve) => dashboardLoadedResolve = resolve)
 
 function start() {
+
+  const dashboardEl = document.getElementById('dashboard')
+
+  const date = moment(dashboardEl.dataset.date)
+  const tasks = JSON.parse(dashboardEl.dataset.tasks)
+
+  let preloadedState = {
+    date,
+    jwt: dashboardEl.dataset.jwt,
+    unassignedTasks: _.filter(tasks, task => !task.isAssigned),
+    allTasks: tasks,
+    taskLists: JSON.parse(dashboardEl.dataset.taskLists),
+    tags: JSON.parse(dashboardEl.dataset.tags),
+    couriersList: JSON.parse(dashboardEl.dataset.couriersList),
+    nav: dashboardEl.dataset.nav,
+    uploaderEndpoint: dashboardEl.dataset.uploaderEndpoint,
+  }
+
+  const key = date.format('YYYY-MM-DD')
+  const persistedFilters = window.sessionStorage.getItem(`cpccl__dshbd__fltrs__${key}`)
+  if (persistedFilters) {
+    preloadedState = {
+      ...preloadedState,
+      filters: JSON.parse(persistedFilters)
+    }
+  }
+
+  const store = createStoreFromPreloadedState(preloadedState)
 
   Promise
     .all([ mapLoaded, mapInitialized, navbarLoaded, dashboardLoaded ])
