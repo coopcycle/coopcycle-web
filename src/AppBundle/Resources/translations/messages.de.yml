@@ -685,3 +685,4 @@ order.payment.waiting_for_confirmation: Wir warten auf die Bestätigung deiner B
 order.payment.redirect.help: Du wirst zur Seite deiner Bank weitergeleitet, um die
   Bezahlung zu vervollständigen
 restaurant.list.promotions: Werbeaktionen
+form.min_max.upper.label: Anzahl Max
