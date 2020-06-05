@@ -303,27 +303,6 @@ snc_redis:
 
 oneup_flysystem:
     adapters:
-        assets_local:
-            local:
-                directory: '%kernel.project_dir%/web/images/assets'
-        product_images_local:
-            local:
-                directory: '%kernel.project_dir%/web/images/products'
-        restaurant_images_local:
-            local:
-                directory: '%kernel.project_dir%/web/images/restaurants'
-        store_images_local:
-            local:
-                directory: '%kernel.project_dir%/web/images/stores'
-        task_images_local:
-            local:
-                directory: '%kernel.project_dir%/web/images/tasks'
-        invoices_local:
-            local:
-                directory: '%kernel.project_dir%/web/invoices'
-        receipts_local:
-            local:
-                directory: '%kernel.project_dir%/web/receipts'
         assets_s3:
             awss3v3:
                 client: s3_client
@@ -365,26 +344,6 @@ oneup_flysystem:
                 bucket: '%env(S3_BUCKET)%'
                 prefix: product_imports
     filesystems:
-        assets:
-            adapter: assets_local
-            alias: assets_filesystem
-            mount: assets_filesystem
-        product_images:
-            adapter: product_images_local
-            alias: product_images_filesystem
-            mount: product_images_filesystem
-        restaurant_images:
-            adapter: restaurant_images_local
-            alias: restaurant_images_filesystem
-            mount: restaurant_images_filesystem
-        store_images:
-            adapter: store_images_local
-            alias: store_images_filesystem
-            mount: store_images_filesystem
-        task_images:
-            adapter: task_images_local
-            alias: task_images_filesystem
-            mount: task_images_filesystem
         assets_s3:
             adapter: assets_s3
             alias: assets_s3_filesystem
@@ -405,14 +364,6 @@ oneup_flysystem:
             adapter: task_images_s3
             alias: task_images_s3_filesystem
             mount: task_images_s3_filesystem
-        invoices:
-            adapter: invoices_local
-            alias: invoices_filesystem
-            mount: invoices_filesystem
-        receipts:
-            adapter: receipts_local
-            alias: receipts_filesystem
-            mount: receipts_filesystem
         receipts_s3:
             adapter: receipts_s3
             alias: receipts_s3_filesystem
