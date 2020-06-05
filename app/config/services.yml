@@ -774,4 +774,4 @@ services:
 
   Pushok\Client:
     arguments:
-      $isProductionEnv: false
+      $isProductionEnv: true

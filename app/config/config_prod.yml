@@ -138,8 +138,3 @@ liip_imagine:
                 data_root:
                     - '%kernel.project_dir%/../../shared/web'
                     - '%kernel.project_dir%/web'
-
-services:
-    Pushok\Client:
-        arguments:
-          $isProductionEnv: true
