@@ -32,6 +32,33 @@ snc_redis:
             options:
                 prefix: "%database_name%_test:"
 
+oneup_flysystem:
+    adapters:
+        assets:
+            local:
+                directory: '/tmp'
+        product_images:
+            local:
+                directory: '/tmp'
+        restaurant_images:
+            local:
+                directory: '/tmp'
+        store_images:
+            local:
+                directory: '/tmp'
+        task_images:
+            local:
+                directory: '/tmp'
+        receipts:
+            local:
+                directory: '/tmp'
+        task_imports:
+            local:
+                directory: '/tmp'
+        product_imports:
+            local:
+                directory: '/tmp'
+
 services:
     AppBundle\EventListener\CarbonListener:
         arguments:
