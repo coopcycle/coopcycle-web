@@ -1,6 +1,5 @@
 import MapHelper from '../MapHelper'
 import L from 'leaflet'
-import _ from 'lodash'
 
 if ($('form[name="zone_collection"]').length === 1) {
   $('#zone_collection_zones').find('input[type="hidden"]')
@@ -29,11 +28,8 @@ if ($('form[name="zone_collection"]').length === 1) {
     })
 }
 
-_.each(window.AppData.Zones, zone => {
-  const $el = $('[data-zone="' + zone.id + '"]')
-  if ($el.length === 1) {
-    const map = MapHelper.init('zone-' + zone.id)
-    const layer = L.geoJSON(zone.geoJSON).addTo(map)
-    MapHelper.fitToLayers(map, [ layer ])
-  }
+document.querySelectorAll('[data-zone]').forEach(el => {
+  const map = MapHelper.init(el.getAttribute('id'))
+  const layer = L.geoJSON(JSON.parse(el.dataset.zone)).addTo(map)
+  MapHelper.fitToLayers(map, [ layer ])
 })
