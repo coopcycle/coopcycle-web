@@ -865,6 +865,7 @@ receipt.title: Reçu pour votre commande n° %number%
 receipt.line_item.name: Produit
 receipt.line_item.unit_price: Prix unitaire
 receipt.line_item.quantity: Quantité
+receipt.line_item.tax_total: TVA
 receipt.line_item.total: Total
 receipt.footer_item.total_products: Total produits
 receipt.footer_item.total_excl_tax: Total HT

@@ -732,6 +732,7 @@ receipt.title: 'Recibo del pedido #%number%'
 receipt.line_item.name: Producto
 receipt.line_item.unit_price: Precio por unidad
 receipt.line_item.quantity: Cantidad
+receipt.line_item.tax_total: IVA
 receipt.line_item.total: Total
 receipt.footer_item.total_products: Total productos
 receipt.footer_item.total_excl_tax: Total (sin IVA)

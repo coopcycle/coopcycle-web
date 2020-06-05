@@ -46,9 +46,10 @@
 
 <table style="width: 100%;">
   <thead>
-    <th style="text-align: left;">{{ 'receipt.line_item.name'|trans }}</th>
+    <th style="text-align: left; ">{{ 'receipt.line_item.name'|trans }}</th>
     <th style="text-align: right;">{{ 'receipt.line_item.unit_price'|trans }}</th>
     <th style="text-align: right;">{{ 'receipt.line_item.quantity'|trans }}</th>
+    <th style="text-align: right;">{{ 'receipt.line_item.tax_total'|trans }}</th>
     <th style="text-align: right;">{{ 'receipt.line_item.total'|trans }}</th>
   </thead>
   <tbody>
@@ -63,6 +64,7 @@
       </td>
       <td style="text-align: right; vertical-align: top;">{{ item.unitPrice|price_format }}</td>
       <td style="text-align: right; vertical-align: top;">{{ item.quantity }}</td>
+      <td style="text-align: right; vertical-align: top;">{{ item.taxTotal|price_format }}</td>
       <td style="text-align: right; vertical-align: top;">{{ item.total|price_format }}</td>
     </tr>
   {% endfor %}
@@ -70,7 +72,7 @@
   <tfoot>
     {% for item in receipt.footerItems %}
     <tr>
-      <th colspan="3" style="text-align: right;"><strong>{{ item.name }}</strong></th>
+      <th colspan="4" style="text-align: right;"><strong>{{ item.name }}</strong></th>
       <td style="text-align: right;">{{ item.total|price_format }}</td>
     </tr>
   {% endfor %}

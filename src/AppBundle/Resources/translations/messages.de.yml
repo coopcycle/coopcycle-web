@@ -480,6 +480,7 @@ restaurant.suggest.has_voted: Du hast für das  Restaurant schon gestimmt!
 form.task.recipient.help: Gib bitte den Namen der Ansprechperson an
 receipt.emitter_details: Bestellung beim Restaurant  <strong>%restaurant_name%</strong>
 receipt.total: Gesamt (Inkl. MwSt.)
+receipt.line_item.tax_total: Ust.
 receipt.line_item.total: Gesamt
 adminDashboard.statistics: Statistiken
 notifications.empty: Keine Benachrichtigung
