@@ -30,7 +30,9 @@
       <div class="col-sm-6 col-md-4">
         <div class="thumbnail">
           <div class="embed-responsive embed-responsive-4by3">
-            <div class="embed-responsive-item" data-zone="{{ zone.id }}" id="zone-{{ zone.id }}"></div>
+            <div class="embed-responsive-item"
+              id="zone-{{ zone.id }}"
+              data-zone="{{ zone.geoJSON|json_encode|e('html_attr') }}"></div>
           </div>
           <div class="caption">
             <h4>{{ zone.name }}</h4>
@@ -62,17 +64,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-window.AppData = window.AppData || {};
-
-window.AppData.Zones = []
-{% for zone in zones %}
-window.AppData.Zones.push({
-  id: {{ zone.id }},
-  geoJSON: {{ zone.geoJSON|json_encode()|raw }}
-})
-
-{% endfor %}
-</script>
 {{ encore_entry_script_tags('zone-preview') }}
 {% endblock %}
