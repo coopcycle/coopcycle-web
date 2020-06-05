@@ -175,6 +175,8 @@ h1, h2, h3, h4, h5, h6 {
 .banner-title {
   color: $white;
   font-weight: 700;
+  margin-top: 30px;
+  margin-bottom: 60px;
   @media (max-width: $screen-xs-max) {
     font-size: 26px;
     text-align: center;
@@ -220,6 +222,17 @@ h1, h2, h3, h4, h5, h6 {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
+  &-container {
+    position: relative;
+    display: flex;
+    width: 50%;
+    margin: 0 auto;
+    justify-content: center;
+    @media (max-width: $screen-sm-max) {
+      width: 80%;
+    }
+  }
+  margin-bottom: 50px;
 }
 
 .homepage-map {
@@ -228,11 +241,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .homepage-searchbox-container {
-  margin: 0 auto;
-  @media (min-width: $screen-sm-min) {
-    max-width: 50%;
-    width: 50%;
-  }
+  position: absolute;
+  bottom: -40px;
+  width: 100%;
+  left: 0;
 }
 
 .homepage-searchbox {
