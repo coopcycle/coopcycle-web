@@ -27,6 +27,20 @@ class SitemapController extends AbstractController
         $otherLocales = array_diff($locales, [$locale]);
 
         $urls = [];
+
+        // About us
+        $aboutUs = [
+            'loc' => $this->generateUrl('about_us', [
+                '_locale' => $locale
+            ], UrlGeneratorInterface::ABSOLUTE_URL)
+        ];
+        foreach ($otherLocales as $otherLocale) {
+            $aboutUs['alternate_urls'][$otherLocale] = $this->generateUrl('about_us', [
+                '_locale' => $otherLocale
+            ], UrlGeneratorInterface::ABSOLUTE_URL);
+        }
+        $urls[] = $aboutUs;
+
         foreach ($restaurants as $restaurant) {
             $url = [
                 'loc' => $this->generateUrl('restaurant', [
