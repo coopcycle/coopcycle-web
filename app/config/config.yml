@@ -37,8 +37,6 @@ parameters:
     osrm_host: "%env(COOPCYCLE_OSRM_HOST)%"
     is_demo: "%env(bool:COOPCYCLE_DEMO)%"
     sentry_public_dsn: "%env(COOPCYCLE_SENTRY_DSN)%"
-    apns_certificate_file: "%env(APNS_CERTIFICATE_FILE)%"
-    apns_certificate_pass_phrase: "%env(APNS_CERTIFICATE_PASS_PHRASE)%"
     foodtech_enabled: "%env(bool:COOPCYCLE_FOODTECH_ENABLED)%"
 
 services:

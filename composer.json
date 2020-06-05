@@ -63,7 +63,6 @@
         "sylius/payment-bundle": "^1.6.5",
         "laravolt/avatar": "^3.2",
         "sylius/product-bundle": "^1.6.5",
-        "duccio/apns-php": "^1.0",
         "sylius/taxonomy-bundle": "^1.6.5",
         "sonata-project/seo-bundle": "^2.5",
         "sylius/currency-bundle": "^1.6.5",
@@ -105,7 +104,8 @@
         "phpdocumentor/reflection-docblock": "^4.0",
         "sylius/customer-bundle": "^1.6",
         "letudiant/composer-shared-package-plugin": "^4.0",
-        "mailjet/mailjet-apiv3-php": "^1.4"
+        "mailjet/mailjet-apiv3-php": "^1.4",
+        "edamov/pushok": "^0.11.2"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

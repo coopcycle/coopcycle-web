@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
+use Pushok;
 
 class RemotePushNotificationManagerTest extends TestCase
 {
@@ -41,45 +42,42 @@ class RemotePushNotificationManagerTest extends TestCase
     {
         $this->firebaseMessaging = $this->prophesize(FirebaseMessaging::class);
         $this->firebaseFactory = $this->prophesize(FirebaseFactory::class);
-        $this->apns = $this->prophesize(\ApnsPHP_Push::class);
+        $this->pushOkClient = $this->prophesize(Pushok\Client::class);
 
         $this->firebaseFactory->createMessaging()
             ->willReturn($this->firebaseMessaging->reveal());
 
         $this->remotePushNotificationManager = new RemotePushNotificationManager(
             $this->firebaseFactory->reveal(),
-            $this->apns->reveal(),
-            'passphrase',
+            $this->pushOkClient->reveal(),
             new NullLogger()
         );
     }
 
     public function testSendOneWithApns()
     {
+        $deviceToken = $this->generateApnsToken();
+
         $remotePushToken = new RemotePushToken();
-        $remotePushToken->setToken($this->generateApnsToken());
+        $remotePushToken->setToken($deviceToken);
         $remotePushToken->setPlatform('ios');
 
-        $this->apns
-            ->setProviderCertificatePassphrase('passphrase')
-            ->shouldBeCalled();
+        $this->pushOkClient
+            ->addNotifications(Argument::that(function (array $notifications) use ($deviceToken) {
 
-        $this->apns
-            ->connect()
-            ->shouldBeCalled();
+                $this->assertCount(1, $notifications);
+                $this->assertEquals($deviceToken, $notifications[0]->getDeviceToken());
 
-        $this->apns
-            ->add(Argument::that(function (\ApnsPHP_Message $message) {
-                return $message->getText() === 'Hello world!';
+                $payload = $notifications[0]->getPayload();
+
+                $this->assertEquals('Hello world!', $payload->getAlert()->getTitle());
+
+                return true;
             }))
             ->shouldBeCalled();
 
-        $this->apns
-            ->send()
-            ->shouldBeCalled();
-
-        $this->apns
-            ->disconnect()
+        $this->pushOkClient
+            ->push()
             ->shouldBeCalled();
 
         $this->remotePushNotificationManager->send('Hello world!', $remotePushToken);
@@ -97,35 +95,34 @@ class RemotePushNotificationManagerTest extends TestCase
         $remotePushToken2->setToken($token2);
         $remotePushToken2->setPlatform('ios');
 
-        $this->apns
-            ->setProviderCertificatePassphrase('passphrase')
-            ->shouldBeCalled();
+        $this->pushOkClient
+            ->addNotifications(Argument::that(function (array $notifications) use ($token1, $token2) {
 
-        $this->apns
-            ->connect()
-            ->shouldBeCalled();
+                $this->assertCount(2, $notifications);
 
-        $this->apns
-            ->add(Argument::that(function (\ApnsPHP_Message $message) use ($token1, $token2) {
-                return $message->getText() === 'Hello world!'
-                    && 2 === count($message->getRecipients())
-                    && in_array($token1, $message->getRecipients())
-                    && in_array($token2, $message->getRecipients());
+                $deviceTokens = array_map(function (Pushok\Notification $n) {
+                    return $n->getDeviceToken();
+                }, $notifications);
+
+                $this->assertContains($token1, $deviceTokens);
+                $this->assertContains($token2, $deviceTokens);
+
+                return true;
             }))
             ->shouldBeCalled();
 
-        $this->apns
-            ->send()
-            ->shouldBeCalled();
-
-        $this->apns
-            ->disconnect()
-            ->shouldBeCalled();
+        $this->pushOkClient
+            ->push()
+            ->willReturn([]);
 
         $this->remotePushNotificationManager->send('Hello world!', [
             $remotePushToken1,
             $remotePushToken2
         ]);
+
+        $this->pushOkClient
+            ->push()
+            ->shouldHaveBeenCalled();
     }
 
     public function testSendOneWithFcm()
@@ -257,6 +254,19 @@ class RemotePushNotificationManagerTest extends TestCase
         $user3 = new ApiUser();
         $user3->getRemotePushTokens()->add($remotePushToken3);
 
+        $this->pushOkClient
+            ->addNotifications(Argument::that(function (array $notifications) use ($token1, $token2) {
+
+                $this->assertCount(1, $notifications);
+
+                return true;
+            }))
+            ->shouldBeCalled();
+
+        $this->pushOkClient
+            ->push()
+            ->willReturn([]);
+
         $this->firebaseMessaging
             ->sendMulticast(Argument::that(function (CloudMessage $message) {
 
@@ -281,5 +291,9 @@ class RemotePushNotificationManagerTest extends TestCase
             $user2,
             $user3
         ], ['event' => [ 'name' => 'foo' ]]);
+
+        $this->pushOkClient
+            ->push()
+            ->shouldHaveBeenCalled();
     }
 }

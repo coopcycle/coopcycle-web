@@ -8,24 +8,22 @@ use Kreait\Firebase\Factory as FirebaseFactory;
 use Kreait\Firebase\Exception\ServiceAccountDiscoveryFailed;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Psr\Log\LoggerInterface;
+use Pushok;
 
 class RemotePushNotificationManager
 {
     private $firebaseFactory;
-    private $apns;
+    private $apnsClient;
     private static $enabled = true;
     private $logger;
 
     public function __construct(
         FirebaseFactory $firebaseFactory,
-        \ApnsPHP_Push $apns,
-        string $apnsCertificatePassPhrase,
+        Pushok\Client $apnsClient,
         LoggerInterface $logger)
     {
         $this->firebaseFactory = $firebaseFactory;
-
-        $apns->setProviderCertificatePassphrase($apnsCertificatePassPhrase);
-        $this->apns = $apns;
+        $this->apnsClient = $apnsClient;
         $this->logger = $logger;
     }
 
@@ -121,45 +119,24 @@ class RemotePushNotificationManager
             return;
         }
 
-        $this->apns->connect();
+        $alert = Pushok\Payload\Alert::create()->setTitle($text);
+        // $alert = $alert->setBody('Lorem ipsum');
 
-        // Instantiate a new Message with a single recipient
-        $apnsMessage = new \ApnsPHP_Message();
-        $apnsMessage->setText($text);
-        $apnsMessage->setSound();
-
-        // Set a custom identifier. To get back this identifier use the getCustomIdentifier() method
-        // over a ApnsPHP_Message object retrieved with the getErrors() message.
-        // $apnsMessage->setCustomIdentifier("Message-123456");
-
-        // Set badge icon
-        // $apnsMessage->setBadge(0);
-
-        // Set a custom property
-        // $apnsMessage->setCustomProperty('acme2', array('bang', 'whiz'));
+        $payload = Pushok\Payload::create()->setAlert($alert);
+        $payload->setSound('default');
 
         foreach ($data as $key => $value) {
-            $apnsMessage->setCustomProperty($key, $value);
+            $payload->setCustomValue($key, $value);
         }
 
-        // Set the expiry value to 30 seconds
-        $apnsMessage->setExpiry(30);
-
+        $notifications = [];
         foreach ($tokens as $token) {
-            $apnsMessage->addRecipient($token->getToken());
+            $notifications[] = new Pushok\Notification($payload, $token->getToken());
         }
 
-        // Add the message to the message queue
-        $this->apns->add($apnsMessage);
+        $this->apnsClient->addNotifications($notifications);
 
-        // Send all messages in the message queue
-        $this->apns->send();
-
-        // Disconnect from the Apple Push Notification Service
-        $this->apns->disconnect();
-
-        // Examine the error message container
-        // $errors = $this->apns->getErrors();
+        $this->apnsClient->push();
     }
 
     /**

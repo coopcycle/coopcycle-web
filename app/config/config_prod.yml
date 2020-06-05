@@ -140,15 +140,6 @@ liip_imagine:
                     - '%kernel.project_dir%/web'
 
 services:
-    apns_php.logger:
-        class: AppBundle\Utils\ApnsPHPLogger
-        arguments: [ '@logger' ]
-    apns_php.push:
-        class: \ApnsPHP_Push
+    Pushok\Client:
         arguments:
-            - 0
-            - "%apns_certificate_file%"
-        calls:
-            - method: setLogger
-              arguments:
-                  - '@apns_php.logger'
+          $isProductionEnv: true

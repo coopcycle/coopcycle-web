@@ -476,11 +476,7 @@ services:
       - "@coopcycle.settings_manager"
       - "%transactional_address%"
 
-  AppBundle\Service\RemotePushNotificationManager:
-    arguments:
-      $apns: "@apns_php.push"
-      $apnsCertificatePassPhrase: "%apns_certificate_pass_phrase%"
-      $logger: "@logger"
+  AppBundle\Service\RemotePushNotificationManager: ~
 
   AppBundle\Service\Geocoder:
     arguments:
@@ -763,3 +759,19 @@ services:
     public: true
 
   AppBundle\Taxonomy\CuisineProvider: ~
+
+  Pushok\AuthProviderInterface: '@Pushok\AuthProvider\Token'
+
+  Pushok\AuthProvider\Token:
+    factory: ['Pushok\AuthProvider\Token', 'create']
+    arguments:
+      $options:
+        key_id: "%env(APNS_KEY_ID)%"
+        team_id: "%env(APNS_TEAM_ID)%"
+        app_bundle_id: "%env(APNS_APP_BUNDLE_ID)%"
+        private_key_path: "%env(APNS_PRIVATE_KEY_FILE)%"
+        private_key_secret: "%env(APNS_CERTIFICATE_PASS_PHRASE)%"
+
+  Pushok\Client:
+    arguments:
+      $isProductionEnv: false
