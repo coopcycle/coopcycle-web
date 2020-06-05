@@ -59,14 +59,21 @@
                 {% endif %}
               </ul>
               <ul class="list-unstyled">
+                {% if coopcycle_has_about_us() %}
                 <li>
-                  <a class="footer-link" href="https://docs.coopcycle.org" target="_blank">
-                    {% trans %}base.footer.help{% endtrans %}
+                  <a class="footer-link" href="{{ path('about_us') }}">
+                    {% trans %}nav.about_us{% endtrans %}
                   </a>
                 </li>
+                {% endif %}
                 <li>
                   <a class="footer-link" href="{{ path('legal') }}">
                     {% trans %}base.footer.legal{% endtrans %}
+                  </a>
+                </li>
+                <li>
+                  <a class="footer-link" href="https://docs.coopcycle.org" target="_blank">
+                    {% trans %}base.footer.help{% endtrans %}
                   </a>
                 </li>
                 {% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
