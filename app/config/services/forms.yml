@@ -193,5 +193,5 @@ services:
 
   AppBundle\Form\CustomizeType:
     arguments:
-      $assetsFilesystem: '@assets_s3_filesystem'
+      $assetsFilesystem: '@assets_filesystem'
     tags: [ form.type ]

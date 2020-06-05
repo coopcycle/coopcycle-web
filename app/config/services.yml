@@ -532,7 +532,7 @@ services:
   AppBundle\Action\Settings:
     public: true
     arguments:
-      $assetsFilesystem: '@assets_s3_filesystem'
+      $assetsFilesystem: '@assets_filesystem'
       $phoneNumberNormalizer: '@misd_phone_number.serializer.normalizer'
       $country: '%country_iso%'
       $locale: '%kernel.default_locale%'
@@ -719,7 +719,7 @@ services:
   AppBundle\Sylius\Order\ReceiptGenerator:
     arguments:
       $httpClient: '@csa_guzzle.client.browserless'
-      $filesystem: '@receipts_s3_filesystem'
+      $filesystem: '@receipts_filesystem'
       $taxRateRepository: '@sylius.repository.tax_rate'
       $locale: '%kernel.default_locale%'
 

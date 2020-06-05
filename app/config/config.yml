@@ -303,32 +303,32 @@ snc_redis:
 
 oneup_flysystem:
     adapters:
-        assets_s3:
+        assets:
             awss3v3:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: assets
-        product_images_s3:
+        product_images:
             awss3v3:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: products
-        restaurant_images_s3:
+        restaurant_images:
             awss3v3:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: restaurants
-        store_images_s3:
+        store_images:
             awss3v3:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: stores
-        task_images_s3:
+        task_images:
             awss3v3:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: tasks
-        receipts_s3:
+        receipts:
             awss3v3:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
@@ -344,30 +344,30 @@ oneup_flysystem:
                 bucket: '%env(S3_BUCKET)%'
                 prefix: product_imports
     filesystems:
-        assets_s3:
-            adapter: assets_s3
-            alias: assets_s3_filesystem
-            mount: assets_s3_filesystem
-        product_images_s3:
-            adapter: product_images_s3
-            alias: product_images_s3_filesystem
-            mount: product_images_s3_filesystem
-        restaurant_images_s3:
-            adapter: restaurant_images_s3
-            alias: restaurant_images_s3_filesystem
-            mount: restaurant_images_s3_filesystem
-        store_images_s3:
-            adapter: store_images_s3
-            alias: store_images_s3_filesystem
-            mount: store_images_s3_filesystem
-        task_images_s3:
-            adapter: task_images_s3
-            alias: task_images_s3_filesystem
-            mount: task_images_s3_filesystem
-        receipts_s3:
-            adapter: receipts_s3
-            alias: receipts_s3_filesystem
-            mount: receipts_s3_filesystem
+        assets:
+            adapter: assets
+            alias: assets_filesystem
+            mount: assets_filesystem
+        product_images:
+            adapter: product_images
+            alias: product_images_filesystem
+            mount: product_images_filesystem
+        restaurant_images:
+            adapter: restaurant_images
+            alias: restaurant_images_filesystem
+            mount: restaurant_images_filesystem
+        store_images:
+            adapter: store_images
+            alias: store_images_filesystem
+            mount: store_images_filesystem
+        task_images:
+            adapter: task_images
+            alias: task_images_filesystem
+            mount: task_images_filesystem
+        receipts:
+            adapter: receipts
+            alias: receipts_filesystem
+            mount: receipts_filesystem
         task_imports:
             adapter: task_imports
             alias: task_imports_filesystem
@@ -383,7 +383,7 @@ vich_uploader:
     mappings:
         restaurant_image:
             uri_prefix: ''
-            upload_destination: restaurant_images_s3_filesystem
+            upload_destination: restaurant_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -392,7 +392,7 @@ vich_uploader:
                     dirs: 2
         store_image:
             uri_prefix: ''
-            upload_destination: store_images_s3_filesystem
+            upload_destination: store_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -401,7 +401,7 @@ vich_uploader:
                     dirs: 2
         task_image:
             uri_prefix: ''
-            upload_destination: task_images_s3_filesystem
+            upload_destination: task_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -410,7 +410,7 @@ vich_uploader:
                     dirs: 2
         product_image:
             uri_prefix: ''
-            upload_destination: product_images_s3_filesystem
+            upload_destination: product_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -661,19 +661,19 @@ liip_imagine:
                 data_root: '%kernel.project_dir%/web'
         restaurant_images:
             flysystem:
-                filesystem_service: oneup_flysystem.restaurant_images_s3_filesystem
+                filesystem_service: oneup_flysystem.restaurant_images_filesystem
         product_images:
             flysystem:
-                filesystem_service: oneup_flysystem.product_images_s3_filesystem
+                filesystem_service: oneup_flysystem.product_images_filesystem
         store_images:
             flysystem:
-                filesystem_service: oneup_flysystem.store_images_s3_filesystem
+                filesystem_service: oneup_flysystem.store_images_filesystem
         task_images:
             flysystem:
-                filesystem_service: oneup_flysystem.task_images_s3_filesystem
+                filesystem_service: oneup_flysystem.task_images_filesystem
         assets:
             flysystem:
-                filesystem_service: oneup_flysystem.assets_s3_filesystem
+                filesystem_service: oneup_flysystem.assets_filesystem
 
 oneup_uploader:
     mappings:
@@ -681,7 +681,7 @@ oneup_uploader:
             frontend: dropzone
             storage:
                 type: flysystem
-                filesystem: oneup_flysystem.restaurant_images_s3_filesystem
+                filesystem: oneup_flysystem.restaurant_images_filesystem
             allowed_mimetypes:
                 image/jpg: []
                 image/jpeg: []
@@ -690,7 +690,7 @@ oneup_uploader:
             frontend: dropzone
             storage:
                 type: flysystem
-                filesystem: oneup_flysystem.product_images_s3_filesystem
+                filesystem: oneup_flysystem.product_images_filesystem
             allowed_mimetypes:
                 image/jpg: []
                 image/jpeg: []
@@ -699,7 +699,7 @@ oneup_uploader:
             frontend: dropzone
             storage:
                 type: flysystem
-                filesystem: oneup_flysystem.assets_s3_filesystem
+                filesystem: oneup_flysystem.assets_filesystem
             namer: AppBundle\Utils\LogoNamer
             allowed_mimetypes:
                 image/png: []
