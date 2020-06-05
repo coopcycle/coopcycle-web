@@ -291,7 +291,7 @@ trait AdminDashboardTrait
         // while $fs is alreay aware of the prefix
         $imagePath = ltrim($storage->resolveUri($image, 'file'), '/');
 
-        $fs = $this->get('task_images_s3_filesystem');
+        $fs = $this->get('task_images_filesystem');
 
         if (!$fs->has($imagePath)) {
             throw new NotFoundHttpException(sprintf('Image at path "%s" not found', $imagePath));
