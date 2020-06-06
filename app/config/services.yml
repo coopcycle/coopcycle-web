@@ -87,6 +87,7 @@ services:
   AppBundle\Service\RoutingInterface: '@routing_service'
 
   League\Flysystem\Filesystem $taskImportsFilesystem: '@task_imports_filesystem'
+  League\Flysystem\Filesystem $receiptsFilesystem: '@receipts_filesystem'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:

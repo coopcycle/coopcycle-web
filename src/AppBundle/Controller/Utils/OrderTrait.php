@@ -8,6 +8,7 @@ use AppBundle\Form\OrderExportType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\ReceiptGenerator;
 use AppBundle\Utils\RestaurantStats;
+use League\Flysystem\Filesystem;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -117,7 +118,7 @@ trait OrderTrait
         ]);
     }
 
-    public function orderReceiptAction($orderNumber, Request $request)
+    public function orderReceiptAction($orderNumber, Request $request, Filesystem $receiptsFilesystem)
     {
         $order = $this->get('sylius.repository.order')->findOneBy([
             'number'=> $orderNumber
@@ -129,15 +130,13 @@ trait OrderTrait
             throw $this->createNotFoundException(sprintf('Receipt for order "%s" does not exist', $orderNumber));
         }
 
-        $fileSystem = $this->get('receipts_filesystem');
-
         $filename = sprintf('%s.pdf', $orderNumber);
 
-        if (!$fileSystem->has($filename)) {
+        if (!$receiptsFilesystem->has($filename)) {
             throw $this->createNotFoundException(sprintf('File %s.pdf does not exist', $orderNumber));
         }
 
-        return new Response((string) $fileSystem->read($filename), 200, [
+        return new Response((string) $receiptsFilesystem->read($filename), 200, [
             'Content-Type' => 'application/pdf',
         ]);
     }
