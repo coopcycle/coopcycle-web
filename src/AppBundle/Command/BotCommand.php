@@ -160,6 +160,8 @@ class BotCommand extends DaemonCommand
         // So you can wait between two iterations if your workers has nothing to do.
 
         $this->setNextIterationSleepingTime(500000); // Every second
+
+        return 0;
     }
 
     private function getDefaultPosition()
