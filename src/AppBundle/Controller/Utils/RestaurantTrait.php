@@ -398,6 +398,8 @@ trait RestaurantTrait
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
+        $this->accessControl($restaurant);
+
         $menuTaxon = $this->get('sylius.repository.taxon')
             ->find($menuId);
 
@@ -424,6 +426,8 @@ trait RestaurantTrait
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
+        $this->accessControl($restaurant);
+
         $menuTaxon = $this->get('sylius.repository.taxon')->find($menuId);
         $toRemove = $this->get('sylius.repository.taxon')->find($sectionId);
 
@@ -449,6 +453,8 @@ trait RestaurantTrait
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
+
+        $this->accessControl($restaurant);
 
         $menuTaxon = $this->get('sylius.repository.taxon')
             ->find($menuId);
@@ -568,6 +574,8 @@ trait RestaurantTrait
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
+        $this->accessControl($restaurant);
+
         $form = $this->createForm(ClosingRuleType::class);
         $form->add('submit', SubmitType::class, array('label' => 'Save'));
 
@@ -636,6 +644,8 @@ trait RestaurantTrait
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
+        $this->accessControl($restaurant);
+
         $routes = $request->attributes->get('routes');
 
         // TODO Use Criteria API for ordering
@@ -664,6 +674,8 @@ trait RestaurantTrait
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
+
+        $this->accessControl($restaurant);
 
         $product = $this->get('sylius.repository.product')
             ->find($productId);
@@ -708,6 +720,8 @@ trait RestaurantTrait
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
+        $this->accessControl($restaurant);
+
         $product = $this->get('sylius.factory.product')
             ->createNew();
 
@@ -745,6 +759,8 @@ trait RestaurantTrait
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
+        $this->accessControl($restaurant);
+
         $routes = $request->attributes->get('routes');
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
@@ -759,6 +775,8 @@ trait RestaurantTrait
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
+
+        $this->accessControl($restaurant);
 
         $productOption = $this->get('sylius.repository.product_option')
             ->find($optionId);
@@ -839,6 +857,8 @@ trait RestaurantTrait
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
             ->find($id);
+
+        $this->accessControl($restaurant);
 
         $productOption = $this->get('sylius.factory.product_option')
             ->createNew();
@@ -949,6 +969,8 @@ trait RestaurantTrait
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
             ->find($id);
+
+        $this->accessControl($restaurant);
 
         $routes = $request->attributes->get('routes');
 
