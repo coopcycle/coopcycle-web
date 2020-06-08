@@ -42,6 +42,7 @@ env:
     - APP_HOST=test.coopcycle.org
     - NODE_ENV=test
     - BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"http://test.coopcycle.org"}}}'
+    - COOPCYCLE_REGION=fr
     - COOPCYCLE_DB_HOST=127.0.0.1
     - COOPCYCLE_DB_PORT=5432
     - COOPCYCLE_DB_NAME=coopcycle

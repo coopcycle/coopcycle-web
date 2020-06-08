@@ -13,6 +13,7 @@ imports:
 parameters:
     secret: "%env(APP_SECRET)%"
     country_iso: "%env(COOPCYCLE_COUNTRY)%"
+    region_iso: "%env(COOPCYCLE_REGION)%"
     coopcycle.locale: "%env(COOPCYCLE_LOCALE)%"
     database_driver:   pdo_pgsql
     database_host:     "%env(COOPCYCLE_DB_HOST)%"
@@ -120,6 +121,7 @@ twig:
         is_demo: "%is_demo%"
         sentry_public_dsn: "%sentry_public_dsn%"
         country_iso: "%country_iso%"
+        region_iso: "%region_iso%"
         cart_provider: '@AppBundle\Service\CartProviderService'
         settings_manager: "@coopcycle.settings_manager"
         matomo_hostname: "%env(COOPCYCLE_MATOMO_HOSTNAME)%"
