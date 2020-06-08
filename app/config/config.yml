@@ -441,7 +441,13 @@ csa_guzzle:
                 lazy: true
 
 sylius_taxation:
-    driver: doctrine/orm
+    resources:
+        tax_category:
+            classes:
+                model: AppBundle\Entity\Sylius\TaxCategory
+        tax_rate:
+            classes:
+                model: AppBundle\Entity\Sylius\TaxRate
 
 sylius_order:
     resources:
