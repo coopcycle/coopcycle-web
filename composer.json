@@ -75,7 +75,7 @@
         "box/spout": "^3.0",
         "jmikola/geojson": "~1.0",
         "simple-bus/symfony-bridge": "^5.3",
-        "friendsofsymfony/jsrouting-bundle": "^2.6",
+        "friendsofsymfony/jsrouting-bundle": "^2.2",
         "jmose/command-scheduler-bundle": "^2.2",
         "predicthq/address-formatter": "^1.1",
         "nmure/crawler-detect-bundle": "^2.0",
