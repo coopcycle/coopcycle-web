@@ -37,7 +37,8 @@ Class CreateSettingCommand extends ContainerAwareCommand
                 'section',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Setting section'
+                'Setting section',
+                'general',
             )
             ->addOption(
                 'name',
@@ -80,9 +81,16 @@ Class CreateSettingCommand extends ContainerAwareCommand
         $value = $input->getOption('value');
 
         try {
-            $value = $this->craueConfig->get($name);
-            $output->writeln(sprintf('<comment>Setting %s already exists</comment>', $name));
+
+            $currentValue = $this->craueConfig->get($name);
+            $output->writeln(sprintf('<comment>Setting %s already exists, updating.</comment>', $name));
+
+            if ($value !== $currentValue) {
+                $this->craueConfig->set($name, $value);
+            }
+
             return 0;
+
         } catch (\RuntimeException $e) {}
 
         $className = $this->entityName;
