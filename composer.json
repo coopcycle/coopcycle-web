@@ -30,7 +30,7 @@
         "symfony/monolog-bundle": "^3.5",
         "sensio/framework-extra-bundle": "^5.4",
         "nelmio/cors-bundle": "~2.0",
-        "lexik/jwt-authentication-bundle": "^2.6.2",
+        "lexik/jwt-authentication-bundle": "^2.7",
         "jsor/doctrine-postgis": "^1.1",
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "league/geotools": "@stable",
