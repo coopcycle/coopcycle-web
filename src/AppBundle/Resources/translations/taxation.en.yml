@@ -8,6 +8,10 @@ tax_category.drink: Drink
 tax_category.alcoholic_drink: Alcoholic drink
 tax_category.book: Book
 tax_category.clothing: Clothing
+<<<<<<< HEAD
 tax_category.standard: Standard
+=======
+tax_category.standard: standard
+>>>>>>> Introduce new tax system for service tax.
 tax_category.reduced: Reduced
 tax_category.super_reduced: Super reduced

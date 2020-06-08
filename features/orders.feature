@@ -78,7 +78,7 @@ Feature: Orders
       | PIZZA     |
       | HAMBURGER |
     And the setting "brand_name" has value "CoopCycle"
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -193,7 +193,7 @@ Feature: Orders
       | PIZZA     |
       | HAMBURGER |
     And the setting "brand_name" has value "CoopCycle"
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -308,7 +308,7 @@ Feature: Orders
       | PIZZA     |
       | HAMBURGER |
     And the setting "brand_name" has value "CoopCycle"
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And I send a "POST" request to "/api/orders/timing" with body:
@@ -364,7 +364,7 @@ Feature: Orders
       | products.yml        |
       | restaurants.yml     |
     And the setting "brand_name" has value "CoopCycle"
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |
@@ -402,7 +402,7 @@ Feature: Orders
       | products.yml        |
       | restaurants.yml     |
     And the setting "brand_name" has value "CoopCycle"
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |
@@ -445,7 +445,7 @@ Feature: Orders
       | PIZZA     |
       | HAMBURGER |
     And the setting "brand_name" has value "CoopCycle"
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -564,7 +564,7 @@ Feature: Orders
       | PIZZA     |
       | HAMBURGER |
     And the setting "brand_name" has value "CoopCycle"
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -692,7 +692,7 @@ Feature: Orders
       | PIZZA          |
       | FISH_AND_CHIPS |
     And the setting "brand_name" has value "CoopCycle"
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -801,7 +801,7 @@ Feature: Orders
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
       | password | 123456            |
@@ -853,7 +853,7 @@ Feature: Orders
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
       | password | 123456            |
@@ -911,7 +911,7 @@ Feature: Orders
       | HAMBURGER |
       | SALAD     |
     And the setting "brand_name" has value "CoopCycle"
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -994,7 +994,7 @@ Feature: Orders
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
       | password | 123456            |
@@ -1047,7 +1047,7 @@ Feature: Orders
       | products.yml        |
       | restaurants.yml     |
     And the setting "brand_name" has value "CoopCycle"
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -1102,7 +1102,7 @@ Feature: Orders
       | PIZZA     |
       | HAMBURGER |
     And the setting "brand_name" has value "CoopCycle"
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     Given the user "bob" has created a cart at restaurant with id "1"
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"

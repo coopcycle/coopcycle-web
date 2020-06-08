@@ -1,0 +1,4 @@
+tax_category.service: Service
+tax_category.service_tax_exempt: Service (TVA non applicable)
+tax_rate.standard: Taux standard
+tax_rate.zero: Taux zéro

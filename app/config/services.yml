@@ -218,11 +218,7 @@ services:
   sylius.order_processing.order_taxes_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor
     arguments:
-      - "@sylius.factory.adjustment"
-      - "@sylius.tax_rate_resolver"
-      - "@sylius.tax_calculator"
-      - "@coopcycle.settings_manager"
-      - "@sylius.repository.tax_category"
+      $state: "%region_iso%"
     tags:
       - { name: sylius.order_processor, priority: 32 }
 
