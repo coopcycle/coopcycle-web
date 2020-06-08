@@ -49,6 +49,8 @@ class TaxesProvider
             $rate->setCountry($country);
             $rate->setCode(sprintf('%s_SERVICE_STANDARD', strtoupper($country)));
             $rate->setName('tax_rate.standard');
+            $rate->setCalculator('default');
+            $rate->setIncludedInPrice(true);
             $rate->setAmount($amount);
 
             $service->addRate($rate);
@@ -58,6 +60,8 @@ class TaxesProvider
             $zeroRate->setCountry($country);
             $zeroRate->setCode(sprintf('%s_SERVICE_ZERO', strtoupper($country)));
             $zeroRate->setName('tax_rate.zero');
+            $zeroRate->setCalculator('default');
+            $zeroRate->setIncludedInPrice(true);
             $zeroRate->setAmount(0.0);
 
             $serviceTaxExempt->addRate($zeroRate);
