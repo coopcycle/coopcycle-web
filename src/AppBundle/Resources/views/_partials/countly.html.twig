@@ -1,0 +1,39 @@
+{% if not analytics_disabled and countly_hostname is not empty %}
+<script type='text/javascript'>
+
+  // Some default pre init
+  var Countly = Countly || {};
+  Countly.q = Countly.q || [];
+
+  // Provide your app key that you retrieved from Countly dashboard
+  Countly.app_key = "{{ countly_app_key }}";
+
+  // Provide your server IP or name.
+  // If you use your own server, make sure you have https enabled if you use
+  // https below.
+  Countly.url = "{{ countly_hostname }}";
+
+  // Start pushing function calls to queue
+  // Track sessions automatically (recommended)
+  Countly.q.push(['track_sessions']);
+
+  //track web page views automatically (recommended)
+  Countly.q.push(['track_pageview']);
+
+  // Uncomment the following line to track web heatmaps (Enterprise Edition)
+  // Countly.q.push(['track_clicks']);
+
+  // Uncomment the following line to track web scrollmaps (Enterprise Edition)
+  // Countly.q.push(['track_scrolls']);
+
+  // Load Countly script asynchronously
+  (function() {
+    var cly = document.createElement('script'); cly.type = 'text/javascript';
+    cly.async = true;
+    // Enter url of script here (see below for other option)
+    cly.src = "{{ countly_script }}";
+    cly.onload = function(){Countly.init()};
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
+  })();
+</script>
+{% endif %}
