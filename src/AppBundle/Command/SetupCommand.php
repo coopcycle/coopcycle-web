@@ -184,36 +184,36 @@ class SetupCommand extends Command
     {
         $output->writeln('<info>Setting up CoopCycle…</info>');
 
-        $output->writeln('<info>Checking Sylius locales are present…</info>');
-        foreach ($this->locales as $locale) {
-            $this->createSyliusLocale($locale, $output);
-        }
+        // $output->writeln('<info>Checking Sylius locales are present…</info>');
+        // foreach ($this->locales as $locale) {
+        //     $this->createSyliusLocale($locale, $output);
+        // }
 
-        $output->writeln('<info>Checking Sylius channels are present…</info>');
-        foreach ($this->channels as $channelCode => $channelName) {
-            $this->createSyliusChannel($channelCode, $channelName, $output);
-        }
+        // $output->writeln('<info>Checking Sylius channels are present…</info>');
+        // foreach ($this->channels as $channelCode => $channelName) {
+        //     $this->createSyliusChannel($channelCode, $channelName, $output);
+        // }
 
-        $output->writeln('<info>Checking Sylius currencies are present…</info>');
-        foreach ($this->currencies as $currencyCode) {
-            $this->createSyliusCurrency($currencyCode, $output);
-        }
+        // $output->writeln('<info>Checking Sylius currencies are present…</info>');
+        // foreach ($this->currencies as $currencyCode) {
+        //     $this->createSyliusCurrency($currencyCode, $output);
+        // }
 
-        $output->writeln('<info>Checking Sylius payment methods are present…</info>');
-        $this->createSyliusPaymentMethods($output);
+        // $output->writeln('<info>Checking Sylius payment methods are present…</info>');
+        // $this->createSyliusPaymentMethods($output);
 
-        $output->writeln('<info>Checking « on demand delivery » product is present…</info>');
-        $this->createOnDemandDeliveryProduct($output);
+        // $output->writeln('<info>Checking « on demand delivery » product is present…</info>');
+        // $this->createOnDemandDeliveryProduct($output);
 
-        $output->writeln('<info>Checking Sylius product attributes are present…</info>');
-        $this->createAllergensAttributes($output);
-        $this->createRestrictedDietsAttributes($output);
+        // $output->writeln('<info>Checking Sylius product attributes are present…</info>');
+        // $this->createAllergensAttributes($output);
+        // $this->createRestrictedDietsAttributes($output);
 
-        $output->writeln('<info>Checking Sylius free delivery promotion is present…</info>');
-        $this->createFreeDeliveryPromotion($output);
+        // $output->writeln('<info>Checking Sylius free delivery promotion is present…</info>');
+        // $this->createFreeDeliveryPromotion($output);
 
-        $output->writeln('<info>Checking cuisines are present…</info>');
-        $this->createCuisines($output);
+        // $output->writeln('<info>Checking cuisines are present…</info>');
+        // $this->createCuisines($output);
 
         $output->writeln('<info>Checking Sylius taxes are present…</info>');
         $this->createSyliusTaxes($output);
@@ -455,22 +455,22 @@ class SetupCommand extends Command
     {
         $expectedTaxCategories = $this->taxesProvider->getCategories();
 
-        $flush = false;
-        foreach ($expectedTaxCategories as $c) {
+        // $flush = false;
+        // foreach ($expectedTaxCategories as $c) {
 
-            $taxCategory = $this->taxCategoryRepository->findOneByCode($c->getCode());
+        //     $taxCategory = $this->taxCategoryRepository->findOneByCode($c->getCode());
 
-            if (null === $taxCategory) {
-                $this->doctrine->getManagerForClass(TaxCategory::class)->persist($c);
-                $flush = true;
-                $output->writeln(sprintf('Creating tax category « %s »', $c->getCode()));
-            } else {
-                $output->writeln(sprintf('Tax category « %s » already exists', $c->getCode()));
-            }
-        }
+        //     if (null === $taxCategory) {
+        //         $this->doctrine->getManagerForClass(TaxCategory::class)->persist($c);
+        //         $flush = true;
+        //         $output->writeln(sprintf('Creating tax category « %s »', $c->getCode()));
+        //     } else {
+        //         $output->writeln(sprintf('Tax category « %s » already exists', $c->getCode()));
+        //     }
+        // }
 
-        if ($flush) {
-            $this->doctrine->getManagerForClass(TaxCategory::class)->flush();
-        }
+        // if ($flush) {
+        //     $this->doctrine->getManagerForClass(TaxCategory::class)->flush();
+        // }
     }
 }
