@@ -3,10 +3,8 @@
 namespace AppBundle\Form\Type;
 
 use AppBundle\Form\Type\MoneyType;
-use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
-use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
@@ -20,32 +18,20 @@ class PriceWithTaxType extends AbstractType
 {
     private $variantResolver;
     private $taxRateResolver;
-    private $taxCategoryRepository;
     private $calculator;
 
     public function __construct(
         ProductVariantResolverInterface $variantResolver,
         TaxRateResolverInterface $taxRateResolver,
-        TaxCategoryRepositoryInterface $taxCategoryRepository,
         CalculatorInterface $calculator)
     {
         $this->variantResolver = $variantResolver;
         $this->taxRateResolver = $taxRateResolver;
-        $this->taxCategoryRepository = $taxCategoryRepository;
         $this->calculator = $calculator;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $taxCategories = [];
-        foreach ($this->taxCategoryRepository->findAll() as $taxCategory) {
-            foreach ($taxCategory->getRates() as $taxRate) {
-                $taxCategories[$taxCategory->getCode()][] = [
-                    'amount' => $taxRate->getAmount(),
-                ];
-            }
-        }
-
         $builder
             ->add('taxExcluded', MoneyType::class, [
                 'mapped' => false,
@@ -55,12 +41,9 @@ class PriceWithTaxType extends AbstractType
                 'mapped' => false,
                 'label' => 'form.price_with_tax.tax_incl.label'
             ])
-            ->add('taxCategory', TaxCategoryChoiceType::class, [
+            ->add('taxCategory', ProductTaxCategoryChoiceType::class, [
                 'mapped' => false,
                 'label' => 'form.product.taxCategory.label',
-                'attr' => [
-                    'data-tax-categories' => json_encode($taxCategories),
-                ]
             ]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
