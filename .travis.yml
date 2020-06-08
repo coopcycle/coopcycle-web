@@ -115,6 +115,7 @@ before_script:
   # Install PHP app
   - composer install --prefer-dist --no-plugins
   - php bin/console doctrine:schema:create --env=test
+  - php bin/console coopcycle:setup --env=test
   - node_modules/.bin/encore dev
   # Start php-fpm
   - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
