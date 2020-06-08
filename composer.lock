@@ -967,16 +967,16 @@
         },
         {
             "name": "csa/guzzle-bundle",
-            "version": "v3.1.1",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/csarrazi/CsaGuzzleBundle.git",
-                "reference": "c54f9daeae991f922fdc0b80fdcccf7cc15d2022"
+                "reference": "454f482f2a1ae36836ad568dbce236b1880f6f24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/csarrazi/CsaGuzzleBundle/zipball/c54f9daeae991f922fdc0b80fdcccf7cc15d2022",
-                "reference": "c54f9daeae991f922fdc0b80fdcccf7cc15d2022",
+                "url": "https://api.github.com/repos/csarrazi/CsaGuzzleBundle/zipball/454f482f2a1ae36836ad568dbce236b1880f6f24",
+                "reference": "454f482f2a1ae36836ad568dbce236b1880f6f24",
                 "shasum": ""
             },
             "require": {
@@ -985,17 +985,17 @@
                 "csa/guzzle-stopwatch-middleware": "^1.0.0",
                 "guzzlehttp/guzzle": "^6.1",
                 "php": "^7.1",
-                "symfony/dependency-injection": "^2.8 || ^3.0 || ^4.0",
-                "symfony/filesystem": "^2.8 || ^3.0 || ^4.0",
-                "symfony/framework-bundle": "^2.8 || ^3.0 || ^4.0",
-                "twig/twig": "^1.34 || ^2.4"
+                "symfony/dependency-injection": "^2.8 || ^3.0 || ^4.0 || ^5.0",
+                "symfony/filesystem": "^2.8 || ^3.0 || ^4.0 || ^5.0",
+                "symfony/framework-bundle": "^2.8 || ^3.0 || ^4.0 || ^5.0",
+                "twig/twig": "^2.10 || ^3.0"
             },
             "require-dev": {
                 "namshi/cuzzle": "^2.0",
                 "phpunit/phpunit": "^7.0",
-                "symfony/phpunit-bridge": "^2.8 || ^3.0 || ^4.0",
-                "symfony/web-profiler-bundle": "^2.8 || ^3.0 || ^4.0",
-                "symfony/yaml": "^2.8 || ^3.0 || ^4.0"
+                "symfony/phpunit-bridge": "^2.8 || ^3.0 || ^4.0 || ^5.0",
+                "symfony/web-profiler-bundle": "^2.8 || ^3.0 || ^4.0 || ^5.0",
+                "symfony/yaml": "^2.8 || ^3.0 || ^4.0 || ^5.0"
             },
             "suggest": {
                 "doctrine/cache": "Allows caching of responses",
@@ -1007,7 +1007,7 @@
             "extra": {
                 "branch-alias": {
                     "dev-2.x": "2.3-dev",
-                    "dev-master": "3.2-dev"
+                    "dev-master": "4.0-dev"
                 }
             },
             "autoload": {
@@ -1026,32 +1026,32 @@
                 }
             ],
             "description": "A bundle integrating GuzzleHttp >= 4.0",
-            "time": "2019-01-25T14:50:10+00:00"
+            "time": "2019-11-26T09:34:44+00:00"
         },
         {
             "name": "csa/guzzle-cache-middleware",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/csarrazi/guzzle-cache-middleware.git",
-                "reference": "a6a8716849b02d7597f815d0f6be7255a24c9c95"
+                "reference": "2ff242e660900ab6b8bcf64be2c76c0d6af61c8b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/csarrazi/guzzle-cache-middleware/zipball/a6a8716849b02d7597f815d0f6be7255a24c9c95",
-                "reference": "a6a8716849b02d7597f815d0f6be7255a24c9c95",
+                "url": "https://api.github.com/repos/csarrazi/guzzle-cache-middleware/zipball/2ff242e660900ab6b8bcf64be2c76c0d6af61c8b",
+                "reference": "2ff242e660900ab6b8bcf64be2c76c0d6af61c8b",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.1",
                 "php": ">=5.6.0",
-                "symfony/filesystem": "^2.7|^3.0|^4.0"
+                "symfony/filesystem": "^2.7|^3.0|^4.0|^5.0"
             },
             "require-dev": {
                 "doctrine/cache": "^1.1",
                 "phpunit/phpunit": "^4.8",
                 "psr/cache": "^1.0",
-                "symfony/phpunit-bridge": "^2.7|^3.0|^4.0"
+                "symfony/phpunit-bridge": "^2.7|^3.0|^4.0|^5.0"
             },
             "suggest": {
                 "doctrine/cache": "Allows caching of responses",
@@ -1081,20 +1081,20 @@
                 }
             ],
             "description": "A Cache middleware for GuzzleHttp >= 6.0",
-            "time": "2017-12-01T11:45:31+00:00"
+            "time": "2019-11-26T09:34:53+00:00"
         },
         {
             "name": "csa/guzzle-history-middleware",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/csarrazi/guzzle-history-middleware.git",
-                "reference": "70c0a20b7ce5f19c8ec7ea8097e987c5d3340327"
+                "reference": "ee0c1228f114113c3af8feb36c4c4e7dd3b30209"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/csarrazi/guzzle-history-middleware/zipball/70c0a20b7ce5f19c8ec7ea8097e987c5d3340327",
-                "reference": "70c0a20b7ce5f19c8ec7ea8097e987c5d3340327",
+                "url": "https://api.github.com/repos/csarrazi/guzzle-history-middleware/zipball/ee0c1228f114113c3af8feb36c4c4e7dd3b30209",
+                "reference": "ee0c1228f114113c3af8feb36c4c4e7dd3b30209",
                 "shasum": ""
             },
             "require": {
@@ -1103,7 +1103,7 @@
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.8",
-                "symfony/phpunit-bridge": "^2.7|^3.0|^4.0"
+                "symfony/phpunit-bridge": "^2.7|^3.0|^4.0|^5.0"
             },
             "type": "library",
             "extra": {
@@ -1127,30 +1127,30 @@
                 }
             ],
             "description": "A History middleware for GuzzleHttp >= 6.0",
-            "time": "2017-12-01T11:48:15+00:00"
+            "time": "2019-11-26T09:34:58+00:00"
         },
         {
             "name": "csa/guzzle-stopwatch-middleware",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/csarrazi/guzzle-stopwatch-middleware.git",
-                "reference": "1612a9c87eb3c6167d38c4ea79ef3055cf50e93e"
+                "reference": "9fa43b92a5d80ce86c2d999782e75f45da180aa9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/csarrazi/guzzle-stopwatch-middleware/zipball/1612a9c87eb3c6167d38c4ea79ef3055cf50e93e",
-                "reference": "1612a9c87eb3c6167d38c4ea79ef3055cf50e93e",
+                "url": "https://api.github.com/repos/csarrazi/guzzle-stopwatch-middleware/zipball/9fa43b92a5d80ce86c2d999782e75f45da180aa9",
+                "reference": "9fa43b92a5d80ce86c2d999782e75f45da180aa9",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.1",
                 "php": ">=5.6.0",
-                "symfony/stopwatch": "^2.7|^3.0|^4.0"
+                "symfony/stopwatch": "^2.7|^3.0|^4.0|^5.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.8",
-                "symfony/phpunit-bridge": "^2.7|^3.0|^4.0"
+                "symfony/phpunit-bridge": "^2.7|^3.0|^4.0|^5.0"
             },
             "type": "library",
             "extra": {
@@ -1174,7 +1174,7 @@
                 }
             ],
             "description": "A Stopwatch middleware for GuzzleHttp >= 6.0",
-            "time": "2017-12-01T11:52:02+00:00"
+            "time": "2019-11-26T09:35:03+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -2985,16 +2985,16 @@
         },
         {
             "name": "friendsofsymfony/jsrouting-bundle",
-            "version": "2.5.4",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle.git",
-                "reference": "7dfd2165c1170a73e5929e70fb80ef57f5539869"
+                "reference": "9deaf916760ce1d64cf46460473260b02751cee5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSJsRoutingBundle/zipball/7dfd2165c1170a73e5929e70fb80ef57f5539869",
-                "reference": "7dfd2165c1170a73e5929e70fb80ef57f5539869",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSJsRoutingBundle/zipball/9deaf916760ce1d64cf46460473260b02751cee5",
+                "reference": "9deaf916760ce1d64cf46460473260b02751cee5",
                 "shasum": ""
             },
             "require": {
@@ -3043,7 +3043,7 @@
                 "javascript",
                 "routing"
             ],
-            "time": "2020-04-15T09:21:31+00:00"
+            "time": "2020-05-20T09:38:45+00:00"
         },
         {
             "name": "friendsofsymfony/rest-bundle",
@@ -3695,22 +3695,22 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.3",
+            "version": "8.12.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "efe098354b5dd49a5457d9e35aa92298de736343"
+                "reference": "476a40b044a953725d5abb75fcbfa1303fd429a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/efe098354b5dd49a5457d9e35aa92298de736343",
-                "reference": "efe098354b5dd49a5457d9e35aa92298de736343",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/476a40b044a953725d5abb75fcbfa1303fd429a2",
+                "reference": "476a40b044a953725d5abb75fcbfa1303fd429a2",
                 "shasum": ""
             },
             "require": {
-                "ext-mbstring": "*",
                 "giggsey/locale": "^1.7",
-                "php": ">=5.3.2"
+                "php": ">=5.3.2",
+                "symfony/polyfill-mbstring": "^1.17"
             },
             "require-dev": {
                 "pear/pear-core-minimal": "^1.9",
@@ -3759,7 +3759,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-05-06T11:46:14+00:00"
+            "time": "2020-06-03T08:58:23+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -4018,23 +4018,24 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.5.2",
+            "version": "6.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "43ece0e75098b7ecd8d13918293029e555a50f82"
+                "reference": "a4a1b6930528a8f7ee03518e6442ec7a44155d9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/43ece0e75098b7ecd8d13918293029e555a50f82",
-                "reference": "43ece0e75098b7ecd8d13918293029e555a50f82",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/a4a1b6930528a8f7ee03518e6442ec7a44155d9d",
+                "reference": "a4a1b6930528a8f7ee03518e6442ec7a44155d9d",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "guzzlehttp/promises": "^1.0",
                 "guzzlehttp/psr7": "^1.6.1",
-                "php": ">=5.5"
+                "php": ">=5.5",
+                "symfony/polyfill-intl-idn": "1.17.0"
             },
             "require-dev": {
                 "ext-curl": "*",
@@ -4042,7 +4043,6 @@
                 "psr/log": "^1.1"
             },
             "suggest": {
-                "ext-intl": "Required for Internationalized Domain Name (IDN) support",
                 "psr/log": "Required for using the Log middleware"
             },
             "type": "library",
@@ -4081,7 +4081,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2019-12-23T11:57:10+00:00"
+            "time": "2020-05-25T19:35:05+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -7813,16 +7813,16 @@
         },
         {
             "name": "martin-georgiev/postgresql-for-doctrine",
-            "version": "v1.4.1",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/martin-georgiev/postgresql-for-doctrine.git",
-                "reference": "c7fc2b8a87744c17ac7c922e360ee7a29865167c"
+                "reference": "ce7b1a203ba5e5a36dc1840132bb5472dec16fce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/c7fc2b8a87744c17ac7c922e360ee7a29865167c",
-                "reference": "c7fc2b8a87744c17ac7c922e360ee7a29865167c",
+                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/ce7b1a203ba5e5a36dc1840132bb5472dec16fce",
+                "reference": "ce7b1a203ba5e5a36dc1840132bb5472dec16fce",
                 "shasum": ""
             },
             "require": {
@@ -7834,12 +7834,12 @@
             },
             "require-dev": {
                 "doctrine/orm": "~2.5",
-                "friendsofphp/php-cs-fixer": "^2.14",
-                "jakub-onderka/php-parallel-lint": "^1.0",
-                "php-coveralls/php-coveralls": "^2.1",
-                "phpstan/phpstan": "^0.11",
-                "phpstan/phpstan-phpunit": "^0.11",
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "php-coveralls/php-coveralls": "^2.2",
+                "phpstan/phpstan": "^0.12",
+                "phpstan/phpstan-phpunit": "^0.12",
                 "phpunit/phpunit": "^8.5",
+                "sensiolabs-de/deptrac-shim": "^0.7.1",
                 "sensiolabs/security-checker": "^6.0"
             },
             "suggest": {
@@ -7875,7 +7875,7 @@
                 "text search",
                 "tsvector"
             ],
-            "time": "2020-04-22T09:31:14+00:00"
+            "time": "2020-06-07T16:22:45+00:00"
         },
         {
             "name": "michelf/php-markdown",
@@ -8525,16 +8525,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.33.0",
+            "version": "2.35.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "4d93cb95a80d9ffbff4018fe58ae3b7dd7f4b99b"
+                "reference": "4b9bd835261ef23d36397a46a76b496a458305e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/4d93cb95a80d9ffbff4018fe58ae3b7dd7f4b99b",
-                "reference": "4d93cb95a80d9ffbff4018fe58ae3b7dd7f4b99b",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/4b9bd835261ef23d36397a46a76b496a458305e5",
+                "reference": "4b9bd835261ef23d36397a46a76b496a458305e5",
                 "shasum": ""
             },
             "require": {
@@ -8558,7 +8558,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.x-dev"
+                    "dev-master": "2.x-dev",
+                    "dev-3.x": "3.x-dev"
                 },
                 "laravel": {
                     "providers": [
@@ -8593,7 +8594,17 @@
                 "datetime",
                 "time"
             ],
-            "time": "2020-04-20T15:05:43+00:00"
+            "funding": [
+                {
+                    "url": "https://opencollective.com/Carbon",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/nesbot/carbon",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-05-24T18:27:52+00:00"
         },
         {
             "name": "nmure/crawler-detect-bundle",
@@ -11533,16 +11544,16 @@
         },
         {
             "name": "snc/redis-bundle",
-            "version": "3.2.2",
+            "version": "3.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/snc/SncRedisBundle.git",
-                "reference": "7d9294b2f90d39a0e2120c6f35a017895482416b"
+                "reference": "cd47f699eeb6cffa72eaa505d3dcf907b157339b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/snc/SncRedisBundle/zipball/7d9294b2f90d39a0e2120c6f35a017895482416b",
-                "reference": "7d9294b2f90d39a0e2120c6f35a017895482416b",
+                "url": "https://api.github.com/repos/snc/SncRedisBundle/zipball/cd47f699eeb6cffa72eaa505d3dcf907b157339b",
+                "reference": "cd47f699eeb6cffa72eaa505d3dcf907b157339b",
                 "shasum": ""
             },
             "require": {
@@ -11608,7 +11619,7 @@
                 "redis",
                 "symfony"
             ],
-            "time": "2020-04-30T05:56:02+00:00"
+            "time": "2020-06-05T06:53:24+00:00"
         },
         {
             "name": "sonata-project/exporter",
@@ -17529,16 +17540,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.25",
+            "version": "0.12.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "9619551d68b2d4c0d681a8df73f3c847c798ee64"
+                "reference": "f108dabe757a584fafc3baabc0fabf4d45e040f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9619551d68b2d4c0d681a8df73f3c847c798ee64",
-                "reference": "9619551d68b2d4c0d681a8df73f3c847c798ee64",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f108dabe757a584fafc3baabc0fabf4d45e040f1",
+                "reference": "f108dabe757a584fafc3baabc0fabf4d45e040f1",
                 "shasum": ""
             },
             "require": {
@@ -17581,7 +17592,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-05-10T20:36:16+00:00"
+            "time": "2020-06-07T22:01:45+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -17880,16 +17891,16 @@
         },
         {
             "name": "phpunit/php-timer",
-            "version": "4.0.0",
+            "version": "5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-timer.git",
-                "reference": "d6359824fc9bd2a4f90383b224906a1884aa56ca"
+                "reference": "b0d089de001ba60ffa3be36b23e1b8150d072238"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/d6359824fc9bd2a4f90383b224906a1884aa56ca",
-                "reference": "d6359824fc9bd2a4f90383b224906a1884aa56ca",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/b0d089de001ba60ffa3be36b23e1b8150d072238",
+                "reference": "b0d089de001ba60ffa3be36b23e1b8150d072238",
                 "shasum": ""
             },
             "require": {
@@ -17901,7 +17912,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.0-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -17931,7 +17942,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-06-01T12:18:17+00:00"
+            "time": "2020-06-07T12:05:53+00:00"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -17990,16 +18001,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.2.1",
+            "version": "9.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3b50c1ad9dd021062c76f678f59fa38b6bd09b15"
+                "reference": "8fd0d8f80029682da89516a554f4d5f5a030345c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3b50c1ad9dd021062c76f678f59fa38b6bd09b15",
-                "reference": "3b50c1ad9dd021062c76f678f59fa38b6bd09b15",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8fd0d8f80029682da89516a554f4d5f5a030345c",
+                "reference": "8fd0d8f80029682da89516a554f4d5f5a030345c",
                 "shasum": ""
             },
             "require": {
@@ -18019,7 +18030,7 @@
                 "phpunit/php-file-iterator": "^3.0",
                 "phpunit/php-invoker": "^3.0",
                 "phpunit/php-text-template": "^2.0",
-                "phpunit/php-timer": "^4.0",
+                "phpunit/php-timer": "^5.0",
                 "sebastian/code-unit": "^1.0.2",
                 "sebastian/comparator": "^4.0",
                 "sebastian/diff": "^4.0",
@@ -18084,7 +18095,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-06-05T06:43:37+00:00"
+            "time": "2020-06-07T14:14:21+00:00"
         },
         {
             "name": "sebastian/code-unit",
