@@ -461,8 +461,9 @@ class SetupCommand extends Command
             $taxCategory = $this->taxCategoryRepository->findOneByCode($c->getCode());
 
             if (null === $taxCategory) {
-                $this->doctrine->getManagerForClass(TaxCategory::class)->persist($taxCategory);
+                $this->doctrine->getManagerForClass(TaxCategory::class)->persist($c);
                 $flush = true;
+                $output->writeln(sprintf('Creating tax category « %s »', $c->getCode()));
             } else {
                 $output->writeln(sprintf('Tax category « %s » already exists', $c->getCode()));
             }
