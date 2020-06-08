@@ -29,12 +29,14 @@ use Behat\Mink\Exception\ExpectationException;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Behat\Tester\Exception\PendingException;
+use Behat\MinkExtension\Context\MinkContext;
 use Coduo\PHPMatcher\PHPMatcher;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
 use FOS\UserBundle\Util\UserManipulator;
 use Behatch\HttpCall\HttpCallResultPool;
+use Behatch\Context\RestContext;
 use PHPUnit\Framework\Assert;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -148,8 +150,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $environment = $scope->getEnvironment();
 
-        $this->restContext = $environment->getContext('Behatch\Context\RestContext');
-        $this->minkContext = $environment->getContext('Behat\MinkExtension\Context\MinkContext');
+        $this->restContext = $environment->getContext(RestContext::class);
+        $this->minkContext = $environment->getContext(MinkContext::class);
     }
 
     /**
