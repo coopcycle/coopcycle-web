@@ -68,7 +68,7 @@ class TaxesProvider
 
     private static $categories = [
         'service' => [
-            'ca-bc' => 0.05000, // We always apply GST on delivery fee
+            // 'ca-bc' => 0.05000, // We always apply GST on delivery fee
             '*' => 'standard'
         ],
         'drink' => [
