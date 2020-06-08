@@ -5,12 +5,6 @@
 {% endblock %}
 
 {% block content %}
-<p class="text-right">
-  <a class="btn btn-success" href="{{ path('admin_taxation_settings_new') }}">
-    <i class="fa fa-plus"></i> {{ 'adminDashboard.taxation.button'|trans }}
-  </a>
-</p>
-
 <table class="table">
   <thead>
     <th>{{ 'sylius.form.tax_category.name'|trans }}</th>
@@ -21,9 +15,7 @@
   {% set taxRate = taxCategory.rates|first %}
   <tr>
     <td>
-      <a href="{{ path('admin_taxation_settings_edit', { code: taxCategory.code }) }}">
-        {{ taxCategory.name }}
-      </a>
+      {{ taxCategory.name }}
     </td>
     <td class="text-right">{{ (taxRate.amount * 100)|number_format(2, '.', ',') }} %</td>
   </tr>
