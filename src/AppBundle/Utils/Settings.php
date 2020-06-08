@@ -55,7 +55,7 @@ class Settings
 
     public $latlng;
 
-    public $default_tax_category;
+    public $subject_to_vat;
 
     public $currency_code;
 

@@ -10,7 +10,6 @@ use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Bundle\CurrencyBundle\Form\Type\CurrencyChoiceType;
-use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -130,9 +129,9 @@ class SettingsType extends AbstractType
                 'help_html' => true
 
             ])
-            ->add('default_tax_category', TaxCategoryChoiceType::class, [
-                'label' => 'form.settings.default_tax_category.label',
-                'help' => 'form.settings.default_tax_category.help'
+            ->add('subject_to_vat', CheckboxType::class, [
+                'label' => 'form.settings.subject_to_vat.label',
+                'help' => 'form.settings.subject_to_vat.help'
             ])
             ->add('currency_code', CurrencyChoiceType::class, [
                 'label' => 'form.settings.currency_code.label'
@@ -172,18 +171,6 @@ class SettingsType extends AbstractType
             }
 
             // Make sure there is an empty choice
-            if (!$data->default_tax_category) {
-
-                $defaultTaxCategory = $form->get('default_tax_category');
-                $options = $defaultTaxCategory->getConfig()->getOptions();
-
-                $options['placeholder'] = '';
-                $options['required'] = false;
-
-                $form->add('default_tax_category', TaxCategoryChoiceType::class, $options);
-            }
-
-            // Make sure there is an empty choice
             if (!$data->currency_code) {
 
                 $currencyCode = $form->get('currency_code');
@@ -208,18 +195,9 @@ class SettingsType extends AbstractType
             } catch (NumberParseException $e) {}
         });
 
-        $builder->get('default_tax_category')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
-
-            $form = $event->getForm();
+        $builder->get('subject_to_vat')->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $data = $event->getData();
-
-            $options = $form->getConfig()->getOptions();
-            foreach ($options['choices'] as $taxCategory) {
-                if ($taxCategory->getCode() === $data) {
-                    $form->setData($taxCategory);
-                    break;
-                }
-            }
+            $event->setData((bool) $event->getData());
         });
 
         $builder->get('currency_code')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
@@ -238,10 +216,6 @@ class SettingsType extends AbstractType
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
             $data = $event->getData();
-
-            if (null !== $data->default_tax_category) {
-                $data->default_tax_category = $data->default_tax_category->getCode();
-            }
             if (null !== $data->currency_code) {
                 $data->currency_code = $data->currency_code->getCode();
             }

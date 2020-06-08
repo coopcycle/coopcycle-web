@@ -23,7 +23,6 @@ class SettingsManager
         'administrator_email',
         'google_api_key',
         'latlng',
-        'default_tax_category',
         'currency_code',
     ];
 
@@ -96,6 +95,7 @@ class SettingsManager
                     } catch (NumberParseException $e) {}
                     break;
                 case 'sms_enabled':
+                case 'subject_to_vat':
                     $value = (bool) $value;
                     break;
             }

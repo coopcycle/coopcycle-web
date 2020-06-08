@@ -1,5 +1,17 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
+{% block _settings_subject_to_vat_row %}
+
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> {{ 'form.settings.subject_to_vat.label'|trans }}
+    <div class="pull-right">
+      <div data-widget="switch" data-switch-target="{{ ('#' ~ form.vars.id) }}"></div>
+    </div>
+    {{ block('hidden_widget') }}
+  </div>
+
+{% endblock %}
+
 {% block password_widget %}
 {% if form.vars.name matches '/^stripe_/' %}
   {% set disabled = is_demo %}

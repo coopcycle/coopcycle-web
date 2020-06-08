@@ -32,6 +32,9 @@
       {{ form_row(form.enable_restaurant_pledges) }}
     </div>
   </div>
+
+  {{ form_row(form.subject_to_vat) }}
+
   <div class="alert alert-danger">
     <i class="fa fa-warning"></i> {{ 'form.maintenance.enable.label'|trans }}
     <div class="pull-right">
@@ -340,6 +343,16 @@
     };
 
     stripeLiveModeSwitch = new CoopCycle.Switch(document.querySelector('#stripe_livemode_switch'), stripeLiveModeSwitchOptions);
+
+    $('[data-widget="switch"]').each(function() {
+      var selector = this.dataset.switchTarget;
+      new CoopCycle.Switch(this, {
+        checked: document.querySelector(selector).value === '1',
+        onChange: function(checked) {
+          document.querySelector(selector).value = checked ? '1' : '0'
+        }
+      });
+    });
 
     new window.CoopCycle.Dropzone($('#logo-dropzone'), {
       dropzone: {
