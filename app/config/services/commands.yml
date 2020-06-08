@@ -85,6 +85,7 @@ services:
       $currencyRepository: '@sylius.repository.currency'
       $currencyFactory: '@sylius.factory.currency'
       $promotionFactory: '@sylius.factory.promotion'
+      $taxCategoryFactory: '@sylius.factory.tax_category'
       $locale: '%kernel.default_locale%'
     tags:
       - { name: 'console.command', command: 'coopcycle:setup' }

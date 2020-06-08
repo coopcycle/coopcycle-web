@@ -776,3 +776,8 @@ services:
   Pushok\Client:
     arguments:
       $isProductionEnv: true
+
+  AppBundle\Sylius\Taxation\TaxesProvider:
+    arguments:
+      $taxCategoryFactory: '@sylius.factory.tax_category'
+      $taxRateFactory: '@sylius.factory.tax_rate'

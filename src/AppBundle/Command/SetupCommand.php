@@ -3,7 +3,9 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Cuisine;
+use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
+use AppBundle\Sylius\Taxation\TaxesProvider;
 use AppBundle\Taxonomy\CuisineProvider;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,10 +24,12 @@ use Sylius\Component\Payment\Model\PaymentMethod;
 use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
+use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SetupCommand extends Command
 {
@@ -122,8 +126,12 @@ class SetupCommand extends Command
         PromotionRepositoryInterface $promotionRepository,
         FactoryInterface $promotionFactory,
         CuisineProvider $cuisineProvider,
+        TaxCategoryRepositoryInterface $taxCategoryRepository,
+        TaxesProvider $taxesProvider,
+        FactoryInterface $taxCategoryFactory,
         ManagerRegistry $doctrine,
         SlugifyInterface $slugify,
+        TranslatorInterface $translator,
         string $locale)
     {
         $this->productRepository = $productRepository;
@@ -147,12 +155,18 @@ class SetupCommand extends Command
 
         $this->cuisineProvider = $cuisineProvider;
 
+        $this->taxCategoryRepository = $taxCategoryRepository;
+        $this->taxCategoryFactory = $taxCategoryFactory;
+        $this->taxesProvider = $taxesProvider;
+
         $this->paymentMethodRepository =
             $doctrine->getRepository(PaymentMethod::class);
 
         $this->doctrine = $doctrine;
 
         $this->slugify = $slugify;
+
+        $this->translator = $translator;
 
         $this->locale = $locale;
 
@@ -200,6 +214,9 @@ class SetupCommand extends Command
 
         $output->writeln('<info>Checking cuisines are present…</info>');
         $this->createCuisines($output);
+
+        $output->writeln('<info>Checking Sylius taxes are present…</info>');
+        $this->createSyliusTaxes($output);
 
         return 0;
     }
@@ -431,6 +448,28 @@ class SetupCommand extends Command
 
         if ($flush) {
             $this->doctrine->getManagerForClass(Cuisine::class)->flush();
+        }
+    }
+
+    private function createSyliusTaxes(OutputInterface $output)
+    {
+        $expectedTaxCategories = $this->taxesProvider->getCategories();
+
+        $flush = false;
+        foreach ($expectedTaxCategories as $c) {
+
+            $taxCategory = $this->taxCategoryRepository->findOneByCode($c->getCode());
+
+            if (null === $taxCategory) {
+                $this->doctrine->getManagerForClass(TaxCategory::class)->persist($taxCategory);
+                $flush = true;
+            } else {
+                $output->writeln(sprintf('Tax category « %s » already exists', $c->getCode()));
+            }
+        }
+
+        if ($flush) {
+            $this->doctrine->getManagerForClass(TaxCategory::class)->flush();
         }
     }
 }
