@@ -1,7 +1,6 @@
 include:
   - settings.yml
   - sylius_channels.yml
-  - sylius_taxation.yml
   - addresses.yml
   - restaurants.yml
 

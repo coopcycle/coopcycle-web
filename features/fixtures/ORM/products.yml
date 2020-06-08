@@ -1,26 +1,5 @@
-Sylius\Component\Taxation\Model\TaxRate:
-  tva_10:
-    name: "TVA 10"
-    code: tva_10
-    amount: 0.10
-    includedInPrice: true
-    calculator: default
-  tva_20:
-    name: "TVA 20"
-    code: tva_20
-    amount: 0.20
-    includedInPrice: true
-    calculator: default
-
-Sylius\Component\Taxation\Model\TaxCategory:
-  tva_conso_immediate:
-    code: tva_conso_immediate
-    name: "TVA consommation immédiate"
-    rates: [ "@tva_10" ]
-  tva_livraison:
-    code: tva_livraison
-    name: "TVA livraison"
-    rates: [ "@tva_20" ]
+include:
+  - sylius_taxation.yml
 
 Sylius\Component\Product\Model\ProductAttribute:
   attribute_restricted_diet:

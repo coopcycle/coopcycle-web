@@ -1,5 +1,8 @@
 # Products
 
+include:
+  - sylius_taxation.yml
+
 AppBundle\Entity\Sylius\ProductOptionValue:
   hamburger_accompaniment_french_fries:
     code: HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES
