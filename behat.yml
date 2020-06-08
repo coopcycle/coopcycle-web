@@ -4,12 +4,8 @@ default:
   suites:
     default:
       contexts:
-        - Behat\MinkExtension\Context\MinkContext
-        - behatch:context:rest
-        - behatch:context:json
         - FeatureContext:
             doctrine: "@doctrine"
-            httpCallResultPool: "@behatch.http_call.result_pool"
             phoneNumberUtil: "@libphonenumber.phone_number_util"
             fixturesLoader: "@fidry_alice_data_fixtures.loader.doctrine"
             settingsManager: "@coopcycle.settings_manager"
@@ -20,9 +16,10 @@ default:
             iriConverter: "@api_platform.iri_converter"
             httpMessageFactory: "@sensio_framework_extra.psr7.http_message_factory"
             tile38: "@snc_redis.tile38"
-
+        - Behat\MinkExtension\Context\MinkContext
+        - Behatch\Context\RestContext
+        - Behatch\Context\JsonContext
   extensions:
-    Behatch\Extension: ~
     Behat\Symfony2Extension:
       kernel:
         env: "test"
@@ -32,3 +29,4 @@ default:
       sessions:
         default:
           symfony2: ~
+    Behatch\Extension: ~
