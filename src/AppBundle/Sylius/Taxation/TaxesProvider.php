@@ -31,10 +31,6 @@ class TaxesProvider
     ];
 
     private static $rates = [
-        // 'ca-bc' => [
-        //     'gst'          => 0.05,
-        //     'pst'          => 0.07,
-        // ],
         'be' => [
             'standard'     => 0.21,
             'intermediary' => 0.12,
@@ -68,7 +64,7 @@ class TaxesProvider
 
     private static $categories = [
         'service' => [
-            // 'ca-bc' => 0.05000, // We always apply GST on delivery fee
+            'ca-bc' => 'gst', // We always apply GST on delivery fee
             '*' => 'standard'
         ],
         'drink' => [
