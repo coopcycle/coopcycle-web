@@ -40,10 +40,12 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
 
         $optionsAdjustments = $object->getAdjustments(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT)->toArray();
         $packagingAdjustments = $object->getAdjustments(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->toArray();
+        $taxAdjustments = $object->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT)->toArray();
 
         $data['name'] = $object->getVariant()->getProduct()->getName();
         $data['adjustments'] = [
-            AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT => $this->normalizeAdjustments($optionsAdjustments)
+            AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT => $this->normalizeAdjustments($optionsAdjustments),
+            AdjustmentInterface::TAX_ADJUSTMENT => $this->normalizeAdjustments($taxAdjustments),
         ];
 
         if (count($packagingAdjustments) > 0) {

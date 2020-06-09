@@ -136,7 +136,8 @@ Feature: Carts
           "delivery":[],
           "delivery_promotion":[],
           "order_promotion":[],
-          "reusable_packaging":[]
+          "reusable_packaging":[],
+          "tax":[]
         }
       }
       """
@@ -199,7 +200,8 @@ Feature: Carts
           "delivery":[],
           "delivery_promotion":[],
           "order_promotion":[],
-          "reusable_packaging":[]
+          "reusable_packaging":[],
+          "tax":[]
         }
       }
       """
@@ -248,7 +250,8 @@ Feature: Carts
           "delivery":[],
           "delivery_promotion":[],
           "order_promotion":[],
-          "reusable_packaging":[]
+          "reusable_packaging":[],
+          "tax":[]
         }
       }
       """
@@ -307,7 +310,8 @@ Feature: Carts
             }
           ],
           "order_promotion":[],
-          "reusable_packaging":[]
+          "reusable_packaging":[],
+          "tax":@array@
         }
       }
       """
@@ -359,7 +363,8 @@ Feature: Carts
           ],
           "delivery_promotion":[],
           "order_promotion":[],
-          "reusable_packaging":[]
+          "reusable_packaging":[],
+          "tax": @array@
         }
       }
       """
@@ -394,6 +399,7 @@ Feature: Carts
       """
     Then the response status code should be 201
     And the response should be in JSON
+    And print last response
     And the JSON should match:
       """
       {
@@ -421,6 +427,13 @@ Feature: Carts
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
+              ],
+              "tax":[
+                {
+                  "id":@integer@,
+                  "label":"TVA 10%",
+                  "amount":@integer@
+                }
               ]
             }
           }
@@ -437,7 +450,14 @@ Feature: Carts
           ],
           "delivery_promotion":[],
           "order_promotion":[],
-          "reusable_packaging":[]
+          "reusable_packaging":[],
+          "tax":[
+            {
+              "id":@integer@,
+              "label":"TVA 20%",
+              "amount":@integer@
+            }
+          ]
         }
       }
       """
@@ -499,6 +519,13 @@ Feature: Carts
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
+              ],
+              "tax":[
+                {
+                  "id":@integer@,
+                  "label":"TVA 10%",
+                  "amount":@integer@
+                }
               ]
             }
           }
@@ -515,7 +542,14 @@ Feature: Carts
           ],
           "delivery_promotion":[],
           "order_promotion":[],
-          "reusable_packaging":[]
+          "reusable_packaging":[],
+          "tax":[
+            {
+              "id":@integer@,
+              "label":"TVA 20%",
+              "amount":@integer@
+            }
+          ]
         }
       }
       """
@@ -577,6 +611,13 @@ Feature: Carts
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
+              ],
+              "tax":[
+                {
+                  "id":@integer@,
+                  "label":"TVA 10%",
+                  "amount":@integer@
+                }
               ]
             }
           }
@@ -593,7 +634,14 @@ Feature: Carts
           ],
           "delivery_promotion":[],
           "order_promotion":[],
-          "reusable_packaging":[]
+          "reusable_packaging":[],
+          "tax":[
+            {
+              "id":@integer@,
+              "label":"TVA 20%",
+              "amount":@integer@
+            }
+          ]
         }
       }
       """
@@ -1167,7 +1215,8 @@ Feature: Carts
           "delivery":[],
           "delivery_promotion":[],
           "order_promotion":[],
-          "reusable_packaging":[]
+          "reusable_packaging":[],
+          "tax":[]
         }
       }
       """

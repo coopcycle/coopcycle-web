@@ -89,12 +89,15 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT)->toArray());
         $reusablePackagingAdjustments =
             array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->toArray());
+        $taxAdjustments =
+            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT)->toArray());
 
         return [
             AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
             AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT => array_values($deliveryPromotionAdjustments),
             AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT => array_values($orderPromotionAdjustments),
-            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments)
+            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments),
+            AdjustmentInterface::TAX_ADJUSTMENT => array_values($taxAdjustments),
         ];
     }
 
