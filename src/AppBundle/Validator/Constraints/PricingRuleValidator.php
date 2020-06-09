@@ -27,6 +27,8 @@ class PricingRuleValidator extends ConstraintValidator
         try {
 
             $delivery = new Delivery();
+            $delivery->getPickup()->setBefore(new \DateTime('+4 hours'));
+
             $this->expressionLanguage->evaluate($object->getExpression(), Delivery::toExpressionLanguageValues($delivery));
 
         } catch (SyntaxError $e) {

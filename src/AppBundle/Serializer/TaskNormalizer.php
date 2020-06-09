@@ -118,6 +118,30 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             }
         }
 
+        if (isset($data['timeSlot'])) {
+
+            // TODO Validate time slot
+
+            preg_match('/^([0-9]{4}-[0-9]{2}-[0-9]{2}) ([0-9:]+-[0-9:]+)$/', $data['timeSlot'], $matches);
+
+            $date = $matches[1];
+            $timeRange = $matches[2];
+
+            [ $start, $end ] = explode('-', $timeRange);
+
+            [ $startHour, $startMinute ] = explode(':', $start);
+            [ $endHour, $endMinute ] = explode(':', $end);
+
+            $after = new \DateTime($date);
+            $after->setTime($startHour, $startMinute);
+
+            $before = new \DateTime($date);
+            $before->setTime($endHour, $endMinute);
+
+            $task->setAfter($after);
+            $task->setBefore($before);
+        }
+
         return $task;
     }
 
