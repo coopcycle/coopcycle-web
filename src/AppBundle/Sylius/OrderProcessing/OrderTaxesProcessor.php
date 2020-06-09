@@ -55,7 +55,7 @@ final class OrderTaxesProcessor implements OrderProcessorInterface
                 AdjustmentInterface::TAX_ADJUSTMENT,
                 $taxRate->getName(),
                 (int) $this->calculator->calculate($orderItem->getTotal(), $taxRate),
-                $neutral = true
+                $neutral = $taxRate->isIncludedInPrice()
             );
             $taxAdjustment->setOriginCode($taxRate->getCode());
 
@@ -73,7 +73,7 @@ final class OrderTaxesProcessor implements OrderProcessorInterface
                 AdjustmentInterface::TAX_ADJUSTMENT,
                 $taxRate->getName(),
                 (int) $this->calculator->calculate($adjustment->getAmount(), $taxRate),
-                $neutral = true
+                $neutral = $taxRate->isIncludedInPrice()
             );
             $taxAdjustment->setOriginCode($taxRate->getCode());
 
