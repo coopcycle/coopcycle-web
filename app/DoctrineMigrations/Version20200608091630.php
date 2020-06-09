@@ -39,17 +39,20 @@ final class Version20200608091630 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         $defaultTaxCategory = $this->getDefaultTaxCategory();
+        $amount = (float) $defaultTaxCategory['amount'];
 
         if ($defaultTaxCategory) {
-            $taxExempt = '0.00000' === $defaultTaxCategory['amount'];
+            $taxExempt = 0.0 == $defaultTaxCategory['amount'];
         } else {
             $taxExempt = false;
         }
 
+        $subjectToVat = !$taxExempt;
+
         $this->addSql('INSERT INTO craue_config_setting (name, section, value) VALUES (:name, :section, :value)', [
             'name' => 'subject_to_vat',
             'section'  => 'general',
-            'value' => !$taxExempt ? '1' : '0',
+            'value' => $subjectToVat ? '1' : '0',
         ]);
     }
 
