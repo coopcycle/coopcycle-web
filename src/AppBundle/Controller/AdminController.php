@@ -74,6 +74,7 @@ use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Taxation\Model\TaxCategory;
+use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Sylius\Component\Taxation\Model\TaxRate;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -623,14 +624,36 @@ class AdminController extends Controller
      * @Route("/admin/settings/taxation", name="admin_taxation_settings")
      * @Template
      */
-    public function taxationSettingsAction(Request $request)
+    public function taxationSettingsAction(Request $request,
+        TaxRateResolverInterface $taxRateResolver,
+        TranslatorInterface $translator)
     {
         $taxCategoryRepository = $this->get('sylius.repository.tax_category');
 
+        $categories = [];
+
         $taxCategories = $taxCategoryRepository->findAll();
+        foreach ($taxCategories as $c) {
+
+            $variant = $this->get('sylius.factory.product_variant')->createNew();
+            $variant->setTaxCategory($c);
+
+            $taxRate = $taxRateResolver->resolve($variant, [
+                'country' => strtolower($this->getParameter('region_iso')),
+            ]);
+
+            if (!$taxRate) {
+                $taxRate = $taxRateResolver->resolve($variant);
+            }
+
+            $categories[] = [
+                'name' => $translator->trans($c->getName(), [], 'taxation'),
+                'rate' => $taxRate,
+            ];
+        }
 
         return [
-            'taxCategories' => $taxCategories
+            'categories' => $categories,
         ];
     }
 

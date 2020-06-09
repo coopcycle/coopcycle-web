@@ -11,13 +11,12 @@
     <th class="text-right">{{ 'sylius.form.tax_rate.amount'|trans }}</th>
   </thead>
   <tbody>
-  {% for taxCategory in taxCategories %}
-  {% set taxRate = taxCategory.rates|first %}
+  {% for category in categories %}
   <tr>
     <td>
-      {{ taxCategory.name }}
+      {{ category.name }}
     </td>
-    <td class="text-right">{{ (taxRate.amount * 100)|number_format(2, '.', ',') }} %</td>
+    <td class="text-right">{{ (category.rate.amount * 100)|number_format(2, '.', ',') }} %</td>
   </tr>
   {% endfor %}
   </tbody>
