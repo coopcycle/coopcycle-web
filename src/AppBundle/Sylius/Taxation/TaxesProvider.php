@@ -63,15 +63,16 @@ class TaxesProvider
     ];
 
     private static $categories = [
-        'service' => [
-            'ca-bc' => 'gst', // We always apply GST on delivery fee
-            '*' => 'standard'
-        ],
+        // 'service' => [
+        //     // 'ca-bc' => 'gst', // We always apply GST on delivery fee
+        //     '*' => 'standard'
+        // ],
         'drink' => [
             'fr' => 'reduced',
         ],
         'alcoholic_drink' => [
             'fr' => 'standard',
+            'de' => 'standard',
         ],
         'food_on_the_spot' => [
             'fr' => 'reduced',
@@ -79,6 +80,12 @@ class TaxesProvider
         'food_takeaway' => [
             'fr' => 'intermediary',
         ],
+    ];
+
+    private static $defaultCategories = [
+        'standard',
+        'intermediary',
+        'reduced',
     ];
 
     public function __construct(
@@ -100,9 +107,32 @@ class TaxesProvider
     {
         $categories = [];
 
-        foreach (self::$categories as $code => $category) {
+        // foreach (self::$categories as $code => $rates) {
 
-            var_dump($code);
+        //     var_dump($code);
+
+        //     $c = $this->taxCategoryRepository->findOneByCode(strtoupper($code));
+
+        //     if (null === $c) {
+        //         $c = $this->taxCategoryFactory->createNew();
+        //     }
+
+        //     $c->setName(
+        //         sprintf('tax_category.%s', $code)
+        //     );
+
+        //     $wildcard = $rates['*'] ?? false;
+
+        //     // if ($wildcard) {
+        //     //     var_dump($wildcard);
+        //     // } else {
+
+        //     // }
+
+        //     # code...
+        // }
+
+        foreach (self::$defaultCategories as $code) {
 
             $c = $this->taxCategoryRepository->findOneByCode(strtoupper($code));
 
@@ -110,11 +140,44 @@ class TaxesProvider
                 $c = $this->taxCategoryFactory->createNew();
             }
 
-            $name = sprintf('tax_category.%s', $code);
+            $c->setName(
+                sprintf('tax_category.%s', $code)
+            );
 
-            $c->setName($name);
+            foreach (self::$countries as $country) {
 
-            // $wildcard = $category['*'] ?? false;
+                $rates = self::$rates[$country] ?? [];
+
+                if (empty($rates)) {
+                    continue;
+                }
+
+                if (!isset($rates[$code])) {
+                    continue;
+                }
+
+                $amount = $rates[$code];
+
+                $rate = $this->taxRateFactory->createNew();
+
+                $rate->setCode(strtoupper(sprintf('%s_%s', $country, $code)));
+                $rate->setName(sprintf('tax_rate.%s', $code));
+                $rate->setCountry($country);
+                $rate->setAmount($amount);
+
+                $rate->setCalculator('default');
+                $rate->setIncludedInPrice(true);
+
+                $c->addRate($rate);
+            }
+
+            if (count($c->getRates()) === 0) {
+                continue;
+            }
+
+            var_dump($code);
+
+            // $wildcard = $rates['*'] ?? false;
 
             // if ($wildcard) {
             //     var_dump($wildcard);
