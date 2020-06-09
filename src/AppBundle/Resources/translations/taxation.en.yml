@@ -1,0 +1,13 @@
+tax_category.service: Service
+tax_category.service_tax_exempt: Service (tax exempt)
+tax_rate.standard: Standard rate
+tax_rate.zero: Zero rate
+
+tax_category.food: Food
+tax_category.drink: Drink
+tax_category.alcoholic_drink: Alcoholic drink
+tax_category.book: Book
+tax_category.clothing: Clothing
+tax_category.standard: Standard
+tax_category.reduced: Reduced
+tax_category.super_reduced: Super reduced
