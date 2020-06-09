@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\MyRestaurants;
 use AppBundle\Action\Restaurant\Close as CloseController;
 use AppBundle\Action\Restaurant\Menu;
+use AppBundle\Action\Restaurant\Deliveries as RestaurantDeliveriesController;
 use AppBundle\Action\Restaurant\Menus;
 use AppBundle\Annotation\Enabled;
 use AppBundle\Api\Dto\RestaurantInput;
@@ -85,6 +86,13 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "path"="/restaurants/{id}/close",
  *       "controller"=CloseController::class,
  *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
+ *     },
+ *     "restaurant_deliveries"={
+ *       "method"="GET",
+ *       "path"="/restaurants/{id}/deliveries/{date}",
+ *       "controller"=RestaurantDeliveriesController::class,
+ *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "normalization_context"={"groups"={"delivery", "address", "restaurant_delivery"}}
  *     }
  *   },
  *   subresourceOperations={

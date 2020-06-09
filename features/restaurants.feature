@@ -541,3 +541,99 @@ Feature: Manage restaurants
         "hydra:totalItems":1
       }
       """
+
+  Scenario: Retrieve restaurant deliveries
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "administrator_email" has value "admin@coopcycle.org"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    Given the user "bob" has ordered something for "2020-05-09" at the restaurant with id "1"
+    And the user "bob" is authenticated
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/orders/1/accept"
+    Then the response status code should be 200
+    And the response should be in JSON
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/restaurants/1/deliveries/2020-05-09"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Restaurant",
+        "@id":"/api/restaurants",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/deliveries/1",
+            "@type":"http://schema.org/ParcelDelivery",
+            "id":@integer@,
+            "pickup":{
+              "@id":"/api/tasks/1",
+              "@type":"Task",
+              "id":@integer@,
+              "status":"TODO",
+              "address":{
+                "@id":"/api/addresses/1",
+                "@type":"http://schema.org/Place",
+                "contactName":null,
+                "description":null,
+                "geo":{
+                  "latitude":48.864577,
+                  "longitude":2.333338
+                },
+                "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+                "telephone":null,
+                "name":null
+              },
+              "comments":@string@,
+              "after":"@string@.isDateTime()",
+              "before":"@string@.isDateTime()",
+              "doneAfter":"@string@.isDateTime()",
+              "doneBefore":"@string@.isDateTime()"
+            },
+            "dropoff":{
+              "@id":"/api/tasks/2",
+              "@type":"Task",
+              "id":@integer@,
+              "status":"TODO",
+              "address":{
+                "@id":"/api/addresses/1",
+                "@type":"http://schema.org/Place",
+                "contactName":null,
+                "description":null,
+                "geo":{
+                  "latitude":48.864577,
+                  "longitude":2.333338
+                },
+                "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+                "telephone":null,
+                "name":null
+              },
+              "comments":@string@,
+              "after":"@string@.isDateTime()",
+              "before":"@string@.isDateTime()",
+              "doneAfter":"@string@.isDateTime()",
+              "doneBefore":"@string@.isDateTime()"
+            }
+          }
+        ],
+        "hydra:totalItems":1
+      }
+      """
