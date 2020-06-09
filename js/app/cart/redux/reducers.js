@@ -47,6 +47,7 @@ const initialState = {
   },
   isDateModalOpen: false,
   isAddressModalOpen: false,
+  country: 'fr',
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -145,6 +146,7 @@ const addressFormElements = (state = initialState.addressFormElements) => state
 const isNewAddressFormElement = (state = initialState.isNewAddressFormElement) => state
 const datePickerTimeSlotInputName = (state = initialState.datePickerTimeSlotInputName) => state
 const addresses = (state = initialState.addresses) => state
+const country = (state = initialState.country) => state
 
 const isMobileCartVisible = (state = initialState.isMobileCartVisible, action = {}) => {
   switch (action.type) {
@@ -215,4 +217,5 @@ export default combineReducers({
   times,
   isDateModalOpen,
   isAddressModalOpen,
+  country,
 })

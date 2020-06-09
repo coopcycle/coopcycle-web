@@ -10,7 +10,7 @@ import session from 'store/storages/sessionStorage'
 import cookie  from 'store/storages/cookieStorage'
 
 import OpeningHoursParser from '../widgets/OpeningHoursParser'
-import i18n from '../i18n'
+import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from '../cart/redux/store'
 import { addItem, addItemWithOptions, queueAddItem } from '../cart/redux/actions'
 import Cart from '../cart/components/Cart'
@@ -313,7 +313,8 @@ window.initMap = function() {
     },
     isNewAddressFormElement: document.querySelector('#cart_isNewAddress'),
     addresses,
-    times
+    times,
+    country: getCountry(),
   }
 
   store = createStoreFromPreloadedState(state)

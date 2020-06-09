@@ -29,9 +29,14 @@ class CartTotal extends React.Component {
 
   renderAdjustments() {
 
-    const { variableCustomerAmountEnabled } = this.props
+    const { items, variableCustomerAmountEnabled, showTaxes } = this.props
 
     let adjustments = []
+    let taxAdjustments = []
+
+    if (Object.prototype.hasOwnProperty.call(this.props.adjustments, 'tax')) {
+      taxAdjustments = this.props.adjustments.tax
+    }
 
     const deliveryAdjustments = this.props.adjustments.delivery || []
 
@@ -51,7 +56,25 @@ class CartTotal extends React.Component {
       }
     }
 
+    const itemTaxAdjustments = _.reduce(items, (acc, item) => {
+      if (Object.prototype.hasOwnProperty.call(item.adjustments, 'tax')) {
+        return acc.concat(item.adjustments.tax)
+      }
+
+      return acc
+    }, [])
+    const itemTaxAdjustmentsGrouped = _.groupBy(itemTaxAdjustments, 'label')
+    const itemTaxAdjustmentsMerged = _.map(itemTaxAdjustmentsGrouped, (items, key) => {
+      return {
+        label: key,
+        amount: _.sumBy(items, 'amount')
+      }
+    })
+
+    taxAdjustments = taxAdjustments.concat(itemTaxAdjustmentsMerged)
+
     if (adjustments.length > 0 || deliveryAdjustments.length > 0) {
+
       return (
         <div>
           { deliveryAdjustments.map(adjustment =>
@@ -59,6 +82,11 @@ class CartTotal extends React.Component {
               key={ adjustment.id }
               adjustment={ _.first(deliveryAdjustments) }
               { ...deliveryAdjustmentProps } />
+          )}
+          { showTaxes && taxAdjustments.map(adjustment =>
+            <Adjustment
+              key={ adjustment.label }
+              adjustment={ adjustment } />
           )}
           { adjustments.map(adjustment =>
             <Adjustment
@@ -103,15 +131,18 @@ function mapStateToProps (state) {
   const { cart } = state
   const isSameRestaurant = selectIsSameRestaurant(state)
 
+  let items       = isSameRestaurant ? cart.items : []
   let itemsTotal  = isSameRestaurant ? cart.itemsTotal : 0
   let total       = isSameRestaurant ? cart.total : 0
   let adjustments = isSameRestaurant ? cart.adjustments : {}
 
   return {
+    items,
     itemsTotal,
     total,
     adjustments,
     variableCustomerAmountEnabled: cart.restaurant.variableCustomerAmountEnabled,
+    showTaxes: state.country === 'ca',
   }
 }
 
