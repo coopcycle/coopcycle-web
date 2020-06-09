@@ -64,7 +64,15 @@ class ReceiptGenerator
         foreach ($taxRates as $taxRate) {
             $taxTotal = $order->getTaxTotalByRate($taxRate);
             if ($taxTotal > 0) {
-                $receipt->addFooterItem(new FooterItem($taxRate->getName(), $taxTotal));
+                $receipt->addFooterItem(
+                    new FooterItem(
+                        sprintf('%s - %s%%',
+                            $this->translator->trans($taxRate->getName(), [], 'taxation'),
+                            number_format((float) ($taxRate->getAmount() * 100), 2)
+                        ),
+                        $taxTotal
+                    )
+                );
             }
         }
         $receipt->addFooterItem(
