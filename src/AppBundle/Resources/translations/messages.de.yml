@@ -675,7 +675,7 @@ restaurant.form.section.payment: Bezahlung
 restaurant.form.section.fulfillment: Ausführung
 restaurant.form.section.general: Allgemein
 restaurant.form.section.options: Optionen
-restaurant.form.noPricingRule: Es wurden keine Bezahlungsvorschriften eingebaut
+restaurant.form.noPricingRule: Es wurden keine Bezahlungsvorschriften festgelegt
 form.order.refuse.label: Ablehnen
 order.payments: Bezahlung
 order.payment.waiting_failure: Deine Bank hat die Überweisung abgelehnt
