@@ -370,6 +370,7 @@ form.settings.administrator_email.help: Las notificaciones se enviarán a éste 
 form.settings.phone_number.label: Número de teléfono
 form.settings.phone_number.help: Este número se mostrará a los clientes
 form.settings.currency_code.label: Moneda
+form.settings.subject_to_vat.label: Sometido al IVA
 form.maintenance.enable.label: Activar el mantenimiento
 form.maintenance.disable.label: Desactivar el mantenimiento
 form.maintenance.enable.alert: Estás a punto de activar el mantenimiento.<br>Solo

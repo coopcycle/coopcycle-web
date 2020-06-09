@@ -467,6 +467,7 @@ form.settings.phone_number.label: Numéro de téléphone
 form.settings.phone_number.help: Ce numéro sera affiché aux clients
 form.settings.enable_restaurant_pledges.label: Autoriser les clients à suggérer des
   restaurants
+form.settings.subject_to_vat.label: Assujetti à la tva
 form.suggest.name.label: Nom du restaurant
 form.suggest.name.help: Veuillez indiquer le nom exact
 form.suggest.message: "Vous ne trouvez pas votre restaurant préféré ?\n<br>\nDonnez-nous\
