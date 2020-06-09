@@ -71,6 +71,8 @@ class PricePreview {
         url: baseURL + '/api/pricing/deliveries',
         data: delivery,
         headers: {
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json',
           Authorization: `Bearer ${this.token}`
         }
       })
