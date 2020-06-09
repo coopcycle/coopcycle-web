@@ -292,6 +292,10 @@ export default function(name, options) {
 
         setPackages(name)
       })
+
+      $(`#${name}_packages`).on('change', 'select', function() {
+        setPackages(name)
+      })
     }
 
     el.addEventListener('submit', (e) => {
