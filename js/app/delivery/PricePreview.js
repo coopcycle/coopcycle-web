@@ -14,6 +14,8 @@ function asyncFunc(item, payload, token) {
       url: `${baseURL}${item.pricingRule}/evaluate`,
       data: payload,
       headers: {
+        Accept: 'application/ld+json',
+        'Content-Type': 'application/ld+json',
         Authorization: `Bearer ${token}`
       }
     })
