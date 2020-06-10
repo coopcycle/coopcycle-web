@@ -400,40 +400,54 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/restaurant/{id}/timing", name="restaurant_fulfillment_timing", methods={"GET"})
      */
-    public function fulfillmentTimingAction($id, Request $request, OrderFactory $orderFactory)
+    public function fulfillmentTimingAction($id, Request $request, OrderFactory $orderFactory, CacheInterface $appCache)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
 
-
         $data = [];
+
+        $deliveryCacheKey = sprintf('restaurant.%d.delivery.timing', $restaurant->getId());
+        $collectionCacheKey = sprintf('restaurant.%d.collection.timing', $restaurant->getId());
 
         if ($restaurant->isFulfillmentMethodEnabled('delivery')) {
 
-            $cart = $orderFactory->createForRestaurant($restaurant);
-            $cart->setTakeaway(false);
+            $data['delivery'] = $appCache->get($deliveryCacheKey, function (ItemInterface $item) use ($restaurant, $orderFactory) {
 
-            $timeInfo = $this->orderTimeHelper->getTimeInfo($cart);
-            $data['delivery'] = [
-                'range'  => $timeInfo['range'],
-                'today' => $timeInfo['today'],
-                'fast'  => $timeInfo['fast'],
-                'diff'  => $timeInfo['diff'],
-            ];
+                $item->expiresAfter(60 * 5);
+
+                $cart = $orderFactory->createForRestaurant($restaurant);
+                $cart->setTakeaway(false);
+
+                $timeInfo = $this->orderTimeHelper->getTimeInfo($cart);
+
+                return [
+                    'range' => $timeInfo['range'],
+                    'today' => $timeInfo['today'],
+                    'fast'  => $timeInfo['fast'],
+                    'diff'  => $timeInfo['diff'],
+                ];
+            });
         }
 
         if ($restaurant->isFulfillmentMethodEnabled('collection')) {
 
-            $cart = $orderFactory->createForRestaurant($restaurant);
-            $cart->setTakeaway(true);
+            $data['collection'] = $appCache->get($collectionCacheKey, function (ItemInterface $item) use ($restaurant, $orderFactory) {
 
-            $timeInfo = $this->orderTimeHelper->getTimeInfo($cart);
-            $data['collection'] = [
-                'range'  => $timeInfo['range'],
-                'today' => $timeInfo['today'],
-                'fast'  => $timeInfo['fast'],
-                'diff'  => $timeInfo['diff'],
-            ];
+                $item->expiresAfter(60 * 5);
+
+                $cart = $orderFactory->createForRestaurant($restaurant);
+                $cart->setTakeaway(true);
+
+                $timeInfo = $this->orderTimeHelper->getTimeInfo($cart);
+
+                return [
+                    'range' => $timeInfo['range'],
+                    'today' => $timeInfo['today'],
+                    'fast'  => $timeInfo['fast'],
+                    'diff'  => $timeInfo['diff'],
+                ];
+            });
         }
 
         return new JsonResponse($data);
