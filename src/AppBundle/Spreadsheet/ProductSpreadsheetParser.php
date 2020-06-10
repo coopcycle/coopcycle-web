@@ -33,7 +33,7 @@ class ProductSpreadsheetParser extends AbstractSpreadsheetParser
     /**
      * @inheritdoc
      */
-    protected function parseData(array $data): array
+    protected function parseData(array $data, array $options = []): array
     {
         return array_map(function ($data)  {
 

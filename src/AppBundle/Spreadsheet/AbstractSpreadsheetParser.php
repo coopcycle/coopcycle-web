@@ -101,15 +101,17 @@ abstract class AbstractSpreadsheetParser
 
     /**
      * @param array $data
+     * @param array $options
      * @return array
      */
-    abstract protected function parseData(array $data): array;
+    abstract protected function parseData(array $data, array $options = []): array;
 
     /**
      * @param File|string $file
+     * @param array $options
      * @throws IOException
      */
-    public function parse($file)
+    public function parse($file, array $options = [])
     {
         $isTempFile = false;
 
@@ -173,6 +175,6 @@ abstract class AbstractSpreadsheetParser
             unlink($filename);
         }
 
-        return $this->parseData($data);
+        return $this->parseData($data, $options);
     }
 }

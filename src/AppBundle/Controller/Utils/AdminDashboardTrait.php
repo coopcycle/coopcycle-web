@@ -16,7 +16,6 @@ use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\TaskImageNamer;
-use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Cocur\Slugify\SlugifyInterface;
 use FOS\UserBundle\Model\UserInterface;
 use Hashids\Hashids;

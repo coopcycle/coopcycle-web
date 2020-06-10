@@ -77,7 +77,9 @@ class ImportTasksHandler implements MessageHandlerInterface
 
         try {
 
-            $tasks = $this->spreadsheetParser->parse($tempnam, $message->getDate());
+            $tasks = $this->spreadsheetParser->parse($tempnam, [
+                'date' => $message->getDate()
+            ]);
 
             foreach ($tasks as $task) {
                 $violations = $this->validator->validate($task);

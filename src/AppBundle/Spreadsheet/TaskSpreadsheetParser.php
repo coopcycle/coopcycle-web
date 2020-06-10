@@ -17,24 +17,12 @@ use FOS\UserBundle\Model\UserManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 
-class TaskSpreadsheetParser
+class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 {
     const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
     const DATE_PATTERN_SLASH = '#(?<day>[0-9]{1,2})/(?<month>[0-9]{1,2})/?(?<year>[0-9]{4})?#';
     const DATE_PATTERN_DOT = '#(?<day>[0-9]{1,2})\.(?<month>[0-9]{1,2})\.?(?<year>[0-9]{4})?#';
     const TIME_PATTERN = '/(?<hour>[0-9]{1,2})[:hH]+(?<minute>[0-9]{1,2})?/';
-
-    const MIME_TYPE_ODS = [
-        'application/vnd.oasis.opendocument.spreadsheet'
-    ];
-    const MIME_TYPE_CSV = [
-        'text/csv',
-        'text/plain'
-    ];
-    const MIME_TYPE_XLSX = [
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/octet-stream'
-    ];
 
     private $geocoder;
     private $tagManager;
@@ -59,78 +47,43 @@ class TaskSpreadsheetParser
         $this->countryCode = $countryCode;
     }
 
-    public static function getMimeTypes()
+    public function getExampleData(): array
     {
-        return array_merge(
-            self::MIME_TYPE_CSV,
-            self::MIME_TYPE_ODS,
-            self::MIME_TYPE_XLSX
-        );
-    }
-
-    public static function getFileExtension($mimeType)
-    {
-        if (in_array($mimeType, self::MIME_TYPE_CSV)) {
-            return 'csv';
-        }
-
-        if (in_array($mimeType, self::MIME_TYPE_ODS)) {
-            return 'ods';
-        }
-
-        if (in_array($mimeType, self::MIME_TYPE_XLSX)) {
-            return 'xlsx';
-        }
-
-        throw new \Exception('Unsupported file type');
+        return [
+            [
+                'type' => 'pickup',
+                'address' => '1, rue de Rivoli Paris',
+                'latlong' => '',
+                'comments' => 'Beware of the dog',
+                'tags' => 'warning fragile important',
+                'address.name' => 'Acme Inc.',
+                'address.description' => '',
+                'address.telephone' => '+33612345678',
+                'address.contactName' => '',
+            ],
+            [
+                'type' => 'dropoff',
+                'address' => '',
+                'latlong' => '48.872322,2.354433',
+                'comments' => '',
+                'tags' => '',
+                'address.name' => '',
+                'address.description' => '',
+                'address.telephone' => '+33612345678',
+                'address.contactName' => 'John Doe',
+            ],
+        ];
     }
 
     /**
-     * @throws IOException
-     * @throws NumberParseException
+     * @inheritdoc
      */
-    public function parse($filename, \DateTime $defaultDate = null)
+    protected function parseData(array $data, array $options = []): array
     {
-        $reader = $this->createReader($filename);
-
-        $reader->open($filename);
-
-        $data = [];
-        $header = [];
-
-        foreach ($reader->getSheetIterator() as $sheet) {
-            foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-                if ($rowIndex === 1) {
-                    $header = $row->toArray();
-                    continue;
-                }
-
-                // Verify that the row is not completely empty
-                if (0 === count(array_filter($row->toArray()))) {
-                    continue;
-                }
-
-                $data[] = $row->toArray();
-            }
-        }
-
-        $this->validateHeader($header);
-
-        $data = array_map(function ($row) use ($header) {
-
-            // Fix the file structure if some columns are "merged"
-            if (count($row) < count($header)) {
-                $row = array_pad($row, count($header), '');
-            }
-
-            return array_combine($header, $row);
-        }, $data);
-
         $tasks = [];
 
-        if (null === $defaultDate) {
-            $defaultDate = new \DateTime();
-        }
+        $defaultDate =
+            isset($options['date']) ? new \DateTime($options['date']) : new \DateTime('now');
 
         foreach ($data as $record) {
 
@@ -206,54 +159,7 @@ class TaskSpreadsheetParser
         return $tasks;
     }
 
-    private function createReader($filename)
-    {
-        $mimeType = mime_content_type($filename);
-
-        if (in_array($mimeType, self::MIME_TYPE_CSV)) {
-            return $this->createCsvReader($filename);
-        }
-
-        if (in_array($mimeType, self::MIME_TYPE_ODS)) {
-            return ReaderEntityFactory::createODSReader();
-        }
-
-        if (in_array($mimeType, self::MIME_TYPE_XLSX)) {
-            return ReaderEntityFactory::createXLSXReader();
-        }
-
-        throw new \Exception('Unsupported file type');
-    }
-
-    private function createCsvReader($filename)
-    {
-        $csvReader = ReaderEntityFactory::createCSVReader();
-        $csvReader->setFieldDelimiter($this->getCsvDelimiter($filename));
-
-        return $csvReader;
-    }
-
-    private function getCsvDelimiter($filename)
-    {
-        $delimiters = array(
-            ';' => 0,
-            ',' => 0,
-            "\t" => 0,
-            '|' => 0,
-        );
-
-        $handle = fopen($filename, "r");
-        $firstLine = fgets($handle);
-        fclose($handle);
-
-        foreach ($delimiters as $delimiter => &$count) {
-            $count = count(str_getcsv($firstLine, $delimiter));
-        }
-
-        return array_search(max($delimiters), $delimiters);
-    }
-
-    private function validateHeader(array $header)
+    protected function validateHeader(array $header)
     {
         $hasAddress = in_array('address', $header);
         $hasLatLong = in_array('latlong', $header);
