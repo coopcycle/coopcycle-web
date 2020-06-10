@@ -12,6 +12,7 @@ class PreparationTimeResolver
     private $pickupTimeResolver;
     private $redis;
     private $extraTime;
+    private $cache = [];
 
     public function __construct(
         PreparationTimeCalculator $preparationTimeCalculator,
@@ -22,6 +23,7 @@ class PreparationTimeResolver
         $this->pickupTimeResolver = $pickupTimeResolver;
         $this->redis = $redis;
         $this->extraTime = null;
+        $this->cache = [];
     }
 
     private function getExtraTime()
@@ -46,11 +48,8 @@ class PreparationTimeResolver
      */
     public function resolve(OrderInterface $order, \DateTime $pickupOrDropoff): \DateTime
     {
-        $preparationTime = $this->preparationTimeCalculator
-            ->createForRestaurant($order->getRestaurant())
-            ->calculate($order);
-
-        $extraTime = $this->getExtraTime();
+        $preparationTime = $this->getPreparationTime($order);
+        $extraTime       = $this->getExtraTime();
 
         $pickup = $this->pickupTimeResolver->resolve($order, $pickupOrDropoff);
 
@@ -59,5 +58,21 @@ class PreparationTimeResolver
         $preparation->sub(date_interval_create_from_date_string($extraTime));
 
         return $preparation;
+    }
+
+    private function getPreparationTime(OrderInterface $order)
+    {
+        $oid = spl_object_hash($order);
+
+        // Optimization
+        // No need to recalculate the preparation time
+        // for the same order in the same thread
+        if (!isset($this->cache[$oid])) {
+            $this->cache[$oid] = $this->preparationTimeCalculator
+                ->createForRestaurant($order->getRestaurant())
+                ->calculate($order);
+        }
+
+        return $this->cache[$oid];
     }
 }
