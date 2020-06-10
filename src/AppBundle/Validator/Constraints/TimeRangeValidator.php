@@ -14,7 +14,7 @@ class TimeRangeValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         try {
-            $timeRange = new TimeRange($value);
+            $timeRange = TimeRange::create($value);
         } catch (EmptyRangeException $e) {
             $this->context
                 ->buildViolation($constraint->emptyRangeMessage)
