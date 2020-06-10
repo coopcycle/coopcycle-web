@@ -84,7 +84,7 @@ class ShippingDateFilter
 
         if (!isset($this->openingHoursCache[$cacheKey])) {
             $ranges = array_map(function ($oh) {
-                return new TimeRange($oh);
+                return TimeRange::create($oh);
             }, $openingHours);
             $this->openingHoursCache[$cacheKey] = $ranges;
         }

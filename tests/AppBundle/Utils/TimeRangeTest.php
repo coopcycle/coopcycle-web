@@ -13,7 +13,7 @@ class TimeRangeTest extends TestCase
     {
         $this->expectException(EmptyRangeException::class);
 
-        $timeRange = new TimeRange('');
+        $timeRange = TimeRange::create('');
     }
 
     public function invalidRangeProvider()
@@ -34,12 +34,12 @@ class TimeRangeTest extends TestCase
         $this->expectException($exception);
         $this->expectExceptionMessage($message);
 
-        $timeRange = new TimeRange($range);
+        $timeRange = TimeRange::create($range);
     }
 
     public function test247()
     {
-        $timeRange = new TimeRange('Mo-Su 00:00-23:59');
+        $timeRange = TimeRange::create('Mo-Su 00:00-23:59');
 
         $this->assertEquals(new \DateTime('2017-05-16 06:30'), $timeRange->getNextOpeningDate(new \DateTime('2017-05-16 06:30')));
         $this->assertNull($timeRange->getNextClosingDate(new \DateTime('2017-05-16 06:30')));
@@ -47,7 +47,7 @@ class TimeRangeTest extends TestCase
 
     public function testIsOpen()
     {
-        $timeRange = new TimeRange('Mo-Sa 11:45-14:45');
+        $timeRange = TimeRange::create('Mo-Sa 11:45-14:45');
 
         // Monday
         $this->assertFalse($timeRange->isOpen(new \DateTime('2017-05-15 11:44')));
@@ -71,7 +71,7 @@ class TimeRangeTest extends TestCase
 
     public function testIsOpenOverlap()
     {
-        $timeRange = new TimeRange('Mo-Sa 20:45-01:00');
+        $timeRange = TimeRange::create('Mo-Sa 20:45-01:00');
 
         // Monday
         $this->assertTrue($timeRange->isOpen(new \DateTime('2017-05-15 21:30')));
@@ -91,14 +91,14 @@ class TimeRangeTest extends TestCase
 
     public function testGetNextOpeningDate()
     {
-        $timeRange = new TimeRange('Mo-Sa 11:45-14:45');
+        $timeRange = TimeRange::create('Mo-Sa 11:45-14:45');
 
         $this->assertEquals(new \DateTime('2017-05-16 11:45'), $timeRange->getNextOpeningDate(new \DateTime('2017-05-16 06:30')));
         $this->assertEquals(new \DateTime('2017-05-17 11:45'), $timeRange->getNextOpeningDate(new \DateTime('2017-05-16 14:45')));
         $this->assertEquals(new \DateTime('2017-05-17 11:45'), $timeRange->getNextOpeningDate(new \DateTime('2017-05-16 15:30')));
         $this->assertEquals(new \DateTime('2017-05-16 12:30'), $timeRange->getNextOpeningDate(new \DateTime('2017-05-16 12:30')));
 
-        $timeRange = new TimeRange('Mo-Sa 20:45-01:00');
+        $timeRange = TimeRange::create('Mo-Sa 20:45-01:00');
 
         $this->assertEquals(new \DateTime('2017-05-16 20:45'), $timeRange->getNextOpeningDate(new \DateTime('2017-05-16 13:30')));
         $this->assertEquals(new \DateTime('2017-05-16 20:45'), $timeRange->getNextOpeningDate(new \DateTime('2017-05-16 01:30')));
@@ -109,10 +109,10 @@ class TimeRangeTest extends TestCase
 
     public function testGetNextClosingDate()
     {
-        $timeRange = new TimeRange('Mo-Sa 11:45-14:45');
+        $timeRange = TimeRange::create('Mo-Sa 11:45-14:45');
         $this->assertEquals(new \DateTime('2017-05-16 14:45'), $timeRange->getNextClosingDate(new \DateTime('2017-05-16 11:45:00')));
 
-        $timeRange = new TimeRange('Tu 10:00-19:00');
+        $timeRange = TimeRange::create('Tu 10:00-19:00');
         $this->assertEquals(new \DateTime('2019-08-06 19:00'), $timeRange->getNextClosingDate(new \DateTime('2019-08-04 12:30')));
     }
 }

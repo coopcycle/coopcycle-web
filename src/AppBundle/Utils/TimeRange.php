@@ -12,6 +12,8 @@ class TimeRange
     private $timeRanges = [];
     private $is247 = false;
 
+    private static $objectCache = [];
+
     private $checkWeekdayCache = [];
     private $checkTimeCache = [];
 
@@ -27,7 +29,7 @@ class TimeRange
         7 => 'Su'
     ];
 
-    public function __construct(string $range = null)
+    private function __construct(string $range = null)
     {
         $range = trim($range);
 
@@ -80,6 +82,15 @@ class TimeRange
 
         $this->timeRanges = $hours;
         $this->weekdays = $weekdays;
+    }
+
+    public static function create(string $range)
+    {
+        if (!isset(self::$objectCache[$range])) {
+            self::$objectCache[$range] = new self($range);
+        }
+
+        return self::$objectCache[$range];
     }
 
     private function _checkWeekday(\DateTime $date)

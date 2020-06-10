@@ -51,7 +51,7 @@ trait OpenCloseTrait
         }
 
         foreach ($openingHours as $openingHour) {
-            $this->timeRanges[] = new TimeRange($openingHour);
+            $this->timeRanges[] = TimeRange::create($openingHour);
         }
     }
 
