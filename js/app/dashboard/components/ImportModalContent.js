@@ -20,7 +20,7 @@ const mimeTypes = [
   'text/plain'
 ]
 
-const ImportModalContent = ({ addImport, closeImportModal, date, t, url }) => {
+const ImportModalContent = ({ addImport, closeImportModal, date, t, url, exampleUrl }) => {
 
   const ref = React.createRef()
 
@@ -81,7 +81,8 @@ const ImportModalContent = ({ addImport, closeImportModal, date, t, url }) => {
   return (
     <div>
       <div className="dropzone dropzone--blue mb-3" ref={ ref }></div>
-      <span className="text-muted">{ t('ADMIN_DASHBOARD_IMPORT_FILE_FORMATS') }</span>
+      <small className="text-muted d-block text-center mb-2">{ t('ADMIN_DASHBOARD_IMPORT_FILE_FORMATS') }</small>
+      <a className="d-block text-center" href={ exampleUrl }>{ t('DOWNLOAD_EXAMPLE_SPREADSHEET') }</a>
     </div>
   )
 }
@@ -91,6 +92,7 @@ function mapStateToProps(state) {
   return {
     date: state.date,
     url: state.uploaderEndpoint,
+    exampleUrl: state.exampleSpreadsheetUrl,
   }
 }
 

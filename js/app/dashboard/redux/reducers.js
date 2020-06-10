@@ -124,6 +124,7 @@ const initialState = {
   imports: {},
   importModalIsOpen: false,
   uploaderEndpoint: '',
+  exampleSpreadsheetUrl: '#',
 }
 
 const rootReducer = (state = initialState, action) => {

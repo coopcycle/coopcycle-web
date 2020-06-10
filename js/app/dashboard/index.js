@@ -39,6 +39,7 @@ function start() {
     couriersList: JSON.parse(dashboardEl.dataset.couriersList),
     nav: dashboardEl.dataset.nav,
     uploaderEndpoint: dashboardEl.dataset.uploaderEndpoint,
+    exampleSpreadsheetUrl: dashboardEl.dataset.exampleSpreadsheetUrl,
   }
 
   const key = date.format('YYYY-MM-DD')
