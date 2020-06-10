@@ -32,7 +32,6 @@ class Geocoder
         $this->settingsManager = $settingsManager;
         $this->country = $country;
         $this->locale = $locale;
-        $this->addressFormatter = new AddressFormatter();
     }
 
     private function getGeocoder()
@@ -112,6 +111,15 @@ class Geocoder
         }
     }
 
+    private function getAddressFormatter()
+    {
+        if (null === $this->addressFormatter) {
+            $this->addressFormatter = new AddressFormatter();
+        }
+
+        return $this->addressFormatter;
+    }
+
     private function formatAddress(Location $location)
     {
         $data = [
@@ -125,7 +133,7 @@ class Geocoder
             $data['country_code'] = $location->getCountry()->getCode();
         }
 
-        $streetAddress = $this->addressFormatter->formatArray($data);
+        $streetAddress = $this->getAddressFormatter()->formatArray($data);
 
         // Convert address to single line
         $lines = preg_split("/\r\n|\n|\r/", $streetAddress);
