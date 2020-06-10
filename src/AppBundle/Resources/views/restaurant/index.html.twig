@@ -49,7 +49,7 @@
   </div>
 
   {% if not restaurant.isOpen %}
-    {% if restaurant.hasClosingRuleForNow %}
+    {% if restaurant.hasClosingRuleFor %}
     <div class="alert alert-danger text-center">
       {% trans with { '%date%': restaurant.getNextOpeningDate|localizeddate('medium', 'none') } %}
       restaurant.temporaryClosedWarning

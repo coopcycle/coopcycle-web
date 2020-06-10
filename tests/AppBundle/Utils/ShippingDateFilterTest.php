@@ -91,7 +91,7 @@ class ShippingDateFilterTest extends TestCase
         $expected)
     {
         $this->restaurant
-            ->hasClosingRuleForNow($preparation)
+            ->hasClosingRuleFor($preparation)
             ->willReturn($hasClosingRuleForNow);
 
         $this->restaurant

@@ -32,10 +32,11 @@ interface OpenCloseInterface
     public function getClosingRules();
 
     /**
+     * @param \DateTime|null $date
      * @param \DateTime|null $now
      * @return boolean
      */
-    public function hasClosingRuleForNow(\DateTime $now = null): bool;
+    public function hasClosingRuleFor(\DateTime $date = null, \DateTime $now = null): bool;
 
     /**
      * @param int $shippingOptionsDays

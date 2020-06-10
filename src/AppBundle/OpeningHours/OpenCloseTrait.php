@@ -4,33 +4,38 @@ namespace AppBundle\OpeningHours;
 
 use AppBundle\Utils\TimeRange;
 use Carbon\Carbon;
+use Doctrine\Common\Collections\Collection;
 
 trait OpenCloseTrait
 {
     private $nextOpeningDateCache = [];
     private $timeRanges = [];
+    private $hasFutureClosingRulesCache = [];
 
-    /**
-     * @param \DateTime|null $now
-     * @return boolean
-     */
-    public function hasClosingRuleForNow(\DateTime $now = null): bool
+    public function hasClosingRuleFor(\DateTime $date = null, \DateTime $now = null): bool
     {
+        $date = $date ?? Carbon::now();
+        $now = $now ?? Carbon::now();
+
         $closingRules = $this->getClosingRules();
 
         if (count($closingRules) === 0) {
             return false;
         }
 
-        if (!$now) {
-            $now = Carbon::now();
+        // Optimisation
+        // When we look for a date in the future,
+        // It's useless to loop over "past" closing rules
+        if ($date >= $now && !$this->hasFutureClosingRules($closingRules, $now)) {
+
+            return false;
         }
 
         // WARNING
         // This method may be called a *lot* of times (see getAvailabilities)
         // Thus, we avoid using Criteria, because it would trigger a query every time
         foreach ($closingRules as $closingRule) {
-            if ($now >= $closingRule->getStartDate() && $now <= $closingRule->getEndDate()) {
+            if ($date >= $closingRule->getStartDate() && $date <= $closingRule->getEndDate()) {
                 return true;
             }
         }
@@ -100,7 +105,7 @@ trait OpenCloseTrait
             $now = Carbon::now();
         }
 
-        if ($this->hasClosingRuleForNow($now)) {
+        if ($this->hasClosingRuleFor($now)) {
 
             return false;
         }
@@ -125,7 +130,7 @@ trait OpenCloseTrait
 
             $nextOpeningDate = null;
 
-            if ($this->hasClosingRuleForNow($now)) {
+            if ($this->hasClosingRuleFor($now)) {
                 foreach ($this->getClosingRules() as $closingRule) {
                     if ($now >= $closingRule->getStartDate() && $now <= $closingRule->getEndDate()) {
 
@@ -170,5 +175,26 @@ trait OpenCloseTrait
         sort($nextClosingDates);
 
         return array_shift($nextClosingDates);
+    }
+
+    private function hasFutureClosingRules(Collection $closingRules, \DateTime $now)
+    {
+        $cacheKey = sprintf('%s.%s', spl_object_hash($closingRules), $now->format('YmdHi'));
+
+        if (!isset($this->hasFutureClosingRulesCache[$cacheKey])) {
+
+            $futureClosingRules = $closingRules->filter(function ($closingRule) use ($now) {
+
+                if ($closingRule->getEndDate() <= $now) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            $this->hasFutureClosingRulesCache[$cacheKey] = count($futureClosingRules) > 0;
+        }
+
+        return $this->hasFutureClosingRulesCache[$cacheKey];
     }
 }

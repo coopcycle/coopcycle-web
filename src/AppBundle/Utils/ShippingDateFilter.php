@@ -57,7 +57,7 @@ class ShippingDateFilter
 
         $openingHours = $restaurant->getOpeningHours($fulfillmentMethod);
 
-        if ($restaurant->hasClosingRuleForNow($preparation)) {
+        if ($restaurant->hasClosingRuleFor($preparation)) {
 
             $this->logger->info(sprintf('ShippingDateFilter::accept() - there is a closing rule for "%s"',
                 $preparation->format(\DateTime::ATOM))
