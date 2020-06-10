@@ -72,6 +72,7 @@ framework:
     assets: ~
     cache:
         prefix_seed: "%database_name%"
+        app: cache.adapter.redis
         default_redis_provider: "%env(COOPCYCLE_REDIS_DSN)%"
         pools:
             enabled_filter_configurator.cache:
