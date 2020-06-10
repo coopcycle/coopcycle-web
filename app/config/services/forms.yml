@@ -4,7 +4,7 @@ services:
     autowire: true
     autoconfigure: true
 
-  AppBundle\Utils\TaskSpreadsheetParser:
+  AppBundle\Spreadsheet\TaskSpreadsheetParser:
     arguments:
       $countryCode: '%country_iso%'
 

@@ -7,7 +7,7 @@ use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Message\ImportTasks;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\SocketIoManager;
-use AppBundle\Utils\TaskSpreadsheetParser;
+use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;

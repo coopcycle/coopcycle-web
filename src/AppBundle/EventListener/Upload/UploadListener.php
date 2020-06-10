@@ -9,7 +9,7 @@ use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Message\ImportTasks;
 use AppBundle\Spreadsheet\ProductSpreadsheetParser;
 use AppBundle\Service\SettingsManager;
-use AppBundle\Utils\TaskSpreadsheetParser;
+use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Doctrine\Persistence\ManagerRegistry;
 use Hashids\Hashids;
 use Oneup\UploaderBundle\Event\PostPersistEvent;

@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\AppBundle\Utils;
+namespace Tests\AppBundle\Spreadsheet;
 
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Tag;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
-use AppBundle\Utils\TaskSpreadsheetParser;
+use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Cocur\Slugify\Slugify;
 use FOS\UserBundle\Model\UserManagerInterface;
 use libphonenumber\PhoneNumber;
