@@ -29,7 +29,7 @@ class TimeRange
         7 => 'Su'
     ];
 
-    private function __construct(string $range = null)
+    public function __construct(string $range = null)
     {
         $range = trim($range);
 
@@ -87,7 +87,7 @@ class TimeRange
     public static function create(string $range)
     {
         if (!isset(self::$objectCache[$range])) {
-            self::$objectCache[$range] = new self($range);
+            self::$objectCache[$range] = new TimeRange($range);
         }
 
         return self::$objectCache[$range];
