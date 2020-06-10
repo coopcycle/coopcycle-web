@@ -12,6 +12,9 @@ class TimeRange
     private $timeRanges = [];
     private $is247 = false;
 
+    private $checkWeekdayCache = [];
+    private $checkTimeCache = [];
+
     const TIME_RANGE_247 = 'Mo-Su 00:00-23:59';
 
     const DAYS = [
@@ -79,7 +82,7 @@ class TimeRange
         $this->weekdays = $weekdays;
     }
 
-    private function checkWeekday(\DateTime $date)
+    private function _checkWeekday(\DateTime $date)
     {
         foreach ($this->weekdays as $weekday) {
             if (array_search($weekday, self::DAYS) === (int) $date->format('N')) {
@@ -90,7 +93,7 @@ class TimeRange
         return false;
     }
 
-    private function checkTime(\DateTime $date)
+    private function _checkTime(\DateTime $date)
     {
         foreach ($this->timeRanges as $timeRange) {
             list($open, $close) = explode('-', $timeRange);
@@ -193,5 +196,27 @@ class TimeRange
         }
 
         return $date;
+    }
+
+    private function checkWeekday(\DateTime $date)
+    {
+        $cacheKey = $date->format('Ymd');
+
+        if (!isset($this->checkWeekdayCache[$cacheKey])) {
+            $this->checkWeekdayCache[$cacheKey] = $this->_checkWeekday($date);
+        }
+
+        return $this->checkWeekdayCache[$cacheKey];
+    }
+
+    private function checkTime(\DateTime $date)
+    {
+        $cacheKey = $date->format('YmdHi');
+
+        if (!isset($this->checkTimeCache[$cacheKey])) {
+            $this->checkTimeCache[$cacheKey] = $this->_checkTime($date);
+        }
+
+        return $this->checkTimeCache[$cacheKey];
     }
 }
