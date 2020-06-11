@@ -17,6 +17,27 @@ const Adjustment = ({ adjustment, tooltip }) => (
   </div>
 )
 
+const groupTaxAdjustments = (adjustments, items) => {
+
+  const itemTaxAdjustments = _.reduce(items, (acc, item) => {
+    if (Object.prototype.hasOwnProperty.call(item.adjustments, 'tax')) {
+      return acc.concat(item.adjustments.tax)
+    }
+
+    return acc
+  }, [])
+
+  const merged  = adjustments.concat(itemTaxAdjustments)
+  const grouped = _.groupBy(merged, 'label')
+
+  return _.map(grouped, (items, key) => {
+    return {
+      label: key,
+      amount: _.sumBy(items, 'amount')
+    }
+  })
+}
+
 class CartTotal extends React.Component {
 
   componentDidMount() {
@@ -56,23 +77,6 @@ class CartTotal extends React.Component {
       }
     }
 
-    const itemTaxAdjustments = _.reduce(items, (acc, item) => {
-      if (Object.prototype.hasOwnProperty.call(item.adjustments, 'tax')) {
-        return acc.concat(item.adjustments.tax)
-      }
-
-      return acc
-    }, [])
-    const itemTaxAdjustmentsGrouped = _.groupBy(itemTaxAdjustments, 'label')
-    const itemTaxAdjustmentsMerged = _.map(itemTaxAdjustmentsGrouped, (items, key) => {
-      return {
-        label: key,
-        amount: _.sumBy(items, 'amount')
-      }
-    })
-
-    taxAdjustments = taxAdjustments.concat(itemTaxAdjustmentsMerged)
-
     if (adjustments.length > 0 || deliveryAdjustments.length > 0) {
 
       return (
@@ -83,7 +87,7 @@ class CartTotal extends React.Component {
               adjustment={ _.first(deliveryAdjustments) }
               { ...deliveryAdjustmentProps } />
           )}
-          { showTaxes && taxAdjustments.map(adjustment =>
+          { showTaxes && groupTaxAdjustments(taxAdjustments, items).map(adjustment =>
             <Adjustment
               key={ adjustment.label }
               adjustment={ adjustment } />
