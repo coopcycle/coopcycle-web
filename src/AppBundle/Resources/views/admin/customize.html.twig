@@ -8,9 +8,27 @@
 
 {% block content %}
 {{ form_start(form) }}
-  {{ form_widget(form) }}
+  {{ form_row(form.motto) }}
+  <div class="form-group">
+    {{ form_label(form.aboutUs) }}
+    <div class="d-flex" style="max-height: 400px;">
+      <div class="w-50">{{ form_widget(form.aboutUs) }}</div>
+      <div class="w-50 border p-4" style="overflow: scroll;">
+        <div id="preview" class="about-us"></div>
+      </div>
+    </div>
+    {{ form_help(form.aboutUs) }}
+  </div>
   <button type="submit" class="btn btn-block btn-lg btn-primary">
     {{ 'basics.save'|trans }}
   </button>
 {{ form_end(form) }}
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('customize-form') }}
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('customize-form') }}
 {% endblock %}
