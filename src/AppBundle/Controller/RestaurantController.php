@@ -405,6 +405,10 @@ class RestaurantController extends AbstractController
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
 
+        if (!$restaurant) {
+            throw new NotFoundHttpException();
+        }
+
         $data = [];
 
         $deliveryCacheKey = sprintf('restaurant.%d.delivery.timing', $restaurant->getId());
