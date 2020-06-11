@@ -1,3 +1,5 @@
+{% set show_taxes = (country_iso == 'ca') or (with_taxes is not defined) or (with_taxes is defined and with_taxes == true) %}
+
 <table class="table">
   <thead>
     <th>{% trans with { '%count%': order.countItems } %}order.items.products_with_count{% endtrans %}</th>
@@ -45,7 +47,7 @@
     {% endif %}
   {% endfor %}
   <tfoot>
-    {% if with_taxes is not defined or (with_taxes is defined and with_taxes == true) %}
+    {% if show_taxes %}
       {% for tax_rate in order|split_tax_rates %}
       <tr>
         <th>{% trans with { '%name%': tax_rate.name } %}order.total_tax_by_rate{% endtrans %}</th>
