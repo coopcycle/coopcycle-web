@@ -49,17 +49,24 @@ final class OrderTaxesProcessor implements OrderProcessorInterface
 
         foreach ($order->getItems() as $orderItem) {
 
-            $taxRate = $this->taxRateResolver->resolve($orderItem->getVariant());
+            $taxCategory = $orderItem->getVariant()->getTaxCategory();
 
-            $taxAdjustment = $this->adjustmentFactory->createWithData(
-                AdjustmentInterface::TAX_ADJUSTMENT,
-                $taxRate->getName(),
-                (int) $this->calculator->calculate($orderItem->getTotal(), $taxRate),
-                $neutral = $taxRate->isIncludedInPrice()
-            );
-            $taxAdjustment->setOriginCode($taxRate->getCode());
+            $adjustments = [];
+            if ($taxCategory->getCode() === 'GST_PST') {
+                $adjustments = array_map(
+                    fn($rate) => $this->createAdjustmentWithRate($orderItem, $rate),
+                    $taxCategory->getRates()->toArray()
+                );
+            } else {
+                $adjustments[] = $this->createAdjustmentWithRate(
+                    $orderItem,
+                    $this->taxRateResolver->resolve($orderItem->getVariant())
+                );
+            }
 
-            $orderItem->addAdjustment($taxAdjustment);
+            foreach ($adjustments as $adjustment) {
+                $orderItem->addAdjustment($adjustment);
+            }
         }
 
         $taxCategory = $this->taxCategoryRepository->findOneBy([
@@ -79,6 +86,19 @@ final class OrderTaxesProcessor implements OrderProcessorInterface
 
             $order->addAdjustment($taxAdjustment);
         }
+    }
+
+    private function createAdjustmentWithRate($orderItem, $taxRate)
+    {
+        $taxAdjustment = $this->adjustmentFactory->createWithData(
+            AdjustmentInterface::TAX_ADJUSTMENT,
+            $taxRate->getName(),
+            (int) $this->calculator->calculate($orderItem->getTotal(), $taxRate),
+            $neutral = $taxRate->isIncludedInPrice()
+        );
+        $taxAdjustment->setOriginCode($taxRate->getCode());
+
+        return $taxAdjustment;
     }
 
     /**
