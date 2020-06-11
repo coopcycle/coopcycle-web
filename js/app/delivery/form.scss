@@ -1,0 +1,79 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+@import "../../../assets/css/vars.scss";
+
+@import "~font-awesome/scss/_variables.scss";
+@import "~font-awesome/scss/_mixins.scss";
+@import "~font-awesome/scss/_animated.scss";
+
+.delivery-price {
+
+  position: relative;
+  border: 4px solid #0984e3;
+  padding-right: 40px;
+  // padding: 10px 40px 10px 20px;
+  // border-radius: 16px;
+  font-size: $font-size-large;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  & > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+  }
+
+  &-label {
+    background-color: #0984e3;
+    padding: 20px;
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  &-value {
+    font-family: "Roboto Mono", monospace;
+    padding-right: 20px;
+  }
+
+  &--error {
+    border: 4px solid $alert-danger-border;
+    color: $alert-danger-text;
+    .delivery-price-label {
+        background-color: $alert-danger-bg;
+    }
+  }
+
+  &--loading {
+    &:after {
+      @include fa-icon();
+      content: $fa-var-spinner;
+      @extend .fa-pulse;
+      display: block;
+      position: absolute;
+      top: calc(50% - 10px);
+      right: $padding-base-horizontal;
+    }
+  }
+}
+
+.delivery__form__packages {
+  &__list-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    &-quantity {
+      flex: 1;
+    }
+    &-multiply {
+      padding: 0 15px;
+    }
+    &-package {
+      flex: 3;
+    }
+    &-delete {
+      margin-left: 15px;
+    }
+  }
+}

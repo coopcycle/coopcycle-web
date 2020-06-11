@@ -56,7 +56,6 @@
       {% if form.vehicle is defined %}
         {{ form_row(form.vehicle) }}
       {% endif %}
-      {{ form_row(form.weight) }}
       {{ form_row(form.pickup) }}
       {{ form_row(form.dropoff) }}
     </div>
@@ -70,12 +69,15 @@
       {% endif %}
 
       {% if delivery.store is not empty and delivery.store.createOrders %}
-        <div id="delivery-price" class="delivery-price-preview">
+        <div id="delivery-price" class="delivery-price-preview mb-4">
 
-          <div class="delivery-price">
-            <span>{% trans %}form.delivery.price.label{% endtrans %}</span>
-            <span id="delivery_price">{{ 0|price_format }}</span>
-            <span id="delivery_price_error" class="delivery-price-error"></span>
+          <div class="delivery-price mb-2">
+            <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
+            <span class="delivery-price-value" id="delivery_price">{{ 0|price_format }}</span>
+          </div>
+
+          <div class="text-center">
+            <small id="delivery_price_error" class="delivery-price-error">Lorem ipsum dolor</small>
           </div>
 
           {% if debug_pricing is defined and debug_pricing %}
@@ -102,6 +104,8 @@
       <div class="form-horizontal">
 
         {{ form_errors(form) }}
+
+        {{ form_row(form.weight) }}
 
         {% if form.packages is defined %}
           <div class="form-group">

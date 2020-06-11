@@ -5,6 +5,8 @@ require('gasparesganga-jquery-loading-overlay')
 import DeliveryForm from '../forms/delivery'
 import PricePreview from './PricePreview'
 
+import './form.scss'
+
 let map
 let form
 let pricePreview
