@@ -40,5 +40,12 @@
 
 {% block scripts_common %}
   {{ encore_entry_script_tags('widgets-admin') }}
+  <script>
+    var HW_config = {
+      selector: ".headway",
+      account:  "7LO8Xx"
+    };
+  </script>
+  <script async src="https://cdn.headwayapp.co/widget.js"></script>
   {% block scripts %}{% endblock %}
 {% endblock %}
