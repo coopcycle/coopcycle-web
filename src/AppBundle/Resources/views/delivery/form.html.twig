@@ -69,11 +69,22 @@
       {% endif %}
 
       {% if delivery.store is not empty and delivery.store.createOrders %}
-        <div id="delivery-price" class="delivery-price-preview mb-4">
+        <div id="delivery-price" class="delivery-price-preview mb-4"
+          data-tax-rate-amount="{{ tax_rate.amount|e('html_attr') }}"
+          data-tax-rate-is-included-in-price="{{ tax_rate.isIncludedInPrice()|json_encode|e('html_attr') }}">
 
           <div class="delivery-price mb-2">
             <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
-            <span class="delivery-price-value" id="delivery_price">{{ 0|price_format }}</span>
+            <span class="delivery-price-value" id="delivery_price">
+              <span {% if not tax_rate.isIncludedInPrice() %}class="text-muted"{% endif %}>
+                <span data-tax="included">{{ 0|price_format }}</span>
+                <span class="ml-2">{{ 'basics.tax_incl'|trans }}</span>
+              </span>
+              <span {% if tax_rate.isIncludedInPrice() %}class="text-muted"{% endif %}>
+                <span data-tax="excluded">{{ 0|price_format }}</span>
+                <span class="ml-2">{{ 'basics.tax_excl'|trans }}</span>
+              </span>
+            </span>
           </div>
 
           <div class="text-center text-danger">

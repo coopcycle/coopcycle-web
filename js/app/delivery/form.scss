@@ -10,7 +10,6 @@
   position: relative;
   border: 4px solid #0984e3;
   padding-right: 40px;
-  font-size: $font-size-large;
 
   display: flex;
   justify-content: space-between;
@@ -24,15 +23,19 @@
   }
 
   &-label {
+    font-size: $font-size-large;
+    font-weight: 700;
     background-color: #0984e3;
     padding: 20px;
     color: #ffffff;
-    font-weight: 700;
   }
 
   &-value {
     font-family: "Roboto Mono", monospace;
     padding-right: 20px;
+    > span {
+      display: block;
+    }
   }
 
   &--error {

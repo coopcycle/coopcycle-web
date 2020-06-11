@@ -979,3 +979,5 @@ promotion_rule.is_customer: Customer is %username%
 order.refund.total_amount: This order was refunded by an amount of %amount%
 spreadsheet.download_example: Download an example spreadsheet
 nav.about_us: About us
+basics.tax_incl: Tax incl.
+basics.tax_excl: Tax excl.
