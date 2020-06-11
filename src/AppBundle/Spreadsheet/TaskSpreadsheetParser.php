@@ -82,8 +82,10 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
     {
         $tasks = [];
 
-        $defaultDate =
-            isset($options['date']) ? new \DateTime($options['date']) : new \DateTime('now');
+        $defaultDate = new \DateTime('now');
+        if (isset($options['date'])) {
+            $defaultDate = $options['date'] instanceof \DateTime ? $options['date'] : new \DateTime($options['date']);
+        }
 
         foreach ($data as $record) {
 
