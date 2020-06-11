@@ -231,6 +231,15 @@ trait StoreTrait
             }
         }
 
+        $taxCategory = $this->get('sylius.repository.tax_category')->findOneBy([
+            'code' => 'SERVICE'
+        ]);
+        $variant = $this->get('sylius.factory.product_variant')->createNew();
+        $variant->setTaxCategory($taxCategory);
+        $rate = $this->get('sylius.tax_rate_resolver')->resolve($variant, [
+            'country' => strtolower($this->getParameter('region_iso')),
+        ]);
+
         return $this->render('@App/store/delivery_form.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
@@ -238,6 +247,7 @@ trait StoreTrait
             'debug_pricing' => $request->query->getBoolean('debug', false),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
+            'tax_rate' => $rate,
         ]);
     }
 
