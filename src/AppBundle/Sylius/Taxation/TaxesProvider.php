@@ -10,6 +10,8 @@ class TaxesProvider
     public const SERVICE = 'service';
     public const SERVICE_TAX_EXEMPT = 'service_tax_exempt';
 
+    public const GST_PST = 'GST_PST';
+
     private static $serviceRates = [
         'ca-bc' => 0.05000, // We always apply GST on delivery fee
         'be'    => 0.21000,
