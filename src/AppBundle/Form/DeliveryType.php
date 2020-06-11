@@ -55,7 +55,6 @@ class DeliveryType extends AbstractType
                 'required' => false,
                 'html5' => true,
                 'label' => 'form.delivery.weight.label',
-                'help' => 'form.delivery.weight.help'
             ]);
 
         if (true === $options['with_vehicle']) {
@@ -208,6 +207,13 @@ class DeliveryType extends AbstractType
             }
 
             $delivery = $event->getForm()->getData();
+
+            if ($form->has('weight')) {
+                $weightK = $form->get('weight')->getData();
+                $weight = $weightK * 1000;
+                $delivery->setWeight($weight);
+            }
+
 
             $coordinates = [];
             foreach ($delivery->getTasks() as $task) {

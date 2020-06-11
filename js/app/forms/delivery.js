@@ -134,7 +134,7 @@ function parseWeight(value) {
     return 0
   }
 
-  return intValue
+  return intValue * 1000
 }
 
 function setPackages(name) {

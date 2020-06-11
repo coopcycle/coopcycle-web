@@ -139,6 +139,13 @@ col-sm-9
   {{ block('hidden_widget') }}
 {% endblock %}
 
+{% block _delivery_weight_widget %}
+  <div class="input-group">
+    {{ block('form_widget_simple') }}
+    <span class="input-group-addon">{{ 'basics.kilos'|trans }}</span>
+  </div>
+{% endblock %}
+
 {% block _delivery_dropoff_doneBefore_widget %}
   {{ block('hidden_widget') }}
   <div id="{{ form.vars.id ~ '_widget' }}"></div>
