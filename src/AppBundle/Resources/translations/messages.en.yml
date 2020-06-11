@@ -676,6 +676,8 @@ form.new_order.variant_name.help: The name that will appear in the order summary
   invoice
 form.new_order.variant_price.label: Price
 form.customize.about_us.label: About us page content
+form.customize.motto.label: Motto
+form.customize.motto.help: This will be displayed on the homepage
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option_value: Each option has a different price

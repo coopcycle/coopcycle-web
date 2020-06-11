@@ -6,7 +6,10 @@
   data-addresses="{{ addresses_normalized|json_encode()|e('html') }}"
   data-tracking-category="Homepage">
   <div class="homepage-search-container">
-    <h1 class="banner-title text-center">{% trans %}index.banner{% endtrans %}</h1>`
+    {% set motto = coopcycle_setting('motto') %}
+    <h1 class="banner-title text-center">
+      {{ motto is not empty ? motto : ('index.banner'|trans) }}
+    </h1>
     <div class="homepage-searchbox-container">
       <div class="homepage-searchbox" data-element>
         <!-- This will be replaced by React -->
