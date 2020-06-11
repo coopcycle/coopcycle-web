@@ -5,7 +5,8 @@ tax_rate.zero: Zero rate
 
 tax_category.food: Food
 tax_category.drink: Drink
-tax_category.alcoholic_drink: Alcoholic drink
+tax_category.jewelry: Jewelry
+tax_category.drink_alcohol: Alcoholic drink
 tax_category.book: Book
 tax_category.clothing: Clothing
 tax_category.standard: Standard
