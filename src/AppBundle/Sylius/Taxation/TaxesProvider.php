@@ -22,6 +22,19 @@ class TaxesProvider
         'pl'    => 0.23000,
     ];
 
+    private static $britshColumbia = [
+        'drink_alcohol' => [
+            'gst' => 0.05,
+            'pst' => 0.1
+        ],
+        'food' => [
+            'pst' => 0.07
+        ],
+        'jewelry' => [
+            'pst' => 0.07
+        ],
+    ];
+
     public function __construct(
         TaxCategoryRepositoryInterface $taxCategoryRepository,
         FactoryInterface $taxCategoryFactory,
@@ -71,6 +84,29 @@ class TaxesProvider
 
         $categories[] = $service;
         $categories[] = $serviceTaxExempt;
+
+        foreach (self::$britshColumbia as $categoryCode => $rates) {
+
+            $c = $this->taxCategoryFactory->createNew();
+            $c->setCode(strtoupper($categoryCode));
+            $c->setName(sprintf('tax_category.%s', $categoryCode));
+
+            foreach ($rates as $code => $amount) {
+
+                $rate = $this->taxRateFactory->createNew();
+
+                $rate->setCountry('ca-bc');
+                $rate->setCode(strtoupper(sprintf('%s_%s_%s', 'CA_BC', $categoryCode, $code)));
+                $rate->setName(sprintf('tax_rate.%s', $code));
+                $rate->setCalculator('default');
+                $rate->setIncludedInPrice(false);
+                $rate->setAmount($amount);
+
+                $c->addRate($rate);
+            }
+
+            $categories[] = $c;
+        }
 
         return $categories;
     }
