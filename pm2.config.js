@@ -53,6 +53,7 @@ apps = _.map(apps, function(app) {
   return _.extend(app, {
     env: {
       NODE_ENV: "development",
+      NODE_PATH: process.env.NODE_PATH,
       PORT: app.port,
       COOPCYCLE_DB_HOST:     process.env.COOPCYCLE_DB_HOST,
       COOPCYCLE_DB_NAME:     process.env.COOPCYCLE_DB_NAME,
