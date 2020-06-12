@@ -184,7 +184,7 @@
             "package-list": [
                 "aws/aws-sdk-php",
                 "giggsey/libphonenumber-for-php",
-                "predicthq/address-formatter",
+                "predicthq/*",
                 "sylius/*",
                 "symfony/symfony"
             ]
