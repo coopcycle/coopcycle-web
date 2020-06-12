@@ -946,6 +946,7 @@ basics.view_example: View example
 notifications.restaurant.new_order: New order to accept
 profile.loopeat.connect: Connect my LoopEat account
 profile.loopeat.connected: LoopEat account connected
+profile.loopeat.disconnect: Disconnect LoopEat
 basics.free: free
 task.receipt.greeting: Dear customer,
 task.receipt.message: Hereby we confirm that we have delivered your parcel at <strong>%address%</strong>

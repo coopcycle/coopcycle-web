@@ -192,6 +192,10 @@ class ProfileController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+            if ($editForm->getClickedButton() && 'loopeatDisconnect' === $editForm->getClickedButton()->getName()) {
+                $user->clearLoopEatCredentials();
+            }
+
             $userManager->updateUser($user);
 
             return $this->redirectToRoute('fos_user_profile_show');
