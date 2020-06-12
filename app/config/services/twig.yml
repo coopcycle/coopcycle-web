@@ -31,6 +31,10 @@ services:
     tags:
       - { name: twig.extension }
 
+  Twig\Extra\Intl\IntlExtension:
+    tags:
+      - { name: twig.extension }
+
   twig.cache_extension.provider:
     class: Twig\CacheExtension\CacheProvider\PsrCacheAdapter
     arguments:

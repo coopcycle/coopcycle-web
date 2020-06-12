@@ -105,7 +105,8 @@
         "sylius/customer-bundle": "^1.6",
         "letudiant/composer-shared-package-plugin": "^4.0",
         "mailjet/mailjet-apiv3-php": "^1.4",
-        "edamov/pushok": "^0.11.2"
+        "edamov/pushok": "^0.11.2",
+        "twig/intl-extra": "^3.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
