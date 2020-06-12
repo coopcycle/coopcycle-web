@@ -1,5 +1,5 @@
 {% set show_taxes = (country_iso == 'ca') or (with_taxes is not defined) or (with_taxes is defined and with_taxes == true) %}
-  {% set with_items = with_items is defined ? with_items : true %}
+{% set with_items = with_items is defined ? with_items : true %}
 
 <table class="table table-order-items">
   <thead>
@@ -75,16 +75,39 @@
       </td>
     </tr>
     {% endif %}
+
     {% if tip_adjustments|length > 0 %}
       {% for adjustment in tip_adjustments %}
-      <tr>
+      <tr class="text-info">
         <th>{{ adjustment.label }}</th>
         <td class="text-right text-nowrap">
-          {{ adjustment.amount|price_format }}
+          {% if with_tip_form is defined %}
+          <a href="#" id="tip-incr">
+            <i class="fa fa-plus-square fa-lg"></i>
+          </a>
+          {% endif %}
+          <span class="ml-2" {% if with_tip_form is defined %}contenteditable="true" id="tip-input"{% endif %}>
+            {{ adjustment.amount|price_format }}
+          </span>
         </td>
       </tr>
       {% endfor %}
+    {% else %}
+      {% if with_tip_form is defined %}
+      <tr class="text-info">
+        <th>{{ 'order.adjustment_type.tip'|trans }}</th>
+        <td class="text-right text-nowrap">
+          <a href="#" id="tip-incr">
+            <i class="fa fa-plus-square fa-lg"></i>
+          </a>
+          <span class="ml-2" contenteditable="true" id="tip-input">
+            {{ 0|price_format }}
+          </span>
+        </td>
+      </tr>
+      {% endif %}
     {% endif %}
+
     {% if promotion_adjustments|length > 0 %}
       {% for adjustment in promotion_adjustments %}
       <tr>

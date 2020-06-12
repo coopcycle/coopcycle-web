@@ -52,6 +52,8 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             return;
         }
 
+        $originalTipAdjustments = $order->getAdjustments(AdjustmentInterface::TIP_ADJUSTMENT);
+
         $order->removeAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
         $order->removeAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
         $order->removeAdjustments(AdjustmentInterface::TIP_ADJUSTMENT);
@@ -121,19 +123,23 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         }
 
         if ($order->getTipAmount() > 0) {
-
             $tipAdjustment = $this->adjustmentFactory->createWithData(
                 AdjustmentInterface::TIP_ADJUSTMENT,
                 $this->translator->trans('order.adjustment_type.tip'),
                 $order->getTipAmount(),
                 $neutral = false
             );
-
             $order->addAdjustment($tipAdjustment);
-
-            if (!$order->isTakeAway()) {
-                $businessAmount += $order->getTipAmount();
+        } else {
+            if (count($originalTipAdjustments) > 0) {
+                foreach ($originalTipAdjustments as $tipAdjustment) {
+                    $order->addAdjustment($tipAdjustment);
+                }
             }
+        }
+
+        if (!$order->isTakeAway()) {
+            $businessAmount += $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT);
         }
 
         $feeAdjustment = $this->adjustmentFactory->createWithData(

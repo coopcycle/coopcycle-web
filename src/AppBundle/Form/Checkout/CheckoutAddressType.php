@@ -11,6 +11,7 @@ use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
 use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -44,6 +45,7 @@ class CheckoutAddressType extends AbstractType
         UrlGeneratorInterface $urlGenerator,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
+        OrderProcessorInterface $orderProcessor,
         string $country)
     {
         $this->tokenStorage = $tokenStorage;
@@ -54,6 +56,7 @@ class CheckoutAddressType extends AbstractType
         $this->urlGenerator = $urlGenerator;
         $this->jwtEncoder = $jwtEncoder;
         $this->iriConverter = $iriConverter;
+        $this->orderProcessor = $orderProcessor;
         $this->country = strtoupper($country);
     }
 
@@ -220,6 +223,8 @@ class CheckoutAddressType extends AbstractType
             if ($form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName()) {
                 $tipAmount = $form->get('tipAmount')->getData();
                 $order->setTipAmount((int) ($tipAmount * 100));
+
+                $this->orderProcessor->process($order);
             }
         });
     }

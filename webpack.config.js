@@ -8,6 +8,7 @@ Encore
 
   .addEntry('common', './js/app/common.js')
   .addEntry('customize-form', './js/app/customize/form.js')
+  .addEntry('checkout-summary', './js/app/checkout/summary.js')
   .addEntry('dashboard', './js/app/dashboard/index.js')
   .addEntry('delivery-form', './js/app/delivery/form.js')
   .addEntry('delivery-list', './js/app/delivery/list.js')

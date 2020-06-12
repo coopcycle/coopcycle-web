@@ -94,6 +94,12 @@ class OrderController extends AbstractController
 
             $order = $form->getData();
 
+            if ($form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName()) {
+                $this->objectManager->flush();
+
+                return $this->redirectToRoute('order');
+            }
+
             $orderProcessor->process($order);
 
             $promotionCoupon = $order->getPromotionCoupon();

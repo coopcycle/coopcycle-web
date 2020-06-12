@@ -17,7 +17,11 @@
 
           <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
           <div id="items">
-            {% include '@App/_partials/order/items.html.twig' with { with_taxes: false, with_items: false } %}
+            {% include '@App/_partials/order/items.html.twig' with {
+              with_taxes: false,
+              with_items: false,
+              with_tip_form: form.tipAmount
+            } %}
             <div class="row">
               <div class="col-xs-12 col-sm-3 col-sm-offset-9">
                 {{ form_row(form.promotionCoupon) }}
@@ -25,7 +29,7 @@
                 {# {{ form_row(form.addPromotion) }} #}
               </div>
             </div>
-            <div class="row">
+            <div class="row hidden">
               <div class="col-xs-12 col-sm-3 col-sm-offset-9">
                 {{ form_row(form.tipAmount) }}
                 {# We use an input group with the button #}
@@ -121,6 +125,7 @@
 
 {% block scripts %}
 {% if not order.empty %}
+{{ encore_entry_script_tags('checkout-summary') }}
 <script>
 (function () {
 
