@@ -213,6 +213,7 @@
         "ORDER_TIMELINE_AFTER_ACCEPTED_DESCRIPTION": "Budeme vás informovat, až kurýr vyzvedne vaši objednávku",
         "ORDER_TIMELINE_AFTER_ACCEPTED_TITLE": "Restaurace nyní potřebuje vaši objednávku připravit",
         "ORDER_TIMELINE_CANCELLED_TITLE": "Objednávka zrušena {{date}}",
-        "ORDER_TIMELINE_DROPPED_TITLE": "Objednávka doručena {{date}}"
+        "ORDER_TIMELINE_DROPPED_TITLE": "Objednávka doručena {{date}}",
+        "DOWNLOAD_EXAMPLE_SPREADSHEET": "Stáhnout příklad tabulky"
     }
 }
