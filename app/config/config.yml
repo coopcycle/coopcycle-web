@@ -134,13 +134,8 @@ twig:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver:   pdo_pgsql
-        host:     "%env(COOPCYCLE_DB_HOST)%"
-        port:     "%env(COOPCYCLE_DB_PORT)%"
-        dbname:   "%env(COOPCYCLE_DB_NAME)%"
-        user:     "%env(COOPCYCLE_DB_USER)%"
-        password: "%env(COOPCYCLE_DB_PASSWORD)%"
-        sslmode: "%env(COOPCYCLE_POSTGRES_SSLMODE)%"
+        driver: pdo_pgsql
+        url: "%env(COOPCYCLE_DB)%"
         charset:  UTF8
         types:
             geography:
