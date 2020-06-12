@@ -31,6 +31,7 @@ adminDashboard.deliveries.delivery: Livraison
 adminDashboard.deliveries.originAddress: Adresse de départ
 adminDashboard.deliveries.deliveryAddress: Adresse de livraison
 adminDashboard.deliveries.save: Enregistrer
+adminDashboard.customize.title: Personnaliser
 admin.deliveries.to_be_confirmed.alert: Vous avez des livraisons à confirmer. Cliquez
   sur l'icône « Livraison » dans la colonne de droite.
 adminDashboard.menuCategories.menu: Menu
