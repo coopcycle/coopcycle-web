@@ -43,9 +43,9 @@ if (!Element.prototype.closest)
 
 Number.prototype.formatMoney = function() {
 
-  return numbro(this).formatCurrency({
-    mantissa: 2,
-    currencySymbol: getCurrencySymbol()
+  return numbro(this).format({
+    ...numbro.languageData().formats.fullWithTwoDecimals,
+    currencySymbol: getCurrencySymbol(),
   })
 }
 
