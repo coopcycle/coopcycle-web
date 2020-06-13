@@ -594,7 +594,7 @@ form.checkout_address.reusable_packaging.loopeat.learn_more: En savoir plus.
 form.checkout_address.reusable_packaging.loopeat.reusable_quantity_label:
   Votre commande présente <strong>%reusablePackagingQuantity%</strong> plats adaptés à la livraison zero déchets.
 form.checkout_address.reusable_packaging.loopeat.available_credits_label:
-  Votre avez <strong>%loopeatAvailableCredits%</strong> crédits LoopEat disponibles.<br />
+  Votre avez <strong>%loopeatAvailableCredits%</strong> crédits LoopEat disponibles.
   <em>(1 crédit = 1 plat dans une lunchbox)</em>
 form.checkout_address.reusable_packaging.loopeat.return_pledge_label:
   Vous allez rendre %field% lunchbox LoopEat au coursier.

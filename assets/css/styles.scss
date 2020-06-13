@@ -1196,36 +1196,28 @@ form[name="restaurant"] {
   background-color: #FBDEDC;
   color: #621e5b;
   position: relative;
+
+  .loopeat-summary li {
+    line-height: 2;
+  }
+
   & img.loopeat-bowl1{
     position: absolute;
     top: 1rem;
     right: 1rem;
     height: calc(100% - 2rem);
   }
-  & .loopeat-icon{
-    display: block;
-    height: 1em;
-    width: 4em;
-    text-align: center;
-    color: #621e5b;
-    float: left;
-    font-weight: bolder;
-    font-size: 1.6em;
-    & img{
-      height: 100%;
-    }
+  .loopeat-icon {
+    font-size: 1.5em;
+    line-height: 1;
+    vertical-align: middle;
+    margin-right: 0.2em;
   }
   & a {
     color: #621e5b;
   }
   &.active {
-    transform: scale(1.02);
     border: 2px solid #621e5b;
-  }
-  & #loopeat-conclusion{
-    font-weight: bold;
-    margin-top: 1em;
-    text-align: center;
   }
   & #checkout_address_cancelReusablePackaging{
     color: #621e5b;
