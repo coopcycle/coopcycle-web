@@ -250,6 +250,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $reusablePackagingEnabled = false;
 
+    protected $reusablePackagingPledgeReturn = 0;
+
     protected $receipt;
 
     /**
@@ -696,6 +698,17 @@ class Order extends BaseOrder implements OrderInterface
         $this->reusablePackagingEnabled = $reusablePackagingEnabled;
 
         return $this;
+    }
+
+    public function setReusablePackagingPledgeReturn(int $reusablePackagingPledgeReturn)
+    {
+        $this->reusablePackagingPledgeReturn = $reusablePackagingPledgeReturn;
+        return $this;
+    }
+
+    public function getReusablePackagingPledgeReturn()
+    {
+        return $this->reusablePackagingPledgeReturn;
     }
 
     public function getReusablePackagingQuantity(): int

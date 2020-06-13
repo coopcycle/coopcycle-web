@@ -8,6 +8,11 @@
         <option name="default">0</option>
       </options>
     </field>
+    <field name="reusablePackagingPledgeReturn" type="integer" column="reusable_packaging_pledge_return">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <field name="takeaway" type="boolean" column="takeaway">
       <options>
         <option name="default">0</option>
