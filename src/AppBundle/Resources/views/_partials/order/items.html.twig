@@ -50,16 +50,6 @@
     {% endif %}
   {% endfor %}
   <tfoot>
-    {% if show_taxes %}
-      {% for tax_rate in order|split_tax_rates %}
-      <tr>
-        <th>{% trans with { '%name%': tax_rate.name } %}order.total_tax_by_rate{% endtrans %}</th>
-        <td class="text-right text-nowrap">
-          {{ tax_rate.amount|price_format }}
-        </td>
-      </tr>
-      {% endfor %}
-    {% endif %}
     <tr>
       <th>{% trans %}order.items_total{% endtrans %}</th>
       <td class="text-right text-nowrap">
@@ -75,7 +65,16 @@
       </td>
     </tr>
     {% endif %}
-
+    {% if show_taxes %}
+      {% for tax_rate in order|split_tax_rates %}
+      <tr>
+        <th>{% trans with { '%name%': tax_rate.name } %}order.total_tax_by_rate{% endtrans %}</th>
+        <td class="text-right text-nowrap">
+          {{ tax_rate.amount|price_format }}
+        </td>
+      </tr>
+      {% endfor %}
+    {% endif %}
     {% if tip_adjustments|length > 0 %}
       {% for adjustment in tip_adjustments %}
       <tr class="text-info">
