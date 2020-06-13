@@ -12,7 +12,7 @@
       <div class="col-xs-12">
         {% include '@App/order/breadcrumb.html.twig' %}
         <h2 class="font-weight-bold m-0 mb-5">{{ order.restaurant.name }}</h4>
-        <div class="border mb-3">
+        <div class="mb-3">
           <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
           <div id="items">
             {% include '@App/_partials/order/items.html.twig' with { with_taxes: false, with_items: false } %}
