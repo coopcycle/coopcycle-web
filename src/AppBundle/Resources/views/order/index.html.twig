@@ -17,7 +17,7 @@
 
           <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
           <div class="border-bottom" id="items">
-            {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
+            {% include '@App/_partials/order/items.html.twig' with { with_taxes: false, with_items: false } %}
             {% if form.reusablePackagingEnabled is defined %}
               {{ form_row(form.reusablePackagingEnabled) }}
             {% endif %}

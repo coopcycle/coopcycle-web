@@ -1,10 +1,12 @@
 {% set show_taxes = (country_iso == 'ca') or (with_taxes is not defined) or (with_taxes is defined and with_taxes == true) %}
+  {% set with_items = with_items is defined ? with_items : true %}
 
 <table class="table table-order-items">
   <thead>
     <th>{% trans with { '%count%': order.countItems } %}order.items.products_with_count{% endtrans %}</th>
     <th class="text-right">Total</th>
   </thead>
+  {% if with_items %}
   <tbody>
   {% for item in order.items %}
     {% set options_adjustments = item.getAdjustments('menu_item_modifier') %}
@@ -37,6 +39,7 @@
     </tr>
   {% endfor %}
   <tbody>
+  {% endif %}
   {% set delivery_adjustments = order.getAdjustments('delivery') %}
   {% set promotion_adjustments = [] %}
   {% set packaging_adjustments = order.getAdjustments('reusable_packaging') %}

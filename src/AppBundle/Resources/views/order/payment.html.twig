@@ -15,7 +15,7 @@
         <div class="border mb-3">
           <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
           <div id="items">
-            {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
+            {% include '@App/_partials/order/items.html.twig' with { with_taxes: false, with_items: false } %}
           </div>
         </div>
         <div class="border mb-3">
