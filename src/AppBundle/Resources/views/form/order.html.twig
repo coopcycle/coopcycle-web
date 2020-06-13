@@ -117,10 +117,10 @@
             <li>
               {% if hasBalanceError %}
                 <span class="loopeat-icon">🤔</span>
-                <span>{{ form.parent.reusablePackagingPledgeReturn.vars.errors[0].getMessage() }}</span>
+                <span id="loopeat-conclusion">{{ form.parent.reusablePackagingPledgeReturn.vars.errors[0].getMessage() }}</span>
               {% else %}
                 <span class="loopeat-icon">👍</span>
-                <span>{{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}</span>
+                <span id="loopeat-conclusion">{{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}</span>
               {% endif %}
             </li>
           </ul>
