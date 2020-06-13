@@ -1,6 +1,6 @@
 {% set show_taxes = (country_iso == 'ca') or (with_taxes is not defined) or (with_taxes is defined and with_taxes == true) %}
 
-<table class="table">
+<table class="table table-order-items">
   <thead>
     <th>{% trans with { '%count%': order.countItems } %}order.items.products_with_count{% endtrans %}</th>
     <th class="text-right">Total</th>

@@ -1243,3 +1243,12 @@ form[name="restaurant"] {
   background: white;
   z-index: 3;
 }
+
+.table-order-items {
+  tbody tr,
+  tfoot tr {
+    td:last-child {
+      font-family: "Roboto Mono", monospace;
+    }
+  }
+}
