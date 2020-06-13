@@ -47,6 +47,16 @@ class Client extends BaseClient
         $this->loopEatClientSecret = $loopEatClientSecret;
     }
 
+    public function setLoopEatPartnerId($loopEatPartnerId)
+    {
+        $this->loopEatPartnerId = $loopEatPartnerId;
+    }
+
+    public function setLoopEatPartnerSecret($loopEatPartnerSecret)
+    {
+        $this->loopEatPartnerSecret = $loopEatPartnerSecret;
+    }
+
     public function refreshToken()
     {
         return function (callable $handler) {
@@ -133,6 +143,46 @@ class Client extends BaseClient
         ]);
 
         return json_decode((string) $response->getBody(), true);
+    }
+
+    public function return(ApiUser $customer, $quantity = 1) {
+        $this->logger->info(sprintf('Returning %d Loopeats from "%s"',
+            $quantity, $customer->getUsername()));
+
+        try {
+
+            for ($i = 0; $i < $quantity; $i++) {
+
+                $response = $this->request('GET', '/customers/return_loopeat', [
+                    'headers' => [
+                        'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
+                    ],
+                    'oauth_credentials' => $customer,
+                ]);
+
+                $url = (string) $response->getBody();
+
+                # returns the loopeats to the coopcycle's owner account
+                $url = str_replace(
+                    '/restaurants/return_loopeat',
+                    '/partners/customer_return_loopeat',
+                    $url);
+
+                $this->logger->info(sprintf('Got token "%s" to return for "%s"', $url, $customer->getUsername()));
+
+                $response = $this->request('GET', $url, [
+                    'auth' => [$this->loopEatPartnerId, $this->loopEatPartnerSecret]
+                ]);
+            }
+
+        } catch (RequestException $e) {
+            $this->logger->error($e->getMessage());
+            return false;
+        }
+
+        $this->logger->info(sprintf('Successfully returned %d Loopeats from "%s"',
+            $quantity, $customer->getUsername()));
+
     }
 
     public function grab(ApiUser $customer, LocalBusiness $restaurant, $quantity = 1)
