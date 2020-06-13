@@ -1192,6 +1192,59 @@ form[name="restaurant"] {
   margin-top: -20px;
 }
 
+#loopeat-block {
+  background-color: #FBDEDC;
+  color: #621e5b;
+  position: relative;
+  & img.loopeat-bowl1{
+    position: absolute;
+    right: 5px;
+    top: 10%;
+    height: 80%;
+  }
+  & .loopeat-icon{
+    display: block;
+    height: 1em;
+    width: 4em;
+    text-align: center;
+    color: #621e5b;
+    float: left;
+    font-weight: bolder;
+    font-size: 1.6em;
+    & img{
+      height: 100%;
+    }
+  }
+  & a {
+    color: #621e5b;
+  }
+  &.active {
+    transform: scale(1.02);
+    border: 2px solid #621e5b;
+  }
+  & #loopeat-conclusion{
+    font-weight: bold;
+    margin-top: 1em;
+    text-align: center;
+  }
+  & #checkout_address_cancelReusablePackaging{
+    color: #621e5b;
+  }
+  & #loopeat-add-credit{
+    float: right;
+  }
+  & #checkout_address_reusablePackagingPledgeReturn{
+    display: inline-block;
+    width: 3em;
+    padding: .1em .1em .1em .3em;
+    height: auto;
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+     opacity: 1;
+    }
+  }
+}
+
 #modal-loopeat {
   @media (max-width: $screen-xs-max) {
     .modal-dialog {

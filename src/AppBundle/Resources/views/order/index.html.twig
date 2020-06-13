@@ -143,6 +143,12 @@
 
   var loopeatIframe = document.querySelector('#modal-loopeat iframe');
   var preventUncheck = false;
+  var wasChecked = $('#checkout_address_reusablePackagingEnabled').is(':checked');
+
+  function submitForm() {
+    $('#checkout_address_isJQuerySubmit').val(1);
+    $('#checkout_address_reusablePackagingEnabled').closest('form').submit();
+  }
 
   function onMessage(e) {
     if (e.source === loopeatIframe.contentWindow) {
@@ -153,7 +159,7 @@
           $('#modal-loopeat').modal('hide');
 
           $('#checkout_address_reusablePackagingEnabled').prop('checked', true);
-          $('#checkout_address_reusablePackagingEnabled').closest('form').submit();
+          submitForm();
         } else {
           $('#modal-loopeat').modal('hide');
         }
@@ -168,18 +174,50 @@
   $('#modal-loopeat').on('hidden.bs.modal', function() {
     if (!preventUncheck) {
       $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
+      if(wasChecked) submitForm();
     }
+  });
+
+  $('#loopeat-add-credit').on('click', function(e) {
+    e.preventDefault();
+
+    var required = $('#checkout_address_reusablePackagingEnabled').data('loopeatRequired');
+    var iframeUrl = $('#checkout_address_reusablePackagingEnabled').data('loopeatAuthorizeUrl');
+
+    if(iframeUrl) {
+      $('#modal-loopeat iframe').attr('src', iframeUrl + '&loopeats_required='+required);
+      $('#modal-loopeat').modal('show');
+    }
+  });
+
+  $('#checkout_address_reusablePackagingPledgeReturn').on('change', function(e) {
+    var balance = parseInt($('#checkout_address_reusablePackagingEnabled').data('loopeatAvailable'))
+    var quantity = parseInt($('#checkout_address_reusablePackagingEnabled').data('packagingQuantity'))
+    var pledgeReturn = parseInt($('#checkout_address_reusablePackagingPledgeReturn').val())
+    var missing = quantity - balance - pledgeReturn
+
+    var conclusion = missing > 0 ?
+      "{{ 'loopeat.insufficient_balance'|trans({}, 'validators') }}".replace('%missing%', missing) :
+      "{{ 'form.checkout_address.reusable_packaging.loopeat.enough_credits'|trans }}"
+
+    var btnAddLabel = "{{ 'form.checkout_address.reusable_packaging.loopeat.add'|trans}}".replace('%missing%', missing)
+
+    $('#loopeat-conclusion').text(conclusion)
+    $('#loopeat-add-credit').text(btnAddLabel)
+    $('#loopeat-buttons').toggle(missing > 0)
+    $('#checkout_address_reusablePackagingEnabled').data('loopeatRequired', quantity - pledgeReturn);
   });
 
   $('#checkout_address_reusablePackagingEnabled').on('change', function(e) {
     var isChecked = $(this).is(':checked');
     var isLoopeat = $(this).data('loopeat') === true;
     var iframeUrl = $(this).data('loopeatAuthorizeUrl');
-    if (isChecked && isLoopeat && iframeUrl) {
+    var hasCredentials = $(this).data('loopeatCredentials') === true;
+    if (!hasCredentials && isChecked && isLoopeat && iframeUrl) {
       $('#modal-loopeat iframe').attr('src', iframeUrl);
       $('#modal-loopeat').modal('show');
     } else {
-      $(this).closest('form').submit();
+      submitForm();
     }
   });
 

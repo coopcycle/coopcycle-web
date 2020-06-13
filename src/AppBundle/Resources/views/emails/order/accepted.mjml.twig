@@ -18,6 +18,11 @@
     '%phone_number%': order.restaurant.telephone|phone_number_format('NATIONAL')
   }, 'emails')|raw }}
   </mj-text>
+  {% if order.restaurant.loopeatEnabled && order.reusablePackagingEnabled %}
+  <mj-text align="left" line-height="20px">
+  {{ ('order.loopeat.accepted')|trans({}, 'emails')|raw }}
+  </mj-text>
+  {% endif %}
   {% else %}
   <mj-text align="left" line-height="20px">
   {{ 'order.public_url' | trans({

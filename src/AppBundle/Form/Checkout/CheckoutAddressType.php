@@ -6,6 +6,8 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\Utils\PriceFormatter;
+use AppBundle\Validator\Constraints\LoopEatOrder;
+use GuzzleHttp\Exception\RequestException;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
@@ -19,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
@@ -126,56 +129,14 @@ class CheckoutAddressType extends AbstractType
 
             $restaurant = $order->getRestaurant();
             $customer = $order->getCustomer();
+            $packagingQuantity = $order->getReusablePackagingQuantity();
 
             if ($order->isEligibleToReusablePackaging() && $restaurant->isDepositRefundOptin()) {
 
                 // FIXME
-                // We need to check if $order->getReusablePackagingQuantity() > 0
+                // We need to check if $packagingQuantity > 0
 
-                $attr = [];
-
-                $isLoopeat = false;
-                if ($restaurant->isLoopeatEnabled()) {
-
-                    if ($customer->hasLoopEatCredentials()) {
-
-                        // Customer already has LoopEat credentials
-                        // We check if the balance is sufficient
-                        $violations = $this->validator->validate($order, null, ['loopeat']);
-                        $isLoopeat = count($violations) === 0;
-
-                    } else {
-                        // Use a JWT as the "state" parameter
-                        $state = $this->jwtEncoder->encode([
-                            'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-                            'sub' => $this->iriConverter->getIriFromItem($customer),
-                            // Custom claims
-                            LoopEatClient::JWT_CLAIM_SUCCESS_REDIRECT =>
-                                $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
-                            LoopEatClient::JWT_CLAIM_FAILURE_REDIRECT =>
-                                $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
-                        ]);
-
-                        $attr['data-loopeat-authorize-url'] = $this->loopeatClient->getOAuthAuthorizeUrl([
-                            'login_hint' => $customer->getEmail(),
-                            'loopeats_required' => $order->getReusablePackagingQuantity(),
-                            'state' => $state,
-                        ]);
-
-                        $isLoopeat = true;
-                    }
-                }
-
-                $hasReusablePackaging = $isLoopeat || $restaurant->isDepositRefundEnabled();
-
-                if ($hasReusablePackaging) {
-
-                    // Make sure to use a string, or it will be data-loopeat="data-loopeat"
-                    $attr['data-loopeat'] = var_export($isLoopeat, true);
-
-                    $key = $isLoopeat ?
-                        'reusable_packaging_loopeat_enabled' : 'reusable_packaging_enabled';
-
+                if($restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {
                     $packagingAmount = $order->getReusablePackagingAmount();
 
                     if ($packagingAmount > 0) {
@@ -184,18 +145,71 @@ class CheckoutAddressType extends AbstractType
                         $packagingPrice = $this->translator->trans('basics.free');
                     }
 
-                    $attr['data-packaging-amount'] = $packagingAmount;
-
-                    $opts = [
+                    $form->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
-                        'label' => sprintf('form.checkout_address.%s.label', $key),
+                        'label' => 'form.checkout_address.reusable_packaging_enabled.label',
                         'label_translation_parameters' => [
                             '%price%' => $packagingPrice,
                         ],
-                        'attr' => $attr,
-                    ];
+                        'attr' => [
+                            'data-packaging-amount' => $packagingAmount
+                        ],
+                    ]);
+                } else if ($restaurant->isLoopeatEnabled()) {
+                    $pledgeReturn = $order->getReusablePackagingPledgeReturn();
+                    $hasLoopeatCredential = $customer->hasLoopEatCredentials();
+                    $availableLoopeat = 0;
+                    $missingLoopeat = $packagingQuantity - $pledgeReturn;
 
-                    $form->add('reusablePackagingEnabled', CheckboxType::class, $opts);
+                    if($hasLoopeatCredential) {
+                        try{ // TODO: can we avoid double query with validator
+                            $loopeatCustomer = $this->loopeatClient->currentCustomer($customer);
+                            $availableLoopeat = $loopeatCustomer['loopeatBalance'];
+                        } catch (RequestException $e) {}
+                        $missingLoopeat = $packagingQuantity - $availableLoopeat - $pledgeReturn;
+                    }
+
+                    // Use a JWT as the "state" parameter
+                    $state = $this->jwtEncoder->encode([
+                        'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
+                        'sub' => $this->iriConverter->getIriFromItem($customer),
+                        // Custom claims
+                        LoopEatClient::JWT_CLAIM_SUCCESS_REDIRECT =>
+                            $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                        LoopEatClient::JWT_CLAIM_FAILURE_REDIRECT =>
+                            $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                    ]);
+
+                    $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                        'required' => false,
+                        'label' => 'form.checkout_address.reusable_packaging_loopeat_enabled.label',
+                        'attr' => [
+                            'data-loopeat' => "true",
+                            'data-loopeat-credentials' => var_export($hasLoopeatCredential, true),
+                            'data-packaging-quantity' => $packagingQuantity,
+                            'data-loopeat-available' => $availableLoopeat,
+                            'data-loopeat-missing' => $missingLoopeat,
+                            'data-loopeat-required' => $packagingQuantity - $pledgeReturn,
+                            'data-loopeat-authorize-url' => $this->loopeatClient->getOAuthAuthorizeUrl([
+                                'login_hint' => $customer->getEmail(),
+                                'state' => $state,
+                            ])
+                        ],
+                    ]);
+                    $form->add('reusablePackagingPledgeReturn', NumberType::class, [
+                        'required' => true,
+                        'html5' => true,
+                        'attr' => ['min' => '0'],
+                        'label' => 'form.checkout_address.reusable_packaging_loopeat_returns.label',
+                    ]);
+                    $form->add('isJQuerySubmit', HiddenType::class, [
+                        'data' => '0',
+                        'mapped' => false,
+                    ]);
+                    $form->add('cancelReusablePackaging', SubmitType::class, [
+                        'label' => 'form.checkout_address.reusable_packaging.loopeat.back',
+                        'attr' => ['class' => 'btn btn-link']
+                    ]);
                 }
             }
 
@@ -209,8 +223,18 @@ class CheckoutAddressType extends AbstractType
             }
         });
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+            $order = $event->getData();
 
+            if ($form->getClickedButton() && 'cancelReusablePackaging' === $form->getClickedButton()->getName()) {
+                $order->setReusablePackagingEnabled(false);
+                $order->setReusablePackagingPledgeReturn(0);
+                $event->setData($order);
+            }
+        });
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $order = $form->getData();
 
@@ -225,6 +249,11 @@ class CheckoutAddressType extends AbstractType
                 $order->setTipAmount((int) ($tipAmount * 100));
 
                 $this->orderProcessor->process($order);
+            }
+
+            if ($form->getClickedButton() && 'cancelReusablePackaging' === $form->getClickedButton()->getName()) {
+                $order->setReusablePackagingEnabled(false);
+                $order->setReusablePackagingPledgeReturn(0);
             }
         });
     }
@@ -245,6 +274,7 @@ class CheckoutAddressType extends AbstractType
         parent::configureOptions($resolver);
 
         $resolver->setDefault('constraints', [
+            new LoopEatOrder(),
             new PromotionSubjectCoupon()
         ]);
     }

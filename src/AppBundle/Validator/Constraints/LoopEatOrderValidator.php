@@ -29,6 +29,10 @@ class LoopEatOrderValidator extends ConstraintValidator
             throw new \InvalidArgumentException(sprintf('$object should be an instance of "%s"', OrderInterface::class));
         }
 
+        if (!$object->isReusablePackagingEnabled()) {
+            return;
+        }
+
         $restaurant = $object->getRestaurant();
 
         if (null === $restaurant) {
@@ -52,16 +56,19 @@ class LoopEatOrderValidator extends ConstraintValidator
         }
 
         try {
-
             $currentCustomer = $this->client->currentCustomer($object->getCustomer());
             $loopeatBalance = $currentCustomer['loopeatBalance'];
+            $pledgeReturn = $object->getReusablePackagingPledgeReturn();
+            $missing = $quantity - $loopeatBalance - $pledgeReturn;
 
-            if ($loopeatBalance < $quantity) {
+            if ($missing > 0) {
                 $this->context->buildViolation($constraint->insufficientBalance)
-                    ->atPath('reusablePackagingEnabled')
+                    ->setParameter('%missing%', $missing)
+                    ->setParameter('%loopeatBalance%', $loopeatBalance)
+                    ->setParameter('%pledgeReturn%', $pledgeReturn)
+                    ->atPath('reusablePackagingPledgeReturn')
                     ->addViolation();
             }
-
         } catch (RequestException $e) {
 
             $this->context->buildViolation($constraint->requestFailed)

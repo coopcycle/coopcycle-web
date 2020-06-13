@@ -85,7 +85,6 @@ class OrderController extends AbstractController
         }
 
         $originalPromotionCoupon = $order->getPromotionCoupon();
-        $originalReusablePackagingEnabled = $order->isReusablePackagingEnabled();
 
         $form = $this->createForm(CheckoutAddressType::class, $order);
 
@@ -127,7 +126,11 @@ class OrderController extends AbstractController
                 return $this->redirectToRoute('order');
             }
 
-            if ($originalReusablePackagingEnabled !== $order->isReusablePackagingEnabled()) {
+            if ($form->getClickedButton() && 'cancelReusablePackaging' === $form->getClickedButton()->getName()) {
+                return $this->redirectToRoute('order');
+            }
+
+            if ($form->has('isJQuerySubmit') && $form->get('isJQuerySubmit')->getData()) {
                 return $this->redirectToRoute('order');
             }
 

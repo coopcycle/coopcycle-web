@@ -588,8 +588,23 @@ form.checkout_address.promotion_coupon.label: Code promotionnel
 form.checkout_address.telephone.label: Téléphone
 form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages réutilisables
   (%price%)
-form.checkout_address.reusable_packaging_loopeat_enabled.label: Je veux des emballages
-  réutilisables LoopEat (%price%)
+
+form.checkout_address.reusable_packaging_loopeat_enabled.label: Je veux des lunchbox consignées LoopEat.
+form.checkout_address.reusable_packaging.loopeat.learn_more: En savoir plus.
+form.checkout_address.reusable_packaging.loopeat.reusable_quantity_label:
+  Votre commande présente <strong>%reusablePackagingQuantity%</strong> plats adaptés à la livraison zero déchets.
+form.checkout_address.reusable_packaging.loopeat.available_credits_label:
+  Votre avez <strong>%loopeatAvailableCredits%</strong> crédits LoopEat disponibles.<br />
+  <em>(1 crédit = 1 plat dans une lunchbox)</em>
+form.checkout_address.reusable_packaging.loopeat.return_pledge_label:
+  Vous allez rendre %field% lunchbox LoopEat au coursier.
+form.checkout_address.reusable_packaging.loopeat.enough_credits:
+  👍 Vous avez assez de crédits pour être livré-e zero déchets
+form.checkout_address.reusable_packaging.loopeat.confirm: Valider
+form.checkout_address.reusable_packaging.loopeat.back: < Retour
+form.checkout_address.reusable_packaging.loopeat.add:
+  Ajouter %missing% crédits
+
 form.checkout_address.quote.label: Demander un devis
 form.checkout_address.add_promotion.label: Appliquer
 form.checkout_address.tip_amount.label: Pourboire
@@ -600,7 +615,6 @@ form.checkout_address.takeaway.disclaimer: Vous avez opté pour le retrait sur p
   Vous vous engagez à venir récupérer votre commande le jour et l'heure indiqués.
 form.checkout_address.takeaway.contact: En cas de problème, contactez l'établissement au %telephone%.
 form.checkout_address.takeaway.no_show_disclaimer: Si vous ne vous présentez pas, nous encaisserons la commande dans son intégralité.
-form.checkout_address.reusable_packaging.loopeat.learn_more: En savoir plus sur LoopEat
 form.task_export.start.label: Début
 form.task_export.end.label: Fin
 form.api_app.name.label: Nom de l'application

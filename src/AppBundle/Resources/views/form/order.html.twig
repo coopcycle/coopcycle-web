@@ -68,17 +68,70 @@
 {% endblock %}
 
 {% block _checkout_address_reusablePackagingEnabled_row %}
-  <div>
-    <div class="alert alert-info py-0 m-0">
-      {{ form_widget(form) }}
-    </div>
-    {% if attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}
-      <div class="text-right my-2">
-        <a href="https://loopeat.fr/en-savoir-plus/" target="_blank">
-          <span class="mr-2">{{ 'form.checkout_address.reusable_packaging.loopeat.learn_more'|trans }}</span>
-          <i class="fa fa-external-link"></i>
-        </a>
+  {% set isLoopeat = attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}
+  {% set isChecked = form.parent.reusablePackagingEnabled.vars.data == 1 %}
+  {% set reusablePackagingQuantity = attr['data-packaging-quantity'] %}
+  {% set loopeatAvailableCredits = attr['data-loopeat-available'] %}
+  {% set hasBalanceError = isChecked and form.parent.reusablePackagingPledgeReturn is defined and
+                    form.parent.reusablePackagingPledgeReturn.vars.errors|length > 0 %}
+  {% set missing = hasBalanceError ?
+                    form.parent.reusablePackagingPledgeReturn.vars.errors[0].getMessageParameters()['%missing%'] :
+                    attr['data-loopeat-missing'] %}
+  {% if isLoopeat %}
+    <div id="loopeat-block" class="p-3{{ isChecked ? " active": "" }}">
+      <div class="py-0 m-0">
+        {{ form_widget(form) }}
       </div>
-    {% endif %}
-  </div>
+      {% if isChecked %}
+        <div class="my-2">
+          <p>
+          <span class="loopeat-icon"><img src="{{ asset('img/loopeat/delivery.png') }}" alt="Quantité" /></span>
+          {{ 'form.checkout_address.reusable_packaging.loopeat.reusable_quantity_label'|trans({'%reusablePackagingQuantity%': reusablePackagingQuantity}) |raw }}
+          </p>
+          <p>
+          <span class="loopeat-icon">€</span>
+          {{ 'form.checkout_address.reusable_packaging.loopeat.available_credits_label'|trans({'%loopeatAvailableCredits%': loopeatAvailableCredits})|raw }}
+          </p>
+          <p>
+          <span class="loopeat-icon"><img src="{{ asset('img/loopeat/bowl2.png') }}" alt="Loopeat" /></span>
+            <label for="{{form.parent.reusablePackagingPledgeReturn.vars.id}}">
+              {{'form.checkout_address.reusable_packaging.loopeat.return_pledge_label'
+                  |trans({'%field%': form_widget(form.parent.reusablePackagingPledgeReturn)})
+                  |raw }}
+            </label>
+          </p>
+          <p id="loopeat-conclusion">
+            {% if hasBalanceError %}
+              🤔 {{ form.parent.reusablePackagingPledgeReturn.vars.errors[0].getMessage() }}
+            {% else %}
+              {{'form.checkout_address.reusable_packaging.loopeat.enough_credits' |trans}}
+            {% endif %}
+          </p>
+          <p id="loopeat-buttons" style="display: {{hasBalanceError ? 'block':'none'}};">
+              {{ form_widget(form.parent.cancelReusablePackaging)}}
+              <a id="loopeat-add-credit" href="" class="btn btn-default">
+                {{ 'form.checkout_address.reusable_packaging.loopeat.add'|trans({'%missing%':missing})}}
+              </a>
+          </p>
+        </div>
+      {% else %}
+        {# TODO: figure how to remove these fields from the form #}
+        {{ form_widget(form.parent.reusablePackagingPledgeReturn, { 'attr': {'style': 'display: none;'} }) }}
+        {{ form_widget(form.parent.cancelReusablePackaging, { 'attr': {'style': 'display: none;'} }) }}
+        <img class="loopeat-bowl1" src="{{ asset('img/loopeat/bowl1.png') }}" alt="Loopeat" />
+        <div class="my-2">
+          <a href="https://loopeat.fr/en-savoir-plus/" target="_blank">
+            <span class="mr-2">{{ 'form.checkout_address.reusable_packaging.loopeat.learn_more'|trans }}</span>
+            <i class="fa fa-external-link"></i>
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  {% else %}
+    <div>
+      <div class="alert alert-info py-0 m-0">
+        {{ form_widget(form) }}
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}
