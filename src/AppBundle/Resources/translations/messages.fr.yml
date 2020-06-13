@@ -599,7 +599,7 @@ form.checkout_address.reusable_packaging.loopeat.available_credits_label:
 form.checkout_address.reusable_packaging.loopeat.return_pledge_label:
   Vous allez rendre %field% lunchbox LoopEat au coursier.
 form.checkout_address.reusable_packaging.loopeat.enough_credits:
-  👍 Vous avez assez de crédits pour être livré-e zero déchets
+  Vous avez assez de crédits pour être livré-e zero déchets
 form.checkout_address.reusable_packaging.loopeat.confirm: Valider
 form.checkout_address.reusable_packaging.loopeat.back: < Retour
 form.checkout_address.reusable_packaging.loopeat.add:

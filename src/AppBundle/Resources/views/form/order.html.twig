@@ -124,12 +124,13 @@
               {% endif %}
             </li>
           </ul>
-          <div id="loopeat-buttons"
-            class="d-flex flex-row justify-content-between {% if not hasBalanceError %}d-none{% endif %}">
-            {{ form_widget(form.parent.cancelReusablePackaging)}}
-            <a id="loopeat-add-credit" href="" class="btn btn-default">
-              {{ 'form.checkout_address.reusable_packaging.loopeat.add'|trans({'%missing%':missing})}}
-            </a>
+          <div id="loopeat-buttons" class="{% if not hasBalanceError %}d-none{% endif %}">
+            <div class="d-flex flex-row justify-content-between ">
+              {{ form_widget(form.parent.cancelReusablePackaging)}}
+              <a id="loopeat-add-credit" href="" class="btn btn-default">
+                {{ 'form.checkout_address.reusable_packaging.loopeat.add'|trans({'%missing%':missing})}}
+              </a>
+            </div>
           </div>
         </div>
       {% else %}
