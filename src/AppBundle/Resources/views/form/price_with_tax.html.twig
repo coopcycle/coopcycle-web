@@ -3,12 +3,9 @@
   {% set tax_categories = {} %}
   {% for tax_category in form.taxCategory.vars.choices %}
     {% set tax_rates = [] %}
-    {% if tax_category.data.rates|length == 1 %}
-      {% set tax_rate = tax_category.data.rates|first %}
-      {% set tax_rates = tax_rates|merge([ { 'amount': tax_rate.amount } ]) %}
-    {% else %}
-      {# TODO #}
-    {% endif %}
+    {% for rate in tax_category.data.rates %}
+      {% set tax_rates = tax_rates|merge([ { 'amount': rate.amount } ]) %}
+    {% endfor %}
     {% set tax_categories = tax_categories|merge({ (tax_category.data.code): tax_rates }) %}
   {% endfor %}
 

@@ -4,7 +4,9 @@ namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Sylius\TaxCategory;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType as BaseTaxCategoryChoiceType;
+use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,10 +19,17 @@ class ProductTaxCategoryChoiceType extends AbstractType
     private $translator;
     private $country;
 
-    public function __construct(RepositoryInterface $taxCategoryRepository, TranslatorInterface $translator, string $country)
+    public function __construct(
+        RepositoryInterface $taxCategoryRepository,
+        TranslatorInterface $translator,
+        TaxRateResolverInterface $taxRateResolver,
+        ProductVariantFactoryInterface $productVariantFactory,
+        string $country)
     {
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->translator = $translator;
+        $this->taxRateResolver = $taxRateResolver;
+        $this->productVariantFactory = $productVariantFactory;
         $this->country = $country;
     }
 
@@ -42,7 +51,15 @@ class ProductTaxCategoryChoiceType extends AbstractType
 
         $resolver->setDefault('choice_label', function (?TaxCategory $taxCategory) {
 
-            return $this->translator->trans($taxCategory->getName(), [], 'taxation');
+            $variant = $this->productVariantFactory->createNew();
+            $variant->setTaxCategory($taxCategory);
+
+            $rate = $this->taxRateResolver->resolve($variant);
+
+            return sprintf('%s (%d%%)',
+                $this->translator->trans($taxCategory->getName(), [], 'taxation'),
+                $rate->getAmount() * 100
+            );
         });
 
         $resolver->setDefault('placeholder', 'form.product_tax_category_choice.placeholder');
