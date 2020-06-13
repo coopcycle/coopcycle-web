@@ -1198,9 +1198,9 @@ form[name="restaurant"] {
   position: relative;
   & img.loopeat-bowl1{
     position: absolute;
-    right: 5px;
-    top: 10%;
-    height: 80%;
+    top: 1rem;
+    right: 1rem;
+    height: calc(100% - 2rem);
   }
   & .loopeat-icon{
     display: block;
