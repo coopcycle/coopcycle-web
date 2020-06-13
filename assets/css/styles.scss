@@ -1234,3 +1234,12 @@ form[name="restaurant"] {
     @extend .table-bordered;
   }
 }
+
+.checkout-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  z-index: 3;
+}

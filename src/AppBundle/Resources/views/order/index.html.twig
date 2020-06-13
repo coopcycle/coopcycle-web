@@ -9,9 +9,8 @@
 
     {% include '@App/order/breadcrumb.html.twig' %}
 
-    {{ form_start(form) }}
+    {{ form_start(form, { attr: { style: 'padding-bottom: 66px;' } }) }}
     <h2 class="font-weight-bold m-0 mb-5">{{ order.restaurant.name }}</h4>
-    {% include '@App/order/_partials/time.html.twig' %}
     <div class="row">
       <div class="col-xs-12 col-md-6">
         <div class="border mb-3">
@@ -69,19 +68,29 @@
           </div>
           <div class="p-3 border-bottom">
             {{ form_row(form.notes) }}
-            <div class="text-center">
-              <button class="btn btn-block btn-lg btn-primary" type="submit">
-                {% trans %}cart.widget.button{% endtrans %}
-              </button>
-              {% if form.quote is defined %}
-                {{ form_widget(form.quote, { attr: { class: 'btn-block btn-lg btn-default' } }) }}
-              {% endif %}
-            </div>
           </div>
 
         </div>
       </div>
     </div>
+    <nav class="checkout-nav border-top">
+      <div class="container">
+        <div class="d-flex flex-row justify-content-between align-items-center py-3">
+          <span class="text-success">
+            <i class="fa fa-clock-o fa-lg mr-2"></i>
+            <strong>{{ shipping_range|time_range_for_humans }}</strong>
+          </span>
+          <div>
+            {% if form.quote is defined %}
+              {{ form_widget(form.quote, { attr: { class: 'btn-lg btn-default mr-2' } }) }}
+            {% endif %}
+            <button class="btn btn-lg btn-primary" type="submit">
+              {% trans %}cart.widget.button{% endtrans %}
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
     {{ form_end(form) }}
 
     <div class="modal fade" id="modal-loopeat" tabindex="-1" role="dialog" aria-hidden="true">
