@@ -677,6 +677,7 @@ Feature: Orders
         "preparationExpectedAt":null,
         "pickupExpectedAt":null,
         "reusablePackagingEnabled": false,
+        "reusablePackagingPledgeReturn": 0,
         "takeaway":false
       }
       """
@@ -956,6 +957,7 @@ Feature: Orders
         "shippingAddress":@...@,
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "id":@integer@,
         "number":null,
         "notes":null,

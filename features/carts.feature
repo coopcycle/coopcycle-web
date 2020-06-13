@@ -68,6 +68,7 @@ Feature: Carts
         "restaurant":"/api/restaurants/2",
         "shippingAddress":null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -128,6 +129,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange":null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -192,6 +194,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange":null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -242,6 +245,7 @@ Feature: Carts
           "2020-04-09T20:05:00+02:00"
         ],
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -290,6 +294,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -349,6 +354,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange": null,
         "reusablePackagingEnabled":true,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -412,6 +418,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[
           {
@@ -504,6 +511,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[
           {
@@ -596,6 +604,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[
           {
@@ -690,6 +699,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":@array@,
         "itemsTotal":1800,
@@ -759,6 +769,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[
           {
@@ -829,6 +840,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[
           {
@@ -894,6 +906,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -949,6 +962,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -986,6 +1000,7 @@ Feature: Carts
           "shippedAt":null,
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
+          "reusablePackagingPledgeReturn": 0,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -1019,6 +1034,7 @@ Feature: Carts
           "shippedAt":null,
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
+          "reusablePackagingPledgeReturn": 0,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -1062,6 +1078,7 @@ Feature: Carts
           "shippedAt":null,
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
+          "reusablePackagingPledgeReturn": 0,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -1095,6 +1112,7 @@ Feature: Carts
           "shippedAt":null,
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
+          "reusablePackagingPledgeReturn": 0,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -1207,6 +1225,7 @@ Feature: Carts
         "shippedAt":null,
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
         "notes":null,
         "items":[],
         "itemsTotal":0,
