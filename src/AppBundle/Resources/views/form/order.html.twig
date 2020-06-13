@@ -86,7 +86,7 @@
         {{ form_widget(form) }}
       </div>
       {% if isChecked %}
-        <div class="my-2">
+        <div>
           <ul class="list-unstyled loopeat-summary">
             <li>
               <span class="loopeat-icon">♻️</span>
@@ -124,12 +124,13 @@
               {% endif %}
             </li>
           </ul>
-          <p id="loopeat-buttons" style="display: {{hasBalanceError ? 'block':'none'}};">
-              {{ form_widget(form.parent.cancelReusablePackaging)}}
-              <a id="loopeat-add-credit" href="" class="btn btn-default">
-                {{ 'form.checkout_address.reusable_packaging.loopeat.add'|trans({'%missing%':missing})}}
-              </a>
-          </p>
+          <div id="loopeat-buttons"
+            class="d-flex flex-row justify-content-between {% if not hasBalanceError %}d-none{% endif %}">
+            {{ form_widget(form.parent.cancelReusablePackaging)}}
+            <a id="loopeat-add-credit" href="" class="btn btn-default">
+              {{ 'form.checkout_address.reusable_packaging.loopeat.add'|trans({'%missing%':missing})}}
+            </a>
+          </div>
         </div>
       {% else %}
         {# TODO: figure how to remove these fields from the form #}
