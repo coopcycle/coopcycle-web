@@ -947,3 +947,4 @@ spreadsheet.download_example: Télécharger un exemple de feuille de calcul
 nav.about_us: À propos
 basics.tax_incl: TTC
 basics.tax_excl: HT
+form.product_tax_category_choice.placeholder: Choisissez une catégorie

@@ -44,6 +44,8 @@ class ProductTaxCategoryChoiceType extends AbstractType
 
             return $this->translator->trans($taxCategory->getName(), [], 'taxation');
         });
+
+        $resolver->setDefault('placeholder', 'form.product_tax_category_choice.placeholder');
     }
 
     public function getParent(): string
