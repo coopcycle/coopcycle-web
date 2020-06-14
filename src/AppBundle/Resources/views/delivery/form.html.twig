@@ -102,6 +102,11 @@
       </div>
       {% endif %}
 
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-7">
       {% if delivery.store is not empty and delivery.store.createOrders %}
         <div id="delivery-price" class="delivery-price-preview mb-4"
           data-tax-rate-amount="{{ tax_rate.amount|e('html_attr') }}"
@@ -141,16 +146,14 @@
 
         </div>
       {% endif %}
-
+    </div>
+    <div class="col-md-5">
+      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary mb-4">
+        <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
+        {% trans %}adminDashboard.deliveries.save{% endtrans %}
+      </button>
     </div>
   </div>
-
-  <hr>
-
-  <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary mb-4">
-    <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
-    {% trans %}adminDashboard.deliveries.save{% endtrans %}
-  </button>
 
 {{ form_end(form) }}
 
