@@ -111,6 +111,14 @@
 
       <div class="embed-responsive embed-responsive-16by9">
         <div class="embed-responsive-item" id="map"></div>
+        <div class="map-distance-overlay">
+          <span class="mr-2">{% trans %}form.delivery.distance.label{% endtrans %}</span>
+          <span id="delivery_distance">
+            {% if delivery.distance is not empty %}
+              {{ delivery.distance|meters_to_kilometers }}
+            {% endif %}
+          </span>
+        </div>
       </div>
       <hr>
       <div class="form-horizontal">
@@ -127,36 +135,6 @@
             </div>
           </div>
         {% endif %}
-
-        <div class="form-group">
-          <label class="col-sm-3 control-label" for="delivery_distance">
-            {% trans %}form.delivery.distance.label{% endtrans %}
-          </label>
-          <div class="col-sm-9">
-            <p class="form-control-static">
-              <span id="delivery_distance">
-                {% if delivery.distance is not empty %}
-                  {{ delivery.distance|meters_to_kilometers }}
-                {% endif %}
-              </span>
-            </p>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="col-sm-3 control-label" for="delivery_duration">
-            {% trans %}form.delivery.duration.label{% endtrans %}
-          </label>
-          <div class="col-sm-9">
-            <p class="form-control-static">
-              <span id="delivery_duration">
-                {% if delivery.duration is not empty %}
-                  {{ delivery.duration|seconds_to_minutes }}
-                {% endif %}
-              </span>
-            </p>
-          </div>
-        </div>
 
       </div>
       <hr>

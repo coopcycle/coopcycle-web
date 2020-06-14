@@ -1272,6 +1272,11 @@ form[name="restaurant"] {
       right: 0;
     }
   }
+  .form-group:first-child {
+    label {
+      font-size: $font-size-large;
+    }
+  }
 }
 
 #delivery_pickup {
@@ -1291,4 +1296,14 @@ form[name="restaurant"] {
   .address-autosuggest__container {
     margin: 0;
   }
+}
+
+.map-distance-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 401;
+  padding: 5px;
+  background-color: #0984e3;
+  color: #ffffff;
 }

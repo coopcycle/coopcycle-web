@@ -30,17 +30,12 @@ function route(delivery) {
   ])
     .then(route => {
 
-      var duration = parseInt(route.duration, 10)
       var distance = parseInt(route.distance, 10)
-
       var kms = (distance / 1000).toFixed(2)
-      var minutes = Math.ceil(duration / 60)
 
       return {
-        duration,
         distance,
         kms,
-        minutes
       }
     })
 }
@@ -125,7 +120,6 @@ window.initMap = function() {
           .then((infos) => {
 
             $('#delivery_distance').text(`${infos.kms} Km`)
-            $('#delivery_duration').text(`${infos.minutes} min`)
 
             if (delivery.store && pricePreview) {
 
