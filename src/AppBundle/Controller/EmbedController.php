@@ -16,6 +16,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Util\UserManipulator;
+use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
@@ -107,7 +108,10 @@ class EmbedController extends Controller
     /**
      * @Route("/embed/delivery/summary", name="embed_delivery_summary")
      */
-    public function deliverySummaryAction(Request $request, DeliveryManager $deliveryManager, SettingsManager $settingsManager)
+    public function deliverySummaryAction(Request $request,
+        DeliveryManager $deliveryManager,
+        SettingsManager $settingsManager,
+        TaxRateResolverInterface $taxRateResolver)
     {
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -128,7 +132,7 @@ class EmbedController extends Controller
                 $delivery = $form->getData();
                 $price = $this->getDeliveryPrice($delivery, $pricingRuleSet, $deliveryManager);
 
-                $rate = $this->get('sylius.tax_rate_resolver')->resolve(
+                $rate = $taxRateResolver->resolve(
                     $this->get('sylius.factory.product_variant')->createForDelivery($delivery, $price)
                 );
 

@@ -14,6 +14,7 @@ use AppBundle\Form\DeliveryImportType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use Knp\Component\Pager\PaginatorInterface;
+use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -175,7 +176,10 @@ trait StoreTrait
         ]);
     }
 
-    public function newStoreDeliveryAction($id, Request $request, OrderManager $orderManager, DeliveryManager $deliveryManager)
+    public function newStoreDeliveryAction($id, Request $request,
+        OrderManager $orderManager,
+        DeliveryManager $deliveryManager,
+        TaxRateResolverInterface $taxRateResolver)
     {
         $routes = $request->attributes->get('routes');
 
@@ -236,7 +240,7 @@ trait StoreTrait
         ]);
         $variant = $this->get('sylius.factory.product_variant')->createNew();
         $variant->setTaxCategory($taxCategory);
-        $rate = $this->get('sylius.tax_rate_resolver')->resolve($variant, [
+        $rate = $taxRateResolver->resolve($variant, [
             'country' => strtolower($this->getParameter('region_iso')),
         ]);
 
