@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 
-module.exports = function(rootDir) {
+module.exports = function() {
 
   var sub = require('../RedisClient')({
     prefix: process.env.COOPCYCLE_DB_NAME + ':',
