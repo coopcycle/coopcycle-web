@@ -39,7 +39,6 @@ context('Delivery', () => {
     cy.wait('@apiRoutingRoute')
 
     cy.get('#delivery_distance').invoke('text').should('match', /[0-9\.]+ Km/)
-    cy.get('#delivery_duration').invoke('text').should('match', /[0-9]+ min/)
 
   })
 
