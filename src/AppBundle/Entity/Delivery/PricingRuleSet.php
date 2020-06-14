@@ -21,6 +21,8 @@ class PricingRuleSet
 
     protected $name;
 
+    protected $strategy = 'find';
+
     public function __construct()
     {
         $this->rules = new ArrayCollection();
