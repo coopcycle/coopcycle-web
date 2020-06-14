@@ -23,11 +23,13 @@ class PriceWithTaxType extends AbstractType
     public function __construct(
         ProductVariantResolverInterface $variantResolver,
         TaxRateResolverInterface $taxRateResolver,
-        CalculatorInterface $calculator)
+        CalculatorInterface $calculator,
+        bool $taxIncl = true)
     {
         $this->variantResolver = $variantResolver;
         $this->taxRateResolver = $taxRateResolver;
         $this->calculator = $calculator;
+        $this->taxIncl = $taxIncl;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -58,8 +60,11 @@ class PriceWithTaxType extends AbstractType
 
                 $taxAmount = (int) $this->calculator->calculate($variant->getPrice(), $taxRate);
 
-                $form->get('taxExcluded')->setData($variant->getPrice() - $taxAmount);
-                $form->get('taxIncluded')->setData($variant->getPrice());
+                $taxExcluded = $this->taxIncl ? ($variant->getPrice() - $taxAmount) : $variant->getPrice();
+                $taxIncluded = $this->taxIncl ? $variant->getPrice() : ($variant->getPrice() + $taxAmount);
+
+                $form->get('taxExcluded')->setData($taxExcluded);
+                $form->get('taxIncluded')->setData($taxIncluded);
                 $form->get('taxCategory')->setData($variant->getTaxCategory());
             }
         });

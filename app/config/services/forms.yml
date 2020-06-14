@@ -118,11 +118,9 @@ services:
 
   AppBundle\Form\ProductType:
     arguments:
-      - '@sylius.factory.product_variant'
-      - '@sylius.repository.product_attribute'
-      - '@sylius.factory.product_attribute_value'
-      - '@sylius.locale_provider'
-      - '@translator'
+      $productAttributeRepository: '@sylius.repository.product_attribute'
+      $productAttributeValueFactory: '@sylius.factory.product_attribute_value'
+      $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
     tags: [ form.type ]
 
   AppBundle\Form\Checkout\CheckoutAddressType:
@@ -190,6 +188,8 @@ services:
 
   AppBundle\Form\Type\PriceWithTaxType:
     tags: [ form.type ]
+    arguments:
+      $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
 
   AppBundle\Form\CustomizeType:
     arguments:

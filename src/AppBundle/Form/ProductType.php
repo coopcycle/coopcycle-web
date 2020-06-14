@@ -49,13 +49,15 @@ class ProductType extends AbstractType
         RepositoryInterface $productAttributeRepository,
         FactoryInterface $productAttributeValueFactory,
         LocaleProviderInterface $localeProvider,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        bool $taxIncl = true)
     {
         $this->variantFactory = $variantFactory;
         $this->productAttributeRepository = $productAttributeRepository;
         $this->productAttributeValueFactory = $productAttributeValueFactory;
         $this->localeProvider = $localeProvider;
         $this->translator = $translator;
+        $this->taxIncl = $taxIncl;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -218,7 +220,9 @@ class ProductType extends AbstractType
                 return;
             }
 
-            $price = $form->get('priceWithTax')->get('taxIncluded')->getData();
+            $priceFormName = $this->taxIncl ? 'taxIncluded' : 'taxExcluded';
+            $price = $form->get('priceWithTax')->get($priceFormName)->getData();
+
             $taxCategory = $form->get('priceWithTax')->get('taxCategory')->getData();
 
             if (null === $product->getId()) {
