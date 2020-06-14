@@ -16,8 +16,6 @@ const logger = winston.createLogger({
   ]
 })
 
-var ROOT_DIR = __dirname + '/../../..';
-
 console.log('---------------------');
 console.log('- STARTING TRACKING -');
 console.log('---------------------');
@@ -43,9 +41,6 @@ const server = http.createServer(function(request, response) {
     // process HTTP request. Since we're writing just WebSockets server
     // we don't have to implement anything.
 });
-
-console.log(process.env.COOPCYCLE_PUBLIC_KEY_FILE)
-
 const tokenVerifier = new TokenVerifier(process.env.COOPCYCLE_PUBLIC_KEY_FILE, db)
 
 const io = require('socket.io')(server, { path: '/tracking/socket.io' });

@@ -15,8 +15,6 @@ const logger = winston.createLogger({
   ]
 })
 
-var ROOT_DIR = __dirname + '/../../..'
-
 console.log('------------------------')
 console.log('- STARTING DISPATCH V2 -')
 console.log('------------------------')
@@ -29,7 +27,7 @@ const {
   sub,
   sequelize,
   redis
-} = require('./config')(ROOT_DIR)
+} = require('./config')()
 
 const db = require('../Db')(sequelize)
 
@@ -38,7 +36,7 @@ var server = http.createServer(function(request, response) {
     // we don't have to implement anything.
 });
 
-var tokenVerifier = new TokenVerifier(ROOT_DIR + '/var/jwt/public.pem', db)
+var tokenVerifier = new TokenVerifier(process.env.COOPCYCLE_PUBLIC_KEY_FILE, db)
 
 var wsServer = new WebSocketServer({
     server: server,
