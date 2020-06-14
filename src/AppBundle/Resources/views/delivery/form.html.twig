@@ -52,32 +52,34 @@
 
   <div class="row">
     <div class="col-md-7">
-      {% if form.store is defined %}
-        {{ form_row(form.store) }}
-      {% endif %}
-      {% if form.vehicle is defined %}
-        {{ form_row(form.vehicle) }}
-      {% endif %}
       {{ form_row(form.pickup) }}
-      <hr>
+    </div>
+    <div class="col-md-5">
+      <div class="form-horizontal">
+        {% if form.store is defined %}
+          {{ form_row(form.store) }}
+        {% endif %}
+        {% if form.vehicle is defined %}
+          {{ form_row(form.vehicle) }}
+        {% endif %}
+        {{ form_row(form.weight) }}
+        {% if form.packages is defined %}
+        <div class="form-group">
+          {{ form_label(form.packages) }}
+          <div class="col-sm-9">
+            {{ form_widget(form.packages) }}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-md-7">
       {{ form_row(form.dropoff) }}
     </div>
     <div class="col-md-5">
-
-      <div class="form-horizontal">
-
-        {{ form_row(form.weight) }}
-
-        {% if form.packages is defined %}
-          <div class="form-group">
-            {{ form_label(form.packages) }}
-            <div class="col-sm-9">
-              {{ form_widget(form.packages) }}
-            </div>
-          </div>
-        {% endif %}
-
-      </div>
 
       <div class="embed-responsive embed-responsive-16by9">
         <div class="embed-responsive-item" id="map"></div>
@@ -140,17 +142,15 @@
         </div>
       {% endif %}
 
-
-      <hr>
-
-      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">
-        <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
-        {% trans %}adminDashboard.deliveries.save{% endtrans %}
-      </button>
-
     </div>
-
   </div>
+
+  <hr>
+
+  <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary mb-4">
+    <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
+    {% trans %}adminDashboard.deliveries.save{% endtrans %}
+  </button>
 
 {{ form_end(form) }}
 
