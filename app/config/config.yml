@@ -131,6 +131,7 @@ twig:
         matomo_site_id: "%env(COOPCYCLE_MATOMO_SITE_ID)%"
         matomo_disabled: "%kernel.debug%"
         currency_context: "@sylius.context.currency"
+        tax_incl: '%env(bool:COOPCYCLE_TAX_INCL)%'
     exception_controller: null
 
 # Doctrine Configuration
