@@ -116,14 +116,14 @@ window.initMap = function() {
 
         this.disable()
 
-        const updateDistance = new Promise((resolve, reject) => {
+        const updateDistance = new Promise((resolve) => {
           route(delivery).then((infos) => {
             $('#delivery_distance').text(`${infos.kms} Km`)
             resolve()
           })
         })
 
-        const updatePrice = new Promise((resolve, reject) => {
+        const updatePrice = new Promise((resolve) => {
           if (delivery.store && pricePreview) {
             const deliveryAsPayload = {
               ...delivery,
