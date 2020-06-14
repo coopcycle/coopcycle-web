@@ -70,6 +70,40 @@ class DeliveryManagerTest extends KernelTestCase
         $this->assertEquals(5.99, $deliveryManager->getPrice($delivery, $ruleSet));
     }
 
+    public function testGetPriceWithMapStrategy()
+    {
+        $rule1 = new PricingRule();
+        $rule1->setExpression('true');
+        $rule1->setPrice(599);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('distance in 0..3000');
+        $rule2->setPrice(100);
+
+        $rule3 = new PricingRule();
+        $rule3->setExpression('distance in 3000..5000');
+        $rule3->setPrice(200);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+            $rule3,
+        ]));
+
+        $deliveryManager = new DeliveryManager(
+            $this->expressionLanguage,
+            $this->routing->reveal(),
+            $this->orderTimeHelper->reveal()
+        );
+
+        $delivery = new Delivery();
+        $delivery->setDistance(1500);
+
+        $this->assertEquals(699, $deliveryManager->getPrice($delivery, $ruleSet));
+    }
+
     public function testCreateFromOrder()
     {
         $restaurantAddress = new Address();

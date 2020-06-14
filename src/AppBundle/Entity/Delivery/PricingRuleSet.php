@@ -61,4 +61,24 @@ class PricingRuleSet
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getStrategy()
+    {
+        return $this->strategy;
+    }
+
+    /**
+     * @param mixed $strategy
+     *
+     * @return self
+     */
+    public function setStrategy($strategy)
+    {
+        $this->strategy = $strategy;
+
+        return $this;
+    }
 }

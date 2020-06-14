@@ -33,11 +33,34 @@ class DeliveryManager
     {
         $this->lastMatchedRule = null;
 
-        foreach ($ruleSet->getRules() as $rule) {
-            if ($rule->matches($delivery, $this->expressionLanguage)) {
-                $this->lastMatchedRule = $rule;
+        if ($ruleSet->getStrategy() === 'find') {
 
-                return $rule->evaluatePrice($delivery, $this->expressionLanguage);
+            foreach ($ruleSet->getRules() as $rule) {
+                if ($rule->matches($delivery, $this->expressionLanguage)) {
+                    $this->lastMatchedRule = $rule;
+
+                    return $rule->evaluatePrice($delivery, $this->expressionLanguage);
+                }
+            }
+
+            return null;
+        }
+
+        if ($ruleSet->getStrategy() === 'map') {
+
+            $totalPrice = 0;
+            foreach ($ruleSet->getRules() as $rule) {
+                if ($rule->matches($delivery, $this->expressionLanguage)) {
+                    $this->lastMatchedRule = $rule;
+
+                    $price = $rule->evaluatePrice($delivery, $this->expressionLanguage);
+                    $totalPrice += $price;
+                }
+            }
+
+            if ($this->lastMatchedRule !== null) {
+
+                return $totalPrice;
             }
         }
     }
