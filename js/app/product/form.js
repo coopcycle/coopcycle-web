@@ -5,6 +5,7 @@ import _ from 'lodash'
 import numbro from 'numbro'
 
 import '../i18n'
+import { calculate } from '../utils/tax'
 
 Dropzone.autoDiscover = false
 
@@ -61,12 +62,13 @@ const getRateAmount = (el) => {
   const taxCategories = JSON.parse(el.dataset.taxCategories)
   const value = el.options[el.selectedIndex].value
   const rates = taxCategories[value]
-  const rate = _.first(rates)
 
-  return rate.amount
+  return _.reduce(rates, (acc, rate) => acc + rate.amount, 0)
 }
 
 document.querySelectorAll('[data-tax-categories]').forEach(el => {
+
+  const taxIncl = JSON.parse(el.dataset.taxIncl)
 
   const taxIncludedEl = document.querySelector(el.dataset.included)
   const taxExcludedEl = document.querySelector(el.dataset.excluded)
@@ -75,16 +77,15 @@ document.querySelectorAll('[data-tax-categories]').forEach(el => {
 
     const amount = getRateAmount(e.target)
 
-    let taxIncluded = taxIncludedEl.value
-    taxIncluded = taxIncluded.replace(',', '.')
-    taxIncluded = parseFloat(taxIncluded)
-    taxIncluded = parseInt(taxIncluded * 100, 10)
+    const masterEl = taxIncl ? taxIncludedEl : taxExcludedEl
+    const otherEl  = taxIncl ? taxExcludedEl : taxIncludedEl
 
-    const vatAmount = Math.round(taxIncluded - (taxIncluded / (1 + amount)))
-    const taxExcluded = taxIncluded - vatAmount
+    const value = numbro.unformat(masterEl.value)
 
-    taxExcludedEl.value = numbro(taxExcluded / 100).format({ mantissa: 2 })
+    const vatAmount = calculate((value * 100), amount, taxIncl)
+    const otherValue = taxIncl ? ((value * 100) - vatAmount) : ((value * 100) + vatAmount)
 
+    otherEl.value = numbro(otherValue / 100).format({ mantissa: 2 })
   })
 
   taxExcludedEl.addEventListener('input', (e) => {

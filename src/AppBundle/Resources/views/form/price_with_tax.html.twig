@@ -18,6 +18,7 @@
     </div>
     <div class="col-sm-4">
       {{ form_row(form.taxCategory, { attr: {
+        'data-tax-incl': tax_incl|json_encode,
         'data-tax-categories': tax_categories|json_encode,
         'data-excluded': ('#' ~ form.taxExcluded.vars.id),
         'data-included': ('#' ~ form.taxIncluded.vars.id)
