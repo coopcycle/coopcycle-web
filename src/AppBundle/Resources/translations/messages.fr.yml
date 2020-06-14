@@ -844,7 +844,7 @@ form.package.name.label: Nom
 form.package_set.packages.label: Emballages
 form.package_set.name.label: Nom
 form.time_slot.interval.label: Intervalle
-form.delivery.packages.label: Emballages
+form.delivery.packages.label: Marchandise
 form.delivery.package.label: Emballage
 order_item.adjustment_type.reusable_packaging: '%quantity% × emballage(s)'
 order.reusable_packaging.alert: Cette commande doit être conditionnée dans des emballages
