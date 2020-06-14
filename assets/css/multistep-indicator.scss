@@ -93,6 +93,7 @@ $animation-time: 0.5s;
 
 // Creates the 'arrow' effect / background colors
 .item-wrap {
+    display: block;
     padding: $base-padding;
     position: relative;
     height: 100%;
