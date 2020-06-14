@@ -255,9 +255,9 @@ class Order extends BaseOrder implements OrderInterface
     protected $receipt;
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $tipAmount = 0;
+    protected $tipAmount = null;
 
     protected $shippingTimeRange;
 

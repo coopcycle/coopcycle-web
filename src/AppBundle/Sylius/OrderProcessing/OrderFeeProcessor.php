@@ -122,14 +122,18 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             }
         }
 
-        if ($order->getTipAmount() > 0) {
-            $tipAdjustment = $this->adjustmentFactory->createWithData(
-                AdjustmentInterface::TIP_ADJUSTMENT,
-                $this->translator->trans('order.adjustment_type.tip'),
-                $order->getTipAmount(),
-                $neutral = false
-            );
-            $order->addAdjustment($tipAdjustment);
+        $tipAmount = $order->getTipAmount();
+
+        if (null !== $tipAmount) {
+            if ($tipAmount > 0) {
+                $tipAdjustment = $this->adjustmentFactory->createWithData(
+                    AdjustmentInterface::TIP_ADJUSTMENT,
+                    $this->translator->trans('order.adjustment_type.tip'),
+                    $order->getTipAmount(),
+                    $neutral = false
+                );
+                $order->addAdjustment($tipAdjustment);
+            }
         } else {
             if (count($originalTipAdjustments) > 0) {
                 foreach ($originalTipAdjustments as $tipAdjustment) {
@@ -138,6 +142,8 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             }
         }
 
+        // If the order is fulfilled with delivery method,
+        // the tip goes to the messenger
         if (!$order->isTakeAway()) {
             $businessAmount += $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT);
         }
