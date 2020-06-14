@@ -13,7 +13,7 @@
       <div class="col-xs-12">
         {% include '@App/order/breadcrumb.html.twig' %}
         <h2 class="font-weight-bold m-0 mb-5">{{ order.restaurant.name }}</h4>
-        <div class="mb-3">
+        <div>
 
           <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
           <div id="items">
@@ -42,39 +42,38 @@
           </div>
 
         </div>
-        <div class="border">
 
-          <h4 class="bg-light p-3 m-0">{% trans %}cart.widget.title{% endtrans %}</h4>
-          <div class="p-3 border-bottom">
+        <hr>
 
-            {% if order.takeaway %}
-              <div class="alert alert-warning">
-                <i class="fa fa-warning mr-2"></i>
-                {{ 'form.checkout_address.takeaway.disclaimer'|trans }}
-                {% if order.restaurant.telephone %}
-                  {{ 'form.checkout_address.takeaway.contact'|trans({ '%telephone%': (order.restaurant.telephone|phone_number_format('NATIONAL')) }) }}
-                {% endif %}
-                <span class="text-danger">{{ 'form.checkout_address.takeaway.no_show_disclaimer'|trans }}</span>
-              </div>
-            {% endif %}
+        <div>
 
-            {% if form.telephone is defined %}
-              {{ form_row(form.telephone) }}
-            {% endif %}
+          {% if order.takeaway %}
+            <div class="alert alert-warning">
+              <i class="fa fa-warning mr-2"></i>
+              {{ 'form.checkout_address.takeaway.disclaimer'|trans }}
+              {% if order.restaurant.telephone %}
+                {{ 'form.checkout_address.takeaway.contact'|trans({ '%telephone%': (order.restaurant.telephone|phone_number_format('NATIONAL')) }) }}
+              {% endif %}
+              <span class="text-danger">{{ 'form.checkout_address.takeaway.no_show_disclaimer'|trans }}</span>
+            </div>
+          {% endif %}
 
-            {% if form.shippingAddress is defined %}
-              {{ form_row(form.shippingAddress.streetAddress) }}
-              {{ form_row(form.shippingAddress.floor) }}
+          {% if form.telephone is defined %}
+            {{ form_row(form.telephone) }}
+          {% endif %}
 
-              {{ form_row(form.shippingAddress.description) }}
-            {% endif %}
+          {% if form.shippingAddress is defined %}
+            {{ form_row(form.shippingAddress.streetAddress) }}
+            {{ form_row(form.shippingAddress.floor) }}
 
-          </div>
-          <div class="p-3">
-            {{ form_row(form.notes) }}
-          </div>
+            {{ form_row(form.shippingAddress.description) }}
+          {% endif %}
 
         </div>
+        <div>
+          {{ form_row(form.notes) }}
+        </div>
+
       </div>
     </div>
     <nav class="checkout-nav border-top">
