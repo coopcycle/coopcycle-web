@@ -116,32 +116,42 @@ window.initMap = function() {
 
         this.disable()
 
-        route(delivery)
-          .then((infos) => {
-
+        const updateDistance = new Promise((resolve, reject) => {
+          route(delivery).then((infos) => {
             $('#delivery_distance').text(`${infos.kms} Km`)
+            resolve()
+          })
+        })
 
-            if (delivery.store && pricePreview) {
-
-              const deliveryAsPayload = {
-                ...delivery,
-                pickup: {
-                  ...delivery.pickup,
-                  address: serializeAddress(delivery.pickup.address)
-                },
-                dropoff: {
-                  ...delivery.dropoff,
-                  address: serializeAddress(delivery.dropoff.address)
-                }
+        const updatePrice = new Promise((resolve, reject) => {
+          if (delivery.store && pricePreview) {
+            const deliveryAsPayload = {
+              ...delivery,
+              pickup: {
+                ...delivery.pickup,
+                address: serializeAddress(delivery.pickup.address)
+              },
+              dropoff: {
+                ...delivery.dropoff,
+                address: serializeAddress(delivery.dropoff.address)
               }
-
-              pricePreview.update(deliveryAsPayload)
             }
 
-            form.enable()
-          })
-          // eslint-disable-next-line no-console
-          .catch(e => console.error(e))
+            pricePreview.update(deliveryAsPayload).then(() => resolve())
+          } else {
+            resolve()
+          }
+        })
+
+        Promise.all([
+          updateDistance,
+          updatePrice,
+        ])
+        .then(() => {
+          form.enable()
+        })
+        // eslint-disable-next-line no-console
+        .catch(e => console.error(e))
       }
     }
   })
