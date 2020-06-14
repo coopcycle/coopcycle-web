@@ -23,8 +23,18 @@
               with_tip_form: form.tipAmount
             } %}
             <div class="row">
-              <div class="col-xs-12 col-sm-3 col-sm-offset-9">
-                {{ form_row(form.promotionCoupon) }}
+              <div class="col-xs-12 col-sm-3 col-sm-offset-9 text-right">
+                <a role="button"
+                  data-toggle="collapse"
+                  href="#promotion-coupon-collapse"
+                  aria-expanded="false"
+                  aria-controls="promotion-coupon-collapse"
+                  class="d-block mb-4 font-weight-bold">
+                  {{ form.promotionCoupon.vars.label|trans }}
+                </a>
+                <div class="collapse" id="promotion-coupon-collapse">
+                  {{ form_row(form.promotionCoupon) }}
+                </div>
                 {# We use an input group with the button #}
                 {# {{ form_row(form.addPromotion) }} #}
               </div>
