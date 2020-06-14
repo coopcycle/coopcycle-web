@@ -103,6 +103,7 @@ class DeliveryType extends AbstractType
                 'with_tags' => $options['with_tags'],
                 'with_addresses' => null !== $store ? $store->getAddresses() : [],
                 'address_placeholder' => 'form.delivery.pickup.address_placeholder',
+                'street_address_label' => 'form.delivery.pickup.label',
             ]);
             $form->add('dropoff', TaskType::class, [
                 'mapped' => false,
@@ -114,6 +115,7 @@ class DeliveryType extends AbstractType
                 'with_tags' => $options['with_tags'],
                 'with_addresses' => null !== $store ? $store->getAddresses() : [],
                 'address_placeholder' => 'form.delivery.dropoff.address_placeholder',
+                'street_address_label' => 'form.delivery.dropoff.label',
                 'with_recipient_details' => $options['with_dropoff_recipient_details'],
                 'with_doorstep' => $options['with_dropoff_doorstep'],
             ]);

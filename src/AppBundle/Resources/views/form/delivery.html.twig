@@ -1,36 +1,16 @@
 {% extends 'bootstrap_3_horizontal_layout.html.twig' %}
 
 {% block form_label_class -%}
-col-sm-3
+col-md-3
 {%- endblock form_label_class %}
 
 {% block form_group_class -%}
-col-sm-9
+col-md-9
 {%- endblock form_group_class %}
 
 {% block task_row %}
-<div class="panel panel-default">
-  <div class="panel-heading" role="tab">
-    <h4 class="panel-title">
-      <a role="button" data-toggle="collapse" href="#{{ form.vars.id ~ '_collapse' }}"
-        aria-expanded="true" aria-controls="{{ form.vars.id ~ '_collapse' }}">
-        {{ label|trans }}
-        <strong id="{{ form.vars.id ~ '_panel_title' }}">
-        {% if form.address.vars.value %}
-        {{ form.address.vars.value.streetAddress }}
-        {% endif %}
-        </strong>
-      </a>
-      <span class="pull-right hidden" id="{{ form.vars.id ~ '_checked' }}">
-        <i class="fa fa-check" aria-hidden="true" style="color: #27AE60"></i>
-      </span>
-    </h4>
-  </div>
-  <div id="{{ form.vars.id ~ '_collapse' }}" class="panel-collapse collapse in" role="tabpanel">
-    <div class="panel-body">
-      {{ form_widget(form) }}
-    </div>
-  </div>
+<div id="{{ form.vars.id }}">
+  {{ form_widget(form) }}
 </div>
 {% endblock %}
 
@@ -59,7 +39,6 @@ col-sm-9
   {% endif %}
 
   {% if form.tagsAsString is defined %}
-    <hr>
     {{ form_row(form.tagsAsString) }}
   {% endif %}
 

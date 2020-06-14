@@ -49,7 +49,7 @@
   {% endif %}
 
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-md-7">
       {% if form.store is defined %}
         {{ form_row(form.store) }}
       {% endif %}
@@ -57,9 +57,10 @@
         {{ form_row(form.vehicle) }}
       {% endif %}
       {{ form_row(form.pickup) }}
+      <hr>
       {{ form_row(form.dropoff) }}
     </div>
-    <div class="col-sm-6">
+    <div class="col-md-5">
 
       {% if not is_new %}
       <div class="alert alert-info">

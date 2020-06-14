@@ -35,7 +35,7 @@ class TaskType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $addressBookOptions = [
-            'label' => 'form.task.address.label',
+            'label' => $options['street_address_label'],
             'with_addresses' => $options['with_addresses']
         ];
 
@@ -156,6 +156,7 @@ class TaskType extends AbstractType
             'address_placeholder' => null,
             'with_recipient_details' => false,
             'with_doorstep' => false,
+            'street_address_label' => 'form.task.address.label',
         ));
     }
 }

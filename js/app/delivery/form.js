@@ -50,11 +50,6 @@ const markerIcons = {
   dropoff: { icon: 'flag', color: '#2ECC71' }
 }
 
-const addressTypeSelector = {
-  pickup:  { checkmark: '#delivery_pickup_checked' },
-  dropoff: { checkmark: '#delivery_dropoff_checked' }
-}
-
 function createMarker(location, addressType) {
 
   if (!map) {
@@ -72,11 +67,6 @@ function createMarker(location, addressType) {
   markers[addressType].addTo(map)
 
   MapHelper.fitToLayers(map, _.filter(markers))
-}
-
-function markAddressChecked(addressType) {
-  const { checkmark } = addressTypeSelector[addressType]
-  $(checkmark).removeClass('hidden')
 }
 
 function serializeAddress(address) {
@@ -102,14 +92,12 @@ window.initMap = function() {
           latitude: delivery.pickup.address.geo.latitude,
           longitude: delivery.pickup.address.geo.longitude
         }, 'pickup')
-        markAddressChecked('pickup')
       }
       if (delivery.dropoff.address) {
         createMarker({
           latitude: delivery.dropoff.address.geo.latitude,
           longitude: delivery.dropoff.address.geo.longitude
         }, 'dropoff')
-        markAddressChecked('dropoff')
       }
     },
     onChange: function(delivery) {
@@ -119,7 +107,6 @@ window.initMap = function() {
           latitude: delivery.pickup.address.geo.latitude,
           longitude: delivery.pickup.address.geo.longitude
         }, 'pickup')
-        markAddressChecked('pickup')
         $('#delivery_pickup_panel_title').text(delivery.pickup.address.streetAddress)
       }
       if (delivery.dropoff.address) {
@@ -127,7 +114,6 @@ window.initMap = function() {
           latitude: delivery.dropoff.address.geo.latitude,
           longitude: delivery.dropoff.address.geo.longitude
         }, 'dropoff')
-        markAddressChecked('dropoff')
         $('#delivery_dropoff_panel_title').text(delivery.dropoff.address.streetAddress)
       }
 
