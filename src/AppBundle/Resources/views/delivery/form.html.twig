@@ -48,6 +48,8 @@
 
   {% endif %}
 
+  {{ form_errors(form) }}
+
   <div class="row">
     <div class="col-md-7">
       {% if form.store is defined %}
@@ -61,6 +63,35 @@
       {{ form_row(form.dropoff) }}
     </div>
     <div class="col-md-5">
+
+      <div class="form-horizontal">
+
+        {{ form_row(form.weight) }}
+
+        {% if form.packages is defined %}
+          <div class="form-group">
+            {{ form_label(form.packages) }}
+            <div class="col-sm-9">
+              {{ form_widget(form.packages) }}
+            </div>
+          </div>
+        {% endif %}
+
+      </div>
+
+      <div class="embed-responsive embed-responsive-16by9">
+        <div class="embed-responsive-item" id="map"></div>
+        <div class="map-distance-overlay">
+          <span class="mr-2">{% trans %}form.delivery.distance.label{% endtrans %}</span>
+          <span id="delivery_distance">
+            {% if delivery.distance is not empty %}
+              {{ delivery.distance|meters_to_kilometers }}
+            {% endif %}
+          </span>
+        </div>
+      </div>
+
+      <hr>
 
       {% if not is_new %}
       <div class="alert alert-info">
@@ -109,35 +140,9 @@
         </div>
       {% endif %}
 
-      <div class="embed-responsive embed-responsive-16by9">
-        <div class="embed-responsive-item" id="map"></div>
-        <div class="map-distance-overlay">
-          <span class="mr-2">{% trans %}form.delivery.distance.label{% endtrans %}</span>
-          <span id="delivery_distance">
-            {% if delivery.distance is not empty %}
-              {{ delivery.distance|meters_to_kilometers }}
-            {% endif %}
-          </span>
-        </div>
-      </div>
+
       <hr>
-      <div class="form-horizontal">
 
-        {{ form_errors(form) }}
-
-        {{ form_row(form.weight) }}
-
-        {% if form.packages is defined %}
-          <div class="form-group">
-            {{ form_label(form.packages) }}
-            <div class="col-sm-9">
-              {{ form_widget(form.packages) }}
-            </div>
-          </div>
-        {% endif %}
-
-      </div>
-      <hr>
       <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">
         <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
         {% trans %}adminDashboard.deliveries.save{% endtrans %}
