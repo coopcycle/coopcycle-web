@@ -7,7 +7,7 @@
     <div class="pull-right">
       <div data-widget="switch" data-switch-target="{{ ('#' ~ form.vars.id) }}"></div>
     </div>
-    {{ block('hidden_widget') }}
+    {{ form_widget(form) }}
   </div>
 
 {% endblock %}

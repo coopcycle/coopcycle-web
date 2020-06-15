@@ -195,11 +195,6 @@ class SettingsType extends AbstractType
             } catch (NumberParseException $e) {}
         });
 
-        $builder->get('subject_to_vat')->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            $data = $event->getData();
-            $event->setData((bool) $event->getData());
-        });
-
         $builder->get('currency_code')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();

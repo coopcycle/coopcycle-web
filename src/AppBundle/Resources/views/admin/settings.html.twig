@@ -346,10 +346,12 @@
 
     $('[data-widget="switch"]').each(function() {
       var selector = this.dataset.switchTarget;
+      var el = document.querySelector(selector);
+      $(el).closest('.checkbox').addClass('d-none');
       new CoopCycle.Switch(this, {
-        checked: document.querySelector(selector).value === '1',
+        checked: el.checked,
         onChange: function(checked) {
-          document.querySelector(selector).value = checked ? '1' : '0'
+          el.checked = checked;
         }
       });
     });

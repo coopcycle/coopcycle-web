@@ -258,6 +258,10 @@ class SettingsManager
                     $value = (bool) $value;
                 }
 
+                if ($name === 'subject_to_vat') {
+                    $value = (bool) $value;
+                }
+
                 $settings->$name = $value;
             } catch (\RuntimeException $e) {}
         }
