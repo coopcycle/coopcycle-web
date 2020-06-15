@@ -176,6 +176,9 @@ class DeliveryType extends AbstractType
                     'mapped' => false,
                     'allow_add' => true,
                     'allow_delete' => true,
+                    'attr' => [
+                        'data-packages-required' => var_export($store->isPackagesRequired(), true),
+                    ]
                 ]);
 
                 $form->get('packages')->setData($data);

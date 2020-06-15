@@ -136,7 +136,7 @@ col-md-9
 {% endblock %}
 
 {% block _delivery_packages_widget %}
-<div id="{{ form.vars.id }}" class="delivery__form__packages">
+<div id="{{ form.vars.id }}" class="delivery__form__packages" data-packages-required="{{ form.vars.attr['data-packages-required'] }}">
   <div id="{{ form.vars.id }}_list"
     data-prototype="{{ form_widget(form.vars.prototype)|e }}"
     data-widget-counter="{{ form.children|length }}"

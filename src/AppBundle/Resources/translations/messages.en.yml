@@ -987,3 +987,4 @@ basics.tax_incl: Tax incl.
 basics.tax_excl: Tax excl.
 basics.kilos: Kilos
 form.product_tax_category_choice.placeholder: Choose a tax category
+form.package_with_quantity.package.placeholder: Choose a type of package

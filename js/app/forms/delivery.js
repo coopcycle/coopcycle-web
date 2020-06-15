@@ -21,6 +21,21 @@ class DeliveryForm {
 
 let store
 
+function setPackages(name) {
+  const packages = []
+  $(`#${name}_packages_list`).children().each(function() {
+    packages.push({
+      type: $(this).find('select').val(),
+      quantity: $(this).find('input[type="number"]').val()
+    })
+  })
+
+  store.dispatch({
+    type: 'SET_PACKAGES',
+    packages
+  })
+}
+
 function createAddressWidget(name, type, cb) {
 
   const telephone = document.querySelector(`#${name}_${type}_telephone`)
@@ -128,6 +143,61 @@ function createTagsWidget(name, type, tags) {
   })
 }
 
+function createPackageForm($list) {
+
+  var counter = $list.data('widget-counter') || $list.children().length
+  var newWidget = $list.attr('data-prototype')
+
+  newWidget = newWidget.replace(/__name__/g, counter)
+
+  counter++
+  $list.data('widget-counter', counter)
+
+  var newElem = $(newWidget)
+  newElem.find('input[type="number"]').val(1)
+  newElem.find('input[type="number"]').on('change', () => setPackages(name))
+  newElem.appendTo($list)
+}
+
+
+function createPackagesWidget(name, packagesRequired) {
+
+  if (packagesRequired) {
+    createPackageForm(
+      $(`#${name}_packages_list`)
+    )
+  }
+
+  $(`#${name}_packages_add`).click(function() {
+    const selector = $(this).attr('data-target')
+    createPackageForm(
+      $(selector)
+    )
+    setPackages(name)
+  })
+
+  $(`#${name}_packages`).on('click', '[data-delete]', function() {
+    const $target = $($(this).attr('data-target'))
+
+    if ($target.length === 0) {
+      return
+    }
+
+    const $list = $target.parent()
+
+    if (packagesRequired && $list.children().length === 1) {
+      return
+    }
+
+    $target.remove()
+    setPackages(name)
+  })
+
+  $(`#${name}_packages`).on('change', 'select', function() {
+    setPackages(name)
+  })
+}
+
 function parseWeight(value) {
   const intValue = parseInt((value || 0), 10)
   if (isNaN(intValue)) {
@@ -135,21 +205,6 @@ function parseWeight(value) {
   }
 
   return intValue * 1000
-}
-
-function setPackages(name) {
-  const packages = []
-  $(`#${name}_packages_list`).children().each(function() {
-    packages.push({
-      type: $(this).find('select').val(),
-      quantity: $(this).find('input[type="number"]').val()
-    })
-  })
-
-  store.dispatch({
-    type: 'SET_PACKAGES',
-    packages
-  })
 }
 
 function reducer(state = {}, action) {
@@ -264,38 +319,8 @@ export default function(name, options) {
     const packages = document.querySelector(`#${name}_packages`)
 
     if (packages) {
-      $(`#${name}_packages_add`).click(function() {
-
-        var list = $($(this).attr('data-target'))
-
-        var counter = list.data('widget-counter') || list.children().length
-        var newWidget = list.attr('data-prototype')
-
-        newWidget = newWidget.replace(/__name__/g, counter)
-
-        counter++
-        list.data('widget-counter', counter)
-
-        var newElem = $(newWidget)
-        newElem.find('input[type="number"]').val(1)
-        newElem.find('input[type="number"]').on('change', () => setPackages(name))
-        newElem.appendTo(list)
-
-        setPackages(name)
-      })
-
-      $(`#${name}_packages`).on('click', '[data-delete]', function() {
-        const $target = $($(this).attr('data-target'))
-        if ($target.length > 0) {
-          $target.remove()
-        }
-
-        setPackages(name)
-      })
-
-      $(`#${name}_packages`).on('change', 'select', function() {
-        setPackages(name)
-      })
+      const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
+      createPackagesWidget(name, packagesRequired)
     }
 
     el.addEventListener('submit', (e) => {

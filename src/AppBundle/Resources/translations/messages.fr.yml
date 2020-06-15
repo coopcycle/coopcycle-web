@@ -950,3 +950,4 @@ nav.about_us: À propos
 basics.tax_incl: TTC
 basics.tax_excl: HT
 form.product_tax_category_choice.placeholder: Choisissez une catégorie
+form.package_with_quantity.package.placeholder: Choisissez un type de marchandise
