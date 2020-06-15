@@ -48,6 +48,8 @@ class TimeSlotType extends AbstractType
             ->add('sameDayCutoff', TimeType::class, [
                 'label' => 'form.time_slot.same_day_cutoff.label',
                 'required' => false,
+                'input' => 'string',
+                'input_format' => 'H:i',
                 'help' => 'form.time_slot.same_day_cutoff.help',
                 'minutes' => [0, 15, 30, 60],
             ])
