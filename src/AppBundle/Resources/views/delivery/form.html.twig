@@ -104,14 +104,14 @@
 
   <hr>
 
-  <div class="row">
+  <div class="d-md-flex d-lg-flex d-xl-flex flex-row mb-4">
     <div class="col-md-7">
       {% if delivery.store is not empty and delivery.store.createOrders %}
-        <div id="delivery-price" class="delivery-price-preview mb-4"
+        <div id="delivery-price" class="delivery-price-preview mb-sm-4 mb-md-0"
           data-tax-rate-amount="{{ tax_rate.amount|e('html_attr') }}"
           data-tax-rate-is-included-in-price="{{ tax_rate.isIncludedInPrice()|json_encode|e('html_attr') }}">
 
-          <div class="delivery-price mb-2">
+          <div class="delivery-price">
             <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
             <span class="delivery-price-value" id="delivery_price">
               <span {% if not tax_rate.isIncludedInPrice() %}class="text-muted"{% endif %}>
@@ -147,7 +147,7 @@
       {% endif %}
     </div>
     <div class="col-md-5">
-      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary mb-4">
+      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary h-100">
         <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
         {% trans %}adminDashboard.deliveries.save{% endtrans %}
       </button>
