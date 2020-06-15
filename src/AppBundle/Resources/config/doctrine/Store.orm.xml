@@ -25,6 +25,8 @@
     <field name="prefillPickupAddress" type="boolean" column="prefill_pickup_address"/>
     <field name="createOrders" type="boolean" column="create_orders"/>
     <field name="checkExpression" type="string" column="check_expression" nullable="true"/>
+    <field name="weightRequired" type="boolean" column="weight_required"/>
+    <field name="packagesRequired" type="boolean" column="packages_required"/>
     <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store">
       <cascade>
         <cascade-persist/>

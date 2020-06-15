@@ -134,6 +134,10 @@ class Store extends LocalBusiness
 
     private $checkExpression;
 
+    private $weightRequired = false;
+
+    private $packagesRequired = false;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
@@ -395,5 +399,45 @@ class Store extends LocalBusiness
     public function getCheckExpression()
     {
         return $this->checkExpression;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWeightRequired()
+    {
+        return $this->weightRequired;
+    }
+
+    /**
+     * @param mixed $weightRequired
+     *
+     * @return self
+     */
+    public function setWeightRequired($weightRequired)
+    {
+        $this->weightRequired = $weightRequired;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPackagesRequired()
+    {
+        return $this->packagesRequired;
+    }
+
+    /**
+     * @param mixed $packagesRequired
+     *
+     * @return self
+     */
+    public function setPackagesRequired($packagesRequired)
+    {
+        $this->packagesRequired = $packagesRequired;
+
+        return $this;
     }
 }

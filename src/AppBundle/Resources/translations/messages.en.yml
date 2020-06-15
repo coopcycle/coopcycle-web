@@ -403,6 +403,8 @@ form.store_type.setAsDefault.label: Set as default address
 form.store_type.defaultAddress.label: Default Address
 form.store_type.time_slot.label: Time slot
 form.store_type.package_set.label: Package set
+form.store_type.weight_required.label: Require input of weight
+form.store_type.packages_required.label: Require input of packages
 form.delivery.vehicle.placeholder: Choose a vehicle type
 form.delivery.pickup.label: Collection address
 form.delivery.pickup.address_placeholder: House number and street name, area, postcode,

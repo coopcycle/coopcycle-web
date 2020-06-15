@@ -54,6 +54,14 @@ class StoreType extends LocalBusinessType
                     'label' => 'form.store_type.create_orders.label',
                     'required' => false,
                 ])
+                ->add('weightRequired', CheckboxType::class, [
+                    'label' => 'form.store_type.weight_required.label',
+                    'required' => false,
+                ])
+                ->add('packagesRequired', CheckboxType::class, [
+                    'label' => 'form.store_type.packages_required.label',
+                    'required' => false,
+                ])
                 ->add('timeSlot', EntityType::class, [
                     'label' => 'form.store_type.time_slot.label',
                     'class' => TimeSlot::class,

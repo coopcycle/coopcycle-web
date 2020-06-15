@@ -95,6 +95,12 @@
       {% if form.createOrders is defined %}
         {{ form_row(form.createOrders) }}
       {% endif %}
+      {% if form.weightRequired is defined %}
+        {{ form_row(form.weightRequired) }}
+      {% endif %}
+      {% if form.packagesRequired is defined %}
+        {{ form_row(form.packagesRequired) }}
+      {% endif %}
     {% endif %}
     <hr>
   {% endif %}

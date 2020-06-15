@@ -107,7 +107,7 @@
   <div class="d-md-flex d-lg-flex d-xl-flex flex-row mb-4">
     <div class="col-md-7">
       {% if delivery.store is not empty and delivery.store.createOrders %}
-        <div id="delivery-price" class="delivery-price-preview mb-sm-4 mb-md-0"
+        <div id="delivery-price" class="delivery-price-preview mb-4 mb-md-0"
           data-tax-rate-amount="{{ tax_rate.amount|e('html_attr') }}"
           data-tax-rate-is-included-in-price="{{ tax_rate.isIncludedInPrice()|json_encode|e('html_attr') }}">
 
