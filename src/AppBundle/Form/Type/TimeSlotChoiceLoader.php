@@ -121,6 +121,16 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                             sprintf('%s-%s', $spec->opens, $spec->closes)
                         );
 
+                        if (null !== $this->timeSlot->getSameDayCutoff()
+                        && Carbon::instance($cursor)->isSameDay($this->now)) {
+                            $cutoff = $this->now->copy()->setTimeFromTimeString(
+                                $this->timeSlot->getSameDayCutoff()
+                            );
+                            if ($this->now > $cutoff) {
+                                continue;
+                            }
+                        }
+
                         if (!$choice->hasBegun($this->now, $this->timeSlot->getPriorNotice())) {
                             $choices[] = $choice;
                         }

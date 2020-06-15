@@ -250,4 +250,68 @@ class TimeSlotChoiceLoaderTest extends TestCase
             $choices[1]
         );
     }
+
+    public function testWithOpeningHoursWithSameDayCutoffExpired()
+    {
+        $slot = new TimeSlot();
+        $slot->setWorkingDaysOnly(false);
+        $slot->setOpeningHours([
+            'Mo-Fr 10:00-11:00',
+            'Mo-Fr 11:00-12:00',
+            'Mo-Fr 12:00-14:00',
+            'Mo-Fr 14:00-16:00'
+        ]);
+        $slot->setSameDayCutoff('11:00');
+
+        Carbon::setTestNow(Carbon::parse('2019-10-21 11:30:00'));
+
+        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr');
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertCount(8, $choices);
+
+        $this->assertTimeSlotChoice(
+            new \DateTime('2019-10-22 10:00:00'),
+            new \DateTime('2019-10-22 11:00:00'),
+            $choices[0]
+        );
+        $this->assertTimeSlotChoice(
+            new \DateTime('2019-10-22 11:00:00'),
+            new \DateTime('2019-10-22 12:00:00'),
+            $choices[1]
+        );
+    }
+
+    public function testWithOpeningHoursWithSameDayCutoffNotExpired()
+    {
+        $slot = new TimeSlot();
+        $slot->setWorkingDaysOnly(false);
+        $slot->setOpeningHours([
+            'Mo-Fr 10:00-11:00',
+            'Mo-Fr 11:00-12:00',
+            'Mo-Fr 12:00-14:00',
+            'Mo-Fr 14:00-16:00'
+        ]);
+        $slot->setSameDayCutoff('11:00');
+
+        Carbon::setTestNow(Carbon::parse('2019-10-21 09:30:00'));
+
+        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr');
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertCount(8, $choices);
+
+        $this->assertTimeSlotChoice(
+            new \DateTime('2019-10-21 10:00:00'),
+            new \DateTime('2019-10-21 11:00:00'),
+            $choices[0]
+        );
+        $this->assertTimeSlotChoice(
+            new \DateTime('2019-10-21 11:00:00'),
+            new \DateTime('2019-10-21 12:00:00'),
+            $choices[1]
+        );
+    }
 }
