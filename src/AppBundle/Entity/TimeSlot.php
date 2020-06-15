@@ -52,6 +52,11 @@ class TimeSlot
     private $priorNotice;
 
     /**
+     * @var string
+     */
+    private $sameDayCutoff = null;
+
+    /**
      * @var array
      */
     private $openingHours = [];
@@ -221,6 +226,26 @@ class TimeSlot
     public function setPriorNotice($priorNotice)
     {
         $this->priorNotice = $priorNotice;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSameDayCutoff()
+    {
+        return $this->sameDayCutoff;
+    }
+
+    /**
+     * @param string $sameDayCutoff
+     *
+     * @return self
+     */
+    public function setSameDayCutoff($sameDayCutoff)
+    {
+        $this->sameDayCutoff = $sameDayCutoff;
 
         return $this;
     }
