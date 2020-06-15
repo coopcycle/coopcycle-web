@@ -17,9 +17,10 @@
   {{ form_row(form.name) }}
   {{ form_row(form.interval) }}
   {{ form_row(form.priorNoticeHours) }}
+  {{ form_row(form.sameDayCutoff) }}
   {% set time_slot = form.vars.data %}
   {% set is_advanced = (time_slot.id is not null and time_slot.hasOpeningHours()) %}
-  <div class="text-right">
+  <div class="text-right mb-4">
     <div class="btn-group">
       <label class="btn btn-default {% if not is_advanced %}active{% endif %}">
         <input type="radio" data-name="mode" data-mode="simple" {% if not is_advanced %}checked{% endif %}> Mode simple

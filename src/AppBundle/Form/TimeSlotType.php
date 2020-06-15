@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -43,6 +44,12 @@ class TimeSlotType extends AbstractType
             ->add('workingDaysOnly', CheckboxType::class, [
                 'label' => 'form.time_slot.working_days_only.label',
                 'required' => false,
+            ])
+            ->add('sameDayCutoff', TimeType::class, [
+                'label' => 'form.time_slot.same_day_cutoff.label',
+                'required' => false,
+                'help' => 'form.time_slot.same_day_cutoff.help',
+                'minutes' => [0, 15, 30, 60],
             ])
             ->add('choices', CollectionType::class, [
                 'entry_type' => TimeSlotChoiceType::class,

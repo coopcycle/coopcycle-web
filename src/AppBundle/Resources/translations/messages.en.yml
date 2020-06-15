@@ -988,3 +988,6 @@ basics.tax_excl: Tax excl.
 basics.kilos: Kilos
 form.product_tax_category_choice.placeholder: Choose a tax category
 form.package_with_quantity.package.placeholder: Choose a type of package
+form.time_slot.same_day_cutoff.label: Same day cutoff
+form.time_slot.same_day_cutoff.help:
+  For example of your select 11:00, choices on the same day won't be displayed after 11:00
