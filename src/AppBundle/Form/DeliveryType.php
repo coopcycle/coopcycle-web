@@ -180,6 +180,15 @@ class DeliveryType extends AbstractType
 
                 $form->get('packages')->setData($data);
             }
+
+            if ($form->has('weight') && $store->isWeightRequired()) {
+
+                $config = $form->get('weight')->getConfig();
+                $options = $config->getOptions();
+                $options['required'] = true;
+
+                $form->add('weight', get_class($config->getType()->getInnerType()), $options);
+            }
         });
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
@@ -215,7 +224,6 @@ class DeliveryType extends AbstractType
                 $weight = $weightK * 1000;
                 $delivery->setWeight($weight);
             }
-
 
             $coordinates = [];
             foreach ($delivery->getTasks() as $task) {

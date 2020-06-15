@@ -404,7 +404,7 @@ class Store extends LocalBusiness
     /**
      * @return mixed
      */
-    public function getWeightRequired()
+    public function isWeightRequired()
     {
         return $this->weightRequired;
     }
@@ -424,7 +424,7 @@ class Store extends LocalBusiness
     /**
      * @return mixed
      */
-    public function getPackagesRequired()
+    public function isPackagesRequired()
     {
         return $this->packagesRequired;
     }
