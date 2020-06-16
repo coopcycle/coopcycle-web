@@ -109,11 +109,7 @@
             <li>
               <span class="loopeat-icon">🍱</span>
               <span>
-                <label for="{{form.parent.reusablePackagingPledgeReturn.vars.id}}">
-                  {{ (loopeat_trans_prefix ~ '.return_pledge_label')|trans({
-                    '%field%': form_widget(form.parent.reusablePackagingPledgeReturn, { label_attr: { class: 'm-0' } })
-                  })|raw }}
-                </label>
+                {{ form_widget(form.parent.reusablePackagingPledgeReturn) }}
               </span>
             </li>
             <li>
@@ -155,4 +151,12 @@
       </div>
     </div>
   {% endif %}
+{% endblock %}
+
+{% block _checkout_address_reusablePackagingPledgeReturn_widget %}
+  <label for="{{form.parent.reusablePackagingPledgeReturn.vars.id}}">
+    {{ 'form.checkout_address.reusable_packaging.loopeat.return_pledge_label'|trans({
+      '%field%': form_widget(form, { label_attr: { class: 'm-0' } })
+    })|raw }}
+  </label>
 {% endblock %}
