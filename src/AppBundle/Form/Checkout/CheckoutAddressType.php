@@ -200,6 +200,7 @@ class CheckoutAddressType extends AbstractType
                         'html5' => true,
                         'attr' => ['min' => '0'],
                         'label' => 'form.checkout_address.reusable_packaging_loopeat_returns.label',
+                        'empty_data' => 0,
                     ]);
                     $form->add('isJQuerySubmit', HiddenType::class, [
                         'data' => '0',
