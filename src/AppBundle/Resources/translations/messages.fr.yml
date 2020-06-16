@@ -968,3 +968,5 @@ form.package_with_quantity.package.placeholder: Choisissez un type de marchandis
 form.time_slot.same_day_cutoff.label: Cutoff pour le jour même
 form.time_slot.same_day_cutoff.help:
   Par exemple si vous sélectionnez 11h, les choix pour le jour même ne seront pas affichés après 11h
+order.reusable_packaging.pledge_return.disclaimer:
+  Le client a indiqué que %count% emballages seront retournés

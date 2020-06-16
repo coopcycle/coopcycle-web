@@ -991,3 +991,5 @@ form.package_with_quantity.package.placeholder: Choose a type of package
 form.time_slot.same_day_cutoff.label: Same day cutoff
 form.time_slot.same_day_cutoff.help:
   For example of your select 11:00, choices on the same day won't be displayed after 11:00
+order.reusable_packaging.pledge_return.disclaimer:
+  The customer has indicated that %count% packages will be returned
