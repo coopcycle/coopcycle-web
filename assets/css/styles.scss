@@ -1205,7 +1205,7 @@ form[name="restaurant"] {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    height: calc(100% - 2rem);
+    height: 7rem;
   }
   .loopeat-icon {
     font-size: 1.5em;
@@ -1218,6 +1218,9 @@ form[name="restaurant"] {
   }
   &.active {
     border: 2px solid #621e5b;
+  }
+  &:not(.active){
+    padding-right: 8rem !important;
   }
   & #checkout_address_cancelReusablePackaging{
     color: #621e5b;
