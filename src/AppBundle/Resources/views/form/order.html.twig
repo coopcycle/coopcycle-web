@@ -72,20 +72,21 @@
   {% set isLoopeat = attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}
   {% set isChecked = form.parent.reusablePackagingEnabled.vars.data == 1 %}
   {% set reusablePackagingQuantity = attr['data-packaging-quantity'] %}
-  {% set loopeatAvailableCredits = attr['data-loopeat-available'] %}
-  {% set hasBalanceError = isChecked and form.parent.reusablePackagingPledgeReturn is defined and
-                    form.parent.reusablePackagingPledgeReturn.vars.errors|length > 0 %}
-  {% set missing = hasBalanceError ?
-                    form.parent.reusablePackagingPledgeReturn.vars.errors[0].getMessageParameters()['%missing%'] :
-                    attr['data-loopeat-missing'] %}
-  {% set loopeat_trans_prefix = 'form.checkout_address.reusable_packaging.loopeat'  %}
 
   {% if isLoopeat %}
+    {% set loopeat_trans_prefix = 'form.checkout_address.reusable_packaging.loopeat'  %}
     <div id="loopeat-block" class="p-3{{ isChecked ? " active": "" }}">
       <div class="py-0 m-0">
         {{ form_widget(form) }}
       </div>
       {% if isChecked %}
+        {% set loopeatAvailableCredits = attr['data-loopeat-available'] %}
+        {% set hasBalanceError = isChecked
+                                 and form.parent.reusablePackagingPledgeReturn is defined
+                                 and form.parent.reusablePackagingPledgeReturn.vars.errors|length > 0 %}
+        {% set missing = hasBalanceError ?
+                         form.parent.reusablePackagingPledgeReturn.vars.errors[0].getMessageParameters()['%missing%'] :
+                         attr['data-loopeat-missing'] %}
         <div>
           <ul class="list-unstyled loopeat-summary">
             <li>
@@ -134,9 +135,6 @@
           </div>
         </div>
       {% else %}
-        {# TODO: figure how to remove these fields from the form #}
-        {{ form_widget(form.parent.reusablePackagingPledgeReturn, { 'attr': {'style': 'display: none;'} }) }}
-        {{ form_widget(form.parent.cancelReusablePackaging, { 'attr': {'style': 'display: none;'} }) }}
         <img class="loopeat-bowl1" src="{{ asset('img/loopeat/bowl1.png') }}" alt="Loopeat" />
         <div class="my-2">
           <a href="https://loopeat.fr/en-savoir-plus/" target="_blank">
