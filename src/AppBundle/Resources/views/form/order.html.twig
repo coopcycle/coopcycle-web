@@ -113,12 +113,7 @@
                 })|raw }}
               </span>
             </li>
-            <li>
-              <span class="loopeat-icon">🍱</span>
-              <span>
-                {{ form_widget(form.parent.reusablePackagingPledgeReturn) }}
-              </span>
-            </li>
+            {{ form_row(form.parent.reusablePackagingPledgeReturn) }}
             <li>
               {% if not is_valid %}
                 <span class="loopeat-icon">🤔</span>
@@ -158,6 +153,19 @@
       </div>
     </div>
   {% endif %}
+{% endblock %}
+
+{% block _checkout_address_reusablePackagingPledgeReturn_row %}
+  <li>
+    <span class="loopeat-icon">🍱</span>
+    <span>
+      {% if attr['max'] > 0 %}
+        {{ form_widget(form) }}
+      {% else %}
+        {{ 'form.checkout_address.reusable_packaging.loopeat.no_pledge_label'|trans }}
+      {% endif %}
+    </span>
+  </li>
 {% endblock %}
 
 {% block _checkout_address_reusablePackagingPledgeReturn_widget %}

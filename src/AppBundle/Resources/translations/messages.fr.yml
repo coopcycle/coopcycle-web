@@ -604,7 +604,8 @@ form.checkout_address.reusable_packaging.loopeat.confirm: Valider
 form.checkout_address.reusable_packaging.loopeat.back: < Retour
 form.checkout_address.reusable_packaging.loopeat.add:
   Ajouter %missing% crédits
-
+form.checkout_address.reusable_packaging.loopeat.no_pledge_label:
+  Vous n'avez pas de lunchbox à rendre.
 form.checkout_address.quote.label: Demander un devis
 form.checkout_address.add_promotion.label: Appliquer
 form.checkout_address.tip_amount.label: Pourboire
