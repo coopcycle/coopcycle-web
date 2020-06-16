@@ -66,7 +66,7 @@ class LoopEatOrderValidator extends ConstraintValidator
                     ->setParameter('%missing%', $missing)
                     ->setParameter('%loopeatBalance%', $loopeatBalance)
                     ->setParameter('%pledgeReturn%', $pledgeReturn)
-                    ->atPath('reusablePackagingPledgeReturn')
+                    ->atPath('reusablePackagingEnabled')
                     ->addViolation();
             }
         } catch (RequestException $e) {

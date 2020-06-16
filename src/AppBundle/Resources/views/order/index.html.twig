@@ -191,21 +191,7 @@
   });
 
   $('#checkout_address_reusablePackagingPledgeReturn').on('change', function(e) {
-    var balance = parseInt($('#checkout_address_reusablePackagingEnabled').data('loopeatAvailable'))
-    var quantity = parseInt($('#checkout_address_reusablePackagingEnabled').data('packagingQuantity'))
-    var pledgeReturn = parseInt($('#checkout_address_reusablePackagingPledgeReturn').val())
-    var missing = quantity - balance - pledgeReturn
-
-    var conclusion = missing > 0 ?
-      "{{ 'loopeat.insufficient_balance'|trans({}, 'validators') }}".replace('%missing%', missing) :
-      "{{ 'form.checkout_address.reusable_packaging.loopeat.enough_credits'|trans }}"
-
-    var btnAddLabel = "{{ 'form.checkout_address.reusable_packaging.loopeat.add'|trans}}".replace('%missing%', missing)
-
-    $('#loopeat-conclusion').text(conclusion)
-    $('#loopeat-add-credit').text(btnAddLabel)
-    $('#loopeat-buttons').toggle(missing > 0)
-    $('#checkout_address_reusablePackagingEnabled').data('loopeatRequired', quantity - pledgeReturn);
+    submitForm();
   });
 
   $('#checkout_address_reusablePackagingEnabled').on('change', function(e) {

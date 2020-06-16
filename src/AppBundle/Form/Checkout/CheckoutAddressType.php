@@ -186,7 +186,6 @@ class CheckoutAddressType extends AbstractType
                         'attr' => [
                             'data-loopeat' => "true",
                             'data-loopeat-credentials' => var_export($hasLoopeatCredential, true),
-                            'data-packaging-quantity' => $packagingQuantity,
                             'data-loopeat-available' => $availableLoopeat,
                             'data-loopeat-missing' => $missingLoopeat,
                             'data-loopeat-required' => $packagingQuantity - $pledgeReturn,

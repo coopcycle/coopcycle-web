@@ -69,18 +69,20 @@
 
 {% block _checkout_address_reusablePackagingEnabled_row %}
 
+  {% set order = form.parent.vars.data %}
+
   {% set isLoopeat = attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}
-  {% set isChecked = form.parent.reusablePackagingEnabled.vars.data == 1 %}
-  {% set reusablePackagingQuantity = attr['data-packaging-quantity'] %}
-  {% set loopeatAvailableCredits = attr['data-loopeat-available'] %}
-  {% set hasBalanceError = isChecked and form.parent.reusablePackagingPledgeReturn is defined and
-                    form.parent.reusablePackagingPledgeReturn.vars.errors|length > 0 %}
-  {% set missing = hasBalanceError ?
-                    form.parent.reusablePackagingPledgeReturn.vars.errors[0].getMessageParameters()['%missing%'] :
-                    attr['data-loopeat-missing'] %}
-  {% set loopeat_trans_prefix = 'form.checkout_address.reusable_packaging.loopeat'  %}
+  {% set isChecked = form.vars.data %}
 
   {% if isLoopeat %}
+
+    {% set loopeat_trans_prefix = 'form.checkout_address.reusable_packaging.loopeat' %}
+    {% set loopeatAvailableCredits = attr['data-loopeat-available'] %}
+    {% set missing = 0 %}
+    {% if not form.vars.valid %}
+      {% set missing = (form.vars.errors|first).messageParameters['%missing%'] %}
+    {% endif %}
+
     <div id="loopeat-block" class="p-3{{ isChecked ? " active": "" }}">
       <div class="py-0 m-0">
         {{ form_widget(form) }}
@@ -92,7 +94,7 @@
               <span class="loopeat-icon">♻️</span>
               <span>
                 {{ (loopeat_trans_prefix ~ '.reusable_quantity_label')|trans({
-                  '%reusablePackagingQuantity%': reusablePackagingQuantity
+                  '%reusablePackagingQuantity%': order.reusablePackagingQuantity
                 })|raw }}
               </span>
             </li>
@@ -115,16 +117,16 @@
               </span>
             </li>
             <li>
-              {% if hasBalanceError %}
+              {% if not form.vars.valid %}
                 <span class="loopeat-icon">🤔</span>
-                <span id="loopeat-conclusion">{{ form.parent.reusablePackagingPledgeReturn.vars.errors[0].getMessage() }}</span>
+                <span id="loopeat-conclusion">{{ (form.vars.errors|first).message }}</span>
               {% else %}
                 <span class="loopeat-icon">👍</span>
                 <span id="loopeat-conclusion">{{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}</span>
               {% endif %}
             </li>
           </ul>
-          <div id="loopeat-buttons" class="{% if not hasBalanceError %}d-none{% endif %}">
+          <div id="loopeat-buttons" class="{% if form.vars.valid %}d-none{% endif %}">
             <div class="d-flex flex-row justify-content-between ">
               {{ form_widget(form.parent.cancelReusablePackaging)}}
               <a id="loopeat-add-credit" href="" class="btn btn-default">
