@@ -136,7 +136,7 @@ class CheckoutAddressType extends AbstractType
                 // FIXME
                 // We need to check if $packagingQuantity > 0
 
-                if ($restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {
+                if($restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {
                     $packagingAmount = $order->getReusablePackagingAmount();
 
                     if ($packagingAmount > 0) {
@@ -156,7 +156,6 @@ class CheckoutAddressType extends AbstractType
                         ],
                     ]);
                 } else if ($restaurant->isLoopeatEnabled()) {
-
                     $pledgeReturn = $order->getReusablePackagingPledgeReturn();
                     $hasLoopeatCredential = $customer->hasLoopEatCredentials();
                     $availableLoopeat = 0;
@@ -197,24 +196,20 @@ class CheckoutAddressType extends AbstractType
                             ])
                         ],
                     ]);
-
+                    $form->add('reusablePackagingPledgeReturn', NumberType::class, [
+                        'required' => true,
+                        'html5' => true,
+                        'attr' => ['min' => '0'],
+                        'label' => 'form.checkout_address.reusable_packaging_loopeat_returns.label',
+                    ]);
                     $form->add('isJQuerySubmit', HiddenType::class, [
                         'data' => '0',
                         'mapped' => false,
                     ]);
-
-                    if ($order->isReusablePackagingEnabled()) {
-                        $form->add('reusablePackagingPledgeReturn', NumberType::class, [
-                            'required' => true,
-                            'html5' => true,
-                            'attr' => ['min' => '0'],
-                            'label' => 'form.checkout_address.reusable_packaging_loopeat_returns.label',
-                        ]);
-                        $form->add('cancelReusablePackaging', SubmitType::class, [
-                            'label' => 'form.checkout_address.reusable_packaging.loopeat.back',
-                            'attr' => ['class' => 'btn btn-link']
-                        ]);
-                    }
+                    $form->add('cancelReusablePackaging', SubmitType::class, [
+                        'label' => 'form.checkout_address.reusable_packaging.loopeat.back',
+                        'attr' => ['class' => 'btn btn-link']
+                    ]);
                 }
             }
 
