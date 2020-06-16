@@ -79,7 +79,14 @@
     {% set loopeat_trans_prefix = 'form.checkout_address.reusable_packaging.loopeat' %}
     {% set loopeatAvailableCredits = attr['data-loopeat-available'] %}
     {% set missing = 0 %}
-    {% if not form.vars.valid %}
+
+    {#
+    We can't completely rely on "form.vars.valid",
+    because Symfony only changes validation state of submitted forms
+    https://github.com/symfony/symfony/issues/32336
+    #}
+    {% set is_valid = form.vars.submitted ? form.vars.valid : form.vars.errors|length == 0 %}
+    {% if not is_valid %}
       {% set missing = (form.vars.errors|first).messageParameters['%missing%'] %}
     {% endif %}
 
@@ -113,7 +120,7 @@
               </span>
             </li>
             <li>
-              {% if not form.vars.valid %}
+              {% if not is_valid %}
                 <span class="loopeat-icon">🤔</span>
                 <span id="loopeat-conclusion">{{ (form.vars.errors|first).message }}</span>
               {% else %}
@@ -122,7 +129,7 @@
               {% endif %}
             </li>
           </ul>
-          <div id="loopeat-buttons" class="{% if form.vars.valid %}d-none{% endif %}">
+          <div id="loopeat-buttons" class="{% if is_valid %}d-none{% endif %}">
             <div class="d-flex flex-row justify-content-between ">
               {{ form_widget(form.parent.cancelReusablePackaging)}}
               <a id="loopeat-add-credit" href="" class="btn btn-default">

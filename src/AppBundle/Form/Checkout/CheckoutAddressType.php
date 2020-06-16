@@ -156,18 +156,6 @@ class CheckoutAddressType extends AbstractType
                         ],
                     ]);
                 } else if ($restaurant->isLoopeatEnabled()) {
-                    $pledgeReturn = $order->getReusablePackagingPledgeReturn();
-                    $hasLoopeatCredential = $customer->hasLoopEatCredentials();
-                    $availableLoopeat = 0;
-                    $missingLoopeat = $packagingQuantity - $pledgeReturn;
-
-                    if($hasLoopeatCredential) {
-                        try{ // TODO: can we avoid double query with validator
-                            $loopeatCustomer = $this->loopeatClient->currentCustomer($customer);
-                            $availableLoopeat = $loopeatCustomer['loopeatBalance'];
-                        } catch (RequestException $e) {}
-                        $missingLoopeat = $packagingQuantity - $availableLoopeat - $pledgeReturn;
-                    }
 
                     // Use a JWT as the "state" parameter
                     $state = $this->jwtEncoder->encode([
@@ -179,6 +167,23 @@ class CheckoutAddressType extends AbstractType
                         LoopEatClient::JWT_CLAIM_FAILURE_REDIRECT =>
                             $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
                     ]);
+
+                    $pledgeReturn = $order->getReusablePackagingPledgeReturn();
+                    $hasLoopeatCredential = $customer->hasLoopEatCredentials();
+                    $availableLoopeat = 0;
+                    $missingLoopeat = $packagingQuantity - $pledgeReturn;
+
+                    // We need to perform the balance check on initial render,
+                    // because the customer *may* have checked the "reusablePackagingEnabled" checkbox,
+                    // then hit the back button, modified the cart, then come back
+                    // It means that when the customer submits the form, we do this twice
+                    if ($hasLoopeatCredential) {
+                        try { // TODO: can we avoid double query with validator
+                            $loopeatCustomer = $this->loopeatClient->currentCustomer($customer);
+                            $availableLoopeat = $loopeatCustomer['loopeatBalance'];
+                        } catch (RequestException $e) {}
+                        $missingLoopeat = $packagingQuantity - $availableLoopeat - $pledgeReturn;
+                    }
 
                     $form->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
@@ -210,6 +215,21 @@ class CheckoutAddressType extends AbstractType
                         'label' => 'form.checkout_address.reusable_packaging.loopeat.back',
                         'attr' => ['class' => 'btn btn-link']
                     ]);
+
+                    if ($missingLoopeat > 0) {
+                        $parameters = [
+                            '%missing%' => $missingLoopeat,
+                            '%loopeatBalance%' => $availableLoopeat,
+                            '%pledgeReturn%' => $pledgeReturn,
+                        ];
+                        $form->get('reusablePackagingEnabled')->addError(
+                            new FormError(
+                                $this->translator->trans('loopeat.insufficient_balance', $parameters, 'validators'),
+                                'loopeat.insufficient_balance',
+                                $parameters,
+                            )
+                        );
+                    }
                 }
             }
 
