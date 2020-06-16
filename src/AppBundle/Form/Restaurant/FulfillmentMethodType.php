@@ -13,9 +13,18 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class FulfillmentMethodType extends AbstractType
 {
+    private $authorizationChecker;
+
+    public function __construct(
+        AuthorizationCheckerInterface $authorizationChecker)
+    {
+        $this->authorizationChecker = $authorizationChecker;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -42,22 +51,26 @@ class FulfillmentMethodType extends AbstractType
             ])
             ->add('minimumAmount', MoneyType::class, [
                 'label' => 'restaurant.contract.minimumCartAmount.label',
-            ])
-            ->add('allowEdit', CheckboxType::class, [
+            ]);
+
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $builder->add('allowEdit', CheckboxType::class, [
                 'label' => 'basics.allow_edit',
                 'required' => false,
                 'mapped' => false,
-            ])
-            ;
+            ]);
+        }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             $fulfillmentMethod = $event->getData();
 
-            $allowEdit = $fulfillmentMethod->hasOption('allow_edit')
-                && true === $fulfillmentMethod->getOption('allow_edit');
+            if ($form->has('allowEdit')) {
+                $allowEdit = $fulfillmentMethod->hasOption('allow_edit')
+                    && true === $fulfillmentMethod->getOption('allow_edit');
 
-            $form->get('allowEdit')->setData($allowEdit);
+                $form->get('allowEdit')->setData($allowEdit);
+            }
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
@@ -70,10 +83,12 @@ class FulfillmentMethodType extends AbstractType
                 array_filter($fulfillmentMethod->getOpeningHours())
             );
 
-            $fulfillmentMethod->setOption(
-                'allow_edit',
-                $form->get('allowEdit')->getData()
-            );
+            if ($form->has('allowEdit')) {
+                $fulfillmentMethod->setOption(
+                    'allow_edit',
+                    $form->get('allowEdit')->getData()
+                );
+            }
         });
     }
 

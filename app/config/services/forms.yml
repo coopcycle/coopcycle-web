@@ -201,3 +201,6 @@ services:
       $taxCategoryRepository: '@sylius.repository.tax_category'
       $country: '%country_iso%'
     tags: [ form.type ]
+
+  AppBundle\Form\Restaurant\FulfillmentMethodType:
+    tags: [ form.type ]
