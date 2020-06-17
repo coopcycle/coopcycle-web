@@ -128,9 +128,9 @@ $('#checkout_address_cancelReusablePackaging').on('click', function() {
   submitForm();
 });
 
-$('#checkout_address_reusablePackagingPledgeReturn').on('change', function() {
+$('#checkout_address_reusablePackagingPledgeReturn').on('change', _.debounce(function() {
   submitForm();
-});
+}, 350));
 
 $('#checkout_address_reusablePackagingEnabled').on('change', function() {
   var isChecked = $(this).is(':checked');
