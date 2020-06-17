@@ -126,10 +126,6 @@ class OrderController extends AbstractController
                 return $this->redirectToRoute('order');
             }
 
-            if ($form->getClickedButton() && 'cancelReusablePackaging' === $form->getClickedButton()->getName()) {
-                return $this->redirectToRoute('order');
-            }
-
             if ($form->has('isJQuerySubmit') && $form->get('isJQuerySubmit')->getData()) {
                 return $this->redirectToRoute('order');
             }

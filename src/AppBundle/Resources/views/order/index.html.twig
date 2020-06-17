@@ -174,7 +174,7 @@
   $('#modal-loopeat').on('hidden.bs.modal', function() {
     if (!preventUncheck) {
       $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
-      if(wasChecked) submitForm();
+      if (wasChecked) submitForm();
     }
   });
 
@@ -184,10 +184,15 @@
     var required = $('#checkout_address_reusablePackagingEnabled').data('loopeatRequired');
     var iframeUrl = $('#checkout_address_reusablePackagingEnabled').data('loopeatAuthorizeUrl');
 
-    if(iframeUrl) {
+    if (iframeUrl) {
       $('#modal-loopeat iframe').attr('src', iframeUrl + '&loopeats_required='+required);
       $('#modal-loopeat').modal('show');
     }
+  });
+
+  $('#checkout_address_cancelReusablePackaging').on('click', function(e) {
+    $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
+    submitForm();
   });
 
   $('#checkout_address_reusablePackagingPledgeReturn').on('change', function(e) {

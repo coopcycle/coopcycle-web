@@ -211,10 +211,6 @@ class CheckoutAddressType extends AbstractType
                         'data' => '0',
                         'mapped' => false,
                     ]);
-                    $form->add('cancelReusablePackaging', SubmitType::class, [
-                        'label' => 'form.checkout_address.reusable_packaging.loopeat.back',
-                        'attr' => ['class' => 'btn btn-link']
-                    ]);
 
                     if ($missingLoopeat > 0) {
                         $parameters = [
@@ -243,17 +239,6 @@ class CheckoutAddressType extends AbstractType
             }
         });
 
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-            $form = $event->getForm();
-            $order = $event->getData();
-
-            if ($form->getClickedButton() && 'cancelReusablePackaging' === $form->getClickedButton()->getName()) {
-                $order->setReusablePackagingEnabled(false);
-                $order->setReusablePackagingPledgeReturn(0);
-                $event->setData($order);
-            }
-        });
-
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $order = $form->getData();
@@ -269,11 +254,6 @@ class CheckoutAddressType extends AbstractType
                 $order->setTipAmount((int) ($tipAmount * 100));
 
                 $this->orderProcessor->process($order);
-            }
-
-            if ($form->getClickedButton() && 'cancelReusablePackaging' === $form->getClickedButton()->getName()) {
-                $order->setReusablePackagingEnabled(false);
-                $order->setReusablePackagingPledgeReturn(0);
             }
         });
     }

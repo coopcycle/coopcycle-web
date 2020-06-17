@@ -131,7 +131,9 @@
           </ul>
           <div id="loopeat-buttons" class="{% if is_valid %}d-none{% endif %}">
             <div class="d-flex flex-row justify-content-between ">
-              {{ form_widget(form.parent.cancelReusablePackaging)}}
+              <button type="button" id="checkout_address_cancelReusablePackaging" class="btn btn-link btn">
+                {{ 'basics.cancel'|trans }}
+              </button>
               <a id="loopeat-add-credit" href="" class="btn btn-default">
                 {{ 'form.checkout_address.reusable_packaging.loopeat.add'|trans({'%missing%':missing})}}
               </a>
@@ -141,7 +143,6 @@
       {% else %}
         {# TODO: figure how to remove these fields from the form #}
         {% do form.parent.reusablePackagingPledgeReturn.setRendered %}
-        {% do form.parent.cancelReusablePackaging.setRendered %}
         <img class="loopeat-bowl1" src="{{ asset('img/loopeat/bowl1.png') }}" alt="Loopeat" />
         <div class="my-2">
           <a href="https://loopeat.fr/en-savoir-plus/" target="_blank">
