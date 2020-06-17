@@ -172,7 +172,6 @@ class CheckoutAddressType extends AbstractType
                     $hasLoopeatCredential = $customer->hasLoopEatCredentials();
                     $availableLoopeat = 0;
                     $missingLoopeat = $packagingQuantity - $pledgeReturn;
-                    $maxPledgeReturn = 0;
 
                     // We need to perform the balance check on initial render,
                     // because the customer *may* have checked the "reusablePackagingEnabled" checkbox,
@@ -182,7 +181,6 @@ class CheckoutAddressType extends AbstractType
                         try { // TODO: can we avoid double query with validator
                             $loopeatCustomer = $this->loopeatClient->currentCustomer($customer);
                             $availableLoopeat = $loopeatCustomer['loopeatBalance'];
-                            $maxPledgeReturn = $loopeatCustomer['loopeatCredit'] - $loopeatCustomer['loopeatBalance'];
                         } catch (RequestException $e) {}
                         $missingLoopeat = $packagingQuantity - $availableLoopeat - $pledgeReturn;
                     }
@@ -205,10 +203,7 @@ class CheckoutAddressType extends AbstractType
                     $form->add('reusablePackagingPledgeReturn', NumberType::class, [
                         'required' => true,
                         'html5' => true,
-                        'attr' => [
-                            'min' => '0',
-                            'max' => (string) $maxPledgeReturn,
-                        ],
+                        'attr' => ['min' => '0'],
                         'label' => 'form.checkout_address.reusable_packaging_loopeat_returns.label',
                         'empty_data' => 0,
                     ]);
