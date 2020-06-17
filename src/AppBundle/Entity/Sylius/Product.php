@@ -26,7 +26,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "put"={
  *       "method"="PUT",
  *       "denormalization_context"={"groups"={"product_update"}},
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsProduct(object)"
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsProduct(object))"
  *     },
  *   },
  *   attributes={
