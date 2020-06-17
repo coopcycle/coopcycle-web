@@ -69,30 +69,22 @@
 
 {% block _checkout_address_reusablePackagingEnabled_row %}
 
-  {% set order = form.parent.vars.data %}
-
   {% set isLoopeat = attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}
   {% set isChecked = form.vars.data %}
 
   {% if isLoopeat %}
 
     {% set loopeat_trans_prefix = 'form.checkout_address.reusable_packaging.loopeat' %}
-    {% set loopeatAvailableCredits = attr['data-loopeat-available'] %}
-    {% set missing = 0 %}
 
-    {#
-    We can't completely rely on "form.vars.valid",
-    because Symfony only changes validation state of submitted forms
-    https://github.com/symfony/symfony/issues/32336
-    #}
-    {% set is_valid = form.vars.submitted ? form.vars.valid : form.vars.errors|length == 0 %}
-    {% if not is_valid %}
-      {% set missing = (form.vars.errors|first).messageParameters['%missing%'] %}
-    {% endif %}
+    {% set order = form.parent.vars.data %}
+    {% set pledge_return = form.parent.reusablePackagingPledgeReturn.vars.data %}
+    {% set missing = (order.reusablePackagingQuantity - loopeat_context.loopeatBalance - pledge_return) %}
 
     <div id="loopeat-block" class="p-3{{ isChecked ? " active": "" }}">
       <div class="py-0 m-0">
-        {{ form_widget(form) }}
+        {{ form_widget(form, { attr: attr|merge({
+          'data-loopeat-required': (order.reusablePackagingQuantity - pledge_return)
+        }) }) }}
       </div>
       {% if isChecked %}
         <div>
@@ -109,7 +101,7 @@
               <span class="loopeat-icon">💶</span>
               <span>
                 {{ (loopeat_trans_prefix ~ '.available_credits_label')|trans({
-                  '%loopeatAvailableCredits%': loopeatAvailableCredits
+                  '%loopeatAvailableCredits%': loopeat_context.loopeatBalance
                 })|raw }}
               </span>
             </li>
@@ -120,22 +112,22 @@
               </span>
             </li>
             <li>
-              {% if not is_valid %}
+              {% if missing > 0 %}
                 <span class="loopeat-icon">🤔</span>
-                <span id="loopeat-conclusion">{{ (form.vars.errors|first).message }}</span>
+                <span id="loopeat-conclusion">{{ 'loopeat.insufficient_balance'|trans({ '%missing%': missing }, 'validators') }}</span>
               {% else %}
                 <span class="loopeat-icon">👍</span>
                 <span id="loopeat-conclusion">{{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}</span>
               {% endif %}
             </li>
           </ul>
-          <div id="loopeat-buttons" class="{% if is_valid %}d-none{% endif %}">
+          <div id="loopeat-buttons" class="{% if missing == 0 %}d-none{% endif %}">
             <div class="d-flex flex-row justify-content-between ">
               <button type="button" id="checkout_address_cancelReusablePackaging" class="btn btn-link btn">
                 {{ 'basics.cancel'|trans }}
               </button>
               <a id="loopeat-add-credit" href="" class="btn btn-default">
-                {{ 'form.checkout_address.reusable_packaging.loopeat.add'|trans({'%missing%':missing})}}
+                {{ 'form.checkout_address.reusable_packaging.loopeat.add'|trans({ '%missing%': missing }) }}
               </a>
             </div>
           </div>

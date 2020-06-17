@@ -5,6 +5,7 @@ namespace AppBundle\Form\Checkout;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Client as LoopEatClient;
+use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\LoopEatOrder;
 use GuzzleHttp\Exception\RequestException;
@@ -49,6 +50,7 @@ class CheckoutAddressType extends AbstractType
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         OrderProcessorInterface $orderProcessor,
+        LoopEatContext $loopeatContext,
         string $country)
     {
         $this->tokenStorage = $tokenStorage;
@@ -60,6 +62,7 @@ class CheckoutAddressType extends AbstractType
         $this->jwtEncoder = $jwtEncoder;
         $this->iriConverter = $iriConverter;
         $this->orderProcessor = $orderProcessor;
+        $this->loopeatContext = $loopeatContext;
         $this->country = strtoupper($country);
     }
 
@@ -168,32 +171,14 @@ class CheckoutAddressType extends AbstractType
                             $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
                     ]);
 
-                    $pledgeReturn = $order->getReusablePackagingPledgeReturn();
-                    $hasLoopeatCredential = $customer->hasLoopEatCredentials();
-                    $availableLoopeat = 0;
-                    $missingLoopeat = $packagingQuantity - $pledgeReturn;
-
-                    // We need to perform the balance check on initial render,
-                    // because the customer *may* have checked the "reusablePackagingEnabled" checkbox,
-                    // then hit the back button, modified the cart, then come back
-                    // It means that when the customer submits the form, we do this twice
-                    if ($hasLoopeatCredential) {
-                        try { // TODO: can we avoid double query with validator
-                            $loopeatCustomer = $this->loopeatClient->currentCustomer($customer);
-                            $availableLoopeat = $loopeatCustomer['loopeatBalance'];
-                        } catch (RequestException $e) {}
-                        $missingLoopeat = $packagingQuantity - $availableLoopeat - $pledgeReturn;
-                    }
+                    $this->loopeatContext->initialize($customer);
 
                     $form->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
                         'label' => 'form.checkout_address.reusable_packaging_loopeat_enabled.label',
                         'attr' => [
                             'data-loopeat' => "true",
-                            'data-loopeat-credentials' => var_export($hasLoopeatCredential, true),
-                            'data-loopeat-available' => $availableLoopeat,
-                            'data-loopeat-missing' => $missingLoopeat,
-                            'data-loopeat-required' => $packagingQuantity - $pledgeReturn,
+                            'data-loopeat-credentials' => var_export($customer->hasLoopEatCredentials(), true),
                             'data-loopeat-authorize-url' => $this->loopeatClient->getOAuthAuthorizeUrl([
                                 'login_hint' => $customer->getEmail(),
                                 'state' => $state,
@@ -211,21 +196,6 @@ class CheckoutAddressType extends AbstractType
                         'data' => '0',
                         'mapped' => false,
                     ]);
-
-                    if ($missingLoopeat > 0) {
-                        $parameters = [
-                            '%missing%' => $missingLoopeat,
-                            '%loopeatBalance%' => $availableLoopeat,
-                            '%pledgeReturn%' => $pledgeReturn,
-                        ];
-                        $form->get('reusablePackagingEnabled')->addError(
-                            new FormError(
-                                $this->translator->trans('loopeat.insufficient_balance', $parameters, 'validators'),
-                                'loopeat.insufficient_balance',
-                                $parameters,
-                            )
-                        );
-                    }
                 }
             }
 

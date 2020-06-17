@@ -132,6 +132,7 @@ twig:
         matomo_disabled: "%kernel.debug%"
         currency_context: "@sylius.context.currency"
         tax_incl: '%env(bool:COOPCYCLE_TAX_INCL)%'
+        loopeat_context: '@AppBundle\LoopEat\Context'
     exception_controller: null
 
 # Doctrine Configuration

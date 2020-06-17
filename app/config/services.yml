@@ -120,6 +120,8 @@ services:
       - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: loopeat }
 
+  AppBundle\LoopEat\Context: ~
+
   AppBundle\Controller\RestaurantController:
     arguments:
       $orderManager: '@sylius.manager.order'
