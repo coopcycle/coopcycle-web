@@ -70,6 +70,7 @@ class ProfileController extends Controller
             'promotion_new' => 'profile_restaurant_new_promotion',
             'promotion' => 'profile_restaurant_promotion',
             'product_option_preview' => 'profile_restaurant_product_option_preview',
+            'reusable_packaging_new' => 'profile_restaurant_new_reusable_packaging',
         ];
     }
 

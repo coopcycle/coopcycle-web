@@ -79,6 +79,13 @@ profile_restaurant_stats:
             restaurant: profile_restaurant
     methods: [ GET, POST ]
 
+profile_restaurant_new_reusable_packaging:
+    path: /profile/restaurants/{id}/deposit-refund/packagings/new
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::newRestaurantReusablePackagingAction
+        layout: '@App/profile.html.twig'
+    methods: [ GET, POST ]
+
 profile_restaurant_deposit_refund:
     path: /profile/restaurants/{id}/deposit-refund
     defaults:
