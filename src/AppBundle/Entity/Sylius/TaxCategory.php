@@ -15,4 +15,9 @@ class TaxCategory extends BaseTaxCategory
 
         $this->countries = new ArrayCollection();
     }
+
+    public function getCountries()
+    {
+        return $this->countries;
+    }
 }

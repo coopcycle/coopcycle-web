@@ -12,7 +12,7 @@ class TaxRate extends BaseTaxRate
     protected $country;
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getCountry()
     {
