@@ -80,6 +80,10 @@
     {% set pledge_return = form.parent.reusablePackagingPledgeReturn.vars.data %}
     {% set missing = (order.reusablePackagingQuantity - loopeat_context.loopeatBalance - pledge_return) %}
 
+    {% if missing < 0 %}
+      {% set missing = 0 %}
+    {% endif %}
+
     <div id="loopeat-block" class="p-3{{ isChecked ? " active": "" }}">
       <div class="py-0 m-0">
         {{ form_widget(form, { attr: attr|merge({
