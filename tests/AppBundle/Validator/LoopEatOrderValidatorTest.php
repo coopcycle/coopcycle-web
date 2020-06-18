@@ -68,7 +68,7 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
         $violations = $this->validator->validate($order->reveal(), $constraint);
 
         $this->buildViolation($constraint->insufficientBalance)
-            ->atPath('property.path.reusablePackagingPledgeReturn')
+            ->atPath('property.path.reusablePackagingEnabled')
             ->setParameter('%missing%', 1)
             ->setParameter('%loopeatBalance%', 2)
             ->setParameter('%pledgeReturn%', 0)
@@ -138,7 +138,7 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
         $violations = $this->validator->validate($order->reveal(), $constraint);
 
         $this->buildViolation($constraint->insufficientBalance)
-            ->atPath('property.path.reusablePackagingPledgeReturn')
+            ->atPath('property.path.reusablePackagingEnabled')
             ->setParameter('%missing%', 1)
             ->setParameter('%loopeatBalance%', 2)
             ->setParameter('%pledgeReturn%', 1)
