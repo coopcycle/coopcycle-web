@@ -133,6 +133,7 @@ twig:
         currency_context: "@sylius.context.currency"
         tax_incl: '%env(bool:COOPCYCLE_TAX_INCL)%'
         loopeat_context: '@AppBundle\LoopEat\Context'
+        sentry_apm_enabled: "%env(bool:COOPCYCLE_SENTRY_APM_ENABLED)%"
     exception_controller: null
 
 # Doctrine Configuration
