@@ -6,6 +6,7 @@ use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Form\Restaurant\FulfillmentMethodType;
+use AppBundle\Form\Restaurant\LoopeatType;
 use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\FormEvent;
@@ -96,13 +97,13 @@ class RestaurantType extends LocalBusinessType
                 ->add('delete', SubmitType::class, [
                     'label' => 'basics.delete',
                 ]);
+        }
 
-            if ($options['loopeat_enabled']) {
-                $builder->add('loopeatEnabled', CheckboxType::class, [
-                    'label' => 'restaurant.form.loopeat_enabled.label',
-                    'required' => false,
-                ]);
-            }
+        if ($options['loopeat_enabled']) {
+            $builder->add('loopeat', LoopeatType::class, [
+                'mapped' => false,
+                'allow_toggle' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
+            ]);
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
@@ -129,13 +130,6 @@ class RestaurantType extends LocalBusinessType
                 }
 
                 $form->get('enabledFulfillmentMethods')->setData($enabledFulfillmentMethods);
-            }
-
-            if ($options['loopeat_enabled'] && $restaurant->hasLoopEatCredentials()) {
-                $form
-                    ->add('loopeatDisconnect', SubmitType::class, [
-                        'label' => 'restaurant.form.loopeat_disconnect.label',
-                    ]);
             }
 
             if (null !== $restaurant->getId()) {
@@ -245,10 +239,6 @@ class RestaurantType extends LocalBusinessType
                     foreach ($newCuisines as $c) {
                         $restaurant->addServesCuisine($c);
                     }
-                }
-
-                if ($form->getClickedButton() && 'loopeatDisconnect' === $form->getClickedButton()->getName()) {
-                    $restaurant->clearLoopEatCredentials();
                 }
             }
         );
