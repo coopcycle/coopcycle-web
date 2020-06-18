@@ -159,9 +159,13 @@
 {% endblock %}
 
 {% block _checkout_address_reusablePackagingPledgeReturn_widget %}
+
+  {% set max = (loopeat_context.loopeatCredit - loopeat_context.loopeatBalance) %}
+  {% set attr = attr|merge({ 'min': 0, 'max': max }) %}
+
   <label for="{{ form.parent.reusablePackagingPledgeReturn.vars.id }}">
     {{ 'form.checkout_address.reusable_packaging.loopeat.return_pledge_label'|trans({
-      '%field%': form_widget(form, { label_attr: { class: 'm-0' } })
+      '%field%': form_widget(form, { attr: attr, label_attr: { class: 'm-0' } })
     })|raw }}
   </label>
 {% endblock %}

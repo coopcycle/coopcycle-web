@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\RequestException;
 class Context
 {
     private $loopeatBalance = 0;
+    private $loopeatCredit = 0;
 
     public function __construct(Client $client)
     {
@@ -19,8 +20,12 @@ class Context
         if ($customer->hasLoopEatCredentials()) {
 
             try {
+
                 $loopeatCustomer = $this->client->currentCustomer($customer);
+
                 $this->loopeatBalance = $loopeatCustomer['loopeatBalance'];
+                $this->loopeatCredit = $loopeatCustomer['loopeatCredit'];
+
             } catch (RequestException $e) {
                 // TODO Log error
             }
@@ -31,5 +36,10 @@ class Context
     public function getLoopeatBalance()
     {
         return $this->loopeatBalance;
+    }
+
+    public function getLoopeatCredit()
+    {
+        return $this->loopeatCredit;
     }
 }
