@@ -57,7 +57,7 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
 
                 $units = ceil($product->getReusablePackagingUnit() * $item->getQuantity());
                 $label = $this->translator->trans('order_item.adjustment_type.reusable_packaging', [
-                    '%quantity%' => $item->getQuantity()
+                    '%quantity%' => ceil($product->getReusablePackagingUnit() * $item->getQuantity())
                 ]);
 
                 $amount = $reusablePackaging->getPrice() * $units;

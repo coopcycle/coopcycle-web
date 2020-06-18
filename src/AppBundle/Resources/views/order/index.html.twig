@@ -135,55 +135,12 @@
 {% block footer %}
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('checkout-summary') }}
+{% endblock %}
+
 {% block scripts %}
 {% if not order.empty %}
 {{ encore_entry_script_tags('checkout-summary') }}
-<script>
-(function () {
-
-  var loopeatIframe = document.querySelector('#modal-loopeat iframe');
-  var preventUncheck = false;
-
-  function onMessage(e) {
-    if (e.source === loopeatIframe.contentWindow) {
-      var messageData = JSON.parse(e.data)
-      if (messageData && messageData.loopeat) {
-        if (messageData.loopeat.success) {
-          preventUncheck = true;
-          $('#modal-loopeat').modal('hide');
-
-          $('#checkout_address_reusablePackagingEnabled').prop('checked', true);
-          $('#checkout_address_reusablePackagingEnabled').closest('form').submit();
-        } else {
-          $('#modal-loopeat').modal('hide');
-        }
-      }
-    }
-  }
-  window.addEventListener('message', onMessage, true);
-
-  $('#modal-loopeat').on('shown.bs.modal', function() {
-    preventUncheck = false;
-  });
-  $('#modal-loopeat').on('hidden.bs.modal', function() {
-    if (!preventUncheck) {
-      $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
-    }
-  });
-
-  $('#checkout_address_reusablePackagingEnabled').on('change', function(e) {
-    var isChecked = $(this).is(':checked');
-    var isLoopeat = $(this).data('loopeat') === true;
-    var iframeUrl = $(this).data('loopeatAuthorizeUrl');
-    if (isChecked && isLoopeat && iframeUrl) {
-      $('#modal-loopeat iframe').attr('src', iframeUrl);
-      $('#modal-loopeat').modal('show');
-    } else {
-      $(this).closest('form').submit();
-    }
-  });
-
-})();
-</script>
 {% endif %}
 {% endblock %}

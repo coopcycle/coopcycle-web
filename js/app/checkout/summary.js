@@ -5,6 +5,8 @@ import { getCurrencySymbol } from '../i18n'
 
 require('gasparesganga-jquery-loading-overlay')
 
+import './summary.scss'
+
 const {
   currency,
   currencyFormat,
@@ -72,6 +74,78 @@ const updateTip = _.debounce(function() {
   })
 
 }, 350)
+
+const loopeatIframe = document.querySelector('#modal-loopeat iframe');
+const wasChecked = $('#checkout_address_reusablePackagingEnabled').is(':checked');
+
+let preventUncheck = false;
+
+function submitForm() {
+  $('#checkout_address_isJQuerySubmit').val(1);
+  $('#checkout_address_reusablePackagingEnabled').closest('form').submit();
+}
+
+function onMessage(e) {
+  if (e.source === loopeatIframe.contentWindow) {
+    var messageData = JSON.parse(e.data)
+    if (messageData && messageData.loopeat) {
+      if (messageData.loopeat.success) {
+        preventUncheck = true;
+        $('#modal-loopeat').modal('hide');
+
+        $('#checkout_address_reusablePackagingEnabled').prop('checked', true);
+        submitForm();
+      } else {
+        $('#modal-loopeat').modal('hide');
+      }
+    }
+  }
+}
+window.addEventListener('message', onMessage, true);
+
+$('#modal-loopeat').on('shown.bs.modal', function() {
+  preventUncheck = false;
+});
+$('#modal-loopeat').on('hidden.bs.modal', function() {
+  if (!preventUncheck) {
+    $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
+    if (wasChecked) submitForm();
+  }
+});
+
+$('#loopeat-add-credit').on('click', function(e) {
+  e.preventDefault();
+
+  var required = $('#checkout_address_reusablePackagingEnabled').data('loopeatRequired');
+  var iframeUrl = $('#checkout_address_reusablePackagingEnabled').data('loopeatAuthorizeUrl');
+
+  if (iframeUrl) {
+    $('#modal-loopeat iframe').attr('src', iframeUrl + '&loopeats_required='+required);
+    $('#modal-loopeat').modal('show');
+  }
+});
+
+$('#checkout_address_cancelReusablePackaging').on('click', function() {
+  $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
+  submitForm();
+});
+
+$('#checkout_address_reusablePackagingPledgeReturn').on('change', _.debounce(function() {
+  submitForm();
+}, 350));
+
+$('#checkout_address_reusablePackagingEnabled').on('change', function() {
+  var isChecked = $(this).is(':checked');
+  var isLoopeat = $(this).data('loopeat') === true;
+  var iframeUrl = $(this).data('loopeatAuthorizeUrl');
+  var hasCredentials = $(this).data('loopeatCredentials') === true;
+  if (!hasCredentials && isChecked && isLoopeat && iframeUrl) {
+    $('#modal-loopeat iframe').attr('src', iframeUrl);
+    $('#modal-loopeat').modal('show');
+  } else {
+    submitForm();
+  }
+});
 
 // ---
 

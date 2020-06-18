@@ -38,7 +38,7 @@ product_option.valuesRange.notAllowed: Vous ne pouvez pas définir d'intervalle 
 
 product.reusablePackagingUnit.mustBeGreaterThanZero: Vous devez spécifier une quantité supérieure à 0
 
-loopeat.insufficient_balance: Votre solde LoopEat (X) n'est pas suffisant pour emballer la totalité de la commande
+loopeat.insufficient_balance: Il vous manque %missing% crédits pour être livré-e zero déchets.
 
 restaurant.contract.variableCustomerAmount.pickOne: Veuillez sélectionner une tarification
 restaurant.contract.variableDeliveryPrice.pickOne: Veuillez sélectionner une tarification

@@ -120,8 +120,15 @@ class GrabLoopEatsTest extends TestCase
             ->getReusablePackagingQuantity()
             ->willReturn(2);
         $order
+            ->getReusablePackagingPledgeReturn()
+            ->willReturn(0);
+        $order
             ->getCustomer()
             ->willReturn($customer);
+
+        $this->loopeat
+            ->return($customer, 0)
+            ->shouldBeCalled();
 
         $this->loopeat
             ->grab($customer, $restaurant, 2)

@@ -12,3 +12,9 @@
 {% endfor %}
 
 {% endfor %}
+
+{% if order.reusablePackagingPledgeReturn > 0 %}
+---
+
+{{ 'order.reusable_packaging.pledge_return.disclaimer'|trans({ '%count%': order.reusablePackagingPledgeReturn }) }}
+{% endif %}

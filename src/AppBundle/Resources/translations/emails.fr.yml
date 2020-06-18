@@ -20,7 +20,7 @@ order.public_url: |
   Pour suivre l'état de votre commande, <a href="%order.public_url%">cliquez ici</a>.
 order.foodtech.accepted.delivery: "Elle vous sera livrée à l'horaire suivant :"
 order.foodtech.accepted.delivery.disclaimer: Nous vous recontacterons en cas de problème
-  pour trouver votre adresse
+  pour trouver votre adresse.
 order.foodtech.accepted.collection: "Vous devrez venir la chercher à l'horaire suivant\
   \ :"
 order.foodtech.accepted.collection.disclaimer: Si vous avez un empêchement, contactez
@@ -30,6 +30,12 @@ order.foodtech.cancelled: |
   Le restaurateur n'est pas en mesure de préparer votre commande %order.number%.
   <br>
   Votre compte n'a pas été débité.
+order.loopeat.accepted: |
+  <p>Vous avez choisi l’option zéro déchet, bravo !</p>
+  <p>Pensez à rendre la/les lunchbox et le sac en tissu au coursier lors de votre prochaine livraison de repas.</p>
+  <p>Grâce à vous, nous changeons le monde, un repas après l’autre.</p>
+  <p>Parlez-en autour de vous, chaque geste compte !</p>
+  <p>Bon appétit ! LoopEat</p>
 admin.order.created.subject: Nouvelle commande à confirmer
 admin.order.created.body: |
   Bonjour,
