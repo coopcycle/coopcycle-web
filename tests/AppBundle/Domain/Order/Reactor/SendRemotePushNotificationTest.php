@@ -9,6 +9,7 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Message\PushNotification;
+use AppBundle\Security\UserManager;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -42,9 +43,17 @@ class SendRemotePushNotificationTest extends KernelTestCase
                 return new Envelope($args[0]);
             });
 
+        $admin = new ApiUser();
+        $admin->setUsername('admin');
+
+        $this->userManager = $this->prophesize(UserManager::class);
+        $this->userManager->findUsersByRole('ROLE_ADMIN')
+            ->willReturn([ $admin ]);
+
         $this->translator = $this->prophesize(TranslatorInterface::class);
 
         $this->reactor = new SendRemotePushNotification(
+            $this->userManager->reveal(),
             $this->messageBus->reveal(),
             $iriConverter,
             $serializer,
@@ -79,6 +88,14 @@ class SendRemotePushNotificationTest extends KernelTestCase
         $this->translator->trans('notifications.restaurant.new_order')->willReturn('New order!');
 
         call_user_func_array($this->reactor, [ new Event\OrderCreated($order) ]);
+
+        $this
+            ->messageBus
+            ->dispatch(new PushNotification(
+                'New order!',
+                [ 'admin' ],
+            ))
+            ->shouldHaveBeenCalledTimes(1);
 
         $this
             ->messageBus
