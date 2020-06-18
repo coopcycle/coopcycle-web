@@ -72,7 +72,6 @@
                   <i class="fa fa-percent"></i>  {% trans %}restaurant.list.promotions{% endtrans %}
                 </a>
               </li>
-              {{ dump(restaurant.depositRefundEnabled) }}
               {% if restaurant.depositRefundEnabled %}
               <li>
                 <a href="{{ path(deposit_refund_route, { id: restaurant.id }) }}">
