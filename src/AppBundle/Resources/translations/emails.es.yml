@@ -5,8 +5,8 @@ registration.email.message: "<h2>Bienvenido sobre %brand_name%, %username%</h2>\
 registration.email.confirm: Confirmar mi correo electrónico
 registration.email.disclaimer: Este enlace sólo puede utilizarse una vez para validar
   tu cuenta
-registration.email.textMessage: "Bienvenido sobre %brand_name%, %username%,\\n\\n\n\
-  Estás recibiendo este mensaje porque recientemente te registraste en %brand_name%.\\\
+registration.email.textMessage: "Bienvenido a %brand_name%, %username%,\\n\\n\nEstás\
+  \ recibiendo este mensaje porque recientemente te registraste en %brand_name%.\\\
   n\nSigue el siguiente enlace para confirmar tu correo electrónico: <a href=\"%confirmationUrl%\"\
   \ rel=\"notrack\">%confirmationUrl%</a>.\n"
 resetting.email.message: <h2>¡Hola %username%!</h2> Para restablecer tu contraseña,
@@ -23,7 +23,8 @@ order.foodtech.accepted.collection.disclaimer: Si tiene algún problema, contact
   <strong>%name%</strong> en <strong>%phone_number%</strong> con suficiente antelación
   para cancelar su pedido.
 order.foodtech.cancelled: "El restaurante no puede preparar tu pedido %order.number%.\n\
-  <br>\nTu cuenta no ha sido cargada.\n"
+  <br>\nSi tu cuenta ha sido cargada, recibiras la devolución en algunos días laborales,\
+  \ dependiendo de tu banco.\n"
 admin.order.created.subject: Nuevo pedido para confirmar
 admin.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido.\n"
 admin.order_foodtech.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido\
@@ -32,7 +33,7 @@ owner.order.created.subject: Nuevo pedido para confirmar
 owner.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido para <strong>%restaurant.name%</strong>.\n"
 order.created.subject: El pedido%order.number%ha sido recibido
 order.created.body: "Hola,\n<br>\nHemos recibido su pedido.\n<br>\nComprobamos su\
-  \ pedido lo antes posible y nos pondremos en contacto contigo cuando esté confirmado.\n"
+  \ pedido lo antes posible y te enviaremos un correo cuando esté confirmado.\n"
 order.accepted.subject: Tu pedido %order.number% ha sido confirmado para entregar
 order.accepted.body.intro: "Hola,\n<br>\nTu pedido esta confirmado."
 order.cancelled.subject: Tu pedido %order.number% ha sido cancelado

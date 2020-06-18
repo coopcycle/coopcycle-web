@@ -969,3 +969,10 @@ basics.close: Zavřít
 sms.with_tracking: "Dobrý den,\nNáš kurýr  je na cestě do %address%.\nSledujte jej\
   \ na %link%\n"
 sms.simple: "Dobrý den,\nNáš kurýr  je na cestě do %address%.\n"
+spreadsheet.download_example: Stáhnout příklad tabulky
+order.refund.total_amount: Tato objednávka byla vrácena v částce  %amount%
+promotion_rule.is_customer: '%username% je zákazník'
+promotion_rule.is_restaurant: '%restaurant% je restaurace'
+nav.about_us: O nás
+receipt.line_item.tax_total: DPH
+form.settings.subject_to_vat.label: S DPH
