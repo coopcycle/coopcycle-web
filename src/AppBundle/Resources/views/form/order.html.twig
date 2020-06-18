@@ -114,10 +114,10 @@
             <li>
               {% if missing > 0 %}
                 <span class="loopeat-icon">🤔</span>
-                <span id="loopeat-conclusion">{{ 'loopeat.insufficient_balance'|trans({ '%missing%': missing }, 'validators') }}</span>
+                <strong>{{ 'loopeat.insufficient_balance'|trans({ '%missing%': missing }, 'validators') }}</strong>
               {% else %}
                 <span class="loopeat-icon">👍</span>
-                <span id="loopeat-conclusion">{{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}</span>
+                <strong>{{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}</strong>
               {% endif %}
             </li>
           </ul>

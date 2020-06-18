@@ -1,4 +1,5 @@
 #loopeat-block {
+
   background-color: #FBDEDC;
   color: #621e5b;
   position: relative;
@@ -7,8 +8,13 @@
     line-height: 2;
   }
 
-  label {
+  .checkbox label {
     font-weight: 700;
+  }
+
+  label {
+    font-weight: 400;
+    margin-bottom: 0;
   }
 
   & img.loopeat-bowl1 {
