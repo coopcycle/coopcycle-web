@@ -117,6 +117,13 @@
           </a>
         </li>
         {% endif %}
+        {% if is_granted('ROLE_RESTAURANT') and restaurant.loopeatEnabled %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#loopeat" aria-controls="loopeat">
+            {{ 'restaurant.form.section.loopeat'|trans }}
+          </a>
+        </li>
+        {% endif %}
       </ul>
     </div>
     <div class="col-sm-9">
@@ -143,6 +150,11 @@
         {% if restaurant.id is not null %}
         <div role="tabpanel" class="tab-pane" id="taxonomy">
           {% include "@App/restaurant/form/_partials/taxonomy.html.twig" %}
+        </div>
+        {% endif %}
+        {% if is_granted('ROLE_RESTAURANT') and restaurant.loopeatEnabled %}
+        <div role="tabpanel" class="tab-pane" id="loopeat">
+          {% include "@App/restaurant/form/_partials/loopeat.html.twig" %}
         </div>
         {% endif %}
       </div>
