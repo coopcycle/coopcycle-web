@@ -63,9 +63,7 @@ class LoopEatOrderValidator extends ConstraintValidator
 
             if ($missing > 0) {
                 $this->context->buildViolation($constraint->insufficientBalance)
-                    ->setParameter('%missing%', $missing)
-                    ->setParameter('%loopeatBalance%', $loopeatBalance)
-                    ->setParameter('%pledgeReturn%', $pledgeReturn)
+                    ->setParameter('%count%', $missing)
                     ->atPath('reusablePackagingEnabled')
                     ->addViolation();
             }

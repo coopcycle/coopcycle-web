@@ -96,17 +96,18 @@
             <li>
               <span class="loopeat-icon loopeat-icon-flying-circle"></span>
               <span>
-                {{ (loopeat_trans_prefix ~ '.reusable_quantity_label')|trans({
-                  '%reusablePackagingQuantity%': order.reusablePackagingQuantity
+                {{ (loopeat_trans_prefix ~ '.reusable_quantity.label')|trans({
+                  '%count%': order.reusablePackagingQuantity
                 })|raw }}
               </span>
             </li>
             <li>
               <span class="loopeat-icon loopeat-icon-euro"></span>
               <span>
-                {{ (loopeat_trans_prefix ~ '.available_credits_label')|trans({
-                  '%loopeatAvailableCredits%': loopeat_context.loopeatBalance
+                {{ (loopeat_trans_prefix ~ '.available_credits.label')|trans({
+                  '%count%': loopeat_context.loopeatBalance
                 })|raw }}
+                <em>{{ (loopeat_trans_prefix ~ '.available_credits.help')|trans }}</em>
               </span>
             </li>
             <li>
@@ -118,7 +119,7 @@
             <li>
               {% if missing > 0 %}
                 <span class="loopeat-icon">🤔</span>
-                <strong>{{ 'loopeat.insufficient_balance'|trans({ '%missing%': missing }, 'validators') }}</strong>
+                <strong>{{ 'loopeat.insufficient_balance'|trans({ '%count%': missing }, 'validators') }}</strong>
               {% else %}
                 <span class="loopeat-icon">👍</span>
                 <strong>{{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}</strong>
