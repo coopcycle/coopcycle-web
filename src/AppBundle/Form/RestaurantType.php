@@ -106,7 +106,7 @@ class RestaurantType extends LocalBusinessType
             ]);
         }
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $restaurant = $event->getData();
             $form = $event->getForm();

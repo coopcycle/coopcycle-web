@@ -20,7 +20,7 @@ class LoopeatType extends AbstractType
             'disabled' => !$options['allow_toggle'],
         ]);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
             $parentForm = $form->getParent();
