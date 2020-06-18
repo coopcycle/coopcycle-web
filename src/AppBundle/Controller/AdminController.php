@@ -631,29 +631,36 @@ class AdminController extends Controller
         $taxCategoryRepository = $this->get('sylius.repository.tax_category');
 
         $categories = [];
+        $countries = [];
 
-        $taxCategories = $taxCategoryRepository->findAll();
+        $taxCategories = $taxCategoryRepository->findBy([], ['name' => 'ASC']);
         foreach ($taxCategories as $c) {
 
-            $variant = $this->get('sylius.factory.product_variant')->createNew();
-            $variant->setTaxCategory($c);
+            $isLegacy = count($c->getRates()) === 1 && null === $c->getRates()->first()->getCountry();
+            if (!$isLegacy) {
+                foreach ($c->getRates() as $r) {
+                    $countries[] = $r->getCountry();
+                }
+            }
 
-            $taxRate = $taxRateResolver->resolve($variant, [
-                'country' => strtolower($this->getParameter('region_iso')),
-            ]);
+            if ($isLegacy) {
+                continue;
+            }
 
-            if (!$taxRate) {
-                $taxRate = $taxRateResolver->resolve($variant);
+            $rates = [];
+            foreach ($c->getRates() as $rate) {
+                $rates[$rate->getCountry()][] = $rate;
             }
 
             $categories[] = [
                 'name' => $translator->trans($c->getName(), [], 'taxation'),
-                'rate' => $taxRate,
+                'rates' => $rates,
             ];
         }
 
         return [
             'categories' => $categories,
+            'countries' => array_unique($countries),
         ];
     }
 

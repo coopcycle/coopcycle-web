@@ -8,7 +8,9 @@
 <table class="table">
   <thead>
     <th>{{ 'sylius.form.tax_category.name'|trans }}</th>
-    <th class="text-right">{{ 'sylius.form.tax_rate.amount'|trans }}</th>
+    {% for country in countries %}
+    <th class="text-right">{{ (country|upper)|country_name }}</th>
+    {% endfor %}
   </thead>
   <tbody>
   {% for category in categories %}
@@ -16,11 +18,28 @@
     <td>
       {{ category.name }}
     </td>
-    <td class="text-right">{{ (category.rate.amount * 100)|number_format(2, '.', ',') }} %</td>
+    {% for country in countries %}
+      <td class="text-right">
+        {% set rates = [] %}
+        {% if category.rates[country] is defined %}
+          <ul class="list-unstyled">
+          {% for rate in category.rates[country] %}
+            <li>
+              <small>
+                <span class="mr-1">{{ rate.name|trans({}, 'taxation') }}</span>
+                <span>{{ (rate.amount * 100)|number_format(2, '.', ',') }} %</span>
+              </small>
+            </li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      </td>
+    {% endfor %}
   </tr>
   {% endfor %}
   </tbody>
 </table>
+
 {% endblock %}
 
 {% block scripts %}

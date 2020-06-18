@@ -2,6 +2,8 @@ tax_category.service: Service
 tax_category.service_tax_exempt: Service (tax exempt)
 tax_rate.standard: Standard rate
 tax_rate.zero: Zero rate
+tax_rate.gst: GST
+tax_rate.pst: PST
 
 tax_category.food: Food
 tax_category.drink: Drink
