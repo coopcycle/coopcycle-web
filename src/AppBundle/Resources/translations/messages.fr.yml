@@ -141,6 +141,7 @@ restaurant.form.quotes_allowed.label: 'Ce restaurant accepte également des comm
   sur devis (ex : traiteur)'
 restaurant.form.save: Enregistrer
 restaurant.form.loopeat_enabled.label: Activer le système de consignes LoopEat
+restaurant.form.loopeat_disconnect.label: Déconnecter mon compte LoopEat
 restaurant.form.featured.label: Ce restaurant apparaît sur la page d'accueil
 restaurant.form.fulfillment_methods.label: Modes d'exécution
 restaurant.form.section.general: Général
