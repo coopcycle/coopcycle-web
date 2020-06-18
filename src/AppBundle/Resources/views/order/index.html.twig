@@ -135,6 +135,10 @@
 {% block footer %}
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('checkout-summary') }}
+{% endblock %}
+
 {% block scripts %}
 {% if not order.empty %}
 {{ encore_entry_script_tags('checkout-summary') }}

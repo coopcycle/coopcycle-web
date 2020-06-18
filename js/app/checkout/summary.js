@@ -5,6 +5,8 @@ import { getCurrencySymbol } from '../i18n'
 
 require('gasparesganga-jquery-loading-overlay')
 
+import './summary.scss'
+
 const {
   currency,
   currencyFormat,

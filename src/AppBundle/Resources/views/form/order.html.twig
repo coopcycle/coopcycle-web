@@ -90,7 +90,7 @@
         <div>
           <ul class="list-unstyled loopeat-summary">
             <li>
-              <span class="loopeat-icon">♻️</span>
+              <span class="loopeat-icon loopeat-icon-flying-circle"></span>
               <span>
                 {{ (loopeat_trans_prefix ~ '.reusable_quantity_label')|trans({
                   '%reusablePackagingQuantity%': order.reusablePackagingQuantity
@@ -98,7 +98,7 @@
               </span>
             </li>
             <li>
-              <span class="loopeat-icon">💶</span>
+              <span class="loopeat-icon loopeat-icon-euro"></span>
               <span>
                 {{ (loopeat_trans_prefix ~ '.available_credits_label')|trans({
                   '%loopeatAvailableCredits%': loopeat_context.loopeatBalance
@@ -106,7 +106,7 @@
               </span>
             </li>
             <li>
-              <span class="loopeat-icon">🍱</span>
+              <span class="loopeat-icon loopeat-icon-gamelle"></span>
               <span>
                 {{ form_widget(form.parent.reusablePackagingPledgeReturn) }}
               </span>
