@@ -1,0 +1,39 @@
+service:
+  rates:
+    be:
+      standard: 0.21
+    ca-bc:
+      gst: 0.05
+    de:
+      standard: 0.19
+    es:
+      standard: 0.21
+    fr:
+      standard: 0.20
+    gb:
+      standard: 0.20
+    pl:
+      standard: 0.23
+
+service_tax_exempt:
+  rates:
+    be:
+      zero: 0.0
+    ca-bc:
+      zero: 0.0
+    de:
+      zero: 0.0
+    es:
+      zero: 0.0
+    fr:
+      zero: 0.0
+    gb:
+      zero: 0.0
+    pl:
+      zero: 0.0
+
+drink_alcohol:
+  rates:
+    ca-bc:
+      gst: 0.05
+      pst: 0.10

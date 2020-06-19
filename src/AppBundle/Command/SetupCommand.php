@@ -453,24 +453,49 @@ class SetupCommand extends Command
 
     private function createSyliusTaxes(OutputInterface $output)
     {
+        $conn = $this->doctrine->getConnection();
+
+        $sql = "UPDATE sylius_adjustment SET origin_code = :new WHERE type = 'tax' AND origin_code = :old";
+        $stmt = $conn->prepare($sql);
+
         $expectedTaxCategories = $this->taxesProvider->getCategories();
+
+        $allMigrations = [];
 
         $flush = false;
         foreach ($expectedTaxCategories as $c) {
-
             $taxCategory = $this->taxCategoryRepository->findOneByCode($c->getCode());
-
             if (null === $taxCategory) {
                 $this->doctrine->getManagerForClass(TaxCategory::class)->persist($c);
-                $flush = true;
                 $output->writeln(sprintf('Creating tax category « %s »', $c->getCode()));
             } else {
-                $output->writeln(sprintf('Tax category « %s » already exists', $c->getCode()));
+                $output->writeln(sprintf('Tax category « %s » already exists, checking rates…', $c->getCode()));
+                $migrations = $this->taxesProvider->synchronize($c, $taxCategory, $output);
+                $allMigrations = array_merge($allMigrations, $migrations);
             }
         }
 
-        if ($flush) {
+        // https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/transactions-and-concurrency.html
+        $conn->beginTransaction(); // suspend auto-commit
+        try {
+
+            $output->writeln('Flushing changes…');
             $this->doctrine->getManagerForClass(TaxCategory::class)->flush();
+
+            $output->writeln('Migrating Sylius adjustments…');
+            foreach ($allMigrations as $migration) {
+                [ $old, $new ] = $migration;
+                $stmt->bindParam('old', $old);
+                $stmt->bindParam('new', $new);
+                $stmt->execute();
+                $output->writeln(sprintf('Migrated %d Sylius adjustments from « %s » to « %s »', $stmt->rowCount(), $old, $new));
+            }
+
+            $conn->commit();
+
+        } catch (\Exception $e) {
+            $conn->rollBack();
+            throw $e;
         }
     }
 }
