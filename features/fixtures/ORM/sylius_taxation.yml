@@ -13,7 +13,7 @@ AppBundle\Entity\Sylius\TaxRate:
     calculator: default
     country: fr
   tva_standard:
-    name: "TVA 0%"
+    name: "TVA 20%"
     code: tax_rate.standard
     amount: 0.2
     includedInPrice: true
