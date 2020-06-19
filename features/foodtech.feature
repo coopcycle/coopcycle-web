@@ -21,7 +21,7 @@ Feature: Food Tech
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |
@@ -75,7 +75,7 @@ Feature: Food Tech
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
     And the restaurant with id "1" has products:
@@ -109,7 +109,7 @@ Feature: Food Tech
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
     And the restaurant with id "1" has products:
@@ -141,7 +141,7 @@ Feature: Food Tech
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
     And the restaurant with id "1" has products:
@@ -183,7 +183,7 @@ Feature: Food Tech
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
     And the restaurant with id "1" has products:
@@ -242,7 +242,7 @@ Feature: Food Tech
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
     And the restaurant with id "1" has products:
@@ -302,7 +302,7 @@ Feature: Food Tech
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
-    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
     And the restaurant with id "1" has products:

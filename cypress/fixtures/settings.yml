@@ -11,6 +11,10 @@ Craue\ConfigBundle\Entity\Setting:
     section: general
     name: default_tax_category
     value: 'tva_livraison'
+  setting_subject_to_vat:
+    section: general
+    name: subject_to_vat
+    value: '1'
   setting_administrator_email:
     section: general
     name: administrator_email
