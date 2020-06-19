@@ -160,7 +160,7 @@ Feature: Manage restaurants
       | email      | bob@coopcycle.org |
       | password   | 123456            |
       | telephone  | 0033612345678     |
-    And the setting "subject_to_vat" has value "1"
+    And the setting "default_tax_category" has value "tva_livraison"
     Given the user "bob" has ordered something for "2018-08-27 12:30:00" at the restaurant with id "3"
     And the user "bob" is authenticated
     When I add "Accept" header equal to "application/ld+json"
