@@ -1,0 +1,16 @@
+tax_category.service: Service
+tax_category.service_tax_exempt: Service (exonéré)
+tax_rate.standard: Taux standard
+tax_rate.zero: Zero rate
+tax_rate.gst: GST
+tax_rate.pst: PST
+
+tax_category.food: Nourriture
+tax_category.drink: Boissons
+tax_category.jewelry: Joaillerie
+tax_category.drink_alcohol: Boissons alcoolisées
+tax_category.book: Livres
+tax_category.clothing: Habillement
+tax_category.standard: Standard
+tax_category.reduced: Réduit
+tax_category.super_reduced: Super réduit
