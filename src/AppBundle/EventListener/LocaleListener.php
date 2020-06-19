@@ -6,6 +6,10 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * @see https://symfony.com/doc/4.4/translation/locale.html
+ * @see https://symfony.com/doc/4.4/session/locale_sticky_session.html
+ */
 class LocaleListener implements EventSubscriberInterface
 {
     private $defaultLocale;
@@ -18,6 +22,13 @@ class LocaleListener implements EventSubscriberInterface
     public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
+
+        // Do not start a session to avoid locking concurrent AJAX requests
+        // https://tideways.com/profiler/blog/slow-ajax-requests-in-your-symfony-application-apply-this-simple-fix
+        if ('restaurant_fulfillment_timing' === $request->attributes->get('_route')) {
+            return;
+        }
+
         if (!$request->hasPreviousSession()) {
             return;
         }
