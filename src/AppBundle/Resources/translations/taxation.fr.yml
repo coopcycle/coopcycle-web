@@ -4,6 +4,7 @@ tax_rate.standard: Taux standard
 tax_rate.zero: Taux zéro
 tax_rate.gst: GST
 tax_rate.pst: PST
+tax_rate.reduced: Taux réduit
 
 tax_category.food: Nourriture
 tax_category.drink: Boissons
