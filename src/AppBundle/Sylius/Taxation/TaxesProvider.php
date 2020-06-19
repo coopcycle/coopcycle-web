@@ -114,8 +114,10 @@ class TaxesProvider
     private function lookupTaxRate(TaxCategory $category, TaxRate $rate)
     {
         foreach ($category->getRates() as $r) {
-            if ($r->getAmount() === $rate->getAmount() && $r->getCountry() === $rate->getCountry()) {
-                return $r;
+            if ($r instanceof TaxRate) {
+                if ($r->getAmount() === $rate->getAmount() && $r->getCountry() === $rate->getCountry()) {
+                    return $r;
+                }
             }
         }
     }
