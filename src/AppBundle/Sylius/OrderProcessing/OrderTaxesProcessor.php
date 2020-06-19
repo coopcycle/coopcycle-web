@@ -9,11 +9,13 @@ use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
+use Sylius\Component\Taxation\Model\TaxableInterface;
+use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Webmozart\Assert\Assert;
 
-final class OrderTaxesProcessor implements OrderProcessorInterface
+final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInterface
 {
     private $adjustmentFactory;
     private $taxRateResolver;
@@ -26,13 +28,25 @@ final class OrderTaxesProcessor implements OrderProcessorInterface
         TaxRateResolverInterface $taxRateResolver,
         CalculatorInterface $calculator,
         SettingsManager $settingsManager,
-        TaxCategoryRepositoryInterface $taxCategoryRepository)
+        TaxCategoryRepositoryInterface $taxCategoryRepository,
+        string $state)
     {
         $this->adjustmentFactory = $adjustmentFactory;
         $this->taxRateResolver = $taxRateResolver;
         $this->calculator = $calculator;
         $this->settingsManager = $settingsManager;
         $this->taxCategoryRepository = $taxCategoryRepository;
+        $this->state = $state;
+    }
+
+    private function setTaxCategory(?TaxCategoryInterface $taxCategory): void
+    {
+        $this->taxCategory = $taxCategory;
+    }
+
+    public function getTaxCategory(): ?TaxCategoryInterface
+    {
+        return $this->taxCategory;
     }
 
     /**
@@ -69,12 +83,17 @@ final class OrderTaxesProcessor implements OrderProcessorInterface
             }
         }
 
-        $taxCategory = $this->taxCategoryRepository->findOneBy([
-            'code' => $this->settingsManager->get('default_tax_category')
-        ]);
+        $subjectToVat = $this->settingsManager->get('subject_to_vat');
+
+        $this->setTaxCategory(
+            $this->taxCategoryRepository->findOneBy([
+                'code' => $subjectToVat ? 'SERVICE' : 'SERVICE_TAX_EXEMPT',
+            ])
+        );
 
         foreach ($order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT) as $adjustment) {
-            $taxRate = $taxCategory->getRates()->get(0);
+
+            $taxRate = $this->taxRateResolver->resolve($this, ['country' => $this->state]);
 
             $taxAdjustment = $this->adjustmentFactory->createWithData(
                 AdjustmentInterface::TAX_ADJUSTMENT,
