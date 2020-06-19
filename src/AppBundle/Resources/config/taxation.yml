@@ -50,6 +50,11 @@ drink_alcohol:
     pl:
       standard: 0.23
 
+food:
+  rates:
+    ca-bc:
+      pst: 0.07
+
 jewelry:
   rates:
     ca-bc:

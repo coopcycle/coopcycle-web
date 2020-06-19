@@ -1,7 +1,7 @@
 tax_category.service: Service
 tax_category.service_tax_exempt: Service (exonéré)
 tax_rate.standard: Taux standard
-tax_rate.zero: Zero rate
+tax_rate.zero: Taux zéro
 tax_rate.gst: GST
 tax_rate.pst: PST
 
