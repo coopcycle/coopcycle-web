@@ -596,6 +596,8 @@ form.checkout_address.reusable_packaging.loopeat.available_credits.help:
   (1 crédit = 1 plat dans une lunchbox)
 form.checkout_address.reusable_packaging.loopeat.return_pledge_label:
   Vous allez rendre %field% lunchbox LoopEat au coursier
+form.checkout_address.reusable_packaging.loopeat.no_pledge_label:
+  Vous n'avez pas de lunchbox à rendre.
 form.checkout_address.reusable_packaging.loopeat.enough_credits:
   Vous avez assez de crédits pour être livré·e zero déchet
 form.checkout_address.reusable_packaging.loopeat.confirm: Valider

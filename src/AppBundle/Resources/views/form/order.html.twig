@@ -110,12 +110,7 @@
                 <em>{{ (loopeat_trans_prefix ~ '.available_credits.help')|trans }}</em>
               </span>
             </li>
-            <li>
-              <span class="loopeat-icon loopeat-icon-gamelle"></span>
-              <span>
-                {{ form_widget(form.parent.reusablePackagingPledgeReturn) }}
-              </span>
-            </li>
+            {{ form_row(form.parent.reusablePackagingPledgeReturn) }}
             <li>
               {% if missing > 0 %}
                 <span class="loopeat-icon">🤔</span>
@@ -158,6 +153,20 @@
       </div>
     </div>
   {% endif %}
+{% endblock %}
+
+{% block _checkout_address_reusablePackagingPledgeReturn_row %}
+  {% set max = (loopeat_context.loopeatCredit - loopeat_context.loopeatBalance) %}
+  <li>
+    <span class="loopeat-icon loopeat-icon-gamelle"></span>
+    <span>
+      {% if max > 0 %}
+        {{ form_widget(form) }}
+      {% else %}
+        {{ 'form.checkout_address.reusable_packaging.loopeat.no_pledge_label'|trans }}
+      {% endif %}
+    </span>
+  </li>
 {% endblock %}
 
 {% block _checkout_address_reusablePackagingPledgeReturn_widget %}
