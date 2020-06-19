@@ -19,6 +19,18 @@ class ProductTaxCategoryChoiceType extends AbstractType
     private $translator;
     private $country;
 
+    private static $serviceTaxCategories = [
+        'SERVICE',
+        'SERVICE_TAX_EXEMPT',
+    ];
+
+    private static $otherTaxCategories = [
+        'DRINK',
+        'DRINK_ALCOHOL',
+        'FOOD',
+        'JEWELRY',
+    ];
+
     public function __construct(
         RepositoryInterface $taxCategoryRepository,
         TranslatorInterface $translator,
@@ -38,12 +50,12 @@ class ProductTaxCategoryChoiceType extends AbstractType
         $resolver->setDefault('choices', function (Options $options) {
 
             $qb = $this->taxCategoryRepository->createQueryBuilder('c');
-            $qb->andWhere($qb->expr()->notIn('c.code', ['SERVICE', 'SERVICE_TAX_EXEMPT']));
+            $qb->andWhere($qb->expr()->notIn('c.code', self::$serviceTaxCategories));
 
             if ('ca' === $this->country) {
-                $qb->andWhere($qb->expr()->in('c.code', ['FOOD', 'DRINK_ALCOHOL', 'JEWELRY']));
+                $qb->andWhere($qb->expr()->in('c.code', self::$otherTaxCategories));
             } else {
-                $qb->andWhere($qb->expr()->notIn('c.code', ['FOOD', 'DRINK_ALCOHOL', 'JEWELRY']));
+                $qb->andWhere($qb->expr()->notIn('c.code', self::$otherTaxCategories));
             }
 
             return $qb->getQuery()->getResult();
