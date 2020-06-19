@@ -43,7 +43,6 @@ use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
-use AppBundle\Form\TaxationType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
