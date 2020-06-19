@@ -392,9 +392,6 @@ form.settings.google_api_key.help: "Creeu un compte de Google per obtenir-ne <a 
 form.settings.latlng.label: Coordenades geogràfiques
 form.settings.latlng.help: "Especifiqueu la latitud i la longitud predeterminades.\
   \ Podeu continuar <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
-form.settings.default_tax_category.label: Taxa d’IVA per Entregues
-form.settings.default_tax_category.help: Especifiqueu el tipus d’IVA a utilitzar per
-  a Entregues
 form.settings.administrator_email.label: Correu electrònic de l'administrador
 form.settings.administrator_email.help: Les notificacions s’enviaran a aquest correu
   electrònic

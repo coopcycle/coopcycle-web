@@ -412,7 +412,6 @@ form.local_business_type.food_establishment: Stabilimento alimentare
 form.local_business_type.store: Magazzino
 form.local_business_type.label: Tipo di azienda
 form.settings.stripe_publishable_key.label: Chiave pubblicabile stripe
-form.settings.default_tax_category.help: Specifica il tasso IVA  da usare per le consegne
 form.settings.administrator_email.label: Amministrazione email
 form.menu_editor.help: "Usa l'editor sottostante per comporre il menù\n<br>\nTrascina\
   \ e lascia i prodotti nella sezione sulla sinistra\n<br>\nSe desideri rimuovere\
@@ -583,7 +582,6 @@ form.settings.google_api_key.label: Chiavi API Google
 form.settings.latlng.label: Coordinate geografiche
 form.settings.latlng.help: "Specifica la latitudine e longitudine predefinita. La\
   \ puoi ottenere su <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
-form.settings.default_tax_category.label: Tasso IVA per le consegne
 form.settings.administrator_email.help: Le notifiche saranno inviate a questa email
 form.settings.phone_number.label: Numero di telefono
 form.settings.phone_number.help: Questo numero comparirà al cliente

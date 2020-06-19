@@ -485,8 +485,6 @@ form.settings.google_api_key.help: "Vytvořte si účet Google a získejte <a hr
 form.settings.latlng.label: Zeměpisné souřadnice
 form.settings.latlng.help: "Určete výchozí zeměpisnou šířku a délku. Můžete  ji získat\
   \ na <a href=\"https://www.latlong.net/\"> latlong.net </a>\n"
-form.settings.default_tax_category.label: Sazba DPH za dodávky
-form.settings.default_tax_category.help: Určete sazbu DPH, která se použije pro dodávky
 form.settings.administrator_email.label: E-mail správce
 form.settings.administrator_email.help: Na tento e-mail budou zaslána oznámení
 form.settings.phone_number.label: Telefonní číslo

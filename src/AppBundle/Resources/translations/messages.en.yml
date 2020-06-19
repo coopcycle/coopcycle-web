@@ -493,8 +493,6 @@ form.settings.google_api_key.help: "Create a Google account to obtain your <a hr
 form.settings.latlng.label: Geographical coordinates
 form.settings.latlng.help: "Specify the default latitude and longitude. You can get\
   \ it on <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
-form.settings.default_tax_category.label: VAT rate for deliveries
-form.settings.default_tax_category.help: Specify the VAT rate to use for deliveries
 form.settings.administrator_email.label: Administrator email
 form.settings.administrator_email.help: Notifications will be sent to this email
 form.settings.phone_number.label: Phone number

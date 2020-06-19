@@ -363,8 +363,6 @@ form.settings.google_api_key.help: "Crea una cuenta Google para obtener tu <a hr
 form.settings.latlng.label: Coordinadas geográficas
 form.settings.latlng.help: "Especifica la latitud y longitud por defecto del mapa.\
   \ Puedes obtenerla en <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
-form.settings.default_tax_category.label: IVA para entregas
-form.settings.default_tax_category.help: Establezca la tasa de IVA para entregas
 form.settings.administrator_email.label: Correo del administrador
 form.settings.administrator_email.help: Las notificaciones se enviarán a éste correo
 form.settings.phone_number.label: Número de teléfono

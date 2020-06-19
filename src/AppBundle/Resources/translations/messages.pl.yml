@@ -479,9 +479,6 @@ form.maintenance.disable.label: Wyłącz kontynuację
 form.settings.latlng.label: Współrzędne geograficzne
 form.settings.latlng.help: "Określ domyślną szerokość i wysokość geograficzną. Możesz\
   \ ją ustalić przez <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
-form.settings.default_tax_category.label: Stawka VAT dla dostaw
-form.settings.default_tax_category.help: Określ stawkę VAT, która ma być stosowana
-  dla dostaw
 pledge.suggested_by: Zgłoszony przez @%username%
 form.maintenance.disable.alert: Zamierzasz wyłączyć tryb konserwacji
 form.maintenance.message.label: Wiadomość
