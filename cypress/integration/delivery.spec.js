@@ -11,7 +11,7 @@ context('Delivery', () => {
     cy.exec(cmd)
   })
 
-  it('create delivery', () => {
+  it.skip('create delivery', () => {
 
     cy.server()
     cy.route('/api/routing/route/*').as('apiRoutingRoute')
