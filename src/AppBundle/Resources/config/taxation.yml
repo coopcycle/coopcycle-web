@@ -34,6 +34,23 @@ service_tax_exempt:
 
 drink_alcohol:
   rates:
+    be:
+      standard: 0.21
     ca-bc:
       gst: 0.05
       pst: 0.10
+    de:
+      standard: 0.19
+    es:
+      standard: 0.21
+    fr:
+      standard: 0.20
+    gb:
+      standard: 0.20
+    pl:
+      standard: 0.23
+
+jewelry:
+  rates:
+    ca-bc:
+      pst: 0.07
