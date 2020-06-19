@@ -36,6 +36,11 @@ class SeoListener
             return;
         }
 
+        // Skip if this is an AJAX request
+        if ($request->isXmlHttpRequest()) {
+            return;
+        }
+
         $locale = $request->getLocale();
 
         $this->seoPage
