@@ -139,6 +139,12 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
+        restaurant_fulfillment_timing:
+            pattern: ^/restaurant/[0-9]+/timing$
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+
         web:
             pattern:            ^/
             form_login:
