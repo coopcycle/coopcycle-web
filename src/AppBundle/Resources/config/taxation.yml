@@ -32,6 +32,13 @@ service_tax_exempt:
     pl:
       zero: 0.0
 
+drink:
+  rates:
+    es:
+      reduced: 0.1
+    fr:
+      reduced: 0.055
+
 drink_alcohol:
   rates:
     be:
