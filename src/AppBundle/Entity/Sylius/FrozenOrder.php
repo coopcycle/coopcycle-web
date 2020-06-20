@@ -73,7 +73,7 @@ abstract class FrozenOrder
     }
 
     /**
-     * @return Collection|FrozenOrderLineItem[]
+     * @return Collection|FrozenOrderFooterItem[]
      */
     public function getFooterItems(): ?Collection
     {
