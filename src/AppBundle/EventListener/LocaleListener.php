@@ -14,6 +14,11 @@ class LocaleListener implements EventSubscriberInterface
 {
     private $defaultLocale;
 
+    private static $blacklist = [
+        'restaurant_fulfillment_timing',
+        'fos_js_routing_js',
+    ];
+
     public function __construct($defaultLocale = 'en')
     {
         $this->defaultLocale = $defaultLocale;
@@ -25,7 +30,7 @@ class LocaleListener implements EventSubscriberInterface
 
         // Do not start a session to avoid locking concurrent AJAX requests
         // https://tideways.com/profiler/blog/slow-ajax-requests-in-your-symfony-application-apply-this-simple-fix
-        if ('restaurant_fulfillment_timing' === $request->attributes->get('_route')) {
+        if ($request->attributes->has('_route') && in_array($request->attributes->get('_route'), self::$blacklist)) {
             return;
         }
 

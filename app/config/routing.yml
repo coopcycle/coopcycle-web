@@ -35,7 +35,7 @@ fos_user_profile_show:
         layout: '@App/profile.html.twig'
 
 fos_js_routing:
-    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing-sf4.xml"
 
 hwi_oauth_redirect:
     resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
