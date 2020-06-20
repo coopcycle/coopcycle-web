@@ -2,10 +2,6 @@
 
 namespace AppBundle\EventSubscriber;
 
-// use AppBundle\Entity\LocalBusiness;
-// use AppBundle\Entity\Store;
-// use Doctrine\Common\Collections\Collection;
-// use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\KernelEvents;
