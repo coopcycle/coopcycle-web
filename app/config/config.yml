@@ -549,6 +549,13 @@ nelmio_alice:
     locale: 'fr_FR'
 
 fos_js_routing:
+    cache_control:
+        public: true
+        maxage: 600
+        smaxage: 600
+        expires: '10 minutes'
+        vary:
+            - Accept-Encoding
     routes_to_expose:
         - ^restaurant$
         - ^restaurants$
