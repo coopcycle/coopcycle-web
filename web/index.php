@@ -1,10 +1,13 @@
 <?php
 
 // use App\Kernel;
+use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 
-require dirname(__DIR__).'/app/autoload.php';
+require dirname(__DIR__).'/vendor/autoload.php';
+
+(new Dotenv(false))->loadEnv(dirname(__DIR__).'/.env');
 
 if ($_SERVER['APP_DEBUG']) {
     umask(0000);
