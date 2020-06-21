@@ -91,7 +91,7 @@ services:
     arguments:
       - '@coopcycle.settings_manager'
       - '@sylius.repository.order'
-      - '@message_bus'
+      - '@messenger.default_bus'
       - '@libphonenumber.phone_number_util'
       - '@router'
       - '@translator'

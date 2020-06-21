@@ -148,7 +148,7 @@ services:
     class: AppBundle\Domain\Order\Reactor\SendRemotePushNotification
     arguments:
       - '@fos_user.user_manager'
-      - '@message_bus'
+      - '@messenger.default_bus'
       - '@api_platform.iri_converter'
       - '@serializer'
       - '@translator'
