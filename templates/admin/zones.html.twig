@@ -1,0 +1,68 @@
+{% extends "admin.html.twig" %}
+{% form_theme upload_form 'bootstrap_3_layout.html.twig' %}
+{% form_theme zone_collection_form 'form/zone_collection.html.twig' %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.zones.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+  {% if upload_form.vars.submitted and upload_form.vars.valid %}
+
+    {{ form_start(zone_collection_form) }}
+      {{ form_widget(zone_collection_form.zones) }}
+      <hr>
+      <div class="row">
+        <div class="col-md-6">
+          <a href="{{ path('admin_zones') }}" class="btn btn-block btn-default">{% trans %}adminDashboard.zones.cancel{% endtrans %}</a>
+        </div>
+        <div class="col-md-6">
+          <button type="submit" class="btn btn-block btn-primary">{% trans %}adminDashboard.zones.save{% endtrans %}</button>
+        </div>
+      </div>
+    {{ form_end(zone_collection_form) }}
+
+  {% else %}
+
+    <div class="row">
+    {% for zone in zones %}
+      <div class="col-sm-6 col-md-4">
+        <div class="thumbnail">
+          <div class="embed-responsive embed-responsive-4by3">
+            <div class="embed-responsive-item"
+              id="zone-{{ zone.id }}"
+              data-zone="{{ zone.geoJSON|json_encode|e('html_attr') }}"></div>
+          </div>
+          <div class="caption">
+            <h4>{{ zone.name }}</h4>
+            <p>
+              <form method="post" action="{{ path('admin_zone_delete', { id: zone.id }) }}">
+                <button type="submit" class="btn btn-sm btn-danger">
+                  <i class="fa fa-trash"></i> {% trans %}adminDashboard.zones.delete{% endtrans %}
+                </button>
+              </form>
+            </p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-4 col-md-offset-8">
+        {{ form_start(upload_form) }}
+          {{ form_row(upload_form.file) }}
+          <span class="help-block">{% trans %}adminDashboard.zones.uploadGeoJSON{% endtrans %}</span>
+          <button type="submit" class="btn btn-block btn-primary">{% trans %}adminDashboard.zones.send{% endtrans %}</button>
+        {{ form_end(upload_form) }}
+      </div>
+    </div>
+
+  {% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('zone-preview') }}
+{% endblock %}

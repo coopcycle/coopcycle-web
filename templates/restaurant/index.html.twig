@@ -1,0 +1,282 @@
+{% extends "base.html.twig" %}
+
+{% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'profile_restaurant' %}
+{% set restaurant_edit_url = path(restaurant_edit_route, { id: restaurant.id }) %}
+
+{% form_theme cart_form 'form/cart.html.twig' %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{{ structured_data|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}
+</script>
+{% endblock %}
+
+{% block banner %}
+
+  {% set disabled_warning = ( not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) ) %}
+  {% set preorder_warning = ( restaurant.orderingDelayMinutes > 0 ) %}
+
+  {% if disabled_warning or preorder_warning %}
+  <nav class="restaurant-banner">
+    <div class="alert alert-warning text-center">
+      {% if disabled_warning %}
+      <p class="mb-0">{{ 'restaurant.disabledWarning'|trans({ '%restaurantEditUrl%': restaurant_edit_url}) | raw }}</p>
+      {% endif %}
+      {% if preorder_warning %}
+      <p class="mb-0">{{ 'restaurant.closedWarningWithDelay'|trans({ '%delay%': delay }) }}</p>
+      {% endif %}
+    </div>
+  </nav>
+  {% endif %}
+
+{% endblock %}
+
+{% block body %}
+<div class="container">
+
+  <div class="homepage-restaurants__show-more text-left mb-4">
+    {% if restaurant.context == 'AppBundle\\Enum\\Store' %}
+      <a class="restaurant-show-more" href="{{ path('stores') }}">
+        <i class="fa fa-arrow-left mr-2"></i>
+        <span>{% trans %}index.view_all_shops{% endtrans %}</span>
+      </a>
+    {% else %}
+      <a class="restaurant-show-more" href="{{ path('restaurants') }}">
+        <i class="fa fa-arrow-left mr-2"></i>
+        <span>{% trans %}index.view_all_restaurants{% endtrans %}</span>
+      </a>
+    {% endif %}
+  </div>
+
+  {% if not restaurant.isOpen %}
+    {% if restaurant.hasClosingRuleFor %}
+    <div class="alert alert-danger text-center">
+      {% trans with { '%date%': restaurant.getNextOpeningDate|localizeddate('medium', 'none') } %}
+      restaurant.temporaryClosedWarning
+      {% endtrans %}
+    </div>
+    {% endif %}
+  {% endif %}
+
+  {% if restaurant.quotesAllowed %}
+    {% set trans_params = {
+      '%contact_us%': ('mailto:' ~ coopcycle_setting('administrator_email')),
+      '%login%': path('fos_user_security_login')
+    } %}
+    {% if app.user %}
+      {% if not app.user.quotesAllowed %}
+        <div class="alert alert-info">
+          <i class="fa fa-info-circle"></i> 
+          {% trans with trans_params %}restaurant.quotes_disclaimer.authenticated{% endtrans %}
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> 
+        {% trans with trans_params %}restaurant.quotes_disclaimer.not_authenticated{% endtrans %}
+      </div>
+    {% endif %}
+  {% endif %}
+
+  <header class="restaurant-header">
+    {% set restaurant_image = coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') %}
+    {% if restaurant_image is not empty %}
+      <img class="restaurant-image" src="{{ restaurant_image }}">
+    {% endif %}
+    <section class="restaurant-header-body">
+      <h1>{{ restaurant.name }}</h1>
+      {% if restaurant.website is defined and restaurant.website is not empty %}
+      <p>
+        <a href="{{ restaurant.website }}" target="_blank">
+          <i class="fa fa-external-link"></i> {{ 'localBusiness.form.website'|trans }}
+        </a>
+      </p>
+      {% endif %}
+      {% if restaurant.description is defined and restaurant.description is not empty %}
+      <div class="restaurant-description text-muted">
+        {{ restaurant.description|markdown }}
+      </div>
+      {% endif %}
+    </section>
+    <section class="restaurant-header-right">
+      <p>{{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
+      {% if restaurant.isFulfillmentMethodEnabled('delivery') %}
+      <div
+        data-opening-hours="{{ restaurant.getOpeningHours('delivery')|json_encode|e('html_attr') }}"
+        data-opening-hours-behavior="{{ restaurant.getOpeningHoursBehavior('delivery')|e('html_attr') }}"></div>
+      {% endif %}
+      {% if restaurant.isFulfillmentMethodEnabled('collection') %}
+      <div
+        data-opening-hours="{{ restaurant.getOpeningHours('collection')|json_encode|e('html_attr') }}"
+        data-opening-hours-behavior="{{ restaurant.getOpeningHoursBehavior('collection')|e('html_attr') }}"></div>
+      {% endif %}
+    </section>
+  </header>
+
+  {% if restaurant.menuTaxon is not null %}
+  <div class="row">
+
+    {#
+    WARNING
+    We cache the following block for performance
+    Iterating through all products, options… is a lot of database requests
+    #}
+    {% cache ('restaurant_' ~ restaurant.id ~ '_menu_v0.3') restaurant %}
+    <div class="col-xs-12 col-sm-8" id="menu">
+      <div class="restaurant-menu-wrapper">
+      {% for child in restaurant.menuTaxon.children %}
+        {% if child.products|length > 0 %}
+        <h2>{{ child.name }}</h2>
+        <div class="restaurant-menu-section">
+          {% for product in child.products %}
+            {# TODO Skip if no variant is defined #}
+            {% if not product.enabled %}
+              <div class="restaurant-menu-section-item">
+                <a class="menu-item menu-item--unavailable">
+                  {% include '_partials/restaurant/menu_item_inner.html.twig' %}
+                </a>
+              </div>
+            {% else %}
+              {% if not product.hasOptions() %}
+              <div class="restaurant-menu-section-item">
+                <form method="post"
+                  action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
+                  data-product-simple>
+                  <button class="menu-item" type="submit">
+                    {% include '_partials/restaurant/menu_item_inner.html.twig' %}
+                  </button>
+                </form>
+              </div>
+              {% else %}
+              <div class="restaurant-menu-section-item">
+                <button
+                  class="menu-item"
+                  data-toggle="modal"
+                  data-target="#{{ product.code }}-options">
+                  {% include '_partials/restaurant/menu_item_inner.html.twig' %}
+                </button>
+              </div>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endfor %}
+      </div>
+    </div>
+    {% endcache %}
+
+    {% if restaurant.isFulfillmentMethodEnabled('delivery') or restaurant.isFulfillmentMethodEnabled('collection') %}
+    <div class="col-xs-12 col-sm-4">
+      {{ form_start(cart_form) }}
+        <div id="cart"></div>
+      {{ form_end(cart_form) }}
+    </div>
+    {% else %}
+      <div class="col-xs-12 col-sm-4">
+        <div class="alert alert-warning">
+          {% trans from 'validators' %}order.fulfillment_methods.empty{% endtrans %}
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+
+  {% else %}
+    <div class="alert alert-warning">
+      {% trans %}restaurant.noMenuWarning{% endtrans %}
+    </div>
+  {% endif %}
+
+</div>
+
+{# Modals for product options #}
+
+{#
+WARNING
+We cache the following block for performance
+Iterating through all products, options… is a lot of database requests
+#}
+{% cache ('restaurant_' ~ restaurant.id ~ '_modals_v0.3') restaurant %}
+{% if restaurant.menuTaxon is not null %}
+  {% for child in restaurant.menuTaxon.children %}
+    {% for product in child.products %}
+      {% if product.enabled and product.hasOptions() %}
+      <div id="{{ product.code }}-options" class="modal fade">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title">{{ product.name }}</h4>
+            </div>
+            <div class="modal-body">
+              {% set variant = product|sylius_resolve_variant %}
+              <form
+                action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
+                data-product-options
+                data-product-price="{{ variant.price }}">
+                {% set option_index = product_option_index() %}
+                {% for option in product.options %}
+                  {% include 'restaurant/_partials/option.html.twig' with { option_index: option_index } %}
+                {% endfor %}
+                {% set product_quantity_input_id = ('product-' ~ product.code ~ '-quantity') %}
+                <div class="row">
+                  <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                    <div class="form-group">
+                      <div class="quantity-input-group">
+                        <button class="quantity-input-group__decrement" type="button"
+                          data-stepper data-target="#{{ product_quantity_input_id }}" data-direction="down">
+                          <i class="fa fa-2x fa-minus-circle"></i>
+                        </button>
+                        <input type="number" min="1" step="1" value="1" id="{{ product_quantity_input_id }}" data-product-quantity>
+                        <button class="quantity-input-group__increment" type="button"
+                          data-stepper data-target="#{{ product_quantity_input_id }}" data-direction="up">
+                          <i class="fa fa-2x fa-plus-circle"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-block btn-primary" disabled>
+                  <span data-product-total>{{ variant.price|price_format }}</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+{% endif %}
+{% endcache %}
+
+{% set restaurant_json = {
+  id: restaurant.id,
+  openingHours: restaurant.openingHours,
+  openingHoursBehavior: restaurant.openingHoursBehavior
+} %}
+
+{% set cart = cart_provider.getCart() %}
+{% set cart_json = cart_provider.normalize(cart) %}
+
+<div id="js-restaurant-data"
+  data-restaurant="{{ restaurant_json|json_encode|e('html_attr') }}"
+  data-cart="{{ cart_json|json_encode|e('html_attr') }}"
+  data-times="{{ times|json_encode|e('html_attr') }}"></div>
+
+<div id="js-addresses-data"
+  data-addresses="{{ addresses_normalized|json_encode|e('html_attr') }}"></div>
+
+{% endblock %}
+
+{% block styles %}
+{{ encore_entry_link_tags('restaurant') }}
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('restaurant') }}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
+{% endblock %}

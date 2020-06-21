@@ -65,7 +65,7 @@ trait StoreTrait
             return $this->redirectToRoute('admin_store_users', ['id' => $id]);
         }
 
-        return $this->render('@App/store/users.html.twig', [
+        return $this->render('store/users.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'users' => $store->getOwners(),
@@ -123,7 +123,7 @@ trait StoreTrait
             return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);
         }
 
-        return $this->render('@App/store/form.html.twig', [
+        return $this->render('store/form.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
@@ -167,7 +167,7 @@ trait StoreTrait
             return $this->redirectToRoute($routes['store'], ['id' => $store->getId()]);
         }
 
-        return $this->render('@App/store/address_form.html.twig', [
+        return $this->render('store/address_form.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'stores_route' => $routes['stores'],
@@ -244,7 +244,7 @@ trait StoreTrait
             'country' => strtolower($this->getParameter('region_iso')),
         ]);
 
-        return $this->render('@App/store/delivery_form.html.twig', [
+        return $this->render('store/delivery_form.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
@@ -312,7 +312,7 @@ trait StoreTrait
             ]
         );
 
-        return $this->render('@App/store/deliveries.html.twig', [
+        return $this->render('store/deliveries.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'deliveries' => $deliveries,

@@ -23,11 +23,11 @@ trait UserTrait
 
         $positions = $qb->getQuery()->getResult();
 
-        return [
+        return $this->render('user/tracking.html.twig', [
             'layout' => $layout,
             'date' => $date,
             'positions' => $positions,
-        ];
+        ]);
     }
 
     protected function getUserAddresses()

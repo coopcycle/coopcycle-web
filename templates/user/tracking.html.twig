@@ -1,0 +1,41 @@
+{% extends layout ~ '.html.twig' %}
+
+{% block breadcrumb %}
+{% if layout == 'admin' %}
+<li>{% trans %}adminDashboard.users.title{% endtrans %}</li>
+{% endif %}
+<li>{% trans %}profile.myTracking{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="text-right">
+    <label class="control-label" style="margin-right: 15px;">{% trans %}Date{% endtrans %}</label>
+    <span id="datepicker"></span>
+  </div>
+
+  <hr>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="embed-responsive embed-responsive-16by9">
+        <div class="embed-responsive-item" id="positions-map"></div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+  window.AppData = window.AppData || {}
+  window.AppData.positions = {{ positions|json_encode()|raw }}
+
+  var trackingURL = "{{ path('profile_tracking', { date: '__DATE__' }) }}";
+
+  new CoopCycle.DatePicker(document.querySelector('#datepicker'), {
+    defaultValue: "{{ date|date('Y-m-d') }}",
+    onChange: function(date, dateString) {
+      window.location.replace(trackingURL.replace('__DATE__', date.format('YYYY-MM-DD')))
+    }
+  });
+  </script>
+  {{ encore_entry_script_tags('user-tracking') }}
+{% endblock %}

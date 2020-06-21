@@ -10,7 +10,6 @@ use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use MyCLabs\Enum\Enum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -53,7 +52,6 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Template
      * @HideSoftDeleted
      */
     public function indexAction(LocalBusinessRepository $repository, CacheInterface $appCache)
@@ -71,13 +69,13 @@ class IndexController extends AbstractController
         [ $stores, $storesCount ] =
             $this->getItems($repository, Store::class, $appCache, sprintf('homepage.stores.%s', $cacheKeySuffix));
 
-        return array(
+        return $this->render('index/index.html.twig', array(
             'restaurants' => $restaurants,
             'stores' => $stores,
             'show_more_restaurants' => $restaurantsCount > self::MAX_RESULTS,
             'show_more_stores' => $storesCount > self::MAX_RESULTS,
             'max_results' => self::MAX_RESULTS,
             'addresses_normalized' => $this->getUserAddresses(),
-        );
+        ));
     }
 }

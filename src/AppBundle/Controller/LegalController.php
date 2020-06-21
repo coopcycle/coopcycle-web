@@ -18,7 +18,7 @@ class LegalController extends AbstractController
     {
         $text = file_get_contents('http://coopcycle.org/terms/fr.md');
 
-        return $this->render('@App/legal/index.html.twig', [
+        return $this->render('legal/index.html.twig', [
             'text' => $text
         ]);
     }

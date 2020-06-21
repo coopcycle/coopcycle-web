@@ -68,7 +68,7 @@ class MaintenanceListener
                 }
             }
 
-            $content = $this->templating->render('@App/maintenance.html.twig', [
+            $content = $this->templating->render('maintenance.html.twig', [
                 'message' => $this->getMessage(),
             ]);
 

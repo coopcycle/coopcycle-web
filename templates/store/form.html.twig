@@ -1,0 +1,199 @@
+{% extends layout %}
+
+{% form_theme form 'form/store.html.twig' %}
+
+{% set admin_deliveries_pricing = path('admin_deliveries_pricing') %}
+
+{% block breadcrumb %}
+<li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+<li>{% if store.id is not empty %}{{ store.name }}{% else %}{% trans %}adminDashboard.stores.createNew{% endtrans %}{% endif %}</li>
+{% endblock %}
+
+{% block content %}
+
+{% if store.id is not empty %}
+<nav class="navbar">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#store-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <span class="navbar-brand">
+        {{ store.name }}
+      </span>
+    </div>
+    <div class="collapse navbar-collapse" id="store-navbar">
+      <div class="nav navbar-nav navbar-right">
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('admin_store_users', { id: store.id }) }}" class="btn btn-default navbar-btn">
+          <i class="fa fa-user"></i>  {% trans %}stores.users{% endtrans %}
+        </a>
+        {% endif %}
+        <a href="{{ path(store_delivery_new_route, { id: store.id }) }}" class="btn btn-success navbar-btn">
+          <i class="fa fa-plus"></i>  {% trans %}delivery.createNew{% endtrans %}
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+{% endif %}
+
+{{ form_start(form) }}
+
+  <div class="row">
+    <div class="col-sm-4">
+      {% if form.imageFile is defined %}
+        {{ form_row(form.imageFile) }}
+      {% endif %}
+    </div>
+    <div class="col-sm-8">
+      {{ form_row(form.name) }}
+      <div class="hidden">
+        {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: { class: 'checkbox switch' }}) }}&nbsp;
+        <a data-toggle="tooltip" data-placement="top" data-html="true" title="{{ "restaurant.form.enabled.tooltip" | trans | raw }}">
+          <i class="fa fa-info-circle"></i>
+        </a>
+      </div>
+      {{ form_row(form.legalName) }}
+      {{ form_row(form.website) }}
+      {{ form_row(form.telephone) }}
+      {% if form.siret is defined %}
+        {{ form_row(form.siret) }}
+      {% endif %}
+      {% if form.vat_number is defined %}
+        {{ form_row(form.vat_number) }}
+      {% endif %}
+      {% if form.rcs_number is defined %}
+        {{ form_row(form.rcs_number) }}
+      {% endif %}
+    </div>
+  </div>
+  <hr>
+
+  {% if form.pricingRuleSet is defined or form.prefillPickupAddress is defined or form.createOrders is defined %}
+    {% if form.pricingRuleSet is defined and form.pricingRuleSet.vars.choices|length == 0 %}
+      <div class="alert alert-warning">{% trans with {'%editPricingRule%':admin_deliveries_pricing} %}restaurant.form.noPricingRule{% endtrans %}</div>
+      <div class="hidden">
+        {{ form_row(form.pricingRuleSet) }}
+        {% if form.prefillPickupAddress is defined %}
+          {{ form_row(form.prefillPickupAddress) }}
+        {% endif %}
+        {% if form.createOrders is defined %}
+          {{ form_row(form.createOrders) }}
+        {% endif %}
+      </div>
+    {% else %}
+      {% if form.pricingRuleSet is defined %}
+        {{ form_row(form.pricingRuleSet) }}
+      {% endif %}
+      {% if form.prefillPickupAddress is defined %}
+        {{ form_row(form.prefillPickupAddress) }}
+      {% endif %}
+      {% if form.createOrders is defined %}
+        {{ form_row(form.createOrders) }}
+      {% endif %}
+      {% if form.weightRequired is defined %}
+        {{ form_row(form.weightRequired) }}
+      {% endif %}
+      {% if form.packagesRequired is defined %}
+        {{ form_row(form.packagesRequired) }}
+      {% endif %}
+    {% endif %}
+    <hr>
+  {% endif %}
+
+  {% if form.timeSlot is defined or form.packageSet is defined %}
+    {% if form.timeSlot is defined %}
+      {{ form_row(form.timeSlot) }}
+    {% endif %}
+    {% if form.packageSet is defined %}
+      {{ form_row(form.packageSet) }}
+    {% endif %}
+    <hr>
+  {% endif %}
+
+  {% if form.address is defined %}
+    {{ form_row(form.address.streetAddress) }}
+    {{ form_row(form.address.postalCode) }}
+    {{ form_row(form.address.addressLocality) }}
+    {{ form_widget(form.address.longitude) }}
+    {{ form_widget(form.address.latitude) }}
+    {% do form.address.setRendered %}
+  {% endif %}
+
+  {% if store.id is not empty %}
+
+    <label class="control-label">{{ 'stores.addresses'|trans }}</label>
+
+    {% if store.addresses|length > 0 %}
+      <table class="table">
+        <thead>
+          <th>{{ 'form.address.name.label'|trans }}</th>
+          <th>{{ 'form.address.streetAddress.label'|trans }}</th>
+          <th></th>
+          <th></th>
+        </thead>
+        <tbody>
+        {% for address in store.addresses %}
+          <tr>
+            <td>{{ address.name }}</td>
+            <td>{{ address.streetAddress }}</td>
+            <td class="text-right">
+              {% if address != store.address %}
+                {% set form_name = 'setAsDefault_' ~ address.id %}
+                {% if form[form_name] is defined %}
+                  {{ form_widget(form[form_name], { attr: { class: 'btn btn-xs btn-default' } }) }}
+                {% endif %}
+              {% else %}
+                <small class="text-muted">{{ 'form.store_type.defaultAddress.label'|trans }}</small>
+              {% endif %}
+            </td>
+            <td class="text-right">
+              <a href="{{ path(store_address_route, { storeId: store.id, addressId: address.id }) }}">{{ 'basics.edit'|trans }}</a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="alert alert-info">
+      {% trans %}basics.no_entries{% endtrans %}
+      </div>
+    {% endif %}
+
+    <p class="text-right">
+      <a href="{{ path(store_address_new_route, { id: store.id }) }}" class="btn btn-success">
+        <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
+      </a>
+    </p>
+
+  {% endif %}
+
+  <hr>
+
+  <button type="submit" class="btn btn-lg btn-block btn-primary">{% trans %}stores.form.save{% endtrans %}</button>
+
+{{ form_end(form) }}
+
+{% endblock %}
+
+{% block scripts %}
+{% if form.address is defined %}
+<script>
+function initMap() {
+  new CoopCycle.AddressInput(document.querySelector('#store_address_streetAddress'), {
+    elements: {
+      latitude: document.querySelector('#store_address_latitude'),
+      longitude: document.querySelector('#store_address_longitude'),
+      postalCode: document.querySelector('#store_address_postalCode'),
+      addressLocality: document.querySelector('#store_address_addressLocality')
+    }
+  });
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
+{% endif %}
+{% endblock %}

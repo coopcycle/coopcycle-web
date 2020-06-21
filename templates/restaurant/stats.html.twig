@@ -1,0 +1,79 @@
+{% extends 'restaurant/layout.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li>{% trans %}restaurant.list.preparationTime{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-4">
+  <h3 class="nomargin">
+  {% trans with {
+    '%start%': start|localizeddate('medium', 'none'),
+    '%end%': end|localizeddate('medium', 'none'),
+  } %}basics.date_range{% endtrans %}
+  </h3>
+  <div class="d-flex align-items-center">
+    <form method="post" class="d-inline-block mr-2">
+      <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-download"></i> {{ 'basics.export'|trans }}</button>
+    </form>
+    <div id="month-picker" class="d-inline-block"></div>
+  </div>
+</div>
+
+<table class="table table-condensed">
+  <thead>
+    {% for column in stats.columns %}
+      <th class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
+        {{ stats.getColumnLabel(column) }}
+      </th>
+    {% endfor %}
+    <th></th>
+  </thead>
+  <tbody>
+    {% for order in stats %}
+      <tr class="{{ order.hasRefunds() ? 'text-danger' : '' }}">
+        {% for column in stats.columns %}
+        <td class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
+          {{ stats.getRowValue(column, loop.parent.loop.index0) }}
+        </td>
+        {% endfor %}
+        <td class="text-right">
+          {% if order.hasRefunds() %}
+            <button class="button-icon" data-toggle="tooltip" data-placement="left"
+              title="{{ 'order.refund.total_amount'|trans({ '%amount%': order.refundTotal|price_format }) }}">
+              <i class="fa fa-exclamation-circle"></i>
+            </button>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      {% for column in stats.columns %}
+        <td class="text-right">
+          <strong>{{ stats.getColumnTotal(column) }}</strong>
+        </td>
+      {% endfor %}
+    </tr>
+  </tfoot>
+</table>
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    new CoopCycle.MonthPicker(document.querySelector('#month-picker'), {
+      defaultValue: "{{ start|date('Y-m') }}",
+      onChange: function(date, dateString) {
+        window.location.href = Routing.generate("{{ stats_route }}", { id: {{ restaurant.id }}, month: dateString });
+      }
+    });
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+{% endblock %}

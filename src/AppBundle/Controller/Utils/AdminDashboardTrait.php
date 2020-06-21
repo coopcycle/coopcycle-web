@@ -55,7 +55,7 @@ trait AdminDashboardTrait
      */
     public function dashboardAction(Request $request)
     {
-        return $this->render('@App/admin/dashboard.html.twig', ['date' => new \DateTime()]);
+        return $this->render('admin/dashboard.html.twig', ['date' => new \DateTime()]);
     }
 
     /**
@@ -164,7 +164,7 @@ trait AdminDashboardTrait
             ];
         }
 
-        return $this->render('@App/admin/dashboard_iframe.html.twig', [
+        return $this->render('admin/dashboard_iframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
             'couriers' => $couriers,

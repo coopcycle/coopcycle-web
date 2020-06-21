@@ -1,0 +1,103 @@
+{% extends "base.html.twig" %}
+
+{% form_theme form 'form/order.html.twig' %}
+
+{% block banner %}
+{% endblock %}
+
+{% block body %}
+<div class="container container--full-height">
+
+  {% if not order.empty %}
+
+    {{ form_start(form, { attr: { style: 'padding-bottom: 66px;' } }) }}
+    <div class="row">
+      <div class="col-xs-12">
+        {% include 'order/breadcrumb.html.twig' %}
+        <h2 class="font-weight-bold m-0 mb-5">{{ order.restaurant.name }}</h4>
+        <div>
+          <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
+          <div id="items">
+            {% include '_partials/order/items.html.twig' with { with_taxes: false, with_items: false } %}
+          </div>
+        </div>
+        <div>
+          <h4 class="bg-light p-3 m-0 mb-4">{% trans %}order.payment.title{% endtrans %}</h4>
+          <div>
+
+            {% if error is defined %}
+              <div class="alert alert-danger">
+                {{ error }}
+              </div>
+            {% endif %}
+
+            {{ form_errors(form) }}
+
+            {% if form.method is defined %}
+              {{ form_row(form.method) }}
+            {% endif %}
+
+            {{ form_widget(form.stripePayment.stripeToken) }}
+
+            {{ form_row(form.stripePayment.cardholderName) }}
+
+            <div class="form-group">
+              <label class="control-label hidden" for="card-element">
+                {% trans %}order.payment.title{% endtrans %}
+              </label>
+              <div id="card-element">
+                <!-- a Stripe Element will be inserted here. -->
+              </div>
+              {# <div id="payment-method-picker"></div> #}
+              <!-- Used to display form errors -->
+              <div id="card-errors" role="alert"></div>
+            </div>
+
+            <div class="text-center hidden mt-3" id="payment-redirect-help">
+              <span class="help-block">{{ 'order.payment.redirect.help'|trans }}</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="checkout-nav border-top">
+      <div class="container">
+        <div class="d-flex flex-row justify-content-between align-items-center py-3">
+          <span class="text-success">
+            <i class="fa fa-clock-o fa-lg mr-2"></i>
+            <strong>{{ shipping_range|time_range_for_humans }}</strong>
+          </span>
+          <div>
+            <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
+              <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+    {{ form_end(form) }}
+
+  {% else %}
+    <div class="alert alert-warning">
+      {% trans from 'validators' %}cart.empty{% endtrans %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
+{% block scripts %}
+{% if not order.empty %}
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
+  new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
+    publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
+    tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
+    cardholderNameElement: document.querySelector('#checkout_payment_stripePayment_cardholderName')
+  });
+</script>
+{% endif %}
+{% endblock %}

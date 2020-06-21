@@ -1,0 +1,24 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block breadcrumb %}
+{% set promotion_coupon = form.vars.data %}
+{% set is_new = (promotion_coupon.id is null) %}
+<li><a href="{{ path('admin_promotions') }}">{{ 'promotions.breadcrumb'|trans }}</a></li>
+<li>{{ promotion_coupon.promotion.name }}</li>
+{% if is_new %}
+<li>{{ 'basics.add'|trans }}</li>
+{% else %}
+<li>{{ promotion_coupon.code }}</li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+  {{ form_widget(form) }}
+  <button type="submit" class="btn btn-block btn-primary">
+    {{ 'basics.save'|trans }}
+  </button>
+{{ form_end(form) }}
+{% endblock %}

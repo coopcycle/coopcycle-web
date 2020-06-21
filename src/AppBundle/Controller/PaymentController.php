@@ -133,7 +133,7 @@ class PaymentController extends AbstractController
             return $this->handleChargeableSource($payment);
         }
 
-        return $this->render('@App/order/wait_for_payment.html.twig', [
+        return $this->render('order/wait_for_payment.html.twig', [
             'order' => $order,
             'shipping_range' => $this->orderTimeHelper->getShippingTimeRange($order),
             'source_id' => $sourceId,

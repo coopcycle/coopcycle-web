@@ -31,7 +31,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
 use Liip\ImagineBundle\Service\FilterService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
@@ -186,7 +185,7 @@ class RestaurantController extends AbstractController
 
         $pages = ceil($count / self::ITEMS_PER_PAGE);
 
-        return $this->render('@App/restaurant/list.html.twig', array(
+        return $this->render('restaurant/list.html.twig', array(
             'count' => $count,
             'restaurants' => $matches,
             'page' => $page,
@@ -210,7 +209,6 @@ class RestaurantController extends AbstractController
      *     "type"="restaurant"
      *   }
      * )
-     * @Template()
      */
     public function indexAction($type, $id, $slug, Request $request,
         SlugifyInterface $slugify,
@@ -251,7 +249,7 @@ class RestaurantController extends AbstractController
             $user = $this->getUser();
             $checkVote = $user !== null ? $restaurant->getPledge()->hasVoted($this->getUser()) : false;
 
-            return $this->render('@App/restaurant/restaurant_pledge_accepted.html.twig', [
+            return $this->render('restaurant/restaurant_pledge_accepted.html.twig', [
                 'restaurant' => $restaurant,
                 'number_of_votes' => $numberOfVotes,
                 'has_already_voted' => $checkVote
@@ -387,14 +385,14 @@ class RestaurantController extends AbstractController
             $delay = $now->diffForHumans($future, ['syntax' => CarbonInterface::DIFF_ABSOLUTE]);
         }
 
-        return array(
+        return $this->render('restaurant/index.html.twig', array(
             'restaurant' => $restaurant,
             'structured_data' => $structuredData,
             'times' => $this->orderTimeHelper->getTimeInfo($cart),
             'delay' => $delay,
             'cart_form' => $cartForm->createView(),
             'addresses_normalized' => $this->getUserAddresses(),
-        );
+        ));
     }
 
     /**
@@ -614,7 +612,6 @@ class RestaurantController extends AbstractController
 
     /**
      * @Route("/restaurants/map", name="restaurants_map")
-     * @Template()
      */
     public function mapAction(Request $request, SlugifyInterface $slugify, CacheInterface $appCache)
     {
@@ -650,9 +647,9 @@ class RestaurantController extends AbstractController
             }, $this->getDoctrine()->getRepository(LocalBusiness::class)->findAll());
         });
 
-        return [
+        return $this->render('restaurant/map.html.twig', [
             'restaurants' => $this->serializer->serialize($restaurants, 'json'),
-        ];
+        ]);
     }
 
     /**
@@ -696,7 +693,7 @@ class RestaurantController extends AbstractController
             return $this->redirectToRoute('restaurants_suggest');
         }
 
-        return $this->render('@App/restaurant/restaurant_pledge.html.twig', [
+        return $this->render('restaurant/restaurant_pledge.html.twig', [
             'form_pledge' => $form->createView()
         ]);
     }

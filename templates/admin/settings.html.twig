@@ -1,0 +1,376 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'form/settings.html.twig' %}
+{% form_theme maintenance_form 'bootstrap_3_layout.html.twig' %}
+{% form_theme banner_form 'bootstrap_3_layout.html.twig' %}
+{% form_theme stripe_livemode_form 'bootstrap_3_layout.html.twig' %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.settings.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="alert alert-info">
+  <i class="fa fa-globe"></i>  {% trans %}form.settings.date_time{% endtrans %}
+  <span class="pull-right">
+    <span>{{ 'now'|localizeddate('none', 'short') }} {{ timezone }}</span>
+  </span>
+</div>
+
+{{ form_start(form) }}
+  <div class="row">
+    <div class="col-sm-3">
+      <label class="control-label">{{ 'form.settings.company_logo.label'|trans }}</label>
+      <div id="logo-dropzone"></div>
+      <p class="help-block">{{ 'form.settings.company_logo.help'|trans }}</p>
+    </div>
+    <div class="col-sm-9">
+      {{ form_row(form.brand_name) }}
+      {{ form_row(form.administrator_email) }}
+      {{ form_row(form.phone_number) }}
+      {{ form_row(form.enable_restaurant_pledges) }}
+    </div>
+  </div>
+
+  {{ form_row(form.subject_to_vat) }}
+
+  <div class="alert alert-danger">
+    <i class="fa fa-warning"></i> {{ 'form.maintenance.enable.label'|trans }}
+    <div class="pull-right">
+      <div id="maintenance"></div>
+    </div>
+    {% if maintenance is not empty %}
+    <div class="pull-right">
+      <a href="#" style="margin-right: 15px;" id="maintenance-edit">{{ 'basics.edit'|trans }}</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="alert alert-warning">
+    <i class="fa fa-warning"></i> {{ 'form.banner.enable.label'|trans }}
+    <div class="pull-right">
+      <div id="banner"></div>
+    </div>
+  </div>
+
+  <hr>
+
+  <h4>{% trans %}form.settings.stripe.title{% endtrans %}</h4>
+
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> {{ "form.settings.stripe.help" | trans | raw }}
+  </div>
+
+  <div class="form-group">
+    <label class="control-label">{% trans %}form.settings.stripe_publishable_key.label{% endtrans %}</label>
+    <div class="row">
+      <div class="col-md-6">
+        {{ form_widget(form.stripe_test_publishable_key) }}
+        <span class="help-block">{% trans %}form.settings.stripe_publishable_key.help{% endtrans %}</span>
+      </div>
+      <div class="col-md-6">
+        {{ form_widget(form.stripe_live_publishable_key) }}
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label">{% trans %}form.settings.stripe_secret_key.label{% endtrans %}</label>
+    <div class="row">
+      <div class="col-md-6">
+        {{ form_widget(form.stripe_test_secret_key) }}
+        <span class="help-block">{% trans %}form.settings.stripe_secret_key.help{% endtrans %}</span>
+      </div>
+      <div class="col-md-6">
+        {{ form_widget(form.stripe_live_secret_key) }}
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label">{% trans %}form.settings.stripe_connect_client_id.label{% endtrans %}</label>
+    <div class="row">
+      <div class="col-md-6">
+        {{ form_widget(form.stripe_test_connect_client_id) }}
+        <span class="help-block">{% trans %}form.settings.stripe_connect_client_id.help{% endtrans %}</span>
+      </div>
+      <div class="col-md-6">
+        {{ form_widget(form.stripe_live_connect_client_id) }}
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-danger">
+    <i class="fa fa-warning"></i> {{ 'form.stripe_livemode.enable.label'|trans }}
+    <div class="pull-right">
+      <div id="stripe_livemode_switch"></div>
+    </div>
+  </div>
+
+  {% if not stripe_livemode %}
+  <p class="help-block">
+    <i class="fa fa-info-circle"></i> {{ 'form.settings.stripe_testmode.help'|trans|raw }}
+  </p>
+  {% endif %}
+
+  {% if not can_enable_stripe_livemode %}
+  <p class="help-block">
+    <i class="fa fa-info-circle"></i> {{ 'form.settings.stripe_enable_livemode.help'|trans|raw }}
+  </p>
+  {% endif %}
+
+  <hr>
+
+  {{ form_rest(form) }}
+
+  <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+{{ form_end(form) }}
+
+<div id="modal-maintenance" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      {{ form_start(maintenance_form) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" data-enable>{{ 'form.maintenance.enable.label'|trans }}</h4>
+        <h4 class="modal-title" data-disable>{{ 'form.maintenance.disable.label'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" data-enable>
+          {% trans %}form.maintenance.enable.alert{% endtrans %}
+        </div>
+        <div data-enable="true">
+          {{ form_row(maintenance_form.message, { attr: { rows: 5 } }) }}
+        </div>
+        <div class="alert alert-success" data-disable>
+          {% trans %}form.maintenance.disable.alert{% endtrans %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+        {{ form_widget(maintenance_form.enable, { attr: { class: 'btn-danger', 'data-enable': 'true' } }) }}
+        {{ form_widget(maintenance_form.disable, { attr: { class: 'btn-success', 'data-disable': 'true' } }) }}
+      </div>
+      {{ form_end(maintenance_form) }}
+    </div>
+  </div>
+</div>
+
+<div id="modal-banner" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      {{ form_start(banner_form) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" data-enable>{{ 'form.banner.enable.label'|trans }}</h4>
+        <h4 class="modal-title" data-disable>{{ 'form.banner.disable.label'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" data-enable>
+          {% trans %}form.banner.enable.alert{% endtrans %}
+        </div>
+        <div data-enable="true">
+          {{ form_row(banner_form.message) }}
+        </div>
+        <div class="alert alert-success" data-disable>
+          {% trans %}form.banner.disable.alert{% endtrans %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+        {{ form_widget(banner_form.enable, { attr: { class: 'btn-danger', 'data-enable': 'true' } }) }}
+        {{ form_widget(banner_form.disable, { attr: { class: 'btn-success', 'data-disable': 'true' } }) }}
+      </div>
+      {{ form_end(banner_form) }}
+    </div>
+  </div>
+</div>
+
+<div id="modal-stripe-livemode" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      {{ form_start(stripe_livemode_form) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" data-enable>{{ 'form.stripe_livemode.enable.label'|trans }}</h4>
+        <h4 class="modal-title" data-disable>{{ 'form.stripe_livemode.disable.label'|trans }}</h4>
+        <h4 class="modal-title" data-disable-and-enable-maintenance>{{ 'form.stripe_livemode.disable.label'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-success" data-enable>
+          {% trans %}form.stripe_livemode.enable.alert{% endtrans %}
+        </div>
+        <div class="alert alert-danger" data-disable>
+          {% trans %}form.stripe_livemode.disable.alert{% endtrans %}
+        </div>
+        <div class="alert alert-danger" data-disable-and-enable-maintenance>
+          {% trans %}form.stripe_livemode.disable_and_enable_maintenance.alert{% endtrans %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+        {{ form_widget(stripe_livemode_form.enable, { attr: { class: 'btn-success', 'data-enable': 'true' } }) }}
+        {{ form_widget(stripe_livemode_form.disable, { attr: { class: 'btn-danger', 'data-disable': 'true' } }) }}
+        {{ form_widget(stripe_livemode_form.disable_and_enable_maintenance, { attr: { class: 'btn-danger', 'data-disable-and-enable-maintenance': 'true' } }) }}
+      </div>
+      {{ form_end(stripe_livemode_form) }}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+
+  (function() {
+
+    var isMaintenanceEnabled = {{ maintenance is not empty ? 'true' : 'false' }};
+    var isBannerEnabled = {{ banner is not empty ? 'true' : 'false' }};
+    var isStripeLivemode = {{ stripe_livemode ? 'true' : 'false' }};
+    var canEnableStripeLivemode = {{ can_enable_stripe_livemode ? 'true' : 'false' }};
+    var isDemo = {{ is_demo ? 'true' : 'false' }};
+
+    var maintenanceSwitch, bannerSwitch, stripeLiveModeSwitch;
+
+    /* Maintenance */
+
+    $('#maintenance-edit').on('click', function(e) {
+      e.preventDefault();
+
+      $('#modal-maintenance').find('[data-disable]').hide();
+      $('#modal-maintenance').find('[data-enable]').show();
+      $('#modal-maintenance').modal('show');
+    });
+
+    $('#modal-maintenance').on('hidden.bs.modal', function(e) {
+      if (true === isMaintenanceEnabled) {
+        maintenanceSwitch.check();
+      } else {
+        maintenanceSwitch.uncheck();
+      }
+    });
+
+    var maintenanceSwitchOptions = {
+      checked: isMaintenanceEnabled,
+      disabled: isDemo,
+      onChange: function(checked) {
+        if (checked !== isMaintenanceEnabled) {
+          if (checked) {
+            $('#modal-maintenance').find('[data-disable]').hide();
+            $('#modal-maintenance').find('[data-enable]').show();
+          } else {
+            $('#modal-maintenance').find('[data-enable]').hide();
+            $('#modal-maintenance').find('[data-disable]').show();
+          }
+          $('#modal-maintenance').modal('show');
+        }
+      }
+    };
+
+    maintenanceSwitch = new CoopCycle.Switch(document.querySelector('#maintenance'), maintenanceSwitchOptions);
+
+    /* Banner */
+
+    $('#modal-banner').on('hidden.bs.modal', function(e) {
+      if (true === isBannerEnabled) {
+        bannerSwitch.check();
+      } else {
+        bannerSwitch.uncheck();
+      }
+    });
+
+    var bannerSwitchOptions = {
+      checked: isBannerEnabled,
+      onChange: function(checked) {
+        if (checked !== isBannerEnabled) {
+          if (checked) {
+            $('#modal-banner').find('[data-disable]').hide();
+            $('#modal-banner').find('[data-enable]').show();
+          } else {
+            $('#modal-banner').find('[data-enable]').hide();
+            $('#modal-banner').find('[data-disable]').show();
+          }
+          $('#modal-banner').modal('show');
+        }
+      }
+    };
+
+    bannerSwitch = new CoopCycle.Switch(document.querySelector('#banner'), bannerSwitchOptions);
+
+    /* Stripe Live Mode */
+
+    $('#modal-stripe-livemode').on('hidden.bs.modal', function(e) {
+      if (true === isStripeLivemode) {
+        stripeLiveModeSwitch.check();
+      } else {
+        stripeLiveModeSwitch.uncheck();
+      }
+    });
+
+    var stripeLiveModeSwitchOptions = {
+      checked: isStripeLivemode,
+      disabled: !canEnableStripeLivemode,
+      onChange: function(checked) {
+        if (checked !== isStripeLivemode) {
+          // Stripe was previously live, but the admin wants to disable it
+          if (isStripeLivemode && !checked) {
+            $('#modal-stripe-livemode').find('[data-enable]').hide();
+            if (!isMaintenanceEnabled) {
+              $('#modal-stripe-livemode').find('[data-disable]').hide();
+              $('#modal-stripe-livemode').find('[data-disable-and-enable-maintenance]').show();
+            } else {
+              $('#modal-stripe-livemode').find('[data-disable-and-enable-maintenance]').hide();
+              $('#modal-stripe-livemode').find('[data-disable]').show();
+            }
+            $('#modal-stripe-livemode').modal('show');
+          }
+          if (!isStripeLivemode && checked) {
+            $('#modal-stripe-livemode').find('[data-disable]').hide();
+            $('#modal-stripe-livemode').find('[data-disable-and-enable-maintenance]').hide();
+            $('#modal-stripe-livemode').find('[data-enable]').show();
+            $('#modal-stripe-livemode').modal('show');
+          }
+        }
+      }
+    };
+
+    stripeLiveModeSwitch = new CoopCycle.Switch(document.querySelector('#stripe_livemode_switch'), stripeLiveModeSwitchOptions);
+
+    $('[data-widget="switch"]').each(function() {
+      var selector = this.dataset.switchTarget;
+      var el = document.querySelector(selector);
+      $(el).closest('.checkbox').addClass('d-none');
+      new CoopCycle.Switch(this, {
+        checked: el.checked,
+        onChange: function(checked) {
+          el.checked = checked;
+        }
+      });
+    });
+
+    new window.CoopCycle.Dropzone($('#logo-dropzone'), {
+      dropzone: {
+        url: "{{ oneup_uploader_endpoint('logo') }}",
+        params: {
+          type: 'logo',
+        }
+      },
+      image: "{{ coopcycle_logo() }}",
+      size: [ 256, 256 ],
+      croppie: {
+        format: 'png'
+      }
+    })
+
+  })();
+
+  </script>
+{% endblock %}

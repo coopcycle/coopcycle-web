@@ -1,0 +1,49 @@
+{% extends layout %}
+
+{% block breadcrumb %}
+<li><a href="{{ path(breadcrumb_path) }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
+<li>#{{ order.id }}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-xs-12 col-md-6">
+      <div class="border mb-3">
+        <h4 class="bg-light p-3 m-0">{{ order.restaurant.name }}</h4>
+        <div class="px-3 py-4" id="restaurant">
+          {% include "_partials/order/restaurant_details.html.twig" %}
+        </div>
+        <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
+        <div id="items">
+          {% include '_partials/order/items.html.twig' with { with_taxes: false } %}
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-6">
+      <div id="order-timeline"></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+new CoopCycle.OrderTimeline(document.querySelector('#order-timeline'), {
+  order: {{ order_normalized|json_encode()|raw }},
+  events: {{ events|json_encode()|raw }},
+  jwt: "{{ jwt }}"
+});
+</script>
+{% if reset %}
+<script>
+sessionStorage.removeItem('search_address');
+sessionStorage.removeItem('search_geohash');
+</script>
+{% endif %}
+{% if track_goal and goal_id is not empty %}
+<script>
+setTimeout(function() {
+  _paq.push(['trackGoal', {{ goal_id|escape('js') }}, {{ order.total|price_format(false)|floatval|escape('js') }}]);
+}, 1000);
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+  <li>{% trans %}adminDashboard.time_slots.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<p class="text-right">
+  <a href="{{ path('admin_new_time_slot') }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
+  </a>
+</p>
+
+<table class="table table-condensed">
+  <thead>
+    <th>#</th>
+    <th>{{ 'form.time_slot.name.label'|trans }}</th>
+    <th>{{ 'form.time_slot.interval.label'|trans }}</th>
+    <th>{{ 'form.time_slot.choices.label'|trans }}</th>
+  </thead>
+  <tbody>
+  {% for time_slot in time_slots %}
+    <tr>
+      <td>
+        <a href="{{ path('admin_time_slot', { id: time_slot.id }) }}">#{{ time_slot.id }}</a>
+      </td>
+      <td>
+        {{ time_slot.name }}
+      </td>
+      <td>
+        {{ time_slot.interval }}
+      </td>
+      <td>
+        {% for choice in time_slot.choices %}
+          <small>{{ choice.startTime }} - {{ choice.endTime }}</small>
+        {% endfor %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

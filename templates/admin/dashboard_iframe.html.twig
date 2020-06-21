@@ -1,0 +1,112 @@
+{% extends "base.html.twig" %}
+
+{% form_theme task_export_form 'form/task_export.html.twig' %}
+
+{% block banner %}{% endblock %}
+{% block menu %}
+  {% if nav %}
+  {% include 'admin/nav.html.twig' with { nav_class: 'navbar--dashboard' } %}
+  {% endif %}
+{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+
+<div class="dashboard {% if nav %}dashboard--nav{% endif %}">
+  <div class="dashboard__wrapper" id="dashboard"
+    data-jwt="{{ jwt }}"
+    data-date="{{ date|date('Y-m-d') }}"
+    data-tags="{{ tags|json_encode|e('html_attr') }}"
+    data-couriers-list="{{ couriers|json_encode|e('html_attr') }}"
+    data-tasks="{{ tasks|json_encode|e('html_attr') }}"
+    data-task-lists="{{ task_lists|json_encode|e('html_attr') }}"
+    data-uploader-endpoint="{{ oneup_uploader_endpoint('tasks') }}"
+    data-nav="{{ nav ? 'on' : 'off' }}"
+    data-example-spreadsheet-url="{{ path('spreadsheet_example_tasks') }}">
+    <div class="dashboard__map">
+      <div class="dashboard__toolbar-container"></div>
+      <div class="dashboard__map-container"></div>
+    </div>
+    <aside class="dashboard__aside"></aside>
+  </div>
+  <div class="dashboard__loader">
+    <div id="dashboard__loader" style="margin: 0 auto;"></div>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="export-modal-label" id="export-modal">
+  <div class="modal-dialog" role="document">
+    {{ form_start(task_export_form, { attr: { class: 'modal-content' } }) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="export-modal-label">{% trans %}adminDashboard.dashboard.exportTasks{% endtrans %}</h4>
+      </div>
+      <div class="modal-body">
+        {{ form_row(task_export_form.start) }}
+        {{ form_row(task_export_form.end) }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}adminDashboard.dashboard.cancel{% endtrans %}</button>
+        <button type="submit" class="btn btn-primary">{% trans %}adminDashboard.dashboard.export{% endtrans %}</button>
+      </div>
+    {{ form_end(task_export_form) }}
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="task-group-modal-label" id="task-group-modal">
+  <div class="modal-dialog" role="document">
+    {{ form_start(task_group_form, { attr: { class: 'modal-content' } }) }}
+      {{ form_widget(task_group_form.id) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="task-group-modal-label">{% trans %}adminDashboard.dashboard.deleteTaskGroup{% endtrans %}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">
+          {% trans %}You are going to delete a task group. This will delete all the tasks from the group.{% endtrans %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}adminDashboard.dashboard.cancel{% endtrans %}</button>
+        {{ form_widget(task_group_form.delete, { attr: { class: 'btn btn-danger' } }) }}
+      </div>
+    {{ form_end(task_group_form) }}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+{{ encore_entry_link_tags('dashboard') }}
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('dashboard') }}
+<script>
+
+  new CoopCycle.DatePicker(document.querySelector('#task_export_start_widget'), {
+    defaultValue: document.querySelector('#task_export_start').value,
+    onChange: function(date, dateString) {
+      if (date) {
+        document.querySelector('#task_export_start').value = date.format('YYYY-MM-DD');
+      }
+    }
+  });
+  new CoopCycle.DatePicker(document.querySelector('#task_export_end_widget'), {
+    defaultValue: document.querySelector('#task_export_end').value,
+    onChange: function(date, dateString) {
+      if (date) {
+        document.querySelector('#task_export_end').value = date.format('YYYY-MM-DD');
+      }
+    }
+  });
+
+  $('#task-group-modal').on('show.bs.modal', function (event) {
+    var $btn = $(event.relatedTarget);
+    $('#task_group_id').val($btn.data('group'));
+  });
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
+  async defer></script>
+{% endblock %}

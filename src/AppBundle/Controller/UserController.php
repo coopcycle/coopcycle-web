@@ -14,7 +14,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -43,15 +42,14 @@ class UserController extends AbstractController
 
     /**
      * @Route("/users/{username}", name="user")
-     * @Template()
      */
     public function indexAction($username, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
 
-        return [
+        return $this->render('user/index.html.twig', [
             'user' => $user,
-        ];
+        ]);
     }
 
     /**
@@ -133,7 +131,7 @@ class UserController extends AbstractController
             return $response;
         }
 
-        return $this->render('@App/profile/invitation_define_password.html.twig', [
+        return $this->render('profile/invitation_define_password.html.twig', [
             'form' => $form->createView()
         ]);
     }

@@ -1,0 +1,74 @@
+{% if option_index is not defined %}
+  {% set option_index = product_option_index() %}
+{% endif %}
+
+<h4>{{ option.name }}</h4>
+<div class="list-group"
+  data-product-options-group
+  {% if not option.additional %}
+  data-product-options-group-min="1"
+  data-product-options-group-max="1"
+  {% else %}
+    {% if option.valuesRange is not null %}
+    data-product-options-group-min="{{ option.valuesRange.lower }}"
+      {% if not option.valuesRange.upperInfinite %}
+        data-product-options-group-max="{{ option.valuesRange.upper }}"
+      {% endif %}
+    {% else %}
+    data-product-options-group-min="0"
+    {% endif %}
+  {% endif %}>
+  {% for option_value in option.values %}
+    {% set option_value_input_id = ('product-' ~ product.code ~ '-option-' ~ option.code ~ '-value-' ~ option_value.code) %}
+    <div class="list-group-item product-option-item" data-option-value-price="{{ option_value.price }}">
+      {% if option.additional %}
+        {% if option.valuesRange is not null %}
+        <div class="product-option-item-range">
+          <input type="hidden" name="options[{{ option_index }}][code]" value="{{ option_value.code }}">
+          <input
+            id="{{ option_value_input_id }}"
+            name="options[{{ option_index }}][quantity]"
+            type="number"
+            step="1"
+            min="0"
+            {% if not option.valuesRange.upperInfinite %}
+            max="{{ option.valuesRange.upper }}"
+            {% endif %}
+            value="0">
+          <label for="{{ option_value_input_id }}" data-step-up>
+            {% include 'restaurant/_partials/option_value.html.twig' %}
+          </label>
+          <div class="product-option-item-range-buttons">
+            <button class="button-icon--decrement" data-stepper data-target="#{{ option_value_input_id }}" data-direction="down">
+              <i class="fa fa-lg fa-minus-circle"></i>
+            </button>
+            <button class="button-icon--increment" data-stepper data-target="#{{ option_value_input_id }}" data-direction="up">
+              <i class="fa fa-lg fa-plus-circle"></i>
+            </button>
+          </div>
+        </div>
+        {% else %}
+        <div class="checkbox nomargin">
+          <label class="d-flex align-items-center">
+            <input
+              name="options[{{ option_index }}][code]"
+              value="{{ option_value.code }}" type="checkbox">
+            {% include 'restaurant/_partials/option_value.html.twig' %}
+          </label>
+        </div>
+        {% endif %}
+      {% else %}
+        <div class="radio nomargin">
+          <label class="d-flex align-items-center">
+            <input
+              name="options[{{ option_index }}][code]"
+              value="{{ option_value.code }}" type="radio">
+            {% include 'restaurant/_partials/option_value.html.twig' %}
+          </label>
+        </div>
+      {% endif %}
+      {{ option_index.incrementValue(option_value) }}
+    </div>
+  {% endfor %}
+</div>
+{{ option_index.incrementOption(option) }}

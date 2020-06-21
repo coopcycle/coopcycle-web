@@ -14,7 +14,7 @@ class OrderTextEncoder implements EncoderInterface
 
     public function encode($data, $format, array $context = array())
     {
-        return $this->templating->render('@App/order/summary.txt.twig', [
+        return $this->templating->render('order/summary.txt.twig', [
             'order' => $data
         ]);
     }

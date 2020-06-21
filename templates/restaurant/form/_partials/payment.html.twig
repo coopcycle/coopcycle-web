@@ -1,0 +1,34 @@
+{% if restaurant.id is not null %}
+
+  {% if show_stripe_connect %}
+
+    {% include "_partials/restaurant/stripe_accounts.html.twig" %}
+
+    {% if form.allowStripeConnect is defined %}
+      <div class="alert alert-warning">
+        {{ 'restaurant.form.allow_stripe_connect.label'|trans }}
+        <div class="pull-right">
+          {{ form_widget(form.allowStripeConnect, { attr: { class: 'checkbox switch' }}) }}
+        </div>
+      </div>
+    {% endif %}
+    {% if form.enableGiropay is defined %}
+      <div class="alert alert-warning">
+        {{ 'restaurant.form.giropay_enabled.label'|trans }}
+        <div class="pull-right">
+          {{ form_widget(form.enableGiropay, { attr: { class: 'checkbox switch' }}) }}
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+
+{% else %}
+
+  {% if form.allowStripeConnect is defined %}
+    {% do form.allowStripeConnect.setRendered %}
+  {% endif %}
+  {% if form.enableGiropay is defined %}
+    {% do form.enableGiropay.setRendered %}
+  {% endif %}
+
+{% endif %}

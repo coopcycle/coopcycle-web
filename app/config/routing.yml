@@ -32,7 +32,7 @@ fos_user_profile_show:
     methods:  [ GET, POST ]
     defaults:
         _controller: AppBundle\Controller\ProfileController::indexAction
-        layout: '@App/profile.html.twig'
+        layout: 'profile.html.twig'
 
 fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing-sf4.xml"

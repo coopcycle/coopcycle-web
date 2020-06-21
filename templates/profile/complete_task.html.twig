@@ -1,0 +1,22 @@
+{% form_theme form 'form/complete_task.html.twig' %}
+
+{% set task = form.vars.data %}
+
+<div class="modal-dialog" role="document">
+  {{ form_start(form, { action: path('profile_task_complete', { id: task.id }), attr: { class: 'modal-content' } }) }}
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h4 class="modal-title" id="task-complete-modal-label">{% trans with { '%id%': ('#' ~ task.id) } %}Complete task %id%{% endtrans %}</h4>
+    </div>
+    <div class="modal-body">
+      {{ form_row(form.notes) }}
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans %}profile.task.cancel{% endtrans %}</button>
+      {{ form_widget(form.fail, { attr: { class: 'btn btn-danger' } }) }}
+      {{ form_widget(form.done, { attr: { class: 'btn btn-success' } }) }}
+    </div>
+  {{ form_end(form) }}
+</div>

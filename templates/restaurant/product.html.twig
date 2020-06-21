@@ -1,0 +1,103 @@
+{% extends 'restaurant/layout.html.twig' %}
+
+{% form_theme form 'form/product.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li><a href="{{ path(products_route, { id: restaurant.id }) }}">{{ 'restaurant.list.products'|trans }}</a></li>
+  <li>{{ product.name }}</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+
+  {% set product = form.vars.value %}
+
+  {% if not form.vars.valid %}
+    {{ form_errors(form) }}
+  {% endif %}
+
+  {% if form.confirm is defined %}
+    <div class="alert alert-warning">
+      <p class="text-center">
+        {% trans with { '%link%': path(product_new_route, { id: restaurant.id }) } %}form.product.confirm.help{% endtrans %}
+      </p>
+      <br>
+      <div class="text-center">
+        {{ form_widget(form.confirm, { attr: { class: 'btn-sm btn-success' } }) }}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-sm-3">
+      {% if product.id is not null %}
+      <div id="product-image-dropzone"></div>
+      {% endif %}
+    </div>
+    <div class="col-sm-9">
+      {{ form_row(form.name) }}
+      {{ form_row(form.description) }}
+      {{ form_row(form.enabled) }}
+    </div>
+  </div>
+
+  {% if form.reusablePackagingEnabled is defined and form.reusablePackaging is defined and form.reusablePackagingUnit is defined %}
+  <div class="panel panel-default">
+    <div class="panel-body">
+      {{ form_widget(form.reusablePackagingEnabled) }}
+      <div class="row">
+        <div class="col-sm-6">
+          {{ form_row(form.reusablePackaging) }}
+        </div>
+        <div class="col-sm-6">
+          {{ form_row(form.reusablePackagingUnit) }}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <hr>
+
+  {{ form_widget(form.priceWithTax) }}
+
+  {{ form_row(form.options, { attr: { class: "product__form__options--sortable" } }) }}
+
+  <div class="row">
+    <div class="col-sm-6">
+      {{ form_row(form.allergens) }}
+    </div>
+    <div class="col-sm-6">
+      {{ form_row(form.restrictedDiets) }}
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="row">
+    {#
+    Make sure the "save" button is *BEFORE* the "delete" button in the DOM
+    to avoid deleting when hitting "enter"
+    #}
+    <div class="col-sm-9">
+      <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+    </div>
+    <div class="col-sm-3">
+      {{ form_widget(form.delete, { attr: { class: 'btn-block btn-danger' } }) }}
+    </div>
+  </div>
+
+{{ form_end(form) }}
+
+<div id="product-form-data"
+  data-action-url="{{ oneup_uploader_endpoint('product') }}"
+  data-product-id="{{ product.id }}"
+  data-product-image="{{ coopcycle_asset(product, 'imageFile', 'product_thumbnail') }}"></div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('product-form') }}
+{% endblock %}

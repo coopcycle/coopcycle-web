@@ -129,7 +129,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin", name="admin_index")
-     * @Template("@App/admin/dashboard.html.twig")
      */
     public function indexAction(Request $request)
     {
@@ -178,7 +177,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/orders/{id}", name="admin_order")
-     * @Template
      */
     public function orderAction($id, Request $request,
         OrderManager $orderManager,
@@ -281,8 +279,8 @@ class AdminController extends Controller
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
-        return $this->render('@App/order/service.html.twig', [
-            'layout' => '@App/admin.html.twig',
+        return $this->render('order/service.html.twig', [
+            'layout' => 'admin.html.twig',
             'order' => $order,
             'delivery' => $delivery,
             'form' => $form->createView(),
@@ -313,7 +311,7 @@ class AdminController extends Controller
             $preparationDelay = 0;
         }
 
-        return $this->render('@App/admin/foodtech_dashboard.html.twig', [
+        return $this->render('admin/foodtech_dashboard.html.twig', [
             'orders' => $orders,
             'date' => $date,
             'orders_normalized' => $ordersNormalized,
@@ -338,7 +336,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/users", name="admin_users")
-     * @Template
      */
     public function usersAction(Request $request)
     {
@@ -358,14 +355,13 @@ class AdminController extends Controller
             ]
         );
 
-        return array(
+        return $this->render('admin/users.html.twig', array(
             'users' => $users,
-        );
+        ));
     }
 
     /**
      * @Route("/admin/users/invite", name="admin_users_invite")
-     * @Template
      */
     public function inviteUserAction(Request $request,
         EmailManager $emailManager,
@@ -410,14 +406,13 @@ class AdminController extends Controller
             ));
         }
 
-        return $this->render('@App/admin/user_invite.html.twig', [
+        return $this->render('admin/user_invite.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
     /**
      * @Route("/admin/users/add", name="admin_users_add")
-     * @Template
      */
     public function userAddAction(Request $request,
         UserManagerInterface $userManager)
@@ -435,14 +430,13 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_users');
         }
 
-        return [
+        return $this->render('admin/user_add.html.twig', [
             'form' => $form->createView(),
-        ];
+        ]);
     }
 
     /**
      * @Route("/admin/user/{username}", name="admin_user_details")
-     * @Template
      */
     public function userAction($username, Request $request)
     {
@@ -451,14 +445,13 @@ class AdminController extends Controller
 
         $user = $userManager->findUserByUsername($username);
 
-        return [
+        return $this->render('admin/user.html.twig', [
             'user' => $user,
-        ];
+        ]);
     }
 
     /**
      * @Route("/admin/user/{username}/edit", name="admin_user_edit")
-     * @Template
      */
     public function userEditAction($username, Request $request)
     {
@@ -513,15 +506,14 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_user_edit', ['username' => $user->getUsername()]);
         }
 
-        return [
+        return $this->render('admin/user_edit.html.twig', [
             'form' => $editForm->createView(),
             'user' => $user,
-        ];
+        ]);
     }
 
     /**
      * @Route("/admin/user/{username}/tracking", name="admin_user_tracking")
-     * @Template("@App/user/tracking.html.twig")
      */
     public function userTrackingAction($username, Request $request)
     {
@@ -553,7 +545,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/deliveries", name="admin_deliveries")
-     * @Template()
      */
     public function deliveriesAction(Request $request, TranslatorInterface $translator)
     {
@@ -600,12 +591,12 @@ class AdminController extends Controller
             ]
         );
 
-        return [
+        return $this->render('admin/deliveries.html.twig', [
             'deliveries' => $deliveries,
             'routes' => $this->getDeliveryRoutes(),
             'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']),
             'delivery_import_form' => $deliveryImportForm->createView(),
-        ];
+        ]);
     }
 
     protected function getDeliveryRoutes()
@@ -621,7 +612,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/settings/taxation", name="admin_taxation_settings")
-     * @Template
      */
     public function taxationSettingsAction(Request $request,
         TaxRateResolverInterface $taxRateResolver,
@@ -657,10 +647,10 @@ class AdminController extends Controller
             ];
         }
 
-        return [
+        return $this->render('admin/taxation_settings.html.twig', [
             'categories' => $categories,
             'countries' => array_unique($countries),
-        ];
+        ]);
     }
 
     /**
@@ -695,14 +685,13 @@ class AdminController extends Controller
             }
         }
 
-        return $this->render('@App/admin/tags.html.twig', [
+        return $this->render('admin/tags.html.twig', [
             'tags' => $tags
         ]);
     }
 
     /**
      * @Route("/admin/deliveries/pricing", name="admin_deliveries_pricing")
-     * @Template("@App/admin/pricing.html.twig")
      */
     public function pricingRuleSetsAction(Request $request)
     {
@@ -710,9 +699,9 @@ class AdminController extends Controller
             ->getRepository(Delivery\PricingRuleSet::class)
             ->findAll();
 
-        return [
+        return $this->render('admin/pricing.html.twig', [
             'ruleSets' => $ruleSets
-        ];
+        ]);
     }
 
     private function renderPricingRuleSetForm(Delivery\PricingRuleSet $ruleSet, Request $request)
@@ -764,16 +753,15 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_deliveries_pricing');
         }
 
-        return [
+        return $this->render('admin/pricing_rule_set.html.twig', [
             'form' => $form->createView(),
             'zones' => $zoneNames,
             'packages' => $packageNames,
-        ];
+        ]);
     }
 
     /**
      * @Route("/admin/deliveries/pricing/new", name="admin_deliveries_pricing_ruleset_new")
-     * @Template("@App/admin/pricing_rule_set.html.twig")
      */
     public function newPricingRuleSetAction(Request $request)
     {
@@ -784,7 +772,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/deliveries/pricing/{id}", name="admin_deliveries_pricing_ruleset")
-     * @Template("@App/admin/pricing_rule_set.html.twig")
      */
     public function pricingRuleSetAction($id, Request $request)
     {
@@ -797,7 +784,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/zones/{id}/delete", methods={"POST"}, name="admin_zone_delete")
-     * @Template
      */
     public function deleteZoneAction($id, Request $request)
     {
@@ -811,7 +797,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/zones", name="admin_zones")
-     * @Template
      */
     public function zonesAction(Request $request)
     {
@@ -849,11 +834,11 @@ class AdminController extends Controller
 
         $zones = $this->getDoctrine()->getRepository(Zone::class)->findAll();
 
-        return [
+        return $this->render('admin/zones.html.twig', [
             'zones' => $zones,
             'upload_form' => $uploadForm->createView(),
             'zone_collection_form' => $zoneCollectionForm->createView(),
-        ];
+        ]);
     }
 
     public function getStoreList(Request $request)
@@ -872,7 +857,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/restaurants/search", name="admin_restaurants_search")
-     * @Template()
      */
     public function searchRestaurantsAction(Request $request)
     {
@@ -895,7 +879,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/stores/search", name="admin_stores_search")
-     * @Template()
      */
     public function searchStoresAction(Request $request)
     {
@@ -932,7 +915,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/users/search", name="admin_users_search")
-     * @Template()
      */
     public function searchUsersAction(Request $request)
     {
@@ -962,7 +944,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/settings", name="admin_settings")
-     * @Template()
      */
     public function settingsAction(Request $request, SettingsManager $settingsManager, Redis $redis)
     {
@@ -1062,7 +1043,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_settings');
         }
 
-        return [
+        return $this->render('admin/settings.html.twig', [
             'timezone' => ini_get('date.timezone'),
             'form' => $form->createView(),
             'maintenance_form' => $maintenanceForm->createView(),
@@ -1072,12 +1053,11 @@ class AdminController extends Controller
             'stripe_livemode' => $isStripeLivemode,
             'stripe_livemode_form' => $stripeLivemodeForm->createView(),
             'can_enable_stripe_livemode' => $canEnableStripeLivemode,
-        ];
+        ]);
     }
 
     /**
      * @Route("/admin/embed", name="admin_embed")
-     * @Template()
      */
     public function embedAction(Request $request, SettingsManager $settingsManager)
     {
@@ -1113,10 +1093,10 @@ class AdminController extends Controller
             return $this->redirect($request->headers->get('referer'));
         }
 
-        return [
+        return $this->render('admin/embed.html.twig', [
             'pricing_rule_set' => $pricingRuleSet,
             'embed_settings_form' => $form->createView(),
-        ];
+        ]);
     }
 
     /**
@@ -1131,7 +1111,7 @@ class AdminController extends Controller
 
         $events = $activityManager->getEventsByDate($date);
 
-        return $this->render('@App/admin/activity.html.twig', [
+        return $this->render('admin/activity.html.twig', [
             'events' => $events,
             'date' => $date
         ]);
@@ -1146,7 +1126,7 @@ class AdminController extends Controller
             ->getRepository(ApiApp::class)
             ->findAll();
 
-        return $this->render('@App/admin/api_apps.html.twig', [
+        return $this->render('admin/api_apps.html.twig', [
             'api_apps' => $apiApps
         ]);
     }
@@ -1181,7 +1161,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_api_app', [ 'id' => $apiApp->getId() ]);
         }
 
-        return $this->render('@App/admin/api_app_form.html.twig', [
+        return $this->render('admin/api_app_form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -1209,7 +1189,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_api_apps');
         }
 
-        return $this->render('@App/admin/api_app_form.html.twig', [
+        return $this->render('admin/api_app_form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -1236,7 +1216,7 @@ class AdminController extends Controller
 
         $freeDeliveryPromotion = $this->get('sylius.repository.promotion')->findOneByCode('FREE_DELIVERY');
 
-        return $this->render('@App/admin/promotions.html.twig', [
+        return $this->render('admin/promotions.html.twig', [
             'promotions' => $promotions,
             'free_delivery_coupons' => $freeDeliveryCoupons,
             'credit_note_coupons' => $creditNoteCoupons,
@@ -1266,7 +1246,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_promotions');
         }
 
-        return $this->render('@App/admin/promotion_coupon.html.twig', [
+        return $this->render('admin/promotion_coupon.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -1332,7 +1312,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_promotions');
         }
 
-        return $this->render('@App/admin/promotion_credit_note.html.twig', [
+        return $this->render('admin/promotion_credit_note.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -1360,7 +1340,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_promotions');
         }
 
-        return $this->render('@App/admin/promotion_coupon.html.twig', [
+        return $this->render('admin/promotion_coupon.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -1491,7 +1471,7 @@ class AdminController extends Controller
             }
         }
 
-        return $this->render('@App/admin/restaurant_pledges.html.twig', [
+        return $this->render('admin/restaurant_pledges.html.twig', [
             'pledges' => $pledges,
         ]);
     }
@@ -1526,7 +1506,7 @@ class AdminController extends Controller
     {
         $timeSlots = $this->getDoctrine()->getRepository(TimeSlot::class)->findAll();
 
-        return $this->render('@App/admin/time_slots.html.twig', [
+        return $this->render('admin/time_slots.html.twig', [
             'time_slots' => $timeSlots,
         ]);
     }
@@ -1551,7 +1531,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_time_slots');
         }
 
-        return $this->render('@App/admin/time_slot.html.twig', [
+        return $this->render('admin/time_slot.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -1587,7 +1567,7 @@ class AdminController extends Controller
     {
         $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
 
-        return $this->render('@App/admin/package_sets.html.twig', [
+        return $this->render('admin/package_sets.html.twig', [
             'package_sets' => $packageSets,
         ]);
     }
@@ -1605,7 +1585,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_packages');
         }
 
-        return $this->render('@App/admin/package_set.html.twig', [
+        return $this->render('admin/package_set.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -1668,7 +1648,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_order', [ 'id' => $order->getId() ]);
         }
 
-        return $this->render('@App/admin/new_order.html.twig', [
+        return $this->render('admin/new_order.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -1677,7 +1657,7 @@ class AdminController extends Controller
     {
         $task = $this->getDoctrine()->getRepository(Task::class)->find($id);
 
-        $html = $this->get('twig')->render('@App/task/receipt.pdf.twig', [
+        $html = $this->get('twig')->render('task/receipt.pdf.twig', [
             'task' => $task,
         ]);
 
@@ -1715,7 +1695,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_customize');
         }
 
-        return $this->render('@App/admin/customize.html.twig', [
+        return $this->render('admin/customize.html.twig', [
             'form' => $form->createView(),
         ]);
     }

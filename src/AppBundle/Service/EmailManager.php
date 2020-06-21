@@ -96,7 +96,7 @@ class EmailManager
     public function createOrderCreatedMessageForCustomer(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.created.subject', ['%order.number%' => $order->getNumber()], 'emails');
-        $body = $this->mjml->render($this->templating->render('@App/emails/order/created.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/order/created.mjml.twig', [
             'order' => $order,
         ]));
 
@@ -109,7 +109,7 @@ class EmailManager
             'owner.order.created.subject',
             ['%order.number%' => $order->getNumber()],
             'emails');
-        $body = $this->mjml->render($this->templating->render('@App/emails/order/created.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/order/created.mjml.twig', [
             'order' => $order,
             'is_owner' => true
         ]));
@@ -120,7 +120,7 @@ class EmailManager
     public function createOrderCreatedMessageForAdmin(OrderInterface $order)
     {
         $subject = $this->translator->trans('admin.order.created.subject', [], 'emails');
-        $body = $this->mjml->render($this->templating->render('@App/emails/order/created.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/order/created.mjml.twig', [
             'order' => $order,
             'is_admin' => true
         ]));
@@ -131,7 +131,7 @@ class EmailManager
     public function createOrderPaymentMessage(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.payment.subject', ['%order.number%' => $order->getNumber()], 'emails');
-        $body = $this->mjml->render($this->templating->render('@App/emails/order/payment.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/order/payment.mjml.twig', [
             'order' => $order
         ]));
 
@@ -141,7 +141,7 @@ class EmailManager
     public function createOrderCancelledMessage(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.cancelled.subject', ['%order.number%' => $order->getNumber()], 'emails');
-        $body = $this->mjml->render($this->templating->render('@App/emails/order/cancelled.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/order/cancelled.mjml.twig', [
             'order' => $order,
         ]));
 
@@ -151,7 +151,7 @@ class EmailManager
     public function createOrderAcceptedMessage(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.accepted.subject', ['%order.number%' => $order->getNumber()], 'emails');
-        $body = $this->mjml->render($this->templating->render('@App/emails/order/accepted.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/order/accepted.mjml.twig', [
             'order' => $order,
         ]));
         return $this->createHtmlMessageWithReplyTo($subject, $body);
@@ -162,7 +162,7 @@ class EmailManager
         $key = $task->isDone() ? 'task.done.subject' : 'task.failed.subject';
 
         $subject = $this->translator->trans($key, ['%task.id%' => $task->getId()], 'emails');
-        $body = $this->mjml->render($this->templating->render('@App/emails/task/completed.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/task/completed.mjml.twig', [
             'task' => $task,
         ]));
 
@@ -172,7 +172,7 @@ class EmailManager
     public function createOrderDelayedMessage(OrderInterface $order, $delay = 10)
     {
         $subject = $this->translator->trans('order.delayed.subject', ['%order.number%' => $order->getNumber()], 'emails');
-        $body = $this->mjml->render($this->templating->render('@App/emails/order/delayed.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/order/delayed.mjml.twig', [
             'order' => $order,
             'delay' => $delay
         ]));
@@ -183,7 +183,7 @@ class EmailManager
     public function createUserPledgeConfirmationMessage(Pledge $pledge)
     {
         $subject = $this->translator->trans('user.pledge.subject', [], 'emails');
-        $body = $this->mjml->render($this->templating->render('@App/emails/pledge/user_pledge.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/pledge/user_pledge.mjml.twig', [
             'pledge' => $pledge
         ]));
 
@@ -193,7 +193,7 @@ class EmailManager
     public function createAdminPledgeConfirmationMessage(Pledge $pledge)
     {
         $subject = $this->translator->trans('admin.pledge.subject', [], 'emails');
-        $body = $this->mjml->render($this->templating->render('@App/emails/pledge/admin_pledge.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/pledge/admin_pledge.mjml.twig', [
             'pledge' => $pledge
         ]));
 
@@ -203,7 +203,7 @@ class EmailManager
     public function createInvitationMessage(Invitation $invitation)
     {
         $subject = $this->translator->trans('admin.send_invitation.subject', [], 'emails');
-        $body = $this->mjml->render($this->templating->render('@App/emails/admin_send_invitation.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/admin_send_invitation.mjml.twig', [
             'user' => $invitation->getUser(),
             'invitation' => $invitation,
         ]));
@@ -214,7 +214,7 @@ class EmailManager
     public function createCovid19Message()
     {
         $subject = $this->translator->trans('covid_19.subject', [], 'emails');
-        $body = $this->mjml->render($this->templating->render('@App/emails/covid_19.mjml.twig'));
+        $body = $this->mjml->render($this->templating->render('emails/covid_19.mjml.twig'));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }

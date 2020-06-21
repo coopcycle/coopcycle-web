@@ -1,0 +1,212 @@
+{% extends 'restaurant/layout.html.twig' %}
+
+{% form_theme form 'form/restaurant.html.twig' %}
+
+{% block breadcrumb %}
+<li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+<li>{% if restaurant.id is not empty %}{{ restaurant.name }}{% else %}{% trans %}restaurant.form.createRestaurant{% endtrans %}{% endif %}</li>
+{% endblock %}
+
+{% block content %}
+
+{% if formErrors is not empty %}
+  <div class="alert alert-danger">
+    <ul class="list-unstyled">
+      {% for field, errors in formErrors %}
+        {% if field != 'enabled' and field != 'data.enabled' %}
+          <li>
+            {{ errors|first }}
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% if activationErrors is not empty %}
+  <div class="alert alert-warning">
+    <h4 class="mt-0">{% trans from 'validators' %}restaurant.notActivable{% endtrans %}</h4>
+    <ul class="list-unstyled">
+      {% for field, errors in activationErrors %}
+        {% if field != 'enabled' and field != 'data.enabled' %}
+        <li>
+          {{ errors|first }}
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% set cannot_be_enabled = ('enabled' in activationErrors|keys or 'data.enabled' in activationErrors|keys) %}
+
+{% set show_stripe_connect = false %}
+
+{% if restaurant.id is not null %}
+  {% for role in restaurant.stripeConnectRoles %}
+    {% if is_granted(role) %}
+      {% set show_stripe_connect = true %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% set show_payment = (restaurant.id is not null and show_stripe_connect) %}
+
+{{ form_start(form) }}
+
+  <nav class="d-flex align-items-center justify-content-between">
+    <span class="text-muted">
+      <i class="fa fa-info-circle"></i>&nbsp;{{ "restaurant.form.enabled.tooltip" | trans | raw }}
+    </span>
+    <div class="switch-wrapper">
+      {% set enabled_checkbox_attr = { class: 'checkbox switch' } %}
+      {% if cannot_be_enabled %}
+        {% set enabled_checkbox_attr = enabled_checkbox_attr|merge({ disabled: 'disabled' }) %}
+      {% endif %}
+      {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: enabled_checkbox_attr }) }}
+    </div>
+  </nav>
+
+  <hr>
+
+  <div class="row">
+    <div class="col-sm-3">
+      {% if form.imageFile is defined %}
+        {{ form_row(form.imageFile) }}
+      {% endif %}
+      <ul class="nav nav-pills nav-stacked">
+        <li role="presentation" class="active">
+          <a role="tab" data-toggle="tab" href="#general" aria-controls="general">
+            {{ 'restaurant.form.section.general'|trans }}
+          </a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#options" aria-controls="options">
+            {{ 'restaurant.form.section.options'|trans }}
+          </a>
+        </li>
+        {% endif %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#fulfillment" aria-controls="fulfillment">
+            {{ 'restaurant.form.section.fulfillment'|trans }}
+          </a>
+        </li>
+        {% if show_payment %}
+        <li role="presentation" {% if restaurant.id is null %}class="disabled"{% endif %}>
+          {% if restaurant.id is not null %}
+            <a role="tab" data-toggle="tab" href="#payment" aria-controls="payment">
+              {{ 'restaurant.form.section.payment'|trans }}
+            </a>
+          {% else %}
+            <a role="tab" href="#">
+              {{ 'restaurant.form.section.payment'|trans }}
+            </a>
+          {% endif %}
+        </li>
+        {% endif %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#settlement" aria-controls="settlement">
+            {{ 'restaurant.form.section.settlement'|trans }}
+          </a>
+        </li>
+        {% if restaurant.id is not null %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#taxonomy" aria-controls="taxonomy">
+            {{ 'restaurant.form.section.taxonomy'|trans }}
+          </a>
+        </li>
+        {% endif %}
+        {% if form.loopeat is defined %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#loopeat" aria-controls="loopeat">
+            {{ 'restaurant.form.section.loopeat'|trans }}
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class="col-sm-9">
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="general">
+          {% include "restaurant/form/_partials/general.html.twig" %}
+        </div>
+        {% if is_granted('ROLE_ADMIN') %}
+        <div role="tabpanel" class="tab-pane" id="options">
+          {% include "restaurant/form/_partials/options.html.twig" %}
+        </div>
+        {% endif %}
+        <div role="tabpanel" class="tab-pane" id="fulfillment">
+          {% include "restaurant/form/_partials/fulfillment.html.twig" %}
+        </div>
+        {% if show_payment %}
+        <div role="tabpanel" class="tab-pane" id="payment">
+          {% include "restaurant/form/_partials/payment.html.twig" %}
+        </div>
+        {% endif %}
+        <div role="tabpanel" class="tab-pane" id="settlement">
+          {% include "restaurant/form/_partials/settlement.html.twig" %}
+        </div>
+        {% if restaurant.id is not null %}
+        <div role="tabpanel" class="tab-pane" id="taxonomy">
+          {% include "restaurant/form/_partials/taxonomy.html.twig" %}
+        </div>
+        {% endif %}
+        {% if form.loopeat is defined %}
+        <div role="tabpanel" class="tab-pane" id="loopeat">
+          {% include "restaurant/form/_partials/loopeat.html.twig" with { form: form.loopeat } %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+
+  <div class="d-flex">
+    {#
+    Make sure the "save" button is *BEFORE* the "delete" button in the DOM
+    to avoid deleting when hitting "enter"
+    #}
+    <div class="flex-fill">
+      <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.save'|trans }}</button>
+    </div>
+    {% if form.delete is defined %}
+      <div class="flex-shrink-1 ml-2">
+      {{ form_widget(form.delete, { attr: { class: 'btn-block btn-lg btn-danger' } }) }}
+      </div>
+    {% endif %}
+  </div>
+
+{{ form_end(form) }}
+
+<div id="restaurant-form-data"
+  data-action-url="{{ oneup_uploader_endpoint('restaurant') }}"
+  data-restaurant-id="{{ restaurant.id }}"
+  data-restaurant-image="{{ coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') }}"
+  data-restaurant-delivery-perimeter-expression="{{ restaurant.deliveryPerimeterExpression|e('html_attr') }}"
+  data-zones="{{ zoneNames|json_encode|e('html_attr') }}"></div>
+
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('restaurant-form') }}
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+  function initMap() {
+    new CoopCycle.AddressInput(document.querySelector('#restaurant_address_streetAddress'), {
+      elements: {
+        latitude: document.querySelector('#restaurant_address_latitude'),
+        longitude: document.querySelector('#restaurant_address_longitude'),
+        postalCode: document.querySelector('#restaurant_address_postalCode'),
+        addressLocality: document.querySelector('#restaurant_address_addressLocality')
+      }
+    })
+  }
+</script>
+{{ encore_entry_script_tags('restaurant-form') }}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
+{% endblock %}

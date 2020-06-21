@@ -1,9 +1,0 @@
-{% extends '@App/emails/layout.mjml.twig' %}
-
-{% block content %}
-<mj-column>
-  <mj-text align="left" line-height="20px">
-  {{ 'user.pledge.body' | trans({'%pledge.name%': pledge.name}, 'emails') | raw }}
-  </mj-text>
-</mj-column>
-{% endblock %}

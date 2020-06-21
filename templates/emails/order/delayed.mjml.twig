@@ -1,0 +1,9 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+<mj-column>
+  <mj-text align="left" line-height="20px">
+  {{ 'order.delayed.body' | trans({ '%delay%': delay }, 'emails') | raw }}
+  </mj-text>
+</mj-column>
+{% endblock %}

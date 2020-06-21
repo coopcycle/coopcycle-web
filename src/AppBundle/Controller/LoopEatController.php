@@ -153,7 +153,7 @@ class LoopEatController extends AbstractController
      */
     public function successAction(Request $request)
     {
-        return $this->render('@App/loopeat/post_message.html.twig', ['loopeat_success' => true]);
+        return $this->render('loopeat/post_message.html.twig', ['loopeat_success' => true]);
     }
 
     /**
@@ -161,6 +161,6 @@ class LoopEatController extends AbstractController
      */
     public function failureAction(Request $request)
     {
-        return $this->render('@App/loopeat/post_message.html.twig', ['loopeat_success' => false]);
+        return $this->render('loopeat/post_message.html.twig', ['loopeat_success' => false]);
     }
 }

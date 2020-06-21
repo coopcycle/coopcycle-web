@@ -1,9 +1,0 @@
-<div class="h-100 d-flex flex-column">
-  <div class="map-container" style="min-height: 250px;">
-    <div class="map-container__map" id="map"></div>
-  </div>
-  <div>
-    {% include '@App/order/_partials/delivery_task.html.twig' with { task: delivery.pickup } %}
-    {% include '@App/order/_partials/delivery_task.html.twig' with { task: delivery.dropoff } %}
-  </div>
-</div>

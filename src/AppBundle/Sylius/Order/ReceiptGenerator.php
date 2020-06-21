@@ -96,7 +96,7 @@ class ReceiptGenerator
 
     public function render(OrderReceipt $receipt): string
     {
-        $html = $this->twig->render('@App/order/receipt.pdf.twig', [
+        $html = $this->twig->render('order/receipt.pdf.twig', [
             'receipt'      => $receipt,
             'order_number' => $receipt->getOrder()->getNumber(),
             'payment'      => $receipt->getOrder()->getLastPayment(),

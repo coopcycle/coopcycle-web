@@ -63,7 +63,7 @@ class SitemapController extends AbstractController
             $urls[] = $url;
         }
 
-        $response = new Response($this->renderView('@App/index/sitemap.xml.twig', [
+        $response = new Response($this->renderView('index/sitemap.xml.twig', [
             'urls' => $urls,
         ]));
         $response->headers->set('Content-Type', 'text/xml');

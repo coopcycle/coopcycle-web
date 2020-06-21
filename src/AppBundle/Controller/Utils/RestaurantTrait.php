@@ -841,7 +841,7 @@ trait RestaurantTrait
                 }
             }
 
-            return $this->render('@App/restaurant/_partials/option.html.twig', $this->withRoutes([
+            return $this->render('restaurant/_partials/option.html.twig', $this->withRoutes([
                 'product' => [
                     'code' => Uuid::uuid4()->toString()
                 ],
@@ -1088,7 +1088,7 @@ trait RestaurantTrait
             return $response;
         }
 
-        return $this->render('@App/restaurant/stats.html.twig', $this->withRoutes([
+        return $this->render('restaurant/stats.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'stats' => $stats,
@@ -1124,7 +1124,7 @@ trait RestaurantTrait
             return $this->redirectToRoute($this->getRestaurantRoute('deposit_refund'), ['id' => $id]);
         }
 
-        return $this->render('@App/restaurant/reusable_packaging.html.twig', $this->withRoutes([
+        return $this->render('restaurant/reusable_packaging.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'form' => $form->createView(),
@@ -1156,7 +1156,7 @@ trait RestaurantTrait
             return $this->redirectToRoute($routes['deposit_refund'], ['id' => $id]);
         }
 
-        return $this->render('@App/restaurant/deposit_refund.html.twig', $this->withRoutes([
+        return $this->render('restaurant/deposit_refund.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'form' => $form->createView(),
@@ -1171,7 +1171,7 @@ trait RestaurantTrait
 
         $this->accessControl($restaurant);
 
-        return $this->render('@App/restaurant/promotions.html.twig', $this->withRoutes([
+        return $this->render('restaurant/promotions.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'promotions' => $restaurant->getPromotions(),
@@ -1216,7 +1216,7 @@ trait RestaurantTrait
                     return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
                 }
 
-                return $this->render('@App/restaurant/promotion.html.twig', $this->withRoutes([
+                return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
                     'layout' => $request->attributes->get('layout'),
                     'restaurant' => $restaurant,
                     'form' => $form->createView(),

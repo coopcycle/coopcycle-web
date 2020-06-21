@@ -1,0 +1,60 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+<section class="homepage-search" data-search="address"
+  data-addresses="{{ addresses_normalized|json_encode()|e('html') }}"
+  data-tracking-category="Homepage">
+  <div class="homepage-search-container">
+    {% set motto = coopcycle_setting('motto') %}
+    <h1 class="banner-title text-center">
+      {{ motto is not empty ? motto : ('index.banner'|trans) }}
+    </h1>
+    <div class="homepage-searchbox-container">
+      <div class="homepage-searchbox" data-element>
+        <!-- This will be replaced by React -->
+        <div class="form-group m-0">
+          <input class="form-control" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Do NOT put the search component inside the form -->
+  <form method="GET" action="{{ path('restaurants') }}" data-form>
+    <input type="hidden" name="geohash">
+  </form>
+</section>
+
+{% if restaurants|length > 0 %}
+  {% include 'index/_partials/section.html.twig' with {
+    items: restaurants,
+    section_title: 'index.our_restaurants'|trans,
+    view_all: 'index.view_all_restaurants'|trans,
+    view_all_path: path('restaurants'),
+    show_more: show_more_restaurants
+  } %}
+{% endif %}
+
+{% if stores|length > 0 %}
+  {% include 'index/_partials/section.html.twig' with {
+    items: stores,
+    section_title: 'index.our_shops'|trans,
+    view_all: 'index.view_all_shops'|trans,
+    view_all_path: path('stores'),
+    show_more: show_more_stores
+  } %}
+{% endif %}
+
+<section class="homepage-map">
+  <div class="embed-responsive embed-responsive-16by9">
+    <iframe class="embed-responsive-item" src="{{ path('restaurants_map', { zoom: 13 }) }}"></iframe>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('search-address') }}
+{{ encore_entry_script_tags('restaurant-list') }}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
+{% endblock %}

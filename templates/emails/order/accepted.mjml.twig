@@ -1,0 +1,34 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+<mj-column>
+  <mj-text align="left" line-height="20px">
+  {{ 'order.accepted.body.intro' | trans({}, 'emails') | raw }}
+  </mj-text>
+  {% if order.foodtech %}
+  <mj-text align="left" line-height="20px">
+  {{ ('order.foodtech.accepted.' ~ order.fulfillmentMethod)|trans({}, 'emails')|raw }}
+  </mj-text>
+  <mj-text align="center" line-height="20px" font-weight="700" container-background-color="#f7d794">
+  {{ order.shippingTimeRange|time_range_for_humans }}
+  </mj-text>
+  <mj-text align="left" line-height="20px">
+  {{ ('order.foodtech.accepted.' ~ order.fulfillmentMethod ~ '.disclaimer')|trans({
+    '%name%': order.restaurant.name,
+    '%phone_number%': order.restaurant.telephone|phone_number_format('NATIONAL')
+  }, 'emails')|raw }}
+  </mj-text>
+  {% if order.restaurant.loopeatEnabled and order.reusablePackagingEnabled %}
+  <mj-text align="left" line-height="20px">
+  {{ ('order.loopeat.accepted')|trans({}, 'emails')|raw }}
+  </mj-text>
+  {% endif %}
+  {% else %}
+  <mj-text align="left" line-height="20px">
+  {{ 'order.public_url' | trans({
+    '%order.public_url%': url('public_order', { number: order.number }),
+  }, 'emails') | raw }}
+  </mj-text>
+  {% endif %}
+</mj-column>
+{% endblock %}

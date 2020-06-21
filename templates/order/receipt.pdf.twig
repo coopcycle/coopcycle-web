@@ -1,0 +1,86 @@
+{% extends "pdf/layout.html.twig" %}
+
+{% block styles %}
+<style>
+.bordered-box {
+  border: 1px solid #ddd;
+  padding: 5mm;
+}
+.receipt-header {
+  text-align: center;
+  margin-bottom: 10mm;
+}
+</style>
+{% endblock %}
+
+{% block header_right %}
+<ul style="text-align: right;">
+  <li><strong>{{ coopcycle_setting('brand_name') }}</strong></li>
+  <li>{{ receipt.issuedAt|localizeddate('short', 'short', locale) }}</li>
+  {% if receipt.billingAddress is not empty %}
+  <li>{{ receipt.billingAddress|nl2br }}</li>
+  {% endif %}
+</ul>
+{% endblock %}
+
+{% block content %}
+
+<div class="receipt-header">
+  <h4>{% trans with { '%number%': order_number } %}receipt.title{% endtrans %}</h4>
+  <span>{% trans with { '%restaurant_name%': restaurant.name } %}receipt.emitter_details{% endtrans %}</span>
+  {% set iso_codes = [] %}
+  {% if restaurant.hasAdditionalProperty('siret') %}
+    {% set iso_codes = iso_codes|merge([ 'SIRET ' ~ restaurant.getAdditionalPropertyValue('siret') ]) %}
+  {% endif %}
+  {% if restaurant.hasAdditionalProperty('rcs_number') %}
+    {% set iso_codes = iso_codes|merge([ 'RCS ' ~ restaurant.getAdditionalPropertyValue('rcs_number') ]) %}
+  {% endif %}
+  {% if restaurant.hasAdditionalProperty('vat_number') %}
+    {% set iso_codes = iso_codes|merge([ 'TVA ' ~ restaurant.getAdditionalPropertyValue('vat_number') ]) %}
+  {% endif %}
+  {% if iso_codes|length > 0 %}
+    <br>
+    <small>{{ iso_codes|join(' - ') }}</small>
+  {% endif %}
+</div>
+
+<table style="width: 100%;">
+  <thead>
+    <th style="text-align: left; ">{{ 'receipt.line_item.name'|trans }}</th>
+    <th style="text-align: right;">{{ 'receipt.line_item.unit_price'|trans }}</th>
+    <th style="text-align: right;">{{ 'receipt.line_item.quantity'|trans }}</th>
+    <th style="text-align: right;">{{ 'receipt.line_item.tax_total'|trans }}</th>
+    <th style="text-align: right;">{{ 'receipt.line_item.total'|trans }}</th>
+  </thead>
+  <tbody>
+  {% for item in receipt.lineItems %}
+    <tr>
+      <td>
+        <span>{{ item.name }}</span>
+        <br>
+        <span style="color: #999;">
+          {{ item.description|nl2br }}
+        </span>
+      </td>
+      <td style="text-align: right; vertical-align: top;">{{ item.unitPrice|price_format }}</td>
+      <td style="text-align: right; vertical-align: top;">{{ item.quantity }}</td>
+      <td style="text-align: right; vertical-align: top;">{{ item.taxTotal|price_format }}</td>
+      <td style="text-align: right; vertical-align: top;">{{ item.total|price_format }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    {% for item in receipt.footerItems %}
+    <tr>
+      <th colspan="4" style="text-align: right;"><strong>{{ item.name }}</strong></th>
+      <td style="text-align: right;">{{ item.total|price_format }}</td>
+    </tr>
+  {% endfor %}
+  </tfoot>
+</table>
+
+<div style="text-align: center;">
+  <small>{{ 'receipt.billing_details'|trans({ '%date%': payment.updatedAt|localizeddate('short', 'short', locale) }) }}</small>
+</div>
+
+{% endblock %}

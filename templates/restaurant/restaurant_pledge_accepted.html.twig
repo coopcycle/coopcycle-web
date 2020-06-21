@@ -1,0 +1,89 @@
+{% extends "base.html.twig" %}
+
+{% block banner %}
+<section class="banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2 text-center">
+        <i class="fa fa-warning"></i> 
+        <span>
+          {% trans with {
+            '%restaurant.name%': restaurant.name
+          } %}restaurant.suggest.banner_disclaimer{% endtrans %}
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block body %}
+<div class="container text-center restaurant-pledge">
+  <div class="row">
+    <div class="col-sm-6 col-sm-push-3">
+      <img class="restaurant-pledge__image" src="{{ asset('img/suggest-restaurant.svg') }}">
+      <h3>{{ restaurant.name }}</h3>
+      <ul class="list-unstyled">
+        <li>{{ restaurant.address.streetAddress }}</li>
+        <li><span class="text-muted">{{ 'pledge.suggested_by'|trans({'%username%': restaurant.pledge.user.username}) }}</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 col-sm-push-3">
+      <p>
+        {% trans with {
+          '%restaurant.name%': restaurant.name,
+          '%brand_name%': coopcycle_setting('brand_name')
+        } %}restaurant.suggest.message{% endtrans %}
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 col-sm-push-3">
+      {% if has_already_voted %}
+        <p>
+          <button class="btn btn-success btn-lg btn-block disabled" disabled type="button">
+            <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> {{ 'restaurant.suggest.vote'|trans({ '%name%': restaurant.name }) }}
+          </button>
+          <span class="help-block">{{ 'restaurant.suggest.has_voted'|trans }}</span>
+        </p>
+      {% else %}
+        <form method="post" action="{{ path('restaurant_vote', { id: restaurant.id }) }}">
+          <p>
+            <button class="btn btn-success btn-lg btn-block" type="submit">
+              <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> {{ 'restaurant.suggest.vote'|trans({ '%name%': restaurant.name }) }}
+            </button>
+          </p>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 col-sm-push-3">
+      {% set first_two_votes = restaurant.pledge.votes|slice(0, 2) %}
+      {% set first_two_usernames = first_two_votes|map(vote => '@' ~ vote.user.username) %}
+      {% if number_of_votes > 0 %}
+        <p>
+        {% if number_of_votes == 1 %}
+          {{ 'pledge.vote_count_equals_one'|trans({
+            '%username%': first_two_usernames|join('')
+          }) }}
+        {% elseif number_of_votes == 2 %}
+          {{ 'pledge.vote_count_equals_two'|trans({
+            '%first_user%': first_two_usernames[0],
+            '%second_user%': first_two_usernames[1]
+          }) }}
+        {% else %}
+          {{ 'pledge.vote_count_human'|trans({
+            '%number_of_votes%' : number_of_votes,
+            '%usernames%': first_two_usernames|join(', '),
+            '%rest%': number_of_votes - 2
+          }) }}
+        {% endif %}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

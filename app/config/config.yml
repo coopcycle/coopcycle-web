@@ -116,9 +116,9 @@ twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     form_themes:
-        - '@App/form/address_book.html.twig'
-        - '@App/form/price_with_tax.html.twig'
-        - '@App/form/delivery.html.twig'
+        - 'form/address_book.html.twig'
+        - 'form/price_with_tax.html.twig'
+        - 'form/delivery.html.twig'
         - '@VichUploader/Form/fields.html.twig'
     globals:
         is_demo: "%is_demo%"

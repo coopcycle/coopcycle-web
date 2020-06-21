@@ -29,7 +29,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthen
 use Cocur\Slugify\SlugifyInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -170,7 +169,7 @@ class ProfileController extends Controller
             $loopeatAuthorizeUrl = sprintf('%s/oauth/authorize?%s', $this->getParameter('loopeat_base_url'), $queryString);
         }
 
-        return $this->render('@App/profile/index.html.twig', array(
+        return $this->render('profile/index.html.twig', array(
             'user' => $user,
             'loopeat_enabled' => $loopeatEnabled,
             'has_loopeat_credentials' => $this->getUser()->hasLoopEatCredentials(),
@@ -180,7 +179,6 @@ class ProfileController extends Controller
 
     /**
      * @Route("/profile/edit", name="profile_edit")
-     * @Template()
      */
     public function editProfileAction(Request $request) {
 
@@ -197,9 +195,9 @@ class ProfileController extends Controller
             return $this->redirectToRoute('fos_user_profile_show');
         }
 
-        return array(
+        return $this->render('profile/edit_profile.html.twig', array(
             'form' => $editForm->createView()
-        );
+        ));
     }
 
     protected function getOrderList(Request $request)
@@ -259,8 +257,8 @@ class ProfileController extends Controller
                 $goalId = intval($goalId);
             }
 
-            return $this->render('@App/order/foodtech.html.twig', [
-                'layout' => '@App/profile.html.twig',
+            return $this->render('order/foodtech.html.twig', [
+                'layout' => 'profile.html.twig',
                 'order' => $order,
                 'events' => (new OrderEventCollection($order))->toArray(),
                 'order_normalized' => $this->get('serializer')->normalize($order, 'jsonld', ['groups' => ['order'], 'is_web' => true]),
@@ -280,8 +278,8 @@ class ProfileController extends Controller
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
-        return $this->render('@App/order/service.html.twig', [
-            'layout' => '@App/profile.html.twig',
+        return $this->render('order/service.html.twig', [
+            'layout' => 'profile.html.twig',
             'order' => $order,
             'delivery' => $delivery,
             'form' => $form->createView(),
@@ -291,18 +289,16 @@ class ProfileController extends Controller
 
     /**
      * @Route("/profile/addresses", name="profile_addresses")
-     * @Template()
      */
     public function addressesAction(Request $request)
     {
-        return array(
+        return $this->render('profile/addresses.html.twig', array(
             'addresses' => $this->getUser()->getAddresses(),
-        );
+        ));
     }
 
     /**
      * @Route("/profile/addresses/new", name="profile_address_new")
-     * @Template()
      */
     public function newAddressAction(Request $request)
     {
@@ -326,9 +322,9 @@ class ProfileController extends Controller
             return $this->redirectToRoute('profile_addresses');
         }
 
-        return array(
+        return $this->render('profile/new_address.html.twig', array(
             'form' => $form->createView(),
-        );
+        ));
     }
 
     protected function getRestaurantList(Request $request)
@@ -354,7 +350,6 @@ class ProfileController extends Controller
 
     /**
      * @Route("/profile/tracking/{date}", name="profile_tracking")
-     * @Template("@App/user/tracking.html.twig")
      */
     public function trackingAction($date, Request $request)
     {
@@ -385,7 +380,7 @@ class ProfileController extends Controller
             $tasks = $taskList->getTasks();
         }
 
-        return $this->render('@App/profile/tasks.html.twig', [
+        return $this->render('profile/tasks.html.twig', [
             'date' => $date,
             'tasks' => $tasks,
         ]);
@@ -393,7 +388,6 @@ class ProfileController extends Controller
 
     /**
      * @Route("/profile/tasks/{id}/complete", name="profile_task_complete")
-     * @Template()
      */
     public function completeTaskAction($id, Request $request, TaskManager $taskManager)
     {
@@ -435,9 +429,9 @@ class ProfileController extends Controller
             return $this->redirectToRoute('profile_tasks', ['date' => $task->getDoneBefore()->format('Y-m-d')]);
         }
 
-        return [
+        return $this->render('profile/complete_task.html.twig', [
             'form' => $form->createView(),
-        ];
+        ]);
     }
 
     /**
@@ -479,7 +473,7 @@ class ProfileController extends Controller
             return new JsonResponse($this->get('serializer')->normalize($notifications, 'json'));
         }
 
-        return $this->render('@App/profile/notifications.html.twig', [
+        return $this->render('profile/notifications.html.twig', [
             'notifications' => $notifications
         ]);
     }

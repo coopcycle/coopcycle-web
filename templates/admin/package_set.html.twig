@@ -1,0 +1,38 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'form/package_set.html.twig' %}
+
+{% block breadcrumb %}
+  {% set package_set = form.vars.value %}
+  <li><a href="{{ path('admin_packages') }}">{% trans %}adminDashboard.package_sets.title{% endtrans %}</a></li>
+  {% if package_set.id is not null %}
+  <li>{{ package_set.name }}</li>
+  {% else %}
+  <li>{{ 'basics.add'|trans }}</li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+  {{ form_widget(form) }}
+  <button type="submit" class="btn btn-block btn-primary">
+    {{ 'basics.save'|trans }}
+  </button>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+<script>
+var $packagesList = $('#package_set_packages');
+$('#package_set_packages_add').on('click', function (e) {
+  var counter = $packagesList.data('widget-counter') || $packagesList.children().length;
+  var newWidget = $packagesList.attr('data-prototype');
+  newWidget = newWidget.replace(/__name__/g, counter);
+  counter++;
+  $packagesList.data('widget-counter', counter);
+  var newElem = $(newWidget);
+  newElem.appendTo($packagesList);
+});
+</script>
+{% endblock %}
+

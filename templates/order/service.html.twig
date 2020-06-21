@@ -1,0 +1,107 @@
+{% extends layout %}
+
+{% if email_form is defined %}
+  {% form_theme email_form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% endif %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
+<li>#{{ order.id }}</li>
+{% endblock %}
+
+{% block content %}
+
+{{ form_start(form) }}
+
+{% include 'order/_partials/navbar.html.twig' %}
+
+{% if form.accept is defined %}
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> {{ 'form.order.accept.help'|trans }}
+  </div>
+{% endif %}
+
+<div class="d-md-flex flex-md-row">
+  <div class="flex-fill mr-md-4" data-change-state>
+    <div class="mb-4">
+      {% include '_partials/order/items.html.twig' with { with_total_excluding_tax: true } %}
+      {% if order.customer is not empty %}
+        {% include 'order/_partials/customer.html.twig' %}
+      {% endif %}
+      {% if order.notes is not empty %}
+        <label class="control-label mb-2">{{ 'order.notes'|trans }}</label>
+        <div class="speech-bubble">
+          <i class="fa fa-quote-left"></i>  {{ order.notes }}
+        </div>
+      {% endif %}
+      {% if show_buttons ?? true %}
+        {% include 'order/_partials/buttons.html.twig' %}
+      {% else %}
+        {# Avoid rendering buttons #}
+        {% for child_form in form %}
+          {% do child_form.setRendered %}
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+  <div class="flex-fill ml-md-4">
+    {% if delivery is not empty %}
+    {% include 'order/_partials/delivery.html.twig' %}
+    {% endif %}
+  </div>
+</div>
+
+<h3 id="payments">{{ 'order.payments'|trans }}</h3>
+{% do form.payments.setRendered %}
+{% include 'order/_partials/payments.html.twig' %}
+
+{% if is_granted('ROLE_ADMIN') and not order.foodtech %}
+  {% include 'order/_partials/payment_link.html.twig' %}
+{% endif %}
+
+{{ form_end(form) }}
+
+{% for payment_form in form.payments %}
+  {% include 'order/_partials/payment_form.html.twig' %}
+{% endfor %}
+
+{% if email_form is defined %}
+  <div class="modal fade" id="send-payment-link-modal" tabindex="-1" role="dialog" aria-labelledby="send-payment-link-modal-label">
+    <div class="modal-dialog" role="document">
+      {{ form_start(email_form, { attr: { class: 'modal-content' } }) }}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="send-payment-link-modal-label">{{ 'orders.payment_link.send_by_email'|trans }}</h4>
+        </div>
+        <div class="modal-body">
+          {{ form_widget(email_form) }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+          <button type="submit" class="btn btn-primary">{{ 'orders.payment_link.send_by_email'|trans }}</button>
+        </div>
+      {{ form_end(email_form) }}
+    </div>
+  </div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('delivery-map') }}
+<script>
+new ClipboardJS('#copy');
+{% if delivery is not empty %}
+new CoopCycle.DeliveryMap('map', {
+  pickup: [ {{ delivery.pickup.address.geo.latitude }}, {{ delivery.pickup.address.geo.longitude }} ],
+  dropoff: [ {{ delivery.dropoff.address.geo.latitude }}, {{ delivery.dropoff.address.geo.longitude }} ]
+});
+{% endif %}
+$('[data-change-state] button[type="submit"]').on('click', function(e) {
+  var message = $(e.target).data('message');
+  if (!window.confirm(message || '{{ 'basics.are_you_sure'|trans }}')) {
+    e.preventDefault();
+  }
+});
+</script>
+{% endblock %}

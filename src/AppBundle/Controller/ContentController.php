@@ -38,7 +38,7 @@ class ContentController extends AbstractController
             return $assetsFilesystem->read('about_us.md');
         });
 
-        return $this->render('@App/content/about_us.html.twig', [
+        return $this->render('content/about_us.html.twig', [
             'about_us' => $aboutUs,
         ]);
     }

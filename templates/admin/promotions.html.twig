@@ -1,0 +1,116 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_promotions') }}">{{ 'promotions.breadcrumb'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="text-right">
+  <div class="dropdown">
+    <button id="add-promotion" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-success">
+      <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="add-promotion">
+      <li>
+        <a href="{{ path('admin_new_promotion_coupon', { id: free_delivery_promotion.id })}}">
+          {{ 'promotions.add_free_delivery_coupon'|trans }}
+        </a>
+      </li>
+      <li><a href="{{ path('admin_new_credit_note') }}">{{ 'promotions.create_credit_note_coupon'|trans }}</a></li>
+    </ul>
+  </div>
+</div>
+
+<h4>
+  {{ 'promotions.heading.free_delivery'|trans }}
+</h4>
+<span class="help-block">{{ 'promotions.heading.free_delivery.help'|trans }}</span>
+
+<table class="table">
+  <thead>
+    <th>{% trans %}sylius.ui.code{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion_coupon.usage_limit{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion_coupon.per_customer_usage_limit{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion_coupon.expires_at{% endtrans %}</th>
+    <th class="text-right">{% trans %}promotion_coupon.used.label{% endtrans %}</th>
+  </thead>
+  <tbody>
+  {% for coupon in free_delivery_coupons %}
+    <tr>
+      <td width="5%">
+        <a href="{{ path('admin_promotion_coupon', { id: coupon.promotion.id, code: coupon.code }) }}">
+          {{ coupon.code }}
+        </a>
+      </td>
+      <td width="20%">
+        {{ coupon.usageLimit }}
+      </td>
+      <td width="20%">
+        {{ coupon.perCustomerUsageLimit }}
+      </td>
+      <td>
+        {% if coupon.expiresAt is not empty %}
+          {{ coupon.expiresAt|localizeddate('short', 'short') }}
+        {% endif %}
+      </td>
+      <td class="text-right">
+        {{ coupon.used }}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h4>
+  {{ 'promotions.heading.credit_note'|trans }}
+</h4>
+<span class="help-block">{{ 'promotions.heading.credit_note.help'|trans }}</span>
+
+<table class="table">
+  <thead>
+    <th>{% trans %}sylius.ui.code{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion.rules{% endtrans %}</th>
+    <th>{% trans %}form.credit_note.amount.label{% endtrans %}</th>
+    <th class="text-right">{% trans %}promotion_coupon.used.label{% endtrans %}</th>
+  </thead>
+  <tbody>
+  {% for coupon in credit_note_coupons %}
+
+    {% set promotion_actions = coupon.promotion.actions %}
+
+    {% set amount = 0 %}
+    {% for promotion_action in promotion_actions %}
+      {% if promotion_action.type == 'order_fixed_discount' %}
+        {% set amount = promotion_action.configuration.amount %}
+      {% endif %}
+    {% endfor %}
+
+    <tr>
+      <td width="5%">
+        <a href="{{ path('admin_promotion_coupon', { id: coupon.promotion.id, code: coupon.code }) }}">
+          {{ coupon.code }}
+        </a>
+      </td>
+
+      <td width="60%">
+        <ul class="list-unstyled">
+        {% for promotion_rule in coupon.promotion.rules %}
+          <li>
+            <small>{{ promotion_rule|promotion_rule_for_humans }}</small>
+          </li>
+        {% endfor %}
+        </ul>
+      </td>
+      <td width="20%">
+        {{ amount|price_format }}
+      </td>
+      <td class="text-right">
+        {{ coupon.used }}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

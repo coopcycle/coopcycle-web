@@ -1,0 +1,116 @@
+{% extends "base.html.twig" %}
+
+{% block banner %}{% endblock %}
+
+{% block body %}
+<div class="container container--full-height">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#profile-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{ path('fos_user_profile_show') }}">
+          <img
+            src="{{ path('user_avatar', { username: app.user.username }) }}"
+            style="display: inline;" width="22" height="22">  <strong>@{{ app.user.username }}</strong>
+        </a>
+      </div>
+      <div class="collapse navbar-collapse" id="profile-navbar">
+        <ul class="nav navbar-nav navbar-left">
+          {% if is_granted('ROLE_STORE') and app.user.stores|length > 0 %}
+            {% set store = app.request.attributes.get('_store') %}
+            {% if app.user.stores|length > 1 %}
+            <li class="dropdown">
+              <a class="admin-navbar__link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                {{ store.name }} <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                {% for s in app.user.stores %}
+                  {# Use "same as" to avoid "Nesting level too deep - recursive dependency?" #}
+                  {# It can happen, because when not using strict comparison, #}
+                  {# PHP would compare all the properties of the objects #}
+                  {% if s is not same as(store) %}
+                  <li>
+                    <a href="{{ path('fos_user_profile_show', { store: s.id }) }}">
+                      {{ s.name }}
+                    </a>
+                  </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </li>
+            {% else %}
+              <li><a>{{ store.name }}</a></li>
+            {% endif %}
+            <li>
+              <a href="{{ path('profile_store', { id: store.id }) }}">{{ 'basics.edit'|trans }}</a>
+            </li>
+          {% endif %}
+          {% if is_granted('ROLE_RESTAURANT') and app.user.restaurants|length > 0 %}
+            {% set restaurant = app.request.attributes.get('_restaurant') %}
+            {% if app.user.restaurants|length > 1 %}
+            <li class="dropdown">
+              <a class="admin-navbar__link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                {{ restaurant.name }} <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                {% for r in app.user.restaurants %}
+                  {# Use "same as" to avoid "Nesting level too deep - recursive dependency?" #}
+                  {# It can happen, because when not using strict comparison, #}
+                  {# PHP would compare all the properties of the objects #}
+                  {% if r is not same as(restaurant) %}
+                  <li>
+                    <a href="{{ path('fos_user_profile_show', { restaurant: r.id }) }}">
+                      {{ r.name }}
+                    </a>
+                  </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </li>
+            {% else %}
+              <li><a>{{ restaurant.name }}</a></li>
+            {% endif %}
+            <li>
+              <a href="{{ path('profile_restaurant', { id: restaurant.id }) }}">{{ 'basics.edit'|trans }}</a>
+            </li>
+          {% endif %}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a class="admin-navbar__link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-user"></i>  {% trans %}profile.myAccount{% endtrans %} <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ path('profile_edit') }}"><i class="fa fa-list-ul"></i>  {% trans %}profile.myPersonalInfo{% endtrans %}</a></li>
+              <li><a href="{{ path('profile_orders') }}"><i class="fa fa-cube"></i>  {% trans %}profile.myOrders{% endtrans %}</a></li>
+              <li><a href="{{ path('profile_addresses') }}"><i class="fa fa-map-marker"></i>   {% trans %}profile.myAddresses{% endtrans %}</a></li>
+              {% if is_granted('ROLE_COURIER') %}
+              <li><a href="{{ path('profile_tasks') }}"><i class="fa fa-bicycle"></i>  {{ 'profile.myDeliveries'|trans }}</a></li>
+              <li><a href="{{ path('profile_tracking', { date: 'now'|date('Y-m-d') }) }}"><i class="fa fa-location-arrow"></i>  {% trans %}profile.myTracking{% endtrans %}</a></li>
+              {% endif %}
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  {% block subnav %}{% endblock %}
+  {% block content %}{% endblock %}
+
+</div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('widgets-admin') }}
+{% endblock %}
+
+{% block scripts_common %}
+  {{ encore_entry_script_tags('widgets-admin') }}
+  {% block scripts %}{% endblock %}
+{% endblock %}

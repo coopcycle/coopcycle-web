@@ -1,0 +1,9 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+<mj-column>
+  <mj-text align="left" line-height="20px">
+    {{ 'covid_19.body'|trans({}, 'emails')|raw }}
+  </mj-text>
+</mj-column>
+{% endblock %}

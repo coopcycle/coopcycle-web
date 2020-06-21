@@ -1,0 +1,39 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.tags.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+<p class="text-right">
+  <a href="{{ path('admin_tag_new') }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {% trans %}adminDashboard.tags.createNew{% endtrans %}
+  </a>
+</p>
+<table class="table">
+<thead>
+  <th>#</th>
+  <th>{% trans %}adminDashboard.tags.name{% endtrans %}</th>
+  <th>{% trans %}adminDashboard.tags.color{% endtrans %}</th>
+  <th></th>
+</thead>
+<tbody>
+{% for tag in tags %}
+<tr>
+  <td><a href="{{ path('admin_tag', { slug: tag.slug }) }}">#{{ tag.id }}</a></td>
+  <td>{{ tag.name }}</td>
+  <td><span class="label label-default" style="background-color: {{ tag.color }};">{{ tag.color }}</span></td>
+  <td>
+  	<form method="POST">
+  	 <input type="hidden" name="tag" value="{{ tag.id }}">
+     <p class="text-right nomargin">
+  	   <button class="btn btn-danger btn-xs" type="submit" name="delete" onclick="return confirm('{{ 'adminDashboard.tags.confirm_delete'|trans|escape('js') }}')">{{ 'basics.delete'|trans }}
+      </button>
+     </p>
+    </form>
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'form/time_slot.html.twig' %}
+
+{% block breadcrumb %}
+  {% set time_slot = form.vars.value %}
+  <li><a href="{{ path('admin_time_slots') }}">{% trans %}adminDashboard.time_slots.title{% endtrans %}</a></li>
+  {% if time_slot.id is not null %}
+  <li>#{{ time_slot.id }}</li>
+  {% else %}
+  <li>{{ 'basics.add'|trans }}</li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+  {{ form_row(form.name) }}
+  {{ form_row(form.interval) }}
+  {{ form_row(form.priorNoticeHours) }}
+  {{ form_row(form.sameDayCutoff) }}
+  {% set time_slot = form.vars.data %}
+  {% set is_advanced = (time_slot.id is not null and time_slot.hasOpeningHours()) %}
+  <div class="text-right mb-4">
+    <div class="btn-group">
+      <label class="btn btn-default {% if not is_advanced %}active{% endif %}">
+        <input type="radio" data-name="mode" data-mode="simple" {% if not is_advanced %}checked{% endif %}> Mode simple
+      </label>
+      <label class="btn btn-default {% if is_advanced %}active{% endif %}">
+        <input type="radio" data-name="mode" data-mode="advanced" {% if is_advanced %}checked{% endif %}> Mode avancé
+      </label>
+    </div>
+  </div>
+  <div id="simple" {% if is_advanced %}class="hidden"{% endif %}>
+    {{ form_row(form.workingDaysOnly) }}
+    {{ form_row(form.choices) }}
+  </div>
+  <div id="advanced" {% if not is_advanced %}class="hidden"{% endif %}>
+    {{ form_row(form.openingHours) }}
+  </div>
+  <button type="submit" class="btn btn-block btn-primary">
+    {{ 'basics.save'|trans }}
+  </button>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+<script>
+var $collectionHolder;
+
+var $addTagButton = $('<button type="button" class="btn btn-success"><i class="fa fa-plus"></i>  {{ 'basics.add'|trans }}</button>');
+var $newLinkLi = $('<div></div>').append($addTagButton);
+
+function addChoiceForm($collectionHolder, $newLinkLi) {
+    var prototype = $collectionHolder.data('prototype');
+
+    var index = $collectionHolder.data('index');
+
+    var newForm = prototype;
+
+    newForm = newForm.replace(/__name__/g, index);
+
+    $collectionHolder.data('index', index + 1);
+
+    var $newFormLi = $('<div></div>').append(newForm);
+    $newLinkLi.before($newFormLi);
+}
+
+$('input[data-name="mode"]').on('click', function() {
+  var mode = $(this).attr('data-mode');
+  if (mode === 'advanced') {
+    $('#simple').addClass('hidden');
+    $('input[data-mode="simple"]').prop('checked', false);
+    $('input[data-mode="simple"]').closest('btn').removeClass('active');
+
+    $('#advanced').removeClass('hidden');
+    $('input[data-mode="advanced"]').closest('btn').addClass('active');
+  } else {
+    $('#advanced').addClass('hidden');
+    $('input[data-mode="advanced"]').prop('checked', false);
+    $('input[data-mode="advanced"]').closest('btn').removeClass('active');
+
+    $('#simple').removeClass('hidden');
+    $('input[data-mode="simple"]').closest('btn').addClass('active');
+  }
+});
+
+$(document).ready(function() {
+    $collectionHolder = $('#time_slot_choices');
+
+    $collectionHolder.append($newLinkLi);
+
+    $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+    $addTagButton.on('click', function(e) {
+        addChoiceForm($collectionHolder, $newLinkLi);
+    });
+
+    new CoopCycle.OpeningHoursInput(document.querySelector('#time_slot_openingHours'), {
+      locale: $('html').attr('lang'),
+      rowsWithErrors: [],
+      behavior: 'time_slot'
+    });
+
+});
+</script>
+{% endblock %}
+

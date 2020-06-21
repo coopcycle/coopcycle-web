@@ -10,7 +10,6 @@ use Hashids\Hashids;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Stripe;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -32,7 +31,6 @@ class PublicController extends AbstractController
 
     /**
      * @Route("/o/{number}", name="public_order")
-     * @Template
      */
     public function orderAction($number, Request $request, EntityManagerInterface $objectManager, StripeManager $stripeManager)
     {
@@ -113,12 +111,11 @@ class PublicController extends AbstractController
             $parameters['payment_form'] = $paymentForm->createView();
         }
 
-        return $parameters;
+        return $this->render('public/order.html.twig', $parameters);
     }
 
     /**
      * @Route("/d/{hashid}", name="public_delivery")
-     * @Template
      */
     public function deliveryAction($hashid, Request $request,
         JWTEncoderInterface $jwtEncoder,
@@ -159,7 +156,7 @@ class PublicController extends AbstractController
             ])->getToken();
         }
 
-        return $this->render('@App/delivery/tracking.html.twig', [
+        return $this->render('delivery/tracking.html.twig', [
             'delivery' => $delivery,
             'courier' => $courier,
             'token' => $token,

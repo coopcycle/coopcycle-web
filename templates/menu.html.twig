@@ -1,0 +1,82 @@
+<nav class="navbar navbar-default navbar-coopcycle">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main" aria-expanded="false">
+        <span class="sr-only">Menu</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="navbar-main">
+
+      <ul class="nav navbar-nav">
+        {% if is_granted('ROLE_ADMIN') %}
+        <li>
+          <p class="navbar-btn">
+            <a class="btn btn-primary" href="{{ path('admin_index') }}">
+              {% trans %}adminDashboard.title{% endtrans %}
+            </a>
+          </p>
+        </li>
+        {% endif %}
+        {% if coopcycle_has_about_us() %}
+        <li>
+          <a href="{{ path('about_us') }}">
+            {% trans %}nav.about_us{% endtrans %}
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+
+      {% set default_locale = 'en' %}
+      {% set locales = {
+        'ca': 'Català',
+        'de': 'Deutsch',
+        'en': 'English',
+        'es': 'Español',
+        'fr': 'Français',
+        'it': 'Italiano',
+        'pl': 'Polski',
+      } %}
+      {% set current_locale = default_locale %}
+      {% if locales[app.request.locale] is defined %}
+        {% set current_locale = locales[app.request.locale] %}
+      {% endif %}
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            {{ current_locale }} <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            {% for locale, label in locales %}
+              {% if locale != app.request.locale %}
+              <li>
+                <a href="{{ path(app.request.get('_route'), app.request.get('_route_params')|merge({'_locale': locale})) }}">{{ label }}</a>
+              </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li id="cart-top">
+          <a href="#">
+            <i class="fa fa-shopping-basket mr-2" aria-hidden="true"></i>
+            <span>{{ 0|price_format }}</span>
+          </a>
+        </li>
+        {% if app.user %}
+          {% include '_partials/user/account_dropdown.html.twig' %}
+        {% else %}
+          <li>
+            <a href="{{ path('fos_user_security_login') }}">{% trans %}navbar.login{% endtrans %}</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

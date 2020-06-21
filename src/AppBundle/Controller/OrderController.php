@@ -15,7 +15,6 @@ use AppBundle\Utils\OrderTimeHelper;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -58,7 +57,6 @@ class OrderController extends AbstractController
 
     /**
      * @Route("/", name="order")
-     * @Template()
      */
     public function indexAction(Request $request,
         OrderManager $orderManager,
@@ -142,16 +140,15 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order_payment');
         }
 
-        return array(
+        return $this->render('order/index.html.twig', array(
             'order' => $order,
             'shipping_range' => $this->getShippingRange($order),
             'form' => $form->createView(),
-        );
+        ));
     }
 
     /**
      * @Route("/payment", name="order_payment")
-     * @Template()
      */
     public function paymentAction(Request $request,
         OrderManager $orderManager,
@@ -201,10 +198,10 @@ class OrderController extends AbstractController
             $this->objectManager->flush();
 
             if (PaymentInterface::STATE_FAILED === $payment->getState()) {
-                return array_merge($parameters, [
+                return $this->render('order/payment.html.twig', array_merge($parameters, [
                     'form' => $form->createView(),
                     'error' => $payment->getLastError()
-                ]);
+                ]));
             }
 
             $this->addFlash('track_goal', true);
@@ -217,6 +214,6 @@ class OrderController extends AbstractController
 
         $parameters['form'] = $form->createView();
 
-        return $parameters;
+        return $this->render('order/payment.html.twig', $parameters);
     }
 }

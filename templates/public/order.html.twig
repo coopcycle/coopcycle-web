@@ -1,0 +1,120 @@
+{% extends "base.html.twig" %}
+
+{% if payment_form is defined %}
+  {% form_theme payment_form 'bootstrap_3_layout.html.twig' %}
+{% endif %}
+
+{% block menu %}
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="{{ path('homepage') }}">
+        <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />
+      </a>
+      <a class="navbar-brand" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+
+  {% for message in app.flashes('embed_delivery') %}
+    <div class="alert alert-success">
+      {{ message|raw }}
+    </div>
+  {% endfor %}
+
+  <div class="row">
+    <div class="col-md-6">
+      <section>
+        <div id="map" style="height: 400px; margin-bottom: 20px;"></div>
+      </section>
+    </div>
+    <div class="col-md-6">
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="nomargin">{{ 'embed.delivery.summary.title'|trans }}</h4>
+        </div>
+        <div class="panel-body">
+          <p class="nomargin text-right">
+            <i class="fa fa-clock-o"></i> {{ 'basics.created_at'|trans({ '%date%': order.createdAt|localizeddate('medium', 'short') }) }}
+          </p>
+        </div>
+        {% include "_partials/order/items.html.twig" %}
+      </div>
+
+      {% if last_payment.state == 'failed' %}
+        <div class="alert alert-danger">{{ last_payment.lastError }}</div>
+      {% endif %}
+
+      {% if last_payment.state == 'completed' %}
+        <div class="alert alert-success">
+          <i class="fa fa-check"></i> {{ 'embed.delivery.paid_at'|trans({ '%date%': last_payment.updatedAt|localizeddate('medium', 'short') }) }}
+        </div>
+      {% endif %}
+
+      {% if payment_form is defined %}
+        {{ form_start(payment_form) }}
+
+          {{ form_errors(payment_form) }}
+          {{ form_widget(payment_form.stripeToken) }}
+          {{ form_row(payment_form.cardholderName) }}
+
+          <div class="form-group">
+            <label class="control-label hidden" for="card-element">
+              {% trans %}order.payment.title{% endtrans %}
+            </label>
+            <div id="card-element">
+              <!-- a Stripe Element will be inserted here. -->
+            </div>
+            <!-- Used to display form errors -->
+            <div id="card-errors" role="alert"></div>
+          </div>
+
+          <div class="text-center">
+            <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
+              <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+            </button>
+          </div>
+
+        {{ form_end(payment_form) }}
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<div style="padding: 20px 0;">
+  <div class="container">
+    <div class="text-center">
+      <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />  {{ 'basics.powered_by'|trans|raw }}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('delivery-map') }}
+<script>
+new CoopCycle.DeliveryMap('map', {
+  pickup: [ {{ order.delivery.pickup.address.geo.latitude }}, {{ order.delivery.pickup.address.geo.longitude }} ],
+  dropoff: [ {{ order.delivery.dropoff.address.geo.latitude }}, {{ order.delivery.dropoff.address.geo.longitude }} ],
+  polyline: "{{ order.delivery.polyline|e('js') }}"
+});
+</script>
+{% if payment_form is defined %}
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
+new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
+  publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
+  tokenElement: document.querySelector('#stripe_payment_stripeToken'),
+  cardholderNameElement: document.querySelector('#stripe_payment_cardholderName')
+});
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'restaurant/layout.html.twig' %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li>{% trans %}restaurant.list.depositRefund{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="alert alert-info">
+  {{ 'info.deposit_refund'|trans }}
+</div>
+
+{{ form_start(form) }}
+  <div class="alert alert-warning">
+  {{ form_row(form.depositRefundOptin) }}
+  </div>
+{{ form_end(form) }}
+
+<table class="table">
+  <thead>
+    <th>{{ 'basics.name'|trans }}</th>
+    <th class="text-right">{{ 'basics.price'|trans }}</th>
+  </thead>
+  <tbody>
+  {% for reusablePackaging in restaurant.reusablePackagings %}
+    <tr>
+      <td>
+        {{ reusablePackaging.name }}
+      </td>
+      <td class="text-right">
+        {{ reusablePackaging.price|price_format }}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<p class="text-right">
+  <a href="{{ path(reusable_packaging_new_route, { id: restaurant.id }) }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
+  </a>
+</p>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('#deposit_refund_settings_depositRefundOptin').on('change', function() {
+  $(this).closest('form').submit();
+});
+</script>
+{% endblock %}

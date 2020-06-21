@@ -1,0 +1,20 @@
+{% extends "profile.html.twig" %}
+
+{% block content %}
+<h2 class="page-header">{% trans %}profile.myOrders{% endtrans %}</h2>
+{% include "profile/orders.pagination.html.twig" %}
+  {% if orders is empty %}
+    <div class="alert alert-warning">
+      {%  trans %}profile.orders.empty{%  endtrans %}
+    </div>
+  {% else %}
+    {% include "_partials/order/list.html.twig" %}
+    {% include "_partials/order/receipt_modal.html.twig" %}
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+{% include "_partials/order/receipt_modal.js.twig" %}
+</script>
+{% endblock %}

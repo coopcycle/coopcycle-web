@@ -1,0 +1,146 @@
+{% extends "base.html.twig" %}
+
+{% form_theme form 'form/order.html.twig' %}
+
+{% block banner %}
+{% endblock %}
+
+{% block body %}
+<div class="container container--full-height">
+
+  {% if not order.empty %}
+
+    {{ form_start(form, { attr: { style: 'padding-bottom: 66px;' } }) }}
+
+    <div class="row">
+      <div class="col-xs-12">
+        {% include 'order/breadcrumb.html.twig' %}
+        <h2 class="font-weight-bold m-0 mb-5">{{ order.restaurant.name }}</h4>
+        <div>
+
+          <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
+          <div id="items">
+            {% include '_partials/order/items.html.twig' with {
+              with_taxes: false,
+              with_items: false,
+              with_tip_form: form.tipAmount
+            } %}
+            <div class="row">
+              <div class="col-xs-12 col-sm-3 col-sm-offset-9 text-right">
+                <a role="button"
+                  data-toggle="collapse"
+                  href="#promotion-coupon-collapse"
+                  aria-expanded="false"
+                  aria-controls="promotion-coupon-collapse"
+                  class="d-block mb-4 font-weight-bold">
+                  {{ form.promotionCoupon.vars.label|trans }}
+                </a>
+                <div class="collapse" id="promotion-coupon-collapse">
+                  {{ form_row(form.promotionCoupon) }}
+                </div>
+                {# We use an input group with the button #}
+                {# {{ form_row(form.addPromotion) }} #}
+              </div>
+            </div>
+            <div class="row hidden">
+              <div class="col-xs-12 col-sm-3 col-sm-offset-9">
+                {{ form_row(form.tipAmount) }}
+                {# We use an input group with the button #}
+                {# {{ form_row(form.addPromotion) }} #}
+              </div>
+            </div>
+            {% if form.reusablePackagingEnabled is defined %}
+              {{ form_row(form.reusablePackagingEnabled) }}
+            {% endif %}
+          </div>
+
+        </div>
+
+        <hr>
+
+        <div>
+
+          {% if order.takeaway %}
+            <div class="alert alert-warning">
+              <i class="fa fa-warning mr-2"></i>
+              {{ 'form.checkout_address.takeaway.disclaimer'|trans }}
+              {% if order.restaurant.telephone %}
+                {{ 'form.checkout_address.takeaway.contact'|trans({ '%telephone%': (order.restaurant.telephone|phone_number_format('NATIONAL')) }) }}
+              {% endif %}
+              <span class="text-danger">{{ 'form.checkout_address.takeaway.no_show_disclaimer'|trans }}</span>
+            </div>
+          {% endif %}
+
+          {% if form.telephone is defined %}
+            {{ form_row(form.telephone) }}
+          {% endif %}
+
+          {% if form.shippingAddress is defined %}
+            {{ form_row(form.shippingAddress.streetAddress) }}
+            {{ form_row(form.shippingAddress.floor) }}
+
+            {{ form_row(form.shippingAddress.description) }}
+          {% endif %}
+
+        </div>
+        <div>
+          {{ form_row(form.notes) }}
+        </div>
+
+      </div>
+    </div>
+    <nav class="checkout-nav border-top">
+      <div class="container">
+        <div class="d-flex flex-row justify-content-between align-items-center py-3">
+          <span class="text-success">
+            <i class="fa fa-clock-o fa-lg mr-2"></i>
+            <strong>{{ shipping_range|time_range_for_humans }}</strong>
+          </span>
+          <div>
+            {% if form.quote is defined %}
+              {{ form_widget(form.quote, { attr: { class: 'btn-lg btn-default mr-2' } }) }}
+            {% endif %}
+            <button class="btn btn-lg btn-primary" type="submit">
+              {% trans %}cart.widget.button{% endtrans %}
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+    {{ form_end(form) }}
+
+    <div class="modal fade" id="modal-loopeat" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-body mb-0 p-0">
+            <div class="embed-responsive embed-responsive-16by9 z-depth-1-half">
+              <iframe class="embed-responsive-item" allowfullscreen></iframe>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-outline-primary btn-rounded btn-md ml-4" data-dismiss="modal">{{ 'basics.close'|trans }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  {% else %}
+    <div class="alert alert-warning">
+      {% trans from 'validators' %}cart.empty{% endtrans %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('checkout-summary') }}
+{% endblock %}
+
+{% block scripts %}
+{% if not order.empty %}
+{{ encore_entry_script_tags('checkout-summary') }}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends layout %}
+
+{% form_theme form 'form/delivery.html.twig' %}
+
+{% block breadcrumb %}
+
+{% set delivery = form.vars.value %}
+
+<li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
+{% if delivery.id is not null %}
+<li>#{{ delivery.id }}</li>
+{% else %}
+<li>{% trans %}delivery.createNew{% endtrans %}</li>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+{% set delivery = form.vars.value %}
+{% set is_new = delivery.id is null %}
+
+{{ form_start(form, { attr: { 'data-store': delivery.store is not empty ? delivery.store.id : null } }) }}
+
+  {% if order is defined and order is not empty %}
+
+    {% if order.state == 'cart' %}
+    <div class="alert alert-warning">
+      <i class="fa fa-exclamation-triangle"></i> {{ 'form.delivery.to_be_confirmed.warning'|trans }}
+      <span class="pull-right">
+        <a class="btn btn-xs btn-success" href="{{ path('admin_order', { id: order.id }) }}">
+          {{ 'form.delivery.view_order'|trans }}
+        </a>
+      </span>
+    </div>
+    {% endif %}
+
+    {% if order.state == 'new' %}
+    <div class="alert alert-info">
+      <i class="fa fa-info-circle"></i> {{ 'form.delivery.has_order.info'|trans }}
+      <span class="pull-right">
+        <a class="btn btn-xs btn-success" href="{{ path('admin_order', { id: order.id }) }}">
+          {{ 'form.delivery.view_order'|trans }}
+        </a>
+      </span>
+    </div>
+    {% endif %}
+
+  {% endif %}
+
+  {{ form_errors(form) }}
+
+  <div class="row">
+    <div class="col-md-7">
+      {{ form_row(form.pickup) }}
+    </div>
+    <div class="col-md-5">
+      <div class="form-horizontal">
+        {% if form.store is defined %}
+          {{ form_row(form.store) }}
+        {% endif %}
+        {% if form.vehicle is defined %}
+          {{ form_row(form.vehicle) }}
+        {% endif %}
+        {{ form_row(form.weight) }}
+        {% if form.packages is defined %}
+        <div class="form-group">
+          {{ form_label(form.packages) }}
+          <div class="col-sm-9">
+            {{ form_widget(form.packages) }}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="row">
+    <div class="col-md-7">
+      {{ form_row(form.dropoff) }}
+    </div>
+    <div class="col-md-5">
+      {% if not is_new %}
+      <div class="alert alert-info">
+        <a href="{{ url('public_delivery', { hashid: delivery|hashid }) }}" target="_blank" id="tracking_link">{% trans %}delivery.tracking_link{% endtrans %} <i class="fa fa-external-link"></i></a>
+        <a href="#" class="pull-right" id="copy" data-clipboard-target="#tracking_link"><i class="fa fa-clipboard" aria-hidden="true"></i></a>
+      </div>
+      {% endif %}
+      <div class="embed-responsive embed-responsive-16by9">
+        <div class="embed-responsive-item" id="map"></div>
+        <div class="map-distance-overlay">
+          <span class="mr-2">{% trans %}form.delivery.distance.label{% endtrans %}</span>
+          <span id="delivery_distance">
+            {% if delivery.distance is not empty %}
+              {{ delivery.distance|meters_to_kilometers }}
+            {% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="d-md-flex d-lg-flex d-xl-flex flex-row mb-4">
+    <div class="col-md-7">
+      {% if delivery.store is not empty and delivery.store.createOrders %}
+        <div id="delivery-price" class="delivery-price-preview mb-4 mb-md-0"
+          data-tax-rate-amount="{{ tax_rate.amount|e('html_attr') }}"
+          data-tax-rate-is-included-in-price="{{ tax_rate.isIncludedInPrice()|json_encode|e('html_attr') }}">
+
+          <div class="delivery-price">
+            <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
+            <span class="delivery-price-value" id="delivery_price">
+              <span {% if not tax_rate.isIncludedInPrice() %}class="text-muted"{% endif %}>
+                <span data-tax="included">{{ 0|price_format }}</span>
+                <span class="ml-2">{{ 'basics.tax_incl'|trans }}</span>
+              </span>
+              <span {% if tax_rate.isIncludedInPrice() %}class="text-muted"{% endif %}>
+                <span data-tax="excluded">{{ 0|price_format }}</span>
+                <span class="ml-2">{{ 'basics.tax_excl'|trans }}</span>
+              </span>
+            </span>
+          </div>
+
+          <div class="text-center text-danger">
+            <small id="delivery_price_error" class="delivery-price-error"></small>
+          </div>
+
+          {% if debug_pricing is defined and debug_pricing %}
+            {% set pricing_rules = delivery.store.pricingRuleSet.rules %}
+            <ul class="list-group" id="pricing-rules-debug">
+            {% for pricing_rule in pricing_rules %}
+              <li class="list-group-item" data-pricing-rule="/api/pricing_rules/{{ pricing_rule.id }}">
+                <span>{{ pricing_rule.expression }}</span>
+                <span class="pull-right">
+                  <i class="fa fa-spinner fa-spin hidden"></i>
+                </span>
+              </li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+
+        </div>
+      {% endif %}
+    </div>
+    <div class="col-md-5">
+      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary h-100">
+        <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
+        {% trans %}adminDashboard.deliveries.save{% endtrans %}
+      </button>
+    </div>
+  </div>
+
+{{ form_end(form) }}
+
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('delivery-form') }}
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('delivery-form') }}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
+  async defer></script>
+{% endblock %}
