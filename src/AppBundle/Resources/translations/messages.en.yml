@@ -688,6 +688,7 @@ roles.ROLE_RESTAURANT: Restaurant
 roles.ROLE_STORE: Store
 roles.ROLE_USER: User
 user.edit.roles.help: Configure the permissions of this user
+user.edit.enabled.label: Enabled
 user.edit.enabled.help: A deactivated user will be logged out and can't login back
   on the platform.
 user.profile.familyName: Family name
