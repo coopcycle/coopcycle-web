@@ -989,3 +989,5 @@ basics.tax_incl: Včetně daně.
 form.customize.motto.help: Zobrazí se na domovské stránce
 form.store_type.packages_required.label: Vyžadovat zadání balíčků
 form.store_type.weight_required.label: Vyžadovat zadání hmotnosti
+delivery.table.heading.owner: Majitel
+user.edit.enabled.label: Povoleno
