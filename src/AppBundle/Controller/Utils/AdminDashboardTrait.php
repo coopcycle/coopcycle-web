@@ -53,14 +53,17 @@ trait AdminDashboardTrait
     /**
      * @Route("/admin/dashboard", name="admin_dashboard")
      */
-    public function dashboardAction(Request $request)
+    public function dashboardAction(Request $request,
+        TaskManager $taskManager,
+        JWTManagerInterface $jwtManager)
     {
-        return $this->render('admin/dashboard.html.twig', ['date' => new \DateTime()]);
+        return $this->dashboardFullscreenAction((new \DateTime())->format('Y-m-d'),
+            $request, $taskManager, $jwtManager);
     }
 
     /**
      * @Route("/admin/dashboard/fullscreen/{date}", name="admin_dashboard_fullscreen",
-     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}|__DATE__"})
+     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
      */
     public function dashboardFullscreenAction($date, Request $request,
         TaskManager $taskManager,
