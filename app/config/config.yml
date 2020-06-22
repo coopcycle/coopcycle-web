@@ -22,7 +22,7 @@ parameters:
     database_user:     "%env(COOPCYCLE_DB_USER)%"
     database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
     locale: "%coopcycle.locale%"
-    locale_regex: ca|fr|en|es|de|it|pl
+    locale_regex: ca|fr|en|es|de|it|pl|pt-BR
     router.request_context.host: "%env(APP_HOST)%"
     loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
     loopeat_base_url: '%env(LOOPEAT_BASE_URL)%'

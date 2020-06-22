@@ -55,6 +55,7 @@ class SetupCommand extends Command
         'de',
         'it',
         'pl',
+        'pt-BR'
     ];
 
     private $channels = [
@@ -70,6 +71,7 @@ class SetupCommand extends Command
         'de' => 'Lieferung auf Anfrage',
         'it' => 'Consegna su richiesta',
         'pl' => 'Dostawa na żądanie',
+        'pt-BR' => 'Entrega sob demanda'
     ];
 
     private $allergenAttributeNames = [
@@ -80,6 +82,7 @@ class SetupCommand extends Command
         'de' => 'Allergene',
         'it' => 'Allergeni',
         'pl' => 'Alergeny',
+        'pt-BR' => 'Alergenos'
     ];
 
     private $restrictedDietsAttributeNames = [
@@ -90,6 +93,7 @@ class SetupCommand extends Command
         'de' => 'Eingeschränkte Ernährung',
         'it' => 'Piani ristretti',
         'pl' => 'Ograniczone diety',
+        'pt-BR' => 'Dietas restritas'
     ];
 
     private $freeDeliveryPromotionNames = [
@@ -100,6 +104,7 @@ class SetupCommand extends Command
         'de' => 'Gratisversand',
         'it' => 'Consegna gratuita',
         'pl' => 'Darmowa dostawa',
+        'pt-BR' => 'Entrega grátis'
     ];
 
     private $currencies = [
@@ -109,6 +114,7 @@ class SetupCommand extends Command
         'PLN',
         'USD',
         'SEK',
+        'BRL'
     ];
 
     public function __construct(
