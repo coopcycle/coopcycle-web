@@ -69,6 +69,18 @@ profile_restaurant_dashboard:
             user_details: user
     methods: [ GET ]
 
+profile_restaurant_preparation_time:
+    path: /profile/restaurants/{id}/preparation-time
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::preparationTimeAction
+        layout: 'profile.html.twig'
+        template: 'restaurant/preparation_time.html.twig'
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+            success: profile_restaurant_preparation_time
+    methods: [ GET ]
+
 profile_restaurant_stats:
     path: /profile/restaurants/{id}/stats
     defaults:
