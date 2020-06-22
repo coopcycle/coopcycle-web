@@ -41,7 +41,7 @@ product.reusablePackagingUnit.mustBeGreaterThanZero: Você deve especificar uma 
 
 order.state.notModifiable: Pedido não pode mais ser alterado
 
-loopeat.insufficient_balance: Seu saldo no LoopEat (X) não é suficiente para embrulhar todo o pedido
+loopeat.insufficient_balance: Seu saldo no LoopEat (X) não é suficiente para embalar todo o pedido
 
 restaurant.contract.variableCustomerAmount.pickOne: Favor escolher ao menos um valor
 restaurant.contract.variableDeliveryPrice.pickOne: Favor escolher ao menos um valor
