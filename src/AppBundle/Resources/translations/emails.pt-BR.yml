@@ -1,0 +1,85 @@
+registration.email.subject: |
+  Confirmação de email
+registration.email.message: |
+  <h2>Bem-vindo a %brand_name%, %username%</h2>
+  Você está recebendo esta mensagem porque recentemente se registrou para uma conta em %brand_name%.
+  <br>
+  Confirme seu endereço de email clicando no botão abaixo.
+registration.email.confirm: Confirmar email
+registration.email.disclaimer: Este link só pode ser utilizado uma vez, para validar sua conta.
+registration.email.textMessage: |
+  Bem-vindo a %brand_name%, %username%,\n\n
+  Você está recebendo esta mensagem porque recentemente se registrou para uma conta em %brand_name%.\n
+  Para confirmar seu endereço de email, por favor clique no seguinte link: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
+resetting.email.message: <h2>Olá %username%</h2> Para redefinir sua senha, clique
+  no botão abaixo.
+resetting.email.reset: Redefinir senha
+order.view: Ver pedido
+order.public_url: |
+  Para rastrear o estado do seu pedido, <a href="%order.public_url%">clique aqui</a>.
+order.foodtech.accepted.delivery: "Será entregue à você no seguinte horário:"
+order.foodtech.accepted.delivery.disclaimer: "Entraremos em contato em caso de problemas na localização do endereço"
+order.foodtech.accepted.collection: "Você deverá recolher seu pedido no seguinte horário:"
+order.foodtech.accepted.collection.disclaimer: "Se encontrar algum problema, contate <strong>%name%</strong> no telefone <strong>%phone_number%</strong> o quanto antes para cancelar seu pedido."
+order.foodtech.cancelled: "O restaurante não pôde preparar seu pedido %order.number%.\n\
+  <br>\nSua conta não foi cobrada.\n"
+admin.order.created.subject: Novo pedido a ser confirmado
+admin.order.created.body: |
+  Olá,
+  <br>
+  Um novo pedido foi criado.
+admin.order_foodtech.created.body: |
+  Olá,
+  <br>
+  Um novo pedido foi criado para o restaurante <strong>%restaurant.name%</strong>.
+admin.pledge.subject: Uma nova sugestão foi enviada!
+admin.send_invitation.subject: Convite para CoopCycle!
+admin.send_invitation.body: |
+  Olá %username%,
+  <br>
+  Este é um convite para o espaço CoopCycle, para finalizar a criação da sua conta, clique no link seguinte.
+admin.send_invitation.create_password: Criar minha senha
+admin.pledge.body: |
+  Olá,
+  <br>
+  %username% gostaria que %pledge.name% participe do CoopCycle!
+user.pledge.subject: Sua sugestão agora está no CoopCycle!
+user.pledge.body: |
+  Olá,
+  <br>
+  graças à você, %pledge.name% agora está no CoopCycle!
+owner.order.created.subject: Novo pedido a confirmar
+owner.order.created.body: |
+  Oi,
+  <br>
+  Um novo pedido foi feito para <strong>%restaurant.name%</strong>.
+order.created.subject: Pedido %order.number% foi recebido
+order.created.body: "Olá,\n<br>\nNós recebemos o seu pedido.\n<br>\nNós vamos checar\
+  \ seu pedido assim que possível e enviaremos um email assim que confirmado.\n"
+order.accepted.subject: Pedido %order.number% foi confirmado para entrega
+order.accepted.body.intro: "Olá,\n<br>\nSeu pedido foi confirmado."
+order.cancelled.subject: Seu pedido %order.number% foi cancelado
+order.cancelled.body.intro: |
+  Olá,
+  <br>
+  Sentimos muito, mas seu pedido foi cancelado.
+order.delayed.subject: Seu pedido %order.number% está atrasado
+order.delayed.body: |
+  Olá,
+  <br>
+  Sentimos muito, mas seu pedido atrasará %delay% minutos.
+  <br>
+  Desculpe pela inconveniência.
+task.done.subject: 'Tarefa #%task.id% finalizada'
+task.done.body: |
+  Olá,
+  <br>
+  Tarefa #%task.id% foi finalizada.
+task.failed.subject: 'Tarefa #%task.id% não pôde ser finalizada'
+task.failed.body: |
+  Olá,
+  <br>
+  Tarefa #%task.id% não pôde ser finalizada.
+order.payment.subject: Pagamento do seu pedido %order.number%
+order.payment.body: "Olá,\n<br>\nNós finalizamos uma entrega que você \
+  \ solicitou\n<br>\nVocê encontrará um link abaixo para permitir o pagamento por cartão de crédito.\n"
