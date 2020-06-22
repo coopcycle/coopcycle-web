@@ -47,7 +47,7 @@
     <td width="10%">{% include '_partials/order/state.html.twig' %}</td>
     <td>
       {% if order.foodtech %}
-        {% if order.restaurant.deleted %}
+        {% if order.restaurant.deleted or not order.restaurant.enabled %}
           {% trans with {
             '%restaurant_name%': order.restaurant.name
           } %}order.list.summary.deleted_restaurant.text{% endtrans %}

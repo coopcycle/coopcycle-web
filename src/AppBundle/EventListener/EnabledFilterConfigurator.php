@@ -53,8 +53,6 @@ class EnabledFilterConfigurator
                 $restaurants = [];
                 if ($user->hasRole('ROLE_RESTAURANT')) {
                     $restaurants = $user->getRestaurants()->toArray();
-                } else {
-                    $restaurants = $this->restaurantRepository->findByCustomer($user);
                 }
 
                 return array_map(function (LocalBusiness $restaurant) {
