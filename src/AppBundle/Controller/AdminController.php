@@ -132,7 +132,7 @@ class AdminController extends Controller
      */
     public function indexAction(Request $request)
     {
-        return $this->dashboardAction($request);
+        return $this->redirectToRoute('admin_dashboard');
     }
 
     protected function getOrderList(Request $request)
