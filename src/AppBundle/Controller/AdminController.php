@@ -537,6 +537,7 @@ class AdminController extends Controller
         $offset = self::ITEMS_PER_PAGE * ($page - 1);
 
         $restaurants = $repository->findBy([], [
+            'enabled' => 'DESC',
             'id' => 'DESC',
         ], self::ITEMS_PER_PAGE, $offset);
 
