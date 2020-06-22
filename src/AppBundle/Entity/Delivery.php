@@ -434,4 +434,17 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
         return $this;
     }
+
+    public function getOwner()
+    {
+        $store = $this->getStore();
+        if (null !== $store) {
+            return $store;
+        }
+
+        $order = $this->getOrder();
+        if (null !== $order) {
+            return $order->getRestaurant();
+        }
+    }
 }

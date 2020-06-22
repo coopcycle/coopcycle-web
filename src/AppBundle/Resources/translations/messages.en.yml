@@ -797,6 +797,7 @@ promotions.create_credit_note_coupon: Add a credit note
 delivery.table.heading.summary: Summary
 delivery.table.heading.courier: Courier
 delivery.table.heading.order: Order
+delivery.table.heading.owner: Owner
 search.users: Search a user…
 allergens.CEREALS_CONTAINING_GLUTEN: Cereals containing gluten
 allergens.CRUSTACEANS: Crustaceans

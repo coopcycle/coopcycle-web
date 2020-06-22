@@ -3,7 +3,7 @@
   <thead>
     <th>#</th>
     {% if with_store is defined and with_store %}
-    <th>{{ 'form.delivery.store.label'|trans }}</th>
+    <th>{{ 'delivery.table.heading.owner'|trans }}</th>
     {% endif %}
     <th>{{ 'delivery.table.heading.summary'|trans }}</th>
     <th>{{ 'delivery.table.heading.courier'|trans }}</th>
@@ -21,11 +21,11 @@
       </td>
       {% if with_store is defined and with_store %}
       <td>
-        {% if delivery.store is not empty %}
+        {% if delivery.owner is not empty %}
           <a href="{{ path(deliveries.route, deliveries.params|merge({
             (deliveries.paginatorOptions.filterFieldParameterName): 's.id',
-            (deliveries.paginatorOptions.filterValueParameterName): delivery.store.id })) }}">
-            {{ delivery.store.name }}
+            (deliveries.paginatorOptions.filterValueParameterName): delivery.owner.id })) }}">
+            {{ delivery.owner.name }}
           </a>
         {% endif %}
       </td>
