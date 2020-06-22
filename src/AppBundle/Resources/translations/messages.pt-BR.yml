@@ -31,7 +31,7 @@ adminDashboard.deliveries.originAddress: Endereço de origem
 adminDashboard.deliveries.deliveryAddress: Endereço de entrega
 adminDashboard.deliveries.save: Salvar
 adminDashboard.embed.title: Incorporação
-adminDashboard.package_sets.title: Pacotes
+adminDashboard.package_sets.title: Embalagens
 adminDashboard.customize.title: Customizar
 embed.delivery.title: Formulário para criação de entrega
 embed.delivery.configure_pricing_rule_set: Você deve primeiro configurar uma regra de precificação para aplicar
@@ -397,9 +397,9 @@ form.store_type.pricing_rule_set.placeholder: Escolher precificação
 form.store_type.setAsDefault.label: Marcar como endereço padrão
 form.store_type.defaultAddress.label: Endereço padrão
 form.store_type.time_slot.label: Horário
-form.store_type.package_set.label: Conjunto de pacotes
+form.store_type.package_set.label: Conjunto de embalagem
 form.store_type.weight_required.label: Exigir preenchimento de peso
-form.store_type.packages_required.label: Exigir preenchimento de pacotes
+form.store_type.packages_required.label: Exigir preenchimento de embalagem
 form.delivery.vehicle.placeholder: Escolhe tipo de veículo
 form.delivery.pickup.label: Endereço de coleta
 form.delivery.pickup.address_placeholder: Número da casa e nome da rua, bairro, CEP,
@@ -419,8 +419,8 @@ form.delivery.store.placeholder: Buscar uma loja…
 form.delivery.price.label: Preço
 form.delivery.to_be_confirmed.warning: Você deve confirmar o pedido
 form.delivery.has_order.info: Esta entrega está conectada a um pedido
-form.delivery.package.label: Pacote
-form.delivery.packages.label: Pacotes
+form.delivery.package.label: Embalagem
+form.delivery.packages.label: Embalagens
 form.delivery.time_slot.label: Horário
 form.delivery.view_order: Ver pedido
 form.order.accept.label: Aceitar
@@ -650,7 +650,7 @@ form.time_slot_choice.start_time.label: Hora de início
 form.time_slot_choice.end_time.label: Hora de fim
 form.time_slot.prior_notice_hours.label: Aviso prévio (horas)
 form.package_set.name.label: Nome
-form.package_set.packages.label: Pacotes
+form.package_set.packages.label: Embalagens
 form.package.name.label: Nome
 form.package.volume_units.label: Unidades de volume
 form.stripe_payment.cardholder_name.label: Nome no cartão
