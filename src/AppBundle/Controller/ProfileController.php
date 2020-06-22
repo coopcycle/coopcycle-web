@@ -24,6 +24,7 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
 use Cocur\Slugify\SlugifyInterface;
@@ -231,8 +232,11 @@ class ProfileController extends Controller
     public function orderAction($id, Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
-        JWTManagerInterface $jwtManager)
+        JWTManagerInterface $jwtManager,
+        EntityManagerInterface $em)
     {
+        $filter = $em->getFilters()->disable('enabled_filter');
+
         $order = $this->container->get('sylius.repository.order')->find($id);
 
         if ($order->getCustomer() !== $this->getUser()) {

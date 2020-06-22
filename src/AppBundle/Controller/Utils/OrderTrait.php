@@ -8,6 +8,7 @@ use AppBundle\Form\OrderExportType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\ReceiptGenerator;
 use AppBundle\Utils\RestaurantStats;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -33,8 +34,10 @@ trait OrderTrait
         return new JsonResponse($orderNormalized, 200);
     }
 
-    public function orderListAction(Request $request, TranslatorInterface $translator)
+    public function orderListAction(Request $request, TranslatorInterface $translator, EntityManagerInterface $em)
     {
+        $filter = $em->getFilters()->disable('enabled_filter');
+
         $response = new Response();
 
         $showCanceled = false;
