@@ -64,15 +64,21 @@ export const selectIsVisibleTask = createSelector(
       timeRange,
     } = filters
 
+    const isFinished = includes(['DONE', 'FAILED'], task.status)
+    const isCancelled = 'CANCELLED' === task.status
+
     if (alwayShowUnassignedTasks && !task.isAssigned) {
+      if (!showCancelledTasks && isCancelled) {
+        return false
+      }
       return true
     }
 
-    if (!showFinishedTasks && includes(['DONE', 'FAILED'], task.status)) {
+    if (!showFinishedTasks && isFinished) {
       return false
     }
 
-    if (!showCancelledTasks && 'CANCELLED' === task.status) {
+    if (!showCancelledTasks && isCancelled) {
       return false
     }
 
