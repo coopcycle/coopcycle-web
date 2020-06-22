@@ -58,10 +58,15 @@ export const selectIsVisibleTask = createSelector(
     const {
       showFinishedTasks,
       showCancelledTasks,
+      alwayShowUnassignedTasks,
       tags,
       hiddenCouriers,
       timeRange,
     } = filters
+
+    if (alwayShowUnassignedTasks && !task.isAssigned) {
+      return true
+    }
 
     if (!showFinishedTasks && includes(['DONE', 'FAILED'], task.status)) {
       return false

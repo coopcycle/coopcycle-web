@@ -84,6 +84,7 @@ const acceptTask = (task, date) => {
 const defaultFilters = {
   showFinishedTasks: true,
   showCancelledTasks: false,
+  alwayShowUnassignedTasks: true,
   tags: [],
   hiddenCouriers: [],
   timeRange: [0, 24],

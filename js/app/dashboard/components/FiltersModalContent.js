@@ -33,6 +33,7 @@ class FiltersModalContent extends React.Component {
 
     this.props.setFilterValue('showFinishedTasks', values.showFinishedTasks)
     this.props.setFilterValue('showCancelledTasks', values.showCancelledTasks)
+    this.props.setFilterValue('alwayShowUnassignedTasks', values.alwayShowUnassignedTasks)
     this.props.setFilterValue('tags', values.tags)
     this.props.setFilterValue('hiddenCouriers', values.hiddenCouriers)
     this.props.setFilterValue('timeRange', values.timeRange)
@@ -45,6 +46,7 @@ class FiltersModalContent extends React.Component {
     let initialValues = {
       showFinishedTasks: this.props.showFinishedTasks,
       showCancelledTasks: this.props.showCancelledTasks,
+      alwayShowUnassignedTasks: this.props.alwayShowUnassignedTasks,
       tags: this.props.selectedTags,
       hiddenCouriers: this.props.hiddenCouriers,
       timeRange: this.props.timeRange,
@@ -104,6 +106,14 @@ class FiltersModalContent extends React.Component {
                         unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
                         defaultChecked={ values.showCancelledTasks }
                         onChange={ (checked) => setFieldValue('showCancelledTasks', checked) } />
+                    </Form.Item>
+                    <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED') }
+                      labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} colon={ false }>
+                      <Switch
+                        checkedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
+                        unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
+                        defaultChecked={ values.alwayShowUnassignedTasks }
+                        onChange={ (checked) => setFieldValue('alwayShowUnassignedTasks', checked) } />
                     </Form.Item>
                   </div>
                 </div>
@@ -166,6 +176,7 @@ function mapStateToProps(state) {
     tags: state.tags,
     showFinishedTasks: state.filters.showFinishedTasks,
     showCancelledTasks: state.filters.showCancelledTasks,
+    alwayShowUnassignedTasks: state.filters.alwayShowUnassignedTasks,
     selectedTags: state.filters.tags,
     couriers: selectBookedUsernames(state),
     hiddenCouriers: state.filters.hiddenCouriers,
