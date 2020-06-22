@@ -68,7 +68,6 @@ services:
       - browserless
     environment:
       - 'BEHAT_PARAMS={"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80"}}}'
-      - SYMFONY_ENV=${APP_ENV}
       - GOOGLE_API_KEY
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY
@@ -86,7 +85,6 @@ services:
       - php
     restart: always
     environment:
-      - SYMFONY_ENV=${APP_ENV}
       - GOOGLE_API_KEY
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY
