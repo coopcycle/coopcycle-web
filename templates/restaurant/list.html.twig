@@ -42,7 +42,7 @@
     </div>
     {% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
     {% if 'yes' == restaurant_pledges_enabled %}
-    <div class="text-center">
+    <div class="text-center p-4 mb-4 border">
       <a href="{{ path('restaurants_suggest') }}">
         {% trans %}base.footer.suggest{% endtrans %}
       </a>
