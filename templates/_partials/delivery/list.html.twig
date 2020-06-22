@@ -23,7 +23,7 @@
       <td>
         {% if delivery.owner is not empty %}
           <a href="{{ path(deliveries.route, deliveries.params|merge({
-            (deliveries.paginatorOptions.filterFieldParameterName): 's.id',
+            (deliveries.paginatorOptions.filterFieldParameterName): delivery.owner is instanceof('AppBundle\\Entity\\LocalBusiness') ? 'r.id' : 's.id',
             (deliveries.paginatorOptions.filterValueParameterName): delivery.owner.id })) }}">
             {{ delivery.owner.name }}
           </a>

@@ -577,8 +577,10 @@ class AdminController extends Controller
             ->getRepository(Delivery::class)
             ->createQueryBuilder('d');
 
-        // Allow filtering by store with KnpPaginator
-        $qb->leftJoin(Store::class, 's', Expr\Join::WITH, 'd.store = s.id');
+        // Allow filtering by store & restaurant with KnpPaginator
+        $qb->leftJoin(Store::class, 's', Expr\Join::WITH, 's.id = d.store');
+        $qb->leftJoin(Order::class, 'o', Expr\Join::WITH, 'o.id = d.order');
+        $qb->leftJoin(LocalBusiness::class, 'r', Expr\Join::WITH, 'r.id = o.restaurant');
 
         $deliveries = $this->get('knp_paginator')->paginate(
             $qb,
@@ -588,7 +590,8 @@ class AdminController extends Controller
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'd.createdAt',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
                 PaginatorInterface::SORT_FIELD_WHITELIST => ['d.createdAt'],
-                PaginatorInterface::FILTER_FIELD_WHITELIST => ['s.id']
+                PaginatorInterface::DEFAULT_FILTER_FIELDS => ['s.id', 'r.id'],
+                PaginatorInterface::FILTER_FIELD_WHITELIST => ['s.id', 'r.id']
             ]
         );
 
