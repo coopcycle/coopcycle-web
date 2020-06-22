@@ -130,6 +130,7 @@ class SettingsType extends AbstractType
 
             ])
             ->add('subject_to_vat', CheckboxType::class, [
+                'required' => false,
                 'label' => 'form.settings.subject_to_vat.label',
                 'help' => 'form.settings.subject_to_vat.help'
             ])
