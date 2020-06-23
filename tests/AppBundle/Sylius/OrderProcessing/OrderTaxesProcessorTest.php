@@ -49,25 +49,55 @@ class OrderTaxesProcessorTest extends KernelTestCase
         $taxRate20->setCalculator('default');
         $taxRate20->setIncludedInPrice(true);
 
-        $taxCategory = new TaxCategory();
+        $taxRate10 = new TaxRate();
+        $taxRate10->setName('TVA conso immédiate');
+        $taxRate10->setAmount(0.1);
+        $taxRate10->setCalculator('default');
+        $taxRate10->setIncludedInPrice(true);
+
+        $taxRate0 = new TaxRate();
+        $taxRate0->setName('TVA Zéro');
+        $taxRate0->setAmount(0.0);
+        $taxRate0->setCalculator('default');
+        $taxRate0->setIncludedInPrice(true);
+
+        $serviceTax = $taxCategory = new TaxCategory();
         $taxCategory->addRate($taxRate20);
 
-        $this->settingsManager
-            ->get('default_tax_category')
-            ->willReturn('tva_livraison');
+        $taxExempt = new TaxCategory();
+        $taxExempt->addRate($taxRate0);
 
         $this->taxCategoryRepository
-            ->findOneBy(['code' => 'tva_livraison'])
+            ->findOneBy(['code' => 'SERVICE'])
             ->willReturn($taxCategory);
 
-        $this->taxRate10 = new TaxRate();
-        $this->taxRate10->setName('TVA conso immédiate');
-        $this->taxRate10->setAmount(0.1);
-        $this->taxRate10->setCalculator('default');
-        $this->taxRate10->setIncludedInPrice(true);
+        $this->taxCategoryRepository
+            ->findOneBy(['code' => 'SERVICE_TAX_EXEMPT'])
+            ->willReturn($taxExempt);
 
-        $this->taxCategory = new TaxCategory();
-        $this->taxCategory->addRate($this->taxRate10);
+        $foodTax = $this->taxCategory = new TaxCategory();
+        $this->taxCategory->addRate($taxRate10);
+
+        $this->taxRateRepository
+            ->findOneBy(Argument::type('array'))
+            ->will(function ($args) use ($foodTax, $serviceTax, $taxExempt, $taxRate10, $taxRate20, $taxRate0) {
+
+                if (!isset($args[0]['country'])) {
+                    return $taxRate10;
+                }
+
+                if ($args[0]['country'] === 'fr') {
+                    if ($args[0]['category'] === $foodTax) {
+                        return $taxRate10;
+                    }
+                    if ($args[0]['category'] === $serviceTax) {
+                        return $taxRate20;
+                    }
+                    if ($args[0]['category'] === $taxExempt) {
+                        return $taxRate0;
+                    }
+                }
+            });
 
         $taxRateResolver = new TaxRateResolver(
             $this->taxRateRepository->reveal()
@@ -79,7 +109,8 @@ class OrderTaxesProcessorTest extends KernelTestCase
             $calculator,
             $this->settingsManager->reveal(),
             $this->taxCategoryRepository->reveal(),
-            static::$kernel->getContainer()->get('translator')
+            static::$kernel->getContainer()->get('translator'),
+             'fr'
         );
     }
 
@@ -101,8 +132,17 @@ class OrderTaxesProcessorTest extends KernelTestCase
         return $orderItem;
     }
 
+    private function subjectToVat(bool $subjectToVat)
+    {
+        $this->settingsManager
+            ->get('subject_to_vat')
+            ->willReturn($subjectToVat);
+    }
+
     public function testEmptyOrder()
     {
+        $this->subjectToVat(true);
+
         $order = new Order();
 
         $this->orderTaxesProcessor->process($order);
@@ -115,9 +155,7 @@ class OrderTaxesProcessorTest extends KernelTestCase
 
     public function testOrderWithoutDelivery()
     {
-        $this->taxRateRepository
-            ->findOneBy(Argument::type('array'))
-            ->willReturn($this->taxRate10);
+        $this->subjectToVat(true);
 
         $order = new Order();
         $order->addItem($this->createOrderItem(1000));
@@ -137,9 +175,7 @@ class OrderTaxesProcessorTest extends KernelTestCase
 
     public function testOrderWithDelivery()
     {
-        $this->taxRateRepository
-            ->findOneBy(Argument::type('array'))
-            ->willReturn($this->taxRate10);
+        $this->subjectToVat(true);
 
         $deliveryAdjustment = new Adjustment();
         $deliveryAdjustment->setType(AdjustmentInterface::DELIVERY_ADJUSTMENT);
@@ -215,5 +251,37 @@ class OrderTaxesProcessorTest extends KernelTestCase
 
         $this->assertContains(50, $amounts);
         $this->assertContains(70, $amounts);
+    }
+
+    public function testOrderWithDeliveryTaxExempt()
+    {
+        $this->subjectToVat(false);
+
+        $deliveryAdjustment = new Adjustment();
+        $deliveryAdjustment->setType(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        $deliveryAdjustment->setAmount(350);
+        $deliveryAdjustment->setNeutral(false);
+
+        $order = new Order();
+        $order->addItem($this->createOrderItem(1000));
+        $order->addAdjustment($deliveryAdjustment);
+
+        $this->assertEquals(1350, $order->getTotal());
+
+        $this->orderTaxesProcessor->process($order);
+
+        // Incl. tax (items) = 1000
+        // Tax total (items) = (1000 - (1000 / (1 + 0.1))) = 91
+
+        // Tax total (items + delivery) = 91 + 0 = 91
+        $this->assertEquals(91, $order->getTaxTotal());
+
+        $adjustments = $order->getAdjustmentsRecursively(AdjustmentInterface::TAX_ADJUSTMENT);
+        $this->assertCount(2, $adjustments);
+
+        $adjustments = $order->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT);
+        $this->assertCount(1, $adjustments);
+
+        $this->assertEquals(0, $adjustments->first()->getAmount());
     }
 }

@@ -78,8 +78,10 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
         $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
 
+        $subjectToVat = $this->settingsManager->get('subject_to_vat');
+
         $taxCategory = $this->taxCategoryRepository->findOneBy([
-            'code' => $this->settingsManager->get('default_tax_category')
+            'code' => $subjectToVat ? 'SERVICE' : 'SERVICE_TAX_EXEMPT'
         ]);
 
         $productVariant = $this->createForProduct($product);
