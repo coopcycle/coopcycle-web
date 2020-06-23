@@ -96,7 +96,7 @@ final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInter
 
         foreach ($order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT) as $adjustment) {
 
-            $taxRate = $this->taxRateResolver->resolve($this, ['country' => $this->state]);
+            $taxRate = $this->taxRateResolver->resolve($this, ['country' => strtolower($this->state)]);
 
             $taxAdjustment = $this->adjustmentFactory->createWithData(
                 AdjustmentInterface::TAX_ADJUSTMENT,
