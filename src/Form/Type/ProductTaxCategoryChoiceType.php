@@ -54,22 +54,22 @@ class ProductTaxCategoryChoiceType extends AbstractType
             $variant = $this->productVariantFactory->createNew();
             $variant->setTaxCategory($taxCategory);
 
-            if ($this->legacyTaxes) {
-                $rate = $this->taxRateResolver->resolve($variant);
-            } else {
-                $rate = $this->taxRateResolver->resolve($variant, [
-                    'country' => strtolower($this->country)
-                ]);
+            $rates = $this->taxRateResolver->resolveAll($variant);
+
+            if (count($rates) === 0) {
+                return '';
             }
 
-            if ($rate) {
-                return sprintf('%s (%d%%)',
-                    $this->translator->trans($taxCategory->getName(), [], 'taxation'),
-                    $rate->getAmount() * 100
-                );
-            }
+            $amount = array_reduce(
+                $rates->toArray(),
+                fn($carry, $rate) => $carry + $rate->getAmount(),
+                0.0
+            );
 
-            return '';
+            return sprintf('%s (%d%%)',
+                $this->translator->trans($taxCategory->getName(), [], 'taxation'),
+                $amount * 100
+            );
         });
 
         $resolver->setDefault('placeholder', 'form.product_tax_category_choice.placeholder');

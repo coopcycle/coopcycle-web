@@ -10,12 +10,12 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Product\ProductVariantInterface;
+use AppBundle\Sylius\Taxation\Resolver\TaxRateResolver;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Sylius\Component\Taxation\Model\TaxCategory;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
-use Sylius\Component\Taxation\Resolver\TaxRateResolver;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -100,7 +100,8 @@ class OrderTaxesProcessorTest extends KernelTestCase
             });
 
         $taxRateResolver = new TaxRateResolver(
-            $this->taxRateRepository->reveal()
+            $this->taxRateRepository->reveal(),
+            'fr'
         );
 
         $this->orderTaxesProcessor = new OrderTaxesProcessor(
@@ -227,9 +228,18 @@ class OrderTaxesProcessorTest extends KernelTestCase
         $pst->setCountry('ca-bc');
 
         $taxCategory = new TaxCategory();
-        $taxCategory->setCode('GST_PST');
         $taxCategory->addRate($gst);
         $taxCategory->addRate($pst);
+
+        $this->taxRateRepository
+            ->findBy([
+                'category' => $taxCategory,
+                'country'  => 'fr',
+            ])
+            ->willReturn([
+                $gst,
+                $pst,
+            ]);
 
         $order = new Order();
         $order->addItem($this->createOrderItem(1000, 1, $taxCategory));
