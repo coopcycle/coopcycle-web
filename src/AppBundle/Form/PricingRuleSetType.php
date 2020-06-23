@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -20,6 +21,17 @@ class PricingRuleSetType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'form.pricing_rule_set.name.label'
+            ])
+            ->add('strategy', ChoiceType::class, [
+                'required' => true,
+                'choices'  => [
+                    'form.pricing_rule_set.strategy.find.label' => 'find',
+                    'form.pricing_rule_set.strategy.map.label' => 'map',
+                ],
+                'label' => 'form.pricing_rule_set.strategy.label',
+                'help' => 'form.pricing_rule_set.strategy.help',
+                'multiple' => false,
+                'expanded' => true,
             ])
             ->add('rules', CollectionType::class, array(
                 'label' => 'form.pricing_rule_set.rules.label',

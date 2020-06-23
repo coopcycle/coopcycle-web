@@ -12,6 +12,9 @@
     {{ form_errors(form) }}
 
     {{ form_row(form.name) }}
+    {{ form_row(form.strategy) }}
+
+    <hr>
 
     <div class="alert alert-warning {% if form.rules|length > 0 %}hidden{% endif %}">
       {% trans %}adminDashboard.pricing.noRuleFound{% endtrans %}

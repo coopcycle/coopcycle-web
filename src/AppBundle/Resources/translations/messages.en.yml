@@ -459,6 +459,12 @@ form.address.name.placeholder: Home, work…
 form.address.company.label: Company
 form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Rules
+form.pricing_rule_set.strategy.label: Method of calculation
+form.pricing_rule_set.strategy.help:
+  The rules are evaluated from top to bottom. Depending on the the method of calculation selected,
+  either the first rule that matches will decide the price, or the price will be calculated by adding up all the matching rules.
+form.pricing_rule_set.strategy.find.label: The first rule that matches
+form.pricing_rule_set.strategy.map.label: All the matching rules
 form.pricing_rule.price.label: Price
 form.preparation_time_rule.expression.label: Expression
 form.preparation_time_rule.time.label: Time
