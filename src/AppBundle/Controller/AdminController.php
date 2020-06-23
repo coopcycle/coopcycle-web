@@ -96,9 +96,7 @@ class AdminController extends Controller
     use AccessControlTrait;
     use AdminDashboardTrait;
     use DeliveryTrait;
-    use OrderTrait {
-        orderListAction as baseOrderListAction;
-    }
+    use OrderTrait;
     use RestaurantTrait;
     use StoreTrait;
     use UserTrait;
@@ -286,11 +284,6 @@ class AdminController extends Controller
             'form' => $form->createView(),
             'email_form' => $emailForm->createView(),
         ]);
-    }
-
-    public function orderListAction(Request $request, TranslatorInterface $translator)
-    {
-        return $this->baseOrderListAction($request, $translator);
     }
 
     public function foodtechDashboardAction($date, Request $request, Redis $redis)

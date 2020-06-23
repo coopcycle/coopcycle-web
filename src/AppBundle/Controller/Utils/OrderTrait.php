@@ -34,9 +34,9 @@ trait OrderTrait
         return new JsonResponse($orderNormalized, 200);
     }
 
-    public function orderListAction(Request $request, TranslatorInterface $translator)
+    public function orderListAction(Request $request, TranslatorInterface $translator, EntityManagerInterface $em)
     {
-        $filter = $this->getDoctrine()->getManager()->getFilters()->disable('enabled_filter');
+        $filter = $em->getFilters()->disable('enabled_filter');
 
         $response = new Response();
 
