@@ -6,7 +6,8 @@ registration.email.message: |
   <br>
   Confirme seu endereço de email clicando no botão abaixo.
 registration.email.confirm: Confirmar email
-registration.email.disclaimer: Este link só pode ser utilizado uma vez, para validar sua conta.
+registration.email.disclaimer: Este link só pode ser utilizado uma vez, para validar
+  sua conta.
 registration.email.textMessage: |
   Bem-vindo a %brand_name%, %username%,\n\n
   Você está recebendo esta mensagem porque recentemente se registrou para uma conta em %brand_name%.\n
@@ -17,10 +18,13 @@ resetting.email.reset: Redefinir senha
 order.view: Ver pedido
 order.public_url: |
   Para rastrear o estado do seu pedido, <a href="%order.public_url%">clique aqui</a>.
-order.foodtech.accepted.delivery: "Será entregue à você no seguinte horário:"
-order.foodtech.accepted.delivery.disclaimer: "Entraremos em contato em caso de problemas na localização do endereço"
-order.foodtech.accepted.collection: "Você deverá recolher seu pedido no seguinte horário:"
-order.foodtech.accepted.collection.disclaimer: "Se encontrar algum problema, contate <strong>%name%</strong> no telefone <strong>%phone_number%</strong> o quanto antes para cancelar seu pedido."
+order.foodtech.accepted.delivery: 'Será entregue à você no seguinte horário:'
+order.foodtech.accepted.delivery.disclaimer: Entraremos em contato em caso de problemas
+  na localização do endereço
+order.foodtech.accepted.collection: 'Você deverá recolher seu pedido no seguinte horário:'
+order.foodtech.accepted.collection.disclaimer: Se encontrar algum problema, contate
+  <strong>%name%</strong> no telefone <strong>%phone_number%</strong> o quanto antes
+  para cancelar seu pedido.
 order.foodtech.cancelled: "O restaurante não pôde preparar seu pedido %order.number%.\n\
   <br>\nSua conta não foi cobrada.\n"
 admin.order.created.subject: Novo pedido a ser confirmado
@@ -81,5 +85,19 @@ task.failed.body: |
   <br>
   Tarefa #%task.id% não pôde ser finalizada.
 order.payment.subject: Pagamento do seu pedido %order.number%
-order.payment.body: "Olá,\n<br>\nNós finalizamos uma entrega que você \
-  \ solicitou\n<br>\nVocê encontrará um link abaixo para permitir o pagamento por cartão de crédito.\n"
+order.payment.body: "Olá,\n<br>\nNós finalizamos uma entrega que você  solicitou\n\
+  <br>\nVocê encontrará um link abaixo para permitir o pagamento por cartão de crédito.\n"
+covid_19.body: "<h1>Instruções para seguir em sua entrega</h1>\n<p>Com a atual pandemia\
+  \ do COVID-19 (Coronavirus), você <strong>deve estritamente</strong> seguir as seguintes\
+  \ instruções:</p>\n<h2>1. Respeitar distanciamento social</h2>\n<p>Nós vamos deixar\
+  \ seu pedido no pé da sua porta, para que você não tenha que se aproximar da pessoa\
+  \ que trouxe sua entrega. Também não há necessidade de gorjeta.</p>\n<h2>2. Tira\
+  \ seu pedido da embalagem após recebimento</h2>\n<p>O vírus pode sobreviver em superfícies\
+  \ de cartolina e plástico por vários dias. Portanto embalagens são um alto risco\
+  \ de transmissão do vírus.\nNós então pedimos que você <strong>abra seu pedido e\
+  \ transfira o conteúdo para pratos</strong>.</p>\n<h2>3. Descarte de embalagens</h2>\n\
+  <p>Uma vez que seu pedido está fora da embalagem, não se esqueça de <strong>descartar\
+  \ a embalagem em uma lixeira fechada</strong> para evitar contato acidental após\
+  \ uso.</p>\n<h2>4. Lave suas mãos!</h2>\n<p>Assim que você retirar seu pedido da\
+  \ embalagem e realizar o devido descarte, <strong>lave suas mãos!</strong></p>\n"
+covid_19.subject: COVID-19 | Instruções importantes sobre seu pedido
