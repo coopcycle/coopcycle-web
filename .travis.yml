@@ -36,7 +36,6 @@ env:
   global:
     - OSRM_VERSION=v5.16.0
     - STRIPE_MOCK_API_BASE=http://localhost:12111
-    - SYMFONY_ENV=test
     - APP_ENV=test
     - APP_DEBUG=1
     - APP_HOST=test.coopcycle.org
