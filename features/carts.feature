@@ -406,7 +406,6 @@ Feature: Carts
       """
     Then the response status code should be 201
     And the response should be in JSON
-    And print last response
     And the JSON should match:
       """
       {
