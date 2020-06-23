@@ -389,6 +389,7 @@ Feature: Carts
       | PIZZA     |
       | HAMBURGER |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     Given the user "bob" has created a cart at restaurant with id "1"
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -483,6 +484,7 @@ Feature: Carts
       | PIZZA     |
       | HAMBURGER |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     Given the user "bob" has created a cart at restaurant with id "1"
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -576,6 +578,7 @@ Feature: Carts
       | PIZZA     |
       | HAMBURGER |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     Given there is a cart at restaurant with id "1"
     And there is a token for the last cart at restaurant with id "1"
     When I add "Content-Type" header equal to "application/ld+json"
@@ -661,6 +664,7 @@ Feature: Carts
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -731,6 +735,7 @@ Feature: Carts
       | HAMBURGER |
     And the setting "brand_name" has value "CoopCycle"
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     Given the user "bob" has created a cart at restaurant with id "1"
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -802,6 +807,7 @@ Feature: Carts
       | PIZZA     |
       | HAMBURGER |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     Given there is a cart at restaurant with id "1"
     And there is a token for the last cart at restaurant with id "1"
     When I add "Content-Type" header equal to "application/ld+json"
@@ -873,6 +879,7 @@ Feature: Carts
       | HAMBURGER |
     And the setting "brand_name" has value "CoopCycle"
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     Given the user "bob" has created a cart at restaurant with id "1"
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -929,6 +936,7 @@ Feature: Carts
       | PIZZA     |
       | HAMBURGER |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     Given there is a cart at restaurant with id "1"
     And there is a token for the last cart at restaurant with id "1"
     When I add "Content-Type" header equal to "application/ld+json"

@@ -13,6 +13,7 @@ Feature: Maintenance
       | HAMBURGER |
     And the setting "brand_name" has value "CoopCycle"
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
