@@ -11,6 +11,7 @@ use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
 final class OrderTaxesProcessor implements OrderProcessorInterface
@@ -26,13 +27,15 @@ final class OrderTaxesProcessor implements OrderProcessorInterface
         TaxRateResolverInterface $taxRateResolver,
         CalculatorInterface $calculator,
         SettingsManager $settingsManager,
-        TaxCategoryRepositoryInterface $taxCategoryRepository)
+        TaxCategoryRepositoryInterface $taxCategoryRepository,
+        TranslatorInterface $translator)
     {
         $this->adjustmentFactory = $adjustmentFactory;
         $this->taxRateResolver = $taxRateResolver;
         $this->calculator = $calculator;
         $this->settingsManager = $settingsManager;
         $this->taxCategoryRepository = $taxCategoryRepository;
+        $this->translator = $translator;
     }
 
     /**
@@ -78,7 +81,7 @@ final class OrderTaxesProcessor implements OrderProcessorInterface
 
             $taxAdjustment = $this->adjustmentFactory->createWithData(
                 AdjustmentInterface::TAX_ADJUSTMENT,
-                $taxRate->getName(),
+                $this->translator->trans($taxRate->getName(), [], 'taxation'),
                 (int) $this->calculator->calculate($adjustment->getAmount(), $taxRate),
                 $neutral = $taxRate->isIncludedInPrice()
             );
@@ -92,7 +95,7 @@ final class OrderTaxesProcessor implements OrderProcessorInterface
     {
         $taxAdjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::TAX_ADJUSTMENT,
-            $taxRate->getName(),
+            $this->translator->trans($taxRate->getName(), [], 'taxation'),
             (int) $this->calculator->calculate($orderItem->getTotal(), $taxRate),
             $neutral = $taxRate->isIncludedInPrice()
         );

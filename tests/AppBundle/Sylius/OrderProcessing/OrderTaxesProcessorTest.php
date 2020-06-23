@@ -78,7 +78,8 @@ class OrderTaxesProcessorTest extends KernelTestCase
             $taxRateResolver,
             $calculator,
             $this->settingsManager->reveal(),
-            $this->taxCategoryRepository->reveal()
+            $this->taxCategoryRepository->reveal(),
+            static::$kernel->getContainer()->get('translator')
         );
     }
 
