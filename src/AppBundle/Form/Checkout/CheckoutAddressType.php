@@ -186,7 +186,7 @@ class CheckoutAddressType extends AbstractType
                         ],
                     ]);
                     $form->add('reusablePackagingPledgeReturn', NumberType::class, [
-                        'required' => true,
+                        'required' => false,
                         'html5' => true,
                         'label' => 'form.checkout_address.reusable_packaging_loopeat_returns.label',
                         'empty_data' => 0,
