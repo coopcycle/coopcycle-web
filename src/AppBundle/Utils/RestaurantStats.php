@@ -178,6 +178,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
             $headings[] = 'completed_by';
         }
         $headings[] = 'order_number';
+        $headings[] = 'fulfillment_method';
         $headings[] = 'completed_at';
         $headings[] = 'total_products_excl_tax';
         foreach ($this->getTaxRates() as $taxRate) {
@@ -227,9 +228,14 @@ class RestaurantStats implements \IteratorAggregate, \Countable
                 return null !== $order->getRestaurant() ? $order->getRestaurant()->getName() : '';
             case 'order_number';
                 return $order->getNumber();
+            case 'fulfillment_method';
+                return $order->getFulfillmentMethod();
             case 'completed_by';
-                $messenger = $order->getDelivery()->getDropoff()->getAssignedCourier();
-                return $messenger ? $messenger->getUsername() : '';
+                if ($order->getFulfillmentMethod() === 'delivery') {
+                    $messenger = $order->getDelivery()->getDropoff()->getAssignedCourier();
+                    return $messenger ? $messenger->getUsername() : '';
+                }
+                return '';
             case 'completed_at';
                 return $order->getShippedAt()->format('Y-m-d H:i');
             case 'total_products_excl_tax':

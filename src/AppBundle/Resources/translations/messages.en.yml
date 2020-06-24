@@ -894,6 +894,7 @@ notifications.messenger_approaching: Hey %customer%! Our messenger %messenger% i
   nearly with you. Get ready!
 order.export.heading.restaurant_name: Restaurant
 order.export.heading.order_number: Order number
+order.export.heading.fulfillment_method: Fulfillment
 order.export.heading.completed_at: Completed at
 order.export.heading.total_products_excl_tax: Total products (excl. VAT)
 order.export.heading.total_products_incl_tax: Total products (incl. VAT)
