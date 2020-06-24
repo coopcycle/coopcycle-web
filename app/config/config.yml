@@ -583,7 +583,6 @@ fos_js_routing:
         - admin_task_receipt
         - profile_jwt
         - profile_notifications
-        - profile_notifications_unread
         - profile_notifications_mark_as_read
         - profile_order_accept
         - profile_order_refuse

@@ -785,3 +785,7 @@ services:
     arguments:
       $taxCategoryFactory: '@sylius.factory.tax_category'
       $taxRateFactory: '@sylius.factory.tax_rate'
+
+  AppBundle\EventListener\AjaxSessionCloseListener:
+    tags:
+      - { name: "kernel.event_listener", event: "kernel.request", priority: -255 }

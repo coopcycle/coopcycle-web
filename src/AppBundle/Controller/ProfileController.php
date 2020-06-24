@@ -474,20 +474,15 @@ class ProfileController extends Controller
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
 
-            return new JsonResponse($this->get('serializer')->normalize($notifications, 'json'));
+            return new JsonResponse([
+                'notifications' => $this->get('serializer')->normalize($notifications, 'json'),
+                'unread' => (int) $socketIoManager->countNotifications($this->getUser())
+            ]);
         }
 
         return $this->render('profile/notifications.html.twig', [
             'notifications' => $notifications
         ]);
-    }
-
-    /**
-     * @Route("/profile/notifications/unread", name="profile_notifications_unread")
-     */
-    public function unreadNotificationsAction(Request $request, SocketIoManager $socketIoManager)
-    {
-        return new JsonResponse((int) $socketIoManager->countNotifications($this->getUser()));
     }
 
     /**

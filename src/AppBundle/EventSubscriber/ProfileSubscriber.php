@@ -15,6 +15,12 @@ class ProfileSubscriber implements EventSubscriberInterface
 {
     private $tokenStorage;
 
+    private static $blacklist = [
+        'profile_notifications',
+        'profile_notifications_unread',
+        'profile_jwt',
+    ];
+
     public function __construct(TokenStorageInterface $tokenStorage)
     {
         $this->tokenStorage = $tokenStorage;
@@ -43,6 +49,16 @@ class ProfileSubscriber implements EventSubscriberInterface
     public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
+
+        if (!$request->attributes->has('_route')) {
+            return;
+        }
+
+        $route = $request->attributes->get('_route');
+
+        if (in_array($route, self::$blacklist)) {
+            return;
+        }
 
         // Skip if this is an API request
         if ($request->attributes->has('_api_resource_class')) {

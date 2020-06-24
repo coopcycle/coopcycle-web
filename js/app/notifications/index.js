@@ -55,15 +55,12 @@ function bootstrap($popover, options) {
     transports: [ 'websocket' ],
   })
 
-  Promise.all([
-    $.getJSON(options.unreadCountURL),
-    $.getJSON(options.notificationsURL, { format: 'json' })
-  ])
-  .then(values => {
+  $.getJSON(options.notificationsURL, { format: 'json' })
+  .then(result => {
 
-    const [ count, notifications ] = values
+    const { unread, notifications } = result
 
-    options.elements.count.innerHTML = count
+    options.elements.count.innerHTML = unread
 
     render(
       <I18nextProvider i18n={ i18n }>
@@ -91,7 +88,6 @@ $.getJSON(window.Routing.generate('profile_jwt'))
   .then(jwt => {
     const options = {
       notificationsURL: window.Routing.generate('profile_notifications'),
-      unreadCountURL: window.Routing.generate('profile_notifications_unread'),
       markAsReadURL: window.Routing.generate('profile_notifications_mark_as_read'),
       jwt: jwt,
       elements: {
