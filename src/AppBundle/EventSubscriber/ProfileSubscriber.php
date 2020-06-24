@@ -17,7 +17,6 @@ class ProfileSubscriber implements EventSubscriberInterface
 
     private static $blacklist = [
         'profile_notifications',
-        'profile_notifications_unread',
         'profile_jwt',
     ];
 

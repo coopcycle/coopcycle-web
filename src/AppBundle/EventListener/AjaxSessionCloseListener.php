@@ -8,7 +8,6 @@ class AjaxSessionCloseListener
 {
     protected static $whitelist = [
         'profile_notifications',
-        'profile_notifications_unread',
         'profile_jwt',
     ];
 
