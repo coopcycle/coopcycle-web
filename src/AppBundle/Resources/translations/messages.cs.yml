@@ -974,3 +974,20 @@ promotion_rule.is_restaurant: '%restaurant% je restaurace'
 nav.about_us: O nás
 receipt.line_item.tax_total: DPH
 form.settings.subject_to_vat.label: S DPH
+form.customize.motto.label: Slogan
+restaurant.form.section.loopeat: LoopEat
+order.reusable_packaging.pledge_return.disclaimer: Zákazník uvedl, že %count% balíčků
+  bude vráceno
+form.time_slot.same_day_cutoff.help: Například podle vašeho výběru 11:00 se volby
+  ve stejný den nebudou zobrazovat po 11:00
+form.time_slot.same_day_cutoff.label: Ve stejný den
+form.package_with_quantity.package.placeholder: Vyberte typ balíčku
+form.product_tax_category_choice.placeholder: Vyberte daňovou kategorii
+basics.kilos: kilogramů
+basics.tax_excl: Bez daně.
+basics.tax_incl: Včetně daně.
+form.customize.motto.help: Zobrazí se na domovské stránce
+form.store_type.packages_required.label: Vyžadovat zadání balíčků
+form.store_type.weight_required.label: Vyžadovat zadání hmotnosti
+delivery.table.heading.owner: Majitel
+user.edit.enabled.label: Povoleno

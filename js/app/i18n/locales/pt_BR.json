@@ -1,7 +1,7 @@
 {
     "common": {
         "CART_TITLE": "Carrinho",
-        "CART_WIDGET_BUTTON": "Pedido",
+        "CART_WIDGET_BUTTON": "Pedir",
         "CART_EMPTY": "Seu carrinho está vazio",
         "OPENING_HOURS_SINGLE": "{{day}} entre {{open}} e {{close}}",
         "OPENING_HOURS_RANGE": "De {{fromDay}} a {{toDay}}, entre {{open}} e {{close}}",

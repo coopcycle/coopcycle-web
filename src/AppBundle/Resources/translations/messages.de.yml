@@ -684,3 +684,10 @@ order.payment.redirect.help: Du wirst zur Seite deiner Bank weitergeleitet, um d
   Bezahlung zu vervollständigen
 restaurant.list.promotions: Werbeaktionen
 form.min_max.upper.label: Anzahl Max
+task.receipt.greeting: Liebe*r Kund*in,
+basics.view_example: Beispiel Anzeigen
+form.delivery_import.store.label: Store
+form.delivery_import.file.label: Datei
+receipt.line_item.unit_price: Preis Einheit
+receipt.line_item.name: Produkt
+receipt.title: 'Rechnung für Ihre Bestellung #%number%'
