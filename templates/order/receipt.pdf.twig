@@ -28,6 +28,12 @@
 <div class="receipt-header">
   <h4>{% trans with { '%number%': order_number } %}receipt.title{% endtrans %}</h4>
   <span>{% trans with { '%restaurant_name%': restaurant.name } %}receipt.emitter_details{% endtrans %}</span>
+  {% if restaurant.legalName is not empty %}
+  <br>
+  <strong>{{ restaurant.legalName }}</strong>
+  {% endif %}
+  <br>
+  <span>{{ restaurant.businessAddress.streetAddress }}</span>
   {% set iso_codes = [] %}
   {% if restaurant.hasAdditionalProperty('siret') %}
     {% set iso_codes = iso_codes|merge([ 'SIRET ' ~ restaurant.getAdditionalPropertyValue('siret') ]) %}

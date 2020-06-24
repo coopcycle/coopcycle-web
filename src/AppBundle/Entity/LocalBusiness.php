@@ -187,6 +187,11 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
     protected $address;
 
     /**
+     * @var Address|null
+     */
+    protected $businessAddress;
+
+    /**
      * @var string The website of the restaurant.
      *
      * @ApiProperty(iri="https://schema.org/URL")
@@ -340,6 +345,11 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
     public function getAddress()
     {
         return $this->address;
+    }
+
+    public function getBusinessAddress()
+    {
+        return $this->businessAddress ?? $this->address;
     }
 
     public function setAddress(Address $address)
