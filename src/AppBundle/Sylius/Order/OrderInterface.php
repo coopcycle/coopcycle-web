@@ -145,4 +145,9 @@ interface OrderInterface extends
      * @return string
      */
     public function getFulfillmentMethod(): string;
+
+    /**
+     * @return int
+     */
+    public function getItemsTotalExcludingTax(): int;
 }

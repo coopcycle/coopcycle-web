@@ -325,6 +325,11 @@ class Order extends BaseOrder implements OrderInterface
         return $taxTotal;
     }
 
+    public function getItemsTotalExcludingTax(): int
+    {
+        return $this->getItemsTotal() - $this->getItemsTaxTotal();
+    }
+
     public function getItemsTaxTotalByRate($taxRate): int
     {
         if ($taxRate instanceof TaxRateInterface) {
