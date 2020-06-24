@@ -158,21 +158,22 @@ class RulePickerLine extends React.Component {
       )
     // vehicle, diff_days(pickup)
     case '==':
-      if (this.state.type === 'diff_days(pickup)' || this.state.type === 'diff_hours(pickup)') {
-        return this.renderNumberInput()
+
+      if (this.state.type === 'vehicle') {
+        return (
+          <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
+            <option value="">-</option>
+            <option value="bike">Vélo</option>
+            <option value="cargo_bike">Vélo Cargo</option>
+          </select>
+        )
       }
 
       if (this.state.type === 'dropoff.doorstep') {
         return this.renderBooleanInput()
       }
 
-      return (
-        <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
-          <option value="">-</option>
-          <option value="bike">Vélo</option>
-          <option value="cargo_bike">Vélo Cargo</option>
-        </select>
-      )
+      return this.renderNumberInput()
     // weight, distance, diff_days(pickup)
     case 'in':
       return (
