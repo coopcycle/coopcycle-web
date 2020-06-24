@@ -37,7 +37,7 @@
       </td>
       <td>{{ product.name }}</td>
       <td class="text-right" width="10%">{{ default_variant.price|price_format }}</td>
-      <td class="text-right">{{ default_variant.taxCategory.name }}</td>
+      <td class="text-right">{{ default_variant.taxCategory.name|trans({}, 'taxation') }}</td>
       <td class="text-right">{{ product.options|length }}</td>
       <td class="text-right">
         <a href="{{ path(product_route, { restaurantId: restaurant.id, productId: product.id }) }}"
