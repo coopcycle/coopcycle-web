@@ -60,7 +60,7 @@ owner.order.created.body: |
 order.created.subject: Pedido %order.number% foi recebido
 order.created.body: "Olá,\n<br>\nNós recebemos o seu pedido.\n<br>\nNós vamos checar\
   \ seu pedido assim que possível e enviaremos um email assim que confirmado.\n"
-order.accepted.subject: Pedido %order.number% foi confirmado para entrega
+order.accepted.subject: Pedido %order.number% foi confirmado
 order.accepted.body.intro: "Olá,\n<br>\nSeu pedido foi confirmado."
 order.cancelled.subject: Seu pedido %order.number% foi cancelado
 order.cancelled.body.intro: |

@@ -31,7 +31,7 @@ order.created.subject: La comanda %order.number% ha estat rebuda
 order.created.body: "Hola,\n<br>\nHem registrat la vostra comanda.\n<br>\nComprobarem\
   \ la vostra comanda tan aviat com sigui possible i ens posarem en contacte amb tu\
   \ quan es confirmi.\n"
-order.accepted.subject: La teva comanda %order.number% ha estat confirmat per a lliurar
+order.accepted.subject: La teva comanda %order.number% ha estat confirmat
 order.accepted.body.intro: "Hola,\n<br>\nLa vostra comanda està confirmada."
 order.cancelled.subject: La teva comanda %order.number% ha estat cancel·lat
 order.cancelled.body.intro: "Hola,\n<br>\nHo sentim, però s'ha cancel·lat la vostra\

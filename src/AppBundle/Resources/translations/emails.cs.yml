@@ -52,7 +52,7 @@ order.cancelled.body.intro: "Dobrý den,\n<br>\nJe nám líto, ale vaše objedn�
   \ zrušena.\n"
 order.cancelled.subject: Vaše objednávka %order.number% byla zrušena
 order.accepted.body.intro: "Dobrý den,\n<br>\nVaše objednávka je potvrzena."
-order.accepted.subject: Objednávka %order.number% byla potvrzena k dodání
+order.accepted.subject: Objednávka %order.number% byla potvrzena
 order.created.body: "Dobrý den,\n<br>\nObdrželi jsme vaši objednávku.\n<br>\nVaši\
   \ objednávku zkontrolujeme co nejdříve a po potvrzení vám zašleme e-mail.\n"
 order.created.subject: Objednávka %order.number% byla přijata

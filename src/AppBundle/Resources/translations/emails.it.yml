@@ -40,7 +40,7 @@ owner.order.created.body: "Ciao,\n<br>\nÈ arrivato un nuovo ordine per <strong>
 order.created.subject: L'ordine %order.number% è stato ricevuto
 order.created.body: "Ciao,\n<br>\nAbbiamo ricevuto il tuo ordine.\n<br>\nControlleremo\
   \ il tuo ordine il prima possibile e ti manderemo un'email appena sarà confermato.\n"
-order.accepted.subject: La spedizione dell'ordine %order.number% è stata confermata
+order.accepted.subject: L'ordine %order.number% è stata confermata
 order.accepted.body.intro: "Ciao,\n<br>\nIl tuo ordine è stato confermato."
 order.cancelled.subject: Il tuo ordine %order.number% è stato cancellato
 order.cancelled.body.intro: "Ciao,\n<br>\nCi dispiace, il tuo ordine è stato cancellato.\n"

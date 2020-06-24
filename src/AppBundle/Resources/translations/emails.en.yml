@@ -56,7 +56,7 @@ owner.order.created.body: |
 order.created.subject: Order %order.number% has been received
 order.created.body: "Hello,\n<br>\nWe have received your order.\n<br>\nWe will check\
   \ your order as soon as possible and send you an email when it is confirmed.\n"
-order.accepted.subject: Order %order.number% has been confirmed for delivery
+order.accepted.subject: Order %order.number% has been confirmed
 order.accepted.body.intro: "Hello,\n<br>\nYour order is confirmed."
 order.cancelled.subject: Your order %order.number% has been cancelled
 order.cancelled.body.intro: |
