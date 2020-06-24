@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
-import { selectIsSameRestaurant } from '../redux/selectors'
+import { selectIsSameRestaurant, selectShowPricesTaxExcluded, selectItemsTotal } from '../redux/selectors'
 
 const Adjustment = ({ adjustment, tooltip }) => (
   <div>
@@ -50,7 +50,7 @@ class CartTotal extends React.Component {
 
   renderAdjustments() {
 
-    const { items, variableCustomerAmountEnabled, showTaxes } = this.props
+    const { items, variableCustomerAmountEnabled, showPricesTaxExcluded } = this.props
 
     let adjustments = []
     let taxAdjustments = []
@@ -87,7 +87,7 @@ class CartTotal extends React.Component {
               adjustment={ _.first(deliveryAdjustments) }
               { ...deliveryAdjustmentProps } />
           )}
-          { showTaxes && groupTaxAdjustments(taxAdjustments, items).map(adjustment =>
+          { showPricesTaxExcluded && groupTaxAdjustments(taxAdjustments, items).map(adjustment =>
             <Adjustment
               key={ adjustment.label }
               adjustment={ adjustment } />
@@ -136,17 +136,16 @@ function mapStateToProps (state) {
   const isSameRestaurant = selectIsSameRestaurant(state)
 
   let items       = isSameRestaurant ? cart.items : []
-  let itemsTotal  = isSameRestaurant ? cart.itemsTotal : 0
   let total       = isSameRestaurant ? cart.total : 0
   let adjustments = isSameRestaurant ? cart.adjustments : {}
 
   return {
     items,
-    itemsTotal,
+    itemsTotal: selectItemsTotal(state),
     total,
     adjustments,
     variableCustomerAmountEnabled: cart.restaurant.variableCustomerAmountEnabled,
-    showTaxes: state.country === 'ca',
+    showPricesTaxExcluded: selectShowPricesTaxExcluded(state),
   }
 }
 

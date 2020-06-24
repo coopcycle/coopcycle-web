@@ -1,6 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import { totalTaxExcluded } from '../../utils/tax'
+
 const truncateText = text => {
   if (text.length > 24) {
     return text.substring(0, 23) + '…'
@@ -67,7 +69,8 @@ class CartItem extends React.Component {
             { this.renderAdjustments() }
           </div>
           <div className="cart__item__content__right">
-            <span>{ (this.props.total / 100).formatMoney() }</span>
+            { this.props.showPricesTaxExcluded && (<span>{ (totalTaxExcluded(this.props) / 100).formatMoney() }</span>) }
+            { !this.props.showPricesTaxExcluded && (<span>{ (this.props.total / 100).formatMoney() }</span>) }
           </div>
         </div>
       </div>

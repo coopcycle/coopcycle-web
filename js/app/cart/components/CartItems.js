@@ -5,7 +5,7 @@ import _ from 'lodash'
 
 import CartItem from './CartItem'
 import { removeItem, updateItemQuantity } from '../redux/actions'
-import { selectItems } from '../redux/selectors'
+import { selectItems, selectShowPricesTaxExcluded } from '../redux/selectors'
 
 class CartItems extends React.Component {
 
@@ -40,6 +40,7 @@ class CartItems extends React.Component {
             total={ item.total }
             quantity={ item.quantity }
             adjustments={ item.adjustments }
+            showPricesTaxExcluded={ this.props.showPricesTaxExcluded }
             onChangeQuantity={ quantity => this._onChangeQuantity(item.id, quantity) } />
         )) }
       </div>
@@ -58,6 +59,7 @@ function mapStateToProps (state) {
 
   return {
     items,
+    showPricesTaxExcluded: selectShowPricesTaxExcluded(state),
   }
 }
 
