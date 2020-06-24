@@ -130,6 +130,8 @@ localBusiness.form.shippingOptionsDays: Number of shipping choices (in days)
 localBusiness.form.openingHoursBehavior: Behavior of opening hours
 localBusiness.form.openingHoursBehavior.asap: As soon as possible
 localBusiness.form.openingHoursBehavior.time_slot: Time slot
+localBusiness.form.use_different_business_address.label: Use a different business address
+localBusiness.form.business_address.label: Business address
 restaurant.available: Available
 restaurant.unavailable: Unavailable
 restaurant.disabledWarning: "This restaurant is disabled so the site visitors can't\

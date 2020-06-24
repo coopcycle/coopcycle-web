@@ -347,9 +347,23 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
         return $this->address;
     }
 
-    public function getBusinessAddress()
+    public function getBusinessAddress($fallback = false)
     {
-        return $this->businessAddress ?? $this->address;
+        if ($fallback) {
+            return $this->businessAddress ?? $this->address;
+        }
+
+        return $this->businessAddress;
+    }
+
+    public function setBusinessAddress(?Address $address)
+    {
+        $this->businessAddress = $address;
+    }
+
+    public function hasDifferentBusinessAddress()
+    {
+        return $this->businessAddress !== null;
     }
 
     public function setAddress(Address $address)

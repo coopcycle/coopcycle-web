@@ -6,6 +6,7 @@ import _ from 'lodash'
 import Select from 'react-select'
 
 import i18n from '../i18n'
+import AddressInput from '../widgets/AddressInput'
 import DropzoneWidget from '../widgets/Dropzone'
 import OpeningHoursInput from '../widgets/OpeningHoursInput'
 
@@ -180,4 +181,32 @@ $(function() {
         }} />, cuisinesEl)
   }
 
+  $('#restaurant_useDifferentBusinessAddress').on('change', function() {
+    if ($(this).is(':checked')) {
+      $('#restaurant_businessAddress_streetAddress').closest('.form-group').removeClass('d-none')
+      setTimeout(() => $('#restaurant_businessAddress_streetAddress').focus(), 350)
+    } else {
+      $('#restaurant_businessAddress_streetAddress').closest('.form-group').addClass('d-none')
+    }
+  })
+
 })
+
+window.initMap = function() {
+  new AddressInput(document.querySelector('#restaurant_address_streetAddress'), {
+    elements: {
+      latitude: document.querySelector('#restaurant_address_latitude'),
+      longitude: document.querySelector('#restaurant_address_longitude'),
+      postalCode: document.querySelector('#restaurant_address_postalCode'),
+      addressLocality: document.querySelector('#restaurant_address_addressLocality')
+    }
+  })
+  new AddressInput(document.querySelector('#restaurant_businessAddress_streetAddress'), {
+    elements: {
+      latitude: document.querySelector('#restaurant_businessAddress_latitude'),
+      longitude: document.querySelector('#restaurant_businessAddress_longitude'),
+      postalCode: document.querySelector('#restaurant_businessAddress_postalCode'),
+      addressLocality: document.querySelector('#restaurant_businessAddress_addressLocality')
+    }
+  })
+}

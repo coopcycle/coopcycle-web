@@ -58,6 +58,14 @@ abstract class LocalBusinessType extends AbstractType
             ->add('legalName', TextType::class, ['required' => false, 'label' => 'localBusiness.form.legalName',])
             ->add('website', UrlType::class, ['required' => false, 'label' => 'localBusiness.form.website',])
             ->add('address', AddressType::class)
+            ->add('useDifferentBusinessAddress', CheckboxType::class, [
+                'mapped' => false,
+                'required' => false,
+                'label' => 'localBusiness.form.use_different_business_address.label'
+            ])
+            ->add('businessAddress', AddressType::class, [
+                'street_address_label' => 'localBusiness.form.business_address.label'
+            ])
             ->add('telephone', PhoneNumbertype::class, [
                 'default_region' => strtoupper($this->country),
                 'format' => PhoneNumberFormat::NATIONAL,
@@ -89,6 +97,10 @@ abstract class LocalBusinessType extends AbstractType
                     'required' => false,
                     'download_uri' => false,
                 ]);
+            }
+
+            if ($localBusiness->hasDifferentBusinessAddress()) {
+                $form->get('useDifferentBusinessAddress')->setData(true);
             }
         });
 
@@ -123,6 +135,13 @@ abstract class LocalBusinessType extends AbstractType
                     if (empty($addressTelephone)) {
                         $address->setTelephone($localBusiness->getTelephone());
                     }
+                }
+
+                $useDifferentBusinessAddress =
+                    $event->getForm()->get('useDifferentBusinessAddress')->getData();
+
+                if (!$useDifferentBusinessAddress) {
+                    $localBusiness->setBusinessAddress(null);
                 }
             }
         );

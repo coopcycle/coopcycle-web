@@ -32,8 +32,9 @@
   <br>
   <strong>{{ restaurant.legalName }}</strong>
   {% endif %}
+  {% set business_address = restaurant.getBusinessAddress(true) %}
   <br>
-  <span>{{ restaurant.businessAddress.streetAddress }}</span>
+  <span>{{ business_address.streetAddress }}</span>
   {% set iso_codes = [] %}
   {% if restaurant.hasAdditionalProperty('siret') %}
     {% set iso_codes = iso_codes|merge([ 'SIRET ' ~ restaurant.getAdditionalPropertyValue('siret') ]) %}

@@ -195,18 +195,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript">
-  function initMap() {
-    new CoopCycle.AddressInput(document.querySelector('#restaurant_address_streetAddress'), {
-      elements: {
-        latitude: document.querySelector('#restaurant_address_latitude'),
-        longitude: document.querySelector('#restaurant_address_longitude'),
-        postalCode: document.querySelector('#restaurant_address_postalCode'),
-        addressLocality: document.querySelector('#restaurant_address_addressLocality')
-      }
-    })
-  }
-</script>
 {{ encore_entry_script_tags('restaurant-form') }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
 {% endblock %}
