@@ -143,7 +143,7 @@ class SocketIoManager
         $hashKey = sprintf('user:%s:notifications_data', $user->getUsername());
 
         foreach ($uuids as $uuid) {
-            $this->redis->lrem($listKey, 0, $uuid);
+            $this->redis->lrem($listKey, $uuid, 0);
             $this->redis->hdel($hashKey, $uuid);
         }
 
