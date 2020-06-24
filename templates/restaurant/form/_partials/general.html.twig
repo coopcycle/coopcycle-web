@@ -16,7 +16,8 @@
 {{ form_row(form.businessAddress.streetAddress, {
   row_attr: {
     class: (is_different_address ? 'd-none' : '')
-  }
+  },
+  required: false
 }) }}
 {{ form_row(form.businessAddress.postalCode) }}
 {{ form_row(form.businessAddress.addressLocality) }}

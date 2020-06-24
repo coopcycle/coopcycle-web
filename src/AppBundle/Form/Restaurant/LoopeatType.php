@@ -26,8 +26,7 @@ class LoopeatType extends AbstractType
             $parentForm = $form->getParent();
             $restaurant = $parentForm->getData();
 
-            $form->get('enabled')->setData($restaurant->isEnabled());
-
+            $form->get('enabled')->setData($restaurant->isLoopeatEnabled());
 
             if ($restaurant->hasLoopEatCredentials()) {
                 $form
@@ -42,6 +41,9 @@ class LoopeatType extends AbstractType
             $form = $event->getForm();
             $parentForm = $form->getParent();
             $restaurant = $parentForm->getData();
+
+            $enabled = $form->get('enabled')->getData();
+            $restaurant->setLoopeatEnabled($enabled);
 
             if ($form->getClickedButton() && 'loopeatDisconnect' === $form->getClickedButton()->getName()) {
                 $restaurant->clearLoopEatCredentials();
