@@ -200,6 +200,7 @@ services:
     arguments:
       $taxCategoryRepository: '@sylius.repository.tax_category'
       $country: '%country_iso%'
+      $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
     tags: [ form.type ]
 
   AppBundle\Form\Restaurant\FulfillmentMethodType:

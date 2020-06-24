@@ -18,6 +18,7 @@ class ProductTaxCategoryChoiceType extends AbstractType
     private $taxCategoryRepository;
     private $translator;
     private $country;
+    private $legacyTaxes = true;
 
     private static $serviceTaxCategories = [
         'SERVICE',
@@ -36,13 +37,15 @@ class ProductTaxCategoryChoiceType extends AbstractType
         TranslatorInterface $translator,
         TaxRateResolverInterface $taxRateResolver,
         ProductVariantFactoryInterface $productVariantFactory,
-        string $country)
+        string $country,
+        bool $legacyTaxes)
     {
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->translator = $translator;
         $this->taxRateResolver = $taxRateResolver;
         $this->productVariantFactory = $productVariantFactory;
         $this->country = $country;
+        $this->legacyTaxes = $legacyTaxes;
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -52,10 +55,10 @@ class ProductTaxCategoryChoiceType extends AbstractType
             $qb = $this->taxCategoryRepository->createQueryBuilder('c');
             $qb->andWhere($qb->expr()->notIn('c.code', self::$serviceTaxCategories));
 
-            if ('ca' === $this->country) {
-                $qb->andWhere($qb->expr()->in('c.code', self::$otherTaxCategories));
-            } else {
+            if ($this->legacyTaxes) {
                 $qb->andWhere($qb->expr()->notIn('c.code', self::$otherTaxCategories));
+            } else {
+                $qb->andWhere($qb->expr()->in('c.code', self::$otherTaxCategories));
             }
 
             return $qb->getQuery()->getResult();
