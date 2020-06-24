@@ -36,7 +36,7 @@ class AddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $streetAddressOptions = [
-            'label' => 'form.address.streetAddress.label',
+            'label' => $options['street_address_label'],
             'attr' => [
                 // autocomplete="off" doesn't work in Chrome
                 // https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion
@@ -156,6 +156,7 @@ class AddressType extends AbstractType
             'with_telephone' => false,
             'with_name' => false,
             'placeholder' => null,
+            'street_address_label' => 'form.address.streetAddress.label',
         ));
     }
 }
