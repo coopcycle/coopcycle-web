@@ -77,14 +77,26 @@ class AppKernel extends Kernel
         return $bundles;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getProjectDir(): string
     {
-        return dirname(__DIR__);
+        if (isset($_ENV['APP_PROJECT_DIR'])) {
+            return $_ENV['APP_PROJECT_DIR'];
+        } elseif (isset($_SERVER['APP_PROJECT_DIR'])) {
+            return $_SERVER['APP_PROJECT_DIR'];
+        }
+
+        return parent::getProjectDir();
     }
 
-    public function getLogDir()
+    /**
+     * {@inheritdoc}
+     */
+    public function getRootDir()
     {
-        return $this->getProjectDir().'/var/logs';
+        return $this->getProjectDir().'/app';
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)
