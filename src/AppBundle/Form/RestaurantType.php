@@ -59,6 +59,14 @@ class RestaurantType extends LocalBusinessType
                 'allow_delete' => false,
                 'prototype' => false,
             ])
+            ->add('useDifferentBusinessAddress', CheckboxType::class, [
+                'mapped' => false,
+                'required' => false,
+                'label' => 'localBusiness.form.use_different_business_address.label'
+            ])
+            ->add('businessAddress', AddressType::class, [
+                'street_address_label' => 'localBusiness.form.business_address.label'
+            ])
             ;
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
@@ -170,6 +178,10 @@ class RestaurantType extends LocalBusinessType
                         ]);
                 }
             }
+
+            if ($restaurant->hasDifferentBusinessAddress()) {
+                $form->get('useDifferentBusinessAddress')->setData(true);
+            }
         });
 
         $builder->addEventListener(
@@ -239,6 +251,13 @@ class RestaurantType extends LocalBusinessType
                     foreach ($newCuisines as $c) {
                         $restaurant->addServesCuisine($c);
                     }
+                }
+
+                $useDifferentBusinessAddress =
+                    $event->getForm()->get('useDifferentBusinessAddress')->getData();
+
+                if (!$useDifferentBusinessAddress) {
+                    $localBusiness->setBusinessAddress(null);
                 }
             }
         );
