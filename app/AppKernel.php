@@ -99,6 +99,15 @@ class AppKernel extends Kernel
         return $this->getProjectDir().'/app';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getLogDir()
+    {
+        // Just to add the "s"
+        return $this->getProjectDir().'/var/logs';
+    }
+
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load($this->getProjectDir().'/app/config/config_'.$this->getEnvironment().'.yml');
