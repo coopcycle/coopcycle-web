@@ -5,13 +5,16 @@ tax_rate.zero: Zero rate
 tax_rate.gst: GST
 tax_rate.pst: PST
 tax_rate.reduced: Reduced rate
+tax_rate.intermediary: Intermediary rate
 
 tax_category.food: Food
+tax_category.food_takeaway: Food › Takeaway
 tax_category.drink: Drink
 tax_category.jewelry: Jewelry
 tax_category.drink_alcohol: Alcoholic drink
 tax_category.book: Book
 tax_category.clothing: Clothing
+
 tax_category.standard: Standard
 tax_category.reduced: Reduced
 tax_category.super_reduced: Super reduced

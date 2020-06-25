@@ -62,6 +62,21 @@ food:
     ca-bc:
       pst: 0.07
 
+food_takeaway:
+  rates:
+    be:
+      reduced: 0.06
+    de:
+      standard: 0.19
+    es:
+      intermediary: 0.1
+    fr:
+      intermediary: 0.1
+    gb:
+      zero: 0.0
+    pl:
+      intermediary: 0.08
+
 jewelry:
   rates:
     ca-bc:
