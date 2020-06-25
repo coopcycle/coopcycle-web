@@ -29,6 +29,7 @@ class ProductTaxCategoryChoiceType extends AbstractType
         'DRINK',
         'DRINK_ALCOHOL',
         'FOOD',
+        'FOOD_TAKEAWAY',
         'JEWELRY',
     ];
 
@@ -61,7 +62,19 @@ class ProductTaxCategoryChoiceType extends AbstractType
                 $qb->andWhere($qb->expr()->in('c.code', self::$otherTaxCategories));
             }
 
-            return $qb->getQuery()->getResult();
+            $categories = $qb->getQuery()->getResult();
+
+            return array_filter($categories, function (TaxCategory $c) {
+
+                $variant = $this->productVariantFactory->createNew();
+                $variant->setTaxCategory($c);
+
+                $rate = $this->taxRateResolver->resolve($variant, [
+                    'country' => strtolower($this->country)
+                ]);
+
+                return $rate !== null;
+            });
         });
 
         $resolver->setDefault('choice_label', function (?TaxCategory $taxCategory) {
@@ -69,12 +82,18 @@ class ProductTaxCategoryChoiceType extends AbstractType
             $variant = $this->productVariantFactory->createNew();
             $variant->setTaxCategory($taxCategory);
 
-            $rate = $this->taxRateResolver->resolve($variant);
+            $rate = $this->taxRateResolver->resolve($variant, [
+                'country' => strtolower($this->country)
+            ]);
 
-            return sprintf('%s (%d%%)',
-                $this->translator->trans($taxCategory->getName(), [], 'taxation'),
-                $rate->getAmount() * 100
-            );
+            if ($rate) {
+                return sprintf('%s (%d%%)',
+                    $this->translator->trans($taxCategory->getName(), [], 'taxation'),
+                    $rate->getAmount() * 100
+                );
+            }
+
+            return '';
         });
 
         $resolver->setDefault('placeholder', 'form.product_tax_category_choice.placeholder');
