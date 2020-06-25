@@ -7,6 +7,7 @@ tax_rate.pst: PST
 tax_rate.reduced: Tasa reducida
 
 tax_category.food: Alimentos
+tax_category.food_takeaway: Alimentos › Para llevar
 tax_category.drink: Bebidas
 tax_category.jewelry: Joyería
 tax_category.drink_alcohol: Bebidas alcohólicas
