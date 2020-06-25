@@ -18,23 +18,23 @@ services:
     public: false
 
   AppBundle\Action\:
-    resource: '../../src/AppBundle/Action/*'
+    resource: '../../src/Action/*'
     tags: ['controller.service_arguments']
 
   AppBundle\EventSubscriber\:
-    resource: '../../src/AppBundle/EventSubscriber/*'
+    resource: '../../src/EventSubscriber/*'
 
   AppBundle\Service\:
-    resource: '../../src/AppBundle/Service/*'
+    resource: '../../src/Service/*'
 
   AppBundle\Message\:
-    resource: '../../src/AppBundle/Message/*'
+    resource: '../../src/Message/*'
 
   AppBundle\MessageHandler\:
-    resource: '../../src/AppBundle/MessageHandler/*'
+    resource: '../../src/MessageHandler/*'
 
   AppBundle\Controller\:
-    resource: '../../src/AppBundle/Controller'
+    resource: '../../src/Controller'
     tags: ['controller.service_arguments']
 
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'

@@ -5,7 +5,7 @@ services:
     autoconfigure: true
 
   AppBundle\Twig\:
-    resource: '../../../src/AppBundle/Twig/*'
+    resource: '../../../src/Twig/*'
 
   League\Flysystem\Filesystem $assetsFilesystem: '@assets_filesystem'
 
