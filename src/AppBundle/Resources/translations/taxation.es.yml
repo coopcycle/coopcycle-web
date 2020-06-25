@@ -13,6 +13,7 @@ tax_category.jewelry: Joyería
 tax_category.drink_alcohol: Bebidas alcohólicas
 tax_category.book: Libros
 tax_category.clothing: Ropa
-tax_category.standard: Estándar
-tax_category.reduced: Reducido
-tax_category.super_reduced: Super reducido
+
+tax_category.base_standard: Básico › Tasa estándar
+tax_category.base_reduced: Básico › Tasa reducida
+tax_category.base_super_reduced: Básico › Tasa super reducida
