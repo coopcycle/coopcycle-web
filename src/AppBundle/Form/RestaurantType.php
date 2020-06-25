@@ -257,7 +257,7 @@ class RestaurantType extends LocalBusinessType
                     $event->getForm()->get('useDifferentBusinessAddress')->getData();
 
                 if (!$useDifferentBusinessAddress) {
-                    $localBusiness->setBusinessAddress(null);
+                    $restaurant->setBusinessAddress(null);
                 }
             }
         );
