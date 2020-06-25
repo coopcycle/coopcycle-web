@@ -679,6 +679,8 @@ liip_imagine:
     loaders:
         default:
             filesystem:
+                # https://github.com/liip/LiipImagineBundle/pull/1094
+                allow_unresolvable_data_roots: true
                 data_root: '%kernel.project_dir%/web'
         restaurant_images:
             flysystem:
