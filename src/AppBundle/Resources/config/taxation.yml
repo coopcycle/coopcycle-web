@@ -81,3 +81,44 @@ jewelry:
   rates:
     ca-bc:
       pst: 0.07
+
+base_standard:
+  rates:
+    be:
+      standard: 0.21
+    de:
+      standard: 0.19
+    es:
+      standard: 0.21
+    fr:
+      standard: 0.20
+    gb:
+      standard: 0.20
+    pl:
+      standard: 0.23
+
+base_intermediary:
+  rates:
+    be:
+      intermediary: 0.12
+    es:
+      intermediary: 0.1
+    fr:
+      intermediary: 0.1
+    pl:
+      intermediary: 0.08
+
+base_reduced:
+  rates:
+    be:
+      reduced: 0.06
+    de:
+      reduced: 0.07
+    es:
+      reduced: 0.04
+    fr:
+      reduced: 0.055
+    gb:
+      reduced: 0.05
+    pl:
+      reduced: 0.05

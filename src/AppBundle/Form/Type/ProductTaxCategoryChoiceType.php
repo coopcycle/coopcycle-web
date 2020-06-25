@@ -31,6 +31,9 @@ class ProductTaxCategoryChoiceType extends AbstractType
         'FOOD',
         'FOOD_TAKEAWAY',
         'JEWELRY',
+        'BASE_STANDARD',
+        'BASE_INTERMEDIARY',
+        'BASE_REDUCED',
     ];
 
     public function __construct(
