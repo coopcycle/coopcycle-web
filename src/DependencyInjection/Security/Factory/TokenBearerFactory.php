@@ -22,7 +22,10 @@ class TokenBearerFactory implements SecurityFactoryInterface
         ;
 
         $listenerId = 'security.authentication.listener.token_bearer.'.$id;
-        $container->setDefinition($listenerId, new ChildDefinition(TokenBearerListener::class));
+        $container
+            ->setDefinition($listenerId, new ChildDefinition(TokenBearerListener::class))
+            ->replaceArgument('$providerKey', $id)
+        ;
 
         return [$providerId, $listenerId, $defaultEntryPoint];
     }

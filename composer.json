@@ -83,7 +83,7 @@
         "sylius/channel-bundle": "^1.7.5",
         "liip/imagine-bundle": "^2.2",
         "oneup/uploader-bundle": "^3.0",
-        "trikoder/oauth2-bundle": "^2.1",
+        "trikoder/oauth2-bundle": "^3.1.1",
         "sylius/promotion-bundle": "^1.7.5",
         "notfloran/mjml-bundle": "^3.0",
         "martin-georgiev/postgresql-for-doctrine": "^1.3",

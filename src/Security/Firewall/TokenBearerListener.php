@@ -27,13 +27,15 @@ class TokenBearerListener implements ListenerInterface
         AuthenticationManagerInterface $authenticationManager,
         JWTTokenAuthenticator $jwtTokenAuthenticator,
         HttpMessageFactoryInterface $httpMessageFactory,
-        OAuth2TokenFactory $oauth2TokenFactory)
+        OAuth2TokenFactory $oauth2TokenFactory,
+        string $providerKey)
     {
         $this->tokenStorage = $tokenStorage;
         $this->authenticationManager = $authenticationManager;
         $this->jwtTokenAuthenticator = $jwtTokenAuthenticator;
         $this->httpMessageFactory = $httpMessageFactory;
         $this->oauth2TokenFactory = $oauth2TokenFactory;
+        $this->providerKey = $providerKey;
     }
 
     public function handle(GetResponseEvent $event)
@@ -60,7 +62,8 @@ class TokenBearerListener implements ListenerInterface
 
         $trikoderToken = $this->oauth2TokenFactory->createOAuth2Token(
             $this->httpMessageFactory->createRequest($request),
-            null
+            null,
+            $this->providerKey
         );
 
         // We create a "composed" token

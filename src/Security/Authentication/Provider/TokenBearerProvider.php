@@ -28,10 +28,10 @@ class TokenBearerProvider implements AuthenticationProviderInterface
         string $providerKey)
     {
         $this->userProvider = $userProvider;
+        $this->resourceServer = $resourceServer;
         $this->jwtTokenAuthenticator = $jwtTokenAuthenticator;
+        $this->oauth2TokenFactory = $oauth2TokenFactory;
         $this->providerKey = $providerKey;
-        // FIXME Inject directly OAuth2Provider
-        $this->oauth2Provider = new OAuth2Provider($userProvider, $resourceServer, $oauth2TokenFactory);
     }
 
     public function authenticate(TokenInterface $token)
@@ -47,8 +47,15 @@ class TokenBearerProvider implements AuthenticationProviderInterface
 
         } catch (InvalidPayloadException $e) {
 
+            $oauth2Provider = new OAuth2Provider(
+                $this->userProvider,
+                $this->resourceServer,
+                $this->oauth2TokenFactory,
+                $token->trikoder->getProviderKey()
+            );
+
             // Then, try with Trikoder
-            $token = $this->oauth2Provider->authenticate($token->trikoder);
+            $token = $oauth2Provider->authenticate($token->trikoder);
 
             return $token;
 
