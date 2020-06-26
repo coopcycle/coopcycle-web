@@ -199,12 +199,13 @@ function createPackagesWidget(name, packagesRequired) {
 }
 
 function parseWeight(value) {
-  const intValue = parseInt((value || 0), 10)
-  if (isNaN(intValue)) {
+
+  const floatValue = parseFloat((value || '0.0'))
+  if (isNaN(floatValue)) {
     return 0
   }
 
-  return intValue * 1000
+  return parseInt((floatValue * 1000), 10)
 }
 
 function reducer(state = {}, action) {
