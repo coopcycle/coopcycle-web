@@ -12,11 +12,6 @@ class GeoJSONType extends GeographyType
         return 'geojson';
     }
 
-    public function getMappedDatabaseTypes(AbstractPlatform $platform)
-    {
-        return array('geojson');
-    }
-
     public function requiresSQLCommentHint(AbstractPlatform $platform)
     {
         return true;
