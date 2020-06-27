@@ -67,6 +67,11 @@ class ProductTaxCategoryChoiceType extends AbstractType
 
             $categories = $qb->getQuery()->getResult();
 
+            if ($this->legacyTaxes) {
+
+                return $categories;
+            }
+
             return array_filter($categories, function (TaxCategory $c) {
 
                 $variant = $this->productVariantFactory->createNew();
