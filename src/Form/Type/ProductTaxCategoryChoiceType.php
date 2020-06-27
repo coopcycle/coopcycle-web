@@ -90,9 +90,13 @@ class ProductTaxCategoryChoiceType extends AbstractType
             $variant = $this->productVariantFactory->createNew();
             $variant->setTaxCategory($taxCategory);
 
-            $rate = $this->taxRateResolver->resolve($variant, [
-                'country' => strtolower($this->country)
-            ]);
+            if ($this->legacyTaxes) {
+                $rate = $this->taxRateResolver->resolve($variant);
+            } else {
+                $rate = $this->taxRateResolver->resolve($variant, [
+                    'country' => strtolower($this->country)
+                ]);
+            }
 
             if ($rate) {
                 return sprintf('%s (%d%%)',
