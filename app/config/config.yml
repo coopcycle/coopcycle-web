@@ -151,15 +151,11 @@ doctrine:
         sslmode: "%env(COOPCYCLE_POSTGRES_SSLMODE)%"
         charset:  UTF8
         types:
-            geography:
-                class: 'Jsor\Doctrine\PostGIS\Types\GeographyType'
-            geometry:
-                class: 'Jsor\Doctrine\PostGIS\Types\GeometryType'
-            raster:
-                class: 'Jsor\Doctrine\PostGIS\Types\RasterType'
-            geojson:
-                class: 'AppBundle\Doctrine\DBAL\Types\GeoJSONType'
-            uuid:  Ramsey\Uuid\Doctrine\UuidType
+            geography: Jsor\Doctrine\PostGIS\Types\GeographyType
+            geometry: Jsor\Doctrine\PostGIS\Types\GeometryType
+            raster: Jsor\Doctrine\PostGIS\Types\RasterType
+            geojson: AppBundle\Doctrine\DBAL\Types\GeoJSONType
+            uuid: Ramsey\Uuid\Doctrine\UuidType
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
             numrange: AppBundle\Doctrine\DBAL\Types\NumRangeType
             tsrange: AppBundle\Doctrine\DBAL\Types\TsRangeType
