@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2087f7dd492c6e908a34655c14289978",
+    "content-hash": "d598ae0664fd9990abffb5d29a0ac939",
     "packages": [
         {
             "name": "api-platform/core",
-            "version": "v2.5.3",
+            "version": "v2.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/api-platform/core.git",
-                "reference": "2d402688c485457adbc771e347e6498e70c6f232"
+                "reference": "d84282fd29cc16a4fac9be67fdd76ca247b94123"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/api-platform/core/zipball/2d402688c485457adbc771e347e6498e70c6f232",
-                "reference": "2d402688c485457adbc771e347e6498e70c6f232",
+                "url": "https://api.github.com/repos/api-platform/core/zipball/d84282fd29cc16a4fac9be67fdd76ca247b94123",
+                "reference": "d84282fd29cc16a4fac9be67fdd76ca247b94123",
                 "shasum": ""
             },
             "require": {
@@ -54,19 +54,19 @@
                 "doctrine/mongodb-odm-bundle": "^4.0",
                 "doctrine/orm": "^2.6.4",
                 "elasticsearch/elasticsearch": "^6.0",
-                "friendsofsymfony/user-bundle": "^2.2@dev",
+                "friendsofsymfony/user-bundle": "2.2.x-dev#157b53bd7d6c347148a90e723981a43f9c897bf5",
                 "guzzlehttp/guzzle": "^6.0",
-                "jangregor/phpstan-prophecy": "^0.4.2",
+                "jangregor/phpstan-prophecy": "^0.6",
                 "justinrainbow/json-schema": "^5.2.1",
                 "nelmio/api-doc-bundle": "^2.13.4",
                 "phpdocumentor/reflection-docblock": "^3.0 || ^4.0",
                 "phpdocumentor/type-resolver": "^0.3 || ^0.4",
                 "phpspec/prophecy": "^1.8",
                 "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^0.11.10",
-                "phpstan/phpstan-doctrine": "^0.11.5",
-                "phpstan/phpstan-phpunit": "^0.11.2",
-                "phpstan/phpstan-symfony": "^0.11.6",
+                "phpstan/phpstan": "^0.12.4",
+                "phpstan/phpstan-doctrine": "^0.12.7",
+                "phpstan/phpstan-phpunit": "^0.12.4",
+                "phpstan/phpstan-symfony": "^0.12.4",
                 "phpunit/phpunit": "^7.5.2 || ^8.0",
                 "psr/log": "^1.0",
                 "ramsey/uuid": "^3.7",
@@ -98,13 +98,13 @@
                 "symfony/validator": "^3.4 || ^4.0 || ^5.0",
                 "symfony/web-profiler-bundle": "^4.2 || ^5.0",
                 "symfony/yaml": "^3.4 || ^4.0 || ^5.0",
+                "teohhanhui/stubs-mongodb": "@dev",
                 "twig/twig": "^1.42.3 || ^2.12",
                 "webonyx/graphql-php": ">=0.13.1 <1.0"
             },
             "suggest": {
                 "doctrine/mongodb-odm-bundle": "To support MongoDB. Only versions 4.0 and later are supported.",
                 "elasticsearch/elasticsearch": "To support Elasticsearch.",
-                "friendsofsymfony/user-bundle": "To use the FOSUserBundle bridge.",
                 "guzzlehttp/guzzle": "To use the HTTP cache invalidation system.",
                 "phpdocumentor/reflection-docblock": "To support extracting metadata from PHPDoc.",
                 "psr/cache-implementation": "To use metadata caching.",
@@ -121,6 +121,9 @@
             "extra": {
                 "branch-alias": {
                     "dev-master": "2.5.x-dev"
+                },
+                "symfony": {
+                    "require": "^3.4 || ^4.0 || ^5.0"
                 }
             },
             "autoload": {
@@ -152,7 +155,7 @@
                 "rest",
                 "swagger"
             ],
-            "time": "2019-11-23T11:27:39+00:00"
+            "time": "2020-05-28T15:07:16+00:00"
         },
         {
             "name": "aws/aws-sdk-php",
@@ -2891,16 +2894,16 @@
         },
         {
             "name": "fig/link-util",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/link-util.git",
-                "reference": "47f55860678a9e202206047bc02767556d298106"
+                "reference": "c038ee75ca13663ddc2d1f185fe6f7533c00832a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/link-util/zipball/47f55860678a9e202206047bc02767556d298106",
-                "reference": "47f55860678a9e202206047bc02767556d298106",
+                "url": "https://api.github.com/repos/php-fig/link-util/zipball/c038ee75ca13663ddc2d1f185fe6f7533c00832a",
+                "reference": "c038ee75ca13663ddc2d1f185fe6f7533c00832a",
                 "shasum": ""
             },
             "require": {
@@ -2944,7 +2947,7 @@
                 "psr-13",
                 "rest"
             ],
-            "time": "2019-12-18T15:40:05+00:00"
+            "time": "2020-04-27T06:40:36+00:00"
         },
         {
             "name": "firebase/php-jwt",
