@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "03c92699b96bcf4945fc588fc47e3e83",
+    "content-hash": "2087f7dd492c6e908a34655c14289978",
     "packages": [
         {
             "name": "api-platform/core",
@@ -7510,23 +7510,23 @@
         },
         {
             "name": "lexik/jwt-authentication-bundle",
-            "version": "v2.7.0",
+            "version": "v2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lexik/LexikJWTAuthenticationBundle.git",
-                "reference": "1a110dbb8649e3029140a29f02f812d168008e8e"
+                "reference": "0b136a3b8b2125a85dc0ae64527e8c86cbe574f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lexik/LexikJWTAuthenticationBundle/zipball/1a110dbb8649e3029140a29f02f812d168008e8e",
-                "reference": "1a110dbb8649e3029140a29f02f812d168008e8e",
+                "url": "https://api.github.com/repos/lexik/LexikJWTAuthenticationBundle/zipball/0b136a3b8b2125a85dc0ae64527e8c86cbe574f1",
+                "reference": "0b136a3b8b2125a85dc0ae64527e8c86cbe574f1",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
                 "lcobucci/jwt": "^3.2",
                 "namshi/jose": "^7.2",
-                "php": "^5.5|^7.0",
+                "php": "^5.6|^7.0",
                 "symfony/framework-bundle": "^3.4|^4.0|^5.0",
                 "symfony/security-bundle": "^3.4|^4.0|^5.0"
             },
@@ -7608,33 +7608,33 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-05-28T23:36:57+00:00"
+            "time": "2020-06-14T13:20:35+00:00"
         },
         {
             "name": "liip/imagine-bundle",
-            "version": "2.3.0",
+            "version": "2.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/liip/LiipImagineBundle.git",
-                "reference": "06740a0a0e9c0054d3e0589472fd19b975784c52"
+                "reference": "d0819fc9b1cd4e9e16db204467b6fe1a5316a163"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/06740a0a0e9c0054d3e0589472fd19b975784c52",
-                "reference": "06740a0a0e9c0054d3e0589472fd19b975784c52",
+                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/d0819fc9b1cd4e9e16db204467b6fe1a5316a163",
+                "reference": "d0819fc9b1cd4e9e16db204467b6fe1a5316a163",
                 "shasum": ""
             },
             "require": {
                 "imagine/imagine": "^0.7.1|^1.1",
                 "php": "^7.1",
-                "symfony/asset": "^3.4|^4.3|^5.0",
                 "symfony/filesystem": "^3.4|^4.3|^5.0",
                 "symfony/finder": "^3.4|^4.3|^5.0",
                 "symfony/framework-bundle": "^3.4|^4.3|^5.0",
+                "symfony/mime": "^4.3|^5.0",
                 "symfony/options-resolver": "^3.4|^4.3|^5.0",
                 "symfony/process": "^3.4|^4.3|^5.0",
                 "symfony/templating": "^3.4|^4.3|^5.0",
-                "symfony/translation": "^3.4|^4.3|^5.0"
+                "twig/twig": "^1.40|^2.9|^3.0"
             },
             "require-dev": {
                 "amazonwebservices/aws-sdk-for-php": "^1.0",
@@ -7652,8 +7652,7 @@
                 "symfony/form": "^3.4|^4.3|^5.0",
                 "symfony/phpunit-bridge": "^4.3|^5.0",
                 "symfony/validator": "^3.4|^4.3|^5.0",
-                "symfony/yaml": "^3.4|^4.3|^5.0",
-                "twig/twig": "^1.34|^2.4|^3.0"
+                "symfony/yaml": "^3.4|^4.3|^5.0"
             },
             "suggest": {
                 "alcaeus/mongo-php-adapter": "required on PHP >= 7.0 to use mongo components with mongodb extension",
@@ -7668,8 +7667,7 @@
                 "ext-mongo": "required for mongodb components on PHP <7.0",
                 "ext-mongodb": "required for mongodb components on PHP >=7.0",
                 "league/flysystem": "required to use FlySystem data loader or cache resolver",
-                "monolog/monolog": "A psr/log compatible logger is required to enable logging",
-                "twig/twig": "required to use the provided Twig extension. Version 1.12 or greater needed"
+                "monolog/monolog": "A psr/log compatible logger is required to enable logging"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -7709,7 +7707,7 @@
                 "symfony",
                 "transformation"
             ],
-            "time": "2020-01-07T13:29:56+00:00"
+            "time": "2020-06-26T05:55:54+00:00"
         },
         {
             "name": "m6web/daemon-bundle",
@@ -11714,16 +11712,16 @@
         },
         {
             "name": "sonata-project/seo-bundle",
-            "version": "2.10.0",
+            "version": "2.11.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sonata-project/SonataSeoBundle.git",
-                "reference": "6d346f5fe90661aaea2a2445ae2168a982d30df7"
+                "url": "git@github.com:sonata-project/SonataSeoBundle.git",
+                "reference": "08ac379a9b98e6d1bc3e611246251433f1d1c745"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/6d346f5fe90661aaea2a2445ae2168a982d30df7",
-                "reference": "6d346f5fe90661aaea2a2445ae2168a982d30df7",
+                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/08ac379a9b98e6d1bc3e611246251433f1d1c745",
+                "reference": "08ac379a9b98e6d1bc3e611246251433f1d1c745",
                 "shasum": ""
             },
             "require": {
@@ -11731,30 +11729,32 @@
                 "psr/http-client": "^1.0",
                 "psr/http-message": "^1.0",
                 "sonata-project/exporter": "^1.11 || ^2.0",
-                "symfony/config": "^3.4 || ^4.2 || ^5.0",
-                "symfony/dependency-injection": "^3.4 || ^4.2 || ^5.0",
-                "symfony/form": "^3.4 || ^4.2 || ^5.0",
-                "symfony/framework-bundle": "^3.4 || ^4.2 || ^5.0",
-                "symfony/http-foundation": "^3.4 || ^4.2 || ^5.0",
-                "symfony/http-kernel": "^3.4 || ^4.2 || ^5.0",
-                "symfony/options-resolver": "^3.4 || ^4.2 || ^5.0",
-                "twig/twig": "^1.40 || ^2.9 || ^3.0"
+                "symfony/config": "^4.4 || ^5.0",
+                "symfony/dependency-injection": "^4.4 || ^5.0",
+                "symfony/form": "^4.4 || ^5.0",
+                "symfony/framework-bundle": "^4.4 || ^5.0",
+                "symfony/http-foundation": "^4.4 || ^5.0",
+                "symfony/http-kernel": "^4.4 || ^5.0",
+                "symfony/options-resolver": "^4.4 || ^5.0",
+                "twig/twig": "^2.9 || ^3.0"
             },
             "conflict": {
-                "sonata-project/block-bundle": "<3.11"
+                "sonata-project/block-bundle": "<3.11",
+                "sonata-project/core-bundle": "<3.20"
             },
             "require-dev": {
                 "guzzlehttp/guzzle": "^6.0",
                 "nyholm/psr7": "^1.2",
                 "sonata-project/admin-bundle": "^3.31",
-                "sonata-project/block-bundle": "^3.11",
-                "sonata-project/core-bundle": "^3.9",
-                "symfony/console": "^3.4 || ^4.2 || ^5.0",
-                "symfony/filesystem": "^3.4 || ^4.2 || ^5.0",
-                "symfony/finder": "^3.4 || ^4.2 || ^5.0",
+                "sonata-project/block-bundle": "^3.17",
+                "sonata-project/doctrine-extensions": "^1.6",
+                "sonata-project/form-extensions": "^0.1 || ^1.4",
+                "symfony/console": "^4.4 || ^5.0",
+                "symfony/filesystem": "^4.4 || ^5.0",
+                "symfony/finder": "^4.4 || ^5.0",
                 "symfony/http-client": "^4.4 || ^5.0",
-                "symfony/phpunit-bridge": "^4.1 || ^5.0",
-                "symfony/yaml": "^3.4 || ^4.2 || ^5.0"
+                "symfony/phpunit-bridge": "^4.4 || ^5.0",
+                "symfony/yaml": "^4.4 || ^5.0"
             },
             "suggest": {
                 "knplabs/knp-menu-bundle": "Used by the BreadcrumbMenuBuilder",
@@ -11792,7 +11792,7 @@
                 "seo",
                 "sonata"
             ],
-            "time": "2020-01-12T18:13:11+00:00"
+            "time": "2020-06-26T20:32:08+00:00"
         },
         {
             "name": "spomky-labs/base64url",
@@ -14605,16 +14605,16 @@
         },
         {
             "name": "symfony/polyfill-php56",
-            "version": "v1.17.0",
+            "version": "v1.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php56.git",
-                "reference": "e3c8c138280cdfe4b81488441555583aa1984e23"
+                "reference": "a25861bb3c79b0ec2da9ede51de2ea573818b943"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php56/zipball/e3c8c138280cdfe4b81488441555583aa1984e23",
-                "reference": "e3c8c138280cdfe4b81488441555583aa1984e23",
+                "url": "https://api.github.com/repos/symfony/polyfill-php56/zipball/a25861bb3c79b0ec2da9ede51de2ea573818b943",
+                "reference": "a25861bb3c79b0ec2da9ede51de2ea573818b943",
                 "shasum": ""
             },
             "require": {
@@ -14625,6 +14625,10 @@
             "extra": {
                 "branch-alias": {
                     "dev-master": "1.17-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
                 }
             },
             "autoload": {
@@ -14671,7 +14675,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-05-12T16:47:27+00:00"
+            "time": "2020-06-06T08:46:27+00:00"
         },
         {
             "name": "symfony/polyfill-php72",
@@ -14892,16 +14896,16 @@
         },
         {
             "name": "symfony/polyfill-util",
-            "version": "v1.17.0",
+            "version": "v1.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-util.git",
-                "reference": "4afb4110fc037752cf0ce9869f9ab8162c4e20d7"
+                "reference": "6dd644eda43cd2f3daa883d728d8ab4120a05af6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-util/zipball/4afb4110fc037752cf0ce9869f9ab8162c4e20d7",
-                "reference": "4afb4110fc037752cf0ce9869f9ab8162c4e20d7",
+                "url": "https://api.github.com/repos/symfony/polyfill-util/zipball/6dd644eda43cd2f3daa883d728d8ab4120a05af6",
+                "reference": "6dd644eda43cd2f3daa883d728d8ab4120a05af6",
                 "shasum": ""
             },
             "require": {
@@ -14911,6 +14915,10 @@
             "extra": {
                 "branch-alias": {
                     "dev-master": "1.17-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
                 }
             },
             "autoload": {
@@ -14954,7 +14962,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-05-12T16:14:59+00:00"
+            "time": "2020-06-06T08:46:27+00:00"
         },
         {
             "name": "symfony/polyfill-uuid",
