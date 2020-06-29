@@ -991,3 +991,11 @@ form.store_type.packages_required.label: Vyžadovat zadání balíčků
 form.store_type.weight_required.label: Vyžadovat zadání hmotnosti
 delivery.table.heading.owner: Majitel
 user.edit.enabled.label: Povoleno
+form.pricing_rule_set.strategy.map.label: Všechna odpovídající pravidla
+form.pricing_rule_set.strategy.find.label: První pravidlo, které odpovídá
+form.pricing_rule_set.strategy.help: Pravidla jsou vyhodnocena shora dolů. V závislosti
+  na zvolené metodě výpočtu se cena rozhodne buď podle prvního pravidla, které bude
+  odpovídat, nebo se cena vypočítá sčítáním všech odpovídajících pravidel.
+form.pricing_rule_set.strategy.label: Metoda výpočtu
+localBusiness.form.business_address.label: Firemní adresa
+localBusiness.form.use_different_business_address.label: Použít jinou firemní adresu
