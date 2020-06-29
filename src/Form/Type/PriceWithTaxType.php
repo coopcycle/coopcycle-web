@@ -58,14 +58,24 @@ class PriceWithTaxType extends AbstractType
                 $variant = $this->variantResolver->getVariant($product);
                 $taxRate = $this->taxRateResolver->resolve($variant);
 
-                $taxAmount = (int) $this->calculator->calculate($variant->getPrice(), $taxRate);
+                if ($taxRate) {
+                    $taxAmount = (int) $this->calculator->calculate($variant->getPrice(), $taxRate);
 
-                $taxExcluded = $this->taxIncl ? ($variant->getPrice() - $taxAmount) : $variant->getPrice();
-                $taxIncluded = $this->taxIncl ? $variant->getPrice() : ($variant->getPrice() + $taxAmount);
+                    $taxExcluded = $this->taxIncl ? ($variant->getPrice() - $taxAmount) : $variant->getPrice();
+                    $taxIncluded = $this->taxIncl ? $variant->getPrice() : ($variant->getPrice() + $taxAmount);
 
-                $form->get('taxExcluded')->setData($taxExcluded);
-                $form->get('taxIncluded')->setData($taxIncluded);
-                $form->get('taxCategory')->setData($variant->getTaxCategory());
+                    $form->get('taxExcluded')->setData($taxExcluded);
+                    $form->get('taxIncluded')->setData($taxIncluded);
+                    $form->get('taxCategory')->setData($variant->getTaxCategory());
+                } else {
+                    if ($this->taxIncl) {
+                        $form->get('taxExcluded')->setData(0);
+                        $form->get('taxIncluded')->setData($variant->getPrice());
+                    } else {
+                        $form->get('taxExcluded')->setData($variant->getPrice());
+                        $form->get('taxIncluded')->setData(0);
+                    }
+                }
             }
         });
     }
