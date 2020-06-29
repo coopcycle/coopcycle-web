@@ -187,6 +187,11 @@ services:
     tags:
       - { name: sylius.context.currency }
 
+  sylius.tax_rate_resolver:
+    class: AppBundle\Sylius\Taxation\Resolver\TaxRateResolver
+    arguments:
+      $region: '%region_iso%'
+
   # IMPORTANT
   # OrderOptionsProcessor MUST be invoked BEFORE OrderFeeProcessor
   # Otherwise, fee calculation may be wrong
