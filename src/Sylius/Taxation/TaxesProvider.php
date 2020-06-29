@@ -78,35 +78,35 @@ class TaxesProvider
         $migrations = [];
 
         if ($expected->getCode() !== $actual->getCode()) {
-            $logger->debug(sprintf('Changing tax category code from « %s » to « %s »', $actual->getCode(), $expected->getCode()));
+            $logger->info(sprintf('Changing tax category code from « %s » to « %s »', $actual->getCode(), $expected->getCode()));
             $actual->setCode($expected->getCode());
         }
 
         if ($expected->getName() !== $actual->getName()) {
-            $logger->debug(sprintf('Changing tax category name from « %s » to « %s »', $actual->getName(), $expected->getName()));
+            $logger->info(sprintf('Changing tax category name from « %s » to « %s »', $actual->getName(), $expected->getName()));
             $actual->setName($expected->getName());
         }
 
         foreach ($expected->getRates() as $expectedTaxRate) {
             if ($match = $this->lookupTaxRate($actual, $expectedTaxRate)) {
                 if ($match->getCode() !== $expectedTaxRate->getCode()) {
-                    $logger->debug(sprintf('Changing tax rate code from « %s » to « %s »', $match->getCode(), $expectedTaxRate->getCode()));
+                    $logger->info(sprintf('Changing tax rate code from « %s » to « %s »', $match->getCode(), $expectedTaxRate->getCode()));
                     $migrations[] = [ $match->getCode(), $expectedTaxRate->getCode() ];
                     $match->setCode($expectedTaxRate->getCode());
                 }
                 if ($match->getName() !== $expectedTaxRate->getName()) {
-                    $logger->debug(sprintf('Changing tax rate name from « %s » to « %s »', $match->getName(), $expectedTaxRate->getName()));
+                    $logger->info(sprintf('Changing tax rate name from « %s » to « %s »', $match->getName(), $expectedTaxRate->getName()));
                     $match->setName($expectedTaxRate->getName());
                 }
                 if ($match->isIncludedInPrice() !== $expectedTaxRate->isIncludedInPrice()) {
-                    $logger->debug(sprintf('Changing tax rate isIncludedInPrice from « %s » to « %s »',
+                    $logger->info(sprintf('Changing tax rate isIncludedInPrice from « %s » to « %s »',
                         var_export($match->isIncludedInPrice(), true),
                         var_export($expectedTaxRate->isIncludedInPrice(), true)
                     ));
                     $match->setIncludedInPrice($expectedTaxRate->isIncludedInPrice());
                 }
             } else {
-                $logger->debug(sprintf('Adding tax rate with code « %s »', $expectedTaxRate->getCode()));
+                $logger->info(sprintf('Adding tax rate with code « %s »', $expectedTaxRate->getCode()));
                 $actual->addRate($expectedTaxRate);
             }
         }

@@ -5,12 +5,14 @@ namespace AppBundle\Command;
 use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
+use AppBundle\Sylius\Taxation\TaxesInitializer;
 use AppBundle\Sylius\Taxation\TaxesProvider;
 use AppBundle\Taxonomy\CuisineProvider;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
+use Psr\Log\LogLevel;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
 use Sylius\Component\Product\Model\ProductAttribute;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
@@ -460,51 +462,19 @@ class SetupCommand extends Command
 
     private function createSyliusTaxes(OutputInterface $output)
     {
-        $logger = new ConsoleLogger($output);
+        $verbosityLevelMap = [
+            LogLevel::NOTICE => OutputInterface::VERBOSITY_NORMAL,
+            LogLevel::INFO   => OutputInterface::VERBOSITY_NORMAL,
+        ];
 
-        $conn = $this->doctrine->getConnection();
+        $taxesInitializer = new TaxesInitializer(
+            $this->doctrine->getConnection(),
+            $this->taxesProvider,
+            $this->taxCategoryRepository,
+            $this->doctrine->getManagerForClass(TaxCategory::class),
+            new ConsoleLogger($output, $verbosityLevelMap)
+        );
 
-        $sql = "UPDATE sylius_adjustment SET origin_code = :new WHERE type = 'tax' AND origin_code = :old";
-        $stmt = $conn->prepare($sql);
-
-        $expectedTaxCategories = $this->taxesProvider->getCategories();
-
-        $allMigrations = [];
-
-        $flush = false;
-        foreach ($expectedTaxCategories as $c) {
-            $taxCategory = $this->taxCategoryRepository->findOneByCode($c->getCode());
-            if (null === $taxCategory) {
-                $this->doctrine->getManagerForClass(TaxCategory::class)->persist($c);
-                $output->writeln(sprintf('Creating tax category « %s »', $c->getCode()));
-            } else {
-                $output->writeln(sprintf('Tax category « %s » already exists, checking rates…', $c->getCode()));
-                $migrations = $this->taxesProvider->synchronize($c, $taxCategory, $logger);
-                $allMigrations = array_merge($allMigrations, $migrations);
-            }
-        }
-
-        // https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/transactions-and-concurrency.html
-        $conn->beginTransaction(); // suspend auto-commit
-        try {
-
-            $output->writeln('Flushing changes…');
-            $this->doctrine->getManagerForClass(TaxCategory::class)->flush();
-
-            $output->writeln('Migrating Sylius adjustments…');
-            foreach ($allMigrations as $migration) {
-                [ $old, $new ] = $migration;
-                $stmt->bindParam('old', $old);
-                $stmt->bindParam('new', $new);
-                $stmt->execute();
-                $output->writeln(sprintf('Migrated %d Sylius adjustments from « %s » to « %s »', $stmt->rowCount(), $old, $new));
-            }
-
-            $conn->commit();
-
-        } catch (\Exception $e) {
-            $conn->rollBack();
-            throw $e;
-        }
+        $taxesInitializer->initialize();
     }
 }
