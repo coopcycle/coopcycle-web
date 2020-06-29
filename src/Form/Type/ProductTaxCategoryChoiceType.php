@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Sylius\TaxCategory;
+use Doctrine\ORM\EntityRepository;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType as BaseTaxCategoryChoiceType;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
@@ -20,24 +21,8 @@ class ProductTaxCategoryChoiceType extends AbstractType
     private $country;
     private $legacyTaxes = true;
 
-    private static $serviceTaxCategories = [
-        'SERVICE',
-        'SERVICE_TAX_EXEMPT',
-    ];
-
-    private static $otherTaxCategories = [
-        'DRINK',
-        'DRINK_ALCOHOL',
-        'FOOD',
-        'FOOD_TAKEAWAY',
-        'JEWELRY',
-        'BASE_STANDARD',
-        'BASE_INTERMEDIARY',
-        'BASE_REDUCED',
-    ];
-
     public function __construct(
-        RepositoryInterface $taxCategoryRepository,
+        EntityRepository $taxCategoryRepository,
         TranslatorInterface $translator,
         TaxRateResolverInterface $taxRateResolver,
         ProductVariantFactoryInterface $productVariantFactory,
@@ -54,35 +39,15 @@ class ProductTaxCategoryChoiceType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('choices', function (Options $options) {
+        $resolver->setDefault('choice_loader', function (Options $options) {
 
-            $qb = $this->taxCategoryRepository->createQueryBuilder('c');
-            $qb->andWhere($qb->expr()->notIn('c.code', self::$serviceTaxCategories));
-
-            if ($this->legacyTaxes) {
-                $qb->andWhere($qb->expr()->notIn('c.code', self::$otherTaxCategories));
-            } else {
-                $qb->andWhere($qb->expr()->in('c.code', self::$otherTaxCategories));
-            }
-
-            $categories = $qb->getQuery()->getResult();
-
-            if ($this->legacyTaxes) {
-
-                return $categories;
-            }
-
-            return array_filter($categories, function (TaxCategory $c) {
-
-                $variant = $this->productVariantFactory->createNew();
-                $variant->setTaxCategory($c);
-
-                $rate = $this->taxRateResolver->resolve($variant, [
-                    'country' => strtolower($this->country)
-                ]);
-
-                return $rate !== null;
-            });
+            return new ProductTaxCategoryChoiceLoader(
+                $this->taxCategoryRepository,
+                $this->taxRateResolver,
+                $this->productVariantFactory,
+                $this->country,
+                $this->legacyTaxes
+            );
         });
 
         $resolver->setDefault('choice_label', function (?TaxCategory $taxCategory) {
