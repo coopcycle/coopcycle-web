@@ -71,6 +71,7 @@ class ProductTaxCategoryChoiceLoader implements ChoiceLoaderInterface
             return new ArrayChoiceList($categories, $value);
         }
 
+        // Remove tax categories when tax rate can't be resolved
         $categories = array_filter($categories, function (TaxCategory $c) {
 
             $variant = $this->productVariantFactory->createNew();
