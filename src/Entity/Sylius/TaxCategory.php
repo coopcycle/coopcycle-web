@@ -24,7 +24,11 @@ class TaxCategory extends BaseTaxCategory
     public function getRatesByCountry($country)
     {
         return $this->getRates()->filter(function ($rate) use ($country) {
-            return strtolower($rate->getCountry()) === strtolower($country);
+            if (is_callable([ $rate, 'getCountry' ])) {
+                return strtolower($rate->getCountry()) === strtolower($country);
+            } else {
+                return true;
+            }
         });
     }
 }

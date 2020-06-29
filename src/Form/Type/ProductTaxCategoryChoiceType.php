@@ -15,7 +15,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductTaxCategoryChoiceType extends AbstractType
 {
-    /** @var RepositoryInterface */
     private $taxCategoryRepository;
     private $translator;
     private $country;

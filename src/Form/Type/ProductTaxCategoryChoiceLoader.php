@@ -15,7 +15,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductTaxCategoryChoiceLoader implements ChoiceLoaderInterface
 {
-    /** @var RepositoryInterface */
     private $taxCategoryRepository;
     private $country;
     private $legacyTaxes = true;
