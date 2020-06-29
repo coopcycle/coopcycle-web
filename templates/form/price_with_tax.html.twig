@@ -2,11 +2,13 @@
 
   {% set tax_categories = {} %}
   {% for tax_category in form.taxCategory.vars.choices %}
-    {% set tax_rates = [] %}
-    {% for rate in tax_category.data.rates %}
-      {% set tax_rates = tax_rates|merge([ { 'amount': rate.amount } ]) %}
+    {% set normalized_tax_rates = [] %}
+    {% set tax_rates = legacy_taxes ?
+      tax_category.data.getRates() : tax_category.data.getRatesByCountry(region_iso) %}
+    {% for rate in tax_rates %}
+      {% set normalized_tax_rates = normalized_tax_rates|merge([ { 'amount': rate.amount } ]) %}
     {% endfor %}
-    {% set tax_categories = tax_categories|merge({ (tax_category.data.code): tax_rates }) %}
+    {% set tax_categories = tax_categories|merge({ (tax_category.data.code): normalized_tax_rates }) %}
   {% endfor %}
 
   <div class="row">

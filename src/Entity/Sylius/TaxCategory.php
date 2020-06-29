@@ -20,4 +20,11 @@ class TaxCategory extends BaseTaxCategory
     {
         return $this->countries;
     }
+
+    public function getRatesByCountry($country)
+    {
+        return $this->getRates()->filter(function ($rate) use ($country) {
+            return strtolower($rate->getCountry()) === strtolower($country);
+        });
+    }
 }
