@@ -11,8 +11,8 @@ class TaxRate extends BaseTaxRate
      */
     protected $country;
 
-    protected $from;
-    protected $to;
+    protected $validFrom;
+    protected $validTo;
 
     /**
      * @return string|null
@@ -33,19 +33,19 @@ class TaxRate extends BaseTaxRate
     /**
      * @return mixed
      */
-    public function getFrom()
+    public function getValidFrom()
     {
-        return $this->from;
+        return $this->validFrom;
     }
 
     /**
-     * @param mixed $from
+     * @param mixed $validFrom
      *
      * @return self
      */
-    public function setFrom($from)
+    public function setValidFrom($validFrom)
     {
-        $this->from = $from;
+        $this->validFrom = $validFrom;
 
         return $this;
     }
@@ -53,19 +53,19 @@ class TaxRate extends BaseTaxRate
     /**
      * @return mixed
      */
-    public function getTo()
+    public function getValidTo()
     {
-        return $this->to;
+        return $this->validTo;
     }
 
     /**
-     * @param mixed $to
+     * @param mixed $validTo
      *
      * @return self
      */
-    public function setTo($to)
+    public function setValidTo($validTo)
     {
-        $this->to = $to;
+        $this->validTo = $validTo;
 
         return $this;
     }
