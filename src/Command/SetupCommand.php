@@ -28,6 +28,7 @@ use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -459,6 +460,8 @@ class SetupCommand extends Command
 
     private function createSyliusTaxes(OutputInterface $output)
     {
+        $logger = new ConsoleLogger($output);
+
         $conn = $this->doctrine->getConnection();
 
         $sql = "UPDATE sylius_adjustment SET origin_code = :new WHERE type = 'tax' AND origin_code = :old";
@@ -476,7 +479,7 @@ class SetupCommand extends Command
                 $output->writeln(sprintf('Creating tax category « %s »', $c->getCode()));
             } else {
                 $output->writeln(sprintf('Tax category « %s » already exists, checking rates…', $c->getCode()));
-                $migrations = $this->taxesProvider->synchronize($c, $taxCategory, $output);
+                $migrations = $this->taxesProvider->synchronize($c, $taxCategory, $logger);
                 $allMigrations = array_merge($allMigrations, $migrations);
             }
         }

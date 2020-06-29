@@ -4,12 +4,13 @@ namespace AppBundle\Sylius\Taxation;
 
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxRate;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Parser as YamlParser;
 use Symfony\Component\Yaml\Yaml;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class TaxesProvider
 {
@@ -70,40 +71,42 @@ class TaxesProvider
         return true;
     }
 
-    public function synchronize(TaxCategory $expected, TaxCategory $actual, OutputInterface $output)
+    public function synchronize(TaxCategory $expected, TaxCategory $actual, ?LoggerInterface $logger = null)
     {
+        $logger = $logger ?? new NullLogger();
+
         $migrations = [];
 
         if ($expected->getCode() !== $actual->getCode()) {
-            $output->writeln(sprintf('Changing tax category code from « %s » to « %s »', $actual->getCode(), $expected->getCode()));
+            $logger->debug(sprintf('Changing tax category code from « %s » to « %s »', $actual->getCode(), $expected->getCode()));
             $actual->setCode($expected->getCode());
         }
 
         if ($expected->getName() !== $actual->getName()) {
-            $output->writeln(sprintf('Changing tax category name from « %s » to « %s »', $actual->getName(), $expected->getName()));
+            $logger->debug(sprintf('Changing tax category name from « %s » to « %s »', $actual->getName(), $expected->getName()));
             $actual->setName($expected->getName());
         }
 
         foreach ($expected->getRates() as $expectedTaxRate) {
             if ($match = $this->lookupTaxRate($actual, $expectedTaxRate)) {
                 if ($match->getCode() !== $expectedTaxRate->getCode()) {
-                    $output->writeln(sprintf('Changing tax rate code from « %s » to « %s »', $match->getCode(), $expectedTaxRate->getCode()));
+                    $logger->debug(sprintf('Changing tax rate code from « %s » to « %s »', $match->getCode(), $expectedTaxRate->getCode()));
                     $migrations[] = [ $match->getCode(), $expectedTaxRate->getCode() ];
                     $match->setCode($expectedTaxRate->getCode());
                 }
                 if ($match->getName() !== $expectedTaxRate->getName()) {
-                    $output->writeln(sprintf('Changing tax rate name from « %s » to « %s »', $match->getName(), $expectedTaxRate->getName()));
+                    $logger->debug(sprintf('Changing tax rate name from « %s » to « %s »', $match->getName(), $expectedTaxRate->getName()));
                     $match->setName($expectedTaxRate->getName());
                 }
                 if ($match->isIncludedInPrice() !== $expectedTaxRate->isIncludedInPrice()) {
-                    $output->writeln(sprintf('Changing tax rate isIncludedInPrice from « %s » to « %s »',
+                    $logger->debug(sprintf('Changing tax rate isIncludedInPrice from « %s » to « %s »',
                         var_export($match->isIncludedInPrice(), true),
                         var_export($expectedTaxRate->isIncludedInPrice(), true)
                     ));
                     $match->setIncludedInPrice($expectedTaxRate->isIncludedInPrice());
                 }
             } else {
-                $output->writeln(sprintf('Adding tax rate with code « %s »', $expectedTaxRate->getCode()));
+                $logger->debug(sprintf('Adding tax rate with code « %s »', $expectedTaxRate->getCode()));
                 $actual->addRate($expectedTaxRate);
             }
         }
