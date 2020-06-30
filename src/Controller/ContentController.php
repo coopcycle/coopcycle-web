@@ -22,7 +22,8 @@ class ContentController extends AbstractController
      *   "es": "/sobre-nosotros",
      *   "fr": "/a-propos",
      *   "it": "/riguardo-a-noi",
-     *   "pl": "/o-nas"
+     *   "pl": "/o-nas",
+     *   "pt-BR": "/sobre-nos"
      * }, name="about_us")
      */
     public function aboutUsAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $appCache)
