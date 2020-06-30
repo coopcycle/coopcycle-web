@@ -5,20 +5,24 @@ namespace AppBundle\Form;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationType extends AbstractType
 {
+    private $urlGenerator;
     private $countryIso;
     private $isDemo;
 
-    public function __construct(string $countryIso, bool $isDemo = false)
+    public function __construct(UrlGeneratorInterface $urlGenerator, string $countryIso, bool $isDemo = false)
     {
+        $this->urlGenerator = $urlGenerator;
         $this->countryIso = strtoupper($countryIso);
         $this->isDemo = $isDemo;
     }
@@ -32,7 +36,18 @@ class RegistrationType extends AbstractType
                 'format' => PhoneNumberFormat::NATIONAL,
                 'default_region' => strtoupper($this->countryIso),
                 'label' => 'profile.telephone',
-            ]);
+            ])
+            ->add('legal', CheckboxType::class, array(
+                'mapped' => false,
+                'required' => true,
+                'label' => 'form.registration.legal.label',
+                'help' => 'form.registration.legal.help',
+                'help_translation_parameters' => [
+                    '%legal_url%' => $this->urlGenerator->generate('legal', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                    '%privacy_url%' => $this->urlGenerator->generate('privacy', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                ],
+                'help_html' => true,
+            ));
 
         if ($this->isDemo) {
             $builder->add('accountType', ChoiceType::class, [

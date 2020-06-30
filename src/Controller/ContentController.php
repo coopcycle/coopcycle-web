@@ -47,9 +47,21 @@ class ContentController extends AbstractController
     /**
      * @Route("/legal", name="legal")
      */
-    public function indexAction()
+    public function legalAction()
     {
         $text = file_get_contents('http://coopcycle.org/terms/fr.md');
+
+        return $this->render('legal/index.html.twig', [
+            'text' => $text
+        ]);
+    }
+
+    /**
+     * @Route("/privacy", name="privacy")
+     */
+    public function privacyAction()
+    {
+        $text = file_get_contents('http://coopcycle.org/privacy/fr.md');
 
         return $this->render('legal/index.html.twig', [
             'text' => $text

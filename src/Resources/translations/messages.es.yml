@@ -4,6 +4,7 @@ navbar.myAccount: Mi cuenta
 base.footer.contactUs: Contáctanos
 base.footer.help: Ayuda
 base.footer.legal: Notas legales
+base.footer.privacy: Privacidad
 adminDashboard.title: Panel de administración
 adminDashboard.configuration: Configuración
 adminDashboard.tooltip.orders: Gestiona pedidos
@@ -686,6 +687,8 @@ pledge.reject: Rechazar
 form.registration.username.help: "Su nombre de usuario no puede tener más de 15 caracteres.\
   \ Un nombre de usuario solo puede contener caracteres alfanuméricos (letras A-Z,\
   \ números 0-9) con la excepción de guiones bajos.\n"
+form.registration.legal.label: Acepto los Términos y Condiciones y la Política de Privacidad
+form.registration.legal.help: Al marcar esta casilla, aceptas nuestros <a href="%legal_url%">Términos y Condiciones</a> y la <a href="%privacy_url%">Política de Privacidad</a>.
 form.time_slot.name.label: Nombre
 form.time_slot.interval.label: Intervalo
 form.time_slot.choices.label: Opciones

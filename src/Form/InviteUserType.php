@@ -17,6 +17,7 @@ class InviteUserType extends AbstractType
             'required' => false
         ]);
 
+        $builder->remove('legal');
         $builder->remove('telephone');
         $builder->remove('plainPassword');
     }

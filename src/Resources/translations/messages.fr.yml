@@ -5,6 +5,7 @@ base.footer.contactUs: Nous contacter
 base.footer.help: Aide
 base.footer.legal: Mentions légales
 base.footer.suggest: Suggérer un restaurant
+base.footer.privacy: Confidentialité
 button.suggest.submitted.label: Revenir à l'accueil
 adminDashboard.title: Panel d'administration
 adminDashboard.configuration: Configuration
@@ -850,6 +851,8 @@ task.form.finish.DONE.info: La tâche a été terminée avec succès
 form.registration.username.help: "Votre nom d'utilisateur ne peut pas dépasser 15\
   \ caractères. Un nom d'utilisateur ne peut contenir que des caractères alphanumériques\
   \ (lettres A-Z, chiffres 0-9) à l'exception du tiret bas (_)\n"
+form.registration.legal.label: J'accepte les Conditions Générales et la Politique de Confidentialité
+form.registration.legal.help: En cochant cette case, vous acceptez nos <a href="%legal_url%">Conditions Générales</a> et notre <a href="%privacy_url%">Politique de Confidentialité</a>.
 order.adjustment_type.reusable_packaging: Emballage
 form.store_type.package_set.label: Ensemble d'emballages
 adminDashboard.package_sets.title: Emballages
