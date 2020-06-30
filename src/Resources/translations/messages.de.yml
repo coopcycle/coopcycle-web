@@ -691,3 +691,5 @@ form.delivery_import.file.label: Datei
 receipt.line_item.unit_price: Preis Einheit
 receipt.line_item.name: Produkt
 receipt.title: 'Rechnung für Ihre Bestellung #%number%'
+form.registration.legal.label: Ich habe die AGB und Datenschutzerklärung gelesen und
+  akzeptiert
