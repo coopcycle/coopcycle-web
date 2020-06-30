@@ -71,6 +71,10 @@ class CustomizeType extends AbstractType
             $aboutUsEnabled = $form->get('aboutUsEnabled')->getData();
             $aboutUs = $form->get('aboutUs')->getData();
 
+            if (empty(trim($aboutUs))) {
+                $aboutUsEnabled = false;
+            }
+
             if ($aboutUsEnabled) {
                 if ($this->assetsFilesystem->has('about_us.md')) {
                     $this->assetsFilesystem->update('about_us.md', $aboutUs);
