@@ -43,4 +43,16 @@ class ContentController extends AbstractController
             'about_us' => $aboutUs,
         ]);
     }
+
+    /**
+     * @Route("/legal", name="legal")
+     */
+    public function indexAction()
+    {
+        $text = file_get_contents('http://coopcycle.org/terms/fr.md');
+
+        return $this->render('legal/index.html.twig', [
+            'text' => $text
+        ]);
+    }
 }
