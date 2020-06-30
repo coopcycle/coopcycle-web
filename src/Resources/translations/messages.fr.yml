@@ -292,7 +292,8 @@ order.payment.card_number.help: 'Un <a href="https://stripe.com/docs/testing#car
   target="_blank" tabindex="-1">numéro de test</a> Stripe est pré-rempli. Aucun compte
   ne sera débité. '
 order.payment.cvc: CVC
-order.payment.redirect.help: Vous serez redirigé·e vers le site Internet de votre banque pour compléter la transaction
+order.payment.redirect.help: Vous serez redirigé·e vers le site Internet de votre
+  banque pour compléter la transaction
 order.payment.waiting_for_confirmation: En attente de la confirmation de votre banque…
 order.state.cart: Panier
 order.state.accepted: Accepté
@@ -587,33 +588,38 @@ form.checkout_address.promotion_coupon.label: Code promotionnel
 form.checkout_address.telephone.label: Téléphone
 form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages réutilisables
   (%price%)
-form.checkout_address.reusable_packaging_loopeat_enabled.label: Je veux des lunchbox consignées LoopEat
+form.checkout_address.reusable_packaging_loopeat_enabled.label: Je veux des lunchbox
+  consignées LoopEat
 form.checkout_address.reusable_packaging.loopeat.learn_more: En savoir plus.
-form.checkout_address.reusable_packaging.loopeat.reusable_quantity.label:
-  Votre commande présente <strong>%count%</strong> plat adapté à la livraison zero déchet|Votre commande présente <strong>%count%</strong> plats adaptés à la livraison zero déchet
-form.checkout_address.reusable_packaging.loopeat.available_credits.label:
-  Vous avez <strong>%count%</strong> crédit LoopEat disponible|Vous avez <strong>%count%</strong> crédits LoopEat disponibles
-form.checkout_address.reusable_packaging.loopeat.available_credits.help:
-  (1 crédit = 1 plat dans une lunchbox)
-form.checkout_address.reusable_packaging.loopeat.return_pledge_label:
-  Vous allez rendre %field% lunchbox LoopEat au coursier
-form.checkout_address.reusable_packaging.loopeat.no_pledge_label:
-  Vous n'avez pas de lunchbox à rendre.
-form.checkout_address.reusable_packaging.loopeat.enough_credits:
-  Vous avez assez de crédits pour être livré·e zero déchet
+form.checkout_address.reusable_packaging.loopeat.reusable_quantity.label: Votre commande
+  présente <strong>%count%</strong> plat adapté à la livraison zero déchet|Votre commande
+  présente <strong>%count%</strong> plats adaptés à la livraison zero déchet
+form.checkout_address.reusable_packaging.loopeat.available_credits.label: Vous avez
+  <strong>%count%</strong> crédit LoopEat disponible|Vous avez <strong>%count%</strong>
+  crédits LoopEat disponibles
+form.checkout_address.reusable_packaging.loopeat.available_credits.help: (1 crédit
+  = 1 plat dans une lunchbox)
+form.checkout_address.reusable_packaging.loopeat.return_pledge_label: Vous allez rendre
+  %field% lunchbox LoopEat au coursier
+form.checkout_address.reusable_packaging.loopeat.no_pledge_label: Vous n'avez pas
+  de lunchbox à rendre.
+form.checkout_address.reusable_packaging.loopeat.enough_credits: Vous avez assez de
+  crédits pour être livré·e zero déchet
 form.checkout_address.reusable_packaging.loopeat.confirm: Valider
-form.checkout_address.reusable_packaging.loopeat.add:
-  Ajouter %missing% crédits
+form.checkout_address.reusable_packaging.loopeat.add: Ajouter %missing% crédits
 form.checkout_address.quote.label: Demander un devis
 form.checkout_address.add_promotion.label: Appliquer
 form.checkout_address.tip_amount.label: Pourboire
 form.checkout_address.tip_amount.help: Merci ❤
 form.checkout_address.add_tip.label: Appliquer
 form.checkout_payment.method.label: Veuillez choisir un moyen de paiement
-form.checkout_address.takeaway.disclaimer: Vous avez opté pour le retrait sur place de votre commande.
-  Vous vous engagez à venir récupérer votre commande le jour et l'heure indiqués.
-form.checkout_address.takeaway.contact: En cas de problème, contactez l'établissement au %telephone%.
-form.checkout_address.takeaway.no_show_disclaimer: Si vous ne vous présentez pas, nous encaisserons la commande dans son intégralité.
+form.checkout_address.takeaway.disclaimer: Vous avez opté pour le retrait sur place
+  de votre commande. Vous vous engagez à venir récupérer votre commande le jour et
+  l'heure indiqués.
+form.checkout_address.takeaway.contact: En cas de problème, contactez l'établissement
+  au %telephone%.
+form.checkout_address.takeaway.no_show_disclaimer: Si vous ne vous présentez pas,
+  nous encaisserons la commande dans son intégralité.
 form.task_export.start.label: Début
 form.task_export.end.label: Fin
 form.api_app.name.label: Nom de l'application
@@ -644,9 +650,9 @@ form.reusable_packaging.price.label: Prix
 form.reusable_packaging.on_hand.label: Stock
 form.deposit_refund_settings.deposit_refund_optin.label: Le système de consigne est
   optionnel
-form.deposit_refund_settings.deposit_refund_optin.help: Lorsque le système de consignes est
-  optionnel, le client pourra choisir s'il veut ou non des emballages. Lorsqu'il est
-  obligatoire, les emballages seront automatiquement ajoutés au total de la commande.
+form.deposit_refund_settings.deposit_refund_optin.help: Lorsque le système de consignes
+  est optionnel, le client pourra choisir s'il veut ou non des emballages. Lorsqu'il
+  est obligatoire, les emballages seront automatiquement ajoutés au total de la commande.
 form.new_order.variant_name.label: Nom du produit
 form.new_order.variant_name.help: Le nom qui apparaîtra dans le résumé de la commande
   et la facture
@@ -827,7 +833,7 @@ restricted_diets.LOW_SALT_DIET: Sans sel
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Végétarien
 time_slot.human_readable: '%day% entre %start% et %end%'
-time_range: 'entre %start% et %end%'
+time_range: entre %start% et %end%
 time_range.same_day: "[Aujourd'hui] [%range%]"
 time_range.next_day: '[Demain] [%range%]'
 time_range.last_day: '[Hier] [%range%]'
@@ -851,11 +857,13 @@ task.form.finish.DONE.info: La tâche a été terminée avec succès
 form.registration.username.help: "Votre nom d'utilisateur ne peut pas dépasser 15\
   \ caractères. Un nom d'utilisateur ne peut contenir que des caractères alphanumériques\
   \ (lettres A-Z, chiffres 0-9) à l'exception du tiret bas (_)\n"
-form.registration.legal.label: J'accepte les Conditions Générales et la Politique de Confidentialité
-form.registration.legal.help: En cochant cette case, vous acceptez nos <a href="%legal_url%">Conditions Générales</a> et notre <a href="%privacy_url%">Politique de Confidentialité</a>.
+form.registration.legal.label: J'accepte les Conditions Générales et la Politique
+  de Confidentialité
+form.registration.legal.help: En cochant cette case, vous acceptez nos <a href="%legal_url%">Conditions
+  Générales</a> et notre <a href="%privacy_url%">Politique de Confidentialité</a>.
 order.adjustment_type.reusable_packaging: Emballage
-form.store_type.package_set.label: Ensemble d'emballages
-adminDashboard.package_sets.title: Emballages
+form.store_type.package_set.label: Ensemble de paquets
+adminDashboard.package_sets.title: Paquets
 form.package.volume_units.label: Unité de volume
 form.package.name.label: Nom
 form.package_set.packages.label: Emballages
@@ -930,11 +938,13 @@ basics.show: Afficher
 basics.hide: Masquer
 notifications.tasks_changed: Les tâches du %date% ont changé !
 restaurant_promotion.offer_delivery: Offrir les frais de livraison
-restaurant_promotion.offer_delivery.help: "Cela vous permet d'offrir les frais de livraison <strong>sur votre propre part</strong>.
-  Votre marge sera réduite du montant des frais de livraison.
-  Cela ne <strong>diminuera pas</strong> les frais perçus par la plate-forme."
+restaurant_promotion.offer_delivery.help: Cela vous permet d'offrir les frais de livraison
+  <strong>sur votre propre part</strong>. Votre marge sera réduite du montant des
+  frais de livraison. Cela ne <strong>diminuera pas</strong> les frais perçus par
+  la plate-forme.
 form.offer_delivery.coupon_code.error.exists: Ce code existe déjà
-form.offer_delivery.coupon_code.help: Il est de votre responsabilité de communiquer ce code au client, soit personnellement, soit via les réseaux sociaux
+form.offer_delivery.coupon_code.help: Il est de votre responsabilité de communiquer
+  ce code au client, soit personnellement, soit via les réseaux sociaux
 users.all: Tous les utilisateurs
 users.couriers: Coursiers
 users.restaurant_owners: Restaurants
@@ -955,10 +965,14 @@ basics.close: Fermer
 basics.allow_edit: Permettre de modifier
 form.price_with_tax.tax_excl.label: Prix (HT)
 form.price_with_tax.tax_incl.label: Prix (TTC)
-confirm.deposit_refund_enabled: Le système de consignes est activé, vous pouvez maintenant <a href="%url%">configurer les types d'emballages</a>.
-info.deposit_refund: Chaque entrée de la liste ci-dessous représente un type d'emballage (petit, grand, etc…). Une fois les types d'emballages créés, vous pouvez les configurer pour chaque produit.
+confirm.deposit_refund_enabled: Le système de consignes est activé, vous pouvez maintenant
+  <a href="%url%">configurer les types d'emballages</a>.
+info.deposit_refund: Chaque entrée de la liste ci-dessous représente un type d'emballage
+  (petit, grand, etc…). Une fois les types d'emballages créés, vous pouvez les configurer
+  pour chaque produit.
 form.receipt.billing_address.label: Adresse de facturation
-form.receipt.billing_address.help: Si vous souhaitez utiliser une adresse de facturation, indiquez-la ici
+form.receipt.billing_address.help: Si vous souhaitez utiliser une adresse de facturation,
+  indiquez-la ici
 order.refund.total_amount: Cette commande a été remboursée d'un montant de %amount%
 spreadsheet.download_example: Télécharger un exemple de feuille de calcul
 nav.about_us: À propos
@@ -967,7 +981,7 @@ basics.tax_excl: HT
 form.product_tax_category_choice.placeholder: Choisissez une catégorie
 form.package_with_quantity.package.placeholder: Choisissez un type de marchandise
 form.time_slot.same_day_cutoff.label: Cutoff pour le jour même
-form.time_slot.same_day_cutoff.help:
-  Par exemple si vous sélectionnez 11h, les choix pour le jour même ne seront pas affichés après 11h
-order.reusable_packaging.pledge_return.disclaimer:
-  Le client a indiqué que %count% emballages seront retournés
+form.time_slot.same_day_cutoff.help: Par exemple si vous sélectionnez 11h, les choix
+  pour le jour même ne seront pas affichés après 11h
+order.reusable_packaging.pledge_return.disclaimer: Le client a indiqué que %count%
+  emballages seront retournés
