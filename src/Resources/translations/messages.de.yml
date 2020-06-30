@@ -478,7 +478,7 @@ restaurant.suggest.has_voted: Du hast für das  Restaurant schon gestimmt!
 form.task.recipient.help: Gib bitte den Namen der Ansprechperson an
 receipt.emitter_details: Bestellung beim Restaurant  <strong>%restaurant_name%</strong>
 receipt.total: Gesamt (Inkl. MwSt.)
-receipt.line_item.tax_total: Ust.
+receipt.line_item.tax_total: USt.
 receipt.line_item.total: Gesamt
 adminDashboard.statistics: Statistiken
 notifications.empty: Keine Benachrichtigung
@@ -549,7 +549,7 @@ form.maintenance.disable.alert: Du bist in Begriff den Wartung-Modus zu deaktivi
 form.maintenance.enable.alert: Du bist in Begriff, den Wartung-Modus zu aktivieren.
   <br> Nur Administrator*innen werden Zugang zur Seite haben.
 form.maintenance.disable.label: Wartung-Modus deaktivieren
-restaurant.form.exclusive.label: Das Restaurant ist exklusiv
+restaurant.form.exclusive.label: Dieses Restaurant ist exklusiv
 form.maintenance.enable.label: Wartung erlauben
 pledge.vote_count_equals_one: '%username% hat für dieses Restaurant gestimmt'
 pledge.vote_count_equals_two: '%first_user% und %second_user% haben für das Restaurant
@@ -668,7 +668,7 @@ localBusiness.form.openingHoursBehavior.asap: So schnell wie möglich
 localBusiness.form.openingHoursBehavior: Art der Öffnungszeiten
 adminDashboard.customize.title: Personalisiere
 restaurant.contract.takeAwayFeeRate.label: Plattformgebühr bei Abholung
-restaurant.form.section.settlement: Deal
+restaurant.form.section.settlement: Bezahlung
 restaurant.form.section.payment: Bezahlung
 restaurant.form.section.fulfillment: Ausführung
 restaurant.form.section.general: Allgemein
@@ -693,3 +693,13 @@ receipt.line_item.name: Produkt
 receipt.title: 'Rechnung für Ihre Bestellung #%number%'
 form.registration.legal.label: Ich habe die AGB und Datenschutzerklärung gelesen und
   akzeptiert
+form.local_business.iso_code.fr.vat_number: USt.-Id Nr.
+form.min_max.lower.label: Anzahl Min.
+orders.payment_refunded: Zahlung erfolgreich zurückerstattet
+orders.payment_link.sent: Email erfolgreich gesendet
+orders.payment_link.send_by_email: 'Link für die Zahlung per Email senden '
+basics.copy: Kopie
+orders.new: Neue Bestellung
+restaurant.form.cuisines.label: Küchenrichtung
+restaurant.form.fulfillment_methods.label: Möglichkeiten zur Auftragsausführung
+restaurant.form.loopeat_enabled.label: LoopEat System einschalten
