@@ -70,7 +70,9 @@
           </a>
           <ul class="dropdown-menu">
             <li><a href="{{ path('admin_settings') }}">{% trans %}adminDashboard.settings.title{% endtrans %}</a></li>
+            {% if not is_demo %}
             <li><a href="{{ path('admin_customize') }}">{% trans %}adminDashboard.customize.title{% endtrans %}</a></li>
+            {% endif %}
             <li><a href="{{ path('admin_deliveries_pricing') }}">{% trans %}adminDashboard.pricing.title{% endtrans %}</a></li>
             <li><a href="{{ path('admin_tags') }}">{% trans %}adminDashboard.tags.title{% endtrans %}</a></li>
             <li><a href="{{ path('admin_taxation_settings') }}">{% trans %}adminDashboard.taxation.title{% endtrans %}</a></li>

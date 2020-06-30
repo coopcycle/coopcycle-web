@@ -1654,6 +1654,12 @@ class AdminController extends Controller
 
     public function customizeAction(Request $request)
     {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            throw $this->createNotFoundException();
+        }
+
         $form = $this->createForm(CustomizeType::class);
 
         $form->handleRequest($request);
