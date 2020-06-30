@@ -8764,16 +8764,16 @@
         },
         {
             "name": "notfloran/mjml-bundle",
-            "version": "v3.3.0",
+            "version": "v3.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/notFloran/mjml-bundle.git",
-                "reference": "ea97bb3c018c8d8a5eb95e7ce8ca6f703d01bdb6"
+                "reference": "10c9bc8a6a202b7a484ea36e8d90c43c4b0cc15a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/notFloran/mjml-bundle/zipball/ea97bb3c018c8d8a5eb95e7ce8ca6f703d01bdb6",
-                "reference": "ea97bb3c018c8d8a5eb95e7ce8ca6f703d01bdb6",
+                "url": "https://api.github.com/repos/notFloran/mjml-bundle/zipball/10c9bc8a6a202b7a484ea36e8d90c43c4b0cc15a",
+                "reference": "10c9bc8a6a202b7a484ea36e8d90c43c4b0cc15a",
                 "shasum": ""
             },
             "require": {
@@ -8783,13 +8783,10 @@
                 "symfony/twig-bundle": "^3.4 || ^4.0 || ^5.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.16",
                 "matthiasnoback/symfony-config-test": "^4.1",
                 "phpstan/phpstan": "^0.12.0",
-                "phpunit/phpunit": "^7.0"
-            },
-            "suggest": {
-                "swiftmailer/swiftmailer": "Plugin to integrate MJML in SwiftMailer"
+                "phpunit/phpunit": "^7.0",
+                "symplify/easy-coding-standard": "^6.0|^7.0"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -8812,7 +8809,7 @@
                 "email",
                 "mjml"
             ],
-            "time": "2019-12-08T09:26:49+00:00"
+            "time": "2020-04-26T17:52:29+00:00"
         },
         {
             "name": "nyholm/psr7",
