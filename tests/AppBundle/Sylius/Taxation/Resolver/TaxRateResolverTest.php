@@ -8,6 +8,7 @@ use AppBundle\Sylius\Taxation\Resolver\TaxRateResolver;
 use AppBundle\Sylius\Taxation\TaxesInitializer;
 use AppBundle\Sylius\Taxation\TaxesProvider;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -45,37 +46,43 @@ class TaxRateResolverTest extends KernelTestCase implements TaxableInterface
         $taxesInitializer->initialize();
     }
 
+    public function tearDown(): void
+    {
+        Carbon::setTestNow();
+    }
+
     public function getTaxCategory(): ?TaxCategoryInterface
     {
         return $this->taxCategory;
     }
 
-    public function resolvesRateWithCountryProvider()
+    public function testResolvesRateWithCountry()
     {
-        return [
+        $expectations = [
             [ 'de', 'FOOD_TAKEAWAY', 0.19 ],
             [ 'fr', 'FOOD_TAKEAWAY', 0.10 ],
             [ 'de', 'BASE_REDUCED',  0.07 ],
+            [ 'be', 'SERVICE',       0.21 ],
+            [ 'es', 'SERVICE',       0.21 ],
         ];
-    }
 
-    /**
-     * @dataProvider resolvesRateWithCountryProvider
-     */
-    public function testResolvesRateWithCountry($region, $code, $amount)
-    {
-        $resolver = new TaxRateResolver(
-            $this->taxRateRepository,
-            $region
-        );
+        foreach ($expectations as $expectation) {
 
-        $this->taxCategory =
-            $this->taxCategoryRepository->findOneByCode($code);
+            [ $region, $code, $amount ] = $expectation;
 
-        $rate = $resolver->resolve($this);
+            $resolver = new TaxRateResolver(
+                $this->taxRateRepository,
+                $region
+            );
 
-        $this->assertNotNull($rate);
-        $this->assertEquals($amount, $rate->getAmount());
+            $this->taxCategory =
+                $this->taxCategoryRepository->findOneByCode($code);
+
+            $rate = $resolver->resolve($this);
+
+            $this->assertNotNull($rate);
+            $this->assertEquals($amount, $rate->getAmount());
+        }
     }
 
     public function testIgnoresCountryCriteria()
@@ -123,5 +130,34 @@ class TaxRateResolverTest extends KernelTestCase implements TaxableInterface
         $this->assertNotNull($rate);
         $this->assertSame($rate, $taxRate);
         $this->assertEquals(0.1, $rate->getAmount());
+    }
+
+    public function testResolvesRateWithCountryAndDates()
+    {
+        $expectations = [
+            [ 'de', 'SERVICE', 0.19, '2020-06-30 12:00:00' ],
+            [ 'de', 'SERVICE', 0.16, '2020-07-01 12:00:00' ],
+            [ 'de', 'SERVICE', 0.19, '2021-01-01 12:00:00' ],
+        ];
+
+        foreach ($expectations as $expectation) {
+
+            [ $region, $code, $amount, $now ] = $expectation;
+
+            Carbon::setTestNow(Carbon::parse($now));
+
+            $resolver = new TaxRateResolver(
+                $this->taxRateRepository,
+                $region
+            );
+
+            $this->taxCategory =
+                $this->taxCategoryRepository->findOneByCode($code);
+
+            $rate = $resolver->resolve($this);
+
+            $this->assertNotNull($rate);
+            $this->assertEquals($amount, $rate->getAmount());
+        }
     }
 }

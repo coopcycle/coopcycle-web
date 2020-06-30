@@ -1,39 +1,36 @@
-# rates:
-#   standard:
-#     de:
-#       - amount: 0.19
-#         to:   '2020-06-30T23:59:59.000Z'
-#       - amount: 0.16
-#         from: '2020-07-01T00:00:00.000Z'
-#         to:   '2020-12-31T23:59:59.000Z'
-#       - amount: 0.19
-#         from: '2021-01-01T00:00:00.000Z'
-#   reduced:
-#     de:
-#       - amount: 0.07
-#         to:   '2020-06-30T23:59:59.000Z'
-#       - amount: 0.05
-#         from: '2020-07-01T00:00:00.000Z'
-#         to:   '2020-12-31T23:59:59.000Z'
-#       - amount: 0.07
-#         from: '2021-01-01T00:00:00.000Z'
+_rates:
+  standard:
+    be: 0.21
+    de:
+      - amount: 0.19
+        since: '2007-01-01T00:00:00.000Z'
+      - amount: 0.16
+        since: '2020-07-01T00:00:00.000Z'
+      - amount: 0.19
+        since: '2021-01-01T00:00:00.000Z'
+    es: 0.21
+    fr: 0.20
+    gb: 0.20
+    pl: 0.23
+  reduced:
+    de:
+      - amount: 0.07
+        since: '2007-01-01T00:00:00.000Z'
+      - amount: 0.05
+        since: '2020-07-01T00:00:00.000Z'
+      - amount: 0.07
+        since: '2021-01-01T00:00:00.000Z'
 
 service:
   rates:
-    be:
-      standard: 0.21
+    be: standard
     ca-bc:
       gst: 0.05
-    de:
-      standard: 0.19
-    es:
-      standard: 0.21
-    fr:
-      standard: 0.20
-    gb:
-      standard: 0.20
-    pl:
-      standard: 0.23
+    de: standard
+    es: standard
+    fr: standard
+    gb: standard
+    pl: standard
 
 service_tax_exempt:
   rates:

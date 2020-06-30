@@ -61,6 +61,18 @@ class TaxRateResolver extends BaseTaxRateResolver
             $qb->setParameter($property, $value);
         }
 
+        $now = Carbon::now();
+
+        // var_dump($now->format('Y-m-d'));
+
+        $qb->andWhere('r.validFrom IS NULL OR r.validFrom >= :now');
+        // $qb->andWhere('r.validTo IS NULL OR r.validTo >= :now');
+        $qb->setParameter('now', $now);
+
+        $qb->orderBy('r.validFrom','DESC');
+
+        // var_dump($qb->getQuery()->getSQL());
+
         // Make sure there will be one result,
         // or getOneOrNullResult will throw an Exception
         $qb->setFirstResult(0);

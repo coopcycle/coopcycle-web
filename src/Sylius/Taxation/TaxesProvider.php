@@ -30,6 +30,9 @@ class TaxesProvider
         $parser = new YamlParser();
         $config = $parser->parseFile($path, Yaml::PARSE_CONSTANT);
 
+        $rateRefs = $config['_rates'];
+        unset($config['_rates']);
+
         $categories = [];
 
         foreach ($config as $categoryCode => $data) {
@@ -39,19 +42,60 @@ class TaxesProvider
             $taxCategory->setName(sprintf('tax_category.%s', $categoryCode));
 
             foreach ($data['rates'] as $region => $rates) {
-                foreach ($rates as $rateCode => $amount) {
 
-                    $taxRate = $this->taxRateFactory->createNew();
+                if (is_array($rates)) {
+                    foreach ($rates as $rateCode => $amount) {
 
-                    $taxRate->setCode(strtoupper(sprintf('%s_%s_%s', str_replace('-', '_', $region), $categoryCode, $rateCode)));
-                    $taxRate->setName(sprintf('tax_rate.%s', $rateCode));
-                    $taxRate->setCalculator('default');
-                    $taxRate->setIncludedInPrice($this->isIncludedInPrice($region));
-                    $taxRate->setAmount($amount);
+                        $taxRate = $this->taxRateFactory->createNew();
 
-                    $taxRate->setCountry($region);
+                        $taxRate->setCode(strtoupper(sprintf('%s_%s_%s', str_replace('-', '_', $region), $categoryCode, $rateCode)));
+                        $taxRate->setName(sprintf('tax_rate.%s', $rateCode));
+                        $taxRate->setCalculator('default');
+                        $taxRate->setIncludedInPrice($this->isIncludedInPrice($region));
+                        $taxRate->setAmount($amount);
 
-                    $taxCategory->addRate($taxRate);
+                        $taxRate->setCountry($region);
+
+                        $taxCategory->addRate($taxRate);
+                    }
+                } elseif (is_string($rates)) {
+
+                    $rateCode = $rates;
+                    $rate = $rateRefs[$rateCode][$region];
+
+                    if (is_array($rate)) {
+                        foreach ($rate as $rateInfo) {
+                            $taxRate = $this->taxRateFactory->createNew();
+
+                            $validFrom = new \DateTime($rateInfo['since']);
+
+                            $taxRate->setCode(
+                                strtoupper(sprintf('%s_%s_%s_%s', str_replace('-', '_', $region), $categoryCode, $rateCode, $validFrom->format('Ymd')))
+                            );
+                            $taxRate->setName(sprintf('tax_rate.%s', $rateCode));
+                            $taxRate->setCalculator('default');
+                            $taxRate->setIncludedInPrice($this->isIncludedInPrice($region));
+                            $taxRate->setAmount($rateInfo['amount']);
+                            $taxRate->setValidFrom($validFrom);
+
+                            $taxRate->setCountry($region);
+
+                            $taxCategory->addRate($taxRate);
+                        }
+                    } else {
+
+                        $taxRate = $this->taxRateFactory->createNew();
+
+                        $taxRate->setCode(strtoupper(sprintf('%s_%s_%s', str_replace('-', '_', $region), $categoryCode, $rateCode)));
+                        $taxRate->setName(sprintf('tax_rate.%s', $rateCode));
+                        $taxRate->setCalculator('default');
+                        $taxRate->setIncludedInPrice($this->isIncludedInPrice($region));
+                        $taxRate->setAmount($rate);
+
+                        $taxRate->setCountry($region);
+
+                        $taxCategory->addRate($taxRate);
+                    }
                 }
             }
 
