@@ -739,7 +739,7 @@ embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règ
   tarifaire à appliquer
 embed.delivery.iframe_code: Utilisez le code HTML ci-dessous pour intégrer le formulaire
   sur votre site
-embed.breadcrumb.start: Informations
+embed.breadcrumb.start: Information
 embed.breadcrumb.summary: Résumé
 embed.breadcrumb.confirm: Confirmation
 embed.payment.heading: Payer ma commande
