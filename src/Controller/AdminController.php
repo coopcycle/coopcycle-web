@@ -27,7 +27,6 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
-use AppBundle\Form\CreateUserType;
 use AppBundle\Form\CustomizeType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Form\EmbedSettingsType;
@@ -400,30 +399,6 @@ class AdminController extends Controller
         }
 
         return $this->render('admin/user_invite.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/admin/users/add", name="admin_users_add")
-     */
-    public function userAddAction(Request $request,
-        UserManagerInterface $userManager)
-    {
-        $form = $this->createForm(CreateUserType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $user = $form->getData();
-            $user->setEnabled(true);
-
-            $userManager->updateUser($user);
-
-            return $this->redirectToRoute('admin_users');
-        }
-
-        return $this->render('admin/user_add.html.twig', [
             'form' => $form->createView(),
         ]);
     }
