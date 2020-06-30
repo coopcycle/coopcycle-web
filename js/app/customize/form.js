@@ -22,3 +22,17 @@ cm.on('change', (editor) => {
 })
 
 render(<ReactMarkdown source={ textarea.value } />, preview)
+
+const customTermsTextarea = document.getElementById('customize_customTerms')
+const customTermsPreview = document.getElementById('custom-terms-preview')
+
+const cm2 = CodeMirror.fromTextArea(customTermsTextarea, {
+  mode: "markdown",
+  theme: "monokai"
+})
+
+cm2.on('change', (editor) => {
+  render(<ReactMarkdown source={ editor.getValue() } />, customTermsPreview)
+})
+
+render(<ReactMarkdown source={ customTermsTextarea.value } />, customTermsPreview)

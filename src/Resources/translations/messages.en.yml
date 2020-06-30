@@ -691,6 +691,8 @@ form.customize.about_us_enabled.label: Enable about us page
 form.customize.about_us.label: About us page content
 form.customize.motto.label: Motto
 form.customize.motto.help: This will be displayed on the homepage
+form.customize.custom_terms_enabled.label: Enable custom terms & conditions
+form.customize.custom_terms.label: Custom terms & conditions page content
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option_value: Each option has a different price

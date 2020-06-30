@@ -30,6 +30,41 @@ class CustomizeType extends AbstractType
         $this->appCache = $appCache;
     }
 
+    private function getContentData($filename)
+    {
+        if ($this->assetsFilesystem->has($filename)) {
+
+            return [
+                $content = $this->assetsFilesystem->read($filename),
+                true
+            ];
+        }
+
+        return [
+            '',
+            false
+        ];
+    }
+
+    private function onContentSubmit($filename, $content, $enabled)
+    {
+        if (empty(trim($content))) {
+            $enabled = false;
+        }
+
+        if ($enabled) {
+            if ($this->assetsFilesystem->has($filename)) {
+                $this->assetsFilesystem->update($filename, $content);
+            } else {
+                $this->assetsFilesystem->write($filename, $content);
+            }
+        } else {
+            if ($this->assetsFilesystem->has($filename)) {
+                $this->assetsFilesystem->delete($filename);
+            }
+        }
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -48,15 +83,30 @@ class CustomizeType extends AbstractType
                 'label' => 'form.customize.about_us.label',
                 'attr' => ['rows' => '12'],
                 'help' => 'mardown_formatting.help',
+            ])
+            ->add('customTermsEnabled', CheckboxType::class, [
+                'required' => false,
+                'label' => 'form.customize.custom_terms_enabled.label',
+            ])
+            ->add('customTerms', TextareaType::class, [
+                'required' => false,
+                'label' => 'form.customize.custom_terms.label',
+                'attr' => ['rows' => '12'],
+                'help' => 'mardown_formatting.help',
             ]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
-            if ($this->assetsFilesystem->has('about_us.md')) {
-                $aboutUs = $this->assetsFilesystem->read('about_us.md');
-                $form->get('aboutUsEnabled')->setData(true);
-                $form->get('aboutUs')->setData($aboutUs);
-            }
+
+            [ $aboutUs, $aboutUsEnabled ] = $this->getContentData('about_us.md');
+
+            $form->get('aboutUs')->setData($aboutUs);
+            $form->get('aboutUsEnabled')->setData($aboutUsEnabled);
+
+            [ $customTerms, $customTermsEnabled ] = $this->getContentData('custom_terms.md');
+
+            $form->get('customTerms')->setData($customTerms);
+            $form->get('customTermsEnabled')->setData($customTermsEnabled);
 
             $motto = $this->settingsManager->get('motto');
             if (!empty($motto)) {
@@ -68,27 +118,30 @@ class CustomizeType extends AbstractType
 
             $form = $event->getForm();
 
+            // About us
+
             $aboutUsEnabled = $form->get('aboutUsEnabled')->getData();
             $aboutUs = $form->get('aboutUs')->getData();
 
-            if (empty(trim($aboutUs))) {
-                $aboutUsEnabled = false;
-            }
-
-            if ($aboutUsEnabled) {
-                if ($this->assetsFilesystem->has('about_us.md')) {
-                    $this->assetsFilesystem->update('about_us.md', $aboutUs);
-                } else {
-                    $this->assetsFilesystem->write('about_us.md', $aboutUs);
-                }
-            } else {
-                if ($this->assetsFilesystem->has('about_us.md')) {
-                    $this->assetsFilesystem->delete('about_us.md');
-                }
-            }
+            $this->onContentSubmit(
+                'about_us.md',
+                $aboutUs,
+                $aboutUsEnabled
+            );
 
             $this->appCache->delete('content.about_us');
             $this->appCache->delete('content.about_us.exists');
+
+            // Custom terms
+
+            $customTermsEnabled = $form->get('customTermsEnabled')->getData();
+            $customTerms = $form->get('customTerms')->getData();
+
+            $this->onContentSubmit(
+                'custom_terms.md',
+                $customTerms,
+                $customTermsEnabled
+            );
 
             $motto = $form->get('motto')->getData();
             if (!empty($motto)) {
