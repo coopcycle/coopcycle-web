@@ -47,9 +47,13 @@ class ContentController extends AbstractController
     /**
      * @Route("/legal", name="legal")
      */
-    public function legalAction()
+    public function legalAction(Filesystem $assetsFilesystem)
     {
-        $text = file_get_contents('http://coopcycle.org/terms/fr.md');
+        if ($assetsFilesystem->has('custom_terms.md')) {
+            $text = $assetsFilesystem->read('custom_terms.md');
+        } else {
+            $text = file_get_contents('http://coopcycle.org/terms/fr.md');
+        }
 
         return $this->render('legal/index.html.twig', [
             'text' => $text
