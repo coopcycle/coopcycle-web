@@ -5,7 +5,7 @@ service:
     ca-bc:
       gst: 0.05
     de:
-      standard: 0.19
+      standard: 0.16
     es:
       standard: 0.21
     fr:
@@ -47,7 +47,7 @@ drink_alcohol:
       gst: 0.05
       pst: 0.10
     de:
-      standard: 0.19
+      standard: 0.16
     es:
       standard: 0.21
     fr:
@@ -67,7 +67,7 @@ food_takeaway:
     be:
       reduced: 0.06
     de:
-      standard: 0.19
+      standard: 0.16
     es:
       intermediary: 0.1
     fr:
@@ -87,7 +87,7 @@ base_standard:
     be:
       standard: 0.21
     de:
-      standard: 0.19
+      standard: 0.16
     es:
       standard: 0.21
     fr:
