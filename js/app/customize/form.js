@@ -9,30 +9,21 @@ import 'codemirror/theme/monokai.css'
 
 import './form.scss'
 
-const textarea = document.getElementById('customize_aboutUs')
-const preview = document.getElementById('preview')
+document.querySelectorAll('textarea[data-preview]').forEach((textarea) => {
 
-const cm = CodeMirror.fromTextArea(textarea, {
-  mode: "markdown",
-  theme: "monokai"
+  const preview = document.querySelector(
+    textarea.getAttribute('data-preview')
+  )
+
+  const cm = CodeMirror.fromTextArea(textarea, {
+    mode: "markdown",
+    theme: "monokai"
+  })
+
+  cm.on('change', (editor) => {
+    render(<ReactMarkdown source={ editor.getValue() } />, preview)
+  })
+
+  render(<ReactMarkdown source={ textarea.value } />, preview)
+
 })
-
-cm.on('change', (editor) => {
-  render(<ReactMarkdown source={ editor.getValue() } />, preview)
-})
-
-render(<ReactMarkdown source={ textarea.value } />, preview)
-
-const customTermsTextarea = document.getElementById('customize_customTerms')
-const customTermsPreview = document.getElementById('custom-terms-preview')
-
-const cm2 = CodeMirror.fromTextArea(customTermsTextarea, {
-  mode: "markdown",
-  theme: "monokai"
-})
-
-cm2.on('change', (editor) => {
-  render(<ReactMarkdown source={ editor.getValue() } />, customTermsPreview)
-})
-
-render(<ReactMarkdown source={ customTermsTextarea.value } />, customTermsPreview)

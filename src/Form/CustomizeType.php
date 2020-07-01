@@ -84,16 +84,21 @@ class CustomizeType extends AbstractType
                 'attr' => ['rows' => '12'],
                 'help' => 'mardown_formatting.help',
             ])
-            ->add('customTermsEnabled', CheckboxType::class, [
-                'required' => false,
-                'label' => 'form.customize.custom_terms_enabled.label',
-            ])
-            ->add('customTerms', TextareaType::class, [
-                'required' => false,
-                'label' => 'form.customize.custom_terms.label',
-                'attr' => ['rows' => '12'],
-                'help' => 'mardown_formatting.help',
-            ]);
+            ;
+
+        foreach (['legal', 'terms', 'privacy'] as $type) {
+            $builder
+                ->add(sprintf('custom%sEnabled', ucfirst($type)), CheckboxType::class, [
+                    'required' => false,
+                    'label' => sprintf('form.customize.custom_%s_enabled.label', $type),
+                ])
+                ->add(sprintf('custom%s', ucfirst($type)), TextareaType::class, [
+                    'required' => false,
+                    'label' => sprintf('form.customize.custom_%s.label', $type),
+                    'attr' => ['rows' => '12'],
+                    'help' => 'mardown_formatting.help',
+                ]);
+        }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
@@ -103,10 +108,11 @@ class CustomizeType extends AbstractType
             $form->get('aboutUs')->setData($aboutUs);
             $form->get('aboutUsEnabled')->setData($aboutUsEnabled);
 
-            [ $customTerms, $customTermsEnabled ] = $this->getContentData('custom_terms.md');
-
-            $form->get('customTerms')->setData($customTerms);
-            $form->get('customTermsEnabled')->setData($customTermsEnabled);
+            foreach (['legal', 'terms', 'privacy'] as $type) {
+                [ $content, $enabled ] = $this->getContentData(sprintf('custom_%s.md', $type));
+                $form->get(sprintf('custom%s', ucfirst($type)))->setData($content);
+                $form->get(sprintf('custom%sEnabled', ucfirst($type)))->setData($enabled);
+            }
 
             $motto = $this->settingsManager->get('motto');
             if (!empty($motto)) {
@@ -132,16 +138,17 @@ class CustomizeType extends AbstractType
             $this->appCache->delete('content.about_us');
             $this->appCache->delete('content.about_us.exists');
 
-            // Custom terms
+            // Custom legal, terms, privacy
 
-            $customTermsEnabled = $form->get('customTermsEnabled')->getData();
-            $customTerms = $form->get('customTerms')->getData();
-
-            $this->onContentSubmit(
-                'custom_terms.md',
-                $customTerms,
-                $customTermsEnabled
-            );
+            foreach (['legal', 'terms', 'privacy'] as $type) {
+                $enabled = $form->get(sprintf('custom%sEnabled', ucfirst($type)))->getData();
+                $content = $form->get(sprintf('custom%s', ucfirst($type)))->getData();
+                $this->onContentSubmit(
+                    sprintf('custom_%s.md', $type),
+                    $content,
+                    $enabled
+                );
+            }
 
             $motto = $form->get('motto')->getData();
             if (!empty($motto)) {

@@ -692,8 +692,12 @@ form.customize.about_us_enabled.label: Enable about us page
 form.customize.about_us.label: About us page content
 form.customize.motto.label: Motto
 form.customize.motto.help: This will be displayed on the homepage
+form.customize.custom_legal_enabled.label: Enable custom legal notice
+form.customize.custom_legal.label: Custom legal notice page content
 form.customize.custom_terms_enabled.label: Enable custom terms & conditions
 form.customize.custom_terms.label: Custom terms & conditions page content
+form.customize.custom_privacy_enabled.label: Enable custom privacy policy
+form.customize.custom_privacy.label: Custom privacy policy page content
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option_value: Each option has a different price

@@ -81,7 +81,11 @@ class ContentController extends AbstractController
      */
     public function privacyAction()
     {
-        $text = file_get_contents('http://coopcycle.org/privacy/fr.md');
+        if ($assetsFilesystem->has('custom_privacy.md')) {
+            $text = $assetsFilesystem->read('custom_privacy.md');
+        } else {
+            $text = file_get_contents('http://coopcycle.org/privacy/fr.md');
+        }
 
         return $this->render('legal/index.html.twig', [
             'text' => $text
