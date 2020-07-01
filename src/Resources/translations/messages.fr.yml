@@ -4,6 +4,7 @@ navbar.myAccount: Mon compte
 base.footer.contactUs: Nous contacter
 base.footer.help: Aide
 base.footer.legal: Mentions légales
+base.footer.terms: Conditions générales
 base.footer.suggest: Suggérer un restaurant
 base.footer.privacy: Confidentialité
 button.suggest.submitted.label: Revenir à l'accueil
@@ -859,7 +860,7 @@ form.registration.username.help: "Votre nom d'utilisateur ne peut pas dépasser 
   \ (lettres A-Z, chiffres 0-9) à l'exception du tiret bas (_)\n"
 form.registration.legal.label: J'accepte les Conditions Générales et la Politique
   de Confidentialité
-form.registration.legal.help: En cochant cette case, vous acceptez nos <a href="%legal_url%">Conditions
+form.registration.legal.help: En cochant cette case, vous acceptez nos <a href="%terms_url%">Conditions
   Générales</a> et notre <a href="%privacy_url%">Politique de Confidentialité</a>.
 order.adjustment_type.reusable_packaging: Emballage
 form.store_type.package_set.label: Ensemble de paquets

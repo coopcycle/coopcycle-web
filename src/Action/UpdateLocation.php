@@ -55,7 +55,15 @@ class UpdateLocation
         }
 
         $data = array_map(function ($location) {
-            $location['time'] = ((int) $location['time']) / 1000;
+
+            // Using transistorsoft/react-native-background-geolocation
+            if (is_string($location['time'])) {
+                $location['time'] = strtotime($location['time']);
+            // Using mauron85/react-native-background-geolocation
+            } else {
+                $location['time'] = ((int) $location['time']) / 1000;
+            }
+
             return $location;
         }, $data);
 
