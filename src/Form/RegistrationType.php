@@ -43,7 +43,7 @@ class RegistrationType extends AbstractType
                 'label' => 'form.registration.legal.label',
                 'help' => 'form.registration.legal.help',
                 'help_translation_parameters' => [
-                    '%legal_url%' => $this->urlGenerator->generate('legal', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                    '%terms_url%' => $this->urlGenerator->generate('terms', [], UrlGeneratorInterface::ABSOLUTE_URL),
                     '%privacy_url%' => $this->urlGenerator->generate('privacy', [], UrlGeneratorInterface::ABSOLUTE_URL),
                 ],
                 'help_html' => true,
