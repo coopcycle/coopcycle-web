@@ -79,7 +79,7 @@ class ContentController extends AbstractController
     /**
      * @Route("/privacy", name="privacy")
      */
-    public function privacyAction()
+    public function privacyAction(Filesystem $assetsFilesystem)
     {
         if ($assetsFilesystem->has('custom_privacy.md')) {
             $text = $assetsFilesystem->read('custom_privacy.md');
