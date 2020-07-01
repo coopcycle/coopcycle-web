@@ -6,6 +6,7 @@ base.footer.help: Help
 base.footer.legal: Legal notice
 base.footer.suggest: Suggest a restaurant
 base.footer.privacy: Privacy
+base.footer.terms: Terms of service
 adminDashboard.title: Admin dashboard
 adminDashboard.configuration: Configuration
 adminDashboard.tooltip.orders: Manage restaurants orders

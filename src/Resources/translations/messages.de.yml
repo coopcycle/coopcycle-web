@@ -124,6 +124,7 @@ form.menu_editor.products_panel.title: Produkten
 basics.edit: Bearbeiten
 basics.created_at: Erstellt am
 base.footer.legal: Impressum
+base.footer.terms: Allgemeine Geschäftsbedingungen
 adminDashboard.title: Administrator-Übersicht
 adminDashboard.tooltip.orders: Organisiere Restaurant-Bestellungen
 adminDashboard.tooltip.deliveries: Organisiere Lieferungen
