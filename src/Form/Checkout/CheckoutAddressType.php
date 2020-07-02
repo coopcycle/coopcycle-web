@@ -189,7 +189,10 @@ class CheckoutAddressType extends AbstractType
                         'required' => false,
                         'html5' => true,
                         'label' => 'form.checkout_address.reusable_packaging_loopeat_returns.label',
-                        'empty_data' => 0,
+                        // WARNING
+                        // Need to use a string here, or it won't work as expected
+                        // https://github.com/symfony/symfony/issues/12499
+                        'empty_data' => '0',
                     ]);
                     $form->add('isJQuerySubmit', HiddenType::class, [
                         'data' => '0',
@@ -219,6 +222,7 @@ class CheckoutAddressType extends AbstractType
             }
 
             if ($form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName()) {
+
                 $tipAmount = $form->get('tipAmount')->getData();
                 $order->setTipAmount((int) ($tipAmount * 100));
 
