@@ -13,6 +13,7 @@ import { antdLocale, getCountry } from '../../i18n'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
 import CourierSelect from './CourierSelect'
+import { timePickerProps } from '../../utils/antd'
 
 import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
 
@@ -442,7 +443,10 @@ class TaskModalContent extends React.Component {
                     <Form.Item>
                       <DatePicker.RangePicker
                         style={{ width: '100%' }}
-                        showTime={{ hideDisabledOptions: true, format: 'HH:mm' }}
+                        showTime={{
+                          ...timePickerProps,
+                          hideDisabledOptions: true,
+                        }}
                         format="LLL"
                         defaultValue={[ moment(values.after), moment(values.before) ]}
                         onChange={(value) => {

@@ -8,9 +8,8 @@ import { withTranslation } from 'react-i18next'
 
 import openingHourIntervalToReadable from '../restaurant/parseOpeningHours'
 import TimeRange from '../utils/TimeRange'
+import { timePickerProps } from '../utils/antd'
 import { antdLocale } from '../i18n'
-
-const timeFormat = 'HH:mm'
 
 let minutes = []
 for (let i = 0; i <= 60; i++) {
@@ -68,16 +67,12 @@ class OpeningHours extends React.Component {
     this.setState({ disabled: true })
   }
 
-  onStartChange(key, date, timeString) {
-
-    if (!timeString) {
-      timeString = '00:00'
-    }
+  onStartChange(key, date) {
 
     const { rows } = this.state
     const row = rows[key]
 
-    row.start = timeString
+    row.start = date.format('HH:mm')
 
     rows.splice(key, 1, row)
     this.setState({ rows })
@@ -85,16 +80,12 @@ class OpeningHours extends React.Component {
     this.props.onChange(_.map(rows, (row) => this.rowToString(row)))
   }
 
-  onEndChange(key, date, timeString) {
-
-    if (!timeString) {
-      timeString = '00:00'
-    }
+  onEndChange(key, date) {
 
     const { rows } = this.state
     const row = rows[key]
 
-    row.end = timeString
+    row.end = date.format('HH:mm')
 
     rows.splice(key, 1, row)
     this.setState({ rows })
@@ -179,11 +170,11 @@ class OpeningHours extends React.Component {
         <td width="50%">
           <span className="d-block mr-3">
             <TimePicker
+              { ...timePickerProps }
               disabled={ this.state.disabled }
               disabledMinutes={this.disabledMinutes}
               onChange={this.onStartChange.bind(this, index)}
               defaultValue={startValue}
-              format={timeFormat}
               hideDisabledOptions
               placeholder="Heure"
               addon={panel => (
@@ -191,11 +182,11 @@ class OpeningHours extends React.Component {
               )}
             />
             <TimePicker
+              { ...timePickerProps }
               disabled={ this.state.disabled }
               disabledMinutes={this.disabledMinutes}
               onChange={this.onEndChange.bind(this, index)}
               defaultValue={endValue}
-              format={timeFormat}
               hideDisabledOptions
               placeholder="Heure"
               addon={panel => (
