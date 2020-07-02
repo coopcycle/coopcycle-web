@@ -76,7 +76,7 @@
         "jmikola/geojson": "~1.0",
         "simple-bus/symfony-bridge": "^5.3",
         "friendsofsymfony/jsrouting-bundle": "^2.2",
-        "jmose/command-scheduler-bundle": "^2.2",
+        "jmose/command-scheduler-bundle": "^3.0",
         "predicthq/address-formatter": "^1.1",
         "nmure/crawler-detect-bundle": "^2.0",
         "symfony/webpack-encore-bundle": "^1.6",

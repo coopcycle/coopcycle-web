@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d598ae0664fd9990abffb5d29a0ac939",
+    "content-hash": "fd5cb80dc8d68544254673455a330d52",
     "packages": [
         {
             "name": "api-platform/core",
@@ -2677,6 +2677,60 @@
                 "sql"
             ],
             "time": "2020-05-29T18:32:49+00:00"
+        },
+        {
+            "name": "dragonmantank/cron-expression",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dragonmantank/cron-expression.git",
+                "reference": "70c187e8d95c828fc93a2d09d63179c13381482e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/70c187e8d95c828fc93a2d09d63179c13381482e",
+                "reference": "70c187e8d95c828fc93a2d09d63179c13381482e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "replace": {
+                "mtdowling/cron-expression": "^1.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.11",
+                "phpunit/phpunit": "^6.4|^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cron\\": "src/Cron/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Tankersley",
+                    "email": "chris@ctankersley.com",
+                    "homepage": "https://github.com/dragonmantank"
+                }
+            ],
+            "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
+            "keywords": [
+                "cron",
+                "schedule"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/dragonmantank",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-03-25T18:33:19+00:00"
         },
         {
             "name": "drupal/core-vendor-hardening",
@@ -5900,41 +5954,41 @@
         },
         {
             "name": "jmose/command-scheduler-bundle",
-            "version": "v2.2.0",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/j-guyon/CommandSchedulerBundle.git",
-                "reference": "916ac90adb79e4aaf3951b8e3964aecfa58c56e5"
+                "reference": "c8a54b9cce09054ae489a71229f7f28e2da1fc45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/j-guyon/CommandSchedulerBundle/zipball/916ac90adb79e4aaf3951b8e3964aecfa58c56e5",
-                "reference": "916ac90adb79e4aaf3951b8e3964aecfa58c56e5",
+                "url": "https://api.github.com/repos/j-guyon/CommandSchedulerBundle/zipball/c8a54b9cce09054ae489a71229f7f28e2da1fc45",
+                "reference": "c8a54b9cce09054ae489a71229f7f28e2da1fc45",
                 "shasum": ""
             },
             "require": {
                 "doctrine/doctrine-bundle": "^1.6.10|^2.0",
                 "doctrine/orm": "^2.5.11",
-                "mtdowling/cron-expression": "^1.2",
-                "php": "^7.1",
-                "symfony/asset": "^3.4|^4.0",
-                "symfony/console": "^3.4|^4.0",
-                "symfony/form": "^3.4|^4.0",
-                "symfony/framework-bundle": "^3.4|^4.0",
-                "symfony/templating": "^3.4|^4.0",
-                "symfony/translation": "^3.4|^4.0",
-                "symfony/twig-bundle": "^3.4|^4.0",
-                "symfony/validator": "^3.4|^4.0"
+                "dragonmantank/cron-expression": "^3.0",
+                "php": "^7.2",
+                "symfony/asset": "^3.4|^4.3|^5.0",
+                "symfony/console": "^3.4|^4.3|^5.0",
+                "symfony/form": "^3.4|^4.3|^5.0",
+                "symfony/framework-bundle": "^3.4|^4.3|^5.0",
+                "symfony/templating": "^3.4|^4.3|^5.0",
+                "symfony/translation": "^3.4|^4.3|^5.0",
+                "symfony/twig-bundle": "^3.4|^4.3|^5.0",
+                "symfony/validator": "^3.4|^4.3|^5.0"
             },
             "require-dev": {
                 "doctrine/doctrine-fixtures-bundle": "^3.0.0",
                 "ext-pcntl": "*",
-                "liip/functional-test-bundle": "^3.2",
-                "liip/test-fixtures-bundle": "^1.0.0",
+                "liip/functional-test-bundle": "^4.2",
+                "liip/test-fixtures-bundle": "^1.4.0",
                 "php-coveralls/php-coveralls": "^2.0",
-                "phpunit/phpunit": "^5.7",
-                "symfony/css-selector": "^3.4|^4.0",
-                "symfony/security-bundle": "^3.4|^4.0"
+                "phpunit/phpunit": "^8.5",
+                "symfony/css-selector": "^3.4|^4.0|^5.0",
+                "symfony/security-bundle": "^3.4|^4.0|^5.0"
             },
             "suggest": {
                 "ext-pcntl": "For using the scheduler daemon"
@@ -5964,7 +6018,7 @@
                 "symfony",
                 "task"
             ],
-            "time": "2020-01-28T10:46:55+00:00"
+            "time": "2020-07-01T14:30:21+00:00"
         },
         {
             "name": "jms/metadata",
@@ -8178,51 +8232,6 @@
                 "psr-3"
             ],
             "time": "2019-12-20T14:15:16+00:00"
-        },
-        {
-            "name": "mtdowling/cron-expression",
-            "version": "v1.2.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mtdowling/cron-expression.git",
-                "reference": "9be552eebcc1ceec9776378f7dcc085246cacca6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mtdowling/cron-expression/zipball/9be552eebcc1ceec9776378f7dcc085246cacca6",
-                "reference": "9be552eebcc1ceec9776378f7dcc085246cacca6",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.0|~5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Cron\\": "src/Cron/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Dowling",
-                    "email": "mtdowling@gmail.com",
-                    "homepage": "https://github.com/mtdowling"
-                }
-            ],
-            "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
-            "keywords": [
-                "cron",
-                "schedule"
-            ],
-            "abandoned": "dragonmantank/cron-expression",
-            "time": "2019-12-28T04:23:06+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
