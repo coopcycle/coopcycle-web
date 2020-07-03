@@ -235,11 +235,9 @@ trait StoreTrait
             }
         }
 
-        $taxCategory = $this->get('sylius.repository.tax_category')->findOneBy([
-            'code' => 'SERVICE'
-        ]);
-        $variant = $this->get('sylius.factory.product_variant')->createNew();
-        $variant->setTaxCategory($taxCategory);
+        $variant = $this->get('sylius.factory.product_variant')
+            ->createForDelivery($delivery, 0);
+
         $rate = $taxRateResolver->resolve($variant, [
             'country' => strtolower($this->getParameter('region_iso')),
         ]);
