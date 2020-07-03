@@ -32,24 +32,6 @@ class TaxRateRuntime implements RuntimeExtensionInterface
         return $values;
     }
 
-    public function splitItems($order)
-    {
-        $taxRates = $this->taxRateRepository->findAll();
-
-        $values = [];
-        foreach ($taxRates as $taxRate) {
-            $taxTotal = $order->getItemsTaxTotalByRate($taxRate);
-            if ($taxTotal > 0) {
-                $values[] = [
-                    'name' => $taxRate->getName(),
-                    'amount' => $taxTotal,
-                ];
-            }
-        }
-
-        return $values;
-    }
-
     public function name($code)
     {
         $taxRate = $this->taxRateRepository->findOneByCode($code);
