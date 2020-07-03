@@ -6,7 +6,7 @@ import { ContextMenuTrigger } from 'react-contextmenu'
 import _ from 'lodash'
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
-import { selectTasksWithColor, selectIsVisibleTask } from '../redux/selectors'
+import { selectIsVisibleTask, selectTasksWithColor } from '../redux/selectors'
 import TaskEta from './TaskEta'
 
 moment.locale($('html').attr('lang'))

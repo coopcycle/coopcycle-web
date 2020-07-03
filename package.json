@@ -19,6 +19,7 @@
   "dependencies": {
     "@mapbox/polyline": "^1.1.0",
     "co": "^4.6.0",
+    "coopcycle-frontend-js": "git+https://git@github.com/coopcycle/coopcycle-frontend-js.git#v1.0.2",
     "dotenv": "^8.2.0",
     "form-data": "^2.3.3",
     "i18next": "^17.0.16",
