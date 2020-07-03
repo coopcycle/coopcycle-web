@@ -86,6 +86,9 @@ base_standard:
   rates:
     be:
       standard: 0.21
+    ca-bc:
+      gst: 0.05
+      pst: 0.07
     de:
       standard: 0.16
     es:
@@ -101,6 +104,8 @@ base_intermediary:
   rates:
     be:
       intermediary: 0.12
+    ca-bc:
+      gst: 0.05
     es:
       intermediary: 0.1
     fr:
@@ -112,6 +117,8 @@ base_reduced:
   rates:
     be:
       reduced: 0.06
+    ca-bc:
+      zero: 0.00
     de:
       reduced: 0.05
     es:
