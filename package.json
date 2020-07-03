@@ -110,7 +110,7 @@
     "react-sortablejs": "^1.5.1",
     "react-stickynode": "^3.0.3",
     "react-timeago": "^4.4.0",
-    "react-toastify": "^5.5.0",
+    "react-toastify": "^6.0.8",
     "redux-actions": "^2.6.5",
     "redux-async-queue": "^1.0.0",
     "redux-thunk": "^2.3.0",
