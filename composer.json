@@ -100,7 +100,7 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "sylius/resource-bundle": "dev-master",
         "twig/cache-extension": "^1.4",
-        "kreait/firebase-bundle": "^1.9",
+        "kreait/firebase-bundle": "^2.1",
         "phpdocumentor/reflection-docblock": "^4.0",
         "sylius/customer-bundle": "^1.6",
         "letudiant/composer-shared-package-plugin": "^4.0",
