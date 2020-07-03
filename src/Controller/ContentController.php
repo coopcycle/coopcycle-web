@@ -79,12 +79,20 @@ class ContentController extends AbstractController
     /**
      * @Route("/privacy", name="privacy")
      */
-    public function privacyAction(Filesystem $assetsFilesystem)
+    public function privacyAction(Request $request, Filesystem $assetsFilesystem)
     {
         if ($assetsFilesystem->has('custom_privacy.md')) {
             $text = $assetsFilesystem->read('custom_privacy.md');
         } else {
-            $text = file_get_contents('http://coopcycle.org/privacy/fr.md');
+
+            $locale = $request->getLocale();
+            $files = [
+                'fr' => 'http://coopcycle.org/privacy/fr.md',
+                'en' => 'http://coopcycle.org/privacy/en.md',
+            ];
+
+            $key = array_key_exists($locale, $files) ? $locale : 'en';
+            $text = file_get_contents($files[$key]);
         }
 
         return $this->render('content/markdown.html.twig', [
