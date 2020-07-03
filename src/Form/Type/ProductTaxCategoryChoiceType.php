@@ -61,12 +61,6 @@ class ProductTaxCategoryChoiceType extends AbstractType
                 return '';
             }
 
-            $amount = array_reduce(
-                $rates->toArray(),
-                fn($carry, $rate) => $carry + $rate->getAmount(),
-                0.0
-            );
-
             // When multiple rates apply
             // Ex: Base › Standard rate (GST 5%, PST 7%)
             if (count($rates) > 1) {
@@ -80,6 +74,12 @@ class ProductTaxCategoryChoiceType extends AbstractType
                     implode(', ', $ratesAsString)
                 );
             }
+
+            $amount = array_reduce(
+                $rates->toArray(),
+                fn($carry, $rate) => $carry + $rate->getAmount(),
+                0.0
+            );
 
             return sprintf('%s (%d%%)',
                 $this->translator->trans($taxCategory->getName(), [], 'taxation'),
