@@ -108,7 +108,7 @@
     "react-redux": "^7.2.0",
     "react-select": "^3.1.0",
     "react-sortablejs": "^1.5.1",
-    "react-stickynode": "^2.1.1",
+    "react-stickynode": "^3.0.3",
     "react-timeago": "^4.4.0",
     "react-toastify": "^5.5.0",
     "redux-actions": "^2.6.5",
