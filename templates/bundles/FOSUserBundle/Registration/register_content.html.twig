@@ -15,6 +15,9 @@
       <div>
         <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'registration.submit'|trans }}</button>
       </div>
+      <div class="help-block">
+        {% trans from 'messages' %}authentication.unsubscribe{% endtrans %}
+      </div>
     {{ form_end(form) }}
     <hr>
     <div class="text-center">

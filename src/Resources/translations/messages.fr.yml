@@ -787,6 +787,7 @@ authentication.not_registered_yet: Pas encore inscrit ?
 authentication.create_account: Créez votre compte
 authentication.already_registered: Vous avez déjà un compte ?
 authentication.sign_in: Identifiez-vous
+authentication.unsubscribe: Vous pourrez facilement vous désinscrire à tout moment via les liens de désinscription présents dans chacun de nos emails
 maintenance.text: Site en maintenance - Nous revenons dans quelques instants
 api_apps.breadcrumb: Clients d'API
 api_apps.created.message: Le client a bien été ajouté. Utilisez les identifiants ci-dessous
@@ -862,6 +863,8 @@ form.registration.legal.label: J'accepte les Conditions Générales et la Politi
   de Confidentialité
 form.registration.legal.help: En cochant cette case, vous acceptez nos <a href="%terms_url%">Conditions
   Générales</a> et notre <a href="%privacy_url%">Politique de Confidentialité</a>.
+form.registration.newsletter_optin.label: J'accepte de recevoir la newsletter de %brand_name%
+form.registration.marketing_optin.label: J'accepte de recevoir des promotions ponctuelles
 order.adjustment_type.reusable_packaging: Emballage
 form.store_type.package_set.label: Ensemble de paquets
 adminDashboard.package_sets.title: Paquets

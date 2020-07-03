@@ -9,7 +9,6 @@ use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
-use AppBundle\Form\RegistrationType;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\ApiUser;

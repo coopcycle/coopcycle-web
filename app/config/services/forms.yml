@@ -25,7 +25,6 @@ services:
 
   AppBundle\Form\RegistrationType:
     arguments:
-      $countryIso: '%country_iso%'
       $isDemo: '%is_demo%'
     tags:
       - { name: form.type }
