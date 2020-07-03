@@ -77,29 +77,26 @@ class CartTotal extends React.Component {
       }
     }
 
-    if (adjustments.length > 0 || deliveryAdjustments.length > 0) {
-
-      return (
-        <div>
-          { deliveryAdjustments.map(adjustment =>
-            <Adjustment
-              key={ adjustment.id }
-              adjustment={ _.first(deliveryAdjustments) }
-              { ...deliveryAdjustmentProps } />
-          )}
-          { showPricesTaxExcluded && groupTaxAdjustments(taxAdjustments, items).map(adjustment =>
-            <Adjustment
-              key={ adjustment.label }
-              adjustment={ adjustment } />
-          )}
-          { adjustments.map(adjustment =>
-            <Adjustment
-              key={ adjustment.id }
-              adjustment={ adjustment } />
-          )}
-        </div>
-      )
-    }
+    return (
+      <div>
+        { deliveryAdjustments.map(adjustment =>
+          <Adjustment
+            key={ adjustment.id }
+            adjustment={ _.first(deliveryAdjustments) }
+            { ...deliveryAdjustmentProps } />
+        )}
+        { showPricesTaxExcluded && groupTaxAdjustments(taxAdjustments, items).map(adjustment =>
+          <Adjustment
+            key={ adjustment.label }
+            adjustment={ adjustment } />
+        )}
+        { adjustments.map(adjustment =>
+          <Adjustment
+            key={ adjustment.id }
+            adjustment={ adjustment } />
+        )}
+      </div>
+    )
   }
 
   render() {
