@@ -20,7 +20,6 @@ parameters:
         - '#Call to an undefined method FOS\\UserBundle\\Model\\UserInterface::[a-zA-Z]+\(\)#'
         - '#Call to an undefined method AppBundle\\Sylius\\Order\\OrderInterface::[a-zA-Z]+\(\)#'
         - '#Call to an undefined method AppBundle\\Entity\\Model\\TaggableInterface::getId\(\)#'
-        - '#Call to an undefined method Sylius\\Component\\Resource\\Repository\\RepositoryInterface::[a-zA-Z]+\(\)#'
         - '#Call to an undefined method League\\Geotools\\Geohash\\GeohashInterface::getCoordinate\(\)#'
         - '#Call to an undefined method Sylius\\Component\\Order\\Repository\\OrderRepositoryInterface::countByCustomerAndCoupon\(\)#'
         - '#Call to an undefined method Symfony\\Component\\HttpFoundation\\Session\\SessionInterface::getFlashBag\(\)#'
