@@ -29,6 +29,11 @@
         <cascade-persist/>
       </cascade>
     </one-to-many>
+    <one-to-many field="optinConsents" target-entity="AppBundle\Entity\OptinConsent" mapped-by="user">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-many>
     <many-to-one field="channel" target-entity="Sylius\Component\Channel\Model\Channel">
       <join-columns>
         <join-column name="channel_id" referenced-column-name="id" nullable="true"/>
