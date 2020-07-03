@@ -2,6 +2,7 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use League\Csv\Writer as CsvWriter;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
@@ -18,7 +19,8 @@ class RestaurantStats implements \IteratorAggregate, \Countable
     private $total = 0;
     private $itemsTaxTotal = 0;
 
-    private $taxRates = [];
+    private $taxTotals = [];
+    private $taxColumns = [];
 
     private $numberFormatter;
 
@@ -35,31 +37,29 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         $this->withRestaurantName = $withRestaurantName;
         $this->withMessenger = $withMessenger;
 
-    	foreach ($orders as $order) {
+        $taxesHelper = new TaxesHelper($taxRateRepository, $translator);
+
+        foreach ($orders as $index => $order) {
     		$this->itemsTotal += $order->getItemsTotal();
     		$this->total += $order->getTotal();
             $this->itemsTaxTotal += $order->getItemsTaxTotal();
-    	}
 
-        $taxRateCodes = [];
-        foreach ($orders as $order) {
-            foreach ($order->getItems() as $orderItem) {
-                foreach ($orderItem->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT) as $adjustment) {
-                    $taxRateCodes[] = $adjustment->getOriginCode();
-                }
-            }
+            $taxTotals = $taxesHelper->getTaxTotals($order, $itemsOnly = true);
+
+            $this->taxTotals[$index] = $taxTotals;
+            $this->taxColumns = array_merge($this->taxColumns, array_keys($taxTotals));
         }
 
-        $taxRateCodes = array_unique($taxRateCodes);
-        sort($taxRateCodes);
-
-        foreach ($taxRateCodes as $taxRateCode) {
-            $this->taxRates[] = $taxRateRepository->findOneByCode($taxRateCode);
-        }
+        $this->taxColumns = array_unique($this->taxColumns);
 
         $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
         $this->numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
         $this->numberFormatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
+    }
+
+    private function isTaxColumn($column)
+    {
+        return in_array($column, $this->taxColumns);
     }
 
     private function formatNumber(int $amount)
@@ -162,11 +162,6 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         return new \ArrayIterator($this->orders);
     }
 
-    public function getTaxRates()
-    {
-        return $this->taxRates;
-    }
-
     public function getColumns()
     {
         $headings = [];
@@ -181,8 +176,8 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         $headings[] = 'fulfillment_method';
         $headings[] = 'completed_at';
         $headings[] = 'total_products_excl_tax';
-        foreach ($this->getTaxRates() as $taxRate) {
-            $headings[] = sprintf('vat.%s', $taxRate->getCode()); //$taxRate->getName();
+        foreach ($this->taxColumns as $taxLabel) {
+            $headings[] = $taxLabel;
         }
         $headings[] = 'total_products_incl_tax';
         $headings[] = 'delivery_fee';
@@ -198,13 +193,9 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getColumnLabel($column)
     {
-        if (0 === strpos($column, 'vat.')) {
-            $code = str_replace('vat.', '', $column);
-            foreach ($this->getTaxRates() as $rate) {
-                if ($rate->getCode() === $code) {
-                    return $rate->getName();
-                }
-            }
+        if ($this->isTaxColumn($column)) {
+
+            return $column;
         }
 
         return $this->translator->trans(sprintf('order.export.heading.%s', $column));
@@ -214,13 +205,11 @@ class RestaurantStats implements \IteratorAggregate, \Countable
     {
         $order = $this->orders[$index];
 
-        if (0 === strpos($column, 'vat.')) {
-            $code = str_replace('vat.', '', $column);
-            foreach ($this->getTaxRates() as $rate) {
-                if ($rate->getCode() === $code) {
-                    return $this->formatNumber($order->getItemsTaxTotalByRate($rate));
-                }
-            }
+        if ($this->isTaxColumn($column)) {
+
+            return $this->formatNumber(
+                $this->taxTotals[$index][$column]
+            );
         }
 
         switch ($column) {
@@ -263,13 +252,15 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getColumnTotal($column)
     {
-        if (0 === strpos($column, 'vat.')) {
-            $code = str_replace('vat.', '', $column);
-            foreach ($this->getTaxRates() as $rate) {
-                if ($rate->getCode() === $code) {
-                    return $this->formatNumber($this->getTaxTotalByRate($rate));
-                }
-            }
+        if ($this->isTaxColumn($column)) {
+
+            $total = array_reduce(
+                $this->taxTotals,
+                fn($carry, $taxTotals): int => $carry + $taxTotals[$column],
+                0
+            );
+
+            return $this->formatNumber($total);
         }
 
         switch ($column) {
@@ -298,7 +289,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function isNumericColumn($column)
     {
-        if (0 === strpos($column, 'vat.')) {
+        if ($this->isTaxColumn($column)) {
 
             return true;
         }

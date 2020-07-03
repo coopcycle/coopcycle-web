@@ -68,7 +68,7 @@
     {% if show_taxes %}
       {% for tax_rate in order|split_tax_rates %}
       <tr>
-        <th>{% trans with { '%name%': tax_rate.name|trans({}, 'taxation') } %}order.total_tax_by_rate{% endtrans %}</th>
+        <th>{% trans with { '%name%': tax_rate.name } %}order.total_tax_by_rate{% endtrans %}</th>
         <td class="text-right text-nowrap">
           {{ tax_rate.amount|price_format }}
         </td>
