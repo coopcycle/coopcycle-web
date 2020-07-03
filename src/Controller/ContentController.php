@@ -39,8 +39,8 @@ class ContentController extends AbstractController
             return $assetsFilesystem->read('about_us.md');
         });
 
-        return $this->render('content/about_us.html.twig', [
-            'about_us' => $aboutUs,
+        return $this->render('content/markdown.html.twig', [
+            'text' => $aboutUs,
         ]);
     }
 
@@ -55,7 +55,7 @@ class ContentController extends AbstractController
             $text = file_get_contents('http://coopcycle.org/legal/fr.md');
         }
 
-        return $this->render('legal/index.html.twig', [
+        return $this->render('content/markdown.html.twig', [
             'text' => $text
         ]);
     }
@@ -71,7 +71,7 @@ class ContentController extends AbstractController
             $text = file_get_contents('http://coopcycle.org/terms/fr.md');
         }
 
-        return $this->render('legal/index.html.twig', [
+        return $this->render('content/markdown.html.twig', [
             'text' => $text
         ]);
     }
@@ -87,7 +87,7 @@ class ContentController extends AbstractController
             $text = file_get_contents('http://coopcycle.org/privacy/fr.md');
         }
 
-        return $this->render('legal/index.html.twig', [
+        return $this->render('content/markdown.html.twig', [
             'text' => $text
         ]);
     }
