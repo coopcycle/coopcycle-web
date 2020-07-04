@@ -118,6 +118,6 @@
     "sass-loader": "^8.0.2",
     "sortablejs": "^1.10.1",
     "store": "^2.0.12",
-    "x-data-spreadsheet": "^1.0.36"
+    "x-data-spreadsheet": "^1.1"
   }
 }
