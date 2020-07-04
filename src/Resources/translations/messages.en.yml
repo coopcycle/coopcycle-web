@@ -801,6 +801,7 @@ authentication.not_registered_yet: Not registered yet?
 authentication.create_account: Create your account
 authentication.already_registered: Already registered?
 authentication.sign_in: Sign in
+authentication.choose_password: Choose your password
 maintenance.text: Site under maintenance - We will be back soon
 api_apps.breadcrumb: API clients
 api_apps.created.message: The client has been added. Use the credentials below to
