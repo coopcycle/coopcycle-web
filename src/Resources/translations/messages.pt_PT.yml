@@ -1,14 +1,14 @@
-global.changesSaved: ''
-navbar.login: ''
-navbar.myAccount: ''
-base.footer.contactUs: ''
-base.footer.help: ''
-base.footer.legal: ''
-base.footer.suggest: ''
-base.footer.privacy: ''
+global.changesSaved: A alterações foram gravadas.
+navbar.login: Autenticação
+navbar.myAccount: A minha conta
+base.footer.contactUs: Contacte-nos
+base.footer.help: Ajuda
+base.footer.legal: Aviso legal
+base.footer.suggest: Sugira um restaurante
+base.footer.privacy: Privacidade
 base.footer.terms: ''
-adminDashboard.title: ''
-adminDashboard.configuration: ''
+adminDashboard.title: Painel do administrador
+adminDashboard.configuration: Configuração
 adminDashboard.tooltip.orders: ''
 adminDashboard.tooltip.deliveries: ''
 adminDashboard.tooltip.stores: ''
