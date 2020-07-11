@@ -72,8 +72,8 @@ adminDashboard.tags.save: Enregistrer
 adminDashboard.tags.createNew: Créer un tag
 adminDashboard.tags.name: Nom
 adminDashboard.tags.color: Couleur
-adminDashboard.tags.confirm_delete: Êtes-vous sûr de supprimer ce tag ? Tous les éléments
-  s'y rapportant ne pourront plus l'afficher ou être regroupés par ce dernier.
+adminDashboard.tags.confirm_delete: "Êtes-vous sûr de supprimer ce tag ?\nTous les\
+  \ éléments s'y rapportant ne pourront plus l'afficher ou être regroupés par ce dernier."
 adminDashboard.taxation.title: Taxes
 adminDashboard.taxation.button: Ajouter une taxe
 adminDashboard.zones.title: Zones
@@ -591,7 +591,8 @@ form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages r
   (%price%)
 form.checkout_address.reusable_packaging_loopeat_enabled.label: Je veux des lunchbox
   consignées LoopEat
-form.checkout_address.reusable_packaging.loopeat.learn_more: En savoir plus.
+form.checkout_address.reusable_packaging.loopeat.learn_more: En savoir plus à propos
+  de LoopEat
 form.checkout_address.reusable_packaging.loopeat.reusable_quantity.label: Votre commande
   présente <strong>%count%</strong> plat adapté à la livraison zero déchet|Votre commande
   présente <strong>%count%</strong> plats adaptés à la livraison zero déchet
@@ -771,7 +772,7 @@ embed.delivery.summary: "Vous avez demandé une course qui vous sera déposée l
   \ à l'adresse suivante : <strong>%dropoff_address%</strong>\n<br>\nNous avons calculé\
   \ une distance de <strong>%distance% kilomètres</strong>.\n<br>\nSelon nos tarifs,\
   \ cette course vous coûtera <strong>%total_excluding_tax% HT</strong> (%total_including_tax%\
-  \ TTC)."
+  \ TTC). "
 embed.delivery.submit.help: Cliquez pour confirmer le devis et commander la course.
 embed.delivery.confirm_message: "Nous avons bien enregistré votre demande. Votre course\
   \ est en attente de validation.\n<br>\nNous allons vous envoyer un email d'ici quelques\
@@ -987,3 +988,29 @@ form.time_slot.same_day_cutoff.help: Par exemple si vous sélectionnez 11h, les 
   pour le jour même ne seront pas affichés après 11h
 order.reusable_packaging.pledge_return.disclaimer: Le client a indiqué que %count%
   emballages seront retournés
+form.customize.about_us_enabled.label: Activer la page à propos
+form.customize.motto.label: Slogan
+form.customize.motto.help: Ceci sera affiché sur la page d'accueil
+localBusiness.form.enabled: Activé
+restaurant.contract.takeAwayFeeRate.label: Frais de plateforme pour la vente à emporter
+restaurant.contract.takeAwayFeeRate.help: Ce pourcentage sera retenu par la plateforme
+  sur le total des produits
+restaurant.list.promotions: Promotions
+order.payment.do_not_close: Ne fermez pas cette page
+order.payment.waiting_success: Votre banque a confirmé le paiement
+form.pricing_rule_set.strategy.help: Les règles sont évaluées de haut en bas. En fonction
+  du mode de calcul choisi, soit la première règle qui correspond déterminera le prix,
+  soit le prix sera calculé en additionnant toutes les règles qui correspondent.
+form.pricing_rule_set.strategy.label: Mode de calcul
+form.pricing_rule_set.strategy.find.label: La première règle qui correspond
+form.pricing_rule_set.strategy.map.label: Toutes les règles qui correspondent
+form.settings.company_logo.label: Logo de l'entreprise
+restaurant.form.section.taxonomy: Taxonomie
+localBusiness.form.use_different_business_address.label: Utiliser une adresse commerciale
+  différente
+localBusiness.form.business_address.label: Adresse commerciale
+restaurant.form.giropay_enabled.label: Activer Giropay
+restaurant.form.section.loopeat: LoopEat
+form.settings.company_logo.help: Ce logo sera utilisé pour les factures et les preuves
+  de livraison
+form.product_option.preview_title: Aperçu de l'option
