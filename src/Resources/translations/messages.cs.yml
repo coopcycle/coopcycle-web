@@ -84,8 +84,9 @@ adminDashboard.tags.save: Uložit
 adminDashboard.tags.createNew: Vytvořit novou značku
 adminDashboard.tags.name: Název
 adminDashboard.tags.color: Barva
-adminDashboard.tags.confirm_delete: "Opravdu chcete tuto značku smazat?\nVšechny prvky,\
-  \ které na ní odkazují, ji již nebudou moci ukázat, nebo podle ní třídít."
+adminDashboard.tags.confirm_delete: "Opravdu chcete tuto značku smazat?\nZnačka bude\
+  \ odstraněna z příslušných prvků, které ji používají, a nebude již seskupena podle\
+  \ značky."
 adminDashboard.taxation.title: Zdanění
 adminDashboard.taxation.button: Přidat zdanění
 adminDashboard.zones.title: Oblasti
@@ -1015,3 +1016,4 @@ form.registration.legal.label: Souhlasím s podmínkami a zásadami ochrany osob
   údajů
 base.footer.terms: Podmínky služby
 base.footer.privacy: Soukromí
+authentication.choose_password: Zvolte si své heslo
