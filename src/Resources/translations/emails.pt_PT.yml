@@ -1,7 +1,10 @@
-registration.email.subject: ''
-registration.email.message: ''
-registration.email.confirm: ''
-registration.email.disclaimer: ''
+registration.email.subject: "E-mail confirmação\n"
+registration.email.message: "<h2>Bem-vindo ao (à) %brand_name%, %username%</h2>\n\
+  Está a receber este e-mail porque recentemente registou uma conta no(a) %brand_name%.\n\
+  <br>\nConfirme o seu endereço de e-mail clicando no botão abaixo.\n"
+registration.email.confirm: Confirmar e-mail
+registration.email.disclaimer: Esta ligação só pode ser usada uma vez para validar
+  a sua conta
 registration.email.textMessage: ''
 resetting.email.message: ''
 resetting.email.reset: ''
