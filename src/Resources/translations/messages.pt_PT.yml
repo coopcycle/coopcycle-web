@@ -6,127 +6,138 @@ base.footer.help: Ajuda
 base.footer.legal: Aviso legal
 base.footer.suggest: Sugira um restaurante
 base.footer.privacy: Privacidade
-base.footer.terms: ''
+base.footer.terms: Termos de serviço
 adminDashboard.title: Painel do administrador
 adminDashboard.configuration: Configuração
-adminDashboard.tooltip.orders: ''
-adminDashboard.tooltip.deliveries: ''
-adminDashboard.tooltip.stores: ''
-adminDashboard.tooltip.restaurants: ''
-adminDashboard.tooltip.users: ''
-adminDashboard.dashboard.title: ''
-adminDashboard.dashboard.import: ''
-adminDashboard.dashboard.export: ''
-adminDashboard.dashboard.importTasks: ''
-adminDashboard.dashboard.exportTasks: ''
-adminDashboard.dashboard.deleteTaskGroup: ''
-adminDashboard.dashboard.displayByGroups: ''
-adminDashboard.dashboard.displayAll: ''
-adminDashboard.dashboard.cancel: ''
-adminDashboard.deliveries.title: ''
-adminDashboard.deliveries.type: ''
-adminDashboard.deliveries.dueDate: ''
-adminDashboard.deliveries.courier: ''
-adminDashboard.deliveries.address: ''
-adminDashboard.deliveries.delivery: ''
-adminDashboard.deliveries.originAddress: ''
-adminDashboard.deliveries.deliveryAddress: ''
-adminDashboard.deliveries.save: ''
+adminDashboard.tooltip.orders: Administrar os pedidos dos restaurantes
+adminDashboard.tooltip.deliveries: Administrar entregas
+adminDashboard.tooltip.stores: Administrar lojas
+adminDashboard.tooltip.restaurants: Administrar restaurantes
+adminDashboard.tooltip.users: Administrar contas de utilizador
+adminDashboard.dashboard.title: Painel de controle
+adminDashboard.dashboard.import: Importar
+adminDashboard.dashboard.export: Exportar
+adminDashboard.dashboard.importTasks: Importar tarefas
+adminDashboard.dashboard.exportTasks: Exportar tarefas
+adminDashboard.dashboard.deleteTaskGroup: Apagar grupo de tarefas
+adminDashboard.dashboard.displayByGroups: Mostrar por grupos
+adminDashboard.dashboard.displayAll: Mostrar tudo
+adminDashboard.dashboard.cancel: Cancelar
+adminDashboard.deliveries.title: Entregas
+adminDashboard.deliveries.type: Tipo
+adminDashboard.deliveries.dueDate: Data de vencimento
+adminDashboard.deliveries.courier: Estafeta
+adminDashboard.deliveries.address: Endereço
+adminDashboard.deliveries.delivery: Entrega
+adminDashboard.deliveries.originAddress: Endereço original
+adminDashboard.deliveries.deliveryAddress: Endereço de entrega
+adminDashboard.deliveries.save: Gravar
 adminDashboard.embed.title: ''
-adminDashboard.package_sets.title: ''
-adminDashboard.customize.title: ''
-embed.delivery.title: ''
-embed.delivery.configure_pricing_rule_set: ''
-embed.delivery.iframe_code: ''
-embed.breadcrumb.start: ''
-embed.breadcrumb.summary: ''
-embed.breadcrumb.confirm: ''
-embed.delivery.summary.title: ''
-embed.delivery.use_form_below: ''
-embed.delivery.paid_at: ''
-embed.payment.heading: ''
-embed.delivery.contact_heading: ''
-embed.delivery.specify_billing_address: ''
-embed.delivery.billing_address: ''
-adminDashboard.menuCategories.menu: ''
-adminDashboard.menuCategories.categories: ''
-adminDashboard.menuCategories.addCategory: ''
-adminDashboard.menuCategories.save: ''
-adminDashboard.stores.title: ''
-adminDashboard.stores.createNew: ''
-adminDashboard.stores.form.uploadImage: ''
-adminDashboard.orders.title: ''
-adminDashboard.orders.previousOrders: ''
-adminDashboard.orders.showCanceled: ''
-adminDashboard.restaurants.title: ''
-adminDashboard.restaurants.createNew: ''
-adminDashboard.restaurants.exclusive: ''
-adminDashboard.users.title: ''
-adminDashboard.users.edit: ''
-adminDashboard.users.roles: ''
-adminDashboard.users.editUser: ''
-adminDashboard.users.edit.addStore: ''
-adminDashboard.users.edit.addRestaurant: ''
-adminDashboard.users.createNew: ''
-adminDashboard.users.invite: ''
-form.user.quotes_allowed.label: ''
-adminDashboard.settings.title: ''
-adminDashboard.pricing.title: ''
-adminDashboard.pricing.manage: ''
-adminDashboard.pricing.settings: ''
-adminDashboard.pricing.noPricings: ''
-adminDashboard.pricing.createNew: ''
-adminDashboard.pricing.noRuleFound: ''
-adminDashboard.pricing.addRule: ''
-adminDashboard.tags.title: ''
-adminDashboard.tags.save: ''
-adminDashboard.tags.createNew: ''
-adminDashboard.tags.name: ''
-adminDashboard.tags.color: ''
-adminDashboard.tags.confirm_delete: ''
-adminDashboard.taxation.title: ''
-adminDashboard.taxation.button: ''
-adminDashboard.zones.title: ''
-adminDashboard.zones.cancel: ''
-adminDashboard.zones.save: ''
-adminDashboard.zones.delete: ''
-adminDashboard.zones.uploadGeoJSON: ''
-adminDashboard.zones.send: ''
-adminDashboard.back.title: ''
-adminDashboard.promotions.title: ''
-adminDashboard.pledges.title: ''
-adminDashboard.time_slots.title: ''
-deliveryForm.noPriceWarning: ''
-deliveryForm.noPriceFromPricingWarning: ''
-delivery.createNew: ''
-delivery.tracking_link: ''
-delivery.with_id: ''
-help.title: ''
+adminDashboard.package_sets.title: Embalagens
+adminDashboard.customize.title: Personalizar
+embed.delivery.title: Formulário de criação de entregas
+embed.delivery.configure_pricing_rule_set: Para aplicar, primeiro precisa de configurar
+  uma regra de preços
+embed.delivery.iframe_code: Use o código HTML abaixo para incorporar o formulário
+  na sua página
+embed.breadcrumb.start: Informação
+embed.breadcrumb.summary: Resumo
+embed.breadcrumb.confirm: Confirmação
+embed.delivery.summary.title: Resumo do pedido
+embed.delivery.use_form_below: Use o formulário abaixo para pagar o seu pedido com
+  cartão de crédito
+embed.delivery.paid_at: Pagamento realizado em %date%
+embed.payment.heading: Pagar o meu pedido
+embed.delivery.contact_heading: Contato
+embed.delivery.specify_billing_address: Especifique um endereço de facturação
+embed.delivery.billing_address: Endereço de facturação
+adminDashboard.menuCategories.menu: Menu
+adminDashboard.menuCategories.categories: Categorias
+adminDashboard.menuCategories.addCategory: Adicionar categoria
+adminDashboard.menuCategories.save: Gravar
+adminDashboard.stores.title: Lojas
+adminDashboard.stores.createNew: Criar uma nova loja
+adminDashboard.stores.form.uploadImage: Carregar uma imagem
+adminDashboard.orders.title: Pedidos
+adminDashboard.orders.previousOrders: Pedidos anteriores
+adminDashboard.orders.showCanceled: Mostrar pedidos cancelados
+adminDashboard.restaurants.title: Restaurantes
+adminDashboard.restaurants.createNew: Criar um novo restaurante
+adminDashboard.restaurants.exclusive: Exclusivo
+adminDashboard.users.title: Utilizadores
+adminDashboard.users.edit: Editar
+adminDashboard.users.roles: Funções
+adminDashboard.users.editUser: Editar utilizador
+adminDashboard.users.edit.addStore: Adicionar uma loja
+adminDashboard.users.edit.addRestaurant: Adicionar um restaurante
+adminDashboard.users.createNew: Adicionar utilizador
+adminDashboard.users.invite: Convidar utilizador
+form.user.quotes_allowed.label: Permitir que este utilizador solicite uma cotação
+adminDashboard.settings.title: Configurações
+adminDashboard.pricing.title: Preços
+adminDashboard.pricing.manage: Gerir
+adminDashboard.pricing.settings: Configurações
+adminDashboard.pricing.noPricings: Ainda não existem preços
+adminDashboard.pricing.createNew: Criar um novo preço
+adminDashboard.pricing.noRuleFound: Regras de preços não encontradas. As regras de
+  preços definem como é que os custos de entrega são calculados.
+adminDashboard.pricing.addRule: Adicionar regra
+adminDashboard.tags.title: Marcadores
+adminDashboard.tags.save: Gravar
+adminDashboard.tags.createNew: Criar um marcador novo
+adminDashboard.tags.name: Nome
+adminDashboard.tags.color: Cor
+adminDashboard.tags.confirm_delete: "Tem a certeza que quer remover este marcador\
+  \ ? \nO marcador será removido doa respectivos elementos que o estejam a usar e\
+  \ não serão mais agrupados pelo marcador."
+adminDashboard.taxation.title: Tributação
+adminDashboard.taxation.button: Adicionar tributação
+adminDashboard.zones.title: Zonas
+adminDashboard.zones.cancel: Cancelar
+adminDashboard.zones.save: Gravar
+adminDashboard.zones.delete: Apagar
+adminDashboard.zones.uploadGeoJSON: Carregar um ficheiro do tipo GeoJSON
+adminDashboard.zones.send: Enviar
+adminDashboard.back.title: Voltar à página
+adminDashboard.promotions.title: Promoções
+adminDashboard.pledges.title: Sugestões
+adminDashboard.time_slots.title: Horários
+deliveryForm.noPriceWarning: Nenhum preço pode ser calculado.  Por favor, insira-o.
+deliveryForm.noPriceFromPricingWarning: Nenhum preço pode ser calculado a partir dos
+  preços.  Insira-o manualmente ou edite os preços.
+delivery.createNew: Criar nova entrega
+delivery.tracking_link: Link de rastreamento
+delivery.with_id: 'Entrega #%id%'
+help.title: Ajuda
 help.home: ''
-restaurants.no_results: ''
-restaurants.visible_by_you_only: ''
-restaurants.placeholder.title: ''
-restaurants.placeholder.text: ''
-localBusiness.form.orderingDelayMinutes: ''
-localBusiness.form.orderingDelayMinutes.help: ''
-localBusiness.form.enabled: ''
-localBusiness.form.orderingDelayDays: ''
-localBusiness.form.orderingDelayHours: ''
-localBusiness.form.name: ''
-localBusiness.form.description: ''
-localBusiness.form.legalName: ''
-localBusiness.form.website: ''
-localBusiness.form.telephone: ''
-localBusiness.form.openingHours: ''
-localBusiness.form.deliveryPerimeterExpression: ''
-localBusiness.form.shippingOptionsDays: ''
-localBusiness.form.openingHoursBehavior: ''
-localBusiness.form.openingHoursBehavior.asap: ''
-localBusiness.form.openingHoursBehavior.time_slot: ''
-localBusiness.form.use_different_business_address.label: ''
-localBusiness.form.business_address.label: ''
-restaurant.available: ''
-restaurant.unavailable: ''
+restaurants.no_results: Não encontramos nenhum restaurante que satisfaça os critérios
+  da sua pesquisa.  ☹<br>Tente com um endereço diferente
+restaurants.visible_by_you_only: Visível apenas para si
+restaurants.placeholder.title: Um pouco de paciência…
+restaurants.placeholder.text: Novos restaurantes estão a chegar em breve!
+localBusiness.form.orderingDelayMinutes: Atraso adicional antes de fazer o pedido
+localBusiness.form.orderingDelayMinutes.help: Use este campo para adicionar algum
+  tempo antes do cliente poder pedir. Esta configuração não altera o tempo de confeção
+  (20 minutos) ou de transporte (25 minutos).
+localBusiness.form.enabled: Ativado
+localBusiness.form.orderingDelayDays: Dia(s)
+localBusiness.form.orderingDelayHours: Hora(s)
+localBusiness.form.name: Nome
+localBusiness.form.description: Descrição
+localBusiness.form.legalName: Nome legal
+localBusiness.form.website: Página
+localBusiness.form.telephone: Telefone
+localBusiness.form.openingHours: Horário de funcionamento
+localBusiness.form.deliveryPerimeterExpression: Zona ou distância máxima para entrega
+localBusiness.form.shippingOptionsDays: Número de opções de envio (em dias)
+localBusiness.form.openingHoursBehavior: Comportamento do horário de funcionamento
+localBusiness.form.openingHoursBehavior.asap: O mais depressa possível
+localBusiness.form.openingHoursBehavior.time_slot: Horário
+localBusiness.form.use_different_business_address.label: Use um endereço profissional
+  diferente
+localBusiness.form.business_address.label: Endereço profissional
+restaurant.available: Disponível
+restaurant.unavailable: Indisponível
 restaurant.disabledWarning: ''
 restaurant.closedWarningWithDelay: ''
 restaurant.temporaryClosedWarning: ''
