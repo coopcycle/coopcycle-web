@@ -1762,6 +1762,20 @@
                 "sqlserver",
                 "sqlsrv"
             ],
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fdbal",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-04-20T17:19:26+00:00"
         },
         {
@@ -2516,6 +2530,20 @@
                 "odm",
                 "orm",
                 "persistence"
+            ],
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fpersistence",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-03-21T15:13:52+00:00"
         },
@@ -4483,6 +4511,12 @@
                 "faker",
                 "orm",
                 "symfony"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/theofidry",
+                    "type": "github"
+                }
             ],
             "time": "2020-03-15T10:07:54+00:00"
         },
@@ -6725,6 +6759,12 @@
                 "google",
                 "sdk"
             ],
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/jeromegamez",
+                    "type": "github"
+                }
+            ],
             "time": "2020-03-16T18:19:54+00:00"
         },
         {
@@ -7013,6 +7053,12 @@
                 "laminas",
                 "zf"
             ],
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
             "time": "2020-04-03T16:01:00+00:00"
         },
         {
@@ -7214,6 +7260,12 @@
                 "read",
                 "transform",
                 "write"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/nyamsprod",
+                    "type": "github"
+                }
             ],
             "time": "2020-03-17T15:15:35+00:00"
         },
@@ -9080,16 +9132,16 @@
         },
         {
             "name": "oneup/uploader-bundle",
-            "version": "3.0.0",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/1up-lab/OneupUploaderBundle.git",
-                "reference": "4c954cd2baf5531b91317bbe72f00f904d47e51d"
+                "reference": "f9d820ab679f7c4942f90ea0e13847a23ef0a0d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/1up-lab/OneupUploaderBundle/zipball/4c954cd2baf5531b91317bbe72f00f904d47e51d",
-                "reference": "4c954cd2baf5531b91317bbe72f00f904d47e51d",
+                "url": "https://api.github.com/repos/1up-lab/OneupUploaderBundle/zipball/f9d820ab679f7c4942f90ea0e13847a23ef0a0d4",
+                "reference": "f9d820ab679f7c4942f90ea0e13847a23ef0a0d4",
                 "shasum": ""
             },
             "require": {
@@ -9098,6 +9150,7 @@
                 "symfony/event-dispatcher-contracts": "^1.0|^2.0",
                 "symfony/finder": "^4.4|^5.0",
                 "symfony/framework-bundle": "^4.4|^5.0",
+                "symfony/mime": "^4.4|^5.0",
                 "symfony/templating": "^4.4|^5.0",
                 "symfony/translation": "^4.4|^5.0",
                 "symfony/translation-contracts": "^1.0|^2.0",
@@ -9148,7 +9201,7 @@
                     "role": "Developer"
                 }
             ],
-            "description": "Handles multi file uploads in Symfony2. Features included: Chunked upload, Orphans management, Gaufrette support.",
+            "description": "This Symfony bundle provides a server implementation for handling single and multiple file uploads using either FineUploader, jQuery File Uploader, YUI3 Uploader, Uploadify, FancyUpload, MooUpload, Plupload or Dropzone. Features include chunked uploads, orphanages, Gaufrette and Flysystem support.",
             "homepage": "https://1up.io",
             "keywords": [
                 "FancyUpload",
@@ -9163,7 +9216,7 @@
                 "plupload",
                 "upload"
             ],
-            "time": "2020-03-27T15:56:10+00:00"
+            "time": "2020-07-06T14:54:07+00:00"
         },
         {
             "name": "pagerfanta/pagerfanta",
@@ -11406,6 +11459,15 @@
                 "log",
                 "logging",
                 "sentry"
+            ],
+            "funding": [
+                {
+                    "type": "custom"
+                },
+                {
+                    "url": "https://sentry.io/pricing/",
+                    "type": "custom"
+                }
             ],
             "time": "2020-03-06T09:24:53+00:00"
         },
@@ -13699,7 +13761,7 @@
                 "storage",
                 "sylius"
             ],
-            "time": "2020-06-25T12:38:18+00:00"
+            "time": "2020-06-30T07:41:56+00:00"
         },
         {
             "name": "sylius/taxation",
@@ -17426,12 +17488,12 @@
             ],
             "authors": [
                 {
-                    "name": "Christophe Coevoet",
-                    "email": "stof@notk.org"
-                },
-                {
                     "name": "Konstantin Kudryashov",
                     "email": "ever.zet@gmail.com"
+                },
+                {
+                    "name": "Christophe Coevoet",
+                    "email": "stof@notk.org"
                 }
             ],
             "description": "Symfony2 framework extension for Behat",
