@@ -1762,6 +1762,20 @@
                 "sqlserver",
                 "sqlsrv"
             ],
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fdbal",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-04-20T17:19:26+00:00"
         },
         {
@@ -2516,6 +2530,20 @@
                 "odm",
                 "orm",
                 "persistence"
+            ],
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fpersistence",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-03-21T15:13:52+00:00"
         },
@@ -4483,6 +4511,12 @@
                 "faker",
                 "orm",
                 "symfony"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/theofidry",
+                    "type": "github"
+                }
             ],
             "time": "2020-03-15T10:07:54+00:00"
         },
@@ -6725,6 +6759,12 @@
                 "google",
                 "sdk"
             ],
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/jeromegamez",
+                    "type": "github"
+                }
+            ],
             "time": "2020-03-16T18:19:54+00:00"
         },
         {
@@ -7013,6 +7053,12 @@
                 "laminas",
                 "zf"
             ],
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
             "time": "2020-04-03T16:01:00+00:00"
         },
         {
@@ -7214,6 +7260,12 @@
                 "read",
                 "transform",
                 "write"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/nyamsprod",
+                    "type": "github"
+                }
             ],
             "time": "2020-03-17T15:15:35+00:00"
         },
@@ -11407,6 +11459,15 @@
                 "logging",
                 "sentry"
             ],
+            "funding": [
+                {
+                    "type": "custom"
+                },
+                {
+                    "url": "https://sentry.io/pricing/",
+                    "type": "custom"
+                }
+            ],
             "time": "2020-03-06T09:24:53+00:00"
         },
         {
@@ -11991,16 +12052,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.39.0",
+            "version": "v7.40.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "350e4f4db026bd0627925885b30c09d054777b68"
+                "reference": "04aedea5ad95b9722aa394a41787751b2b478310"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/350e4f4db026bd0627925885b30c09d054777b68",
-                "reference": "350e4f4db026bd0627925885b30c09d054777b68",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/04aedea5ad95b9722aa394a41787751b2b478310",
+                "reference": "04aedea5ad95b9722aa394a41787751b2b478310",
                 "shasum": ""
             },
             "require": {
@@ -12044,7 +12105,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2020-06-25T23:56:19+00:00"
+            "time": "2020-07-06T17:51:30+00:00"
         },
         {
             "name": "superbalist/flysystem-google-storage",
@@ -13699,7 +13760,7 @@
                 "storage",
                 "sylius"
             ],
-            "time": "2020-06-25T12:38:18+00:00"
+            "time": "2020-06-30T07:41:56+00:00"
         },
         {
             "name": "sylius/taxation",
@@ -17426,12 +17487,12 @@
             ],
             "authors": [
                 {
-                    "name": "Christophe Coevoet",
-                    "email": "stof@notk.org"
-                },
-                {
                     "name": "Konstantin Kudryashov",
                     "email": "ever.zet@gmail.com"
+                },
+                {
+                    "name": "Christophe Coevoet",
+                    "email": "stof@notk.org"
                 }
             ],
             "description": "Symfony2 framework extension for Behat",
