@@ -97,10 +97,17 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                 unset($data['address']);
                 $address = $this->geocoder->geocode($addressAsString);
             }
-
         }
 
         $task = $this->normalizer->denormalize($data, $class, $format, $context);
+
+        if (null === $task->getId() && null !== $task->getAddress()) {
+            $addr = $task->getAddress();
+            if (!empty($addr->getStreetAddress()) && null === $addr->getGeo()) {
+                $geoAddr = $this->geocoder->geocode($addr->getStreetAddress());
+                $addr->setGeo($geoAddr->getGeo());
+            }
+        }
 
         if ($address && null === $task->getAddress()) {
             $task->setAddress($address);

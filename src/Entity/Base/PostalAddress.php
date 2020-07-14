@@ -79,6 +79,8 @@ abstract class PostalAddress
     protected $streetAddress;
 
     /**
+     * @var PhoneNumber|null
+     *
      * @Groups({"address", "address_create", "task_create", "task_edit", "order_update", "cart", "delivery_create"})
      * @ApiProperty(iri="https://schema.org/telephone")
      * @AssertPhoneNumber
@@ -258,6 +260,9 @@ abstract class PostalAddress
         return $this->telephone;
     }
 
+    /**
+     * @param PhoneNumber|null $telephone
+     */
     public function setTelephone(?PhoneNumber $telephone = null)
     {
         $this->telephone = $telephone;
