@@ -6589,17 +6589,16 @@
         },
         {
             "name": "knplabs/knp-time-bundle",
-            "version": "v1.11.0",
-            "target-dir": "Knp/Bundle/TimeBundle",
+            "version": "v1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpTimeBundle.git",
-                "reference": "8f3983f8b53e9c350f7dd476461bd7f5b32dfc89"
+                "reference": "d413a674d206e0a71748513d13c50bb5907ca372"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpTimeBundle/zipball/8f3983f8b53e9c350f7dd476461bd7f5b32dfc89",
-                "reference": "8f3983f8b53e9c350f7dd476461bd7f5b32dfc89",
+                "url": "https://api.github.com/repos/KnpLabs/KnpTimeBundle/zipball/d413a674d206e0a71748513d13c50bb5907ca372",
+                "reference": "d413a674d206e0a71748513d13c50bb5907ca372",
                 "shasum": ""
             },
             "require": {
@@ -6624,8 +6623,8 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Knp\\Bundle\\TimeBundle": ""
+                "psr-4": {
+                    "Knp\\Bundle\\TimeBundle\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -6652,7 +6651,7 @@
                 "knplabs",
                 "time"
             ],
-            "time": "2019-12-30T16:00:41+00:00"
+            "time": "2020-07-07T20:34:42+00:00"
         },
         {
             "name": "kreait/clock",
