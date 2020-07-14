@@ -225,6 +225,11 @@ api_platform:
     # see https://github.com/api-platform/core/pull/2721
     messenger:
         enabled: false
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+        csv: ['text/csv']
+        html: ['text/html']
 
 # Swiftmailer Configuration
 swiftmailer:
