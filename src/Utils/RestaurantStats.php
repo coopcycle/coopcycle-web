@@ -208,7 +208,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         if ($this->isTaxColumn($column)) {
 
             return $this->formatNumber(
-                $this->taxTotals[$index][$column]
+                $this->taxTotals[$index][$column] ?? 0
             );
         }
 
@@ -256,7 +256,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
             $total = array_reduce(
                 $this->taxTotals,
-                fn($carry, $taxTotals): int => $carry + $taxTotals[$column],
+                fn($carry, $taxTotals): int => $carry + ($taxTotals[$column] ?? 0),
                 0
             );
 
