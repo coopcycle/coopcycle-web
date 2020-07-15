@@ -32,7 +32,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        $bulk = array_map(function ($item) use ($class, $context) {
+        $bulk = array_map(function ($item) use ($context) {
 
             // This is needed, because CsvDecoder will transform empty rows to empty strings,
             // causing the error "The string supplied did not seem to be a phone number."
