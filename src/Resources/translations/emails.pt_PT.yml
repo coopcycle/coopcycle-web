@@ -5,3 +5,24 @@ registration.email.message: "<h2>Bem-vindo ao (à) %brand_name%, %username%</h2>
 registration.email.confirm: Confirmar e-mail
 registration.email.disclaimer: Esta ligação só pode ser usada uma vez para validar
   a sua conta
+admin.order.created.body: "Olá,\n<br>\nFoi criado um novo pedido.\n"
+admin.order.created.subject: Novo pedido a ser confirmado
+order.foodtech.cancelled: "O restaurante é incapaz de preparar o seu pedido %order.number%.\n\
+  <br>\nA sua conta não será debitada.\n"
+order.foodtech.accepted.collection.disclaimer: Caso haja um problema, contacte com
+  a antecedência suficiente <strong>%name%</strong> usando o número <strong>%phone_number%</strong>  por
+  forma a cancelar o seu pedido.
+order.foodtech.accepted.collection: 'Terá de o levantar no tempo indicado:'
+order.foodtech.accepted.delivery.disclaimer: Contactá-lo-emos no caso de haver um
+  problema para encontrar o seu endereço
+order.foodtech.accepted.delivery: 'Ser-lhe-á entregue no tempo indicado:'
+order.public_url: "Para rastrear o estado do seu pedido, <a href=\"%order.public_url%\"\
+  >pressione aqui</a>.\n"
+order.view: Ver pedido
+resetting.email.reset: Redefinir senha
+resetting.email.message: <h2>Olá %username%</h2> Para redefinir a sua senha, por favor
+  pressione no botão abaixo.
+registration.email.textMessage: "Bem-vindo à %brand_name%, %username%,\\n\\n\nEstá\
+  \ a receber esta mensagem porque se inscreveu recentemente na %brand_name%.\\n\n\
+  Para confirmar o seu email, por favor pressione na seguinte hiperligação: <a href=\"\
+  %confirmationUrl%\" rel=\"notrack\">%confirmationUrl%</a>.\n"
