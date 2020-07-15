@@ -32,7 +32,6 @@ adminDashboard.deliveries.delivery: Entrega
 adminDashboard.deliveries.originAddress: Endereço original
 adminDashboard.deliveries.deliveryAddress: Endereço de entrega
 adminDashboard.deliveries.save: Gravar
-adminDashboard.embed.title: ''
 adminDashboard.package_sets.title: Embalagens
 adminDashboard.customize.title: Personalizar
 embed.delivery.title: Formulário de criação de entregas
@@ -109,7 +108,6 @@ delivery.createNew: Criar nova entrega
 delivery.tracking_link: Link de rastreamento
 delivery.with_id: 'Entrega #%id%'
 help.title: Ajuda
-help.home: ''
 restaurants.no_results: Não encontramos nenhum restaurante que satisfaça os critérios
   da sua pesquisa.  ☹<br>Tente com um endereço diferente
 restaurants.visible_by_you_only: Visível apenas para si
