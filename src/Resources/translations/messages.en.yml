@@ -86,7 +86,7 @@ adminDashboard.tags.save: Save
 adminDashboard.tags.createNew: Create new tag
 adminDashboard.tags.name: Name
 adminDashboard.tags.color: Color
-adminDashboard.tags.confirm_delete: "Are you sure you want to delete this tag ? \n\
+adminDashboard.tags.confirm_delete: "Are you sure you want to delete this tag? \n\
   The tag will be removed from the respective elements using it and won't be grouped\
   \ by the tag anymore."
 adminDashboard.taxation.title: Taxation
@@ -132,7 +132,8 @@ localBusiness.form.shippingOptionsDays: Number of shipping choices (in days)
 localBusiness.form.openingHoursBehavior: Behavior of opening hours
 localBusiness.form.openingHoursBehavior.asap: As soon as possible
 localBusiness.form.openingHoursBehavior.time_slot: Time slot
-localBusiness.form.use_different_business_address.label: Use a different business address
+localBusiness.form.use_different_business_address.label: Use a different business
+  address
 localBusiness.form.business_address.label: Business address
 restaurant.available: Available
 restaurant.unavailable: Unavailable
@@ -464,9 +465,10 @@ form.address.company.label: Company
 form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Rules
 form.pricing_rule_set.strategy.label: Method of calculation
-form.pricing_rule_set.strategy.help:
-  The rules are evaluated from top to bottom. Depending on the the method of calculation selected,
-  either the first rule that matches will decide the price, or the price will be calculated by adding up all the matching rules.
+form.pricing_rule_set.strategy.help: The rules are evaluated from top to bottom. Depending
+  on the the method of calculation selected, either the first rule that matches will
+  decide the price, or the price will be calculated by adding up all the matching
+  rules.
 form.pricing_rule_set.strategy.find.label: The first rule that matches
 form.pricing_rule_set.strategy.map.label: All the matching rules
 form.pricing_rule.price.label: Price
@@ -562,7 +564,8 @@ form.registration.username.help: "Your username cannot be longer than 15 charact
   \ A username can only contain alphanumeric characters (letters A-Z, numbers 0-9)\
   \ with the exception of underscores.\n"
 form.registration.legal.label: I agree with the Terms and Conditions and Privacy Policy
-form.registration.legal.help: By checking this box, you agree to our <a href="%terms_url%">Terms and Conditions</a> and <a href="%privacy_url%">Privacy Policy</a>.
+form.registration.legal.help: By checking this box, you agree to our <a href="%terms_url%">Terms
+  and Conditions</a> and <a href="%privacy_url%">Privacy Policy</a>.
 form.local_business.stripe_account.title: Stripe account
 form.local_business.stripe_account.help: Connect a Stripe account to transfer money
   to another bank account
@@ -595,7 +598,8 @@ form.menu_editor.help: "Use the editor below to compose the menu items\n<br>\nDr
 form.menu_editor.products.help: To add products to the list on the right, add them
   to the <a href="%products_url%">catalog</a> first
 form.menu_editor.taxon_modal.title: Modify a section
-form.menu_editor.name.help: This is only for you to distinguish menus. This is not displayed to the customer.
+form.menu_editor.name.help: This is only for you to distinguish menus. This is not
+  displayed to the customer.
 form.product.name.label: Name
 form.product.description.label: Description
 form.product.price.label: Price
@@ -681,9 +685,9 @@ form.reusable_packaging.price.label: Price
 form.reusable_packaging.on_hand.label: Stock
 form.deposit_refund_settings.deposit_refund_optin.label: Deposit-refund system is
   optional
-form.deposit_refund_settings.deposit_refund_optin.help: When the deposit-refund system is
-  optional, will be able to choose whether or not he or she wants the packagings. When it is
-  mandatory, the packagings will be added to the order total automatically.
+form.deposit_refund_settings.deposit_refund_optin.help: When the deposit-refund system
+  is optional, will be able to choose whether or not he or she wants the packagings.
+  When it is mandatory, the packagings will be added to the order total automatically.
 form.new_order.variant_name.label: Product name
 form.new_order.variant_name.help: The name that will appear in the order summary and
   invoice
@@ -996,10 +1000,14 @@ fulfillment_method.collection: Collection
 basics.allow_edit: Allow editing
 form.price_with_tax.tax_excl.label: Price (tax excl.)
 form.price_with_tax.tax_incl.label: Price (tax incl.)
-confirm.deposit_refund_enabled: The deposit-refund system is enabled, you can now <a href="%url%">configure the packagings</a>.
-info.deposit_refund: Each entry in the list below represents a type of packaging (small, large…). Once the packagings have been created, you can configure them for each product.
+confirm.deposit_refund_enabled: The deposit-refund system is enabled, you can now
+  <a href="%url%">configure the packagings</a>.
+info.deposit_refund: Each entry in the list below represents a type of packaging (small,
+  large…). Once the packagings have been created, you can configure them for each
+  product.
 form.receipt.billing_address.label: Billing address
-form.receipt.billing_address.help: If you want to use a different address for billing, enter it here
+form.receipt.billing_address.help: If you want to use a different address for billing,
+  enter it here
 promotion_rule.is_restaurant: Restaurant is %restaurant%
 promotion_rule.is_customer: Customer is %username%
 order.refund.total_amount: This order was refunded by an amount of %amount%
@@ -1011,7 +1019,7 @@ basics.kilos: Kilos
 form.product_tax_category_choice.placeholder: Choose a tax category
 form.package_with_quantity.package.placeholder: Choose a type of package
 form.time_slot.same_day_cutoff.label: Same day cutoff
-form.time_slot.same_day_cutoff.help:
-  For example of your select 11:00, choices on the same day won't be displayed after 11:00
-order.reusable_packaging.pledge_return.disclaimer:
-  The customer has indicated that %count% packages will be returned
+form.time_slot.same_day_cutoff.help: For example of your select 11:00, choices on
+  the same day won't be displayed after 11:00
+order.reusable_packaging.pledge_return.disclaimer: The customer has indicated that
+  %count% packages will be returned

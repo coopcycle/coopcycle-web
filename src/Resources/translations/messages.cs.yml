@@ -84,8 +84,9 @@ adminDashboard.tags.save: Uložit
 adminDashboard.tags.createNew: Vytvořit novou značku
 adminDashboard.tags.name: Název
 adminDashboard.tags.color: Barva
-adminDashboard.tags.confirm_delete: "Opravdu chcete tuto značku smazat?\nVšechny prvky,\
-  \ které na ní odkazují, ji již nebudou moci ukázat, nebo podle ní třídít."
+adminDashboard.tags.confirm_delete: "Opravdu chcete tuto značku smazat?\nZnačka bude\
+  \ odstraněna z příslušných prvků, které ji používají, a nebude již seskupena podle\
+  \ značky."
 adminDashboard.taxation.title: Zdanění
 adminDashboard.taxation.button: Přidat zdanění
 adminDashboard.zones.title: Oblasti
@@ -999,3 +1000,20 @@ form.pricing_rule_set.strategy.help: Pravidla jsou vyhodnocena shora dolů. V z�
 form.pricing_rule_set.strategy.label: Metoda výpočtu
 localBusiness.form.business_address.label: Firemní adresa
 localBusiness.form.use_different_business_address.label: Použít jinou firemní adresu
+order.export.heading.fulfillment_method: Plnění
+form.customize.custom_privacy.label: Obsah vlastních Zásad ochrany osobních údajů
+form.customize.custom_privacy_enabled.label: Povolit vlastní zásady ochrany osobních
+  údajů
+form.customize.custom_terms.label: Obsah stránky vlastních smluvních podmínek
+form.customize.custom_terms_enabled.label: Povolit vlastní smluvní podmínky
+form.customize.custom_legal.label: Vlastní obsah stránky s právním upozorněním
+form.customize.custom_legal_enabled.label: Povolit vlastní právní upozornění
+form.customize.about_us_enabled.label: Povolit stránku O nás
+form.registration.legal.help: Zaškrtnutím tohoto políčka vyjadřujete souhlas s našimi
+  <a href="%terms_url%"> smluvními podmínkami </a> a <a href="%privacy_url%"> zásadami
+  ochrany osobních údajů </a>.
+form.registration.legal.label: Souhlasím s podmínkami a zásadami ochrany osobních
+  údajů
+base.footer.terms: Podmínky služby
+base.footer.privacy: Soukromí
+authentication.choose_password: Zvolte si své heslo
