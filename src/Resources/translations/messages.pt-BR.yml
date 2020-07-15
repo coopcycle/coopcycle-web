@@ -999,3 +999,27 @@ order.reusable_packaging.pledge_return.disclaimer: O cliente indicou que %count%
   serão retornadas
 delivery.table.heading.owner: Dono
 user.edit.enabled.label: Ativado
+form.local_business.iso_code.fr.siret: Número SIRET
+form.customize.custom_privacy.label: Conteúdo da página da política de privacidade
+  personalizada
+form.customize.custom_privacy_enabled.label: Habilitar a política de privacidade personalizada
+form.customize.custom_terms.label: Conteúdo da página dos termos e condições personalizados
+form.customize.custom_terms_enabled.label: Habilitar os termos e condições personalizados
+form.customize.custom_legal.label: Conteúdo da página do aviso legal personalizado
+form.customize.custom_legal_enabled.label: Habilitar o aviso legal personalizado
+form.customize.about_us_enabled.label: Habilitar a página Sobre
+form.registration.legal.help: Ao marcar esta caixa, você indica que está de acordo
+  com nossos <a href="%terms_url%">Termos e Condições</a> e nossa <a href="%privacy_url%">Política
+  de Privacidade</a>.
+form.registration.legal.label: Estou de acordo com os Termos e Condições e com a Política
+  de Privacidade
+form.pricing_rule_set.strategy.help: As regras são avaliadas da primeira à última.
+  Dependendo do método de cálculo escolhido, ou a primeira regra que se encaixar determinará
+  o preço, ou o preço será calculado de acordo com todas as regras que se encaixarem.
+form.pricing_rule_set.strategy.map.label: Todas as regras que se encaixarem
+form.pricing_rule_set.strategy.find.label: A primeira regra que se encaixar
+form.pricing_rule_set.strategy.label: Método de cálculo
+localBusiness.form.business_address.label: Endereço comercial
+localBusiness.form.use_different_business_address.label: Utilize outro endereço comercial
+base.footer.terms: Termos de serviço
+base.footer.privacy: Privacidade

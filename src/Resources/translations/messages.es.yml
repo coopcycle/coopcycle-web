@@ -687,8 +687,10 @@ pledge.reject: Rechazar
 form.registration.username.help: "Su nombre de usuario no puede tener más de 15 caracteres.\
   \ Un nombre de usuario solo puede contener caracteres alfanuméricos (letras A-Z,\
   \ números 0-9) con la excepción de guiones bajos.\n"
-form.registration.legal.label: Acepto los Términos y Condiciones y la Política de Privacidad
-form.registration.legal.help: Al marcar esta casilla, aceptas nuestros <a href="%terms_url%">Términos y Condiciones</a> y la <a href="%privacy_url%">Política de Privacidad</a>.
+form.registration.legal.label: Acepto los Términos y Condiciones y la Política de
+  Privacidad
+form.registration.legal.help: Al marcar esta casilla, aceptas nuestros <a href="%terms_url%">Términos
+  y Condiciones</a> y la <a href="%privacy_url%">Política de Privacidad</a>.
 form.time_slot.name.label: Nombre
 form.time_slot.interval.label: Intervalo
 form.time_slot.choices.label: Opciones
@@ -976,7 +978,17 @@ sms.with_tracking: "Hola,\nnuestro mensajero esta en camino a %address%.\nSígue
   \ en %link%\n"
 fulfillment_method.delivery: Entrega
 fulfillment_method.collection: Recogida
-form.checkout_address.takeaway.no_show_disclaimer: 'Tenga en cuenta: si no recoge,
-  se le cobrará el importe total del pedido.'
+form.checkout_address.takeaway.no_show_disclaimer: Tenga en cuenta - si no recoge,
+  se le cobrará el importe total del pedido.
 form.receipt.billing_address.label: Dirección de facturación
-form.receipt.billing_address.help: Si desea utilizar una dirección de facturación diferente, introdúzcala aquí
+form.receipt.billing_address.help: Si desea utilizar una dirección de facturación
+  diferente, introdúzcala aquí
+form.store_type.weight_required.label: Pedir el peso
+base.footer.terms: Términos de Servicio
+restaurant.form.cuisines.label: Estilos de cocina
+form.pricing_rule_set.strategy.label: Método de cálculo
+form.pricing_rule_set.strategy.help: Las reglas se evalúan de arriba a abajo. Dependiendo
+  del método de cálculo seleccionado, o bien la primera regla que coincida decidirá
+  el precio, o bien el precio se calculará sumando todas las reglas que coinciden.
+form.pricing_rule_set.strategy.find.label: La primera regla que coincide
+form.pricing_rule_set.strategy.map.label: Todas las reglas que coinciden

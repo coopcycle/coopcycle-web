@@ -694,14 +694,14 @@ receipt.line_item.name: Produkt
 receipt.title: 'Rechnung für Ihre Bestellung #%number%'
 form.registration.legal.label: Ich habe die AGB und Datenschutzerklärung gelesen und
   akzeptiert
-form.registration.legal.help: Indem Sie dieses Kästchen ankreuzen, erklären Sie sich mit unseren
-  <a href="%terms_url%">AGB</a> und
-  <a href="%privacy_url%">Datenschutzerklärung</a> einverstanden.
+form.registration.legal.help: Indem Sie dieses Kästchen ankreuzen, erklären Sie sich
+  mit unseren <a href="%terms_url%">AGB</a> und <a href="%privacy_url%">Datenschutzerklärung</a>
+  einverstanden.
 form.local_business.iso_code.fr.vat_number: USt.-Id Nr.
 form.min_max.lower.label: Anzahl Min.
 orders.payment_refunded: Zahlung erfolgreich zurückerstattet
 orders.payment_link.sent: Email erfolgreich gesendet
-orders.payment_link.send_by_email: 'Link für die Zahlung per Email senden '
+orders.payment_link.send_by_email: Link für die Zahlung per Email senden
 basics.copy: Kopie
 orders.new: Neue Bestellung
 restaurant.form.cuisines.label: Küchenrichtung
