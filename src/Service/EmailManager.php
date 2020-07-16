@@ -218,4 +218,25 @@ class EmailManager
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
+
+    private function createExpiringAuthorizationReminderMessage(OrderInterface $order, $isAdmin = false)
+    {
+        $subject = $this->translator->trans('order.expiring_authorization.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/order/expiring_authorization.mjml.twig', [
+            'order' => $order,
+            'is_admin' => $isAdmin,
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createExpiringAuthorizationReminderMessageForAdmin(OrderInterface $order)
+    {
+        return $this->createExpiringAuthorizationReminderMessage($order, true);
+    }
+
+    public function createExpiringAuthorizationReminderMessageForOwner(OrderInterface $order)
+    {
+        return $this->createExpiringAuthorizationReminderMessage($order, false);
+    }
 }

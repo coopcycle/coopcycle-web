@@ -97,3 +97,9 @@ covid_19.body: "<h1>Instructions to follow for your delivery</h1>\n<p>Given the 
   \ bin</strong> to avoid inadvertently touching it later.</p>\n<h2>4. Wash your hands!</h2>\n\
   <p>Once you have unpacked your order and discarded the packaging, <strong>wash your\
   \ hands!</strong></p>\n"
+
+order.expiring_authorization.subject: A payment authorization will expire soon
+order.expiring_authorization.text:
+  The payment authorization for order <strong>%order.number%</strong> will expire soon.
+  <br>
+  You should complete the order before the authorization expires to avoid losing money.

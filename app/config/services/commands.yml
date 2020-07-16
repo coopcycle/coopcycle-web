@@ -107,3 +107,9 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:geofencing' }
       - { name: 'monolog.logger', channel: 'geofencing' }
+
+  AppBundle\Command\WatchExpiringAuthorizationCommand:
+    arguments:
+      $orderRepository: '@sylius.repository.order'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:orders:watch-expiring-authorization' }
