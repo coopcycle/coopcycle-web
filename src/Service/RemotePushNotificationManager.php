@@ -107,7 +107,15 @@ class RemotePushNotificationManager
         $deviceTokens = array_values($deviceTokens);
 
         try {
-            $firebaseMessaging->sendMulticast($message, $deviceTokens);
+
+            // @see https://firebase-php.readthedocs.io/en/stable/cloud-messaging.html?#send-messages-to-multiple-devices-multicast
+            $report = $firebaseMessaging->sendMulticast($message, $deviceTokens);
+            if ($report->hasFailures()) {
+                foreach ($report->failures()->getItems() as $failure) {
+                    $this->logger->error($failure->error()->getMessage());
+                }
+            }
+
         } catch (\Exception $e) {
             $this->logger->error($e);
         }
