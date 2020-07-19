@@ -33,17 +33,20 @@ class SettingsType extends AbstractType
     private $phoneNumberUtil;
     private $country;
     private $isDemo;
+    private $debug;
 
     public function __construct(
         SettingsManager $settingsManager,
         PhoneNumberUtil $phoneNumberUtil,
         string $country,
-        bool $isDemo)
+        bool $isDemo,
+        bool $debug)
     {
         $this->settingsManager = $settingsManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->country = $country;
         $this->isDemo = $isDemo;
+        $this->debug = $debug;
     }
 
     private function createPlaceholder($value)
@@ -121,7 +124,7 @@ class SettingsType extends AbstractType
                 'label' => 'form.settings.google_api_key.label',
                 'help' => 'form.settings.google_api_key.help',
                 'help_html' => true,
-                'disabled' => $this->isDemo
+                'disabled' => $this->isDemo || $this->debug
             ])
             ->add('latlng', TextType::class, [
                 'label' => 'form.settings.latlng.label',
