@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fd5cb80dc8d68544254673455a330d52",
+    "content-hash": "ad09468b0d0104bcc715dc4972c7cde6",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3159,23 +3159,23 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v5.1.0",
+            "version": "v5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "4566062c68f76f43d44f1643f4970fe89757d4c6"
+                "reference": "feb0e820b8436873675fd3aca04f3728eb2185cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/4566062c68f76f43d44f1643f4970fe89757d4c6",
-                "reference": "4566062c68f76f43d44f1643f4970fe89757d4c6",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/feb0e820b8436873675fd3aca04f3728eb2185cb",
+                "reference": "feb0e820b8436873675fd3aca04f3728eb2185cb",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8|^5"
+                "phpunit/phpunit": ">=4.8 <=9"
             },
             "type": "library",
             "autoload": {
@@ -3201,7 +3201,11 @@
             ],
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
-            "time": "2020-02-24T23:15:03+00:00"
+            "keywords": [
+                "jwt",
+                "php"
+            ],
+            "time": "2020-03-25T18:49:23+00:00"
         },
         {
             "name": "friendsofsymfony/jsrouting-bundle",
@@ -3910,16 +3914,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.6",
+            "version": "8.12.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "e7a6e4ae54e8fdcfd933e826cf4a99fc85018635"
+                "reference": "3ca7b9a09fc2b00a508875ac2c52ef5c19ef2c4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/e7a6e4ae54e8fdcfd933e826cf4a99fc85018635",
-                "reference": "e7a6e4ae54e8fdcfd933e826cf4a99fc85018635",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/3ca7b9a09fc2b00a508875ac2c52ef5c19ef2c4c",
+                "reference": "3ca7b9a09fc2b00a508875ac2c52ef5c19ef2c4c",
                 "shasum": ""
             },
             "require": {
@@ -3974,20 +3978,20 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-06-18T15:12:08+00:00"
+            "time": "2020-07-02T12:08:36+00:00"
         },
         {
             "name": "giggsey/locale",
-            "version": "1.8",
+            "version": "1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/Locale.git",
-                "reference": "85a1b251bad11c986fec2a051b10d4b80a5caa1b"
+                "reference": "b07f1eace8072ccc61445ad8fbd493ff9d783043"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/Locale/zipball/85a1b251bad11c986fec2a051b10d4b80a5caa1b",
-                "reference": "85a1b251bad11c986fec2a051b10d4b80a5caa1b",
+                "url": "https://api.github.com/repos/giggsey/Locale/zipball/b07f1eace8072ccc61445ad8fbd493ff9d783043",
+                "reference": "b07f1eace8072ccc61445ad8fbd493ff9d783043",
                 "shasum": ""
             },
             "require": {
@@ -4023,37 +4027,37 @@
                 }
             ],
             "description": "Locale functions required by libphonenumber-for-php",
-            "time": "2019-10-09T18:53:14+00:00"
+            "time": "2020-07-07T11:16:24+00:00"
         },
         {
             "name": "google/auth",
-            "version": "v1.7.1",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "39e243a7d8320b1889ab8bb4cd6f98f7af83c582"
+                "reference": "077d6ae98d550161d3b2a0ba283bdce785c74d85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/39e243a7d8320b1889ab8bb4cd6f98f7af83c582",
-                "reference": "39e243a7d8320b1889ab8bb4cd6f98f7af83c582",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/077d6ae98d550161d3b2a0ba283bdce785c74d85",
+                "reference": "077d6ae98d550161d3b2a0ba283bdce785c74d85",
                 "shasum": ""
             },
             "require": {
                 "firebase/php-jwt": "~2.0|~3.0|~4.0|~5.0",
-                "guzzlehttp/guzzle": "~5.3.1|~6.0",
+                "guzzlehttp/guzzle": "^5.3.1|^6.2.1|^7.0",
                 "guzzlehttp/psr7": "^1.2",
                 "php": ">=5.4",
                 "psr/cache": "^1.0",
                 "psr/http-message": "^1.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^1.11",
                 "guzzlehttp/promises": "0.1.1|^1.3",
                 "kelvinmo/simplejwt": "^0.2.5",
                 "phpseclib/phpseclib": "^2",
                 "phpunit/phpunit": "^4.8.36|^5.7",
-                "sebastian/comparator": ">=1.2.3"
+                "sebastian/comparator": ">=1.2.3",
+                "squizlabs/php_codesniffer": "^3.5"
             },
             "suggest": {
                 "phpseclib/phpseclib": "May be used in place of OpenSSL for signing strings or for token management. Please require version ^2."
@@ -4075,20 +4079,20 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2020-02-12T20:54:50+00:00"
+            "time": "2020-07-08T19:11:36+00:00"
         },
         {
             "name": "google/cloud-core",
-            "version": "v1.35.0",
+            "version": "v1.37.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-cloud-php-core.git",
-                "reference": "e24a49fb1df51d6cff38c97450feffae82661c2d"
+                "reference": "4004da54c100aa93ff904bac62baefc07ddac8d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-cloud-php-core/zipball/e24a49fb1df51d6cff38c97450feffae82661c2d",
-                "reference": "e24a49fb1df51d6cff38c97450feffae82661c2d",
+                "url": "https://api.github.com/repos/googleapis/google-cloud-php-core/zipball/4004da54c100aa93ff904bac62baefc07ddac8d5",
+                "reference": "4004da54c100aa93ff904bac62baefc07ddac8d5",
                 "shasum": ""
             },
             "require": {
@@ -4136,24 +4140,24 @@
                 "Apache-2.0"
             ],
             "description": "Google Cloud PHP shared dependency, providing functionality useful to all components.",
-            "time": "2020-02-11T23:07:13+00:00"
+            "time": "2020-06-08T18:49:53+00:00"
         },
         {
             "name": "google/cloud-storage",
-            "version": "v1.18.0",
+            "version": "v1.21.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-cloud-php-storage.git",
-                "reference": "201b69aa6f24b60718dc0bd0c1bdc6963ade0e99"
+                "reference": "d0f0a86969ffbce6c6fb8e5346a5d579ea5f9f91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-cloud-php-storage/zipball/201b69aa6f24b60718dc0bd0c1bdc6963ade0e99",
-                "reference": "201b69aa6f24b60718dc0bd0c1bdc6963ade0e99",
+                "url": "https://api.github.com/repos/googleapis/google-cloud-php-storage/zipball/d0f0a86969ffbce6c6fb8e5346a5d579ea5f9f91",
+                "reference": "d0f0a86969ffbce6c6fb8e5346a5d579ea5f9f91",
                 "shasum": ""
             },
             "require": {
-                "google/cloud-core": "^1.35",
+                "google/cloud-core": "^1.37",
                 "google/crc32": "^0.1.0"
             },
             "require-dev": {
@@ -4187,7 +4191,7 @@
                 "Apache-2.0"
             ],
             "description": "Cloud Storage Client for PHP",
-            "time": "2020-02-11T23:07:13+00:00"
+            "time": "2020-06-08T18:49:53+00:00"
         },
         {
             "name": "google/crc32",
@@ -6663,33 +6667,36 @@
         },
         {
             "name": "kreait/firebase-bundle",
-            "version": "1.9.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kreait/firebase-bundle.git",
-                "reference": "78502a27e9a1e059f11c29ea0d8f7948fab5f660"
+                "reference": "9c114b7a0f2fa444ee356cfc18382bf805637bcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kreait/firebase-bundle/zipball/78502a27e9a1e059f11c29ea0d8f7948fab5f660",
-                "reference": "78502a27e9a1e059f11c29ea0d8f7948fab5f660",
+                "url": "https://api.github.com/repos/kreait/firebase-bundle/zipball/9c114b7a0f2fa444ee356cfc18382bf805637bcc",
+                "reference": "9c114b7a0f2fa444ee356cfc18382bf805637bcc",
                 "shasum": ""
             },
             "require": {
-                "kreait/firebase-php": "^4.35",
-                "php": "^7.0",
+                "kreait/firebase-php": "^5.5",
+                "php": "^7.2",
+                "psr/cache": "^1.0",
+                "psr/simple-cache": "^1.0",
                 "symfony/cache": "^3.4|^4.2|^5.0",
-                "symfony/config": "^3.4|^4.2|^5.0",
+                "symfony/config": "^3.4.26|^4.2|^5.0",
                 "symfony/dependency-injection": "^3.4.26|^4.2.7|^5.0",
                 "symfony/http-kernel": "^3.4|^4.2|^5.0"
             },
             "require-dev": {
-                "symfony/phpunit-bridge": "^5.0"
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "phpunit/phpunit": "^8.5"
             },
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
-                    "Kreait\\Firebase\\Symfony\\Bundle\\": ""
+                    "Kreait\\Firebase\\Symfony\\Bundle\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -6714,20 +6721,26 @@
                 "symfony",
                 "symfony-bundle"
             ],
-            "time": "2020-02-09T16:25:03+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/jeromegamez",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-07-10T17:37:20+00:00"
         },
         {
             "name": "kreait/firebase-php",
-            "version": "4.41.0",
+            "version": "5.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kreait/firebase-php.git",
-                "reference": "7d11727f8685813dbae135ce0903b412235c11c2"
+                "reference": "265e7ad53d2fe1fcfbbb387e2f70b48761ce7e79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kreait/firebase-php/zipball/7d11727f8685813dbae135ce0903b412235c11c2",
-                "reference": "7d11727f8685813dbae135ce0903b412235c11c2",
+                "url": "https://api.github.com/repos/kreait/firebase-php/zipball/265e7ad53d2fe1fcfbbb387e2f70b48761ce7e79",
+                "reference": "265e7ad53d2fe1fcfbbb387e2f70b48761ce7e79",
                 "shasum": ""
             },
             "require": {
@@ -6736,26 +6749,30 @@
                 "ext-mbstring": "*",
                 "ext-openssl": "*",
                 "giggsey/libphonenumber-for-php": "^8.9",
-                "google/auth": "^0.11.0|^1.0",
+                "google/auth": "^1.8",
+                "google/cloud-core": "^1.36",
                 "google/cloud-storage": "^1.14",
-                "guzzlehttp/guzzle": "^6.2.1|^7.0@beta",
+                "guzzlehttp/guzzle": "^6.2.1|^7.0",
                 "kreait/clock": "^1.0.1",
                 "kreait/firebase-tokens": "^1.10",
-                "kreait/gcp-metadata": "^1.0.1",
                 "lcobucci/jwt": "^3.3.1",
                 "mtdowling/jmespath.php": "^2.3",
-                "php": "^7.0",
+                "php": "^7.2",
+                "psr/cache": "^1.0",
+                "psr/http-message": "^1.0",
+                "psr/log": "^1.1",
                 "psr/simple-cache": "^1.0",
-                "riverline/multipart-parser": "^2.0",
-                "superbalist/flysystem-google-storage": "^7.0"
+                "riverline/multipart-parser": "^2.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.16",
                 "google/cloud-firestore": "^1.11",
-                "jangregor/phpstan-prophecy": "^0.1.2|^0.2|^0.3|^0.4.2",
-                "phpstan/phpstan-phpunit": "^0.9.4|^0.11.2",
-                "phpunit/phpunit": "^6.5.14|^7.5.17",
-                "symfony/var-dumper": "^3.4|^4.4|^5.0"
+                "jangregor/phpstan-prophecy": "^0.6.2",
+                "phpstan/extension-installer": "^1.0",
+                "phpstan/phpstan": "^0.12.15",
+                "phpstan/phpstan-phpunit": "^0.12.6",
+                "phpunit/phpunit": "^8.5",
+                "symfony/var-dumper": "^5.0"
             },
             "suggest": {
                 "google/cloud-firestore": "^1.0 to use the Firestore component"
@@ -6763,16 +6780,14 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.x-dev"
+                    "dev-main": "5.x-dev",
+                    "dev-4.x": "4.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
                     "Kreait\\Firebase\\": "src/Firebase"
-                },
-                "files": [
-                    "src/Firebase.php"
-                ]
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6793,7 +6808,13 @@
                 "google",
                 "sdk"
             ],
-            "time": "2020-03-16T18:19:54+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/jeromegamez",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-07-19T15:55:17+00:00"
         },
         {
             "name": "kreait/firebase-tokens",
@@ -6862,55 +6883,6 @@
                 "token"
             ],
             "time": "2020-01-14T16:43:39+00:00"
-        },
-        {
-            "name": "kreait/gcp-metadata",
-            "version": "1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/kreait/gcp-metadata-php.git",
-                "reference": "7ab206ba1d7b59a502be07e5ec2df617a7b1ba38"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/kreait/gcp-metadata-php/zipball/7ab206ba1d7b59a502be07e5ec2df617a7b1ba38",
-                "reference": "7ab206ba1d7b59a502be07e5ec2df617a7b1ba38",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": "^6.0",
-                "php": "^7.0",
-                "psr/http-message": "^1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^6.5.14|^7.5.19"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Kreait\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jérôme Gamez",
-                    "email": "jerome@gamez.name"
-                }
-            ],
-            "description": "Get the metadata from a Google Cloud Platform environment.",
-            "keywords": [
-                "gce",
-                "gcp",
-                "google",
-                "google-cloud",
-                "google-cloud-engine",
-                "google-cloud-platform"
-            ],
-            "time": "2020-03-19T18:31:55+00:00"
         },
         {
             "name": "laminas/laminas-code",
@@ -8173,16 +8145,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "1.25.3",
+            "version": "1.25.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "fa82921994db851a8becaf3787a9e73c5976b6f1"
+                "reference": "3022efff205e2448b560c833c6fbbf91c3139168"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/fa82921994db851a8becaf3787a9e73c5976b6f1",
-                "reference": "fa82921994db851a8becaf3787a9e73c5976b6f1",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/3022efff205e2448b560c833c6fbbf91c3139168",
+                "reference": "3022efff205e2448b560c833c6fbbf91c3139168",
                 "shasum": ""
             },
             "require": {
@@ -8196,11 +8168,10 @@
                 "aws/aws-sdk-php": "^2.4.9 || ^3.0",
                 "doctrine/couchdb": "~1.0@dev",
                 "graylog2/gelf-php": "~1.0",
-                "jakub-onderka/php-parallel-lint": "0.9",
                 "php-amqplib/php-amqplib": "~2.4",
                 "php-console/php-console": "^3.1.3",
+                "php-parallel-lint/php-parallel-lint": "^1.0",
                 "phpunit/phpunit": "~4.5",
-                "phpunit/phpunit-mock-objects": "2.3.0",
                 "ruflin/elastica": ">=0.90 <3.0",
                 "sentry/sentry": "^0.13",
                 "swiftmailer/swiftmailer": "^5.3|^6.0"
@@ -8247,7 +8218,17 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2019-12-20T14:15:16+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/Seldaek",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/monolog/monolog",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-05-22T07:31:27+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -12081,53 +12062,6 @@
                 "stripe"
             ],
             "time": "2020-07-18T00:01:06+00:00"
-        },
-        {
-            "name": "superbalist/flysystem-google-storage",
-            "version": "7.2.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Superbalist/flysystem-google-cloud-storage.git",
-                "reference": "87e2f450c0e4b5200fef9ffe6863068cc873d734"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Superbalist/flysystem-google-cloud-storage/zipball/87e2f450c0e4b5200fef9ffe6863068cc873d734",
-                "reference": "87e2f450c0e4b5200fef9ffe6863068cc873d734",
-                "shasum": ""
-            },
-            "require": {
-                "google/cloud-storage": "~1.0",
-                "league/flysystem": "~1.0",
-                "php": ">=5.5.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "0.9.*",
-                "phpunit/phpunit": "~4.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Superbalist\\Flysystem\\GoogleStorage\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Superbalist.com a division of Takealot Online (Pty) Ltd",
-                    "email": "info@superbalist.com"
-                }
-            ],
-            "description": "Flysystem adapter for Google Cloud Storage",
-            "time": "2019-10-10T12:22:54+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

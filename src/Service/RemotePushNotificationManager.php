@@ -4,9 +4,11 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\RemotePushToken;
+use Doctrine\ORM\EntityManagerInterface;
 use Kreait\Firebase\Factory as FirebaseFactory;
 use Kreait\Firebase\Exception\ServiceAccountDiscoveryFailed;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\MessageTarget;
 use Psr\Log\LoggerInterface;
 use Pushok;
 
@@ -14,16 +16,20 @@ class RemotePushNotificationManager
 {
     private $firebaseFactory;
     private $apnsClient;
-    private static $enabled = true;
+    private $entityManager;
     private $logger;
+
+    private static $enabled = true;
 
     public function __construct(
         FirebaseFactory $firebaseFactory,
         Pushok\Client $apnsClient,
+        EntityManagerInterface $entityManager,
         LoggerInterface $logger)
     {
         $this->firebaseFactory = $firebaseFactory;
         $this->apnsClient = $apnsClient;
+        $this->entityManager = $entityManager;
         $this->logger = $logger;
     }
 
@@ -106,18 +112,37 @@ class RemotePushNotificationManager
         // Make sure to have a zero-indexed array
         $deviceTokens = array_values($deviceTokens);
 
-        try {
+        // @see https://firebase-php.readthedocs.io/en/stable/cloud-messaging.html?#send-messages-to-multiple-devices-multicast
+        $report = $firebaseMessaging->sendMulticast($message, $deviceTokens);
 
-            // @see https://firebase-php.readthedocs.io/en/stable/cloud-messaging.html?#send-messages-to-multiple-devices-multicast
-            $report = $firebaseMessaging->sendMulticast($message, $deviceTokens);
-            if ($report->hasFailures()) {
-                foreach ($report->failures()->getItems() as $failure) {
-                    $this->logger->error($failure->error()->getMessage());
+        if ($report->hasFailures()) {
+            foreach ($report->failures()->getItems() as $failure) {
+
+                if ($failure->target()->type() === MessageTarget::TOKEN) {
+
+                    $this->logger->error(sprintf('Error sending FCM message to token "%s": %s',
+                        $failure->target()->value(),
+                        $failure->error()->getMessage()
+                    ));
+
+                    // @see https://firebase.google.com/docs/reference/fcm/rest/v1/ErrorCode
+                    // If the token was not found, we remove it from database
+                    if ($failure->messageWasSentToUnknownToken()) {
+                        foreach ($tokens as $token) {
+                            if ($token->getToken() === $failure->target()->value()) {
+
+                                $this->logger->info(sprintf('Removing remote push token "%s"',
+                                    $failure->target()->value()
+                                ));
+
+                                $this->entityManager->remove($token);
+                                $this->entityManager->flush();
+                                break;
+                            }
+                        }
+                    }
                 }
             }
-
-        } catch (\Exception $e) {
-            $this->logger->error($e);
         }
     }
 
