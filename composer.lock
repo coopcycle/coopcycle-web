@@ -12054,16 +12054,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.43.0",
+            "version": "v7.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "7f516261bc496706a03b9443107532b552efa9d8"
+                "reference": "b39ccc77358fbe0d462e6cc89ac01b7a0c896f35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/7f516261bc496706a03b9443107532b552efa9d8",
-                "reference": "7f516261bc496706a03b9443107532b552efa9d8",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/b39ccc77358fbe0d462e6cc89ac01b7a0c896f35",
+                "reference": "b39ccc77358fbe0d462e6cc89ac01b7a0c896f35",
                 "shasum": ""
             },
             "require": {
@@ -12107,7 +12107,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2020-07-18T00:01:06+00:00"
+            "time": "2020-07-20T21:25:50+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -13715,7 +13715,7 @@
                 "storage",
                 "sylius"
             ],
-            "time": "2020-06-25T12:38:18+00:00"
+            "time": "2020-06-30T07:41:56+00:00"
         },
         {
             "name": "sylius/taxation",
