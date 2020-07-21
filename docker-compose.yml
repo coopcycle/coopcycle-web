@@ -6,7 +6,7 @@ services:
     restart: always
     image: mdillon/postgis:9.4-alpine
     environment:
-      POSTGRES_DB: coopcycle
+      - POSTGRES_DB=${COOPCYCLE_DB_NAME}
     ports:
       - '5432:5432'
     volumes:
@@ -50,7 +50,7 @@ services:
     volumes:
       - './var/osrm:/data'
     environment:
-      OSRM_FILENAME: data.osrm
+      - OSRM_FILENAME=data.osrm
 
   php:
     build:
@@ -67,11 +67,10 @@ services:
       - stripe_mock
       - browserless
     environment:
-      SYMFONY_ENV: dev
-      BEHAT_PARAMS: '{"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80"}}}'
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
-      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      - 'BEHAT_PARAMS={"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80"}}}'
+      - GOOGLE_API_KEY
+      - STRIPE_PUBLISHABLE_KEY
+      - STRIPE_SECRET_KEY
     volumes:
       - 'php_cache:/var/www/html/var/cache'
       - './:/var/www/html:cached'
@@ -86,10 +85,9 @@ services:
       - php
     restart: always
     environment:
-      SYMFONY_ENV: dev
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
-      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      - GOOGLE_API_KEY
+      - STRIPE_PUBLISHABLE_KEY
+      - STRIPE_SECRET_KEY
     volumes:
       - 'php_cache:/var/www/html/var/cache'
       - './:/var/www/html:cached'
@@ -147,9 +145,9 @@ services:
     volumes:
       - minio_data:/data
     environment:
-      MINIO_ACCESS_KEY: minio
-      MINIO_SECRET_KEY: coopcycle
-      MINIO_REGION: fr-fr
+      - MINIO_ACCESS_KEY=${S3_CREDENTIALS_KEY}
+      - MINIO_SECRET_KEY=${S3_CREDENTIALS_SECRET}
+      - MINIO_REGION=${S3_REGION}
 
   # https://github.com/minio/minio/issues/4882
   # https://docs.min.io/docs/minio-client-complete-guide#policy
@@ -157,16 +155,20 @@ services:
     image: minio/mc
     depends_on:
       - minio
+    environment:
+      - S3_CREDENTIALS_KEY
+      - S3_CREDENTIALS_SECRET
+      - S3_REGION
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc config host add coopcycle http://minio:9000 minio coopcycle;
-      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images;
-      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images/assets;
-      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images/products;
-      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images/receipts;
-      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images/restaurants;
-      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images/stores;
-      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images/tasks;
+      /usr/bin/mc config host add coopcycle http://minio:9000 $S3_CREDENTIALS_KEY $S3_CREDENTIALS_SECRET;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/assets;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/products;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/receipts;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/restaurants;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/stores;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/tasks;
       /usr/bin/mc policy set public coopcycle/images;
       "
 
