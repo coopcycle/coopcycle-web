@@ -2,6 +2,7 @@ global.changesSaved: Your changes have been saved.
 navbar.login: Login
 navbar.myAccount: My Account
 base.footer.contactUs: Contact us
+base.footer.companyRegister: Become a partner
 base.footer.help: Help
 base.footer.legal: Legal notice
 base.footer.suggest: Suggest a restaurant

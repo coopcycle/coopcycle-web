@@ -51,6 +51,11 @@
                     <i class="fa fa-envelope"></i>  {{ coopcycle_setting('administrator_email') }}
                   </a>
                 </li>
+                <li>
+                  <a class="footer-link" href="{{ path('company_registration') }}" >
+                    {% trans %}base.footer.companyRegister{% endtrans %}
+                  </a>
+                </li>
                 {% set phone_number = coopcycle_setting('phone_number') %}
                 {% if phone_number is not empty %}
                 <li>

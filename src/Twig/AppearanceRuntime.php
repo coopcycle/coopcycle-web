@@ -23,8 +23,8 @@ class AppearanceRuntime implements RuntimeExtensionInterface
         Filesystem $assetsFilesystem,
         FilterService $imagineFilter,
         CacheInterface $appCache,
-        string $logoFallback)
-    {
+        string $logoFallback
+    ) {
         $this->settingsManager = $settingsManager;
         $this->assetsFilesystem = $assetsFilesystem;
         $this->imagineFilter = $imagineFilter;
@@ -35,7 +35,6 @@ class AppearanceRuntime implements RuntimeExtensionInterface
     public function logo()
     {
         $companyLogo = $this->settingsManager->get('company_logo');
-
         if (!empty($companyLogo) && $this->assetsFilesystem->has($companyLogo)) {
 
             return $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');

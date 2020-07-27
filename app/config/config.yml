@@ -105,6 +105,7 @@ framework:
                     consumer: "%database_name%:consumer"
         routing:
             'AppBundle\Message\Email': async
+            'AppBundle\Message\Company\RequestRegistration': async
             'AppBundle\Message\PushNotification': async
             'AppBundle\Message\ImportTasks': async
             'AppBundle\Message\Sms': async
