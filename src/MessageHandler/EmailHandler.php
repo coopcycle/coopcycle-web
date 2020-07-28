@@ -8,6 +8,10 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class EmailHandler implements MessageHandlerInterface
 {
+    private \Swift_Mailer $mailer;
+    private \Swift_Transport $transport;
+    private EmailManager $emailManager;
+
     public function __construct(\Swift_Mailer $mailer, \Swift_Transport $transport, EmailManager $emailManager)
     {
         $this->mailer = $mailer;
@@ -18,9 +22,7 @@ class EmailHandler implements MessageHandlerInterface
     public function __invoke(Email $message)
     {
         $this->emailManager->sendTo($message->getMessage(), $message->getTo());
-
         $transport = $this->mailer->getTransport();
-
         if ($transport instanceof \Swift_Transport_SpoolTransport) {
             $spool = $transport->getSpool();
             $spool->flushQueue($this->transport);

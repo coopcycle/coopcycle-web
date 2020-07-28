@@ -1,0 +1,19 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  <mj-column>
+    <mj-text align="left" line-height="20px">
+
+      {{ registration.companyName }}
+      {{ 'profile.task.address'|trans }}:
+      {{ registration.address.addressCountry }}
+      {{ registration.address.postalCode }}
+      {{ registration.address.streetAddress }}
+
+      {{ 'form.address.company.meal_estimate.label'|trans }} : {{ registration.mealEstimate }}
+      {{ 'form.address.company.collaborator_number.label'|trans }} : {{ registration.collaboratorNumber }}
+
+
+    </mj-text>
+  </mj-column>
+{% endblock %}
