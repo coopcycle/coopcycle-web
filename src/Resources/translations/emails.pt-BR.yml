@@ -6,8 +6,8 @@ registration.email.message: |
   <br>
   Confirme seu endereço de email clicando no botão abaixo.
 registration.email.confirm: Confirmar email
-registration.email.disclaimer: Este link só pode ser utilizado uma vez, para validar
-  sua conta.
+registration.email.disclaimer: Este link só pode ser utilizado uma vez para validar
+  sua conta
 registration.email.textMessage: |
   Bem-vindo a %brand_name%, %username%,\n\n
   Você está recebendo esta mensagem porque recentemente se registrou para uma conta em %brand_name%.\n
@@ -18,9 +18,9 @@ resetting.email.reset: Redefinir senha
 order.view: Ver pedido
 order.public_url: |
   Para rastrear o estado do seu pedido, <a href="%order.public_url%">clique aqui</a>.
-order.foodtech.accepted.delivery: 'Será entregue à você no seguinte horário:'
-order.foodtech.accepted.delivery.disclaimer: Entraremos em contato em caso de problemas
-  na localização do endereço
+order.foodtech.accepted.delivery: 'Será entregue a você no seguinte horário:'
+order.foodtech.accepted.delivery.disclaimer: Entraremos em contato caso haja problemas
+  na localização de seu endereço
 order.foodtech.accepted.collection: 'Você deverá recolher seu pedido no seguinte horário:'
 order.foodtech.accepted.collection.disclaimer: Se encontrar algum problema, contate
   <strong>%name%</strong> no telefone <strong>%phone_number%</strong> o quanto antes
