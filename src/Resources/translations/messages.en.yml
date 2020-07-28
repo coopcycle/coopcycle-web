@@ -463,6 +463,12 @@ form.address.streetAddress.error.noLatLng: Please select an address in the dropd
 form.address.name.label: Name
 form.address.name.placeholder: Home, work…
 form.address.company.label: Company
+form.address.company_name.label: Company name
+form.address.company.business_reference.label: Contact person for the company
+form.address.company.function.label: Contact person position
+form.address.company.collaborator_number.label: Number of employees
+form.address.company.meal_estimate.label: Estimated number of meals (per day)
+form.company.make_the_request.label: Send request
 form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Rules
 form.pricing_rule_set.strategy.label: Method of calculation
