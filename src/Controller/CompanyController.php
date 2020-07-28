@@ -65,7 +65,6 @@ class CompanyController
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
             $companyRegistration = $form->getData();
-            // $this->bus->dispatch($companyRegistration);
 
             $message = $this->emailManager->createHtmlMessage(
                 $this->translator->trans('registration.company', [], 'emails'),
