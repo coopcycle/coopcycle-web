@@ -45,7 +45,7 @@ class DoRegisterViaMailHandler implements MessageSubscriberInterface
     {
         $message = new \Swift_Message(
             $this->translator->trans('registration.company', [], 'emails'),
-            $this->twig->render(':emails/company/request_registration.mjml.twig', [
+            $this->twig->render('emails/company/request_registration.mjml.twig', [
                 'registration' => $registration
             ])
         );
