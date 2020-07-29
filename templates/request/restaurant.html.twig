@@ -1,0 +1,31 @@
+{% extends "base.html.twig" %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block body %}
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      {{ form_start(form, {'method': 'post', 'action': path('request_restaurant'), 'attr': {'class': 'fos_user_registration_register'}}) }}
+      {{ form_widget(form) }}
+      <div>
+        <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'form.company.make_the_request.label'|trans }}</button>
+      </div>
+      {{ form_end(form) }}
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    function initMap() {
+      new CoopCycle.AddressInput(document.querySelector(`#request_for_add_address_streetAddress`), {
+        elements: {
+          latitude: document.querySelector(`#request_for_add_address_latitude`),
+          longitude: document.querySelector(`#request_for_add_address_longitude `)
+        }
+      });
+    }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&language={{ app.request.locale }}&callback=initMap"
+          async defer></script>
+{% endblock %}

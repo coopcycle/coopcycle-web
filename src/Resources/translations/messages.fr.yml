@@ -3,6 +3,7 @@ navbar.login: Connexion
 navbar.myAccount: Mon compte
 base.footer.contactUs: Nous contacter
 base.footer.companyRegister: Devenir partenaire
+base.footer.RegisterMyRestaurant: Inscrire mon restaurant
 base.footer.help: Aide
 base.footer.legal: Mentions légales
 base.footer.terms: Conditions générales
@@ -1021,3 +1022,22 @@ restaurant.form.section.loopeat: LoopEat
 form.settings.company_logo.help: Ce logo sera utilisé pour les factures et les preuves
   de livraison
 form.product_option.preview_title: Aperçu de l'option
+form:
+  restaurant:
+    name:
+      label: Nom du restaurant
+    address:
+      label: Adresse du restaurant
+    contact_referent:
+      label:   Contact de la personne référente pour le restaurant
+    b2b:
+      label: Souhaitez-vous proposer une offre à destination des entreprises (B2B)?
+      yes: oui
+      no: non
+  company:
+    make_the_request:
+      label: Envoyer
+request:
+  restaurant:
+      email:
+        subject: Nouvelle demande d'ajout de restaurant
