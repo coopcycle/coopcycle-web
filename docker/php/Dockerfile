@@ -105,3 +105,4 @@ ENV APP_DEBUG 1
 RUN composer global require "hirak/prestissimo"
 
 ENTRYPOINT ["docker-app-start"]
+CMD ["php-fpm"]
