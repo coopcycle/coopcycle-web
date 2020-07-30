@@ -26,6 +26,7 @@ class Customer extends BaseCustomer implements CustomerInterface
     /** @var Collection|Address[] */
     protected $addresses;
 
+
     public function __construct()
     {
         parent::__construct();
