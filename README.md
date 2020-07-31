@@ -53,6 +53,10 @@ Enable`, and `Maps API dashboard > APIs > Places API for Web > Enable`).
 
 ```
 docker-compose up
+
+or if you whant test/dev 
+
+docker-compose up -f docker-compose.yml -f docker-compose.test.yml
 ```
 
 At this step, the platform should be up & running, but the database is still empty.
