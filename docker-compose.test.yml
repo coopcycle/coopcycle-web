@@ -1,0 +1,26 @@
+version: '3'
+
+services: 
+  nginx_test:
+    image: 'nginx:1.11-alpine'
+    depends_on:
+      - php
+      - nodejs
+    ports:
+      - '9080:80'
+    volumes:
+      - './docker/nginx_test/conf.d:/etc/nginx/conf.d:ro'
+      - './web:/var/www/html/web:ro'
+      - './vendor:/var/www/html/vendor:ro'
+
+  stripe_mock:
+    image: stripemock/stripe-mock:latest
+    ports:
+      - '12111:12111'
+
+  browserless:
+    image: browserless/chrome
+    restart: always
+    environment:
+      - DEBUG=browserless/chrome*
+

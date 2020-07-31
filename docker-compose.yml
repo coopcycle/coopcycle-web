@@ -11,6 +11,11 @@ services:
       - '5432:5432'
     volumes:
       - 'pg_data:/var/lib/postgresql/data'
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
 
   redis:
     restart: always
@@ -104,33 +109,10 @@ services:
       - './web:/var/www/html/web:ro'
       - './vendor:/var/www/html/vendor:ro'
 
-  nginx_test:
-    image: 'nginx:1.11-alpine'
-    depends_on:
-      - php
-      - nodejs
-    ports:
-      - '9080:80'
-    volumes:
-      - './docker/nginx_test/conf.d:/etc/nginx/conf.d:ro'
-      - './web:/var/www/html/web:ro'
-      - './vendor:/var/www/html/vendor:ro'
-
   smtp:
     image: namshi/smtp
     ports:
       - 25:25
-
-  stripe_mock:
-    image: stripemock/stripe-mock:latest
-    ports:
-      - '12111:12111'
-
-  browserless:
-    image: browserless/chrome
-    restart: always
-    environment:
-      - DEBUG=browserless/chrome*
 
   mjml:
     image: adrianrudnik/mjml-server

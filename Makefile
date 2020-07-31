@@ -6,6 +6,9 @@ install:
 	@docker-compose exec php bin/demo --env=dev
 	@docker-compose exec php php bin/console doctrine:migrations:version --no-interaction --quiet --add --all
 
+start-dev: 
+	docker-compose up -f docker-compose.yml -f docker-compose.test.yml
+
 osrm:
 	@docker-compose run --rm osrm wget --no-check-certificate https://coopcycle.org/osm/paris-france.osm.pbf -O /data/data.osm.pbf
 	@docker-compose run --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
