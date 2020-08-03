@@ -263,6 +263,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $takeaway = false;
 
+    protected $fromOrganization = false ;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -878,5 +880,24 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFromOrganization(): bool
+    {
+        return $this->fromOrganization;
+    }
+
+    /**
+     * @param bool $fromOrganization
+     * @return Order
+     */
+    public function setFromOrganization(bool $fromOrganization): Order
+    {
+        $this->fromOrganization = $fromOrganization;
+
+        return $this;
     }
 }

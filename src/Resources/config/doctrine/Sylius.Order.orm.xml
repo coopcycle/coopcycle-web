@@ -13,6 +13,11 @@
         <option name="default">0</option>
       </options>
     </field>
+    <field name="fromOrganization" type="boolean">
+      <options>
+        <option name="default">false</option>
+      </options>
+    </field>
     <field name="takeaway" type="boolean" column="takeaway">
       <options>
         <option name="default">0</option>
