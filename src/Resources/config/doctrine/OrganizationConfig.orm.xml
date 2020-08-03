@@ -3,7 +3,10 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
   <entity name="AppBundle\Entity\OrganizationConfig" table="organization_config">
-    <id name="organization" association-key="true"/>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+
 
     <field name="name" type="text"/>
     <field name="logo" type="text" nullable="true"/>
@@ -16,7 +19,19 @@
     <field name="coverageOfDeliveryCostsByTheCompanyOrTheEmployee" type="text" nullable="true"/>
 
     <one-to-one field="organization" target-entity="AppBundle\Entity\Organization" inversed-by="config"/>
-
+    <many-to-many field="addresses" target-entity="AppBundle\Entity\Address">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-table name="organization_config_addresses">
+        <join-columns>
+          <join-column name="organization_id" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="address_id" referenced-column-name="id" unique="true"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
 
   </entity>
 </doctrine-mapping>

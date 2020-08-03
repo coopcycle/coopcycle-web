@@ -9,84 +9,74 @@ use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
-use AppBundle\Form\RegistrationType;
-use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Organization;
 use AppBundle\Entity\PackageSet;
+use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\TimeSlot;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Zone;
-use AppBundle\Entity\Sylius\Order;
-use AppBundle\Exception\PreviousTaskNotCompletedException;
+use AppBundle\Form\AddOrganizationType;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
 use AppBundle\Form\CustomizeType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Form\EmbedSettingsType;
+use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\InviteUserType;
+use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\NewOrderType;
 use AppBundle\Form\OrderType;
-use AppBundle\Form\PricingRuleSetType;
-use AppBundle\Form\UpdateProfileType;
-use AppBundle\Form\GeoJSONUploadType;
-use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\PackageSetType;
+use AppBundle\Form\PricingRuleSetType;
+use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
+use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
-use AppBundle\Service\TaskManager;
+use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Order\OrderTransitions;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
 use AppBundle\Utils\MessageLoggingTwigSwiftMailer;
-use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
-use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
+use FOS\UserBundle\Util\TokenGeneratorInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Redis;
 use Ramsey\Uuid\Uuid;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
-use Sylius\Component\Payment\Model\PaymentInterface;
-use Sylius\Component\Payment\PaymentTransitions;
-use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Promotion\Model\PromotionAction;
-use Sylius\Component\Taxation\Model\TaxCategory;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
-use Sylius\Component\Taxation\Model\TaxRate;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use AppBundle\Service\TagManager;
-use AppBundle\Entity\Invitation;
-use FOS\UserBundle\Util\TokenGeneratorInterface;
 
 class AdminController extends Controller
 {
@@ -1704,5 +1694,65 @@ class AdminController extends Controller
         return $this->render('admin/customize.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/admin/organizations", name="admin_organizations")
+     */
+    public function organizationsAction()
+    {
+        $organizations = $this->getDoctrine()->getRepository(Organization::class)->findAll();
+
+        return $this->render('admin/organizations.html.twig', [
+            'organizations' => $organizations,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/organization", name="admin_add_organization")
+     */
+    public function addOrganizationAction(Request $request)
+    {
+
+        $form = $this->createForm(AddOrganizationType::class);
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+
+            $organization = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($organization);
+            $em->flush();
+
+            return new RedirectResponse($this->generateUrl('admin_organizations'));
+
+        }
+
+        return $this->render('admin/add_organization.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/organization/{id}", name="admin_organization")
+     */
+    public function getOrganizationAction(Request $request, Organization $organization)
+    {
+        $form = $this->createForm(AddOrganizationType::class, null, ['organization' => $organization]);
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+
+            $organization = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($organization);
+            $em->flush();
+
+            return new RedirectResponse($this->generateUrl('admin_organizations'));
+
+        }
+
+        return $this->render('admin/organization.html.twig',
+            [
+                'form' => $form->createView(),
+                'organization' => $organization
+            ]
+        );
     }
 }

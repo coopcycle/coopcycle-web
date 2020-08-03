@@ -42,7 +42,12 @@
             <span class="navbar-label">{% trans %}adminDashboard.stores.title{% endtrans %}</span>
           </a>
         </li>
-        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.restaurants{%  endtrans %}">
+        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.organizations{%  endtrans %}">
+          <a class="admin-navbar__link" href="{{ path('admin_organizations') }}">
+            <i class="fa fa-cutlery"></i>
+            <span class="navbar-label">{% trans %}adminDashboard.orgnizations.title{% endtrans %}</span>
+          </a>
+        </li>    <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.restaurants{%  endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_restaurants') }}">
             <i class="fa fa-cutlery"></i>
             <span class="navbar-label">{% trans %}adminDashboard.restaurants.title{% endtrans %}</span>

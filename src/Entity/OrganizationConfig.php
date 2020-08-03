@@ -2,12 +2,15 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class OrganizationConfig
 {
+    public $id;
     private $name;
-    private $address;
+    private $addresses;
     private $logo;
     /**
      * @var string
@@ -23,6 +26,38 @@ class OrganizationConfig
     private $startHourOrder;
     private $dayOfOrderAvailable;
     private $organization;
+
+    public function __construct(
+        string $name,
+        Address $address,
+        string $logo,
+        string $deliveryPerimeterExpression,
+        string $numberOfOrderAvailable,
+        string $amountOfSubsidyPerEmployeeAndOrder,
+        string $coverageOfDeliveryCostsByTheCompanyOrTheEmployee,
+        \DateTimeInterface $orderLeadTime,
+        int $limitHourOrder,
+        int $startHourOrder,
+        string $dayOfOrderAvailable
+    ) {
+        $this->name = $name;
+        $this->addresses = new ArrayCollection([$address]);
+        $this->logo = $logo;
+        $this->deliveryPerimeterExpression = $deliveryPerimeterExpression;
+        $this->numberOfOrderAvailable = $numberOfOrderAvailable;
+        $this->amountOfSubsidyPerEmployeeAndOrder = $amountOfSubsidyPerEmployeeAndOrder;
+        $this->coverageOfDeliveryCostsByTheCompanyOrTheEmployee = $coverageOfDeliveryCostsByTheCompanyOrTheEmployee;
+        $this->orderLeadTime = $orderLeadTime;
+        $this->limitHourOrder = $limitHourOrder;
+        $this->startHourOrder = $startHourOrder;
+        $this->dayOfOrderAvailable = $dayOfOrderAvailable;
+
+    }
+
+    public function setOrganization(Organization $organization)
+    {
+        $this->organization = $organization;
+    }
 
     /**
      * @return mixed
@@ -64,10 +99,14 @@ class OrganizationConfig
         return $this->organization;
     }
 
-    public function setOrganization(Organization $organization): void
+    /**
+     * @return string
+     */
+    public function getCoverageOfDeliveryCostsByTheCompanyOrTheEmployee(): string
     {
-        $this->organization = $organization;
+        return $this->coverageOfDeliveryCostsByTheCompanyOrTheEmployee;
     }
+
 
     private function isCoverageOfDeliveryCostsByTheCompanyOrTheEmployee()
     {
@@ -83,12 +122,14 @@ class OrganizationConfig
     }
 
     /**
-     * @return mixed
+     * @return ArrayCollection
      */
-    public function getAddress()
+    public function getAddresses(): Collection
     {
-        return $this->address;
+        return $this->addresses;
     }
+
+
 
     /**
      * @return mixed

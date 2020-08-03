@@ -1,0 +1,50 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path('admin_organizations') }}">{{ 'organizations.breadcrumb'|trans }}</a></li>
+{% endblock %}
+
+
+{% block content %}
+  <div class="text-right">
+    <div class="dropdown">
+      <button id="add-promotion" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-success">
+        <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="add-promotion">
+        <li><a href="{{ path('admin_add_organization')}}">{{ 'organization.add_new'|trans }}</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <h4>
+    {{ 'promotions.heading.free_delivery'|trans }}
+  </h4>
+  <span class="help-block">{{ 'promotions.heading.free_delivery.help'|trans }}</span>
+
+  <table class="table">
+    <thead>
+    <th>{% trans %}sylius.ui.code{% endtrans %}</th>
+    <th>{% trans %}sylius.form.attribute.name{% endtrans %}</th>
+    <th class="text-right">{% trans %}promotion_coupon.used.label{% endtrans %}</th>
+    </thead>
+    <tbody>
+    {% for organization in organizations %}
+      <tr>
+        <td width="5%">
+          <a href="{{ path('admin_organization', { id: organization.id }) }}">
+            {{ organization.id }}
+          </a>
+        </td>
+        <td width="20%">
+          {{ organization.config.name }}
+        </td>
+        <td width="20%">
+          {{ organization.config|json_encode }}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

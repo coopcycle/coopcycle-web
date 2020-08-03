@@ -16,6 +16,7 @@ adminDashboard.tooltip.orders: Gestion des commandes restaurateurs
 adminDashboard.tooltip.deliveries: Gestion des courses
 adminDashboard.tooltip.stores: Gestion des magasins
 adminDashboard.tooltip.restaurants: Gestion des restaurants
+adminDashboard.tooltip.organizations: Gestion des organizations
 adminDashboard.tooltip.users: Gestion des comptes utilisateurs
 adminDashboard.dashboard.title: Tableau de bord
 adminDashboard.dashboard.import: Importer
@@ -43,9 +44,11 @@ adminDashboard.menuCategories.categories: Catégories
 adminDashboard.menuCategories.addCategory: Ajouter une catégorie
 adminDashboard.menuCategories.save: Enregistrer
 adminDashboard.stores.title: Magasins
+adminDashboard.orgnizations.title: Oragnisations
 adminDashboard.stores.createNew: Créer un magasin
 adminDashboard.stores.form.uploadImage: Uploader une image
 adminDashboard.orders.title: Commandes
+adminDashboard.oragnizations.title: Organizations
 adminDashboard.orders.previousOrders: Commandes précédentes
 adminDashboard.orders.showCanceled: Afficher les commandes annulées
 adminDashboard.orders.noOrders: Pas de commande pour l'instant
@@ -804,6 +807,7 @@ api_apps.breadcrumb: Clients d'API
 api_apps.created.message: Le client a bien été ajouté. Utilisez les identifiants ci-dessous
   pour vous authentifier.
 promotions.breadcrumb: Promotions
+organizations.breadcrumb: Organizations
 promotions.breadcrumb.new_credit_note: Nouvel avoir commercial
 promotions.heading.free_delivery: Livraison offerte
 promotions.heading.free_delivery.help: Créez des codes promotionnels pour offrir la
@@ -816,6 +820,7 @@ promotions.promotion_coupon.success: Votre code promotionnel %code% a été pris
 promotions.add_free_delivery_coupon: Ajouter un code promotionnel « Livraison offerte
   »
 promotions.create_credit_note_coupon: Créer un avoir commercial
+organization.add_new: Créer une organization
 delivery.table.heading.summary: Résumé
 delivery.table.heading.courier: Coursier
 delivery.table.heading.order: Commande
@@ -891,6 +896,7 @@ deliveries.sort.newest: Les plus récentes
 deliveries.sort.oldest: Les plus anciennes
 deliveries.filter.clear: Afficher tout
 orders.new: Nouvelle commande
+oragnizations.new: Nouvelle organization
 basics.copy: Copier
 orders.payment_link.send_by_email: Envoyer un lien de paiement
 orders.payment_link.sent: L'email a été envoyé
