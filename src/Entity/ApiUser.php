@@ -14,6 +14,7 @@ use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Product\ProductInterface;
 use FOS\UserBundle\Model\User as BaseUser;
+use Gedmo\Timestampable\Traits\Timestampable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
@@ -53,6 +54,7 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
 class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 {
     use LoopEatOAuthCredentialsTrait;
+    use Timestampable;
 
     protected $id;
 
