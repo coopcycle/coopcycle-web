@@ -21,8 +21,8 @@ class SettingsModalContent extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      polylineStyle: 'normal',
-      clustersEnabled: false,
+      polylineStyle: props.polylineStyle,
+      clustersEnabled: props.clustersEnabled,
     }
   }
 
