@@ -29,7 +29,8 @@ class SettingsManagerTest extends TestCase
             $this->doctrine->reveal(),
             $this->phoneNumberUtil->reveal(),
             'fr',
-            true,
+            $foodtechEnable = true,
+            $b2bEnabled = false,
             new NullLogger()
         );
     }
