@@ -83,6 +83,9 @@
   <th>{% trans %}profile.email{% endtrans  %}</th>
   <th>{% trans %}profile.telephone{% endtrans  %}</th>
   <th class="text-right">{% trans %}adminDashboard.users.roles{% endtrans  %}</th>
+  <th class="text-right">{% trans %}adminDashboard.users.orders_count{% endtrans  %}</th>
+  <th class="text-right">{% trans %}adminDashboard.users.registered_at{% endtrans  %}</th>
+  <th class="text-right">{% trans %}adminDashboard.users.last_order{% endtrans  %}</th>
   <th></th>
 </thead>
 <tbody>
@@ -101,6 +104,16 @@
     <td class="text-right">
       {% include "_partials/user/roles.html.twig" %}
     </td>
+    <td class="text-right">
+      {{ attributes[user.username]['orders_count'] }}
+    </td>
+    <td class="text-right">
+      {{ user.createdAt|ago }}
+    </td>
+    <td class="text-right">
+      {% if attributes[user.username]['last_order'] is not empty %}
+        {{ attributes[user.username]['last_order'].updatedAt|ago }}
+      {% endif %}
     <td class="text-right">
       <a class="btn btn-xs btn-success" href="{{ path('admin_user_edit', { username: user.username }) }}">
         <i class="fa fa-pencil" aria-hidden="true"></i>  {% trans from 'messages' %}Edit{%  endtrans %}

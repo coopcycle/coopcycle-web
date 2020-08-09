@@ -59,6 +59,9 @@ adminDashboard.users.edit.addStore: Ajouter un magasin
 adminDashboard.users.edit.addRestaurant: Ajouter un restaurant
 adminDashboard.users.createNew: Ajouter un utilisateur
 adminDashboard.users.invite: Inviter un utilisateur
+adminDashboard.users.orders_count: Nombre de commandes
+adminDashboard.users.registered_at: Inscription
+adminDashboard.users.last_order: Dernière commande
 adminDashboard.settings.title: Paramètres
 adminDashboard.pricing.title: Tarification
 adminDashboard.pricing.manage: Gérer

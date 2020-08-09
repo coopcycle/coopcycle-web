@@ -347,8 +347,36 @@ class AdminController extends Controller
             ]
         );
 
+        $attributes = [];
+
+        foreach ($users as $user) {
+
+            $qb = $this->get('sylius.repository.order')->createQueryBuilder('o');
+            $qb->andWhere('o.customer = :customer');
+            $qb->andWhere('o.state = :state');
+            $qb->setParameter('customer', $user);
+            $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
+
+            $res = $qb->getQuery()->getResult();
+
+            $attributes[$user->getUsername()]['orders_count'] = count($res);
+
+            $qb = $this->get('sylius.repository.order')->createQueryBuilder('o');
+            $qb->andWhere('o.customer = :customer');
+            $qb->andWhere('o.state = :state');
+            $qb->setParameter('customer', $user);
+            $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
+            $qb->orderBy('o.updatedAt', 'DESC');
+            $qb->setMaxResults(1);
+
+            $res = $qb->getQuery()->getOneOrNullResult();
+
+            $attributes[$user->getUsername()]['last_order'] = $res;
+        }
+
         return $this->render('admin/users.html.twig', array(
             'users' => $users,
+            'attributes' => $attributes,
         ));
     }
 
