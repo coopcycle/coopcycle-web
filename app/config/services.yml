@@ -464,13 +464,10 @@ services:
 
   AppBundle\Service\SettingsManager:
     arguments:
-      - "@craue_config"
-      - "%craue_config.entity_name%"
-      - "@doctrine"
-      - "@libphonenumber.phone_number_util"
-      - "%country_iso%"
-      - "%foodtech_enabled%"
-      - "@logger"
+      $craueConfig: "@craue_config"
+      $configEntityName: "%craue_config.entity_name%"
+      $country: "%country_iso%"
+      $foodtechEnabled: "%foodtech_enabled%"
 
   AppBundle\Service\EmailManager:
     arguments:
