@@ -117,6 +117,7 @@
         "ADMIN_DASHBOARD_VIEW_MODE_BY_GROUP": "Display by groups",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "Display by dropoff desc.",
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Supported file formats: csv, ods, xlsx",
+        "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Enabled map clusters",
         "USER_EDIT_ENABLED_LABEL": "Enabled",
         "USER_EDIT_DISABLED_LABEL": "Disabled",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Order created",

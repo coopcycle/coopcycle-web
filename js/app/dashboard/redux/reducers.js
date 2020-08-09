@@ -45,6 +45,7 @@ import {
   IMPORT_ERROR,
   OPEN_IMPORT_MODAL,
   CLOSE_IMPORT_MODAL,
+  SET_CLUSTERS_ENABLED,
 } from './actions'
 
 const moment = extendMoment(Moment)
@@ -126,6 +127,7 @@ const initialState = {
   importModalIsOpen: false,
   uploaderEndpoint: '',
   exampleSpreadsheetUrl: '#',
+  clustersEnabled: false,
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -621,6 +623,16 @@ const imports = (state = initialState.imports, action) => {
   return state
 }
 
+const clustersEnabled = (state = initialState.clustersEnabled, action) => {
+  switch (action.type) {
+  case SET_CLUSTERS_ENABLED:
+
+    return action.enabled
+  }
+
+  return state
+}
+
 export default (state = initialState, action) => {
 
   const { allTasks, unassignedTasks, taskLists, tasksWithColor, taskListsLoading } = combinedTasks(state, action)
@@ -654,5 +666,6 @@ export default (state = initialState, action) => {
     taskEvents: taskEvents(state.taskEvents, action),
     imports: imports(state.imports, action),
     importModalIsOpen: importModalIsOpen(state.importModalIsOpen, action),
+    clustersEnabled: clustersEnabled(state.clustersEnabled, action),
   }
 }

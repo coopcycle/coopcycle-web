@@ -111,6 +111,7 @@ export const CLOSE_SEARCH = 'CLOSE_SEARCH'
 export const OPEN_SETTINGS = 'OPEN_SETTINGS'
 export const CLOSE_SETTINGS = 'CLOSE_SETTINGS'
 export const SET_POLYLINE_STYLE = 'SET_POLYLINE_STYLE'
+export const SET_CLUSTERS_ENABLED = 'SET_CLUSTERS_ENABLED'
 
 export const LOAD_TASK_EVENTS_REQUEST = 'LOAD_TASK_EVENTS_REQUEST'
 export const LOAD_TASK_EVENTS_SUCCESS = 'LOAD_TASK_EVENTS_SUCCESS'
@@ -402,6 +403,10 @@ function setPolylineStyle(style) {
   return {type: SET_POLYLINE_STYLE, style}
 }
 
+function setClustersEnabled(enabled) {
+  return {type: SET_CLUSTERS_ENABLED, enabled}
+}
+
 function loadTaskEventsRequest() {
   return { type: LOAD_TASK_EVENTS_REQUEST }
 }
@@ -687,4 +692,5 @@ export {
   importSuccess,
   importError,
   startTask,
+  setClustersEnabled,
 }
