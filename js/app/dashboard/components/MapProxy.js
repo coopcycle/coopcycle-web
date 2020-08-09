@@ -198,10 +198,6 @@ export default class MapProxy {
     }
   }
 
-  removeTask(task) {
-    this.taskMarkers.delete(task['id'])
-  }
-
   getPolylineLayerGroup(username) {
     let layerGroup = this.polylineLayerGroups.get(username)
 
