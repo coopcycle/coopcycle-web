@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import isScalar from 'locutus/php/var/is_scalar'
 import { withTranslation } from 'react-i18next'
+import numbro from 'numbro'
 
 /*
 
@@ -33,6 +34,8 @@ const typeToOperators = {
   'packages': ['containsAtLeastOne'],
   'order.itemsTotal': ['==', '<', '>', 'in'],
 }
+
+const isK = type => type === 'distance' || type === 'weight'
 
 class RulePickerLine extends React.Component {
 
@@ -77,9 +80,9 @@ class RulePickerLine extends React.Component {
   }
 
   handleValueChange (ev) {
-    const { value } = this.state
+    const { type, value } = this.state
     if (!Array.isArray(value)) {
-      this.setState({ value: ev.target.value })
+      this.setState({ value: numbro.unformat(ev.target.value) * (isK(type) ? 1000 : 1) })
     }
   }
 
@@ -124,9 +127,21 @@ class RulePickerLine extends React.Component {
     this.props.onDelete(this.props.index)
   }
 
-  renderNumberInput() {
+  renderNumberInput(k = false) {
+
+    let props = {}
+    if (k) {
+      props = {
+        ...props,
+        step: '.5'
+      }
+    }
+
     return (
-      <input className="form-control input-sm" value={this.state.value} onChange={this.handleValueChange} type="number" min="0" required></input>
+      <input className="form-control input-sm"
+        value={ k ? (this.state.value / 1000) : this.state.value }
+        onChange={ this.handleValueChange }
+        type="number" min="0" required { ...props }></input>
     )
   }
 
@@ -173,7 +188,7 @@ class RulePickerLine extends React.Component {
         return this.renderBooleanInput()
       }
 
-      return this.renderNumberInput()
+      return this.renderNumberInput(isK(this.state.type))
     // weight, distance, diff_days(pickup)
     case 'in':
       return (
@@ -188,7 +203,7 @@ class RulePickerLine extends React.Component {
       )
     case '<':
     case '>':
-      return this.renderNumberInput()
+      return this.renderNumberInput(isK(this.state.type))
     case 'containsAtLeastOne':
       return (
         <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
