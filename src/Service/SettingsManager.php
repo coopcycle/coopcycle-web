@@ -45,6 +45,7 @@ class SettingsManager
         PhoneNumberUtil $phoneNumberUtil,
         string $country,
         bool $foodtechEnabled,
+        bool $b2bEnabled,
         LoggerInterface $logger)
     {
         $this->craueConfig = $craueConfig;
@@ -53,6 +54,7 @@ class SettingsManager
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->country = $country;
         $this->foodtechEnabled = $foodtechEnabled;
+        $this->b2bEnabled = $b2bEnabled;
         $this->logger = $logger;
     }
 
@@ -77,6 +79,8 @@ class SettingsManager
                 return ini_get('date.timezone');
             case 'foodtech_enabled':
                 return $this->foodtechEnabled;
+            case 'b2b_enabled':
+                return $this->b2bEnabled;
         }
 
         if (isset($this->cache[$name])) {

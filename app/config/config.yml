@@ -41,6 +41,7 @@ parameters:
     is_demo: "%env(bool:COOPCYCLE_DEMO)%"
     sentry_public_dsn: "%env(COOPCYCLE_SENTRY_DSN)%"
     foodtech_enabled: "%env(bool:COOPCYCLE_FOODTECH_ENABLED)%"
+    b2b_enabled: '%env(bool:COOPCYCLE_B2B_ENABLED)%'
 
 services:
     tag_manager.cache:
