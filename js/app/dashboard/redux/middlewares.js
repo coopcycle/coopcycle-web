@@ -4,6 +4,7 @@ import {
   setOffline,
   importSuccess,
   importError,
+  taskListUpdated,
   SET_FILTER_VALUE,
   RESET_FILTERS,
 } from './actions'
@@ -64,6 +65,8 @@ export const socketIO = ({ dispatch, getState }) => {
 
     socket.on('task_import:success', data => dispatch(importSuccess(data.token)))
     socket.on('task_import:failure', data => dispatch(importError(data.token, data.message)))
+
+    socket.on('task_collection:updated', data => dispatch(taskListUpdated(data.task_collection)))
 
     socket.on('tracking', data => {
       pulse()

@@ -9,6 +9,7 @@ import {
   CLOSE_ADD_USER,
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
+  TASK_LIST_UPDATED,
   TOGGLE_POLYLINE,
   TOGGLE_TASK,
   SELECT_TASK,
@@ -238,6 +239,28 @@ const rootReducer = (state = initialState, action) => {
       taskLists: newTaskLists,
       allTasks: _.uniqBy(Array.prototype.concat(state.allTasks, [ action.task ]), '@id'),
     }
+
+  case TASK_LIST_UPDATED:
+
+    taskListIndex = _.findIndex(state.taskLists, taskList => taskList['@id'] === action.taskList['@id'])
+
+    if (-1 === taskListIndex) {
+
+      return state
+    }
+
+    newTaskLists.splice(taskListIndex, 1, {
+      ...state.taskLists[taskListIndex],
+      distance: action.taskList.distance,
+      duration: action.taskList.duration,
+      polyline: action.taskList.polyline,
+    })
+
+    return {
+      ...state,
+      taskLists: newTaskLists,
+    }
+
   }
 
   return state

@@ -81,6 +81,7 @@ export const OPEN_ADD_USER = 'OPEN_ADD_USER'
 export const CLOSE_ADD_USER = 'CLOSE_ADD_USER'
 export const MODIFY_TASK_LIST_REQUEST = 'MODIFY_TASK_LIST_REQUEST'
 export const MODIFY_TASK_LIST_REQUEST_SUCCESS = 'MODIFY_TASK_LIST_REQUEST_SUCCESS'
+export const TASK_LIST_UPDATED = 'TASK_LIST_UPDATED'
 export const TOGGLE_POLYLINE = 'TOGGLE_POLYLINE'
 export const TOGGLE_TASK = 'TOGGLE_TASK'
 export const SELECT_TASK = 'SELECT_TASK'
@@ -250,6 +251,10 @@ function modifyTaskList(username, tasks) {
 
 function togglePolyline(username) {
   return { type: TOGGLE_POLYLINE, username }
+}
+
+function taskListUpdated(taskList) {
+  return { type: TASK_LIST_UPDATED, taskList }
 }
 
 function toggleTask(task, multiple = false) {
@@ -693,4 +698,5 @@ export {
   importError,
   startTask,
   setClustersEnabled,
+  taskListUpdated,
 }
