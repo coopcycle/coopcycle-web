@@ -636,6 +636,7 @@ services:
       $mappingFactory: '@vich_uploader.property_mapping_factory'
       $uploadHandler: '@vich_uploader.upload_handler'
       $secret: '%secret%'
+      $isDemo: '%is_demo%'
     tags:
       - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
 
