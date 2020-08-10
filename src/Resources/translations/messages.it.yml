@@ -221,7 +221,6 @@ restaurant.contract.customerAmount.help: Questo importo verrà mostrato nel carr
 restaurant.contract.restaurantPaysStripeFee.restaurant: Ristoranti
 form.time_slot_choice.start_time.label: Ora di inizio
 form.time_slot_choice.end_time.label: Ora di fine
-form.address.floor.label: Piano
 form.address.description.label: Istruzioni
 form.address.description.placeholder: Secondo porta sulla sinistra…
 form.address.streetAddress.label: Indirizzo

@@ -451,7 +451,6 @@ form.payment.refund_application_fee.help: "Se você confirmar esta caixa, a comi
   \ mais</a>\n"
 form.address.addressLocality.label: Cidade
 form.address.postalCode.label: CEP
-form.address.floor.label: Piso
 form.address.description.label: Instruções
 form.address.description.placeholder: 2ª porta à esquerda…
 form.address.streetAddress.label: Endereço

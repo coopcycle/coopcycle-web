@@ -69,7 +69,6 @@
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Unterstützte Formate: csv, ods, xlsx",
         "PLEASE_SELECT_ADDRESS": "Bitte wählen Sie eine Adresse aus dem Auswahlfeld",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_DESCRIPTION_LABEL": "Hinweise",
-        "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_FLOOR_LABEL": "Etage",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_LABEL": "Telefonnummer",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_PLACEHOLDER": "Zuhause, Arbeit …",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_LABEL": "Name",

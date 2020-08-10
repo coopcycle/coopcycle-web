@@ -59,10 +59,6 @@ class AddressType extends AbstractType
                 'required' => false,
                 'label' => 'form.address.addressLocality.label'
             ])
-            ->add('floor', TextType::class, [
-                'required' => false,
-                'label' => 'form.address.floor.label'
-            ])
             ->add('description', TextareaType::class, [
                 'required' => false,
                 'label' => 'form.address.description.label',

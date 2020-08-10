@@ -419,14 +419,6 @@ class TaskModalContent extends React.Component {
                     </small>
                   </div>
                   <div className="form-group form-group-sm">
-                    <label className="control-label" htmlFor="address_floor">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_FLOOR_LABEL') }</label>
-                    <input type="text" id="address_floor" name="address.floor" className="form-control"
-                      autoComplete="off"
-                      onChange={ handleChange }
-                      onBlur={ handleBlur }
-                      value={ values.address.floor || '' } />
-                  </div>
-                  <div className="form-group form-group-sm">
                     <label className="control-label" htmlFor="address_description">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_DESCRIPTION_LABEL') }</label>
                     <textarea id="address_description" name="address.description" rows="3"
                       placeholder={ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_DESCRIPTION_PLACEHOLDER') }

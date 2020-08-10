@@ -427,7 +427,6 @@ form.address.name.label: Nom
 form.address.name.placeholder: Maison, bureau…
 form.address.addressLocality.label: Ville
 form.address.postalCode.label: Code postal
-form.address.floor.label: Étage
 form.address.description.label: Instructions
 form.address.description.placeholder: 2ème porte à gauche…
 form.address.company.label: Entreprise

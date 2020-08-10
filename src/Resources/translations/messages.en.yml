@@ -458,7 +458,6 @@ form.payment.refund_application_fee.help: "If you check this box, the commission
   https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Learn more</a>\n"
 form.address.addressLocality.label: City
 form.address.postalCode.label: Postal code
-form.address.floor.label: Floor
 form.address.description.label: Instructions
 form.address.description.placeholder: 2nd door on the left…
 form.address.streetAddress.label: Address
