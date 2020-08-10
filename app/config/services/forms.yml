@@ -206,3 +206,6 @@ services:
 
   AppBundle\Form\Restaurant\FulfillmentMethodType:
     tags: [ form.type ]
+
+  AppBundle\Form\TagsType:
+    tags: [ form.type ]
