@@ -27,7 +27,7 @@
   <tbody>
     {% for product in products %}
     {% set default_variant = product|sylius_resolve_variant %}
-    <tr data-enabled="{{ product.enabled|json_encode|e('html_attr') }}" data-iri="{{ product|get_iri_from_item(1)|e('html_attr') }}">
+    <tr data-enabled="{{ product.enabled|json_encode|e('html_attr') }}" data-iri="{{ product|get_iri_from_item|e('html_attr') }}">
       <td data-cell="toggle">
         {% if product.enabled %}
           <i class="fa fa-toggle-on"></i>
