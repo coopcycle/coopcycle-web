@@ -54,7 +54,6 @@ services:
       $craueConfig: '@craue_config'
       $configEntityName: '%craue_config.entity_name%'
       $taxonFactory: '@sylius.factory.taxon'
-      $phoneNumberUtil: '@libphonenumber.phone_number_util'
       $taxCategoryRepository: '@sylius.repository.tax_category'
       $taxCategoryFactory: '@sylius.factory.tax_category'
       $taxCategoryManager: '@sylius.manager.tax_category'

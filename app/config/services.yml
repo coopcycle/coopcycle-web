@@ -79,9 +79,6 @@ services:
     public: true
   FOS\UserBundle\Mailer\MailerInterface: '@fos_user.mailer.twig_swift'
   Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface: '@lexik_jwt_authentication.jwt_manager'
-  libphonenumber\PhoneNumberUtil:
-    alias: 'libphonenumber.phone_number_util'
-    public: true
   Liip\ImagineBundle\Service\FilterService: '@liip_imagine.service.filter'
   League\Flysystem\MountManager: '@oneup_flysystem.mount_manager'
   AppBundle\Service\RoutingInterface: '@routing_service'

@@ -10,11 +10,7 @@ services:
 
   AppBundle\Utils\DeliverySpreadsheetParser:
     arguments:
-      - "@coopcycle.geocoder"
-      - "@coopcycle.tag_manager"
-      - "@slugify"
-      - "@libphonenumber.phone_number_util"
-      - "%country_iso%"
+      $countryCode: "%country_iso%"
 
   AppBundle\Spreadsheet\ProductSpreadsheetParser: ~
 

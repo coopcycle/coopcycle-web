@@ -94,7 +94,7 @@ services:
       - '@coopcycle.settings_manager'
       - '@sylius.repository.order'
       - '@messenger.default_bus'
-      - '@libphonenumber.phone_number_util'
+      - '@libphonenumber\PhoneNumberUtil'
       - '@router'
       - '@translator'
       - '%secret%'
