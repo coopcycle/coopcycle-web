@@ -1032,8 +1032,6 @@ form:
       label: Contact de la personne référente pour le restaurant
     b2b:
       label: Souhaitez-vous proposer une offre à destination des entreprises (B2B)?
-      yes: oui
-      no: non
   company:
     make_the_request:
       label: Envoyer

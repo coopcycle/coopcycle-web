@@ -11,7 +11,7 @@
       {{ 'form.restaurant.contact_referent.label'|trans }}
       {{ restaurant.contact }}
       {{ 'form.restaurant.b2b.label'|trans }}
-      {{ restaurant.b2b ? 'form.restaurant.b2b.yes'|trans: 'form.restaurant.b2b.no'|trans }}
+      {{ restaurant.b2b ? ('basics.yes'|trans) : ('basics.no'|trans) }}
 
     </mj-text>
   </mj-column>
