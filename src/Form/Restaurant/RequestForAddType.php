@@ -28,6 +28,7 @@ class RequestForAddType extends AbstractType implements DataMapperInterface
             ])
             ->add('b2b', CheckboxType::class, [
                 'label' => 'form.restaurant.b2b.label',
+                'required' => false,
             ])
             ->setDataMapper($this)
         ;

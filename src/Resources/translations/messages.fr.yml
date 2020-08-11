@@ -1037,7 +1037,3 @@ form:
   company:
     make_the_request:
       label: Envoyer
-request:
-  restaurant:
-      email:
-        subject: Nouvelle demande d'ajout de restaurant
