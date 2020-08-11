@@ -64,10 +64,7 @@ class RestaurantController extends AbstractController
     private $orderManager;
     private $seoPage;
     private $uploaderHelper;
-    /**
-     * @var SerializerInterface
-     */
-    private SerializerInterface $serializer;
+    private $serializer;
     /**
      * @var OrderTimeHelper
      */
