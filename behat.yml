@@ -6,7 +6,7 @@ default:
       contexts:
         - FeatureContext:
             doctrine: "@doctrine"
-            phoneNumberUtil: "@libphonenumber.phone_number_util"
+            phoneNumberUtil: "@libphonenumber\PhoneNumberUtil"
             fixturesLoader: "@fidry_alice_data_fixtures.loader.doctrine"
             settingsManager: "@coopcycle.settings_manager"
             orderTimelineCalculator: "@coopcycle.order_timeline_calculator"
