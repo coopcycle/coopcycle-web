@@ -64,6 +64,8 @@ class RequestController
                 $message,
                 $this->settingsManager->get('administrator_email')
             ));
+
+            return $this->redirectToRoute('request_restaurant');
         }
 
         return new Response(
