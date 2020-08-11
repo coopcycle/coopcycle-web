@@ -59,13 +59,13 @@ final class RestaurantCartContext implements CartContextInterface
 
             if (null === $cart) {
                 $this->session->remove($this->sessionKeyName);
-            }
-
-            try {
-                $restaurant = $cart->getRestaurant();
-            } catch (EntityNotFoundException $e) {
-                $cart = null;
-                $this->session->remove($this->sessionKeyName);
+            } else {
+                try {
+                    $restaurant = $cart->getRestaurant();
+                } catch (EntityNotFoundException $e) {
+                    $cart = null;
+                    $this->session->remove($this->sessionKeyName);
+                }
             }
         }
 
