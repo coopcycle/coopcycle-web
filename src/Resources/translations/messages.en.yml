@@ -3,6 +3,7 @@ navbar.login: Login
 navbar.myAccount: My Account
 base.footer.contactUs: Contact us
 base.footer.companyRegister: Become a partner
+base.footer.RegisterMyRestaurant: Register my restaurant
 base.footer.help: Help
 base.footer.legal: Legal notice
 base.footer.suggest: Suggest a restaurant
@@ -1032,3 +1033,11 @@ form.time_slot.same_day_cutoff.help: For example of your select 11:00, choices o
   the same day won't be displayed after 11:00
 order.reusable_packaging.pledge_return.disclaimer: The customer has indicated that
   %count% packages will be returned
+form:
+  restaurant:
+    name:
+      label: Restaurant name
+    contact_referent:
+      label: Contact person for the restaurant
+    b2b:
+      label: Would you like to propose special offers for companies?

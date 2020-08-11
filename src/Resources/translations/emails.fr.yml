@@ -127,3 +127,4 @@ order.expiring_authorization.text:
   <br>
   Vous devriez finaliser la commande avant l'expiration de la pré-autorisation pour éviter de perdre de l'argent.
 registration.company: Demande d'enregistrement d'entreprise
+registration.restaurant: Nouvelle demande d'ajout de restaurant
