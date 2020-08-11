@@ -4,10 +4,6 @@ include:
   - addresses.yml
   - restaurants.yml
 
-libphonenumber\PhoneNumber:
-  phone_number_1:
-    __construct: { '@libphonenumber\PhoneNumberUtil::parse': ['+33612345678'] }
-
 AppBundle\Entity\ApiUser:
   bob:
     __factory:
@@ -18,7 +14,7 @@ AppBundle\Entity\ApiUser:
         - true
         - false
     roles: [ 'ROLE_USER' ]
-    telephone: "@phone_number_1"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
   jane:
     __factory:
       '@FOS\UserBundle\Util\UserManipulator::create':
@@ -28,5 +24,5 @@ AppBundle\Entity\ApiUser:
         - true
         - false
     roles: [ 'ROLE_USER' ]
-    telephone: "@phone_number_1"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
     addresses: [ "@address_4" ]
