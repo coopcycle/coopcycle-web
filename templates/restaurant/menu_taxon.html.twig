@@ -109,7 +109,11 @@
             <input type="hidden">
             <div class="form-group">
               <label for="taxon-name" class="control-label">{{ 'basics.name'|trans }}</label>
-              <input type="text" class="form-control" id="taxon-name">
+              <input type="text" class="form-control" id="taxon-name" data-prop="name">
+            </div>
+            <div class="form-group">
+              <label for="taxon-description" class="control-label">{{ 'basics.description'|trans }}</label>
+              <textarea class="form-control" id="taxon-description" data-prop="description"></textarea>
             </div>
           </div>
           <div class="modal-footer">

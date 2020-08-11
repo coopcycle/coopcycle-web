@@ -796,6 +796,7 @@ basics.tax_category: VAT
 basics.export: Export
 basics.import: Import
 basics.name: Name
+basics.description: Description
 basics.today: Today
 basics.are_you_sure: Are you sure?
 basics.no_entries: No element yet
