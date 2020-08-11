@@ -8,7 +8,7 @@ use AppBundle\Message\Request\RequestRestaurant;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -21,13 +21,11 @@ class RequestForAddType extends AbstractType implements DataMapperInterface
                 'label' => 'form.restaurant.name.label',
             ])
             ->add('address', AddressType::class, [
-                'label' => 'form.restaurant.address.label',
+                'label' => false,
             ])
-            ->add('contact', TextareaType::class,
-                [
+            ->add('contact', EmailType::class, [
                     'label' => 'form.restaurant.contact_referent.label',
-                ]
-            )
+            ])
             ->add('b2b', CheckboxType::class, [
                 'label' => 'form.restaurant.b2b.label',
             ])

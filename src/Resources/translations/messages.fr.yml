@@ -1028,10 +1028,8 @@ form:
   restaurant:
     name:
       label: Nom du restaurant
-    address:
-      label: Adresse du restaurant
     contact_referent:
-      label:   Contact de la personne référente pour le restaurant
+      label: Contact de la personne référente pour le restaurant
     b2b:
       label: Souhaitez-vous proposer une offre à destination des entreprises (B2B)?
       yes: oui
