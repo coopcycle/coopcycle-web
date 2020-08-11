@@ -122,7 +122,7 @@ services:
       - 25:25
 
   stripe_mock:
-    image: stripemock/stripe-mock:latest
+    image: stripemock/stripe-mock:v0.94.0
     ports:
       - '12111:12111'
 

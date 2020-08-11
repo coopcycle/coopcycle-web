@@ -61,7 +61,6 @@ form.delivery.pickup.doneBefore.label: Abholzeit
 form.delivery.price.label: Preis
 form.address.addressLocality.label: Stadt
 form.address.postalCode.label: Postleitzahl
-form.address.floor.label: Etage
 form.address.description.label: Anweisungen
 form.address.description.placeholder: z.B. zweite Tür links …
 form.address.streetAddress.label: Adresse

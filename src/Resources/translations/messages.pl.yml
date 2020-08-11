@@ -433,7 +433,6 @@ form.payment.refund_amount.help: Kwota, którą określiłeś, zostanie zwrócon
 form.payment.refund_application_fee.label: Opłata za zwrot
 form.address.addressLocality.label: Miasto
 form.address.postalCode.label: Kod pocztowy
-form.address.floor.label: Nr lokalu
 form.address.description.label: 'Informacje dotyczące adresu: np. piętro, nazwa firmy,
   nr pokoju'
 form.address.description.placeholder: Drugie drzwi po lewej…

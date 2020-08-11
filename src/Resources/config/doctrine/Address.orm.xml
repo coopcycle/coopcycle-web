@@ -8,7 +8,6 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="description" type="text" column="description" nullable="true"/>
-    <field name="floor" type="string" column="floor" nullable="true"/>
     <field name="geo" type="geography" column="geo">
       <options>
         <option name="geometry_type">GEOMETRY</option>
@@ -24,5 +23,10 @@
     <field name="company" type="string" column="company" nullable="true"/>
     <field name="telephone" type="phone_number" column="telephone" nullable="true"/>
     <field name="contactName" type="string" column="contact_name" nullable="true"/>
+    <entity-listeners>
+      <entity-listener class="AppBundle\Entity\Listener\AddressListener">
+        <lifecycle-callback type="preUpdate" method="preUpdate"/>
+      </entity-listener>
+    </entity-listeners>
   </entity>
 </doctrine-mapping>

@@ -68,7 +68,11 @@ export default (props) => {
       return _.find(tags, t => t.slug === tag.slug)
     })
   }
-  // TODO Manage string
+
+  if (defaultValue && typeof defaultValue === 'string') {
+    const slugs = defaultValue.split(/[ ]+/)
+    defaultValueAsTags = slugs.map(slug => _.find(tags, t => t.slug === slug))
+  }
 
   return (
     <Select

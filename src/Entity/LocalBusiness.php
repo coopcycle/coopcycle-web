@@ -248,6 +248,10 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
      * @Assert\Valid()
      */
     protected $fulfillmentMethods;
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $isAvailableForB2b;
 
     public function __construct()
     {
@@ -262,6 +266,7 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
         $this->preparationTimeRules = new ArrayCollection();
         $this->reusablePackagings = new ArrayCollection();
         $this->promotions = new ArrayCollection();
+        $this->isAvailableForB2b = false ;
 
         $this->fulfillmentMethods = new ArrayCollection();
         $this->addFulfillmentMethod('delivery', true);
@@ -409,6 +414,22 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
         $choiceList = $choiceLoader->loadChoiceList();
 
         return $choiceList->getValues();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAvailableForB2b(): bool
+    {
+        return $this->isAvailableForB2b;
+    }
+
+    /**
+     * @param bool $isAvailableForB2b
+     */
+    public function setIsAvailableForB2b(bool $isAvailableForB2b): void
+    {
+        $this->isAvailableForB2b = $isAvailableForB2b;
     }
 
     public function getStripeAccounts()

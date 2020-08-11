@@ -43,7 +43,6 @@ class CartType extends AbstractType
         $removeAddressFields = function (FormEvent $event) {
             $form = $event->getForm();
 
-            $form->get('shippingAddress')->remove('floor');
             $form->get('shippingAddress')->remove('description');
         };
 

@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import 'leaflet-polylinedecorator'
+import 'leaflet.markercluster'
 import React from 'react'
 import { render } from 'react-dom'
 import MapHelper from '../../MapHelper'
@@ -87,6 +88,14 @@ export default class MapProxy {
 
     this.onEditClick = options.onEditClick
 
+    this.tasksLayerGroup = new L.LayerGroup()
+    this.tasksLayerGroup.addTo(this.map)
+
+    this.clusterGroup = L.markerClusterGroup({
+      showCoverageOnHover: false,
+    })
+    this.clusterGroup.addTo(this.map)
+
     this.onTaskMouseDown = options.onTaskMouseDown
     this.onTaskMouseOver = options.onTaskMouseOver
     this.onTaskMouseOut = options.onTaskMouseOut
@@ -155,7 +164,8 @@ export default class MapProxy {
       this.onTaskMouseDown(task)
     })
 
-    marker.addTo(this.map)
+    this.tasksLayerGroup.addLayer(marker)
+    this.clusterGroup.addLayer(marker)
   }
 
   enableConnect(task, active = false) {
@@ -194,12 +204,9 @@ export default class MapProxy {
   hideTask(task) {
     const marker = this.taskMarkers.get(task['id'])
     if (marker) {
-      this.map.removeLayer(marker)
+      this.tasksLayerGroup.removeLayer(marker)
+      this.clusterGroup.removeLayer(marker)
     }
-  }
-
-  removeTask(task) {
-    this.taskMarkers.delete(task['id'])
   }
 
   getPolylineLayerGroup(username) {
@@ -211,6 +218,16 @@ export default class MapProxy {
     }
 
     return layerGroup
+  }
+
+  showClusters() {
+    this.tasksLayerGroup.removeFrom(this.map)
+    this.clusterGroup.addTo(this.map)
+  }
+
+  hideClusters() {
+    this.clusterGroup.removeFrom(this.map)
+    this.tasksLayerGroup.addTo(this.map)
   }
 
   getPolylineAsTheCrowFliesLayerGroup(username) {

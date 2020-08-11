@@ -37,9 +37,6 @@ export default withTranslation()(({ order, t }) => {
         </div>
         <ul className="list-unstyled">
           <li>{ order.shippingAddress.streetAddress }</li>
-          { order.shippingAddress.floor && (
-            <li>Étage : { order.shippingAddress.floor }</li>
-          ) }
         </ul>
         { order.shippingAddress.description && (
           <div className="speech-bubble">

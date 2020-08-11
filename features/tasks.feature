@@ -268,7 +268,6 @@ Feature: Tasks
           "@type":"http://schema.org/Place",
           "contactName":"John Doe",
           "description":null,
-          "floor":null,
           "geo":{
             "latitude":48.846656,
             "longitude":2.369052
@@ -554,7 +553,6 @@ Feature: Tasks
           "firstName":null,
           "lastName":null,
           "description": "Sonner à l'interphone",
-          "floor":null,
           "geo":{
             "latitude":48.870473,
             "longitude":2.331933
@@ -625,7 +623,6 @@ Feature: Tasks
           "firstName":null,
           "lastName":null,
           "description": "Sonner à l'interphone",
-          "floor":null,
           "geo":{
             "latitude":48.870473,
             "longitude":2.331933

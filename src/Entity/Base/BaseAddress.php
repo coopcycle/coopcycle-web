@@ -18,15 +18,6 @@ class BaseAddress extends Place
     protected $description;
 
     /**
-     * @var string Floor
-     *
-     * @Groups({"task", "task", "task_create", "task_edit", "order_update"})
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/addressLocality")
-     */
-    protected $floor;
-
-    /**
      * @return string
      */
     public function getDescription()
@@ -40,21 +31,5 @@ class BaseAddress extends Place
     public function setDescription(string $description = null)
     {
         $this->description = $description;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFloor()
-    {
-        return $this->floor;
-    }
-
-    /**
-     * @param string $floor
-     */
-    public function setFloor(string $floor = null)
-    {
-        $this->floor = $floor;
     }
 }

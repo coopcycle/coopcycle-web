@@ -33,4 +33,4 @@ php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --en
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=test
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=test
 
-exec php-fpm
+exec docker-php-entrypoint "$@"

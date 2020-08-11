@@ -116,8 +116,14 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
                 $address->setDescription($record['address.description']);
             }
 
+            // Legacy
+            // address.floor does not exist anymore
+            // @see https://github.com/coopcycle/coopcycle-web/issues/1351
             if (isset($record['address.floor']) && !empty($record['address.floor'])) {
-                $address->setFloor($record['address.floor']);
+                $address->setDescription(implode(' - ', array_filter([
+                    $address->getDescription(),
+                    $record['address.floor']
+                ])));
             }
 
             if (isset($record['address.telephone']) && !empty($record['address.telephone'])) {

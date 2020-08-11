@@ -35,6 +35,11 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $data = $this->normalizer->normalize($object, $format, $context);
 
+        if (!is_array($data)) {
+
+            return $data;
+        }
+
         // Legacy props
         if (isset($data['after'])) {
             $data['doneAfter'] = $data['after'];

@@ -393,6 +393,14 @@ services:
     tags:
       - { name: doctrine.orm.entity_listener }
 
+  AppBundle\Entity\Listener\AddressListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
+  AppBundle\Entity\Listener\DeliveryListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
   AppBundle\EventListener\JwtListener:
     tags:
       - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess }
@@ -464,13 +472,11 @@ services:
 
   AppBundle\Service\SettingsManager:
     arguments:
-      - "@craue_config"
-      - "%craue_config.entity_name%"
-      - "@doctrine"
-      - "@libphonenumber.phone_number_util"
-      - "%country_iso%"
-      - "%foodtech_enabled%"
-      - "@logger"
+      $craueConfig: "@craue_config"
+      $configEntityName: "%craue_config.entity_name%"
+      $country: "%country_iso%"
+      $foodtechEnabled: "%foodtech_enabled%"
+      $b2bEnabled: "%b2b_enabled%"
 
   AppBundle\Service\EmailManager:
     arguments:
@@ -630,6 +636,7 @@ services:
       $mappingFactory: '@vich_uploader.property_mapping_factory'
       $uploadHandler: '@vich_uploader.upload_handler'
       $secret: '%secret%'
+      $isDemo: '%is_demo%'
     tags:
       - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
 
@@ -748,6 +755,10 @@ services:
   AppBundle\MessageHandler\ImportTasksHandler:
     arguments:
       $secret: '%secret%'
+
+  AppBundle\MessageHandler\CalculateRouteHandler:
+    arguments:
+      $eventBus: '@simple_bus.event_bus'
 
   AppBundle\Service\MaintenanceManager: ~
 

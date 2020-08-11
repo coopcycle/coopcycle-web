@@ -346,7 +346,6 @@ form.payment.refund_application_fee.help: "Si marqueu aquesta casella, la comiss
   https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Aprèn més</a>\n"
 form.address.addressLocality.label: Ciutat
 form.address.postalCode.label: Codi Postal
-form.address.floor.label: Pis
 form.address.description.label: Instruccions
 form.address.description.placeholder: 2a porta a l'esquerra …
 form.address.streetAddress.label: Adreça
