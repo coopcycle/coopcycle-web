@@ -110,7 +110,7 @@ delivery.with_id: 'Entrega #%id%'
 help.title: Ajuda
 help.home: Página inicial
 restaurants.no_results: Não encontramos nenhum restaurante que satisfaça os critérios
-  da sua pesquisa. ☹< <br>Tente com um endereço diferente
+  da sua pesquisa. ☹ <br>Tente com um endereço diferente
 restaurants.visible_by_you_only: Visível apenas para si
 restaurants.placeholder.title: Um pouco de paciência…
 restaurants.placeholder.text: Novos restaurantes estão a chegar em breve!
