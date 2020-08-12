@@ -5,9 +5,11 @@ namespace Tests\AppBundle\Service;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Service\RemotePushNotificationManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Kreait\Firebase\Factory as FirebaseFactory;
 use Kreait\Firebase\Messaging as FirebaseMessaging;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Exception\Messaging\NotFound;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -47,9 +49,12 @@ class RemotePushNotificationManagerTest extends TestCase
         $this->firebaseFactory->createMessaging()
             ->willReturn($this->firebaseMessaging->reveal());
 
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+
         $this->remotePushNotificationManager = new RemotePushNotificationManager(
             $this->firebaseFactory->reveal(),
             $this->pushOkClient->reveal(),
+            $this->entityManager->reveal(),
             new NullLogger()
         );
     }
@@ -133,19 +138,29 @@ class RemotePushNotificationManagerTest extends TestCase
         $remotePushToken->setToken($token);
         $remotePushToken->setPlatform('android');
 
+        $msr = FirebaseMessaging\MulticastSendReport::withItems([
+            FirebaseMessaging\SendReport::success(
+                FirebaseMessaging\MessageTarget::with('token', $token),
+                []
+            )
+        ]);
+
         $this->firebaseMessaging
             ->sendMulticast(Argument::that(function (CloudMessage $message) {
 
                 $data = json_decode(json_encode($message), true);
 
-                $this->assertArrayHasKey('notification', $data);
                 $this->assertArrayHasKey('android', $data);
 
-                $this->assertEquals('Hello world!', $data['notification']['title']);
-                $this->assertEquals('Hello world!', $data['notification']['body']);
+                if (isset($data['notification'])) {
+                    $this->assertEquals('Hello world!', $data['notification']['title']);
+                    $this->assertEquals('Hello world!', $data['notification']['body']);
+                }
 
                 return true;
+
             }), [ $token ])
+            ->willReturn($msr)
             ->shouldBeCalled();
 
         $this->remotePushNotificationManager->send('Hello world!', $remotePushToken);
@@ -163,19 +178,33 @@ class RemotePushNotificationManagerTest extends TestCase
         $remotePushToken2->setToken($token2);
         $remotePushToken2->setPlatform('android');
 
+        $msr = FirebaseMessaging\MulticastSendReport::withItems([
+            FirebaseMessaging\SendReport::success(
+                FirebaseMessaging\MessageTarget::with('token', $token1),
+                []
+            ),
+            FirebaseMessaging\SendReport::success(
+                FirebaseMessaging\MessageTarget::with('token', $token2),
+                []
+            ),
+        ]);
+
         $this->firebaseMessaging
             ->sendMulticast(Argument::that(function (CloudMessage $message) {
 
                 $data = json_decode(json_encode($message), true);
 
-                $this->assertArrayHasKey('notification', $data);
                 $this->assertArrayHasKey('android', $data);
 
-                $this->assertEquals('Hello world!', $data['notification']['title']);
-                $this->assertEquals('Hello world!', $data['notification']['body']);
+                if (isset($data['notification'])) {
+                    $this->assertEquals('Hello world!', $data['notification']['title']);
+                    $this->assertEquals('Hello world!', $data['notification']['body']);
+                }
 
                 return true;
+
             }), [ $token1, $token2 ])
+            ->willReturn($msr)
             ->shouldBeCalled();
 
         $this->remotePushNotificationManager->send('Hello world!', [
@@ -205,19 +234,33 @@ class RemotePushNotificationManagerTest extends TestCase
 
         $user3 = new ApiUser();
 
+        $msr = FirebaseMessaging\MulticastSendReport::withItems([
+            FirebaseMessaging\SendReport::success(
+                FirebaseMessaging\MessageTarget::with('token', $token1),
+                []
+            ),
+            FirebaseMessaging\SendReport::success(
+                FirebaseMessaging\MessageTarget::with('token', $token2),
+                []
+            ),
+        ]);
+
         $this->firebaseMessaging
             ->sendMulticast(Argument::that(function (CloudMessage $message) {
 
                 $data = json_decode(json_encode($message), true);
 
-                $this->assertArrayHasKey('notification', $data);
                 $this->assertArrayHasKey('android', $data);
 
-                $this->assertEquals('Hello world!', $data['notification']['title']);
-                $this->assertEquals('Hello world!', $data['notification']['body']);
+                if (isset($data['notification'])) {
+                    $this->assertEquals('Hello world!', $data['notification']['title']);
+                    $this->assertEquals('Hello world!', $data['notification']['body']);
+                }
 
                 return true;
+
             }), [ $token1, $token2 ])
+            ->willReturn($msr)
             ->shouldBeCalled();
 
         $this->remotePushNotificationManager->send('Hello world!', [
@@ -267,23 +310,37 @@ class RemotePushNotificationManagerTest extends TestCase
             ->push()
             ->willReturn([]);
 
+        $msr = FirebaseMessaging\MulticastSendReport::withItems([
+            FirebaseMessaging\SendReport::success(
+                FirebaseMessaging\MessageTarget::with('token', $token2),
+                []
+            ),
+            FirebaseMessaging\SendReport::failure(
+                FirebaseMessaging\MessageTarget::with('token', $token3),
+                new NotFound()
+            ),
+        ]);
+
         $this->firebaseMessaging
             ->sendMulticast(Argument::that(function (CloudMessage $message) {
 
                 $data = json_decode(json_encode($message), true);
 
-                $this->assertArrayHasKey('notification', $data);
                 $this->assertArrayHasKey('android', $data);
                 $this->assertArrayHasKey('data', $data);
-
-                $this->assertEquals('Hello world!', $data['notification']['title']);
-                $this->assertEquals('Hello world!', $data['notification']['body']);
 
                 $this->assertArrayHasKey('event', $data['data']);
                 $this->assertEquals('{"name":"foo"}', $data['data']['event']);
 
+                if (isset($data['notification'])) {
+                    $this->assertEquals('Hello world!', $data['notification']['title']);
+                    $this->assertEquals('Hello world!', $data['notification']['body']);
+                }
+
                 return true;
+
             }), [ $token2, $token3 ])
+            ->willReturn($msr)
             ->shouldBeCalled();
 
         $this->remotePushNotificationManager->send('Hello world!', [
@@ -295,5 +352,55 @@ class RemotePushNotificationManagerTest extends TestCase
         $this->pushOkClient
             ->push()
             ->shouldHaveBeenCalled();
+    }
+
+    public function testSendMultipleWithFcmWithNotFoundError()
+    {
+        $token1 = $this->generateApnsToken();
+        $remotePushToken1 = new RemotePushToken();
+        $remotePushToken1->setToken($token1);
+        $remotePushToken1->setPlatform('android');
+
+        $token2 = $this->generateApnsToken();
+        $remotePushToken2 = new RemotePushToken();
+        $remotePushToken2->setToken($token2);
+        $remotePushToken2->setPlatform('android');
+
+        $msr = FirebaseMessaging\MulticastSendReport::withItems([
+            FirebaseMessaging\SendReport::success(
+                FirebaseMessaging\MessageTarget::with('token', $token1),
+                []
+            ),
+            FirebaseMessaging\SendReport::failure(
+                FirebaseMessaging\MessageTarget::with('token', $token2),
+                new NotFound()
+            ),
+        ]);
+
+        $this->firebaseMessaging
+            ->sendMulticast(Argument::that(function (CloudMessage $message) {
+
+                $data = json_decode(json_encode($message), true);
+
+                $this->assertArrayHasKey('android', $data);
+
+                if (isset($data['notification'])) {
+                    $this->assertEquals('Hello world!', $data['notification']['title']);
+                    $this->assertEquals('Hello world!', $data['notification']['body']);
+                }
+
+                return true;
+
+            }), [ $token1, $token2 ])
+            ->willReturn($msr)
+            ->shouldBeCalled();
+
+        $this->remotePushNotificationManager->send('Hello world!', [
+            $remotePushToken1,
+            $remotePushToken2
+        ]);
+
+        $this->entityManager->remove($remotePushToken2)->shouldHaveBeenCalled();
+        $this->entityManager->flush()->shouldHaveBeenCalled();
     }
 }

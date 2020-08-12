@@ -37,6 +37,16 @@ module.exports = function(sequelize) {
     email_canonical: Sequelize.STRING,
     password: Sequelize.STRING,
     enabled: Sequelize.BOOLEAN,
+    createdAt: {
+      field: 'created_at',
+      type: Sequelize.DATE,
+      defaultValue: new Date(),
+    },
+    updatedAt: {
+      field: 'updated_at',
+      type: Sequelize.DATE,
+      defaultValue: new Date(),
+    },
   }, _.extend(sequelizeOptions, {
     tableName: 'api_user',
     getterMethods: {

@@ -115,6 +115,10 @@
     <hr>
   {% endif %}
 
+  {% if form.tags is defined %}
+    {{ form_row(form.tags) }}
+  {% endif %}
+
   {% if form.address is defined %}
     {{ form_row(form.address.streetAddress) }}
     {{ form_row(form.address.postalCode) }}
@@ -181,6 +185,7 @@
 {% endblock %}
 
 {% block scripts %}
+{{ encore_entry_script_tags('store-form') }}
 {% if form.address is defined %}
 <script>
 function initMap() {

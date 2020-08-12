@@ -54,7 +54,6 @@ services:
       $craueConfig: '@craue_config'
       $configEntityName: '%craue_config.entity_name%'
       $taxonFactory: '@sylius.factory.taxon'
-      $phoneNumberUtil: '@libphonenumber.phone_number_util'
       $taxCategoryRepository: '@sylius.repository.tax_category'
       $taxCategoryFactory: '@sylius.factory.tax_category'
       $taxCategoryManager: '@sylius.manager.tax_category'
@@ -107,3 +106,9 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:geofencing' }
       - { name: 'monolog.logger', channel: 'geofencing' }
+
+  AppBundle\Command\WatchExpiringAuthorizationCommand:
+    arguments:
+      $orderRepository: '@sylius.repository.order'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:orders:watch-expiring-authorization' }

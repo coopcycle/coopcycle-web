@@ -127,6 +127,9 @@
       {% for child in restaurant.menuTaxon.children %}
         {% if child.products|length > 0 %}
         <h2>{{ child.name }}</h2>
+        {% if child.description is not empty %}
+        <p class="text-muted">{{ child.description }}</p>
+        {% endif %}
         <div class="restaurant-menu-section">
           {% for product in child.products %}
             {# TODO Skip if no variant is defined #}

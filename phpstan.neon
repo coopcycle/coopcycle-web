@@ -31,3 +31,5 @@ parameters:
         - '#Comparison operation "<" between 0\|1 and 10 is always true#'
         - '#Call to an undefined method League\\Geotools\\Distance\\DistanceInterface::flat\(\)#'
         - '#Call to an undefined method Sylius\\Component\\Promotion\\Model\\PromotionSubjectInterface::getRestaurant\(\)#'
+        - '#Call to an undefined method Sylius\\Component\\Resource\\Repository\\RepositoryInterface::findOneBy[a-zA-Z]+\(\)#'
+        - '#Call to an undefined method Symfony\\Component\\Validator\\ConstraintViolationListInterface::findByCodes\(\)#'

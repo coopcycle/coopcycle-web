@@ -1,7 +1,7 @@
 <mj-table>
 	<tr style="border-bottom: 1px solid #ecedee; text-align: left;">
 	  <th>{{ 'order.items.products_with_count'|trans({ '%count%': order.countItems }) }}</th>
-	  <th style="text-align: right;">Total</th>
+	  <th style="text-align: right;">{{ 'order.list.total'|trans }}</th>
 	</tr>
   {% for item in order.items %}
   <tr style="text-align: left;">
@@ -13,6 +13,17 @@
     <th>{{ 'order.items_total'|trans }}</th>
     <td style="text-align: right;">{{ order.itemsTotal|price_format }}</td>
   </tr>
+  {% set tip_adjustments = order.getAdjustments('tip') %}
+  {% if tip_adjustments|length > 0 %}
+    {% for adjustment in tip_adjustments %}
+    <tr style="text-align: left;">
+      <th style="text-align: left;">{{ adjustment.label }}</th>
+      <td style="text-align: right;">
+        {{ adjustment.amount|price_format }}
+      </td>
+    </tr>
+    {% endfor %}
+  {% endif %}
   {% set delivery_adjustments = order.getAdjustments('delivery') %}
   {% if delivery_adjustments|length > 0 %}
   {% set delivery_adjustment = delivery_adjustments|first %}
@@ -40,7 +51,7 @@
     {% endfor %}
   {% endif %}
   <tr style="text-align: left;">
-    <th>Total</th>
+    <th>{{ 'order.list.total'|trans }}</th>
     <th style="text-align: right;">{{ order.total|price_format }}</th>
   </tr>
 </mj-table>

@@ -81,6 +81,7 @@ export const OPEN_ADD_USER = 'OPEN_ADD_USER'
 export const CLOSE_ADD_USER = 'CLOSE_ADD_USER'
 export const MODIFY_TASK_LIST_REQUEST = 'MODIFY_TASK_LIST_REQUEST'
 export const MODIFY_TASK_LIST_REQUEST_SUCCESS = 'MODIFY_TASK_LIST_REQUEST_SUCCESS'
+export const TASK_LIST_UPDATED = 'TASK_LIST_UPDATED'
 export const TOGGLE_POLYLINE = 'TOGGLE_POLYLINE'
 export const TOGGLE_TASK = 'TOGGLE_TASK'
 export const SELECT_TASK = 'SELECT_TASK'
@@ -111,6 +112,7 @@ export const CLOSE_SEARCH = 'CLOSE_SEARCH'
 export const OPEN_SETTINGS = 'OPEN_SETTINGS'
 export const CLOSE_SETTINGS = 'CLOSE_SETTINGS'
 export const SET_POLYLINE_STYLE = 'SET_POLYLINE_STYLE'
+export const SET_CLUSTERS_ENABLED = 'SET_CLUSTERS_ENABLED'
 
 export const LOAD_TASK_EVENTS_REQUEST = 'LOAD_TASK_EVENTS_REQUEST'
 export const LOAD_TASK_EVENTS_SUCCESS = 'LOAD_TASK_EVENTS_SUCCESS'
@@ -249,6 +251,10 @@ function modifyTaskList(username, tasks) {
 
 function togglePolyline(username) {
   return { type: TOGGLE_POLYLINE, username }
+}
+
+function taskListUpdated(taskList) {
+  return { type: TASK_LIST_UPDATED, taskList }
 }
 
 function toggleTask(task, multiple = false) {
@@ -400,6 +406,10 @@ function closeSettings() {
 
 function setPolylineStyle(style) {
   return {type: SET_POLYLINE_STYLE, style}
+}
+
+function setClustersEnabled(enabled) {
+  return {type: SET_CLUSTERS_ENABLED, enabled}
 }
 
 function loadTaskEventsRequest() {
@@ -687,4 +697,6 @@ export {
   importSuccess,
   importError,
   startTask,
+  setClustersEnabled,
+  taskListUpdated,
 }

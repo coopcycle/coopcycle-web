@@ -67,6 +67,9 @@ class StoreType extends LocalBusinessType
                     'class' => TimeSlot::class,
                     'choice_label' => 'name',
                     'required' => false,
+                ])
+                ->add('tags', TagsType::class, [
+                    'mapped' => false,
                 ]);
         }
 

@@ -51,7 +51,6 @@
         "sentry/sentry-symfony": "^3.0",
         "ramsey/uuid-doctrine": "^1.6",
         "ramsey/uuid": "^3.9",
-        "misd/phone-number-bundle": "^1.2",
         "nesbot/carbon": "^2.0",
         "sylius/taxation-bundle": "^1.7.5",
         "knplabs/knp-markdown-bundle": "^1.6",
@@ -100,13 +99,14 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "sylius/resource-bundle": "dev-master",
         "twig/cache-extension": "^1.4",
-        "kreait/firebase-bundle": "^1.9",
+        "kreait/firebase-bundle": "^2.2",
         "phpdocumentor/reflection-docblock": "^4.0",
         "sylius/customer-bundle": "^1.6",
         "letudiant/composer-shared-package-plugin": "^4.0",
         "mailjet/mailjet-apiv3-php": "^1.4",
         "edamov/pushok": "^0.11.2",
-        "twig/intl-extra": "^3.0"
+        "twig/intl-extra": "^3.0",
+        "odolbeau/phone-number-bundle": "^3.1"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

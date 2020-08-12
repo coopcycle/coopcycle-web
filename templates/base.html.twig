@@ -66,6 +66,18 @@
                   </a>
                 </li>
                 {% endif %}
+                {% if coopcycle_setting('b2b_enabled') %}
+                <li>
+                  <a class="footer-link" href="{{ path('company_registration') }}" >
+                    {% trans %}base.footer.companyRegister{% endtrans %}
+                  </a>
+                </li>
+                <li>
+                  <a class="footer-link" href="{{ path('request_restaurant') }}">
+                    {% trans %}base.footer.RegisterMyRestaurant{% endtrans %}
+                  </a>
+                </li>
+                {% endif %}
                 <li>
                   <a class="footer-link" href="{{ path('legal') }}">
                     {% trans %}base.footer.legal{% endtrans %}

@@ -441,7 +441,6 @@ form.payment.refund_application_fee.help: "Pokud zaškrtnete toto políčko, bud
   > Další informace </a>\n"
 form.address.addressLocality.label: Město
 form.address.postalCode.label: PSČ
-form.address.floor.label: Patro
 form.address.description.label: Instrukce
 form.address.description.placeholder: 2. dveře vlevo…
 form.address.streetAddress.label: Adresa

@@ -17,20 +17,20 @@ if [ ! -f var/jwt/public.pem ]; then
     openssl rsa -pubout -passin pass:coursiers -in var/jwt/private.pem -out var/jwt/public.pem
 fi
 
-if [ "$SYMFONY_ENV" = 'prod' ]; then
+if [ "$APP_ENV" = 'prod' ]; then
     composer install --prefer-dist --no-plugins --no-progress --no-suggest --no-dev --optimize-autoloader --classmap-authoritative
 else
     composer install --prefer-dist --no-plugins --no-progress --no-suggest
 fi
 
-php bin/console doctrine:database:create --if-not-exists --env=$SYMFONY_ENV
-php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=$SYMFONY_ENV
-php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=$SYMFONY_ENV
-php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=$SYMFONY_ENV
+php bin/console doctrine:database:create --if-not-exists --env=$APP_ENV
+php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=$APP_ENV
+php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=$APP_ENV
+php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=$APP_ENV
 
 php bin/console doctrine:database:create --if-not-exists --env=test
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=test
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=test
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=test
 
-exec php-fpm
+exec docker-php-entrypoint "$@"

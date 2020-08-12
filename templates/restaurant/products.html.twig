@@ -14,7 +14,7 @@
   <a href="{{ path(new_product_route, { id: restaurant.id }) }}"
     class="btn btn-success"><i class="fa fa-plus"></i> {{ 'basics.add'|trans }}</a>
 </p>
-<table class="table">
+<table class="table" data-entity="product">
   <thead>
     <th></th>
     <th>{{ 'form.product.name.label'|trans }}</th>
@@ -27,8 +27,8 @@
   <tbody>
     {% for product in products %}
     {% set default_variant = product|sylius_resolve_variant %}
-    <tr>
-      <td>
+    <tr data-enabled="{{ product.enabled|json_encode|e('html_attr') }}" data-iri="{{ product|get_iri_from_item|e('html_attr') }}">
+      <td data-cell="toggle">
         {% if product.enabled %}
           <i class="fa fa-toggle-on"></i>
         {% else %}

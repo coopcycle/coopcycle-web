@@ -64,6 +64,31 @@ class RestaurantController extends AbstractController
     private $orderManager;
     private $seoPage;
     private $uploaderHelper;
+    private $serializer;
+    /**
+     * @var OrderTimeHelper
+     */
+    private OrderTimeHelper $orderTimeHelper;
+    /**
+     * @var FilterService
+     */
+    private FilterService $imagineFilter;
+    /**
+     * @var ValidatorInterface
+     */
+    private ValidatorInterface $validator;
+    /**
+     * @var RepositoryInterface
+     */
+    private RepositoryInterface $productRepository;
+    private $productVariantResolver;
+    private $orderItemFactory;
+    /**
+     * @var RepositoryInterface
+     */
+    private RepositoryInterface $orderItemRepository;
+    private $orderItemQuantityModifier;
+    private $orderModifier;
 
     public function __construct(
         EntityManagerInterface $orderManager,

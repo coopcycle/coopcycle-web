@@ -1,0 +1,18 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  <mj-column>
+    <mj-text align="left" line-height="20px">
+      {{ restaurant.name }}
+      {{ 'form.address.streetAddress.label'|trans }} :
+      {{ restaurant.address.postalCode }}
+      {{ restaurant.address.addressLocality }}
+      {{ restaurant.address.streetAddress }}
+      {{ 'form.restaurant.contact_referent.label'|trans }}
+      {{ restaurant.contact }}
+      {{ 'form.restaurant.b2b.label'|trans }}
+      {{ restaurant.b2b ? ('basics.yes'|trans) : ('basics.no'|trans) }}
+
+    </mj-text>
+  </mj-column>
+{% endblock %}

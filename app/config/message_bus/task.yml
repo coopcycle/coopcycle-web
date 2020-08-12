@@ -74,6 +74,8 @@ services:
         subscribes_to: task:failed
       - name: event_subscriber
         subscribes_to: task:cancelled
+      - name: event_subscriber
+        subscribes_to: task_collection:updated
 
   coopcycle.domain.task.reactor.send_email:
     class: AppBundle\Domain\Task\Reactor\SendEmail
@@ -92,7 +94,7 @@ services:
       - '@coopcycle.settings_manager'
       - '@sylius.repository.order'
       - '@messenger.default_bus'
-      - '@libphonenumber.phone_number_util'
+      - '@libphonenumber\PhoneNumberUtil'
       - '@router'
       - '@translator'
       - '%secret%'

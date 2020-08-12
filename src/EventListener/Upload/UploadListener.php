@@ -30,6 +30,7 @@ final class UploadListener
     private $messageBus;
     private $productSpreadsheetParser;
     private $secret;
+    private $isDemo;
     private $logger;
 
     public function __construct(
@@ -42,6 +43,7 @@ final class UploadListener
         SerializerInterface $serializer,
         IriConverterInterface $iriConverter,
         string $secret,
+        bool $isDemo,
         LoggerInterface $logger)
     {
         $this->doctrine = $doctrine;
@@ -53,6 +55,7 @@ final class UploadListener
         $this->serializer = $serializer;
         $this->iriConverter = $iriConverter;
         $this->secret = $secret;
+        $this->isDemo = $isDemo;
         $this->logger = $logger;
     }
 
@@ -133,6 +136,10 @@ final class UploadListener
     private function onLogoUpload(PostPersistEvent $event)
     {
         $file = $event->getFile();
+
+        if ($this->isDemo) {
+            throw new UploadException('Company logo can\'t be changed in demo mode');
+        }
 
         $this->settingsManager->set('company_logo', $file->getBasename());
         $this->settingsManager->flush();

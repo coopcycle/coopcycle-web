@@ -78,6 +78,17 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
             unset($data['closingRules']);
         }
 
+        $imagePath = $this->uploaderHelper->asset($object, 'imageFile');
+        if (empty($imagePath)) {
+            $imagePath = '/img/cuisine/default.jpg';
+            $request = $this->requestStack->getCurrentRequest();
+            if ($request) {
+                $data['image'] = $request->getUriForPath($imagePath);
+            }
+        } else {
+            $data['image'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail');
+        }
+
         // Stop now if this is for SEO
         // FIXME Stop checking groups manually
         if (isset($context['groups']) && in_array('restaurant_seo', $context['groups'])) {
@@ -89,17 +100,6 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['hasMenu'] = $data['activeMenuTaxon'];
         }
         unset($data['activeMenuTaxon']);
-
-        $imagePath = $this->uploaderHelper->asset($object, 'imageFile');
-        if (empty($imagePath)) {
-            $imagePath = '/img/cuisine/default.jpg';
-            $request = $this->requestStack->getCurrentRequest();
-            if ($request) {
-                $data['image'] = $request->getUriForPath($imagePath);
-            }
-        } else {
-            $data['image'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail');
-        }
 
         return $data;
     }

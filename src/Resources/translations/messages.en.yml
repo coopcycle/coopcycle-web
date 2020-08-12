@@ -2,6 +2,8 @@ global.changesSaved: Your changes have been saved.
 navbar.login: Login
 navbar.myAccount: My Account
 base.footer.contactUs: Contact us
+base.footer.companyRegister: Become a partner
+base.footer.RegisterMyRestaurant: Register my restaurant
 base.footer.help: Help
 base.footer.legal: Legal notice
 base.footer.suggest: Suggest a restaurant
@@ -71,6 +73,9 @@ adminDashboard.users.edit.addStore: Add a store
 adminDashboard.users.edit.addRestaurant: Add a restaurant
 adminDashboard.users.createNew: Add user
 adminDashboard.users.invite: Invite user
+adminDashboard.users.orders_count: Number of orders
+adminDashboard.users.registered_at: Registered
+adminDashboard.users.last_order: Last order
 form.user.quotes_allowed.label: Allow this user to request a quote
 adminDashboard.settings.title: Settings
 adminDashboard.pricing.title: Pricing
@@ -454,7 +459,6 @@ form.payment.refund_application_fee.help: "If you check this box, the commission
   https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Learn more</a>\n"
 form.address.addressLocality.label: City
 form.address.postalCode.label: Postal code
-form.address.floor.label: Floor
 form.address.description.label: Instructions
 form.address.description.placeholder: 2nd door on the left…
 form.address.streetAddress.label: Address
@@ -462,6 +466,12 @@ form.address.streetAddress.error.noLatLng: Please select an address in the dropd
 form.address.name.label: Name
 form.address.name.placeholder: Home, work…
 form.address.company.label: Company
+form.address.company_name.label: Company name
+form.address.company.business_reference.label: Contact person for the company
+form.address.company.function.label: Contact person position
+form.address.company.collaborator_number.label: Number of employees
+form.address.company.meal_estimate.label: Estimated number of meals (per day)
+form.company.make_the_request.label: Send request
 form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Rules
 form.pricing_rule_set.strategy.label: Method of calculation
@@ -786,6 +796,7 @@ basics.tax_category: VAT
 basics.export: Export
 basics.import: Import
 basics.name: Name
+basics.description: Description
 basics.today: Today
 basics.are_you_sure: Are you sure?
 basics.no_entries: No element yet
@@ -1023,3 +1034,11 @@ form.time_slot.same_day_cutoff.help: For example of your select 11:00, choices o
   the same day won't be displayed after 11:00
 order.reusable_packaging.pledge_return.disclaimer: The customer has indicated that
   %count% packages will be returned
+form:
+  restaurant:
+    name:
+      label: Restaurant name
+    contact_referent:
+      label: Contact person for the restaurant
+    b2b:
+      label: Would you like to propose special offers for companies?

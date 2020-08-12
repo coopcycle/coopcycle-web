@@ -2,7 +2,7 @@
 
 namespace AppBundle\Domain\Task\Reactor;
 
-use AppBundle\Domain\Task\Event;
+use AppBundle\Domain\Event;
 use AppBundle\Service\SocketIoManager;
 
 class PublishRedisMessage

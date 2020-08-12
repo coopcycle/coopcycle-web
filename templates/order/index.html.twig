@@ -77,8 +77,6 @@
 
           {% if form.shippingAddress is defined %}
             {{ form_row(form.shippingAddress.streetAddress) }}
-            {{ form_row(form.shippingAddress.floor) }}
-
             {{ form_row(form.shippingAddress.description) }}
           {% endif %}
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
-  <entity name="AppBundle\Entity\TaskCollection" table="task_collection" inheritance-type="JOINED">
+  <entity repository-class="AppBundle\Entity\TaskCollectionRepository" name="AppBundle\Entity\TaskCollection" table="task_collection" inheritance-type="JOINED">
     <discriminator-column name="type" type="string" length="255"/>
     <discriminator-map>
       <discriminator-mapping value="delivery" class="AppBundle\Entity\Delivery"/>

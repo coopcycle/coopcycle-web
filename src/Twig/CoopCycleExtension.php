@@ -2,6 +2,7 @@
 
 namespace AppBundle\Twig;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Carbon\Carbon;
@@ -17,11 +18,13 @@ use Twig\TwigTest;
 class CoopCycleExtension extends AbstractExtension
 {
     private $serializer;
+    private $iriConverter;
     private $secret;
 
-    public function __construct(SerializerInterface $serializer, string $secret)
+    public function __construct(SerializerInterface $serializer, IriConverterInterface $iriConverter, string $secret)
     {
         $this->serializer = $serializer;
+        $this->iriConverter = $iriConverter;
         $this->secret = $secret;
     }
 
@@ -44,6 +47,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('local_business_type', array(LocalBusinessRuntime::class, 'type')),
             new TwigFilter('time_range_for_humans', array(OrderRuntime::class, 'timeRangeForHumans')),
             new TwigFilter('promotion_rule_for_humans', array(PromotionRuntime::class, 'ruleForHumans')),
+            new TwigFilter('get_iri_from_item', array($this, 'getIriFromItem')),
         );
     }
 
@@ -149,5 +153,10 @@ class CoopCycleExtension extends AbstractExtension
     public function productOptionIndex()
     {
         return new ProductOptionIndex();
+    }
+
+    public function getIriFromItem($item)
+    {
+        return $this->iriConverter->getIriFromItem($item);
     }
 }

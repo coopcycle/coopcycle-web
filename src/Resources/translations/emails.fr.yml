@@ -120,3 +120,11 @@ covid_19.body: "<h1>Consignes à suivre pour votre livraison</h1>\n<p>Face à l'
   \ plus tard par inadvertance.</p>\n<h2>4. Lavez-vous les mains !</h2>\n<p>Une fois\
   \ que vous avez déballé votre commande et jeté les emballages, <strong>lavez-vous\
   \ impérativement les mains !</strong></p>\n"
+
+order.expiring_authorization.subject: Une pré-autorisation va bientôt expirer
+order.expiring_authorization.text:
+  Une pré-autorisation de paiement pour la commande <strong>%order.number%</strong> va bientôt expirer.
+  <br>
+  Vous devriez finaliser la commande avant l'expiration de la pré-autorisation pour éviter de perdre de l'argent.
+registration.company: Demande d'enregistrement d'entreprise
+registration.restaurant: Nouvelle demande d'ajout de restaurant

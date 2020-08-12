@@ -20,6 +20,12 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
     private function flattenItems(array $items)
     {
         return array_values(array_map(function ($item) {
+
+            if (!is_array($item['task'])) {
+
+                return $item;
+            }
+
             $position = $item['position'];
             $task = $item['task'];
 

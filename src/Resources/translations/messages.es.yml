@@ -324,7 +324,6 @@ form.address.name.label: Nombre
 form.address.name.placeholder: Casa, oficina…
 form.address.addressLocality.label: Ciudad
 form.address.postalCode.label: Código postal
-form.address.floor.label: Piso
 form.address.description.label: Instrucciones
 form.address.description.placeholder: 2ª puerta a la izquierda…
 form.pricing_rule_set.name.label: Nombre

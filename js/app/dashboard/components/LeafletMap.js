@@ -14,6 +14,7 @@ class LeafletMap extends Component {
       asTheCrowFlies,
       tasks,
       tasksFiltered,
+      clustersEnabled,
     } = this.props
 
     const tasksHidden = _.differenceWith(tasks, tasksFiltered, (a, b) => a['@id'] === b['@id'])
@@ -23,6 +24,12 @@ class LeafletMap extends Component {
 
     _.forEach(polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
     _.forEach(asTheCrowFlies, (polyline, username) => this.proxy.setPolylineAsTheCrowFlies(username, polyline))
+
+    if (clustersEnabled) {
+      this.proxy.showClusters()
+    } else {
+      this.proxy.hideClusters()
+    }
   }
 
   componentDidMount() {
@@ -166,6 +173,7 @@ function mapStateToProps(state) {
     offline: state.offline,
     polylineStyle: state.polylineStyle,
     asTheCrowFlies,
+    clustersEnabled: state.clustersEnabled,
   }
 }
 

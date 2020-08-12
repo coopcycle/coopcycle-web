@@ -57,16 +57,6 @@
   {{ block('form_row') }}
 {% endblock %}
 
-{% block _checkout_address_shippingAddress_floor_row %}
-  {% set address = form.parent.vars.value %}
-  {% if address is empty %}
-    {% set row_attr = row_attr|merge({
-      class: (row_attr.class|default('') ~ ' d-none')
-    }) %}
-  {% endif %}
-  {{ block('form_row') }}
-{% endblock %}
-
 {% block _checkout_address_reusablePackagingEnabled_row %}
 
   {% set isLoopeat = attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}

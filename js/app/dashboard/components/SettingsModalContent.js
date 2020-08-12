@@ -5,7 +5,8 @@ import { Form, Radio } from 'antd'
 
 import {
   closeSettings,
-  setPolylineStyle } from '../redux/actions'
+  setPolylineStyle,
+  setClustersEnabled } from '../redux/actions'
 
 const formItemLayout = {
   labelCol: { span: 10 },
@@ -20,13 +21,15 @@ class SettingsModalContent extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      value: 'normal'
+      polylineStyle: props.polylineStyle,
+      clustersEnabled: props.clustersEnabled,
     }
   }
 
   handleSubmit(e) {
     e.preventDefault()
-    this.props.setPolylineStyle(this.state.value)
+    this.props.setPolylineStyle(this.state.polylineStyle)
+    this.props.setClustersEnabled(this.state.clustersEnabled)
     this.props.closeSettings()
   }
 
@@ -37,11 +40,18 @@ class SettingsModalContent extends React.Component {
         onSubmit={ this.handleSubmit.bind(this) }>
         <Form.Item label={ this.props.t('ADMIN_DASHBOARD_SETTINGS_POLYLINE') } { ...formItemLayout }>
           <Radio.Group defaultValue={ this.props.polylineStyle }
-            onChange={ (e) => this.setState({ value: e.target.value }) }>
+            onChange={ (e) => this.setState({ polylineStyle: e.target.value }) }>
             <Radio.Button value="normal">Normal</Radio.Button>
             <Radio.Button value="as_the_crow_flies">
               { this.props.t('ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES') }
             </Radio.Button>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item label={ this.props.t('ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED') } { ...formItemLayout }>
+          <Radio.Group defaultValue={ this.props.clustersEnabled }
+            onChange={ (e) => this.setState({ clustersEnabled: e.target.value }) }>
+            <Radio.Button value={ true }>Yes</Radio.Button>
+            <Radio.Button value={ false }>No</Radio.Button>
           </Radio.Group>
         </Form.Item>
         <Form.Item { ...buttonItemLayout }>
@@ -57,7 +67,8 @@ class SettingsModalContent extends React.Component {
 function mapStateToProps(state) {
 
   return {
-    polylineStyle: state.polylineStyle
+    polylineStyle: state.polylineStyle,
+    clustersEnabled: state.clustersEnabled,
   }
 }
 
@@ -65,6 +76,7 @@ function mapDispatchToProps(dispatch) {
 
   return {
     setPolylineStyle: style => dispatch(setPolylineStyle(style)),
+    setClustersEnabled: enabled => dispatch(setClustersEnabled(enabled)),
     closeSettings: () => dispatch(closeSettings())
   }
 }

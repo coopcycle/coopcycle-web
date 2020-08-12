@@ -2,6 +2,8 @@ global.changesSaved: Changements sauvegardés.
 navbar.login: Connexion
 navbar.myAccount: Mon compte
 base.footer.contactUs: Nous contacter
+base.footer.companyRegister: Devenir partenaire
+base.footer.RegisterMyRestaurant: Inscrire mon restaurant
 base.footer.help: Aide
 base.footer.legal: Mentions légales
 base.footer.terms: Conditions générales
@@ -58,6 +60,9 @@ adminDashboard.users.edit.addStore: Ajouter un magasin
 adminDashboard.users.edit.addRestaurant: Ajouter un restaurant
 adminDashboard.users.createNew: Ajouter un utilisateur
 adminDashboard.users.invite: Inviter un utilisateur
+adminDashboard.users.orders_count: Nombre de commandes
+adminDashboard.users.registered_at: Inscription
+adminDashboard.users.last_order: Dernière commande
 adminDashboard.settings.title: Paramètres
 adminDashboard.pricing.title: Tarification
 adminDashboard.pricing.manage: Gérer
@@ -423,10 +428,15 @@ form.address.name.label: Nom
 form.address.name.placeholder: Maison, bureau…
 form.address.addressLocality.label: Ville
 form.address.postalCode.label: Code postal
-form.address.floor.label: Étage
 form.address.description.label: Instructions
 form.address.description.placeholder: 2ème porte à gauche…
 form.address.company.label: Entreprise
+form.address.company_name.label: Nom de l'entreprise
+form.address.company.business_reference.label: Contact de la personne référente pour l’entreprise
+form.address.company.function.label: Poste
+form.address.company.collaborator_number.label: Nombre de collaborateur-ices
+form.address.company.meal_estimate.label: Estimation du nombre de repas (par jour)
+form.company.make_the_request.label: Faire la demande
 form.pricing_rule_set.name.label: Nom
 form.pricing_rule_set.rules.label: Règles
 form.pricing_rule.price.label: Prix
@@ -1014,3 +1024,11 @@ restaurant.form.section.loopeat: LoopEat
 form.settings.company_logo.help: Ce logo sera utilisé pour les factures et les preuves
   de livraison
 form.product_option.preview_title: Aperçu de l'option
+form:
+  restaurant:
+    name:
+      label: Nom du restaurant
+    contact_referent:
+      label: Contact de la personne référente pour le restaurant
+    b2b:
+      label: Souhaitez-vous proposer une offre à destination des entreprises ?

@@ -1,0 +1,20 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+<mj-column>
+  <mj-text align="left" line-height="20px">
+  {{ 'order.expiring_authorization.text'|trans({ '%order.number%': order.number }, 'emails')|raw }}
+  </mj-text>
+  {% if is_admin %}
+    {% set route_name = 'admin_order' %}
+    {% set url_params = { id: order.id } %}
+  {% else %}
+    {% set route_name = 'profile_restaurant_dashboard' %}
+    {% set url_params = { restaurantId: order.restaurant.id, order: order.id } %}
+  {% endif %}
+  <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white"
+    href="{{ url(route_name, url_params) }}">
+  {{ 'order.view' | trans({}, 'emails') }}
+  </mj-button>
+</mj-column>
+{% endblock %}

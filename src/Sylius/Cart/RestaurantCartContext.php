@@ -3,6 +3,7 @@
 namespace AppBundle\Sylius\Cart;
 
 use AppBundle\Entity\LocalBusinessRepository;
+use Doctrine\ORM\EntityNotFoundException;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -58,6 +59,13 @@ final class RestaurantCartContext implements CartContextInterface
 
             if (null === $cart) {
                 $this->session->remove($this->sessionKeyName);
+            } else {
+                try {
+                    $restaurant = $cart->getRestaurant();
+                } catch (EntityNotFoundException $e) {
+                    $cart = null;
+                    $this->session->remove($this->sessionKeyName);
+                }
             }
         }
 
