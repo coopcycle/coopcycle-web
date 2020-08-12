@@ -5,3 +5,66 @@ registration.email.message: "<h2>Bem-vindo ao (à) %brand_name%, %username%</h2>
 registration.email.confirm: Confirmar e-mail
 registration.email.disclaimer: Esta ligação só pode ser usada uma vez para validar
   a sua conta
+admin.order.created.body: "Olá,\n<br>\nFoi criado um novo pedido.\n"
+admin.order.created.subject: Novo pedido a ser confirmado
+order.foodtech.cancelled: "O restaurante é incapaz de preparar o seu pedido %order.number%.\n\
+  <br>\nA sua conta não será debitada.\n"
+order.foodtech.accepted.collection.disclaimer: Caso haja um problema, contacte com
+  a antecedência suficiente <strong>%name%</strong> usando o número <strong>%phone_number%</strong>  por
+  forma a cancelar o seu pedido.
+order.foodtech.accepted.collection: 'Terá de o levantar no tempo indicado:'
+order.foodtech.accepted.delivery.disclaimer: Contactá-lo-emos no caso de haver um
+  problema para encontrar o seu endereço
+order.foodtech.accepted.delivery: 'Ser-lhe-á entregue no tempo indicado:'
+order.public_url: "Para rastrear o estado do seu pedido, <a href=\"%order.public_url%\"\
+  >pressione aqui</a>.\n"
+order.view: Ver pedido
+resetting.email.reset: Redefinir senha
+resetting.email.message: <h2>Olá %username%</h2> Para redefinir a sua senha, por favor
+  pressione no botão abaixo.
+registration.email.textMessage: "Bem-vindo à %brand_name%, %username%,\\n\\n\nEstá\
+  \ a receber esta mensagem porque se inscreveu recentemente na %brand_name%.\\n\n\
+  Para confirmar o seu email, por favor pressione na seguinte hiperligação: <a href=\"\
+  %confirmationUrl%\" rel=\"notrack\">%confirmationUrl%</a>.\n"
+order.cancelled.subject: O seu pedido %order.number% foi cancelado
+order.accepted.body.intro: "Olá,\n<br>\nO seu pedido está confirmado."
+order.accepted.subject: Pedido %order.number% foi confirmado
+order.created.body: "Olá,\n<br>\nRecebemos o seu pedido.\n<br>\nVerificaremos seu\
+  \ pedido o mais rápido possível e enviaremos um e-mail quando ele for confirmado.\n"
+order.created.subject: Pedido %order.number% foi recebido
+owner.order.created.body: "Olá,\n<br>\nUm novo pedido foi feito para <strong>%restaurant.name%</strong>.\n"
+owner.order.created.subject: Novo pedido para confirmar
+user.pledge.body: "Olá,\n<br>\ngraças a si, %pledge.name% está agora no CoopCycle!\n"
+user.pledge.subject: A sua sugestão está agora no CoopCycle!
+admin.pledge.body: "Olá,\n<br>\n%username% gostaria %pledge.name% de estar no CoopCycle!\n"
+admin.send_invitation.create_password: Criar a minha password
+admin.send_invitation.body: "Olá %username%,\n<br>\nEste é um convite para o espaço\
+  \ CoopCycle. Para finalizar a criação da sua conta, clique no link a seguir.\n"
+admin.send_invitation.subject: Convite para CoopCycle!
+admin.pledge.subject: Foi enviada uma nova sugestão!
+admin.order_foodtech.created.body: "Olá,\n<br>\nFoi criado um novo pedido para <strong>%restaurant.name%</strong>.\n"
+covid_19.body: "<h1>Instruções a seguir para a sua entrega</h1>\n<p>Dada a atual pandemia\
+  \ de COVID-19 (Coronavírus), você <strong>deve seguir rigorosamente</strong> as\
+  \ seguintes instruções:</p>\n<h2>1. Respeitar a distância social</h2>\n<p>Deixaremos\
+  \ o pedido à sua porta para que você não necessite de se aproximar da pessoa que\
+  \ o vem entregar. Também não há necessidade de deixar gratificação.</p>\n<h2>2.\
+  \ Abra a embalagem depois de a receber</h2>\n<p>O vírus pode sobreviver em superfícies\
+  \ de papel e plástico por vários dias. A embalagem é, portanto, uma via de alto\
+  \ risco de transmissão do vírus.\nSolicitamos, portanto, que <strong> abra a embalagem\
+  \ e transfira o conteúdo para pratos</strong>.</p>\n<h2>3. Descarte a embalagem</h2>\n\
+  <p>Depois de abrir a embalagem, certifique-se que <strong>descarta a embalagem e\
+  \ a coloca num saco fechado</strong>, garantindo assim que não lhe toca inadvertidamente\
+  \ mais tarde.</p>\n<h2>4. Lave as mãos!</h2>\n<p>Depois de abrir e descartar a embalagem,\
+  \ <strong>lave as mãos!</strong></p>\n"
+covid_19.subject: COVID-19 | Instruções importantes para o seu pedido
+order.payment.body: "Olá,\n<br>\nConcluímos uma entrega que você nos solicitou.\n\
+  <br>\nAbaixo encontrará uma ligação que lhe permitirá pagar com cartão de crédito.\n"
+order.payment.subject: Pagamento do seu pedido %order.number%
+task.failed.body: "Olá,\n<br>\nA tarefa #%task.id% não pôde ser concluída.\n"
+task.failed.subject: 'A tarefa #%task.id% não pôde ser concluída'
+task.done.body: "Olá,\n<br>\nA tarefa #%task.id% foi concluída.\n"
+task.done.subject: 'Tarefa #%task.id% concluída'
+order.delayed.body: "Olá,\n<br>\nLamentamos, mas o seu pedido será adiado por %delay%\
+  \ minutos.\n<br>\nPedimos desculpa pelo inconveniente.\n"
+order.delayed.subject: O seu pedido %order.number% foi adiado
+order.cancelled.body.intro: "Olá,\n<br>\nLamentamos, mas seu pedido foi cancelado.\n"

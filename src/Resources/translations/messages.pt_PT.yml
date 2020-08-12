@@ -87,7 +87,7 @@ adminDashboard.tags.createNew: Criar um marcador novo
 adminDashboard.tags.name: Nome
 adminDashboard.tags.color: Cor
 adminDashboard.tags.confirm_delete: "Tem a certeza que quer remover este marcador\
-  \ ? \nO marcador será removido doa respectivos elementos que o estejam a usar e\
+  \ ? \nO marcador será removido dos respectivos elementos que o estejam a usar e\
   \ não serão mais agrupados pelo marcador."
 adminDashboard.taxation.title: Tributação
 adminDashboard.taxation.button: Adicionar tributação
@@ -108,8 +108,9 @@ delivery.createNew: Criar nova entrega
 delivery.tracking_link: Link de rastreamento
 delivery.with_id: 'Entrega #%id%'
 help.title: Ajuda
+help.home: Página inicial
 restaurants.no_results: Não encontramos nenhum restaurante que satisfaça os critérios
-  da sua pesquisa.  ☹<br>Tente com um endereço diferente
+  da sua pesquisa. ☹< <br>Tente com um endereço diferente
 restaurants.visible_by_you_only: Visível apenas para si
 restaurants.placeholder.title: Um pouco de paciência…
 restaurants.placeholder.text: Novos restaurantes estão a chegar em breve!
@@ -136,3 +137,66 @@ localBusiness.form.use_different_business_address.label: Use um endereço profis
 localBusiness.form.business_address.label: Endereço profissional
 restaurant.available: Disponível
 restaurant.unavailable: Indisponível
+restaurant.contract.variableCustomerAmount.placeholder: Selecione um conjunto de regras
+  de preços
+restaurant.contract.variableCustomerAmount.help: O preço pago será calculado usando
+  o conjunto de regras de preços selecionado
+restaurant.contract.variableCustomerAmount.label: Valor pago pelo cliente (variável)
+restaurant.contract.showAdvanced: Mostrar configurações avançadas
+restaurant.contract.noContract: Sem detalhes do contrato. Entre em contato com um
+  administrador.
+restaurant.contract.onlyAdmin: Apenas um administrador pode editar os detalhes do
+  contrato.
+restaurant.contract.restaurantPaysStripeFee.cooperative: Cooperativo
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurante
+restaurant.contract.feeRate.help: Esta percentagem será retida pela plataforma no
+  total de produtos
+restaurant.contract.feeRate.label: Taxa da plataforma para entregas
+restaurant.contract.customerAmount.help: Esse valor será exibido no carrinho e aumentará
+  o valor total
+restaurant.contract.customerAmount.label: Valor pago pelo cliente
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: O valor é calculado dinamicamente
+restaurant.contract.variableDeliveryPriceEnabled.label: Ativar valor variável cobrado
+  pela plataforma
+restaurant.contract.variableDeliveryPrice.placeholder: Selecione um conjunto de regras
+  de preços
+restaurant.contract.variableDeliveryPrice.help: O valor cobrado será calculado usando
+  o conjunto de regras de preços selecionado
+restaurant.contract.variableDeliveryPrice.label: Valor cobrado pela plataforma (variável)
+restaurant.contract.flatDeliveryPrice.help: Esse valor não será exibido no carrinho
+  e não aumentará o valor total
+restaurant.contract.flatDeliveryPrice.label: Valor cobrado pela plataforma
+restaurant.contract.minimumCartAmount.label: Montante mínimo do carrinho
+restaurant.deliveryPerimeterExpression.help: Defina um perímetro de entregas aceitável.
+  Pode escolher um raio (em km) ou uma zona
+restaurant.deliveryPerimeterExpression.title: Perímetro de entrega
+restaurant.contract.title: Contrato
+restaurant.form.cuisines.label: Cozinhas
+restaurant.form.section.settlement: Liquidação
+restaurant.form.section.payment: Pagamento
+restaurant.form.section.fulfillment: Satisfação
+restaurant.form.section.options: Opções
+restaurant.form.section.general: Geral
+restaurant.form.featured.label: Este restaurante é destaque na página inicial
+restaurant.form.quotes_allowed.label: 'Este restaurante também aceita orçamentos (p.e.:
+  serviço de buffet)'
+restaurant.form.exclusive.label: Este restaurante é exclusivo
+restaurant.form.save: Gravar
+restaurant.form.createRestaurant: Criar restaurante
+restaurant.form.accessPlanning: Plano de acesso
+restaurant.form.deposit_refund_enabled.label: Ativar sistema de reembolso de depósitos
+restaurant.form.temporaryClosingRule: Clique aqui para desativar temporariamente os
+  pedidos no seu restaurante.
+restaurant.form.enabled.tooltip: "Quando está inativo, o restaurante não fica visível\
+  \ na página. Não aparece nos resultados de pesquisa e a página do restaurante não\
+  \ está acessível aos visitantes.\n"
+restaurant.form.noPricingRule: Nenhuma regra de preço foi implementada, <a href="%editPricingRule%">clique
+  aqui para criar uma</a>.
+restaurant.noMenuWarning: "Por enquanto este restaurante não tem ementa.\n"
+restaurant.temporaryClosedWarning: Este restaurante está fechado até <strong>%date%</strong>.
+  Ainda assim pode pedir para mais tarde!
+restaurant.closedWarningWithDelay: Peça agora para mais tarde. Peça com pelo menos
+  %delay% de antecedência.
+restaurant.disabledWarning: "Este restaurante está inativo, logo, os visitantes não\
+  \ conseguem ver esta página. Se quiser, pode <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
+  >ativá-lo no administrador</a>.\n"
