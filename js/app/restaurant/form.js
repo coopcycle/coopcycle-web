@@ -6,7 +6,6 @@ import _ from 'lodash'
 import Select from 'react-select'
 
 import i18n from '../i18n'
-import AddressInput from '../widgets/AddressInput'
 import DropzoneWidget from '../widgets/Dropzone'
 import OpeningHoursInput from '../widgets/OpeningHoursInput'
 
