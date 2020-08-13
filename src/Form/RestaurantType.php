@@ -65,7 +65,10 @@ class RestaurantType extends LocalBusinessType
                 'label' => 'localBusiness.form.use_different_business_address.label'
             ])
             ->add('businessAddress', AddressType::class, [
-                'street_address_label' => 'localBusiness.form.business_address.label'
+                'street_address_label' => 'localBusiness.form.business_address.label',
+                'with_widget' => true,
+                'with_description' => false,
+                'label' => false,
             ])
             ;
 

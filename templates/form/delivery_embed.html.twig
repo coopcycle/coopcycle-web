@@ -54,17 +54,6 @@
 {{ form_row(form.company) }}
 {{ form_row(form.streetAddress) }}
 
-{{ form_widget(form.latitude) }}
-{{ form_widget(form.longitude) }}
-{{ form_widget(form.postalCode) }}
-{{ form_widget(form.addressLocality) }}
+{{ form_rest(form) }}
 
-{% endblock %}
-
-{% block _delivery_billingAddress_postalCode_widget %}
-  {{ block('hidden_widget') }}
-{% endblock %}
-
-{% block _delivery_billingAddress_addressLocality_widget %}
-  {{ block('hidden_widget') }}
 {% endblock %}

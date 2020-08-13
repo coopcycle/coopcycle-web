@@ -107,15 +107,6 @@ function initMap() {
         addressLocality: document.querySelector(`#delivery_${type}_address_addressLocality`)
       }
     });
-  })
-
-  new CoopCycle.AddressInput(document.querySelector(`#delivery_billingAddress_streetAddress`), {
-    elements: {
-      latitude: document.querySelector(`#delivery_billingAddress_latitude`),
-      longitude: document.querySelector(`#delivery_billingAddress_longitude `),
-      postalCode: document.querySelector(`#delivery_billingAddress_postalCode`),
-      addressLocality: document.querySelector(`#delivery_billingAddress_addressLocality`)
-    }
   });
 
 }

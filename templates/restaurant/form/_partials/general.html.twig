@@ -2,23 +2,8 @@
 {{ form_row(form.type) }}
 
 {{ form_row(form.address) }}
-
 {{ form_row(form.useDifferentBusinessAddress) }}
-
-{% set is_different_address = form.useDifferentBusinessAddress.vars.value %}
-
-{{ form_row(form.businessAddress.streetAddress, {
-  row_attr: {
-    class: (is_different_address ? 'd-none' : '')
-  },
-  required: false
-}) }}
-{{ form_row(form.businessAddress.postalCode) }}
-{{ form_row(form.businessAddress.addressLocality) }}
-{{ form_widget(form.businessAddress.longitude) }}
-{{ form_widget(form.businessAddress.latitude) }}
-{# http://stackoverflow.com/questions/10570002/how-to-make-form-rest-not-display-a-field-with-symfony2 #}
-{% do form.businessAddress.setRendered %}
+{{ form_row(form.businessAddress) }}
 
 {{ form_row(form.description) }}
 {{ form_row(form.legalName) }}

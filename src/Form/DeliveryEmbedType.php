@@ -72,6 +72,9 @@ class DeliveryEmbedType extends DeliveryType
             ->add('billingAddress', AddressType::class, [
                 'mapped' => false,
                 'extended' => true,
+                'with_widget' => true,
+                'with_description' => false,
+                'label' => false,
             ]);
 
         if ($options['with_payment']) {

@@ -184,29 +184,17 @@ $(function() {
   $('#restaurant_useDifferentBusinessAddress').on('change', function() {
     if ($(this).is(':checked')) {
       $('#restaurant_businessAddress_streetAddress').closest('.form-group').removeClass('d-none')
+      $('#restaurant_businessAddress_streetAddress').attr('required', true)
       setTimeout(() => $('#restaurant_businessAddress_streetAddress').focus(), 350)
     } else {
       $('#restaurant_businessAddress_streetAddress').closest('.form-group').addClass('d-none')
+      $('#restaurant_businessAddress_streetAddress').attr('required', false)
     }
   })
+
+  if (!$('#restaurant_useDifferentBusinessAddress').is(':checked')) {
+    $('#restaurant_businessAddress_streetAddress').closest('.form-group').addClass('d-none')
+    $('#restaurant_businessAddress_streetAddress').attr('required', false)
+  }
 
 })
-
-window.initMap = function() {
-  new AddressInput(document.querySelector('#restaurant_address_streetAddress'), {
-    elements: {
-      latitude: document.querySelector('#restaurant_address_latitude'),
-      longitude: document.querySelector('#restaurant_address_longitude'),
-      postalCode: document.querySelector('#restaurant_address_postalCode'),
-      addressLocality: document.querySelector('#restaurant_address_addressLocality')
-    }
-  })
-  new AddressInput(document.querySelector('#restaurant_businessAddress_streetAddress'), {
-    elements: {
-      latitude: document.querySelector('#restaurant_businessAddress_latitude'),
-      longitude: document.querySelector('#restaurant_businessAddress_longitude'),
-      postalCode: document.querySelector('#restaurant_businessAddress_postalCode'),
-      addressLocality: document.querySelector('#restaurant_businessAddress_addressLocality')
-    }
-  })
-}

@@ -77,17 +77,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const inputs = document.querySelectorAll('[data-widget="address-input"]')
   if (inputs.length > 0) {
-    if (!window.initMap) {
-      window.initMap = function() {
-        inputs.forEach(el => {
-          new AddressInput(el, {
-            elements: {
-              latitude:   document.getElementById(el.getAttribute('id').replace('address_streetAddress', 'address_latitude')),
-              longitude:  document.getElementById(el.getAttribute('id').replace('address_streetAddress', 'address_longitude')),
-              postalCode: document.getElementById(el.getAttribute('id').replace('address_streetAddress', 'address_postalCode')),
-            }
-          })
+    let prevInitMap
+    if (window.initMap && typeof window.initMap === 'function') {
+      prevInitMap = window.initMap
+    }
+    window.initMap = function() {
+      inputs.forEach(el => {
+        new AddressInput(el, {
+          elements: {
+            latitude:        document.getElementById(el.getAttribute('id').replace(/([aA])ddress_streetAddress/, '$1ddress_latitude')),
+            longitude:       document.getElementById(el.getAttribute('id').replace(/([aA])ddress_streetAddress/, '$1ddress_longitude')),
+            postalCode:      document.getElementById(el.getAttribute('id').replace(/([aA])ddress_streetAddress/, '$1ddress_postalCode')),
+            addressLocality: document.getElementById(el.getAttribute('id').replace(/([aA])ddress_streetAddress/, '$1ddress_addressLocality')),
+          }
         })
+      })
+      if (prevInitMap) {
+        prevInitMap()
+        prevInitMap = null
       }
     }
   }
