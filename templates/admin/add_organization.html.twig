@@ -1,0 +1,33 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path('admin_organizations') }}">{{ 'adminDashboard.organizations.title'|trans }}</a></li>
+  <li>{{ organization.name }}</li>
+  <li>{{ 'basics.configure'|trans }}</li>
+{% endblock %}
+
+{% block content %}
+  {{ form_start(form) }}
+  {{ form_widget(form) }}
+  <button type="submit" class="btn btn-block btn-primary">
+    {{ 'basics.save'|trans }}
+  </button>
+  {{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    function initMap() {
+      new CoopCycle.AddressInput(document.querySelector(`#add_organization_address_streetAddress`), {
+        elements: {
+          latitude: document.querySelector(`#add_organization_address_latitude`),
+          longitude: document.querySelector(`#add_organization_address_longitude `)
+        }
+      });
+    }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
+          async defer></script>
+{% endblock %}

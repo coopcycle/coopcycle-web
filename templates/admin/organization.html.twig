@@ -1,0 +1,20 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_tags') }}">{% trans %}adminDashboard.organizations.title{% endtrans %}</a></li>
+<li>{{ organization.name }}</li>
+<li>{{ 'basics.configure'|trans }}</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+  {{ form_widget(form) }}
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+    </div>
+  </div>
+{{ form_end(form) }}
+{% endblock %}

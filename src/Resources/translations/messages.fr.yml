@@ -16,6 +16,7 @@ adminDashboard.tooltip.orders: Gestion des commandes restaurateurs
 adminDashboard.tooltip.deliveries: Gestion des courses
 adminDashboard.tooltip.stores: Gestion des magasins
 adminDashboard.tooltip.restaurants: Gestion des restaurants
+adminDashboard.tooltip.organizations: Gestion des organisations
 adminDashboard.tooltip.users: Gestion des comptes utilisateurs
 adminDashboard.dashboard.title: Tableau de bord
 adminDashboard.dashboard.import: Importer
@@ -43,6 +44,7 @@ adminDashboard.menuCategories.categories: Catégories
 adminDashboard.menuCategories.addCategory: Ajouter une catégorie
 adminDashboard.menuCategories.save: Enregistrer
 adminDashboard.stores.title: Magasins
+adminDashboard.organizations.title: Organisations
 adminDashboard.stores.createNew: Créer un magasin
 adminDashboard.stores.form.uploadImage: Uploader une image
 adminDashboard.orders.title: Commandes
@@ -804,6 +806,7 @@ api_apps.breadcrumb: Clients d'API
 api_apps.created.message: Le client a bien été ajouté. Utilisez les identifiants ci-dessous
   pour vous authentifier.
 promotions.breadcrumb: Promotions
+organizations.breadcrumb: Organisations
 promotions.breadcrumb.new_credit_note: Nouvel avoir commercial
 promotions.heading.free_delivery: Livraison offerte
 promotions.heading.free_delivery.help: Créez des codes promotionnels pour offrir la
@@ -891,6 +894,7 @@ deliveries.sort.newest: Les plus récentes
 deliveries.sort.oldest: Les plus anciennes
 deliveries.filter.clear: Afficher tout
 orders.new: Nouvelle commande
+organizations.new: Nouvelle organisation
 basics.copy: Copier
 orders.payment_link.send_by_email: Envoyer un lien de paiement
 orders.payment_link.sent: L'email a été envoyé

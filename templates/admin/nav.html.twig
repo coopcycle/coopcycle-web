@@ -24,31 +24,39 @@
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.orders{%  endtrans %}">
+        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.orders{% endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_orders') }}">
             <i class="fa fa-cube"></i>
             <span class="navbar-label">{% trans %}adminDashboard.orders.title{% endtrans %}</span>
           </a>
         </li>
-        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.deliveries{%  endtrans %}">
+        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.deliveries{% endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_deliveries') }}">
             <i class="fa fa-bicycle"></i>
             <span class="navbar-label">{% trans %}adminDashboard.deliveries.title{% endtrans %}</span>
           </a>
         </li>
-        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.stores{%  endtrans %}">
+        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.stores{% endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_stores') }}">
             <i class="fa fa-shopping-cart"></i>
             <span class="navbar-label">{% trans %}adminDashboard.stores.title{% endtrans %}</span>
           </a>
         </li>
-        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.restaurants{%  endtrans %}">
+        {% if coopcycle_setting('b2b_enabled') %}
+        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.organizations{% endtrans %}">
+          <a class="admin-navbar__link" href="{{ path('admin_organizations') }}">
+            <i class="fa fa-building-o"></i>
+            <span class="navbar-label">{% trans %}adminDashboard.organizations.title{% endtrans %}</span>
+          </a>
+        </li>
+        {% endif %}
+        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.restaurants{% endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_restaurants') }}">
             <i class="fa fa-cutlery"></i>
             <span class="navbar-label">{% trans %}adminDashboard.restaurants.title{% endtrans %}</span>
           </a>
         </li>
-        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.users{%  endtrans %}">
+        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.users{% endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_users') }}">
             <i class="fa fa-user"></i>
             <span class="navbar-label">{% trans %}adminDashboard.users.title{% endtrans %}</span>

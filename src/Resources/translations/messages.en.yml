@@ -810,6 +810,7 @@ basics.net_income: Net income
 basics.send_invitation: Send an invitation
 basics.send_invitation.confirm: Your invitation has been sent! You can now edit the
   settings of the new user.
+basics.configure: Configure
 profile.password.change: Change your password
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?
