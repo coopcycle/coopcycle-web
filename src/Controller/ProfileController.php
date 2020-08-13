@@ -309,7 +309,8 @@ class ProfileController extends Controller
         $address = new Address();
 
         $form = $this->createForm(AddressType::class, $address, [
-            'with_name' => true
+            'with_name' => true,
+            'with_widget' => true,
         ]);
 
         $form->handleRequest($request);

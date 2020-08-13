@@ -22,6 +22,7 @@ class RequestForAddType extends AbstractType implements DataMapperInterface
             ])
             ->add('address', AddressType::class, [
                 'label' => false,
+                'with_widget' => true,
             ])
             ->add('contact', EmailType::class, [
                     'label' => 'form.restaurant.contact_referent.label',

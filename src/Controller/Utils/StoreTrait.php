@@ -140,7 +140,8 @@ trait StoreTrait
         $routes = $request->attributes->get('routes');
 
         $form = $this->createForm(AddressType::class, $address, [
-            'with_name' => true
+            'with_name' => true,
+            'with_widget' => true,
         ]);
 
         $form->handleRequest($request);

@@ -13,6 +13,7 @@ require('bootstrap-sass')
 import './i18n'
 import { setTimezone, getCurrencySymbol } from './i18n'
 import CartTop from './cart/CartTop'
+import AddressInput from './widgets/AddressInput'
 
 global.ClipboardJS = require('clipboard')
 
@@ -72,6 +73,23 @@ document.addEventListener('DOMContentLoaded', function() {
         total={ total }
         itemsTotal={ itemsTotal }
       />, cartTopElement)
+  }
+
+  const inputs = document.querySelectorAll('[data-widget="address-input"]')
+  if (inputs.length > 0) {
+    if (!window.initMap) {
+      window.initMap = function() {
+        inputs.forEach(el => {
+          new AddressInput(el, {
+            elements: {
+              latitude:   document.getElementById(el.getAttribute('id').replace('address_streetAddress', 'address_latitude')),
+              longitude:  document.getElementById(el.getAttribute('id').replace('address_streetAddress', 'address_longitude')),
+              postalCode: document.getElementById(el.getAttribute('id').replace('address_streetAddress', 'address_postalCode')),
+            }
+          })
+        })
+      }
+    }
   }
 
 })

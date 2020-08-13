@@ -49,6 +49,10 @@ class AddressType extends AbstractType
             $streetAddressOptions['attr']['placeholder'] = $options['placeholder'];
         }
 
+        if ($options['with_widget']) {
+            $streetAddressOptions['attr']['data-widget'] = 'address-input';
+        }
+
         $builder
             ->add('streetAddress', SearchType::class, $streetAddressOptions)
             ->add('postalCode', HiddenType::class, [
@@ -153,6 +157,7 @@ class AddressType extends AbstractType
             'with_name' => false,
             'placeholder' => null,
             'street_address_label' => 'form.address.streetAddress.label',
+            'with_widget' => false,
         ));
     }
 }

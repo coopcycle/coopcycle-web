@@ -27,6 +27,11 @@ class StoreType extends LocalBusinessType
     {
         parent::buildForm($builder, $options);
 
+        // Override the "with_widget" option only for Stores
+        $builder->add('address', AddressType::class, [
+            'with_widget' => true
+        ]);
+
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
                 ->add('pricingRuleSet', EntityType::class, array(

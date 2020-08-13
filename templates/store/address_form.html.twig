@@ -18,18 +18,6 @@
 {% endblock %}
 
 {% block scripts %}
-  <script>
-  function initMap() {
-    new CoopCycle.AddressInput(document.querySelector('#address_streetAddress'), {
-      elements: {
-        latitude: document.querySelector('#address_latitude'),
-        longitude: document.querySelector('#address_longitude'),
-        postalCode: document.querySelector('#address_postalCode'),
-        addressLocality: document.querySelector('#address_addressLocality')
-      }
-    })
-  }
-  </script>
   <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
   async defer></script>
 {% endblock %}

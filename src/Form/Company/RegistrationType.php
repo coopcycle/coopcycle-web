@@ -23,6 +23,7 @@ class RegistrationType extends AbstractType implements DataMapperInterface
                 ])
             ->add('address', AddressType::class, [
                 'label' => false,
+                'with_widget' => true,
             ])
             ->add('business_referent', BusinessReferentType::class, [
                 'label' => 'form.address.company.business_reference.label',

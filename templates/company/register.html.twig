@@ -24,16 +24,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-function initMap() {
-  new CoopCycle.AddressInput(document.querySelector(`#registration_address_streetAddress`), {
-    elements: {
-      latitude: document.querySelector(`#registration_address_latitude`),
-      longitude: document.querySelector(`#registration_address_longitude `)
-    }
-  });
-}
-</script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&language={{ app.request.locale }}&callback=initMap"
   async defer></script>
 {% endblock %}

@@ -45,19 +45,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript">
-
-function initMap() {
-    new CoopCycle.AddressInput(document.querySelector('#pledge_address_streetAddress'), {
-      elements: {
-        latitude: document.querySelector('#pledge_address_latitude'),
-        longitude: document.querySelector('#pledge_address_longitude'),
-        postalCode: document.querySelector('#pledge_address_postalCode'),
-        addressLocality: document.querySelector('#pledge_address_addressLocality')
-      }
-    })
-  }
-
-</script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
 {% endblock %}

@@ -187,18 +187,6 @@
 {% block scripts %}
 {{ encore_entry_script_tags('store-form') }}
 {% if form.address is defined %}
-<script>
-function initMap() {
-  new CoopCycle.AddressInput(document.querySelector('#store_address_streetAddress'), {
-    elements: {
-      latitude: document.querySelector('#store_address_latitude'),
-      longitude: document.querySelector('#store_address_longitude'),
-      postalCode: document.querySelector('#store_address_postalCode'),
-      addressLocality: document.querySelector('#store_address_addressLocality')
-    }
-  });
-}
-</script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
 {% endif %}
 {% endblock %}

@@ -20,7 +20,9 @@ class AddOrganizationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('address', AddressType::class)
+            ->add('address', AddressType::class, [
+                'with_widget' => true,
+            ])
             ->add('logo')
             ->add('deliveryPerimeterExpression')
             ->add('numberOfOrderAvailable')
