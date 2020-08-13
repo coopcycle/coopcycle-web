@@ -44,11 +44,10 @@ adminDashboard.menuCategories.categories: Catégories
 adminDashboard.menuCategories.addCategory: Ajouter une catégorie
 adminDashboard.menuCategories.save: Enregistrer
 adminDashboard.stores.title: Magasins
-adminDashboard.orgnizations.title: Oragnisations
+adminDashboard.organizations.title: Organisations
 adminDashboard.stores.createNew: Créer un magasin
 adminDashboard.stores.form.uploadImage: Uploader une image
 adminDashboard.orders.title: Commandes
-adminDashboard.oragnizations.title: Organizations
 adminDashboard.orders.previousOrders: Commandes précédentes
 adminDashboard.orders.showCanceled: Afficher les commandes annulées
 adminDashboard.orders.noOrders: Pas de commande pour l'instant
@@ -896,7 +895,7 @@ deliveries.sort.newest: Les plus récentes
 deliveries.sort.oldest: Les plus anciennes
 deliveries.filter.clear: Afficher tout
 orders.new: Nouvelle commande
-oragnizations.new: Nouvelle organization
+organizations.new: Nouvelle organization
 basics.copy: Copier
 orders.payment_link.send_by_email: Envoyer un lien de paiement
 orders.payment_link.sent: L'email a été envoyé
