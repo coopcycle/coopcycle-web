@@ -10,6 +10,9 @@ use Sylius\Component\Customer\Model\CustomerGroup;
 class OrganizationConfig
 {
     private $id;
+
+    private $organization;
+
     private $group;
     private $address;
     private $logo;
@@ -27,32 +30,19 @@ class OrganizationConfig
     private $limitHourOrder;
     private $startHourOrder;
     private $dayOfOrderAvailable;
-    private $organization;
 
     public function __construct(
-        CustomerGroup $group,
-        Address $address,
-        string $logo,
-        string $deliveryPerimeterExpression,
-        string $numberOfOrderAvailable,
-        string $amountOfSubsidyPerEmployeeAndOrder,
-        string $coverageOfDeliveryCostsByTheCompanyOrTheEmployee,
-        \DateTimeInterface $orderLeadTime,
-        int $limitHourOrder,
-        int $startHourOrder,
-        string $dayOfOrderAvailable)
+        Organization $organization = null)
     {
-        $this->group = $group;
-        $this->address = $address;
-        $this->logo = $logo;
-        $this->deliveryPerimeterExpression = $deliveryPerimeterExpression;
-        $this->numberOfOrderAvailable = $numberOfOrderAvailable;
-        $this->amountOfSubsidyPerEmployeeAndOrder = $amountOfSubsidyPerEmployeeAndOrder;
-        $this->coverageOfDeliveryCostsByTheCompanyOrTheEmployee = $coverageOfDeliveryCostsByTheCompanyOrTheEmployee;
-        $this->orderLeadTime = $orderLeadTime;
-        $this->limitHourOrder = $limitHourOrder;
-        $this->startHourOrder = $startHourOrder;
-        $this->dayOfOrderAvailable = $dayOfOrderAvailable;
+        $this->organization = $organization;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function setOrganization(Organization $organization)
@@ -103,7 +93,7 @@ class OrganizationConfig
     /**
      * @return string
      */
-    public function getCoverageOfDeliveryCostsByTheCompanyOrTheEmployee(): string
+    public function getCoverageOfDeliveryCostsByTheCompanyOrTheEmployee(): ?string
     {
         return $this->coverageOfDeliveryCostsByTheCompanyOrTheEmployee;
     }
@@ -115,14 +105,12 @@ class OrganizationConfig
     }
 
     /**
-     * @return Address
+     * @return Address|null
      */
-    public function getAddress(): Address
+    public function getAddress(): ?Address
     {
         return $this->address;
     }
-
-
 
     /**
      * @return mixed
@@ -162,5 +150,137 @@ class OrganizationConfig
     public function getGroup()
     {
         return $this->group;
+    }
+
+    /**
+     * @param mixed $group
+     *
+     * @return self
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $address
+     *
+     * @return self
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $logo
+     *
+     * @return self
+     */
+    public function setLogo($logo)
+    {
+        $this->logo = $logo;
+
+        return $this;
+    }
+
+    /**
+     * @param string $deliveryPerimeterExpression
+     *
+     * @return self
+     */
+    public function setDeliveryPerimeterExpression($deliveryPerimeterExpression)
+    {
+        $this->deliveryPerimeterExpression = $deliveryPerimeterExpression;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $numberOfOrderAvailable
+     *
+     * @return self
+     */
+    public function setNumberOfOrderAvailable($numberOfOrderAvailable)
+    {
+        $this->numberOfOrderAvailable = $numberOfOrderAvailable;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $amountOfSubsidyPerEmployeeAndOrder
+     *
+     * @return self
+     */
+    public function setAmountOfSubsidyPerEmployeeAndOrder($amountOfSubsidyPerEmployeeAndOrder)
+    {
+        $this->amountOfSubsidyPerEmployeeAndOrder = $amountOfSubsidyPerEmployeeAndOrder;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $coverageOfDeliveryCostsByTheCompanyOrTheEmployee
+     *
+     * @return self
+     */
+    public function setCoverageOfDeliveryCostsByTheCompanyOrTheEmployee($coverageOfDeliveryCostsByTheCompanyOrTheEmployee)
+    {
+        $this->coverageOfDeliveryCostsByTheCompanyOrTheEmployee = $coverageOfDeliveryCostsByTheCompanyOrTheEmployee;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $orderLeadTime
+     *
+     * @return self
+     */
+    public function setOrderLeadTime($orderLeadTime)
+    {
+        $this->orderLeadTime = $orderLeadTime;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $limitHourOrder
+     *
+     * @return self
+     */
+    public function setLimitHourOrder($limitHourOrder)
+    {
+        $this->limitHourOrder = $limitHourOrder;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $startHourOrder
+     *
+     * @return self
+     */
+    public function setStartHourOrder($startHourOrder)
+    {
+        $this->startHourOrder = $startHourOrder;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $dayOfOrderAvailable
+     *
+     * @return self
+     */
+    public function setDayOfOrderAvailable($dayOfOrderAvailable)
+    {
+        $this->dayOfOrderAvailable = $dayOfOrderAvailable;
+
+        return $this;
     }
 }
