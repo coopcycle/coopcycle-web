@@ -1,26 +1,25 @@
 <?php
+
 declare(strict_types=1);
 
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\OrganizationConfig;
-use Sylius\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
+use Ramsey\Uuid\Uuid;
+use Sylius\Component\Customer\Model\CustomerGroup;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AddOrganizationType extends AbstractType implements DataMapperInterface
+class AddOrganizationType extends AbstractType
 {
-    private ?Organization $organization;
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->organization = $options['organization'];
-        $builder->add('name')
-            ->add('group', CustomerGroupType::class)
+        $builder
             ->add('address', AddressType::class)
             ->add('logo')
             ->add('deliveryPerimeterExpression')
@@ -31,53 +30,30 @@ class AddOrganizationType extends AbstractType implements DataMapperInterface
             ->add('limitHourOrder')
             ->add('startHourOrder')
             ->add('dayOfOrderAvailable')
-            ->setDataMapper($this)
         ;
 
-    }
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
 
-    public function mapDataToForms($viewData, $forms)
-    {
-        $forms = iterator_to_array($forms);
-        $forms['group']->setData($this->organization->getGroup());
-        $forms['name']->setData($this->organization->getConfig()->getName());
-        $forms['address']->setData($this->organization->getConfig()->getAddresses()->first());
-        $forms['logo']->setData($this->organization->getConfig()->getLogo());
-        $forms['deliveryPerimeterExpression']->setData($this->organization->getConfig()->getDeliveryPerimeterExpression());
-        $forms['numberOfOrderAvailable']->setData($this->organization->getConfig()->getNumberOfOrderAvailable());
-        $forms['amountOfSubsidyPerEmployeeAndOrder']->setData($this->organization->getConfig()->getAmountOfSubsidyPerEmployeeAndOrder());
-        $forms['coverageOfDeliveryCostsByTheCompanyOrTheEmployee']->setData($this->organization->getConfig()->getCoverageOfDeliveryCostsByTheCompanyOrTheEmployee());
-        $forms['orderLeadTime']->setData($this->organization->getConfig()->getOrderLeadTime());
-        $forms['limitHourOrder']->setData($this->organization->getConfig()->getLimitHourOrder());
-        $forms['startHourOrder']->setData($this->organization->getConfig()->getStartHourOrder());
-        $forms['dayOfOrderAvailable']->setData($this->organization->getConfig()->getDayOfOrderAvailable());
+            $organizationConfig = $event->getForm()->getData();
 
-    }
+            // Generate a group automatically
+            if (null === $organizationConfig->getGroup()) {
 
-    public function mapFormsToData($forms, &$viewData)
-    {
-        $forms = iterator_to_array($forms);
-        $organization = new Organization(
-            $forms['group']->getData(),
-            new OrganizationConfig(
-                $forms['name']->getData(),
-                $forms['address']->getData(),
-                $forms['logo']->getData(),
-                $forms['deliveryPerimeterExpression']->getData(),
-                $forms['numberOfOrderAvailable']->getData(),
-                $forms['amountOfSubsidyPerEmployeeAndOrder']->getData(),
-                $forms['coverageOfDeliveryCostsByTheCompanyOrTheEmployee']->getData(),
-                $forms['orderLeadTime']->getData(),
-                (int)$forms['limitHourOrder']->getData(),
-                (int)$forms['startHourOrder']->getData(),
-                (string)$forms['dayOfOrderAvailable']->getData(),
-            ),
-        );
-        $viewData = $organization;
+                $organization = $organizationConfig->getOrganization();
+
+                $group = new CustomerGroup();
+                $group->setCode(sprintf(Uuid::uuid4()->toString()));
+                $group->setName(sprintf('%s default group', $organization->getName()));
+
+                $organizationConfig->setGroup($group);
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setRequired('organization');
+        $resolver->setDefaults(array(
+            'data_class' => OrganizationConfig::class,
+        ));
     }
 }

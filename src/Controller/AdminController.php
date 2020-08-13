@@ -16,6 +16,7 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Organization;
+use AppBundle\Entity\OrganizationConfig;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Store;
@@ -35,6 +36,7 @@ use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\NewOrderType;
 use AppBundle\Form\OrderType;
+use AppBundle\Form\OrganizationType;
 use AppBundle\Form\PackageSetType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantAdminType;
@@ -1709,12 +1711,12 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/organization", name="admin_add_organization")
+     * @Route("/admin/organizations/new", name="admin_add_organization")
      */
     public function addOrganizationAction(Request $request)
     {
+        $form = $this->createForm(OrganizationType::class);
 
-        $form = $this->createForm(AddOrganizationType::class);
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
             $organization = $form->getData();
@@ -1723,7 +1725,6 @@ class AdminController extends Controller
             $em->flush();
 
             return new RedirectResponse($this->generateUrl('admin_organizations'));
-
         }
 
         return $this->render('admin/add_organization.html.twig', [
@@ -1732,11 +1733,24 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/organization/{id}", name="admin_organization")
+     * @Route("/admin/organizations/{id}/configure", name="admin_organization_configure")
      */
-    public function getOrganizationAction(Request $request, Organization $organization)
+    public function configureOrganizationAction($id, Request $request)
     {
-        $form = $this->createForm(AddOrganizationType::class, null, ['organization' => $organization]);
+        $organization = $this->getDoctrine()->getRepository(Organization::class)->find($id);
+
+        if (!$organization) {
+            throw $this->createNotFoundException(sprintf('Organization #%d does not exist', $id));
+        }
+
+        $organizationConfig = $this->getDoctrine()->getRepository(OrganizationConfig::class)
+            ->findOneBy(['organization' => $organization]);
+
+        if (!$organizationConfig) {
+            $organizationConfig = new OrganizationConfig($organization);
+        }
+
+        $form = $this->createForm(AddOrganizationType::class, $organizationConfig);
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
             $organization = $form->getData();
@@ -1745,13 +1759,12 @@ class AdminController extends Controller
             $em->flush();
 
             return new RedirectResponse($this->generateUrl('admin_organizations'));
-
         }
 
-        return $this->render('admin/organization.html.twig',
+        return $this->render('admin/add_organization.html.twig',
             [
                 'form' => $form->createView(),
-                'organization' => $organization
+                'organization' => $organization,
             ]
         );
     }

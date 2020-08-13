@@ -4,7 +4,8 @@
 
 {% block breadcrumb %}
 <li><a href="{{ path('admin_tags') }}">{% trans %}adminDashboard.organizations.title{% endtrans %}</a></li>
-<li>{{ organization.config.name }}</li>
+<li>{{ organization.name }}</li>
+<li>{{ 'basics.configure'|trans }}</li>
 {% endblock %}
 
 {% block content %}
