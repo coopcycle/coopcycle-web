@@ -7,19 +7,6 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-
-
-    <one-to-one field="group" target-entity="Sylius\Component\Customer\Model\CustomerGroup">
-      <join-column name="group_id" referenced-column-name="id"/>
-      <cascade >
-        <cascade-persist />
-      </cascade>
-    </one-to-one>
-    <one-to-one field="config" target-entity="AppBundle\Entity\OrganizationConfig">
-      <join-column name="config_id" referenced-column-name="id"/>
-      <cascade >
-        <cascade-persist />
-      </cascade>
-    </one-to-one>
+    <field name="name" type="text"/>
   </entity>
 </doctrine-mapping>

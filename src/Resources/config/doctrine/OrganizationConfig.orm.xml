@@ -8,7 +8,6 @@
     </id>
 
 
-    <field name="name" type="text"/>
     <field name="logo" type="text" nullable="true"/>
     <field name="orderLeadTime" type="datetime"/>
     <field name="limitHourOrder" type="text"/>
@@ -18,20 +17,21 @@
     <field name="amountOfSubsidyPerEmployeeAndOrder" type="text"/>
     <field name="coverageOfDeliveryCostsByTheCompanyOrTheEmployee" type="text" nullable="true"/>
 
-    <one-to-one field="organization" target-entity="AppBundle\Entity\Organization" inversed-by="config"/>
-    <many-to-many field="addresses" target-entity="AppBundle\Entity\Address">
-      <cascade>
-        <cascade-persist/>
+    <one-to-one field="group" target-entity="Sylius\Component\Customer\Model\CustomerGroup">
+      <join-column name="group_id" referenced-column-name="id"/>
+      <cascade >
+        <cascade-persist />
       </cascade>
-      <join-table name="organization_config_addresses">
-        <join-columns>
-          <join-column name="organization_id" referenced-column-name="id"/>
-        </join-columns>
-        <inverse-join-columns>
-          <join-column name="address_id" referenced-column-name="id" unique="true"/>
-        </inverse-join-columns>
-      </join-table>
-    </many-to-many>
+    </one-to-one>
+    <one-to-one field="organization" target-entity="AppBundle\Entity\Organization"/>
+    <many-to-one field="address" target-entity="AppBundle\Entity\Address">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-columns>
+        <join-column name="address_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
 
   </entity>
 </doctrine-mapping>

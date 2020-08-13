@@ -5,13 +5,15 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Sylius\Component\Customer\Model\CustomerGroup;
 
 class OrganizationConfig
 {
-    public $id;
-    private $name;
-    private $addresses;
+    private $id;
+    private $group;
+    private $address;
     private $logo;
+
     /**
      * @var string
      *
@@ -28,7 +30,7 @@ class OrganizationConfig
     private $organization;
 
     public function __construct(
-        string $name,
+        CustomerGroup $group,
         Address $address,
         string $logo,
         string $deliveryPerimeterExpression,
@@ -38,10 +40,10 @@ class OrganizationConfig
         \DateTimeInterface $orderLeadTime,
         int $limitHourOrder,
         int $startHourOrder,
-        string $dayOfOrderAvailable
-    ) {
-        $this->name = $name;
-        $this->addresses = new ArrayCollection([$address]);
+        string $dayOfOrderAvailable)
+    {
+        $this->group = $group;
+        $this->address = $address;
         $this->logo = $logo;
         $this->deliveryPerimeterExpression = $deliveryPerimeterExpression;
         $this->numberOfOrderAvailable = $numberOfOrderAvailable;
@@ -51,7 +53,6 @@ class OrganizationConfig
         $this->limitHourOrder = $limitHourOrder;
         $this->startHourOrder = $startHourOrder;
         $this->dayOfOrderAvailable = $dayOfOrderAvailable;
-
     }
 
     public function setOrganization(Organization $organization)
@@ -114,19 +115,11 @@ class OrganizationConfig
     }
 
     /**
-     * @return mixed
+     * @return Address
      */
-    public function getName()
+    public function getAddress(): Address
     {
-        return $this->name;
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getAddresses(): Collection
-    {
-        return $this->addresses;
+        return $this->address;
     }
 
 
@@ -161,5 +154,13 @@ class OrganizationConfig
     public function getDeliveryPerimeterExpression(): string
     {
         return $this->deliveryPerimeterExpression;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGroup()
+    {
+        return $this->group;
     }
 }

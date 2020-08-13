@@ -8,18 +8,18 @@ use Sylius\Component\Customer\Model\CustomerGroup;
 class Organization
 {
     private $id;
-    private $group;
+    private $name;
     private OrganizationConfig $config;
 
     /**
      * Organization constructor.
-     * @param $id
+     *
      * @param $group
      * @param $config
      */
-    public function __construct(CustomerGroup $group, OrganizationConfig $config)
+    public function __construct(string $name, OrganizationConfig $config)
     {
-        $this->group = $group;
+        $this->name = $name;
         $this->config = $config;
         $this->config->setOrganization($this);
     }
@@ -40,8 +40,8 @@ class Organization
     /**
      * @return mixed
      */
-    public function getGroup()
+    public function getName()
     {
-        return $this->group;
+        return $this->name;
     }
 }
