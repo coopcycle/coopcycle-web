@@ -120,12 +120,7 @@
   {% endif %}
 
   {% if form.address is defined %}
-    {{ form_row(form.address.streetAddress) }}
-    {{ form_row(form.address.postalCode) }}
-    {{ form_row(form.address.addressLocality) }}
-    {{ form_widget(form.address.longitude) }}
-    {{ form_widget(form.address.latitude) }}
-    {% do form.address.setRendered %}
+    {{ form_row(form.address) }}
   {% endif %}
 
   {% if store.id is not empty %}

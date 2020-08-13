@@ -29,7 +29,9 @@ class StoreType extends LocalBusinessType
 
         // Override the "with_widget" option only for Stores
         $builder->add('address', AddressType::class, [
-            'with_widget' => true
+            'with_widget' => true,
+            'with_description' => false,
+            'label' => false,
         ]);
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {

@@ -57,7 +57,10 @@ abstract class LocalBusinessType extends AbstractType
             ->add('name', TextType::class, ['label' => 'localBusiness.form.name'])
             ->add('legalName', TextType::class, ['required' => false, 'label' => 'localBusiness.form.legalName',])
             ->add('website', UrlType::class, ['required' => false, 'label' => 'localBusiness.form.website',])
-            ->add('address', AddressType::class)
+            ->add('address', AddressType::class, [
+                'with_description' => false,
+                'label' => false,
+            ])
             ->add('telephone', PhoneNumbertype::class, [
                 'default_region' => strtoupper($this->country),
                 'format' => PhoneNumberFormat::NATIONAL,

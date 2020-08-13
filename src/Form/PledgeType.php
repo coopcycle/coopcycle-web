@@ -22,6 +22,7 @@ class PledgeType extends AbstractType {
             ->add('address', AddressType::class, [
                 'label' => false,
                 'with_widget' => true,
+                'with_description' => false,
             ]);
     }
 }

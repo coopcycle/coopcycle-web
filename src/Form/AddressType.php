@@ -63,11 +63,7 @@ class AddressType extends AbstractType
                 'required' => false,
                 'label' => 'form.address.addressLocality.label'
             ])
-            ->add('description', TextareaType::class, [
-                'required' => false,
-                'label' => 'form.address.description.label',
-                'attr' => ['rows' => '3', 'placeholder' => 'form.address.description.placeholder']
-            ])
+
             ->add('latitude', HiddenType::class, [
                 'mapped' => false,
             ])
@@ -99,6 +95,15 @@ class AddressType extends AbstractType
                     'required' => false,
                     'label' => 'form.address.name.label',
                     'attr' => ['placeholder' => 'form.address.name.placeholder']
+                ]);
+        }
+
+        if (true === $options['with_description']) {
+            $builder
+                ->add('description', TextareaType::class, [
+                    'required' => false,
+                    'label' => 'form.address.description.label',
+                    'attr' => ['rows' => '3', 'placeholder' => 'form.address.description.placeholder']
                 ]);
         }
 
@@ -158,6 +163,7 @@ class AddressType extends AbstractType
             'placeholder' => null,
             'street_address_label' => 'form.address.streetAddress.label',
             'with_widget' => false,
+            'with_description' => true,
         ));
     }
 }
