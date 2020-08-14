@@ -103,7 +103,7 @@
         "ADMIN_DASHBOARD_COURIER_SELECT_PLACEHOLDER": "Select a courier…",
         "ADMIN_DASHBOARD_SEARCH": "Search",
         "ADMIN_DASHBOARD_SEARCH_PLACEHOLDER": "Identifier, address…",
-        "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Visualización de rutas",
+        "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Route display",
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES": "As the crow flies",
         "ADMIN_DASHBOARD_CANCEL_TASKS_MULTI": "Cancel {{count}} task(s)",
         "ADMIN_DASHBOARD_NO_ACTION_AVAILABLE": "No action available",
