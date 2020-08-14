@@ -287,7 +287,7 @@ class AdminController extends Controller
             'resource_class' => Order::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['order', 'address']
+            'groups' => ['order', 'address', 'dispatch']
         ]);
 
         $preparationDelay = $redis->get('foodtech:preparation_delay');

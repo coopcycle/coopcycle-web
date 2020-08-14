@@ -319,13 +319,13 @@ trait RestaurantTrait
                 'resource_class' => Order::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
-                'groups' => ['order', 'address']
+                'groups' => ['order', 'address', 'dispatch']
             ]),
             'order_normalized' => $order ? $this->get('serializer')->normalize($order, 'jsonld', [
                 'resource_class' => Order::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
-                'groups' => ['order', 'address']
+                'groups' => ['order', 'address', 'dispatch']
             ]) : null,
             'routes' => $routes,
             'date' => $date,

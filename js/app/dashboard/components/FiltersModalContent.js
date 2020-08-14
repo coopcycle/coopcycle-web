@@ -7,7 +7,7 @@ import { Formik } from 'formik'
 
 import { antdLocale } from '../../i18n'
 import TagsSelect from '../../components/TagsSelect'
-import Avatar from './Avatar'
+import Avatar from '../../components/Avatar'
 import {
   closeFiltersModal,
   setFilterValue } from '../redux/actions'

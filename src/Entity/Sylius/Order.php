@@ -38,6 +38,8 @@ use Sylius\Component\Order\Model\Order as BaseOrder;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Sylius\Component\Taxation\Model\TaxRateInterface;
 
 /**
@@ -878,5 +880,20 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return false;
+    }
+
+    /**
+     * @SerializedName("assignedTo")
+     * @Groups({"dispatch"})
+     */
+    public function getAssignedTo()
+    {
+        if (null !== $this->getDelivery()) {
+            $pickup = $this->getDelivery()->getPickup();
+
+            if ($pickup->isAssigned()) {
+                return $pickup->getAssignedCourier()->getUsername();
+            }
+        }
     }
 }
