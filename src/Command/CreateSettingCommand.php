@@ -51,7 +51,14 @@ Class CreateSettingCommand extends ContainerAwareCommand
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Setting value'
-            );
+            )
+            ->addOption(
+                'force',
+                null,
+                InputOption::VALUE_NONE,
+                'Force overwrite when setting already exists'
+            )
+            ;
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -79,14 +86,17 @@ Class CreateSettingCommand extends ContainerAwareCommand
         $section = $input->getOption('section');
         $name = $input->getOption('name');
         $value = $input->getOption('value');
+        $force = $input->getOption('force');
 
         try {
 
             $currentValue = $this->craueConfig->get($name);
-            $output->writeln(sprintf('<comment>Setting %s already exists, updating.</comment>', $name));
 
-            if ($value !== $currentValue) {
+            if ($force) {
+                $output->writeln(sprintf('<comment>Setting "%s" already exists, updating.</comment>', $name));
                 $this->craueConfig->set($name, $value);
+            } else {
+                $output->writeln(sprintf('<comment>Setting "%s" already exists, ignoring.</comment>', $name));
             }
 
             return 0;
