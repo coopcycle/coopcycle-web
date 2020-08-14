@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\Type;
 
+use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Form\Type\MoneyType;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
@@ -56,10 +57,15 @@ class PriceWithTaxType extends AbstractType
             if (null !== $product->getId()) {
 
                 $variant = $this->variantResolver->getVariant($product);
-                $taxRate = $this->taxRateResolver->resolve($variant);
+                $rates = $this->taxRateResolver->resolveAll($variant);
 
-                if ($taxRate) {
-                    $taxAmount = (int) $this->calculator->calculate($variant->getPrice(), $taxRate);
+                if (count($rates) > 0) {
+
+                    $taxAmount = array_reduce(
+                        $rates->toArray(),
+                        fn($carry, $rate): int => $carry + (int) $this->calculator->calculate($variant->getPrice(), $rate),
+                        0
+                    );
 
                     $taxExcluded = $this->taxIncl ? ($variant->getPrice() - $taxAmount) : $variant->getPrice();
                     $taxIncluded = $this->taxIncl ? $variant->getPrice() : ($variant->getPrice() + $taxAmount);
@@ -67,6 +73,7 @@ class PriceWithTaxType extends AbstractType
                     $form->get('taxExcluded')->setData($taxExcluded);
                     $form->get('taxIncluded')->setData($taxIncluded);
                     $form->get('taxCategory')->setData($variant->getTaxCategory());
+
                 } else {
                     if ($this->taxIncl) {
                         $form->get('taxExcluded')->setData(0);

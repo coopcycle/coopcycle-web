@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Sylius\TaxCategory;
+use AppBundle\Entity\Sylius\TaxRate;
 use Doctrine\ORM\EntityRepository;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType as BaseTaxCategoryChoiceType;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
@@ -54,22 +55,36 @@ class ProductTaxCategoryChoiceType extends AbstractType
             $variant = $this->productVariantFactory->createNew();
             $variant->setTaxCategory($taxCategory);
 
-            if ($this->legacyTaxes) {
-                $rate = $this->taxRateResolver->resolve($variant);
-            } else {
-                $rate = $this->taxRateResolver->resolve($variant, [
-                    'country' => strtolower($this->country)
-                ]);
+            $rates = $this->taxRateResolver->resolveAll($variant);
+
+            if (count($rates) === 0) {
+                return '';
             }
 
-            if ($rate) {
-                return sprintf('%s (%d%%)',
+            // When multiple rates apply
+            // Ex: Base › Standard rate (GST 5%, PST 7%)
+            if (count($rates) > 1) {
+
+                $ratesAsString = array_map(function (TaxRate $rate) {
+                    return sprintf('%s %d%%', $this->translator->trans($rate->getName(), [], 'taxation'), $rate->getAmount() * 100);
+                }, $rates->toArray());
+
+                return sprintf('%s (%s)',
                     $this->translator->trans($taxCategory->getName(), [], 'taxation'),
-                    $rate->getAmount() * 100
+                    implode(', ', $ratesAsString)
                 );
             }
 
-            return '';
+            $amount = array_reduce(
+                $rates->toArray(),
+                fn($carry, $rate) => $carry + $rate->getAmount(),
+                0.0
+            );
+
+            return sprintf('%s (%d%%)',
+                $this->translator->trans($taxCategory->getName(), [], 'taxation'),
+                $amount * 100
+            );
         });
 
         $resolver->setDefault('placeholder', 'form.product_tax_category_choice.placeholder');
