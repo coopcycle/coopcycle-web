@@ -77,6 +77,7 @@ class TagsType extends AbstractType
         ], $tags);
 
         $resolver->setDefaults(array(
+            'required' => false,
             'attr' => [
                 'data-tags' => json_encode($data)
             ]
