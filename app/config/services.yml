@@ -645,6 +645,15 @@ services:
     tags:
       - { name: 'sylius.context.channel', priority: -64 }
 
+  AppBundle\Sylius\Channel\ProChannelContext:
+    tags:
+      - { name: 'sylius.context.channel', priority: 128 }
+
+
+  AppBundle\EventListener\ChangeChannelListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.response }
+
   AppBundle\EventSubscriber\ApiLogSubscriber:
     tags:
       - { name: monolog.logger, channel: api }
