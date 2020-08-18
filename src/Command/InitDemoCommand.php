@@ -457,7 +457,7 @@ class InitDemoCommand extends Command
         $contract->setCustomerAmount(350);
         $contract->setFeeRate(0);
 
-        $restaurant = new Entity\Restaurant();
+        $restaurant = new Entity\LocalBusiness();
 
         $phoneNumber = $this->phoneNumberUtil->parse($this->faker->phoneNumber, 'FR');
 
