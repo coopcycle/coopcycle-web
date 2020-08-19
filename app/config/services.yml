@@ -802,3 +802,12 @@ services:
   AppBundle\EventListener\AjaxSessionCloseListener:
     tags:
       - { name: "kernel.event_listener", event: "kernel.request", priority: -255 }
+
+  AppBundle\Payment\GatewayResolver:
+    arguments:
+      $country: '%country_iso%'
+      $mercadopagoCountries:
+        - ar
+        - br
+        - cr
+        - mx

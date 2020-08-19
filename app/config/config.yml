@@ -140,6 +140,7 @@ twig:
         loopeat_context: '@AppBundle\LoopEat\Context'
         sentry_apm_enabled: "%env(bool:COOPCYCLE_SENTRY_APM_ENABLED)%"
         legacy_taxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
+        payment_gateway_resolver: '@AppBundle\Payment\GatewayResolver'
     exception_controller: null
 
 # Doctrine Configuration
