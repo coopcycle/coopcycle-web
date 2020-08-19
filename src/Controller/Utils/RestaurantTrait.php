@@ -25,6 +25,7 @@ use AppBundle\Form\RestaurantType;
 use AppBundle\Form\Restaurant\DepositRefundSettingsType;
 use AppBundle\Form\Restaurant\ReusablePackagingType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
+use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -36,6 +37,7 @@ use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use MercadoPago;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -962,6 +964,55 @@ trait RestaurantTrait
         ));
 
         return $this->redirect('https://connect.stripe.com/oauth/authorize?' . $queryString);
+    }
+
+    /**
+     * @see https://www.mercadopago.com.mx/developers/es/guides/marketplace/api/create-marketplace/
+     */
+    public function mercadopagoOAuthRedirectAction($id, Request $request,
+        SettingsManager $settingsManager,
+        JWTEncoderInterface $jwtEncoder,
+        IriConverterInterface $iriConverter,
+        MercadopagoManager $mercadopagoManager)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        $redirectUri = $this->generateUrl(
+            'mercadopago_oauth_callback',
+            [],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        $redirectAfterUri = $this->generateUrl(
+            $request->attributes->get('redirect_after'),
+            ['id' => $restaurant->getId()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        // Use a JWT as the "state" parameter
+        // @see https://stripe.com/docs/connect/oauth-reference#get-authorize-request
+        $state = $jwtEncoder->encode([
+            'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
+            // The "iss" (Issuer) claim contains a redirect URL
+            'iss' => $redirectAfterUri,
+            // The "sub" (Subject) claim contains a restaurant IRI
+            'sub' => $iriConverter->getIriFromItem($restaurant),
+            // The custom "mplm" (Mercado Pago livemode) contains a boolean
+            'mplm' => 'no',
+        ]);
+
+        $mercadopagoManager->configure();
+
+        $oAuth = new MercadoPago\OAuth();
+
+        $url = sprintf('%s&state=%s',
+            $oAuth->getAuthorizationURL($settingsManager->get('mercadopago_app_id'), $redirectUri),
+            $state
+        );
+
+        return $this->redirect($url);
     }
 
     public function preparationTimeAction($id, Request $request, PreparationTimeCalculator $calculator)

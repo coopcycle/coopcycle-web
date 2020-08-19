@@ -114,12 +114,15 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
      */
     protected $customer;
 
+    private $mercadopagoAccounts;
+
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
         $this->stores = new ArrayCollection();
         $this->stripeAccounts = new ArrayCollection();
         $this->remotePushTokens = new ArrayCollection();
+        $this->mercadopagoAccounts = new ArrayCollection();
 
         parent::__construct();
     }
@@ -411,5 +414,17 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
         }
 
         return false;
+    }
+
+    public function getMercadopagoAccounts()
+    {
+        return $this->mercadopagoAccounts;
+    }
+
+    public function addMercadopagoAccount(MercadopagoAccount $account)
+    {
+        $this->mercadopagoAccounts->add($account);
+
+        return $this;
     }
 }

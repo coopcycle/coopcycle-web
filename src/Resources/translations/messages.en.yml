@@ -601,6 +601,7 @@ form.local_business.stripe_account.link_ok: "This restaurant is linked to a Stri
   \ account and can receive payments from the platform.<br>\nTo manage your Stripe\
   \ account and the transfers to your account, please use the <a href=\"https://dashboard.stripe.com/\"\
   \ target=\"_blank\">Stripe dashboard</a>.\n"
+form.local_business.mercadopago.connect_button.text: Connect with Mercado Pago
 form.menu_item.name.label: Name
 form.menu_item.price.label: Price
 form.menu_item_modifier.name.label: Name

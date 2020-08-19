@@ -1,6 +1,8 @@
 {% if restaurant.id is not null %}
 
-  {% if show_stripe_connect %}
+  {% set gateway = payment_gateway_resolver.resolve() %}
+
+  {% if gateway == 'stripe' and show_stripe_connect %}
 
     {% include "_partials/restaurant/stripe_accounts.html.twig" %}
 
@@ -20,15 +22,18 @@
         </div>
       </div>
     {% endif %}
+
   {% endif %}
 
-{% else %}
-
-  {% if form.allowStripeConnect is defined %}
-    {% do form.allowStripeConnect.setRendered %}
-  {% endif %}
-  {% if form.enableGiropay is defined %}
-    {% do form.enableGiropay.setRendered %}
+  {% if gateway == 'mercadopago' %}
+    {% include "_partials/restaurant/mercadopago_accounts.html.twig" %}
   {% endif %}
 
+{% endif %}
+
+{% if form.allowStripeConnect is defined and not form.allowStripeConnect.rendered %}
+  {% do form.allowStripeConnect.setRendered %}
+{% endif %}
+{% if form.enableGiropay is defined and not form.enableGiropay.rendered %}
+  {% do form.enableGiropay.setRendered %}
 {% endif %}

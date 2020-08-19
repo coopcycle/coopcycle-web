@@ -113,6 +113,7 @@ class AdminController extends Controller
             'promotion' => 'admin_restaurant_promotion',
             'product_option_preview' => 'admin_restaurant_product_option_preview',
             'reusable_packaging_new' => 'admin_restaurant_new_reusable_packaging',
+            'mercadopago_oauth_redirect' => 'admin_restaurant_mercadopago_oauth_redirect',
         ];
     }
 

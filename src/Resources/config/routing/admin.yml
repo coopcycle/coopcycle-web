@@ -364,6 +364,14 @@ admin_restaurant_stripe_oauth_redirect:
         redirect_after: admin_restaurant
     methods: [ GET ]
 
+admin_restaurant_mercadopago_oauth_redirect:
+    path: /admin/restaurants/{id}/mercadopago-oauth-redirect
+    defaults:
+        _controller: AppBundle\Controller\AdminController::mercadopagoOAuthRedirectAction
+        redirect_after: admin_restaurant
+    methods: [ GET ]
+
+
 admin_order_cancel:
     path: /admin/orders/{id}/cancel
     defaults:
