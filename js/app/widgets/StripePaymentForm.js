@@ -7,22 +7,7 @@ import mastercard from 'payment-icons/min/flat/mastercard.svg'
 import visa from 'payment-icons/min/flat/visa.svg'
 import giropay from '../../../assets/svg/giropay.svg'
 
-const style = {
-  base: {
-    color: '#32325d',
-    lineHeight: '18px',
-    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-    fontSmoothing: 'antialiased',
-    fontSize: '16px',
-    '::placeholder': {
-      color: '#aab7c4'
-    }
-  },
-  invalid: {
-    color: '#fa755a',
-    iconColor: '#fa755a'
-  }
-}
+import stripe from '../payment/stripe'
 
 function disableBtn(btn) {
   btn.setAttribute('disabled', '')
@@ -68,6 +53,12 @@ const PaymentMethodPicker = ({ methods, onSelect }) => {
   )
 }
 
+class CreditCard {
+ constructor(config) {
+   this.config = config;
+ }
+}
+
 export default function(form, options) {
 
   const submitButton = form.querySelector('input[type="submit"],button[type="submit"]')
@@ -78,23 +69,23 @@ export default function(form, options) {
 
   disableBtn(submitButton)
 
-  const stripe = Stripe(options.publishableKey)
-  const elements = stripe.elements()
+  const gatewayForCard = options.card || 'stripe'
+  const gatewayConfig = options.gatewayConfigs ? options.gatewayConfigs[gatewayForCard] : { publishableKey: options.publishableKey }
 
-  const card = elements.create('card', { style, hidePostalCode: true })
+  Object.assign(CreditCard.prototype, stripe)
 
-  card.addEventListener('change', function(event) {
-    const displayError = document.getElementById('card-errors')
-    if (event.error) {
-      displayError.textContent = event.error.message
-    } else {
-      displayError.textContent = ''
+  const cc = new CreditCard({
+    gatewayConfig,
+    onChange: (event) => {
+      if (event.error) {
+        document.getElementById('card-errors').textContent = event.error.message
+      } else {
+        document.getElementById('card-errors').textContent = ''
+      }
     }
   })
 
-  card.on('ready', function() {
-    enableBtn(submitButton)
-  })
+  cc.init(form)
 
   form.addEventListener('submit', function(event) {
 
@@ -107,26 +98,25 @@ export default function(form, options) {
     $('.btn-payment').addClass('btn-payment__loading')
     disableBtn(submitButton)
 
-    stripe.createToken(card).then(function(result) {
-      if (result.error) {
+    cc.createToken()
+      .then(token => {
+        options.tokenElement.setAttribute('value', token)
+        form.submit()
+      })
+      .catch(e => {
         $('.btn-payment').removeClass('btn-payment__loading')
         enableBtn(submitButton)
-        var errorElement = document.getElementById('card-errors')
-        errorElement.textContent = result.error.message
-      } else {
-        options.tokenElement.setAttribute('value', result.token.id)
-        form.submit()
-      }
-    })
+        document.getElementById('card-errors').textContent = e.message
+      })
   })
 
   const onSelect = value => {
     form.querySelector(`input[name="checkout_payment[method]"][value="${value}"]`).checked = true
     if (value === 'card') {
-      card.mount('#card-element')
+      cc.mount(document.getElementById('card-element')).then(() => enableBtn(submitButton))
       document.getElementById('payment-redirect-help').classList.add('hidden')
     } else {
-      card.unmount()
+      cc.unmount()
       document.getElementById('card-errors').textContent = ''
       document.getElementById('payment-redirect-help').classList.remove('hidden')
       enableBtn(submitButton)
@@ -150,6 +140,6 @@ export default function(form, options) {
     )
 
   } else {
-    card.mount('#card-element')
+    cc.mount(document.getElementById('card-element'))
   }
 }
