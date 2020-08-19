@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Service\SettingsManager;
+use AppBundle\Form\PaymentGateway\StripeType;
 use Doctrine\ORM\EntityRepository;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
@@ -78,48 +79,6 @@ class SettingsType extends AbstractType
                 'label' => 'form.settings.enable_restaurant_pledges.label',
                 'required' => false,
             ])
-            ->add('stripe_test_publishable_key', PasswordType::class, [
-                'required' => false,
-                'label' => 'form.settings.stripe_publishable_key.label',
-                'attr' => [
-                    'autocomplete' => 'new-password'
-                ]
-            ])
-            ->add('stripe_test_secret_key', PasswordType::class, [
-                'required' => false,
-                'label' => 'form.settings.stripe_secret_key.label',
-                'attr' => [
-                    'autocomplete' => 'new-password'
-                ]
-            ])
-            ->add('stripe_test_connect_client_id', PasswordType::class, [
-                'required' => false,
-                'label' => 'form.settings.stripe_connect_client_id.label',
-                'attr' => [
-                    'autocomplete' => 'new-password'
-                ]
-            ])
-            ->add('stripe_live_publishable_key', PasswordType::class, [
-                'required' => false,
-                'label' => 'form.settings.stripe_publishable_key.label',
-                'attr' => [
-                    'autocomplete' => 'new-password'
-                ]
-            ])
-            ->add('stripe_live_secret_key', PasswordType::class, [
-                'required' => false,
-                'label' => 'form.settings.stripe_secret_key.label',
-                'attr' => [
-                    'autocomplete' => 'new-password'
-                ]
-            ])
-            ->add('stripe_live_connect_client_id', PasswordType::class, [
-                'required' => false,
-                'label' => 'form.settings.stripe_connect_client_id.label',
-                'attr' => [
-                    'autocomplete' => 'new-password'
-                ]
-            ])
             ->add('google_api_key', TextType::class, [
                 'label' => 'form.settings.google_api_key.label',
                 'help' => 'form.settings.google_api_key.help',
@@ -141,6 +100,8 @@ class SettingsType extends AbstractType
                 'label' => 'form.settings.currency_code.label'
             ]);
 
+        $builder->add('stripe', StripeType::class, ['mapped' => false]);
+
         $builder->get('enable_restaurant_pledges')
             ->addModelTransformer(new CallbackTransformer(
                 function ($originalValue) {
@@ -158,9 +119,30 @@ class SettingsType extends AbstractType
             $data = $event->getData();
 
             foreach ($data as $name => $value) {
+
+                if (!$form->has($name)) {
+
+                    [ $namespace ] = explode('_', $name, 2);
+
+                    if (!$form->has($namespace)) {
+                        continue;
+                    }
+
+                    if (!$form->get($namespace)->has($name)) {
+                        continue;
+                    }
+
+                    $source = $form->get($namespace)->get($name);
+                    $target = $form->get($namespace);
+
+                } else {
+                    $source = $form->get($name);
+                    $target = $form;
+                }
+
                 if ($this->settingsManager->isSecret($name)) {
 
-                    $config = $form->get($name)->getConfig();
+                    $config = $source->getConfig();
                     $options = $config->getOptions();
 
                     $options['empty_data'] = $value;
@@ -170,7 +152,7 @@ class SettingsType extends AbstractType
                         'autocomplete' => 'new-password'
                     ];
 
-                    $form->add($name, PasswordType::class, $options);
+                    $target->add($name, PasswordType::class, $options);
                 }
             }
 
@@ -185,7 +167,6 @@ class SettingsType extends AbstractType
 
                 $form->add('currency_code', CurrencyChoiceType::class, $options);
             }
-
         });
 
         $builder->get('phone_number')->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
