@@ -56,7 +56,13 @@
 
   <hr>
 
+  {% if form.stripe is defined %}
   {% include 'admin/_partials/stripe.html.twig' %}
+  {% endif %}
+
+  {% if form.mercadopago is defined %}
+    {% include 'admin/_partials/mercadopago.html.twig' %}
+  {% endif %}
 
   <hr>
 

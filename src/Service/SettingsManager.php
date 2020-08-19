@@ -34,6 +34,10 @@ class SettingsManager
         'stripe_live_secret_key',
         'stripe_live_connect_client_id',
         'google_api_key',
+        'mercadopago_test_publishable_key',
+        'mercadopago_live_publishable_key',
+        'mercadopago_test_access_token',
+        'mercadopago_live_access_token',
     ];
 
     private $cache = [];

@@ -1,0 +1,33 @@
+<h4>{% trans %}form.settings.mercadopago.title{% endtrans %}</h4>
+
+<div class="form-group">
+  <label class="control-label">{% trans %}form.settings.mercadopago.publishable_key.label{% endtrans %}</label>
+  <div class="row">
+    <div class="col-md-6">
+      {{ form_widget(form.mercadopago.mercadopago_test_publishable_key) }}
+      <span class="help-block">{% trans with { '%country%': country_iso } %}form.settings.mercadopago.publishable_key.help{% endtrans %}</span>
+    </div>
+    <div class="col-md-6">
+      {{ form_widget(form.mercadopago.mercadopago_live_publishable_key) }}
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="control-label">{% trans %}form.settings.mercadopago.access_token.label{% endtrans %}</label>
+  <div class="row">
+    <div class="col-md-6">
+      {{ form_widget(form.mercadopago.mercadopago_test_access_token) }}
+      <span class="help-block">{% trans with { '%country%': country_iso } %}form.settings.mercadopago.access_token.help{% endtrans %}</span>
+    </div>
+    <div class="col-md-6">
+      {{ form_widget(form.mercadopago.mercadopago_live_access_token) }}
+    </div>
+  </div>
+</div>
+
+{{ form_row(form.mercadopago.mercadopago_app_id) }}
+
+<div class="alert alert-info">
+  <i class="fa fa-info-circle"></i> {% trans with { '%redirect_uri%': url('mercadopago_oauth_callback') } %}form.settings.mercadopago.redirect_uri.help{% endtrans %}
+</div>

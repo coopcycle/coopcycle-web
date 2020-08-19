@@ -63,4 +63,16 @@ class Settings
      * @Assert\Choice({"yes", "no"})
      */
     public $enable_restaurant_pledges;
+
+    /**
+     * @Assert\Regex("/^TEST-[A-Za-z0-9-]+/")
+     */
+    public $mercadopago_test_publishable_key;
+
+    /**
+     * @Assert\Regex("/^TEST-[A-Za-z0-9-]+/")
+     */
+    public $mercadopago_test_access_token;
+
+    public $mercadopago_app_id;
 }

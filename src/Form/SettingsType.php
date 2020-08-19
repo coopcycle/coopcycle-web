@@ -2,7 +2,9 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Form\PaymentGateway\MercadopagoType;
 use AppBundle\Form\PaymentGateway\StripeType;
 use Doctrine\ORM\EntityRepository;
 use libphonenumber\NumberParseException;
@@ -39,12 +41,14 @@ class SettingsType extends AbstractType
     public function __construct(
         SettingsManager $settingsManager,
         PhoneNumberUtil $phoneNumberUtil,
+        GatewayResolver $gatewayResolver,
         string $country,
         bool $isDemo,
         bool $debug)
     {
         $this->settingsManager = $settingsManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
+        $this->gatewayResolver = $gatewayResolver;
         $this->country = $country;
         $this->isDemo = $isDemo;
         $this->debug = $debug;
@@ -100,7 +104,18 @@ class SettingsType extends AbstractType
                 'label' => 'form.settings.currency_code.label'
             ]);
 
-        $builder->add('stripe', StripeType::class, ['mapped' => false]);
+        $gateway = $this->gatewayResolver->resolve();
+
+        switch ($gateway) {
+            case 'mercadopago':
+                $builder->add('mercadopago', MercadopagoType::class, ['mapped' => false]);
+                break;
+
+            case 'stripe':
+            default:
+                $builder->add('stripe', StripeType::class, ['mapped' => false]);
+                break;
+        }
 
         $builder->get('enable_restaurant_pledges')
             ->addModelTransformer(new CallbackTransformer(
