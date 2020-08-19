@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block body %}
+
 <div class="container container--full-height">
 
   {% if not order.empty %}
@@ -39,7 +40,7 @@
 
             {{ form_widget(form.stripePayment.stripeToken) }}
 
-            {{ form_row(form.stripePayment.cardholderName) }}
+            {{ form_row(form.stripePayment.cardholderName, { attr: {  'data-checkout': 'cardholderName' } }) }}
 
             <div class="form-group">
               <label class="control-label hidden" for="card-element">
@@ -92,9 +93,19 @@
 {% block scripts %}
 {% if not order.empty %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+<script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
 <script type="text/javascript">
   new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
-    publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
+    card: "{{ payment_gateway_resolver.resolve() }}",
+    amount: {{ order.total }},
+    gatewayConfigs: {
+      stripe: {
+        publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}"
+      },
+      mercadopago: {
+        publishableKey: "{{ coopcycle_setting('mercadopago_test_publishable_key') }}"
+      }
+    },
     tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
     cardholderNameElement: document.querySelector('#checkout_payment_stripePayment_cardholderName')
   });
