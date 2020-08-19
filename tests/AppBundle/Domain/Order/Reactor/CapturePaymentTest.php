@@ -7,6 +7,8 @@ use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Order\Reactor\CapturePayment;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Payment\Gateway;
+use AppBundle\Payment\GatewayResolver;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\StripeManager;
 use PHPUnit\Framework\TestCase;
@@ -25,8 +27,15 @@ class CapturePaymentTest extends TestCase
     {
         $this->stripeManager = $this->prophesize(StripeManager::class);
 
-        $this->capturePayment = new CapturePayment(
+        $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
+
+        $this->gateway = new Gateway(
+            $this->gatewayResolver->reveal(),
             $this->stripeManager->reveal()
+        );
+
+        $this->capturePayment = new CapturePayment(
+            $this->gateway
         );
     }
 

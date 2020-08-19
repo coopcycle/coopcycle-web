@@ -9,6 +9,8 @@ use AppBundle\Domain\Order\Event\CheckoutSucceeded;
 use AppBundle\Domain\Order\Handler\CheckoutHandler;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
+use AppBundle\Payment\Gateway;
+use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
@@ -36,6 +38,12 @@ class CheckoutHandlerTest extends TestCase
         $this->eventRecorder = $this->prophesize(RecordsMessages::class);
         $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);
         $this->stripeManager = $this->prophesize(StripeManager::class);
+        $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
+
+        $this->gateway = new Gateway(
+            $this->gatewayResolver->reveal(),
+            $this->stripeManager->reveal()
+        );
 
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
 
@@ -53,6 +61,7 @@ class CheckoutHandlerTest extends TestCase
             $this->eventRecorder->reveal(),
             $this->orderNumberAssigner->reveal(),
             $this->stripeManager->reveal(),
+            $this->gateway,
             $this->orderTimeHelper->reveal()
         );
     }

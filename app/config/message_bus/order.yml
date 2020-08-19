@@ -30,6 +30,7 @@ services:
       - '@event_recorder'
       - '@sylius.order_number_assigner'
       - '@coopcycle.stripe_manager'
+      - '@AppBundle\Payment\Gateway'
       - '@AppBundle\Utils\OrderTimeHelper'
     tags:
       - name: command_handler
@@ -176,8 +177,7 @@ services:
   coopcycle.domain.order.reactor.capture_payment:
     class: AppBundle\Domain\Order\Reactor\CapturePayment
     arguments:
-      - '@coopcycle.stripe_manager'
-      - '@event_bus'
+      - '@AppBundle\Payment\Gateway'
     tags:
         - name: event_subscriber
           subscribes_to: order:fulfilled

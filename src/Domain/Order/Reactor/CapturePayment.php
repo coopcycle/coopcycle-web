@@ -3,18 +3,18 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event;
-use AppBundle\Service\StripeManager;
+use AppBundle\Payment\Gateway;
 use AppBundle\Sylius\Order\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Webmozart\Assert\Assert;
 
 class CapturePayment
 {
-    private $stripeManager;
+    private $gateway;
 
-    public function __construct(StripeManager $stripeManager)
+    public function __construct(Gateway $gateway)
     {
-        $this->stripeManager = $stripeManager;
+        $this->gateway = $gateway;
     }
 
     public function __invoke(Event $event)
@@ -57,7 +57,7 @@ class CapturePayment
 
         try {
 
-            $this->stripeManager->capture($payment);
+            $this->gateway->capture($payment);
 
         } catch (\Exception $e) {
             // FIXME

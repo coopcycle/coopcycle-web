@@ -4,6 +4,7 @@ namespace AppBundle\Domain\Order\Handler;
 
 use AppBundle\Domain\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event;
+use AppBundle\Payment\Gateway;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
@@ -21,11 +22,13 @@ class CheckoutHandler
         RecordsMessages $eventRecorder,
         OrderNumberAssignerInterface $orderNumberAssigner,
         StripeManager $stripeManager,
+        Gateway $gateway,
         OrderTimeHelper $orderTimeHelper)
     {
         $this->eventRecorder = $eventRecorder;
         $this->orderNumberAssigner = $orderNumberAssigner;
         $this->stripeManager = $stripeManager;
+        $this->gateway = $gateway;
         $this->orderTimeHelper = $orderTimeHelper;
     }
 
@@ -86,9 +89,7 @@ class CheckoutHandler
                 $this->orderNumberAssigner->assignNumber($order);
                 $payment->setStripeToken($stripeToken);
 
-                $charge = $this->stripeManager->authorize($payment);
-
-                $payment->setCharge($charge->id);
+                $this->gateway->authorize($payment);
             }
 
             $this->setShippingDate($order);
