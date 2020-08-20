@@ -21,7 +21,7 @@ class ChangeChannelListener
         if (!in_array($newChannel, ['web', 'pro'])) {
             return;
         }
-        $response->headers->setCookie(new Cookie('channel_cart',  $newChannel));
+        $response->headers->setCookie(new Cookie('channel_cart', $newChannel));
 
     }
 }

@@ -20,6 +20,7 @@ class ProChannelContext implements ChannelContextInterface
      * @var Request|null
      */
     private ?Request $masterRequest;
+    private const KEY_CHANNEL_CART = 'channel_cart';
 
     public function __construct(ChannelRepositoryInterface $channelRepository, RequestStack $request)
     {
@@ -30,7 +31,12 @@ class ProChannelContext implements ChannelContextInterface
 
     public function getChannel(): ChannelInterface
     {
-        $channel = $this->channelRepository->findOneByCode($this->getRequest()->cookies->get('channel_cart', 'web'));
+        $request = $this->getRequest();
+        $channelCode = $request->query->get('change_channel', $request->get(self::KEY_CHANNEL_CART, 'web'));
+        if (!in_array($channelCode, ['web', 'pro'])) {
+            throw new ChannelNotFoundException();
+        }
+        $channel = $this->channelRepository->findOneByCode($channelCode);
         if (null === $channel) {
             throw new ChannelNotFoundException();
         }
@@ -38,7 +44,7 @@ class ProChannelContext implements ChannelContextInterface
         return $channel;
 
     }
- 
+
     private function getRequest(): Request
     {
         if (null === $this->masterRequest) {
