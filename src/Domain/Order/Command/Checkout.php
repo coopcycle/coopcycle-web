@@ -27,7 +27,7 @@ class Checkout
             return $this->data;
         }
 
-        return $this->data['stripeToken'];
+        return $this->data['stripeToken'] ?? null;
     }
 
     public function getData()
