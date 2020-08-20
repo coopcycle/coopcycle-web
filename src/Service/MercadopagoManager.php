@@ -43,9 +43,23 @@ class MercadopagoManager
 
         $order = $payment->getOrder();
 
+        $options = [];
+
+        $applicationFee = 0;
+        if (null !== $order->getRestaurant()) {
+            $account = $order->getRestaurant()->getMercadopagoAccount(false);
+            if ($account) {
+                $applicationFee = $order->getFeeTotal();
+                // @see MercadoPago\Manager::processOptions()
+                $options['custom_access_token'] = $account->getAccessToken();
+            }
+        }
+
+        $order = $payment->getOrder();
+
         $p = new MercadoPago\Payment();
 
-        $p->transaction_amount = $payment->getAmount();
+        $p->transaction_amount = ($payment->getAmount() / 100);
         $p->token = $payment->getStripeToken();
         $p->description = sprintf('Order %s', $order->getNumber());
         $p->installments = $payment->getMercadopagoInstallments() ?? 1;
@@ -55,7 +69,11 @@ class MercadopagoManager
         );
         $p->capture = false;
 
-        $p->save();
+        if ($applicationFee > 0) {
+            $p->application_fee = ($applicationFee / 100);
+        }
+
+        $p->save($options);
 
         return $p;
     }
