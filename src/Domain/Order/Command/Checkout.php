@@ -7,12 +7,12 @@ use AppBundle\Sylius\Order\OrderInterface;
 class Checkout
 {
     private $order;
-    private $stripeToken;
+    private $data;
 
-    public function __construct(OrderInterface $order, $stripeToken = null)
+    public function __construct(OrderInterface $order, $data = null)
     {
         $this->order = $order;
-        $this->stripeToken = $stripeToken;
+        $this->data = $data;
     }
 
     public function getOrder()
@@ -22,7 +22,17 @@ class Checkout
 
     public function getStripeToken()
     {
-        return $this->stripeToken;
+        if (is_string($this->data)) {
+
+            return $this->data;
+        }
+
+        return $this->data['stripeToken'];
+    }
+
+    public function getData()
+    {
+        return $this->data;
     }
 }
 

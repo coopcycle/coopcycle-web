@@ -33,4 +33,45 @@ class MercadopagoManager
     {
         MercadoPago\SDK::setAccessToken($this->settingsManager->get('mercadopago_access_token'));
     }
+
+    /**
+     * @return MercadoPago\Payment
+     */
+    public function authorize(PaymentInterface $payment)
+    {
+        $this->configure();
+
+        $order = $payment->getOrder();
+
+        $p = new MercadoPago\Payment();
+
+        $p->transaction_amount = $payment->getAmount();
+        $p->token = $payment->getStripeToken();
+        $p->description = sprintf('Order %s', $order->getNumber());
+        $p->installments = $payment->getMercadopagoInstallments() ?? 1;
+        $p->payment_method_id = $payment->getMercadopagoPaymentMethod();
+        $p->payer = array(
+            'email' => $order->getCustomer()->getEmail()
+        );
+        $p->capture = false;
+
+        $p->save();
+
+        return $p;
+    }
+
+    /**
+     * @return MercadoPago\Payment
+     */
+    public function capture(PaymentInterface $payment)
+    {
+        $this->configure();
+
+        $payment = MercadoPago\Payment::find_by_id($payment->getCharge());
+        $payment->capture = true;
+
+        $payment->update();
+
+        return $payment;
+    }
 }
