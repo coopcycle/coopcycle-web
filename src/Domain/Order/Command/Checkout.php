@@ -12,7 +12,12 @@ class Checkout
     public function __construct(OrderInterface $order, $data = null)
     {
         $this->order = $order;
-        $this->data = $data;
+
+        if (is_string($data)) {
+            $this->data = ['stripeToken' => $data ];
+        } else {
+            $this->data = $data;
+        }
     }
 
     public function getOrder()
@@ -22,11 +27,6 @@ class Checkout
 
     public function getStripeToken()
     {
-        if (is_string($this->data)) {
-
-            return $this->data;
-        }
-
         return $this->data['stripeToken'] ?? null;
     }
 
