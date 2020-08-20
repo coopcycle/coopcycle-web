@@ -726,6 +726,10 @@ services:
     tags:
       - { name: monolog.logger, channel: stripe }
 
+  AppBundle\Service\MercadopagoManager:
+    arguments:
+      $secret: '%secret%'
+
   AppBundle\Sylius\Order\ReceiptGenerator:
     arguments:
       $httpClient: '@csa_guzzle.client.browserless'
