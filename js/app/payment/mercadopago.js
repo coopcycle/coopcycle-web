@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
 import { PaymentInputsWrapper, usePaymentInputs } from 'react-payment-inputs'
 import images from 'react-payment-inputs/images'
+import _ from 'lodash'
 
 // @see https://www.mercadopago.com.mx/developers/es/guides/payments/api/receiving-payment-by-card/
 
@@ -55,6 +56,21 @@ const MercadoPagoForm = ({ amount, onChange }) => {
 
   const [ expiryDateMonth, expiryDateYear ] = expiryDate.split('/').map(i => i.trim())
 
+  const cardNumberProps = getCardNumberProps({
+    onChange: e => {
+      // Obtener método de pago de la tarjeta
+      // Obtener cantidad de cuotas
+      getInstallments(e.target.value, amount, setPaymentMethod, setInstallments)
+      setCardNumber(e.target.value)
+    }
+  })
+
+  const expiryDateProps = getExpiryDateProps({
+    onChange: e => setExpiryDate(e.target.value)
+  })
+
+  const cvcProps = getCVCProps()
+
   return (
     <PaymentInputsWrapper { ...wrapperProps }>
       <input type="hidden" data-checkout="cardNumber" value={ cardNumber } />
@@ -63,17 +79,11 @@ const MercadoPagoForm = ({ amount, onChange }) => {
       <input type="hidden" data-checkout="cardExpirationYear" value={ expiryDateYear || '' } />
 
       <svg { ...getCardImageProps({ images }) } />
-      { /* TODO We need to remove the "name" attributes from the managed fields, for security */ }
-      <input { ...getCardNumberProps({
-        onChange: e => {
-          // Obtener método de pago de la tarjeta
-          // Obtener cantidad de cuotas
-          getInstallments(e.target.value, amount, setPaymentMethod, setInstallments)
-          setCardNumber(e.target.value)
-        }
-      }) } />
-      <input { ...getExpiryDateProps({ onChange: e => setExpiryDate(e.target.value) }) } />
-      <input { ...getCVCProps() } data-checkout="securityCode" />
+      { /* We need to remove the "name" attributes from the managed fields, for security */ }
+      { /* @see https://github.com/medipass/react-payment-inputs/issues/47 */ }
+      <input { ..._.omit(cardNumberProps, ['name']) } />
+      <input { ..._.omit(expiryDateProps, ['name']) } />
+      <input { ..._.omit(cvcProps, ['name']) } data-checkout="securityCode" />
       { /* The value of the fields below will be copied to the "real" form fields before creating a token */ }
       { installments.length > 0 && (
         <select ref={ installmentsRef }>
