@@ -52,5 +52,15 @@ class MercadopagoType extends BaseType
                 'help_html' => true
             ])
             ;
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $parentForm = $form->getParent();
+
+            $settings = $parentForm->getData();
+
+            $form->get('mercadopago_app_id')->setData($settings->mercadopago_app_id);
+        });
     }
 }
