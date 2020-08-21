@@ -2,20 +2,20 @@
 
 namespace AppBundle\Form\PaymentGateway;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
-class MercadopagoType extends AbstractType
+class MercadopagoType extends BaseType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $builder
             ->add('mercadopago_test_publishable_key', PasswordType::class, [
                 'required' => false,
@@ -52,15 +52,5 @@ class MercadopagoType extends AbstractType
                 'help_html' => true
             ])
             ;
-
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
-
-            $form = $event->getForm();
-            $parentForm = $form->getParent();
-
-            $settings = $parentForm->getData();
-
-            $form->get('mercadopago_app_id')->setData($settings->mercadopago_app_id);
-        });
     }
 }
