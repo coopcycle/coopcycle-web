@@ -46,6 +46,7 @@ class PaymentType extends AbstractType
 
                         $form->add('amount', MoneyType::class, [
                             'label' => 'form.payment.refund_amount.label',
+                            'help' => 'form.payment.refund_amount.help',
                             'data' => $payment->getRefundAmount(),
                             'mapped' => false,
                         ]);
