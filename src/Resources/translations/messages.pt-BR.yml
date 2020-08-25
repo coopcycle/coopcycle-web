@@ -444,11 +444,6 @@ form.order.refuse.refund.alert: Este pedido foi pago por um método que não ger
   pre-autorizações. Se você recusar, este pagamento será reembolsado. Você tem certeza?
 form.payment.refund_amount.label: Valor
 form.payment.refund_amount.help: O valor especificado será reembolsado ao cliente
-form.payment.refund_application_fee.label: Taxas de reembolso
-form.payment.refund_application_fee.help: "Se você confirmar esta caixa, a comissão\
-  \ cobrada pela plataforma ao parceiro será reembolsada proporcionalmente\n<br>\n\
-  <a href=\"https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Leia\
-  \ mais</a>\n"
 form.address.addressLocality.label: Cidade
 form.address.postalCode.label: CEP
 form.address.description.label: Instruções

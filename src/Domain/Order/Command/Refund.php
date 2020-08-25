@@ -8,13 +8,11 @@ class Refund
 {
     private $payment;
     private $amount;
-    private $refundApplicationFee;
 
-    public function __construct(PaymentInterface $payment, $amount = null, $refundApplicationFee = false)
+    public function __construct(PaymentInterface $payment, $amount = null)
     {
         $this->payment = $payment;
         $this->amount = $amount;
-        $this->refundApplicationFee = $refundApplicationFee;
     }
 
     public function getPayment()
@@ -25,10 +23,5 @@ class Refund
     public function getAmount()
     {
         return $this->amount;
-    }
-
-    public function getRefundApplicationFee()
-    {
-        return $this->refundApplicationFee;
     }
 }

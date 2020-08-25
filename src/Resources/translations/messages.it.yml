@@ -309,10 +309,6 @@ restricted_diets.HALAL_DIET: Carne halal
 restricted_diets.HINDU_DIET: Hindu
 restricted_diets.KOSHER_DIET: Kosher
 restricted_diets.LOW_CALORIE_DIET: Calorie basse
-form.payment.refund_application_fee.help: "Se spunti questa casella, la commissione\
-  \ addebitata dalla piattaforma al partner verrà rimborsata proporzionalmente\n<br>\n\
-  <a href=\"https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Learn\
-  \ more</a>\n"
 form.banner.enable.alert: Stai per abilitare i banner
 form.banner.disable.alert: Stai per disabilitare i banner
 form.banner.message.label: Messaggio da mostrare nel banner
@@ -564,7 +560,6 @@ form.order.payment_refund.label: Rimborso
 form.order.refund_modal.title: Rimborso
 form.payment.refund_amount.label: Quantità
 form.payment.refund_amount.help: La quantità specificata sarà rimborsato al cliente
-form.payment.refund_application_fee.label: Tariffe per il rimborso
 form.settings.date_time: Data e ora
 form.settings.brand_name.label: Nome marca
 form.settings.stripe.title: Account Stripe

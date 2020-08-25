@@ -30,7 +30,6 @@ class RefundHandler
     {
         $payment = $command->getPayment();
         $amount = $command->getAmount();
-        $refundApplicationFee = $command->getRefundApplicationFee();
 
         $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
 
@@ -43,7 +42,7 @@ class RefundHandler
 
         $transition = $isPartial ? 'refund_partially' : PaymentTransitions::TRANSITION_REFUND;
 
-        $refund = $this->stripeManager->refund($payment, $amount, $refundApplicationFee);
+        $refund = $this->stripeManager->refund($payment, $amount);
 
         if ($payment->getState() === 'refunded_partially' && $transition !== 'refund_partially') {
             $stateMachine->apply($transition);

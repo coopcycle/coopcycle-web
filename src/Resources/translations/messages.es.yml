@@ -314,10 +314,6 @@ form.order.payment_refund.label: Reembolsar
 form.order.refund_modal.title: Reembolso
 form.payment.refund_amount.label: Suma
 form.payment.refund_amount.help: El importe que especifique será devuelto al cliente
-form.payment.refund_application_fee.label: Reembolsar el pago
-form.payment.refund_application_fee.help: "Si marca esta casilla, la comisión cobrada\
-  \ por la plataforma al socio será reembolsada proporcionalmente\n<br>\n<a href=\"\
-  https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Más información</a>\n"
 form.address.streetAddress.label: Dirección
 form.address.streetAddress.error.noLatLng: Selecciona una dirección en el menú desplegable
 form.address.name.label: Nombre

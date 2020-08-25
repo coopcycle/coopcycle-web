@@ -73,8 +73,8 @@ class OrderManager
         $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
     }
 
-    public function refundPayment(PaymentInterface $payment, $amount = null, $refundApplicationFee = false)
+    public function refundPayment(PaymentInterface $payment, $amount = null)
     {
-        $this->commandBus->handle(new OrderCommand\Refund($payment, $amount, $refundApplicationFee));
+        $this->commandBus->handle(new OrderCommand\Refund($payment, $amount));
     }
 }

@@ -145,9 +145,6 @@ task.form.details: Szczegóły zlecenie
 form.delivery.to_be_confirmed.warning: Musisz potwierdzić zamówienie
 form.order.accept.help: Po zaakceptowaniu zamówienia, klient zostanie powiadomiony
   przez email.
-form.payment.refund_application_fee.help: "Jeśli zaznaczysz to pole, prowizja pobierana\
-  \ przez platformę od partnera zostanie zwrócona proporcjonalnie\n<br>\n<a href=\"\
-  https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Dowiedz się więcej</a>\n"
 form.settings.stripe.help: 'Stripe jest serwisem płatniczym, którego używamy do obsługi
   kart kredytowych. Aby używać części e-commerce platformy należy skonfigurować tę
   sekcję, a także Stripe Connect. Stripe pobiera opłatę w wysokości 0,25cts + 1,4%
@@ -430,7 +427,6 @@ form.order.payment_refund.label: Zwrot
 form.order.refund_modal.title: Zwrot
 form.payment.refund_amount.label: Kwota
 form.payment.refund_amount.help: Kwota, którą określiłeś, zostanie zwrócona klientowi
-form.payment.refund_application_fee.label: Opłata za zwrot
 form.address.addressLocality.label: Miasto
 form.address.postalCode.label: Kod pocztowy
 form.address.description.label: 'Informacje dotyczące adresu: np. piętro, nazwa firmy,

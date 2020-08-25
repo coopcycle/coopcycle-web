@@ -51,13 +51,6 @@ class PaymentType extends AbstractType
                             'mapped' => false,
                         ]);
 
-                        $form->add('refundApplicationFee', CheckboxType::class, [
-                            'label' => 'form.payment.refund_application_fee.label',
-                            'data' => true,
-                            'mapped' => false,
-                            'required' => false,
-                        ]);
-
                         $form->add('refund', SubmitType::class, [
                             'label' => 'form.order.payment_refund.label'
                         ]);

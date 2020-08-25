@@ -17,14 +17,6 @@
       <div class="modal-body">
         {% if payment_form.amount is defined %}
           {{ form_row(payment_form.amount) }}
-          {{ form_row(payment_form.refundApplicationFee) }}
-          <div class="form-group">
-            <div class="col-sm-10 col-sm-offset-2">
-              <p class="help-block">
-                <i class="fa fa-info-circle"></i> {% trans %}form.payment.refund_application_fee.help{% endtrans %}
-              </p>
-            </div>
-          </div>
         {% endif %}
       </div>
       <div class="modal-footer">

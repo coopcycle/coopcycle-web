@@ -453,7 +453,6 @@ form.order.refuse.refund.alert: This order was paid with a payment method that d
   you sure?
 form.payment.refund_amount.label: Amount
 form.payment.refund_amount.help: The amount you specify will be refunded to the customer
-form.payment.refund_application_fee.label: Refund fees
 form.payment.refund_application_fee.help: "If you check this box, the commission charged\
   \ by the platform to the partner will be refunded proportionally\n<br>\n<a href=\"\
   https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Learn more</a>\n"
