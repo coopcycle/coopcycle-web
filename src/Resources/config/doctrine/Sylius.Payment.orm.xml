@@ -6,5 +6,10 @@
         <join-column name="order_id" referenced-column-name="id" on-delete="CASCADE" nullable="false"/>
       </join-columns>
     </many-to-one>
+    <one-to-many field="refunds" target-entity="AppBundle\Entity\Refund" mapped-by="payment">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-many>
   </entity>
 </doctrine-mapping>
