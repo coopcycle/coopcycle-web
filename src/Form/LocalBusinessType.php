@@ -142,6 +142,8 @@ abstract class LocalBusinessType extends AbstractType
                 $additionalProperties[] = 'vat_number';
                 $additionalProperties[] = 'rcs_number';
                 break;
+            case 'ar':
+                $additionalProperties[] = 'cuit';
             default:
                 break;
         }

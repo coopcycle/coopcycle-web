@@ -69,6 +69,9 @@
       {% if form.rcs_number is defined %}
         {{ form_row(form.rcs_number) }}
       {% endif %}
+      {% if form.cuit is defined %}
+        {{ form_row(form.cuit) }}
+      {% endif %}
     </div>
   </div>
   <hr>
