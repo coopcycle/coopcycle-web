@@ -884,6 +884,7 @@ form.min_max.infinity.label: Pas de maximum
 form.local_business.iso_code.fr.siret: Numéro de SIRET
 form.local_business.iso_code.fr.vat_number: Numéro d'identification à la TVA
 form.local_business.iso_code.fr.rcs_number: Numéro RCS
+form.local_business.iso_code.ar.cuit: Numéro CUIT/CUIL
 receipt.title: Reçu pour votre commande n° %number%
 receipt.line_item.name: Produit
 receipt.line_item.unit_price: Prix unitaire

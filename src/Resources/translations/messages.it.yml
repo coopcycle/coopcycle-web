@@ -757,6 +757,7 @@ allergens.SESAME_SEEDS: Olio di sesamo
 allergens.LUPIN: Lupini
 allergens.MOLLUSCS: Molluschi
 form.local_business.iso_code.fr.rcs_number: Numero RCS
+form.local_business.iso_code.ar.cuit: Numero CUIT/CUIL
 receipt.line_item.name: Prodotto
 receipt.line_item.unit_price: Prezzo unitario
 receipt.line_item.quantity: Quantità

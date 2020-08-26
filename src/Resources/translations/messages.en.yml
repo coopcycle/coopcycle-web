@@ -887,6 +887,7 @@ form.min_max.infinity.label: No maximum
 form.local_business.iso_code.fr.siret: SIRET number
 form.local_business.iso_code.fr.vat_number: VAT number
 form.local_business.iso_code.fr.rcs_number: RCS number
+form.local_business.iso_code.ar.cuit: CUIT/CUIL number
 receipt.title: 'Receipt of your order #%number%'
 receipt.line_item.name: Product
 receipt.line_item.unit_price: Unit price

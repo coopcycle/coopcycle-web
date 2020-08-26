@@ -612,6 +612,7 @@ receipt.title: 'Účtenka  objednávky #% number%'
 form.local_business.iso_code.fr.rcs_number: RCS číslo
 form.local_business.iso_code.fr.vat_number: DIČ číslo
 form.local_business.iso_code.fr.siret: Číslo SIRET
+form.local_business.iso_code.ar.cuit: Číslo CUIT/CUIL
 form.min_max.infinity.label: Žádné maximum
 form.min_max.upper.label: Max. číslo
 form.min_max.lower.label: Min. číslo

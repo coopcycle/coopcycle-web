@@ -978,6 +978,7 @@ order.reusable_packaging.pledge_return.disclaimer: O cliente indicou que %count%
 delivery.table.heading.owner: Dono
 user.edit.enabled.label: Ativado
 form.local_business.iso_code.fr.siret: Número SIRET
+form.local_business.iso_code.ar.cuit: Número cuit/cuil
 form.customize.custom_privacy.label: Conteúdo da página da política de privacidade
   personalizada
 form.customize.custom_privacy_enabled.label: Habilitar a política de privacidade personalizada

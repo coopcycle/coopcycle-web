@@ -770,6 +770,7 @@ receipt.title: 'Paragon twojego zamówienia #%number%'
 form.local_business.iso_code.fr.rcs_number: Numer RCS
 form.local_business.iso_code.fr.vat_number: Numer VAT
 form.local_business.iso_code.fr.siret: Numer SIRET
+form.local_business.iso_code.ar.cuit: Numer CUIT/CUIL
 form.min_max.infinity.label: Brak maksimum
 form.min_max.upper.label: Max. numer
 form.min_max.lower.label: Min. numer

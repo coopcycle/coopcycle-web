@@ -777,6 +777,7 @@ form.min_max.upper.label: Número màxim
 form.local_business.iso_code.fr.siret: Número SIRET
 form.local_business.iso_code.fr.vat_number: Número IVA
 form.local_business.iso_code.fr.rcs_number: Número RCS
+form.local_business.iso_code.ar.cuit: Número CUIT/CUIL
 receipt.title: 'Rebut de la comanda #%number%'
 receipt.line_item.name: Producte
 receipt.line_item.unit_price: preu d'unitat
