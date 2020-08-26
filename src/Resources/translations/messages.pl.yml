@@ -497,6 +497,7 @@ form.local_business.stripe_account.link_ok: "Ta restauracja jest połączona z k
   \ Stripe i może otrzymywać płatności z platformy <br>\nAby zarządzać kontem Stripe\
   \ i przelewami do twojego konta, proszę skorzystaj z<a href=\"https://dashboard.stripe.com/\"\
   \ target=\"_blank\">pulpitu nawigacyjnego Stripe</a>.\n"
+form.local_business.mercadopago_account.title: Konto MercadoPago
 form.product_option.values.title: Cechy
 form.product_option.values.help: Musisz określić listę cech dla tej opcji
 form.product_option.additional.label: Ta opcja jest dodatkowa

@@ -430,6 +430,7 @@ form.registration.username.help: "El vostre nom d’usuari no pot ser superior a
   \ caràcters. Un nom d'usuari només pot contenir caràcters alfanumèrics (lletres\
   \ A-Z, números 0-9) a excepció dels guions baixos.\n"
 form.local_business.stripe_account.title: Compte de Stripe
+form.local_business.mercadopago_account.title: Compte de MercadoPago
 form.local_business.stripe_account.help: Connecteu un compte Stripe per transferir
   diners a un altre compte bancari
 form.local_business.stripe_account.connect_button.text: Connecta amb Stripe

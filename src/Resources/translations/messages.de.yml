@@ -554,6 +554,7 @@ form.local_business.stripe_account.help: Verbinden Sie ein Stripe Konto um Geld 
   einem anderen Bankkonto zu überweisen
 form.local_business.stripe_account.connect_button.text: Mit Stripe verbinden
 form.local_business.stripe_account.success: Stripe Konto erfolgreich verbunden
+form.local_business.mercadopago_account.title: MercadoPago Konto
 form.menu_taxon.child_name.placeholder: "Zum Beispiel: Haupgerichte, Desserts, ...\n"
 form.menu_editor.save.label: Änderungen speichern
 form.menu_editor.taxon_modal.title: Ändern Sie einen Abschnitt

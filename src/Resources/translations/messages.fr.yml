@@ -530,6 +530,7 @@ form.local_business.stripe_account.link_ok: "Ce restaurant est lié à un compte
   \ et peut donc recevoir des paiements depuis la plateforme.<br>\nPour accéder au\
   \ compte Stripe lié, <a href=\"https://dashboard.stripe.com/\" target=\"_blank\"\
   >rendez vous sur votre dashboard Stripe</a>.\n"
+form.local_business.mercadopago_account.title: Compte MercadoPago
 form.menu_item.name.label: Nom
 form.menu_item.price.label: Prix
 form.menu_item_modifier.name.label: Nom du groupe

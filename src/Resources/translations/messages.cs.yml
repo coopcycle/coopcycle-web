@@ -900,6 +900,7 @@ form.local_business.stripe_account.connect_button.text: Propojit se Stripe
 form.local_business.stripe_account.help: Pro převod peněz na jiný bankovní účet připojte
   Stripe účet
 form.local_business.stripe_account.title: Stripe účet
+form.local_business.mercadopago_account.title: MercadoPago účet
 form.registration.username.help: "Vaše uživatelské jméno nesmí být delší než 15 znaků.\
   \ Uživatelské jméno může obsahovat pouze alfanumerické znaky (písmena A-Z, čísla\
   \ 0-9) s výjimkou podtržítek.\n"
