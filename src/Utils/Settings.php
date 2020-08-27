@@ -74,5 +74,15 @@ class Settings
      */
     public $mercadopago_test_access_token;
 
+    /**
+     * @Assert\Regex("/^APP_USR-[A-Za-z0-9-]+/")
+     */
+    public $mercadopago_live_publishable_key;
+
+    /**
+     * @Assert\Regex("/^APP-USR-[A-Za-z0-9-]+/")
+     */
+    public $mercadopago_live_access_token;
+
     public $mercadopago_app_id;
 }
