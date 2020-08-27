@@ -53,7 +53,7 @@
     <tr>
       <th>{% trans %}order.items_total{% endtrans %}</th>
       <td class="text-right text-nowrap">
-        {{ show_taxes ? (order.itemsTotalExcludingTax|price_format) : (order.itemsTotal|price_format) }}
+        {{ tax_incl ? (order.itemsTotal|price_format) : (order.itemsTotalExcludingTax|price_format) }}
       </td>
     </tr>
     {% if delivery_adjustments|length > 0 %}
