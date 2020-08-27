@@ -1,9 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withTranslation } from 'react-i18next'
+import _ from 'lodash'
 
 import RulePickerLine from './RulePickerLine'
 import parsePricingRule from '../delivery/pricing-rule-parser'
+
+export const numericTypes = [
+  'distance',
+  'weight',
+  'diff_days(pickup)',
+  'diff_hours(pickup)',
+  'order.itemsTotal',
+]
 
 const lineToString = state => {
   /*
@@ -31,7 +40,7 @@ const lineToString = state => {
   case 'out_zone':
     return `${state.operator}(${state.left}, "${state.right}")`
   case '==':
-    if (state.left === 'dropoff.doorstep') {
+    if (state.left === 'dropoff.doorstep' || _.includes(numericTypes, state.left)) {
       return `${state.left} == ${state.right}`
     }
     return `${state.left} == "${state.right}"`

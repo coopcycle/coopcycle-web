@@ -4,6 +4,8 @@ import isScalar from 'locutus/php/var/is_scalar'
 import { withTranslation } from 'react-i18next'
 import numbro from 'numbro'
 
+import { numericTypes } from './RulePicker'
+
 /*
 
   A component to edit a rule which will be evaluated as Symfony's expression language.
@@ -37,6 +39,19 @@ const typeToOperators = {
 
 const isK = type => type === 'distance' || type === 'weight'
 
+const formatValue = (value, type) => {
+  if (!_.includes(numericTypes, type)) {
+
+    return value
+  }
+
+  if (value === '') {
+    return 0
+  }
+
+  return numbro.unformat(value) * (isK(type) ? 1000 : 1)
+}
+
 class RulePickerLine extends React.Component {
 
   constructor (props) {
@@ -68,21 +83,25 @@ class RulePickerLine extends React.Component {
   }
 
   handleFirstBoundChange (ev) {
+    const { type } = this.state
     let value = this.state.value.slice()
-    value[0] = ev.target.value
+    value[0] = ev.target.value * (isK(type) ? 1000 : 1)
     this.setState({ value })
   }
 
   handleSecondBoundChange (ev) {
+    const { type } = this.state
     let value = this.state.value.slice()
-    value[1] = ev.target.value
+    value[1] = ev.target.value * (isK(type) ? 1000 : 1)
     this.setState({ value })
   }
 
   handleValueChange (ev) {
     const { type, value } = this.state
     if (!Array.isArray(value)) {
-      this.setState({ value: numbro.unformat(ev.target.value) * (isK(type) ? 1000 : 1) })
+      this.setState({
+        value: formatValue(ev.target.value, type)
+      })
     }
   }
 
@@ -194,10 +213,10 @@ class RulePickerLine extends React.Component {
       return (
         <div className="row">
           <div className="col-md-6">
-            <input className="form-control input-sm" value={this.state.value[0]} onChange={this.handleFirstBoundChange} type="number" min="0" required></input>
+            <input className="form-control input-sm" value={ (this.state.value[0] / (isK(this.state.type) ? 1000 : 1))  } onChange={this.handleFirstBoundChange} type="number" min="0" required></input>
           </div>
           <div className="col-md-6">
-            <input className="form-control input-sm" value={this.state.value[1]} onChange={this.handleSecondBoundChange} type="number" min="0" required></input>
+            <input className="form-control input-sm" value={ (this.state.value[1] / (isK(this.state.type) ? 1000 : 1)) } onChange={this.handleSecondBoundChange} type="number" min="0" required></input>
           </div>
         </div>
       )
