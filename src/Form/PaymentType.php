@@ -8,7 +8,8 @@ use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -49,6 +50,23 @@ class PaymentType extends AbstractType
                             'help' => 'form.payment.refund_amount.help',
                             'data' => $payment->getRefundAmount(),
                             'mapped' => false,
+                        ]);
+                        $form->add('liable', ChoiceType::class, [
+                            'choices'  => [
+                                'Merchant' => 'merchant',
+                                'Platform' => 'platform',
+                            ],
+                            'label' => 'form.payment.refund_liable.label',
+                            'help' => 'form.payment.refund_liable.help',
+                            'expanded' => true,
+                            'multiple' => false,
+                            'mapped' => false,
+                        ]);
+                        $form->add('comments', TextareaType::class, [
+                            'label' => 'form.payment.refund_comment.label',
+                            'help' => 'form.payment.refund_comment.help',
+                            'mapped' => false,
+                            'attr' => ['rows' => '6'],
                         ]);
 
                         $form->add('refund', SubmitType::class, [

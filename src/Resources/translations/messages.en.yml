@@ -453,6 +453,10 @@ form.order.refuse.refund.alert: This order was paid with a payment method that d
   you sure?
 form.payment.refund_amount.label: Amount
 form.payment.refund_amount.help: The amount you specify will be refunded to the customer
+form.payment.refund_liable.label: Liable party
+form.payment.refund_liable.help: Which party is liable for the incident?
+form.payment.refund_comment.label: Comments
+form.payment.refund_comment.help: Please describe what happened
 form.payment.refund_application_fee.help: "If you check this box, the commission charged\
   \ by the platform to the partner will be refunded proportionally\n<br>\n<a href=\"\
   https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Learn more</a>\n"
@@ -1053,3 +1057,10 @@ form:
       label: Contact person for the restaurant
     b2b:
       label: Would you like to propose special offers for companies?
+refund.list.amount: Refunded amount
+refund.list.liable_party: Liable party
+refund.list.comments: Comments
+refund.list.debit_total: Total amount due by the platform to the business
+refund.list.refunded_at: Refunded at
+refund.list.disclaimer.admin: "When the platform is responsible for the incident, \
+  it means the platform owes the merchant the amount of the refund, because the merchant actually refunded the customer."

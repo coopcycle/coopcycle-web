@@ -23,6 +23,25 @@
   </div>
 </div>
 
+{% set refunds = [] %}
+{% for order in stats %}
+  {% if order.hasRefunds() %}
+    {% set refunds = refunds|merge(order.getRefunds()) %}
+  {% endif %}
+{% endfor %}
+
+<ul class="nav nav-tabs mb-4">
+  <li role="presentation" {% if tab == 'orders' %}class="active"{% endif %}>
+    <a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, tab: 'orders' })) }}">{{ 'restaurant.list.orders'|trans }} ({{ stats|length }})</a>
+  </li>
+  <li role="presentation" {% if tab == 'refunds' %}class="active"{% endif %}>
+    <a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, tab: 'refunds' })) }}">Refunds ({{ refunds|length }})</a>
+  </li>
+</ul>
+
+{% if tab == 'refunds' %}
+  {% include 'restaurant/_partials/refunds.html.twig' %}
+{% else %}
 <table class="table table-condensed">
   <thead>
     {% for column in stats.columns %}
@@ -61,6 +80,7 @@
     </tr>
   </tfoot>
 </table>
+{% endif %}
 
 {% endblock %}
 

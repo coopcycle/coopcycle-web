@@ -217,8 +217,10 @@ class AdminController extends Controller
 
                     $payment = $paymentForm->getData();
                     $amount = $paymentForm->get('amount')->getData();
+                    $liableParty = $paymentForm->get('liable')->getData();
+                    $comments = $paymentForm->get('comments')->getData();
 
-                    $orderManager->refundPayment($payment, $amount);
+                    $orderManager->refundPayment($payment, $amount, $liableParty, $comments);
 
                     $this->get('sylius.manager.order')->flush();
 

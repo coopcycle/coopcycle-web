@@ -2,8 +2,9 @@
 
 namespace AppBundle\Domain\Order\Handler;
 
-use AppBundle\Domain\Order\Command\Refund;
+use AppBundle\Domain\Order\Command\Refund as RefundCommand;
 use AppBundle\Domain\Order\Event;
+use AppBundle\Entity\Refund;
 use AppBundle\Service\StripeManager;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
@@ -26,10 +27,12 @@ class RefundHandler
         $this->eventRecorder = $eventRecorder;
     }
 
-    public function __invoke(Refund $command)
+    public function __invoke(RefundCommand $command)
     {
         $payment = $command->getPayment();
         $amount = $command->getAmount();
+        $liableParty = $command->getLiableParty();
+        $comments = $command->getComments();
 
         $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
 
@@ -48,7 +51,10 @@ class RefundHandler
             $stateMachine->apply($transition);
         }
 
-        $payment->addRefund($refund);
+        $ref = $payment->addRefund($amount, $liableParty, $comments);
+
+        $ref->setData(['stripe_refund_id' => $refund->id]);
+        $payment->addStripeRefund($refund);
 
         // TODO Record event
     }

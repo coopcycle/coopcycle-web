@@ -523,6 +523,8 @@ class Order extends BaseOrder implements OrderInterface
             return null;
         }
 
+        // TODO Order payments by creation date
+
         $payment = $this->payments->filter(function (PaymentInterface $payment) use ($state): bool {
             return null === $state || $payment->getState() === $state;
         })->last();
@@ -880,6 +882,22 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return false;
+    }
+
+    public function getRefunds(): array
+    {
+        $refunds = [];
+        foreach ($this->getPayments() as $payment) {
+            if (PaymentInterface::STATE_COMPLETED === $payment->getState()) {
+                if ($payment->hasRefunds()) {
+                    foreach ($payment->getRefunds() as $refund) {
+                        $refunds[] = $refund;
+                    }
+                }
+            }
+        }
+
+        return $refunds;
     }
 
     /**
