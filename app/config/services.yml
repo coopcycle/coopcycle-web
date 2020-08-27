@@ -707,6 +707,9 @@ services:
   AppBundle\Utils\LogoNamer:
     public: true
 
+  AppBundle\Utils\BannerNamer:
+    public: true
+
   # https://digitalist.se/blogg/using-open-source-minio-and-flysystem-s3-module-handle-drupal-files
   # https://github.com/minio/cookbook/blob/master/docs/how-to-use-minio-as-laravel-file-storage.md
   s3_client:

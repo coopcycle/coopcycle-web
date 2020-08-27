@@ -726,6 +726,8 @@ form.customize.custom_terms_enabled.label: Enable custom terms & conditions
 form.customize.custom_terms.label: Custom terms & conditions page content
 form.customize.custom_privacy_enabled.label: Enable custom privacy policy
 form.customize.custom_privacy.label: Custom privacy policy page content
+form.customize.custom_banner.label: Custom banner
+form.customize.custom_banner.help: Make sure that the banner is a repeatable SVG pattern
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option_value: Each option has a different price

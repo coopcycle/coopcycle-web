@@ -755,6 +755,16 @@ oneup_uploader:
                 application/octet-stream: []
                 text/csv: []
                 text/plain: []
+        banner:
+            frontend: dropzone
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.assets_filesystem
+            namer: AppBundle\Utils\BannerNamer
+            allowed_mimetypes:
+                text/html: ['svg']
+                image/svg+xml: ['svg']
+                image/svg: ['svg']
 
 trikoder_oauth2:
     authorization_server:

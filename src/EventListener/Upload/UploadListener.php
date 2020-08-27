@@ -14,6 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Hashids\Hashids;
 use Oneup\UploaderBundle\Event\PostPersistEvent;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
@@ -42,6 +43,7 @@ final class UploadListener
         ProductSpreadsheetParser $productSpreadsheetParser,
         SerializerInterface $serializer,
         IriConverterInterface $iriConverter,
+        CacheInterface $appCache,
         string $secret,
         bool $isDemo,
         LoggerInterface $logger)
@@ -54,6 +56,7 @@ final class UploadListener
         $this->productSpreadsheetParser = $productSpreadsheetParser;
         $this->serializer = $serializer;
         $this->iriConverter = $iriConverter;
+        $this->appCache = $appCache;
         $this->secret = $secret;
         $this->isDemo = $isDemo;
         $this->logger = $logger;
@@ -90,6 +93,10 @@ final class UploadListener
             // $response['products'] = $this->serializer->normalize($products, 'json', ['iri' => '']);
 
             return $response;
+        }
+
+        if ('banner' === $event->getType()) {
+            return $this->onBannerUpload($event);
         }
 
         $type = $request->get('type');
@@ -205,5 +212,17 @@ final class UploadListener
         // $response['error'] = 'Bad encoding';
 
         return $response;
+    }
+
+    private function onBannerUpload(PostPersistEvent $event)
+    {
+        $file = $event->getFile();
+
+        if ($this->isDemo) {
+            throw new UploadException('Banner can\'t be changed in demo mode');
+        }
+
+        $this->appCache->delete('banner_svg_stat');
+        $this->appCache->delete('banner_svg');
     }
 }

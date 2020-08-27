@@ -12,6 +12,13 @@
       {% block styles %}{% endblock %}
     {% endblock %}
     {% block structured_data %}{% endblock %}
+    {% if coopcycle_has_banner() %}
+    <style>
+    .homepage-search, .restaurant-list-header {
+      background-image: url({{ url('assets_banner_svg')  }});
+    }
+    </style>
+    {% endif %}
   </head>
   <body data-country="{{ country_iso }}" data-currency-symbol="{{ currency_context.currencyCode|sylius_currency_symbol }}" data-timezone="{{ coopcycle_setting('timezone') }}">
     {% block menu %}

@@ -4,11 +4,14 @@ namespace AppBundle\Twig;
 
 use Twig\Extension\RuntimeExtensionInterface;
 use Intervention\Image\ImageManagerStatic;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
+use League\Flysystem\Filesystem;
 use League\Flysystem\MountManager;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 use Vich\UploaderBundle\Storage\StorageInterface;
-use League\Flysystem\AwsS3v3\AwsS3Adapter;
 
 class AssetsRuntime implements RuntimeExtensionInterface
 {
@@ -16,12 +19,16 @@ class AssetsRuntime implements RuntimeExtensionInterface
         StorageInterface $storage,
         MountManager $mountManager,
         PropertyMappingFactory $propertyMappingFactory,
-        CacheManager $cacheManager)
+        CacheManager $cacheManager,
+        Filesystem $assetsFilesystem,
+        CacheInterface $appCache)
     {
         $this->storage = $storage;
         $this->mountManager = $mountManager;
         $this->propertyMappingFactory = $propertyMappingFactory;
         $this->cacheManager = $cacheManager;
+        $this->assetsFilesystem = $assetsFilesystem;
+        $this->appCache = $appCache;
     }
 
     public function asset($obj, string $fieldName, string $filter): ?string
@@ -56,5 +63,15 @@ class AssetsRuntime implements RuntimeExtensionInterface
         }
 
         return (string) ImageManagerStatic::make($fileSystem->read($uri))->encode('data-url');
+    }
+
+    public function hasCustomBanner(): bool
+    {
+        return $this->appCache->get('banner_svg_stat', function (ItemInterface $item) {
+
+            $item->expiresAfter(3600);
+
+            return $this->assetsFilesystem->has('banner.svg');
+        });
     }
 }
