@@ -411,7 +411,6 @@ delivery.with_id: 'Versand #%id%'
 profile.username: Benutzername
 form.order.refund_modal.title: Rückzahlung
 form.payment.refund_amount.help: Der von Dir angegebene Betrag wird dem Kunden zurückerstattet
-form.payment.refund_application_fee.label: Gebühren der Rückerstattung
 form.suggest.submit.label: Jetzt vorschlagen
 form.suggest.name.help: Bitte geben Sie den exakten Namen an, damit wir ihn finden
   können
@@ -447,9 +446,6 @@ form.settings.stripe.help: 'Stripe ist ein Zahlungsdienstleister zum Verarbeiten
   ist es nötig Stripe Connect einzurichten. Stripe entnimmt 0,25 Euro + 1,4% pro Zahlung
   als Provision (für eine aktuelle Kostenübersicht, klicke bitte <a href="https://stripe.com/fr/pricing">hier</a>),
   die vom Shopbetreiber bezahlt werden muss. '
-form.payment.refund_application_fee.help: "Wenn Sie diese Auswahlbox aktivieren, wird\
-  \ die Provision der Plattform an den Partner anteilig zurückgegeben.\n<br>\n<a href=\"\
-  https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Learn more</a>\n"
 form.delivery.view_order: Zeige Bestellung
 form.delivery.time_slot.label: Zeitfenster
 form.delivery.has_order.info: Diese Lieferung ist an eine Bestellung geknüpft

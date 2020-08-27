@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Domain\Order\Command as OrderCommand;
+use AppBundle\Entity\Refund;
 use AppBundle\Sylius\Order\OrderInterface;
 use SimpleBus\SymfonyBridge\Bus\CommandBus;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
@@ -73,8 +74,8 @@ class OrderManager
         $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
     }
 
-    public function refundPayment(PaymentInterface $payment, $amount = null, $refundApplicationFee = false)
+    public function refundPayment(PaymentInterface $payment, $amount = null, $liableParty = Refund::LIABLE_PARTY_PLATFORM, $comments = '')
     {
-        $this->commandBus->handle(new OrderCommand\Refund($payment, $amount, $refundApplicationFee));
+        $this->commandBus->handle(new OrderCommand\Refund($payment, $amount, $liableParty, $comments));
     }
 }

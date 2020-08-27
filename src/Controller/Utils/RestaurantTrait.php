@@ -1077,6 +1077,8 @@ trait RestaurantTrait
 
     public function statsAction($id, Request $request, SlugifyInterface $slugify, TranslatorInterface $translator)
     {
+        $tab = $request->query->get('tab', 'orders');
+
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
             ->find($id);
@@ -1104,7 +1106,7 @@ trait RestaurantTrait
         $end->setDate($date->format('Y'), $date->format('m'), $date->format('t'));
         $end->setTime(23, 59, 59);
 
-        $orders = $this->getDoctrine()->getRepository(Order::class)
+        $orders = $this->get('sylius.repository.order')
             ->findOrdersByRestaurantAndDateRange(
                 $restaurant,
                 $start,
@@ -1144,7 +1146,8 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'stats' => $stats,
             'start' => $start,
-            'end' => $end
+            'end' => $end,
+            'tab' => $tab,
         ]));
     }
 

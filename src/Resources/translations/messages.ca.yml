@@ -340,10 +340,6 @@ form.order.payment_refund.label: Devolució
 form.order.refund_modal.title: Devolució
 form.payment.refund_amount.label: Import
 form.payment.refund_amount.help: L’import que especifiqueu es retornarà al client
-form.payment.refund_application_fee.label: Comissions de devolució
-form.payment.refund_application_fee.help: "Si marqueu aquesta casella, la comissió\
-  \ que cobra la plataforma al soci es retornarà proporcionalment\n<br>\n<a href=\"\
-  https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Aprèn més</a>\n"
 form.address.addressLocality.label: Ciutat
 form.address.postalCode.label: Codi Postal
 form.address.description.label: Instruccions

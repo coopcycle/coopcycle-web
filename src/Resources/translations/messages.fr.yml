@@ -413,11 +413,6 @@ form.order.payment_refund.label: Rembourser
 form.order.refund_modal.title: Remboursement
 form.payment.refund_amount.label: Montant
 form.payment.refund_amount.help: Le montant que vous indiquez sera remboursé au client
-form.payment.refund_application_fee.label: Rembourser les frais
-form.payment.refund_application_fee.help: "Si vous cochez cette case, la commission\
-  \ prélevée par la plateforme au partenaire sera remboursés au pro-rata\n<br>\n<a\
-  \ href=\"https://stripe.com/docs/connect/direct-charges#issuing-refunds\">En savoir\
-  \ plus</a>\n"
 form.delivery_embed.name.label: Nom
 form.delivery_embed.name.help: Votre nom ou le nom de l'entreprise
 form.delivery_embed.telephone.label: Numéro de téléphone

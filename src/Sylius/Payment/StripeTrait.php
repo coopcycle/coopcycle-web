@@ -2,7 +2,6 @@
 
 namespace AppBundle\Sylius\Payment;
 
-use Stripe\Refund;
 use Stripe\PaymentIntent;
 use Stripe\Source;
 
@@ -59,51 +58,6 @@ trait StripeTrait
 
             return $this->details['last_error'];
         }
-    }
-
-    public function addRefund(Refund $refund)
-    {
-        $refunds = [];
-        if (isset($this->details['refunds'])) {
-            $refunds = $this->details['refunds'];
-        }
-
-        $refunds[] = [
-            'id' => $refund->id,
-            'amount' => $refund->amount,
-        ];
-
-        $this->details = array_merge($this->details, ['refunds' => $refunds]);
-    }
-
-    public function hasRefunds()
-    {
-        return isset($this->details['refunds']) && is_array($this->details['refunds']) && count($this->details['refunds']) > 0;
-    }
-
-    public function getRefunds()
-    {
-        if (isset($this->details['refunds'])) {
-
-            return $this->details['refunds'];
-        }
-
-        return [];
-    }
-
-    public function getRefundTotal()
-    {
-        $total = 0;
-        foreach ($this->getRefunds() as $refund) {
-            $total += $refund['amount'];
-        }
-
-        return $total;
-    }
-
-    public function getRefundAmount()
-    {
-        return $this->getAmount() - $this->getRefundTotal();
     }
 
     public function setPaymentIntent(PaymentIntent $intent)

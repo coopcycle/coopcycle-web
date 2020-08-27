@@ -435,10 +435,6 @@ form.order.refuse.refund.alert: Tato objednávka byla placena platební metodou,
   nespravuje předautorizace. Pokud ji odmítnete, bude platba vrácena. Jste si jist?
 form.payment.refund_amount.label: Částka
 form.payment.refund_amount.help: Částka, kterou určíte, bude vrácena zákazníkovi
-form.payment.refund_application_fee.label: Vrácení poplatků
-form.payment.refund_application_fee.help: "Pokud zaškrtnete toto políčko, bude provize,\
-  \ kterou platforma účtuje partnerovi, vrácena proporčně\n<br>\n<a href=\"https://stripe.com/docs/connect/direct-charges#issuing-refunds\"\
-  > Další informace </a>\n"
 form.address.addressLocality.label: Město
 form.address.postalCode.label: PSČ
 form.address.description.label: Instrukce

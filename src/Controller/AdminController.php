@@ -211,16 +211,16 @@ class AdminController extends Controller
                 $hasClickedRefund =
                     $paymentForm->getClickedButton() && 'refund' === $paymentForm->getClickedButton()->getName();
 
-                $hasExpectedFields =
-                    $paymentForm->has('amount') && $paymentForm->has('refundApplicationFee');
+                $hasExpectedFields = $paymentForm->has('amount');
 
                 if ($hasClickedRefund && $hasExpectedFields) {
 
                     $payment = $paymentForm->getData();
                     $amount = $paymentForm->get('amount')->getData();
-                    $refundApplicationFee = $paymentForm->get('refundApplicationFee')->getData();
+                    $liableParty = $paymentForm->get('liable')->getData();
+                    $comments = $paymentForm->get('comments')->getData();
 
-                    $orderManager->refundPayment($payment, $amount, $refundApplicationFee);
+                    $orderManager->refundPayment($payment, $amount, $liableParty, $comments);
 
                     $this->get('sylius.manager.order')->flush();
 

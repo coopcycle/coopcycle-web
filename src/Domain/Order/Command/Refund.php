@@ -2,19 +2,22 @@
 
 namespace AppBundle\Domain\Order\Command;
 
+use AppBundle\Entity\Refund as RefundEntity;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
 class Refund
 {
     private $payment;
     private $amount;
-    private $refundApplicationFee;
+    private $liableParty;
+    private $comments;
 
-    public function __construct(PaymentInterface $payment, $amount = null, $refundApplicationFee = false)
+    public function __construct(PaymentInterface $payment, $amount = null, $liableParty = RefundEntity::LIABLE_PARTY_PLATFORM, $comments = '')
     {
         $this->payment = $payment;
         $this->amount = $amount;
-        $this->refundApplicationFee = $refundApplicationFee;
+        $this->liableParty = $liableParty;
+        $this->comments = $comments;
     }
 
     public function getPayment()
@@ -27,8 +30,13 @@ class Refund
         return $this->amount;
     }
 
-    public function getRefundApplicationFee()
+    public function getLiableParty()
     {
-        return $this->refundApplicationFee;
+        return $this->liableParty;
+    }
+
+    public function getComments()
+    {
+        return $this->comments;
     }
 }
