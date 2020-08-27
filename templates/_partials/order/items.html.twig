@@ -4,7 +4,7 @@
 <table class="table table-order-items">
   <thead>
     <th>{% trans with { '%count%': order.countItems } %}order.items.products_with_count{% endtrans %}</th>
-    <th class="text-right">Total</th>
+    <th class="text-right">{{ 'order.list.total'|trans }}</th>
   </thead>
   {% if with_items %}
   <tbody>
