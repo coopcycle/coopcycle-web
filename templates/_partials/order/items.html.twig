@@ -1,4 +1,4 @@
-{% set show_taxes = (country_iso == 'ca') or (with_taxes is not defined) or (with_taxes is defined and with_taxes == true) %}
+{% set show_taxes = (not tax_incl) or (with_taxes is not defined) or (with_taxes is defined and with_taxes == true) %}
 {% set with_items = with_items is defined ? with_items : true %}
 
 <table class="table table-order-items">
