@@ -143,7 +143,7 @@ function createTagsWidget(name, type, tags) {
   })
 }
 
-function createPackageForm($list) {
+function createPackageForm(name, $list) {
 
   var counter = $list.data('widget-counter') || $list.children().length
   var newWidget = $list.attr('data-prototype')
@@ -164,6 +164,7 @@ function createPackagesWidget(name, packagesRequired) {
 
   if (packagesRequired) {
     createPackageForm(
+      name,
       $(`#${name}_packages_list`)
     )
   }
@@ -171,6 +172,7 @@ function createPackagesWidget(name, packagesRequired) {
   $(`#${name}_packages_add`).click(function() {
     const selector = $(this).attr('data-target')
     createPackageForm(
+      name,
       $(selector)
     )
     setPackages(name)
