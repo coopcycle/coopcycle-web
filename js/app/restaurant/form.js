@@ -8,6 +8,7 @@ import Select from 'react-select'
 import i18n from '../i18n'
 import DropzoneWidget from '../widgets/Dropzone'
 import OpeningHoursInput from '../widgets/OpeningHoursInput'
+import DeliveryZonePicker from '../components/DeliveryZonePicker'
 
 Dropzone.autoDiscover = false
 
@@ -104,14 +105,12 @@ $(function() {
 
   const zonePickerEl = document.getElementById('restaurant_deliveryPerimeterExpression__picker')
   if (zonePickerEl) {
-    window.CoopCycle.DeliveryZonePicker(
-      zonePickerEl,
-      {
-        zones: JSON.parse(formData.dataset.zones),
-        expression: formData.dataset.restaurantDeliveryPerimeterExpression,
-        onExprChange: (expr) => { $('#restaurant_deliveryPerimeterExpression').val(expr)}
-      }
-    )
+    render(
+      <DeliveryZonePicker
+        zones={ JSON.parse(formData.dataset.zones) }
+        expression={ formData.dataset.restaurantDeliveryPerimeterExpression }
+        onExprChange={ expr => $('#restaurant_deliveryPerimeterExpression').val(expr) }
+      />, zonePickerEl)
   }
 
   const openingHoursInputs = new Map()
