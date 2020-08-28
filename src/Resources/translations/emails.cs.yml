@@ -69,3 +69,7 @@ admin.send_invitation.subject: Pozvání do CoopCycle!
 admin.pledge.subject: Byl odeslán nový návrh!
 admin.order_foodtech.created.body: "Dobrý den,\n<br>\nByla vytvořena nová objednávka\
   \ pro <strong>%restaurant.name%</strong>.\n"
+order.expiring_authorization.text: Autorizace platby pro objednávku <strong>%order.number%
+  </strong> brzy vyprší. <br> Měli byste dokončit objednávku před vypršením autorizace,
+  abyste předešli ztrátě peněz.
+order.expiring_authorization.subject: Platnost autorizace platby brzy vyprší
