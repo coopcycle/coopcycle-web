@@ -182,6 +182,11 @@ class RestaurantController extends AbstractController
         return $business->getContext() === Store::class ? 'store' : 'restaurant';
     }
 
+    private function isAnotherRestaurant(OrderInterface $cart, LocalBusiness $restaurant)
+    {
+        return null !== $cart->getId() && $cart->getRestaurant() !== $restaurant;
+    }
+
     /**
      * @Route("/restaurants", name="restaurants")
      */
@@ -286,8 +291,7 @@ class RestaurantController extends AbstractController
 
         $cart = $cartContext->getCart();
 
-        $isAnotherRestaurant =
-            null !== $cart->getId() && $cart->getRestaurant() !== $restaurant;
+        $isAnotherRestaurant = $this->isAnotherRestaurant($cart, $restaurant);
 
         if ($isAnotherRestaurant) {
             $cart->clearItems();
@@ -564,12 +568,21 @@ class RestaurantController extends AbstractController
 
         $cart = $cartContext->getCart();
 
+        $isAnotherRestaurant = $this->isAnotherRestaurant($cart, $restaurant);
+
+        if ($isAnotherRestaurant) {
+            $cart->clearItems();
+            $cart->setRestaurant($restaurant);
+        }
+
         $cart->setShippingTimeRange(null);
 
-        $this->orderManager->persist($cart);
-        $this->orderManager->flush();
+        if (!$isAnotherRestaurant) {
+            $this->orderManager->persist($cart);
+            $this->orderManager->flush();
 
-        $this->saveSession($request, $cart);
+            $this->saveSession($request, $cart);
+        }
 
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
