@@ -63,18 +63,24 @@ final class Version20200826135116 extends AbstractMigration
 
             foreach ($details['refunds'] as $refund) {
 
-                $stripeRefund = Stripe\Refund::retrieve(
-                    $refund['id'],
-                    $stripeOptions
-                );
+                try {
+                    $stripeRefund = Stripe\Refund::retrieve(
+                        $refund['id'],
+                        $stripeOptions
+                    );
+                    $createdAt = date('Y-m-d H:i:s', $stripeRefund->created);
+                } catch (Stripe\Exception\ApiErrorException $e) {
+                    $createdAt = (new \DateTime())->format('Y-m-d H:i:s');
+                }
+
 
                 $this->addSql('INSERT INTO refund (payment_id, liable_party, amount, data, created_at, updated_at) VALUES (:payment_id, :liable_party, :amount, :data, :created_at, :updated_at)', [
                     'payment_id' => $payment['id'],
                     'liable_party' => 'unknown',
                     'amount' => $refund['amount'],
                     'data' => json_encode(['stripe_refund_id' => $refund['id']]),
-                    'created_at' => date('Y-m-d H:i:s', $stripeRefund->created),
-                    'updated_at' => date('Y-m-d H:i:s', $stripeRefund->created),
+                    'created_at' => $createdAt,
+                    'updated_at' => $createdAt,
                 ]);
             }
         }
