@@ -349,14 +349,6 @@ class RestaurantController extends AbstractController
 
                 $errors = [];
 
-                // Customer may be browsing the available restaurants
-                // Make sure the request targets the same restaurant
-                // If not, we don't persist the cart
-                if ($isAnotherRestaurant) {
-
-                    return $this->jsonResponse($cart, $errors);
-                }
-
                 // Make sure the shipping address is valid
                 // FIXME This is cumbersome, there should be a better way
                 $shippingAddress = $cart->getShippingAddress();
@@ -366,11 +358,20 @@ class RestaurantController extends AbstractController
                         $cart->setShippingAddress(null);
                     }
                 }
+
                 if (!$cartForm->isValid()) {
                     foreach ($cartForm->getErrors() as $formError) {
                         $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
                         $errors[$propertyPath] = [ ValidationUtils::serializeFormError($formError) ];
                     }
+                }
+
+                // Customer may be browsing the available restaurants
+                // Make sure the request targets the same restaurant
+                // If not, we don't persist the cart
+                if ($isAnotherRestaurant) {
+
+                    return $this->jsonResponse($cart, $errors);
                 }
 
                 $this->orderManager->persist($cart);
