@@ -118,12 +118,15 @@ class PricePreview {
           const taxAmount =
             calculate(priceResult.price, amount, isIncludedInPrice)
 
+          const taxIncluded = isIncludedInPrice ? priceResult.price : (priceResult.price + taxAmount)
+          const taxExcluded = isIncludedInPrice ? (priceResult.price - taxAmount) : priceResult.price
+
           $('#delivery_price')
             .find('[data-tax="included"]')
-            .text((priceResult.price / 100).formatMoney())
+            .text((taxIncluded / 100).formatMoney())
           $('#delivery_price')
             .find('[data-tax="excluded"]')
-            .text(((priceResult.price - taxAmount) / 100).formatMoney())
+            .text((taxExcluded / 100).formatMoney())
 
         } else {
           $('#delivery_price_error').text(priceResult.message)
