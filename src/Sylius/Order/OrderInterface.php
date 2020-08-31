@@ -14,6 +14,7 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentsSubjectInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponAwarePromotionSubjectInterface;
 use Sylius\Component\Promotion\Model\PromotionSubjectInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 interface OrderInterface extends
     BaseOrderInterface,
@@ -150,4 +151,9 @@ interface OrderInterface extends
      * @return int
      */
     public function getItemsTotalExcludingTax(): int;
+
+    /*
+     * @return UserInterface|null
+     */
+    public function getUser(): ?UserInterface;
 }
