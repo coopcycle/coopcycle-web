@@ -11,9 +11,9 @@ AppBundle\Entity\ApiUser:
     roles:
       groups: ['user']
     givenName:
-      groups: ['user']
+      groups: ['order']
     familyName:
-      groups: ['user']
+      groups: ['order']
 
 AppBundle\Entity\Sylius\Taxon:
   attributes:
