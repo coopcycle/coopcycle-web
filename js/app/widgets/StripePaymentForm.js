@@ -140,6 +140,6 @@ export default function(form, options) {
     )
 
   } else {
-    cc.mount(document.getElementById('card-element'))
+    cc.mount(document.getElementById('card-element')).then(() => enableBtn(submitButton))
   }
 }
