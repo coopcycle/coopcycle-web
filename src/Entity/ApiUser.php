@@ -20,7 +20,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
@@ -73,21 +72,18 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     protected $email;
 
     /**
-     * @Groups({"order"})
      * @Assert\NotBlank()
      * @ApiProperty(iri="https://schema.org/givenName")
     */
     protected $givenName;
 
     /**
-     * @Groups({"order"})
      * @Assert\NotBlank()
      * @ApiProperty(iri="https://schema.org/familyName")
      */
     protected $familyName;
 
     /**
-     * @Groups({"order"})
      * @AssertPhoneNumber
      * @ApiProperty(iri="https://schema.org/telephone")
      */
