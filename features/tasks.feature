@@ -1228,3 +1228,41 @@ Feature: Tasks
         "tags":[]
       }
       """
+
+  Scenario: Create task with invalid address
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/tasks" with body:
+      """
+      {
+        "address": {},
+        "doneAfter": "2020-09-01T13:53:29.536Z",
+        "doneBefore": "2020-09-01T14:23:29.537Z"
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+         "@context":"\/api\/contexts\/ConstraintViolationList",
+         "@type":"ConstraintViolationList",
+         "hydra:title":"An error occurred",
+         "hydra:description":@string@,
+         "violations":[
+            {
+               "propertyPath":"address.geo",
+               "message":@string@
+            },
+            {
+               "propertyPath":"address.streetAddress",
+               "message":@string@
+            }
+         ]
+      }
+      """
