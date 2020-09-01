@@ -343,6 +343,8 @@ class RestaurantController extends AbstractController
 
             $cartForm->handleRequest($request);
 
+            $cart = $cartForm->getData();
+
             // Make sure the shipping address is valid
             // FIXME This is cumbersome, there should be a better way
             $shippingAddress = $cart->getShippingAddress();
@@ -352,8 +354,6 @@ class RestaurantController extends AbstractController
                     $cart->setShippingAddress(null);
                 }
             }
-
-            $cart = $cartForm->getData();
 
             if ($request->isXmlHttpRequest()) {
 
