@@ -110,7 +110,7 @@ final class OrderSubscriber implements EventSubscriberInterface
 
         // Make sure customer is set
         if (null === $order->getCustomer() && null !== $user) {
-            $order->setCustomer($this->getUser());
+            $order->setCustomer($this->getUser()->getCustomer());
         }
 
         if ($request->attributes->get('_route') === 'api_orders_post_collection'

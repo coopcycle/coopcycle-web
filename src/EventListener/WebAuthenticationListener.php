@@ -60,7 +60,7 @@ final class WebAuthenticationListener implements EventSubscriberInterface
             return;
         }
 
-        $cart->setCustomer($user);
+        $cart->setCustomer($user->getCustomer());
 
         if (null === $cart->getRestaurant()) {
             return;

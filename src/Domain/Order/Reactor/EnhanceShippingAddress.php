@@ -3,9 +3,16 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\OrderCreated;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberUtil;
 
 class EnhanceShippingAddress
 {
+    public function __construct(PhoneNumberUtil $phoneNumberUtil)
+    {
+        $this->phoneNumberUtil = $phoneNumberUtil;
+    }
+
     public function __invoke(OrderCreated $event)
     {
         $order = $event->getOrder();
@@ -25,13 +32,15 @@ class EnhanceShippingAddress
         $telephone = $shippingAddress->getTelephone();
 
         if (empty($contactName)) {
-            $shippingAddress->setContactName(
-                trim(sprintf('%s %s', $customer->getGivenName(), $customer->getFamilyName()))
-            );
+            $shippingAddress->setContactName($customer->getFullName());
         }
 
-        if (empty($telephone)) {
-            $shippingAddress->setTelephone($customer->getTelephone());
+        if (empty($telephone) && !empty($customer->getPhoneNumber())) {
+            try {
+                $shippingAddress->setTelephone(
+                    $this->phoneNumberUtil->parse($customer->getPhoneNumber())
+                );
+            } catch (NumberParseException $e) {}
         }
     }
 }

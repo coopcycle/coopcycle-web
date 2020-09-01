@@ -32,7 +32,7 @@ class Assign
         }
 
         if (is_object($user = $token->getUser())) {
-            $data->setCustomer($user);
+            $data->setCustomer($user->getCustomer());
         }
 
         return $data;

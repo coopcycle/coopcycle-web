@@ -239,7 +239,7 @@ class ProfileController extends Controller
 
         $order = $this->container->get('sylius.repository.order')->find($id);
 
-        if ($order->getCustomer() !== $this->getUser()) {
+        if ($order->getCustomer()->hasUser() && $order->getCustomer()->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
 

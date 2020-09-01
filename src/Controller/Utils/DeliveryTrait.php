@@ -10,6 +10,7 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Form\FormError;
@@ -29,11 +30,11 @@ trait DeliveryTrait
     /**
      * @param Delivery $delivery
      * @param int $price
-     * @param UserInterface $user
+     * @param CustomerInterface $customer
      *
      * @return OrderInterface
      */
-    protected function createOrderForDelivery(Delivery $delivery, int $price, ?UserInterface $user = null)
+    protected function createOrderForDelivery(Delivery $delivery, int $price, ?CustomerInterface $customer = null)
     {
         $orderFactory = $this->container->get('sylius.factory.order');
         $orderItemFactory = $this->container->get('sylius.factory.order_item');
@@ -55,8 +56,8 @@ trait DeliveryTrait
 
         $order->setShippingTimeRange($shippingTimeRange);
 
-        if (null !== $user) {
-            $order->setCustomer($user);
+        if (null !== $customer) {
+            $order->setCustomer($customer);
         }
 
         $variant = $productVariantFactory->createForDelivery($delivery, $price);

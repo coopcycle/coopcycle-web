@@ -6,6 +6,11 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
+    <one-to-many field="orders" target-entity="Sylius\Component\Order\Model\OrderInterface" mapped-by="customer">
+      <cascade>
+        <cascade-all />
+      </cascade>
+    </one-to-many>
     <many-to-one field="defaultAddress" target-entity="AppBundle\Entity\Address">
       <join-columns>
         <join-column name="default_address_id" referenced-column-name="id" on-delete="SET NULL"/>

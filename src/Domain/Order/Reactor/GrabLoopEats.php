@@ -4,6 +4,8 @@ namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\Domain\Order\Event;
+use AppBundle\Sylius\Customer\CustomerInterface;
+use Webmozart\Assert\Assert;
 
 class GrabLoopEats
 {
@@ -33,7 +35,15 @@ class GrabLoopEats
 
         // TODO Make sure the reusable packagings are actually from LoopEat
 
-        $this->client->return($order->getCustomer(), $order->getReusablePackagingPledgeReturn());
-        $this->client->grab($order->getCustomer(), $order->getRestaurant(), $order->getReusablePackagingQuantity());
+        $customer = $order->getCustomer();
+
+        Assert::isInstanceOf($customer, CustomerInterface::class);
+
+        if (!$customer->hasUser()) {
+            return;
+        }
+
+        $this->client->return($customer->getUser(), $order->getReusablePackagingPledgeReturn());
+        $this->client->grab($customer->getUser(), $order->getRestaurant(), $order->getReusablePackagingQuantity());
     }
 }

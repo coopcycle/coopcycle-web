@@ -615,13 +615,11 @@ Feature: Orders
         "@id":"@string@.startsWith('/api/orders')",
         "@type":"http://schema.org/Order",
         "customer":{
-          "@id":"@string@.startsWith('/api/users')",
-          "@type":"User",
+          "@id":"@string@.startsWith('/api/customers')",
+          "@type":"Customer",
           "username":"bob",
           "email":"bob@coopcycle.org",
-          "telephone": "+33612345678",
-          "givenName":"Bob",
-          "familyName":"Doe"
+          "telephone": "+33612345678"
         },
         "restaurant":{
           "@id":"/api/restaurants/1",

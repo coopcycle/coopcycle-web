@@ -206,6 +206,8 @@ services:
 
   coopcycle.domain.order.reactor.enhance_shipping_address:
     class: AppBundle\Domain\Order\Reactor\EnhanceShippingAddress
+    arguments:
+      - '@libphonenumber\PhoneNumberUtil'
     tags:
         - name: event_subscriber
           subscribes_to: order:created
