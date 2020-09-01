@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Sylius\Customer\CustomerInterface;
@@ -12,6 +13,17 @@ use Sylius\Component\Customer\Model\Customer as BaseCustomer;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * @ApiResource(
+ *   shortName="Customer",
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN') or user.getCustomer() == object"
+ *     }
+ *   }
+ * )
+ */
 class Customer extends BaseCustomer implements CustomerInterface
 {
     /** @var ApiUser */
@@ -135,5 +147,19 @@ class Customer extends BaseCustomer implements CustomerInterface
     public function hasUser(): bool
     {
         return null !== $this->user;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->getPhoneNumber();
+    }
+
+    public function getUsername(): string
+    {
+        if ($this->hasUser()) {
+            return $this->getUser()->getUsername();
+        }
+
+        return $this->getFullName();
     }
 }

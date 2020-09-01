@@ -15,6 +15,15 @@ AppBundle\Entity\ApiUser:
     familyName:
       groups: ['order']
 
+AppBundle\Entity\Sylius\Customer:
+  attributes:
+    username:
+      groups: ['order']
+    email:
+      groups: ['order']
+    telephone:
+      groups: ['order']
+
 AppBundle\Entity\Sylius\Taxon:
   attributes:
     code:
