@@ -82,6 +82,7 @@
     "jquery": "^3.5.1",
     "json-loader": "^0.5.7",
     "leaflet": "^1.5.1",
+    "leaflet-area-select": "^1.0.5",
     "leaflet-polylinedecorator": "^1.6.0",
     "leaflet-providers": "^1.10.2",
     "leaflet.markercluster": "^1.4.1",
