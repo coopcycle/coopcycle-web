@@ -85,6 +85,7 @@ export const TASK_LIST_UPDATED = 'TASK_LIST_UPDATED'
 export const TOGGLE_POLYLINE = 'TOGGLE_POLYLINE'
 export const TOGGLE_TASK = 'TOGGLE_TASK'
 export const SELECT_TASK = 'SELECT_TASK'
+export const SELECT_TASKS = 'SELECT_TASKS'
 export const SET_TASK_LIST_GROUP_MODE = 'SET_TASK_LIST_GROUP_MODE'
 export const ADD_TASK_LIST_REQUEST = 'ADD_TASK_LIST_REQUEST'
 export const ADD_TASK_LIST_REQUEST_SUCCESS = 'ADD_TASK_LIST_REQUEST_SUCCESS'
@@ -263,6 +264,10 @@ function toggleTask(task, multiple = false) {
 
 function selectTask(task) {
   return { type: SELECT_TASK, task }
+}
+
+function selectTasks(tasks) {
+  return { type: SELECT_TASKS, tasks }
 }
 
 function setTaskListGroupMode(mode) {
@@ -667,6 +672,7 @@ export {
   setTaskListGroupMode,
   toggleTask,
   selectTask,
+  selectTasks,
   setGeolocation,
   setOffline,
   openNewTaskModal,

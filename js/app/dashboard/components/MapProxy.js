@@ -2,6 +2,7 @@ import _ from 'lodash'
 import L from 'leaflet'
 import 'leaflet-polylinedecorator'
 import 'leaflet.markercluster'
+import 'leaflet-area-select'
 import React from 'react'
 import { render } from 'react-dom'
 import MapHelper from '../../MapHelper'
@@ -106,6 +107,25 @@ export default class MapProxy {
     this.map.on('mouseup', e => {
       options.onMouseUp(e)
     })
+
+    this.map.selectArea.enable()
+
+    this.map.on('areaselected', (e) => {
+      L.Util.requestAnimFrame(() => {
+        const markers = []
+        this.map.eachLayer((layer) => {
+          if (!_.includes(Array.from(this.taskMarkers.values()), layer)) {
+            return
+          }
+          if (!e.bounds.contains(layer.getLatLng())) {
+            return
+          }
+          markers.push(layer)
+        })
+        options.onMarkersSelected(markers)
+      })
+    })
+
   }
 
   addTask(task, markerColor) {
@@ -141,6 +161,8 @@ export default class MapProxy {
         .setContent(el)
 
       marker.bindPopup(popup)
+
+      marker.options.task = task['@id']
 
     } else {
 
