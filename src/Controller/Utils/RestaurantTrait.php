@@ -1091,10 +1091,11 @@ trait RestaurantTrait
 
         if ($request->query->has('month')) {
             $month = $request->query->get('month');
-            preg_match('/([0-9]{4})-([0-9]{2})/', $month, $matches);
-            $year = $matches[1];
-            $month = $matches[2];
-            $date->setDate($year, $month, 1);
+            if (1 === preg_match('/([0-9]{4})-([0-9]{2})/', $month, $matches)) {
+                $year = $matches[1];
+                $month = $matches[2];
+                $date->setDate($year, $month, 1);
+            }
         }
 
         $start = clone $date;
