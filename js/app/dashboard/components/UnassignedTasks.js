@@ -1,17 +1,44 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { render } from 'react-dom'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import moment from 'moment'
-import Sortable from 'react-sortablejs'
-
+import { ReactSortable, Sortable, MultiDrag } from 'react-sortablejs'
 import Task from './Task'
 import TaskGroup from './TaskGroup'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
 
 const UnassignedTasksPopoverContentWithTrans = withTranslation()(UnassignedTasksPopoverContent)
+
+Sortable.mount(new MultiDrag())
+
+// @see https://github.com/SortableJS/react-sortablejs/issues/145#issuecomment-619060227
+const SortableList = ({ tasks }) => {
+
+  const [ state, setState ] = useState(tasks)
+
+  return (
+    <ReactSortable
+      list={ state }
+      setList={ setState }
+      className="list-group nomargin"
+      onChange={ (/*order, sortable, e*/) => {
+        // console.log('UnassignedTasks.Sortable.onChange', order, e)
+      }}
+      multiDrag
+      sort= { false }
+      dataIdAttr="data-task-id"
+      group={{ name: 'unassigned' }}>
+      { state.map((task) => {
+        return (
+          <Task key={ task['@id'] } task={ task } />
+        )
+      })}
+    </ReactSortable>
+  )
+}
 
 class UnassignedTasks extends React.Component {
 
@@ -138,23 +165,7 @@ class UnassignedTasks extends React.Component {
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
-          <Sortable
-            className="list-group nomargin"
-            onChange={ (/*order, sortable, e*/) => {
-              // console.log('UnassignedTasks.Sortable.onChange', order, e)
-            }}
-            options={{
-              sort: false,
-              dataIdAttr: 'data-task-id',
-              group: { name: 'unassigned' },
-            }}>
-            { groups }
-            { _.map(standaloneTasks, (task, key) => {
-              return (
-                <Task key={ key } task={ task } />
-              )
-            })}
-          </Sortable>
+          <SortableList tasks={ standaloneTasks } />
         </div>
       </div>
     )

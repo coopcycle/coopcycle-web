@@ -137,6 +137,7 @@ class Task extends React.Component {
 
     if (selected) {
       classNames.push('task__highlighted')
+      classNames.push('sortable-selected')
     }
 
     const customerName =  task.address.firstName ?  [task.address.firstName, task.address.lastName, task.address.streetAddress].join(' ') : null,

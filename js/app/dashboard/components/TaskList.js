@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { render } from 'react-dom'
 import moment from 'moment'
-import Sortable from 'react-sortablejs'
+import { ReactSortable, Sortable, MultiDrag } from 'react-sortablejs'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
@@ -14,6 +14,62 @@ import { selectFilteredTasks } from '../redux/selectors'
 moment.locale($('html').attr('lang'))
 
 const TaskListPopoverContentWithTrans = withTranslation()(TaskListPopoverContent)
+
+Sortable.mount(new MultiDrag())
+
+// @see https://github.com/SortableJS/react-sortablejs/issues/145#issuecomment-619060227
+const SortableList = ({ tasks, onChange, onRemove, className, modifyTaskList }) => {
+
+
+
+  const [ state, setState ] = useState(tasks)
+
+  console.log('TaskList SortableList render', tasks, state)
+
+  return (
+    <ReactSortable
+      list={ state }
+      setList={ newList => {
+
+        console.log('TaskList setList', tasks, newList, tasks === newList)
+
+        setState(newList)
+
+
+        // console.log('setList newList', newList)
+
+        // const stateAsIds = state.map(t => t['@id'])
+        // const newListAsIds = newList.map(t => t['@id'])
+
+        // const isEq = _.isEqual(stateAsIds, newListAsIds)
+
+        // console.log('setList isEq', isEq)
+
+        // if (isEq) {
+        //   return
+        // }
+        // modifyTaskList(newList)
+      }}
+      multiDrag
+      dataIdAttr="data-task-id"
+      group={{
+        name: 'assigned',
+        put: ['unassigned'],
+      }}
+      onChange={ onChange }
+      className={ className }
+      >
+      { state.map(task => (
+        <Task
+          key={ task['@id'] }
+          task={ task }
+          assigned={ true }
+          onRemove={ onRemove }
+        />
+      ))}
+    </ReactSortable>
+  )
+}
 
 class TaskList extends React.Component {
 
@@ -147,9 +203,19 @@ class TaskList extends React.Component {
               </a>
             </div>
           )}
-          <Sortable
+          <SortableList
             className={ taskListClasslist.join(' ') }
-            onChange={ (order, sortable, e) => {
+            tasks={ this.props.tasks }
+            onRemove={ task => this.remove(task) }
+            modifyTaskList={ tasks => {
+              // console.log(this.props.tasks === tasks)
+              this.props.modifyTaskList(this.props.username, tasks)
+              // this.props.modifyTaskList
+            }}
+            onChange={ (order, sortable, e, foo) => {
+
+              console.log('onChange!!!', order, sortable, e, foo)
+              return
 
               if (e.type === 'add' || e.type === 'update') {
 
@@ -194,23 +260,7 @@ class TaskList extends React.Component {
 
                 this.props.modifyTaskList(this.props.username, tasks)
               }
-            }}
-            options={{
-              dataIdAttr: 'data-task-id',
-              group: {
-                name: 'assigned',
-                put: ['unassigned'],
-              },
-            }}>
-            { tasks.map(task => (
-              <Task
-                key={ task['@id'] }
-                task={ task }
-                assigned={ true }
-                onRemove={ task => this.remove(task) }
-              />
-            ))}
-          </Sortable>
+            }} />
         </div>
       </div>
     )

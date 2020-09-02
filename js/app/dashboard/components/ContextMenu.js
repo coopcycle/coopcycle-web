@@ -11,6 +11,7 @@ const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
 const CANCEL_MULTI = 'CANCEL_MULTI'
 const MOVE_TO_TOP = 'MOVE_TO_TOP'
 const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
+const ASSIGN_MULTI = 'ASSIGN_MULTI'
 
 function _unassign(tasksToUnassign, removeTasks) {
   const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo)
@@ -42,12 +43,14 @@ const DynamicMenu = ({
 
       const isTriggerSelected = _.find(selectedTasks, selectedTask => selectedTask['@id'] === trigger.task['@id'])
 
+      // The user has right-clicked on one of the selected tasks
       if (isTriggerSelected) {
         if (tasksToUnassign.length > 0) {
           actions.push(UNASSIGN_MULTI)
         }
         if (containsOnlyUnassignedTasks) {
           actions.push(CANCEL_MULTI)
+          actions.push(ASSIGN_MULTI)
         }
       }
     }
@@ -79,6 +82,11 @@ const DynamicMenu = ({
           { t('ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI', { count: tasksToUnassign.length }) }
         </MenuItem>
       )}
+      { actions.includes(ASSIGN_MULTI) && (
+        <MenuItem onClick={ () => console.log('Ok') }>
+          { t('ADMIN_DASHBOARD_ASSIGN_TASKS_MULTI', { count: selectedTasks.length }) }
+        </MenuItem>
+      )}
       { actions.includes(CANCEL_MULTI) && (
         <MenuItem onClick={ () => cancelTasks(selectedTasks) }>
           { t('ADMIN_DASHBOARD_CANCEL_TASKS_MULTI', { count: selectedTasks.length }) }
@@ -100,6 +108,12 @@ function mapStateToProps(state) {
   const tasksToUnassign =
       _.filter(state.selectedTasks, selectedTask =>
         !_.find(state.unassignedTasks, unassignedTask => unassignedTask['@id'] === selectedTask['@id']))
+
+  // const tasksToAssign =
+  //     _.filter(state.selectedTasks, selectedTask =>
+  //       _.find(state.unassignedTasks, unassignedTask => unassignedTask['@id'] === selectedTask['@id']))
+
+  // console.log(tasksToAssign)
 
   const containsOnlyUnassignedTasks = !_.find(state.selectedTasks, t => t.isAssigned)
 
