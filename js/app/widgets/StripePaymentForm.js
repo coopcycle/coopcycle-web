@@ -91,6 +91,7 @@ export default function(form, options) {
       if (event.error) {
         document.getElementById('card-errors').textContent = event.error.message
       } else {
+        event.complete && enableBtn(submitButton)
         document.getElementById('card-errors').textContent = ''
       }
     }
