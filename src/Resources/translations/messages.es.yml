@@ -202,6 +202,10 @@ order.total_tax: IVA
 order.total_tax_by_rate: Total %name%
 order.preparation_expected_at: Preparación esperada a las %date%
 order.shipping_date.title: Tu horario de entrega
+order.payer.title: Detalles del comprador
+order.payer.email: E-mail
+order.payer.identificationType: Tipo de documento
+order.payer.identificationNumber: Número de documento
 order.payment.title: Información de tú pago
 order.payment.expiration.label: Caducidad
 order.payment.month.label: Mes

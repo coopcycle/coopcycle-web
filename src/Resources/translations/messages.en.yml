@@ -299,6 +299,10 @@ order.total_tax: VAT
 order.total_tax_by_rate: Total %name%
 order.preparation_expected_at: Preparation expected at %date%
 order.shipping_date.title: Your shipping date
+order.payer.title: Buyer information
+order.payer.email: E-mail
+order.payer.identificationType: ID type
+order.payer.identificationNumber: Identification number
 order.payment.title: Your payment information
 order.payment.expiration.label: Expiration
 order.payment.month.label: Month

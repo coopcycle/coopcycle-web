@@ -1,5 +1,8 @@
 {% extends "base.html.twig" %}
 
+{% set country = country_iso %}
+{% set gateway = payment_gateway_resolver.resolve() %}
+
 {% form_theme form 'form/order.html.twig' %}
 
 {% block banner %}
@@ -22,6 +25,31 @@
             {% include '_partials/order/items.html.twig' with { with_taxes: false, with_items: false } %}
           </div>
         </div>
+
+        {% if gateway == 'mercadopago' %}
+          <div class="form-group">
+            <h4 class="bg-light p-3 m-0">{{ 'order.payer.title'|trans }}</h4>
+            <div style="margin:10px">
+              <div>
+                <label for="email">{{ 'order.payer.email'|trans }}</label>
+                <input class="form-control" id="email" name="email" type="text" value="test@test.com" />
+              </div>
+
+              {% if country == 'ar' %}
+                <div>
+                  <label for="docType">{{ 'order.payer.identificationType'|trans }}</label>
+                  <select class="form-control" id="docType" name="docType" data-checkout="docType" type="text"></select>
+                </div>
+                <div>
+                  <label for="docNumber">{{ 'order.payer.identificationNumber'|trans }}</label>
+                  <input class="form-control" id="docNumber" name="docNumber" data-checkout="docNumber" type="text"/>
+                </div>
+              {% endif %}
+
+            </div>
+          </div>
+        {% endif %}
+
         <div>
           <h4 class="bg-light p-3 m-0 mb-4">{% trans %}order.payment.title{% endtrans %}</h4>
           <div>
@@ -95,6 +123,8 @@
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
 <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
 <script type="text/javascript">
+  // FIXME
+  // 'StripePaymentForm' should be renamed to something more generic like GatewatPaymentForm - @sgobotta
   new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
     card: "{{ payment_gateway_resolver.resolve() }}",
     amount: {{ order.total }},
@@ -103,11 +133,15 @@
         publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}"
       },
       mercadopago: {
-        publishableKey: "{{ coopcycle_setting('mercadopago_test_publishable_key') }}"
+        publishableKey: "{{ coopcycle_setting('mercadopago_test_publishable_key') }}",
+        country: '{{ country }}',
+        // FIXME
+        // Probably the gateway resolver could return a configuration object with this information - @sgobotta
+        countriesWithIdentificationTypes: ['ar']
       }
     },
     tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
-    cardholderNameElement: document.querySelector('#checkout_payment_stripePayment_cardholderName')
+    cardholderNameElement: document.querySelector('#checkout_payment_stripePayment_cardholderName'),
   });
 </script>
 {% endif %}
