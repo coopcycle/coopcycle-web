@@ -64,6 +64,8 @@ export default function(form, options) {
 
   const submitButton = form.querySelector('input[type="submit"],button[type="submit"]')
 
+  const toggleButton = isValidForm => isValidForm ? enableBtn(submitButton) : disableBtn(submitButton)
+
   const methods = Array
     .from(form.querySelectorAll('input[name="checkout_payment[method]"]'))
     .map((el) => el.value)
@@ -75,7 +77,7 @@ export default function(form, options) {
 
   switch (gatewayForCard) {
     case 'mercadopago':
-      Object.assign(CreditCard.prototype, mercadopago)
+      Object.assign(CreditCard.prototype, mercadopago({ onChange: toggleButton }))
       break
     case 'stripe':
     default:

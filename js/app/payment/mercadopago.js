@@ -50,10 +50,8 @@ const MercadoPagoForm = ({ amount, onChange }) => {
     getCardNumberProps,
     getExpiryDateProps,
     getCVCProps,
-  } = usePaymentInputs({
-    onChange,
-  })
-  
+  } = usePaymentInputs()
+  const { error: formError } = wrapperProps
   const [ expiryDateMonth, expiryDateYear ] = expiryDate.split('/').map(i => i.trim())
 
   const cardNumberProps = getCardNumberProps({
@@ -70,6 +68,10 @@ const MercadoPagoForm = ({ amount, onChange }) => {
   })
 
   const cvcProps = getCVCProps()
+
+  React.useEffect(() => {
+    onChange(formError === undefined)
+  }, [formError])
 
   return (
     <PaymentInputsWrapper { ...wrapperProps }>
@@ -98,7 +100,7 @@ const MercadoPagoForm = ({ amount, onChange }) => {
   );
 }
 
-export default {
+export default ({ onChange }) => ({
   init(form) {
     this.form = form
     const { country, countriesWithIdentificationTypes, publishableKey } = this.config.gatewayConfig
@@ -111,14 +113,10 @@ export default {
   },
   mount(el) {
     this.el = el
-
     return new Promise((resolve) => {
       render(<MercadoPagoForm
         amount={ this.config.amount }
-        // FIXME
-        // The event needs to be "transformed" into something generic
-        // The parent callback works only for Stripe
-        onChange={ this.config.onChange } />, el, resolve)
+        onChange={onChange} />, el, resolve)
     })
   },
   unmount() {
@@ -141,4 +139,4 @@ export default {
       })
     })
   }
-}
+})
