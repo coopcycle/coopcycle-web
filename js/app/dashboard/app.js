@@ -87,6 +87,11 @@ class DashboardApp extends React.Component {
               return;
             }
 
+            // cannot unassign by drag'n'drop atm
+            if (source.droppableId.startsWith('assigned:') && destination.droppableId === 'unassigned') {
+              return
+            }
+
             const username = destination.droppableId.replace('assigned:', '')
             const taskList = _.find(this.props.taskLists, tl => tl.username === username)
             const newTasks = [ ...taskList.items ]
