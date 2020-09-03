@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { render } from 'react-dom'
 import moment from 'moment'
-import Sortable from 'react-sortablejs'
+import { Draggable, Droppable } from "react-beautiful-dnd"
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
@@ -147,70 +147,31 @@ class TaskList extends React.Component {
               </a>
             </div>
           )}
-          <Sortable
-            className={ taskListClasslist.join(' ') }
-            onChange={ (order, sortable, e) => {
-
-              if (e.type === 'add' || e.type === 'update') {
-
-                const isTask = e.item.hasAttribute('data-task-id')
-
-                let tasks = []
-                if (isTask) {
-
-                  tasks = order.map(id => ({ '@id': id }))
-
-                  if (e.type === 'add') {
-                    const task = _.find(this.props.allTasks, t => t['@id'] === e.item.getAttribute('data-task-id'))
-
-                    if (task && task.previous) {
-                      // If previous task is another day, will be null
-                      const previousTask = _.find(this.props.allTasks, t => t['@id'] === task.previous)
-                      if (previousTask) {
-                        Array.prototype.splice.apply(tasks,
-                          Array.prototype.concat([ e.newIndex, 0 ], previousTask))
-                      }
-                    } else if (task && task.next) {
-                      // If next task is another day, will be null
-                      const nextTask = _.find(this.props.allTasks, t => t['@id'] === task.next)
-                      if (nextTask) {
-                        Array.prototype.splice.apply(tasks,
-                          Array.prototype.concat([ e.newIndex + 1, 0 ], nextTask))
-                      }
-                    }
-                  }
-
-                } else {
-
-                  const tasksFromGroup = Array
-                    .from(e.item.querySelectorAll('[data-task-id]'))
-                    .map(el => _.find(this.props.allTasks, t => t['@id'] === el.getAttribute('data-task-id')))
-
-                  tasks = this.props.items.slice()
-
-                  Array.prototype.splice.apply(tasks,
-                    Array.prototype.concat([ e.newIndex, 0 ], tasksFromGroup))
-                }
-
-                this.props.modifyTaskList(this.props.username, tasks)
-              }
-            }}
-            options={{
-              dataIdAttr: 'data-task-id',
-              group: {
-                name: 'assigned',
-                put: ['unassigned'],
-              },
-            }}>
-            { tasks.map(task => (
-              <Task
-                key={ task['@id'] }
-                task={ task }
-                assigned={ true }
-                onRemove={ task => this.remove(task) }
-              />
-            ))}
-          </Sortable>
+          <Droppable droppableId={ `assigned:${username}` }>
+            {(provided) => (
+              <div className={ taskListClasslist.join(' ') } ref={ provided.innerRef } { ...provided.droppableProps }>
+                { _.map(tasks, (task, index) => {
+                  return (
+                    <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ index }>
+                      {(provided) => (
+                        <div
+                          ref={ provided.innerRef }
+                          { ...provided.draggableProps }
+                          { ...provided.dragHandleProps }
+                        >
+                          <Task
+                            task={ task }
+                            assigned={ true }
+                            onRemove={ task => this.remove(task) } />
+                        </div>
+                      )}
+                    </Draggable>
+                  )
+                })}
+                { provided.placeholder }
+              </div>
+            )}
+          </Droppable>
         </div>
       </div>
     )

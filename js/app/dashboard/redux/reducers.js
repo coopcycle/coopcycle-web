@@ -48,6 +48,7 @@ import {
   OPEN_IMPORT_MODAL,
   CLOSE_IMPORT_MODAL,
   SET_CLUSTERS_ENABLED,
+  CLEAR_SELECTED_TASKS,
 } from './actions'
 
 const moment = extendMoment(Moment)
@@ -338,6 +339,10 @@ const selectedTasks = (state = [], action) => {
   case SELECT_TASKS:
 
     return action.tasks
+
+  case CLEAR_SELECTED_TASKS:
+
+    return []
   }
 
   return state
