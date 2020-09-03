@@ -53,7 +53,7 @@ const MercadoPagoForm = ({ amount, onChange }) => {
   } = usePaymentInputs({
     onChange,
   })
-
+  
   const [ expiryDateMonth, expiryDateYear ] = expiryDate.split('/').map(i => i.trim())
 
   const cardNumberProps = getCardNumberProps({
@@ -101,12 +101,13 @@ const MercadoPagoForm = ({ amount, onChange }) => {
 export default {
   init(form) {
     this.form = form
+    const { country, countriesWithIdentificationTypes, publishableKey } = this.config.gatewayConfig
 
-    Mercadopago.setPublishableKey(this.config.gatewayConfig.publishableKey)
+    Mercadopago.setPublishableKey(publishableKey)
 
-    // FIXME
-    // This does nothing in Mexico, need to test for other countries
-    // Mercadopago.getIdentificationTypes()
+    if (countriesWithIdentificationTypes.includes(country)) {
+      Mercadopago.getIdentificationTypes()
+    }
   },
   mount(el) {
     this.el = el
