@@ -16,7 +16,8 @@ import {
   openSettings,
   closeSettings,
   closeImportModal,
-  modifyTaskList } from './redux/actions'
+  modifyTaskList,
+  clearSelectedTasks } from './redux/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
 import ContextMenu from './components/ContextMenu'
@@ -46,82 +47,106 @@ class DashboardApp extends React.Component {
   render () {
     return (
       <div className="dashboard__aside-container">
-        <DragDropContext onDragEnd={ result => {
+        <DragDropContext
+          // https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/patterns/multi-drag.md
+          onDragStart={ result => {
 
-          // dropped nowhere
-          if (!result.destination) {
-            return;
-          }
+            // If the user is starting to drag something that is not selected then we need to clear the selection.
+            // https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/patterns/multi-drag.md#dragging
+            const isDraggableSelected =
+              !!_.find(this.props.selectedTasks, t => t['@id'] === result.draggableId)
 
-          const source = result.source;
-          const destination = result.destination;
+            if (!isDraggableSelected) {
+              this.props.clearSelectedTasks()
+            }
 
-          // reodered inside the unassigned list, do nothing
-          if (
-            source.droppableId === destination.droppableId &&
-            source.droppableId === 'unassigned'
-          ) {
-            return;
-          }
+          }}
+          onDragEnd={ result => {
 
-          // did not move anywhere - can bail early
-          if (
-            source.droppableId === destination.droppableId &&
-            source.index === destination.index
-          ) {
-            return;
-          }
+            // dropped nowhere
+            if (!result.destination) {
+              return;
+            }
 
-          const username = destination.droppableId.replace('assigned:', '')
-          const taskList = _.find(this.props.taskLists, tl => tl.username === username)
-          const newTasks = [ ...taskList.items ]
+            const source = result.source;
+            const destination = result.destination;
 
-          if (result.draggableId.startsWith('group:')) {
+            // reodered inside the unassigned list, do nothing
+            if (
+              source.droppableId === destination.droppableId &&
+              source.droppableId === 'unassigned'
+            ) {
+              return;
+            }
 
-            const groupEl = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`)
+            // did not move anywhere - can bail early
+            if (
+              source.droppableId === destination.droppableId &&
+              source.index === destination.index
+            ) {
+              return;
+            }
 
-            const tasksFromGroup = Array
-              .from(groupEl.querySelectorAll('[data-task-id]'))
-              .map(el => _.find(this.props.allTasks, t => t['@id'] === el.getAttribute('data-task-id')))
+            const username = destination.droppableId.replace('assigned:', '')
+            const taskList = _.find(this.props.taskLists, tl => tl.username === username)
+            const newTasks = [ ...taskList.items ]
 
-            Array.prototype.splice.apply(newTasks,
-              Array.prototype.concat([ result.destination.index, 0 ], tasksFromGroup))
+            if (this.props.selectedTasks.length > 1) {
 
-          } else {
+              // FIXME Manage linked tasks
+              // FIXME
+              // The tasks are dropped in the order they were selected
+              // Instead, we should respect the order of the unassigned tasks
 
-            // Reorder inside same list
-            if (source.droppableId === destination.droppableId) {
-              const [ removed ] = newTasks.splice(result.source.index, 1);
-              newTasks.splice(result.destination.index, 0, removed)
+              Array.prototype.splice.apply(newTasks,
+                Array.prototype.concat([ result.destination.index, 0 ], this.props.selectedTasks))
+
+            } else if (result.draggableId.startsWith('group:')) {
+
+              const groupEl = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`)
+
+              const tasksFromGroup = Array
+                .from(groupEl.querySelectorAll('[data-task-id]'))
+                .map(el => _.find(this.props.allTasks, t => t['@id'] === el.getAttribute('data-task-id')))
+
+              Array.prototype.splice.apply(newTasks,
+                Array.prototype.concat([ result.destination.index, 0 ], tasksFromGroup))
+
             } else {
 
-              const task = _.find(this.props.allTasks, t => t['@id'] === result.draggableId)
+              // Reorder inside same list
+              if (source.droppableId === destination.droppableId) {
+                const [ removed ] = newTasks.splice(result.source.index, 1);
+                newTasks.splice(result.destination.index, 0, removed)
+              } else {
 
-              newTasks.splice(result.destination.index, 0, task)
+                const task = _.find(this.props.allTasks, t => t['@id'] === result.draggableId)
 
-              if (task && task.previous) {
-                // If previous task is another day, will be null
-                const previousTask = _.find(this.props.allTasks, t => t['@id'] === task.previous)
-                if (previousTask) {
-                  Array.prototype.splice.apply(newTasks,
-                    Array.prototype.concat([ result.destination.index, 0 ], previousTask))
+                newTasks.splice(result.destination.index, 0, task)
+
+                if (task && task.previous) {
+                  // If previous task is another day, will be null
+                  const previousTask = _.find(this.props.allTasks, t => t['@id'] === task.previous)
+                  if (previousTask) {
+                    Array.prototype.splice.apply(newTasks,
+                      Array.prototype.concat([ result.destination.index, 0 ], previousTask))
+                  }
+                } else if (task && task.next) {
+                  // If next task is another day, will be null
+                  const nextTask = _.find(this.props.allTasks, t => t['@id'] === task.next)
+                  if (nextTask) {
+                    Array.prototype.splice.apply(newTasks,
+                      Array.prototype.concat([ result.destination.index + 1, 0 ], nextTask))
+                  }
                 }
-              } else if (task && task.next) {
-                // If next task is another day, will be null
-                const nextTask = _.find(this.props.allTasks, t => t['@id'] === task.next)
-                if (nextTask) {
-                  Array.prototype.splice.apply(newTasks,
-                    Array.prototype.concat([ result.destination.index + 1, 0 ], nextTask))
-                }
+
               }
 
             }
 
-          }
+            this.props.modifyTaskList(username, newTasks)
 
-          this.props.modifyTaskList(username, newTasks)
-
-        } }>
+          }}>
           <UnassignedTasks />
           <TaskLists couriersList={ this.props.couriersList } />
         </DragDropContext>
@@ -178,6 +203,7 @@ function mapStateToProps(state) {
     importModalIsOpen: state.importModalIsOpen,
     allTasks: state.allTasks,
     taskLists: state.taskLists,
+    selectedTasks: state.selectedTasks,
   }
 }
 
@@ -193,6 +219,7 @@ function mapDispatchToProps (dispatch) {
     closeSettings: () => dispatch(closeSettings()),
     closeImportModal: () => dispatch(closeImportModal()),
     modifyTaskList: (username, tasks) => dispatch(modifyTaskList(username, tasks)),
+    clearSelectedTasks: () => dispatch(clearSelectedTasks()),
   }
 }
 

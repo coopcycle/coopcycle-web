@@ -162,15 +162,23 @@ class UnassignedTasks extends React.Component {
                 { _.map(standaloneTasks, (task, index) => {
                   return (
                     <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ (groups.length + index) }>
-                      {(provided) => (
-                        <div
-                          ref={ provided.innerRef }
-                          { ...provided.draggableProps }
-                          { ...provided.dragHandleProps }
-                        >
-                          <Task task={ task } />
-                        </div>
-                      )}
+                      {(provided, snapshot) => {
+
+                        return (
+                          <div
+                            ref={ provided.innerRef }
+                            { ...provided.draggableProps }
+                            { ...provided.dragHandleProps }
+                          >
+                            <Task task={ task } />
+                            { (snapshot.isDragging && this.props.selectedTasks.length > 1) && (
+                              <div style={{ position: 'absolute', top: '-10px', right: '-10px', backgroundColor: '#e67e22', color: 'white', height: '20px', width: '20px', borderRadius: '50%', textAlign: 'center' }}>
+                                <span style={{ lineHeight: '20px', fontWeight: '700' }}>{ this.props.selectedTasks.length }</span>
+                              </div>
+                            ) }
+                          </div>
+                        )
+                      }}
                     </Draggable>
                   )
                 })}
@@ -190,7 +198,8 @@ function mapStateToProps (state) {
     unassignedTasks: state.unassignedTasks,
     taskListGroupMode: state.taskListGroupMode,
     showCancelledTasks: state.filters.showCancelledTasks,
-    taskModalIsOpen: state.taskModalIsOpen
+    taskModalIsOpen: state.taskModalIsOpen,
+    selectedTasks: state.selectedTasks,
   }
 }
 

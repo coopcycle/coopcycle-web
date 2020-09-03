@@ -86,6 +86,7 @@ export const TOGGLE_POLYLINE = 'TOGGLE_POLYLINE'
 export const TOGGLE_TASK = 'TOGGLE_TASK'
 export const SELECT_TASK = 'SELECT_TASK'
 export const SELECT_TASKS = 'SELECT_TASKS'
+export const CLEAR_SELECTED_TASKS = 'CLEAR_SELECTED_TASKS'
 export const SET_TASK_LIST_GROUP_MODE = 'SET_TASK_LIST_GROUP_MODE'
 export const ADD_TASK_LIST_REQUEST = 'ADD_TASK_LIST_REQUEST'
 export const ADD_TASK_LIST_REQUEST_SUCCESS = 'ADD_TASK_LIST_REQUEST_SUCCESS'
@@ -268,6 +269,10 @@ function selectTask(task) {
 
 function selectTasks(tasks) {
   return { type: SELECT_TASKS, tasks }
+}
+
+function clearSelectedTasks() {
+  return { type: CLEAR_SELECTED_TASKS }
 }
 
 function setTaskListGroupMode(mode) {
@@ -705,4 +710,5 @@ export {
   startTask,
   setClustersEnabled,
   taskListUpdated,
+  clearSelectedTasks,
 }
