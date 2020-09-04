@@ -18,6 +18,7 @@ use AppBundle\Service\TaskManager;
 use AppBundle\Utils\TaskImageNamer;
 use Cocur\Slugify\SlugifyInterface;
 use FOS\UserBundle\Model\UserInterface;
+use FOS\UserBundle\Model\UserManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
@@ -202,10 +203,11 @@ trait AdminDashboardTrait
      */
     public function modifyTaskListAction($date, $username, Request $request,
         IriConverterInterface $iriConverter,
+        UserManagerInterface $userManager,
         LoggerInterface $logger)
     {
         $date = new \DateTime($date);
-        $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
+        $user = $userManager->findUserByUsername($username);
 
         $taskList = $this->getTaskList($date, $user);
 
@@ -248,10 +250,10 @@ trait AdminDashboardTrait
      *   methods={"POST"},
      *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
      */
-    public function createTaskListAction($date, $username, Request $request)
+    public function createTaskListAction($date, $username, Request $request, UserManagerInterface $userManager)
     {
         $date = new \DateTime($date);
-        $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
+        $user = $userManager->findUserByUsername($username);
 
         $taskList = $this->getTaskList($date, $user);
 

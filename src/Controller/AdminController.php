@@ -427,12 +427,13 @@ class AdminController extends Controller
     /**
      * @Route("/admin/user/{username}", name="admin_user_details")
      */
-    public function userAction($username, Request $request)
+    public function userAction($username, Request $request, UserManagerInterface $userManager)
     {
-        // @link https://symfony.com/doc/current/bundles/FOSUserBundle/user_manager.html
-        $userManager = $this->get('fos_user.user_manager');
-
         $user = $userManager->findUserByUsername($username);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
 
         return $this->render('admin/user.html.twig', [
             'user' => $user,
@@ -442,12 +443,13 @@ class AdminController extends Controller
     /**
      * @Route("/admin/user/{username}/edit", name="admin_user_edit")
      */
-    public function userEditAction($username, Request $request)
+    public function userEditAction($username, Request $request, UserManagerInterface $userManager)
     {
-        // @link https://symfony.com/doc/current/bundles/FOSUserBundle/user_manager.html
-        $userManager = $this->get('fos_user.user_manager');
-
         $user = $userManager->findUserByUsername($username);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
 
         // Roles that can be edited by admin
         $editableRoles = ['ROLE_ADMIN', 'ROLE_COURIER', 'ROLE_RESTAURANT', 'ROLE_STORE'];
@@ -504,10 +506,13 @@ class AdminController extends Controller
     /**
      * @Route("/admin/user/{username}/tracking", name="admin_user_tracking")
      */
-    public function userTrackingAction($username, Request $request)
+    public function userTrackingAction($username, Request $request, UserManagerInterface $userManager)
     {
-        $userManager = $this->get('fos_user.user_manager');
         $user = $userManager->findUserByUsername($username);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
 
         return $this->userTracking($user, 'admin');
     }
