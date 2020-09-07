@@ -110,7 +110,6 @@
     "react-phone-number-input": "^2.5.3",
     "react-redux": "^7.2.1",
     "react-select": "^3.1.0",
-    "react-sortablejs": "^1.5.1",
     "react-stickynode": "^3.0.3",
     "react-timeago": "^4.4.0",
     "react-toastify": "^6.0.8",
