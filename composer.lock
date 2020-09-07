@@ -1816,20 +1816,6 @@
                 "sqlserver",
                 "sqlsrv"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fdbal",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-04-20T17:19:26+00:00"
         },
         {
@@ -4585,12 +4571,6 @@
                 "orm",
                 "symfony"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/theofidry",
-                    "type": "github"
-                }
-            ],
             "time": "2020-03-15T10:07:54+00:00"
         },
         {
@@ -6302,12 +6282,6 @@
                 "laminas",
                 "zf"
             ],
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
             "time": "2020-04-03T16:01:00+00:00"
         },
         {
@@ -6443,16 +6417,16 @@
         },
         {
             "name": "league/csv",
-            "version": "9.6.0",
+            "version": "9.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/csv.git",
-                "reference": "7351a74625601914409b42b32cabb91a93773b7b"
+                "reference": "634322df4aed210fdfbb7c94e434dc860da733d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/csv/zipball/7351a74625601914409b42b32cabb91a93773b7b",
-                "reference": "7351a74625601914409b42b32cabb91a93773b7b",
+                "url": "https://api.github.com/repos/thephpleague/csv/zipball/634322df4aed210fdfbb7c94e434dc860da733d9",
+                "reference": "634322df4aed210fdfbb7c94e434dc860da733d9",
                 "shasum": ""
             },
             "require": {
@@ -6462,11 +6436,12 @@
             },
             "require-dev": {
                 "ext-curl": "*",
+                "ext-dom": "*",
                 "friendsofphp/php-cs-fixer": "^2.16",
                 "phpstan/phpstan": "^0.12.0",
                 "phpstan/phpstan-phpunit": "^0.12.0",
                 "phpstan/phpstan-strict-rules": "^0.12.0",
-                "phpunit/phpunit": "^8.0"
+                "phpunit/phpunit": "^8.5"
             },
             "suggest": {
                 "ext-dom": "Required to use the XMLConverter and or the HTMLConverter classes",
@@ -6516,7 +6491,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-03-17T15:15:35+00:00"
+            "time": "2020-09-05T08:40:12+00:00"
         },
         {
             "name": "league/event",
@@ -8080,16 +8055,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.39.0",
+            "version": "2.39.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "0a41ea7f7fedacf307b7a339800e10356a042918"
+                "reference": "7af467873250583cc967a59ee9df29fabab193c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/0a41ea7f7fedacf307b7a339800e10356a042918",
-                "reference": "0a41ea7f7fedacf307b7a339800e10356a042918",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/7af467873250583cc967a59ee9df29fabab193c1",
+                "reference": "7af467873250583cc967a59ee9df29fabab193c1",
                 "shasum": ""
             },
             "require": {
@@ -8102,7 +8077,7 @@
                 "doctrine/orm": "^2.7",
                 "friendsofphp/php-cs-fixer": "^2.14 || ^3.0",
                 "kylekatarnls/multi-tester": "^2.0",
-                "phpmd/phpmd": "^2.8",
+                "phpmd/phpmd": "^2.9",
                 "phpstan/extension-installer": "^1.0",
                 "phpstan/phpstan": "^0.12.35",
                 "phpunit/phpunit": "^7.5 || ^8.0",
@@ -8165,7 +8140,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-08-24T12:35:58+00:00"
+            "time": "2020-09-04T13:11:37+00:00"
         },
         {
             "name": "nmure/crawler-detect-bundle",
@@ -11611,16 +11586,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.50.0",
+            "version": "v7.51.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "0195e3dcc34123df9a441069dbf08db17c3b025d"
+                "reference": "879a3545126ebc77218c53d2055572b7e473fbcf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/0195e3dcc34123df9a441069dbf08db17c3b025d",
-                "reference": "0195e3dcc34123df9a441069dbf08db17c3b025d",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/879a3545126ebc77218c53d2055572b7e473fbcf",
+                "reference": "879a3545126ebc77218c53d2055572b7e473fbcf",
                 "shasum": ""
             },
             "require": {
@@ -11664,7 +11639,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2020-08-28T20:17:35+00:00"
+            "time": "2020-09-02T21:04:02+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -15077,16 +15052,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v4.4.12",
+            "version": "v4.4.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "da9869f6939e19341eae226bb8ac20419cf3790e"
+                "reference": "9b8314080fb15e84e030f94488d9e1fa17adb846"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/da9869f6939e19341eae226bb8ac20419cf3790e",
-                "reference": "da9869f6939e19341eae226bb8ac20419cf3790e",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/9b8314080fb15e84e030f94488d9e1fa17adb846",
+                "reference": "9b8314080fb15e84e030f94488d9e1fa17adb846",
                 "shasum": ""
             },
             "require": {
@@ -15264,7 +15239,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-08-31T06:09:59+00:00"
+            "time": "2020-09-02T08:11:15+00:00"
         },
         {
             "name": "symfony/webpack-encore-bundle",
@@ -17132,12 +17107,12 @@
             ],
             "authors": [
                 {
-                    "name": "Konstantin Kudryashov",
-                    "email": "ever.zet@gmail.com"
-                },
-                {
                     "name": "Christophe Coevoet",
                     "email": "stof@notk.org"
+                },
+                {
+                    "name": "Konstantin Kudryashov",
+                    "email": "ever.zet@gmail.com"
                 }
             ],
             "description": "Symfony2 framework extension for Behat",
@@ -17713,16 +17688,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.40",
+            "version": "0.12.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "dce7293ad7b59fc09a9ab9b0b5b44902c092ca17"
+                "reference": "7c43b7c2d5ca6554f6231e82e342a710163ac5f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/dce7293ad7b59fc09a9ab9b0b5b44902c092ca17",
-                "reference": "dce7293ad7b59fc09a9ab9b0b5b44902c092ca17",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7c43b7c2d5ca6554f6231e82e342a710163ac5f4",
+                "reference": "7c43b7c2d5ca6554f6231e82e342a710163ac5f4",
                 "shasum": ""
             },
             "require": {
@@ -17765,7 +17740,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-08-26T19:06:20+00:00"
+            "time": "2020-09-02T13:14:53+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -18813,16 +18788,16 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v5.1.4",
+            "version": "v5.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "3229133c5f966d50a741a668e54b34c1368200a0"
+                "reference": "e7d37c91486a0f9eed58a8c23822e1870ea36db5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/3229133c5f966d50a741a668e54b34c1368200a0",
-                "reference": "3229133c5f966d50a741a668e54b34c1368200a0",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/e7d37c91486a0f9eed58a8c23822e1870ea36db5",
+                "reference": "e7d37c91486a0f9eed58a8c23822e1870ea36db5",
                 "shasum": ""
             },
             "require": {
@@ -18888,7 +18863,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-08-28T16:19:35+00:00"
+            "time": "2020-09-01T13:16:17+00:00"
         },
         {
             "name": "theseer/tokenizer",
