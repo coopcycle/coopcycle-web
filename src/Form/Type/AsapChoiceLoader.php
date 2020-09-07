@@ -122,6 +122,8 @@ class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
             $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
         }
 
+        $availabilities = array_values(array_unique($availabilities));
+
         return new ArrayChoiceList($availabilities, $value);
     }
 
