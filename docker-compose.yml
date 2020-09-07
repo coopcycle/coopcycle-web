@@ -175,6 +175,14 @@ services:
   tile38:
     image: tile38/tile38
 
+  pgadmin:
+    image: fenglc/pgadmin4
+    environment:
+        - DEFAULT_USER=root
+        - DEFAULT_PASSWORD=changeMe
+    ports:
+        - 5050:5050
+
 volumes:
   node_modules:
   pg_data:
