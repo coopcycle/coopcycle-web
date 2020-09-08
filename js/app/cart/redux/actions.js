@@ -248,6 +248,21 @@ export function changeDate() {
   }
 }
 
+export function mapAddressFields(address) {
+
+  return (dispatch, getState) => {
+
+    const { addressFormElements } = getState()
+
+    _.forEach(addressFormElements, (el, key) => {
+      const value = _.get(address, key)
+      if (value) {
+        el.value = value
+      }
+    })
+  }
+}
+
 export function changeAddress(address) {
 
   return (dispatch, getState) => {
@@ -280,6 +295,9 @@ export function changeAddress(address) {
       } else {
 
         isNewAddressFormElement.value = '1'
+
+        // This must be done *BEFORE* posting the form
+        dispatch(mapAddressFields(address))
 
         postForm()
           .then(res => handleAjaxResponse(res, dispatch))

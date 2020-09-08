@@ -1,10 +1,10 @@
-import _ from 'lodash'
+import { mapAddressFields } from './actions'
 
 /**
  * This middleware checks if the shipping address was updated,
  * and updates the value of the mapped HTML elements
  */
-export const updateFormElements = ({ getState }) => {
+export const updateFormElements = ({ dispatch, getState }) => {
 
   return next => action => {
 
@@ -13,12 +13,7 @@ export const updateFormElements = ({ getState }) => {
     const state = getState()
 
     if (state.cart.shippingAddress !== prevState.cart.shippingAddress) {
-        _.forEach(state.addressFormElements, (el, key) => {
-            const value = _.get(state.cart.shippingAddress, key)
-            if (value) {
-                el.value = value
-            }
-        })
+        dispatch(mapAddressFields(state.cart.shippingAddress))
     }
 
     return result
