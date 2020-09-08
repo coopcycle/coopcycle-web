@@ -216,6 +216,7 @@ context('Checkout', () => {
     cy.server()
     cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
     cy.route('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
+    cy.route('POST', '/fr/restaurant/*/cart/address').as('postCartAddress')
 
     cy.visit('/login')
 
@@ -284,7 +285,7 @@ context('Checkout', () => {
       .contains('1, Rue de Rivoli, Paris, France')
       .click()
 
-    cy.wait('@postRestaurant')
+    cy.wait('@postCartAddress')
 
     cy.get('form[name="cart"]').submit()
 
