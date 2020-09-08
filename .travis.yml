@@ -138,5 +138,5 @@ script:
   - node node_modules/.bin/mocha --require @babel/register --exit js/tests/
   - $(npm bin)/cypress run
 
-after_failure:
-  - cat var/logs/test-*.log
+# after_failure:
+#   - cat var/logs/test-*.log
