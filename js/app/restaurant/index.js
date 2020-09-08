@@ -316,11 +316,11 @@ window.initMap = function() {
     restaurant,
     datePickerTimeSlotInputName: 'cart[timeSlot]',
     addressFormElements: {
-      streetAddress: document.querySelector('#cart_shippingAddress_streetAddress'),
-      postalCode: document.querySelector('#cart_shippingAddress_postalCode'),
-      addressLocality: document.querySelector('#cart_shippingAddress_addressLocality'),
-      latitude: document.querySelector('#cart_shippingAddress_latitude'),
-      longitude: document.querySelector('#cart_shippingAddress_longitude')
+      'streetAddress': document.querySelector('#cart_shippingAddress_streetAddress'),
+      'postalCode': document.querySelector('#cart_shippingAddress_postalCode'),
+      'addressLocality': document.querySelector('#cart_shippingAddress_addressLocality'),
+      'geo.latitude': document.querySelector('#cart_shippingAddress_latitude'),
+      'geo.longitude': document.querySelector('#cart_shippingAddress_longitude')
     },
     isNewAddressFormElement: document.querySelector('#cart_isNewAddress'),
     addresses,

@@ -207,7 +207,10 @@ function geocodeAndSync() {
       if (status === geocoderOK && results.length > 0) {
         const place = results[0]
         const address = placeToAddress(place, cart.shippingAddress.streetAddress)
-        dispatch(changeAddress(address))
+        dispatch(changeAddress({
+          ...cart.shippingAddress,
+          ...address,
+        }))
       } else {
         dispatch(geocodingFailure())
       }
@@ -245,20 +248,6 @@ export function changeDate() {
   }
 }
 
-export function mapAddressFields(address) {
-
-  return (dispatch, getState) => {
-
-    const { addressFormElements } = getState()
-
-    _.forEach(addressFormElements, (el, key) => {
-      if (Object.prototype.hasOwnProperty.call(address, key)) {
-        el.value = address[key]
-      }
-    })
-  }
-}
-
 export function changeAddress(address) {
 
   return (dispatch, getState) => {
@@ -266,7 +255,6 @@ export function changeAddress(address) {
     window._paq.push(['trackEvent', 'Checkout', 'changeAddress', address.streetAddress])
 
     const {
-      addressFormElements,
       isNewAddressFormElement,
       restaurant
     } = getState()
@@ -292,12 +280,6 @@ export function changeAddress(address) {
       } else {
 
         isNewAddressFormElement.value = '1'
-
-        _.forEach(addressFormElements, (el, key) => {
-          if (Object.prototype.hasOwnProperty.call(address, key)) {
-            el.value = address[key]
-          }
-        })
 
         postForm()
           .then(res => handleAjaxResponse(res, dispatch))
