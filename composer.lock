@@ -1816,6 +1816,20 @@
                 "sqlserver",
                 "sqlsrv"
             ],
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fdbal",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-04-20T17:19:26+00:00"
         },
         {
@@ -4571,6 +4585,12 @@
                 "orm",
                 "symfony"
             ],
+            "funding": [
+                {
+                    "url": "https://github.com/theofidry",
+                    "type": "github"
+                }
+            ],
             "time": "2020-03-15T10:07:54+00:00"
         },
         {
@@ -6281,6 +6301,12 @@
                 "autoloading",
                 "laminas",
                 "zf"
+            ],
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
             ],
             "time": "2020-04-03T16:01:00+00:00"
         },
@@ -11315,16 +11341,16 @@
         },
         {
             "name": "sonata-project/exporter",
-            "version": "2.2.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/exporter.git",
-                "reference": "ed2b6e43982eec5c267b3ff3bc0e3c97ab98b849"
+                "reference": "d2fb26e7a8c8bf86e5d7a2aed563375e28f6762e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/exporter/zipball/ed2b6e43982eec5c267b3ff3bc0e3c97ab98b849",
-                "reference": "ed2b6e43982eec5c267b3ff3bc0e3c97ab98b849",
+                "url": "https://api.github.com/repos/sonata-project/exporter/zipball/d2fb26e7a8c8bf86e5d7a2aed563375e28f6762e",
+                "reference": "d2fb26e7a8c8bf86e5d7a2aed563375e28f6762e",
                 "shasum": ""
             },
             "require": {
@@ -11380,27 +11406,27 @@
                 "export",
                 "xls"
             ],
-            "time": "2020-03-17T17:59:38+00:00"
+            "time": "2020-07-14T21:36:10+00:00"
         },
         {
             "name": "sonata-project/seo-bundle",
-            "version": "2.11.0",
+            "version": "2.12.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:sonata-project/SonataSeoBundle.git",
-                "reference": "08ac379a9b98e6d1bc3e611246251433f1d1c745"
+                "url": "https://github.com/sonata-project/SonataSeoBundle.git",
+                "reference": "ffbe1a4f1619d9ea4ee45e7576f1602df16a899f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/08ac379a9b98e6d1bc3e611246251433f1d1c745",
-                "reference": "08ac379a9b98e6d1bc3e611246251433f1d1c745",
+                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/ffbe1a4f1619d9ea4ee45e7576f1602df16a899f",
+                "reference": "ffbe1a4f1619d9ea4ee45e7576f1602df16a899f",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1",
+                "php": "^7.2",
                 "psr/http-client": "^1.0",
                 "psr/http-message": "^1.0",
-                "sonata-project/exporter": "^1.11 || ^2.0",
+                "sonata-project/exporter": "^2.0",
                 "symfony/config": "^4.4 || ^5.0",
                 "symfony/dependency-injection": "^4.4 || ^5.0",
                 "symfony/form": "^4.4 || ^5.0",
@@ -11464,7 +11490,7 @@
                 "seo",
                 "sonata"
             ],
-            "time": "2020-06-26T20:32:08+00:00"
+            "time": "2020-09-07T19:38:01+00:00"
         },
         {
             "name": "spomky-labs/base64url",
@@ -17107,12 +17133,12 @@
             ],
             "authors": [
                 {
-                    "name": "Christophe Coevoet",
-                    "email": "stof@notk.org"
-                },
-                {
                     "name": "Konstantin Kudryashov",
                     "email": "ever.zet@gmail.com"
+                },
+                {
+                    "name": "Christophe Coevoet",
+                    "email": "stof@notk.org"
                 }
             ],
             "description": "Symfony2 framework extension for Behat",
