@@ -4,6 +4,8 @@ namespace AppBundle\Form;
 
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberType as LibPhoneNumberType;
+use libphonenumber\PhoneNumberUtil;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,6 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 abstract class LocalBusinessType extends AbstractType
@@ -28,6 +31,7 @@ abstract class LocalBusinessType extends AbstractType
     protected $country;
     protected $loopeatEnabled;
     protected $debug;
+    private $translator;
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
@@ -36,7 +40,8 @@ abstract class LocalBusinessType extends AbstractType
         SerializerInterface $serializer,
         string $country,
         bool $loopeatEnabled = false,
-        bool $debug = false)
+        bool $debug = false,
+        TranslatorInterface $translator)
     {
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
@@ -45,10 +50,15 @@ abstract class LocalBusinessType extends AbstractType
         $this->country = $country;
         $this->loopeatEnabled = $loopeatEnabled;
         $this->debug = $debug;
+        $this->translator = $translator;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $phoneNumberUtil = PhoneNumberUtil::getInstance();
+        $telephoneExample = $phoneNumberUtil->getExampleNumberForType(strtoupper($this->country), LibPhoneNumberType::MOBILE);
+        [,,$countryCode,,,$phoneNumber] = explode(" ", $telephoneExample);
+
         $builder
             ->add('enabled', CheckboxType::class, [
                 'label' => 'localBusiness.form.enabled',
@@ -67,6 +77,10 @@ abstract class LocalBusinessType extends AbstractType
                 'format' => PhoneNumberFormat::NATIONAL,
                 'required' => false,
                 'label' => 'localBusiness.form.telephone',
+                'help' => strval($this->translator->trans('localBusiness.form.telephone.help', [
+                    '%cc%' => "+".$countryCode,
+                    '%phone%' => $phoneNumber,
+                ])),
             ]);
 
         foreach ($options['additional_properties'] as $key) {
