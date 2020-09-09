@@ -211,7 +211,7 @@ context('Checkout', () => {
       .should('have.value', '91 Rue de Rivoli, Paris, France')
   })
 
-  it('order something at restaurant with existing address (via modal)', () => {
+  it.skip('order something at restaurant with existing address (via modal)', () => {
 
     cy.server()
     cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
