@@ -1,6 +1,8 @@
 import AddressAutosuggest from '../widgets/AddressAutosuggest'
 import DateTimePicker from '../widgets/DateTimePicker'
 
+const getDateTimePickerContainer = trigger => trigger.parentNode
+
 window.initMap = function() {
 
   $.each(['pickup', 'dropoff'], function(index, type) {
@@ -10,12 +12,8 @@ window.initMap = function() {
 
     new DateTimePicker(document.querySelector(`#delivery_${type}_doneBefore_widget`), {
       defaultValue,
-      getDatePickerContainer: function(trigger) {
-        return trigger.parentNode;
-      },
-      getTimePickerContainer: function(trigger) {
-        return trigger.parentNode;
-      },
+      getDatePickerContainer: getDateTimePickerContainer,
+      getTimePickerContainer: getDateTimePickerContainer,
       onChange: function(date) {
         if (date) {
           document.querySelector(`#delivery_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
@@ -29,6 +27,7 @@ window.initMap = function() {
     new AddressAutosuggest(
       streetAddrInput.closest('.form-group'),
       {
+        required: true,
         address: streetAddrInput.value,
         inputId: streetAddrInput.getAttribute('id'),
         inputName: streetAddrInput.getAttribute('name'),
