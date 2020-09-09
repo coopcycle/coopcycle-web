@@ -46,26 +46,33 @@ context('Delivery', () => {
 
     cy.visit('/fr/embed/delivery/start')
 
+    // Pickup
+
     cy.get('#delivery_pickup_address_streetAddress')
       .type('91 rue de rivoli paris', { timeout: 5000, delay: 30 })
 
-    // @see https://github.com/cypress-io/cypress/issues/1847
-    cy.get('.pac-container .pac-item')
-      .contains('91 Rue de Rivoli')
-      .trigger('mouseover')
+    cy.get('#delivery_pickup_address_streetAddress')
+      .closest('.form-group')
+      .find('.react-autosuggest__suggestions-container')
+      .find('ul[role="listbox"] li', { timeout: 5000 })
+      .contains('91 Rue de Rivoli, Paris, France')
       .click()
 
     cy.get('#delivery_pickup_address_latitude')
       .invoke('val')
       .should('match', /[0-9\.]+/)
 
+    // Dropoff
+
     cy.get('#delivery_dropoff_address_streetAddress')
       .type('120 rue st maur paris', { timeout: 5000, delay: 30 })
 
-    // @see https://github.com/cypress-io/cypress/issues/1847
-    cy.get('.pac-container .pac-item')
+    // Click on the first suggestion
+    cy.get('#delivery_dropoff_address_streetAddress')
+      .closest('.form-group')
+      .find('.react-autosuggest__suggestions-container')
+      .find('ul[role="listbox"] li', { timeout: 5000 })
       .contains('120 Rue St Maur')
-      .trigger('mouseover')
       .click()
 
     cy.get('#delivery_dropoff_address_latitude')
