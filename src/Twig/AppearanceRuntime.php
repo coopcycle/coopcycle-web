@@ -43,14 +43,19 @@ class AppearanceRuntime implements RuntimeExtensionInterface
 
     public function companyLogo()
     {
-        $companyLogo = $this->settingsManager->get('company_logo');
+        return $this->appCache->get('content.company_logo.base_64', function (ItemInterface $item) {
 
-        if (!empty($companyLogo) && $this->assetsFilesystem->has($companyLogo)) {
+            $item->expiresAfter(60 * 60 * 24);
 
-            return (string) ImageManagerStatic::make($this->assetsFilesystem->read($companyLogo))->encode('data-url');
-        }
+            $companyLogo = $this->settingsManager->get('company_logo');
 
-        return (string) ImageManagerStatic::make(file_get_contents($this->logoFallback))->encode('data-url');
+            if (!empty($companyLogo) && $this->assetsFilesystem->has($companyLogo)) {
+
+                return (string) ImageManagerStatic::make($this->assetsFilesystem->read($companyLogo))->encode('data-url');
+            }
+
+            return (string) ImageManagerStatic::make(file_get_contents($this->logoFallback))->encode('data-url');
+        });
     }
 
     public function hasAboutUs()
