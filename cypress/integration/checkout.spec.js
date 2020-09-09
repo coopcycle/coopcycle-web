@@ -287,6 +287,8 @@ context('Checkout', () => {
 
     cy.wait('@postCartAddress')
 
+    cy.get('.cart__items').invoke('text').should('match', /Cheeseburger/)
+
     cy.get('form[name="cart"]').submit()
 
     cy.location('pathname').should('eq', '/order/')
