@@ -3943,16 +3943,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.8",
+            "version": "8.12.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "5a6e4e730de52f55882d2db27016e2916f8791e9"
+                "reference": "674b79ae3362409d08e550cb196d982485a76225"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/5a6e4e730de52f55882d2db27016e2916f8791e9",
-                "reference": "5a6e4e730de52f55882d2db27016e2916f8791e9",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/674b79ae3362409d08e550cb196d982485a76225",
+                "reference": "674b79ae3362409d08e550cb196d982485a76225",
                 "shasum": ""
             },
             "require": {
@@ -4007,7 +4007,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-08-13T17:48:08+00:00"
+            "time": "2020-08-31T09:51:44+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -4060,16 +4060,16 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.11.1",
+            "version": "v1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "bb959e91bd8ffbd352ab76cbf11d656ce6435088"
+                "reference": "74cad289014f7ef747618480f6b59f6303357f34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/bb959e91bd8ffbd352ab76cbf11d656ce6435088",
-                "reference": "bb959e91bd8ffbd352ab76cbf11d656ce6435088",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/74cad289014f7ef747618480f6b59f6303357f34",
+                "reference": "74cad289014f7ef747618480f6b59f6303357f34",
                 "shasum": ""
             },
             "require": {
@@ -4108,20 +4108,20 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2020-07-27T18:33:35+00:00"
+            "time": "2020-09-08T16:33:56+00:00"
         },
         {
             "name": "google/cloud-core",
-            "version": "v1.38.0",
+            "version": "v1.39.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-cloud-php-core.git",
-                "reference": "5379a3a2ffae2b6ad7eb55a4fa56acdd694a460e"
+                "reference": "f9e7421beac89fd7d9006a13a6b39b89dd86c92e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-cloud-php-core/zipball/5379a3a2ffae2b6ad7eb55a4fa56acdd694a460e",
-                "reference": "5379a3a2ffae2b6ad7eb55a4fa56acdd694a460e",
+                "url": "https://api.github.com/repos/googleapis/google-cloud-php-core/zipball/f9e7421beac89fd7d9006a13a6b39b89dd86c92e",
+                "reference": "f9e7421beac89fd7d9006a13a6b39b89dd86c92e",
                 "shasum": ""
             },
             "require": {
@@ -4169,24 +4169,24 @@
                 "Apache-2.0"
             ],
             "description": "Google Cloud PHP shared dependency, providing functionality useful to all components.",
-            "time": "2020-07-21T18:59:47+00:00"
+            "time": "2020-09-08T20:52:20+00:00"
         },
         {
             "name": "google/cloud-storage",
-            "version": "v1.22.0",
+            "version": "v1.23.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-cloud-php-storage.git",
-                "reference": "9412bf831a3fdd895378203b7e42b782deee8795"
+                "reference": "42f7dfb248318aa152b4491b72279035df0d0900"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-cloud-php-storage/zipball/9412bf831a3fdd895378203b7e42b782deee8795",
-                "reference": "9412bf831a3fdd895378203b7e42b782deee8795",
+                "url": "https://api.github.com/repos/googleapis/google-cloud-php-storage/zipball/42f7dfb248318aa152b4491b72279035df0d0900",
+                "reference": "42f7dfb248318aa152b4491b72279035df0d0900",
                 "shasum": ""
             },
             "require": {
-                "google/cloud-core": "^1.37",
+                "google/cloud-core": "^1.39",
                 "google/crc32": "^0.1.0"
             },
             "require-dev": {
@@ -4220,7 +4220,7 @@
                 "Apache-2.0"
             ],
             "description": "Cloud Storage Client for PHP",
-            "time": "2020-07-21T18:59:47+00:00"
+            "time": "2020-09-08T20:52:20+00:00"
         },
         {
             "name": "google/crc32",
@@ -5975,16 +5975,16 @@
         },
         {
             "name": "kreait/firebase-php",
-            "version": "5.8.0",
+            "version": "5.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kreait/firebase-php.git",
-                "reference": "9975417777a1f33f12894380f3e6f8f2a6923050"
+                "reference": "9cb112fedcafe1c25cced005fc9e0c065c397244"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kreait/firebase-php/zipball/9975417777a1f33f12894380f3e6f8f2a6923050",
-                "reference": "9975417777a1f33f12894380f3e6f8f2a6923050",
+                "url": "https://api.github.com/repos/kreait/firebase-php/zipball/9cb112fedcafe1c25cced005fc9e0c065c397244",
+                "reference": "9cb112fedcafe1c25cced005fc9e0c065c397244",
                 "shasum": ""
             },
             "require": {
@@ -6058,7 +6058,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-08-23T21:34:50+00:00"
+            "time": "2020-09-04T23:18:15+00:00"
         },
         {
             "name": "kreait/firebase-tokens",
@@ -11483,31 +11483,31 @@
         },
         {
             "name": "spomky-labs/base64url",
-            "version": "v2.0.1",
+            "version": "v2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Spomky-Labs/base64url.git",
-                "reference": "3eb46a1de803f0078962d910e3a2759224a68c61"
+                "reference": "48ea8ff600cefe56b82d3d5b768b6f4f3bfe05a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Spomky-Labs/base64url/zipball/3eb46a1de803f0078962d910e3a2759224a68c61",
-                "reference": "3eb46a1de803f0078962d910e3a2759224a68c61",
+                "url": "https://api.github.com/repos/Spomky-Labs/base64url/zipball/48ea8ff600cefe56b82d3d5b768b6f4f3bfe05a1",
+                "reference": "48ea8ff600cefe56b82d3d5b768b6f4f3bfe05a1",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1"
+                "php": ">=7.1"
             },
             "require-dev": {
                 "php-coveralls/php-coveralls": "^2.0",
-                "phpunit/phpunit": "^7.0"
+                "phpstan/phpstan": "^0.11",
+                "phpstan/phpstan-beberlei-assert": "^0.11.0",
+                "phpstan/phpstan-deprecation-rules": "^0.11",
+                "phpstan/phpstan-phpunit": "^0.11",
+                "phpstan/phpstan-strict-rules": "^0.11",
+                "phpunit/phpunit": "^7.0|^8.0|^9.0"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Base64Url\\": "src/"
@@ -11531,7 +11531,7 @@
                 "safe",
                 "url"
             ],
-            "time": "2018-08-16T15:44:20+00:00"
+            "time": "2020-08-30T13:35:33+00:00"
         },
         {
             "name": "stof/doctrine-extensions-bundle",
@@ -15891,23 +15891,23 @@
         },
         {
             "name": "web-token/jwt-core",
-            "version": "v2.1.7",
+            "version": "v2.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/web-token/jwt-core.git",
-                "reference": "c5f73d1992ce8cff1f9b59c755d95ce2f01fa28a"
+                "reference": "0909efa4fe2c3e2d537922b3ea1b65eb8203686c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/web-token/jwt-core/zipball/c5f73d1992ce8cff1f9b59c755d95ce2f01fa28a",
-                "reference": "c5f73d1992ce8cff1f9b59c755d95ce2f01fa28a",
+                "url": "https://api.github.com/repos/web-token/jwt-core/zipball/0909efa4fe2c3e2d537922b3ea1b65eb8203686c",
+                "reference": "0909efa4fe2c3e2d537922b3ea1b65eb8203686c",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-mbstring": "*",
                 "fgrosse/phpasn1": "^2.0",
-                "php": "^7.2",
+                "php": ">=7.2",
                 "spomky-labs/base64url": "^1.0|^2.0"
             },
             "conflict": {
@@ -15972,20 +15972,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-05-29T20:21:59+00:00"
+            "time": "2020-08-22T13:17:25+00:00"
         },
         {
             "name": "web-token/jwt-key-mgmt",
-            "version": "v2.1.7",
+            "version": "v2.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/web-token/jwt-key-mgmt.git",
-                "reference": "9d9ce13b8060136d412e8a49dbc38fd69962069e"
+                "reference": "03fafa105970f0e5a7ae44c39bc8f0576ebcb23b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/web-token/jwt-key-mgmt/zipball/9d9ce13b8060136d412e8a49dbc38fd69962069e",
-                "reference": "9d9ce13b8060136d412e8a49dbc38fd69962069e",
+                "url": "https://api.github.com/repos/web-token/jwt-key-mgmt/zipball/03fafa105970f0e5a7ae44c39bc8f0576ebcb23b",
+                "reference": "03fafa105970f0e5a7ae44c39bc8f0576ebcb23b",
                 "shasum": ""
             },
             "require": {
@@ -16062,20 +16062,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-05-29T20:21:59+00:00"
+            "time": "2020-08-01T11:57:29+00:00"
         },
         {
             "name": "web-token/jwt-signature",
-            "version": "v2.1.7",
+            "version": "v2.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/web-token/jwt-signature.git",
-                "reference": "41da248b6a7a4e98bd6fb8ffa5b74ac4dece280e"
+                "reference": "f4d83f77031c9d27edebbea053931074030d3b09"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/web-token/jwt-signature/zipball/41da248b6a7a4e98bd6fb8ffa5b74ac4dece280e",
-                "reference": "41da248b6a7a4e98bd6fb8ffa5b74ac4dece280e",
+                "url": "https://api.github.com/repos/web-token/jwt-signature/zipball/f4d83f77031c9d27edebbea053931074030d3b09",
+                "reference": "f4d83f77031c9d27edebbea053931074030d3b09",
                 "shasum": ""
             },
             "require": {
@@ -16148,24 +16148,24 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-05-29T20:21:59+00:00"
+            "time": "2020-08-01T11:48:26+00:00"
         },
         {
             "name": "web-token/jwt-signature-algorithm-ecdsa",
-            "version": "v2.1.7",
+            "version": "v2.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/web-token/jwt-signature-algorithm-ecdsa.git",
-                "reference": "340cd45a092440b407e6af43373664d8c6318ab9"
+                "reference": "3ae6e56ccf34e8b7b65ec988497d5d1bceca9864"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/web-token/jwt-signature-algorithm-ecdsa/zipball/340cd45a092440b407e6af43373664d8c6318ab9",
-                "reference": "340cd45a092440b407e6af43373664d8c6318ab9",
+                "url": "https://api.github.com/repos/web-token/jwt-signature-algorithm-ecdsa/zipball/3ae6e56ccf34e8b7b65ec988497d5d1bceca9864",
+                "reference": "3ae6e56ccf34e8b7b65ec988497d5d1bceca9864",
                 "shasum": ""
             },
             "require": {
-                "lib-openssl": "*",
+                "ext-openssl": "*",
                 "web-token/jwt-signature": "^2.0"
             },
             "require-dev": {
@@ -16227,7 +16227,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-05-29T20:21:59+00:00"
+            "time": "2020-08-22T13:17:25+00:00"
         },
         {
             "name": "webmozart/assert",
