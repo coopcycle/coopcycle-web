@@ -78,6 +78,14 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Raleway", Helvetica, Arial, sans-serif;
 }
 
+.navbar-brand.navbar-brand-img {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  img {
+    height: 30px;
+  }
+}
+
 .navbar-coopcycle {
   background-color: #ffffff;
   border: none;
