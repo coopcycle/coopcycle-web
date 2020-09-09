@@ -401,6 +401,13 @@ class AddressAutosuggest extends Component {
       }
     }
 
+    if (this.props.inputId) {
+      inputProps = {
+        ...inputProps,
+        id: this.props.inputId,
+      }
+    }
+
     const highlightFirstSuggestion = this.highlightFirstSuggestion()
 
     return (
@@ -434,6 +441,7 @@ AddressAutosuggest.defaultProps = {
   fuseSearchOptions: {},
   disabled: false,
   inputName: undefined,
+  inputId: undefined,
 }
 
 AddressAutosuggest.propTypes = {
@@ -449,6 +457,7 @@ AddressAutosuggest.propTypes = {
   fuseSearchOptions: PropTypes.object,
   disabled: PropTypes.bool,
   inputName: PropTypes.string,
+  inputId: PropTypes.string,
 }
 
 export default withTranslation()(AddressAutosuggest)

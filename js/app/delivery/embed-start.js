@@ -30,6 +30,7 @@ window.initMap = function() {
       streetAddrInput.closest('.form-group'),
       {
         address: streetAddrInput.value,
+        inputId: streetAddrInput.getAttribute('id'),
         inputName: streetAddrInput.getAttribute('name'),
         onAddressSelected: (text, address) => {
           document.querySelector(`#delivery_${type}_address_latitude`).value = address.geo.latitude

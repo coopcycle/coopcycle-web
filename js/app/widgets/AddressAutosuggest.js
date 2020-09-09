@@ -11,6 +11,7 @@ const defaultOptions = {
   preciseOnly: false,
   reportValidity: false,
   inputName: undefined,
+  inputId: undefined,
 }
 
 export default function(el, options) {
@@ -29,7 +30,8 @@ export default function(el, options) {
       required={ overrideOptions.required }
       preciseOnly={ overrideOptions.preciseOnly }
       reportValidity={ overrideOptions.reportValidity }
-      inputName={ overrideOptions.inputName } />,
+      inputName={ overrideOptions.inputName }
+      inputId={ overrideOptions.inputId } />,
     el
   )
 }
