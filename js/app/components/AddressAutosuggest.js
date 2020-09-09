@@ -385,13 +385,20 @@ class AddressAutosuggest extends Component {
 
     const { value, suggestions, multiSection } = this.state
 
-    const inputProps = {
+    let inputProps = {
       placeholder: this.placeholder(),
       value,
       onChange: this.onChange.bind(this),
       type: "search",
       required: this.props.required,
       disabled: this.props.disabled,
+    }
+
+    if (this.props.inputName) {
+      inputProps = {
+        ...inputProps,
+        name: this.props.inputName,
+      }
     }
 
     const highlightFirstSuggestion = this.highlightFirstSuggestion()
@@ -426,6 +433,7 @@ AddressAutosuggest.defaultProps = {
   preciseOnly: false,
   fuseSearchOptions: {},
   disabled: false,
+  inputName: undefined,
 }
 
 AddressAutosuggest.propTypes = {
@@ -440,6 +448,7 @@ AddressAutosuggest.propTypes = {
   fuseOptions: PropTypes.object,
   fuseSearchOptions: PropTypes.object,
   disabled: PropTypes.bool,
+  inputName: PropTypes.string,
 }
 
 export default withTranslation()(AddressAutosuggest)
