@@ -1,0 +1,151 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: mdillon/postgis:9.4-alpine
+    environment:
+      - POSTGRES_DB=${COOPCYCLE_DB_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'pg_data:/var/lib/postgresql/data'
+
+  redis:
+    image: redis:5-alpine
+    ports:
+      - '6379:6379'
+
+  nodejs:
+    build:
+      dockerfile: './docker/nodejs/Dockerfile'
+      context: '.'
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8000:8000'
+      - '8001:8001'
+      - '8002:8002'
+    volumes:
+      - 'node_modules:/srv/coopcycle/node_modules'
+      - './:/srv/coopcycle:cached'
+
+  webpack:
+    build:
+      dockerfile: './docker/webpack/Dockerfile'
+      context: '.'
+    ports:
+      - '8080:8080'
+    volumes:
+      - 'node_modules:/srv/coopcycle/node_modules'
+      - './:/srv/coopcycle:cached'
+
+  osrm:
+    build: './docker/osrm'
+    ports:
+      - '5000:5000'
+    volumes:
+      - './var/osrm:/data'
+    environment:
+      - OSRM_FILENAME=data.osrm
+
+  php:
+    build:
+      dockerfile: './docker/php/Dockerfile'
+      context: '.'
+    image: coopcycle/php
+    depends_on:
+      - postgres
+      - redis
+      - osrm
+    links:
+      - osrm
+    environment:
+      - 'BEHAT_PARAMS={"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80"}}}'
+      - GOOGLE_API_KEY
+      - STRIPE_PUBLISHABLE_KEY
+      - STRIPE_SECRET_KEY
+    volumes:
+      - 'php_cache:/var/www/html/var/cache'
+      - './:/var/www/html:cached'
+    cap_add:
+      - SYS_ADMIN
+
+  php_worker:
+    build:
+      dockerfile: './docker/php_worker/Dockerfile'
+      context: '.'
+    depends_on:
+      - php
+    environment:
+      - GOOGLE_API_KEY
+      - STRIPE_PUBLISHABLE_KEY
+      - STRIPE_SECRET_KEY
+    volumes:
+      - 'php_cache:/var/www/html/var/cache'
+      - './:/var/www/html:cached'
+
+  nginx:
+    image: 'nginx:1.11-alpine'
+    depends_on:
+      - php
+      - nodejs
+    ports:
+      - '80:80'
+    volumes:
+      - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
+      - './web:/var/www/html/web:ro'
+      - './vendor:/var/www/html/vendor:ro'
+
+  minio:
+    image: minio/minio
+    command: server /data
+    ports:
+      - "9000:9000"
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ACCESS_KEY=${S3_CREDENTIALS_KEY}
+      - MINIO_SECRET_KEY=${S3_CREDENTIALS_SECRET}
+      - MINIO_REGION=${S3_REGION}
+
+  # https://github.com/minio/minio/issues/4882
+  # https://docs.min.io/docs/minio-client-complete-guide#policy
+  minio_client:
+    image: minio/mc
+    depends_on:
+      - minio
+    environment:
+      - S3_CREDENTIALS_KEY
+      - S3_CREDENTIALS_SECRET
+      - S3_REGION
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add coopcycle http://minio:9000 $S3_CREDENTIALS_KEY $S3_CREDENTIALS_SECRET;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/assets;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/products;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/receipts;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/restaurants;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/stores;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/tasks;
+      /usr/bin/mc policy set public coopcycle/images;
+      "
+
+  tile38:
+    image: tile38/tile38
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+        - PGADMIN_DEFAULT_EMAIL=root@coopcycle.org
+        - PGADMIN_DEFAULT_PASSWORD=changeMe
+    ports:
+        - 5050:80
+
+volumes:
+  node_modules:
+  pg_data:
+  php_cache:
+  minio_data:
