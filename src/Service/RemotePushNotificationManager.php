@@ -162,6 +162,17 @@ class RemotePushNotificationManager
             $payload->setCustomValue($key, $value);
         }
 
+        // @see https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_background_updates_to_your_app
+        // The system treats background notifications as low priority:
+        // you can use them to refresh your app’s content, but the system doesn’t guarantee their delivery.
+        // In addition, the system may throttle the delivery of background notifications if the total number becomes excessive.
+        // The number of background notifications allowed by the system depends on current conditions,
+        // but don’t try to send more than two or three per hour.
+        //
+        // $payload->setContentAvailability(true);
+
+        $payload->setPushType('alert');
+
         $notifications = [];
         foreach ($tokens as $token) {
             $notifications[] = new Pushok\Notification($payload, $token->getToken());
@@ -169,7 +180,19 @@ class RemotePushNotificationManager
 
         $this->apnsClient->addNotifications($notifications);
 
-        $this->apnsClient->push();
+        $responses = $this->apnsClient->push();
+
+        foreach ($responses as $response) {
+            if (200 !== $response->getStatusCode()) {
+                $this->logger->error(sprintf('APNS returned "%s" "%s" "%s"',
+                    $response->getStatusCode(),
+                    $response->getErrorReason(),
+                    $response->getErrorDescription()
+                ));
+            } else {
+                $this->logger->info(sprintf('APNS returned "%s"', $response->getReasonPhrase()));
+            }
+        }
     }
 
     /**
