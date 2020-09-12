@@ -163,6 +163,8 @@ class RemotePushNotificationManager
         }
 
         // @see https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_background_updates_to_your_app
+        // @see https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html
+        //
         // The system treats background notifications as low priority:
         // you can use them to refresh your app’s content, but the system doesn’t guarantee their delivery.
         // In addition, the system may throttle the delivery of background notifications if the total number becomes excessive.
@@ -175,7 +177,9 @@ class RemotePushNotificationManager
 
         $notifications = [];
         foreach ($tokens as $token) {
-            $notifications[] = new Pushok\Notification($payload, $token->getToken());
+            $notification = new Pushok\Notification($payload, $token->getToken());
+            $notification->setHighPriority();
+            $notifications[] = $notification;
         }
 
         $this->apnsClient->addNotifications($notifications);
