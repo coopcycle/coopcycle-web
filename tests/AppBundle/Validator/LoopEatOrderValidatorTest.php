@@ -37,6 +37,40 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
         );
     }
 
+    public function testDoesNothingWhenLoopeatDisabled()
+    {
+        $customer = new ApiUser();
+
+        $restaurant = new Restaurant();
+        $restaurant->setLoopeatEnabled(false);
+
+        $order = $this->prophesize(Order::class);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->getCustomer()
+            ->willReturn($customer);
+        $order
+            ->getReusablePackagingQuantity()
+            ->willReturn(3);
+        $order
+            ->getReusablePackagingPledgeReturn()
+            ->willReturn(0);
+        $order
+            ->isReusablePackagingEnabled()
+            ->willReturn(true);
+
+        $this->loopeatClient->currentCustomer($customer)
+            ->willReturn(['loopeatBalance' => 2]);
+
+        $constraint = new LoopEatOrderConstraint();
+
+        $this->validator->validate($order->reveal(), $constraint);
+
+        $this->assertNoViolation();
+    }
+
     public function testInsufficientBalance()
     {
         $customer = new ApiUser();
