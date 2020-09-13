@@ -95,7 +95,6 @@ export default class MapProxy {
     this.clusterGroup = L.markerClusterGroup({
       showCoverageOnHover: false,
     })
-    this.clusterGroup.addTo(this.map)
 
     this.onTaskMouseDown = options.onTaskMouseDown
     this.onTaskMouseOver = options.onTaskMouseOver
