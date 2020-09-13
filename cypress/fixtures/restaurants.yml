@@ -253,7 +253,7 @@ AppBundle\Entity\LocalBusiness:
     orderingDelayMinutes: 0
     openingHours: ['Mo-Su 09:30-23:30']
     enabled: true
-    contract: "@contract_2"
+    contract: "@contract_3"
     depositRefundEnabled: true
     __calls:
       - setMinimumAmount: ['delivery', 1500]
