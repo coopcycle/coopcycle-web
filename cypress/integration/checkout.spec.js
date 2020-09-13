@@ -293,4 +293,81 @@ context('Checkout', () => {
 
     cy.location('pathname').should('eq', '/order/')
   })
+
+  it('order something at restaurant with deposit-refund enabled', () => {
+
+    cy.server()
+    cy.route('POST', '/fr/restaurant/*-zero-waste-inc').as('postRestaurant')
+    cy.route('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
+
+    cy.visit('/fr/restaurants')
+
+    cy.contains('Zero Waste Inc.').click()
+
+    cy.location('pathname').should('match', /\/fr\/restaurant\/[0-9]+-zero-waste/)
+
+    cy.wait('@postRestaurant')
+
+    cy.contains('Salade au poulet').click()
+    cy.wait('@postProduct')
+
+    cy.get('.cart__items').invoke('text').should('match', /Salade au poulet/)
+
+    cy.get('.ReactModal__Content--enter-address')
+      .should('be.visible')
+
+    cy.get('.ReactModal__Content--enter-address input[type="search"]')
+      .type('91 rue de la roquette paris', { timeout: 5000, delay: 30 })
+
+    cy.get('.ReactModal__Content--enter-address')
+      .find('ul[role="listbox"] li', { timeout: 5000 })
+      .contains('91 Rue de la Roquette, Paris, France')
+      .click()
+
+    cy.wait('@postRestaurant')
+
+    cy.get('.cart .address-autosuggest__container input[type="search"]')
+      .should('have.value', '91 Rue de la Roquette, Paris, France')
+
+    cy.contains('Salade au poulet').click()
+    cy.wait('@postProduct')
+
+    cy.contains('Salade au poulet').click()
+    cy.wait('@postProduct')
+
+    cy.get('form[name="cart"]').submit()
+
+    cy.location('pathname').should('eq', '/login')
+
+    cy.get('[name="_username"]').type('bob')
+    cy.get('[name="_password"]').type('12345678')
+    cy.get('[name="_submit"]').click()
+
+    cy.location('pathname').should('eq', '/order/')
+
+    cy.get('.table-order-items tfoot tr:last-child td ')
+      .invoke('text')
+      .invoke('trim')
+      .should('match', /^18,00/)
+
+    cy.get('#checkout_address_reusablePackagingEnabled')
+      .should('be.visible')
+
+    cy.get('#checkout_address_reusablePackagingEnabled')
+      .closest('.alert')
+      .invoke('text')
+      .should('match', /Je veux des emballages réutilisables/)
+
+    cy.get('#checkout_address_reusablePackagingEnabled').click()
+
+    // TODO
+    // In this case, maybe we should reload the page?
+
+    cy.location('pathname').should('eq', '/order/payment')
+
+    cy.get('.table-order-items tfoot tr:last-child td ')
+      .invoke('text')
+      .invoke('trim')
+      .should('match', /^21,00/)
+  })
 })
