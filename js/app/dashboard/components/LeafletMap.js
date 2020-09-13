@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
-import { setCurrentTask, assignAfter, selectTasks as selectTasksAction } from '../redux/actions'
+import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction } from '../redux/actions'
 import { selectTasks, selectFilteredTasks } from '../redux/selectors'
 
 class LeafletMap extends Component {
