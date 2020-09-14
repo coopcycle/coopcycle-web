@@ -11,6 +11,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\DeliveryAddress;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Organization;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Store\Token as StoreToken;
@@ -1071,5 +1072,26 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $em = $this->doctrine->getManagerForClass(Product::class);
         $em->flush();
+    }
+
+    /**
+     * @Then all the tasks should belong to organization with name :orgName
+     */
+    public function allTheTasksShouldBelongToOrganizationWithName($orgName)
+    {
+        $org = $this->doctrine->getRepository(Organization::class)->findOneByName($orgName);
+
+        if (!$org) {
+            throw new \RuntimeException(sprintf('Organization with name "%s" not found', $orgName));
+        }
+
+        $tasks = $this->doctrine->getRepository(Task::class)->findAll();
+
+        foreach ($tasks as $task) {
+            $organization = $task->getOrganization();
+            if (!$organization || $organization !== $org) {
+                Assert::fail(sprintf('Task #%d does not belong to organization with name "%s"', $task->getId(), $orgName));
+            }
+        }
     }
 }

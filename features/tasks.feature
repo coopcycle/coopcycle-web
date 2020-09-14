@@ -1228,6 +1228,7 @@ Feature: Tasks
         "tags":[]
       }
       """
+    And all the tasks should belong to organization with name "Acme"
 
   Scenario: Create task with invalid address
     Given the fixtures files are loaded:
