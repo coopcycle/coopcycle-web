@@ -135,6 +135,11 @@ services:
 
   tile38:
     image: tile38/tile38
+  
+  mjml:
+    image: adrianrudnik/mjml-server
+    ports:
+      - 8889:80
 
   pgadmin:
     image: dpage/pgadmin4
