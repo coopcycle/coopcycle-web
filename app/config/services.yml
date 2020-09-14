@@ -515,6 +515,10 @@ services:
     tags:
       - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
+  AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
   AppBundle\Api\EventSubscriber\PricingSubscriber:
     arguments:
         - '@coopcycle.delivery.manager'
