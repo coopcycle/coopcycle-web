@@ -9,14 +9,17 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Validation;
+use AppBundle\Payment\GatewayResolver;
 
 class IsActivableRestaurantValidator extends ConstraintValidator
 {
     private $settingsManager;
+    private $resolver;
 
-    public function __construct(SettingsManager $settingsManager)
+    public function __construct(SettingsManager $settingsManager, GatewayResolver $resolver)
     {
         $this->settingsManager = $settingsManager;
+        $this->resolver = $resolver;
     }
 
     public function validate($object, Constraint $constraint)
@@ -74,11 +77,20 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                     ->addViolation();
             }
 
-            $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
-            if (null === $stripeAccount) {
-                $this->context->buildViolation($constraint->stripeAccountMessage)
-                    ->atPath('stripeAccounts')
-                    ->addViolation();
+            if ('mercadopago' === $this->resolver->resolve()) {
+                $mercadopagoAccount = $object->getMercadopagoAccount($this->settingsManager->isMercadopagoLivemode());
+                if (null === $mercadopagoAccount) {
+                    $this->context->buildViolation($constraint->mercadopagoAccountMessage)
+                        ->atPath('mercadopagoAccounts')
+                        ->addViolation();
+                }
+            } else {
+                $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
+                if (null === $stripeAccount) {
+                    $this->context->buildViolation($constraint->stripeAccountMessage)
+                        ->atPath('stripeAccounts')
+                        ->addViolation();
+                }
             }
         }
 

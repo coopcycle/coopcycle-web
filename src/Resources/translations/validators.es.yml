@@ -3,6 +3,7 @@ restaurant.telephone.notBlank: Introduce un número de teléfono
 restaurant.name.notBlank: Introduce el nombre del restaurante
 restaurant.contract.notValid: Introduce los términos de contrato (requiere privilegios de administrador)
 restaurant.stripeAccount.notSet: Enlaza el restaurante a una cuenta Stripe
+restaurant.mercadopagoAccount.notSet: Enlaza el restaurante a una cuenta de MercadoPago
 restaurant.notActivable: Aún no puedes activar éste restaurante
 restaurant.menu.notSet: Crea y activa un menú
 

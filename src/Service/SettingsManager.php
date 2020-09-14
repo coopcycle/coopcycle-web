@@ -131,6 +131,17 @@ class SettingsManager
         return filter_var($livemode, FILTER_VALIDATE_BOOLEAN);
     }
 
+    public function isMercadopagoLivemode()
+    {
+        $livemode = $this->get('mercadopago_livemode');
+
+        if (!$livemode) {
+            return false;
+        }
+
+        return filter_var($livemode, FILTER_VALIDATE_BOOLEAN);
+    }
+
     public function canEnableStripeTestmode()
     {
         try {

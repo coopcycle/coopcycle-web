@@ -392,6 +392,8 @@ form.local_business.stripe_account.link_ok: "Éste restaurante ha sido enlazado 
   \ cuenta Stripe y puede recibir pagos de la plataforma.<br>\nPara gestionar tu cuenta\
   \ Stripe por favor usa el <a href=\"https://dashboard.stripe.com/\" target=\"_blank\"\
   >panel de administración de Stripe</a>.\n"
+form.local_business.mercadopago_account.title: Cuenta de MercadoPago
+form.local_business.mercadopago_account.success: Cuenta MercadoPago conectada con éxito
 form.menu_item.name.label: Nombre
 form.menu_item.price.label: Precio
 form.menu_item_modifier.name.label: Nombre

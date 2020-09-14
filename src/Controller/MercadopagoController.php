@@ -130,7 +130,7 @@ class MercadopagoController extends AbstractController
 
         $this->addFlash(
             'notice',
-            $translator->trans('form.local_business.stripe_account.success')
+            $translator->trans('form.local_business.mercadopago_account.success')
         );
 
         return $this->redirect($redirect);
