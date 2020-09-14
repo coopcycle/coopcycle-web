@@ -13,7 +13,7 @@ require('bootstrap-sass')
 import './i18n'
 import { setTimezone, getCurrencySymbol } from './i18n'
 import CartTop from './cart/CartTop'
-import AddressInput from './widgets/AddressInput'
+import AddressAutosuggest from './widgets/AddressAutosuggest'
 
 global.ClipboardJS = require('clipboard')
 
@@ -82,15 +82,34 @@ document.addEventListener('DOMContentLoaded', function() {
       prevInitMap = window.initMap
     }
     window.initMap = function() {
+
+      const addressElements = {
+        latitude: '$1ddress_latitude',
+        longitude: '$1ddress_longitude',
+        postalCode: '$1ddress_postalCode',
+        addressLocality: '$1ddress_addressLocality',
+      }
+
       inputs.forEach(el => {
-        new AddressInput(el, {
-          elements: {
-            latitude:        document.getElementById(el.getAttribute('id').replace(/([aA])ddress_streetAddress/, '$1ddress_latitude')),
-            longitude:       document.getElementById(el.getAttribute('id').replace(/([aA])ddress_streetAddress/, '$1ddress_longitude')),
-            postalCode:      document.getElementById(el.getAttribute('id').replace(/([aA])ddress_streetAddress/, '$1ddress_postalCode')),
-            addressLocality: document.getElementById(el.getAttribute('id').replace(/([aA])ddress_streetAddress/, '$1ddress_addressLocality')),
+        new AddressAutosuggest(
+          el.closest('.form-group'),
+          {
+            required: true,
+            address: el.value,
+            inputId: el.getAttribute('id'),
+            inputName: el.getAttribute('name'),
+            onAddressSelected: (text, address) => {
+              for (const addressProp in addressElements) {
+                const addressEl = document.getElementById(
+                  el.getAttribute('id').replace(/([aA])ddress_streetAddress/, addressElements[addressProp])
+                )
+                if (addressEl) {
+                  addressEl.value = address[addressProp]
+                }
+              }
+            }
           }
-        })
+        )
       })
       if (prevInitMap) {
         prevInitMap()
