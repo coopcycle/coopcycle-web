@@ -65,6 +65,11 @@
         <join-column name="assigned_to" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
+    <many-to-one field="organization" target-entity="AppBundle\Entity\Organization">
+      <join-columns>
+        <join-column name="organization_id" referenced-column-name="id" on-delete="SET NULL" />
+      </join-columns>
+    </many-to-one>
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\TaskListener">
         <lifecycle-callback type="prePersist" method="prePersist"/>
