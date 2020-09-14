@@ -83,7 +83,7 @@ abstract class PostalAddress
      *
      * @Groups({"address", "address_create", "task_create", "task_edit", "order_update", "cart", "delivery_create"})
      * @ApiProperty(iri="https://schema.org/telephone")
-     * @AssertPhoneNumber
+     * @AssertPhoneNumber(groups={"Default", "cart"})
      */
     protected $telephone;
 

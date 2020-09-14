@@ -41,6 +41,7 @@ use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Validator\Constraints as Assert;
 use Sylius\Component\Taxation\Model\TaxRateInterface;
 
 /**
@@ -231,6 +232,9 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $restaurant;
 
+    /**
+     * @Assert\Valid(groups={"cart"})
+     */
     protected $shippingAddress;
 
     protected $billingAddress;
