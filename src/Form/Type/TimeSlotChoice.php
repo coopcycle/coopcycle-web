@@ -54,6 +54,26 @@ class TimeSlotChoice
         return $now >= $after;
     }
 
+    public function hasFinished(\DateTimeInterface $now = null, string $priorNotice = null)
+    {
+        if (null === $now) {
+            $now = Carbon::now();
+        }
+
+        [ $start, $end ] = $this->timeRange;
+        [ $hour, $minute ] = explode(':', $end);
+
+        $before = clone $this->date;
+
+        $before->setTime($hour, $minute);
+
+        if ($priorNotice) {
+            $before->modify(sprintf('-%s', $priorNotice));
+        }
+
+        return $now >= $before;
+    }
+
     public function applyToTask(Task $task)
     {
         $datePeriod = $this->toDatePeriod();

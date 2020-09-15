@@ -135,7 +135,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                             }
                         }
 
-                        if (!$choice->hasBegun($this->now, $this->timeSlot->getPriorNotice())) {
+                        if (!$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())) {
                             $choices[] = $choice;
                         }
                     }
@@ -147,7 +147,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                         $timeSlotChoice->toTimeRange()
                     );
 
-                    if (!$choice->hasBegun($this->now, $this->timeSlot->getPriorNotice())) {
+                    if (!$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())) {
                         $choices[] = $choice;
                     }
                 }

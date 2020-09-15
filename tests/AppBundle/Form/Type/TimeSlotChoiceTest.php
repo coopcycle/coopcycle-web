@@ -44,6 +44,30 @@ class TimeSlotChoiceTest extends TestCase
         $this->assertFalse($choice->hasBegun(new \DateTime('2019-07-30 09:00:00'), '1 hour'));
     }
 
+    public function testHasFinished()
+    {
+        $choice = new TimeSlotChoice(new \DateTime('2019-07-30'), '11:00:00-14:00:00');
+
+        $this->assertFalse($choice->hasFinished(new \DateTime('2019-07-30 09:00:00')));
+        $this->assertFalse($choice->hasFinished(new \DateTime('2019-07-30 11:00:00')));
+        $this->assertFalse($choice->hasFinished(new \DateTime('2019-07-30 11:05:00')));
+        $this->assertTrue($choice->hasFinished(new \DateTime('2019-07-30 14:05:00')));
+    }
+
+    public function testHasFinishedWithPriorNotice()
+    {
+        $choice = new TimeSlotChoice(new \DateTime('2019-07-30'), '11:00:00-14:00:00');
+
+        // 11:00 max
+        $this->assertFalse($choice->hasFinished(new \DateTime('2019-07-30 09:00:00'), '3 hours'));
+        $this->assertTrue($choice->hasFinished(new \DateTime('2019-07-30 12:30:00'), '3 hours'));
+        // 12:00 max
+        $this->assertFalse($choice->hasFinished(new \DateTime('2019-07-30 09:00:00'), '2 hours'));
+        $this->assertTrue($choice->hasFinished(new \DateTime('2019-07-30 13:00:00'), '2 hours'));
+        // 12:00 max
+        $this->assertFalse($choice->hasFinished(new \DateTime('2019-07-30 09:00:00'), '1 hour'));
+    }
+
     public function testApplyToTask()
     {
         $task = new Task();
