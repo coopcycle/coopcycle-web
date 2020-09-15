@@ -220,13 +220,13 @@ class TimeSlotChoiceLoaderTest extends TestCase
         $this->assertCount(2, $choices);
 
         $this->assertTimeSlotChoice(
-            new \DateTime('2019-10-22 10:00:00'),
-            new \DateTime('2019-10-22 12:00:00'),
+            new \DateTime('2019-10-21 10:00:00'),
+            new \DateTime('2019-10-21 12:00:00'),
             $choices[0]
         );
         $this->assertTimeSlotChoice(
-            new \DateTime('2019-10-23 10:00:00'),
-            new \DateTime('2019-10-23 12:00:00'),
+            new \DateTime('2019-10-22 10:00:00'),
+            new \DateTime('2019-10-22 12:00:00'),
             $choices[1]
         );
 
