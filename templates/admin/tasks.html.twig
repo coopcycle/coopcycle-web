@@ -1,0 +1,102 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+{% if tasks|length > 0 %}
+
+<div class="mb-4">
+
+<div class="btn btn-default disabled" data-multi-select-handle-off>
+  <input type="checkbox" class="mr-1" />
+</div>
+
+<div class="btn-group d-none" data-multi-select-handle-on>
+  <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <input type="checkbox" class="mr-1" checked />
+    <span><span class="caret"></span></span>
+  </div>
+  <ul class="dropdown-menu">
+    <li><a href="#"
+      data-toggle="modal" data-target="#attach-to-org-modal">{{ 'form.attach_to_org.modal.title'|trans }}</a></li>
+  </ul>
+</div>
+
+
+</div>
+
+{% set tasks_by_day = {} %}
+{% for task in tasks %}
+  {% set tasks_by_day = tasks_by_day|merge({
+    (task.before|date('Y-m-d')): tasks_by_day[task.before|date('Y-m-d')]|default([])|merge([ task ])
+  }) %}
+{% endfor %}
+
+{% for day, tasks_for_day in tasks_by_day %}
+<h4>{{ day|format_date() }}</h4>
+<table class="table table-condensed">
+  <tbody>
+  {% for task in tasks_for_day %}
+    <tr>
+      <td width="1%">
+        <input type="checkbox" data-multi-select data-task-id="{{ task.id }}" />
+      </td>
+      <td width="1%">
+        {% include "_partials/task/type_icon.html.twig" with { task: task } %}
+      </td>
+      <td width="10%">
+        <span class="text-muted font-weight-bold">#{{ task.id }}</span>
+      </td>
+      <td>
+        {% if task.organization is not empty %}
+          {{ task.organization.name }}
+        {% endif %}
+      </td>
+      <td class="text-right">
+        <small class="text-muted">
+          {{ task.after|format_datetime('short', 'short') }} - {{ task.before|format_datetime('short', 'short') }}
+        </small>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="attach-to-org-modal-label" id="attach-to-org-modal">
+  <div class="modal-dialog" role="document">
+    {{ form_start(form, { attr: { class: 'modal-content' } }) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="attach-to-org-modal-label">{% trans %}form.attach_to_org.modal.title{% endtrans %}</h4>
+      </div>
+      <div class="modal-body">
+        {{ form_widget(form) }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
+        <button type="submit" class="btn btn-primary">{% trans %}basics.continue{% endtrans %}</button>
+      </div>
+    {{ form_end(form) }}
+  </div>
+</div>
+
+{% endfor %}
+
+<nav class="text-center">
+  {{ knp_pagination_render(tasks) }}
+</nav>
+
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}basics.no_entries{% endtrans %}
+  </div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('task-list') }}
+{% endblock %}

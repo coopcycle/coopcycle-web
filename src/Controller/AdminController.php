@@ -26,6 +26,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AddOrganizationType;
+use AppBundle\Form\AttachToOrganizationType;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
 use AppBundle\Form\CustomizeType;
@@ -606,6 +607,56 @@ class AdminController extends Controller
             'view'      => 'admin_delivery',
             'store_new' => 'admin_store_delivery_new'
         ];
+    }
+
+    /**
+     * @Route("/admin/tasks", name="admin_tasks")
+     */
+    public function tasksAction(Request $request, TranslatorInterface $translator)
+    {
+        $form = $this->createForm(AttachToOrganizationType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $tasks = $form->get('tasks')->getData();
+            $store = $form->get('store')->getData();
+
+            if ($store) {
+                foreach ($tasks as $task) {
+                    if (null === $task->getOrganization()) {
+                        $task->setOrganization($store->getOrganization());
+                    }
+                }
+
+                $this->getDoctrine()->getManagerForClass(Task::class)->flush();
+            }
+
+            return $this->redirectToRoute('admin_tasks');
+        }
+
+        $qb = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->createQueryBuilder('t');
+
+        $tasks = $this->get('knp_paginator')->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.doneBefore',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
+                PaginatorInterface::SORT_FIELD_WHITELIST => ['t.doneBefore'],
+                PaginatorInterface::DEFAULT_FILTER_FIELDS => [],
+                PaginatorInterface::FILTER_FIELD_WHITELIST => []
+            ]
+        );
+
+        return $this->render('admin/tasks.html.twig', [
+            'tasks' => $tasks,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
