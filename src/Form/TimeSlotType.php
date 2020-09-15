@@ -101,7 +101,7 @@ class TimeSlotType extends AbstractType
         });
 
         // When using "simple" mode, make sure there is at least one choice.
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $timeSlot = $event->getData();
 
