@@ -102,6 +102,10 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
             return new ArrayChoiceList([], $value);
         }
 
+        if (!$this->timeSlot->hasOpeningHours() && count($this->timeSlot->getChoices()) === 0) {
+            return new ArrayChoiceList([], $value);
+        }
+
         $cursor = $this->getCursor($this->now);
 
         $choices = [];
