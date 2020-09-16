@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import moment from 'moment'
 import { ContextMenuTrigger } from 'react-contextmenu'
-import _ from 'lodash'
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
 import { selectTasksWithColor, selectIsVisibleTask } from '../redux/selectors'

@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const addressAsText = (address) => {
 
   if (!_.isEmpty(address.name)) {
