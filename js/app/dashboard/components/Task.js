@@ -7,39 +7,20 @@ import _ from 'lodash'
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
 import { selectTasksWithColor, selectIsVisibleTask } from '../redux/selectors'
+import { addressAsText } from '../utils'
 import TaskEta from './TaskEta'
 
 moment.locale($('html').attr('lang'))
 
-const TaskCaption = ({ task, t }) => {
-
-  const contactName = task.address.contactName
-    || [
-      task.address.firstName,
-      task.address.lastName,
-    ].filter(item => !_.isEmpty(item)).join(' ')
-    || null
-
-  const addressParts = [
-    task.address.streetAddress
-  ]
-
-  if (contactName) {
-    addressParts.unshift(contactName)
-  }
-
-  const addressName = task.address.name || addressParts.join(' ')
-
-  return (
-    <span>
-      <span className="mr-1">#{ task.id }</span>
-      { t('ADMIN_DASHBOARD_TASK_CAPTION', {
-        address: addressName,
-        date: moment(task.before).format('LT')
-      }) }
-    </span>
-  )
-}
+const TaskCaption = ({ task, t }) => (
+  <span>
+    <span className="mr-1">#{ task.id }</span>
+    { t('ADMIN_DASHBOARD_TASK_CAPTION', {
+      address: addressAsText(task.address),
+      date: moment(task.before).format('LT')
+    }) }
+  </span>
+)
 
 class Task extends React.Component {
 
