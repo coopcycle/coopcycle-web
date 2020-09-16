@@ -7,6 +7,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\MyStores;
 use AppBundle\Entity\Base\LocalBusiness;
+use AppBundle\Entity\Model\OrganizationAwareInterface;
+use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -50,9 +52,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * )
  * @Vich\Uploadable
  */
-class Store extends LocalBusiness implements TaggableInterface
+class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface
 {
     use TaggableTrait;
+    use OrganizationAwareTrait;
 
     /**
      * @var int

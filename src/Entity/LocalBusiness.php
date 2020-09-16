@@ -17,6 +17,8 @@ use AppBundle\Entity\LocalBusiness\CatalogTrait;
 use AppBundle\Entity\LocalBusiness\FoodEstablishmentTrait;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ImageTrait;
+use AppBundle\Entity\Model\OrganizationAwareInterface;
+use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Form\Type\AsapChoiceLoader;
@@ -103,7 +105,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @AssertIsActivableRestaurant(groups="activable")
  * @Enabled
  */
-class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenCloseInterface
+class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenCloseInterface, OrganizationAwareInterface
 {
     use Timestampable;
     use SoftDeleteableEntity;
@@ -112,6 +114,7 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
     use FoodEstablishmentTrait;
     use ImageTrait;
     use OpenCloseTrait;
+    use OrganizationAwareTrait;
 
     /**
      * @var int
