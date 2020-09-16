@@ -73,7 +73,7 @@
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_PLACEHOLDER": "Zuhause, Arbeit …",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_LABEL": "Name",
         "ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI": "Austragen {{count}} task(s)",
-        "ADMIN_DASHBOARD_TASK_CAPTION": "#{{id}} - {{- address}} bevor {{date}}",
+        "ADMIN_DASHBOARD_TASK_CAPTION": "{{- address}} bevor {{date}}",
         "ADMIN_DASHBOARD_FILTERS_TAB_TAGS": "Tags",
         "ADMIN_DASHBOARD_ORDERS_TAKEAWAY_ALERT": "Diese Bestellung wird vom Kunden abgeholt",
         "ADMIN_DASHBOARD_ORDERS_REFUSE_REASON": "Aus welchem Grund lehnst du diese Bestellung ab?",

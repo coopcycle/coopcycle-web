@@ -57,7 +57,7 @@
         "ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE": "Tranche horaire",
         "ADMIN_DASHBOARD_FILTERS_SHOW": "Afficher",
         "ADMIN_DASHBOARD_FILTERS_HIDE": "Masquer",
-        "ADMIN_DASHBOARD_TASK_CAPTION": "#{{id}} - {{- address}} avant {{date}}",
+        "ADMIN_DASHBOARD_TASK_CAPTION": "{{- address}} avant {{date}}",
         "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Tâche #{{id}}",
         "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Entre {{after}} et {{before}}",
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Assignée à {{username}}",

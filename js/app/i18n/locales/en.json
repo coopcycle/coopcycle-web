@@ -64,7 +64,7 @@
         "ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE": "Time range",
         "ADMIN_DASHBOARD_FILTERS_SHOW": "Show",
         "ADMIN_DASHBOARD_FILTERS_HIDE": "Hide",
-        "ADMIN_DASHBOARD_TASK_CAPTION": "#{{id}} - {{- address}} before {{date}}",
+        "ADMIN_DASHBOARD_TASK_CAPTION": "{{- address}} before {{date}}",
         "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Task #{{id}}",
         "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Between {{after}} and {{before}}",
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Assigned to {{username}}",
