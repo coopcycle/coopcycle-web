@@ -303,7 +303,7 @@ function addTaskList(username) {
     return axios.post(url, {}, {
       withCredentials: true,
       headers: {
-        'Content-Type': 'application/ld+json'
+        'Content-Type': 'application/json'
       },
     })
       .then(res => dispatch(addTaskListRequestSuccess(res.data)))
