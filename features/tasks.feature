@@ -291,7 +291,8 @@ Feature: Tasks
         "assignedTo":"bob",
         "previous":null,
         "next":null,
-        "doorstep":false
+        "doorstep":false,
+        "orgName": ""
       }
       """
 
@@ -575,7 +576,8 @@ Feature: Tasks
         "group":null,
         "tags":@array@,
         "images":@array@,
-        "doorstep":false
+        "doorstep":false,
+        "orgName": ""
       }
       """
 
@@ -647,7 +649,8 @@ Feature: Tasks
           {"name":"Important","slug":"important","color":"#000000"}
         ],
         "images":@array@,
-        "doorstep":false
+        "doorstep":false,
+        "orgName": ""
       }
       """
 

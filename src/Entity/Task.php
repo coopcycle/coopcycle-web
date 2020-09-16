@@ -679,4 +679,20 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     {
         return $this->doorstep;
     }
+
+    /**
+     * @SerializedName("orgName")
+     * @Groups({"task"})
+     */
+    public function getOrganizationName()
+    {
+        $organization = $this->getOrganization();
+
+        if ($organization) {
+
+            return $organization->getName();
+        }
+
+        return '';
+    }
 }
