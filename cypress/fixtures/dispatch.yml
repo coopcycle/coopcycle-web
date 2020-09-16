@@ -1,0 +1,36 @@
+include:
+  - settings.yml
+  - sylius_channels.yml
+  - addresses.yml
+
+AppBundle\Entity\ApiUser:
+  bob:
+    __factory:
+      '@FOS\UserBundle\Util\UserManipulator::create':
+        - 'admin'
+        - '12345678'
+        - 'admin@demo.coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_ADMIN' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+  jane:
+    __factory:
+      '@FOS\UserBundle\Util\UserManipulator::create':
+        - 'jane'
+        - '12345678'
+        - 'jane@demo.coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_COURIER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+
+AppBundle\Entity\Task:
+  task_1:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('today 10:30:00'))>
+    doneBefore: <identity(new \DateTime('today 11:00:00'))>
+  task_2:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('today 11:30:00'))>
+    doneBefore: <identity(new \DateTime('today 12:00:00'))>

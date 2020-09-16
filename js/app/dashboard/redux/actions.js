@@ -300,15 +300,17 @@ function addTaskList(username) {
 
     dispatch(addTaskListRequest(username))
 
-    return fetch(url, {
-      credentials: 'include',
-      method: 'POST',
+    return axios.post(url, {}, {
+      withCredentials: true,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/ld+json'
+      },
     })
-      .then(res => res.json())
-      .then(taskList => dispatch(addTaskListRequestSuccess(taskList)))
+      .then(res => dispatch(addTaskListRequestSuccess(res.data)))
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+      })
   }
 }
 
