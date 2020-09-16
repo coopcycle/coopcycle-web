@@ -49,7 +49,16 @@ class TaskModalContent extends React.Component {
 
   renderHeaderText(task) {
     if (!!task && Object.prototype.hasOwnProperty.call(task, '@id')) {
-      return this.props.t('ADMIN_DASHBOARD_TASK_TITLE', { id: task.id })
+
+      const parts = [
+        this.props.t('ADMIN_DASHBOARD_TASK_TITLE', { id: task.id })
+      ]
+
+      if (task.orgName && !_.isEmpty(task.orgName)) {
+        parts.unshift(`${task.orgName} › `)
+      }
+
+      return parts.join(' ')
     }
 
     return this.props.t('ADMIN_DASHBOARD_TASK_TITLE_NEW')
