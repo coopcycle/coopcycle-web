@@ -130,5 +130,15 @@ context('Checkout', () => {
 
     cy.wait('@postTaskList', { timeout: 10000 })
 
+    // FIXME Drag'n'drop doesn't work
+
+    // cy
+    //   .get('[data-rbd-droppable-id="unassigned"]')
+    //   .children()
+    //   .first()
+    //   .drag('[data-rbd-droppable-id="assigned:jane"]')
+
+    // cy.wait('@postTaskList', { timeout: 10000 })
+
   })
 })
