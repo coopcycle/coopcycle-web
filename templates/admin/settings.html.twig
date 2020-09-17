@@ -4,6 +4,7 @@
 {% form_theme maintenance_form 'bootstrap_3_layout.html.twig' %}
 {% form_theme banner_form 'bootstrap_3_layout.html.twig' %}
 {% form_theme stripe_livemode_form 'bootstrap_3_layout.html.twig' %}
+{% form_theme mercadopago_livemode_form 'bootstrap_3_layout.html.twig' %}
 
 {% block breadcrumb %}
 <li>{% trans %}adminDashboard.settings.title{% endtrans %}</li>
@@ -169,6 +170,40 @@
   </div>
 </div>
 
+<div id="modal-mercadopago-livemode" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      {{ form_start(mercadopago_livemode_form) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" data-enable>{{ 'form.mercadopago_livemode.enable.label'|trans }}</h4>
+        <h4 class="modal-title" data-disable>{{ 'form.mercadopago_livemode.disable.label'|trans }}</h4>
+        <h4 class="modal-title" data-disable-and-enable-maintenance>{{ 'form.mercadopago_livemode.disable.label'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-success" data-enable>
+          {% trans %}form.mercadopago_livemode.enable.alert{% endtrans %}
+        </div>
+        <div class="alert alert-danger" data-disable>
+          {% trans %}form.mercadopago_livemode.disable.alert{% endtrans %}
+        </div>
+        <div class="alert alert-danger" data-disable-and-enable-maintenance>
+          {% trans %}form.mercadopago_livemode.disable_and_enable_maintenance.alert{% endtrans %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+        {{ form_widget(mercadopago_livemode_form.enable, { attr: { class: 'btn-success', 'data-enable': 'true' } }) }}
+        {{ form_widget(mercadopago_livemode_form.disable, { attr: { class: 'btn-danger', 'data-disable': 'true' } }) }}
+        {{ form_widget(mercadopago_livemode_form.disable_and_enable_maintenance, { attr: { class: 'btn-danger', 'data-disable-and-enable-maintenance': 'true' } }) }}
+      </div>
+      {{ form_end(mercadopago_livemode_form) }}
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -180,9 +215,11 @@
     var isBannerEnabled = {{ banner is not empty ? 'true' : 'false' }};
     var isStripeLivemode = {{ stripe_livemode ? 'true' : 'false' }};
     var canEnableStripeLivemode = {{ can_enable_stripe_livemode ? 'true' : 'false' }};
+    var isMercadopagoLivemode = {{ mercadopago_livemode ? 'true' : 'false' }};
+    var canEnableMercadopagoLivemode = {{ can_enable_mercadopago_livemode ? 'true' : 'false' }};
     var isDemo = {{ is_demo ? 'true' : 'false' }};
 
-    var maintenanceSwitch, bannerSwitch, stripeLiveModeSwitch;
+    var maintenanceSwitch, bannerSwitch, stripeLiveModeSwitch, mercadopagoLiveModeSwitch;
 
     /* Maintenance */
 
@@ -289,6 +326,48 @@
       };
 
       stripeLiveModeSwitch = new CoopCycle.Switch(document.querySelector('#stripe_livemode_switch'), stripeLiveModeSwitchOptions);
+    }
+
+    /* Mercadopago Live Mode */
+
+    if (document.querySelector('#mercadopago_livemode_switch')) {
+
+      $('#modal-mercadopago-livemode').on('hidden.bs.modal', function(e) {
+        if (true === isMercadopagoLivemode) {
+          mercadopagoLiveModeSwitch.check();
+        } else {
+          mercadopagoLiveModeSwitch.uncheck();
+        }
+      });
+
+      var mercadopagoLiveModeSwitchOptions = {
+        checked: isMercadopagoLivemode,
+        disabled: !canEnableMercadopagoLivemode,
+        onChange: function(checked) {
+          if (checked !== isMercadopagoLivemode) {
+            // Stripe was previously live, but the admin wants to disable it
+            if (isMercadopagoLivemode && !checked) {
+              $('#modal-mercadopago-livemode').find('[data-enable]').hide();
+              if (!isMaintenanceEnabled) {
+                $('#modal-mercadopago-livemode').find('[data-disable]').hide();
+                $('#modal-mercadopago-livemode').find('[data-disable-and-enable-maintenance]').show();
+              } else {
+                $('#modal-mercadopago-livemode').find('[data-disable-and-enable-maintenance]').hide();
+                $('#modal-mercadopago-livemode').find('[data-disable]').show();
+              }
+              $('#modal-mercadopago-livemode').modal('show');
+            }
+            if (!isMercadopagoLivemode && checked) {
+              $('#modal-mercadopago-livemode').find('[data-disable]').hide();
+              $('#modal-mercadopago-livemode').find('[data-disable-and-enable-maintenance]').hide();
+              $('#modal-mercadopago-livemode').find('[data-enable]').show();
+              $('#modal-mercadopago-livemode').modal('show');
+            }
+          }
+        }
+      };
+
+      mercadopagoLiveModeSwitch = new CoopCycle.Switch(document.querySelector('#mercadopago_livemode_switch'), mercadopagoLiveModeSwitchOptions);
     }
 
     $('[data-widget="switch"]').each(function() {
