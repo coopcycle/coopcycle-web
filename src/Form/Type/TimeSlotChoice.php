@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Task;
+use AppBundle\DataType\TsRange;
 use Carbon\Carbon;
 
 class TimeSlotChoice
@@ -107,6 +108,24 @@ class TimeSlotChoice
         }
 
         return new self($before, sprintf('%s-%s', $after->format('H:i'), $before->format('H:i')));
+    }
+
+    public function toTsRange(): TsRange
+    {
+        [ $startHour, $startMinute ] = explode(':', $this->timeRange[0]);
+        [ $endHour, $endMinute ] = explode(':', $this->timeRange[1]);
+
+        $lower = clone $this->date;
+        $upper = clone $this->date;
+
+        $lower->setTime($startHour, $startMinute);
+        $upper->setTime($endHour, $endMinute);
+
+        $range = new TsRange();
+        $range->setLower($lower);
+        $range->setUpper($upper);
+
+        return $range;
     }
 
     public function __toString()
