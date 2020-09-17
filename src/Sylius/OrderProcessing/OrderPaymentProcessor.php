@@ -9,6 +9,7 @@ use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Factory\PaymentFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
+use AppBundle\Payment\GatewayResolver;
 use Webmozart\Assert\Assert;
 
 final class OrderPaymentProcessor implements OrderProcessorInterface
@@ -16,15 +17,18 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
     private $paymentMethodRepository;
     private $paymentFactory;
     private $currencyContext;
+    private $resolver;
 
     public function __construct(
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentFactoryInterface $paymentFactory,
-        CurrencyContextInterface $currencyContext)
+        CurrencyContextInterface $currencyContext,
+        GatewayResolver $resolver)
     {
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentFactory = $paymentFactory;
         $this->currencyContext = $currencyContext;
+        $this->resolver = $resolver;
     }
 
     /**
@@ -66,15 +70,17 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             return;
         }
 
-        // FIXME
-        // Do not hardcode this here
-        $stripe = $this->paymentMethodRepository->findOneByCode('STRIPE');
+        $paymentMethod = $this->paymentMethodRepository->findOneByCode(
+            strtoupper(
+                $this->resolver->resolve()
+            )
+        );
 
         $payment = $this->paymentFactory->createWithAmountAndCurrencyCode(
             $order->getTotal(),
             $this->currencyContext->getCurrencyCode()
         );
-        $payment->setMethod($stripe);
+        $payment->setMethod($paymentMethod);
         $payment->setState($targetState);
 
         $order->addPayment($payment);

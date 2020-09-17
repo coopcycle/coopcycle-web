@@ -129,7 +129,7 @@ class OrderController extends AbstractController
             }
 
             if ($isFreeOrder || $isQuote) {
-                 $this->addFlash('track_goal', true);
+                $this->addFlash('track_goal', true);
 
                 return $this->redirectToRoute('profile_order', [
                     'id' => $order->getId(),

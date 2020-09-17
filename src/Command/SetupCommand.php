@@ -284,13 +284,18 @@ class SetupCommand extends Command
 
     private function createSyliusPaymentMethods(OutputInterface $output)
     {
-        $paymentMethod = $this->paymentMethodRepository->findOneByCode('STRIPE');
+        $this->createPaymentMethod("Stripe", $output);
+        $this->createPaymentMethod("MercadoPago", $output);
+    }
+
+    private function createPaymentMethod($paymentCode, OutputInterface $output) {
+        $paymentMethod = $this->paymentMethodRepository->findOneByCode(strtoupper($paymentCode));
 
         if (null === $paymentMethod) {
 
             $paymentMethod = new PaymentMethod();
 
-            $paymentMethod->setCode('STRIPE');
+            $paymentMethod->setCode(strtoupper($paymentCode));
             $paymentMethod->enable();
 
             foreach ($this->locales as $locale) {
@@ -298,14 +303,14 @@ class SetupCommand extends Command
                 $paymentMethod->setFallbackLocale($locale);
                 $translation = $paymentMethod->getTranslation($locale);
 
-                $translation->setName('Stripe');
+                $translation->setName($paymentCode);
             }
 
             $this->paymentMethodRepository->add($paymentMethod);
 
-            $output->writeln('Creating payment method « Stripe »');
+            $output->writeln('Creating payment method « '. $paymentCode .' »');
         } else {
-            $output->writeln('Payment method « Stripe » already exists');
+            $output->writeln('Payment method « '. $paymentCode .' » already exists');
         }
     }
 
