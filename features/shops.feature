@@ -51,7 +51,6 @@ Feature: Manage shops
           }
         ],
         "specialOpeningHoursSpecification":[],
-        "availabilities":@array@,
         "image":@string@,
         "fulfillmentMethods":@array@
       }
