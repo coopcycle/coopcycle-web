@@ -345,7 +345,7 @@
         disabled: !canEnableMercadopagoLivemode,
         onChange: function(checked) {
           if (checked !== isMercadopagoLivemode) {
-            // Stripe was previously live, but the admin wants to disable it
+            // Mercadopago was previously live, but the admin wants to disable it
             if (isMercadopagoLivemode && !checked) {
               $('#modal-mercadopago-livemode').find('[data-enable]').hide();
               if (!isMaintenanceEnabled) {
