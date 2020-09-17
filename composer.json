@@ -100,7 +100,7 @@
         "sylius/resource-bundle": "dev-master",
         "twig/cache-extension": "^1.4",
         "kreait/firebase-bundle": "^2.2",
-        "phpdocumentor/reflection-docblock": "^4.0",
+        "phpdocumentor/reflection-docblock": "^5.2",
         "sylius/customer-bundle": "^1.6",
         "letudiant/composer-shared-package-plugin": "^4.0",
         "mailjet/mailjet-apiv3-php": "^1.4",
