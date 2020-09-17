@@ -22,6 +22,7 @@ use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Form\Type\AsapChoiceLoader;
+use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
@@ -407,6 +408,32 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
      */
     public function getAvailabilities(\DateTime $now = null)
     {
+        if (!$this->isFulfillmentMethodEnabled('delivery')) {
+            return [];
+        }
+
+        $fulfillmentMethod = $this->getFulfillmentMethod('delivery');
+
+        if ($fulfillmentMethod->getOpeningHoursBehavior() === 'time_slot') {
+
+            $choiceLoader = new TimeSlotChoiceLoader(
+                TimeSlot::fromLocalBusiness($this, $fulfillmentMethod), 'en');
+
+            $choiceList = $choiceLoader->loadChoiceList();
+
+            $availabilities = [];
+            foreach ($choiceList->getChoices() as $choice) {
+
+                $range = $choice->toTsRange();
+
+                $availabilities[] = Carbon::instance($range->getLower())
+                    ->average($range->getUpper())
+                    ->format(\DateTime::ATOM);
+            }
+
+            return $availabilities;
+        }
+
         $choiceLoader = new AsapChoiceLoader(
             $this->getOpeningHours(/* $fulfillmentMethod */),
             $this->getClosingRules(),
