@@ -112,26 +112,10 @@ class OrderTimeHelper
 
             $ranges = [];
 
-            // Convert the settings to a TimeSlot
-            $timeSlot = new TimeSlot();
-            $timeSlot->setWorkingDaysOnly(false);
-
-            $minutes = $restaurant->getOrderingDelayMinutes();
-            if ($minutes > 0) {
-                $hours = (int) $minutes / 60;
-                $timeSlot->setPriorNotice(sprintf('%d %s', $hours, ($hours > 1 ? 'hours' : 'hour')));
-            }
-
-            $shippingOptionsDays = $restaurant->getShippingOptionsDays();
-            if ($shippingOptionsDays > 0) {
-                $timeSlot->setInterval(sprintf('%d days', $shippingOptionsDays));
-            }
-
-            $timeSlot->setOpeningHours(
-                $fulfillmentMethod->getOpeningHours()
+            $choiceLoader = new TimeSlotChoiceLoader(
+                TimeSlot::fromLocalBusiness($restaurant, $fulfillmentMethod),
+                $this->country
             );
-
-            $choiceLoader = new TimeSlotChoiceLoader($timeSlot, $this->country);
             $choiceList = $choiceLoader->loadChoiceList();
 
             foreach ($choiceList->getChoices() as $choice) {
