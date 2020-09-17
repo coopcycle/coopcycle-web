@@ -4,6 +4,7 @@ namespace AppBundle\Validator;
 
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Validator\Constraints\IsActivableRestaurant;
 use AppBundle\Validator\Constraints\IsActivableRestaurantValidator;
@@ -15,17 +16,22 @@ class IsActivableRestaurantValidatorTest extends ConstraintValidatorTestCase
     use ProphecyTrait;
 
 	private $settingsManager;
+    private $gatewayResolver;
 
 	public function setUp() :void
     {
         $this->settingsManager = $this->prophesize(SettingsManager::class);
+        $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
 
         parent::setUp();
     }
 
     protected function createValidator()
     {
-        return new IsActivableRestaurantValidator($this->settingsManager->reveal());
+        return new IsActivableRestaurantValidator(
+            $this->settingsManager->reveal(),
+            $this->gatewayResolver->reveal()
+        );
 	}
 
     public function testMissingPhone()

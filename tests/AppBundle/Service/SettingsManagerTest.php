@@ -10,6 +10,7 @@ use libphonenumber\PhoneNumberUtil;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
+use AppBundle\Payment\GatewayResolver;
 
 class SettingsManagerTest extends TestCase
 {
@@ -87,7 +88,8 @@ class SettingsManagerTest extends TestCase
             $country,
             $foodtechEnable = true,
             $b2bEnabled = false,
-            new NullLogger()
+            new NullLogger(),
+            new GatewayResolver('fr')
         );
 
         $this->assertEquals($expected, $settingsManager->canSendSms());
