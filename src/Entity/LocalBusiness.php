@@ -9,6 +9,7 @@ use AppBundle\Action\Restaurant\Close as CloseController;
 use AppBundle\Action\Restaurant\Menu;
 use AppBundle\Action\Restaurant\Deliveries as RestaurantDeliveriesController;
 use AppBundle\Action\Restaurant\Menus;
+use AppBundle\Action\Restaurant\Timing;
 use AppBundle\Annotation\Enabled;
 use AppBundle\Api\Dto\RestaurantInput;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
@@ -94,6 +95,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "controller"=RestaurantDeliveriesController::class,
  *       "access_control"="is_granted('ROLE_ADMIN')",
  *       "normalization_context"={"groups"={"delivery", "address", "restaurant_delivery"}}
+ *     },
+ *     "restaurant_timing"={
+ *       "method"="GET",
+ *       "path"="/restaurants/{id}/timing",
+ *       "controller"=Timing::class,
+ *       "normalization_context"={"groups"={"restaurant_timing"}}
  *     }
  *   },
  *   subresourceOperations={
