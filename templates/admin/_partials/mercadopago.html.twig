@@ -31,3 +31,22 @@
 <div class="alert alert-info">
   <i class="fa fa-info-circle"></i> {% trans with { '%redirect_uri%': url('mercadopago_oauth_callback') } %}form.settings.mercadopago.redirect_uri.help{% endtrans %}
 </div>
+
+<div class="alert alert-danger">
+  <i class="fa fa-warning"></i> {{ 'form.mercadopago_livemode.enable.label'|trans }}
+  <div class="pull-right">
+    <div id="mercadopago_livemode_switch"></div>
+  </div>
+</div>
+
+{% if not mercadopago_livemode %}
+<p class="help-block">
+  <i class="fa fa-info-circle"></i> {{ 'form.settings.mercadopago_testmode.help'|trans|raw }}
+</p>
+{% endif %}
+
+{% if not can_enable_mercadopago_livemode %}
+<p class="help-block">
+  <i class="fa fa-info-circle"></i> {{ 'form.settings.mercadopago_enable_livemode.help'|trans|raw }}
+</p>
+{% endif %}

@@ -394,6 +394,14 @@ form.local_business.stripe_account.link_ok: "Éste restaurante ha sido enlazado 
   >panel de administración de Stripe</a>.\n"
 form.local_business.mercadopago_account.title: Cuenta de MercadoPago
 form.local_business.mercadopago_account.success: Cuenta MercadoPago conectada con éxito
+form.mercadopago_livemode.enable.label: Utilizar Mercadopago en modo « producción »
+form.mercadopago_livemode.enable.alert: En modo « producción », las tarjetas de crédito serán cargadas.
+form.mercadopago_livemode.disable.label: Utilizar Mercadopago en modo « test »
+form.mercadopago_livemode.disable.alert: En modo « test », las tarjetas de crédito no serán cargadas.
+form.mercadopago_livemode.disable_and_enable_maintenance.label: Utilizar el modo « test » y activar el mantenimiento
+form.mercadopago_livemode.disable_and_enable_maintenance.alert: Estás utilizando el modo « live ».<br>Si quiere pasar en modo « test », el mantenimiento se activará automáticamente.
+form.settings.mercadopago_testmode.help: 'En modo « test », debe usar <a href="https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba">números de tarjetas de prueba</a> para pagar. <strong>No se intercambiará dinero.</strong> '
+form.settings.mercadopago_enable_livemode.help: Para activar el modo « live », primero necesita configurar las credenciales « live ».
 form.menu_item.name.label: Nombre
 form.menu_item.price.label: Precio
 form.menu_item_modifier.name.label: Nombre

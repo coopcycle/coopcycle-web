@@ -596,6 +596,15 @@ form.local_business.stripe_account.link_ok: "This restaurant is linked to a Stri
   \ account and the transfers to your account, please use the <a href=\"https://dashboard.stripe.com/\"\
   \ target=\"_blank\">Stripe dashboard</a>.\n"
 form.local_business.mercadopago.connect_button.text: Connect with Mercado Pago
+form.local_business.mercadopago_account.title: MercadoPago Account
+form.mercadopago_livemode.enable.label: Use Mercadopago in « live » mode
+form.mercadopago_livemode.enable.alert: In « live » mode, credit cards will be charged.
+form.mercadopago_livemode.disable.label: Use Mercadopago in « test » mode
+form.mercadopago_livemode.disable.alert: In « test » mode, credit cards will not be charged.
+form.mercadopago_livemode.disable_and_enable_maintenance.label: Switch to « test » mode and enable maintenance
+form.mercadopago_livemode.disable_and_enable_maintenance.alert: You are in « live » mode.<br>If you switch to « test » mode, maintenance will be enabled automatically.
+form.settings.mercadopago_testmode.help: 'In « test » mode, you will have to use <a href="https://www.mercadopago.com.ar/developers/en/guides/online-payments/checkout-api/testing#bookmark_how_to_test_your_integration">test credit cards</a> numbers to pay on the platform. <strong>No money will be exchanged.</strong> '
+form.settings.mercadopago_enable_livemode.help: To enable « live » mode, you need to configure « live » keys first.
 form.menu_item.name.label: Name
 form.menu_item.price.label: Price
 form.menu_item_modifier.name.label: Name
