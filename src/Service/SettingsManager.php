@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Psr\Log\LoggerInterface;
+use AppBundle\Payment\GatewayResolver;
 
 class SettingsManager
 {
@@ -17,6 +18,7 @@ class SettingsManager
     private $country;
     private $doctrine;
     private $logger;
+    private $gatewayResolver;
 
     private $mandatorySettings = [
         'brand_name',
@@ -33,6 +35,8 @@ class SettingsManager
         'stripe_live_publishable_key',
         'stripe_live_secret_key',
         'stripe_live_connect_client_id',
+        'payment_gateway',
+        'payment_method_publishable_key',
         'google_api_key',
         'mercadopago_test_publishable_key',
         'mercadopago_live_publishable_key',
@@ -50,7 +54,8 @@ class SettingsManager
         string $country,
         bool $foodtechEnabled,
         bool $b2bEnabled,
-        LoggerInterface $logger)
+        LoggerInterface $logger,
+        GatewayResolver $gatewayResolver)
     {
         $this->craueConfig = $craueConfig;
         $this->configEntityName = $configEntityName;
@@ -60,6 +65,7 @@ class SettingsManager
         $this->foodtechEnabled = $foodtechEnabled;
         $this->b2bEnabled = $b2bEnabled;
         $this->logger = $logger;
+        $this->gatewayResolver = $gatewayResolver;
     }
 
     public function isSecret($name)
@@ -70,6 +76,8 @@ class SettingsManager
     public function get($name)
     {
         switch ($name) {
+            case 'payment_gateway':
+                return $this->gatewayResolver->resolve();
             case 'stripe_publishable_key':
                 $name = $this->isStripeLivemode() ? 'stripe_live_publishable_key' : 'stripe_test_publishable_key';
                 break;
@@ -78,6 +86,12 @@ class SettingsManager
                 break;
             case 'stripe_connect_client_id':
                 $name = $this->isStripeLivemode() ? 'stripe_live_connect_client_id' : 'stripe_test_connect_client_id';
+                break;
+            case 'mercadopago_publishable_key':
+                $name = $this->isMercadopagoLivemode() ? 'mercadopago_live_publishable_key' : 'mercadopago_test_publishable_key';
+                break;
+            case 'mercadopago_access_token':
+                $name = $this->isMercadopagoLivemode() ? 'mercadopago_live_access_token' : 'mercadopago_test_access_token';
                 break;
             case 'timezone':
                 return ini_get('date.timezone');
@@ -164,6 +178,32 @@ class SettingsManager
             $stripeLiveConnectClientId = $this->craueConfig->get('stripe_live_connect_client_id');
 
             return !empty($stripeLivePublishableKey) && !empty($stripeLiveSecretKey) && !empty($stripeLiveConnectClientId);
+
+        } catch (\RuntimeException $e) {
+            return false;
+        }
+    }
+
+    public function canEnableMercadopagoTestmode()
+    {
+        try {
+            $mercadopagoTestPublishableKey = $this->craueConfig->get('mercadopago_test_publishable_key');
+            $mercadopagoTestSecretKey = $this->craueConfig->get('mercadopago_test_secret_key');
+
+            return !empty($mercadopagoTestPublishableKey) && !empty($mercadopagoTestSecretKey);
+
+        } catch (\RuntimeException $e) {
+            return false;
+        }
+    }
+
+    public function canEnableMercadopagoLivemode()
+    {
+        try {
+            $mercadopagoLivePublishableKey = $this->craueConfig->get('mercadopago_live_publishable_key');
+            $mercadopagoLiveSecretKey = $this->craueConfig->get('mercadopago_live_secret_key');
+
+            return !empty($mercadopagoLivePublishableKey) && !empty($mercadopagoLiveSecretKey);
 
         } catch (\RuntimeException $e) {
             return false;
