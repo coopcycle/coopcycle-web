@@ -11,6 +11,9 @@ framework:
         storage_id: session.storage.mock_file
     profiler:
         collect: false
+    cache:
+        prefix_seed: "%database_name%_test"
+        app: cache.adapter.array
 
 doctrine:
     dbal:
