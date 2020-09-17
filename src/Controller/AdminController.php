@@ -35,6 +35,7 @@ use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
+use AppBundle\Form\MercadopagoLivemodeType;
 use AppBundle\Form\NewOrderType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\OrganizationType;
@@ -1021,6 +1022,32 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_settings');
         }
 
+        /* Mercadopago live mode */
+
+        $isMercadopagoLivemode = $settingsManager->isMercadopagoLivemode();
+        $canEnableMercadopagoLivemode = $settingsManager->canEnableMercadopagoLivemode();
+        $mercadopagoLivemodeForm = $this->createForm(MercadopagoLivemodeType::class);
+
+        $mercadopagoLivemodeForm->handleRequest($request);
+        if ($mercadopagoLivemodeForm->isSubmitted() && $mercadopagoLivemodeForm->isValid()) {
+
+            if ($mercadopagoLivemodeForm->getClickedButton()) {
+                if ('enable' === $mercadopagoLivemodeForm->getClickedButton()->getName()) {
+                    $settingsManager->set('mercadopago_livemode', 'yes');
+                }
+                if ('disable' === $mercadopagoLivemodeForm->getClickedButton()->getName()) {
+                    $settingsManager->set('mercadopago_livemode', 'no');
+                }
+                if ('disable_and_enable_maintenance' === $mercadopagoLivemodeForm->getClickedButton()->getName()) {
+                    $redis->set('maintenance', '1');
+                    $settingsManager->set('mercadopago_livemode', 'no');
+                }
+                $settingsManager->flush();
+            }
+
+            return $this->redirectToRoute('admin_settings');
+        }
+
         /* Maintenance */
 
         $maintenanceForm = $this->createForm(MaintenanceType::class);
@@ -1101,6 +1128,9 @@ class AdminController extends Controller
             'stripe_livemode' => $isStripeLivemode,
             'stripe_livemode_form' => $stripeLivemodeForm->createView(),
             'can_enable_stripe_livemode' => $canEnableStripeLivemode,
+            'mercadopago_livemode' => $isMercadopagoLivemode,
+            'mercadopago_livemode_form' => $mercadopagoLivemodeForm->createView(),
+            'can_enable_mercadopago_livemode' => $canEnableMercadopagoLivemode,
         ]);
     }
 
