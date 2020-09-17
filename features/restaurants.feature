@@ -137,7 +137,6 @@ Feature: Manage restaurants
         }
       ],
       "specialOpeningHoursSpecification":[],
-      "availabilities":@array@,
       "fulfillmentMethods":@array@
     }
     """

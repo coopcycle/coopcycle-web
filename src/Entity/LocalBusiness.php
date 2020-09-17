@@ -61,7 +61,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "normalization_context"={"groups"={"restaurant", "restaurant_legacy", "address", "order"}}
+ *       "normalization_context"={"groups"={"restaurant", "address", "order"}}
  *     },
  *     "restaurant_menu"={
  *       "method"="GET",
