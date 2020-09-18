@@ -80,7 +80,7 @@ class Settings
     public $mercadopago_live_publishable_key;
 
     /**
-     * @Assert\Regex("/^APP-USR-[A-Za-z0-9-]+/")
+     * @Assert\Regex("/^APP_USR-[A-Za-z0-9-]+/")
      */
     public $mercadopago_live_access_token;
 
