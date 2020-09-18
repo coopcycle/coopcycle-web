@@ -268,6 +268,13 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $shippingTimeRange;
 
+    /**
+     * @Assert\Expression(
+     *   "!this.isTakeaway() or (this.isTakeaway() and this.getRestaurant().isFulfillmentMethodEnabled('collection'))",
+     *   message="order.collection.not_available",
+     *   groups={"cart"}
+     * )
+     */
     protected $takeaway = false;
 
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
@@ -857,9 +864,20 @@ class Order extends BaseOrder implements OrderInterface
         $this->takeaway = $takeaway;
     }
 
+    /**
+     * @SerializedName("fulfillmentMethod")
+     */
     public function getFulfillmentMethod(): string
     {
         return $this->isTakeaway() ? 'collection' : 'delivery';
+    }
+
+    /**
+     * @SerializedName("fulfillmentMethod")
+     */
+    public function setFulfillmentMethod(string $fulfillmentMethod)
+    {
+        $this->setTakeaway($fulfillmentMethod === 'collection');
     }
 
     public function getRefundTotal(): int

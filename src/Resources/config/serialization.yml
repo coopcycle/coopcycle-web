@@ -73,6 +73,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order', 'cart', 'order_update']
     takeaway:
       groups: ['order']
+    fulfillmentMethod:
+      groups: ['cart', 'order_update']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:
