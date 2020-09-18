@@ -1147,6 +1147,46 @@ Feature: Carts
       }
       """
 
+  Scenario: Start cart session (with collection fulfillment method)
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/carts/session" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/5"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "token":@string@,
+        "cart":{
+          "@context":"/api/contexts/Order",
+          "@id":"/api/orders/1",
+          "@type":"http://schema.org/Order",
+          "customer":null,
+          "restaurant":"/api/restaurants/5",
+          "shippingAddress":null,
+          "shippedAt":null,
+          "shippingTimeRange": null,
+          "reusablePackagingEnabled":false,
+          "reusablePackagingPledgeReturn": 0,
+          "notes":null,
+          "items":[],
+          "itemsTotal":0,
+          "total":0,
+          "adjustments":@...@,
+          "fulfillmentMethod":"collection"
+        }
+      }
+      """
+
   Scenario: Wrong cart session token
     Given the fixtures files are loaded:
       | sylius_channels.yml |

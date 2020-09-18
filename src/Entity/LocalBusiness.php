@@ -954,6 +954,18 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
         $fulfillmentMethod->setEnabled($enabled);
     }
 
+    public function disableFulfillmentMethod($method)
+    {
+        $fulfillmentMethod = $this->fulfillmentMethods->filter(function (FulfillmentMethod $fulfillmentMethod) use ($method): bool {
+            return $method === $fulfillmentMethod->getType();
+        })->first();
+
+        if ($fulfillmentMethod) {
+
+            $fulfillmentMethod->setEnabled(false);
+        }
+    }
+
     public function getOpeningHours($method = 'delivery')
     {
         foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
