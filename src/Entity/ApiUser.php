@@ -30,6 +30,11 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN') or user == object"
+ *     },
+ *     "put"={
+ *       "method"="PUT",
+ *       "access_control"="is_granted('ROLE_ADMIN') or user == object",
+ *       "denormalization_context"={"groups"={"user_update"}},
  *     }
  *   },
  *   collectionOperations={
