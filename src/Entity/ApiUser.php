@@ -84,6 +84,7 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     protected $familyName;
 
     /**
+     * @var PhoneNumber|null
      * @AssertPhoneNumber
      * @ApiProperty(iri="https://schema.org/telephone")
      */
@@ -172,7 +173,7 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     }
 
     /**
-     * @param mixed $telephone
+     * @param PhoneNumber|string $telephone
      */
     public function setTelephone($telephone)
     {
