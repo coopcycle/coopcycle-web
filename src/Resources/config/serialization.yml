@@ -7,7 +7,7 @@ AppBundle\Entity\ApiUser:
     addresses:
       groups: ['user']
     telephone:
-      groups: ['order', 'user_update']
+      groups: ['user', 'order', 'user_update']
     roles:
       groups: ['user']
     givenName:

@@ -38,6 +38,24 @@ Feature: Users
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/users/1"
     Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/User",
+        "@id":"/api/users/1",
+        "@type":"User",
+        "username":"bob",
+        "email":"bob@demo.coopcycle.org",
+        "givenName":null,
+        "familyName":null,
+        "telephone":null,
+        "roles":[
+          "ROLE_USER"
+        ],
+        "addresses":[]
+      }
+      """
 
   Scenario: Retrieve users filtered by role
     Given the fixtures files are loaded:
