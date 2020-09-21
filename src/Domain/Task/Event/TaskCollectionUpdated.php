@@ -37,9 +37,4 @@ class TaskCollectionUpdated extends BaseEvent implements SerializableEventInterf
     {
         return 'task_collection:updated';
     }
-
-    public function forHumans(TranslatorInterface $translator, UserInterface $user = null)
-    {
-        return '';
-    }
 }

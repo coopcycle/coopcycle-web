@@ -3,13 +3,14 @@
 namespace AppBundle\Domain\Order;
 
 use AppBundle\Domain\Event as BaseEvent;
+use AppBundle\Domain\HumanReadableEventInterface;
 use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class Event extends BaseEvent implements SerializableEventInterface
+abstract class Event extends BaseEvent implements SerializableEventInterface, HumanReadableEventInterface
 {
     protected $order;
 
