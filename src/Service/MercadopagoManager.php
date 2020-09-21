@@ -66,6 +66,8 @@ class MercadopagoManager
         $p->payment_method_id = $payment->getMercadopagoPaymentMethod();
         $p->payer = array(
             'email' => $order->getCustomer()->getEmail()
+            // On development we should use the buyer testing e-mail
+            // Documentation: https://www.mercadopago.com.mx/developers/en/guides/online-payments/marketplace/checkout-pro/testing-marketplace/
         );
         $p->capture = false;
 
@@ -87,10 +89,26 @@ class MercadopagoManager
     {
         $this->configure();
 
-        $payment = MercadoPago\Payment::find_by_id($payment->getCharge());
+        // FIXME: should be refactored
+
+        $order = $payment->getOrder();
+
+        $options = [];
+
+        if (null !== $order->getRestaurant()) {
+            $account = $order->getRestaurant()->getMercadopagoAccount(false);
+            if ($account) {
+                // @see MercadoPago\Manager::processOptions()
+                $options['custom_access_token'] = $account->getAccessToken();
+            }
+        }
+
+        $payment = MercadoPago\Payment::read(["id" => $payment->getCharge()], ["custom_access_token" => $options['custom_access_token']]);
         $payment->capture = true;
 
-        $payment->update();
+        if (!$payment->update()) {
+            throw new \Exception((string) $payment->error);
+        }
 
         return $payment;
     }
