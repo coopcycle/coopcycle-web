@@ -54,6 +54,8 @@ final class Version20200921100753 extends AbstractMigration implements Container
         $this->redis  = $redis  = $this->container->get(Redis::class);
         $this->prefix = $prefix = $this->container->getParameter('database_name');
 
+        $redis->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
+
         $it = NULL;
         while ($keys = $redis->scan($it, sprintf('%s:user:*:notifications_data', $this->prefix))) {
             foreach ($keys as $key) {
