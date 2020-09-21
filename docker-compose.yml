@@ -162,14 +162,14 @@ services:
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc config host add coopcycle http://minio:9000 $S3_CREDENTIALS_KEY $S3_CREDENTIALS_SECRET;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/assets;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/products;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/receipts;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/restaurants;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/stores;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/tasks;
-      /usr/bin/mc policy set public coopcycle/images;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/assets/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/products/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/receipts/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/restaurants/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/stores/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/tasks/;
+      /usr/bin/mc policy set public coopcycle/images/;
       "
 
   tile38:
