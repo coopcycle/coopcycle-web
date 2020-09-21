@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0c520c682f29a2cc33b05f7e82ff8e1d",
+    "content-hash": "8ad63de7fdf5094ecb5568288de79da8",
     "packages": [
         {
             "name": "api-platform/core",
@@ -7464,16 +7464,16 @@
         },
         {
             "name": "mercadopago/dx-php",
-            "version": "2.1.0",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mercadopago/dx-php.git",
-                "reference": "0428df445eff7f2722228176a756cef418baa48c"
+                "reference": "b17ca2d555512b6489067e3166bb4beaab206cff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mercadopago/dx-php/zipball/0428df445eff7f2722228176a756cef418baa48c",
-                "reference": "0428df445eff7f2722228176a756cef418baa48c",
+                "url": "https://api.github.com/repos/mercadopago/dx-php/zipball/b17ca2d555512b6489067e3166bb4beaab206cff",
+                "reference": "b17ca2d555512b6489067e3166bb4beaab206cff",
                 "shasum": ""
             },
             "require": {
@@ -7521,7 +7521,7 @@
             ],
             "description": "Mercado Pago PHP SDK",
             "homepage": "https://github.com/mercadopago/dx-php",
-            "time": "2020-07-01T19:48:00+00:00"
+            "time": "2020-09-10T20:17:15+00:00"
         },
         {
             "name": "michelf/php-markdown",

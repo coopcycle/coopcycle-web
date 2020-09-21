@@ -108,7 +108,7 @@
         "twig/intl-extra": "^3.0",
         "odolbeau/phone-number-bundle": "^3.1",
         "league/omnipay": "^3",
-        "mercadopago/dx-php": "^2.1"
+        "mercadopago/dx-php": "^2.1.1"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
