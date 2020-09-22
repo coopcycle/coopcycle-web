@@ -184,9 +184,14 @@ class InitDemoCommand extends Command
         }
     }
 
-    private function loadFixtures($filename, array $objects = [])
+    private function loadFixtures($filename, array $objects = [], $parameters = [])
     {
-        return $this->fixturesLoader->load([$filename], $parameters = [], $objects, PurgeMode::createNoPurgeMode());
+        return $this->fixturesLoader->load(
+            [$filename],
+            $parameters,
+            $objects,
+            PurgeMode::createNoPurgeMode()
+        );
     }
 
     private function createCraueConfigSetting($name, $value, $section = 'general')
@@ -293,6 +298,7 @@ class InitDemoCommand extends Command
         for ($i = 0; $i < 5; $i++) {
             $appetizer = $this->loadFixtures(__DIR__ . '/Resources/appetizer.yml', [
                 'taxCategory' => $taxCategory,
+            ], [
                 'currentLocale' => $this->defaultLocale,
             ]);
 
@@ -308,7 +314,7 @@ class InitDemoCommand extends Command
     {
         $products = [];
 
-        $options = $this->loadFixtures(__DIR__ . '/Resources/product_options.yml', [
+        $options = $this->loadFixtures(__DIR__ . '/Resources/product_options.yml', [], [
             'currentLocale' => $this->defaultLocale,
         ]);
 
@@ -316,6 +322,7 @@ class InitDemoCommand extends Command
 
             $dish = $this->loadFixtures(__DIR__ . '/Resources/dish.yml', [
                 'taxCategory' => $taxCategory,
+            ], [
                 'currentLocale' => $this->defaultLocale,
             ]);
 
@@ -337,6 +344,7 @@ class InitDemoCommand extends Command
         for ($i = 0; $i < 5; $i++) {
             $dessert = $this->loadFixtures(__DIR__ . '/Resources/dessert.yml', [
                 'taxCategory' => $taxCategory,
+            ], [
                 'currentLocale' => $this->defaultLocale,
             ]);
 
