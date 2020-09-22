@@ -55,10 +55,6 @@ services:
       $configEntityName: '%craue_config.entity_name%'
       $taxonFactory: '@sylius.factory.taxon'
       $taxCategoryRepository: '@sylius.repository.tax_category'
-      $taxCategoryFactory: '@sylius.factory.tax_category'
-      $taxCategoryManager: '@sylius.manager.tax_category'
-      $taxRateFactory: '@sylius.factory.tax_rate'
-      $taxRateManager: '@sylius.manager.tax_rate'
     tags:
       - { name: 'console.command', command: 'coopcycle:demo:init' }
 

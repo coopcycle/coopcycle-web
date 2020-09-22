@@ -45,6 +45,8 @@ class InitDemoCommand extends Command
         'craue_config_setting',
         'migration_versions',
         'sylius_locale',
+        'sylius_tax_category',
+        'sylius_tax_rate',
     ];
 
     private static $users = [
@@ -72,10 +74,6 @@ class InitDemoCommand extends Command
         FactoryInterface $taxonFactory,
         PhoneNumberUtil $phoneNumberUtil,
         RepositoryInterface $taxCategoryRepository,
-        FactoryInterface $taxCategoryFactory,
-        EntityManagerInterface $taxCategoryManager,
-        FactoryInterface $taxRateFactory,
-        EntityManagerInterface $taxRateManager,
         Geocoder $geocoder)
     {
         $this->doctrine = $doctrine;
@@ -88,10 +86,6 @@ class InitDemoCommand extends Command
         $this->taxonFactory = $taxonFactory;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->taxCategoryFactory = $taxCategoryFactory;
-        $this->taxCategoryManager = $taxCategoryManager;
-        $this->taxRateFactory = $taxRateFactory;
-        $this->taxRateManager = $taxRateManager;
         $this->geocoder = $geocoder;
 
         parent::__construct();
@@ -240,33 +234,6 @@ class InitDemoCommand extends Command
     {
         $this->userManipulator->create($username, $username, "{$username}@demo.coopcycle.org", true, false);
         $this->userManipulator->addRole($username, 'ROLE_COURIER');
-    }
-
-    private function createTaxCategory($taxCategoryName, $taxCategoryCode, $taxRateName, $taxRateCode, $taxRateAmount)
-    {
-        if ($taxCategory = $this->taxCategoryRepository->findOneByCode($taxCategoryCode)) {
-            return $taxCategory;
-        }
-
-        $taxCategory = $this->taxCategoryFactory->createNew();
-        $taxCategory->setName($taxCategoryName);
-        $taxCategory->setCode($taxCategoryCode);
-
-        $this->taxCategoryManager->persist($taxCategory);
-        $this->taxCategoryManager->flush();
-
-        $taxRate = $this->taxRateFactory->createNew();
-        $taxRate->setName($taxRateName);
-        $taxRate->setCode($taxRateCode);
-        $taxRate->setCategory($taxCategory);
-        $taxRate->setAmount($taxRateAmount);
-        $taxRate->setIncludedInPrice(true);
-        $taxRate->setCalculator('default');
-
-        $this->taxRateManager->persist($taxRate);
-        $this->taxRateManager->flush();
-
-        return $taxCategory;
     }
 
     private function createMenuTaxon($appetizers, $dishes, $desserts)
@@ -491,10 +458,7 @@ class InitDemoCommand extends Command
     private function createRestaurants(OutputInterface $output)
     {
         $foodTaxCategory =
-            $this->createTaxCategory('TVA consommation immédiate', 'tva_conso_immediate', 'TVA 10%', 'tva_10', 0.10);
-
-        $this->createTaxCategory('TVA consommation différée', 'tva_conso_differee', 'TVA 5.5%', 'tva_5_5', 0.055);
-        $this->createTaxCategory('TVA livraison', 'tva_livraison', 'TVA 20%', 'tva_20', 0.20);
+            $this->taxCategoryRepository->findOneByCode('BASE_REDUCED');
 
         $em = $this->doctrine->getManagerForClass(Entity\LocalBusiness::class);
 
@@ -519,7 +483,7 @@ class InitDemoCommand extends Command
                 $em->clear();
 
                 // As we have cleared the whole UnitOfWork, we need to restore the TaxCategory entity
-                $foodTaxCategory = $this->taxCategoryRepository->findOneByCode('tva_conso_immediate');
+                $foodTaxCategory = $this->taxCategoryRepository->findOneByCode('BASE_REDUCED');
             }
         }
 
