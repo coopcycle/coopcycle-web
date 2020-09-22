@@ -56,6 +56,7 @@ services:
       $taxonFactory: '@sylius.factory.taxon'
       $taxCategoryRepository: '@sylius.repository.tax_category'
       $country: "%country_iso%"
+      $defaultLocale: "%kernel.default_locale%"
     tags:
       - { name: 'console.command', command: 'coopcycle:demo:init' }
 
