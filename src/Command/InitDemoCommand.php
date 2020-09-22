@@ -83,7 +83,8 @@ class InitDemoCommand extends Command
         RepositoryInterface $taxCategoryRepository,
         Geocoder $geocoder,
         string $country,
-        string $defaultLocale)
+        string $defaultLocale,
+        string $googleApiKeyFromEnv)
     {
         $this->doctrine = $doctrine;
         $this->userManipulator = $userManipulator;
@@ -98,6 +99,7 @@ class InitDemoCommand extends Command
         $this->geocoder = $geocoder;
         $this->country = $country;
         $this->defaultLocale = $defaultLocale;
+        $this->googleApiKeyFromEnv = $googleApiKeyFromEnv;
 
         parent::__construct();
     }
@@ -126,14 +128,14 @@ class InitDemoCommand extends Command
 
         if ($lock->acquire()) {
 
+            $output->writeln('Verifying database config…');
+            $this->handleCraueConfig($input, $output);
+
             $output->writeln('Purging database…');
             $this->ormPurger->purge();
 
             $output->writeln('Resetting sequences…');
             $this->resetSequences();
-
-            $output->writeln('Verifying database config…');
-            $this->handleCraueConfig($input, $output);
 
             $output->writeln('Creating super users…');
             foreach (self::$users as $username => $params) {
@@ -233,6 +235,19 @@ class InitDemoCommand extends Command
         } catch (\RuntimeException $e) {
             $brandName = $this->createCraueConfigSetting('brand_name', 'CoopCycle');
             $em->persist($brandName);
+        }
+
+        try {
+            $this->craueConfig->get('google_api_key');
+        } catch (\RuntimeException $e) {
+            if (empty($this->googleApiKeyFromEnv)) {
+                throw new \RuntimeException(sprintf('No Google API key found. '
+                    .'You should either have a "google_api_key" setting stored in database, '
+                    .'or a GOOGLE_API_KEY env var. '));
+            }
+            $em->persist(
+                $this->createCraueConfigSetting('google_api_key', $this->googleApiKeyFromEnv)
+            );
         }
 
         $em->flush();

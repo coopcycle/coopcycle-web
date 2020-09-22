@@ -57,6 +57,7 @@ services:
       $taxCategoryRepository: '@sylius.repository.tax_category'
       $country: "%country_iso%"
       $defaultLocale: "%kernel.default_locale%"
+      $googleApiKeyFromEnv: '%env(GOOGLE_API_KEY)%'
     tags:
       - { name: 'console.command', command: 'coopcycle:demo:init' }
 
