@@ -210,7 +210,7 @@ class InitDemoCommand extends Command
         } catch (\RuntimeException $e) {
             $mapCenterValue = implode(',', self::$parisFranceCoords);
             $mapCenter = $this->createCraueConfigSetting('latlng', $mapCenterValue);
-            $em->persist($mapsCenter);
+            $em->persist($mapCenter);
         }
 
         try {
