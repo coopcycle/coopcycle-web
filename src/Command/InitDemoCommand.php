@@ -103,7 +103,14 @@ class InitDemoCommand extends Command
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $this->faker->addProvider(new RestaurantProvider($this->faker));
+        $providerClass = 'AppBundle\\Faker\\' . $this->defaultLocale . '\\RestaurantProvider';
+        if (!class_exists($providerClass, true)) {
+            $providerClass = RestaurantProvider::class;
+        }
+
+        $restaurantProvider = new $providerClass($this->faker);
+
+        $this->faker->addProvider($restaurantProvider);
 
         $this->ormPurger = new ORMPurger($this->doctrine->getManager(), $this->excludedTables);
         // $this->ormPurger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
