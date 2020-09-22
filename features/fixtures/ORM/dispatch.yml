@@ -9,7 +9,7 @@ AppBundle\Entity\Base\GeoCoordinates:
   geo_3:
     __construct: [ "48.878658", "2.341055" ]
 
-AppBundle\Entity\ApiUser:
+AppBundle\Entity\User:
   bob:
     __factory:
       '@FOS\UserBundle\Util\UserManipulator::create':

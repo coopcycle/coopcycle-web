@@ -4,7 +4,7 @@ namespace AppBundle\Entity\Sylius;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,7 +26,7 @@ use Webmozart\Assert\Assert;
  */
 class Customer extends BaseCustomer implements CustomerInterface
 {
-    /** @var ApiUser */
+    /** @var User */
     protected $user;
 
     /** @var Collection|OrderInterface[] */
@@ -126,17 +126,17 @@ class Customer extends BaseCustomer implements CustomerInterface
             return;
         }
 
-        /** @var ApiUser|null $user */
-        Assert::nullOrIsInstanceOf($user, ApiUser::class);
+        /** @var User|null $user */
+        Assert::nullOrIsInstanceOf($user, User::class);
 
         $previousUser = $this->user;
         $this->user = $user;
 
-        if ($previousUser instanceof ApiUser) {
+        if ($previousUser instanceof User) {
             $previousUser->setCustomer(null);
         }
 
-        if ($user instanceof ApiUser) {
+        if ($user instanceof User) {
             $user->setCustomer($this);
         }
     }

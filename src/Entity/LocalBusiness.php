@@ -1035,7 +1035,7 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
         }
     }
 
-    public function addOwner(ApiUser $owner)
+    public function addOwner(User $owner)
     {
         $owner->addRestaurant($this);
 

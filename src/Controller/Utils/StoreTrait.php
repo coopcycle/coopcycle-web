@@ -3,7 +3,7 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Address;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
@@ -60,7 +60,7 @@ trait StoreTrait
             // FIXME Association should be inversed
             $user->addStore($store);
 
-            $this->getDoctrine()->getManagerForClass(ApiUser::class)->flush();
+            $this->getDoctrine()->getManagerForClass(User::class)->flush();
 
             return $this->redirectToRoute('admin_store_users', ['id' => $id]);
         }

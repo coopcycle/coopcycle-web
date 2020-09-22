@@ -5,14 +5,14 @@ namespace Tests\AppBundle\Entity\Restaurant;
 use PHPUnit\Framework\TestCase;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 
 class PledgeTest extends TestCase
 {
     public function testAddVote()
     {
     	$pledge = new Pledge();
-    	$user = new ApiUser();
+    	$user = new User();
 
     	$pledge->addVote($user);
 
@@ -22,8 +22,8 @@ class PledgeTest extends TestCase
     public function testHasVoted()
     {
     	$pledge = new Pledge();
-    	$user1 = new ApiUser();
-    	$user2 = new ApiUser();
+    	$user1 = new User();
+    	$user2 = new User();
 
     	$pledge->addVote($user1);
 
@@ -38,7 +38,7 @@ class PledgeTest extends TestCase
     public function testSameUserCannotVoteTwice()
     {
     	$pledge = new Pledge();
-    	$user1 = new ApiUser();
+    	$user1 = new User();
 
     	$pledge->addVote($user1);
     	$pledge->addVote($user1);

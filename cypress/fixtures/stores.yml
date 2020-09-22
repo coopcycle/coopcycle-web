@@ -54,7 +54,7 @@ AppBundle\Entity\Store:
     pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
 
-AppBundle\Entity\ApiUser:
+AppBundle\Entity\User:
   default_user:
     __factory:
       '@FOS\UserBundle\Util\UserManipulator::create':

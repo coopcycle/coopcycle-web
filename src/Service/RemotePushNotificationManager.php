@@ -2,7 +2,7 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
 use Doctrine\ORM\EntityManagerInterface;
 use Kreait\Firebase\Factory as FirebaseFactory;
@@ -211,15 +211,15 @@ class RemotePushNotificationManager
 
         $tokens = [];
         foreach ($recipients as $recipient) {
-            if (!$recipient instanceof RemotePushToken && !$recipient instanceof ApiUser) {
+            if (!$recipient instanceof RemotePushToken && !$recipient instanceof User) {
                 throw new \InvalidArgumentException(sprintf('$recipients must be an instance of %s or %s',
-                    RemotePushToken::class, ApiUser::class));
+                    RemotePushToken::class, User::class));
             }
 
             if ($recipient instanceof RemotePushToken) {
                 $tokens[] = $recipient;
             }
-            if ($recipient instanceof ApiUser) {
+            if ($recipient instanceof User) {
                 foreach ($recipient->getRemotePushTokens() as $remotePushToken) {
                     $tokens[] = $remotePushToken;
                 }

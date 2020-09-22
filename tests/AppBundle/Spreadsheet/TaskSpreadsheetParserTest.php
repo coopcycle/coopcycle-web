@@ -2,7 +2,7 @@
 
 namespace Tests\AppBundle\Spreadsheet;
 
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Tag;
 use AppBundle\Service\Geocoder;
@@ -32,7 +32,7 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->phoneNumberUtil = $this->prophesize(PhoneNumberUtil::class);
         $this->userManager = $this->prophesize(UserManagerInterface::class);
 
-        $this->bob = new ApiUser();
+        $this->bob = new User();
         $this->bob->addRole('ROLE_COURIER');
 
         $this->userManager->findUserByUsername('bob')

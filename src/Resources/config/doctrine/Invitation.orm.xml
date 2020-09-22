@@ -3,7 +3,7 @@
   <entity name="AppBundle\Entity\Invitation" table="invitation">
     <id name="code" type="string" column="code" length="180"/>
     <field name="sentAt" type="datetime" column="sent_at" nullable="true"/>
-    <one-to-one field="user" target-entity="AppBundle\Entity\ApiUser">
+    <one-to-one field="user" target-entity="AppBundle\Entity\User">
       <join-columns>
         <join-column name="user_id" referenced-column-name="id"/>
       </join-columns>

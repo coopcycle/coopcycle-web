@@ -2,7 +2,7 @@
 
 namespace Tests\AppBundle\MessageHandler;
 
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Message\PushNotification;
 use AppBundle\MessageHandler\PushNotificationHandler;
 use AppBundle\Service\RemotePushNotificationManager;
@@ -27,7 +27,7 @@ class PushNotificationHandlerTest extends TestCase
 
     public function testSkipsUnknownUsers()
     {
-        $user = new ApiUser();
+        $user = new User();
 
         $this->userManager->findUserByUsername('bar')->willReturn($user);
         $this->userManager->findUserByUsername('foo')->willReturn(null);
@@ -43,8 +43,8 @@ class PushNotificationHandlerTest extends TestCase
 
     public function testSend()
     {
-        $bar = new ApiUser();
-        $foo = new ApiUser();
+        $bar = new User();
+        $foo = new User();
 
         $this->userManager->findUserByUsername('bar')->willReturn($bar);
         $this->userManager->findUserByUsername('foo')->willReturn($foo);

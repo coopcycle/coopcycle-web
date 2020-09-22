@@ -9,7 +9,7 @@ use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Message\PushNotification;
@@ -160,7 +160,7 @@ class TaskSubscriberTest extends TestCase
     {
         $unitOfWork = $this->prophesize(UnitOfWork::class);
 
-        $user = new ApiUser();
+        $user = new User();
         $user->setUsername('bob');
         $user->addRole('ROLE_COURIER');
 
@@ -237,7 +237,7 @@ class TaskSubscriberTest extends TestCase
 
         $date = new \DateTime('2020-04-17 19:00:00');
 
-        $user = new ApiUser();
+        $user = new User();
         $user->setUsername('bob');
         $user->addRole('ROLE_COURIER');
 
@@ -323,7 +323,7 @@ class TaskSubscriberTest extends TestCase
     {
         $unitOfWork = $this->prophesize(UnitOfWork::class);
 
-        $user = new ApiUser();
+        $user = new User();
         $user->setUsername('bob');
 
         $task = new Task();
@@ -409,7 +409,7 @@ class TaskSubscriberTest extends TestCase
     {
         $unitOfWork = $this->prophesize(UnitOfWork::class);
 
-        $user = new ApiUser();
+        $user = new User();
         $user->setUsername('bob');
 
         $task1 = new Task();
@@ -490,7 +490,7 @@ class TaskSubscriberTest extends TestCase
     {
         $unitOfWork = $this->prophesize(UnitOfWork::class);
 
-        $user = new ApiUser();
+        $user = new User();
         $user->setUsername('bob');
         $user->addRole('ROLE_ADMIN');
 
@@ -550,7 +550,7 @@ class TaskSubscriberTest extends TestCase
 
         $date = new \DateTime('2020-04-17 19:00:00');
 
-        $user = new ApiUser();
+        $user = new User();
         $user->setUsername('bob');
         $user->addRole('ROLE_COURIER');
 
@@ -648,7 +648,7 @@ class TaskSubscriberTest extends TestCase
 
         $date = new \DateTime('2020-04-17 19:00:00');
 
-        $user = new ApiUser();
+        $user = new User();
         $user->setUsername('bob');
         $user->addRole('ROLE_COURIER');
 
@@ -762,7 +762,7 @@ class TaskSubscriberTest extends TestCase
 
         $date = new \DateTime('2020-04-17 19:00:00');
 
-        $user = new ApiUser();
+        $user = new User();
         $user->setUsername('bob');
         $user->addRole('ROLE_COURIER');
 

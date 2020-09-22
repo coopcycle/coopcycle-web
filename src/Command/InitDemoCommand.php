@@ -148,7 +148,7 @@ class InitDemoCommand extends Command
                 $user = $this->createUser($username, ['password' => $username]);
                 $user->addAddress($this->faker->randomAddress);
             }
-            $this->doctrine->getManagerForClass(Entity\ApiUser::class)->flush();
+            $this->doctrine->getManagerForClass(Entity\User::class)->flush();
 
             $output->writeln('Creating couriers…');
             for ($i = 1; $i <= 50; $i++) {

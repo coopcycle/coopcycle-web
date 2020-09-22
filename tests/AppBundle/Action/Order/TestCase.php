@@ -2,7 +2,7 @@
 
 namespace Tests\AppBundle\Action\Order;
 
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Service\OrderManager;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase as BaseTestCase;

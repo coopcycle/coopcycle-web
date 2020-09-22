@@ -5,7 +5,7 @@
       <unique-constraint name="task_list_unique" columns="date,courier_id"/>
     </unique-constraints>
     <field name="date" type="date" column="date"/>
-    <many-to-one field="courier" target-entity="AppBundle\Entity\ApiUser">
+    <many-to-one field="courier" target-entity="AppBundle\Entity\User">
       <join-columns>
         <join-column name="courier_id" referenced-column-name="id" nullable="false"/>
       </join-columns>

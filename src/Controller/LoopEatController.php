@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use Doctrine\ORM\EntityManagerInterface;
@@ -111,8 +111,8 @@ class LoopEatController extends AbstractController
 
         $subject = $iriConverter->getItemFromIri($payload['sub']);
 
-        if (!$subject instanceof LocalBusiness && !$subject instanceof ApiUser) {
-            throw new BadRequestHttpException(sprintf('Subject should be an instance of "%s" or "%s"', LocalBusiness::class, ApiUser::class));
+        if (!$subject instanceof LocalBusiness && !$subject instanceof User) {
+            throw new BadRequestHttpException(sprintf('Subject should be an instance of "%s" or "%s"', LocalBusiness::class, User::class));
         }
 
         if (!$request->query->has('code') && !$request->query->has('error')) {
@@ -135,7 +135,7 @@ class LoopEatController extends AbstractController
         $subject->setLoopeatAccessToken($data['access_token']);
         $subject->setLoopeatRefreshToken($data['refresh_token']);
 
-        if ($subject instanceof ApiUser) {
+        if ($subject instanceof User) {
             $userManager->updateUser($subject);
         }
 

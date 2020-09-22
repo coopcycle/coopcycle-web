@@ -4,7 +4,7 @@ namespace AppBundle\Controller\Utils;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
@@ -146,7 +146,7 @@ trait AdminDashboardTrait
         }, $taskLists);
 
         $couriers = $this->getDoctrine()
-            ->getRepository(ApiUser::class)
+            ->getRepository(User::class)
             ->createQueryBuilder('u')
             ->select("u.username")
             ->where('u.roles LIKE :roles')

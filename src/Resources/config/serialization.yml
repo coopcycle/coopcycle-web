@@ -1,4 +1,4 @@
-AppBundle\Entity\ApiUser:
+AppBundle\Entity\User:
   attributes:
     username:
       groups: ['user', 'order']

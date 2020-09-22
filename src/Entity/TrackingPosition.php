@@ -33,7 +33,7 @@ class TrackingPosition implements \JsonSerializable
         return $this->courier;
     }
 
-    public function setCourier(ApiUser $courier)
+    public function setCourier(User $courier)
     {
         $this->courier = $courier;
 
