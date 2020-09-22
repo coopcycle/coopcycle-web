@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 
-php bin/console coopcycle:demo:init "$@"
 php bin/console coopcycle:setup "$@"
+php bin/console coopcycle:demo:init "$@"
 php bin/console cache:clear --no-warmup "$@"

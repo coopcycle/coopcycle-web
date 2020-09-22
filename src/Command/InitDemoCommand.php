@@ -18,7 +18,6 @@ use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use FOS\UserBundle\Util\UserManipulator;
 use libphonenumber\PhoneNumberUtil;
 use Redis;
-use Sylius\Component\Locale\Model\Locale;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
@@ -45,6 +44,7 @@ class InitDemoCommand extends Command
     private $excludedTables = [
         'craue_config_setting',
         'migration_versions',
+        'sylius_locale',
     ];
 
     private static $users = [
@@ -123,9 +123,6 @@ class InitDemoCommand extends Command
             $output->writeln('Verifying database config…');
             $this->handleCraueConfig($input, $output);
 
-            $output->writeln('Create lang...');
-            $this->createLangs();
-
             $output->writeln('Creating super users…');
             foreach (self::$users as $username => $params) {
                 $this->createUser($username, $params);
@@ -186,21 +183,6 @@ class InitDemoCommand extends Command
     private function loadFixtures($filename, array $objects = [])
     {
         return $this->fixturesLoader->load([$filename], $parameters = [], $objects, PurgeMode::createNoPurgeMode());
-    }
-
-    private function createLangs() {
-        $en = new Locale();
-        $en->setCode('en');
-        $fr = new Locale();
-        $fr->setCode('fr');
-        $es = new Locale();
-        $es->setCode('es');
-
-        $em = $this->doctrine->getManagerForClass(Locale::class);
-        $em->persist($en);
-        $em->persist($es);
-        $em->persist($fr);
-        $em-> flush();
     }
 
     private function createCraueConfigSetting($name, $value, $section = 'general')
