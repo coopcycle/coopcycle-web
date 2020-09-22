@@ -74,7 +74,8 @@ class InitDemoCommand extends Command
         FactoryInterface $taxonFactory,
         PhoneNumberUtil $phoneNumberUtil,
         RepositoryInterface $taxCategoryRepository,
-        Geocoder $geocoder)
+        Geocoder $geocoder,
+        string $country)
     {
         $this->doctrine = $doctrine;
         $this->userManipulator = $userManipulator;
@@ -87,6 +88,7 @@ class InitDemoCommand extends Command
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->geocoder = $geocoder;
+        $this->country = $country;
 
         parent::__construct();
     }
@@ -200,6 +202,7 @@ class InitDemoCommand extends Command
         try {
             $this->craueConfig->get('latlng');
         } catch (\RuntimeException $e) {
+            // FIXME Avoid hardcoding coordinates
             $mapsCenter = $this->createCraueConfigSetting('latlng', '48.857498,2.335402');
             $em->persist($mapsCenter);
         }
@@ -388,7 +391,7 @@ class InitDemoCommand extends Command
     {
         $shop = new Entity\Store();
 
-        $phoneNumber = $this->phoneNumberUtil->parse($this->faker->phoneNumber, 'FR');
+        $phoneNumber = $this->phoneNumberUtil->getExampleNumber(strtoupper($this->country));
 
         $shop->setEnabled(true);
         $shop->setTelephone($phoneNumber);
@@ -408,7 +411,7 @@ class InitDemoCommand extends Command
 
         $restaurant = new Entity\LocalBusiness();
 
-        $phoneNumber = $this->phoneNumberUtil->parse($this->faker->phoneNumber, 'FR');
+        $phoneNumber = $this->phoneNumberUtil->getExampleNumber(strtoupper($this->country));
 
         $restaurant->setEnabled(true);
         $restaurant->setTelephone($phoneNumber);

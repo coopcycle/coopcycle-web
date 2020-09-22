@@ -554,6 +554,7 @@ event_bus:
     logging: ~
 
 nelmio_alice:
+    # FIXME Do not hardcode this
     locale: 'fr_FR'
 
 fos_js_routing:
