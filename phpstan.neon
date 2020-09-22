@@ -34,3 +34,4 @@ parameters:
         - '#Call to an undefined method Sylius\\Component\\Promotion\\Model\\PromotionSubjectInterface::getRestaurant\(\)#'
         - '#Call to an undefined method Sylius\\Component\\Resource\\Repository\\RepositoryInterface::findOneBy[a-zA-Z]+\(\)#'
         - '#Call to an undefined method Symfony\\Component\\Validator\\ConstraintViolationListInterface::findByCodes\(\)#'
+        - '#Call to an undefined method Faker\\Generator::[a-zA-Z]+\(\)#'
