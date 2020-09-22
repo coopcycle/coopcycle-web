@@ -17,6 +17,7 @@ use Fidry\AliceDataFixtures\LoaderInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use FOS\UserBundle\Util\UserManipulator;
 use libphonenumber\PhoneNumberUtil;
+use League\Geotools\Coordinate\Coordinate;
 use Redis;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
@@ -54,6 +55,11 @@ class InitDemoCommand extends Command
             'password' => 'admin',
             'roles' => ['ROLE_ADMIN']
         ],
+    ];
+
+    private static $parisFranceCoords = [
+        48.857498,
+        2.335402,
     ];
 
     protected function configure()
@@ -200,10 +206,10 @@ class InitDemoCommand extends Command
         $em = $this->doctrine->getManagerForClass($className);
 
         try {
-            $this->craueConfig->get('latlng');
+            $mapCenterValue = $this->craueConfig->get('latlng');
         } catch (\RuntimeException $e) {
-            // FIXME Avoid hardcoding coordinates
-            $mapsCenter = $this->createCraueConfigSetting('latlng', '48.857498,2.335402');
+            $mapCenterValue = implode(',', self::$parisFranceCoords);
+            $mapCenter = $this->createCraueConfigSetting('latlng', $mapCenterValue);
             $em->persist($mapsCenter);
         }
 
@@ -216,7 +222,7 @@ class InitDemoCommand extends Command
 
         $em->flush();
 
-        $addressProvider = new AddressProvider($this->faker, $this->geocoder);
+        $addressProvider = new AddressProvider($this->faker, $this->geocoder, new Coordinate($mapCenterValue));
 
         $this->faker->addProvider($addressProvider);
     }
