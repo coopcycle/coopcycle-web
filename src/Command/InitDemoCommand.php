@@ -46,6 +46,7 @@ class InitDemoCommand extends Command
         'craue_config_setting',
         'migration_versions',
         'sylius_locale',
+        'sylius_channel',
         'sylius_tax_category',
         'sylius_tax_rate',
     ];
