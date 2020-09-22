@@ -462,7 +462,7 @@ class InitDemoCommand extends Command
 
         $em = $this->doctrine->getManagerForClass(Entity\LocalBusiness::class);
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 1; $i <= 50; $i++) {
 
             $restaurant = $this->createRestaurant($this->faker->randomAddress, $foodTaxCategory);
 
