@@ -81,7 +81,8 @@ class InitDemoCommand extends Command
         PhoneNumberUtil $phoneNumberUtil,
         RepositoryInterface $taxCategoryRepository,
         Geocoder $geocoder,
-        string $country)
+        string $country,
+        string $defaultLocale)
     {
         $this->doctrine = $doctrine;
         $this->userManipulator = $userManipulator;
@@ -95,6 +96,7 @@ class InitDemoCommand extends Command
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->geocoder = $geocoder;
         $this->country = $country;
+        $this->defaultLocale = $defaultLocale;
 
         parent::__construct();
     }
@@ -291,6 +293,7 @@ class InitDemoCommand extends Command
         for ($i = 0; $i < 5; $i++) {
             $appetizer = $this->loadFixtures(__DIR__ . '/Resources/appetizer.yml', [
                 'taxCategory' => $taxCategory,
+                'currentLocale' => $this->defaultLocale,
             ]);
 
             $appetizer['variant']->setName($appetizer['product']->getName());
@@ -305,12 +308,15 @@ class InitDemoCommand extends Command
     {
         $products = [];
 
-        $options = $this->loadFixtures(__DIR__ . '/Resources/product_options.yml');
+        $options = $this->loadFixtures(__DIR__ . '/Resources/product_options.yml', [
+            'currentLocale' => $this->defaultLocale,
+        ]);
 
         for ($i = 0; $i < 5; $i++) {
 
             $dish = $this->loadFixtures(__DIR__ . '/Resources/dish.yml', [
                 'taxCategory' => $taxCategory,
+                'currentLocale' => $this->defaultLocale,
             ]);
 
             $dish['variant']->setName($dish['product']->getName());
@@ -331,6 +337,7 @@ class InitDemoCommand extends Command
         for ($i = 0; $i < 5; $i++) {
             $dessert = $this->loadFixtures(__DIR__ . '/Resources/dessert.yml', [
                 'taxCategory' => $taxCategory,
+                'currentLocale' => $this->defaultLocale,
             ]);
 
             $dessert['variant']->setName($dessert['product']->getName());
