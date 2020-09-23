@@ -58,6 +58,7 @@ services:
       $country: "%country_iso%"
       $defaultLocale: "%kernel.default_locale%"
       $googleApiKeyFromEnv: '%env(GOOGLE_API_KEY)%'
+      $regionLatLng: '%env(COOPCYCLE_REGION_LAT_LNG)%'
     tags:
       - { name: 'console.command', command: 'coopcycle:demo:init' }
 

@@ -58,10 +58,7 @@ class InitDemoCommand extends Command
         ],
     ];
 
-    private static $parisFranceCoords = [
-        48.857498,
-        2.335402,
-    ];
+    private $regionLatLng;
 
     protected function configure()
     {
@@ -84,7 +81,8 @@ class InitDemoCommand extends Command
         Geocoder $geocoder,
         string $country,
         string $defaultLocale,
-        string $googleApiKeyFromEnv)
+        string $googleApiKeyFromEnv,
+        string $regionLatLng)
     {
         $this->doctrine = $doctrine;
         $this->userManipulator = $userManipulator;
@@ -100,6 +98,7 @@ class InitDemoCommand extends Command
         $this->country = $country;
         $this->defaultLocale = $defaultLocale;
         $this->googleApiKeyFromEnv = $googleApiKeyFromEnv;
+        $this->regionLatLng = $regionLatLng;
 
         parent::__construct();
     }
@@ -225,7 +224,7 @@ class InitDemoCommand extends Command
         try {
             $mapCenterValue = $this->craueConfig->get('latlng');
         } catch (\RuntimeException $e) {
-            $mapCenterValue = implode(',', self::$parisFranceCoords);
+            $mapCenterValue = implode(',', [$this->regionLatLng]);
             $mapCenter = $this->createCraueConfigSetting('latlng', $mapCenterValue);
             $em->persist($mapCenter);
         }

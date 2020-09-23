@@ -2,7 +2,7 @@ Craue\ConfigBundle\Entity\Setting:
   setting_latlng:
     section: general
     name: latlng
-    value: '48.857498,2.335402'
+    value: '<{DEFAULT_LAT_LNG}>'
   setting_google_api_key:
     section: general
     name: google_api_key
