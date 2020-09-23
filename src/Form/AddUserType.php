@@ -2,7 +2,7 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
@@ -30,7 +30,7 @@ class AddUserType extends AbstractType
     {
         $transformer = new CallbackTransformer(
             function ($entity) {
-                if ($entity instanceof ApiUser) {
+                if ($entity instanceof User) {
                     return $entity->getId();
                 }
 
@@ -41,7 +41,7 @@ class AddUserType extends AbstractType
                     return null;
                 }
 
-                return $this->doctrine->getRepository(ApiUser::class)->find($id);
+                return $this->doctrine->getRepository(User::class)->find($id);
             }
         );
 

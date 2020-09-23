@@ -495,7 +495,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
         return null !== $this->assignedTo;
     }
 
-    public function isAssignedTo(ApiUser $courier)
+    public function isAssignedTo(User $courier)
     {
         return $this->isAssigned() && $this->assignedTo === $courier;
     }
@@ -511,10 +511,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     }
 
     /**
-     * @param ApiUser $courier
+     * @param User $courier
      * @param \DateTime|null $date
      */
-    public function assignTo(ApiUser $courier, \DateTime $date = null)
+    public function assignTo(User $courier, \DateTime $date = null)
     {
         if (null === $date) {
             @trigger_error('Not specifying a date when calling assignTo() is deprecated', E_USER_DEPRECATED);
@@ -606,7 +606,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
         return $this->createdAt;
     }
 
-    public function isReadableBy(ApiUser $user)
+    public function isReadableBy(User $user)
     {
         if ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_COURIER')) {
             return true;

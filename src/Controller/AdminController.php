@@ -10,7 +10,7 @@ use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\ApiApp;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Invitation;
@@ -326,7 +326,7 @@ class AdminController extends Controller
     public function usersAction(Request $request)
     {
         $qb = $this->getDoctrine()
-            ->getRepository(ApiUser::class)
+            ->getRepository(User::class)
             ->createQueryBuilder('u');
 
         $users = $this->get('knp_paginator')->paginate(
@@ -469,7 +469,7 @@ class AdminController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
 
-            $userManager = $this->getDoctrine()->getManagerForClass(ApiUser::class);
+            $userManager = $this->getDoctrine()->getManagerForClass(User::class);
 
             $user = $editForm->getData();
 
@@ -967,13 +967,13 @@ class AdminController extends Controller
      */
     public function searchUsersAction(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(ApiUser::class);
+        $repository = $this->getDoctrine()->getRepository(User::class);
 
         $results = $repository->search($request->query->get('q'));
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
 
-            $data = array_map(function (ApiUser $user) {
+            $data = array_map(function (User $user) {
 
                 $text = sprintf('%s (%s)', $user->getEmail(), $user->getUsername());
 

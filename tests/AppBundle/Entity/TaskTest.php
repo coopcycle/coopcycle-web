@@ -6,7 +6,7 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\TaskEvent;
 use AppBundle\Validator\Constraints\Task as TaskConstraint;
 use AppBundle\Validator\Constraints\TaskValidator;
@@ -31,7 +31,7 @@ class TaskTest extends TestCase
     protected function setUp(): void
     {
         $this->task = new Task();
-        $this->courier = new ApiUser();
+        $this->courier = new User();
     }
 
     public function testSetPrevious()

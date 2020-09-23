@@ -66,7 +66,7 @@
         <join-column name="package_set_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-many field="owners" target-entity="AppBundle\Entity\ApiUser" mapped-by="stores"/>
+    <many-to-many field="owners" target-entity="AppBundle\Entity\User" mapped-by="stores"/>
     <many-to-many field="addresses" target-entity="AppBundle\Entity\Address">
       <cascade>
         <cascade-persist/>

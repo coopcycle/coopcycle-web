@@ -14,7 +14,7 @@
       </options>
     </field>
     <field name="date" type="datetime" column="date" nullable="false"/>
-    <many-to-one field="courier" target-entity="AppBundle\Entity\ApiUser">
+    <many-to-one field="courier" target-entity="AppBundle\Entity\User">
       <join-columns>
         <join-column name="courier_id" referenced-column-name="id"/>
       </join-columns>

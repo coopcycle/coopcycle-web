@@ -158,7 +158,7 @@
         <order-by-field name="name" direction="ASC"/>
       </order-by>
     </many-to-many>
-    <many-to-many field="owners" target-entity="AppBundle\Entity\ApiUser" mapped-by="restaurants"/>
+    <many-to-many field="owners" target-entity="AppBundle\Entity\User" mapped-by="restaurants"/>
     <many-to-many field="products" target-entity="AppBundle\Entity\Sylius\Product">
       <cascade>
         <cascade-persist/>

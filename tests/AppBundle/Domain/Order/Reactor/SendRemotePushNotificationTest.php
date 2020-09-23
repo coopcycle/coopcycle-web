@@ -5,7 +5,7 @@ namespace Tests\AppBundle\Domain\Order\Reactor;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Reactor\SendRemotePushNotification;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Message\PushNotification;
@@ -43,7 +43,7 @@ class SendRemotePushNotificationTest extends KernelTestCase
                 return new Envelope($args[0]);
             });
 
-        $admin = new ApiUser();
+        $admin = new User();
         $admin->setUsername('admin');
 
         $this->userManager = $this->prophesize(UserManager::class);
@@ -70,7 +70,7 @@ class SendRemotePushNotificationTest extends KernelTestCase
 
     public function testSendsNotification()
     {
-        $owner = new ApiUser();
+        $owner = new User();
         $owner->setUsername('bob');
 
         $order = new Order();

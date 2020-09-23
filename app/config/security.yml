@@ -19,7 +19,7 @@ security:
             id: fos_user.user_provider.username_email
         # jwt:
         #     lexik_jwt:
-        #         class: AppBundle\Entity\ApiUser
+        #         class: AppBundle\Entity\User
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs

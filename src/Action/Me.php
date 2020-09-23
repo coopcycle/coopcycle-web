@@ -5,7 +5,7 @@ namespace AppBundle\Action;
 use Doctrine\Persistence\ManagerRegistry;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\ApiApp;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface;
 use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
@@ -25,7 +25,7 @@ class Me
     }
 
     /**
-     * @return ApiApp|ApiUser
+     * @return ApiApp|User
      */
     public function __invoke()
     {

@@ -255,7 +255,7 @@ nelmio_cors:
 fos_user:
     db_driver: orm
     firewall_name: web
-    user_class: AppBundle\Entity\ApiUser
+    user_class: AppBundle\Entity\User
     service:
         mailer: fos_user.mailer.twig_swift
         user_manager: coopcycle.user_manager

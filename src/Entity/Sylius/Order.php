@@ -20,7 +20,7 @@ use AppBundle\Action\MyOrders;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Filter\OrderDateFilter;
@@ -300,14 +300,14 @@ class Order extends BaseOrder implements OrderInterface
     }
 
     /**
-     * @return ApiUser|null
+     * @return User|null
      */
     public function getCustomer()
     {
         return $this->customer;
     }
 
-    public function setCustomer(ApiUser $customer)
+    public function setCustomer(User $customer)
     {
         $this->customer = $customer;
 

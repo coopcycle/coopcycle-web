@@ -4,7 +4,7 @@ namespace Tests\AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\OrderPicked;
 use AppBundle\Domain\Order\Reactor\GrabLoopEats;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\LoopEat\Client as LoopEatClient;
@@ -107,7 +107,7 @@ class GrabLoopEatsTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setLoopeatEnabled(true);
 
-        $customer = new ApiUser();
+        $customer = new User();
 
         $order = $this->prophesize(Order::class);
         $order

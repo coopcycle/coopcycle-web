@@ -3,7 +3,7 @@
 namespace AppBundle\Action;
 
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Form\ApiRegistrationType;
 use FOS\UserBundle\Mailer\MailerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
@@ -81,7 +81,7 @@ class Register
             'telephone' => $telephone
         ];
 
-        $user = new ApiUser();
+        $user = new User();
 
         $form = $this->formFactory->create(ApiRegistrationType::class, $user);
         $form->submit($data);

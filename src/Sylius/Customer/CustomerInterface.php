@@ -3,7 +3,7 @@
 namespace AppBundle\Sylius\Customer;
 
 use AppBundle\Entity\Address;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Customer\Model\CustomerInterface as BaseCustomerInterface;
@@ -54,12 +54,12 @@ interface CustomerInterface extends BaseCustomerInterface
     public function hasUser(): bool;
 
     /**
-     * @return ApiUser|UserInterface|null
+     * @return User|UserInterface|null
      */
     public function getUser(): ?UserInterface;
 
     /**
-     * @param ApiUser|UserInterface|null $user
+     * @param User|UserInterface|null $user
      */
     public function setUser(?UserInterface $user);
 }

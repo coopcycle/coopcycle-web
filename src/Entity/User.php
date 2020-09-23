@@ -55,7 +55,7 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  * @UniqueEntity(fields={"usernameCanonical"}, errorPath="username")
  * @UniqueEntity("facebookId")
  */
-class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterface
+class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 {
     use LoopEatOAuthCredentialsTrait;
     use Timestampable;
