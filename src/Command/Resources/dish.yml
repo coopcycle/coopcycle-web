@@ -1,6 +1,6 @@
 AppBundle\Entity\Sylius\ProductVariant:
   variant:
-    currentLocale: "%currentLocale%"
+    currentLocale: "<{currentLocale}>"
     name: Default
     code: <uuid()>
     price: <numberBetween(499, 999)>
@@ -9,7 +9,7 @@ AppBundle\Entity\Sylius\ProductVariant:
 AppBundle\Entity\Sylius\Product:
   product:
     code: <uuid()>
-    currentLocale: "%currentLocale%"
+    currentLocale: "<{currentLocale}>"
     name: <dishName()>
     slug: <uuid()>
     enabled: true
