@@ -619,7 +619,8 @@ Feature: Orders
           "@type":"Customer",
           "username":"bob",
           "email":"bob@coopcycle.org",
-          "telephone": "+33612345678"
+          "telephone": "+33612345678",
+          "phoneNumber": "+33612345678"
         },
         "restaurant":{
           "@id":"/api/restaurants/1",
