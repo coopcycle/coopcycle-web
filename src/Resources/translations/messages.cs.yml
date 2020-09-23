@@ -1063,3 +1063,4 @@ adminDashboard.users.registered_at: Registrovaný
 adminDashboard.users.orders_count: Počet objednávek
 base.footer.RegisterMyRestaurant: Zaregistrovat moji restauraci
 base.footer.companyRegister: Stát se partnerem
+form.time_slot.choices.error.empty: Seznam možností nemůže být prázdný
