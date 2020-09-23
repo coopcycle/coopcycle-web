@@ -11,15 +11,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Customer\Model\Customer as BaseCustomer;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Webmozart\Assert\Assert;
 
 /**
  * @ApiResource(
  *   shortName="Customer",
+ *   normalizationContext={"groups"={"customer"}},
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN') or user.getCustomer() == object"
+ *     },
+ *     "put"={
+ *       "method"="PUT",
+ *       "access_control"="is_granted('ROLE_ADMIN') or user.getCustomer() == object",
+ *       "denormalization_context"={"groups"={"customer_update"}},
  *     }
  *   }
  * )
@@ -149,9 +156,20 @@ class Customer extends BaseCustomer implements CustomerInterface
         return null !== $this->user;
     }
 
+    /**
+     * @SerializedName("telephone")
+     */
     public function getTelephone(): ?string
     {
         return $this->getPhoneNumber();
+    }
+
+    /**
+     * @SerializedName("telephone")
+     */
+    public function setTelephone(?string $telephone)
+    {
+        $this->setPhoneNumber($telephone);
     }
 
     public function getUsername(): string

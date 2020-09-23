@@ -18,11 +18,15 @@ AppBundle\Entity\User:
 AppBundle\Entity\Sylius\Customer:
   attributes:
     username:
-      groups: ['order']
+      groups: ['customer', 'order']
     email:
-      groups: ['order']
+      groups: ['customer', 'order']
     telephone:
-      groups: ['order']
+      groups: ['customer', 'order', 'customer_update']
+    phoneNumber:
+      groups: ['customer', 'order', 'customer_update']
+    fullName:
+      groups: ['customer']
 
 AppBundle\Entity\Sylius\Taxon:
   attributes:
