@@ -205,3 +205,6 @@ services:
 
   AppBundle\Form\TagsType:
     tags: [ form.type ]
+
+  AppBundle\Form\AttachToOrganizationType:
+    tags: [ form.type ]

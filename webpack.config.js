@@ -30,6 +30,7 @@ Encore
   .addEntry('restaurants-map', './js/app/restaurants-map/index.js')
   .addEntry('search-address', './js/app/search/address.js')
   .addEntry('store-form', './js/app/store/form.js')
+  .addEntry('task-list', './js/app/delivery/task-list.js')
   .addEntry('user-tracking', './js/app/user/tracking.js')
   .addEntry('user-form', './js/app/user/form.js')
   .addEntry('widgets', './js/app/widgets/index.js')

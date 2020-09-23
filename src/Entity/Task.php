@@ -20,6 +20,8 @@ use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
+use AppBundle\Entity\Model\OrganizationAwareInterface;
+use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Validator\Constraints\Task as AssertTask;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -172,9 +174,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(TaskFilter::class)
  * @ApiFilter(AssignedFilter::class, properties={"assigned"})
  */
-class Task implements TaggableInterface
+class Task implements TaggableInterface, OrganizationAwareInterface
 {
     use TaggableTrait;
+    use OrganizationAwareTrait;
 
     const TYPE_DROPOFF = 'DROPOFF';
     const TYPE_PICKUP = 'PICKUP';
@@ -675,5 +678,21 @@ class Task implements TaggableInterface
     public function isDoorstep()
     {
         return $this->doorstep;
+    }
+
+    /**
+     * @SerializedName("orgName")
+     * @Groups({"task"})
+     */
+    public function getOrganizationName()
+    {
+        $organization = $this->getOrganization();
+
+        if ($organization) {
+
+            return $organization->getName();
+        }
+
+        return '';
     }
 }
