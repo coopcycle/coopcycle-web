@@ -298,7 +298,10 @@ form.order.fulfill.label: Realizar
 form.order.payment_complete.label: Completar
 form.order.payment_refund.label: Reembolsar
 form.order.refund_modal.title: Reembolso
-form.payment.refund_amount.label: Suma
+form.payment.state.label: Estado
+form.payment.amount.label: Monto
+form.payment.refund_amount.label: Monto de reembolso
+form.payment.last_update.label: Ultima actualización
 form.payment.refund_amount.help: El importe que especifique será devuelto al cliente
 form.address.streetAddress.label: Dirección
 form.address.streetAddress.error.noLatLng: Selecciona una dirección en el menú desplegable

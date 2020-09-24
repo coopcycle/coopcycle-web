@@ -1,9 +1,9 @@
 <table class="table">
   <thead>
-    <th>État</th>
-    <th class="text-right">Montant</th>
-    <th class="text-right">Montant remboursé</th>
-    <th class="text-right">Dernière mise à jour</th>
+    <th>{{ 'form.payment.state.label'|trans }}</th>
+    <th class="text-right">{{ 'form.payment.amount.label'|trans }}</th>
+    <th class="text-right">{{ 'form.payment.refund_amount.label'|trans }}</th>
+    <th class="text-right">{{ 'form.payment.last_update.label'|trans }}</th>
     {% if is_granted('ROLE_ADMIN') %}
     <th></th>
     {% endif %}

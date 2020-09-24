@@ -397,7 +397,10 @@ form.order.fulfill.label: Terminer
 form.order.payment_complete.label: Valider
 form.order.payment_refund.label: Rembourser
 form.order.refund_modal.title: Remboursement
-form.payment.refund_amount.label: Montant
+form.payment.state.label: État
+form.payment.amount.label: Montant
+form.payment.refund_amount.label: Montant remboursé
+form.payment.last_update.label: Dernière mise à jour
 form.payment.refund_amount.help: Le montant que vous indiquez sera remboursé au client
 form.delivery_embed.name.label: Nom
 form.delivery_embed.name.help: Votre nom ou le nom de l'entreprise

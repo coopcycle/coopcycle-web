@@ -438,7 +438,10 @@ form.order.refund_modal.title: Refund
 form.order.refuse.refund.alert: This order was paid with a payment method that does
   not manage pre-authorizations. If you refuse it, the payment will be refunded. Are
   you sure?
-form.payment.refund_amount.label: Amount
+form.payment.state.label: State
+form.payment.amount.label: Amount
+form.payment.refund_amount.label: Refunded Amount
+form.payment.last_update.label: Last update
 form.payment.refund_amount.help: The amount you specify will be refunded to the customer
 form.payment.refund_liable.label: Liable party
 form.payment.refund_liable.help: Which party is liable for the incident?
