@@ -1,4 +1,5 @@
-var WebSocketServer = require('ws').Server
+var WebSocket = require('ws')
+var WebSocketServer = WebSocket.Server
 var http = require('http')
 var _ = require('lodash')
 var winston = require('winston')
@@ -53,13 +54,20 @@ var wsServer = new WebSocketServer({
     },
 })
 
-let isClosing = false
 let rooms = {}
 
 sub.on('psubscribe', (channel, count) => {
   logger.info(`Subscribed to ${channel} (${count})`)
   initialize()
 })
+
+// @see https://github.com/websockets/ws#how-to-detect-and-close-broken-connections
+
+function noop() {}
+
+function heartbeat() {
+  this.isAlive = true
+}
 
 function initialize() {
 
@@ -73,7 +81,11 @@ function initialize() {
 
     if (rooms[channel]) {
       logger.debug(`Emitting "${decoded.name}" to sockets in ${channel}`)
-      _.forEach(rooms[channel], ws => ws.send(message))
+      _.forEach(rooms[channel], ws => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(message)
+        }
+      })
     }
 
   })
@@ -81,9 +93,12 @@ function initialize() {
   // WebSocket server
   wsServer.on('connection', function(ws, req) {
 
+    ws.isAlive = true
+    ws.on('pong', heartbeat)
+
     const { user } = req
 
-    console.log(`User ${user.username} connected`)
+    logger.info(`User ${user.username} connected`)
 
     if (!rooms[`users:${user.username}`]) {
       rooms[`users:${user.username}`] = []
@@ -92,13 +107,26 @@ function initialize() {
     rooms[`users:${user.username}`].push(ws)
 
     ws.on('close', function() {
-      console.log(`User ${user.username} disconnected`)
+      logger.info(`User ${user.username} disconnected`)
       if (rooms[`users:${user.username}`]) {
         rooms[`users:${user.username}`] = _.filter(rooms[`users:${user.username}`], socket => socket !== ws)
       }
     })
 
   })
+
+  const interval = setInterval(function ping() {
+    wsServer.clients.forEach(function each(ws) {
+      if (ws.isAlive === false) return ws.terminate();
+
+      ws.isAlive = false;
+      ws.ping(noop)
+    })
+  }, 30000)
+
+  wsServer.on('close', function close() {
+    clearInterval(interval);
+  });
 
   server.listen(process.env.PORT || 8000, function() {})
 }
@@ -107,11 +135,7 @@ sub.prefixedPSubscribe('users:*')
 
 // Handle restarts
 process.on('SIGINT', function () {
-
   console.log('------------------------')
   console.log('- STOPPING DISPATCH V2 -')
   console.log('------------------------')
-
-  isClosing = true;
-
 })
