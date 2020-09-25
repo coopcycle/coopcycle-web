@@ -6,6 +6,7 @@ import _ from 'lodash'
 
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { selectAllTasks, selectTaskLists } from 'coopcycle-frontend-js/dispatch/redux'
 
 import {
   setCurrentTask,
@@ -206,8 +207,8 @@ function mapStateToProps(state) {
     settingsModalIsOpen: state.settingsModalIsOpen,
     searchIsOn: state.searchIsOn,
     importModalIsOpen: state.importModalIsOpen,
-    allTasks: state.allTasks,
-    taskLists: state.taskLists,
+    allTasks: selectAllTasks(state),
+    taskLists: selectTaskLists(state),
     selectedTasks: state.selectedTasks,
   }
 }

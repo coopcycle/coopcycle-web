@@ -30,16 +30,17 @@ function start() {
   const tasks = JSON.parse(dashboardEl.dataset.tasks)
 
   let preloadedState = {
-    date,
-    jwt: dashboardEl.dataset.jwt,
-    unassignedTasks: _.filter(tasks, task => !task.isAssigned),
-    allTasks: tasks,
-    taskLists: JSON.parse(dashboardEl.dataset.taskLists),
+    dispatch: {
+      unassignedTasks: _.filter(tasks, task => !task.isAssigned),
+      taskLists: JSON.parse(dashboardEl.dataset.taskLists),
+      date,
+    },
     tags: JSON.parse(dashboardEl.dataset.tags),
     couriersList: JSON.parse(dashboardEl.dataset.couriersList),
-    nav: dashboardEl.dataset.nav,
     uploaderEndpoint: dashboardEl.dataset.uploaderEndpoint,
     exampleSpreadsheetUrl: dashboardEl.dataset.exampleSpreadsheetUrl,
+    jwt: dashboardEl.dataset.jwt,
+    nav: dashboardEl.dataset.nav,
   }
 
   const key = date.format('YYYY-MM-DD')

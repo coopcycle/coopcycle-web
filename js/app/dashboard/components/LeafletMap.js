@@ -4,7 +4,8 @@ import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
 import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction } from '../redux/actions'
-import { selectTasks, selectFilteredTasks } from '../redux/selectors'
+import { selectFilteredTasks } from '../redux/selectors'
+import { selectAllTasks, selectTaskLists, selectSelectedDate } from 'coopcycle-frontend-js/dispatch/redux'
 
 class LeafletMap extends Component {
 
@@ -154,7 +155,9 @@ class LeafletMap extends Component {
 
 function mapStateToProps(state) {
 
-  const { taskLists, polylineEnabled } = state
+  const { polylineEnabled } = state
+
+  const taskLists = selectTaskLists(state)
 
   let polylines = {}
   _.forEach(taskLists, taskList => {
@@ -167,14 +170,14 @@ function mapStateToProps(state) {
       _.map(taskList.items, item => ([ item.address.geo.latitude, item.address.geo.longitude ]))
   })
 
-  const tasks = selectTasks(state)
+  const tasks = selectAllTasks(state)
 
   return {
     tasks,
     tasksFiltered: selectFilteredTasks({
       tasks,
       filters: state.filters,
-      date: state.date
+      date: selectSelectedDate(state)
     }),
     polylines,
     polylineEnabled,

@@ -1,4 +1,4 @@
-import reducers from '../redux/reducers'
+import reducers from '../redux/dispatchReducers'
 import moment from 'moment'
 
 describe('combinedTasks reducer', () => {
@@ -7,7 +7,6 @@ describe('combinedTasks reducer', () => {
 
     expect(
       reducers({
-        allTasks: [],
         unassignedTasks: [
           { '@id': 1, isAssigned: false }
         ],
@@ -23,13 +22,6 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [
-        {
-          '@id': 1,
-          isAssigned: true,
-          assignedTo: 'bob'
-        }
-      ],
       unassignedTasks: [],
       taskLists: [
         { username: 'bob', items: [{
@@ -46,7 +38,6 @@ describe('combinedTasks reducer', () => {
 
     expect(
       reducers({
-        allTasks: [],
         unassignedTasks: [],
         taskLists: [
           { username: 'bob', items: [] }
@@ -60,13 +51,6 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [
-        {
-          '@id': 1,
-          isAssigned: true,
-          assignedTo: 'bob'
-        }
-      ],
       unassignedTasks: [],
       taskLists: [
         { username: 'bob', items: [{
@@ -79,7 +63,6 @@ describe('combinedTasks reducer', () => {
 
     expect(
       reducers({
-        allTasks: [],
         unassignedTasks: [],
         taskLists: [
           { username: 'bob', items: [{
@@ -97,13 +80,6 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [
-        {
-          '@id': 2,
-          isAssigned: true,
-          assignedTo: 'bob'
-        }
-      ],
       unassignedTasks: [],
       taskLists: [
         { username: 'bob', items: [{
@@ -124,7 +100,6 @@ describe('combinedTasks reducer', () => {
 
     expect(
       reducers({
-        allTasks: [],
         unassignedTasks: [],
         taskLists: [
           { username: 'bob', items: [{
@@ -142,13 +117,6 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [
-        {
-          '@id': 1,
-          isAssigned: false,
-          assignedTo: null
-        }
-      ],
       unassignedTasks: [{
         '@id': 1,
         isAssigned: false,
@@ -165,7 +133,6 @@ describe('combinedTasks reducer', () => {
 
     expect(
       reducers({
-        allTasks: [],
         unassignedTasks: [],
         taskLists: [
           { username: 'bob', items: [] }
@@ -179,13 +146,6 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [
-        {
-          '@id': 1,
-          isAssigned: false,
-          assignedTo: null
-        }
-      ],
       unassignedTasks: [{
         '@id': 1,
         isAssigned: false,
@@ -198,7 +158,6 @@ describe('combinedTasks reducer', () => {
 
     expect(
       reducers({
-        allTasks: [],
         unassignedTasks: [{
           '@id': 1,
           isAssigned: false,
@@ -216,13 +175,6 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [
-        {
-          '@id': 2,
-          isAssigned: false,
-          assignedTo: null
-        }
-      ],
       unassignedTasks: [{
         '@id': 1,
         isAssigned: false,
@@ -243,7 +195,6 @@ describe('combinedTasks reducer', () => {
 
     expect(
       reducers({
-        allTasks: [],
         unassignedTasks: [],
         taskLists: [
           { username: 'bob', items: [{
@@ -266,13 +217,6 @@ describe('combinedTasks reducer', () => {
         }
       })
     ).toMatchObject({
-      allTasks: [
-        {
-          '@id': 2,
-          isAssigned: true,
-          assignedTo: 'bob'
-        }
-      ],
       unassignedTasks: [],
       taskLists: [
         { username: 'bob', items: [{
@@ -297,7 +241,6 @@ describe('combinedTasks reducer', () => {
     expect(
       reducers({
         date,
-        allTasks: [],
         unassignedTasks: [],
         taskLists: []
       }, {
@@ -312,7 +255,6 @@ describe('combinedTasks reducer', () => {
       })
     ).toMatchObject({
       date,
-      allTasks: [],
       unassignedTasks: [],
       taskLists: []
     })
@@ -333,7 +275,6 @@ describe('combinedTasks reducer', () => {
     expect(
       reducers({
         date,
-        allTasks: [],
         unassignedTasks: [],
         taskLists: []
       }, {
@@ -342,7 +283,6 @@ describe('combinedTasks reducer', () => {
       })
     ).toMatchObject({
       date,
-      allTasks: [ task ],
       unassignedTasks: [ task ],
       taskLists: []
     })
@@ -364,7 +304,6 @@ describe('combinedTasks reducer', () => {
     expect(
       reducers({
         date,
-        allTasks: [],
         unassignedTasks: [],
         taskLists: []
       }, {
@@ -373,7 +312,6 @@ describe('combinedTasks reducer', () => {
       })
     ).toMatchObject({
       date,
-      allTasks: [ task ],
       unassignedTasks: [],
       taskLists: [{
         '@context': '/api/contexts/TaskList',

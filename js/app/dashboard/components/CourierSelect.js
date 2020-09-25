@@ -6,6 +6,8 @@ import _ from 'lodash'
 
 import Avatar from '../../components/Avatar'
 
+import { selectTaskLists } from 'coopcycle-frontend-js/dispatch/redux'
+
 const courierAsOption = courier => ({
   ...courier,
   value: courier.username,
@@ -57,7 +59,7 @@ function mapStateToProps(state, ownProps) {
   let couriers = state.couriersList
 
   if (Object.prototype.hasOwnProperty.call(ownProps, 'exclude') && ownProps.exclude) {
-    const usernames = _.map(state.taskLists, taskList => taskList.username)
+    const usernames = _.map(selectTaskLists(state), taskList => taskList.username)
     couriers = _.filter(couriers, courier => !_.includes(usernames, courier.username))
   }
 

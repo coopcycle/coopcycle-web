@@ -6,7 +6,7 @@ import { Input } from 'antd'
 import Fuse from 'fuse.js'
 
 import { toggleSearch } from '../redux/actions'
-import { selectTasks } from '../redux/selectors'
+import { selectAllTasks } from 'coopcycle-frontend-js/dispatch/redux'
 
 import Task from './Task'
 
@@ -124,7 +124,7 @@ class SearchPanel extends React.Component {
 
 function mapStateToProps(state) {
 
-  const tasks = selectTasks(state)
+  const tasks = selectAllTasks(state)
 
   return {
     tasks,

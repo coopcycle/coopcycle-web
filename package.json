@@ -19,7 +19,7 @@
   "dependencies": {
     "@mapbox/polyline": "^1.1.0",
     "co": "^4.6.0",
-    "coopcycle-frontend-js": "git+https://git@github.com/coopcycle/coopcycle-frontend-js.git#v1.0.2",
+    "coopcycle-frontend-js": "git+https://git@github.com/coopcycle/coopcycle-frontend-js.git#1.0.4",
     "dotenv": "^8.2.0",
     "form-data": "^2.3.3",
     "i18next": "^17.0.16",
@@ -35,6 +35,7 @@
     "pg-hstore": "^2.3.3",
     "promise": "^8.1.0",
     "redis": "^3.0",
+    "reduce-reducers": "^1.0.4",
     "redux": "^4.0.4",
     "sequelize": "^5.21.6",
     "socket.io": "2.0.3",

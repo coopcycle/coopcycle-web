@@ -10,6 +10,7 @@ import Task from './Task'
 import TaskGroup from './TaskGroup'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
+import { selectUnassignedTasks } from 'coopcycle-frontend-js/dispatch/redux'
 
 const UnassignedTasksPopoverContentWithTrans = withTranslation()(UnassignedTasksPopoverContent)
 
@@ -195,7 +196,7 @@ class UnassignedTasks extends React.Component {
 function mapStateToProps (state) {
 
   return {
-    unassignedTasks: state.unassignedTasks,
+    unassignedTasks: selectUnassignedTasks(state),
     taskListGroupMode: state.taskListGroupMode,
     showCancelledTasks: state.filters.showCancelledTasks,
     taskModalIsOpen: state.taskModalIsOpen,
