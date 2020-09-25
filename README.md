@@ -99,6 +99,11 @@ Debugging
 ```
 make enable-xdebug
 ```
+> **Note:** If you've been working with this stack before you'll need to rebuild the php image for this command to work:
+> ```
+> docker-compose build php
+> docker-compose restart php nginx
+> ```
 #### 2. Enable php debug in VSCode
 1. Install a PHP Debug extension, this is tested with [felixfbecker.php-debug](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug) extension.
 2. Add the following configuration in your `.vscode/launch.json` of your workspace:
