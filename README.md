@@ -127,7 +127,7 @@ make enable-xdebug
   ]
 }
 ```
-3. Restart nginx and php containers
+3. If you're having issues connecting the debugger yo can restart nginx and php containers to reload the xdebug extension.
 ```
 docker-compose restart php nginx
 ```

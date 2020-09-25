@@ -34,3 +34,4 @@ email-preview:
 
 enable-xdebug:
 	@docker-compose exec php /usr/local/bin/enable-xdebug
+	@docker-compose restart php nginx
