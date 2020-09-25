@@ -127,6 +127,10 @@ make enable-xdebug
   ]
 }
 ```
+3. Restart nginx and php containers
+```
+docker-compose restart php nginx
+```
 
 Running migrations
 ------------------
