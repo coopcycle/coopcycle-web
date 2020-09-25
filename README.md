@@ -92,6 +92,41 @@ make behat
 ```
 make mocha
 ```
+Debugging
+------------------
+#### 1. Install and enable xdebug in the php container
+
+```
+make enable-xdebug
+```
+#### 2. Enable php debug in VSCode
+1. Install a PHP Debug extension, this is tested with [felixfbecker.php-debug](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug) extension.
+2. Add the following configuration in your `.vscode/launch.json` of your workspace:
+
+```json
+{
+	...
+	"configurations": [
+    ...
+    {
+      "name": "Listen for XDebug",
+      "type": "php",
+      "request": "launch",
+      "port": 9001,
+      "pathMappings": {
+          "/var/www/html": "${workspaceFolder}"
+      },
+      "xdebugSettings": {
+          "max_data": 65535,
+          "show_hidden": 1,
+          "max_children": 100,
+          "max_depth": 5
+      }
+    }
+    ...
+  ]
+}
+```
 
 Running migrations
 ------------------
