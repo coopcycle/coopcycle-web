@@ -157,16 +157,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.150.2",
+            "version": "3.155.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1aef7e270f15347df82279f05d85f551f85c8b87"
+                "reference": "da40d5d22acbe542f37c44c78ee520005a6c81a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1aef7e270f15347df82279f05d85f551f85c8b87",
-                "reference": "1aef7e270f15347df82279f05d85f551f85c8b87",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/da40d5d22acbe542f37c44c78ee520005a6c81a2",
+                "reference": "da40d5d22acbe542f37c44c78ee520005a6c81a2",
                 "shasum": ""
             },
             "require": {
@@ -238,7 +238,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-08-20T18:12:35+00:00"
+            "time": "2020-09-25T18:12:28+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -2823,16 +2823,16 @@
         },
         {
             "name": "dragonmantank/cron-expression",
-            "version": "v3.0.0",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dragonmantank/cron-expression.git",
-                "reference": "70c187e8d95c828fc93a2d09d63179c13381482e"
+                "reference": "fa4e95ff5a7f1d62c3fbc05c32729b7f3ca14b52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/70c187e8d95c828fc93a2d09d63179c13381482e",
-                "reference": "70c187e8d95c828fc93a2d09d63179c13381482e",
+                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/fa4e95ff5a7f1d62c3fbc05c32729b7f3ca14b52",
+                "reference": "fa4e95ff5a7f1d62c3fbc05c32729b7f3ca14b52",
                 "shasum": ""
             },
             "require": {
@@ -2873,7 +2873,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-03-25T18:33:19+00:00"
+            "time": "2020-08-21T02:30:13+00:00"
         },
         {
             "name": "drupal/core-vendor-hardening",
@@ -4016,16 +4016,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.9",
+            "version": "8.12.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "674b79ae3362409d08e550cb196d982485a76225"
+                "reference": "befffd590d1e2333bbb6d712541ccccf5fc08f1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/674b79ae3362409d08e550cb196d982485a76225",
-                "reference": "674b79ae3362409d08e550cb196d982485a76225",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/befffd590d1e2333bbb6d712541ccccf5fc08f1f",
+                "reference": "befffd590d1e2333bbb6d712541ccccf5fc08f1f",
                 "shasum": ""
             },
             "require": {
@@ -4080,7 +4080,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-08-31T09:51:44+00:00"
+            "time": "2020-09-22T07:23:22+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -4133,16 +4133,16 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.12.0",
+            "version": "v1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "74cad289014f7ef747618480f6b59f6303357f34"
+                "reference": "173191f5defd1d9ae8bdfc28da31b63eb73dd34e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/74cad289014f7ef747618480f6b59f6303357f34",
-                "reference": "74cad289014f7ef747618480f6b59f6303357f34",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/173191f5defd1d9ae8bdfc28da31b63eb73dd34e",
+                "reference": "173191f5defd1d9ae8bdfc28da31b63eb73dd34e",
                 "shasum": ""
             },
             "require": {
@@ -4181,7 +4181,7 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2020-09-08T16:33:56+00:00"
+            "time": "2020-09-18T20:03:05+00:00"
         },
         {
             "name": "google/cloud-core",
@@ -4723,12 +4723,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hwi/HWIOAuthBundle.git",
-                "reference": "5461f23ae2440d8ccc3cfff12bec3c92fb2271ee"
+                "reference": "4bc9fb893f1961771aab2dadcfeff0a53c7e7363"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hwi/HWIOAuthBundle/zipball/5461f23ae2440d8ccc3cfff12bec3c92fb2271ee",
-                "reference": "5461f23ae2440d8ccc3cfff12bec3c92fb2271ee",
+                "url": "https://api.github.com/repos/hwi/HWIOAuthBundle/zipball/4bc9fb893f1961771aab2dadcfeff0a53c7e7363",
+                "reference": "4bc9fb893f1961771aab2dadcfeff0a53c7e7363",
                 "shasum": ""
             },
             "require": {
@@ -4739,30 +4739,33 @@
                 "php-http/httplug": "^2.0",
                 "php-http/message-factory": "^1.0",
                 "psr/http-message": "^1.0",
-                "symfony/form": "^3.4|^4.3",
-                "symfony/framework-bundle": "^3.4.26|^4.3",
-                "symfony/options-resolver": "^3.4|^4.3",
-                "symfony/security-bundle": "^3.4|^4.3",
-                "symfony/templating": "^3.4|^4.3",
-                "symfony/yaml": "^3.4|^4.3"
+                "symfony/form": "^3.4|^4.4|^5.0",
+                "symfony/framework-bundle": "^3.4.26|^4.4|^5.0",
+                "symfony/options-resolver": "^3.4|^4.4|^5.0",
+                "symfony/security-bundle": "^3.4|^4.4|^5.0",
+                "symfony/templating": "^3.4|^4.4|^5.0",
+                "symfony/yaml": "^3.4|^4.4|^5.0"
             },
             "conflict": {
                 "twig/twig": "<1.34"
             },
             "require-dev": {
+                "doctrine/doctrine-bundle": "^1.11|^2.0",
                 "doctrine/orm": "^2.3",
                 "friendsofphp/php-cs-fixer": "^2.0",
-                "friendsofsymfony/user-bundle": "^2.0",
+                "friendsofsymfony/user-bundle": "^2.1",
                 "php-http/guzzle6-adapter": "^2.0",
                 "php-http/httplug-bundle": "^1.7",
-                "phpunit/phpunit": "^6.5|^7.5",
-                "symfony/browser-kit": "^3.4|^4.2",
+                "phpunit/phpunit": "^7.5|^8.0",
+                "symfony/browser-kit": "^3.4|^4.4|^5.0",
+                "symfony/css-selector": "^3.4|^4.4|^5.0",
                 "symfony/monolog-bundle": "^3.4",
-                "symfony/phpunit-bridge": "^3.4|^4.2",
-                "symfony/property-access": "^3.4|^4.2",
-                "symfony/stopwatch": "^3.4|^4.2",
-                "symfony/twig-bundle": "^3.4|^4.2",
-                "symfony/validator": "^3.4|^4.2"
+                "symfony/phpunit-bridge": "^5.0",
+                "symfony/property-access": "^3.4|^4.4|^5.0",
+                "symfony/stopwatch": "^3.4|^4.4|^5.0",
+                "symfony/translation": "^3.4|^4.4|^5.0",
+                "symfony/twig-bundle": "^3.4|^4.4|^5.0",
+                "symfony/validator": "^3.4|^4.4|^5.0"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "to use Doctrine user provider",
@@ -4774,7 +4777,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev"
+                    "dev-master": "1.2-dev"
                 }
             },
             "autoload": {
@@ -4815,6 +4818,7 @@
                 "Deezer",
                 "EVE Online",
                 "amazon",
+                "apple",
                 "asana",
                 "auth0",
                 "azure",
@@ -4876,7 +4880,7 @@
                 "yandex",
                 "youtube"
             ],
-            "time": "2019-09-03T09:15:54+00:00"
+            "time": "2020-09-01T17:48:57+00:00"
         },
         {
             "name": "illuminate/cache",
@@ -6856,16 +6860,16 @@
         },
         {
             "name": "league/mime-type-detection",
-            "version": "1.4.0",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/mime-type-detection.git",
-                "reference": "fda190b62b962d96a069fcc414d781db66d65b69"
+                "reference": "ea2fbfc988bade315acd5967e6d02274086d0f28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/fda190b62b962d96a069fcc414d781db66d65b69",
-                "reference": "fda190b62b962d96a069fcc414d781db66d65b69",
+                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/ea2fbfc988bade315acd5967e6d02274086d0f28",
+                "reference": "ea2fbfc988bade315acd5967e6d02274086d0f28",
                 "shasum": ""
             },
             "require": {
@@ -6903,7 +6907,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-08-09T10:34:01+00:00"
+            "time": "2020-09-21T18:10:53+00:00"
         },
         {
             "name": "league/oauth2-server",
@@ -9021,16 +9025,16 @@
         },
         {
             "name": "php-http/discovery",
-            "version": "1.9.1",
+            "version": "1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/discovery.git",
-                "reference": "64a18cc891957e05d91910b3c717d6bd11fbede9"
+                "reference": "4366bf1bc39b663aa87459bd725501d2f1988b6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/discovery/zipball/64a18cc891957e05d91910b3c717d6bd11fbede9",
-                "reference": "64a18cc891957e05d91910b3c717d6bd11fbede9",
+                "url": "https://api.github.com/repos/php-http/discovery/zipball/4366bf1bc39b663aa87459bd725501d2f1988b6c",
+                "reference": "4366bf1bc39b663aa87459bd725501d2f1988b6c",
                 "shasum": ""
             },
             "require": {
@@ -9082,7 +9086,7 @@
                 "message",
                 "psr7"
             ],
-            "time": "2020-07-13T15:44:45+00:00"
+            "time": "2020-09-22T13:31:04+00:00"
         },
         {
             "name": "php-http/guzzle6-adapter",
