@@ -38,4 +38,3 @@ fresh:
 	-docker rmi $(docker images -q)
 	-docker volume rm $(docker volume list)
 	-docker network rm $(docker network list)
-	"$(MAKE)" install
