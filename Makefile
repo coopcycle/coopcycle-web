@@ -26,9 +26,16 @@ migrations-diff:
 	@docker-compose exec php php bin/console doctrine:migrations:diff
 
 migrations-migrate:
-	@composer install
 	@docker-compose exec php php bin/console doctrine:migrations:migrate
 	@docker-compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction
 
 email-preview:
 	@docker-compose exec php php bin/console coopcycle:email:preview > /tmp/coopcycle_email_layout.html && open /tmp/coopcycle_email_layout.html
+
+fresh:
+	-docker ps -a -q | xargs docker stop
+	-docker ps -a -q | xargs docker rm
+	-docker rmi $(docker images -q)
+	-docker volume rm $(docker volume list)
+	-docker network rm $(docker network list)
+	"$(MAKE)" install
