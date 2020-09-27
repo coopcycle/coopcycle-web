@@ -26,6 +26,7 @@ migrations-diff:
 	@docker-compose exec php php bin/console doctrine:migrations:diff
 
 migrations-migrate:
+	@composer install
 	@docker-compose exec php php bin/console doctrine:migrations:migrate
 	@docker-compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction
 
