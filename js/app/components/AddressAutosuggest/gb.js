@@ -46,8 +46,8 @@ const toAddress = (postcode) => ({
 })
 
 const toPostcode = (address) => ({
-  latitude: address.geo.latitude,
-  longitude: address.geo.longitude,
+  latitude: address.geo ? address.geo.latitude : address.latitude,
+  longitude: address.geo ? address.geo.longitude : address.longitude,
   postcode: address.postalCode,
 })
 

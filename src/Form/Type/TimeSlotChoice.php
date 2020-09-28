@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Task;
+use AppBundle\DataType\TsRange;
 use Carbon\Carbon;
 
 class TimeSlotChoice
@@ -54,6 +55,26 @@ class TimeSlotChoice
         return $now >= $after;
     }
 
+    public function hasFinished(\DateTimeInterface $now = null, string $priorNotice = null)
+    {
+        if (null === $now) {
+            $now = Carbon::now();
+        }
+
+        [ $start, $end ] = $this->timeRange;
+        [ $hour, $minute ] = explode(':', $end);
+
+        $before = clone $this->date;
+
+        $before->setTime($hour, $minute);
+
+        if ($priorNotice) {
+            $before->modify(sprintf('-%s', $priorNotice));
+        }
+
+        return $now >= $before;
+    }
+
     public function applyToTask(Task $task)
     {
         $datePeriod = $this->toDatePeriod();
@@ -87,6 +108,24 @@ class TimeSlotChoice
         }
 
         return new self($before, sprintf('%s-%s', $after->format('H:i'), $before->format('H:i')));
+    }
+
+    public function toTsRange(): TsRange
+    {
+        [ $startHour, $startMinute ] = explode(':', $this->timeRange[0]);
+        [ $endHour, $endMinute ] = explode(':', $this->timeRange[1]);
+
+        $lower = clone $this->date;
+        $upper = clone $this->date;
+
+        $lower->setTime($startHour, $startMinute);
+        $upper->setTime($endHour, $endMinute);
+
+        $range = new TsRange();
+        $range->setLower($lower);
+        $range->setUpper($upper);
+
+        return $range;
     }
 
     public function __toString()

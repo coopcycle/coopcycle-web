@@ -102,6 +102,10 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
             return new ArrayChoiceList([], $value);
         }
 
+        if (!$this->timeSlot->hasOpeningHours() && count($this->timeSlot->getChoices()) === 0) {
+            return new ArrayChoiceList([], $value);
+        }
+
         $cursor = $this->getCursor($this->now);
 
         $choices = [];
@@ -121,7 +125,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                             sprintf('%s-%s', $spec->opens, $spec->closes)
                         );
 
-                        if (null !== $this->timeSlot->getSameDayCutoff()
+                        if (!empty($this->timeSlot->getSameDayCutoff())
                         && Carbon::instance($cursor)->isSameDay($this->now)) {
                             $cutoff = $this->now->copy()->setTimeFromTimeString(
                                 $this->timeSlot->getSameDayCutoff()
@@ -131,7 +135,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                             }
                         }
 
-                        if (!$choice->hasBegun($this->now, $this->timeSlot->getPriorNotice())) {
+                        if (!$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())) {
                             $choices[] = $choice;
                         }
                     }
@@ -143,7 +147,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                         $timeSlotChoice->toTimeRange()
                     );
 
-                    if (!$choice->hasBegun($this->now, $this->timeSlot->getPriorNotice())) {
+                    if (!$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())) {
                         $choices[] = $choice;
                     }
                 }

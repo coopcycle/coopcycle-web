@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
@@ -97,6 +98,23 @@ class TimeSlotType extends AbstractType
                     'min' => 0
                 ]
             ]);
+        });
+
+        // When using "simple" mode, make sure there is at least one choice.
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+            $timeSlot = $event->getData();
+
+            if (!$timeSlot->hasOpeningHours()) {
+                $choices = $form->get('choices')->getData();
+                if (count($choices) === 0) {
+                    $message =
+                        $this->translator->trans('form.time_slot.choices.error.empty');
+                    $form->get('choices')->addError(
+                        new FormError($message, 'form.time_slot.choices.error.empty')
+                    );
+                }
+            }
         });
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {

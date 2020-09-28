@@ -10,7 +10,7 @@ use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\ApiApp;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Invitation;
@@ -26,6 +26,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AddOrganizationType;
+use AppBundle\Form\AttachToOrganizationType;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
 use AppBundle\Form\CustomizeType;
@@ -325,7 +326,7 @@ class AdminController extends Controller
     public function usersAction(Request $request)
     {
         $qb = $this->getDoctrine()
-            ->getRepository(ApiUser::class)
+            ->getRepository(User::class)
             ->createQueryBuilder('u');
 
         $users = $this->get('knp_paginator')->paginate(
@@ -427,12 +428,13 @@ class AdminController extends Controller
     /**
      * @Route("/admin/user/{username}", name="admin_user_details")
      */
-    public function userAction($username, Request $request)
+    public function userAction($username, Request $request, UserManagerInterface $userManager)
     {
-        // @link https://symfony.com/doc/current/bundles/FOSUserBundle/user_manager.html
-        $userManager = $this->get('fos_user.user_manager');
-
         $user = $userManager->findUserByUsername($username);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
 
         return $this->render('admin/user.html.twig', [
             'user' => $user,
@@ -442,12 +444,13 @@ class AdminController extends Controller
     /**
      * @Route("/admin/user/{username}/edit", name="admin_user_edit")
      */
-    public function userEditAction($username, Request $request)
+    public function userEditAction($username, Request $request, UserManagerInterface $userManager)
     {
-        // @link https://symfony.com/doc/current/bundles/FOSUserBundle/user_manager.html
-        $userManager = $this->get('fos_user.user_manager');
-
         $user = $userManager->findUserByUsername($username);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
 
         // Roles that can be edited by admin
         $editableRoles = ['ROLE_ADMIN', 'ROLE_COURIER', 'ROLE_RESTAURANT', 'ROLE_STORE'];
@@ -466,7 +469,7 @@ class AdminController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
 
-            $userManager = $this->getDoctrine()->getManagerForClass(ApiUser::class);
+            $userManager = $this->getDoctrine()->getManagerForClass(User::class);
 
             $user = $editForm->getData();
 
@@ -504,10 +507,13 @@ class AdminController extends Controller
     /**
      * @Route("/admin/user/{username}/tracking", name="admin_user_tracking")
      */
-    public function userTrackingAction($username, Request $request)
+    public function userTrackingAction($username, Request $request, UserManagerInterface $userManager)
     {
-        $userManager = $this->get('fos_user.user_manager');
         $user = $userManager->findUserByUsername($username);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
 
         return $this->userTracking($user, 'admin');
     }
@@ -601,6 +607,56 @@ class AdminController extends Controller
             'view'      => 'admin_delivery',
             'store_new' => 'admin_store_delivery_new'
         ];
+    }
+
+    /**
+     * @Route("/admin/tasks", name="admin_tasks")
+     */
+    public function tasksAction(Request $request, TranslatorInterface $translator)
+    {
+        $form = $this->createForm(AttachToOrganizationType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $tasks = $form->get('tasks')->getData();
+            $store = $form->get('store')->getData();
+
+            if ($store) {
+                foreach ($tasks as $task) {
+                    if (null === $task->getOrganization()) {
+                        $task->setOrganization($store->getOrganization());
+                    }
+                }
+
+                $this->getDoctrine()->getManagerForClass(Task::class)->flush();
+            }
+
+            return $this->redirectToRoute('admin_tasks');
+        }
+
+        $qb = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->createQueryBuilder('t');
+
+        $tasks = $this->get('knp_paginator')->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.doneBefore',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
+                PaginatorInterface::SORT_FIELD_WHITELIST => ['t.doneBefore'],
+                PaginatorInterface::DEFAULT_FILTER_FIELDS => [],
+                PaginatorInterface::FILTER_FIELD_WHITELIST => []
+            ]
+        );
+
+        return $this->render('admin/tasks.html.twig', [
+            'tasks' => $tasks,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
@@ -911,13 +967,13 @@ class AdminController extends Controller
      */
     public function searchUsersAction(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(ApiUser::class);
+        $repository = $this->getDoctrine()->getRepository(User::class);
 
         $results = $repository->search($request->query->get('q'));
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
 
-            $data = array_map(function (ApiUser $user) {
+            $data = array_map(function (User $user) {
 
                 $text = sprintf('%s (%s)', $user->getEmail(), $user->getUsername());
 

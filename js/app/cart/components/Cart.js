@@ -45,7 +45,8 @@ class Cart extends Component {
                   geohash={ '' }
                   key={ this.props.streetAddress }
                   onAddressSelected={ (value, address) => this.props.changeAddress(address) }
-                  disabled={ this.props.isCollectionOnly || this.props.takeaway } />
+                  disabled={ this.props.isCollectionOnly || this.props.takeaway }
+                  required />
                 { this.props.isCollectionEnabled && (
                 <div className="text-center">
                   <Takeaway

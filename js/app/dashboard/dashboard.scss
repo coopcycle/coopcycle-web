@@ -198,8 +198,9 @@ html, body {
   font-size: 12px;
   position: relative;
   cursor: pointer;
-  border-radius: 0;
+  border-radius: 0 !important;
   padding: 8px;
+  border-right: none;
   border-left: 6px solid #ffffff;
 
   a {

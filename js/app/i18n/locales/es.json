@@ -46,7 +46,7 @@
         "ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS": "Tareas terminadas",
         "ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS": "Tareas canceladas",
         "ADMIN_DASHBOARD_FILTERS_NONTAGGED_TASKS": "Tareas no etiquetadas",
-        "ADMIN_DASHBOARD_TASK_CAPTION": "#{{id}} - {{- address}} antes de {{date}}",
+        "ADMIN_DASHBOARD_TASK_CAPTION": "{{- address}} antes de {{date}}",
         "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Tarea #{{id}}",
         "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Entre {{after}} y {{before}}",
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Asignado a {{username}}",

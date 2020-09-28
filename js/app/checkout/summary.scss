@@ -1,3 +1,5 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+
 #loopeat-block {
 
   background-color: #FBDEDC;
@@ -19,10 +21,15 @@
 
   & img.loopeat-bowl1 {
     position: absolute;
-    top: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
     right: 1rem;
-    height: calc(100% - 2rem);
+    height: calc(100% - 4rem);
+    @media (min-width: $screen-sm-min) {
+      height: calc(100% - 2rem);
+    }
   }
+
   & a {
     color: #621e5b;
   }

@@ -19,7 +19,10 @@ function roundUp(n, x = 5) {
 
 export const asText = (value, short) => {
 
-  // FIXME Make sure that value is not null / an array of 2 strings
+  if (!value || !Array.isArray(value) || value.length !== 2) {
+    return ''
+  }
+
   const range = moment.range(
     moment(value[0]),
     moment(value[1])

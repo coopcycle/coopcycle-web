@@ -20,6 +20,8 @@ use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
+use AppBundle\Entity\Model\OrganizationAwareInterface;
+use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Validator\Constraints\Task as AssertTask;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -43,6 +45,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="POST",
  *       "access_control"="is_granted('ROLE_ADMIN')",
  *       "denormalization_context"={"groups"={"task_create"}},
+ *       "validation_groups"={"Default"}
  *     },
  *     "my_tasks"={
  *       "method"="GET",
@@ -171,9 +174,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(TaskFilter::class)
  * @ApiFilter(AssignedFilter::class, properties={"assigned"})
  */
-class Task implements TaggableInterface
+class Task implements TaggableInterface, OrganizationAwareInterface
 {
     use TaggableTrait;
+    use OrganizationAwareTrait;
 
     const TYPE_DROPOFF = 'DROPOFF';
     const TYPE_PICKUP = 'PICKUP';
@@ -208,6 +212,7 @@ class Task implements TaggableInterface
     private $delivery;
 
     /**
+     * @Assert\Valid()
      * @Groups({"task", "task_create", "task_edit", "address", "address_create", "delivery_create", "pricing_rule_evalute"})
      */
     private $address;
@@ -490,7 +495,7 @@ class Task implements TaggableInterface
         return null !== $this->assignedTo;
     }
 
-    public function isAssignedTo(ApiUser $courier)
+    public function isAssignedTo(User $courier)
     {
         return $this->isAssigned() && $this->assignedTo === $courier;
     }
@@ -506,10 +511,10 @@ class Task implements TaggableInterface
     }
 
     /**
-     * @param ApiUser $courier
+     * @param User $courier
      * @param \DateTime|null $date
      */
-    public function assignTo(ApiUser $courier, \DateTime $date = null)
+    public function assignTo(User $courier, \DateTime $date = null)
     {
         if (null === $date) {
             @trigger_error('Not specifying a date when calling assignTo() is deprecated', E_USER_DEPRECATED);
@@ -601,7 +606,7 @@ class Task implements TaggableInterface
         return $this->createdAt;
     }
 
-    public function isReadableBy(ApiUser $user)
+    public function isReadableBy(User $user)
     {
         if ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_COURIER')) {
             return true;
@@ -673,5 +678,21 @@ class Task implements TaggableInterface
     public function isDoorstep()
     {
         return $this->doorstep;
+    }
+
+    /**
+     * @SerializedName("orgName")
+     * @Groups({"task"})
+     */
+    public function getOrganizationName()
+    {
+        $organization = $this->getOrganization();
+
+        if ($organization) {
+
+            return $organization->getName();
+        }
+
+        return '';
     }
 }

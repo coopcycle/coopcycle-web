@@ -2,7 +2,7 @@
 
 namespace AppBundle\LoopEat;
 
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use GuzzleHttp\Exception\RequestException;
 
 class Context
@@ -15,7 +15,7 @@ class Context
         $this->client = $client;
     }
 
-    public function initialize(ApiUser $customer)
+    public function initialize(User $customer)
     {
         if ($customer->hasLoopEatCredentials()) {
 

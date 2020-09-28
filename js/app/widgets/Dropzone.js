@@ -12,6 +12,7 @@ export default function(el, options) {
   const [ width, height ] = options.size
 
   const croppieFormat = Object.prototype.hasOwnProperty.call(options, 'croppie') ? options.croppie.format : 'jpeg'
+  const croppieEnableResize = Object.prototype.hasOwnProperty.call(options, 'croppie') ? options.croppie.enableResize : false
 
   const $dropzoneContainer = $('<div>')
   $dropzoneContainer.addClass('dropzone')
@@ -107,15 +108,23 @@ export default function(el, options) {
 
       buttonConfirm.addEventListener('click', function() {
 
-        // Get the output file data from Croppie
-        croppie.result({
+        let croppieOptions = {
           type: 'blob',
-          size: {
-            width: width,
-            height: height
-          },
           format: croppieFormat
-        }).then(function(blob) {
+        }
+
+        if (!croppieEnableResize) {
+          croppieOptions = {
+            size: {
+              width: width,
+              height: height
+            },
+            ...croppieOptions
+          }
+        }
+
+        // Get the output file data from Croppie
+        croppie.result(croppieOptions).then(function(blob) {
 
           // Create a new Dropzone file thumbnail
           dz.createThumbnail(
@@ -142,7 +151,7 @@ export default function(el, options) {
 
       // Create the Croppie editor
       var croppie = new Croppie(editor, {
-        enableResize: false,
+        enableResize: croppieEnableResize,
         viewport: {
           width: width,
           height: height,

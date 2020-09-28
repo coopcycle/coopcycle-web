@@ -153,6 +153,7 @@ TestUtils.prototype.createUser = function(username, roles) {
 TestUtils.prototype.createRestaurant = function(name, coordinates) {
   var Restaurant = this.db.Restaurant;
   var Address = this.db.Address;
+  var Organization = this.db.Organization;
 
   return new Promise(function (resolve, reject) {
 
@@ -162,14 +163,22 @@ TestUtils.prototype.createRestaurant = function(name, coordinates) {
       addressLocality: 'Paris big city of the dream',
       geo: { type: 'Point', coordinates: [ coordinates.latitude, coordinates.longitude ] }
     }).then(function(address) {
-      Restaurant.create({
-        type: 'restaurant',
-        name: name,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }).then(function(restaurant) {
-        restaurant.setAddress(address).then(function() {
-          resolve(restaurant);
+
+      Organization.create({
+        name: 'Acme'
+      }).then(function(organization) {
+        Restaurant.build({
+          type: 'restaurant',
+          name: name,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          organizationId: organization.id,
+        })
+        .save()
+        .then(function(restaurant) {
+          restaurant.setAddress(address).then(function() {
+            resolve(restaurant);
+          })
         })
       })
     })

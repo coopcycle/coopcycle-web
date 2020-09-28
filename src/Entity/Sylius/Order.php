@@ -20,7 +20,7 @@ use AppBundle\Action\MyOrders;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Filter\OrderDateFilter;
@@ -38,8 +38,10 @@ use Sylius\Component\Order\Model\Order as BaseOrder;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Validator\Constraints as Assert;
 use Sylius\Component\Taxation\Model\TaxRateInterface;
 
 /**
@@ -230,6 +232,9 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $restaurant;
 
+    /**
+     * @Assert\Valid(groups={"cart"})
+     */
     protected $shippingAddress;
 
     protected $billingAddress;
@@ -263,6 +268,13 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $shippingTimeRange;
 
+    /**
+     * @Assert\Expression(
+     *   "!this.isTakeaway() or (this.isTakeaway() and this.getRestaurant().isFulfillmentMethodEnabled('collection'))",
+     *   message="order.collection.not_available",
+     *   groups={"cart"}
+     * )
+     */
     protected $takeaway = false;
 
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
@@ -288,14 +300,14 @@ class Order extends BaseOrder implements OrderInterface
     }
 
     /**
-     * @return ApiUser|null
+     * @return User|null
      */
     public function getCustomer()
     {
         return $this->customer;
     }
 
-    public function setCustomer(ApiUser $customer)
+    public function setCustomer(User $customer)
     {
         $this->customer = $customer;
 
@@ -852,9 +864,20 @@ class Order extends BaseOrder implements OrderInterface
         $this->takeaway = $takeaway;
     }
 
+    /**
+     * @SerializedName("fulfillmentMethod")
+     */
     public function getFulfillmentMethod(): string
     {
         return $this->isTakeaway() ? 'collection' : 'delivery';
+    }
+
+    /**
+     * @SerializedName("fulfillmentMethod")
+     */
+    public function setFulfillmentMethod(string $fulfillmentMethod)
+    {
+        $this->setTakeaway($fulfillmentMethod === 'collection');
     }
 
     public function getRefundTotal(): int
@@ -913,5 +936,21 @@ class Order extends BaseOrder implements OrderInterface
                 return $pickup->getAssignedCourier()->getUsername();
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUser(): ?UserInterface
+    {
+        if (null === $this->customer) {
+            return null;
+        }
+
+        if ($this->customer instanceof UserInterface) {
+            return $this->customer;
+        }
+
+        return $this->customer->getUser();
     }
 }

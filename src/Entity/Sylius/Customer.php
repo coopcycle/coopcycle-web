@@ -2,8 +2,9 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -12,9 +13,20 @@ use Sylius\Component\Customer\Model\Customer as BaseCustomer;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * @ApiResource(
+ *   shortName="Customer",
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN') or user.getCustomer() == object"
+ *     }
+ *   }
+ * )
+ */
 class Customer extends BaseCustomer implements CustomerInterface
 {
-    /** @var ApiUser */
+    /** @var User */
     protected $user;
 
     /** @var Collection|OrderInterface[] */
@@ -114,17 +126,17 @@ class Customer extends BaseCustomer implements CustomerInterface
             return;
         }
 
-        /** @var ApiUser|null $user */
-        Assert::nullOrIsInstanceOf($user, ApiUser::class);
+        /** @var User|null $user */
+        Assert::nullOrIsInstanceOf($user, User::class);
 
         $previousUser = $this->user;
         $this->user = $user;
 
-        if ($previousUser instanceof ApiUser) {
+        if ($previousUser instanceof User) {
             $previousUser->setCustomer(null);
         }
 
-        if ($user instanceof ApiUser) {
+        if ($user instanceof User) {
             $user->setCustomer($this);
         }
     }
@@ -135,5 +147,19 @@ class Customer extends BaseCustomer implements CustomerInterface
     public function hasUser(): bool
     {
         return null !== $this->user;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->getPhoneNumber();
+    }
+
+    public function getUsername(): string
+    {
+        if ($this->hasUser()) {
+            return $this->getUser()->getUsername();
+        }
+
+        return $this->getFullName();
     }
 }

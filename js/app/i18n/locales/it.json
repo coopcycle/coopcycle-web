@@ -54,7 +54,7 @@
         "ADMIN_DASHBOARD_FILTERS_TAB_COURIERS": "Corrieri",
         "ADMIN_DASHBOARD_FILTERS_SHOW": "Mostra",
         "ADMIN_DASHBOARD_FILTERS_HIDE": "Nascondi",
-        "ADMIN_DASHBOARD_TASK_CAPTION": "#{{id}} - {{- address}} prima del {{date}}",
+        "ADMIN_DASHBOARD_TASK_CAPTION": "{{- address}} prima del {{date}}",
         "ADMIN_DASHBOARD_TASK_TITLE": "Impiego #{{id}}",
         "ADMIN_DASHBOARD_TASK_TITLE_NEW": "Nuovo impiego",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_STREET_ADDRESS_LABEL": "Indirizzo",

@@ -104,31 +104,56 @@ class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
 
         $numberOfDays = 0;
         $days = [];
-        while ($numberOfDays < $this->numberOfDays) {
-            while (true) {
 
-                $period = CarbonPeriod::create(
-                    $nextOpeningDate, '15 minutes', $nextClosingDate,
-                    CarbonPeriod::EXCLUDE_END_DATE
-                );
+        while ($numberOfDays < $this->numberOfDays) {
+
+            $periods = $this->getPeriods($nextOpeningDate, $nextClosingDate);
+
+            foreach ($periods as $period) {
                 foreach ($period as $date) {
                     $availabilities[] = $date->format(\DateTime::ATOM);
                     $days[] = $date->format('Y-m-d');
-                    $numberOfDays = count(array_unique($days));
                 }
-
-                $nextOpeningDate = $this->getNextOpeningDate($nextClosingDate);
-
-                if (!Carbon::instance($nextOpeningDate)->isSameDay($nextClosingDate)) {
-                    $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
-                    break;
-                }
-
-                $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
             }
+
+            $numberOfDays = count(array_unique($days));
+
+            $nextOpeningDate = $this->getNextOpeningDate($nextClosingDate);
+            $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
         }
 
+        $availabilities = array_values(array_unique($availabilities));
+
         return new ArrayChoiceList($availabilities, $value);
+    }
+
+    /**
+     * @param \DateTime $nextOpeningDate
+     * @param \DateTime $nextClosingDate
+     * @return CarbonPeriod[]
+     */
+    private function getPeriods(\DateTime $nextOpeningDate, \DateTime $nextClosingDate)
+    {
+        $periods = [];
+
+        do {
+
+            $periods[] = CarbonPeriod::create(
+                $nextOpeningDate, '15 minutes', $nextClosingDate,
+                CarbonPeriod::EXCLUDE_END_DATE
+            );
+
+            $nextOpeningDate = $this->getNextOpeningDate($nextClosingDate);
+
+            if (!Carbon::instance($nextOpeningDate)->isSameDay($nextClosingDate)) {
+                break;
+            }
+
+            $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
+
+        } while (Carbon::instance($nextOpeningDate)->isSameDay($nextClosingDate));
+
+        return $periods;
     }
 
     /**

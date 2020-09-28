@@ -5,7 +5,7 @@ namespace Tests\AppBundle\Domain\Task\Reactor;
 use AppBundle\Domain\Task\Event\TaskStarted;
 use AppBundle\Domain\Task\Reactor\SendSms;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\OrderRepository;

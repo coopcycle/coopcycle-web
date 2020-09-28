@@ -123,7 +123,7 @@
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Przypisany do {{username}}",
         "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Pomiędzy {{after}} a {{before}}",
         "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Zadanie #{{id}}",
-        "ADMIN_DASHBOARD_TASK_CAPTION": "#{{id}} - {{- address}} od {{date}}",
+        "ADMIN_DASHBOARD_TASK_CAPTION": "{{- address}} od {{date}}",
         "ADMIN_DASHBOARD_FILTERS_HIDE": "Ukryj",
         "ADMIN_DASHBOARD_FILTERS_SHOW": "Pokaż",
         "ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE": "Zakres czasu",

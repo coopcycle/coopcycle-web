@@ -114,7 +114,7 @@
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Přiřazeno k {{username}}",
         "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Mezi {{after}} a {{before}}",
         "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Úkol #{{id}}",
-        "ADMIN_DASHBOARD_TASK_CAPTION": "#{{id}} - {{- address}} před {{date}}",
+        "ADMIN_DASHBOARD_TASK_CAPTION": "{{- address}} před {{date}}",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_STREET_ADDRESS_LABEL": "Adresa",
         "ADMIN_DASHBOARD_TASK_TITLE_NEW": "Nový úkol",
         "ADMIN_DASHBOARD_TASK_TITLE": "Úkol #{{id}}",

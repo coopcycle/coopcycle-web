@@ -4,13 +4,13 @@ namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 
 class TaskListTest extends TaskCollectionTest
 {
     public function setUp(): void
     {
-        $user = new ApiUser();
+        $user = new User();
 
         $this->taskCollection = new TaskList();
         $this->taskCollection->setCourier($user);
@@ -19,7 +19,7 @@ class TaskListTest extends TaskCollectionTest
 
     public function testAddRemoveTaskChangesAssignedUser()
     {
-        $user = new ApiUser();
+        $user = new User();
 
         $taskList = new TaskList();
         $taskList->setCourier($user);

@@ -1,7 +1,7 @@
 import React from 'react'
 import parsePricingRule from '../delivery/pricing-rule-parser'
 
-export class DeliveryZonePicker extends React.Component {
+export default class DeliveryZonePicker extends React.Component {
   constructor (props) {
     super(props)
 

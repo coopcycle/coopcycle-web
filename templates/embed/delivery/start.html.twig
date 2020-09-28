@@ -60,66 +60,7 @@
 {% endblock %}
 
 {% block scripts %}
-
-{% set pickup_date = null %}
-{% set dropoff_date = null %}
-
-{% if form.pickup.doneBefore.vars.value is not empty %}
-  {% set pickup_date = form.pickup.doneBefore.vars.value|date('Y-m-d H:i:s') %}
-{% endif %}
-
-{% if form.dropoff.doneBefore.vars.value is not empty %}
-  {% set dropoff_date = form.dropoff.doneBefore.vars.value|date('Y-m-d H:i:s') %}
-{% endif %}
-
-<script>
-function initMap() {
-
-  var tasks = {
-    pickup: {
-      doneBefore: {{ pickup_date|json_encode()|raw }},
-    },
-    dropoff: {
-      doneBefore: {{ dropoff_date|json_encode()|raw }}
-    }
-  }
-
-  $.each(tasks, function(type, data) {
-    new CoopCycle.DateTimePicker(document.querySelector(`#delivery_${type}_doneBefore_widget`), {
-      defaultValue: data.doneBefore,
-      getDatePickerContainer: function(trigger) {
-        return trigger.parentNode;
-      },
-      getTimePickerContainer: function(trigger) {
-        return trigger.parentNode;
-      },
-      onChange: function(date, dateString) {
-        if (date) {
-          document.querySelector(`#delivery_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
-        }
-      }
-    });
-    new CoopCycle.AddressInput(document.querySelector(`#delivery_${type}_address_streetAddress`), {
-      elements: {
-        latitude: document.querySelector(`#delivery_${type}_address_latitude`),
-        longitude: document.querySelector(`#delivery_${type}_address_longitude `),
-        postalCode: document.querySelector(`#delivery_${type}_address_postalCode`),
-        addressLocality: document.querySelector(`#delivery_${type}_address_addressLocality`)
-      }
-    });
-  });
-
-}
-</script>
-<script>
-$('#billing-address').on('hidden.bs.collapse', function () {
-  $('#delivery_billingAddress_streetAddress').removeAttr('required');
-})
-$('#billing-address').on('shown.bs.collapse', function () {
-  $('#delivery_billingAddress_streetAddress').attr('required', true);
-});
-$('#delivery_billingAddress_streetAddress').removeAttr('required');
-</script>
+{{ encore_entry_script_tags('delivery-embed-start-form') }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&language={{ app.request.locale }}&callback=initMap"
   async defer></script>
 {% endblock %}

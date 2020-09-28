@@ -5,7 +5,7 @@ namespace Tests\AppBundle\Domain\Task\Reactor;
 use AppBundle\Domain\Task\Event\TaskDone;
 use AppBundle\Domain\Task\Event\TaskFailed;
 use AppBundle\Domain\Task\Reactor\SendEmail;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
@@ -85,11 +85,11 @@ class SendEmailTest extends TestCase
     {
         $store = new Store();
 
-        $bob = $this->prophesize(ApiUser::class);
+        $bob = $this->prophesize(User::class);
         $bob->getFullName()->willReturn('Bob');
         $bob->getEmail()->willReturn('bob@acme.com');
 
-        $sarah = $this->prophesize(ApiUser::class);
+        $sarah = $this->prophesize(User::class);
         $sarah->getFullName()->willReturn('Sarah');
         $sarah->getEmail()->willReturn('sarah@acme.com');
 

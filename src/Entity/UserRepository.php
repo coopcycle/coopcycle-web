@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr;
 
-class ApiUserRepository extends EntityRepository
+class UserRepository extends EntityRepository
 {
     public function search($q)
     {

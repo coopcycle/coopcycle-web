@@ -68,9 +68,10 @@ Feature: Authenticate
 
   Scenario: Authenticated request
     Given the user is loaded:
-      | email    | bob@coopcycle.org |
-      | username | bob               |
-      | password | 123456            |
+      | email     | bob@coopcycle.org |
+      | username  | bob               |
+      | password  | 123456            |
+      | telephone | +33612345678      |
     And the user "bob" is authenticated
     When I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/me"
@@ -85,7 +86,8 @@ Feature: Authenticate
       "addresses": [],
       "username": "bob",
       "email": "bob@coopcycle.org",
-      "roles":["ROLE_USER"]
+      "roles":["ROLE_USER"],
+      "telephone":"+33612345678"
     }
     """
 

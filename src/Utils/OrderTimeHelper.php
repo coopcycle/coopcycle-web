@@ -112,42 +112,14 @@ class OrderTimeHelper
 
             $ranges = [];
 
-            // Convert the settings to a TimeSlot
-            $timeSlot = new TimeSlot();
-            $timeSlot->setWorkingDaysOnly(false);
-
-            $minutes = $restaurant->getOrderingDelayMinutes();
-            if ($minutes > 0) {
-                $hours = (int) $minutes / 60;
-                $timeSlot->setPriorNotice(sprintf('%d %s', $hours, ($hours > 1 ? 'hours' : 'hour')));
-            }
-
-            $shippingOptionsDays = $restaurant->getShippingOptionsDays();
-            if ($shippingOptionsDays > 0) {
-                $timeSlot->setInterval(sprintf('%d days', $shippingOptionsDays));
-            }
-
-            $timeSlot->setOpeningHours(
-                $fulfillmentMethod->getOpeningHours()
+            $choiceLoader = new TimeSlotChoiceLoader(
+                TimeSlot::fromLocalBusiness($restaurant, $fulfillmentMethod),
+                $this->country
             );
-
-            $choiceLoader = new TimeSlotChoiceLoader($timeSlot, $this->country);
             $choiceList = $choiceLoader->loadChoiceList();
 
             foreach ($choiceList->getChoices() as $choice) {
-                $choiceText = (string) $choice;
-                if (1 === preg_match('/^(?<date>[0-9]{4}-[0-9]{2}-[0-9]{2}) (?<start_time>[0-9]{2}:[0-9]{2})-(?<end_time>[0-9]{2}:[0-9]{2})$/', $choiceText, $matches)) {
-
-                    $lower = new \DateTime(sprintf('%s %s:00', $matches['date'], $matches['start_time']));
-                    $upper = new \DateTime(sprintf('%s %s:00', $matches['date'], $matches['end_time']));
-
-                    $range = new TsRange();
-                    $range->setLower($lower);
-                    $range->setUpper($upper);
-
-                    $ranges[] = $range;
-                }
-
+                $ranges[] = $choice->toTsRange();
             }
 
             return $ranges;

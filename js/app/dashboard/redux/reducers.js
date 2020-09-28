@@ -13,6 +13,7 @@ import {
   TOGGLE_POLYLINE,
   TOGGLE_TASK,
   SELECT_TASK,
+  SELECT_TASKS,
   SET_TASK_LIST_GROUP_MODE,
   ADD_TASK_LIST_REQUEST,
   ADD_TASK_LIST_REQUEST_SUCCESS,
@@ -47,6 +48,7 @@ import {
   OPEN_IMPORT_MODAL,
   CLOSE_IMPORT_MODAL,
   SET_CLUSTERS_ENABLED,
+  CLEAR_SELECTED_TASKS,
 } from './actions'
 
 const moment = extendMoment(Moment)
@@ -333,6 +335,14 @@ const selectedTasks = (state = [], action) => {
     }
 
     return [ action.task ]
+
+  case SELECT_TASKS:
+
+    return action.tasks
+
+  case CLEAR_SELECTED_TASKS:
+
+    return []
   }
 
   return state

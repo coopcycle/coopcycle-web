@@ -2,7 +2,7 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
 use Doctrine\ORM\EntityManagerInterface;
 use Kreait\Firebase\Factory as FirebaseFactory;
@@ -162,14 +162,41 @@ class RemotePushNotificationManager
             $payload->setCustomValue($key, $value);
         }
 
+        // @see https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_background_updates_to_your_app
+        // @see https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html
+        //
+        // The system treats background notifications as low priority:
+        // you can use them to refresh your app’s content, but the system doesn’t guarantee their delivery.
+        // In addition, the system may throttle the delivery of background notifications if the total number becomes excessive.
+        // The number of background notifications allowed by the system depends on current conditions,
+        // but don’t try to send more than two or three per hour.
+        //
+        // $payload->setContentAvailability(true);
+
+        $payload->setPushType('alert');
+
         $notifications = [];
         foreach ($tokens as $token) {
-            $notifications[] = new Pushok\Notification($payload, $token->getToken());
+            $notification = new Pushok\Notification($payload, $token->getToken());
+            $notification->setHighPriority();
+            $notifications[] = $notification;
         }
 
         $this->apnsClient->addNotifications($notifications);
 
-        $this->apnsClient->push();
+        $responses = $this->apnsClient->push();
+
+        foreach ($responses as $response) {
+            if (200 !== $response->getStatusCode()) {
+                $this->logger->error(sprintf('APNS returned "%s" "%s" "%s"',
+                    $response->getStatusCode(),
+                    $response->getErrorReason(),
+                    $response->getErrorDescription()
+                ));
+            } else {
+                $this->logger->info(sprintf('APNS returned "%s"', $response->getReasonPhrase()));
+            }
+        }
     }
 
     /**
@@ -184,15 +211,15 @@ class RemotePushNotificationManager
 
         $tokens = [];
         foreach ($recipients as $recipient) {
-            if (!$recipient instanceof RemotePushToken && !$recipient instanceof ApiUser) {
+            if (!$recipient instanceof RemotePushToken && !$recipient instanceof User) {
                 throw new \InvalidArgumentException(sprintf('$recipients must be an instance of %s or %s',
-                    RemotePushToken::class, ApiUser::class));
+                    RemotePushToken::class, User::class));
             }
 
             if ($recipient instanceof RemotePushToken) {
                 $tokens[] = $recipient;
             }
-            if ($recipient instanceof ApiUser) {
+            if ($recipient instanceof User) {
                 foreach ($recipient->getRemotePushTokens() as $remotePushToken) {
                     $tokens[] = $remotePushToken;
                 }

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import moment from 'moment'
 
 import i18n from '../../i18n'
+import { addressAsText } from '../utils'
 
 export default class extends Component {
 
@@ -31,7 +32,7 @@ export default class extends Component {
           </a>
         </div>
         <div>
-          { task.address.name || task.address.streetAddress }
+          { addressAsText(task.address) }
         </div>
         <div>
           { i18n.t('ADMIN_DASHBOARD_TASK_TIME_RANGE', {

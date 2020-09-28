@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
-import { setCurrentTask, assignAfter } from '../redux/actions'
+import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction } from '../redux/actions'
 import { selectTasks, selectFilteredTasks } from '../redux/selectors'
 
 class LeafletMap extends Component {
@@ -83,6 +83,16 @@ class LeafletMap extends Component {
 
         this.proxy.clearDrawPolyline()
         this.proxy.enableDragging()
+      },
+      onMarkersSelected: markers => {
+        const tasks = []
+        markers.forEach(marker => {
+          const task = _.find(this.props.tasks, t => t['@id'] === marker.options.task)
+          if (task) {
+            tasks.push(task)
+          }
+        })
+        this.props.selectTasks(tasks)
       }
     })
 
@@ -181,6 +191,8 @@ function mapDispatchToProps (dispatch) {
   return {
     setCurrentTask: task => dispatch(setCurrentTask(task)),
     assignAfter: (username, task, after) => dispatch(assignAfter(username, task, after)),
+    selectTask: task => dispatch(selectTask(task)),
+    selectTasks: tasks => dispatch(selectTasksAction(tasks)),
   }
 }
 

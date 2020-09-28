@@ -13,6 +13,7 @@ Encore
   .addEntry('delivery-form', './js/app/delivery/form.js')
   .addEntry('delivery-list', './js/app/delivery/list.js')
   .addEntry('delivery-map', './js/app/delivery/map.js')
+  .addEntry('delivery-embed-start-form', './js/app/delivery/embed-start.js')
   .addEntry('delivery-pricing-rules', './js/app/delivery/pricing-rules.js')
   .addEntry('delivery-tracking', './js/app/delivery/tracking.js')
   .addEntry('notifications', './js/app/notifications/index.js')
@@ -29,6 +30,7 @@ Encore
   .addEntry('restaurants-map', './js/app/restaurants-map/index.js')
   .addEntry('search-address', './js/app/search/address.js')
   .addEntry('store-form', './js/app/store/form.js')
+  .addEntry('task-list', './js/app/delivery/task-list.js')
   .addEntry('user-tracking', './js/app/user/tracking.js')
   .addEntry('user-form', './js/app/user/form.js')
   .addEntry('widgets', './js/app/widgets/index.js')
@@ -50,10 +52,14 @@ Encore
   .enableSassLoader(function(sassOptions) {}, {
     resolveUrlLoader: false
   })
-  .enableLessLoader(function(lessOptions) {
+  .enableLessLoader(function(lessLoaderOptions) {
     // Avoid error "Inline JavaScript is not enabled. Is it set in your options?"
     // https://github.com/ant-design/ant-motion/issues/44
-    lessOptions.javascriptEnabled = true
+    if (lessLoaderOptions.lessOptions) {
+      lessLoaderOptions.lessOptions.javascriptEnabled = true
+    } else {
+      lessLoaderOptions.lessOptions = { javascriptEnabled: true }
+    }
   })
 
   .autoProvidejQuery()

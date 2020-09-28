@@ -9,6 +9,7 @@ use AppBundle\Action\Restaurant\Close as CloseController;
 use AppBundle\Action\Restaurant\Menu;
 use AppBundle\Action\Restaurant\Deliveries as RestaurantDeliveriesController;
 use AppBundle\Action\Restaurant\Menus;
+use AppBundle\Action\Restaurant\Timing;
 use AppBundle\Annotation\Enabled;
 use AppBundle\Api\Dto\RestaurantInput;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
@@ -17,9 +18,12 @@ use AppBundle\Entity\LocalBusiness\CatalogTrait;
 use AppBundle\Entity\LocalBusiness\FoodEstablishmentTrait;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ImageTrait;
+use AppBundle\Entity\Model\OrganizationAwareInterface;
+use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Form\Type\AsapChoiceLoader;
+use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
@@ -59,7 +63,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "normalization_context"={"groups"={"restaurant", "restaurant_legacy", "address", "order"}}
+ *       "normalization_context"={"groups"={"restaurant", "address", "order"}}
  *     },
  *     "restaurant_menu"={
  *       "method"="GET",
@@ -91,6 +95,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "controller"=RestaurantDeliveriesController::class,
  *       "access_control"="is_granted('ROLE_ADMIN')",
  *       "normalization_context"={"groups"={"delivery", "address", "restaurant_delivery"}}
+ *     },
+ *     "restaurant_timing"={
+ *       "method"="GET",
+ *       "path"="/restaurants/{id}/timing",
+ *       "controller"=Timing::class,
+ *       "normalization_context"={"groups"={"restaurant_timing"}}
  *     }
  *   },
  *   subresourceOperations={
@@ -103,7 +113,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @AssertIsActivableRestaurant(groups="activable")
  * @Enabled
  */
-class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenCloseInterface
+class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenCloseInterface, OrganizationAwareInterface
 {
     use Timestampable;
     use SoftDeleteableEntity;
@@ -112,6 +122,7 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
     use FoodEstablishmentTrait;
     use ImageTrait;
     use OpenCloseTrait;
+    use OrganizationAwareTrait;
 
     /**
      * @var int
@@ -404,6 +415,32 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
      */
     public function getAvailabilities(\DateTime $now = null)
     {
+        if (!$this->isFulfillmentMethodEnabled('delivery')) {
+            return [];
+        }
+
+        $fulfillmentMethod = $this->getFulfillmentMethod('delivery');
+
+        if ($fulfillmentMethod->getOpeningHoursBehavior() === 'time_slot') {
+
+            $choiceLoader = new TimeSlotChoiceLoader(
+                TimeSlot::fromLocalBusiness($this, $fulfillmentMethod), 'en');
+
+            $choiceList = $choiceLoader->loadChoiceList();
+
+            $availabilities = [];
+            foreach ($choiceList->getChoices() as $choice) {
+
+                $range = $choice->toTsRange();
+
+                $availabilities[] = Carbon::instance($range->getLower())
+                    ->average($range->getUpper())
+                    ->format(\DateTime::ATOM);
+            }
+
+            return $availabilities;
+        }
+
         $choiceLoader = new AsapChoiceLoader(
             $this->getOpeningHours(/* $fulfillmentMethod */),
             $this->getClosingRules(),
@@ -917,6 +954,18 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
         $fulfillmentMethod->setEnabled($enabled);
     }
 
+    public function disableFulfillmentMethod($method)
+    {
+        $fulfillmentMethod = $this->fulfillmentMethods->filter(function (FulfillmentMethod $fulfillmentMethod) use ($method): bool {
+            return $method === $fulfillmentMethod->getType();
+        })->first();
+
+        if ($fulfillmentMethod) {
+
+            $fulfillmentMethod->setEnabled(false);
+        }
+    }
+
     public function getOpeningHours($method = 'delivery')
     {
         foreach ($this->getFulfillmentMethods() as $fulfillmentMethod) {
@@ -986,7 +1035,7 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
         }
     }
 
-    public function addOwner(ApiUser $owner)
+    public function addOwner(User $owner)
     {
         $owner->addRestaurant($this);
 

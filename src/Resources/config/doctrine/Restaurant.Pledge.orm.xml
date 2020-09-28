@@ -30,7 +30,7 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <many-to-one field="user" target-entity="AppBundle\Entity\ApiUser">
+    <many-to-one field="user" target-entity="AppBundle\Entity\User">
       <join-columns>
         <join-column name="user_id" referenced-column-name="id" nullable="false"/>
       </join-columns>

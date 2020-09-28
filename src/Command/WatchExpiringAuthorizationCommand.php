@@ -82,6 +82,11 @@ class WatchExpiringAuthorizationCommand extends Command
 
             $payment = $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED);
 
+            if (!$payment) {
+                $this->io->text(sprintf('Order #%d has no authorized payment, skipping', $order->getId()));
+                continue;
+            }
+
             $stripeOptions = [];
 
             $stripeUserId = $payment->getStripeUserId();

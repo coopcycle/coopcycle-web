@@ -17,8 +17,8 @@ use Fidry\AliceDataFixtures\LoaderInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use FOS\UserBundle\Util\UserManipulator;
 use libphonenumber\PhoneNumberUtil;
+use League\Geotools\Coordinate\Coordinate;
 use Redis;
-use Sylius\Component\Locale\Model\Locale;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
@@ -45,6 +45,10 @@ class InitDemoCommand extends Command
     private $excludedTables = [
         'craue_config_setting',
         'migration_versions',
+        'sylius_locale',
+        'sylius_channel',
+        'sylius_tax_category',
+        'sylius_tax_rate',
     ];
 
     private static $users = [
@@ -52,6 +56,11 @@ class InitDemoCommand extends Command
             'password' => 'admin',
             'roles' => ['ROLE_ADMIN']
         ],
+    ];
+
+    private static $parisFranceCoords = [
+        48.857498,
+        2.335402,
     ];
 
     protected function configure()
@@ -72,11 +81,10 @@ class InitDemoCommand extends Command
         FactoryInterface $taxonFactory,
         PhoneNumberUtil $phoneNumberUtil,
         RepositoryInterface $taxCategoryRepository,
-        FactoryInterface $taxCategoryFactory,
-        EntityManagerInterface $taxCategoryManager,
-        FactoryInterface $taxRateFactory,
-        EntityManagerInterface $taxRateManager,
-        Geocoder $geocoder)
+        Geocoder $geocoder,
+        string $country,
+        string $defaultLocale,
+        string $googleApiKeyFromEnv)
     {
         $this->doctrine = $doctrine;
         $this->userManipulator = $userManipulator;
@@ -88,18 +96,24 @@ class InitDemoCommand extends Command
         $this->taxonFactory = $taxonFactory;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->taxCategoryFactory = $taxCategoryFactory;
-        $this->taxCategoryManager = $taxCategoryManager;
-        $this->taxRateFactory = $taxRateFactory;
-        $this->taxRateManager = $taxRateManager;
         $this->geocoder = $geocoder;
+        $this->country = $country;
+        $this->defaultLocale = $defaultLocale;
+        $this->googleApiKeyFromEnv = $googleApiKeyFromEnv;
 
         parent::__construct();
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $this->faker->addProvider(new RestaurantProvider($this->faker));
+        $providerClass = 'AppBundle\\Faker\\' . $this->defaultLocale . '\\RestaurantProvider';
+        if (!class_exists($providerClass, true)) {
+            $providerClass = RestaurantProvider::class;
+        }
+
+        $restaurantProvider = new $providerClass($this->faker);
+
+        $this->faker->addProvider($restaurantProvider);
 
         $this->ormPurger = new ORMPurger($this->doctrine->getManager(), $this->excludedTables);
         // $this->ormPurger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
@@ -114,17 +128,14 @@ class InitDemoCommand extends Command
 
         if ($lock->acquire()) {
 
+            $output->writeln('Verifying database config…');
+            $this->handleCraueConfig($input, $output);
+
             $output->writeln('Purging database…');
             $this->ormPurger->purge();
 
             $output->writeln('Resetting sequences…');
             $this->resetSequences();
-
-            $output->writeln('Verifying database config…');
-            $this->handleCraueConfig($input, $output);
-
-            $output->writeln('Create lang...');
-            $this->createLangs();
 
             $output->writeln('Creating super users…');
             foreach (self::$users as $username => $params) {
@@ -137,7 +148,7 @@ class InitDemoCommand extends Command
                 $user = $this->createUser($username, ['password' => $username]);
                 $user->addAddress($this->faker->randomAddress);
             }
-            $this->doctrine->getManagerForClass(Entity\ApiUser::class)->flush();
+            $this->doctrine->getManagerForClass(Entity\User::class)->flush();
 
             $output->writeln('Creating couriers…');
             for ($i = 1; $i <= 50; $i++) {
@@ -183,24 +194,14 @@ class InitDemoCommand extends Command
         }
     }
 
-    private function loadFixtures($filename, array $objects = [])
+    private function loadFixtures($filename, array $objects = [], $parameters = [])
     {
-        return $this->fixturesLoader->load([$filename], $parameters = [], $objects, PurgeMode::createNoPurgeMode());
-    }
-
-    private function createLangs() {
-        $en = new Locale();
-        $en->setCode('en');
-        $fr = new Locale();
-        $fr->setCode('fr');
-        $es = new Locale();
-        $es->setCode('es');
-
-        $em = $this->doctrine->getManagerForClass(Locale::class);
-        $em->persist($en);
-        $em->persist($es);
-        $em->persist($fr);
-        $em-> flush();
+        return $this->fixturesLoader->load(
+            [$filename],
+            $parameters,
+            $objects,
+            PurgeMode::createNoPurgeMode()
+        );
     }
 
     private function createCraueConfigSetting($name, $value, $section = 'general')
@@ -222,10 +223,11 @@ class InitDemoCommand extends Command
         $em = $this->doctrine->getManagerForClass($className);
 
         try {
-            $this->craueConfig->get('latlng');
+            $mapCenterValue = $this->craueConfig->get('latlng');
         } catch (\RuntimeException $e) {
-            $mapsCenter = $this->createCraueConfigSetting('latlng', '48.857498,2.335402');
-            $em->persist($mapsCenter);
+            $mapCenterValue = implode(',', self::$parisFranceCoords);
+            $mapCenter = $this->createCraueConfigSetting('latlng', $mapCenterValue);
+            $em->persist($mapCenter);
         }
 
         try {
@@ -235,9 +237,22 @@ class InitDemoCommand extends Command
             $em->persist($brandName);
         }
 
+        try {
+            $this->craueConfig->get('google_api_key');
+        } catch (\RuntimeException $e) {
+            if (empty($this->googleApiKeyFromEnv)) {
+                throw new \RuntimeException(sprintf('No Google API key found. '
+                    .'You should either have a "google_api_key" setting stored in database, '
+                    .'or a GOOGLE_API_KEY env var. '));
+            }
+            $em->persist(
+                $this->createCraueConfigSetting('google_api_key', $this->googleApiKeyFromEnv)
+            );
+        }
+
         $em->flush();
 
-        $addressProvider = new AddressProvider($this->faker, $this->geocoder);
+        $addressProvider = new AddressProvider($this->faker, $this->geocoder, new Coordinate($mapCenterValue));
 
         $this->faker->addProvider($addressProvider);
     }
@@ -258,33 +273,6 @@ class InitDemoCommand extends Command
     {
         $this->userManipulator->create($username, $username, "{$username}@demo.coopcycle.org", true, false);
         $this->userManipulator->addRole($username, 'ROLE_COURIER');
-    }
-
-    private function createTaxCategory($taxCategoryName, $taxCategoryCode, $taxRateName, $taxRateCode, $taxRateAmount)
-    {
-        if ($taxCategory = $this->taxCategoryRepository->findOneByCode($taxCategoryCode)) {
-            return $taxCategory;
-        }
-
-        $taxCategory = $this->taxCategoryFactory->createNew();
-        $taxCategory->setName($taxCategoryName);
-        $taxCategory->setCode($taxCategoryCode);
-
-        $this->taxCategoryManager->persist($taxCategory);
-        $this->taxCategoryManager->flush();
-
-        $taxRate = $this->taxRateFactory->createNew();
-        $taxRate->setName($taxRateName);
-        $taxRate->setCode($taxRateCode);
-        $taxRate->setCategory($taxCategory);
-        $taxRate->setAmount($taxRateAmount);
-        $taxRate->setIncludedInPrice(true);
-        $taxRate->setCalculator('default');
-
-        $this->taxRateManager->persist($taxRate);
-        $this->taxRateManager->flush();
-
-        return $taxCategory;
     }
 
     private function createMenuTaxon($appetizers, $dishes, $desserts)
@@ -333,6 +321,8 @@ class InitDemoCommand extends Command
         for ($i = 0; $i < 5; $i++) {
             $appetizer = $this->loadFixtures(__DIR__ . '/Resources/appetizer.yml', [
                 'taxCategory' => $taxCategory,
+            ], [
+                'currentLocale' => $this->defaultLocale,
             ]);
 
             $appetizer['variant']->setName($appetizer['product']->getName());
@@ -347,12 +337,16 @@ class InitDemoCommand extends Command
     {
         $products = [];
 
-        $options = $this->loadFixtures(__DIR__ . '/Resources/product_options.yml');
+        $options = $this->loadFixtures(__DIR__ . '/Resources/product_options.yml', [], [
+            'currentLocale' => $this->defaultLocale,
+        ]);
 
         for ($i = 0; $i < 5; $i++) {
 
             $dish = $this->loadFixtures(__DIR__ . '/Resources/dish.yml', [
                 'taxCategory' => $taxCategory,
+            ], [
+                'currentLocale' => $this->defaultLocale,
             ]);
 
             $dish['variant']->setName($dish['product']->getName());
@@ -373,6 +367,8 @@ class InitDemoCommand extends Command
         for ($i = 0; $i < 5; $i++) {
             $dessert = $this->loadFixtures(__DIR__ . '/Resources/dessert.yml', [
                 'taxCategory' => $taxCategory,
+            ], [
+                'currentLocale' => $this->defaultLocale,
             ]);
 
             $dessert['variant']->setName($dessert['product']->getName());
@@ -439,7 +435,7 @@ class InitDemoCommand extends Command
     {
         $shop = new Entity\Store();
 
-        $phoneNumber = $this->phoneNumberUtil->parse($this->faker->phoneNumber, 'FR');
+        $phoneNumber = $this->phoneNumberUtil->getExampleNumber(strtoupper($this->country));
 
         $shop->setEnabled(true);
         $shop->setTelephone($phoneNumber);
@@ -459,7 +455,7 @@ class InitDemoCommand extends Command
 
         $restaurant = new Entity\LocalBusiness();
 
-        $phoneNumber = $this->phoneNumberUtil->parse($this->faker->phoneNumber, 'FR');
+        $phoneNumber = $this->phoneNumberUtil->getExampleNumber(strtoupper($this->country));
 
         $restaurant->setEnabled(true);
         $restaurant->setTelephone($phoneNumber);
@@ -509,14 +505,11 @@ class InitDemoCommand extends Command
     private function createRestaurants(OutputInterface $output)
     {
         $foodTaxCategory =
-            $this->createTaxCategory('TVA consommation immédiate', 'tva_conso_immediate', 'TVA 10%', 'tva_10', 0.10);
-
-        $this->createTaxCategory('TVA consommation différée', 'tva_conso_differee', 'TVA 5.5%', 'tva_5_5', 0.055);
-        $this->createTaxCategory('TVA livraison', 'tva_livraison', 'TVA 20%', 'tva_20', 0.20);
+            $this->taxCategoryRepository->findOneByCode('BASE_REDUCED');
 
         $em = $this->doctrine->getManagerForClass(Entity\LocalBusiness::class);
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 1; $i <= 50; $i++) {
 
             $restaurant = $this->createRestaurant($this->faker->randomAddress, $foodTaxCategory);
 
@@ -537,7 +530,7 @@ class InitDemoCommand extends Command
                 $em->clear();
 
                 // As we have cleared the whole UnitOfWork, we need to restore the TaxCategory entity
-                $foodTaxCategory = $this->taxCategoryRepository->findOneByCode('tva_conso_immediate');
+                $foodTaxCategory = $this->taxCategoryRepository->findOneByCode('BASE_REDUCED');
             }
         }
 

@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import moment from 'moment'
-import Sortable from 'react-sortablejs'
+import { Draggable, Droppable } from "react-beautiful-dnd"
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
@@ -76,7 +76,10 @@ class UnassignedTasks extends React.Component {
         }
       })
       groupsMap.forEach((tasks, group) => {
-        groups.push(this.renderGroup(group, tasks))
+        groups.push({
+          ...group,
+          tasks
+        })
       })
 
       standaloneTasks = _.filter(unassignedTasks, task => !Object.prototype.hasOwnProperty.call(task, 'group') || !task.group)
@@ -138,23 +141,51 @@ class UnassignedTasks extends React.Component {
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
-          <Sortable
-            className="list-group nomargin"
-            onChange={ (/*order, sortable, e*/) => {
-              // console.log('UnassignedTasks.Sortable.onChange', order, e)
-            }}
-            options={{
-              sort: false,
-              dataIdAttr: 'data-task-id',
-              group: { name: 'unassigned' },
-            }}>
-            { groups }
-            { _.map(standaloneTasks, (task, key) => {
-              return (
-                <Task key={ key } task={ task } />
-              )
-            })}
-          </Sortable>
+          <Droppable droppableId="unassigned">
+            {(provided) => (
+              <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
+                { _.map(groups, (group, index) => {
+                  return (
+                    <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
+                      {(provided) => (
+                        <div
+                          ref={ provided.innerRef }
+                          { ...provided.draggableProps }
+                          { ...provided.dragHandleProps }
+                        >
+                          { this.renderGroup(group, group.tasks) }
+                        </div>
+                      )}
+                    </Draggable>
+                  )
+                })}
+                { _.map(standaloneTasks, (task, index) => {
+                  return (
+                    <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ (groups.length + index) }>
+                      {(provided, snapshot) => {
+
+                        return (
+                          <div
+                            ref={ provided.innerRef }
+                            { ...provided.draggableProps }
+                            { ...provided.dragHandleProps }
+                          >
+                            <Task task={ task } />
+                            { (snapshot.isDragging && this.props.selectedTasks.length > 1) && (
+                              <div style={{ position: 'absolute', top: '-10px', right: '-10px', backgroundColor: '#e67e22', color: 'white', height: '20px', width: '20px', borderRadius: '50%', textAlign: 'center' }}>
+                                <span style={{ lineHeight: '20px', fontWeight: '700' }}>{ this.props.selectedTasks.length }</span>
+                              </div>
+                            ) }
+                          </div>
+                        )
+                      }}
+                    </Draggable>
+                  )
+                })}
+                { provided.placeholder }
+              </div>
+            )}
+          </Droppable>
         </div>
       </div>
     )
@@ -167,7 +198,8 @@ function mapStateToProps (state) {
     unassignedTasks: state.unassignedTasks,
     taskListGroupMode: state.taskListGroupMode,
     showCancelledTasks: state.filters.showCancelledTasks,
-    taskModalIsOpen: state.taskModalIsOpen
+    taskModalIsOpen: state.taskModalIsOpen,
+    selectedTasks: state.selectedTasks,
   }
 }
 

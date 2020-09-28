@@ -137,3 +137,6 @@ script:
   - php vendor/bin/behat -f progress
   - node node_modules/.bin/mocha --require @babel/register --exit js/tests/
   - $(npm bin)/cypress run
+
+# after_failure:
+#   - cat var/logs/test-*.log

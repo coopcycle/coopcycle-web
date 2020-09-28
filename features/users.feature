@@ -26,7 +26,7 @@ Feature: Users
     And the user "bob" sends a "GET" request to "/api/users/2"
     Then the response status code should be 403
 
-  Scenario: User can retrieve himself
+  Scenario: User can retrieve him/herself
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | users.yml           |
@@ -38,6 +38,24 @@ Feature: Users
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/users/1"
     Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/User",
+        "@id":"/api/users/1",
+        "@type":"User",
+        "username":"bob",
+        "email":"bob@demo.coopcycle.org",
+        "givenName":null,
+        "familyName":null,
+        "telephone":null,
+        "roles":[
+          "ROLE_USER"
+        ],
+        "addresses":[]
+      }
+      """
 
   Scenario: Retrieve users filtered by role
     Given the fixtures files are loaded:
@@ -91,5 +109,43 @@ Feature: Users
             }
           ]
         }
+      }
+      """
+
+  Scenario: User can update his/her telephone
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | users.yml           |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | givenName  | John              |
+      | familyName | Doe               |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/users/1" with body:
+      """
+      {
+        "telephone": "+33612345678"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/User",
+        "@id":"/api/users/1",
+        "@type":"User",
+        "username":"bob",
+        "email":"bob@demo.coopcycle.org",
+        "givenName":"John",
+        "familyName":"Doe",
+        "telephone":"+33612345678",
+        "roles":[
+          "ROLE_USER"
+        ],
+        "addresses":@array@
       }
       """

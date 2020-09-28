@@ -6,7 +6,7 @@ import _ from 'lodash'
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 import TagsInput from '../widgets/TagsInput'
-import i18n from '../i18n'
+import { validateForm } from '../utils/address'
 
 class DeliveryForm {
   disable() {
@@ -143,7 +143,7 @@ function createTagsWidget(name, type, tags) {
   })
 }
 
-function createPackageForm($list) {
+function createPackageForm(name, $list) {
 
   var counter = $list.data('widget-counter') || $list.children().length
   var newWidget = $list.attr('data-prototype')
@@ -164,6 +164,7 @@ function createPackagesWidget(name, packagesRequired) {
 
   if (packagesRequired) {
     createPackageForm(
+      name,
       $(`#${name}_packages_list`)
     )
   }
@@ -171,6 +172,7 @@ function createPackagesWidget(name, packagesRequired) {
   $(`#${name}_packages_add`).click(function() {
     const selector = $(this).attr('data-target')
     createPackageForm(
+      name,
       $(selector)
     )
     setPackages(name)
@@ -338,21 +340,9 @@ export default function(name, options) {
         const lngInput = document.querySelector(`#${name}_${type}_address [data-address-prop="longitude"]`)
         const streetAddrInput = document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`)
 
-        if (searchInput.validity.valid) {
-          if (_.isEmpty(latInput.value) || _.isEmpty(lngInput.value)
-          || (searchInput.value !== streetAddrInput.value)) {
-            e.preventDefault();
-            searchInput.setCustomValidity(i18n.t('PLEASE_SELECT_ADDRESS'))
-            if (HTMLInputElement.prototype.reportValidity) {
-              searchInput.reportValidity()
-            }
+        const isValid = validateForm(e, searchInput, latInput, lngInput, streetAddrInput)
 
-            return true
-          }
-        }
-
-        return false
-
+        return !isValid
       })
 
     }, false)

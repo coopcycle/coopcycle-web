@@ -142,7 +142,8 @@ class Navbar extends React.Component {
             <ul className="nav navbar-nav navbar-right">
               <li>
                 <a href="#" onClick={ this._onSettingsClick.bind(this) }>
-                  <i className="fa fa-cog" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_SETTINGS') }
+                  <i className="fa fa-cog mr-1" aria-hidden="true"></i>
+                  <span className="d-none d-xl-inline">{ this.props.t('ADMIN_DASHBOARD_NAV_SETTINGS') }</span>
                 </a>
               </li>
               <li><a><span className="pulse" id="pulse"></span></a></li>

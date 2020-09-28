@@ -46,4 +46,4 @@ loopeat.insufficient_balance: Your LoopEat balance (X) is not sufficient to wrap
 restaurant.contract.variableCustomerAmount.pickOne: Please pick at least one pricing
 restaurant.contract.variableDeliveryPrice.pickOne: Please pick at least one pricing
 
-pricing_rule.expression.syntax_error: Syntax error in expression "%expression%"
+order.collection.not_available: The "collection" fulfillment method is not available

@@ -72,7 +72,9 @@ services:
   Sylius\Component\Order\Context\CartContextInterface: '@sylius.context.cart.composite'
   Sylius\Component\Channel\Repository\ChannelRepositoryInterface: '@sylius.repository.channel'
   Sylius\Component\Channel\Context\ChannelContextInterface: '@sylius.context.channel.composite'
-  Redis: '@snc_redis.default'
+  Redis:
+    alias: 'snc_redis.default'
+    public: true
   Sylius\Bundle\CurrencyBundle\Templating\Helper\CurrencyHelperInterface: '@sylius.templating.helper.currency'
   FOS\UserBundle\Util\UserManipulator:
     alias: 'fos_user.util.user_manipulator'
@@ -165,6 +167,12 @@ services:
       $templating: '@twig'
     tags:
       - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+  AppBundle\EventListener\DeauthenticatedListener:
+    arguments:
+      $sessionKeyName: "%sylius_cart_restaurant_session_key_name%"
+    tags:
+      - { name: kernel.event_listener, event: Symfony\Component\Security\Http\Event\DeauthenticatedEvent, method: logoutOnChange }
 
   sylius.context.locale.request_based:
     class: Sylius\Bundle\LocaleBundle\Context\RequestBasedLocaleContext
@@ -508,6 +516,10 @@ services:
     arguments: [ '@event_dispatcher', '@routing_service', '@logger' ]
     tags:
       - { name: doctrine.event_subscriber, connection: default, priority: 16 }
+
+  AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
 
   AppBundle\Api\EventSubscriber\PricingSubscriber:
     arguments:

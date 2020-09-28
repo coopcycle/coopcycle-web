@@ -9,7 +9,7 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
@@ -182,6 +182,11 @@ class RestaurantController extends AbstractController
         return $business->getContext() === Store::class ? 'store' : 'restaurant';
     }
 
+    private function isAnotherRestaurant(OrderInterface $cart, LocalBusiness $restaurant)
+    {
+        return null !== $cart->getId() && $cart->getRestaurant() !== $restaurant;
+    }
+
     /**
      * @Route("/restaurants", name="restaurants")
      */
@@ -286,8 +291,7 @@ class RestaurantController extends AbstractController
 
         $cart = $cartContext->getCart();
 
-        $isAnotherRestaurant =
-            null !== $cart->getId() && $cart->getRestaurant() !== $restaurant;
+        $isAnotherRestaurant = $this->isAnotherRestaurant($cart, $restaurant);
 
         if ($isAnotherRestaurant) {
             $cart->clearItems();
@@ -341,9 +345,26 @@ class RestaurantController extends AbstractController
 
             $cart = $cartForm->getData();
 
+            // Make sure the shipping address is valid
+            // FIXME This is cumbersome, there should be a better way
+            $shippingAddress = $cart->getShippingAddress();
+            if (null !== $shippingAddress) {
+                $isShippingAddressValid = count($this->validator->validate($shippingAddress)) === 0;
+                if (!$isShippingAddressValid) {
+                    $cart->setShippingAddress(null);
+                }
+            }
+
             if ($request->isXmlHttpRequest()) {
 
                 $errors = [];
+
+                if (!$cartForm->isValid()) {
+                    foreach ($cartForm->getErrors() as $formError) {
+                        $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
+                        $errors[$propertyPath] = [ ValidationUtils::serializeFormError($formError) ];
+                    }
+                }
 
                 // Customer may be browsing the available restaurants
                 // Make sure the request targets the same restaurant
@@ -351,22 +372,6 @@ class RestaurantController extends AbstractController
                 if ($isAnotherRestaurant) {
 
                     return $this->jsonResponse($cart, $errors);
-                }
-
-                // Make sure the shipping address is valid
-                // FIXME This is cumbersome, there should be a better way
-                $shippingAddress = $cart->getShippingAddress();
-                if (null !== $shippingAddress) {
-                    $isShippingAddressValid = count($this->validator->validate($shippingAddress)) === 0;
-                    if (!$isShippingAddressValid) {
-                        $cart->setShippingAddress(null);
-                    }
-                }
-                if (!$cartForm->isValid()) {
-                    foreach ($cartForm->getErrors() as $formError) {
-                        $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
-                        $errors[$propertyPath] = [ ValidationUtils::serializeFormError($formError) ];
-                    }
                 }
 
                 $this->orderManager->persist($cart);
@@ -564,12 +569,21 @@ class RestaurantController extends AbstractController
 
         $cart = $cartContext->getCart();
 
+        $isAnotherRestaurant = $this->isAnotherRestaurant($cart, $restaurant);
+
+        if ($isAnotherRestaurant) {
+            $cart->clearItems();
+            $cart->setRestaurant($restaurant);
+        }
+
         $cart->setShippingTimeRange(null);
 
-        $this->orderManager->persist($cart);
-        $this->orderManager->flush();
+        if (!$isAnotherRestaurant) {
+            $this->orderManager->persist($cart);
+            $this->orderManager->flush();
 
-        $this->saveSession($request, $cart);
+            $this->saveSession($request, $cart);
+        }
 
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);

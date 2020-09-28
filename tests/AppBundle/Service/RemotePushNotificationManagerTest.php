@@ -2,7 +2,7 @@
 
 namespace Tests\AppBundle\Service;
 
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Service\RemotePushNotificationManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -226,13 +226,13 @@ class RemotePushNotificationManagerTest extends TestCase
         $remotePushToken2->setToken($token2);
         $remotePushToken2->setPlatform('android');
 
-        $user1 = new ApiUser();
+        $user1 = new User();
         $user1->getRemotePushTokens()->add($remotePushToken1);
 
-        $user2 = new ApiUser();
+        $user2 = new User();
         $user2->getRemotePushTokens()->add($remotePushToken2);
 
-        $user3 = new ApiUser();
+        $user3 = new User();
 
         $msr = FirebaseMessaging\MulticastSendReport::withItems([
             FirebaseMessaging\SendReport::success(
@@ -288,13 +288,13 @@ class RemotePushNotificationManagerTest extends TestCase
         $remotePushToken3->setToken($token3);
         $remotePushToken3->setPlatform('android');
 
-        $user1 = new ApiUser();
+        $user1 = new User();
         $user1->getRemotePushTokens()->add($remotePushToken1);
 
-        $user2 = new ApiUser();
+        $user2 = new User();
         $user2->getRemotePushTokens()->add($remotePushToken2);
 
-        $user3 = new ApiUser();
+        $user3 = new User();
         $user3->getRemotePushTokens()->add($remotePushToken3);
 
         $this->pushOkClient

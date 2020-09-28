@@ -36,7 +36,7 @@
     </one-to-many>
     <many-to-one field="reusablePackaging" target-entity="AppBundle\Entity\ReusablePackaging">
       <join-columns>
-        <join-column name="reusable_packaging_id" referenced-column-name="id" nullable="true"/>
+        <join-column name="reusable_packaging_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
       </join-columns>
     </many-to-one>
   </entity>

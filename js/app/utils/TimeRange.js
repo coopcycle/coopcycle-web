@@ -53,6 +53,12 @@ export default class TimeRange {
     })
   }
 
+  static getDayPart(text) {
+    const matches = text.match(/(Mo|Tu|We|Th|Fr|Sa|Su)+-?(Mo|Tu|We|Th|Fr|Sa|Su)?/gi)
+
+    return matches.join(',')
+  }
+
   static parse(text) {
 
     const matches = text.match(/(Mo|Tu|We|Th|Fr|Sa|Su)+-?(Mo|Tu|We|Th|Fr|Sa|Su)?/gi)

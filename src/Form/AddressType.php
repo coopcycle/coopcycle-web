@@ -130,7 +130,13 @@ class AddressType extends AbstractType
                 if (count($latitudeViolations) > 0 || count($longitudeViolations) > 0) {
 
                     $message = 'form.address.streetAddress.error.noLatLng';
-                    $error = new FormError($this->translator->trans($message), $message);
+                    $error = new FormError(
+                        $this->translator->trans($message),
+                        $message,
+                        $messageParameters = [],
+                        $messagePluralization = null,
+                        $cause = count($latitudeViolations) > 0 ? $latitudeViolations->get(0) : $longitudeViolations->get(0)
+                    );
 
                     $form->get('streetAddress')->addError($error);
                 } else {

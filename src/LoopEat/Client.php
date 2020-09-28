@@ -2,7 +2,7 @@
 
 namespace AppBundle\LoopEat;
 
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\LocalBusiness;
 use FOS\UserBundle\Model\UserManagerInterface;
 use GuzzleHttp\Client as BaseClient;
@@ -133,7 +133,7 @@ class Client extends BaseClient
         return sprintf('%s/oauth/authorize?%s', $this->getConfig('base_uri'), $queryString);
     }
 
-    public function currentCustomer(ApiUser $customer)
+    public function currentCustomer(User $customer)
     {
         $response = $this->request('GET', '/customers/current', [
             'headers' => [
@@ -145,7 +145,7 @@ class Client extends BaseClient
         return json_decode((string) $response->getBody(), true);
     }
 
-    public function return(ApiUser $customer, $quantity = 1) {
+    public function return(User $customer, $quantity = 1) {
         $this->logger->info(sprintf('Returning %d Loopeats from "%s"',
             $quantity, $customer->getUsername()));
 
@@ -185,7 +185,7 @@ class Client extends BaseClient
 
     }
 
-    public function grab(ApiUser $customer, LocalBusiness $restaurant, $quantity = 1)
+    public function grab(User $customer, LocalBusiness $restaurant, $quantity = 1)
     {
         $this->logger->info(sprintf('Grabbing %d Loopeats at "%s" for "%s"',
             $quantity, $restaurant->getName(), $customer->getUsername()));

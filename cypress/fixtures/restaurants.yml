@@ -3,6 +3,17 @@
 include:
   - sylius_taxation.yml
 
+# Packaging
+
+AppBundle\Entity\ReusablePackaging:
+  packaging_acme:
+    restaurant: "@zero_waste_inc"
+    price: 100
+    name: 'Acme'
+    onHold: 0
+    onHand: 9999
+    tracked: false
+
 AppBundle\Entity\Sylius\ProductOptionValue:
   hamburger_accompaniment_french_fries:
     code: HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES
@@ -72,6 +83,12 @@ AppBundle\Entity\Sylius\ProductVariant:
     name: Carrot Cake
     code: CARROTCAKE_DEFAULT
     price: 600
+  chicken_salad_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Salade au poulet
+    code: CHICKEN_SALAD_DEFAULT
+    price: 600
 
 AppBundle\Entity\Sylius\Product:
   pizza_margherita:
@@ -118,6 +135,16 @@ AppBundle\Entity\Sylius\Product:
     slug: carrotcake
     enabled: true
     variants: [ "@carrotcake_default" ]
+  chicken_salad:
+    code: CHICKEN_SALAD
+    currentLocale: fr
+    name: Salade au poulet
+    slug: chicken-salad
+    enabled: true
+    reusablePackagingEnabled: true
+    reusablePackagingUnit: 1
+    reusablePackaging: "@packaging_acme"
+    variants: [ "@chicken_salad_default" ]
 
 # Menus
 
@@ -161,6 +188,20 @@ AppBundle\Entity\Sylius\Taxon:
     name: Default
     __calls:
       - addChild: [ "@pizza_express_section_pizzas" ]
+  zero_waste_inc_section_salads:
+    code: ZERO_WASTE_SALADS
+    currentLocale: fr
+    slug: zero-waste-salads
+    name: Salades
+    __calls:
+      - addProduct: [ "@chicken_salad" ]
+  zero_waste_menu:
+    code: ZERO_WASTE_ROOT
+    currentLocale: fr
+    slug: zero-waste-root
+    name: Default
+    __calls:
+      - addChild: [ "@zero_waste_inc_section_salads" ]
 
 # Restaurants
 
@@ -206,3 +247,18 @@ AppBundle\Entity\LocalBusiness:
       - addProduct: [ "@pizza_reina" ]
       - addTaxon: [ "@pizza_express_menu" ]
       - setMenuTaxon: [ "@pizza_express_menu" ]
+  zero_waste_inc:
+    name: Zero Waste Inc.
+    address: "@address_2"
+    orderingDelayMinutes: 0
+    openingHours: ['Mo-Su 09:30-23:30']
+    enabled: true
+    contract: "@contract_3"
+    depositRefundEnabled: true
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+      - addReusablePackaging: [ "@packaging_acme" ]
+      - addProduct: [ "@chicken_salad" ]
+      - addTaxon: [ "@zero_waste_menu" ]
+      - setMenuTaxon: [ "@zero_waste_menu" ]

@@ -137,8 +137,90 @@ Feature: Manage restaurants
         }
       ],
       "specialOpeningHoursSpecification":[],
-      "availabilities":@array@,
       "fulfillmentMethods":@array@
+    }
+    """
+
+  Scenario: Retrieve a restaurant timing (tomorrow)
+    Given the current time is "2020-09-17 15:00:00"
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burger  | HAMBURGER |
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/restaurants/1/timing"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+     "@context":"@*@",
+     "@type":"Timing",
+     "@id":@string@,
+     "delivery":{
+        "@context":"@*@",
+        "@type":"TimeInfo",
+        "@id":@string@,
+        "range":[
+          "2020-09-18T11:55:00+02:00",
+          "2020-09-18T12:05:00+02:00"
+        ],
+        "today":false,
+        "fast": false,
+        "diff":"1255 - 1265"
+      },
+      "collection":null
+    }
+    """
+
+  Scenario: Retrieve a restaurant timing (today)
+    Given the current time is "2020-09-17 12:00:00"
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burger  | HAMBURGER |
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/restaurants/1/timing"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And print last response
+    And the JSON should match:
+    """
+    {
+      "@context":"@*@",
+      "@type":"Timing",
+      "@id":@string@,
+      "delivery":{
+        "@context":"@*@",
+        "@type":"TimeInfo",
+        "@id":@string@,
+        "range":[
+          "2020-09-17T12:25:00+02:00",
+          "2020-09-17T12:35:00+02:00"
+        ],
+        "today":true,
+        "fast":true,
+        "diff":"25 - 35"
+      },
+      "collection":null
     }
     """
 

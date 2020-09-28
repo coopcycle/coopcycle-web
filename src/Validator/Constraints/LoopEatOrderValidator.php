@@ -40,9 +40,6 @@ class LoopEatOrderValidator extends ConstraintValidator
         }
 
         if (!$restaurant->isLoopeatEnabled()) {
-            $this->context->buildViolation($constraint->disabled)
-                ->atPath('reusablePackagingEnabled')
-                ->addViolation();
             return;
         }
 

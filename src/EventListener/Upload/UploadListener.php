@@ -150,6 +150,8 @@ final class UploadListener
 
         $this->settingsManager->set('company_logo', $file->getBasename());
         $this->settingsManager->flush();
+
+        $this->appCache->delete('content.company_logo.base_64');
     }
 
     private function onTasksUpload(PostPersistEvent $event)

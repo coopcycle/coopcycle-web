@@ -10,7 +10,7 @@ use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
@@ -189,7 +189,7 @@ class ProfileController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $userManager = $this->getDoctrine()->getManagerForClass(ApiUser::class);
+            $userManager = $this->getDoctrine()->getManagerForClass(User::class);
             $userManager->persist($user);
             $userManager->flush();
 

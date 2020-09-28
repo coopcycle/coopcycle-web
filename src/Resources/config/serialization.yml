@@ -1,4 +1,4 @@
-AppBundle\Entity\ApiUser:
+AppBundle\Entity\User:
   attributes:
     username:
       groups: ['user', 'order']
@@ -7,9 +7,22 @@ AppBundle\Entity\ApiUser:
     addresses:
       groups: ['user']
     telephone:
-      groups: ['order']
+      groups: ['user', 'order', 'user_update']
     roles:
       groups: ['user']
+    givenName:
+      groups: ['order']
+    familyName:
+      groups: ['order']
+
+AppBundle\Entity\Sylius\Customer:
+  attributes:
+    username:
+      groups: ['order']
+    email:
+      groups: ['order']
+    telephone:
+      groups: ['order']
 
 AppBundle\Entity\Sylius\Taxon:
   attributes:
@@ -60,6 +73,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order', 'cart', 'order_update']
     takeaway:
       groups: ['order']
+    fulfillmentMethod:
+      groups: ['cart', 'order_update']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:

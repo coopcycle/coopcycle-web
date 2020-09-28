@@ -30,6 +30,7 @@
       </label>
     </div>
   </div>
+  {{ form_errors(form) }}
   <div id="simple" {% if is_advanced %}class="hidden"{% endif %}>
     {{ form_row(form.workingDaysOnly) }}
     {{ form_row(form.choices) }}

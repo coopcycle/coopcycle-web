@@ -3,9 +3,10 @@
 namespace AppBundle\Service;
 
 use AppBundle\Domain\Order\Event as OrderEvent;
+use AppBundle\Domain\HumanReadableEventInterface;
 use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Domain\Task\Event as TaskEvent;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Redis;
@@ -81,7 +82,7 @@ class SocketIoManager
 
     private function createNotification(UserInterface $user, $message)
     {
-        if ($message instanceof SerializableEventInterface) {
+        if ($message instanceof HumanReadableEventInterface) {
 
             $uuid = Uuid::uuid4()->toString();
             $listKey = sprintf('user:%s:notifications', $user->getUsername());

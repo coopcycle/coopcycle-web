@@ -60,6 +60,10 @@ AppBundle\Entity\LocalBusiness:
     __calls:
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]
+      - addFulfillmentMethod: ['collection', true]
+      - setOpeningHours:
+        - ['Mo-Sa 11:30-14:30']
+        - 'collection'
   restaurant_3:
     name: 'La Cantina Clandestina'
     orderingDelayMinutes: 0
@@ -84,6 +88,11 @@ AppBundle\Entity\LocalBusiness:
         - <identity(new \DateTime('2019-11-12 18:00:00'))>
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]
+      - disableFulfillmentMethod: ['delivery']
+      - addFulfillmentMethod: ['collection', true]
+      - setOpeningHours:
+        - ['Mo-Sa 11:30-14:30']
+        - 'collection'
   restaurant_5:
     name: 'I Want This Restaurant'
     address: "@address_3"

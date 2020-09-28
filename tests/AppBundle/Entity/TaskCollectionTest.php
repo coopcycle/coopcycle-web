@@ -5,7 +5,7 @@ namespace Tests\AppBundle\Entity;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\TaskList;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use PHPUnit\Framework\TestCase;
 
 abstract class TaskCollectionTest extends TestCase

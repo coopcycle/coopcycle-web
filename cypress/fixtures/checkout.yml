@@ -4,7 +4,7 @@ include:
   - addresses.yml
   - restaurants.yml
 
-AppBundle\Entity\ApiUser:
+AppBundle\Entity\User:
   bob:
     __factory:
       '@FOS\UserBundle\Util\UserManipulator::create':

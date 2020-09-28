@@ -122,7 +122,8 @@
         "coduo/php-matcher": "^4.0",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-symfony": "^0.12",
-        "phpspec/prophecy-phpunit": "^2.0"
+        "phpspec/prophecy-phpunit": "^2.0",
+        "phpstan/phpstan-webmozart-assert": "^0.12.7"
     },
     "scripts": {
         "post-install-cmd": [

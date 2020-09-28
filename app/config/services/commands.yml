@@ -55,10 +55,9 @@ services:
       $configEntityName: '%craue_config.entity_name%'
       $taxonFactory: '@sylius.factory.taxon'
       $taxCategoryRepository: '@sylius.repository.tax_category'
-      $taxCategoryFactory: '@sylius.factory.tax_category'
-      $taxCategoryManager: '@sylius.manager.tax_category'
-      $taxRateFactory: '@sylius.factory.tax_rate'
-      $taxRateManager: '@sylius.manager.tax_rate'
+      $country: "%country_iso%"
+      $defaultLocale: "%kernel.default_locale%"
+      $googleApiKeyFromEnv: '%env(GOOGLE_API_KEY)%'
     tags:
       - { name: 'console.command', command: 'coopcycle:demo:init' }
 
@@ -112,3 +111,11 @@ services:
       $orderRepository: '@sylius.repository.order'
     tags:
       - { name: 'console.command', command: 'coopcycle:orders:watch-expiring-authorization' }
+
+  AppBundle\Command\OrderNotificationCommand:
+    arguments:
+      $orderRepository: '@sylius.repository.order'
+      $websocket: '@coopcycle.domain.order.reactor.publish_to_redis'
+      $push: '@coopcycle.domain.order.reactor.send_remote_push_notification'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:notifications:order' }

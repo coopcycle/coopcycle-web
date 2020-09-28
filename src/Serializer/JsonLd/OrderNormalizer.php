@@ -170,15 +170,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 ];
             }
 
-            $customer = $object->getCustomer();
-            if (null === $customer) {
-                $data['customer'] = null;
-            } else {
-                $data['customer'] = [
-                    'username' => $customer->getUsername()
-                ];
-            }
-
             $data['takeaway'] = $object->isTakeaway();
         }
 

@@ -14,6 +14,7 @@ import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from '../cart/redux/store'
 import { addItem, addItemWithOptions, queueAddItem } from '../cart/redux/actions'
 import Cart from '../cart/components/Cart'
+import { validateForm } from '../utils/address'
 
 require('gasparesganga-jquery-loading-overlay')
 
@@ -300,16 +301,26 @@ window.initMap = function() {
     }
   }
 
+  $(container).closest('form').on('submit', function (e) {
+
+    const searchInput = document.querySelector('#cart input[type="search"]')
+    const latInput = document.querySelector('#cart_shippingAddress_latitude')
+    const lngInput = document.querySelector('#cart_shippingAddress_longitude')
+    const streetAddrInput = document.querySelector('#cart_shippingAddress_streetAddress')
+
+    validateForm(e, searchInput, latInput, lngInput, streetAddrInput)
+  })
+
   const state = {
     cart,
     restaurant,
     datePickerTimeSlotInputName: 'cart[timeSlot]',
     addressFormElements: {
-      streetAddress: document.querySelector('#cart_shippingAddress_streetAddress'),
-      postalCode: document.querySelector('#cart_shippingAddress_postalCode'),
-      addressLocality: document.querySelector('#cart_shippingAddress_addressLocality'),
-      latitude: document.querySelector('#cart_shippingAddress_latitude'),
-      longitude: document.querySelector('#cart_shippingAddress_longitude')
+      'streetAddress': document.querySelector('#cart_shippingAddress_streetAddress'),
+      'postalCode': document.querySelector('#cart_shippingAddress_postalCode'),
+      'addressLocality': document.querySelector('#cart_shippingAddress_addressLocality'),
+      'geo.latitude': document.querySelector('#cart_shippingAddress_latitude'),
+      'geo.longitude': document.querySelector('#cart_shippingAddress_longitude')
     },
     isNewAddressFormElement: document.querySelector('#cart_isNewAddress'),
     addresses,
