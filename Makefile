@@ -31,3 +31,6 @@ migrations-migrate:
 
 email-preview:
 	@docker-compose exec php php bin/console coopcycle:email:preview > /tmp/coopcycle_email_layout.html && open /tmp/coopcycle_email_layout.html
+
+fresh:
+	@docker-compose down
