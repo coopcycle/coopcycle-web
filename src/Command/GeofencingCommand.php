@@ -131,10 +131,14 @@ class GeofencingCommand extends Command
 
                     $customer = $order->getCustomer();
 
-                    $this->logMessage(sprintf('Sending push notification to "%s"', $customer->getUsername()));
+                    if (!$customer->hasUser()) {
+                        return;
+                    }
+
+                    $this->logMessage(sprintf('Sending push notification to "%s"', $customer->getUser()->getUsername()));
 
                     $notificationTitle = $this->translator->trans('notifications.messenger_approaching', [
-                        '%customer%' => $customer->getUsername(),
+                        '%customer%' => $customer->getUser()->getUsername(),
                         '%messenger%' => $task->getAssignedCourier()->getUsername(),
                     ]);
 

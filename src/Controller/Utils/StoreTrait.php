@@ -207,7 +207,7 @@ trait StoreTrait
                 try {
 
                     $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $order = $this->createOrderForDelivery($delivery, $price, $this->getUser());
+                    $order = $this->createOrderForDelivery($delivery, $price, $this->getUser()->getCustomer());
 
                     $this->get('sylius.repository.order')->add($order);
                     $orderManager->onDemand($order);

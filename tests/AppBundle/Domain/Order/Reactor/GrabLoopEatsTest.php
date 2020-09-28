@@ -6,6 +6,7 @@ use AppBundle\Domain\Order\Event\OrderPicked;
 use AppBundle\Domain\Order\Reactor\GrabLoopEats;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -107,7 +108,10 @@ class GrabLoopEatsTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setLoopeatEnabled(true);
 
-        $customer = new User();
+        $user = new User();
+
+        $customer = new Customer();
+        $customer->setUser($user);
 
         $order = $this->prophesize(Order::class);
         $order
@@ -127,11 +131,11 @@ class GrabLoopEatsTest extends TestCase
             ->willReturn($customer);
 
         $this->loopeat
-            ->return($customer, 0)
+            ->return($user, 0)
             ->shouldBeCalled();
 
         $this->loopeat
-            ->grab($customer, $restaurant, 2)
+            ->grab($user, $restaurant, 2)
             ->shouldBeCalled();
 
         call_user_func_array($this->grabLoopEats, [ new OrderPicked($order->reveal()) ]);

@@ -149,3 +149,39 @@ Feature: Users
         "addresses":@array@
       }
       """
+
+  # This is needed by the app
+  # The field is named "telephone"
+  # https://github.com/coopcycle/coopcycle-app/blob/33135cffd10e54c271b581a9f7ce063f4200fff1/src/redux/Checkout/actions.js#L677-L688
+  Scenario: User can update the phone number associated to his/her customer account
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | users.yml           |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | givenName  | John              |
+      | familyName | Doe               |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/customers/1" with body:
+      """
+      {
+        "telephone": "+33612345678"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Customer",
+        "@id":"/api/customers/1",
+        "@type":"Customer",
+        "email":"bob@demo.coopcycle.org",
+        "phoneNumber":"+33612345678",
+        "telephone":"+33612345678",
+        "username":"bob"
+      }
+      """

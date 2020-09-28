@@ -13,9 +13,8 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
-use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Util\UserManipulator;
+use FOS\UserBundle\Util\CanonicalizerInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -61,26 +60,20 @@ class EmbedController extends Controller
         return $pricingRuleSet;
     }
 
-    private function findOrCreateUser($email, $telephone, SlugifyInterface $slugify, UserManipulator $userManipulator)
+    private function findOrCreateCustomer($email, $telephone, CanonicalizerInterface $canonicalizer)
     {
-        $userManager = $this->get('fos_user.user_manager');
+        $customer = $this->get('sylius.repository.customer')
+            ->findOneBy([
+                'emailCanonical' => $canonicalizer->canonicalize($email)
+            ]);
 
-        $user = $userManager->findUserByEmail($email);
-        if (!$user) {
-
-            [ $localPart, $domain ] = explode('@', $email);
-            $username = $slugify->slugify($localPart, ['separator' => '_']);
-            $password = random_bytes(16);
-
-            $user = $userManipulator->create($username, $password, $email, true, false);
+        if (!$customer) {
+            $customer->setEmail($email);
+            $customer->setEmailCanonical($canonicalizer->canonicalize($email));
+            $customer->setTelephone($telephone);
         }
 
-        if (null === $user->getTelephone() || !$user->getTelephone()->equals($telephone)) {
-            $user->setTelephone($telephone);
-            $userManager->updateUser($user);
-        }
-
-        return $user;
+        return $customer;
     }
 
     /**
@@ -161,12 +154,11 @@ class EmbedController extends Controller
      */
     public function deliveryProcessAction(
         Request $request,
-        SlugifyInterface $slugify,
         OrderRepositoryInterface $orderRepository,
         OrderManager $orderManager,
         EntityManagerInterface $objectManager,
         DeliveryManager $deliveryManager,
-        UserManipulator $userManipulator)
+        CanonicalizerInterface $canonicalizer)
     {
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -189,9 +181,9 @@ class EmbedController extends Controller
             $email = $form->get('email')->getData();
             $telephone = $form->get('telephone')->getData();
 
-            $user  = $this->findOrCreateUser($email, $telephone, $slugify, $userManipulator);
+            $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
             $price = $this->getDeliveryPrice($delivery, $pricingRuleSet, $deliveryManager);
-            $order = $this->createOrderForDelivery($delivery, $price, $user);
+            $order = $this->createOrderForDelivery($delivery, $price, $customer);
 
             $billingAddress = $form->get('billingAddress')->getData();
             $this->setBillingAddress($order, $billingAddress);

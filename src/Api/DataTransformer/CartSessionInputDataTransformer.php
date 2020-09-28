@@ -28,7 +28,7 @@ class CartSessionInputDataTransformer implements DataTransformerInterface
         }
     }
 
-    private function getCustomerFromToken()
+    private function getUserFromToken()
     {
         if (null !== $token = $this->tokenStorage->getToken()) {
             if ($token instanceof JWTUserToken && is_object($token->getUser())) {
@@ -50,8 +50,8 @@ class CartSessionInputDataTransformer implements DataTransformerInterface
             $cart = $this->orderFactory->createForRestaurant($data->restaurant);
         }
 
-        if (null === $cart->getCustomer() && $customer = $this->getCustomerFromToken()) {
-            $cart->setCustomer($customer);
+        if (null === $cart->getCustomer() && $user = $this->getUserFromToken()) {
+            $cart->setCustomer($user->getCustomer());
         }
 
         $session->cart = $cart;

@@ -114,7 +114,7 @@ class CheckoutAddressType extends AbstractType
             $order = $event->getData();
 
             // Add a "telephone" field when the customer does not have telephone
-            if (empty($order->getCustomer()->getTelephone())) {
+            if (empty($order->getCustomer()->getPhoneNumber())) {
                 $form->add('telephone', PhoneNumberType::class, [
                     'format' => PhoneNumberFormat::NATIONAL,
                     'default_region' => $this->country,
@@ -139,7 +139,7 @@ class CheckoutAddressType extends AbstractType
                 // FIXME
                 // We need to check if $packagingQuantity > 0
 
-                if($restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {
+                if ($restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {
                     $packagingAmount = $order->getReusablePackagingAmount();
 
                     if ($packagingAmount > 0) {
@@ -158,7 +158,7 @@ class CheckoutAddressType extends AbstractType
                             'data-packaging-amount' => $packagingAmount
                         ],
                     ]);
-                } else if ($restaurant->isLoopeatEnabled()) {
+                } else if ($restaurant->isLoopeatEnabled() && $customer->hasUser()) {
 
                     // Use a JWT as the "state" parameter
                     $state = $this->jwtEncoder->encode([
@@ -171,14 +171,14 @@ class CheckoutAddressType extends AbstractType
                             $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
                     ]);
 
-                    $this->loopeatContext->initialize($customer);
+                    $this->loopeatContext->initialize($customer->getUser());
 
                     $form->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
                         'label' => 'form.checkout_address.reusable_packaging_loopeat_enabled.label',
                         'attr' => [
                             'data-loopeat' => "true",
-                            'data-loopeat-credentials' => var_export($customer->hasLoopEatCredentials(), true),
+                            'data-loopeat-credentials' => var_export($customer->getUser()->hasLoopEatCredentials(), true),
                             'data-loopeat-authorize-url' => $this->loopeatClient->getOAuthAuthorizeUrl([
                                 'login_hint' => $customer->getEmail(),
                                 'state' => $state,

@@ -9,6 +9,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\OrderEvent;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
+use Sylius\Component\Customer\Model\CustomerAwareInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentsSubjectInterface;
@@ -21,7 +22,8 @@ interface OrderInterface extends
     PaymentsSubjectInterface,
     ChannelAwareInterface,
     PromotionSubjectInterface,
-    PromotionCouponAwarePromotionSubjectInterface
+    PromotionCouponAwarePromotionSubjectInterface,
+    CustomerAwareInterface
 {
     public const STATE_ACCEPTED = 'accepted';
     public const STATE_REFUSED = 'refused';
