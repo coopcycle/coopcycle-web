@@ -6380,6 +6380,12 @@
                 "laminas",
                 "zf"
             ],
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
             "time": "2020-04-03T16:01:00+00:00"
         },
         {
@@ -11684,16 +11690,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.51.0",
+            "version": "v7.56.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "879a3545126ebc77218c53d2055572b7e473fbcf"
+                "reference": "987596ad7ca747ce498e13bc1e3d1a57fbeb94cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/879a3545126ebc77218c53d2055572b7e473fbcf",
-                "reference": "879a3545126ebc77218c53d2055572b7e473fbcf",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/987596ad7ca747ce498e13bc1e3d1a57fbeb94cc",
+                "reference": "987596ad7ca747ce498e13bc1e3d1a57fbeb94cc",
                 "shasum": ""
             },
             "require": {
@@ -11737,7 +11743,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2020-09-02T21:04:02+00:00"
+            "time": "2020-09-25T18:15:04+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -17145,12 +17151,12 @@
             ],
             "authors": [
                 {
-                    "name": "Christophe Coevoet",
-                    "email": "stof@notk.org"
-                },
-                {
                     "name": "Konstantin Kudryashov",
                     "email": "ever.zet@gmail.com"
+                },
+                {
+                    "name": "Christophe Coevoet",
+                    "email": "stof@notk.org"
                 }
             ],
             "description": "Symfony2 framework extension for Behat",
