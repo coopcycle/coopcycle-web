@@ -81,7 +81,7 @@ class Register
             'telephone' => $telephone
         ];
 
-        $user = new User();
+        $user = $this->userManager->createUser();
 
         $form = $this->formFactory->create(ApiRegistrationType::class, $user);
         $form->submit($data);
