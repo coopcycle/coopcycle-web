@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
@@ -21,7 +22,6 @@ use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 /**
  * @ApiResource(
@@ -76,25 +76,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
      */
     protected $email;
 
-    /**
-     * @Assert\NotBlank()
-     * @ApiProperty(iri="https://schema.org/givenName")
-    */
-    protected $givenName;
-
-    /**
-     * @Assert\NotBlank()
-     * @ApiProperty(iri="https://schema.org/familyName")
-     */
-    protected $familyName;
-
-    /**
-     * @var PhoneNumber|null
-     * @AssertPhoneNumber
-     * @ApiProperty(iri="https://schema.org/telephone")
-     */
-    protected $telephone;
-
     private $restaurants;
 
     private $stores;
@@ -131,10 +112,13 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     /**
      * @return mixed
+     * @Assert\NotBlank()
      */
     public function getGivenName()
     {
-        return $this->givenName;
+        if (null !== $this->customer) {
+            return $this->customer->getFirstName();
+        }
     }
 
     /**
@@ -142,8 +126,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
      */
     public function setGivenName($givenName)
     {
-        $this->givenName = $givenName;
-
         if (null !== $this->customer) {
             $this->customer->setFirstName($givenName);
         }
@@ -151,10 +133,13 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     /**
      * @return mixed
+     * @Assert\NotBlank()
      */
     public function getFamilyName()
     {
-        return $this->familyName;
+        if (null !== $this->customer) {
+            return $this->customer->getLastName();
+        }
     }
 
     /**
@@ -162,8 +147,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
      */
     public function setFamilyName($familyName)
     {
-        $this->familyName = $familyName;
-
         if (null !== $this->customer) {
             $this->customer->setLastName($familyName);
         }
@@ -174,7 +157,16 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
      */
     public function getTelephone()
     {
-        return $this->telephone;
+        if (null !== $this->customer) {
+
+            $phoneNumber = $this->customer->getPhoneNumber();
+
+            if (!empty($phoneNumber)) {
+                try {
+                    return PhoneNumberUtil::getInstance()->parse($phoneNumber);
+                } catch (NumberParseException $e) {}
+            }
+        }
     }
 
     /**
@@ -182,8 +174,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
      */
     public function setTelephone($telephone)
     {
-        $this->telephone = $telephone;
-
         if (null !== $this->customer) {
             if ($telephone instanceof PhoneNumber) {
                 $this->customer->setPhoneNumber(
@@ -319,7 +309,9 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     public function getFullName()
     {
-        return join(' ', [$this->givenName, $this->familyName]);
+        if (null !== $this->customer) {
+            return $this->customer->getFullName();
+        }
     }
 
     public function getChannel(): ?ChannelInterface
