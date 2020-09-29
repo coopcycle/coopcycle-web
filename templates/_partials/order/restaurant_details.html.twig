@@ -3,5 +3,5 @@
 {{ order.restaurant.address.postalCode }} {{ order.restaurant.address.addressLocality }}
 <br>
 {% if order.restaurant.telephone %}
-  {{ order.restaurant.telephone |phone_number_format('NATIONAL') }}
+  {{ order.restaurant.telephone|phone_number_format('NATIONAL') }}
 {% endif %}

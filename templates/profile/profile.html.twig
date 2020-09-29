@@ -7,11 +7,11 @@
   </span>
 </h2>
 
-<p><strong>{% trans %}profile.username{%  endtrans %}</strong>: {{ user.username }}</p>
-<p><strong>{% trans %}profile.email{%  endtrans %}</strong>: {% if is_demo %}✴✴✴{% else %}{{ user.email }}{% endif %}</p>
-<p><strong>{% trans %}profile.familyName{%  endtrans %}</strong>: {{ user.familyName }}</p>
-<p><strong>{% trans %}profile.givenName{%  endtrans %}</strong>: {{ user.givenName }}</p>
-<p><strong>{% trans %}profile.telephone{%  endtrans %}</strong>: {% if user.telephone %}{{ user.telephone |phone_number_format('NATIONAL') }}{% endif %}</p>
+<p><strong>{% trans %}profile.username{% endtrans %}</strong>: {{ user.username }}</p>
+<p><strong>{% trans %}profile.email{% endtrans %}</strong>: {% if is_demo %}✴✴✴{% else %}{{ user.email }}{% endif %}</p>
+<p><strong>{% trans %}profile.familyName{% endtrans %}</strong>: {{ user.familyName }}</p>
+<p><strong>{% trans %}profile.givenName{% endtrans %}</strong>: {{ user.givenName }}</p>
+<p><strong>{% trans %}profile.telephone{% endtrans %}</strong>: {% if user.telephone %}{{ user.telephone|phone_number_format('NATIONAL') }}{% endif %}</p>
 <p><a href="{{ path('fos_user_change_password') }}">{% trans %}profile.password.change{% endtrans %}</a></p>
 
 {% if loopeat_enabled is defined and loopeat_enabled %}
