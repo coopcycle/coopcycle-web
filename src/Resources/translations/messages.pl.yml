@@ -250,6 +250,7 @@ restaurant.closingForm.reason.label: Powód
 restaurant.closingForm.dates.label: Zamknięte od/do
 restaurant.list.manage: Zarządzaj
 restaurant.list.orders: Zamówienia
+restaurant.list.refunds: Zwroty kosztów
 restaurant.list.products: Produkty
 restaurant.list.product_options: Opcje
 restaurant.list.menus: Lista menu

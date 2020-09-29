@@ -35,7 +35,7 @@
     <a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, tab: 'orders' })) }}">{{ 'restaurant.list.orders'|trans }} ({{ stats|length }})</a>
   </li>
   <li role="presentation" {% if tab == 'refunds' %}class="active"{% endif %}>
-    <a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, tab: 'refunds' })) }}">Refunds ({{ refunds|length }})</a>
+    <a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, tab: 'refunds' })) }}">{{ 'restaurant.list.refunds'|trans }} ({{ refunds|length }})</a>
   </li>
 </ul>
 

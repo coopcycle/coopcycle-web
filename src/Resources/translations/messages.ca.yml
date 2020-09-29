@@ -163,6 +163,7 @@ restaurant.closingForm.reason.label: Raó
 restaurant.closingForm.dates.label: Tancar de / a
 restaurant.list.manage: Gestiona
 restaurant.list.orders: Comandes
+restaurant.list.refunds: Devolucions
 restaurant.list.products: Productes
 restaurant.list.product_options: Opcions
 restaurant.list.menus: Menús

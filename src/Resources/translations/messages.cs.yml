@@ -220,6 +220,7 @@ restaurant.closingForm.reason.label: Důvod
 restaurant.closingForm.dates.label: Zavřeno od/do
 restaurant.list.manage: Spravovat
 restaurant.list.orders: Objednávky
+restaurant.list.refunds: Vrácení peněz
 restaurant.list.products: Produkty
 restaurant.list.product_options: Možnosti
 restaurant.list.menus: Nabídky

@@ -224,6 +224,7 @@ restaurant.closingForm.reason.label: Motivo
 restaurant.closingForm.dates.label: Fechado de/até
 restaurant.list.manage: Gerenciar
 restaurant.list.orders: Pedidos
+restaurant.list.refunds: Reembolsos
 restaurant.list.products: Produtos
 restaurant.list.product_options: Opções
 restaurant.list.menus: Cardápios

@@ -144,6 +144,7 @@ restaurant.closingForm.reason.label: Razón
 restaurant.closingForm.dates.label: Cerrado de/hasta
 restaurant.list.manage: Gestionar
 restaurant.list.orders: Pedidos
+restaurant.list.refunds: Devoluciones
 restaurant.list.products: Productos
 restaurant.list.product_options: Opciones
 restaurant.list.menus: Cartas
@@ -919,6 +920,7 @@ basics.no: No
 notifications.messenger_approaching: Hey %customer%! Nuestro mensajero %messenger%
   está casi contigo. Prepárate!
 order.export.heading.order_number: Número de pedido
+order.export.heading.fulfillment_method: Cumplimiento
 order.export.heading.completed_at: Completado en
 order.export.heading.delivery_fee: Gastos de envío
 order.export.heading.tip: Propina
@@ -975,3 +977,8 @@ form.pricing_rule_set.strategy.help: Las reglas se evalúan de arriba a abajo. D
   el precio, o bien el precio se calculará sumando todas las reglas que coinciden.
 form.pricing_rule_set.strategy.find.label: La primera regla que coincide
 form.pricing_rule_set.strategy.map.label: Todas las reglas que coinciden
+refund.list.debit_total: Importe total adeudado por la plataforma a la empresa
+refund.list.refunded_at: Devuelto en
+refund.list.liable_party: Parte responsable
+refund.list.amount: Monto devuelto
+refund.list.comments: Comentarios

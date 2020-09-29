@@ -834,6 +834,7 @@ restaurant.menus.noMenus: Non hai creato ancora nessun menu al momento.
 restaurant.menus.activated: Il menù « %menu_name% » è stato attivato. Verrà ora mostrato
   sulla pagina del ristorante
 restaurant.list.orders: Ordini
+restaurant.list.refunds: Rimborsi
 restaurant.list.products: Prodotti
 restaurant.list.product_options: Opzioni
 restaurant.list.menus: Menù

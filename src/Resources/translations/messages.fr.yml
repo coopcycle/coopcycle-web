@@ -212,6 +212,7 @@ restaurant.closingForm.reason.label: Motif
 restaurant.closingForm.dates.label: Fermeture de/à
 restaurant.list.manage: Gérer
 restaurant.list.orders: Commandes
+restaurant.list.refunds: Remboursements
 restaurant.list.products: Produits
 restaurant.list.product_options: Options
 restaurant.list.menus: Menus
@@ -1019,3 +1020,8 @@ form:
       label: Contact de la personne référente pour le restaurant
     b2b:
       label: Souhaitez-vous proposer une offre à destination des entreprises ?
+refund.list.debit_total: Montant total dû par la plateforme à l'entreprise
+refund.list.refunded_at: Remboursé à
+refund.list.liable_party: Partie responsable
+refund.list.amount: Montant du remboursement
+refund.list.comments: Commentaires
