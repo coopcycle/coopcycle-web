@@ -1,4 +1,4 @@
-import AddressAutosuggest from '../widgets/AddressAutosuggest'
+import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 
 const getDateTimePickerContainer = trigger => trigger.parentNode
@@ -21,24 +21,11 @@ window.initMap = function() {
       }
     })
 
-    const streetAddrInput =
-      document.querySelector(`#delivery_${type}_address_streetAddress`)
-
-    new AddressAutosuggest(
-      streetAddrInput.closest('.form-group'),
-      {
-        required: true,
-        address: streetAddrInput.value,
-        inputId: streetAddrInput.getAttribute('id'),
-        inputName: streetAddrInput.getAttribute('name'),
-        onAddressSelected: (text, address) => {
-          document.querySelector(`#delivery_${type}_address_latitude`).value = address.geo.latitude
-          document.querySelector(`#delivery_${type}_address_longitude `).value = address.geo.longitude
-          document.querySelector(`#delivery_${type}_address_postalCode`).value = address.postalCode
-          document.querySelector(`#delivery_${type}_address_addressLocality`).value = address.addressLocality
-        }
-      }
-    )
+    new AddressBook(document.querySelector(`#delivery_${type}_address`), {
+      existingAddressControl: document.querySelector(`#delivery_${type}_address_existingAddress`),
+      newAddressControl: document.querySelector(`#delivery_${type}_address_newAddress_streetAddress`),
+      isNewAddressControl: document.querySelector(`#delivery_${type}_address_isNewAddress`),
+    })
 
   })
 }

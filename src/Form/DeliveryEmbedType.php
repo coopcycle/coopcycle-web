@@ -95,20 +95,6 @@ class DeliveryEmbedType extends DeliveryType
                 $event->setData($data);
             }
         });
-
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
-
-            $form = $event->getForm();
-
-            // This is here to avoid a BC break since AddressBookType was introduced
-            // FIXME Use AddressBookType everywhere
-
-            $form->get('pickup')->remove('address');
-            $form->get('dropoff')->remove('address');
-
-            $form->get('pickup')->add('address', AddressType::class);
-            $form->get('dropoff')->add('address', AddressType::class);
-        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -48,34 +48,32 @@ context('Delivery', () => {
 
     // Pickup
 
-    cy.get('#delivery_pickup_address_streetAddress')
+    cy.get('#delivery_pickup_address input[type="search"]')
       .type('91 rue de rivoli paris', { timeout: 5000, delay: 30 })
 
-    cy.get('#delivery_pickup_address_streetAddress')
-      .closest('.form-group')
+    cy.get('#delivery_pickup_address')
       .find('.react-autosuggest__suggestions-container')
       .find('ul[role="listbox"] li', { timeout: 5000 })
       .contains('91 Rue de Rivoli, Paris, France')
       .click()
 
-    cy.get('#delivery_pickup_address_latitude')
+    cy.get('#delivery_pickup_address_newAddress_latitude')
       .invoke('val')
       .should('match', /[0-9\.]+/)
 
     // Dropoff
 
-    cy.get('#delivery_dropoff_address_streetAddress')
+    cy.get('#delivery_dropoff_address input[type="search"]')
       .type('120 rue st maur paris', { timeout: 5000, delay: 30 })
 
     // Click on the first suggestion
-    cy.get('#delivery_dropoff_address_streetAddress')
-      .closest('.form-group')
+    cy.get('#delivery_dropoff_address')
       .find('.react-autosuggest__suggestions-container')
       .find('ul[role="listbox"] li', { timeout: 5000 })
       .contains('120 Rue St Maur')
       .click()
 
-    cy.get('#delivery_dropoff_address_latitude')
+    cy.get('#delivery_dropoff_address_newAddress_latitude')
       .invoke('val')
       .should('match', /[0-9\.]+/)
 
