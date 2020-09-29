@@ -79,7 +79,7 @@ context('Delivery', () => {
       .invoke('val')
       .should('match', /[0-9\.]+/)
 
-    cy.get('form[name="delivery"]').submit()
+    cy.get('form[name="delivery"] button[type="submit"]').click()
 
     cy.location('pathname').should('eq', '/fr/embed/delivery/summary')
 
