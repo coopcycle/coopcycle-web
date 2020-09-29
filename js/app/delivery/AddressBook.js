@@ -78,7 +78,9 @@ export default function(el, options) {
 
   if (existingAddressControlSelected.dataset.address) {
     address = JSON.parse(existingAddressControlSelected.dataset.address)
-    options.onReady(address)
+    if (options.onReady && typeof options.onReady === 'function') {
+      options.onReady(address)
+    }
   }
 
   if (isNewAddressControl.checked && newAddressControl.value) {
@@ -93,7 +95,9 @@ export default function(el, options) {
         longitude: el.querySelector('[data-address-prop="longitude"]').value,
       }
     }
-    options.onReady(address)
+    if (options.onReady && typeof options.onReady === 'function') {
+      options.onReady(address)
+    }
   }
 
   const reactContainer = document.createElement('div')
@@ -125,7 +129,9 @@ export default function(el, options) {
           }
         }
 
-        options.onChange(address)
+        if (options.onChange && typeof options.onChange === 'function') {
+          options.onChange(address)
+        }
 
       } }
       { ...autosuggestProps } />,
