@@ -79,6 +79,10 @@ context('Delivery', () => {
       .invoke('val')
       .should('match', /[0-9\.]+/)
 
+    cy.get('#delivery_name').type('John Doe')
+    cy.get('#delivery_email').type('dev@coopcycle.org')
+    cy.get('#delivery_telephone').type('0612345678')
+
     cy.get('form[name="delivery"] button[type="submit"]').click()
 
     cy.location('pathname').should('eq', '/fr/embed/delivery/summary')
