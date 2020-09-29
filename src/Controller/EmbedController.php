@@ -15,6 +15,7 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Util\CanonicalizerInterface;
+use libphonenumber\PhoneNumber;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -60,7 +61,7 @@ class EmbedController extends Controller
         return $pricingRuleSet;
     }
 
-    private function findOrCreateCustomer($email, $telephone, CanonicalizerInterface $canonicalizer)
+    private function findOrCreateCustomer($email, PhoneNumber $telephone, CanonicalizerInterface $canonicalizer)
     {
         $customer = $this->get('sylius.repository.customer')
             ->findOneBy([
@@ -68,10 +69,15 @@ class EmbedController extends Controller
             ]);
 
         if (!$customer) {
+            $customer = $this->get('sylius.factory.customer')->createNew();
+
             $customer->setEmail($email);
             $customer->setEmailCanonical($canonicalizer->canonicalize($email));
-            $customer->setTelephone($telephone);
         }
+
+        // Make sure to use setTelephone(),
+        // so that it converts PhoneNumber to ISO string
+        $customer->setTelephone($telephone);
 
         return $customer;
     }
@@ -185,8 +191,9 @@ class EmbedController extends Controller
             $price = $this->getDeliveryPrice($delivery, $pricingRuleSet, $deliveryManager);
             $order = $this->createOrderForDelivery($delivery, $price, $customer);
 
-            $billingAddress = $form->get('billingAddress')->getData();
-            $this->setBillingAddress($order, $billingAddress);
+            if ($billingAddress = $form->get('billingAddress')->getData()) {
+                $this->setBillingAddress($order, $billingAddress);
+            }
 
             $name = $form->get('name')->getData();
             $order->setNotes($name);
