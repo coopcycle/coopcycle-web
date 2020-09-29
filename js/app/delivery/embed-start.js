@@ -43,12 +43,21 @@ window.initMap = function() {
   })
 }
 
+function setBillingAddressRequired(required) {
+  if (required) {
+    $('#delivery_billingAddress_streetAddress').prop('required', true)
+  } else {
+    $('#delivery_billingAddress_streetAddress').prop('required', false)
+    $('#delivery_billingAddress_streetAddress').removeAttr('required')
+  }
+}
+
 $('#billing-address').on('hidden.bs.collapse', function () {
-  $('#delivery_billingAddress_streetAddress').removeAttr('required')
+  setBillingAddressRequired(false)
 })
 
 $('#billing-address').on('shown.bs.collapse', function () {
-  $('#delivery_billingAddress_streetAddress').attr('required', true)
+  setBillingAddressRequired(true)
 })
 
-$('#delivery_billingAddress_streetAddress').removeAttr('required')
+setBillingAddressRequired(false)

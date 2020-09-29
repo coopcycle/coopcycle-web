@@ -75,6 +75,7 @@ class DeliveryEmbedType extends DeliveryType
                 'with_widget' => true,
                 'with_description' => false,
                 'label' => false,
+                'required' => false,
             ]);
 
         if ($options['with_payment']) {
