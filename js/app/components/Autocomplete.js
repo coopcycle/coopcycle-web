@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Autosuggest from 'react-autosuggest'
+import { debounce } from 'lodash'
 
 // ------------------ Autosuggest ------------------
 
@@ -33,6 +34,11 @@ export default class extends Component {
       suggestions: [],
       isFetching: false,
     }
+
+    this.onSuggestionsFetchRequested = debounce(
+      this.onSuggestionsFetchRequested.bind(this),
+      350
+    )
   }
 
   onChange(event, { newValue }) {
@@ -95,7 +101,7 @@ export default class extends Component {
       <Autosuggest
         theme={theme}
         suggestions={suggestions}
-        onSuggestionsFetchRequested={this.onSuggestionsFetchRequested.bind(this)}
+        onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
         onSuggestionsClearRequested={this.onSuggestionsClearRequested.bind(this)}
         onSuggestionSelected={this.onSuggestionSelected.bind(this)}
         getSuggestionValue={getSuggestionValue}
