@@ -75,8 +75,24 @@ export default function(el, options) {
 
   // Callback with initial data
   let address
+
   if (existingAddressControlSelected.dataset.address) {
     address = JSON.parse(existingAddressControlSelected.dataset.address)
+    options.onReady(address)
+  }
+
+  if (isNewAddressControl.checked && newAddressControl.value) {
+    address = {
+      streetAddress: newAddressControl.value,
+      postalCode: el.querySelector('[data-address-prop="postalCode"]').value,
+      addressLocality: el.querySelector('[data-address-prop="addressLocality"]').value,
+      latitude: el.querySelector('[data-address-prop="latitude"]').value,
+      longitude: el.querySelector('[data-address-prop="longitude"]').value,
+      geo: {
+        latitude: el.querySelector('[data-address-prop="latitude"]').value,
+        longitude: el.querySelector('[data-address-prop="longitude"]').value,
+      }
+    }
     options.onReady(address)
   }
 
