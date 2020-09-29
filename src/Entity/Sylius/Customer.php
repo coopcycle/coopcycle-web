@@ -9,6 +9,9 @@ use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use libphonenumber\PhoneNumber;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 use Sylius\Component\Customer\Model\Customer as BaseCustomer;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -165,11 +168,18 @@ class Customer extends BaseCustomer implements CustomerInterface
     }
 
     /**
+     * @param PhoneNumber|string $telephone
      * @SerializedName("telephone")
      */
-    public function setTelephone(?string $telephone)
+    public function setTelephone($telephone)
     {
-        $this->setPhoneNumber($telephone);
+        if ($telephone instanceof PhoneNumber) {
+            $this->setPhoneNumber(
+                PhoneNumberUtil::getInstance()->format($telephone, PhoneNumberFormat::E164)
+            );
+        } else {
+            $this->setPhoneNumber($telephone);
+        }
     }
 
     public function getUsername(): string

@@ -4,7 +4,6 @@ namespace AppBundle\Entity;
 
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
-use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -175,13 +174,7 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
     public function setTelephone($telephone)
     {
         if (null !== $this->customer) {
-            if ($telephone instanceof PhoneNumber) {
-                $this->customer->setPhoneNumber(
-                    PhoneNumberUtil::getInstance()->format($telephone, PhoneNumberFormat::E164)
-                );
-            } else {
-                $this->customer->setPhoneNumber($telephone);
-            }
+            $this->customer->setTelephone($telephone);
         }
     }
 

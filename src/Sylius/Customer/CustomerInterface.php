@@ -6,6 +6,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\User;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\Collection;
+use libphonenumber\PhoneNumber;
 use Sylius\Component\Customer\Model\CustomerInterface as BaseCustomerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -62,4 +63,9 @@ interface CustomerInterface extends BaseCustomerInterface
      * @param User|UserInterface|null $user
      */
     public function setUser(?UserInterface $user);
+
+    /**
+     * @param PhoneNumber|string $telephone
+     */
+    public function setTelephone($telephone);
 }
