@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         new AddressAutosuggest(
           el.closest('.form-group'),
           {
-            required: true,
+            required: el.required,
             address,
             inputId: el.getAttribute('id'),
             inputName: el.getAttribute('name'),
