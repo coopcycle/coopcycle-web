@@ -833,3 +833,5 @@ services:
         - mx
 
   AppBundle\Payment\Gateway: ~
+
+  AppBundle\Doctrine\DBAL\Platforms\PostgreSQL94Platform: ~

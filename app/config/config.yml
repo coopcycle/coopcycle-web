@@ -167,7 +167,6 @@ doctrine:
             _text: string
             numrange: string
             tsrange: string
-
         # If you don't define this option and you haven't created your database yet,
         # you may get PDOException errors because Doctrine will try to guess
         # the database server version automatically and none is available.
@@ -175,11 +174,13 @@ doctrine:
         # Should be fixed in next Doctrine version
         # https://github.com/doctrine/dbal/pull/2671
         server_version: 9.4
-
         # Add a schema filter to avoid having PostGIS tables tiger.* & topology.* in migrations diff
         # https://symfony.com/doc/master/bundles/DoctrineMigrationsBundle/index.html#manual-tables
         schema_filter: ~^(?!(tiger|topology)\.)~
-
+        # Use a custom platform implementation to be able to generate GiST indexes
+        # https://www.postgresql.org/docs/current/textsearch-indexes.html
+        # https://www.postgresql.org/docs/current/pgtrgm.html
+        platform_service: AppBundle\Doctrine\DBAL\Platforms\PostgreSQL94Platform
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
