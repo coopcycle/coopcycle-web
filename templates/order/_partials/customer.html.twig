@@ -1,14 +1,6 @@
 <div class="d-flex flex-row justify-content-between border mb-4 p-4">
   <div>
-    {% if order.customer.hasUser() %}
-      <a href="{{ path('admin_user_details', { username: order.customer.username }) }}">
-        <i class="fa fa-user"></i> {{ order.customer.user.username }}
-      </a>
-    {% else %}
-      <span>
-        <i class="fa fa-user"></i> {{ order.customer.emailCanonical }}
-      </span>
-    {% endif %}
+    {% include '_partials/order/customer.html.twig' with { customer: order.customer } %}
   </div>
   <div>
     <a href="mailto:{{ order.customer.emailCanonical }}"><i class="fa fa-envelope"></i>  {{ order.customer.emailCanonical }}</a>

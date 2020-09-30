@@ -38,15 +38,7 @@
     {% if is_granted('ROLE_ADMIN') %}
     <td width="10%">
       {% if order.customer is not null %}
-        {% if order.customer.hasUser() %}
-          <a href="{{ path('admin_user_details', { username: order.customer.username }) }}">
-            <i class="fa fa-user"></i> {{ order.customer.user.username }}
-          </a>
-        {% else %}
-          <span>
-            <i class="fa fa-user"></i> {{ order.customer.emailCanonical }}
-          </span>
-        {% endif %}
+        {% include '_partials/order/customer.html.twig' with { customer: order.customer } %}
       {% endif %}
     </td>
     {% endif %}
