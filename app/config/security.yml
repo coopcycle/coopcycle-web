@@ -55,6 +55,13 @@ security:
             anonymous: ~
             bearer_token: true
 
+        api_task_groups:
+            pattern:   ^/api/task_groups/[0-9]+$
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
         api_store_deliveries:
             pattern:   ^/api/stores/[0-9]+/deliveries$
             methods: [ GET ]

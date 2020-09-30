@@ -63,6 +63,7 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
             'api_deliveries_pick_item',
             'api_deliveries_drop_item',
             'api_stores_get_item',
+            'api_task_groups_get_item',
         ]);
     }
 

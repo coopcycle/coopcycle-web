@@ -16,6 +16,7 @@ default:
             iriConverter: "@api_platform.iri_converter"
             httpMessageFactory: "@sensio_framework_extra.psr7.http_message_factory"
             tile38: "@snc_redis.tile38"
+            faker: "@nelmio_alice.faker.generator"
         - Behat\MinkExtension\Context\MinkContext
         - Behatch\Context\RestContext
         - Behatch\Context\JsonContext

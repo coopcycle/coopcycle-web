@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Task\Bulk as TaskBulk;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -14,9 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ApiResource(
  *   shortName="TaskGroup",
- *   attributes={
- *     "normalization_context"={"groups"={"task"}}
- *   },
+ *   normalizationContext={"groups"={"task_group"}},
  *   collectionOperations={
  *     "tasks_import"={
  *       "method"="POST",
@@ -29,7 +28,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   },
  *   itemOperations={
  *     "get"={
- *       "method"="GET"
+ *       "method"="GET",
+ *       "normalizationContext"={"groups"={"task_group"}},
+ *       "security"="is_granted('ROLE_OAUTH2_TASKS') and object.isAllowed(oauth2_context.store)"
  *     }
  *   }
  * )
@@ -44,11 +45,14 @@ class Group implements TaggableInterface
     protected $id;
 
     /**
-     * @Groups({"task"})
+     * @Groups({"task", "task_group"})
      * @Assert\Type(type="string")
      */
     protected $name;
 
+    /**
+     * @Groups({"task_group"})
+     */
     protected $tasks;
 
     public function __construct()
@@ -90,5 +94,23 @@ class Group implements TaggableInterface
         $task->setGroup($this);
 
         $this->tasks->add($task);
+    }
+
+    public function isAllowed(Store $store)
+    {
+        foreach ($this->getTasks() as $task) {
+
+            $organization = $task->getOrganization();
+
+            if ($organization === null) {
+                return false;
+            }
+
+            if ($organization !== $store->getOrganization()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
