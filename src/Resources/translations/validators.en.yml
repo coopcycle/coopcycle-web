@@ -47,3 +47,5 @@ restaurant.contract.variableCustomerAmount.pickOne: Please pick at least one pri
 restaurant.contract.variableDeliveryPrice.pickOne: Please pick at least one pricing
 
 order.collection.not_available: The "collection" fulfillment method is not available
+
+task_group.ref.duplicate: The ref "%ref%" appears multiple times

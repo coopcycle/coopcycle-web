@@ -26,6 +26,7 @@ use AppBundle\Validator\Constraints\Task as AssertTask;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -173,6 +174,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(TaskDateFilter::class, properties={"date"})
  * @ApiFilter(TaskFilter::class)
  * @ApiFilter(AssignedFilter::class, properties={"assigned"})
+ * @UniqueEntity(fields={"organization", "ref"}, errorPath="ref")
  */
 class Task implements TaggableInterface, OrganizationAwareInterface
 {
@@ -274,6 +276,11 @@ class Task implements TaggableInterface, OrganizationAwareInterface
      * @Groups({"task", "task_create", "task_edit"})
      */
     private $doorstep = false;
+
+    /**
+     * @Groups({"task", "task_create"})
+     */
+    private $ref;
 
     public function __construct()
     {
@@ -694,5 +701,17 @@ class Task implements TaggableInterface, OrganizationAwareInterface
         }
 
         return '';
+    }
+
+    public function setRef(string $ref)
+    {
+        $this->ref = $ref;
+
+        return $this;
+    }
+
+    public function getRef(): ?string
+    {
+        return $this->ref;
     }
 }

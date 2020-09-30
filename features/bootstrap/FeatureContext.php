@@ -1131,4 +1131,31 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->doctrine->getManagerForClass(Task\Group::class)->persist($group);
         $this->doctrine->getManagerForClass(Task\Group::class)->flush();
     }
+
+    /**
+     * @Given a task with ref :ref exists and is attached to store with name :storeName
+     */
+    public function aTaskWithRefExistsAndIsAttachedToStoreWithName($ref, $storeName)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $latitude = $this->faker->latitude(48.85, 48.86);
+        $longitude = $this->faker->longitude(2.33, 2.34);
+
+        $address = new Address();
+        $address->setStreetAddress('1, Rue de Rivoli, Paris, France');
+        $address->setGeo(new GeoCoordinates($latitude, $longitude));
+
+        $task = new Task();
+
+        $task->setType('dropoff');
+        $task->setAfter(new \DateTime('+1 hour'));
+        $task->setBefore(new \DateTime('+2 hours'));
+        $task->setAddress($address);
+        $task->setOrganization($store->getOrganization());
+        $task->setRef($ref);
+
+        $this->doctrine->getManagerForClass(Task::class)->persist($task);
+        $this->doctrine->getManagerForClass(Task::class)->flush();
+    }
 }

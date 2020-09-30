@@ -8,6 +8,7 @@ use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
+use AppBundle\Validator\Constraints\TaskGroup as AssertTaskGroup;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,6 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     }
  *   }
  * )
+ * @AssertTaskGroup()
  */
 class Group implements TaggableInterface
 {
@@ -51,6 +53,7 @@ class Group implements TaggableInterface
     protected $name;
 
     /**
+     * @Assert\Valid()
      * @Groups({"task_group"})
      */
     protected $tasks;

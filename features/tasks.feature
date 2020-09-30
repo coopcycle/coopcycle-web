@@ -292,7 +292,8 @@ Feature: Tasks
         "previous":null,
         "next":null,
         "doorstep":false,
-        "orgName": ""
+        "orgName": "",
+        "ref":null
       }
       """
 
@@ -577,7 +578,8 @@ Feature: Tasks
         "tags":@array@,
         "images":@array@,
         "doorstep":false,
-        "orgName": ""
+        "orgName": "",
+        "ref":null
       }
       """
 
@@ -650,7 +652,8 @@ Feature: Tasks
         ],
         "images":@array@,
         "doorstep":false,
-        "orgName": ""
+        "orgName": "",
+        "ref":null
       }
       """
 
@@ -1234,6 +1237,71 @@ Feature: Tasks
       }
       """
     And all the tasks should belong to organization with name "Acme"
+
+  Scenario: Import tasks with CSV format with duplicate ref
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    Given the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "text/csv"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
+      """
+      type,address.streetAddress,address.telephone,address.name,after,before,ref
+      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,123456
+      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"tasks[1]",
+            "message":@string@
+          }
+        ]
+      }
+      """
+
+  Scenario: Import tasks with CSV format with existing ref
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    Given the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    And a task with ref "123456" exists and is attached to store with name "Acme"
+    When I add "Content-Type" header equal to "text/csv"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
+      """
+      type,address.streetAddress,address.telephone,address.name,after,before,ref
+      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,654321
+      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"tasks[1].ref",
+            "message":@string@
+          }
+        ]
+      }
+      """
 
   Scenario: Authorized to retrieve task group
     Given the fixtures files are loaded:
