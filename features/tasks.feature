@@ -1228,8 +1228,8 @@ Feature: Tasks
         "@type":"TaskGroup",
         "name":@string@,
         "tasks":[
-          "/api/tasks/1",
-          "/api/tasks/2"
+          "@string@.matchRegex('#/api/tasks/[0-9]+#')",
+          "@string@.matchRegex('#/api/tasks/[0-9]+#')"
         ]
       }
       """
@@ -1257,8 +1257,8 @@ Feature: Tasks
         "@type":"TaskGroup",
         "name":@string@,
         "tasks":[
-          "/api/tasks/1",
-          "/api/tasks/2"
+          "@string@.matchRegex('#/api/tasks/[0-9]+#')",
+          "@string@.matchRegex('#/api/tasks/[0-9]+#')"
         ]
       }
       """
