@@ -28,12 +28,18 @@ class OrganizationSubscriber implements EventSubscriber
         );
     }
 
+    /**
+     * Tries to find an organization to attach the Task to.
+     */
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
 
         $entityManager = $args->getObjectManager();
 
+        // If the persisted entiy is a LocalBusiness or a Store,
+        // and it is not linked to an Organization,
+        // create an Organization with the same name
         if ($entity instanceof LocalBusiness || $entity instanceof Store) {
             if (null === $entity->getOrganization()) {
                 $organization = new Organization();
@@ -43,7 +49,14 @@ class OrganizationSubscriber implements EventSubscriber
             }
         }
 
+        // If the persisted entiy is a Task, and it's not linked to an Organization,
+        // try to find an Organization depending on the context
         if ($entity instanceof Task) {
+
+            // If the Task is already attached to an Organization, ignore
+            if (null !== $entity->getOrganization()) {
+                return;
+            }
 
             $store = $this->storeExtractor->extractStore();
             if (null !== $store) {
