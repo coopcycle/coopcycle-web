@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
   <entity repository-class="AppBundle\Entity\TaskRepository" name="AppBundle\Entity\Task" table="task">
+    <unique-constraints>
+      <unique-constraint columns="organization_id,ref"/>
+    </unique-constraints>
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
@@ -10,6 +13,7 @@
     <field name="doneBefore" type="datetime" column="done_before" nullable="false"/>
     <field name="comments" type="text" column="comments" nullable="true"/>
     <field name="doorstep" type="boolean" column="doorstep"/>
+    <field name="ref" type="string" column="ref" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>

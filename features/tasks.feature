@@ -292,7 +292,8 @@ Feature: Tasks
         "previous":null,
         "next":null,
         "doorstep":false,
-        "orgName": ""
+        "orgName": "",
+        "ref":null
       }
       """
 
@@ -577,7 +578,8 @@ Feature: Tasks
         "tags":@array@,
         "images":@array@,
         "doorstep":false,
-        "orgName": ""
+        "orgName": "",
+        "ref":null
       }
       """
 
@@ -650,7 +652,8 @@ Feature: Tasks
         ],
         "images":@array@,
         "doorstep":false,
-        "orgName": ""
+        "orgName": "",
+        "ref":null
       }
       """
 

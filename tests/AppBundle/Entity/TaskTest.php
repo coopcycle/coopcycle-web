@@ -16,6 +16,8 @@ use Doctrine\ORM\UnitOfWork;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidatorFactory;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
@@ -161,13 +163,20 @@ class TaskTest extends TestCase
 
         $realFactory = new ConstraintValidatorFactory();
 
+        $uniqueEntityValidator = $this->prophesize(UniqueEntityValidator::class);
+
         $factory = $this->prophesize(ConstraintValidatorFactoryInterface::class);
         $factory
             ->getInstance(Argument::type(Constraint::class))
-            ->will(function ($args) use ($doctrine, $realFactory) {
+            ->will(function ($args) use ($doctrine, $realFactory, $uniqueEntityValidator) {
 
                 if ($args[0] instanceof TaskConstraint) {
                     return new TaskValidator($doctrine->reveal());
+                }
+
+                // We return a mock of UniqueEntityValidator, so this is not tested
+                if ($args[0] instanceof UniqueEntity) {
+                    return $uniqueEntityValidator->reveal();
                 }
 
                 return $realFactory->getInstance($args[0]);
