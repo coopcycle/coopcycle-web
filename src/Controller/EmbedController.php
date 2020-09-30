@@ -195,9 +195,6 @@ class EmbedController extends Controller
                 $this->setBillingAddress($order, $billingAddress);
             }
 
-            $name = $form->get('name')->getData();
-            $order->setNotes($name);
-
             $orderRepository->add($order);
             $orderManager->checkout($order, $stripeToken);
             $objectManager->flush();

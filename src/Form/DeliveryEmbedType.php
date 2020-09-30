@@ -95,6 +95,20 @@ class DeliveryEmbedType extends DeliveryType
                 $event->setData($data);
             }
         });
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+
+            $form = $event->getForm();
+
+            $delivery = $form->getData();
+            $contactName = $form->get('name')->getData();
+
+            foreach ($delivery->getTasks() as $task) {
+                if (null !== $task->getAddress()) {
+                    $task->getAddress()->setContactName($contactName);
+                }
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)
