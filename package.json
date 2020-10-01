@@ -75,7 +75,7 @@
     "eslint-plugin-react": "^7.20.6",
     "font-awesome": "^4.7.0",
     "fontawesome-markers": "^4.6.1",
-    "formik": "^2.1.5",
+    "formik": "^2.1.6",
     "fuse.js": "^3.4.5",
     "gasparesganga-jquery-loading-overlay": "^2.1.7",
     "howler": "^2.2.0",
@@ -123,6 +123,6 @@
     "sass-loader": "^9.0.1",
     "sortablejs": "^1.10.1",
     "store": "^2.0.12",
-    "x-data-spreadsheet": "^1.1"
+    "x-data-spreadsheet": "^1.1.7"
   }
 }
