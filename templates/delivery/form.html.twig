@@ -22,7 +22,7 @@
 
 {{ form_start(form, { attr: { 'data-store': delivery.store is not empty ? delivery.store.id : null } }) }}
 
-  {% if is_granted('ROLE_ADMIN') and delivery.id is not null and delivery.order is not empty %}
+  {% if is_granted('ROLE_ADMIN') and not is_new and delivery.order is not empty %}
     {% include '_partials/delivery/order_alert.html.twig' with { order: delivery.order } %}
   {% endif %}
 
