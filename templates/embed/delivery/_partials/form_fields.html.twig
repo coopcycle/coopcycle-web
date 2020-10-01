@@ -9,6 +9,9 @@
   {% if form.weight is defined %}
     {{ form_row(form.weight) }}
   {% endif %}
+  {% if form.packages is defined %}
+    {{ form_row(form.packages) }}
+  {% endif %}
 
   {{ form_row(form.name) }}
   {{ form_row(form.email) }}
