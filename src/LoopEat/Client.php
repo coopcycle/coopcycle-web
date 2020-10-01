@@ -133,21 +133,22 @@ class Client extends BaseClient
         return sprintf('%s/oauth/authorize?%s', $this->getConfig('base_uri'), $queryString);
     }
 
-    public function currentCustomer(User $customer)
+    public function currentCustomer(User $user)
     {
         $response = $this->request('GET', '/customers/current', [
             'headers' => [
-                'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
+                'Authorization' => sprintf('Bearer %s', $user->getLoopeatAccessToken())
             ],
-            'oauth_credentials' => $customer,
+            'oauth_credentials' => $user,
         ]);
 
         return json_decode((string) $response->getBody(), true);
     }
 
-    public function return(User $customer, $quantity = 1) {
+    public function return(User $user, $quantity = 1)
+    {
         $this->logger->info(sprintf('Returning %d Loopeats from "%s"',
-            $quantity, $customer->getUsername()));
+            $quantity, $user->getUsername()));
 
         try {
 
@@ -155,9 +156,9 @@ class Client extends BaseClient
 
                 $response = $this->request('GET', '/customers/return_loopeat', [
                     'headers' => [
-                        'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
+                        'Authorization' => sprintf('Bearer %s', $user->getLoopeatAccessToken())
                     ],
-                    'oauth_credentials' => $customer,
+                    'oauth_credentials' => $user,
                 ]);
 
                 $url = (string) $response->getBody();
@@ -168,7 +169,7 @@ class Client extends BaseClient
                     '/partners/customer_return_loopeat',
                     $url);
 
-                $this->logger->info(sprintf('Got token "%s" to return for "%s"', $url, $customer->getUsername()));
+                $this->logger->info(sprintf('Got token "%s" to return for "%s"', $url, $user->getUsername()));
 
                 $response = $this->request('GET', $url, [
                     'auth' => [$this->loopEatPartnerId, $this->loopEatPartnerSecret]
@@ -181,14 +182,14 @@ class Client extends BaseClient
         }
 
         $this->logger->info(sprintf('Successfully returned %d Loopeats from "%s"',
-            $quantity, $customer->getUsername()));
+            $quantity, $user->getUsername()));
 
     }
 
-    public function grab(User $customer, LocalBusiness $restaurant, $quantity = 1)
+    public function grab(User $user, LocalBusiness $restaurant, $quantity = 1)
     {
         $this->logger->info(sprintf('Grabbing %d Loopeats at "%s" for "%s"',
-            $quantity, $restaurant->getName(), $customer->getUsername()));
+            $quantity, $restaurant->getName(), $user->getUsername()));
 
         try {
 
@@ -196,14 +197,14 @@ class Client extends BaseClient
 
                 $response = $this->request('GET', '/customers/grab_loopeat', [
                     'headers' => [
-                        'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
+                        'Authorization' => sprintf('Bearer %s', $user->getLoopeatAccessToken())
                     ],
-                    'oauth_credentials' => $customer,
+                    'oauth_credentials' => $user,
                 ]);
 
                 $url = (string) $response->getBody();
 
-                $this->logger->info(sprintf('Got token "%s" to grab for "%s"', $url, $customer->getUsername()));
+                $this->logger->info(sprintf('Got token "%s" to grab for "%s"', $url, $user->getUsername()));
 
                 $response = $this->request('GET', $url, [
                     'headers' => [
@@ -220,7 +221,7 @@ class Client extends BaseClient
         }
 
         $this->logger->info(sprintf('Successfully grabbed %d Loopeats at "%s" for "%s"',
-            $quantity, $restaurant->getName(), $customer->getUsername()));
+            $quantity, $restaurant->getName(), $user->getUsername()));
 
         return true;
     }
