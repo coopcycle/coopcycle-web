@@ -158,7 +158,7 @@ class CheckoutAddressType extends AbstractType
                             'data-packaging-amount' => $packagingAmount
                         ],
                     ]);
-                } else if ($restaurant->isLoopeatEnabled() && $customer->hasUser()) {
+                } else if ($restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials() && $customer->hasUser()) {
 
                     // Use a JWT as the "state" parameter
                     $state = $this->jwtEncoder->encode([
