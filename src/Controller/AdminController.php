@@ -383,7 +383,9 @@ class AdminController extends Controller
         TokenGeneratorInterface $tokenGenerator,
         EntityManagerInterface $objectManager)
     {
-        $form = $this->createForm(InviteUserType::class);
+        $user = $userManager->createUser();
+
+        $form = $this->createForm(InviteUserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
