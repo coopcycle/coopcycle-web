@@ -19,7 +19,6 @@ adminDashboard.users.edit.addRestaurant: Aggiungi un ristorante
 adminDashboard.users.edit.addStore: Aggiungi un negozio
 adminDashboard.users.editUser: Modifica utente
 adminDashboard.users.roles: Ruoli
-adminDashboard.users.edit: Modifica
 adminDashboard.users.title: Utenti
 adminDashboard.restaurants.exclusive: Esclusivo
 adminDashboard.restaurants.createNew: Crea un nuovo ristorante
@@ -59,7 +58,6 @@ adminDashboard.deliveries.courier: Corriere
 adminDashboard.deliveries.dueDate: Data di scadenza
 adminDashboard.deliveries.type: Tipo
 adminDashboard.deliveries.title: Consegne
-adminDashboard.dashboard.cancel: Cancella
 adminDashboard.dashboard.displayAll: Visualizza tutto
 adminDashboard.dashboard.displayByGroups: Visualizza per gruppo
 adminDashboard.dashboard.deleteTaskGroup: Cancella gruppo attività
@@ -77,7 +75,6 @@ adminDashboard.back.title: Torna al sito web
 adminDashboard.zones.send: Invia
 adminDashboard.zones.uploadGeoJSON: Carica il file GeoJSON
 adminDashboard.zones.delete: Cancella
-adminDashboard.zones.cancel: Cancella
 adminDashboard.zones.title: Zone
 adminDashboard.taxation.button: Aggiungi tassazione
 adminDashboard.taxation.title: Tassazione
@@ -388,7 +385,6 @@ form.min_max.upper.label: Numero massimo
 form.min_max.infinity.label: Nessun massimo
 form.local_business.iso_code.fr.siret: Numero Codice Fiscale
 order.list.generate_receipt: Emetti
-task.form.cancel: Annulla
 form.settings.stripe_secret_key.label: Chiave segreta stripe
 form.local_business.stripe_account.need_stripe_account: "Non hai ancora creato un\
   \ account Stripe per questo ristorante. Stripe è una piattaforma di pagamento che\
@@ -546,7 +542,6 @@ form.delivery.packages.label: Colli
 form.delivery.time_slot.label: Fascia oraria
 form.delivery.view_order: Vedi ordine
 form.order.accept.label: Accetta
-form.order.cancel.label: Annulla
 form.order.refuse.label: Rifiuta
 form.order.fulfill.label: Esegui
 form.order.payment_complete.label: Completa
@@ -878,7 +873,6 @@ profile.myDeliveries: Le mie consegne
 profile.myStores: I miei negozi
 profile.myAddresses: I miei indirizzo
 profile.myPersonalInfo: Le mie informazioni personali
-profile.task.cancel: Cancella
 profile.payment: Pagamento
 order.list.summary.restaurant.text: Consegna al ristorante <a href="%restaurant_url%">%restaurant_name%</a>
 order.list.state: Stato
@@ -890,7 +884,6 @@ order.adjustment_type.delivery: Consegna
 order.adjustment_type.platform_fees: Tariffe CoopCycle
 form.settings.stripe_connect_client_id.label: Identificativo di connessione Stripe
 order.list.total: Totale
-order.list.cancel: Cancella
 payment.state.completed: Completato
 payment.state.failed: Fallito
 payment.state.cancelled: Cancellato

@@ -78,7 +78,7 @@ class OrderType extends AbstractType
 
                     } elseif ($stateMachine->can(OrderTransitions::TRANSITION_CANCEL)) {
                         $form->add('cancel', SubmitType::class, [
-                            'label' => 'form.order.cancel.label'
+                            'label' => 'basics.cancel'
                         ]);
                     }
                 }

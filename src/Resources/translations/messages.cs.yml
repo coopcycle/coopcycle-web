@@ -20,7 +20,6 @@ adminDashboard.dashboard.exportTasks: Exportovat úkoly
 adminDashboard.dashboard.deleteTaskGroup: Smazat skupinu úloh
 adminDashboard.dashboard.displayByGroups: Zobrazit podle skupin
 adminDashboard.dashboard.displayAll: Zobrazit vše
-adminDashboard.dashboard.cancel: Zrušit
 adminDashboard.deliveries.title: Dodávky
 adminDashboard.deliveries.type: Typ
 adminDashboard.deliveries.dueDate: Datum vypršení
@@ -60,7 +59,6 @@ adminDashboard.restaurants.title: Restaurace
 adminDashboard.restaurants.createNew: Vytvořit novou restauraci
 adminDashboard.restaurants.exclusive: Výhradní
 adminDashboard.users.title: Uživatelé
-adminDashboard.users.edit: Upravit
 adminDashboard.users.roles: Role
 adminDashboard.users.editUser: Upravit uživatele
 adminDashboard.users.edit.addStore: Přidat obchod
@@ -87,7 +85,6 @@ adminDashboard.tags.confirm_delete: "Opravdu chcete tuto značku smazat?\nZnačk
 adminDashboard.taxation.title: Zdanění
 adminDashboard.taxation.button: Přidat zdanění
 adminDashboard.zones.title: Oblasti
-adminDashboard.zones.cancel: Zrušit
 adminDashboard.zones.delete: Smazat
 adminDashboard.zones.uploadGeoJSON: Nahrát GeoJSON soubor
 adminDashboard.zones.send: Poslat
@@ -261,7 +258,6 @@ profile.myOrders: Mé objednávky
 profile.myAddresses: Mé adresy
 profile.myPersonalInfo: Moje osobní údaje
 profile.payment: Způsob platby
-profile.task.cancel: Zrušit
 profile.task.noTasks: Žádné naplánované úkoly
 profile.task.dueDate: Datum splatnosti
 profile.task.address: Adresa
@@ -332,7 +328,6 @@ order.adjustment_type.tip: Spropitné
 order_item.adjustment_type.reusable_packaging: '%quantity% × obal(y)'
 order.list.total: Celkem
 order.list.shippedAt: Čas  doručení
-order.list.cancel: Zrušit
 order.list.type: Typ
 order.list.customer: Zákazník
 order.list.state: Stav
@@ -346,7 +341,6 @@ vehicle.bike: Kolo
 vehicle.cargo_bike: Kolo s nosičem
 task.form.create: Vytvořit úlohu
 task.form.timeWindow: Časové okno
-task.form.cancel: Zrušit
 task.form.showHistory: Zobrazit historii
 task.form.modal.moreOptions: Více možností
 task.form.edit: Změnit úlohu  %id%
@@ -418,7 +412,6 @@ form.delivery.time_slot.label: Časový slot
 form.delivery.view_order: Zobrazit objednávku
 form.order.accept.label: Přijmout
 form.order.accept.help: Po přijetí objednávky bude zákazník informován e-mailem.
-form.order.cancel.label: Zrušit
 form.order.refuse.label: Odmítnout
 form.order.fulfill.label: Splnit
 form.order.payment_complete.label: Dokončit

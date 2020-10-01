@@ -20,7 +20,6 @@ adminDashboard.dashboard.exportTasks: Exportar tarefas
 adminDashboard.dashboard.deleteTaskGroup: Remover grupo de tarefas
 adminDashboard.dashboard.displayByGroups: Exibir por grupos
 adminDashboard.dashboard.displayAll: Exibir todas
-adminDashboard.dashboard.cancel: Cancelar
 adminDashboard.deliveries.title: Entregas
 adminDashboard.deliveries.type: Tipo
 adminDashboard.deliveries.dueDate: Prazo
@@ -61,7 +60,6 @@ adminDashboard.restaurants.title: Restaurantes
 adminDashboard.restaurants.createNew: Criar novo restaurante
 adminDashboard.restaurants.exclusive: Exclusivo
 adminDashboard.users.title: Usuários
-adminDashboard.users.edit: Editar
 adminDashboard.users.roles: Papéis
 adminDashboard.users.editUser: Editar usuário
 adminDashboard.users.edit.addStore: Adicionar uma loja
@@ -88,7 +86,6 @@ adminDashboard.tags.confirm_delete: "Tem certeza que deseja remover esta tag? \n
 adminDashboard.taxation.title: Impostos
 adminDashboard.taxation.button: Adicionar imposto
 adminDashboard.zones.title: Zonas
-adminDashboard.zones.cancel: Cancelar
 adminDashboard.zones.delete: Remover
 adminDashboard.zones.uploadGeoJSON: Enviar um arquivo GeoJSON
 adminDashboard.zones.send: Enviar
@@ -265,7 +262,6 @@ profile.myOrders: Meus pedidos
 profile.myAddresses: Meus endereços
 profile.myPersonalInfo: Minha informação pessoal
 profile.payment: Pagamento
-profile.task.cancel: Cancelar
 profile.task.noTasks: Nenhuma tarefa agendada
 profile.task.dueDate: Prazo
 profile.task.address: Endereço
@@ -336,7 +332,6 @@ order.adjustment_type.tip: Gorjeta
 order_item.adjustment_type.reusable_packaging: '%quantity% × embalagen(s)'
 order.list.total: Total
 order.list.shippedAt: Horário de entrega
-order.list.cancel: Cancelar
 order.list.type: Tipo
 order.list.customer: Cliente
 order.list.state: Estado
@@ -350,7 +345,6 @@ vehicle.bike: Bicicleta
 vehicle.cargo_bike: Bicicleta de carga
 task.form.create: Criar tarefa
 task.form.timeWindow: Janela de tempo
-task.form.cancel: Cancelar
 task.form.showHistory: Exibir histórico
 task.form.modal.moreOptions: Mais opções
 task.form.edit: Alterar tarefa %id%
@@ -427,7 +421,6 @@ form.delivery.view_order: Ver pedido
 form.order.accept.label: Aceitar
 form.order.accept.help: Assim que você aceitar o pedido, o cliente será notificado
   por email.
-form.order.cancel.label: Cancelar
 form.order.refuse.label: Recusar
 form.order.fulfill.label: Cumprir
 form.order.payment_complete.label: Finalizar

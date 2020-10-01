@@ -21,7 +21,6 @@ adminDashboard.dashboard.filters: Filtros
 adminDashboard.dashboard.deleteTaskGroup: Eliminar grupo de tareas
 adminDashboard.dashboard.displayByGroups: Mostrar por grupo
 adminDashboard.dashboard.displayAll: Mostrar todas
-adminDashboard.dashboard.cancel: Cancelar
 adminDashboard.deliveries.title: Entregas
 adminDashboard.deliveries.type: Tipo
 adminDashboard.deliveries.dueDate: Fecha de entrega
@@ -43,7 +42,6 @@ adminDashboard.orders.showCanceled: Mostrar pedidos cancelados
 adminDashboard.restaurants.title: Restaurantes
 adminDashboard.restaurants.createNew: Crear restaurante
 adminDashboard.users.title: Usuarios
-adminDashboard.users.edit: Editar
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Editar usuario
 adminDashboard.users.edit.addStore: Añadir tienda
@@ -65,7 +63,6 @@ adminDashboard.tags.color: Color
 adminDashboard.taxation.title: Impuestos
 adminDashboard.taxation.button: Añadir impuesto
 adminDashboard.zones.title: Zonas
-adminDashboard.zones.cancel: Cancelar
 adminDashboard.zones.delete: Eliminar
 adminDashboard.zones.uploadGeoJSON: Subir un archivo GeoJSON
 adminDashboard.zones.send: Enviar
@@ -178,7 +175,6 @@ profile.myOrders: Mis pedidos
 profile.myAddresses: Mis direcciones
 profile.myPersonalInfo: Mi información personal
 profile.payment: Pago
-profile.task.cancel: Cancelar
 profile.task.noTasks: No hay tareas programadas
 profile.task.dueDate: Fecha de entrega
 profile.task.address: Dirección
@@ -235,7 +231,6 @@ order.adjustment_type.delivery: Entrega
 order.adjustment_type.platform_fees: Comisión CoopCycle
 order.list.total: Total
 order.list.shippedAt: Hora de entrega
-order.list.cancel: Cancelar
 order.list.type: Tipo
 order.list.customer: Cliente
 order.list.state: Estado
@@ -300,7 +295,6 @@ form.delivery.price.label: Precio
 form.order.accept.label: Aceptar
 form.order.accept.help: Una vez que haya aceptado el pedido, el cliente será notificado
   por correo electrónico.
-form.order.cancel.label: Cancelar
 form.order.fulfill.label: Realizar
 form.order.payment_complete.label: Completar
 form.order.payment_refund.label: Reembolsar
@@ -638,7 +632,6 @@ restaurant.stats.total_products_excluding_taxes: Total de productos sin impuesto
 restaurant.stats.delivery: Entrega
 task.form.create: Crear tarea
 task.form.timeWindow: Ventana de tiempo
-task.form.cancel: Cancelar
 task.form.showHistory: Mostrar historial
 task.form.modal.moreOptions: Mas opciones
 task.form.edit: Modificar tarea %id%

@@ -5,7 +5,7 @@
 {% block breadcrumb %}
 <li><a href="{{ path('admin_users') }}">{% trans %}adminDashboard.users.title{% endtrans %}</a></li>
 <li><a href="{{ path('admin_user_details', { username: user.username }) }}">{{ user.username }}</a></li>
-<li>{% trans %}adminDashboard.users.edit{% endtrans %}</li>
+<li>{% trans %}basics.edit{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}

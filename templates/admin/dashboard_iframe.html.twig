@@ -46,7 +46,7 @@
         {{ form_row(task_export_form.end) }}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}adminDashboard.dashboard.cancel{% endtrans %}</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
         <button type="submit" class="btn btn-primary">{% trans %}adminDashboard.dashboard.export{% endtrans %}</button>
       </div>
     {{ form_end(task_export_form) }}
@@ -67,7 +67,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}adminDashboard.dashboard.cancel{% endtrans %}</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
         {{ form_widget(task_group_form.delete, { attr: { class: 'btn btn-danger' } }) }}
       </div>
     {{ form_end(task_group_form) }}

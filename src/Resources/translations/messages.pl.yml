@@ -41,7 +41,6 @@ adminDashboard.back.title: Powrót
 adminDashboard.zones.send: Wyślij
 adminDashboard.zones.uploadGeoJSON: Dodaj plik GeoJSON
 adminDashboard.zones.delete: Usuń
-adminDashboard.zones.cancel: Anuluj
 adminDashboard.zones.title: Strefy
 adminDashboard.tags.color: Kolor
 adminDashboard.tags.name: Nazwa
@@ -59,7 +58,6 @@ adminDashboard.users.createNew: Dodaj użytkownika
 adminDashboard.users.edit.addRestaurant: Dodaj restuaracje
 adminDashboard.users.edit.addStore: Dodaj sklep
 adminDashboard.users.editUser: Edytuj użytkownika
-adminDashboard.users.edit: Edytuj
 adminDashboard.users.title: Użytkownicy
 adminDashboard.menuCategories.menu: Menu
 adminDashboard.menuCategories.addCategory: Dodaj kategorie
@@ -89,7 +87,6 @@ adminDashboard.deliveries.dueDate: Termin realizacji
 adminDashboard.deliveries.type: Rodzaj
 adminDashboard.deliveries.address: Adres
 adminDashboard.dashboard.displayAll: Pokaż wszystkie
-adminDashboard.dashboard.cancel: Anuluj
 restaurant.contract.variableDeliveryPriceEnabled.disclaimer: Kwota jest obliczana
   dynamicznie
 roles.ROLE_ADMIN.help: "Administrator: Pełny dostęp do wszystkich funkcji\n"
@@ -289,7 +286,6 @@ profile.myOrders: Moje zamówienia
 profile.myAddresses: Moje adresy
 profile.myPersonalInfo: Moje personalne informacje
 profile.payment: Płatność
-profile.task.cancel: Anuluj
 profile.task.noTasks: Brak zaplanowanych zadań
 profile.task.dueDate: Termin dostawy
 profile.task.address: Adres
@@ -347,7 +343,6 @@ order.adjustment_type.delivery: Dostawa
 order_item.adjustment_type.reusable_packaging: '%quantity% × opakowanie'
 order.list.total: Suma
 order.list.shippedAt: Czas dostawy
-order.list.cancel: Anuluj
 order.list.customer: Klient
 order.list.state: Status
 order.list.summary: Podsumowanie
@@ -357,7 +352,6 @@ order.list.generate_receipt: Wystaw
 vehicle.bike: Rower
 vehicle.cargo_bike: Rower cargo
 task.form.create: Utwórz zlecenie
-task.form.cancel: Anuluj
 task.form.showHistory: Pokaż poprzednie
 task.form.modal.moreOptions: Więcej opcji
 task.form.edit: Zmień zamówienie %id%
@@ -413,7 +407,6 @@ form.delivery.packages.label: Opakowanie
 form.delivery.time_slot.label: Przedział czasu
 form.delivery.view_order: Zobacz zamówienie
 form.order.accept.label: Akceptuj
-form.order.cancel.label: Anuluj
 form.order.fulfill.label: Wypełnij
 form.order.payment_complete.label: Kompletny
 form.order.payment_refund.label: Zwrot

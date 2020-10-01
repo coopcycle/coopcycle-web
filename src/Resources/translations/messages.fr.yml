@@ -26,7 +26,6 @@ adminDashboard.dashboard.exportTasks: Exporter des tâches
 adminDashboard.dashboard.deleteTaskGroup: Supprimer un groupe de tâches
 adminDashboard.dashboard.displayByGroups: Afficher par groupe
 adminDashboard.dashboard.displayAll: Afficher tout
-adminDashboard.dashboard.cancel: Annuler
 adminDashboard.deliveries.title: Livraisons
 adminDashboard.deliveries.type: Type
 adminDashboard.deliveries.dueDate: Échéance
@@ -53,7 +52,6 @@ adminDashboard.restaurants.exclusive: Exclusif
 adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Créer un restaurant
 adminDashboard.users.title: Utilisateurs
-adminDashboard.users.edit: Modifier
 adminDashboard.users.roles: Rôles
 adminDashboard.users.editUser: Modifier l'utilisateur
 adminDashboard.users.edit.addStore: Ajouter un magasin
@@ -81,7 +79,6 @@ adminDashboard.tags.confirm_delete: "Êtes-vous sûr de supprimer ce tag ?\nTous
 adminDashboard.taxation.title: Taxes
 adminDashboard.taxation.button: Ajouter une taxe
 adminDashboard.zones.title: Zones
-adminDashboard.zones.cancel: Annuler
 adminDashboard.zones.delete: Supprimer
 adminDashboard.zones.uploadGeoJSON: Uploadez un fichier GeoJSON
 adminDashboard.zones.send: Envoyer
@@ -251,7 +248,6 @@ profile.myOrders: Mes commandes
 profile.myAddresses: Mes adresses
 profile.myPersonalInfo: Mes données personnelles
 profile.payment: Paiement
-profile.task.cancel: Annuler
 profile.task.noTasks: Aucune tâche programmée
 profile.task.dueDate: Échéance
 profile.task.address: Adresse
@@ -319,7 +315,6 @@ payment.state.refunded: Remboursé
 payment.state.refunded_partially: Remboursé partiellement
 order.list.total: Total
 order.list.shippedAt: Heure de livraison
-order.list.cancel: Annuler
 order.list.type: Type
 order.list.customer: Client
 order.list.state: État
@@ -398,7 +393,6 @@ form.delivery.time_slot.label: Tranche horaire
 form.order.accept.label: Accepter
 form.order.accept.help: Lorsque vous aurez accepté la commande, le client sera notifié
   par email.
-form.order.cancel.label: Annuler
 form.order.refuse.label: Refuser
 form.order.fulfill.label: Terminer
 form.order.payment_complete.label: Valider
@@ -850,7 +844,6 @@ help.title: Aide
 help.home: Accueil
 task.form.create: Créer une tâche
 task.form.timeWindow: Plage horaire
-task.form.cancel: Annuler
 task.form.showHistory: Voir l'historique
 task.form.modal.moreOptions: Plus d'options
 task.form.edit: Modifier la tâche %id%

@@ -106,7 +106,6 @@ embed.delivery.submit.help: Klicken Sie hier um die Anfrage zu bestätigen und d
 pagination.next: Nächste
 basics.next: Nächste
 embed.delivery.summary.title: Zusammenfassung von deine Bestellung
-adminDashboard.users.edit: Bearbeiten
 order.items.products_with_count: Produkten (%count%)
 order.total_including_tax: Gesamtbetrag
 order.list.total: Total
@@ -166,7 +165,6 @@ adminDashboard.tags.createNew: Neue Markierung erstellen
 adminDashboard.taxation.title: Besteuerung
 adminDashboard.taxation.button: Besteuerung hinzufügen
 adminDashboard.zones.title: Zonen
-adminDashboard.zones.cancel: Abbrechen
 adminDashboard.zones.uploadGeoJSON: Eine GeoJSON-Datei hochladen
 adminDashboard.zones.send: Senden
 adminDashboard.back.title: Zurück zur Website
@@ -254,7 +252,6 @@ restaurant.list.norestaurant: Es gibt zur Zeit keine Restaurants
 restaurant.list.createNewRestaurant: Ein neues Restaurant erstellen
 restaurant.list.preparationTime: Vorbereitung
 restaurant.list.stats: Statistiken
-adminDashboard.dashboard.cancel: Abbrechen
 order.list.receipt: Empfangsbestätigung
 restaurant.product_options.help: "Die Auswahl ermöglicht es Ihnen, die Produkte <strong>individuell\
   \ anzupassen</strong>\n<br>\nSie ermöglichen es Ihnen beispielsweise, Zusatzartikel\
@@ -269,7 +266,6 @@ profile.myOrders: Meine Bestellungen
 profile.myAddresses: Meine Adressen
 profile.myPersonalInfo: Meine persönlichen Daten
 profile.payment: Zahlungsweise
-profile.task.cancel: Abbrechen
 profile.task.noTasks: Keine Aufgabe geplant
 profile.task.dueDate: Abgabetermin
 profile.task.complete: Fertigstellen
@@ -342,7 +338,6 @@ payment.state.refunded_partially: Teilweise rückerstattet
 order.adjustment_type.delivery: Lieferung
 order.adjustment_type.platform_fees: Gebühr für CoopCycle
 order.list.shippedAt: Lieferzeit
-order.list.cancel: Abbrechen
 order.list.type: Typ
 order.list.customer: Kunde
 order.list.state: Staat
@@ -351,7 +346,6 @@ order.list.summary.deleted_restaurant.text: Lieferung bei Restaurant %restaurant
 order.list.summary.delivery.text: Lieferung %distance%, %vehicle%
 task.form.create: Auftrag anlegen
 task.form.timeWindow: Zeitfenster
-task.form.cancel: Abbrechen
 task.form.showHistory: Verlauf ansehen
 task.form.modal.moreOptions: Mehr Optionen
 task.form.edit: Auftrag ändern %id%
@@ -390,7 +384,6 @@ form.delivery.packages.label: Verpackungen
 form.order.accept.label: Bestätigen
 form.order.accept.help: Sobald Du die Bestellung angenommen hast, wird der Kunde per
   E-Mail benachrichtigt.
-form.order.cancel.label: Abbrechen
 form.order.fulfill.label: Erledigen
 form.order.payment_complete.label: Fertigstellen
 form.order.payment_refund.label: Rückzahlung

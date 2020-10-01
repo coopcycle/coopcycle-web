@@ -24,7 +24,6 @@ adminDashboard.dashboard.exportTasks: Export tasks
 adminDashboard.dashboard.deleteTaskGroup: Delete task group
 adminDashboard.dashboard.displayByGroups: Display by groups
 adminDashboard.dashboard.displayAll: Display all
-adminDashboard.dashboard.cancel: Cancel
 adminDashboard.deliveries.title: Deliveries
 adminDashboard.deliveries.type: Type
 adminDashboard.deliveries.dueDate: Due date
@@ -64,7 +63,6 @@ adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Create a new restaurant
 adminDashboard.restaurants.exclusive: Exclusive
 adminDashboard.users.title: Users
-adminDashboard.users.edit: Edit
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Edit user
 adminDashboard.users.edit.addStore: Add a store
@@ -94,7 +92,6 @@ adminDashboard.tags.confirm_delete: "Are you sure you want to delete this tag? \
 adminDashboard.taxation.title: Taxation
 adminDashboard.taxation.button: Add taxation
 adminDashboard.zones.title: Zones
-adminDashboard.zones.cancel: Cancel
 adminDashboard.zones.delete: Delete
 adminDashboard.zones.uploadGeoJSON: Upload a GeoJSON file
 adminDashboard.zones.send: Send
@@ -274,7 +271,6 @@ profile.myOrders: My orders
 profile.myAddresses: My addresses
 profile.myPersonalInfo: My personal information
 profile.payment: Payment
-profile.task.cancel: Cancel
 profile.task.noTasks: No tasks scheduled
 profile.task.dueDate: Due date
 profile.task.address: Address
@@ -345,7 +341,6 @@ order.adjustment_type.tip: Tip
 order_item.adjustment_type.reusable_packaging: '%quantity% × packaging(s)'
 order.list.total: Total
 order.list.shippedAt: Shipping time
-order.list.cancel: Cancel
 order.list.type: Type
 order.list.customer: Customer
 order.list.state: State
@@ -359,7 +354,6 @@ vehicle.bike: Bike
 vehicle.cargo_bike: Cargo bike
 task.form.create: Create task
 task.form.timeWindow: Time window
-task.form.cancel: Cancel
 task.form.showHistory: Show history
 task.form.modal.moreOptions: More options
 task.form.edit: Modify task %id%
@@ -435,7 +429,6 @@ form.delivery.view_order: View order
 form.order.accept.label: Accept
 form.order.accept.help: Once you have accepted the order, the customer will be notified
   by email.
-form.order.cancel.label: Cancel
 form.order.refuse.label: Refuse
 form.order.fulfill.label: Fulfill
 form.order.payment_complete.label: Complete

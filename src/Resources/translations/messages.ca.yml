@@ -20,7 +20,6 @@ adminDashboard.dashboard.exportTasks: Tasques d’exportació
 adminDashboard.dashboard.deleteTaskGroup: Suprimeix el grup de tasques
 adminDashboard.dashboard.displayByGroups: Visualització per grups
 adminDashboard.dashboard.displayAll: Mostra tot
-adminDashboard.dashboard.cancel: Cancel · lar
 adminDashboard.deliveries.title: Entregues
 adminDashboard.deliveries.type: Tipus
 adminDashboard.deliveries.dueDate: Data de venciment
@@ -59,7 +58,6 @@ adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Crea un nou restaurant
 adminDashboard.restaurants.exclusive: Exclusiu
 adminDashboard.users.title: Usuaris
-adminDashboard.users.edit: Edita
 adminDashboard.users.roles: Funcions
 adminDashboard.users.editUser: Edita l'usuari
 adminDashboard.users.edit.addStore: Afegeix una botiga
@@ -81,7 +79,6 @@ adminDashboard.tags.color: Color
 adminDashboard.taxation.title: Impostos
 adminDashboard.taxation.button: Afegir impostos
 adminDashboard.zones.title: Zones
-adminDashboard.zones.cancel: Cancel · lar
 adminDashboard.zones.delete: Suprimeix
 adminDashboard.zones.uploadGeoJSON: Carregueu un fitxer GeoJSON
 adminDashboard.zones.send: Envia
@@ -196,7 +193,6 @@ profile.myOrders: Les meves ordres
 profile.myAddresses: Les meves adreces
 profile.myPersonalInfo: Les meves dades personals
 profile.payment: Pagament
-profile.task.cancel: Cancel · lar
 profile.task.noTasks: No s’han programat tasques
 profile.task.dueDate: Data de venciment
 profile.task.address: Adreça
@@ -253,7 +249,6 @@ order.adjustment_type.delivery: Entrega
 order.adjustment_type.platform_fees: Comissions de CoopCycle
 order.list.total: Total
 order.list.shippedAt: Temps d’enviament
-order.list.cancel: Cancel · lar
 order.list.type: Tipus
 order.list.customer: Client
 order.list.state: Estat
@@ -266,7 +261,6 @@ vehicle.bike: Bicicleta
 vehicle.cargo_bike: Bicicleta de càrrega
 task.form.create: Crear tasca
 task.form.timeWindow: Finestra de temps
-task.form.cancel: Cancel · lar
 task.form.showHistory: Mostra l'historial
 task.form.modal.moreOptions: Més opcions
 task.form.edit: Modifica la tasca %id%
@@ -325,7 +319,6 @@ form.delivery.price.label: Preu
 form.order.accept.label: Accepta
 form.order.accept.help: Un cop acceptada la comanda, el client serà notificat per
   correu electrònic.
-form.order.cancel.label: Cancel · lar
 form.order.fulfill.label: Complir
 form.order.payment_complete.label: Completa
 form.order.payment_refund.label: Devolució
