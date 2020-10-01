@@ -79,7 +79,6 @@ adminDashboard.tags.color: Color
 adminDashboard.taxation.title: Impostos
 adminDashboard.taxation.button: Afegir impostos
 adminDashboard.zones.title: Zones
-adminDashboard.zones.delete: Suprimeix
 adminDashboard.zones.uploadGeoJSON: Carregueu un fitxer GeoJSON
 adminDashboard.zones.send: Envia
 adminDashboard.back.title: Tornar al lloc web

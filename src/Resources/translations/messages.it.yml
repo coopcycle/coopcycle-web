@@ -74,7 +74,6 @@ adminDashboard.promotions.title: Promozioni
 adminDashboard.back.title: Torna al sito web
 adminDashboard.zones.send: Invia
 adminDashboard.zones.uploadGeoJSON: Carica il file GeoJSON
-adminDashboard.zones.delete: Cancella
 adminDashboard.zones.title: Zone
 adminDashboard.taxation.button: Aggiungi tassazione
 adminDashboard.taxation.title: Tassazione

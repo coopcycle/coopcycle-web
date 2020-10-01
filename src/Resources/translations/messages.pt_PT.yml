@@ -87,7 +87,6 @@ adminDashboard.tags.confirm_delete: "Tem a certeza que quer remover este marcado
 adminDashboard.taxation.title: Tributação
 adminDashboard.taxation.button: Adicionar tributação
 adminDashboard.zones.title: Zonas
-adminDashboard.zones.delete: Apagar
 adminDashboard.zones.uploadGeoJSON: Carregar um ficheiro do tipo GeoJSON
 adminDashboard.zones.send: Enviar
 adminDashboard.back.title: Voltar à página

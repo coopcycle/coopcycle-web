@@ -25,7 +25,6 @@ adminDashboard.settings.title: Einstellungen
 adminDashboard.pricing.settings: Einstellungen
 adminDashboard.tags.name: Name
 adminDashboard.tags.color: Farbe
-adminDashboard.zones.delete: Löschen
 localBusiness.form.name: Name
 localBusiness.form.website: Website
 restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurant

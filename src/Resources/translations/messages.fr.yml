@@ -79,7 +79,6 @@ adminDashboard.tags.confirm_delete: "Êtes-vous sûr de supprimer ce tag ?\nTous
 adminDashboard.taxation.title: Taxes
 adminDashboard.taxation.button: Ajouter une taxe
 adminDashboard.zones.title: Zones
-adminDashboard.zones.delete: Supprimer
 adminDashboard.zones.uploadGeoJSON: Uploadez un fichier GeoJSON
 adminDashboard.zones.send: Envoyer
 adminDashboard.back.title: Revenir au site

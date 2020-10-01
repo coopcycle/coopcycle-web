@@ -85,7 +85,6 @@ adminDashboard.tags.confirm_delete: "Opravdu chcete tuto značku smazat?\nZnačk
 adminDashboard.taxation.title: Zdanění
 adminDashboard.taxation.button: Přidat zdanění
 adminDashboard.zones.title: Oblasti
-adminDashboard.zones.delete: Smazat
 adminDashboard.zones.uploadGeoJSON: Nahrát GeoJSON soubor
 adminDashboard.zones.send: Poslat
 adminDashboard.back.title: Zpět na web

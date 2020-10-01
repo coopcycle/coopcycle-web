@@ -63,7 +63,6 @@ adminDashboard.tags.color: Color
 adminDashboard.taxation.title: Impuestos
 adminDashboard.taxation.button: Añadir impuesto
 adminDashboard.zones.title: Zonas
-adminDashboard.zones.delete: Eliminar
 adminDashboard.zones.uploadGeoJSON: Subir un archivo GeoJSON
 adminDashboard.zones.send: Enviar
 adminDashboard.back.title: Volver al sitio

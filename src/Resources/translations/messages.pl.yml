@@ -40,7 +40,6 @@ adminDashboard.promotions.title: Promocje
 adminDashboard.back.title: Powrót
 adminDashboard.zones.send: Wyślij
 adminDashboard.zones.uploadGeoJSON: Dodaj plik GeoJSON
-adminDashboard.zones.delete: Usuń
 adminDashboard.zones.title: Strefy
 adminDashboard.tags.color: Kolor
 adminDashboard.tags.name: Nazwa
