@@ -37,7 +37,9 @@
         {% if form.vehicle is defined %}
           {{ form_row(form.vehicle) }}
         {% endif %}
-        {{ form_row(form.weight) }}
+        {% if form.weight is defined %}
+          {{ form_row(form.weight) }}
+        {% endif %}
         {% if form.packages is defined %}
         <div class="form-group">
           {{ form_label(form.packages) }}
