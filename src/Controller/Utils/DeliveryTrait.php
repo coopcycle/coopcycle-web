@@ -92,13 +92,6 @@ trait DeliveryTrait
     {
         $routes = $request->attributes->get('routes');
 
-        $isNew = $delivery->getId() === null;
-        $order = null;
-
-        if (!$isNew && $this->getUser()->hasRole('ROLE_ADMIN')) {
-            $order = $delivery->getOrder();
-        }
-
         $form = $this->createDeliveryForm($delivery, $options);
 
         $form->handleRequest($request);
@@ -106,7 +99,7 @@ trait DeliveryTrait
 
             $delivery = $form->getData();
 
-            if ($isNew) {
+            if ($delivery->getId() === null) {
                 $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
             }
 
@@ -119,7 +112,6 @@ trait DeliveryTrait
             'layout' => $request->attributes->get('layout'),
             'delivery' => $delivery,
             'form' => $form->createView(),
-            'order' => $order,
             'debug_pricing' => $request->query->getBoolean('debug', false),
         ]);
     }

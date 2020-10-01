@@ -1,0 +1,21 @@
+{% if order.state == 'cart' %}
+<div class="alert alert-warning">
+  <i class="fa fa-exclamation-triangle"></i> {{ 'form.delivery.to_be_confirmed.warning'|trans }}
+  <span class="pull-right">
+    <a class="btn btn-xs btn-success" href="{{ path('admin_order', { id: order.id }) }}">
+      {{ 'form.delivery.view_order'|trans }}
+    </a>
+  </span>
+</div>
+{% endif %}
+
+{% if order.state == 'new' %}
+<div class="alert alert-info">
+  <i class="fa fa-info-circle"></i> {{ 'form.delivery.has_order.info'|trans }}
+  <span class="pull-right">
+    <a class="btn btn-xs btn-success" href="{{ path('admin_order', { id: order.id }) }}">
+      {{ 'form.delivery.view_order'|trans }}
+    </a>
+  </span>
+</div>
+{% endif %}
