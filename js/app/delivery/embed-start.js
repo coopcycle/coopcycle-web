@@ -7,19 +7,20 @@ window.initMap = function() {
 
   $.each(['pickup', 'dropoff'], function(index, type) {
 
-    const defaultValue =
-      document.querySelector(`#delivery_${type}_doneBefore`).value
+    const doneBeforeEl = document.querySelector(`#delivery_${type}_doneBefore`)
 
-    new DateTimePicker(document.querySelector(`#delivery_${type}_doneBefore_widget`), {
-      defaultValue,
-      getDatePickerContainer: getDateTimePickerContainer,
-      getTimePickerContainer: getDateTimePickerContainer,
-      onChange: function(date) {
-        if (date) {
-          document.querySelector(`#delivery_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
+    if (doneBeforeEl) {
+      new DateTimePicker(document.querySelector(`#delivery_${type}_doneBefore_widget`), {
+        defaultValue: doneBeforeEl.value,
+        getDatePickerContainer: getDateTimePickerContainer,
+        getTimePickerContainer: getDateTimePickerContainer,
+        onChange: function(date) {
+          if (date) {
+            document.querySelector(`#delivery_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
+          }
         }
-      }
-    })
+      })
+    }
 
     new AddressBook(document.querySelector(`#delivery_${type}_address`), {
       existingAddressControl: document.querySelector(`#delivery_${type}_address_existingAddress`),

@@ -2,8 +2,10 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\TimeSlot;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
@@ -21,6 +23,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class DeliveryEmbedType extends DeliveryType
 {
     private $settingsManager;
+    private $entityManager;
 
     public function __construct(
         RoutingInterface $routing,
@@ -28,11 +31,14 @@ class DeliveryEmbedType extends DeliveryType
         AuthorizationCheckerInterface $authorizationChecker,
         string $country,
         string $locale,
-        SettingsManager $settingsManager)
+        SettingsManager $settingsManager,
+        EntityManagerInterface $entityManager
+    )
     {
         parent::__construct($routing, $translator, $authorizationChecker, $country, $locale);
 
         $this->settingsManager = $settingsManager;
+        $this->entityManager = $entityManager;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -41,6 +47,14 @@ class DeliveryEmbedType extends DeliveryType
             'with_weight'  => $this->settingsManager->getBoolean('embed.delivery.withWeight'),
             'with_vehicle' => $this->settingsManager->getBoolean('embed.delivery.withVehicle'),
         ]);
+
+        $timeSlotId = $this->settingsManager->get('embed.delivery.timeSlot');
+        if ($timeSlotId) {
+            $timeSlot = $this->entityManager->getRepository(TimeSlot::class)->find($timeSlotId);
+            if ($timeSlot) {
+                $options['with_time_slot'] = $timeSlot;
+            }
+        }
 
         parent::buildForm($builder, $options);
 

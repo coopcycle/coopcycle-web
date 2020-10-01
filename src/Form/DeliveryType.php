@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TimeSlot;
 use AppBundle\Form\Entity\PackageWithQuantity;
 use AppBundle\Form\Type\TimeSlotChoice;
 use AppBundle\Form\Type\TimeSlotChoiceType;
@@ -126,34 +127,6 @@ class DeliveryType extends AbstractType
                 return;
             }
 
-            if (null !== $store->getTimeSlot()) {
-
-                $timeSlotOptions = [
-                    'time_slot' => $store->getTimeSlot(),
-                    'label' => 'form.delivery.time_slot.label',
-                    'mapped' => false
-                ];
-
-                $pickupTimeSlotOptions = $dropoffTimeSlotOptions = $timeSlotOptions;
-
-                if (null !== $delivery->getId()) {
-
-                    $pickupTimeSlotOptions['disabled'] = true;
-                    $pickupTimeSlotOptions['data'] = TimeSlotChoice::fromTask($delivery->getPickup());
-
-                    $dropoffTimeSlotOptions['disabled'] = true;
-                    $dropoffTimeSlotOptions['data'] = TimeSlotChoice::fromTask($delivery->getDropoff());
-                }
-
-                $form->get('pickup')->remove('doneAfter');
-                $form->get('pickup')->remove('doneBefore');
-                $form->get('pickup')->add('timeSlot', TimeSlotChoiceType::class, $pickupTimeSlotOptions);
-
-                $form->get('dropoff')->remove('doneAfter');
-                $form->get('dropoff')->remove('doneBefore');
-                $form->get('dropoff')->add('timeSlot', TimeSlotChoiceType::class, $dropoffTimeSlotOptions);
-            }
-
             if (null !== $store->getPackageSet()) {
 
                 $packageSet = $store->getPackageSet();
@@ -194,6 +167,41 @@ class DeliveryType extends AbstractType
 
                 $form->add('weight', get_class($config->getType()->getInnerType()), $options);
             }
+        });
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+
+            $form = $event->getForm();
+            $delivery = $event->getData();
+
+            if (!$timeSlot = $this->getTimeSlot($options, $delivery->getStore())) {
+                return;
+            }
+
+            $timeSlotOptions = [
+                'time_slot' => $timeSlot,
+                'label' => 'form.delivery.time_slot.label',
+                'mapped' => false
+            ];
+
+            $pickupTimeSlotOptions = $dropoffTimeSlotOptions = $timeSlotOptions;
+
+            if (null !== $delivery->getId()) {
+
+                $pickupTimeSlotOptions['disabled'] = true;
+                $pickupTimeSlotOptions['data'] = TimeSlotChoice::fromTask($delivery->getPickup());
+
+                $dropoffTimeSlotOptions['disabled'] = true;
+                $dropoffTimeSlotOptions['data'] = TimeSlotChoice::fromTask($delivery->getDropoff());
+            }
+
+            $form->get('pickup')->remove('doneAfter');
+            $form->get('pickup')->remove('doneBefore');
+            $form->get('pickup')->add('timeSlot', TimeSlotChoiceType::class, $pickupTimeSlotOptions);
+
+            $form->get('dropoff')->remove('doneAfter');
+            $form->get('dropoff')->remove('doneBefore');
+            $form->get('dropoff')->add('timeSlot', TimeSlotChoiceType::class, $dropoffTimeSlotOptions);
         });
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
@@ -241,6 +249,24 @@ class DeliveryType extends AbstractType
         });
     }
 
+    /**
+     * @return TimeSlot|null
+     */
+    private function getTimeSlot(array $options, ?Store $store = null): ?TimeSlot
+    {
+        if (null !== $options['with_time_slot']) {
+
+            return $options['with_time_slot'];
+        }
+
+        if ($store) {
+
+            return $store->getTimeSlot();
+        }
+
+        return null;
+    }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
@@ -250,7 +276,10 @@ class DeliveryType extends AbstractType
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
             'with_dropoff_recipient_details' => false,
             'with_dropoff_doorstep' => false,
+            'with_time_slot' => null,
         ));
+
+        $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);
     }
 
     private function getVehicleChoices()
