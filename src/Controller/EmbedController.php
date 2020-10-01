@@ -11,7 +11,6 @@ use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\DeliveryEmbedType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
-use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Util\CanonicalizerInterface;
@@ -109,7 +108,6 @@ class EmbedController extends Controller
      */
     public function deliverySummaryAction(Request $request,
         DeliveryManager $deliveryManager,
-        SettingsManager $settingsManager,
         TaxRateResolverInterface $taxRateResolver)
     {
         if ($this->container->has('profiler')) {
