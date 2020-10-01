@@ -38,15 +38,11 @@ class DeliveryEmbedType extends DeliveryType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $options = array_merge($options, [
+            'with_weight'  => $this->settingsManager->getBoolean('embed.delivery.withWeight'),
             'with_vehicle' => $this->settingsManager->getBoolean('embed.delivery.withVehicle'),
         ]);
 
         parent::buildForm($builder, $options);
-
-        $withWeight = $this->settingsManager->getBoolean('embed.delivery.withWeight');
-        if (!$withWeight) {
-            $builder->remove('weight');
-        }
 
         $builder
             ->add('name', TextType::class, [

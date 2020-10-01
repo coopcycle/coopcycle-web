@@ -50,12 +50,14 @@ class DeliveryType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('weight', NumberType::class, [
-                'required' => false,
-                'html5' => true,
-                'label' => 'form.delivery.weight.label',
-            ]);
+        if (true === $options['with_weight']) {
+            $builder
+                ->add('weight', NumberType::class, [
+                    'required' => false,
+                    'html5' => true,
+                    'label' => 'form.delivery.weight.label',
+                ]);
+        }
 
         if (true === $options['with_vehicle']) {
             $builder->add('vehicle', ChoiceType::class, [
@@ -244,6 +246,7 @@ class DeliveryType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => Delivery::class,
             'with_vehicle' => false,
+            'with_weight' => true,
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
             'with_dropoff_recipient_details' => false,
             'with_dropoff_doorstep' => false,
