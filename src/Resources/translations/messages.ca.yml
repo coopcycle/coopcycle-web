@@ -29,7 +29,6 @@ adminDashboard.deliveries.address: Adreça
 adminDashboard.deliveries.delivery: Entrega
 adminDashboard.deliveries.originAddress: Adreça de procedència
 adminDashboard.deliveries.deliveryAddress: Adreça d'entrega
-adminDashboard.deliveries.save: Desa
 adminDashboard.embed.title: Pantalla externa
 embed.delivery.title: Formulari de creació de entregues
 embed.delivery.configure_pricing_rule_set: Primer has de configurar una regla de preus
@@ -50,7 +49,6 @@ embed.delivery.billing_address: Adreça de facturació
 adminDashboard.menuCategories.menu: Menú
 adminDashboard.menuCategories.categories: Categories
 adminDashboard.menuCategories.addCategory: Afegir categoria
-adminDashboard.menuCategories.save: Desa
 adminDashboard.stores.title: Botigues
 adminDashboard.stores.createNew: Crea una nova botiga
 adminDashboard.stores.form.uploadImage: Carregueu una imatge
@@ -62,7 +60,6 @@ adminDashboard.restaurants.createNew: Crea un nou restaurant
 adminDashboard.restaurants.exclusive: Exclusiu
 adminDashboard.users.title: Usuaris
 adminDashboard.users.edit: Edita
-adminDashboard.users.save: Desa
 adminDashboard.users.roles: Funcions
 adminDashboard.users.editUser: Edita l'usuari
 adminDashboard.users.edit.addStore: Afegeix una botiga
@@ -78,7 +75,6 @@ adminDashboard.pricing.noRuleFound: No s'ha trobat cap regla de preus. Les regle
   de preus defineixen com es calcula el cost de lliurament.
 adminDashboard.pricing.addRule: Afegiu una regla
 adminDashboard.tags.title: Etiquetes
-adminDashboard.tags.save: Desa
 adminDashboard.tags.createNew: Crea una etiqueta nova
 adminDashboard.tags.name: Nom
 adminDashboard.tags.color: Color
@@ -86,7 +82,6 @@ adminDashboard.taxation.title: Impostos
 adminDashboard.taxation.button: Afegir impostos
 adminDashboard.zones.title: Zones
 adminDashboard.zones.cancel: Cancel · lar
-adminDashboard.zones.save: Desa
 adminDashboard.zones.delete: Suprimeix
 adminDashboard.zones.uploadGeoJSON: Carregueu un fitxer GeoJSON
 adminDashboard.zones.send: Envia
@@ -139,7 +134,6 @@ restaurant.form.temporaryClosingRule: Faci clic aquí per a desactivar temporalm
   les comandes al seu restaurant.
 restaurant.form.accessPlanning: Planificació d’accés
 restaurant.form.createRestaurant: Crear restaurant
-restaurant.form.save: Desa
 restaurant.contract.title: Contracte
 restaurant.deliveryPerimeterExpression.title: Perímetre d’entrega
 restaurant.deliveryPerimeterExpression.help: Definiu el perímetre acceptat per als
@@ -208,9 +202,7 @@ profile.task.dueDate: Data de venciment
 profile.task.address: Adreça
 profile.task.complete: Completa
 profile.task.date: Data
-profile.edit.save: Desa
 profile.addresses.newAddress: Nova adreça
-profile.addresses.save: Desa
 profile.addresses.add: Afegiu
 profile.editProfile: Edita el perfil
 profile.payment.title: Pagament
@@ -541,7 +533,6 @@ roles.ROLE_RESTAURANT.help: 'Propietari del restaurant: gestiona els restaurants
   gestiona les comandes …'
 roles.ROLE_STORE.help: 'Propietari de la botiga: gestiona les botigues assignades,
   gestiona els enviaments …'
-stores.form.save: Desa
 stores.manage: Gestiona
 stores.settings: Configuració
 stores.createNewDelivery: Crea un nou lliurament

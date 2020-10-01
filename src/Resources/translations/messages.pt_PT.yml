@@ -31,7 +31,6 @@ adminDashboard.deliveries.address: Endereço
 adminDashboard.deliveries.delivery: Entrega
 adminDashboard.deliveries.originAddress: Endereço original
 adminDashboard.deliveries.deliveryAddress: Endereço de entrega
-adminDashboard.deliveries.save: Gravar
 adminDashboard.package_sets.title: Embalagens
 adminDashboard.customize.title: Personalizar
 embed.delivery.title: Formulário de criação de entregas
@@ -53,7 +52,6 @@ embed.delivery.billing_address: Endereço de facturação
 adminDashboard.menuCategories.menu: Menu
 adminDashboard.menuCategories.categories: Categorias
 adminDashboard.menuCategories.addCategory: Adicionar categoria
-adminDashboard.menuCategories.save: Gravar
 adminDashboard.stores.title: Lojas
 adminDashboard.stores.createNew: Criar uma nova loja
 adminDashboard.stores.form.uploadImage: Carregar uma imagem
@@ -82,7 +80,6 @@ adminDashboard.pricing.noRuleFound: Regras de preços não encontradas. As regra
   preços definem como é que os custos de entrega são calculados.
 adminDashboard.pricing.addRule: Adicionar regra
 adminDashboard.tags.title: Marcadores
-adminDashboard.tags.save: Gravar
 adminDashboard.tags.createNew: Criar um marcador novo
 adminDashboard.tags.name: Nome
 adminDashboard.tags.color: Cor
@@ -93,7 +90,6 @@ adminDashboard.taxation.title: Tributação
 adminDashboard.taxation.button: Adicionar tributação
 adminDashboard.zones.title: Zonas
 adminDashboard.zones.cancel: Cancelar
-adminDashboard.zones.save: Gravar
 adminDashboard.zones.delete: Apagar
 adminDashboard.zones.uploadGeoJSON: Carregar um ficheiro do tipo GeoJSON
 adminDashboard.zones.send: Enviar
@@ -181,7 +177,6 @@ restaurant.form.featured.label: Este restaurante é destaque na página inicial
 restaurant.form.quotes_allowed.label: 'Este restaurante também aceita orçamentos (p.e.:
   serviço de buffet)'
 restaurant.form.exclusive.label: Este restaurante é exclusivo
-restaurant.form.save: Gravar
 restaurant.form.createRestaurant: Criar restaurante
 restaurant.form.accessPlanning: Plano de acesso
 restaurant.form.deposit_refund_enabled.label: Ativar sistema de reembolso de depósitos

@@ -29,7 +29,6 @@ adminDashboard.deliveries.address: Endereço
 adminDashboard.deliveries.delivery: Entrega
 adminDashboard.deliveries.originAddress: Endereço de origem
 adminDashboard.deliveries.deliveryAddress: Endereço de entrega
-adminDashboard.deliveries.save: Salvar
 adminDashboard.embed.title: Incorporação
 adminDashboard.package_sets.title: Embalagens
 adminDashboard.customize.title: Customizar
@@ -52,7 +51,6 @@ embed.delivery.billing_address: Endereço de cobrança
 adminDashboard.menuCategories.menu: Menu
 adminDashboard.menuCategories.categories: Categorias
 adminDashboard.menuCategories.addCategory: Adicionar categoria
-adminDashboard.menuCategories.save: Salvar
 adminDashboard.stores.title: Lojas
 adminDashboard.stores.createNew: Criar nova loja
 adminDashboard.stores.form.uploadImage: Enviar uma imagem
@@ -81,7 +79,6 @@ adminDashboard.pricing.noRuleFound: Nenhuma regra de preço encontrada. Regras d
   definem como o custo do pedido é calculado.
 adminDashboard.pricing.addRule: Adicionar regra
 adminDashboard.tags.title: Tags
-adminDashboard.tags.save: Salvar
 adminDashboard.tags.createNew: Criar nova tag
 adminDashboard.tags.name: Nome
 adminDashboard.tags.color: Cor
@@ -92,7 +89,6 @@ adminDashboard.taxation.title: Impostos
 adminDashboard.taxation.button: Adicionar imposto
 adminDashboard.zones.title: Zonas
 adminDashboard.zones.cancel: Cancelar
-adminDashboard.zones.save: Salvar
 adminDashboard.zones.delete: Remover
 adminDashboard.zones.uploadGeoJSON: Enviar um arquivo GeoJSON
 adminDashboard.zones.send: Enviar
@@ -159,7 +155,6 @@ restaurant.form.temporaryClosingRule: Clique aqui para temporariamente desativar
 restaurant.form.deposit_refund_enabled.label: Habilitar sistema de reembolso
 restaurant.form.accessPlanning: Acessar calendário
 restaurant.form.createRestaurant: Criar restaurante
-restaurant.form.save: Salvar
 restaurant.form.exclusive.label: Este restaurante é exclusivo
 restaurant.form.quotes_allowed.label: 'Este restaurante também aceita cotações (ex:
   catering)'
@@ -276,9 +271,7 @@ profile.task.dueDate: Prazo
 profile.task.address: Endereço
 profile.task.complete: Finalizada
 profile.task.date: Data
-profile.edit.save: Salvar
 profile.addresses.newAddress: Novo endereço
-profile.addresses.save: Salvar
 profile.addresses.add: Adicionar
 profile.editProfile: Editar perfil
 profile.payment.title: Pagamento
@@ -694,7 +687,6 @@ roles.ROLE_COURIER.help: "Courier: ver tarefas pendentes, modificar tarefas desi
 roles.ROLE_RESTAURANT.help: 'Dono de restaurante: gerenciar restaurantes designados,
   gerenciar pedidos…'
 roles.ROLE_STORE.help: 'Dono de loja: gerenciar lojas designadas, gerenciar entregas…'
-stores.form.save: Salvar
 stores.manage: Gerenciar
 stores.settings: Configurações
 stores.createNewDelivery: Criar nova entrega

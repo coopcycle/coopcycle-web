@@ -17,7 +17,6 @@ adminDashboard.users.invite: Invita utente
 adminDashboard.users.createNew: Aggiungi utente
 adminDashboard.users.edit.addRestaurant: Aggiungi un ristorante
 adminDashboard.users.edit.addStore: Aggiungi un negozio
-adminDashboard.menuCategories.save: Salva
 adminDashboard.users.editUser: Modifica utente
 adminDashboard.users.roles: Ruoli
 adminDashboard.users.edit: Modifica
@@ -52,7 +51,6 @@ embed.delivery.configure_pricing_rule_set: È innanzitutto necessario configurar
 embed.delivery.title: Modulo di creazione consegna
 adminDashboard.package_sets.title: Pacchi
 adminDashboard.embed.title: Visualizzazione esterna
-adminDashboard.deliveries.save: Salva
 adminDashboard.deliveries.deliveryAddress: Indirizzo di consegna
 adminDashboard.deliveries.originAddress: Indirizzo di origine
 adminDashboard.deliveries.delivery: Consegna
@@ -79,7 +77,6 @@ adminDashboard.back.title: Torna al sito web
 adminDashboard.zones.send: Invia
 adminDashboard.zones.uploadGeoJSON: Carica il file GeoJSON
 adminDashboard.zones.delete: Cancella
-adminDashboard.zones.save: Salva
 adminDashboard.zones.cancel: Cancella
 adminDashboard.zones.title: Zone
 adminDashboard.taxation.button: Aggiungi tassazione
@@ -87,7 +84,6 @@ adminDashboard.taxation.title: Tassazione
 adminDashboard.tags.color: Colore
 adminDashboard.tags.name: Nome
 adminDashboard.tags.createNew: Crea un nuovo tag
-adminDashboard.tags.save: Salva
 adminDashboard.tags.title: Tags
 adminDashboard.pricing.addRule: Aggiungere regole
 adminDashboard.pricing.createNew: Create nuovi prezzi
@@ -114,7 +110,6 @@ restaurants.no_results: Non abbiamo trovato ristoranti che coincidono con la tua
 restaurants.placeholder.text: Nuovi ristorani arriveranno presto!
 order.reusable_packaging.alert: Questo ordine deve essere impachettato con un packaging
   riutilizzabile
-restaurant.form.save: Salva
 restaurant.quotes_disclaimer.authenticated: Questo ristorante accetta anche preventivi.
   Per creare un preventivo devi essere un cliente referenziato. <a href="%contact_us%">Contattaci</a>
   per altre informazioni.
@@ -452,7 +447,6 @@ user.profile.givenName: Nome
 roles.ROLE_ADMIN.help: "Amministratore: accesso completo a tutte le funzioni\n"
 roles.ROLE_RESTAURANT.help: 'Ristoratore: gestire i ristoranti assegnati, gestire
   gli ordini …'
-stores.form.save: Salva
 admin.settings.missing_mandatory_settings: "Mancano impostazioni obbligatorie.\nVai\
   \ a <a href=\"%settings_url%\">settings page</a> per configurarle.\n"
 activity.task.unassigned: "@%owner% task non assegnata #task/%aggregate_id%\n"
@@ -951,9 +945,7 @@ order.payment.cvc: CVC
 profile.task.address: Indirizzo
 profile.task.complete: Completato
 profile.task.date: Data
-profile.edit.save: Salva
 profile.addresses.newAddress: Nuovo indirizzo
-profile.addresses.save: Salva
 profile.addresses.add: Aggiungi
 profile.familyName: Cognome
 order.payment.redirect.help: Verrai reindirizzato al sito della banca per completare

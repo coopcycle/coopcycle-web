@@ -30,12 +30,10 @@ adminDashboard.deliveries.address: Dirección
 adminDashboard.deliveries.delivery: Entrega
 adminDashboard.deliveries.originAddress: Dirección de origen
 adminDashboard.deliveries.deliveryAddress: Dirección de entrega
-adminDashboard.deliveries.save: Guardar
 adminDashboard.embed.title: Integración
 adminDashboard.menuCategories.menu: Carta
 adminDashboard.menuCategories.categories: Categorías
 adminDashboard.menuCategories.addCategory: Añadir categoría
-adminDashboard.menuCategories.save: Guardar
 adminDashboard.stores.title: Tiendas
 adminDashboard.stores.createNew: Crear tienda
 adminDashboard.stores.form.uploadImage: Subir una imagen
@@ -61,7 +59,6 @@ adminDashboard.pricing.noRuleFound: No se encuentra ninguna regla de tarificaci�
   Éstas definen como se calcula el coste de la entrega.
 adminDashboard.pricing.addRule: Añadir regla
 adminDashboard.tags.title: Etiquetas
-adminDashboard.tags.save: Guardar
 adminDashboard.tags.createNew: Crear nueva etiqueta
 adminDashboard.tags.name: Nombre
 adminDashboard.tags.color: Color
@@ -69,7 +66,6 @@ adminDashboard.taxation.title: Impuestos
 adminDashboard.taxation.button: Añadir impuesto
 adminDashboard.zones.title: Zonas
 adminDashboard.zones.cancel: Cancelar
-adminDashboard.zones.save: Guardar
 adminDashboard.zones.delete: Eliminar
 adminDashboard.zones.uploadGeoJSON: Subir un archivo GeoJSON
 adminDashboard.zones.send: Enviar
@@ -118,7 +114,6 @@ restaurant.form.temporaryClosingRule: Haga clic aquí para desactivar temporalme
   los pedidos a su restaurante.
 restaurant.form.accessPlanning: Acceder al calendario
 restaurant.form.createRestaurant: Crear restaurante
-restaurant.form.save: Guardar
 restaurant.contract.title: Contrato
 restaurant.deliveryPerimeterExpression.title: Perímetro de entrega
 restaurant.deliveryPerimeterExpression.help: Define el perímetro permitido para la
@@ -189,9 +184,7 @@ profile.task.dueDate: Fecha de entrega
 profile.task.address: Dirección
 profile.task.complete: Completada
 profile.task.date: Fecha
-profile.edit.save: Guardar
 profile.addresses.newAddress: Nueva dirección
-profile.addresses.save: Guardar
 profile.addresses.add: Añadir
 profile.editProfile: Editar perfil
 profile.payment.title: Pago
@@ -493,7 +486,6 @@ roles.ROLE_RESTAURANT.help: 'Propietario de restaurante: gestionar restaurantes 
   gestionar pedidos…'
 roles.ROLE_STORE.help: 'Propietario de tienda: gestionar tiendas asignadas, gestionar
   entregas…'
-stores.form.save: Guardar
 stores.manage: Gestionar
 stores.settings: Ajustes
 stores.createNewDelivery: Crear entrega

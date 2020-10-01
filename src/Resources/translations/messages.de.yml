@@ -14,10 +14,8 @@ adminDashboard.deliveries.address: Adresse
 adminDashboard.deliveries.delivery: Lieferadresse
 adminDashboard.deliveries.originAddress: Abholadresse
 adminDashboard.deliveries.deliveryAddress: Lieferadresse
-adminDashboard.deliveries.save: Speichern
 embed.breadcrumb.summary: Zusammenfassung
 embed.breadcrumb.confirm: Bestätigung
-adminDashboard.menuCategories.save: Speichern
 adminDashboard.stores.form.uploadImage: Bild hochladen
 adminDashboard.orders.title: Bestellungen
 adminDashboard.restaurants.title: Restaurants
@@ -25,22 +23,17 @@ adminDashboard.restaurants.title: Restaurants
 adminDashboard.users.edit.addRestaurant: Restaurant hinzufügen
 adminDashboard.settings.title: Einstellungen
 adminDashboard.pricing.settings: Einstellungen
-adminDashboard.tags.save: Speichern
 adminDashboard.tags.name: Name
 adminDashboard.tags.color: Farbe
-adminDashboard.zones.save: Speichern
 adminDashboard.zones.delete: Löschen
 localBusiness.form.name: Name
 localBusiness.form.website: Website
-restaurant.form.save: Speichern
 restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurant
 restaurant.closingForm.reason.label: Grund
 restaurant.list.products: Produkten
 restaurant.list.settings: Einstellungen
 restaurant.form.uploadImage: Bild hochladen
 profile.task.address: Adresse
-profile.edit.save: Speichern
-profile.addresses.save: Speichern
 profile.email: E-Mail
 order.payment.month.label: Monat
 order.state.new: Neu
@@ -94,7 +87,6 @@ form.credit_note.name.label: Name
 form.resend_confirmation_email.submit.label: E-Mail erneut senden
 roles.ROLE_COURIER: Kurier
 roles.ROLE_RESTAURANT: Restaurant
-stores.form.save: Speichern
 basics.name: Name
 form.payment.refund_amount.label: Menge
 embed.delivery.contact_heading: Kontakt

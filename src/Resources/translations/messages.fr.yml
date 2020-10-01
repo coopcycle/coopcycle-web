@@ -35,14 +35,12 @@ adminDashboard.deliveries.address: Adresse
 adminDashboard.deliveries.delivery: Livraison
 adminDashboard.deliveries.originAddress: Adresse de départ
 adminDashboard.deliveries.deliveryAddress: Adresse de livraison
-adminDashboard.deliveries.save: Enregistrer
 adminDashboard.customize.title: Personnaliser
 admin.deliveries.to_be_confirmed.alert: Vous avez des livraisons à confirmer. Cliquez
   sur l'icône « Livraison » dans la colonne de droite.
 adminDashboard.menuCategories.menu: Menu
 adminDashboard.menuCategories.categories: Catégories
 adminDashboard.menuCategories.addCategory: Ajouter une catégorie
-adminDashboard.menuCategories.save: Enregistrer
 adminDashboard.stores.title: Magasins
 adminDashboard.organizations.title: Organisations
 adminDashboard.stores.createNew: Créer un magasin
@@ -75,7 +73,6 @@ adminDashboard.pricing.noRuleFound: Veuillez ajouter au moins une règle de tari
   Les règles définissent comment le prix de la course est calculé.
 adminDashboard.pricing.addRule: Ajouter une règle
 adminDashboard.tags.title: Tags
-adminDashboard.tags.save: Enregistrer
 adminDashboard.tags.createNew: Créer un tag
 adminDashboard.tags.name: Nom
 adminDashboard.tags.color: Couleur
@@ -85,7 +82,6 @@ adminDashboard.taxation.title: Taxes
 adminDashboard.taxation.button: Ajouter une taxe
 adminDashboard.zones.title: Zones
 adminDashboard.zones.cancel: Annuler
-adminDashboard.zones.save: Enregistrer
 adminDashboard.zones.delete: Supprimer
 adminDashboard.zones.uploadGeoJSON: Uploadez un fichier GeoJSON
 adminDashboard.zones.send: Envoyer
@@ -148,7 +144,6 @@ restaurant.form.createRestaurant: Créer un restaurant
 restaurant.form.exclusive.label: Ce restaurant est une exclusivité
 restaurant.form.quotes_allowed.label: 'Ce restaurant accepte également des commandes
   sur devis (ex : traiteur)'
-restaurant.form.save: Enregistrer
 restaurant.form.loopeat_enabled.label: Activer le système de consignes LoopEat
 restaurant.form.loopeat_disconnect.label: Déconnecter mon compte LoopEat
 restaurant.form.featured.label: Ce restaurant apparaît sur la page d'accueil
@@ -262,9 +257,7 @@ profile.task.dueDate: Échéance
 profile.task.address: Adresse
 profile.task.complete: Terminer
 profile.task.date: Date
-profile.edit.save: Enregistrer
 profile.addresses.newAddress: Nouvelle adresse
-profile.addresses.save: Enregistrer
 profile.addresses.add: Ajouter
 profile.editProfile: Modifier le profil
 profile.payment.title: Paiement
@@ -689,7 +682,6 @@ roles.ROLE_RESTAURANT.help: "Restaurant : gérer les restaurants qui lui sont as
   \ gérer les commandes…\n"
 roles.ROLE_STORE.help: 'Magasin : gérer les magasins qui lui sont assignés, créer
   des courses…'
-stores.form.save: Enregistrer
 stores.manage: Gérer
 stores.settings: Paramètres
 stores.createNewDelivery: Créer une livraison

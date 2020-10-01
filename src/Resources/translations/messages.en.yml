@@ -33,7 +33,6 @@ adminDashboard.deliveries.address: Address
 adminDashboard.deliveries.delivery: Delivery
 adminDashboard.deliveries.originAddress: Origin address
 adminDashboard.deliveries.deliveryAddress: Delivery address
-adminDashboard.deliveries.save: Save
 adminDashboard.embed.title: External Display
 adminDashboard.package_sets.title: Packages
 adminDashboard.customize.title: Customize
@@ -55,7 +54,6 @@ embed.delivery.billing_address: Billing address
 adminDashboard.menuCategories.menu: Menu
 adminDashboard.menuCategories.categories: Categories
 adminDashboard.menuCategories.addCategory: Add category
-adminDashboard.menuCategories.save: Save
 adminDashboard.stores.title: Stores
 adminDashboard.stores.createNew: Create a new store
 adminDashboard.stores.form.uploadImage: Upload an image
@@ -87,7 +85,6 @@ adminDashboard.pricing.noRuleFound: No pricing rule found. Pricing rules define 
   the delivery cost is calculated.
 adminDashboard.pricing.addRule: Add rule
 adminDashboard.tags.title: Tags
-adminDashboard.tags.save: Save
 adminDashboard.tags.createNew: Create new tag
 adminDashboard.tags.name: Name
 adminDashboard.tags.color: Color
@@ -98,7 +95,6 @@ adminDashboard.taxation.title: Taxation
 adminDashboard.taxation.button: Add taxation
 adminDashboard.zones.title: Zones
 adminDashboard.zones.cancel: Cancel
-adminDashboard.zones.save: Save
 adminDashboard.zones.delete: Delete
 adminDashboard.zones.uploadGeoJSON: Upload a GeoJSON file
 adminDashboard.zones.send: Send
@@ -168,7 +164,6 @@ restaurant.form.temporaryClosingRule: Click here to temporarily disable orders t
 restaurant.form.deposit_refund_enabled.label: Enable deposit-refund system
 restaurant.form.accessPlanning: Access planning
 restaurant.form.createRestaurant: Create restaurant
-restaurant.form.save: Save
 restaurant.form.exclusive.label: This restaurant is exclusive
 restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (e.g.:
   catering)'
@@ -285,9 +280,7 @@ profile.task.dueDate: Due date
 profile.task.address: Address
 profile.task.complete: Complete
 profile.task.date: Date
-profile.edit.save: Save
 profile.addresses.newAddress: New address
-profile.addresses.save: Save
 profile.addresses.add: Add
 profile.editProfile: Edit profile
 profile.payment.title: Payment
@@ -747,7 +740,6 @@ roles.ROLE_COURIER.help: "Courier: view waiting tasks, modify assigned tasks…\
 roles.ROLE_RESTAURANT.help: 'Restaurant owner: manage assigned restaurants, manage
   orders…'
 roles.ROLE_STORE.help: 'Store owner: manage assigned stores, manage deliveries…'
-stores.form.save: Save
 stores.manage: Manage
 stores.settings: Settings
 stores.createNewDelivery: Create new delivery

@@ -41,12 +41,10 @@ adminDashboard.back.title: Powrót
 adminDashboard.zones.send: Wyślij
 adminDashboard.zones.uploadGeoJSON: Dodaj plik GeoJSON
 adminDashboard.zones.delete: Usuń
-adminDashboard.zones.save: Zapisz
 adminDashboard.zones.cancel: Anuluj
 adminDashboard.zones.title: Strefy
 adminDashboard.tags.color: Kolor
 adminDashboard.tags.name: Nazwa
-adminDashboard.tags.save: Zapisz
 adminDashboard.pricing.manage: Zarządzaj
 adminDashboard.pricing.createNew: Dodaj nową wycenę
 adminDashboard.pricing.noPricings: Brak wycen
@@ -67,7 +65,6 @@ adminDashboard.menuCategories.menu: Menu
 adminDashboard.menuCategories.addCategory: Dodaj kategorie
 adminDashboard.menuCategories.categories: Kategorie
 embed.delivery.billing_address: Adres rozliczeniowy
-adminDashboard.menuCategories.save: Zapisz
 adminDashboard.stores.createNew: Dodaj nowy sklep
 adminDashboard.stores.title: Sklepy
 adminDashboard.restaurants.createNew: Dodaj nową restauracje
@@ -83,7 +80,6 @@ embed.delivery.summary.title: Podsumowanie zamówienia
 embed.breadcrumb.confirm: Potwierdzenie
 embed.breadcrumb.summary: Podsumowanie
 adminDashboard.package_sets.title: Przesyłki
-adminDashboard.deliveries.save: Zapisz
 adminDashboard.deliveries.deliveryAddress: Adres doręczenia
 adminDashboard.deliveries.originAddress: Adres odbioru
 adminDashboard.deliveries.delivery: Dostawa
@@ -212,7 +208,6 @@ restaurant.form.temporaryClosingRule: Kliknij tutaj, aby tymczasowo wyłączyć 
   do twojej restauracji.
 restaurant.form.deposit_refund_enabled.label: Włącz system zwrotu kaucji
 restaurant.form.createRestaurant: Stwórz restaurację
-restaurant.form.save: Zapisz
 restaurant.form.exclusive.label: Ta restauracja jest ekskluzywna
 restaurant.form.quotes_allowed.label: Ta restauracja akceptuje również wyceny (np.
   catering)
@@ -300,9 +295,7 @@ profile.task.dueDate: Termin dostawy
 profile.task.address: Adres
 profile.task.complete: Zakończony
 profile.task.date: Data
-profile.edit.save: Zapisz
 profile.addresses.newAddress: Nowy adres
-profile.addresses.save: Zapisz
 profile.addresses.add: Dodaj
 profile.editProfile: Edytuj profil
 profile.payment.title: Płatność
@@ -541,7 +534,6 @@ roles.ROLE_COURIER.help: "Kurier/Kurierka: zobacz zadania oczekujące, modyfikuj
   \ zadania…\n"
 roles.ROLE_RESTAURANT.help: 'Właściciel restauracji: zarządzaj przypisanymi restauracjami,
   zarządzaj zamówieniami…'
-stores.form.save: Zapisz
 stores.manage: Zarządzaj
 stores.settings: Ustawienia
 form.credit_note.name.help: Nazwa promocji, która będzie wyświetlana w koszyku

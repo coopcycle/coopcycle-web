@@ -29,7 +29,6 @@ adminDashboard.deliveries.address: Adresa
 adminDashboard.deliveries.delivery: Dodávka
 adminDashboard.deliveries.originAddress: Původní adresa
 adminDashboard.deliveries.deliveryAddress: Doručovací adresa
-adminDashboard.deliveries.save: Uložit
 adminDashboard.embed.title: Externí obrazovka
 adminDashboard.package_sets.title: Balíčky
 embed.delivery.title: Formulář pro vytvoření dodávky
@@ -51,7 +50,6 @@ embed.delivery.billing_address: Fakturační adresa
 adminDashboard.menuCategories.menu: Nabídka
 adminDashboard.menuCategories.categories: Kategorie
 adminDashboard.menuCategories.addCategory: Přidat kategorii
-adminDashboard.menuCategories.save: Uložit
 adminDashboard.stores.title: Obchody
 adminDashboard.stores.createNew: Vytvořit nový obchod
 adminDashboard.stores.form.uploadImage: Nahrát obrázek
@@ -80,7 +78,6 @@ adminDashboard.pricing.noRuleFound: Nebylo nalezeno žádné cenové pravidlo. P
   tvorby cen definují způsob výpočtu nákladů na doručení.
 adminDashboard.pricing.addRule: Přidat pravidlo
 adminDashboard.tags.title: Značky
-adminDashboard.tags.save: Uložit
 adminDashboard.tags.createNew: Vytvořit novou značku
 adminDashboard.tags.name: Název
 adminDashboard.tags.color: Barva
@@ -91,7 +88,6 @@ adminDashboard.taxation.title: Zdanění
 adminDashboard.taxation.button: Přidat zdanění
 adminDashboard.zones.title: Oblasti
 adminDashboard.zones.cancel: Zrušit
-adminDashboard.zones.save: Uložit
 adminDashboard.zones.delete: Smazat
 adminDashboard.zones.uploadGeoJSON: Nahrát GeoJSON soubor
 adminDashboard.zones.send: Poslat
@@ -158,7 +154,6 @@ restaurant.form.temporaryClosingRule: Kliknutím sem dočasně deaktivujete obje
 restaurant.form.deposit_refund_enabled.label: Povolit systém vložení a vrácení peněz
 restaurant.form.accessPlanning: Plánování přístupu
 restaurant.form.createRestaurant: Vytvořit restauraci
-restaurant.form.save: Uložit
 restaurant.form.exclusive.label: Tato restaurace je exkluzivní
 restaurant.form.quotes_allowed.label: 'Tato restaurace také přijímá nabídky (např.:
   catering)'
@@ -272,9 +267,7 @@ profile.task.dueDate: Datum splatnosti
 profile.task.address: Adresa
 profile.task.complete: Dokončit
 profile.task.date: Datum
-profile.edit.save: Uložit
 profile.addresses.newAddress: Nová adresa
-profile.addresses.save: Uložit
 profile.addresses.add: Přidat
 profile.editProfile: Upravit profil
 profile.payment.title: Platba
@@ -770,7 +763,6 @@ stores.users: Uživatelé
 stores.createNewDelivery: Vytvořit novou dodávku
 stores.settings: Nastavení
 stores.manage: Spravovat
-stores.form.save: Uložit
 roles.ROLE_STORE.help: 'Majitel obchodu: spravuje přiřazené obchody, spravuje dodávky
   …'
 roles.ROLE_RESTAURANT.help: 'Majitel restaurace: spravuje  přidělenou restauraci,
