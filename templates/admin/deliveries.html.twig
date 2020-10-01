@@ -9,15 +9,12 @@
 {% block content %}
 
   <div class="text-right mb-4">
-    <a href="#" class="btn btn-success pull-right" data-toggle="modal" data-target="#choose-store-modal">
-      <i class="fa fa-plus"></i> {% trans %}delivery.createNew{% endtrans %}
-    </a>
-    <div class="dropdown pull-right mr-4">
-      {% include '_partials/delivery/sort.html.twig' %}
-    </div>
-    <a href="#" class="btn btn-success pull-right mr-4" data-toggle="modal" data-target="#export-deliveries-modal">
+    <a href="#" class="btn btn-success mr-4" data-toggle="modal" data-target="#export-deliveries-modal">
       <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
     </a>
+    <div class="dropdown d-inline-block mr-4">
+      {% include '_partials/delivery/sort.html.twig' %}
+    </div>
     {# Filter is active #}
     {% if deliveries.paginatorOptions.filterFieldParameterName in deliveries.params|keys %}
       {% set params_without_filters = {} %}
@@ -30,6 +27,9 @@
         {{ 'deliveries.filter.clear'|trans }} <i class="fa fa-times"></i>
       </a>
     {% endif %}
+    <a href="#" class="btn btn-success" data-toggle="modal" data-target="#choose-store-modal">
+      <i class="fa fa-plus"></i> {% trans %}delivery.createNew{% endtrans %}
+    </a>
   </div>
 
   {% if delivery_import_form.vars.submitted and (not delivery_import_form.vars.valid and not delivery_import_form.file.vars.valid) %}
