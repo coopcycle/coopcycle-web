@@ -1,5 +1,8 @@
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
+import { createPackagesWidget } from '../forms/delivery'
+
+import './embed-start.scss'
 
 const getDateTimePickerContainer = trigger => trigger.parentNode
 
@@ -29,6 +32,13 @@ window.initMap = function() {
     })
 
   })
+
+  const packages = document.querySelector(`#delivery_packages`)
+
+  if (packages) {
+    const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
+    createPackagesWidget('delivery', packagesRequired)
+  }
 }
 
 function setBillingAddressRequired(required) {
