@@ -471,8 +471,6 @@ class AdminController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
 
-            $userManager = $this->getDoctrine()->getManagerForClass(User::class);
-
             $user = $editForm->getData();
 
             $roles = $editForm->get('roles')->getData();
@@ -489,8 +487,7 @@ class AdminController extends Controller
                 }
             }
 
-            $userManager->persist($user);
-            $userManager->flush();
+            $userManager->updateUser($user);
 
             $this->addFlash(
                 'notice',

@@ -10,7 +10,6 @@ use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
@@ -25,6 +24,7 @@ use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use FOS\UserBundle\Model\UserManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
 use Cocur\Slugify\SlugifyInterface;
@@ -181,7 +181,7 @@ class ProfileController extends Controller
     /**
      * @Route("/profile/edit", name="profile_edit")
      */
-    public function editProfileAction(Request $request) {
+    public function editProfileAction(Request $request, UserManagerInterface $userManager) {
 
         $user = $this->getUser();
 
@@ -189,9 +189,7 @@ class ProfileController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $userManager = $this->getDoctrine()->getManagerForClass(User::class);
-            $userManager->persist($user);
-            $userManager->flush();
+            $userManager->updateUser($user);
 
             return $this->redirectToRoute('fos_user_profile_show');
         }

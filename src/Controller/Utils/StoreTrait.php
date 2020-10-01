@@ -3,7 +3,6 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Address;
-use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
@@ -13,6 +12,7 @@ use AppBundle\Form\AddressType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
+use FOS\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\Form\FormError;
@@ -42,7 +42,7 @@ trait StoreTrait
         ]);
     }
 
-    public function storeUsersAction($id, Request $request)
+    public function storeUsersAction($id, Request $request, UserManagerInterface $userManager)
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
 
@@ -60,7 +60,7 @@ trait StoreTrait
             // FIXME Association should be inversed
             $user->addStore($store);
 
-            $this->getDoctrine()->getManagerForClass(User::class)->flush();
+            $userManager->updateUser($user);
 
             return $this->redirectToRoute('admin_store_users', ['id' => $id]);
         }
