@@ -163,7 +163,7 @@ class CheckoutAddressType extends AbstractType
                     // Use a JWT as the "state" parameter
                     $state = $this->jwtEncoder->encode([
                         'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-                        'sub' => $this->iriConverter->getIriFromItem($customer),
+                        'sub' => $this->iriConverter->getIriFromItem($customer->getUser()),
                         // Custom claims
                         LoopEatClient::JWT_CLAIM_SUCCESS_REDIRECT =>
                             $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
@@ -180,7 +180,7 @@ class CheckoutAddressType extends AbstractType
                             'data-loopeat' => "true",
                             'data-loopeat-credentials' => var_export($customer->getUser()->hasLoopEatCredentials(), true),
                             'data-loopeat-authorize-url' => $this->loopeatClient->getOAuthAuthorizeUrl([
-                                'login_hint' => $customer->getEmail(),
+                                'login_hint' => $customer->getUser()->getEmailCanonical(),
                                 'state' => $state,
                             ])
                         ],
