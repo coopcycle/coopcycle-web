@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\TimeSlot;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
@@ -40,6 +41,17 @@ class EmbedSettingsType extends AbstractType
                 'choice_label' => 'name',
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('ts')->orderBy('ts.name', 'ASC');
+                }
+            ))
+            ->add('packageSet', EntityType::class, array(
+                'mapped' => false,
+                'required' => false,
+                'placeholder' => 'form.store_type.package_set.placeholder',
+                'label' => 'form.store_type.package_set.label',
+                'class' => PackageSet::class,
+                'choice_label' => 'name',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('ps')->orderBy('ps.name', 'ASC');
                 }
             ))
             ->add('withVehicle', CheckboxType::class, [

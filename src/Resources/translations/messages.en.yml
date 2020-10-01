@@ -401,6 +401,7 @@ form.store_type.defaultAddress.label: Default Address
 form.store_type.time_slot.label: Time slot
 form.store_type.time_slot.placeholder: Choose a time slot
 form.store_type.package_set.label: Package set
+form.store_type.package_set.placeholder: Choose a package set
 form.store_type.weight_required.label: Require input of weight
 form.store_type.packages_required.label: Require input of packages
 form.delivery.vehicle.placeholder: Choose a vehicle type
