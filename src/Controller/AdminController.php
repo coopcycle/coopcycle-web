@@ -1111,8 +1111,10 @@ class AdminController extends Controller
     public function embedAction(Request $request, SettingsManager $settingsManager)
     {
         $pricingRuleSet = null;
+        $timeSlot = null;
 
         $pricingRuleSetId = $settingsManager->get('embed.delivery.pricingRuleSet');
+        $timeSlotId = $settingsManager->get('embed.delivery.timeSlot');
         $withVehicle = $settingsManager->getBoolean('embed.delivery.withVehicle');
         $withWeight = $settingsManager->getBoolean('embed.delivery.withWeight');
 
@@ -1122,8 +1124,16 @@ class AdminController extends Controller
                 ->find($pricingRuleSetId);
         }
 
+        if ($timeSlotId) {
+            $timeSlot = $this->getDoctrine()
+                ->getRepository(TimeSlot::class)
+                ->find($timeSlotId);
+        }
+
         $form = $this->createForm(EmbedSettingsType::class);
+
         $form->get('pricingRuleSet')->setData($pricingRuleSet);
+        $form->get('timeSlot')->setData($timeSlot);
         $form->get('withVehicle')->setData($withVehicle);
         $form->get('withWeight')->setData($withWeight);
 
@@ -1131,10 +1141,12 @@ class AdminController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             $pricingRuleSet = $form->get('pricingRuleSet')->getData();
+            $timeSlot = $form->get('timeSlot')->getData();
             $withVehicle = $form->get('withVehicle')->getData();
             $withWeight = $form->get('withWeight')->getData();
 
             $settingsManager->set('embed.delivery.pricingRuleSet', $pricingRuleSet ? $pricingRuleSet->getId() : null, 'embed');
+            $settingsManager->set('embed.delivery.timeSlot', $timeSlot ? $timeSlot->getId() : null, 'embed');
             $settingsManager->set('embed.delivery.withVehicle', $withVehicle ? 'yes' : 'no', 'embed');
             $settingsManager->set('embed.delivery.withWeight', $withWeight ? 'yes' : 'no', 'embed');
             $settingsManager->flush();

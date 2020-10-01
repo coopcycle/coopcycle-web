@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\TimeSlot;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -28,6 +29,17 @@ class EmbedSettingsType extends AbstractType
                 'choice_label' => 'name',
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('prs')->orderBy('prs.name', 'ASC');
+                }
+            ))
+            ->add('timeSlot', EntityType::class, array(
+                'mapped' => false,
+                'required' => false,
+                'placeholder' => 'form.store_type.time_slot.placeholder',
+                'label' => 'form.store_type.time_slot.label',
+                'class' => TimeSlot::class,
+                'choice_label' => 'name',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('ts')->orderBy('ts.name', 'ASC');
                 }
             ))
             ->add('withVehicle', CheckboxType::class, [
