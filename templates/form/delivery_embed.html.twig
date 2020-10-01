@@ -18,6 +18,10 @@
     {{ form_row(form.parent.weight) }}
   {% endif %}
 
+  {% if form.vars.value.type == 'PICKUP' and form.parent.packages is defined %}
+    {{ form_row(form.parent.packages) }}
+  {% endif %}
+
   {{ form_row(form.address.newAddress.description) }}
 
   {{ form_widget(form.type) }}

@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
@@ -123,43 +124,7 @@ class DeliveryType extends AbstractType
                 'with_doorstep' => $options['with_dropoff_doorstep'],
             ]);
 
-            if (null === $store) {
-                return;
-            }
-
-            if (null !== $store->getPackageSet()) {
-
-                $packageSet = $store->getPackageSet();
-
-                $data = [];
-
-                if ($delivery->hasPackages()) {
-                    foreach ($delivery->getPackages() as $deliveryPackage) {
-                        $pwq = new PackageWithQuantity($deliveryPackage->getPackage());
-                        $pwq->setQuantity($deliveryPackage->getQuantity());
-                        $data[] = $pwq;
-                    }
-                }
-
-                $form->add('packages', CollectionType::class, [
-                    'entry_type' => PackageWithQuantityType::class,
-                    'entry_options' => [
-                        'label' => false,
-                        'package_set' => $packageSet
-                    ],
-                    'label' => 'form.delivery.packages.label',
-                    'mapped' => false,
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'attr' => [
-                        'data-packages-required' => var_export($store->isPackagesRequired(), true),
-                    ]
-                ]);
-
-                $form->get('packages')->setData($data);
-            }
-
-            if ($form->has('weight') && $store->isWeightRequired()) {
+            if ($form->has('weight') && null !== $store && $store->isWeightRequired()) {
 
                 $config = $form->get('weight')->getConfig();
                 $options = $config->getOptions();
@@ -202,6 +167,46 @@ class DeliveryType extends AbstractType
             $form->get('dropoff')->remove('doneAfter');
             $form->get('dropoff')->remove('doneBefore');
             $form->get('dropoff')->add('timeSlot', TimeSlotChoiceType::class, $dropoffTimeSlotOptions);
+        });
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+
+            $form = $event->getForm();
+            $delivery = $event->getData();
+
+            if (!$packageSet = $this->getPackageSet($options, $delivery->getStore())) {
+                return;
+            }
+
+            $data = [];
+
+            if ($delivery->hasPackages()) {
+                foreach ($delivery->getPackages() as $deliveryPackage) {
+                    $pwq = new PackageWithQuantity($deliveryPackage->getPackage());
+                    $pwq->setQuantity($deliveryPackage->getQuantity());
+                    $data[] = $pwq;
+                }
+            }
+
+            $store = $delivery->getStore();
+            $isPackagesRequired = null !== $store ? $store->isPackagesRequired() : true;
+
+            $form->add('packages', CollectionType::class, [
+                'entry_type' => PackageWithQuantityType::class,
+                'entry_options' => [
+                    'label' => false,
+                    'package_set' => $packageSet
+                ],
+                'label' => 'form.delivery.packages.label',
+                'mapped' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'attr' => [
+                    'data-packages-required' => var_export($isPackagesRequired, true),
+                ]
+            ]);
+
+            $form->get('packages')->setData($data);
         });
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
@@ -267,6 +272,24 @@ class DeliveryType extends AbstractType
         return null;
     }
 
+    /**
+     * @return PackageSet|null
+     */
+    private function getPackageSet(array $options, ?Store $store = null): ?PackageSet
+    {
+        if (null !== $options['with_package_set']) {
+
+            return $options['with_package_set'];
+        }
+
+        if ($store) {
+
+            return $store->getPackageSet();
+        }
+
+        return null;
+    }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
@@ -277,9 +300,11 @@ class DeliveryType extends AbstractType
             'with_dropoff_recipient_details' => false,
             'with_dropoff_doorstep' => false,
             'with_time_slot' => null,
+            'with_package_set' => null,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);
+        $resolver->setAllowedTypes('with_package_set', ['null', PackageSet::class]);
     }
 
     private function getVehicleChoices()

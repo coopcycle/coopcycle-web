@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\SettingsManager;
@@ -53,6 +54,14 @@ class DeliveryEmbedType extends DeliveryType
             $timeSlot = $this->entityManager->getRepository(TimeSlot::class)->find($timeSlotId);
             if ($timeSlot) {
                 $options['with_time_slot'] = $timeSlot;
+            }
+        }
+
+        $packageSetId = $this->settingsManager->get('embed.delivery.packageSet');
+        if ($packageSetId) {
+            $packageSet = $this->entityManager->getRepository(PackageSet::class)->find($packageSetId);
+            if ($packageSet) {
+                $options['with_package_set'] = $packageSet;
             }
         }
 
