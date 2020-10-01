@@ -1,0 +1,19 @@
+.delivery__form__packages {
+  &__list-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    &-quantity {
+      flex: 1;
+    }
+    &-multiply {
+      padding: 0 15px;
+    }
+    &-package {
+      flex: 3;
+    }
+    &-delete {
+      margin-left: 15px;
+    }
+  }
+}

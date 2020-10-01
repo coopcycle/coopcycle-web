@@ -6,10 +6,20 @@
 
   {{ form_row(form.address) }}
 
-  {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
+  {% if form.doneBefore is defined %}
+    {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
+  {% endif %}
+
+  {% if form.timeSlot is defined %}
+    {{ form_row(form.timeSlot) }}
+  {% endif %}
 
   {% if form.vars.value.type == 'PICKUP' and form.parent.weight is defined %}
     {{ form_row(form.parent.weight) }}
+  {% endif %}
+
+  {% if form.vars.value.type == 'PICKUP' and form.parent.packages is defined %}
+    {{ form_row(form.parent.packages) }}
   {% endif %}
 
   {{ form_row(form.address.newAddress.description) }}
