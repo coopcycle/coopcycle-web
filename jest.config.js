@@ -163,6 +163,8 @@ module.exports = {
   // transform: null,
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
+  // all files inside node_modules are not transformed by default,
+  // you may use transformIgnorePatterns to allow transpiling such modules
   transformIgnorePatterns: [
     // "node_modules/(?!(react-native|my-project|react-native-button)/)"
     "node_modules/(?!(coopcycle-frontend-js)/)"
