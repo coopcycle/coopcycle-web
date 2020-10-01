@@ -16,6 +16,7 @@ import CourierSelect from './CourierSelect'
 import { timePickerProps } from '../../utils/antd'
 
 import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
+import { selectSelectedDate } from 'coopcycle-frontend-js/dispatch/redux'
 
 const itemColor = event => {
   switch (event.name) {
@@ -545,7 +546,7 @@ function mapStateToProps (state) {
     completeTaskErrorMessage: state.completeTaskErrorMessage,
     country,
     phoneNumberExample: phoneNumber.formatNational(),
-    date: state.date,
+    date: selectSelectedDate(state),
     isTaskTypeEditable: isTaskTypeEditable(state.currentTask),
     isLoadingEvents: state.isLoadingTaskEvents,
     events,

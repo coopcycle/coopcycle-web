@@ -12,6 +12,9 @@ const CANCEL_MULTI = 'CANCEL_MULTI'
 const MOVE_TO_TOP = 'MOVE_TO_TOP'
 const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
 
+import { selectUnassignedTasks } from 'coopcycle-frontend-js/dispatch/redux'
+
+
 function _unassign(tasksToUnassign, removeTasks) {
   const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo)
   _.forEach(tasksByUsername, (tasks, username) => removeTasks(username, tasks))
@@ -99,12 +102,12 @@ function mapStateToProps(state) {
 
   const tasksToUnassign =
       _.filter(state.selectedTasks, selectedTask =>
-        !_.find(state.unassignedTasks, unassignedTask => unassignedTask['@id'] === selectedTask['@id']))
+        !_.find(selectUnassignedTasks(state), unassignedTask => unassignedTask['@id'] === selectedTask['@id']))
 
   const containsOnlyUnassignedTasks = !_.find(state.selectedTasks, t => t.isAssigned)
 
   return {
-    unassignedTasks: state.unassignedTasks,
+    unassignedTasks: selectUnassignedTasks(state),
     selectedTasks: state.selectedTasks,
     tasksToUnassign,
     containsOnlyUnassignedTasks,

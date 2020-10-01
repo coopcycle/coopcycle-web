@@ -86,7 +86,7 @@ export const socketIO = ({ dispatch, getState }) => {
 }
 
 function getKey(state) {
-  return state.date.format('YYYY-MM-DD')
+  return state.dispatch.date.format('YYYY-MM-DD')
 }
 
 export const persistFilters = ({ getState }) => (next) => (action) => {

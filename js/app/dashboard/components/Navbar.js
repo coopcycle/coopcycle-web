@@ -7,6 +7,7 @@ import _ from 'lodash'
 
 import { antdLocale } from '../../i18n'
 import { openFiltersModal, resetFilters, openSettings, openImportModal } from '../redux/actions'
+import { selectSelectedDate } from 'coopcycle-frontend-js/dispatch/redux'
 
 class Navbar extends React.Component {
 
@@ -156,15 +157,16 @@ class Navbar extends React.Component {
 }
 
 function mapStateToProps(state) {
+  let selectedDate = selectSelectedDate(state)
 
   return {
-    date: state.date,
+    date: selectedDate,
     prev: window.Routing.generate('admin_dashboard_fullscreen', {
-      date: moment(state.date).subtract(1, 'days').format('YYYY-MM-DD'),
+      date: moment(selectedDate).subtract(1, 'days').format('YYYY-MM-DD'),
       nav: state.nav
     }),
     next: window.Routing.generate('admin_dashboard_fullscreen', {
-      date: moment(state.date).add(1, 'days').format('YYYY-MM-DD'),
+      date: moment(selectedDate).add(1, 'days').format('YYYY-MM-DD'),
       nav: state.nav
     }),
     imports: state.imports,

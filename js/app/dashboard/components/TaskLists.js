@@ -8,6 +8,8 @@ import { addTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, clo
 import CourierSelect from './CourierSelect'
 import TaskList from './TaskList'
 
+import { selectTaskLists } from 'coopcycle-frontend-js/dispatch/redux'
+
 class TaskLists extends React.Component {
 
   constructor(props) {
@@ -107,8 +109,8 @@ function mapStateToProps (state) {
 
   return {
     addModalIsOpen: state.addModalIsOpen,
-    taskLists: state.taskLists,
-    taskListsLoading: state.taskListsLoading,
+    taskLists: selectTaskLists(state),
+    taskListsLoading: state.dispatch.taskListsLoading,
     taskModalIsOpen: state.taskModalIsOpen,
   }
 }

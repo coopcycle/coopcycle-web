@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import axios from 'axios'
 import { taskComparator, withoutTasks, withLinkedTasks } from './utils'
+import { selectSelectedDate, selectTaskLists, selectAllTasks } from 'coopcycle-frontend-js/dispatch/redux'
 
 function createClient(dispatch) {
 
@@ -136,7 +137,10 @@ export function assignAfter(username, task, after) {
 
   return function(dispatch, getState) {
 
-    const { allTasks, taskLists } = getState()
+    let state = getState()
+    let allTasks = selectAllTasks(state)
+    let taskLists = selectTaskLists(state)
+
     const taskList = _.find(taskLists, taskList => taskList.username === username)
     const taskIndex = _.findIndex(taskList.items, t => taskComparator(t, after))
 
@@ -162,7 +166,10 @@ function removeTasks(username, tasks) {
       return
     }
 
-    const { allTasks, taskLists } = getState()
+    let state = getState()
+    let allTasks = selectAllTasks(state)
+    let taskLists = selectTaskLists(state)
+
     const taskList = _.find(taskLists, taskList => taskList.username === username)
 
     dispatch(modifyTaskList(username, withoutTasks(taskList.items, withLinkedTasks(tasks, allTasks))))
@@ -218,7 +225,9 @@ function modifyTaskList(username, tasks) {
 
   return function(dispatch, getState) {
 
-    const { date, allTasks } = getState()
+    let state = getState()
+    let allTasks = selectAllTasks(state)
+    let date = selectSelectedDate(state)
 
     const url = window.Routing.generate('admin_task_list_modify', {
       date: date.format('YYYY-MM-DD'),
@@ -291,7 +300,8 @@ function addTaskList(username) {
 
   return function(dispatch, getState) {
 
-    const { date } = getState()
+    let state = getState()
+    let date = selectSelectedDate(state)
 
     const url = window.Routing.generate('admin_task_list_create', {
       date: date.format('YYYY-MM-DD'),
@@ -318,7 +328,9 @@ function moveToTop(task) {
 
   return function(dispatch, getState) {
 
-    const { taskLists } = getState()
+    let state = getState()
+    let taskLists = selectTaskLists(state)
+
     const taskList = _.find(taskLists, taskList => taskList.username === task.assignedTo)
 
     if (taskList) {
@@ -333,7 +345,9 @@ function moveToBottom(task) {
 
   return function(dispatch, getState) {
 
-    const { taskLists } = getState()
+    let state = getState()
+    let taskLists = selectTaskLists(state)
+
     const taskList = _.find(taskLists, taskList => taskList.username === task.assignedTo)
 
     if (taskList) {

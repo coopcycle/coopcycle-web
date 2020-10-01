@@ -1,25 +1,7 @@
 import { createSelector } from 'reselect'
-import Moment from 'moment'
-import { extendMoment } from 'moment-range'
-import { integerToColor, groupLinkedTasks } from './utils'
-import { filter, forEach, includes, intersectionWith, isEqual, mapValues } from 'lodash'
-
-const moment = extendMoment(Moment)
-
-function flattenTaskLists(taskLists) {
-  const tasks = []
-  forEach(taskLists, taskList => taskList.items.forEach(task => tasks.push(task)))
-
-  return tasks
-}
-
-export const selectTasks = createSelector(
-  state => state.unassignedTasks,
-  state => flattenTaskLists(state.taskLists),
-  (unassignedTasks, assignedTasks) => {
-    return unassignedTasks.slice(0).concat(assignedTasks)
-  }
-)
+import { moment } from 'coopcycle-frontend-js'
+import { selectTaskLists } from 'coopcycle-frontend-js/dispatch/redux'
+import { filter, includes, intersectionWith, isEqual } from 'lodash'
 
 export const selectFilteredTasks = createSelector(
   state => state.tasks,
@@ -39,14 +21,8 @@ export const selectFilteredTasks = createSelector(
 )
 
 export const selectBookedUsernames = createSelector(
-  state => state.taskLists,
+  selectTaskLists,
   taskLists => taskLists.map(taskList => taskList.username)
-)
-
-export const selectTasksWithColor = createSelector(
-  state => state.allTasks,
-  allTasks =>
-    mapValues(groupLinkedTasks(allTasks), taskIds => integerToColor(taskIds.reduce((accumulator, value) => accumulator + value)))
 )
 
 export const selectIsVisibleTask = createSelector(

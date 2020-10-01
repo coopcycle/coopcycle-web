@@ -10,6 +10,7 @@ import Task from './Task'
 import TaskListPopoverContent from './TaskListPopoverContent'
 import { removeTasks, modifyTaskList, togglePolyline } from '../redux/actions'
 import { selectFilteredTasks } from '../redux/selectors'
+import { selectSelectedDate, selectAllTasks } from 'coopcycle-frontend-js/dispatch/redux'
 
 moment.locale($('html').attr('lang'))
 
@@ -183,14 +184,14 @@ function mapStateToProps(state, ownProps) {
   const tasksFiltered = selectFilteredTasks({
     tasks: ownProps.items,
     filters: state.filters,
-    date: state.date,
+    date: selectSelectedDate(state),
   })
 
   // console.log(`Showing ${tasksFiltered.length} of ${ownProps.items.length}`)
 
   return {
     polylineEnabled: state.polylineEnabled[ownProps.username],
-    allTasks: state.allTasks,
+    allTasks: selectAllTasks(state),
     tasks: ownProps.items,
     isEmpty: ownProps.items.length === 0 || tasksFiltered.length === 0,
     distance: ownProps.distance,

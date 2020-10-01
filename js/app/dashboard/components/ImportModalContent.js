@@ -10,6 +10,7 @@ Dropzone.autoDiscover = false
 import "dropzone/dist/dropzone.css"
 
 import { closeImportModal, addImport } from '../redux/actions'
+import { selectSelectedDate } from 'coopcycle-frontend-js/dispatch/redux'
 
 const mimeTypes = [
   'application/vnd.oasis.opendocument.spreadsheet',
@@ -90,7 +91,7 @@ const ImportModalContent = ({ addImport, closeImportModal, date, t, url, example
 function mapStateToProps(state) {
 
   return {
-    date: state.date,
+    date: selectSelectedDate(state),
     url: state.uploaderEndpoint,
     exampleUrl: state.exampleSpreadsheetUrl,
   }
