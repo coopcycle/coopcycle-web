@@ -19,7 +19,8 @@ final class Version20201001132956 extends AbstractMigration
         $stmt = $this->connection->prepare('SELECT '.
             'u.id AS user_id, u.email AS user_email, u.email_canonical AS user_email_canonical, '.
             'c.id customer_id, c.email AS customer_email, c.email_canonical AS customer_email_canonical '.
-            'FROM api_user u JOIN sylius_customer c ON u.customer_id = c.id');
+            'FROM api_user u JOIN sylius_customer c ON u.customer_id = c.id '.
+            'WHERE u.email != c.email OR u.email_canonical != c.email_canonical');
 
         $stmt->execute();
         while ($data = $stmt->fetch()) {
