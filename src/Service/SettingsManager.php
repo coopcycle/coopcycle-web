@@ -188,7 +188,7 @@ class SettingsManager
     {
         try {
             $mercadopagoTestPublishableKey = $this->craueConfig->get('mercadopago_test_publishable_key');
-            $mercadopagoTestSecretKey = $this->craueConfig->get('mercadopago_test_secret_key');
+            $mercadopagoTestSecretKey = $this->craueConfig->get('mercadopago_test_access_token');
 
             return !empty($mercadopagoTestPublishableKey) && !empty($mercadopagoTestSecretKey);
 
@@ -201,7 +201,7 @@ class SettingsManager
     {
         try {
             $mercadopagoLivePublishableKey = $this->craueConfig->get('mercadopago_live_publishable_key');
-            $mercadopagoLiveSecretKey = $this->craueConfig->get('mercadopago_live_secret_key');
+            $mercadopagoLiveSecretKey = $this->craueConfig->get('mercadopago_live_access_token');
 
             return !empty($mercadopagoLivePublishableKey) && !empty($mercadopagoLiveSecretKey);
 
