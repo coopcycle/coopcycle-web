@@ -8,6 +8,5 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="text"/>
-    <many-to-many field="users" mapped-by="organizations" target-entity="ApiUser"/>
   </entity>
 </doctrine-mapping>

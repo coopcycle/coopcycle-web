@@ -2,21 +2,21 @@
 
 namespace AppBundle\Entity;
 
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumber;
+use libphonenumber\PhoneNumberUtil;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Action\Me as MeController;
 use AppBundle\Api\Filter\UserRoleFilter;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Product\ProductInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 use FOS\UserBundle\Model\User as BaseUser;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
-use libphonenumber\PhoneNumber;
-use libphonenumber\PhoneNumberFormat;
-use libphonenumber\PhoneNumberUtil;
-use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -98,8 +98,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     private $mercadopagoAccounts;
 
-    private $organizations;
-
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
@@ -107,29 +105,8 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
         $this->stripeAccounts = new ArrayCollection();
         $this->remotePushTokens = new ArrayCollection();
         $this->mercadopagoAccounts = new ArrayCollection();
-        $this->organizations = new ArrayCollection();
 
         parent::__construct();
-    }
-
-    public function addOrganization(Organization $organization)
-    {
-        if ($this->organizations->contains($organization)) {
-            return;
-        }
-        $organization->addUser($this);
-        $this->organizations->add($organization);
-
-    }
-
-    public function getOrganizations()
-    {
-        return $this->organizations;
-    }
-
-    public function isInOrganization()
-    {
-        return $this->organizations->count() > 0;
     }
 
     /**
