@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LoopEatController extends AbstractController
 {
@@ -91,7 +92,8 @@ class LoopEatController extends AbstractController
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         UserManagerInterface $userManager,
-        EntityManagerInterface $objectManager)
+        EntityManagerInterface $objectManager,
+        TranslatorInterface $translator)
     {
         if (!$request->query->has('state')) {
             throw $this->createAccessDeniedException();
@@ -143,7 +145,7 @@ class LoopEatController extends AbstractController
             $objectManager->flush();
         }
 
-        $this->addFlash('notice', 'LoopEat account connected successfully!');
+        $this->addFlash('notice', $translator->trans('loopeat.oauth_connect.success'));
 
         return $this->redirect($this->getSuccessRedirect($payload));
     }

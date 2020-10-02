@@ -1028,3 +1028,4 @@ refund.list.refunded_at: Remboursé à
 refund.list.liable_party: Partie responsable
 refund.list.amount: Montant du remboursement
 refund.list.comments: Commentaires
+loopeat.oauth_connect.success: Votre compte LoopEat est connecté !
