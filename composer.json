@@ -119,7 +119,7 @@
         "behat/mink-extension": "^2.2",
         "behat/mink-browserkit-driver": "^1.3.1",
         "behatch/contexts": "^3.3",
-        "coduo/php-matcher": "^4.0",
+        "coduo/php-matcher": "^5.0",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-symfony": "^0.12",
         "phpspec/prophecy-phpunit": "^2.0",
