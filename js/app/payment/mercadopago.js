@@ -103,11 +103,11 @@ const MercadoPagoForm = ({ amount, onChange }) => {
 export default ({ onChange }) => ({
   init(form) {
     this.form = form
-    const { country, countriesWithIdentificationTypes, publishableKey } = this.config.gatewayConfig
+    const { country, publishableKey } = this.config.gatewayConfig
 
     Mercadopago.setPublishableKey(publishableKey)
 
-    if (countriesWithIdentificationTypes.includes(country)) {
+    if (country !== 'mx') {
       Mercadopago.getIdentificationTypes()
     }
   },

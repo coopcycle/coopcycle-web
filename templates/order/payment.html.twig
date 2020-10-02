@@ -137,10 +137,7 @@
       },
       mercadopago: {
         publishableKey: "{{ coopcycle_setting('mercadopago_publishable_key') }}",
-        country: '{{ country }}',
-        // FIXME
-        // Probably the gateway resolver could return a configuration object with this information - @sgobotta
-        countriesWithIdentificationTypes: ['ar']
+        country: "{{ country }}"
       }
     },
     tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
