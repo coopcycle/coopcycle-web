@@ -51,7 +51,8 @@ class CheckoutAddressType extends AbstractType
         IriConverterInterface $iriConverter,
         OrderProcessorInterface $orderProcessor,
         LoopEatContext $loopeatContext,
-        string $country)
+        string $country,
+        string $loopeatOAuthFlow)
     {
         $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
@@ -64,6 +65,7 @@ class CheckoutAddressType extends AbstractType
         $this->orderProcessor = $orderProcessor;
         $this->loopeatContext = $loopeatContext;
         $this->country = strtoupper($country);
+        $this->loopeatOAuthFlow = $loopeatOAuthFlow;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -182,7 +184,8 @@ class CheckoutAddressType extends AbstractType
                             'data-loopeat-authorize-url' => $this->loopeatClient->getOAuthAuthorizeUrl([
                                 'login_hint' => $customer->getUser()->getEmailCanonical(),
                                 'state' => $state,
-                            ])
+                            ]),
+                            'data-loopeat-oauth-flow' => $this->loopeatOAuthFlow,
                         ],
                     ]);
                     $form->add('reusablePackagingPledgeReturn', NumberType::class, [

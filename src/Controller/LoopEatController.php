@@ -11,6 +11,8 @@ use FOS\UserBundle\Model\UserManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Psr\Log\LoggerInterface;
+use Sylius\Component\Order\Context\CartContextInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -23,11 +25,13 @@ class LoopEatController extends AbstractController
         string $loopeatBaseUrl,
         string $loopeatClientId,
         string $loopeatClientSecret,
+        string $loopeatOAuthFlow,
         LoggerInterface $logger)
     {
         $this->loopeatBaseUrl = $loopeatBaseUrl;
         $this->loopeatClientId = $loopeatClientId;
         $this->loopeatClientSecret = $loopeatClientSecret;
+        $this->loopeatOAuthFlow = $loopeatOAuthFlow;
         $this->logger = $logger;
     }
 
@@ -153,9 +157,29 @@ class LoopEatController extends AbstractController
     /**
      * @Route("/loopeat/success", name="loopeat_success")
      */
-    public function successAction(Request $request)
+    public function successAction(Request $request,
+        CartContextInterface $cartContext,
+        OrderProcessorInterface $orderProcessor,
+        EntityManagerInterface $objectManager)
     {
-        return $this->render('loopeat/post_message.html.twig', ['loopeat_success' => true]);
+        if ('iframe' === $this->loopeatOAuthFlow) {
+            return $this->render('loopeat/post_message.html.twig', ['loopeat_success' => true]);
+        }
+
+        $cart = $cartContext->getCart();
+
+        if (null === $cart) {
+
+            return $this->redirectToRoute('homepage');
+        }
+
+        $cart->setReusablePackagingEnabled(true);
+
+        $orderProcessor->process($cart);
+
+        $objectManager->flush();
+
+        return $this->redirectToRoute('order');
     }
 
     /**
@@ -163,6 +187,10 @@ class LoopEatController extends AbstractController
      */
     public function failureAction(Request $request)
     {
-        return $this->render('loopeat/post_message.html.twig', ['loopeat_success' => false]);
+        if ('iframe' === $this->loopeatOAuthFlow) {
+            return $this->render('loopeat/post_message.html.twig', ['loopeat_success' => false]);
+        }
+
+        return $this->redirectToRoute('order');
     }
 }

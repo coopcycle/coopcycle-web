@@ -124,6 +124,7 @@ services:
   AppBundle\Form\Checkout\CheckoutAddressType:
     arguments:
       $country: '%country_iso%'
+      $loopeatOAuthFlow: '%env(LOOPEAT_OAUTH_FLOW)%'
     tags: [ form.type ]
 
   AppBundle\Form\ApiAppType:
