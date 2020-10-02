@@ -109,6 +109,7 @@
     "react-i18next": "^10.12.5",
     "react-markdown": "^4.3.1",
     "react-modal": "^3.10.1",
+    "react-payment-inputs": "^1.1.7",
     "react-phone-number-input": "^2.5.3",
     "react-redux": "^7.2.1",
     "react-select": "^3.1.0",
@@ -123,6 +124,7 @@
     "sass-loader": "^9.0.1",
     "sortablejs": "^1.10.1",
     "store": "^2.0.12",
+    "styled-components": "^5.2.0",
     "x-data-spreadsheet": "^1.1.7"
   }
 }

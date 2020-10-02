@@ -249,6 +249,7 @@ stores.settings: Impostazioni
 task.form.finish.FAIL.info: Il compito non può essere completato
 task.status.todo: Da svolgere
 form.local_business.stripe_account.title: Account stripe
+form.local_business.mercadopago_account.title: Account MercadoPago
 meta.title: Piattaforme di consegne per lavoratori indipendenti
 form.task.status.label: Stato
 form.menu_editor.products.help: Per aggiungere prodotti all'elenco a destra, aggiungili

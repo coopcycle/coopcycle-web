@@ -550,6 +550,7 @@ form.local_business.stripe_account.link_ok: "Este restaurante está conectado a 
   \ conta Stripe e pode receber pagamentos pela plataforma.<br>\nPara gerenciar sua\
   \ conta Stripe e as transferências para sua conta, por favor use o <a href=\"https://dashboard.stripe.com/\"\
   \ target=\"_blank\">painel de controle Stripe</a>.\n"
+form.local_business.mercadopago_account.title: Conta MercadoPago
 form.menu_item.name.label: Nome
 form.menu_item.price.label: Preço
 form.menu_item_modifier.name.label: Nome

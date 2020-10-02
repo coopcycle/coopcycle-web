@@ -299,6 +299,10 @@ order.total_tax: VAT
 order.total_tax_by_rate: Total %name%
 order.preparation_expected_at: Preparation expected at %date%
 order.shipping_date.title: Your shipping date
+order.payer.title: Buyer information
+order.payer.email: E-mail
+order.payer.identificationType: ID type
+order.payer.identificationNumber: Identification number
 order.payment.title: Your payment information
 order.payment.expiration.label: Expiration
 order.payment.month.label: Month
@@ -517,16 +521,6 @@ form.settings.enable_restaurant_pledges.label: Allow customers to suggest restau
 form.settings.company_logo.label: Company logo
 form.settings.company_logo.help: This logo will be used invoices & proofs of delivery
 form.settings.subject_to_vat.label: Subject to VAT
-form.settings.mercadopago.title: Mercado Pago
-form.settings.mercadopago.publishable_key.label: Publishable key
-form.settings.mercadopago.publishable_key.help: "Get the <a href=\"\
-  https://www.mercadopago.com.%country%/developers/panel/credentials\" target=\"_blank\">publishable key</a>"
-form.settings.mercadopago.access_token.label: Access token
-form.settings.mercadopago.access_token.help: "Get the <a href=\"\
-  https://www.mercadopago.com.%country%/developers/panel/credentials\" target=\"_blank\">access token</a>"
-form.settings.mercadopago.app_id.label: Application ID
-form.settings.mercadopago.app_id.help: You need to <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">create an application</a> to obtain your application ID.
-form.settings.mercadopago.redirect_uri.help: "When configuring your app, use the following redirect URI: <code>%redirect_uri%</code>"
 form.suggest.name.label: Name
 form.suggest.name.help: Please indicate the exact name so that we can find it
 form.suggest.submit.label: Suggest now
@@ -595,8 +589,10 @@ form.local_business.stripe_account.link_ok: "This restaurant is linked to a Stri
   \ account and can receive payments from the platform.<br>\nTo manage your Stripe\
   \ account and the transfers to your account, please use the <a href=\"https://dashboard.stripe.com/\"\
   \ target=\"_blank\">Stripe dashboard</a>.\n"
-form.local_business.mercadopago.connect_button.text: Connect with Mercado Pago
+form.settings.mercadopago.title: Mercado Pago
 form.local_business.mercadopago_account.title: MercadoPago Account
+form.local_business.mercadopago_account.success: MercadoPago account successfully connected
+form.local_business.mercadopago.connect_button.text: Connect with Mercado Pago
 form.mercadopago_livemode.enable.label: Use Mercadopago in « live » mode
 form.mercadopago_livemode.enable.alert: In « live » mode, credit cards will be charged.
 form.mercadopago_livemode.disable.label: Use Mercadopago in « test » mode
@@ -605,6 +601,15 @@ form.mercadopago_livemode.disable_and_enable_maintenance.label: Switch to « tes
 form.mercadopago_livemode.disable_and_enable_maintenance.alert: You are in « live » mode.<br>If you switch to « test » mode, maintenance will be enabled automatically.
 form.settings.mercadopago_testmode.help: 'In « test » mode, you will have to use <a href="https://www.mercadopago.com.ar/developers/en/guides/online-payments/checkout-api/testing#bookmark_how_to_test_your_integration">test credit cards</a> numbers to pay on the platform. <strong>No money will be exchanged.</strong> '
 form.settings.mercadopago_enable_livemode.help: To enable « live » mode, you need to configure « live » keys first.
+form.settings.mercadopago.publishable_key.label: Publishable key
+form.settings.mercadopago.publishable_key.help: "Get the <a href=\"\
+  https://www.mercadopago.com.%country%/developers/panel/credentials\" target=\"_blank\">publishable key</a>"
+form.settings.mercadopago.access_token.label: Access token
+form.settings.mercadopago.access_token.help: "Get the <a href=\"\
+  https://www.mercadopago.com.%country%/developers/panel/credentials\" target=\"_blank\">access token</a>"
+form.settings.mercadopago.app_id.label: Application ID
+form.settings.mercadopago.app_id.help: You need to <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">create an application</a> to obtain your application ID.
+form.settings.mercadopago.redirect_uri.help: "When configuring your app, use the following redirect URI: <code>%redirect_uri%</code>"
 form.menu_item.name.label: Name
 form.menu_item.price.label: Price
 form.menu_item_modifier.name.label: Name

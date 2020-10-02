@@ -1,11 +1,15 @@
 {% extends "base.html.twig" %}
 
+{% set country = country_iso %}
+{% set gateway = payment_gateway_resolver.resolve() %}
+
 {% form_theme form 'form/order.html.twig' %}
 
 {% block banner %}
 {% endblock %}
 
 {% block body %}
+
 <div class="container container--full-height">
 
   {% if not order.empty %}
@@ -21,6 +25,34 @@
             {% include '_partials/order/items.html.twig' with { with_taxes: false, with_items: false } %}
           </div>
         </div>
+
+        {% if gateway == 'mercadopago' %}
+          <div class="form-group">
+            <h4 class="bg-light p-3 m-0">{{ 'order.payer.title'|trans }}</h4>
+            <div style="margin:10px">
+              <div>
+                <label for="email">{{ 'order.payer.email'|trans }}</label>
+                <input class="form-control" id="email" name="email" type="text" value="test@test.com" />
+              </div>
+              {#
+              In Mexico, we don't need identification documents
+              https://www.mercadopago.com.br/developers/en/guides/resources/localization/identification-types/
+              #}
+              {% if country != 'mx' %}
+                <div>
+                  <label for="docType">{{ 'order.payer.identificationType'|trans }}</label>
+                  <select class="form-control" id="docType" name="docType" data-checkout="docType" type="text"></select>
+                </div>
+                <div>
+                  <label for="docNumber">{{ 'order.payer.identificationNumber'|trans }}</label>
+                  <input class="form-control" id="docNumber" name="docNumber" data-checkout="docNumber" type="text"/>
+                </div>
+              {% endif %}
+
+            </div>
+          </div>
+        {% endif %}
+
         <div>
           <h4 class="bg-light p-3 m-0 mb-4">{% trans %}order.payment.title{% endtrans %}</h4>
           <div>
@@ -39,7 +71,7 @@
 
             {{ form_widget(form.stripePayment.stripeToken) }}
 
-            {{ form_row(form.stripePayment.cardholderName) }}
+            {{ form_row(form.stripePayment.cardholderName, { attr: {  'data-checkout': 'cardholderName' } }) }}
 
             <div class="form-group">
               <label class="control-label hidden" for="card-element">
@@ -91,10 +123,36 @@
 
 {% block scripts %}
 {% if not order.empty %}
+
+{% set gateway = payment_gateway_resolver.resolve() %}
+{% set gateway_configs = {} %}
+
+{% if gateway == 'stripe' %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+{% set gateway_configs = gateway_configs|merge({
+  stripe: {
+    publishableKey: coopcycle_setting('stripe_publishable_key')
+  }
+}) %}
+{% endif %}
+
+{% if gateway == 'mercadopago' %}
+<script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
+{% set gateway_configs = gateway_configs|merge({
+  mercadopago: {
+    publishableKey: coopcycle_setting('mercadopago_test_publishable_key'),
+    country: country
+  }
+}) %}
+{% endif %}
+
 <script type="text/javascript">
+  // FIXME
+  // 'StripePaymentForm' should be renamed to something more generic like GatewatPaymentForm - @sgobotta
   new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
-    publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
+    card: "{{ gateway }}",
+    amount: {{ order.total }},
+    gatewayConfigs: {{ gateway_configs|json_encode|raw }},
     tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
     cardholderNameElement: document.querySelector('#checkout_payment_stripePayment_cardholderName')
   });

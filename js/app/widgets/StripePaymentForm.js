@@ -8,6 +8,7 @@ import visa from 'payment-icons/min/flat/visa.svg'
 import giropay from '../../../assets/svg/giropay.svg'
 
 import stripe from '../payment/stripe'
+import mercadopago from '../payment/mercadopago'
 
 function disableBtn(btn) {
   btn.setAttribute('disabled', '')
@@ -63,6 +64,8 @@ export default function(form, options) {
 
   const submitButton = form.querySelector('input[type="submit"],button[type="submit"]')
 
+  const toggleButton = isValidForm => isValidForm ? enableBtn(submitButton) : disableBtn(submitButton)
+
   const methods = Array
     .from(form.querySelectorAll('input[name="checkout_payment[method]"]'))
     .map((el) => el.value)
@@ -72,14 +75,23 @@ export default function(form, options) {
   const gatewayForCard = options.card || 'stripe'
   const gatewayConfig = options.gatewayConfigs ? options.gatewayConfigs[gatewayForCard] : { publishableKey: options.publishableKey }
 
-  Object.assign(CreditCard.prototype, stripe)
+  switch (gatewayForCard) {
+    case 'mercadopago':
+      Object.assign(CreditCard.prototype, mercadopago({ onChange: toggleButton }))
+      break
+    case 'stripe':
+    default:
+      Object.assign(CreditCard.prototype, stripe)
+  }
 
   const cc = new CreditCard({
     gatewayConfig,
+    amount: options.amount,
     onChange: (event) => {
       if (event.error) {
         document.getElementById('card-errors').textContent = event.error.message
       } else {
+        event.complete && enableBtn(submitButton)
         document.getElementById('card-errors').textContent = ''
       }
     }
