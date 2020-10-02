@@ -141,6 +141,7 @@ twig:
         sentry_apm_enabled: "%env(bool:COOPCYCLE_SENTRY_APM_ENABLED)%"
         legacy_taxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
         payment_gateway_resolver: '@AppBundle\Payment\GatewayResolver'
+        context_channel: "@sylius.context.channel"
     exception_controller: null
 
 # Doctrine Configuration

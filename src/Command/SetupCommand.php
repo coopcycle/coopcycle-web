@@ -63,7 +63,8 @@ class SetupCommand extends Command
 
     private $channels = [
         'web' => 'Web',
-        'app' => 'App'
+        'app' => 'App',
+        'pro' => 'Pro'
     ];
 
     private $onDemandDeliveryProductNames = [

@@ -4,6 +4,7 @@ namespace AppBundle\Sylius\Cart;
 
 use AppBundle\Entity\LocalBusinessRepository;
 use Doctrine\ORM\EntityNotFoundException;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -22,6 +23,10 @@ final class RestaurantCartContext implements CartContextInterface
     private $restaurantRepository;
 
     private $sessionKeyName;
+    /**
+     * @var ChannelContextInterface
+     */
+    private ChannelContextInterface $channelContext;
 
     /**
      * @param SessionInterface $session
@@ -33,13 +38,15 @@ final class RestaurantCartContext implements CartContextInterface
         OrderRepositoryInterface $orderRepository,
         FactoryInterface $orderFactory,
         LocalBusinessRepository $restaurantRepository,
-        string $sessionKeyName)
+        string $sessionKeyName,
+        ChannelContextInterface $channelContext)
     {
         $this->session = $session;
         $this->orderRepository = $orderRepository;
         $this->orderFactory = $orderFactory;
         $this->restaurantRepository = $restaurantRepository;
         $this->sessionKeyName = $sessionKeyName;
+        $this->channelContext = $channelContext;
     }
 
     /**
@@ -57,7 +64,7 @@ final class RestaurantCartContext implements CartContextInterface
         if ($this->session->has($this->sessionKeyName)) {
             $cart = $this->orderRepository->findCartById($this->session->get($this->sessionKeyName));
 
-            if (null === $cart) {
+            if (null === $cart || $cart->getChannel()->getCode() !== $this->channelContext->getChannel()->getCode()) {
                 $this->session->remove($this->sessionKeyName);
             } else {
                 try {

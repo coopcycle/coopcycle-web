@@ -8,6 +8,21 @@
         {% trans %}navbar.myAccount{% endtrans %}
       </a>
     </li>
+
+    {% if is_granted('ROLE_PRO') %}
+      {% set queryParams = app.request.query.all %}
+      {% if context_channel.channel.code == 'pro' %}
+        {% set queryParams = queryParams|merge({change_channel: 'web'}) %}
+        {% set accountType = 'navbar.lambdaCart' %}
+      {% else %}
+        {% set queryParams = queryParams|merge({change_channel: 'pro'}) %}
+        {% set accountType = 'navbar.proCart' %}
+      {% endif %}
+      {% set currentPath = path(app.request.attributes.get('_route'),
+        app.request.attributes.get('_route_params')|merge(queryParams)) %}
+      <li><a href="{{ currentPath }}">{{ accountType|trans }}</a></li>
+    {% endif %}
+
     <li role="separator" class="divider"></li>
     <li><a href="{{ path('fos_user_security_logout') }}">{% trans from 'FOSUserBundle' %}layout.logout{% endtrans %}</a></li>
   </ul>
