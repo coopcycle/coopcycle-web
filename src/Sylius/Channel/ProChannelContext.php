@@ -23,7 +23,9 @@ class ProChannelContext implements ChannelContextInterface
      */
     private RequestStack $requestStack;
 
-    private const COOKIE_KEY = 'channel_cart';
+    public const QUERY_PARAM_NAME = 'change_channel';
+
+    public const COOKIE_KEY = 'channel_cart';
 
     public function __construct(ChannelRepositoryInterface $channelRepository, RequestStack $requestStack)
     {
@@ -35,7 +37,7 @@ class ProChannelContext implements ChannelContextInterface
     {
         $request = $this->getRequest();
 
-        $channelCode = $request->query->get('change_channel') ?: $request->cookies->get(self::COOKIE_KEY);
+        $channelCode = $request->query->get(self::QUERY_PARAM_NAME) ?: $request->cookies->get(self::COOKIE_KEY);
 
         if (null === $channelCode) {
             throw new ChannelNotFoundException();

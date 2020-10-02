@@ -1,8 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace AppBundle\EventListener;
 
+use AppBundle\Sylius\Channel\ProChannelContext;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
@@ -13,15 +15,17 @@ class ChangeChannelListener
         if (!$event->isMasterRequest()) {
             return;
         }
-        if (!$event->getRequest()->query->has('change_channel')) {
+
+        if (!$event->getRequest()->query->has(ProChannelContext::QUERY_PARAM_NAME)) {
             return;
         }
-        $response = $event->getResponse();
-        $newChannel = $event->getRequest()->query->get('change_channel');
+
+        $newChannel = $event->getRequest()->query->get(ProChannelContext::QUERY_PARAM_NAME);
         if (!in_array($newChannel, ['web', 'pro'])) {
             return;
         }
-        $response->headers->setCookie(new Cookie('channel_cart', $newChannel));
 
+        $response = $event->getResponse();
+        $response->headers->setCookie(new Cookie(ProChannelContext::COOKIE_KEY, $newChannel));
     }
 }
