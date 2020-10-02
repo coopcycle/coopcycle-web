@@ -10,6 +10,8 @@ use AppBundle\Sylius\Cart\RestaurantCartContext;
 use Doctrine\ORM\EntityNotFoundException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -32,13 +34,20 @@ class RestaurantCartContextTest extends TestCase
         $this->orderRepository = $this->prophesize(OrderRepositoryInterface::class);
         $this->orderFactory = $this->prophesize(OrderFactory::class);
         $this->restaurantRepository = $this->prophesize(LocalBusinessRepository::class);
+        $this->channelContext = $this->prophesize(ChannelContextInterface::class);
+
+        $this->webChannel = $this->prophesize(ChannelInterface::class);
+        $this->webChannel->getCode()->willReturn('web');
+
+        $this->channelContext->getChannel()->willReturn($this->webChannel->reveal());
 
         $this->context = new RestaurantCartContext(
             $this->session->reveal(),
             $this->orderRepository->reveal(),
             $this->orderFactory->reveal(),
             $this->restaurantRepository->reveal(),
-            $this->sessionKeyName
+            $this->sessionKeyName,
+            $this->channelContext->reveal()
         );
     }
 
@@ -109,6 +118,8 @@ class RestaurantCartContextTest extends TestCase
 
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getRestaurant()->willReturn($restaurant);
+        $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
+
         $expectedCart = $cartProphecy->reveal();
 
         $this->orderRepository
@@ -193,6 +204,7 @@ class RestaurantCartContextTest extends TestCase
 
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getRestaurant()->willReturn($restaurant);
+        $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
 
         $expectedCart = $cartProphecy->reveal();
 
