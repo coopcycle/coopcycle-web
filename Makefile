@@ -38,3 +38,9 @@ enable-xdebug:
 
 fresh:
 	@docker-compose down
+
+dev:
+	@docker-compose -f docker-compose.dev.yml up
+
+devd:
+	@docker-compose -f docker-compose.dev.yml up -d

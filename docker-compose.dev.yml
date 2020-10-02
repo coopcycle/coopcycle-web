@@ -3,7 +3,6 @@ version: '3'
 services:
 
   postgres:
-    restart: always
     image: mdillon/postgis:9.4-alpine
     environment:
       - POSTGRES_DB=${COOPCYCLE_DB_NAME}
@@ -13,7 +12,6 @@ services:
       - 'pg_data:/var/lib/postgresql/data'
 
   redis:
-    restart: always
     image: redis:5-alpine
     ports:
       - '6379:6379'
@@ -61,11 +59,8 @@ services:
       - postgres
       - redis
       - osrm
-      - stripe_mock
     links:
       - osrm
-      - stripe_mock
-      - browserless
     environment:
       - 'BEHAT_PARAMS={"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80"}}}'
       - GOOGLE_API_KEY
@@ -83,7 +78,6 @@ services:
       context: '.'
     depends_on:
       - php
-    restart: always
     environment:
       - GOOGLE_API_KEY
       - STRIPE_PUBLISHABLE_KEY
@@ -103,39 +97,6 @@ services:
       - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
       - './web:/var/www/html/web:ro'
       - './vendor:/var/www/html/vendor:ro'
-
-  nginx_test:
-    image: 'nginx:1.11-alpine'
-    depends_on:
-      - php
-      - nodejs
-    ports:
-      - '9080:80'
-    volumes:
-      - './docker/nginx_test/conf.d:/etc/nginx/conf.d:ro'
-      - './web:/var/www/html/web:ro'
-      - './vendor:/var/www/html/vendor:ro'
-
-  smtp:
-    image: namshi/smtp
-    ports:
-      - 25:25
-
-  stripe_mock:
-    image: stripemock/stripe-mock:v0.94.0
-    ports:
-      - '12111:12111'
-
-  browserless:
-    image: browserless/chrome
-    restart: always
-    environment:
-      - DEBUG=browserless/chrome*
-
-  mjml:
-    image: adrianrudnik/mjml-server
-    ports:
-      - 8889:80
 
   minio:
     image: minio/minio
@@ -162,26 +123,31 @@ services:
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc config host add coopcycle http://minio:9000 $S3_CREDENTIALS_KEY $S3_CREDENTIALS_SECRET;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/assets/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/products/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/receipts/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/restaurants/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/stores/;
-      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/tasks/;
-      /usr/bin/mc policy set public coopcycle/images/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/assets;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/products;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/receipts;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/restaurants;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/stores;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/tasks;
+      /usr/bin/mc policy set public coopcycle/images;
       "
 
   tile38:
     image: tile38/tile38
+  
+  mjml:
+    image: adrianrudnik/mjml-server
+    ports:
+      - 8889:80
 
   pgadmin:
-    image: fenglc/pgadmin4
+    image: dpage/pgadmin4
     environment:
-        - DEFAULT_USER=root
-        - DEFAULT_PASSWORD=changeMe
+        - PGADMIN_DEFAULT_EMAIL=root@coopcycle.org
+        - PGADMIN_DEFAULT_PASSWORD=changeMe
     ports:
-        - 5050:5050
+        - 5050:80
 
 volumes:
   node_modules:
