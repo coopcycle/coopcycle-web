@@ -34,8 +34,11 @@
                 <label for="email">{{ 'order.payer.email'|trans }}</label>
                 <input class="form-control" id="email" name="email" type="text" value="test@test.com" />
               </div>
-
-              {% if country == 'ar' %}
+              {#
+              In Mexico, we don't need identification documents
+              https://www.mercadopago.com.br/developers/en/guides/resources/localization/identification-types/
+              #}
+              {% if country != 'mx' %}
                 <div>
                   <label for="docType">{{ 'order.payer.identificationType'|trans }}</label>
                   <select class="form-control" id="docType" name="docType" data-checkout="docType" type="text"></select>
