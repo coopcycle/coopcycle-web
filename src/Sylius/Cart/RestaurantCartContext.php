@@ -39,8 +39,7 @@ final class RestaurantCartContext implements CartContextInterface
         FactoryInterface $orderFactory,
         LocalBusinessRepository $restaurantRepository,
         string $sessionKeyName,
-        ChannelContextInterface  $channelContext
-    )
+        ChannelContextInterface $channelContext)
     {
         $this->session = $session;
         $this->orderRepository = $orderRepository;
@@ -63,12 +62,9 @@ final class RestaurantCartContext implements CartContextInterface
         $cart = null;
 
         if ($this->session->has($this->sessionKeyName)) {
-
             $cart = $this->orderRepository->findCartById($this->session->get($this->sessionKeyName));
-            if ($cart->getChannel()->getCode() !== $this->channelContext->getChannel()->getCode()) {
-                $this->session->remove($this->sessionKeyName);
-            }
-            if (null === $cart) {
+
+            if (null === $cart || $cart->getChannel()->getCode() !== $this->channelContext->getChannel()->getCode()) {
                 $this->session->remove($this->sessionKeyName);
             } else {
                 try {
