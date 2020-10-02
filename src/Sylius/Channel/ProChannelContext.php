@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace AppBundle\Sylius\Channel;
@@ -22,7 +23,7 @@ class ProChannelContext implements ChannelContextInterface
      */
     private RequestStack $requestStack;
 
-    private const KEY_CHANNEL_CART = 'channel_cart';
+    private const COOKIE_KEY = 'channel_cart';
 
     public function __construct(ChannelRepositoryInterface $channelRepository, RequestStack $requestStack)
     {
@@ -34,7 +35,12 @@ class ProChannelContext implements ChannelContextInterface
     {
         $request = $this->getRequest();
 
-        $channelCode = $request->query->get('change_channel', $request->get(self::KEY_CHANNEL_CART, 'web'));
+        $channelCode = $request->query->get('change_channel') ?: $request->cookies->get(self::COOKIE_KEY);
+
+        if (null === $channelCode) {
+            throw new ChannelNotFoundException();
+        }
+
         if (!in_array($channelCode, ['web', 'pro'])) {
             throw new ChannelNotFoundException();
         }
@@ -45,7 +51,6 @@ class ProChannelContext implements ChannelContextInterface
         }
 
         return $channel;
-
     }
 
     private function getRequest(): Request
