@@ -193,7 +193,18 @@ class OrderController extends AbstractController
                 return $this->redirect($payment->getSourceRedirectUrl());
             }
 
-            $orderManager->checkout($order, $form->get('stripePayment')->get('stripeToken')->getData());
+            $data = [
+                'stripeToken' => $form->get('stripePayment')->get('stripeToken')->getData()
+            ];
+
+            if ($form->has('paymentMethod')) {
+                $data['mercadopagoPaymentMethod'] = $form->get('paymentMethod')->getData();
+            }
+            if ($form->has('installments')) {
+                $data['mercadopagoInstallments'] = $form->get('installments')->getData();
+            }
+
+            $orderManager->checkout($order, $data);
 
             $this->objectManager->flush();
 

@@ -89,6 +89,17 @@ class CheckoutHandler
                 $this->orderNumberAssigner->assignNumber($order);
                 $payment->setStripeToken($stripeToken);
 
+                $data = $command->getData();
+
+                if (is_array($data)) {
+                    if (isset($data['mercadopagoPaymentMethod'])) {
+                        $payment->setMercadopagoPaymentMethod($data['mercadopagoPaymentMethod']);
+                    }
+                    if (isset($data['mercadopagoInstallments'])) {
+                        $payment->setMercadopagoInstallments($data['mercadopagoInstallments']);
+                    }
+                }
+
                 $this->gateway->authorize($payment);
             }
 
