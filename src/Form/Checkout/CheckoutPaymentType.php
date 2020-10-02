@@ -4,9 +4,7 @@ namespace AppBundle\Form\Checkout;
 
 use AppBundle\Form\StripePaymentType;
 use AppBundle\Payment\GatewayResolver;
-use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\StripeManager;
-use MercadoPago;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -18,13 +16,11 @@ use Symfony\Component\Form\FormError;
 class CheckoutPaymentType extends AbstractType
 {
     private $stripeManager;
-    private $mercadopagoManager;
     private $resolver;
 
-    public function __construct(StripeManager $stripeManager, MercadopagoManager $mercadopagoManager, GatewayResolver $resolver)
+    public function __construct(StripeManager $stripeManager, GatewayResolver $resolver)
     {
         $this->stripeManager = $stripeManager;
-        $this->mercadopagoManager = $mercadopagoManager;
         $this->resolver = $resolver;
     }
 
@@ -37,7 +33,6 @@ class CheckoutPaymentType extends AbstractType
 
         // @see https://www.mercadopago.com.br/developers/en/guides/payments/api/receiving-payment-by-card/
         if ('mercadopago' === $this->resolver->resolve()) {
-
             $builder
                 ->add('paymentMethod', HiddenType::class, [
                     'mapped' => false,
@@ -45,18 +40,6 @@ class CheckoutPaymentType extends AbstractType
                 ->add('installments', HiddenType::class, [
                     'mapped' => false,
                 ]);
-
-            $this->mercadopagoManager->configure();
-
-            // For most countries, the customer has to provide
-            // @see https://www.mercadopago.com.br/developers/en/guides/localization/identification-types/
-            // @see https://www.mercadopago.com.br/developers/en/reference/identification_types/_identification_types/get/
-            $identificationTypesResponse = MercadoPago\SDK::get('/v1/identification_types');
-
-            // This will return 404 for Mexico
-            if ($identificationTypesResponse !== 404) {
-                // TODO Implement identification types for other countries
-            }
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
