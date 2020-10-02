@@ -845,3 +845,6 @@ services:
         - mx
 
   AppBundle\Payment\Gateway: ~
+
+  AppBundle\Security\ProVoter:
+    tags: [ 'security.voter' ]
