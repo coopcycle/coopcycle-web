@@ -141,6 +141,7 @@ services:
       $loopeatBaseUrl: '%loopeat_base_url%'
       $loopeatClientId: '%loopeat_client_id%'
       $loopeatClientSecret: '%loopeat_client_secret%'
+      $loopeatOAuthFlow: '%env(LOOPEAT_OAUTH_FLOW)%'
 
   AppBundle\Controller\PaymentController:
     arguments:

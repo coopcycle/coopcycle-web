@@ -118,10 +118,18 @@ $('#loopeat-add-credit').on('click', function(e) {
 
   var required = $('#checkout_address_reusablePackagingEnabled').data('loopeatRequired');
   var iframeUrl = $('#checkout_address_reusablePackagingEnabled').data('loopeatAuthorizeUrl');
+  var oAuthFlow = $('#checkout_address_reusablePackagingEnabled').data('loopeatOauthFlow');
 
   if (iframeUrl) {
-    $('#modal-loopeat iframe').attr('src', iframeUrl + '&loopeats_required='+required);
-    $('#modal-loopeat').modal('show');
+    if (oAuthFlow === 'iframe') {
+      $('#modal-loopeat iframe').attr('src', iframeUrl + '&loopeats_required='+required);
+      $('#modal-loopeat').modal('show');
+    } else {
+      $('#modal-loopeat-redirect-warning [data-continue]')
+        .off('click')
+        .on('click', () => window.location.href = iframeUrl + '&loopeats_required='+required)
+      $('#modal-loopeat-redirect-warning').modal('show');
+    }
   }
 });
 
@@ -138,13 +146,26 @@ $('#checkout_address_reusablePackagingEnabled').on('change', function() {
   var isChecked = $(this).is(':checked');
   var isLoopeat = $(this).data('loopeat') === true;
   var iframeUrl = $(this).data('loopeatAuthorizeUrl');
+  var oAuthFlow = $(this).data('loopeatOauthFlow');
   var hasCredentials = $(this).data('loopeatCredentials') === true;
   if (!hasCredentials && isChecked && isLoopeat && iframeUrl) {
-    $('#modal-loopeat iframe').attr('src', iframeUrl);
-    $('#modal-loopeat').modal('show');
+    if (oAuthFlow === 'iframe') {
+      $('#modal-loopeat iframe').attr('src', iframeUrl);
+      $('#modal-loopeat').modal('show');
+    } else {
+      $('#modal-loopeat-redirect-warning [data-continue]')
+        .off('click')
+        .on('click', () => window.location.href = iframeUrl)
+      $('#modal-loopeat-redirect-warning').modal('show');
+    }
   } else {
     submitForm();
   }
+});
+
+$('#modal-loopeat-redirect-warning').on('hidden.bs.modal', function() {
+  $('#modal-loopeat-redirect-warning [data-continue]').off('click');
+  $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
 });
 
 // ---
