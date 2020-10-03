@@ -205,7 +205,7 @@ class ProfileController extends Controller
             ->createQueryBuilder('o')
             ->andWhere('o.customer = :customer')
             ->andWhere('o.state != :state')
-            ->setParameter('customer', $this->getUser())
+            ->setParameter('customer', $this->getUser()->getCustomer())
             ->setParameter('state', OrderInterface::STATE_CART);
 
         $count = (clone $qb)

@@ -152,19 +152,6 @@ class LocalBusinessRepository extends EntityRepository
             ->getResult();
     }
 
-    public function findByCustomer(UserInterface $customer)
-    {
-        $qb = $this->createQueryBuilder('r');
-
-        $qb
-            ->join(OrderInterface::class, 'o', Expr\Join::WITH, 'o.restaurant = r.id')
-            ->where('o.customer = :customer')
-            ->setParameter('customer', $customer)
-            ->groupBy('r.id');
-
-        return $qb->getQuery()->getResult();
-    }
-
     public function countAll()
     {
         $qb = $this

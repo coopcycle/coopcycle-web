@@ -349,7 +349,7 @@ class AdminController extends Controller
             $qb = $this->get('sylius.repository.order')->createQueryBuilder('o');
             $qb->andWhere('o.customer = :customer');
             $qb->andWhere('o.state = :state');
-            $qb->setParameter('customer', $user);
+            $qb->setParameter('customer', $user->getCustomer());
             $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
 
             $res = $qb->getQuery()->getResult();
@@ -359,7 +359,7 @@ class AdminController extends Controller
             $qb = $this->get('sylius.repository.order')->createQueryBuilder('o');
             $qb->andWhere('o.customer = :customer');
             $qb->andWhere('o.state = :state');
-            $qb->setParameter('customer', $user);
+            $qb->setParameter('customer', $user->getCustomer());
             $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
             $qb->orderBy('o.updatedAt', 'DESC');
             $qb->setMaxResults(1);
