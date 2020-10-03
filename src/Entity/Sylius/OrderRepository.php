@@ -9,6 +9,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Sylius\Bundle\OrderBundle\Doctrine\ORM\OrderRepository as BaseOrderRepository;
+use Sylius\Component\Customer\Model\CustomerInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -128,7 +129,7 @@ class OrderRepository extends BaseOrderRepository
         return $this;
     }
 
-    public function countByCustomerAndCoupon(UserInterface $customer, PromotionCouponInterface $coupon): int
+    public function countByCustomerAndCoupon(CustomerInterface $customer, PromotionCouponInterface $coupon): int
     {
         return (int) $this->createQueryBuilder('o')
             ->select('COUNT(o.id)')
