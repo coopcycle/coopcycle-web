@@ -72,7 +72,6 @@ Feature: Manage restaurants
             }
           ],
           "specialOpeningHoursSpecification":[],
-          "availabilities":"@*@",
           "image":@string@,
           "fulfillmentMethods":@array@
         }

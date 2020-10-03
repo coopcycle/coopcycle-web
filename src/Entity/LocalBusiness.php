@@ -22,8 +22,6 @@ use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
-use AppBundle\Form\Type\AsapChoiceLoader;
-use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
@@ -52,7 +50,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "get"={
  *       "method"="GET",
  *       "pagination_enabled"=false,
- *       "normalization_context"={"groups"={"restaurant", "restaurant_legacy", "address", "order"}}
+ *       "normalization_context"={"groups"={"restaurant", "address", "order"}}
  *     },
  *     "me_restaurants"={
  *       "method"="GET",
@@ -404,54 +402,6 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
     public function addClosingRule(ClosingRule $closingRule)
     {
         $this->closingRules->add($closingRule);
-    }
-
-    /**
-     * @SerializedName("availabilities")
-     * @Groups({"restaurant_legacy"})
-     * @deprecated
-     * @param \DateTime|null $now
-     * @return array
-     */
-    public function getAvailabilities(\DateTime $now = null)
-    {
-        if (!$this->isFulfillmentMethodEnabled('delivery')) {
-            return [];
-        }
-
-        $fulfillmentMethod = $this->getFulfillmentMethod('delivery');
-
-        if ($fulfillmentMethod->getOpeningHoursBehavior() === 'time_slot') {
-
-            $choiceLoader = new TimeSlotChoiceLoader(
-                TimeSlot::fromLocalBusiness($this, $fulfillmentMethod), 'en');
-
-            $choiceList = $choiceLoader->loadChoiceList();
-
-            $availabilities = [];
-            foreach ($choiceList->getChoices() as $choice) {
-
-                $range = $choice->toTsRange();
-
-                $availabilities[] = Carbon::instance($range->getLower())
-                    ->average($range->getUpper())
-                    ->format(\DateTime::ATOM);
-            }
-
-            return $availabilities;
-        }
-
-        $choiceLoader = new AsapChoiceLoader(
-            $this->getOpeningHours(/* $fulfillmentMethod */),
-            $this->getClosingRules(),
-            $this->getShippingOptionsDays(),
-            $this->getOrderingDelayMinutes(),
-            $now
-        );
-
-        $choiceList = $choiceLoader->loadChoiceList();
-
-        return $choiceList->getValues();
     }
 
     /**

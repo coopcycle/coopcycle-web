@@ -32,7 +32,7 @@ trait OpenCloseTrait
         }
 
         // WARNING
-        // This method may be called a *lot* of times (see getAvailabilities)
+        // This method may be called a *lot* of times
         // Thus, we avoid using Criteria, because it would trigger a query every time
         foreach ($closingRules as $closingRule) {
             if ($date >= $closingRule->getStartDate() && $date <= $closingRule->getEndDate()) {
