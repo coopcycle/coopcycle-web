@@ -154,7 +154,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *     "get_cart_timing"={
  *       "method"="GET",
  *       "path"="/orders/{id}/timing",
- *       "access_control"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
+ *       "access_control"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())",
  *       "swagger_context"={
  *         "summary"="Retrieves timing information about a Order resource.",
  *         "responses"={
@@ -169,7 +169,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="GET",
  *       "path"="/orders/{id}/validate",
  *       "normalization_context"={"groups"={"cart"}},
- *       "access_control"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user"
+ *       "access_control"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())"
  *     },
  *     "put_cart"={
  *       "method"="PUT",
