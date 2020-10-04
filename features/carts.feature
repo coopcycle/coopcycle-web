@@ -1465,6 +1465,7 @@ Feature: Carts
       """
 
   Scenario: Get cart timing (with session)
+    Given the current time is "2020-10-02 11:00:00"
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | products.yml        |
@@ -1486,3 +1487,59 @@ Feature: Carts
     And I send an authenticated "GET" request to "/api/orders/1/timing"
     Then the response status code should be 200
     And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "behavior":"asap",
+        "preparation":"10 minutes",
+        "shipping":"10 minutes",
+        "asap":"2020-10-02T12:00:00+02:00",
+        "range":[
+          "2020-10-02T11:55:00+02:00",
+          "2020-10-02T12:05:00+02:00"
+        ],
+        "today":true,
+        "fast":false,
+        "diff":"55 - 65",
+        "ranges":@array@,
+        "choices":@array@
+      }
+      """
+
+  Scenario: Validate cart (with session)
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
+    Given there is a cart at restaurant with id "1"
+    And there is a token for the last cart at restaurant with id "1"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send an authenticated "GET" request to "/api/orders/1/validate"
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"total",
+            "message":@string@
+          }
+        ]
+      }
+      """
