@@ -1,9 +1,8 @@
 import React from 'react'
 import { render } from 'react-dom'
-import RulePicker from '../components/RulePicker'
+import Sortable from 'sortablejs'
 
-import dragula from 'dragula'
-import '../../../assets/css/dragula.scss'
+import RulePicker from '../components/RulePicker'
 
 const ruleSet = $('#rule-set'),
   warning = $('form[name="pricing_rule_set"] .alert-warning')
@@ -13,13 +12,12 @@ const wrapper = document.getElementById('rule-set')
 const zones = JSON.parse(wrapper.dataset.zones)
 const packages = JSON.parse(wrapper.dataset.packages)
 
-dragula([document.querySelector('.delivery-pricing-ruleset')], {
-  moves: (el, container, handle) => {
-    return handle.classList.contains('delivery-pricing-ruleset__rule__handle')
-      || handle.parentNode.classList.contains('delivery-pricing-ruleset__rule__handle')
-  }
+new Sortable(document.querySelector('.delivery-pricing-ruleset'), {
+  group: 'rules',
+  handle: '.delivery-pricing-ruleset__rule__handle',
+  animation: 250,
+  onUpdate: onListChange,
 })
-  .on('dragend', () => onListChange())
 
 const onListChange = () => {
   if ($('.delivery-pricing-ruleset > li').length === 0) {
