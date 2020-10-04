@@ -1,0 +1,35 @@
+@import "~font-awesome/scss/_variables.scss";
+@import "~font-awesome/scss/_mixins.scss";
+
+.preparation_time_rules_preparationTimeRule {
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: white;
+
+  .form-group {
+    flex-grow: 1;
+    margin-bottom: 0;
+  }
+
+  .form-group:first-child {
+    margin-right: 10px;
+  }
+
+  &:before {
+    @include fa-icon();
+    content: $fa-var-arrows;
+    display: block;
+    margin-right: 10px;
+  }
+
+  .close {
+    margin-left: 10px;
+  }
+
+}

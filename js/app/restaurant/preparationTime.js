@@ -1,6 +1,6 @@
-import dragula from 'dragula'
+import Sortable from 'sortablejs'
 
-import '../../../assets/css/dragula.scss'
+import './preparationTime.scss'
 
 const preparationTimeRules = $('#preparation_time_rules_preparationTimeRules')
 
@@ -9,9 +9,6 @@ const onListChange = () => {
     $(el).find('input[type="hidden"]').val(index)
   })
 }
-
-dragula([ document.querySelector('#preparation_time_rules_preparationTimeRules') ], {})
-  .on('dragend', () => onListChange())
 
 $(document).on('click', '#preparation_time_rules_preparationTimeRules > div .close', function(e) {
   e.preventDefault()
@@ -30,6 +27,12 @@ $('#add-rule').on('click', (e) => {
   preparationTimeRules.append(html)
 
   onListChange()
+})
+
+new Sortable(preparationTimeRules.get(0), {
+  group: 'rules',
+  animation: 250,
+  onUpdate: onListChange,
 })
 
 onListChange()
