@@ -58,6 +58,12 @@ class GeofencingCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Limit the number of processed messages',
                 '10'
+            )
+            ->addOption(
+                'stop',
+                's',
+                InputOption::VALUE_NONE,
+                'Unsubscribe from Tile38',
             );
     }
 
@@ -68,6 +74,16 @@ class GeofencingCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $stopChannel = sprintf('%s:geofencing:stop', $this->doorstepChanNamespace);
+
+        if (true === $input->getOption('stop')) {
+
+            $this->logMessage(sprintf('Sending "stop" message on channel "%s"', $stopChannel));
+            $this->tile38->publish($stopChannel, 'stop');
+
+            return 0;
+        }
+
         // @see https://github.com/phpredis/phpredis/issues/1727
         // ini_set('default_socket_timeout', -1);
 
@@ -83,11 +99,16 @@ class GeofencingCommand extends Command
 
         $this->logMessage(sprintf('Subscribing to channels with pattern %s', $pattern));
 
+        $patterns = [
+            $pattern,
+            $stopChannel,
+        ];
+
         try {
 
             $this->tile38->pSubscribe(
-                [ $pattern ],
-                function(Redis $redis, $pattern, $channel, $message) use ($taskRepository, $orderRepository, $limit) {
+                $patterns,
+                function(Redis $redis, $pattern, $channel, $message) use ($taskRepository, $orderRepository, $limit, $stopChannel, $patterns) {
 
                     // {
                     //   "command":"set",
@@ -108,6 +129,13 @@ class GeofencingCommand extends Command
                     // }
 
                     $this->logMessage(sprintf('Received pmessage on channel "%s"', $channel));
+
+                    if ($channel === $stopChannel) {
+                        $this->logMessage('Unsubscribing after receiving stop signal');
+                        $redis->pUnsubscribe($patterns);
+                        $redis->close();
+                        return;
+                    }
 
                     $payload = json_decode($message, true);
 
@@ -152,7 +180,7 @@ class GeofencingCommand extends Command
 
                     if ($this->messageCount >= $limit) {
                         $this->logMessage(sprintf('Unsubscribing after processing %d messages', $this->messageCount));
-                        $redis->pUnsubscribe([ 'coopcycle:dropoff:*' ]);
+                        $redis->pUnsubscribe($patterns);
                         $redis->close();
                     }
 
