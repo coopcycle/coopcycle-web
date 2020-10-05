@@ -8,7 +8,7 @@ var TokenVerifier = require('../TokenVerifier')
 
 const logger = winston.createLogger({
   level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-  format: winston.format.json(),
+  format: process.env.NODE_ENV === 'production' ? winston.format.json() : winston.format.simple(),
   transports: [
     new winston.transports.Console({
       format: winston.format.simple()

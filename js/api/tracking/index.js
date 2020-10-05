@@ -8,7 +8,7 @@ const TokenVerifier = require('../TokenVerifier')
 
 const logger = winston.createLogger({
   level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-  format: winston.format.json(),
+  format: process.env.NODE_ENV === 'production' ? winston.format.json() : winston.format.simple(),
   transports: [
     new winston.transports.Console({
       format: winston.format.simple()
@@ -71,6 +71,7 @@ function bootstrap() {
     })
     sub.prefixedPSubscribe('users:*')
     sub.prefixedPSubscribe('couriers:*')
+    sub.prefixedPSubscribe('orders:*')
   })
 
   const createTile38ChannelIfNotExists = () => new Promise((resolve, reject) => {
@@ -136,6 +137,9 @@ const authMiddleware = function(socket, next) {
           if (user.hasOwnProperty('courier')) {
             socket.courier = user.courier
           }
+          if (user.hasOwnProperty('order')) {
+            socket.order = user.order
+          }
         }
         next();
       })
@@ -152,7 +156,7 @@ let cursor = 0
 
 function scan () {
 
-  console.log('Scanning…')
+  logger.info('Scanning…')
 
   tile38Client.send_command('SCAN', [tile38FleetKey, 'CURSOR', cursor, 'LIMIT', '10'], function (err, res) {
 
@@ -244,7 +248,7 @@ function initialize() {
 
     if (data.object && data.object.type && data.object.type === 'Point') {
 
-      console.log(`Sending "tracking" message to users in rooms "admins" & "couriers:${data.id}"`)
+      logger.info(`Sending "tracking" message to users in rooms "admins" & "couriers:${data.id}"`)
 
       const [ lng, lat, timestamp ] = data.object.coordinates
       io.in('dispatch').emit('tracking', {
@@ -267,24 +271,33 @@ function initialize() {
       if (socket.user) {
         socket.join(`users:${socket.user.username}`, (err) => {
           if (!err) {
-            console.log(`user "${socket.user.username}" joined room "users:${socket.user.username}"`)
+            logger.info(`user "${socket.user.username}" joined room "users:${socket.user.username}"`)
           }
         })
         // This is a dispatcher
         if (_.includes(socket.user.roles, 'ROLE_ADMIN')) {
           socket.join('dispatch', (err) => {
             if (!err) {
-              console.log(`user "${socket.user.username}" joined room "dispatch"`)
+              logger.info(`user "${socket.user.username}" joined room "dispatch"`)
               scan()
             }
           })
         }
       } else {
-        socket.join(`couriers:${socket.courier}`, (err) => {
-          if (!err) {
-            console.log(`user joined room "couriers:${socket.courier}"`)
-          }
-        })
+        if (socket.courier) {
+          socket.join(`couriers:${socket.courier}`, (err) => {
+            if (!err) {
+              logger.info(`user joined room "couriers:${socket.courier}"`)
+            }
+          })
+        }
+        if (socket.order) {
+          socket.join(`orders:${socket.order}`, (err) => {
+            if (!err) {
+              logger.info(`user joined room "orders:${socket.order}"`)
+            }
+          })
+        }
       }
     })
 

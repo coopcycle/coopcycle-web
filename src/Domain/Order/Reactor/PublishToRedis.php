@@ -25,6 +25,8 @@ class PublishToRedis
 
             Assert::isInstanceOf($customer, CustomerInterface::class);
 
+            $this->socketIoManager->toOrderWatchers($order, $event);
+
             if (null !== $customer && $customer->hasUser()) {
                 $this->socketIoManager->toUserAndAdmins($customer->getUser(), $event);
             } else {

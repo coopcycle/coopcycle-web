@@ -2,12 +2,14 @@
 
 namespace AppBundle\Service;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event as OrderEvent;
 use AppBundle\Domain\HumanReadableEventInterface;
 use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Domain\Task\Event as TaskEvent;
 use AppBundle\Entity\User;
 use AppBundle\Action\Utils\TokenStorageTrait;
+use AppBundle\Sylius\Order\OrderInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Redis;
 use Ramsey\Uuid\Uuid;
@@ -24,6 +26,7 @@ class SocketIoManager
     private $redis;
     private $userManager;
     private $serializer;
+    private $iriConverter;
     private $translator;
 
     public function __construct(
@@ -31,12 +34,14 @@ class SocketIoManager
         UserManagerInterface $userManager,
         TokenStorageInterface $tokenStorage,
         SerializerInterface $serializer,
+        IriConverterInterface $iriConverter,
         TranslatorInterface $translator)
     {
         $this->redis = $redis;
         $this->userManager = $userManager;
         $this->tokenStorage = $tokenStorage;
         $this->serializer = $serializer;
+        $this->iriConverter = $iriConverter;
         $this->translator = $translator;
     }
 
@@ -60,6 +65,23 @@ class SocketIoManager
         foreach ($users as $user) {
             $this->toUser($user, $message, $data);
         }
+    }
+
+    public function toOrderWatchers(OrderInterface $order, $message, array $data = [])
+    {
+        $messageName = $message instanceof NamedMessage ? $message::messageName() : $message;
+
+        if ($message instanceof SerializableEventInterface && empty($data)) {
+            $data = $message->normalize($this->serializer);
+        }
+
+        $channel = sprintf('orders:%s', $this->iriConverter->getIriFromItem($order));
+        $payload = json_encode([
+            'name' => $messageName,
+            'data' => $data
+        ]);
+
+        $this->redis->publish($channel, $payload);
     }
 
     public function toUser(UserInterface $user, $message, array $data = [])
