@@ -41,7 +41,7 @@
           </div>
         </div>
         <div class="text-center">
-          <a href="{{ path('hwi_oauth_service_redirect', { service: 'facebook' }) }}" class="btn btn-facebook" alt="{{ 'social.sign_in_with_facebook'|trans }}">
+          <a href="{{ hwi_oauth_authorization_url('facebook')|oauth2_proxy }}" class="btn btn-facebook" alt="{{ 'social.sign_in_with_facebook'|trans }}">
             <i class="fa fa-facebook-official"></i>  {{ 'social.sign_in_with_facebook'|trans({}, 'messages') }}
           </a>
         </div>

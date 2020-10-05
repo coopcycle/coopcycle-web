@@ -66,3 +66,9 @@ services:
       $cacheStrategy: '@twig.cache_extension.strategy.generational'
     tags:
       - { name: twig.extension }
+
+  AppBundle\Twig\OAuthRuntime:
+    arguments:
+      $key: '%env(COOPCYCLE_OAUTH2_PROXY_JWT_KEY)%'
+      $proxyUri: '%env(COOPCYCLE_OAUTH2_PROXY_URI)%'
+      $enabled: '%env(bool:COOPCYCLE_OAUTH2_PROXY_ENABLED)%'
