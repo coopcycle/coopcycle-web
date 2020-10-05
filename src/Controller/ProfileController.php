@@ -254,11 +254,6 @@ class ProfileController extends Controller
                 $trackGoal = !empty($messages);
             }
 
-            $goalId = getenv('MATOMO_CHECKOUT_COMPLETED_GOAL_ID');
-            if (!empty($goalId)) {
-                $goalId = intval($goalId);
-            }
-
             return $this->render('order/foodtech.html.twig', [
                 'layout' => 'profile.html.twig',
                 'order' => $order,
@@ -267,7 +262,6 @@ class ProfileController extends Controller
                 'breadcrumb_path' => 'profile_orders',
                 'reset' => $reset,
                 'track_goal' => $trackGoal,
-                'goal_id' => $goalId,
                 'jwt' => $jwtManager->create($this->getUser()),
             ]);
         }
