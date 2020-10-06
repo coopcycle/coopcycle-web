@@ -13,5 +13,19 @@
   </div>
   <div class="col-xs-12 col-md-6">
     <div id="order-timeline"></div>
+    {% if not order.customer.hasUser() %}
+      <div class="border mb-3">
+        <h4 class="bg-light p-3 m-0">{{ 'authentication.not_registered_yet'|trans }}</h4>
+        <div class="px-3 py-4">
+          <p>{{ 'authentication.register_benefits'|trans }}</p>
+          <div class="text-right">
+            <a class="btn btn-success"
+              href="{{ path('fos_user_registration_register', { source: app.request.get('hashid') }) }}">
+              {{ 'authentication.create_account'|trans }}
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endif %}
   </div>
 </div>

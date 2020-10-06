@@ -1008,3 +1008,4 @@ refund.list.refunded_at: Devuelto en
 refund.list.liable_party: Parte responsable
 refund.list.amount: Monto devuelto
 refund.list.comments: Comentarios
+authentication.register_benefits: Crea una cuenta para pedir más rápidamente. También podrás recuperar el historial de tus pedidos anteriores.

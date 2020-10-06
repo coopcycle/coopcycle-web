@@ -849,3 +849,8 @@ services:
 
   AppBundle\Security\ProVoter:
     tags: [ 'security.voter' ]
+
+  AppBundle\EventSubscriber\RegistrationInitializeListener:
+    arguments:
+      $orderRepository: '@sylius.repository.order'
+      $secret: '%secret%'
