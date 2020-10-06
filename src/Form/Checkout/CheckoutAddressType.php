@@ -2,14 +2,12 @@
 
 namespace AppBundle\Form\Checkout;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\LoopEatOrder;
 use GuzzleHttp\Exception\RequestException;
-use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
@@ -29,7 +27,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -46,9 +43,6 @@ class CheckoutAddressType extends AbstractType
         PriceFormatter $priceFormatter,
         ValidatorInterface $validator,
         LoopEatClient $loopeatClient,
-        UrlGeneratorInterface $urlGenerator,
-        JWTEncoderInterface $jwtEncoder,
-        IriConverterInterface $iriConverter,
         OrderProcessorInterface $orderProcessor,
         LoopEatContext $loopeatContext,
         string $country,
@@ -59,9 +53,6 @@ class CheckoutAddressType extends AbstractType
         $this->priceFormatter = $priceFormatter;
         $this->validator = $validator;
         $this->loopeatClient = $loopeatClient;
-        $this->urlGenerator = $urlGenerator;
-        $this->jwtEncoder = $jwtEncoder;
-        $this->iriConverter = $iriConverter;
         $this->orderProcessor = $orderProcessor;
         $this->loopeatContext = $loopeatContext;
         $this->country = strtoupper($country);
@@ -143,17 +134,6 @@ class CheckoutAddressType extends AbstractType
 
                 if ($restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials() && $customer->hasUser()) {
 
-                    // Use a JWT as the "state" parameter
-                    $state = $this->jwtEncoder->encode([
-                        'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-                        'sub' => $this->iriConverter->getIriFromItem($customer->getUser()),
-                        // Custom claims
-                        LoopEatClient::JWT_CLAIM_SUCCESS_REDIRECT =>
-                            $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
-                        LoopEatClient::JWT_CLAIM_FAILURE_REDIRECT =>
-                            $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
-                    ]);
-
                     $this->loopeatContext->initialize();
 
                     $form->add('reusablePackagingEnabled', CheckboxType::class, [
@@ -164,7 +144,8 @@ class CheckoutAddressType extends AbstractType
                             'data-loopeat-credentials' => var_export($customer->getUser()->hasLoopEatCredentials(), true),
                             'data-loopeat-authorize-url' => $this->loopeatClient->getOAuthAuthorizeUrl([
                                 'login_hint' => $customer->getUser()->getEmailCanonical(),
-                                'state' => $state,
+                                // Use a JWT as the "state" parameter
+                                'state' => $this->loopeatClient->createStateParamForUser($customer->getUser()),
                             ]),
                             'data-loopeat-oauth-flow' => $this->loopeatOAuthFlow,
                         ],

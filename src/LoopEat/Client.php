@@ -2,6 +2,7 @@
 
 namespace AppBundle\LoopEat;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\User;
 use AppBundle\Entity\LocalBusiness;
 use FOS\UserBundle\Model\UserManagerInterface;
@@ -11,10 +12,12 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise\RejectedPromise;
 use GuzzleHttp\Psr7;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class Client extends BaseClient
@@ -24,7 +27,13 @@ class Client extends BaseClient
 
     private $logger;
 
-    public function __construct(array $config = [], UserManagerInterface $userManager, LoggerInterface $logger)
+    public function __construct(
+        array $config = [],
+        UserManagerInterface $userManager,
+        JWTEncoderInterface $jwtEncoder,
+        IriConverterInterface $iriConverter,
+        UrlGeneratorInterface $urlGenerator,
+        LoggerInterface $logger)
     {
         $stack = HandlerStack::create();
         $stack->push($this->refreshToken());
@@ -34,6 +43,9 @@ class Client extends BaseClient
         parent::__construct($config);
 
         $this->userManager = $userManager;
+        $this->jwtEncoder = $jwtEncoder;
+        $this->iriConverter = $iriConverter;
+        $this->urlGenerator = $urlGenerator;
         $this->logger = $logger;
     }
 
@@ -224,5 +236,18 @@ class Client extends BaseClient
             $quantity, $restaurant->getName(), $user->getUsername()));
 
         return true;
+    }
+
+    public function createStateParamForUser(User $user)
+    {
+        return $this->jwtEncoder->encode([
+            'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
+            'sub' => $this->iriConverter->getIriFromItem($user),
+            // Custom claims
+            self::JWT_CLAIM_SUCCESS_REDIRECT =>
+                $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            self::JWT_CLAIM_FAILURE_REDIRECT =>
+                $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
+        ]);
     }
 }
