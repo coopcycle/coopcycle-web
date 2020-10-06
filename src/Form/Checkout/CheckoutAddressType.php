@@ -136,31 +136,12 @@ class CheckoutAddressType extends AbstractType
             $customer = $order->getCustomer();
             $packagingQuantity = $order->getReusablePackagingQuantity();
 
-            if ($order->isEligibleToReusablePackaging() && $restaurant->isDepositRefundOptin()) {
+            if ($order->isEligibleToReusablePackaging()) {
 
                 // FIXME
                 // We need to check if $packagingQuantity > 0
 
-                if ($restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {
-                    $packagingAmount = $order->getReusablePackagingAmount();
-
-                    if ($packagingAmount > 0) {
-                        $packagingPrice = sprintf('+ %s', $this->priceFormatter->formatWithSymbol($packagingAmount));
-                    } else {
-                        $packagingPrice = $this->translator->trans('basics.free');
-                    }
-
-                    $form->add('reusablePackagingEnabled', CheckboxType::class, [
-                        'required' => false,
-                        'label' => 'form.checkout_address.reusable_packaging_enabled.label',
-                        'label_translation_parameters' => [
-                            '%price%' => $packagingPrice,
-                        ],
-                        'attr' => [
-                            'data-packaging-amount' => $packagingAmount
-                        ],
-                    ]);
-                } else if ($restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials() && $customer->hasUser()) {
+                if ($restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials() && $customer->hasUser()) {
 
                     // Use a JWT as the "state" parameter
                     $state = $this->jwtEncoder->encode([
@@ -200,6 +181,27 @@ class CheckoutAddressType extends AbstractType
                     $form->add('isJQuerySubmit', HiddenType::class, [
                         'data' => '0',
                         'mapped' => false,
+                    ]);
+
+                } elseif ($restaurant->isDepositRefundEnabled() && $restaurant->isDepositRefundOptin()) {
+
+                    $packagingAmount = $order->getReusablePackagingAmount();
+
+                    if ($packagingAmount > 0) {
+                        $packagingPrice = sprintf('+ %s', $this->priceFormatter->formatWithSymbol($packagingAmount));
+                    } else {
+                        $packagingPrice = $this->translator->trans('basics.free');
+                    }
+
+                    $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                        'required' => false,
+                        'label' => 'form.checkout_address.reusable_packaging_enabled.label',
+                        'label_translation_parameters' => [
+                            '%price%' => $packagingPrice,
+                        ],
+                        'attr' => [
+                            'data-packaging-amount' => $packagingAmount
+                        ],
                     ]);
                 }
             }
