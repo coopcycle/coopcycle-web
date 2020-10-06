@@ -48,3 +48,7 @@ services:
   AppBundle\Validator\Constraints\PricingRuleValidator:
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\UserWithSameEmailNotExistsValidator:
+    tags:
+      - { name: validator.constraint_validator }

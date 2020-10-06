@@ -43,3 +43,5 @@ loopeat.insufficient_balance:
 
 restaurant.contract.variableCustomerAmount.pickOne: Veuillez sélectionner une tarification
 restaurant.contract.variableDeliveryPrice.pickOne: Veuillez sélectionner une tarification
+
+checkout.user_with_same_email_exists: Un compte avec le même email existe déjà
