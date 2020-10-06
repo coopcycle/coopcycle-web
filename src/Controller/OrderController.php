@@ -81,10 +81,9 @@ class OrderController extends AbstractController
 
         $user = $this->getUser();
 
-        // At this step, we are pretty sure the customer is logged in
-        // Make sure the order actually has a customer, if not set previously
+        // If the user is authenticated, use the corresponding customer
         // @see AppBundle\EventListener\WebAuthenticationListener
-        if ($user !== $order->getUser()) {
+        if (null !== $user && $user->getCustomer() !== $order->getCustomer()) {
             $order->setCustomer($user->getCustomer());
             $this->objectManager->flush();
         }
@@ -96,6 +95,7 @@ class OrderController extends AbstractController
         $form = $this->createForm(CheckoutAddressType::class, $order);
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted()) {
 
             $order = $form->getData();

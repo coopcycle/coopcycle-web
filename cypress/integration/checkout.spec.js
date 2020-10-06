@@ -73,15 +73,15 @@ context('Checkout', () => {
 
     cy.get('.cart__items').invoke('text').should('match', /Cheese Cake/)
 
+    // FIXME Use click instead of submit
     cy.get('form[name="cart"]').submit()
 
-    cy.location('pathname').should('eq', '/login')
-
-    cy.get('[name="_username"]').type('bob')
-    cy.get('[name="_password"]').type('12345678')
-    cy.get('[name="_submit"]').click()
-
     cy.location('pathname').should('eq', '/order/')
+
+    cy.get('input[name="checkout_address[email]"]').type('dev@coopcycle.org')
+    cy.get('input[name="checkout_address[firstName]"]').type('John')
+    cy.get('input[name="checkout_address[lastName]"]').type('Doe')
+    cy.get('input[name="checkout_address[telephone]"]').type('0612345678')
 
     cy.contains('Commander').click()
 
@@ -335,13 +335,8 @@ context('Checkout', () => {
     cy.contains('Salade au poulet').click()
     cy.wait('@postProduct')
 
+    // FIXME Use click instead of submit
     cy.get('form[name="cart"]').submit()
-
-    cy.location('pathname').should('eq', '/login')
-
-    cy.get('[name="_username"]').type('bob')
-    cy.get('[name="_password"]').type('12345678')
-    cy.get('[name="_submit"]').click()
 
     cy.location('pathname').should('eq', '/order/')
 
@@ -429,12 +424,6 @@ context('Checkout', () => {
 
     // FIXME Use click instead of submit
     cy.get('form[name="cart"]').submit()
-
-    cy.location('pathname').should('eq', '/login')
-
-    cy.get('[name="_username"]').type('bob')
-    cy.get('[name="_password"]').type('12345678')
-    cy.get('[name="_submit"]').click()
 
     cy.location('pathname').should('eq', '/order/')
 
