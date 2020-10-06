@@ -125,6 +125,8 @@ services:
     arguments:
       $country: '%country_iso%'
       $loopeatOAuthFlow: '%env(LOOPEAT_OAUTH_FLOW)%'
+      $customerFactory: '@sylius.factory.customer'
+      $customerRepository: '@sylius.repository.customer'
     tags: [ form.type ]
 
   AppBundle\Form\ApiAppType:

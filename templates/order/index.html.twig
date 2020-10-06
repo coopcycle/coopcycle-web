@@ -71,6 +71,21 @@
             </div>
           {% endif %}
 
+          {% if form.email is defined %}
+            {{ form_row(form.email) }}
+          {% endif %}
+
+          {% if form.firstName is defined or form.lastName is defined %}
+          <div class="row">
+            <div class="col-xs-12 col-sm-6">
+              {{ form_row(form.firstName) }}
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              {{ form_row(form.lastName) }}
+            </div>
+          </div>
+          {% endif %}
+
           {% if form.telephone is defined %}
             {{ form_row(form.telephone) }}
           {% endif %}
