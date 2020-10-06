@@ -65,7 +65,7 @@ function bootstrap() {
   const subscribeToRedis = () => new Promise((resolve, reject) => {
     sub.on('psubscribe', (channel, count) => {
       logger.info(`Subscribed to ${channel} (${count})`)
-      if (count === 2) {
+      if (count === 3) {
         resolve()
       }
     })
