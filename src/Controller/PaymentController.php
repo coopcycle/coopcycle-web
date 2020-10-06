@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Utils\OrderConfirmTrait;
 use AppBundle\Form\Checkout\ChargeStripeSourceType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
@@ -21,6 +22,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PaymentController extends AbstractController
 {
+    use OrderConfirmTrait;
+
     public function __construct(
         EntityManagerInterface $objectManager,
         OrderManager $orderManager,
@@ -58,12 +61,7 @@ class PaymentController extends AbstractController
             throw new BadRequestHttpException(sprintf('Payment #%d could not be charged', $payment->getId()));
         }
 
-        $this->addFlash('track_goal', true);
-
-        return $this->redirectToRoute('profile_order', [
-            'id' => $order->getId(),
-            'reset' => 'yes'
-        ]);
+        return $this->redirectToOrderConfirm($order);
     }
 
     /**

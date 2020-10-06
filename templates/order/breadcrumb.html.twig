@@ -1,9 +1,12 @@
 {% set step = 1 %}
-{% if app.request.get('_route') == 'order' or app.request.get('_route') == 'order_delivery' %}
+{% if app.request.get('_route') == 'order' %}
   {% set step = 2 %}
 {% endif %}
 {% if app.request.get('_route') == 'order_payment' %}
   {% set step = 3 %}
+{% endif %}
+{% if app.request.get('_route') == 'order_confirm' %}
+  {% set step = 4 %}
 {% endif %}
 
 {% if (restaurant is not defined) and (order is defined) %}
@@ -22,14 +25,22 @@
     </a>
   </li>
   <li class="multi-step-item {% if step == 2 %}active current{% endif %}">
-    {% if order is defined %}<a class="item-wrap" href="{{ path('order') }}">{% endif %}
+    {% if order is defined and step < 4 %}
+      <a class="item-wrap" href="{{ path('order') }}">
+    {% else %}
+      <div class="item-wrap">
+    {% endif %}
       <span class="item-title">
         <span class="mr-2">
           <i class="fa fa-info-circle fa-lg"></i>
         </span>
         <span class="d-none d-md-inline d-lg-inline d-xl-inline">{{ 'checkout.breadcrumb.address'|trans }}</span>
       </span>
-    {% if order is defined %}</a>{% endif %}
+    {% if order is defined and step < 4 %}
+      </a>
+    {% else %}
+      </div>
+    {% endif %}
   </li>
   <li class="multi-step-item {% if step == 3 %}active current{% endif %}">
     <div class="item-wrap">
@@ -38,6 +49,16 @@
           <i class="fa fa-credit-card fa-lg"></i>
         </span>
         <span class="d-none d-md-inline d-lg-inline d-xl-inline">{{ 'checkout.breadcrumb.payment'|trans }}</span>
+      </span>
+    </div>
+  </li>
+  <li class="multi-step-item {% if step == 4 %}active current{% endif %}">
+    <div class="item-wrap">
+      <span class="item-title">
+        <span class="mr-2">
+          <i class="fa fa-check fa-lg"></i>
+        </span>
+        <span class="d-none d-md-inline d-lg-inline d-xl-inline">{{ 'checkout.breadcrumb.confirm'|trans }}</span>
       </span>
     </div>
   </li>

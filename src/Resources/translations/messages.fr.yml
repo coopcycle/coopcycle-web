@@ -359,6 +359,7 @@ cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
 checkout.breadcrumb.address: Adresse
 checkout.breadcrumb.payment: Paiement
+checkout.breadcrumb.confirm: Confirmation
 form.geojson_upload.file: Fichier
 form.store_type.pricing_rule_set.label: Tarification
 form.store_type.prefill_pickup_address.label: Remplir automatiquement l'adresse de

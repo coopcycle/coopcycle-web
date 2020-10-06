@@ -27,6 +27,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Cocur\Slugify\SlugifyInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
@@ -231,6 +232,8 @@ class ProfileController extends Controller
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
         JWTManagerInterface $jwtManager,
+        JWSProviderInterface $jwsProvider,
+        IriConverterInterface $iriConverter,
         EntityManagerInterface $em)
     {
         $filter = $em->getFilters()->disable('enabled_filter');
@@ -243,26 +246,29 @@ class ProfileController extends Controller
 
         if ($order->isFoodtech()) {
 
-            $reset = false;
-            if ($request->query->has('reset')) {
-                $reset = $request->query->getBoolean('reset');
-            }
+            $exp = clone $order->getShippingTimeRange()->getUpper();
+            $exp->modify('+3 hours');
 
-            $trackGoal = false;
-            if ($request->getSession()->getFlashBag()->has('track_goal')) {
-                $messages = $request->getSession()->getFlashBag()->get('track_goal');
-                $trackGoal = !empty($messages);
-            }
+            // FIXME We may generate expired tokens
 
-            return $this->render('order/foodtech.html.twig', [
-                'layout' => 'profile.html.twig',
+            $jwt = $jwsProvider->create([
+                // We add a custom "ord" claim to the token,
+                // that will allow watching order events
+                'ord' => $iriConverter->getIriFromItem($order),
+                // Token expires 3 hours after expected completion
+                'exp' => $exp->getTimestamp(),
+            ])->getToken();
+
+            return $this->render('profile/order.html.twig', [
                 'order' => $order,
                 'events' => (new OrderEventCollection($order))->toArray(),
-                'order_normalized' => $this->get('serializer')->normalize($order, 'jsonld', ['groups' => ['order'], 'is_web' => true]),
-                'breadcrumb_path' => 'profile_orders',
-                'reset' => $reset,
-                'track_goal' => $trackGoal,
-                'jwt' => $jwtManager->create($this->getUser()),
+                'order_normalized' => $this->get('serializer')->normalize($order, 'jsonld', [
+                    'groups' => ['order'],
+                    'is_web' => true
+                ]),
+                'reset' => false,
+                'track_goal' => false,
+                'jwt' => $jwt,
             ]);
         }
 

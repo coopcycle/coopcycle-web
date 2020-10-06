@@ -115,7 +115,7 @@ context('Checkout', () => {
 
     cy.get('form[name="checkout_payment"]').submit()
 
-    cy.location('pathname').should('match', /\/profile\/orders\/[0-9]+/)
+    cy.location('pathname').should('match', /\/order\/confirm\/[a-zA-Z0-9]+/)
   })
 
   it('order something at restaurant with existing address', () => {

@@ -19,7 +19,6 @@ embed.breadcrumb.confirm: Bestätigung
 adminDashboard.stores.form.uploadImage: Bild hochladen
 adminDashboard.orders.title: Bestellungen
 adminDashboard.restaurants.title: Restaurants
-
 adminDashboard.users.edit.addRestaurant: Restaurant hinzufügen
 adminDashboard.settings.title: Einstellungen
 adminDashboard.pricing.settings: Einstellungen
@@ -689,3 +688,4 @@ orders.new: Neue Bestellung
 restaurant.form.cuisines.label: Küchenrichtung
 restaurant.form.fulfillment_methods.label: Möglichkeiten zur Auftragsausführung
 restaurant.form.loopeat_enabled.label: LoopEat System einschalten
+checkout.breadcrumb.confirm: Bestätigung

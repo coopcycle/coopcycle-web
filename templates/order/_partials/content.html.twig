@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="col-xs-12 col-md-6">
+    <div class="border mb-3">
+      <h4 class="bg-light p-3 m-0">{{ order.restaurant.name }}</h4>
+      <div class="px-3 py-4" id="restaurant">
+        {% include "_partials/order/restaurant_details.html.twig" %}
+      </div>
+      <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
+      <div id="items">
+        {% include '_partials/order/items.html.twig' with { with_taxes: false } %}
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-12 col-md-6">
+    <div id="order-timeline"></div>
+  </div>
+</div>

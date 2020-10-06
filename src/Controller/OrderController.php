@@ -2,33 +2,40 @@
 
 namespace AppBundle\Controller;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\Controller\Utils\OrderConfirmTrait;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
+use Hashids\Hashids;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * @Route("/order")
- */
 class OrderController extends AbstractController
 {
+    use OrderConfirmTrait;
+
     private $objectManager;
     private $orderTimeHelper;
     private $logger;
@@ -56,7 +63,7 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/", name="order")
+     * @Route("/order/", name="order")
      */
     public function indexAction(Request $request,
         OrderManager $orderManager,
@@ -129,12 +136,8 @@ class OrderController extends AbstractController
             }
 
             if ($isFreeOrder || $isQuote) {
-                 $this->addFlash('track_goal', true);
 
-                return $this->redirectToRoute('profile_order', [
-                    'id' => $order->getId(),
-                    'reset' => 'yes'
-                ]);
+                return $this->redirectToOrderConfirm($order);
             }
 
             return $this->redirectToRoute('order_payment');
@@ -148,7 +151,7 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/payment", name="order_payment")
+     * @Route("/order/payment", name="order_payment")
      */
     public function paymentAction(Request $request,
         OrderManager $orderManager,
@@ -215,16 +218,65 @@ class OrderController extends AbstractController
                 ]));
             }
 
-            $this->addFlash('track_goal', true);
-
-            return $this->redirectToRoute('profile_order', [
-                'id' => $order->getId(),
-                'reset' => 'yes'
-            ]);
+            return $this->redirectToOrderConfirm($order);
         }
 
         $parameters['form'] = $form->createView();
 
         return $this->render('order/payment.html.twig', $parameters);
+    }
+
+    /**
+     * @Route("/order/confirm/{hashid}", name="order_confirm")
+     */
+    public function confirmAction($hashid,
+        OrderRepository $orderRepository,
+        FlashBagInterface $flashBag,
+        JWSProviderInterface $jwsProvider,
+        IriConverterInterface $iriConverter,
+        Request $request)
+    {
+        $hashids = new Hashids($this->getParameter('secret'), 16);
+
+        $decoded = $hashids->decode($hashid);
+
+        if (count($decoded) !== 1) {
+            throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
+        }
+
+        $id = current($decoded);
+        $order = $orderRepository->find($id);
+
+        if (null === $order) {
+            throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
+        }
+
+        $resetSession = $flashBag->has('reset_session') && !empty($flashBag->get('reset_session'));
+        $trackGoal = $flashBag->has('track_goal') && !empty($flashBag->get('track_goal'));
+
+        $exp = clone $order->getShippingTimeRange()->getUpper();
+        $exp->modify('+3 hours');
+
+        // FIXME We may generate expired tokens
+
+        $jwt = $jwsProvider->create([
+            // We add a custom "ord" claim to the token,
+            // that will allow watching order events
+            'ord' => $iriConverter->getIriFromItem($order),
+            // Token expires 3 hours after expected completion
+            'exp' => $exp->getTimestamp(),
+        ])->getToken();
+
+        return $this->render('order/foodtech.html.twig', [
+            'order' => $order,
+            'events' => (new OrderEventCollection($order))->toArray(),
+            'order_normalized' => $this->get('serializer')->normalize($order, 'jsonld', [
+                'groups' => ['order'],
+                'is_web' => true
+            ]),
+            'reset' => $resetSession,
+            'track_goal' => $trackGoal,
+            'jwt' => $jwt,
+        ]);
     }
 }

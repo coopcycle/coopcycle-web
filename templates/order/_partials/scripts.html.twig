@@ -1,0 +1,20 @@
+<script>
+new CoopCycle.OrderTimeline(document.querySelector('#order-timeline'), {
+  order: {{ order_normalized|json_encode()|raw }},
+  events: {{ events|json_encode()|raw }},
+  jwt: "{{ jwt }}"
+});
+</script>
+{% if reset %}
+<script>
+sessionStorage.removeItem('search_address');
+sessionStorage.removeItem('search_geohash');
+</script>
+{% endif %}
+{% if not analytics_disabled and matomo_hostname is not empty and track_goal and matomo_checkout_completed_goal_id is not empty %}
+<script>
+setTimeout(function() {
+  _paq.push(['trackGoal', {{ matomo_checkout_completed_goal_id|escape('js') }}, {{ order.total|price_format(false)|floatval|escape('js') }}]);
+}, 1000);
+</script>
+{% endif %}
