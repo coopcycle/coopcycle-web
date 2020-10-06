@@ -120,7 +120,9 @@ services:
       - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: loopeat }
 
-  AppBundle\LoopEat\Context: ~
+  AppBundle\LoopEat\Context:
+    tags:
+      - { name: monolog.logger, channel: loopeat }
 
   AppBundle\Controller\RestaurantController:
     arguments:

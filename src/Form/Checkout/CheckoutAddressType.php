@@ -154,7 +154,7 @@ class CheckoutAddressType extends AbstractType
                             $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
                     ]);
 
-                    $this->loopeatContext->initialize($customer->getUser());
+                    $this->loopeatContext->initialize();
 
                     $form->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
