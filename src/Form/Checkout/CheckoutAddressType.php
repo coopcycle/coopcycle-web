@@ -12,7 +12,6 @@ use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
 use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
-use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -43,7 +42,6 @@ class CheckoutAddressType extends AbstractType
         PriceFormatter $priceFormatter,
         ValidatorInterface $validator,
         LoopEatClient $loopeatClient,
-        OrderProcessorInterface $orderProcessor,
         LoopEatContext $loopeatContext,
         string $country,
         string $loopeatOAuthFlow)
@@ -53,7 +51,6 @@ class CheckoutAddressType extends AbstractType
         $this->priceFormatter = $priceFormatter;
         $this->validator = $validator;
         $this->loopeatClient = $loopeatClient;
-        $this->orderProcessor = $orderProcessor;
         $this->loopeatContext = $loopeatContext;
         $this->country = strtoupper($country);
         $this->loopeatOAuthFlow = $loopeatOAuthFlow;
@@ -208,11 +205,8 @@ class CheckoutAddressType extends AbstractType
             }
 
             if ($form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName()) {
-
                 $tipAmount = $form->get('tipAmount')->getData();
                 $order->setTipAmount((int) ($tipAmount * 100));
-
-                $this->orderProcessor->process($order);
             }
         });
     }

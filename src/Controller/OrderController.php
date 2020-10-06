@@ -90,57 +90,67 @@ class OrderController extends AbstractController
         }
 
         $originalPromotionCoupon = $order->getPromotionCoupon();
+        $wasReusablePackagingEnabled = $order->isReusablePackagingEnabled();
 
         $form = $this->createForm(CheckoutAddressType::class, $order);
 
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
 
             $order = $form->getData();
 
-            if ($form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName()) {
+            $reusablePackagingWasChanged =
+                $wasReusablePackagingEnabled !== $order->isReusablePackagingEnabled();
+
+            $tipWasAdded =
+                $form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName();
+
+            $promotionCouponWasAdded =
+                null === $originalPromotionCoupon && null !== $order->getPromotionCoupon();
+
+            $isJQuerySubmit =
+                $form->has('isJQuerySubmit') && '1' === $form->get('isJQuerySubmit')->getData();
+
+            // In those cases, we always reload the page
+            if ($reusablePackagingWasChanged || $tipWasAdded || $promotionCouponWasAdded || $isJQuerySubmit) {
+
+                if ($promotionCouponWasAdded) {
+                    $this->addFlash(
+                        'notice',
+                        $translator->trans('promotions.promotion_coupon.success', [
+                            '%code%' => $order->getPromotionCoupon()->getCode()
+                        ])
+                    );
+                }
+
+                $orderProcessor->process($order);
                 $this->objectManager->flush();
 
                 return $this->redirectToRoute('order');
             }
 
-            $orderProcessor->process($order);
+            if ($form->isValid()) {
 
-            $promotionCoupon = $order->getPromotionCoupon();
+                $orderProcessor->process($order);
 
-            // Check if a promotion coupon has been added
-            if (null === $originalPromotionCoupon && null !== $promotionCoupon) {
-                $this->addFlash(
-                    'notice',
-                    $translator->trans('promotions.promotion_coupon.success', ['%code%' => $promotionCoupon->getCode()])
-                );
+                $isQuote = $form->getClickedButton() && 'quote' === $form->getClickedButton()->getName();
+                $isFreeOrder = !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
+
+                if ($isQuote) {
+                    $orderManager->quote($order);
+                } elseif ($isFreeOrder) {
+                    $orderManager->checkout($order);
+                }
+
+                $this->objectManager->flush();
+
+                if ($isFreeOrder || $isQuote) {
+
+                    return $this->redirectToOrderConfirm($order);
+                }
+
+                return $this->redirectToRoute('order_payment');
             }
-
-            $isQuote = $form->getClickedButton() && 'quote' === $form->getClickedButton()->getName();
-            $isFreeOrder = !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
-
-            if ($isQuote) {
-                $orderManager->quote($order);
-            } elseif ($isFreeOrder) {
-                $orderManager->checkout($order);
-            }
-
-            $this->objectManager->flush();
-
-            if ($form->getClickedButton() && 'addPromotion' === $form->getClickedButton()->getName()) {
-                return $this->redirectToRoute('order');
-            }
-
-            if ($form->has('isJQuerySubmit') && $form->get('isJQuerySubmit')->getData()) {
-                return $this->redirectToRoute('order');
-            }
-
-            if ($isFreeOrder || $isQuote) {
-
-                return $this->redirectToOrderConfirm($order);
-            }
-
-            return $this->redirectToRoute('order_payment');
         }
 
         return $this->render('order/index.html.twig', array(

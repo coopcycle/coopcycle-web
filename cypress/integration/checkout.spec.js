@@ -360,10 +360,7 @@ context('Checkout', () => {
 
     cy.get('#checkout_address_reusablePackagingEnabled').click()
 
-    // TODO
-    // In this case, maybe we should reload the page?
-
-    cy.location('pathname').should('eq', '/order/payment')
+    cy.location('pathname').should('eq', '/order/')
 
     cy.get('.table-order-items tfoot tr:last-child td ')
       .invoke('text')
