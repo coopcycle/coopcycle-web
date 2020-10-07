@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container container--full-height">
+  <div class="row">
+    <div class="col-xs-12">
+      {% include 'order/breadcrumb.html.twig' %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+      {% include 'security/login_form.html.twig' %}
+    </div>
+    <div class="col-xs-12 col-sm-6 border-left">
+      <form method="post">
+        <div class="form-group">
+          <label for="guest-checkout-email">Continue as guest</label>
+          <input type="email" name="email" id="guest-checkout-email" class="form-control" placeholder="Please enter your email" required>
+        </div>
+        <div class="text-right">
+          <button class="btn btn-block btn-primary" type="submit">
+            {{ 'basics.continue'|trans }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

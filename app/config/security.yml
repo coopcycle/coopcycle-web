@@ -159,6 +159,15 @@ security:
             stateless: true
             anonymous: ~
 
+        guest_checkout:
+            pattern:            ^/(order|guest-checkout)
+            logout: false
+            anonymous: ~
+            stateless: true
+            guard:
+                authenticators:
+                    - AppBundle\Security\GuestCheckoutAuthenticator
+
         web:
             pattern:            ^/
             form_login:
@@ -183,8 +192,10 @@ security:
     access_control:
         - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/guest-checkout, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/order, allow_if: "is_granted('HAS_CUSTOMER')" }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
         - { path: ^/profile/jwt, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/profile/notifications, roles: IS_AUTHENTICATED_REMEMBERED }

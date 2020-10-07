@@ -856,3 +856,11 @@ services:
     arguments:
       $orderRepository: '@sylius.repository.order'
       $secret: '%secret%'
+
+  AppBundle\Security\HasCustomerVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\GuestCheckoutAuthenticator:
+    arguments:
+      $customerFactory: '@sylius.factory.customer'
+      $customerRepository: '@sylius.repository.customer'

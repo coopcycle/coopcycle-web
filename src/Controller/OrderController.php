@@ -29,6 +29,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -158,6 +160,33 @@ class OrderController extends AbstractController
             'order' => $order,
             'shipping_range' => $this->getShippingRange($order),
             'form' => $form->createView(),
+        ));
+    }
+
+    /**
+     * @Route("/guest-checkout", name="guest_checkout", methods={"GET", "POST"})
+     */
+    public function guestCheckoutAction(Request $request,
+        CartContextInterface $cartContext,
+        CsrfTokenManagerInterface $tokenManager = null)
+    {
+        $order = $cartContext->getCart();
+
+        if (null === $order || null === $order->getRestaurant()) {
+
+            return $this->redirectToRoute('homepage');
+        }
+
+        /** @see FOS\UserBundle\Controller\SecurityController::loginAction */
+        $csrfToken = $tokenManager
+            ? $tokenManager->getToken('authenticate')->getValue()
+            : null;
+
+        return $this->render('order/guest_checkout.html.twig', array(
+            'last_username' => '',
+            'error' => null,
+            'csrf_token' => $csrfToken,
+            'order' => $order,
         ));
     }
 
