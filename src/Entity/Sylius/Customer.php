@@ -50,7 +50,7 @@ class Customer extends BaseCustomer implements CustomerInterface, OAuthCredentia
     /** @var Collection|Address[] */
     protected $addresses;
 
-    protected ?CustomerCredentials $loopeatCredentials;
+    protected ?CustomerCredentials $loopeatCredentials = null;
 
     public function __construct()
     {
@@ -206,7 +206,7 @@ class Customer extends BaseCustomer implements CustomerInterface, OAuthCredentia
 
     public function setLoopeatAccessToken($accessToken)
     {
-        if (null == $this->loopeatCredentials) {
+        if (null === $this->loopeatCredentials) {
 
             $this->loopeatCredentials = new CustomerCredentials();
             $this->loopeatCredentials->setCustomer($this);
@@ -217,7 +217,7 @@ class Customer extends BaseCustomer implements CustomerInterface, OAuthCredentia
 
     public function getLoopeatRefreshToken()
     {
-        if (null == $this->loopeatCredentials) {
+        if (null === $this->loopeatCredentials) {
 
             return null;
         }
@@ -227,7 +227,7 @@ class Customer extends BaseCustomer implements CustomerInterface, OAuthCredentia
 
     public function setLoopeatRefreshToken($refreshToken)
     {
-        if (null == $this->loopeatCredentials) {
+        if (null === $this->loopeatCredentials) {
 
             $this->loopeatCredentials = new CustomerCredentials();
             $this->loopeatCredentials->setCustomer($this);
@@ -243,7 +243,7 @@ class Customer extends BaseCustomer implements CustomerInterface, OAuthCredentia
 
     public function clearLoopEatCredentials()
     {
-        if (null == $this->loopeatCredentials) {
+        if (null === $this->loopeatCredentials) {
 
             return;
         }
