@@ -159,10 +159,6 @@ class CheckoutAddressType extends AbstractType
                         // https://github.com/symfony/symfony/issues/12499
                         'empty_data' => '0',
                     ]);
-                    $form->add('isJQuerySubmit', HiddenType::class, [
-                        'data' => '0',
-                        'mapped' => false,
-                    ]);
 
                 } elseif ($restaurant->isDepositRefundEnabled() && $restaurant->isDepositRefundOptin()) {
 

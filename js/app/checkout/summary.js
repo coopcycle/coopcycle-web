@@ -81,7 +81,6 @@ const wasChecked = $('#checkout_address_reusablePackagingEnabled').is(':checked'
 let preventUncheck = false;
 
 function submitForm() {
-  $('#checkout_address_isJQuerySubmit').val(1);
   $('#checkout_address_reusablePackagingEnabled').closest('form').submit();
 }
 

@@ -91,6 +91,7 @@ class OrderController extends AbstractController
 
         $originalPromotionCoupon = $order->getPromotionCoupon();
         $wasReusablePackagingEnabled = $order->isReusablePackagingEnabled();
+        $originalReusablePackagingPledgeReturn = $order->getReusablePackagingPledgeReturn();
 
         $form = $this->createForm(CheckoutAddressType::class, $order);
 
@@ -102,17 +103,17 @@ class OrderController extends AbstractController
             $reusablePackagingWasChanged =
                 $wasReusablePackagingEnabled !== $order->isReusablePackagingEnabled();
 
+            $reusablePackagingPledgeReturnWasChanged =
+                $originalReusablePackagingPledgeReturn !== $order->getReusablePackagingPledgeReturn();
+
             $tipWasAdded =
                 $form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName();
 
             $promotionCouponWasAdded =
                 null === $originalPromotionCoupon && null !== $order->getPromotionCoupon();
 
-            $isJQuerySubmit =
-                $form->has('isJQuerySubmit') && '1' === $form->get('isJQuerySubmit')->getData();
-
             // In those cases, we always reload the page
-            if ($reusablePackagingWasChanged || $tipWasAdded || $promotionCouponWasAdded || $isJQuerySubmit) {
+            if ($reusablePackagingWasChanged || $tipWasAdded || $promotionCouponWasAdded || $reusablePackagingPledgeReturnWasChanged) {
 
                 if ($promotionCouponWasAdded) {
                     $this->addFlash(
