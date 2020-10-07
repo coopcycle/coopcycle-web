@@ -3,11 +3,10 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
-use AppBundle\Entity\User;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Psr\Log\LoggerInterface;
@@ -95,7 +94,6 @@ class LoopEatController extends AbstractController
         Request $request,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
-        UserManagerInterface $userManager,
         EntityManagerInterface $objectManager,
         TranslatorInterface $translator)
     {
@@ -117,8 +115,8 @@ class LoopEatController extends AbstractController
 
         $subject = $iriConverter->getItemFromIri($payload['sub']);
 
-        if (!$subject instanceof LocalBusiness && !$subject instanceof User) {
-            throw new BadRequestHttpException(sprintf('Subject should be an instance of "%s" or "%s"', LocalBusiness::class, User::class));
+        if (!$subject instanceof LocalBusiness && !$subject instanceof Customer) {
+            throw new BadRequestHttpException(sprintf('Subject should be an instance of "%s" or "%s"', LocalBusiness::class, Customer::class));
         }
 
         if (!$request->query->has('code') && !$request->query->has('error')) {
@@ -141,13 +139,7 @@ class LoopEatController extends AbstractController
         $subject->setLoopeatAccessToken($data['access_token']);
         $subject->setLoopeatRefreshToken($data['refresh_token']);
 
-        if ($subject instanceof User) {
-            $userManager->updateUser($subject);
-        }
-
-        if ($subject instanceof LocalBusiness) {
-            $objectManager->flush();
-        }
+        $objectManager->flush();
 
         $this->addFlash('notice', $translator->trans('loopeat.oauth_connect.success'));
 

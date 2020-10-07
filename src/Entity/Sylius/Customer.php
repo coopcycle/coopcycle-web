@@ -4,7 +4,9 @@ namespace AppBundle\Entity\Sylius;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\LoopEat\CustomerCredentials;
 use AppBundle\Entity\User;
+use AppBundle\LoopEat\OAuthCredentialsInterface;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -34,7 +36,7 @@ use Webmozart\Assert\Assert;
  *   }
  * )
  */
-class Customer extends BaseCustomer implements CustomerInterface
+class Customer extends BaseCustomer implements CustomerInterface, OAuthCredentialsInterface
 {
     /** @var User */
     protected $user;
@@ -48,6 +50,7 @@ class Customer extends BaseCustomer implements CustomerInterface
     /** @var Collection|Address[] */
     protected $addresses;
 
+    protected ?CustomerCredentials $loopeatCredentials;
 
     public function __construct()
     {
@@ -189,5 +192,63 @@ class Customer extends BaseCustomer implements CustomerInterface
         }
 
         return $this->getFullName();
+    }
+
+    public function getLoopeatAccessToken()
+    {
+        if (null == $this->loopeatCredentials) {
+
+            return null;
+        }
+
+        return $this->loopeatCredentials->getLoopeatAccessToken();
+    }
+
+    public function setLoopeatAccessToken($accessToken)
+    {
+        if (null == $this->loopeatCredentials) {
+
+            $this->loopeatCredentials = new CustomerCredentials();
+            $this->loopeatCredentials->setCustomer($this);
+        }
+
+        $this->loopeatCredentials->setLoopeatAccessToken($accessToken);
+    }
+
+    public function getLoopeatRefreshToken()
+    {
+        if (null == $this->loopeatCredentials) {
+
+            return null;
+        }
+
+        return $this->loopeatCredentials->getLoopeatRefreshToken();
+    }
+
+    public function setLoopeatRefreshToken($refreshToken)
+    {
+        if (null == $this->loopeatCredentials) {
+
+            $this->loopeatCredentials = new CustomerCredentials();
+            $this->loopeatCredentials->setCustomer($this);
+        }
+
+        $this->loopeatCredentials->setLoopeatRefreshToken($refreshToken);
+    }
+
+    public function hasLoopEatCredentials(): bool
+    {
+        return null !== $this->loopeatCredentials && $this->loopeatCredentials->hasLoopEatCredentials();
+    }
+
+    public function clearLoopEatCredentials()
+    {
+        if (null == $this->loopeatCredentials) {
+
+            return;
+        }
+
+        $this->loopeatCredentials->setCustomer(null);
+        $this->loopeatCredentials = null;
     }
 }

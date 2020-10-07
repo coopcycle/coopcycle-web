@@ -143,6 +143,7 @@ twig:
         legacy_taxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
         payment_gateway_resolver: '@AppBundle\Payment\GatewayResolver'
         context_channel: "@sylius.context.channel"
+        loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
     exception_controller: null
 
 # Doctrine Configuration

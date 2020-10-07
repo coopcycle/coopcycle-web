@@ -36,18 +36,16 @@ class Context
 
         $customer = $order->getCustomer();
 
-        if (null === $customer || !$customer->hasUser()) {
-            $this->logger->info(sprintf('Order #%d has no user data available', $order->getId()));
+        if (null === $customer) {
+            $this->logger->info(sprintf('Order #%d has no customer', $order->getId()));
             return;
         }
 
-        $user = $customer->getUser();
-
-        if ($user->hasLoopEatCredentials()) {
+        if ($customer->hasLoopEatCredentials()) {
 
             try {
 
-                $loopeatCustomer = $this->client->currentCustomer($user);
+                $loopeatCustomer = $this->client->currentCustomer($customer);
 
                 $this->loopeatBalance = $loopeatCustomer['loopeatBalance'];
                 $this->loopeatCredit  = $loopeatCustomer['loopeatCredit'];

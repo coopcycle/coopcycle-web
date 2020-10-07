@@ -35,15 +35,7 @@ class GrabLoopEats
 
         // TODO Make sure the reusable packagings are actually from LoopEat
 
-        $customer = $order->getCustomer();
-
-        Assert::isInstanceOf($customer, CustomerInterface::class);
-
-        if (!$customer->hasUser()) {
-            return;
-        }
-
-        $this->client->return($customer->getUser(), $order->getReusablePackagingPledgeReturn());
-        $this->client->grab($customer->getUser(), $order->getRestaurant(), $order->getReusablePackagingQuantity());
+        $this->client->return($order->getCustomer(), $order->getReusablePackagingPledgeReturn());
+        $this->client->grab($order->getCustomer(), $order->getRestaurant(), $order->getReusablePackagingQuantity());
     }
 }

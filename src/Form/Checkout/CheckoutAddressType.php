@@ -129,7 +129,7 @@ class CheckoutAddressType extends AbstractType
                 // FIXME
                 // We need to check if $packagingQuantity > 0
 
-                if ($restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials() && $customer->hasUser()) {
+                if ($restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials() && null !== $customer->getId()) {
 
                     $this->loopeatContext->initialize();
 
@@ -138,11 +138,14 @@ class CheckoutAddressType extends AbstractType
                         'label' => 'form.checkout_address.reusable_packaging_loopeat_enabled.label',
                         'attr' => [
                             'data-loopeat' => "true",
-                            'data-loopeat-credentials' => var_export($customer->getUser()->hasLoopEatCredentials(), true),
+                            'data-loopeat-credentials' => var_export($customer->hasLoopEatCredentials(), true),
                             'data-loopeat-authorize-url' => $this->loopeatClient->getOAuthAuthorizeUrl([
-                                'login_hint' => $customer->getUser()->getEmailCanonical(),
+                                'login_hint' => $customer->getEmailCanonical(),
                                 // Use a JWT as the "state" parameter
-                                'state' => $this->loopeatClient->createStateParamForUser($customer->getUser()),
+                                // FIXME
+                                // If the customer is not persisted yet, we can't generate an IRI
+                                // Use the email instead
+                                'state' => $this->loopeatClient->createStateParamForCustomer($customer),
                             ]),
                             'data-loopeat-oauth-flow' => $this->loopeatOAuthFlow,
                         ],

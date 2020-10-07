@@ -10,7 +10,6 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Me as MeController;
 use AppBundle\Api\Filter\UserRoleFilter;
-use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Product\ProductInterface;
 use FOS\UserBundle\Model\User as BaseUser;
@@ -56,7 +55,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 {
-    use LoopEatOAuthCredentialsTrait;
     use Timestampable;
 
     protected $id;

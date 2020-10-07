@@ -131,11 +131,11 @@ class GrabLoopEatsTest extends TestCase
             ->willReturn($customer);
 
         $this->loopeat
-            ->return($user, 0)
+            ->return($customer, 0)
             ->shouldBeCalled();
 
         $this->loopeat
-            ->grab($user, $restaurant, 2)
+            ->grab($customer, $restaurant, 2)
             ->shouldBeCalled();
 
         call_user_func_array($this->grabLoopEats, [ new OrderPicked($order->reveal()) ]);

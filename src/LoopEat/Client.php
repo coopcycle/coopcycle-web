@@ -3,9 +3,9 @@
 namespace AppBundle\LoopEat;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
-use AppBundle\Entity\User;
 use AppBundle\Entity\LocalBusiness;
-use FOS\UserBundle\Model\UserManagerInterface;
+use AppBundle\Entity\Sylius\Customer;
+use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client as BaseClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
@@ -18,7 +18,6 @@ use Psr\Log\NullLogger;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class Client extends BaseClient
 {
@@ -29,7 +28,7 @@ class Client extends BaseClient
 
     public function __construct(
         array $config = [],
-        UserManagerInterface $userManager,
+        EntityManagerInterface $objectManager,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         UrlGeneratorInterface $urlGenerator,
@@ -42,7 +41,7 @@ class Client extends BaseClient
 
         parent::__construct($config);
 
-        $this->userManager = $userManager;
+        $this->objectManager = $objectManager;
         $this->jwtEncoder = $jwtEncoder;
         $this->iriConverter = $iriConverter;
         $this->urlGenerator = $urlGenerator;
@@ -104,11 +103,16 @@ class Client extends BaseClient
 
                                     $options['oauth_credentials']->setLoopeatAccessToken($data['access_token']);
 
-                                    if ($options['oauth_credentials'] instanceof UserInterface) {
-                                        $this->logger->info(sprintf('Saving new access token for "%s"',
-                                            $options['oauth_credentials']->getUsername()));
-                                        $this->userManager->updateUser($options['oauth_credentials']);
+                                    if ($options['oauth_credentials'] instanceof Customer) {
+                                        $this->logger->info(sprintf('Saving new access token for customer "%s"',
+                                            $options['oauth_credentials']->getEmailCanonical()));
                                     }
+                                    if ($options['oauth_credentials'] instanceof LocalBusiness) {
+                                        $this->logger->info(sprintf('Saving new access token for restaurant "%s"',
+                                            $options['oauth_credentials']->getName()));
+                                    }
+
+                                    $this->objectManager->flush();
 
                                     $request = Psr7\modify_request($request, [
                                         'set_headers' => [
@@ -145,22 +149,22 @@ class Client extends BaseClient
         return sprintf('%s/oauth/authorize?%s', $this->getConfig('base_uri'), $queryString);
     }
 
-    public function currentCustomer(User $user)
+    public function currentCustomer(Customer $customer)
     {
         $response = $this->request('GET', '/customers/current', [
             'headers' => [
-                'Authorization' => sprintf('Bearer %s', $user->getLoopeatAccessToken())
+                'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
             ],
-            'oauth_credentials' => $user,
+            'oauth_credentials' => $customer,
         ]);
 
         return json_decode((string) $response->getBody(), true);
     }
 
-    public function return(User $user, $quantity = 1)
+    public function return(Customer $customer, $quantity = 1)
     {
         $this->logger->info(sprintf('Returning %d Loopeats from "%s"',
-            $quantity, $user->getUsername()));
+            $quantity, $customer->getEmailCanonical()));
 
         try {
 
@@ -168,9 +172,9 @@ class Client extends BaseClient
 
                 $response = $this->request('GET', '/customers/return_loopeat', [
                     'headers' => [
-                        'Authorization' => sprintf('Bearer %s', $user->getLoopeatAccessToken())
+                        'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
                     ],
-                    'oauth_credentials' => $user,
+                    'oauth_credentials' => $customer,
                 ]);
 
                 $url = (string) $response->getBody();
@@ -181,7 +185,7 @@ class Client extends BaseClient
                     '/partners/customer_return_loopeat',
                     $url);
 
-                $this->logger->info(sprintf('Got token "%s" to return for "%s"', $url, $user->getUsername()));
+                $this->logger->info(sprintf('Got token "%s" to return for "%s"', $url, $customer->getEmailCanonical()));
 
                 $response = $this->request('GET', $url, [
                     'auth' => [$this->loopEatPartnerId, $this->loopEatPartnerSecret]
@@ -194,14 +198,14 @@ class Client extends BaseClient
         }
 
         $this->logger->info(sprintf('Successfully returned %d Loopeats from "%s"',
-            $quantity, $user->getUsername()));
+            $quantity, $customer->getEmailCanonical()));
 
     }
 
-    public function grab(User $user, LocalBusiness $restaurant, $quantity = 1)
+    public function grab(Customer $customer, LocalBusiness $restaurant, $quantity = 1)
     {
         $this->logger->info(sprintf('Grabbing %d Loopeats at "%s" for "%s"',
-            $quantity, $restaurant->getName(), $user->getUsername()));
+            $quantity, $restaurant->getName(), $customer->getEmailCanonical()));
 
         try {
 
@@ -209,14 +213,14 @@ class Client extends BaseClient
 
                 $response = $this->request('GET', '/customers/grab_loopeat', [
                     'headers' => [
-                        'Authorization' => sprintf('Bearer %s', $user->getLoopeatAccessToken())
+                        'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
                     ],
-                    'oauth_credentials' => $user,
+                    'oauth_credentials' => $customer,
                 ]);
 
                 $url = (string) $response->getBody();
 
-                $this->logger->info(sprintf('Got token "%s" to grab for "%s"', $url, $user->getUsername()));
+                $this->logger->info(sprintf('Got token "%s" to grab for "%s"', $url, $customer->getEmailCanonical()));
 
                 $response = $this->request('GET', $url, [
                     'headers' => [
@@ -233,16 +237,20 @@ class Client extends BaseClient
         }
 
         $this->logger->info(sprintf('Successfully grabbed %d Loopeats at "%s" for "%s"',
-            $quantity, $restaurant->getName(), $user->getUsername()));
+            $quantity, $restaurant->getName(), $customer->getEmailCanonical()));
 
         return true;
     }
 
-    public function createStateParamForUser(User $user)
+    public function createStateParamForCustomer(Customer $customer)
     {
+        // FIXME
+        // If the customer is not persisted yet, we can't generate an IRI
+        // Use the email instead
+
         return $this->jwtEncoder->encode([
             'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-            'sub' => $this->iriConverter->getIriFromItem($user),
+            'sub' => $this->iriConverter->getIriFromItem($customer),
             // Custom claims
             self::JWT_CLAIM_SUCCESS_REDIRECT =>
                 $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),

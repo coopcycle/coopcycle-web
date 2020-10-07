@@ -6,6 +6,11 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
+    <one-to-one field="loopeatCredentials" target-entity="AppBundle\Entity\LoopEat\CustomerCredentials" mapped-by="customer">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-one>
     <one-to-many field="orders" target-entity="Sylius\Component\Order\Model\OrderInterface" mapped-by="customer">
       <cascade>
         <cascade-all />

@@ -11,7 +11,6 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Validation;
-use Webmozart\Assert\Assert as WebmozartAssert;
 
 class LoopEatOrderValidator extends ConstraintValidator
 {
@@ -45,6 +44,12 @@ class LoopEatOrderValidator extends ConstraintValidator
             return;
         }
 
+        $customer = $object->getCustomer();
+
+        if (null === $customer) {
+            return;
+        }
+
         $quantity = $object->getReusablePackagingQuantity();
 
         if ($quantity < 1) {
@@ -56,15 +61,7 @@ class LoopEatOrderValidator extends ConstraintValidator
 
         try {
 
-            $customer = $object->getCustomer();
-
-            WebmozartAssert::isInstanceOf($customer, CustomerInterface::class);
-
-            if (!$customer->hasUser()) {
-                return;
-            }
-
-            $currentCustomer = $this->client->currentCustomer($customer->getUser());
+            $currentCustomer = $this->client->currentCustomer($customer);
             $loopeatBalance = $currentCustomer['loopeatBalance'];
             $pledgeReturn = $object->getReusablePackagingPledgeReturn();
             $missing = $quantity - $loopeatBalance - $pledgeReturn;
@@ -83,6 +80,5 @@ class LoopEatOrderValidator extends ConstraintValidator
 
             $this->logger->error($e->getMessage());
         }
-
     }
 }

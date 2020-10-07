@@ -6,8 +6,6 @@
     </id>
     <field name="facebookId" type="string" column="facebook_id" nullable="true"/>
     <field name="facebookAccessToken" type="string" column="facebook_access_token" nullable="true"/>
-    <field name="loopeatAccessToken" type="text" column="loopeat_access_token" nullable="true"/>
-    <field name="loopeatRefreshToken" type="text" column="loopeat_refresh_token" nullable="true"/>
     <field name="quotesAllowed" type="boolean" column="quotes_allowed">
       <options>
         <option name="default">0</option>

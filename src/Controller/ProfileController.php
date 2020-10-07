@@ -139,10 +139,11 @@ class ProfileController extends Controller
             return $this->tasksAction($request);
         }
 
-        $loopeatEnabled = $this->getParameter('loopeat_enabled');
+        $customer = $user->getCustomer();
 
         $loopeatAuthorizeUrl = '';
-        if ($loopeatEnabled && !$this->getUser()->hasLoopEatCredentials()) {
+
+        if ($this->getParameter('loopeat_enabled') && !$customer->hasLoopEatCredentials()) {
 
             $redirectUri = $this->generateUrl('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -155,7 +156,7 @@ class ProfileController extends Controller
             // Use a JWT as the "state" parameter
             $state = $jwtEncoder->encode([
                 'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-                'sub' => $iriConverter->getIriFromItem($this->getUser()),
+                'sub' => $iriConverter->getIriFromItem($customer),
                 // The "iss" (Issuer) claim contains a redirect URL
                 'iss' => $redirectAfterUri,
             ]);
@@ -173,8 +174,7 @@ class ProfileController extends Controller
 
         return $this->render('profile/index.html.twig', array(
             'user' => $user,
-            'loopeat_enabled' => $loopeatEnabled,
-            'has_loopeat_credentials' => $this->getUser()->hasLoopEatCredentials(),
+            'customer' => $customer,
             'loopeat_authorize_url' => $loopeatAuthorizeUrl,
         ));
     }
