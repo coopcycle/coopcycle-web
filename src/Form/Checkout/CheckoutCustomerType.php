@@ -65,6 +65,7 @@ class CheckoutCustomerType extends AbstractType
                         ]),
                         new AssertUserWithSameEmailNotExists(),
                     ],
+                    'help' => 'form.email.help',
                 ]);
             }
 
@@ -99,6 +100,7 @@ class CheckoutCustomerType extends AbstractType
                     // If we don't do this, PhoneNumberToStringTransformer trigger an error
                     // "Expected a \libphonenumber\PhoneNumber"
                     'mapped' => false,
+                    'help' => 'form.checkout_address.telephone.help',
                 ]);
             }
         });
