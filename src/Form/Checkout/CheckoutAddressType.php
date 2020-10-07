@@ -6,19 +6,11 @@ use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\Utils\PriceFormatter;
-use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as AssertUserWithSameEmailNotExists;
 use AppBundle\Validator\Constraints\LoopEatOrder;
-use FOS\UserBundle\Util\CanonicalizerInterface;
-use GuzzleHttp\Exception\RequestException;
-use libphonenumber\PhoneNumberFormat;
-use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
 use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
-use Sylius\Component\Resource\Factory\FactoryInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -34,37 +26,24 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 class CheckoutAddressType extends AbstractType
 {
     private $tokenStorage;
-    private $country;
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
         TranslatorInterface $translator,
         PriceFormatter $priceFormatter,
-        ValidatorInterface $validator,
         LoopEatClient $loopeatClient,
         LoopEatContext $loopeatContext,
-        FactoryInterface $customerFactory,
-        CanonicalizerInterface $canonicalizer,
-        RepositoryInterface $customerRepository,
-        string $country,
         string $loopeatOAuthFlow)
     {
         $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
         $this->priceFormatter = $priceFormatter;
-        $this->validator = $validator;
         $this->loopeatClient = $loopeatClient;
         $this->loopeatContext = $loopeatContext;
-        $this->customerFactory = $customerFactory;
-        $this->canonicalizer = $canonicalizer;
-        $this->customerRepository = $customerRepository;
-        $this->country = strtoupper($country);
         $this->loopeatOAuthFlow = $loopeatOAuthFlow;
     }
 
@@ -115,57 +94,9 @@ class CheckoutAddressType extends AbstractType
             $form = $event->getForm();
             $order = $event->getData();
 
-            $customer = $order->getCustomer();
-
-            // TODO Add fields in any case, but pre-filled
-
-            if (null === $customer || empty($customer->getEmail())) {
-                $form->add('email', EmailType::class, [
-                    'mapped' => false,
-                    'label' => 'form.email',
-                    'translation_domain' => 'FOSUserBundle',
-                    'constraints' => [
-                        new Assert\NotBlank(),
-                        new Assert\Email([
-                            'mode' => Assert\Email::VALIDATION_MODE_STRICT,
-                        ]),
-                        new AssertUserWithSameEmailNotExists(),
-                    ],
-                ]);
-            }
-
-            if (null === $customer || empty($customer->getFirstName())) {
-                $form->add('firstName', TextType::class, [
-                    'mapped' => false,
-                    'label' => 'profile.givenName',
-                    'constraints' => [
-                        new Assert\NotBlank()
-                    ],
-                ]);
-            }
-
-            if (null === $customer || empty($customer->getLastName())) {
-                $form->add('lastName', TextType::class, [
-                    'mapped' => false,
-                    'label' => 'profile.familyName',
-                    'constraints' => [
-                        new Assert\NotBlank()
-                    ],
-                ]);
-            }
-
-            if (null === $customer || empty($customer->getPhoneNumber())) {
-                $form->add('telephone', PhoneNumberType::class, [
-                    'format' => PhoneNumberFormat::NATIONAL,
-                    'default_region' => $this->country,
-                    'label' => 'form.checkout_address.telephone.label',
-                    'mapped' => false,
-                    'constraints' => [
-                        new Assert\NotBlank(),
-                        new AssertPhoneNumber(),
-                    ],
-                ]);
-            }
+            $form->add('customer', CheckoutCustomerType::class, [
+                'label' => false,
+            ]);
 
             if ($order->isTakeaway()) {
                 $form->remove('shippingAddress');
@@ -248,39 +179,6 @@ class CheckoutAddressType extends AbstractType
 
             $form = $event->getForm();
             $order = $form->getData();
-
-            $customer = $order->getCustomer();
-
-            if (null === $customer && $form->has('email') && $form->get('email')->isValid()) {
-
-                $email = $form->get('email')->getData();
-                $emailCanonical = $this->canonicalizer->canonicalize($email);
-
-                $customer = $this->customerRepository
-                    ->findOneBy([
-                        'emailCanonical' => $emailCanonical,
-                    ]);
-
-                if (!$customer) {
-                    $customer = $this->customerFactory->createNew();
-                    $customer->setEmail($email);
-                    $customer->setEmailCanonical($emailCanonical);
-                }
-
-                $order->setCustomer($customer);
-            }
-
-            if (null !== $customer && $form->has('telephone')) {
-                $customer->setTelephone($form->get('telephone')->getData());
-            }
-
-            if (null !== $customer && $form->has('firstName')) {
-                $customer->setFirstName($form->get('firstName')->getData());
-            }
-
-            if (null !== $customer && $form->has('lastName')) {
-                $customer->setLastName($form->get('lastName')->getData());
-            }
 
             if ($form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName()) {
                 $tipAmount = $form->get('tipAmount')->getData();
