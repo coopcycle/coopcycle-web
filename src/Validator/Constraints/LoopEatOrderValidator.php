@@ -46,7 +46,7 @@ class LoopEatOrderValidator extends ConstraintValidator
 
         $customer = $object->getCustomer();
 
-        if (null === $customer) {
+        if (null === $customer || null === $customer->getId()) {
             return;
         }
 
