@@ -128,7 +128,6 @@ services:
 
   AppBundle\Form\Checkout\CheckoutCustomerType:
     arguments:
-      $country: '%country_iso%'
       $customerFactory: '@sylius.factory.customer'
       $customerRepository: '@sylius.repository.customer'
     tags: [ form.type ]
@@ -215,4 +214,9 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\AttachToOrganizationType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Type\PhoneNumberType:
+    arguments:
+      $country: '%region_iso%'
     tags: [ form.type ]

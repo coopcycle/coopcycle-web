@@ -100,6 +100,9 @@ class CheckoutAddressType extends AbstractType
 
             $form->add('customer', CheckoutCustomerType::class, [
                 'label' => false,
+                'constraints' => [
+                    new Assert\Valid(),
+                ]
             ]);
 
             if ($order->isTakeaway()) {

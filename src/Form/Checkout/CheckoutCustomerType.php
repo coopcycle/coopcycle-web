@@ -4,12 +4,10 @@ namespace AppBundle\Form\Checkout;
 
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Form\AddressType;
+use AppBundle\Form\Type\PhoneNumberType;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as AssertUserWithSameEmailNotExists;
 use FOS\UserBundle\Util\CanonicalizerInterface;
-use libphonenumber\PhoneNumberFormat;
-use libphonenumber\PhoneNumberUtil;
-use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -31,20 +29,17 @@ class CheckoutCustomerType extends AbstractType
     private $customerFactory;
     private $canonicalizer;
     private $customerRepository;
-    private $country;
 
     public function __construct(
         TranslatorInterface $translator,
         FactoryInterface $customerFactory,
         CanonicalizerInterface $canonicalizer,
-        RepositoryInterface $customerRepository,
-        string $country)
+        RepositoryInterface $customerRepository)
     {
         $this->translator = $translator;
         $this->customerFactory = $customerFactory;
         $this->canonicalizer = $canonicalizer;
         $this->customerRepository = $customerRepository;
-        $this->country = strtoupper($country);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -89,17 +84,11 @@ class CheckoutCustomerType extends AbstractType
 
             if (null === $customer || !$customer->hasUser() || empty($customer->getPhoneNumber())) {
                 $form->add('phoneNumber', PhoneNumberType::class, [
-                    'format' => PhoneNumberFormat::NATIONAL,
-                    'default_region' => $this->country,
                     'label' => 'form.checkout_address.telephone.label',
                     'constraints' => [
                         new Assert\NotBlank(),
                         new AssertPhoneNumber(),
                     ],
-                    // We use mapped = false, because phoneNumber is a string
-                    // If we don't do this, PhoneNumberToStringTransformer trigger an error
-                    // "Expected a \libphonenumber\PhoneNumber"
-                    'mapped' => false,
                     'help' => 'form.checkout_address.telephone.help',
                 ]);
             }
@@ -123,24 +112,6 @@ class CheckoutCustomerType extends AbstractType
                     $event->setData($customer);
                 } else {
                     $event->getData()->setEmailCanonical($emailCanonical);
-                }
-            }
-        });
-
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-
-            $form = $event->getForm();
-            $customer = $form->getData();
-
-            if ($form->has('phoneNumber') && $form->get('phoneNumber')->isValid()) {
-
-                $phoneNumber = PhoneNumberUtil::getInstance()->format(
-                    $form->get('phoneNumber')->getData(),
-                    PhoneNumberFormat::E164
-                );
-
-                if ($phoneNumber !== $customer->getPhoneNumber()) {
-                    $customer->setPhoneNumber($phoneNumber);
                 }
             }
         });
