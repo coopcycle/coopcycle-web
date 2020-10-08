@@ -121,6 +121,8 @@ class CheckoutCustomerType extends AbstractType
 
                 if (null !== $customer) {
                     $event->setData($customer);
+                } else {
+                    $event->getData()->setEmailCanonical($emailCanonical);
                 }
             }
         });
