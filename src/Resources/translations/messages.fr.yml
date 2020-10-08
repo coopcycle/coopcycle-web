@@ -1032,3 +1032,5 @@ refund.list.comments: Commentaires
 loopeat.oauth_connect.success: Votre compte LoopEat est connecté !
 loopeat.oauth_redirect.warning: Vous allez être redirigé·e vers le site de LoopEat pour vous identifier ou créer votre compte
 authentication.register_benefits: Créez un compte pour commander plus rapidement. Vous pourrez aussi retrouver l'historique de vos commandes précédentes.
+guest_checkout.user_with_same_email_exists: Un compte avec le même email existe déjà. Veuillez vous connecter pour continuer, ou utilisez un autre email pour commander sans créer de compte.
+guest_checkout.use_another_email: Utiliser un autre email

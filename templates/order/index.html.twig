@@ -10,6 +10,44 @@
 
   {% if not order.empty %}
 
+    {% set user_with_same_email_exists_code =
+      constant('AppBundle\\Validator\\Constraints\\UserWithSameEmailNotExists::USER_WITH_SAME_EMAIL_EXISTS_ERROR') %}
+
+    {% if form.customer.email is defined and not form.customer.email.vars.valid
+      and form.customer.email.vars.errors.findByCodes(user_with_same_email_exists_code)|length > 0 %}
+      <div class="alert alert-warning">
+        <div class="mb-3">
+          <i class="fa fa-warning mr-1"></i>
+          <span>{{ 'guest_checkout.user_with_same_email_exists'|trans }}</span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-warning"
+            data-toggle="collapse" data-target="#guest-checkout-signin"
+            aria-expanded="false" aria-controls="guest-checkout-signin">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</button>
+          <button type="button" class="btn btn-transparent">{{ 'guest_checkout.use_another_email'|trans }}</button>
+        </div>
+        <div class="collapse mt-4" id="guest-checkout-signin">
+          <form action="{{ path("fos_user_security_check", { _target_path: path('order') }) }}" method="post">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+            <input type="hidden" name="_username" value="{{ form.customer.email.vars.data }}" />
+            <div class="input-group">
+              <input type="password" name="_password"
+                class="form-control" id="guest-checkout-password"
+                placeholder="{{ 'security.login.password'|trans({}, 'FOSUserBundle') }}">
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary">
+                  {{ 'security.login.submit'|trans({}, 'FOSUserBundle') }}
+                </button>
+              </span>
+            </div>
+            <a class="help-block mb-0" href="{{ path('fos_user_resetting_request') }}">
+              {% trans from 'messages' %}authentication.forgot_password{% endtrans %}
+            </a>
+          </form>
+        </div>
+      </div>
+    {% endif %}
+
     {{ form_start(form, { attr: { style: 'padding-bottom: 66px;' } }) }}
 
     <div class="row">
