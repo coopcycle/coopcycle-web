@@ -47,7 +47,10 @@ class CheckoutCustomerType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
-            $customer = $event->getData();
+            $parentForm = $form->getParent();
+
+            $order = $parentForm->getData();
+            $customer = $order->getCustomer();
 
             if (null === $customer || !$customer->hasUser()) {
                 $form->add('email', EmailType::class, [
@@ -61,6 +64,7 @@ class CheckoutCustomerType extends AbstractType
                         new AssertUserWithSameEmailNotExists(),
                     ],
                     'help' => 'form.email.help',
+                    'data' => $customer !== null ? $customer->getEmailCanonical() : '',
                 ]);
             }
 
@@ -70,6 +74,7 @@ class CheckoutCustomerType extends AbstractType
                     'constraints' => [
                         new Assert\NotBlank()
                     ],
+                    'data' => $customer !== null ? $customer->getFirstName() : '',
                 ]);
             }
 
@@ -79,6 +84,7 @@ class CheckoutCustomerType extends AbstractType
                     'constraints' => [
                         new Assert\NotBlank()
                     ],
+                    'data' => $customer !== null ? $customer->getLastName() : '',
                 ]);
             }
 
@@ -90,6 +96,7 @@ class CheckoutCustomerType extends AbstractType
                         new AssertPhoneNumber(),
                     ],
                     'help' => 'form.checkout_address.telephone.help',
+                    'data' => $customer !== null ? $customer->getPhoneNumber() : '',
                 ]);
             }
         });
@@ -121,6 +128,7 @@ class CheckoutCustomerType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Customer::class,
+            // 'validation_groups' => ['sylius_customer_guest'],
         ));
     }
 }

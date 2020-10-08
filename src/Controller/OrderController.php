@@ -101,6 +101,11 @@ class OrderController extends AbstractController
 
             $order = $form->getData();
 
+            if ($form->get('customer')->isValid()) {
+                $customer = $form->get('customer')->getData();
+                $order->setCustomer($customer);
+            }
+
             $reusablePackagingWasChanged =
                 $wasReusablePackagingEnabled !== $order->isReusablePackagingEnabled();
 

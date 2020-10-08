@@ -100,6 +100,10 @@ class CheckoutAddressType extends AbstractType
 
             $form->add('customer', CheckoutCustomerType::class, [
                 'label' => false,
+                // We need to use mapped = false
+                // because the form may be submitted "partially"
+                // (for example, when toggling reusable packaging)
+                'mapped' => false,
                 'constraints' => [
                     new Assert\Valid(),
                 ]
