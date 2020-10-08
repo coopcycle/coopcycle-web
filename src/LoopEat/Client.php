@@ -5,6 +5,8 @@ namespace AppBundle\LoopEat;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Customer;
+use AppBundle\LoopEat\OAuthCredentialsInterface;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client as BaseClient;
 use GuzzleHttp\Exception\RequestException;
@@ -149,13 +151,13 @@ class Client extends BaseClient
         return sprintf('%s/oauth/authorize?%s', $this->getConfig('base_uri'), $queryString);
     }
 
-    public function currentCustomer(Customer $customer)
+    public function currentCustomer(OAuthCredentialsInterface $credentials)
     {
         $response = $this->request('GET', '/customers/current', [
             'headers' => [
-                'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
+                'Authorization' => sprintf('Bearer %s', $credentials->getLoopeatAccessToken())
             ],
-            'oauth_credentials' => $customer,
+            'oauth_credentials' => $credentials,
         ]);
 
         return json_decode((string) $response->getBody(), true);
@@ -244,13 +246,22 @@ class Client extends BaseClient
 
     public function createStateParamForCustomer(Customer $customer)
     {
-        // FIXME
-        // If the customer is not persisted yet, we can't generate an IRI
-        // Use the email instead
-
         return $this->jwtEncoder->encode([
             'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
             'sub' => $this->iriConverter->getIriFromItem($customer),
+            // Custom claims
+            self::JWT_CLAIM_SUCCESS_REDIRECT =>
+                $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            self::JWT_CLAIM_FAILURE_REDIRECT =>
+                $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
+        ]);
+    }
+
+    public function createStateParamForOrder(OrderInterface $order)
+    {
+        return $this->jwtEncoder->encode([
+            'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
+            'sub' => $this->iriConverter->getIriFromItem($order),
             // Custom claims
             self::JWT_CLAIM_SUCCESS_REDIRECT =>
                 $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),

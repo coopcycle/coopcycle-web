@@ -37,5 +37,10 @@ class GrabLoopEats
 
         $this->client->return($order->getCustomer(), $order->getReusablePackagingPledgeReturn());
         $this->client->grab($order->getCustomer(), $order->getRestaurant(), $order->getReusablePackagingQuantity());
+
+        // When this is a guest checkout, we clear the credentials after grabbing
+        if (!$order->getCustomer()->hasUser()) {
+            $order->getCustomer()->clearLoopEatCredentials();
+        }
     }
 }

@@ -27,6 +27,7 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -70,7 +71,8 @@ class OrderController extends AbstractController
         CartContextInterface $cartContext,
         OrderProcessorInterface $orderProcessor,
         TranslatorInterface $translator,
-        ValidatorInterface $validator)
+        ValidatorInterface $validator,
+        SessionInterface $session)
     {
         $order = $cartContext->getCart();
 
@@ -260,6 +262,23 @@ class OrderController extends AbstractController
 
         if (null === $order) {
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
+        }
+
+        $loopeatAccessTokenKey =
+            sprintf('loopeat.order.%d.access_token', $id);
+        $loopeatRefreshTokenKey =
+            sprintf('loopeat.order.%d.refresh_token', $id);
+
+        if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
+            $order->getCustomer()->setLoopeatAccessToken(
+                $session->get($loopeatAccessTokenKey)
+            );
+            $order->getCustomer()->setLoopeatRefreshToken(
+                $session->get($loopeatRefreshTokenKey)
+            );
+
+            $session->remove($loopeatAccessTokenKey);
+            $session->remove($loopeatRefreshTokenKey);
         }
 
         $resetSession = $flashBag->has('reset_session') && !empty($flashBag->get('reset_session'));

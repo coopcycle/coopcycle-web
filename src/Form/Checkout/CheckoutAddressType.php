@@ -5,6 +5,7 @@ namespace AppBundle\Form\Checkout;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\LoopEat\Context as LoopEatContext;
+use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\LoopEatOrder;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
@@ -22,6 +23,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -37,6 +39,7 @@ class CheckoutAddressType extends AbstractType
         PriceFormatter $priceFormatter,
         LoopEatClient $loopeatClient,
         LoopEatContext $loopeatContext,
+        SessionInterface $session,
         string $loopeatOAuthFlow)
     {
         $this->tokenStorage = $tokenStorage;
@@ -44,6 +47,7 @@ class CheckoutAddressType extends AbstractType
         $this->priceFormatter = $priceFormatter;
         $this->loopeatClient = $loopeatClient;
         $this->loopeatContext = $loopeatContext;
+        $this->session = $session;
         $this->loopeatOAuthFlow = $loopeatOAuthFlow;
     }
 
@@ -111,24 +115,27 @@ class CheckoutAddressType extends AbstractType
                 // FIXME
                 // We need to check if $packagingQuantity > 0
 
-                if ($restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials() && null !== $customer && null !== $customer->getId()) {
+                if ($restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials()) {
 
                     $this->loopeatContext->initialize();
+
+                    $loopeatAdapter = new LoopEatAdapter($order, $this->session);
+
+                    $loopeatAuthorizeParams = [
+                        'state' => $this->loopeatClient->createStateParamForOrder($order),
+                    ];
+
+                    if (null !== $customer && !empty($customer->getEmailCanonical())) {
+                        $loopeatAuthorizeParams['login_hint'] = $customer->getEmailCanonical();
+                    }
 
                     $form->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
                         'label' => 'form.checkout_address.reusable_packaging_loopeat_enabled.label',
                         'attr' => [
-                            'data-loopeat' => "true",
-                            'data-loopeat-credentials' => var_export($customer->hasLoopEatCredentials(), true),
-                            'data-loopeat-authorize-url' => $this->loopeatClient->getOAuthAuthorizeUrl([
-                                'login_hint' => $customer->getEmailCanonical(),
-                                // Use a JWT as the "state" parameter
-                                // FIXME
-                                // If the customer is not persisted yet, we can't generate an IRI
-                                // Use the email instead
-                                'state' => $this->loopeatClient->createStateParamForCustomer($customer),
-                            ]),
+                            'data-loopeat' => 'true',
+                            'data-loopeat-credentials' => var_export($loopeatAdapter->hasLoopEatCredentials(), true),
+                            'data-loopeat-authorize-url' => $this->loopeatClient->getOAuthAuthorizeUrl($loopeatAuthorizeParams),
                             'data-loopeat-oauth-flow' => $this->loopeatOAuthFlow,
                         ],
                     ]);
