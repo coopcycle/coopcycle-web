@@ -1,14 +1,7 @@
 context('Checkout', () => {
   beforeEach(() => {
 
-    const prefix = Cypress.env('COMMAND_PREFIX')
-
-    let cmd = 'bin/console coopcycle:fixtures:load -f cypress/fixtures/checkout.yml --env test'
-    if (prefix) {
-      cmd = `${prefix} ${cmd}`
-    }
-
-    cy.exec(cmd)
+    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
 
     cy.window().then((win) => {
       win.sessionStorage.clear()
@@ -23,9 +16,10 @@ context('Checkout', () => {
 
     cy.visit('/fr/')
 
-    cy.contains('Crazy Hamburger').click()
-
-    cy.location('pathname').should('match', /\/fr\/restaurant\/[0-9]+-crazy-hamburger/)
+    cy.clickRestaurant(
+      'Crazy Hamburger',
+      /\/fr\/restaurant\/[0-9]+-crazy-hamburger/
+    )
 
     cy.wait('@postRestaurant')
 
@@ -51,16 +45,88 @@ context('Checkout', () => {
 
     cy.get('.cart__items').invoke('text').should('match', /Cheeseburger/)
 
-    cy.get('.ReactModal__Content--enter-address')
+    cy.searchAddress(
+      '.ReactModal__Content--enter-address',
+      '91 rue de rivoli paris',
+      '91 Rue de Rivoli, Paris, France'
+    )
+
+    cy.wait('@postRestaurant')
+
+    cy.get('.cart .address-autosuggest__container input[type="search"]')
+      .should('have.value', '91 Rue de Rivoli, Paris, France')
+
+    cy.contains('Cheese Cake').click()
+
+    cy.wait('@postProduct')
+
+    cy.get('.cart__items').invoke('text').should('match', /Cheese Cake/)
+
+    cy.get('form[name="cart"]').submit()
+
+    cy.location('pathname').should('eq', '/login')
+
+    cy.login('bob', '12345678')
+
+    cy.location('pathname').should('eq', '/order/')
+
+    cy.contains('Commander').click()
+
+    cy.location('pathname').should('eq', '/order/payment')
+
+    cy.get('form[name="checkout_payment"] input[type="text"]').type('John Doe')
+    cy.enterCreditCard()
+
+    cy.get('form[name="checkout_payment"]').submit()
+
+    cy.location('pathname').should('match', /\/order\/confirm\/[a-zA-Z0-9]+/)
+  })
+
+
+  it('order something at restaurant (as guest)', () => {
+
+    cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
+
+    cy.server()
+    cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+    cy.route('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
+
+    cy.visit('/fr/')
+
+    cy.clickRestaurant(
+      'Crazy Hamburger',
+      /\/fr\/restaurant\/[0-9]+-crazy-hamburger/
+    )
+
+    cy.wait('@postRestaurant')
+
+    cy.contains('Cheeseburger').click()
+
+    cy.get('#CHEESEBURGER-options')
       .should('be.visible')
 
-    cy.get('.ReactModal__Content--enter-address input[type="search"]')
-      .type('91 rue de rivoli paris', { timeout: 5000, delay: 30 })
+    // Make sure to use a precise selector, because 2 products have same options
+    cy.get('#CHEESEBURGER-options input[value="HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES"]')
+      .check()
+    cy.get('#CHEESEBURGER-options input[value="HAMBURGER_DRINK_COLA"]')
+      .check()
 
-    cy.get('.ReactModal__Content--enter-address')
-      .find('ul[role="listbox"] li', { timeout: 5000 })
-      .contains('91 Rue de Rivoli, Paris, France')
+    cy.get('#CHEESEBURGER-options input[value="HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES"]').should('be.checked')
+    cy.get('#CHEESEBURGER-options input[value="HAMBURGER_DRINK_COLA"]').should('be.checked')
+
+    cy.get('#CHEESEBURGER-options button[type="submit"]')
+      .should('not.be.disabled')
       .click()
+
+    cy.wait('@postProduct')
+
+    cy.get('.cart__items').invoke('text').should('match', /Cheeseburger/)
+
+    cy.searchAddress(
+      '.ReactModal__Content--enter-address',
+      '91 rue de rivoli paris',
+      '91 Rue de Rivoli, Paris, France'
+    )
 
     cy.wait('@postRestaurant')
 
@@ -88,30 +154,7 @@ context('Checkout', () => {
     cy.location('pathname').should('eq', '/order/payment')
 
     cy.get('form[name="checkout_payment"] input[type="text"]').type('John Doe')
-
-    const expDate = Cypress.moment().add(6, 'month').format('MMYY')
-
-    // @see https://github.com/cypress-io/cypress/issues/136
-    cy.get('.StripeElement iframe')
-        .then(function ($iframe) {
-
-            const $body = $iframe.contents().find('body')
-
-            cy
-              .wrap($body)
-              .find('input[name="cardnumber"]')
-              .type('4242424242424242')
-
-            cy
-              .wrap($body)
-              .find('input[name="exp-date"]')
-              .type(expDate)
-
-            cy
-              .wrap($body)
-              .find('input[name="cvc"]')
-              .type('123')
-        })
+    cy.enterCreditCard()
 
     cy.get('form[name="checkout_payment"]').submit()
 
@@ -294,7 +337,9 @@ context('Checkout', () => {
     cy.location('pathname').should('eq', '/order/')
   })
 
-  it('order something at restaurant with deposit-refund enabled', () => {
+  it('order something at restaurant with deposit-refund enabled (as guest)', () => {
+
+    cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 
     cy.server()
     cy.route('POST', '/fr/restaurant/*-zero-waste-inc').as('postRestaurant')
@@ -363,7 +408,9 @@ context('Checkout', () => {
       .should('match', /^21,00/)
   })
 
-  it('order something at restaurant with a tip', () => {
+  it('order something at restaurant with a tip (as guest)', () => {
+
+    cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 
     cy.server()
     cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')

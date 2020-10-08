@@ -12,6 +12,7 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Service\OrderManager;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
@@ -71,8 +72,14 @@ class OrderController extends AbstractController
         CartContextInterface $cartContext,
         OrderProcessorInterface $orderProcessor,
         TranslatorInterface $translator,
-        ValidatorInterface $validator)
+        ValidatorInterface $validator,
+        SettingsManager $settingsManager)
     {
+
+        if (!$settingsManager->get('guest_checkout_enabled')) {
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+        }
+
         $order = $cartContext->getCart();
 
         if (null === $order || null === $order->getRestaurant()) {
@@ -175,6 +182,10 @@ class OrderController extends AbstractController
         CartContextInterface $cartContext,
         StripeManager $stripeManager)
     {
+        if (!$settingsManager->get('guest_checkout_enabled')) {
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+        }
+
         $order = $cartContext->getCart();
 
         if (null === $order || null === $order->getRestaurant()) {
