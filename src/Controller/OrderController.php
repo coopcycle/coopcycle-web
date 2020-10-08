@@ -180,7 +180,8 @@ class OrderController extends AbstractController
     public function paymentAction(Request $request,
         OrderManager $orderManager,
         CartContextInterface $cartContext,
-        StripeManager $stripeManager)
+        StripeManager $stripeManager,
+        SettingsManager $settingsManager)
     {
         if (!$settingsManager->get('guest_checkout_enabled')) {
             $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
