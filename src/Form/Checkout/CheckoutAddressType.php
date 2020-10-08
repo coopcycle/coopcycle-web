@@ -5,11 +5,9 @@ namespace AppBundle\Form\Checkout;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\LoopEat\Context as LoopEatContext;
+use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\LoopEatOrder;
-use GuzzleHttp\Exception\RequestException;
-use libphonenumber\PhoneNumberFormat;
-use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
 use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -25,34 +23,31 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CheckoutAddressType extends AbstractType
 {
     private $tokenStorage;
-    private $country;
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
         TranslatorInterface $translator,
         PriceFormatter $priceFormatter,
-        ValidatorInterface $validator,
         LoopEatClient $loopeatClient,
         LoopEatContext $loopeatContext,
-        string $country,
+        SessionInterface $session,
         string $loopeatOAuthFlow)
     {
         $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
         $this->priceFormatter = $priceFormatter;
-        $this->validator = $validator;
         $this->loopeatClient = $loopeatClient;
         $this->loopeatContext = $loopeatContext;
-        $this->country = strtoupper($country);
+        $this->session = $session;
         $this->loopeatOAuthFlow = $loopeatOAuthFlow;
     }
 
@@ -103,18 +98,17 @@ class CheckoutAddressType extends AbstractType
             $form = $event->getForm();
             $order = $event->getData();
 
-            // Add a "telephone" field when the customer does not have telephone
-            if (empty($order->getCustomer()->getPhoneNumber())) {
-                $form->add('telephone', PhoneNumberType::class, [
-                    'format' => PhoneNumberFormat::NATIONAL,
-                    'default_region' => $this->country,
-                    'label' => 'form.checkout_address.telephone.label',
-                    'mapped' => false,
-                    'constraints' => [
-                        new AssertPhoneNumber()
-                    ],
-                ]);
-            }
+            $form->add('customer', CheckoutCustomerType::class, [
+                'label' => false,
+                // We need to use mapped = false
+                // because the form may be submitted "partially"
+                // (for example, when toggling reusable packaging)
+                'mapped' => false,
+                'constraints' => [
+                    new Assert\Valid(),
+                ],
+                'data' => $order->getCustomer(),
+            ]);
 
             if ($order->isTakeaway()) {
                 $form->remove('shippingAddress');
@@ -129,24 +123,27 @@ class CheckoutAddressType extends AbstractType
                 // FIXME
                 // We need to check if $packagingQuantity > 0
 
-                if ($restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials() && null !== $customer->getId()) {
+                if ($restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials()) {
 
                     $this->loopeatContext->initialize();
+
+                    $loopeatAdapter = new LoopEatAdapter($order, $this->session);
+
+                    $loopeatAuthorizeParams = [
+                        'state' => $this->loopeatClient->createStateParamForOrder($order),
+                    ];
+
+                    if (null !== $customer && !empty($customer->getEmailCanonical())) {
+                        $loopeatAuthorizeParams['login_hint'] = $customer->getEmailCanonical();
+                    }
 
                     $form->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
                         'label' => 'form.checkout_address.reusable_packaging_loopeat_enabled.label',
                         'attr' => [
-                            'data-loopeat' => "true",
-                            'data-loopeat-credentials' => var_export($customer->hasLoopEatCredentials(), true),
-                            'data-loopeat-authorize-url' => $this->loopeatClient->getOAuthAuthorizeUrl([
-                                'login_hint' => $customer->getEmailCanonical(),
-                                // Use a JWT as the "state" parameter
-                                // FIXME
-                                // If the customer is not persisted yet, we can't generate an IRI
-                                // Use the email instead
-                                'state' => $this->loopeatClient->createStateParamForCustomer($customer),
-                            ]),
+                            'data-loopeat' => 'true',
+                            'data-loopeat-credentials' => var_export($loopeatAdapter->hasLoopEatCredentials(), true),
+                            'data-loopeat-authorize-url' => $this->loopeatClient->getOAuthAuthorizeUrl($loopeatAuthorizeParams),
                             'data-loopeat-oauth-flow' => $this->loopeatOAuthFlow,
                         ],
                     ]);
@@ -194,14 +191,9 @@ class CheckoutAddressType extends AbstractType
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+
             $form = $event->getForm();
             $order = $form->getData();
-
-            $customer = $order->getCustomer();
-
-            if ($form->has('telephone')) {
-                $customer->setTelephone($form->get('telephone')->getData());
-            }
 
             if ($form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName()) {
                 $tipAmount = $form->get('tipAmount')->getData();

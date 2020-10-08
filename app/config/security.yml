@@ -185,7 +185,6 @@ security:
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/order, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
         - { path: ^/profile/jwt, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/profile/notifications, roles: IS_AUTHENTICATED_REMEMBERED }

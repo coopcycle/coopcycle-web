@@ -1,15 +1,25 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
-{% block _settings_subject_to_vat_row %}
-
-  <div class="alert alert-info">
-    <i class="fa fa-info-circle"></i> {{ 'form.settings.subject_to_vat.label'|trans }}
+{% block switch_alert %}
+  <div class="alert alert-{{ color|default('info') }}">
+    <i class="fa fa-{{ icon|default('info-circle') }}"></i> {{ form.vars.label|trans }}
     <div class="pull-right">
       <div data-widget="switch" data-switch-target="{{ ('#' ~ form.vars.id) }}"></div>
     </div>
     {{ form_widget(form) }}
   </div>
+{% endblock %}
 
+{% block _settings_guest_checkout_enabled_row %}
+  {% set color = 'success' %}
+  {% set icon = 'shopping-basket' %}
+  {{ block('switch_alert') }}
+{% endblock %}
+
+{% block _settings_subject_to_vat_row %}
+  {% set color = 'info' %}
+  {% set icon = 'info-circle' %}
+  {{ block('switch_alert') }}
 {% endblock %}
 
 {% block password_widget %}

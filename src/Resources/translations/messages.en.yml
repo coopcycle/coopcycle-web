@@ -1077,3 +1077,6 @@ form.attach_to_org.modal.title: Attach to store
 loopeat.oauth_connect.success: LoopEat account connected successfully!
 loopeat.oauth_redirect.warning: You will be redirected to the LoopEat website to login or create your account
 authentication.register_benefits: Register for a faster checkout experience. You will also be able to find your previous orders history.
+form.checkout_address.telephone.help: To contact you in case of a problem
+guest_checkout.user_with_same_email_exists: An account with the same email already exists. Please log in to continue, or use another email to order without creating an account.
+guest_checkout.use_another_email: Use another Email

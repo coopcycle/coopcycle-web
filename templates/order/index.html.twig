@@ -10,13 +10,51 @@
 
   {% if not order.empty %}
 
+    {% set user_with_same_email_exists_code =
+      constant('AppBundle\\Validator\\Constraints\\UserWithSameEmailNotExists::USER_WITH_SAME_EMAIL_EXISTS_ERROR') %}
+
+    {% if form.customer.email is defined and not form.customer.email.vars.valid
+      and form.customer.email.vars.errors.findByCodes(user_with_same_email_exists_code)|length > 0 %}
+      <div class="alert alert-warning">
+        <div class="mb-3">
+          <i class="fa fa-warning mr-1"></i>
+          <span>{{ 'guest_checkout.user_with_same_email_exists'|trans }}</span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-warning"
+            data-toggle="collapse" data-target="#guest-checkout-signin"
+            aria-expanded="false" aria-controls="guest-checkout-signin">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</button>
+          <button type="button" class="btn btn-transparent">{{ 'guest_checkout.use_another_email'|trans }}</button>
+        </div>
+        <div class="collapse mt-4" id="guest-checkout-signin">
+          <form action="{{ path("fos_user_security_check", { _target_path: path('order') }) }}" method="post">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+            <input type="hidden" name="_username" value="{{ form.customer.email.vars.data }}" />
+            <div class="input-group">
+              <input type="password" name="_password"
+                class="form-control" id="guest-checkout-password"
+                placeholder="{{ 'security.login.password'|trans({}, 'FOSUserBundle') }}">
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary">
+                  {{ 'security.login.submit'|trans({}, 'FOSUserBundle') }}
+                </button>
+              </span>
+            </div>
+            <a class="help-block mb-0" href="{{ path('fos_user_resetting_request') }}">
+              {% trans from 'messages' %}authentication.forgot_password{% endtrans %}
+            </a>
+          </form>
+        </div>
+      </div>
+    {% endif %}
+
     {{ form_start(form, { attr: { style: 'padding-bottom: 66px;' } }) }}
 
     <div class="row">
       <div class="col-xs-12">
         {% include 'order/breadcrumb.html.twig' %}
         <h2 class="font-weight-bold m-0 mb-5">{{ order.restaurant.name }}</h4>
-        <div>
+        <div class="border-bottom mb-5">
 
           <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
           <div id="items">
@@ -56,31 +94,26 @@
 
         </div>
 
-        <hr>
+        {% if order.takeaway %}
+        <div class="alert alert-warning">
+          <i class="fa fa-warning mr-2"></i>
+          {{ 'form.checkout_address.takeaway.disclaimer'|trans }}
+          {% if order.restaurant.telephone %}
+            {{ 'form.checkout_address.takeaway.contact'|trans({ '%telephone%': (order.restaurant.telephone|phone_number_format('NATIONAL')) }) }}
+          {% endif %}
+          <span class="text-danger">{{ 'form.checkout_address.takeaway.no_show_disclaimer'|trans }}</span>
+        </div>
+        {% endif %}
+
+        {{ form_row(form.customer) }}
 
         <div>
-
-          {% if order.takeaway %}
-            <div class="alert alert-warning">
-              <i class="fa fa-warning mr-2"></i>
-              {{ 'form.checkout_address.takeaway.disclaimer'|trans }}
-              {% if order.restaurant.telephone %}
-                {{ 'form.checkout_address.takeaway.contact'|trans({ '%telephone%': (order.restaurant.telephone|phone_number_format('NATIONAL')) }) }}
-              {% endif %}
-              <span class="text-danger">{{ 'form.checkout_address.takeaway.no_show_disclaimer'|trans }}</span>
-            </div>
-          {% endif %}
-
-          {% if form.telephone is defined %}
-            {{ form_row(form.telephone) }}
-          {% endif %}
-
           {% if form.shippingAddress is defined %}
             {{ form_row(form.shippingAddress.streetAddress) }}
             {{ form_row(form.shippingAddress.description) }}
           {% endif %}
-
         </div>
+
         <div>
           {{ form_row(form.notes) }}
         </div>

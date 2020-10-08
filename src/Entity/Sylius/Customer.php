@@ -6,7 +6,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\LoopEat\CustomerCredentials;
 use AppBundle\Entity\User;
-use AppBundle\LoopEat\OAuthCredentialsInterface;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -36,7 +35,7 @@ use Webmozart\Assert\Assert;
  *   }
  * )
  */
-class Customer extends BaseCustomer implements CustomerInterface, OAuthCredentialsInterface
+class Customer extends BaseCustomer implements CustomerInterface
 {
     /** @var User */
     protected $user;

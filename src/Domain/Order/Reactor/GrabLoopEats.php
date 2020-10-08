@@ -3,6 +3,7 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\LoopEat\Client as LoopEatClient;
+use AppBundle\LoopEat\OAuthCredentialsInterface;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use Webmozart\Assert\Assert;
@@ -37,5 +38,13 @@ class GrabLoopEats
 
         $this->client->return($order->getCustomer(), $order->getReusablePackagingPledgeReturn());
         $this->client->grab($order->getCustomer(), $order->getRestaurant(), $order->getReusablePackagingQuantity());
+
+        Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
+        Assert::isInstanceOf($order->getCustomer(), OAuthCredentialsInterface::class);
+
+        // When this is a guest checkout, we clear the credentials after grabbing
+        if (!$order->getCustomer()->hasUser()) {
+            $order->getCustomer()->clearLoopEatCredentials();
+        }
     }
 }

@@ -144,6 +144,8 @@ services:
       $loopeatClientId: '%loopeat_client_id%'
       $loopeatClientSecret: '%loopeat_client_secret%'
       $loopeatOAuthFlow: '%env(LOOPEAT_OAUTH_FLOW)%'
+    tags:
+      - { name: monolog.logger, channel: loopeat }
 
   AppBundle\Controller\PaymentController:
     arguments:

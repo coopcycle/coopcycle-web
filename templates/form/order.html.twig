@@ -170,3 +170,41 @@
     })|raw }}
   </label>
 {% endblock %}
+
+{% block _checkout_address_customer_row %}
+{% if form|length > 0 %}
+  <div class="border-bottom mb-5">
+    <div class="my-4">
+    {% if form.email is defined or form.phoneNumber is defined %}
+      {% if form.email is defined and form.phoneNumber is defined %}
+      <div class="row">
+        <div class="col-xs-12 col-sm-6">
+          {{ form_row(form.email) }}
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          {{ form_row(form.phoneNumber) }}
+        </div>
+      </div>
+      {% else %}
+        {% if form.email is defined %}
+          {{ form_row(form.email) }}
+        {% endif %}
+        {% if form.phoneNumber is defined %}
+          {{ form_row(form.phoneNumber) }}
+        {% endif %}
+      {% endif %}
+    {% endif %}
+    {% if form.firstName is defined or form.lastName is defined %}
+    <div class="row">
+      <div class="col-xs-12 col-sm-6">
+        {{ form_row(form.firstName) }}
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        {{ form_row(form.lastName) }}
+      </div>
+    </div>
+    {% endif %}
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

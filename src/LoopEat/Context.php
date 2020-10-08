@@ -2,24 +2,32 @@
 
 namespace AppBundle\LoopEat;
 
+use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use GuzzleHttp\Exception\RequestException;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class Context
 {
     private $client;
     private $cartContext;
+    private $session;
     private $logger;
 
     private $loopeatBalance = 0;
     private $loopeatCredit = 0;
 
-    public function __construct(Client $client, CartContextInterface $cartContext, LoggerInterface $logger = null)
+    public function __construct(
+        Client $client,
+        CartContextInterface $cartContext,
+        SessionInterface $session,
+        LoggerInterface $logger = null)
     {
         $this->client = $client;
         $this->cartContext = $cartContext;
+        $this->session = $session;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -34,18 +42,13 @@ class Context
 
         $this->logger->info(sprintf('Initializing LoopEat context for order #%d', $order->getId()));
 
-        $customer = $order->getCustomer();
+        $adapter = new LoopEatAdapter($order, $this->session);
 
-        if (null === $customer) {
-            $this->logger->info(sprintf('Order #%d has no customer', $order->getId()));
-            return;
-        }
-
-        if ($customer->hasLoopEatCredentials()) {
+        if ($adapter->hasLoopEatCredentials()) {
 
             try {
 
-                $loopeatCustomer = $this->client->currentCustomer($customer);
+                $loopeatCustomer = $this->client->currentCustomer($adapter);
 
                 $this->loopeatBalance = $loopeatCustomer['loopeatBalance'];
                 $this->loopeatCredit  = $loopeatCustomer['loopeatCredit'];
@@ -57,7 +60,7 @@ class Context
             }
 
         } else {
-            $this->logger->info(sprintf('Customer for order #%d has no LoopEat credentials', $order->getId()));
+            $this->logger->info(sprintf('No LoopEat credentials found for order #%d', $order->getId()));
         }
     }
 

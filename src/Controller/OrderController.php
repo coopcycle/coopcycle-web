@@ -12,6 +12,7 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Service\OrderManager;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
@@ -27,6 +28,7 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -70,8 +72,14 @@ class OrderController extends AbstractController
         CartContextInterface $cartContext,
         OrderProcessorInterface $orderProcessor,
         TranslatorInterface $translator,
-        ValidatorInterface $validator)
+        ValidatorInterface $validator,
+        SettingsManager $settingsManager)
     {
+
+        if (!$settingsManager->get('guest_checkout_enabled')) {
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+        }
+
         $order = $cartContext->getCart();
 
         if (null === $order || null === $order->getRestaurant()) {
@@ -81,10 +89,9 @@ class OrderController extends AbstractController
 
         $user = $this->getUser();
 
-        // At this step, we are pretty sure the customer is logged in
-        // Make sure the order actually has a customer, if not set previously
+        // If the user is authenticated, use the corresponding customer
         // @see AppBundle\EventListener\WebAuthenticationListener
-        if ($user !== $order->getUser()) {
+        if (null !== $user && $user->getCustomer() !== $order->getCustomer()) {
             $order->setCustomer($user->getCustomer());
             $this->objectManager->flush();
         }
@@ -96,9 +103,15 @@ class OrderController extends AbstractController
         $form = $this->createForm(CheckoutAddressType::class, $order);
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted()) {
 
             $order = $form->getData();
+
+            if ($form->get('customer')->isValid()) {
+                $customer = $form->get('customer')->getData();
+                $order->setCustomer($customer);
+            }
 
             $reusablePackagingWasChanged =
                 $wasReusablePackagingEnabled !== $order->isReusablePackagingEnabled();
@@ -167,8 +180,13 @@ class OrderController extends AbstractController
     public function paymentAction(Request $request,
         OrderManager $orderManager,
         CartContextInterface $cartContext,
-        StripeManager $stripeManager)
+        StripeManager $stripeManager,
+        SettingsManager $settingsManager)
     {
+        if (!$settingsManager->get('guest_checkout_enabled')) {
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+        }
+
         $order = $cartContext->getCart();
 
         if (null === $order || null === $order->getRestaurant()) {
@@ -245,6 +263,7 @@ class OrderController extends AbstractController
         FlashBagInterface $flashBag,
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
+        SessionInterface $session,
         Request $request)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
@@ -260,6 +279,23 @@ class OrderController extends AbstractController
 
         if (null === $order) {
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
+        }
+
+        $loopeatAccessTokenKey =
+            sprintf('loopeat.order.%d.access_token', $id);
+        $loopeatRefreshTokenKey =
+            sprintf('loopeat.order.%d.refresh_token', $id);
+
+        if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
+            $order->getCustomer()->setLoopeatAccessToken(
+                $session->get($loopeatAccessTokenKey)
+            );
+            $order->getCustomer()->setLoopeatRefreshToken(
+                $session->get($loopeatRefreshTokenKey)
+            );
+
+            $session->remove($loopeatAccessTokenKey);
+            $session->remove($loopeatRefreshTokenKey);
         }
 
         $resetSession = $flashBag->has('reset_session') && !empty($flashBag->get('reset_session'));

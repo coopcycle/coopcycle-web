@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Customer;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
@@ -14,6 +15,7 @@ use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -95,6 +97,7 @@ class LoopEatController extends AbstractController
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         EntityManagerInterface $objectManager,
+        SessionInterface $session,
         TranslatorInterface $translator)
     {
         if (!$request->query->has('state')) {
@@ -115,8 +118,9 @@ class LoopEatController extends AbstractController
 
         $subject = $iriConverter->getItemFromIri($payload['sub']);
 
-        if (!$subject instanceof LocalBusiness && !$subject instanceof Customer) {
-            throw new BadRequestHttpException(sprintf('Subject should be an instance of "%s" or "%s"', LocalBusiness::class, Customer::class));
+        if (!$subject instanceof LocalBusiness && !$subject instanceof Customer && !$subject instanceof Order) {
+            throw new BadRequestHttpException(sprintf('Subject should be an instance of "%s" or "%s" or "%s"',
+                LocalBusiness::class, Customer::class, Order::class));
         }
 
         if (!$request->query->has('code') && !$request->query->has('error')) {
@@ -136,10 +140,23 @@ class LoopEatController extends AbstractController
             return $this->redirect($this->getFailureRedirect($payload));
         }
 
-        $subject->setLoopeatAccessToken($data['access_token']);
-        $subject->setLoopeatRefreshToken($data['refresh_token']);
+        // This happens for guest checkout
+        if ($subject instanceof Order && null !== $subject->getCustomer()) {
+            $subject = $subject->getCustomer();
+        }
 
-        $objectManager->flush();
+        // If the customer is not defined yet,
+        // we store the credentials in session
+        // they will be attached to customer later
+        if ($subject instanceof Order) {
+            $this->logger->info(sprintf('Storing LoopEat credentials for order #%d in session', $subject->getId()));
+            $session->set(sprintf('loopeat.order.%d.access_token', $subject->getId()), $data['access_token']);
+            $session->set(sprintf('loopeat.order.%d.refresh_token', $subject->getId()), $data['refresh_token']);
+        } else {
+            $subject->setLoopeatAccessToken($data['access_token']);
+            $subject->setLoopeatRefreshToken($data['refresh_token']);
+            $objectManager->flush();
+        }
 
         $this->addFlash('notice', $translator->trans('loopeat.oauth_connect.success'));
 

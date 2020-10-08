@@ -140,4 +140,42 @@ class GrabLoopEatsTest extends TestCase
 
         call_user_func_array($this->grabLoopEats, [ new OrderPicked($order->reveal()) ]);
     }
+
+    public function testGrabWithGuestCheckout()
+    {
+        $restaurant = new Restaurant();
+        $restaurant->setLoopeatEnabled(true);
+
+        $customer = $this->prophesize(Customer::class);
+        $customer->hasUser()->willReturn(false);
+
+        $order = $this->prophesize(Order::class);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->isReusablePackagingEnabled()
+            ->willReturn(true);
+        $order
+            ->getReusablePackagingQuantity()
+            ->willReturn(2);
+        $order
+            ->getReusablePackagingPledgeReturn()
+            ->willReturn(0);
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
+
+        $this->loopeat
+            ->return($customer->reveal(), 0)
+            ->shouldBeCalled();
+
+        $this->loopeat
+            ->grab($customer->reveal(), $restaurant, 2)
+            ->shouldBeCalled();
+
+        $customer->clearLoopEatCredentials()->shouldBeCalled();
+
+        call_user_func_array($this->grabLoopEats, [ new OrderPicked($order->reveal()) ]);
+    }
 }

@@ -123,8 +123,13 @@ services:
 
   AppBundle\Form\Checkout\CheckoutAddressType:
     arguments:
-      $country: '%country_iso%'
       $loopeatOAuthFlow: '%env(LOOPEAT_OAUTH_FLOW)%'
+    tags: [ form.type ]
+
+  AppBundle\Form\Checkout\CheckoutCustomerType:
+    arguments:
+      $customerFactory: '@sylius.factory.customer'
+      $customerRepository: '@sylius.repository.customer'
     tags: [ form.type ]
 
   AppBundle\Form\ApiAppType:
@@ -209,4 +214,9 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\AttachToOrganizationType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Type\PhoneNumberType:
+    arguments:
+      $country: '%region_iso%'
     tags: [ form.type ]
