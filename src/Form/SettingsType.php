@@ -102,6 +102,11 @@ class SettingsType extends AbstractType
             ])
             ->add('currency_code', CurrencyChoiceType::class, [
                 'label' => 'form.settings.currency_code.label'
+            ])
+            ->add('guest_checkout_enabled', CheckboxType::class, [
+                'required' => false,
+                'label' => 'form.settings.guest_checkout_enabled.label',
+                'help' => 'form.settings.guest_checkout_enabled.help'
             ]);
 
         $gateway = $this->gatewayResolver->resolve();
@@ -124,6 +129,17 @@ class SettingsType extends AbstractType
                 },
                 function ($submittedValue) {
                     return $submittedValue ? 'yes' : 'no';
+                }
+            ))
+        ;
+
+        $builder->get('guest_checkout_enabled')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($originalValue) {
+                    return filter_var($originalValue, FILTER_VALIDATE_BOOLEAN);
+                },
+                function ($submittedValue) {
+                    return $submittedValue ? '1' : '0';
                 }
             ))
         ;

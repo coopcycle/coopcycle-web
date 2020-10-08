@@ -44,6 +44,12 @@ class SettingsManager
         'mercadopago_live_access_token',
     ];
 
+    private static $boolean = [
+        'sms_enabled',
+        'subject_to_vat',
+        'guest_checkout_enabled',
+    ];
+
     private $cache = [];
 
     public function __construct(
@@ -116,10 +122,10 @@ class SettingsManager
                         $value = $this->phoneNumberUtil->parse($value, strtoupper($this->country));
                     } catch (NumberParseException $e) {}
                     break;
-                case 'sms_enabled':
-                case 'subject_to_vat':
-                    $value = (bool) $value;
-                    break;
+            }
+
+            if (in_array($name, self::$boolean)) {
+                $value = (bool) $value;
             }
 
             $this->cache[$name] = $value;
@@ -313,11 +319,7 @@ class SettingsManager
             try {
                 $value = $this->craueConfig->get($name);
 
-                if ($name === 'sms_enabled') {
-                    $value = (bool) $value;
-                }
-
-                if ($name === 'subject_to_vat') {
+                if (in_array($name, self::$boolean)) {
                     $value = (bool) $value;
                 }
 

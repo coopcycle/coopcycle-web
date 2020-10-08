@@ -85,4 +85,6 @@ class Settings
     public $mercadopago_live_access_token;
 
     public $mercadopago_app_id;
+
+    public $guest_checkout_enabled;
 }
