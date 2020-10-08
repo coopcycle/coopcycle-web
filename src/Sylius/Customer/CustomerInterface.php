@@ -4,13 +4,14 @@ namespace AppBundle\Sylius\Customer;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\User;
+use AppBundle\LoopEat\OAuthCredentialsInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\Collection;
 use libphonenumber\PhoneNumber;
 use Sylius\Component\Customer\Model\CustomerInterface as BaseCustomerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-interface CustomerInterface extends BaseCustomerInterface
+interface CustomerInterface extends BaseCustomerInterface, OAuthCredentialsInterface
 {
     /**
      * @return Collection|OrderInterface[]
