@@ -49,7 +49,14 @@ Encore
   .splitEntryChunks()
 
   .enablePostCssLoader()
-  .enableSassLoader(function(sassOptions) {}, {
+  .enableSassLoader(function(sassLoaderOptions) {
+    // https://github.com/twbs/bootstrap-sass#sass-number-precision
+    if (sassLoaderOptions.sassOptions) {
+      sassLoaderOptions.sassOptions.precision = 8
+    } else {
+      sassLoaderOptions.sassOptions = { precision: 8 }
+    }
+  }, {
     resolveUrlLoader: false
   })
   .enableLessLoader(function(lessLoaderOptions) {
