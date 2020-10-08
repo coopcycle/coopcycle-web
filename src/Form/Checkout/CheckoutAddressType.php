@@ -106,7 +106,8 @@ class CheckoutAddressType extends AbstractType
                 'mapped' => false,
                 'constraints' => [
                     new Assert\Valid(),
-                ]
+                ],
+                'data' => $order->getCustomer(),
             ]);
 
             if ($order->isTakeaway()) {
