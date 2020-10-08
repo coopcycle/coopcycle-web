@@ -6380,6 +6380,12 @@
                 "laminas",
                 "zf"
             ],
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
             "time": "2020-04-03T16:01:00+00:00"
         },
         {
@@ -17146,12 +17152,12 @@
             ],
             "authors": [
                 {
-                    "name": "Christophe Coevoet",
-                    "email": "stof@notk.org"
-                },
-                {
                     "name": "Konstantin Kudryashov",
                     "email": "ever.zet@gmail.com"
+                },
+                {
+                    "name": "Christophe Coevoet",
+                    "email": "stof@notk.org"
                 }
             ],
             "description": "Symfony2 framework extension for Behat",
@@ -18775,16 +18781,16 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v5.1.6",
+            "version": "v5.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "6753ea4cb2dab705e819b1ddd8833a5c98338650"
+                "reference": "150aeb91dd9dafe13ec8416abd62e435330ca12d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/6753ea4cb2dab705e819b1ddd8833a5c98338650",
-                "reference": "6753ea4cb2dab705e819b1ddd8833a5c98338650",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/150aeb91dd9dafe13ec8416abd62e435330ca12d",
+                "reference": "150aeb91dd9dafe13ec8416abd62e435330ca12d",
                 "shasum": ""
             },
             "require": {
@@ -18853,7 +18859,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-09-18T14:27:32+00:00"
+            "time": "2020-10-02T12:57:56+00:00"
         },
         {
             "name": "theseer/tokenizer",
