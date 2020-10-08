@@ -71,8 +71,7 @@ class OrderController extends AbstractController
         CartContextInterface $cartContext,
         OrderProcessorInterface $orderProcessor,
         TranslatorInterface $translator,
-        ValidatorInterface $validator,
-        SessionInterface $session)
+        ValidatorInterface $validator)
     {
         $order = $cartContext->getCart();
 
@@ -247,6 +246,7 @@ class OrderController extends AbstractController
         FlashBagInterface $flashBag,
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
+        SessionInterface $session,
         Request $request)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
