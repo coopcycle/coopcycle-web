@@ -2,41 +2,30 @@
 
 namespace AppBundle\Form;
 
-use libphonenumber\PhoneNumberFormat;
-use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationType extends AbstractType
 {
     private $urlGenerator;
-    private $countryIso;
     private $isDemo;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator, string $countryIso, bool $isDemo = false)
+    public function __construct(UrlGeneratorInterface $urlGenerator, bool $isDemo = false)
     {
         $this->urlGenerator = $urlGenerator;
-        $this->countryIso = strtoupper($countryIso);
         $this->isDemo = $isDemo;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('givenName', TextType::class, array('label' => 'profile.givenName'))
-            ->add('familyName', TextType::class, array('label' => 'profile.familyName'))
-            ->add('telephone', PhoneNumberType::class, [
-                'format' => PhoneNumberFormat::NATIONAL,
-                'default_region' => strtoupper($this->countryIso),
-                'label' => 'profile.telephone',
-            ])
             ->add('legal', CheckboxType::class, array(
                 'mapped' => false,
                 'required' => true,

@@ -18,7 +18,6 @@ class InviteUserType extends AbstractType
         ]);
 
         $builder->remove('legal');
-        $builder->remove('telephone');
         $builder->remove('plainPassword');
     }
 

@@ -109,7 +109,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     /**
      * @return mixed
-     * @Assert\NotBlank()
      */
     public function getGivenName()
     {
@@ -130,7 +129,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     /**
      * @return mixed
-     * @Assert\NotBlank()
      */
     public function getFamilyName()
     {
