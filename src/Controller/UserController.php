@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Invitation;
 use AppBundle\Form\SetPasswordInvitationType;
 use AppBundle\Sylius\Order\OrderFactory;
+use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\FOSUserEvents;
@@ -14,10 +15,12 @@ use FOS\UserBundle\Util\UserManipulator;
 use Laravolt\Avatar\Avatar;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -40,6 +43,51 @@ class UserController extends AbstractController
         '#FF9800',
         '#FF5722',
     ];
+
+    private function createSuggestions(UserManagerInterface $userManager, SlugifyInterface $slugify, $email, $index = 0)
+    {
+        $username = $slugify->slugify($email, ['separator' => '_']);
+
+        if ($index > 0) {
+            $username = sprintf('%s_%d', $username, $index);
+        }
+
+        $user = $userManager->findUserByUsername($username);
+        if (null !== $user) {
+
+            return $this->createUserFromEmail($userManager, $slugify, $email, ++$index, $suggestions);
+        }
+
+        return [
+            $username,
+        ];
+    }
+
+    /**
+     * @Route("/register/suggest", name="register_suggest")
+     */
+    public function usernameExistsAction(Request $request, UserManagerInterface $userManager, SlugifyInterface $slugify)
+    {
+        $username = $request->query->get('username');
+        $email = $request->query->get('email');
+
+        if (!$username) {
+            throw new BadRequestHttpException('Missing "username" parameter');
+        }
+
+        $user = $userManager->findUserByUsername($username);
+
+        if (null !== $user) {
+
+            $suggestions = $this->createSuggestions($userManager, $slugify, $email);
+
+            $data = ['exists' => true, 'suggestions' => $suggestions];
+        } else {
+            $data = ['exists' => false, 'suggestions' => []];
+        }
+
+        return new JsonResponse($data);
+    }
 
     /**
      * @Route("/users/{username}", name="user")

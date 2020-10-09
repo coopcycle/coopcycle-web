@@ -21,6 +21,7 @@ Encore
   .addEntry('product-form', './js/app/product/form.js')
   .addEntry('product-list', './js/app/product/list.js')
   .addEntry('product-option-form', './js/app/forms/product-option.js')
+  .addEntry('register', './js/app/register/index.js')
   .addEntry('restaurant', './js/app/restaurant/index.js')
   .addEntry('restaurant-form', './js/app/restaurant/form.js')
   .addEntry('restaurant-list', './js/app/restaurant/list.js')
