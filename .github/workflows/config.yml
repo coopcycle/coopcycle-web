@@ -21,7 +21,7 @@ jobs:
           pip install awscli
       - name: Compile assets for production
         run: NODE_ENV=production node_modules/.bin/encore production
-      - name: Compile assets for production
+      - name: Compile SDK for production
         run: NODE_ENV=production npm run sdk:build
       - name: Upload assets to storage
         run: |
