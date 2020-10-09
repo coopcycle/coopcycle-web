@@ -41,12 +41,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
   elements.forEach(element => {
 
-    // console.log(uuid())
-
     const url = element.dataset.coopcycleEmbed
-    // const regex = /^(https?:\/\/[^\/]+\/[a-z]{2})\/(restaurant|store)\/(.*)$/
-    // const embedURL = url.replace(regex, '$1/embed/$2/$3')
-    const embedURL = url + '?embed=yes'
+    const embedURL = url + '?embed'
 
     const container = document.createElement('div')
     container.innerHTML = modalHTML

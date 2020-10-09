@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\OrderConfirmTrait;
 use AppBundle\DataType\TsRange;
+use AppBundle\Embed\Context as EmbedContext;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
@@ -73,10 +74,13 @@ class OrderController extends AbstractController
         OrderProcessorInterface $orderProcessor,
         TranslatorInterface $translator,
         ValidatorInterface $validator,
-        SettingsManager $settingsManager)
+        SettingsManager $settingsManager,
+        EmbedContext $embedContext)
     {
         if (!$settingsManager->get('guest_checkout_enabled')) {
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+            if (!$embedContext->isEnabled()) {
+                $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+            }
         }
 
         $order = $cartContext->getCart();
@@ -180,10 +184,13 @@ class OrderController extends AbstractController
         OrderManager $orderManager,
         CartContextInterface $cartContext,
         StripeManager $stripeManager,
-        SettingsManager $settingsManager)
+        SettingsManager $settingsManager,
+        EmbedContext $embedContext)
     {
         if (!$settingsManager->get('guest_checkout_enabled')) {
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+            if (!$embedContext->isEnabled()) {
+                $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+            }
         }
 
         $order = $cartContext->getCart();
