@@ -1035,3 +1035,7 @@ authentication.register_benefits: Créez un compte pour commander plus rapidemen
 guest_checkout.user_with_same_email_exists: Un compte avec le même email existe déjà. Veuillez vous connecter pour continuer, ou utilisez un autre email pour commander sans créer de compte.
 guest_checkout.use_another_email: Utiliser un autre email
 form.checkout_address.telephone.help: Pour vous contacter en cas de problème
+restaurant.embed.disclaimer: Vous pouvez intégrer le tunnel de commande directement sur votre site. Suivez les instructions ci-dessous pour démarrer.
+restaurant.embed.step_1: 'Ajoutez le script <code>coopcycle.js</code> à votre page'
+restaurant.embed.step_2: 'Ajoutez l'attribut <code>data-coopcycle-embed="%url%"</code> à un élément HTML cliquable'
+restaurant.embed.greeting: C'est tout ! Désormais, quand les visiteurs cliquent sur le bouton, une fenêtre s'ouvre directement sur votre site.
