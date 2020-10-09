@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "jest": "jest --config jest.config.js",
-    "sdk:watch": "webpack --config webpack.sdk.config.js --watch"
+    "sdk:watch": "webpack --config webpack.sdk.config.js --watch",
+    "sdk:build": "webpack --config webpack.sdk.config.js -p"
   },
   "browserslist": [
     "> 5%",
