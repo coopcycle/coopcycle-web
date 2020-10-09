@@ -78,6 +78,7 @@
     "fuse.js": "^3.4.5",
     "gasparesganga-jquery-loading-overlay": "^2.1.7",
     "howler": "^2.2.0",
+    "html-loader": "^1.1.0",
     "inputmask": "^5.0.5",
     "jest": "^26.4.2",
     "jquery": "^3.5.1",
@@ -91,6 +92,7 @@
     "less-loader": "^6.2.0",
     "libphonenumber-js": "^1.7.54",
     "lottie-web": "^5.7.3",
+    "micromodal": "^0.4.6",
     "mocha": "^7.1.1",
     "moment-range": "^4.0.2",
     "node-sass": "^4.14.1",
@@ -123,6 +125,7 @@
     "sortablejs": "^1.10.1",
     "store": "^2.0.12",
     "styled-components": "^5.2.0",
+    "to-string-loader": "^1.1.6",
     "x-data-spreadsheet": "^1.1.7"
   }
 }
