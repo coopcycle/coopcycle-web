@@ -55,7 +55,7 @@ class UserController extends AbstractController
         $user = $userManager->findUserByUsername($username);
         if (null !== $user) {
 
-            return $this->createUserFromEmail($userManager, $slugify, $email, ++$index, $suggestions);
+            return $this->createSuggestions($userManager, $slugify, $email, ++$index);
         }
 
         return [
@@ -71,8 +71,12 @@ class UserController extends AbstractController
         $username = $request->query->get('username');
         $email = $request->query->get('email');
 
-        if (!$username) {
+        if (!$username || empty($username)) {
             throw new BadRequestHttpException('Missing "username" parameter');
+        }
+
+        if (empty($email)) {
+            $email = $username;
         }
 
         $user = $userManager->findUserByUsername($username);
