@@ -1039,3 +1039,4 @@ restaurant.embed.disclaimer: Vous pouvez intégrer le tunnel de commande directe
 restaurant.embed.step_1: 'Ajoutez le script <code>coopcycle.js</code> à votre page'
 restaurant.embed.step_2: "Ajoutez l'attribut <code>data-coopcycle-embed=\"%url%\"</code> à un élément HTML cliquable"
 restaurant.embed.greeting: C'est tout ! Désormais, quand les visiteurs cliquent sur le bouton, une fenêtre s'ouvre directement sur votre site.
+form.settings.guest_checkout_enabled.label: Autoriser à commander sans créer de compte
