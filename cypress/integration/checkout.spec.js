@@ -70,6 +70,8 @@ context('Checkout', () => {
 
     cy.location('pathname').should('eq', '/order/')
 
+    cy.get('input[name="checkout_address[customer][fullName]"]').type('John Doe')
+
     cy.contains('Commander').click()
 
     cy.location('pathname').should('eq', '/order/payment')
