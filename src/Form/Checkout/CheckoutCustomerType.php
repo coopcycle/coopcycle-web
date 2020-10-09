@@ -68,7 +68,7 @@ class CheckoutCustomerType extends AbstractType
                 ]);
             }
 
-            if (null === $customer || !$customer->hasUser()) {
+            if (null === $customer || !$customer->hasUser() || empty($customer->getFirstName())) {
                 $form->add('firstName', TextType::class, [
                     'label' => 'profile.givenName',
                     'constraints' => [
@@ -78,7 +78,7 @@ class CheckoutCustomerType extends AbstractType
                 ]);
             }
 
-            if (null === $customer || !$customer->hasUser()) {
+            if (null === $customer || !$customer->hasUser() || empty($customer->getLastName())) {
                 $form->add('lastName', TextType::class, [
                     'label' => 'profile.familyName',
                     'constraints' => [
