@@ -93,7 +93,7 @@ usernameInput
   .addEventListener('input', checkUsername, false)
 
 emailInput
-  .addEventListener('input', (e) => {
+  .addEventListener('input', () => {
     if (emailInput.checkValidity()) {
       checkUsername()
     }
