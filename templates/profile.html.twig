@@ -20,7 +20,7 @@
         </a>
       </div>
       <div class="collapse navbar-collapse" id="profile-navbar">
-        <ul class="nav navbar-nav navbar-left">
+        <ul class="nav navbar-nav navbar-right">
           {% if is_granted('ROLE_STORE') and app.user.stores|length > 0 %}
             {% set store = app.request.attributes.get('_store') %}
             {% if app.user.stores|length > 1 %}
@@ -80,29 +80,57 @@
             </li>
           {% endif %}
         </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li class="dropdown">
-            <a class="admin-navbar__link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-              <i class="fa fa-user"></i>  {% trans %}profile.myAccount{% endtrans %} <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a href="{{ path('profile_edit') }}"><i class="fa fa-list-ul"></i>  {% trans %}profile.myPersonalInfo{% endtrans %}</a></li>
-              <li><a href="{{ path('profile_orders') }}"><i class="fa fa-cube"></i>  {% trans %}profile.myOrders{% endtrans %}</a></li>
-              <li><a href="{{ path('profile_addresses') }}"><i class="fa fa-map-marker"></i>   {% trans %}profile.myAddresses{% endtrans %}</a></li>
-              {% if is_granted('ROLE_COURIER') %}
-              <li><a href="{{ path('profile_tasks') }}"><i class="fa fa-bicycle"></i>  {{ 'profile.myDeliveries'|trans }}</a></li>
-              <li><a href="{{ path('profile_tracking', { date: 'now'|date('Y-m-d') }) }}"><i class="fa fa-location-arrow"></i>  {% trans %}profile.myTracking{% endtrans %}</a></li>
-              {% endif %}
-            </ul>
-          </li>
-        </ul>
       </div>
     </div>
   </nav>
 
-  {% block subnav %}{% endblock %}
-  {% block content %}{% endblock %}
-
+  <div class="row">
+    <div class="col-sm-3">
+      <ul class="nav nav-pills nav-stacked">
+        <li
+          class="{{ app.request.attributes.get('_route') in [ 'fos_user_profile_show', 'profile_edit' ] ? 'active' : '' }}">
+          <a href="{{ path('fos_user_profile_show') }}">
+            <i class="fa fa-list-ul mr-1"></i>
+            <span>{% trans %}profile.myPersonalInfo{% endtrans %}</span>
+          </a>
+        </li>
+        <li
+          class="{{ app.request.attributes.get('_route') == 'profile_orders' ? 'active' : '' }}">
+          <a href="{{ path('profile_orders') }}">
+            <i class="fa fa-cube mr-1"></i>
+            <span>{% trans %}profile.myOrders{% endtrans %}</span>
+          </a>
+        </li>
+        <li
+          class="{{ app.request.attributes.get('_route') == 'profile_addresses' ? 'active' : '' }}">
+          <a href="{{ path('profile_addresses') }}">
+            <i class="fa fa-map-marker mr-1"></i>
+            <span>{% trans %}profile.myAddresses{% endtrans %}</span>
+          </a>
+        </li>
+        {% if is_granted('ROLE_COURIER') %}
+        <li
+          class="{{ app.request.attributes.get('_route') == 'profile_tasks' ? 'active' : '' }}">
+          <a href="{{ path('profile_tasks') }}">
+            <i class="fa fa-bicycle mr-1"></i>
+            <span>{{ 'profile.myDeliveries'|trans }}</span>
+          </a>
+        </li>
+        <li
+          class="{{ app.request.attributes.get('_route') == 'profile_tracking' ? 'active' : '' }}">
+          <a href="{{ path('profile_tracking', { date: 'now'|date('Y-m-d') }) }}">
+            <i class="fa fa-location-arrow mr-1"></i>
+            <span>{% trans %}profile.myTracking{% endtrans %}</span>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class="col-sm-9">
+      {% block subnav %}{% endblock %}
+      {% block content %}{% endblock %}
+    </div>
+  </div>
 </div>
 {% endblock %}
 

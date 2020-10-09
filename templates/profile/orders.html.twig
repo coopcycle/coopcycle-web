@@ -1,7 +1,6 @@
 {% extends "profile.html.twig" %}
 
 {% block content %}
-<h2 class="page-header">{% trans %}profile.myOrders{% endtrans %}</h2>
 {% include "profile/orders.pagination.html.twig" %}
   {% if orders is empty %}
     <div class="alert alert-warning">
