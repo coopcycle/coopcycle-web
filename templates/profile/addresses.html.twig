@@ -1,25 +1,28 @@
 {% extends "profile.html.twig" %}
 
-
 {% block content %}
-<h2 class="page-header">{% trans %}profile.myAddresses{%  endtrans %}</h2>
   {% if addresses is empty %}
     <div class="alert alert-warning">
-      {%  trans %}profile.addresses.empty{%  endtrans %}
+      {% trans %}profile.addresses.empty{%  endtrans %}
     </div>
   {% else %}
     <table class="table">
+      <thead>
+        <th colspan="2">{% trans %}profile.myAddresses{% endtrans %}</th>
+      </thead>
       <tbody>
         {% for address in addresses %}
         <tr>
-          <td>{{ address.id }}</td>
           <td>{{ address.streetAddress }}</td>
+          <td class="text-right">{{ address.name }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-  {%  endif %}
-<a class="btn btn-success" href="{{ path('profile_address_new') }}">{% trans %}profile.addresses.add{%  endtrans %}</a>
+  {% endif %}
+  <div class="text-right">
+    <a class="btn btn-success" href="{{ path('profile_address_new') }}"><i class="fa fa-plus mr-1"></i>{% trans %}profile.addresses.add{% endtrans %}</i></a>
+  </div>
 {% endblock %}
 
 {% block scripts %}

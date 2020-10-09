@@ -86,7 +86,7 @@
     <td class="text-right">{{ order.shippedAt|localizeddate('short', 'short') }}</td>
     {% if with_reorder ?? false %}
     <td class="text-right">
-      {% if order.foodtech %}
+      {% if order.foodtech and order.restaurant.enabled %}
       <a class="btn btn-sm btn-success" href="{{ path('order_reorder', { hashid: order|hashid(16) }) }}">
         <i class="fa fa-shopping-basket mr-1"></i>
         <span>{{ 'order.list.reorder'|trans }}</span>

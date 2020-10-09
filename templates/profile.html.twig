@@ -102,7 +102,7 @@
           </a>
         </li>
         <li
-          class="{{ app.request.attributes.get('_route') == 'profile_addresses' ? 'active' : '' }}">
+          class="{{ app.request.attributes.get('_route') in [ 'profile_addresses', 'profile_address_new' ] ? 'active' : '' }}">
           <a href="{{ path('profile_addresses') }}">
             <i class="fa fa-map-marker mr-1"></i>
             <span>{% trans %}profile.myAddresses{% endtrans %}</span>
