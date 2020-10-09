@@ -1,3 +1,4 @@
+{% if pages > 1 %}
 <nav aria-label="...">
   <ul class="pager">
     {% set prev_page = (page > 1) ? page - 1 : 1 %}
@@ -14,3 +15,4 @@
     </li>
   </ul>
 </nav>
+{% endif %}

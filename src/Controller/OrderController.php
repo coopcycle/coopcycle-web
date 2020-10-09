@@ -24,8 +24,10 @@ use Hashids\Hashids;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
+use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -46,10 +48,14 @@ class OrderController extends AbstractController
     public function __construct(
         EntityManagerInterface $objectManager,
         OrderTimeHelper $orderTimeHelper,
+        FactoryInterface $orderFactory,
+        string $sessionKeyName,
         LoggerInterface $logger)
     {
         $this->objectManager = $objectManager;
         $this->orderTimeHelper = $orderTimeHelper;
+        $this->orderFactory = $orderFactory;
+        $this->sessionKeyName = $sessionKeyName;
         $this->logger = $logger;
     }
 
@@ -331,5 +337,50 @@ class OrderController extends AbstractController
             'track_goal' => $trackGoal,
             'jwt' => $jwt,
         ]);
+    }
+
+    /**
+     * @Route("/order/{hashid}/reorder", name="order_reorder")
+     */
+    public function reorderAction($hashid,
+        OrderRepository $orderRepository,
+        SessionInterface $session,
+        OrderProcessorInterface $orderProcessor,
+        OrderModifierInterface $orderModifier,
+        Request $request)
+    {
+        $hashids = new Hashids($this->getParameter('secret'), 16);
+
+        $decoded = $hashids->decode($hashid);
+
+        if (count($decoded) !== 1) {
+            throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
+        }
+
+        $id = current($decoded);
+        $order = $orderRepository->find($id);
+
+        if (null === $order) {
+            throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
+        }
+
+        $restaurant = $order->getRestaurant();
+
+        $cart = $this->orderFactory->createForRestaurant($restaurant);
+        $cart->setCustomer($this->getUser()->getCustomer());
+
+        foreach ($order->getItems() as $item) {
+            $orderModifier->addToOrder($cart, clone $item);
+        }
+
+        $orderProcessor->process($cart);
+
+        $this->objectManager->persist($cart);
+        $this->objectManager->flush();
+
+        $session->set('restaurantId', $cart->getRestaurant()->getId());
+        $session->set($this->sessionKeyName, $cart->getId());
+
+        return $this->redirectToRoute('order');
     }
 }

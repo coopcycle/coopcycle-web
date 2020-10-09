@@ -2,25 +2,27 @@
   <thead>
     <th>#</th>
     <th>{% trans %}order.list.type{% endtrans %}</th>
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
     <th>{% trans %}order.list.customer{% endtrans %}</th>
     {% endif %}
     <th>{% trans %}order.list.state{% endtrans %}</th>
     <th>{% trans %}order.list.summary{% endtrans %}</th>
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
     <th class="text-right">{% trans %}order.total_excluding_tax{% endtrans %}</th>
     <th class="text-right">{% trans %}basics.platform_fees{% endtrans %}</th>
     {% endif %}
     <th class="text-right">{% trans %}order.total_including_tax{% endtrans %}</th>
     <th class="text-center">{% trans %}order.list.receipt{% endtrans %}</th>
     <th class="text-right">{% trans %}order.list.shippedAt{% endtrans %}</th>
+    {% if with_reorder ?? false %}
+    <th></th>
+    {% endif %}
   </thead>
   <tbody>
   {% for order in orders %}
-
   <tr>
     <td width="5%">
-      <a href="{{ path(routes.order, { id: order.id }) }}">
+      <a href="{{ path(routes.order, { id: order.id }) }}" class="text-monospace">
         {% if order.number is not null %}
         {{ order.number }}
         {% else %}
@@ -35,7 +37,7 @@
         <i class="fa fa-bicycle"></i>
       {% endif %}
     </td>
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
     <td width="10%">
       {% if order.customer is not null %}
         {% include '_partials/order/customer.html.twig' with { customer: order.customer } %}
@@ -61,7 +63,7 @@
         {% endfor %}
       {% endif %}
     </td>
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
     <td class="text-right">
       <span>{{ (order.itemsTotal - order.itemsTaxTotal)|price_format }}</span>
     </td>
@@ -79,10 +81,19 @@
         <button type="button" class="btn btn-xs btn-default"
           data-toggle="modal" data-target="#order-receipt-modal"
           data-action="{{ path(routes.order_receipt_generate, { orderNumber: order.number }) }}">{{ 'order.list.generate_receipt'|trans }}</button>
-        </form>
       {% endif %}
     </td>
     <td class="text-right">{{ order.shippedAt|localizeddate('short', 'short') }}</td>
+    {% if with_reorder ?? false %}
+    <td class="text-right">
+      {% if order.foodtech %}
+      <a class="btn btn-sm btn-success" href="{{ path('order_reorder', { hashid: order|hashid(16) }) }}">
+        <i class="fa fa-shopping-basket mr-1"></i>
+        <span>{{ 'order.list.reorder'|trans }}</span>
+      </a>
+      {% endif %}
+    </td>
+    {% endif %}
   </tr>
   {% endfor %}
   </tbody>

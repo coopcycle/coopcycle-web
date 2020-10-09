@@ -1087,3 +1087,4 @@ restaurant.embed.step_1: 'Add the <code>coopcycle.js</code> script to your page'
 restaurant.embed.step_2: 'Add the <code>data-coopcycle-embed="%url%"</code> to a clickable HTML element'
 restaurant.embed.greeting: That's all! Now when visitors click on the button, it opens a window directly on your website.
 form.settings.guest_checkout_enabled.label: Enable guest checkout
+order.list.reorder: Reorder

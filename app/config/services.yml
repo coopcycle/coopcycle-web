@@ -97,6 +97,8 @@ services:
   AppBundle\Controller\OrderController:
     arguments:
       $objectManager: '@sylius.manager.order'
+      $orderFactory: '@sylius.factory.order'
+      $sessionKeyName: "%sylius_cart_restaurant_session_key_name%"
     tags:
       - { name: monolog.logger, channel: stripe }
 

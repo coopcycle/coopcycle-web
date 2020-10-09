@@ -134,9 +134,9 @@ class CoopCycleExtension extends AbstractExtension
         return strtolower($carbon->locale($locale)->calendar());
     }
 
-    public function hashid(object $object)
+    public function hashid(object $object, $minHashLength = 8)
     {
-        $hashids = new Hashids($this->secret, 8);
+        $hashids = new Hashids($this->secret, $minHashLength ?? 8);
 
         if (is_callable([$object, 'getId'])) {
             $id = $object->getId();
