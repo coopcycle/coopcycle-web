@@ -1034,3 +1034,4 @@ loopeat.oauth_redirect.warning: Vous allez être redirigé·e vers le site de Lo
 authentication.register_benefits: Créez un compte pour commander plus rapidement. Vous pourrez aussi retrouver l'historique de vos commandes précédentes.
 guest_checkout.user_with_same_email_exists: Un compte avec le même email existe déjà. Veuillez vous connecter pour continuer, ou utilisez un autre email pour commander sans créer de compte.
 guest_checkout.use_another_email: Utiliser un autre email
+form.checkout_address.telephone.help: Pour vous contacter en cas de problème
