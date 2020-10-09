@@ -20,6 +20,7 @@ use AppBundle\Entity\OrganizationConfig;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
@@ -327,10 +328,12 @@ class AdminController extends Controller
     public function usersAction(Request $request)
     {
         $qb = $this->getDoctrine()
-            ->getRepository(User::class)
+            ->getRepository(Customer::class)
             ->createQueryBuilder('u');
 
-        $users = $this->get('knp_paginator')->paginate(
+        $qb->leftJoin(User::class, 'u2', Expr\Join::WITH, 'u.id = u2.customer');
+
+        $customers = $this->get('knp_paginator')->paginate(
             $qb,
             $request->query->getInt('page', 1),
             self::ITEMS_PER_PAGE,
@@ -344,33 +347,35 @@ class AdminController extends Controller
 
         $attributes = [];
 
-        foreach ($users as $user) {
+        foreach ($customers as $customer) {
+
+            $key = $customer->getEmailCanonical();
 
             $qb = $this->get('sylius.repository.order')->createQueryBuilder('o');
             $qb->andWhere('o.customer = :customer');
-            $qb->andWhere('o.state = :state');
-            $qb->setParameter('customer', $user->getCustomer());
-            $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
+            $qb->andWhere('o.state != :state');
+            $qb->setParameter('customer', $customer);
+            $qb->setParameter('state', OrderInterface::STATE_CART);
 
             $res = $qb->getQuery()->getResult();
 
-            $attributes[$user->getUsername()]['orders_count'] = count($res);
+            $attributes[$key]['orders_count'] = count($res);
 
             $qb = $this->get('sylius.repository.order')->createQueryBuilder('o');
             $qb->andWhere('o.customer = :customer');
-            $qb->andWhere('o.state = :state');
-            $qb->setParameter('customer', $user->getCustomer());
-            $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
+            $qb->andWhere('o.state != :state');
+            $qb->setParameter('customer', $customer);
+            $qb->setParameter('state', OrderInterface::STATE_CART);
             $qb->orderBy('o.updatedAt', 'DESC');
             $qb->setMaxResults(1);
 
             $res = $qb->getQuery()->getOneOrNullResult();
 
-            $attributes[$user->getUsername()]['last_order'] = $res;
+            $attributes[$key]['last_order'] = $res;
         }
 
         return $this->render('admin/users.html.twig', array(
-            'users' => $users,
+            'customers' => $customers,
             'attributes' => $attributes,
         ));
     }

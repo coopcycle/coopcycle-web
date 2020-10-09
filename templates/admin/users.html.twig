@@ -15,7 +15,7 @@
       <button class="btn btn-default dropdown-toggle" type="button" id="users-sort"
         data-toggle="dropdown"
         aria-haspopup="true" aria-expanded="true">
-        {% if users.isSorted('u.username') and users.direction == 'asc' %}
+        {% if customers.isSorted('u.username') and customers.direction == 'asc' %}
           {{ 'users.sort.alphabetically'|trans }}
         {% else %}
           {{ 'users.sort.newest'|trans }}
@@ -23,8 +23,8 @@
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="users-sort">
-        <li>{{ knp_pagination_sortable(users, 'users.sort.newest'|trans, 'u.id', {}, { direction: 'desc' } )|raw }}</li>
-        <li>{{ knp_pagination_sortable(users, 'users.sort.alphabetically'|trans, 'u.username', {}, { direction: 'asc' } )|raw }}</li>
+        <li>{{ knp_pagination_sortable(customers, 'users.sort.newest'|trans, 'u.id', {}, { direction: 'desc' } )|raw }}</li>
+        <li>{{ knp_pagination_sortable(customers, 'users.sort.alphabetically'|trans, 'u.username', {}, { direction: 'asc' } )|raw }}</li>
       </ul>
     </div>
     <a href="{{ path('admin_users_invite') }}" class="btn btn-info">
@@ -37,31 +37,31 @@
   {
     title: 'users.all'|trans,
     icon: 'user',
-    active: ((users.params.filterField is not defined) or (users.params.filterField == 'u.username')),
+    active: ((customers.params.filterField is not defined) or (customers.params.filterField == 'u.username')),
     path: path('admin_users')
   },
   {
     title: 'users.couriers'|trans,
     icon: 'bicycle',
-    active: (users.params.filterField is defined and users.params.filterField == 'u.roles' and users.params.filterValue == '*ROLE_COURIER*'),
+    active: (customers.params.filterField is defined and customers.params.filterField == 'u.roles' and customers.params.filterValue == '*ROLE_COURIER*'),
     path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_COURIER*' })
   },
   {
     title: 'users.restaurant_owners'|trans,
     icon: 'cutlery',
-    active: (users.params.filterField is defined and users.params.filterField == 'u.roles' and users.params.filterValue == '*ROLE_RESTAURANT*'),
+    active: (customers.params.filterField is defined and customers.params.filterField == 'u.roles' and customers.params.filterValue == '*ROLE_RESTAURANT*'),
     path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_RESTAURANT*' })
   },
   {
     title: 'users.store_owners'|trans,
     icon: 'shopping-cart',
-    active: (users.params.filterField is defined and users.params.filterField == 'u.roles' and users.params.filterValue == '*ROLE_STORE*'),
+    active: (customers.params.filterField is defined and customers.params.filterField == 'u.roles' and customers.params.filterValue == '*ROLE_STORE*'),
     path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_STORE*' })
   },
   {
     title: 'users.administrators'|trans,
     icon: 'lock',
-    active: (users.params.filterField is defined and users.params.filterField == 'u.roles' and users.params.filterValue == '*ROLE_ADMIN*'),
+    active: (customers.params.filterField is defined and customers.params.filterField == 'u.roles' and customers.params.filterValue == '*ROLE_ADMIN*'),
     path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_ADMIN*' })
   }
 ] %}
@@ -78,53 +78,59 @@
 
 <table class="table">
 <thead>
-  <th>#</th>
-  <th>{% trans %}profile.username{% endtrans  %}</th>
   <th>{% trans %}profile.email{% endtrans  %}</th>
   <th>{% trans %}profile.telephone{% endtrans  %}</th>
-  <th class="text-right">{% trans %}adminDashboard.users.roles{% endtrans  %}</th>
   <th class="text-right">{% trans %}adminDashboard.users.orders_count{% endtrans  %}</th>
   <th class="text-right">{% trans %}adminDashboard.users.registered_at{% endtrans  %}</th>
   <th class="text-right">{% trans %}adminDashboard.users.last_order{% endtrans  %}</th>
+  <th class="text-right">{% trans %}adminDashboard.users.roles{% endtrans  %}</th>
+  <th>{% trans %}profile.username{% endtrans  %}</th>
   <th></th>
 </thead>
 <tbody>
-{% for user in users %}
+{% for customer in customers %}
   <tr>
-    <td><a href="{{ path('admin_user_details', { username: user.username }) }}">#{{ user.id }}</a></td>
-    <td>{{ user.username }}</td>
     <td>
-      {% if is_demo %}
-        ✴✴✴
-      {% else %}
-        {{ user.email }}
+      <span class="text-monospace">{% if is_demo %}✴✴✴{% else %}{{ customer.emailCanonical }}{% endif %}</span>
+    </td>
+    <td>
+      {% if customer.phoneNumber is not empty %}{{ customer.phoneNumber }}{% endif %}
+    </td>
+    <td class="text-right">
+      {{ attributes[customer.emailCanonical]['orders_count'] }}
+    </td>
+    <td class="text-right">
+      {{ customer.createdAt|ago }}
+    </td>
+    <td class="text-right">
+      {% if attributes[customer.emailCanonical]['last_order'] is not empty %}
+        {{ attributes[customer.emailCanonical]['last_order'].updatedAt|ago }}
       {% endif %}
     </td>
-    <td>{% if user.telephone %}{{ user.telephone|phone_number_format('NATIONAL') }}{% endif %}</td>
     <td class="text-right">
-      {% include "_partials/user/roles.html.twig" %}
-    </td>
-    <td class="text-right">
-      {{ attributes[user.username]['orders_count'] }}
-    </td>
-    <td class="text-right">
-      {{ user.createdAt|ago }}
-    </td>
-    <td class="text-right">
-      {% if attributes[user.username]['last_order'] is not empty %}
-        {{ attributes[user.username]['last_order'].updatedAt|ago }}
+      {% if customer.hasUser() %}
+        {% include "_partials/user/roles.html.twig" with { user: customer.user } %}
       {% endif %}
+    </td>
+    <td>
+      {% if customer.hasUser() %}
+        <strong class="text-monospace">{{ customer.user.username }}</strong>
+      {% endif %}
+    </td>
     <td class="text-right">
-      <a class="btn btn-xs btn-success" href="{{ path('admin_user_edit', { username: user.username }) }}">
+      {% if customer.hasUser() %}
+      <a class="btn btn-xs btn-success"
+        href="{{ path('admin_user_edit', { username: customer.user.username }) }}">
         <i class="fa fa-pencil" aria-hidden="true"></i>  {% trans from 'messages' %}Edit{%  endtrans %}
       </a>
+      {% endif %}
     </td>
   </tr>
 {% endfor %}
 </table>
 </tbody>
 <nav class="text-center">
-  {{ knp_pagination_render(users) }}
+  {{ knp_pagination_render(customers) }}
 </nav>
 {% endblock %}
 
