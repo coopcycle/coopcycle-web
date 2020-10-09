@@ -17,11 +17,11 @@
       </div>
     {{ form_end(form) }}
     <hr>
-    <div class="text-center">
-      <p>
-        <span>{% trans from 'messages' %}authentication.already_registered{% endtrans %}</span> 
-        <a href="{{ path('fos_user_security_login') }}">{% trans from 'messages' %}authentication.sign_in{% endtrans %}</a>
-      </p>
+    <div class="panel panel-default">
+      <a class="panel-body d-block text-center" href="{{ path('fos_user_security_login') }}">
+        <span>{% trans from 'messages' %}authentication.already_registered{% endtrans %}</span>
+        <span>{% trans from 'messages' %}authentication.sign_in{% endtrans %}</span>
+      </a>
     </div>
   </div>
 </div>
