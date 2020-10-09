@@ -27,6 +27,8 @@ class UserRepository extends EntityRepository
             ->addOrderBy('SIMILARITY(c.lastName, :q)', 'DESC')
             ->setParameter('q', strtolower($q));
 
+        $qb->setMaxResults(10);
+
         return $qb->getQuery()->getResult();
     }
 }
