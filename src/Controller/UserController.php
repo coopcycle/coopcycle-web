@@ -46,6 +46,15 @@ class UserController extends AbstractController
 
     private function createSuggestions(UserManagerInterface $userManager, SlugifyInterface $slugify, $email, $index = 0)
     {
+        if (empty($email)) {
+            return [];
+        }
+
+        if (false !== strpos($email, '@')) {
+            $parts = explode('@', $email);
+            $email = $parts[0];
+        }
+
         $username = $slugify->slugify($email, ['separator' => '_']);
 
         if ($index > 0) {
@@ -68,26 +77,32 @@ class UserController extends AbstractController
      */
     public function usernameExistsAction(Request $request, UserManagerInterface $userManager, SlugifyInterface $slugify)
     {
-        $username = $request->query->get('username');
-        $email = $request->query->get('email');
-
-        if (!$username || empty($username)) {
+        if (!$request->query->has('username')) {
             throw new BadRequestHttpException('Missing "username" parameter');
         }
+
+        if (!$request->query->has('email')) {
+            throw new BadRequestHttpException('Missing "email" parameter');
+        }
+
+        $username = $request->query->get('username');
+        $email = $request->query->get('email');
 
         if (empty($email)) {
             $email = $username;
         }
 
-        $user = $userManager->findUserByUsername($username);
+        $user = null;
+        if (!empty($username)) {
+            $user = $userManager->findUserByUsername($username);
+        }
+
+        $suggestions = $this->createSuggestions($userManager, $slugify, $email);
 
         if (null !== $user) {
-
-            $suggestions = $this->createSuggestions($userManager, $slugify, $email);
-
             $data = ['exists' => true, 'suggestions' => $suggestions];
         } else {
-            $data = ['exists' => false, 'suggestions' => []];
+            $data = ['exists' => false, 'suggestions' => $suggestions];
         }
 
         return new JsonResponse($data);

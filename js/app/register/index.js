@@ -1,5 +1,15 @@
 import _ from 'lodash'
 
+const emailInput =
+  document.querySelector('[name="fos_user_registration_form[email]"]')
+
+const usernameInput =
+  document.querySelector('[name="fos_user_registration_form[username]"]')
+
+const formGroup = usernameInput.closest('.form-group')
+
+/* */
+
 const checkUsername = _.debounce(function() {
 
   const email =
@@ -7,11 +17,6 @@ const checkUsername = _.debounce(function() {
 
   const username =
     document.querySelector('[name="fos_user_registration_form[username]"]').value
-
-  const usernameInput =
-      document.querySelector('[name="fos_user_registration_form[username]"]')
-
-  const formGroup = usernameInput.closest('.form-group')
 
   formGroup.classList.remove('has-success', 'has-error')
   formGroup.classList.add('has-feedback')
@@ -47,10 +52,11 @@ const checkUsername = _.debounce(function() {
     usernameInput.setAttribute('disabled', false)
     usernameInput.removeAttribute('disabled')
 
-    formGroup.classList
-      .add(result.exists ? 'has-error' : 'has-success')
-
-    feedbackEl.classList.add(result.exists ? 'fa-warning' : 'fa-check')
+    if (usernameInput.value) {
+      formGroup.classList
+        .add(result.exists ? 'has-error' : 'has-success')
+      feedbackEl.classList.add(result.exists ? 'fa-warning' : 'fa-check')
+    }
 
     suggestionsEl.textContent = '';
 
@@ -83,4 +89,12 @@ const checkUsername = _.debounce(function() {
 
 }, 350)
 
-document.querySelector('[name="fos_user_registration_form[username]"]').addEventListener('input', checkUsername, false)
+usernameInput
+  .addEventListener('input', checkUsername, false)
+
+emailInput
+  .addEventListener('input', (e) => {
+    if (emailInput.checkValidity()) {
+      checkUsername()
+    }
+  }, false)
