@@ -13,9 +13,12 @@ class EmbedSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if ('restaurant' === $request->get('_route') && $request->query->has('embed')) {
-            $request->getSession()->set('embed', true);
-            $request->attributes->set('embed', true);
+        if ($request->query->has('embed')) {
+            if (!$request->query->getBoolean('embed')) {
+                $request->getSession()->remove('embed');
+            } else {
+                $request->getSession()->set('embed', true);
+            }
         }
     }
 
