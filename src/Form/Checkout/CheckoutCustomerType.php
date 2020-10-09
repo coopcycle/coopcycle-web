@@ -68,23 +68,13 @@ class CheckoutCustomerType extends AbstractType
                 ]);
             }
 
-            if (null === $customer || !$customer->hasUser() || empty($customer->getFirstName())) {
-                $form->add('firstName', TextType::class, [
-                    'label' => 'profile.givenName',
+            if (null === $customer || !$customer->hasUser() || empty($customer->getFullName())) {
+                $form->add('fullName', TextType::class, [
+                    'label' => 'profile.fullName',
                     'constraints' => [
                         new Assert\NotBlank()
                     ],
-                    'data' => $customer !== null ? $customer->getFirstName() : '',
-                ]);
-            }
-
-            if (null === $customer || !$customer->hasUser() || empty($customer->getLastName())) {
-                $form->add('lastName', TextType::class, [
-                    'label' => 'profile.familyName',
-                    'constraints' => [
-                        new Assert\NotBlank()
-                    ],
-                    'data' => $customer !== null ? $customer->getLastName() : '',
+                    'data' => $customer !== null ? $customer->getFullName() : '',
                 ]);
             }
 

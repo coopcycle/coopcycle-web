@@ -265,6 +265,7 @@ profile.email: Email
 profile.telephone: Numéro de téléphone
 profile.familyName: Nom
 profile.givenName: Prénom
+profile.fullName: Nom complet
 profile.managedStores: Magasins gérés par l'utilisateur
 profile.managedRestaurants: Restaurants gérés par l'utilisateur
 profile.accountType: Type de compte

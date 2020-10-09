@@ -41,13 +41,10 @@ class UpdateProfileType extends AbstractType
                 'label' => 'profile.username',
                 'required' => false,
             ])
-            ->add('familyName', TextType::class, [
-                'label' => 'profile.familyName',
+            ->add('fullName', TextType::class, [
+                'label' => 'profile.fullName',
                 'required' => false,
-            ])
-            ->add('givenName', TextType::class, [
-                'label' => 'profile.givenName',
-                'required' => false,
+                'property_path' => 'customer.fullName',
             ])
             ->add('telephone', PhoneNumberType::class, [
                 'label' => 'profile.telephone',

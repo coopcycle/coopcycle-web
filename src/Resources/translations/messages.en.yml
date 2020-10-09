@@ -286,6 +286,7 @@ profile.email: Email
 profile.telephone: Telephone
 profile.familyName: Family name
 profile.givenName: Given name
+profile.fullName: Full name
 profile.managedStores: Stores managed by user
 profile.managedRestaurants: Restaurants managed by user
 profile.accountType: Account type

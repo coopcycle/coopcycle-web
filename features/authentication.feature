@@ -139,7 +139,33 @@ Feature: Authenticate
     }
     """
 
-  Scenario: Register failure
+  Scenario: Register success (with full name)
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/register" with parameters:
+      | key         | value             |
+      | _email      | bob@coopcycle.org |
+      | _username   | bob               |
+      | _password   | 123456            |
+      | _fullName   | Bob Doe           |
+      | _telephone  | +33612345678      |
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "id":@integer@,
+      "roles":[
+        "ROLE_USER"
+      ],
+      "username":"bob",
+      "email":"bob@coopcycle.org",
+      "enabled": true,
+      "token":@string@,
+      "refresh_token":@string@
+    }
+    """
+
+  Scenario: Register failure (empty username)
     When I add "Accept" header equal to "application/ld+json"
     And I send a "POST" request to "/api/register" with parameters:
       | key         | value             |
@@ -155,14 +181,6 @@ Feature: Authenticate
       "violations":[
         {
           "propertyPath":"data.username",
-          "message":@string@
-        },
-        {
-          "propertyPath":"data.givenName",
-          "message":@string@
-        },
-        {
-          "propertyPath":"data.familyName",
           "message":@string@
         }
       ]

@@ -17,8 +17,7 @@
       {% if form.email is defined %}
         {{ form_row(form.email) }}
       {% endif %}
-      {{ form_row(form.familyName) }}
-      {{ form_row(form.givenName) }}
+      {{ form_row(form.fullName) }}
       {{ form_row(form.telephone) }}
       {% if form.quotesAllowed is defined %}
         {{ form_row(form.quotesAllowed) }}

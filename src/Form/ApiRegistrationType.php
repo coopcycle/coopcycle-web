@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ApiRegistrationType extends AbstractType
 {
@@ -28,6 +29,14 @@ class ApiRegistrationType extends AbstractType
     {
         $builder->add('email', EmailType::class)
                 ->add('username', TextType::class)
+                ->add('givenName', TextType::class, ['constraints' => [
+                    new Assert\NotNull(),
+                    new Assert\NotBlank(),
+                ]])
+                ->add('familyName', TextType::class, ['constraints' => [
+                    new Assert\NotBlank(),
+                ]])
+                ->add('fullName', TextType::class, ['mapped' => false])
                 ->add('plainPassword', RepeatedType::class, [
                     'type' => PasswordType::class,
                     'first_name' => 'password',

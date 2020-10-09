@@ -250,4 +250,10 @@ class Customer extends BaseCustomer implements CustomerInterface
         $this->loopeatCredentials->setCustomer(null);
         $this->loopeatCredentials = null;
     }
+
+    public function setFullName(?string $fullName): void
+    {
+        $this->setFirstName($fullName);
+        $this->setLastName('');
+    }
 }

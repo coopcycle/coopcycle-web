@@ -471,8 +471,7 @@ context('Checkout', () => {
     cy.location('pathname').should('eq', '/order/')
 
     cy.get('input[name="checkout_address[customer][email]"]').type('dev@coopcycle.org')
-    cy.get('input[name="checkout_address[customer][firstName]"]').type('John')
-    cy.get('input[name="checkout_address[customer][lastName]"]').type('Doe')
+    cy.get('input[name="checkout_address[customer][fullName]"]').type('John Doe')
     cy.get('input[name="checkout_address[customer][phoneNumber]"]').type('0612345678')
 
     cy.contains('Commander').click()
