@@ -124,6 +124,13 @@
           </a>
         </li>
         {% endif %}
+        {% if restaurant.id is not null %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#embed" aria-controls="taxonomy">
+            {{ 'restaurant.form.section.embed'|trans }}
+          </a>
+        </li>
+        {% endif %}
       </ul>
     </div>
     <div class="col-sm-9">
@@ -155,6 +162,11 @@
         {% if form.loopeat is defined %}
         <div role="tabpanel" class="tab-pane" id="loopeat">
           {% include "restaurant/form/_partials/loopeat.html.twig" with { form: form.loopeat } %}
+        </div>
+        {% endif %}
+        {% if restaurant.id is not null %}
+        <div role="tabpanel" class="tab-pane" id="embed">
+          {% include "restaurant/form/_partials/embed.html.twig" %}
         </div>
         {% endif %}
       </div>

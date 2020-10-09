@@ -1080,3 +1080,8 @@ authentication.register_benefits: Register for a faster checkout experience. You
 form.checkout_address.telephone.help: To contact you in case of a problem
 guest_checkout.user_with_same_email_exists: An account with the same email already exists. Please log in to continue, or use another email to order without creating an account.
 guest_checkout.use_another_email: Use another email
+restaurant.form.section.embed: Embed
+restaurant.embed.disclaimer: You can embed the checkout directly on your website. Follow the instructions below to get started.
+restaurant.embed.step_1: 'Add the <code>coopcycle.js</code> script to your page'
+restaurant.embed.step_2: 'Add the <code>data-coopcycle-embed="%url%"</code> to a clickable HTML element'
+restaurant.embed.greeting: That's all! Now when visitors click on the button, it opens a window directly on your website.

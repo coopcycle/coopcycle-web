@@ -4,7 +4,8 @@
   "description": "CoopCycle platform.",
   "main": "index.js",
   "scripts": {
-    "jest": "jest --config jest.config.js"
+    "jest": "jest --config jest.config.js",
+    "sdk:watch": "webpack --config webpack.sdk.config.js --watch"
   },
   "browserslist": [
     "> 5%",
@@ -99,6 +100,7 @@
     "numbro": "^2.3.1",
     "payment-icons": "^1.2.1",
     "postcss-loader": "^3.0.0",
+    "prismjs": "^1.21.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-autosuggest": "^10.0.2",

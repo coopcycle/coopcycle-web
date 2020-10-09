@@ -75,7 +75,6 @@ class OrderController extends AbstractController
         ValidatorInterface $validator,
         SettingsManager $settingsManager)
     {
-
         if (!$settingsManager->get('guest_checkout_enabled')) {
             $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
         }

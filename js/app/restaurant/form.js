@@ -4,11 +4,17 @@ import { Switch } from 'antd'
 import Dropzone from 'dropzone'
 import _ from 'lodash'
 import Select from 'react-select'
+import Prism from 'prismjs'
+import 'prismjs/plugins/toolbar/prism-toolbar'
+import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard'
 
 import i18n from '../i18n'
 import DropzoneWidget from '../widgets/Dropzone'
 import OpeningHoursInput from '../widgets/OpeningHoursInput'
 import DeliveryZonePicker from '../components/DeliveryZonePicker'
+
+import 'prismjs/themes/prism.css'
+import 'prismjs/plugins/toolbar/prism-toolbar.css'
 
 Dropzone.autoDiscover = false
 
