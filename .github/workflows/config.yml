@@ -19,7 +19,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install python-swiftclient python-keystoneclient
           pip install awscli
-       - name: Compile SDK for production
+      - name: Compile SDK for production
         run: NODE_ENV=production npm run sdk:build
       - name: Compile assets for production
         run: |
