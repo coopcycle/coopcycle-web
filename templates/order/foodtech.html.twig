@@ -1,7 +1,7 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-<div class="container container--full-height">
+<div class="container container--full-height {{ embed_context.enabled ? 'pt-4' : '' }}">
   <div class="row">
     <div class="col-xs-12">
       {% include 'order/breadcrumb.html.twig' %}
