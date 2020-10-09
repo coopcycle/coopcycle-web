@@ -70,6 +70,7 @@ framework:
         handler_id: snc_redis.session.handler
         cookie_lifetime: 604800 # 7 days
         gc_maxlifetime: 604800 # 7 days
+        cookie_samesite: 'lax'
     fragments:       ~
     http_method_override: true
     assets: ~
