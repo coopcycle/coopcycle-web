@@ -858,3 +858,5 @@ services:
     arguments:
       $orderRepository: '@sylius.repository.order'
       $secret: '%secret%'
+
+  AppBundle\Embed\Context: ~

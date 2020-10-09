@@ -48,7 +48,7 @@
       </div>
     {% endif %}
 
-    {{ form_start(form, { attr: { style: 'padding-bottom: 66px;' } }) }}
+    {{ form_start(form, { attr: { style: 'padding-bottom: 66px;', class: (embed_context.enabled ? 'pt-4' : '') } }) }}
 
     <div class="row">
       <div class="col-xs-12">

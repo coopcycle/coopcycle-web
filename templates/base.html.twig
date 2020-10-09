@@ -22,7 +22,9 @@
   </head>
   <body data-country="{{ country_iso }}" data-currency-symbol="{{ currency_context.currencyCode|sylius_currency_symbol }}" data-timezone="{{ coopcycle_setting('timezone') }}">
     {% block menu %}
+      {% if not embed_context.enabled %}
       {% include "menu.html.twig" %}
+      {% endif %}
     {% endblock %}
     {% block banner %}
       {% if is_demo %}
@@ -47,105 +49,9 @@
     {% block body %}{% endblock %}
     </div>
     {% block footer %}
-      <footer class="footer">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-6">
-              <h5>{% trans %}base.footer.contactUs{% endtrans %}</h5>
-              <ul class="list-unstyled">
-                <li>
-                  <a class="footer-link" href="mailto:{{ coopcycle_setting('administrator_email') }}">
-                    <i class="fa fa-envelope"></i>  {{ coopcycle_setting('administrator_email') }}
-                  </a>
-                </li>
-                {% set phone_number = coopcycle_setting('phone_number') %}
-                {% if phone_number is not empty %}
-                <li>
-                  <i class="fa fa-phone"></i>  <span>{{ phone_number|phone_number_format('NATIONAL') }}</span>
-                </li>
-                {% endif %}
-              </ul>
-              <ul class="list-unstyled">
-                {% if coopcycle_has_about_us() %}
-                <li>
-                  <a class="footer-link" href="{{ path('about_us') }}">
-                    {% trans %}nav.about_us{% endtrans %}
-                  </a>
-                </li>
-                {% endif %}
-                {% if coopcycle_setting('b2b_enabled') %}
-                <li>
-                  <a class="footer-link" href="{{ path('company_registration') }}" >
-                    {% trans %}base.footer.companyRegister{% endtrans %}
-                  </a>
-                </li>
-                <li>
-                  <a class="footer-link" href="{{ path('request_restaurant') }}">
-                    {% trans %}base.footer.RegisterMyRestaurant{% endtrans %}
-                  </a>
-                </li>
-                {% endif %}
-                <li>
-                  <a class="footer-link" href="{{ path('legal') }}">
-                    {% trans %}base.footer.legal{% endtrans %}
-                  </a>
-                </li>
-                <li>
-                  <a class="footer-link" href="{{ path('terms') }}">
-                    {% trans %}base.footer.terms{% endtrans %}
-                  </a>
-                </li>
-                <li>
-                  <a class="footer-link" href="{{ path('privacy') }}">
-                    {% trans %}base.footer.privacy{% endtrans %}
-                  </a>
-                </li>
-                <li>
-                  <a class="footer-link" href="https://docs.coopcycle.org" target="_blank">
-                    {% trans %}base.footer.help{% endtrans %}
-                  </a>
-                </li>
-                {% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
-                {% if 'yes' == restaurant_pledges_enabled %}
-                <li>
-                  <a class="footer-link" href="{{ path('restaurants_suggest') }}">
-                    {% trans %}base.footer.suggest{% endtrans %}
-                  </a>
-                </li>
-                {% endif %}
-              </ul>
-            </div>
-            <div class="col-sm-6">
-              <div class="text-right">
-                <span class="mr-2">{{ 'basics.powered_by'|trans|raw }}</span>
-                <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />
-              </div>
-              <div class="text-right">
-                <a class="btn-google-play" href="https://play.google.com/store/apps/details?id=fr.coopcycle">
-                  <img alt="Disponible sur Google Play"
-                    src="https://play.google.com/intl/en_us/badges/images/generic/{{ app.request.locale }}_badge_web_generic.png" />
-                </a>
-              </div>
-              {% set app_store_badges = {
-                'de': 'Download_on_the_App_Store_Badge_DE_RGB_blk.svg',
-                'en': 'Download_on_the_App_Store_Badge_EN_RGB_blk.svg',
-                'es': 'Download_on_the_App_Store_Badge_ES_RGB_blk.svg',
-                'fr': 'Download_on_the_App_Store_Badge_FR_RGB_blk.svg'
-              } %}
-              {% set app_store_badge = app_store_badges['en'] %}
-              {% if app_store_badges[app.request.locale] is defined %}
-                {% set app_store_badge = app_store_badges[app.request.locale] %}
-              {% endif %}
-              <div class="text-right">
-                <a href="https://apps.apple.com/us/app/coopcycle/id1324884530?l=fr&ls=1">
-                  <img alt="Télécharger dans l'App Store"
-                    src="{{ asset('img/app/app-store/' ~ app_store_badge) }}" />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {% if not embed_context.enabled %}
+      {% include "footer.html.twig" %}
+      {% endif %}
     {% endblock %}
     {% if app.environment == "prod" %}
       {% if sentry_apm_enabled %}
