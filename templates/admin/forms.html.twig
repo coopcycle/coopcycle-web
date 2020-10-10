@@ -5,6 +5,13 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="text-right mb-4">
+  <a href="{{ path('admin_form_new') }}" class="btn btn-success">
+    <i class="fa fa-plus"></i><span>{{ 'basics.add'|trans }}</span>
+  </a>
+</div>
+
 <table class="table">
   <thead>
     <th>#</th>
@@ -15,6 +22,7 @@
   </thead>
   <tbody>
   {% for form in forms %}
+    <tr>
       <td width="5%">
         <a href="{{ path('admin_form', { id: form.id }) }}">
           <span class="text-monospace">{{ form|hashid(12) }}</span>

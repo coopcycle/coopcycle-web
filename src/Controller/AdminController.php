@@ -1149,6 +1149,32 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/admin/forms/new", name="admin_form_new")
+     */
+    public function newFormAction(Request $request)
+    {
+        $deliveryForm = new DeliveryForm();
+        $form = $this->createForm(EmbedSettingsType::class, $deliveryForm);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->getDoctrine()
+                ->getManagerForClass(DeliveryForm::class)
+                ->persist($deliveryForm);
+            $this->getDoctrine()
+                ->getManagerForClass(DeliveryForm::class)
+                ->flush();
+
+            return $this->redirectToRoute('admin_forms');
+        }
+
+        return $this->render('admin/embed.html.twig', [
+            'embed_settings_form' => $form->createView(),
+        ]);
+    }
+
+    /**
      * @Route("/admin/forms/{id}", name="admin_form")
      */
     public function formAction($id, Request $request)
@@ -1168,7 +1194,6 @@ class AdminController extends Controller
         }
 
         return $this->render('admin/embed.html.twig', [
-            'pricing_rule_set' => $deliveryForm->getPricingRuleSet(),
             'embed_settings_form' => $form->createView(),
         ]);
     }
