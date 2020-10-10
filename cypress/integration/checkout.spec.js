@@ -475,6 +475,7 @@ context('Checkout', () => {
     cy.get('input[name="checkout_address[customer][email]"]').type('dev@coopcycle.org')
     cy.get('input[name="checkout_address[customer][fullName]"]').type('John Doe')
     cy.get('input[name="checkout_address[customer][phoneNumber]"]').type('0612345678')
+    cy.get('input[name="checkout_address[customer][legal]"]').check()
 
     cy.contains('Commander').click()
 
