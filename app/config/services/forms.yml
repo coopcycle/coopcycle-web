@@ -216,3 +216,6 @@ services:
     arguments:
       $country: '%region_iso%'
     tags: [ form.type ]
+
+  AppBundle\Form\Type\LegalType:
+    tags: [ form.type ]

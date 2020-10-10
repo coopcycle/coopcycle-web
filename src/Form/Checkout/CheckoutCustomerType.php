@@ -4,6 +4,7 @@ namespace AppBundle\Form\Checkout;
 
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Form\AddressType;
+use AppBundle\Form\Type\LegalType;
 use AppBundle\Form\Type\PhoneNumberType;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as AssertUserWithSameEmailNotExists;
@@ -88,6 +89,10 @@ class CheckoutCustomerType extends AbstractType
                     'help' => 'form.checkout_address.telephone.help',
                     'data' => $customer !== null ? $customer->getPhoneNumber() : '',
                 ]);
+            }
+
+            if (null === $customer || !$customer->hasUser()) {
+                $form->add('legal', LegalType::class);
             }
         });
 

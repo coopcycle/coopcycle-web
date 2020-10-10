@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Form\Type\LegalType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -10,33 +11,19 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationType extends AbstractType
 {
-    private $urlGenerator;
     private $isDemo;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator, bool $isDemo = false)
+    public function __construct(bool $isDemo = false)
     {
-        $this->urlGenerator = $urlGenerator;
         $this->isDemo = $isDemo;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('legal', CheckboxType::class, array(
-                'mapped' => false,
-                'required' => true,
-                'label' => 'form.registration.legal.label',
-                'help' => 'form.registration.legal.help',
-                'help_translation_parameters' => [
-                    '%terms_url%' => $this->urlGenerator->generate('terms', [], UrlGeneratorInterface::ABSOLUTE_URL),
-                    '%privacy_url%' => $this->urlGenerator->generate('privacy', [], UrlGeneratorInterface::ABSOLUTE_URL),
-                ],
-                'help_html' => true,
-            ));
+        $builder->add('legal', LegalType::class);
 
         if ($this->isDemo) {
             $builder->add('accountType', ChoiceType::class, [

@@ -201,6 +201,9 @@
       </div>
     </div>
     {% endif %}
+    {% if form.legal is defined %}
+      {{ form_row(form.legal) }}
+    {% endif %}
     </div>
   </div>
 {% endif %}
