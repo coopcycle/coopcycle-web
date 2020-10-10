@@ -1,0 +1,25 @@
+cliArgs:
+  geometry: false # retrieve geometry (-g)
+  threads: 4 # number of threads to use (-t)
+  explore: 5 # exploration level to use (0..5) (-x)
+  limit: '1mb' # max request size
+  logdir: '/..' # the path for the logs relative to ./src
+  maxlocations: 1000 # max number of jobs/shipments locations
+  maxvehicles: 200 # max number of vehicles
+  override: true # allow cli options override (-g, -t and -x)
+  path: '' # VROOM path (if not in $PATH)
+  port: 3000 # expressjs port
+  router: 'osrm' # routing backend (osrm, libosrm or ors)
+  timeout: 300000 # milli-seconds
+  baseurl: '/' #base url for api
+routingServers:
+  osrm:
+    car:
+      host: 'osrm'
+      port: '5000'
+    bike:
+      host: 'osrm'
+      port: '5000'
+    foot:
+      host: 'osrm'
+      port: '5000'

@@ -176,9 +176,7 @@ services:
     image: tile38/tile38
 
   vroom:
-    network_mode: host
     image: vroomvrp/vroom-docker:v1.8.0
-    container_name: vroom
     ports:
       - "3000:3000"
     volumes:

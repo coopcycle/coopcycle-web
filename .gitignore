@@ -33,6 +33,8 @@
 /node_modules/
 .DS_Store
 
+/vroom-conf/access.log
+
 # Sublime text editor stuff
 *.sublime-workspace
 *.sublime-project
