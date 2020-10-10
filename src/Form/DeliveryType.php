@@ -245,12 +245,16 @@ class DeliveryType extends AbstractType
 
             $coordinates = [];
             foreach ($delivery->getTasks() as $task) {
-                $coordinates[] = $task->getAddress()->getGeo();
+                if ($address = $task->getAddress()) {
+                    $coordinates[] = $address->getGeo();
+                }
             }
 
-            $delivery->setDistance($this->routing->getDistance(...$coordinates));
-            $delivery->setDuration($this->routing->getDuration(...$coordinates));
-            $delivery->setPolyline($this->routing->getPolyline(...$coordinates));
+            if (count($coordinates) > 0) {
+                $delivery->setDistance($this->routing->getDistance(...$coordinates));
+                $delivery->setDuration($this->routing->getDuration(...$coordinates));
+                $delivery->setPolyline($this->routing->getPolyline(...$coordinates));
+            }
         });
     }
 

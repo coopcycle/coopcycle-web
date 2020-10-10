@@ -1088,3 +1088,5 @@ restaurant.embed.step_2: 'Add the <code>data-coopcycle-embed="%url%"</code> to a
 restaurant.embed.greeting: That's all! Now when visitors click on the button, it opens a window directly on your website.
 form.settings.guest_checkout_enabled.label: Enable guest checkout
 order.list.reorder: Reorder
+homepage.form.title: Do you need something delivered?
+homepage.form.content: "<strong>%brand_name%</strong> is operating local and non polluting on-demand bike delivery services. Ship a single package, or fulfill recuring shipping for your business."

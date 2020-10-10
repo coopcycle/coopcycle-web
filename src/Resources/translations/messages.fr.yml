@@ -1041,3 +1041,5 @@ restaurant.embed.step_1: 'Ajoutez le script <code>coopcycle.js</code> à votre p
 restaurant.embed.step_2: "Ajoutez l'attribut <code>data-coopcycle-embed=\"%url%\"</code> à un élément HTML cliquable"
 restaurant.embed.greeting: C'est tout ! Désormais, quand les visiteurs cliquent sur le bouton, une fenêtre s'ouvre directement sur votre site.
 form.settings.guest_checkout_enabled.label: Autoriser à commander sans créer de compte
+homepage.form.title: Vous avez besoin d'une livraison ?
+homepage.form.content: "<strong>%brand_name%</strong> propose des services locaux et non polluants de livraison à vélo à la demande. Expédiez un colis ponctuellement ou de manière récurrente pour votre entreprise."

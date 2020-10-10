@@ -35,6 +35,37 @@
   } %}
 {% endif %}
 
+{% if delivery_form is not null %}
+<div class="container">
+  <section class="homepage-delivery p-5">
+    <div class="row">
+      <div class="col-sm-6">
+        {{ form_start(delivery_form, {
+          action: path('embed_delivery_start', { hashid: hashid }),
+          attr: {
+            autocomplete: 'off',
+            class: 'mb-4'
+          } }) }}
+          {{ form_widget(delivery_form.pickup.type) }}
+          {{ form_widget(delivery_form.dropoff.type) }}
+          <div class="mb-4">
+          {{ form_widget(delivery_form.dropoff.address) }}
+          </div>
+          <div class="mb-4">
+          {{ form_widget(delivery_form.dropoff.timeSlot) }}
+          </div>
+          <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }} →</button>
+        {{ form_end(delivery_form, { render_rest: false }) }}
+      </div>
+      <div class="col-sm-6 homepage-delivery-text">
+        <h2 class="mt-0">{{ 'homepage.form.title'|trans }}</h2>
+        <p>{% trans with { '%brand_name%': coopcycle_setting('brand_name') } %}homepage.form.content{% endtrans %}</p>
+      </div>
+    </div>
+  </section>
+</div>
+{% endif %}
+
 {% if stores|length > 0 %}
   {% include 'index/_partials/section.html.twig' with {
     items: stores,
@@ -56,5 +87,6 @@
 {% block scripts %}
 {{ encore_entry_script_tags('search-address') }}
 {{ encore_entry_script_tags('restaurant-list') }}
+{{ encore_entry_script_tags('delivery-homepage') }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
 {% endblock %}

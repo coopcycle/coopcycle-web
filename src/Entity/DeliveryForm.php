@@ -12,8 +12,9 @@ class DeliveryForm
     private $pricingRuleSet;
     private $timeSlot;
     private $packageSet;
-    private $withVehicle;
-    private $withWeight;
+    private $withVehicle = false;
+    private $withWeight = false;
+    private $showHomepage = false;
 
     /**
      * @return mixed
@@ -119,6 +120,26 @@ class DeliveryForm
     public function setWithWeight($withWeight)
     {
         $this->withWeight = $withWeight;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShowHomepage()
+    {
+        return $this->showHomepage;
+    }
+
+    /**
+     * @param mixed $showHomepage
+     *
+     * @return self
+     */
+    public function setShowHomepage($showHomepage)
+    {
+        $this->showHomepage = $showHomepage;
 
         return $this;
     }

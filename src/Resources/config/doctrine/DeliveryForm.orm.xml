@@ -6,6 +6,7 @@
     </id>
     <field name="withVehicle" type="boolean" column="with_vehicle"/>
     <field name="withWeight" type="boolean" column="with_weight"/>
+    <field name="showHomepage" type="boolean" column="show_homepage"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
