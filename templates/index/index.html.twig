@@ -51,9 +51,11 @@
           <div class="mb-4">
           {{ form_widget(delivery_form.dropoff.address) }}
           </div>
+          {% if delivery_form.dropoff.timeSlot is defined %}
           <div class="mb-4">
           {{ form_widget(delivery_form.dropoff.timeSlot) }}
           </div>
+          {% endif %}
           <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }} →</button>
         {{ form_end(delivery_form, { render_rest: false }) }}
       </div>
