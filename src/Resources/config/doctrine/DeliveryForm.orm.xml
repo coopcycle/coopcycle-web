@@ -14,6 +14,6 @@
     </field>
     <many-to-one field="pricingRuleSet" target-entity="AppBundle\Entity\Delivery\PricingRuleSet" />
     <many-to-one field="timeSlot" target-entity="AppBundle\Entity\TimeSlot" />
-    <many-to-one field="packageSet" target-entity="AppBundle\Entity\packageSet" />
+    <many-to-one field="packageSet" target-entity="AppBundle\Entity\PackageSet" />
   </entity>
 </doctrine-mapping>
