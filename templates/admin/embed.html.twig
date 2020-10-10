@@ -19,7 +19,7 @@
   {% if delivery_form.id is not null %}
     <p>{% trans %}embed.delivery.iframe_code{% endtrans %}</p>
     {% set iframe_code %}<iframe src="{{ url('embed_delivery_start', { hashid: delivery_form|hashid(12) }) }}" width="600" height="800" frameborder="0"></iframe>{% endset %}
-    <pre>{{ iframe_code|e }}</pre>
+    <pre><code class="language-html">{{ iframe_code|e }}</code></pre>
   {% endif %}
 
   {{ form_start(embed_settings_form) }}
