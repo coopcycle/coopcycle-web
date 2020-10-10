@@ -29,13 +29,8 @@ class ApiRegistrationType extends AbstractType
     {
         $builder->add('email', EmailType::class)
                 ->add('username', TextType::class)
-                ->add('givenName', TextType::class, ['constraints' => [
-                    new Assert\NotNull(),
-                    new Assert\NotBlank(),
-                ]])
-                ->add('familyName', TextType::class, ['constraints' => [
-                    new Assert\NotBlank(),
-                ]])
+                ->add('givenName', TextType::class)
+                ->add('familyName', TextType::class)
                 ->add('fullName', TextType::class, ['mapped' => false])
                 ->add('plainPassword', RepeatedType::class, [
                     'type' => PasswordType::class,
@@ -43,14 +38,11 @@ class ApiRegistrationType extends AbstractType
                     'second_name' => 'password_confirmation',
                     'invalid_message' => 'fos_user.password.mismatch'
                 ])
-                ->add('givenName', TextType::class)
-                ->add('familyName', TextType::class)
                 ->add('telephone', PhoneNumberType::class, [
                     'required' => false,
                     'format' => PhoneNumberFormat::NATIONAL,
                     'default_region' => strtoupper($this->countryIso)
                 ]);
-
     }
 
     public function configureOptions(OptionsResolver $resolver)
