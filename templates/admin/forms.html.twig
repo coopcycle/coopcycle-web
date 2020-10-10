@@ -1,58 +1,48 @@
 {% extends "admin.html.twig" %}
 
 {% block breadcrumb %}
-{# <li><a href="{{ path('admin_api_apps') }}">{{ 'api_apps.breadcrumb'|trans }}</a></li> #}
+<li>{% trans %}adminDashboard.embed.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
-{# <p class="text-right">
-  <a href="{{ path('admin_new_api_app') }}" class="btn btn-success">
-    <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
-  </a>
-</p> #}
 <table class="table">
   <thead>
     <th>#</th>
-    {# <th>{{ 'form.api_app.name.label'|trans }}</th>
-    <th>{{ 'form.api_app.store.label'|trans }}</th>
-    <th>{{ 'form.api_app.client_id.label'|trans }}</th>
-    <th>{{ 'form.api_app.client_secret.label'|trans }}</th> #}
+    <th>{{ 'form.store_type.pricing_rule_set.label'|trans }}</th>
+    <th>{{ 'form.store_type.time_slot.label'|trans }}</th>
+    <th>{{ 'form.store_type.package_set.label'|trans }}</th>
+    <th></th>
   </thead>
   <tbody>
   {% for form in forms %}
       <td width="5%">
-        {# <a href="{{ path('admin_api_app', { id: api_app.id }) }}"> #}
-          {{ form|hashid(12) }}
-        {# </a> #}
-      </td>
-      {# <td>
-        {{ api_app.name }}
+        <a href="{{ path('admin_form', { id: form.id }) }}">
+          <span class="text-monospace">{{ form|hashid(12) }}</span>
+        </a>
       </td>
       <td>
-        {{ api_app.store.name }}
+        {{ form.pricingRuleSet.name }}
       </td>
       <td>
-        <span class="mr-4">{{ api_app.oauth2Client.identifier }}</span>
-        <button type="button" class="btn btn-default btn-xs"
-          data-toggle="copy" data-clipboard-text="{{ api_app.oauth2Client.identifier }}">
-          <i class="fa fa-copy"></i> {{ 'basics.copy'|trans }}
-        </button>
+        {{ form.timeSlot.name }}
       </td>
       <td>
-        <span class="mr-4">••••••••••••••••</span>
-        <button type="button" class="btn btn-default btn-xs"
-          data-toggle="copy" data-clipboard-text="{{ api_app.oauth2Client.secret }}">
-          <i class="fa fa-copy"></i> {{ 'basics.copy'|trans }}
-        </button>
-      </td> #}
+        {{ form.packageSet.name }}
+      </td>
+      <td>
+        <ul class="list-unstyled">
+          <li>
+            <i class="fa fa-{{ form.withVehicle ? 'check' : 'times' }}"></i>
+            {{ 'form.embed_settings.with_vehicle.label'|trans }}
+          </li>
+          <li>
+            <i class="fa fa-{{ form.withWeight ? 'check' : 'times' }}"></i>
+            {{ 'form.embed_settings.with_weight.label'|trans }}
+          </li>
+        </ul>
+      </td>
     </tr>
   {% endfor %}
   </tbody>
 </table>
 {% endblock %}
-
-{# {% block scripts %}
-<script>
-new ClipboardJS('[data-toggle="copy"]');
-</script>
-{% endblock %} #}

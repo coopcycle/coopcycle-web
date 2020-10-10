@@ -12,6 +12,7 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
@@ -1144,64 +1145,41 @@ class AdminController extends Controller
      */
     public function embedAction(Request $request, SettingsManager $settingsManager)
     {
-        $pricingRuleSet = null;
-        $timeSlot = null;
-        $packageSet = null;
+        return $this->redirectToRoute('admin_forms', [], 301);
+    }
 
-        $pricingRuleSetId = $settingsManager->get('embed.delivery.pricingRuleSet');
-        $timeSlotId = $settingsManager->get('embed.delivery.timeSlot');
-        $packageSetId = $settingsManager->get('embed.delivery.packageSet');
-        $withVehicle = $settingsManager->getBoolean('embed.delivery.withVehicle');
-        $withWeight = $settingsManager->getBoolean('embed.delivery.withWeight');
+    /**
+     * @Route("/admin/forms/{id}", name="admin_form")
+     */
+    public function formAction($id, Request $request)
+    {
+        $deliveryForm = $this->getDoctrine()->getRepository(DeliveryForm::class)->find($id);
 
-        if ($pricingRuleSetId) {
-            $pricingRuleSet = $this->getDoctrine()
-                ->getRepository(PricingRuleSet::class)
-                ->find($pricingRuleSetId);
-        }
-
-        if ($timeSlotId) {
-            $timeSlot = $this->getDoctrine()
-                ->getRepository(TimeSlot::class)
-                ->find($timeSlotId);
-        }
-
-        if ($packageSetId) {
-            $packageSet = $this->getDoctrine()
-                ->getRepository(PackageSet::class)
-                ->find($packageSetId);
-        }
-
-        $form = $this->createForm(EmbedSettingsType::class);
-
-        $form->get('pricingRuleSet')->setData($pricingRuleSet);
-        $form->get('timeSlot')->setData($timeSlot);
-        $form->get('packageSet')->setData($packageSet);
-        $form->get('withVehicle')->setData($withVehicle);
-        $form->get('withWeight')->setData($withWeight);
+        $form = $this->createForm(EmbedSettingsType::class, $deliveryForm);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $pricingRuleSet = $form->get('pricingRuleSet')->getData();
-            $timeSlot = $form->get('timeSlot')->getData();
-            $packageSet = $form->get('packageSet')->getData();
-            $withVehicle = $form->get('withVehicle')->getData();
-            $withWeight = $form->get('withWeight')->getData();
-
-            $settingsManager->set('embed.delivery.pricingRuleSet', $pricingRuleSet ? $pricingRuleSet->getId() : null, 'embed');
-            $settingsManager->set('embed.delivery.timeSlot', $timeSlot ? $timeSlot->getId() : null, 'embed');
-            $settingsManager->set('embed.delivery.packageSet', $packageSet ? $packageSet->getId() : null, 'embed');
-            $settingsManager->set('embed.delivery.withVehicle', $withVehicle ? 'yes' : 'no', 'embed');
-            $settingsManager->set('embed.delivery.withWeight', $withWeight ? 'yes' : 'no', 'embed');
             $settingsManager->flush();
 
-            return $this->redirect($request->headers->get('referer'));
+            return $this->redirectToRoute('admin_forms');
         }
 
         return $this->render('admin/embed.html.twig', [
-            'pricing_rule_set' => $pricingRuleSet,
+            'pricing_rule_set' => $deliveryForm->getPricingRuleSet(),
             'embed_settings_form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/forms", name="admin_forms")
+     */
+    public function formsAction(Request $request)
+    {
+        $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
+
+        return $this->render('admin/forms.html.twig', [
+            'forms' => $forms,
         ]);
     }
 
