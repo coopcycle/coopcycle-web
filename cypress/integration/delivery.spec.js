@@ -83,7 +83,7 @@ context('Delivery', () => {
 
     cy.get('form[name="delivery"] button[type="submit"]').click()
 
-    cy.location('pathname').should('eq', '/fr/embed/delivery/summary')
+    cy.location('pathname').should('match', /\/fr\/forms\/[a-zA-Z0-9]+\/summary/)
 
     cy.get('form[name="delivery"] .alert-info')
       .invoke('text')
