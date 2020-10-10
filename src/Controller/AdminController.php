@@ -1160,7 +1160,9 @@ class AdminController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $settingsManager->flush();
+            $this->getDoctrine()
+                ->getManagerForClass(DeliveryForm::class)
+                ->flush();
 
             return $this->redirectToRoute('admin_forms');
         }

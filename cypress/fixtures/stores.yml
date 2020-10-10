@@ -77,3 +77,5 @@ AppBundle\Entity\Sylius\Product:
 AppBundle\Entity\DeliveryForm:
   delivery_form:
     pricingRuleSet: '@pricing_rule_set_1'
+    withVehicle: false
+    withWeight: false

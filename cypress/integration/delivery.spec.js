@@ -88,6 +88,5 @@ context('Delivery', () => {
     cy.get('form[name="delivery"] .alert-info')
       .invoke('text')
       .should('match', /Vous avez demandé une course qui vous sera déposée le/)
-
   })
 })
