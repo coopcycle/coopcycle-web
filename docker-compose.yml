@@ -175,6 +175,19 @@ services:
   tile38:
     image: tile38/tile38
 
+  vroom:
+    network_mode: host
+    image: vroomvrp/vroom-docker:v1.8.0
+    container_name: vroom
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./vroom-conf/:/conf
+    environment:
+      - VROOM_ROUTER=osrm  # router to use, osrm or ors
+    depends_on:
+      - osrm
+
 volumes:
   node_modules:
   pg_data:
