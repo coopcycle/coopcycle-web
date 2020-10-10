@@ -18,7 +18,7 @@
 
   <h3>{{ 'embed.delivery.summary.title'|trans }}</h3>
 
-  {{ form_start(form, { action: path('embed_delivery_process') }) }}
+  {{ form_start(form, { action: path('embed_delivery_process', { hashid: hashid }) }) }}
   <div class="alert alert-info">
     {% trans with {
       '%dropoff_date%': delivery.dropoff.doneBefore|localizeddate('medium', 'short'),
@@ -93,7 +93,7 @@ new CoopCycle.DeliveryMap('map', {
 
 $("#modify-form").on('click', function() {
   $('form[name="delivery"]')
-    .attr('action', "{{ path('embed_delivery_start') }}")
+    .attr('action', "{{ path('embed_delivery_start', { hashid: hashid }) }}")
     .submit()
 });
 
