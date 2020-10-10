@@ -1,0 +1,56 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.embed.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="text-right mb-4">
+  <a href="{{ path('admin_form_new') }}" class="btn btn-success">
+    <i class="fa fa-plus"></i><span>{{ 'basics.add'|trans }}</span>
+  </a>
+</div>
+
+<table class="table">
+  <thead>
+    <th>#</th>
+    <th>{{ 'form.store_type.pricing_rule_set.label'|trans }}</th>
+    <th>{{ 'form.store_type.time_slot.label'|trans }}</th>
+    <th>{{ 'form.store_type.package_set.label'|trans }}</th>
+    <th></th>
+  </thead>
+  <tbody>
+  {% for form in forms %}
+    <tr>
+      <td width="5%">
+        <a href="{{ path('admin_form', { id: form.id }) }}">
+          <span class="text-monospace">{{ form|hashid(12) }}</span>
+        </a>
+      </td>
+      <td>
+        {{ form.pricingRuleSet.name }}
+      </td>
+      <td>
+        {{ form.timeSlot.name }}
+      </td>
+      <td>
+        {{ form.packageSet.name }}
+      </td>
+      <td>
+        <ul class="list-unstyled">
+          <li>
+            <i class="fa fa-{{ form.withVehicle ? 'check' : 'times' }}"></i>
+            {{ 'form.embed_settings.with_vehicle.label'|trans }}
+          </li>
+          <li>
+            <i class="fa fa-{{ form.withWeight ? 'check' : 'times' }}"></i>
+            {{ 'form.embed_settings.with_weight.label'|trans }}
+          </li>
+        </ul>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

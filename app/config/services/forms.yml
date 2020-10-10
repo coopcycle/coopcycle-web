@@ -54,9 +54,6 @@ services:
     parent: AppBundle\Form\DeliveryType
     autowire: false
     autoconfigure: false
-    arguments:
-      $settingsManager: '@coopcycle.settings_manager'
-      $entityManager: '@Doctrine\ORM\EntityManagerInterface'
     tags: [ form.type ]
 
   AppBundle\Form\NewOrderType:

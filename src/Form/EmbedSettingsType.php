@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\TimeSlot;
@@ -22,8 +23,7 @@ class EmbedSettingsType extends AbstractType
     {
         $builder
             ->add('pricingRuleSet', EntityType::class, array(
-                'mapped' => false,
-                'required' => false,
+                'required' => true,
                 'placeholder' => 'form.store_type.pricing_rule_set.placeholder',
                 'label' => 'form.store_type.pricing_rule_set.label',
                 'class' => PricingRuleSet::class,
@@ -33,7 +33,6 @@ class EmbedSettingsType extends AbstractType
                 }
             ))
             ->add('timeSlot', EntityType::class, array(
-                'mapped' => false,
                 'required' => false,
                 'placeholder' => 'form.store_type.time_slot.placeholder',
                 'label' => 'form.store_type.time_slot.label',
@@ -44,7 +43,6 @@ class EmbedSettingsType extends AbstractType
                 }
             ))
             ->add('packageSet', EntityType::class, array(
-                'mapped' => false,
                 'required' => false,
                 'placeholder' => 'form.store_type.package_set.placeholder',
                 'label' => 'form.store_type.package_set.label',
@@ -62,5 +60,12 @@ class EmbedSettingsType extends AbstractType
                 'label' => 'form.embed_settings.with_weight.label',
                 'required' => false
             ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => DeliveryForm::class,
+        ));
     }
 }

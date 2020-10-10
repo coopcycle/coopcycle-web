@@ -8,23 +8,25 @@
 
 {% block content %}
 
-<h3>{% trans %}embed.delivery.title{% endtrans %}</h3>
+  {% set delivery_form = embed_settings_form.vars.data %}
 
-{% if pricing_rule_set is null %}
-  <div class="alert alert-warning">{% trans %}embed.delivery.configure_pricing_rule_set{% endtrans %}</div>
-{% endif %}
+  <h3>{% trans %}embed.delivery.title{% endtrans %}</h3>
 
-{% if pricing_rule_set is not null %}
-  <p>{% trans %}embed.delivery.iframe_code{% endtrans %}</p>
-  {% set iframe_code %}<iframe src="{{ url('embed_delivery_start') }}" width="600" height="800" frameborder="0"></iframe>{% endset %}
-  <pre>{{ iframe_code|e }}</pre>
-{% endif %}
-
-{{ form_start(embed_settings_form) }}
-  {{ form_widget(embed_settings_form) }}
-  <hr>
-  <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
-{{ form_end(embed_settings_form) }}
+  {{ form_start(embed_settings_form) }}
+    {{ form_widget(embed_settings_form) }}
+    <hr>
+    {% if delivery_form.id is not null %}
+      <p>{% trans %}embed.delivery.iframe_code{% endtrans %}</p>
+      {% set iframe_code %}<iframe src="{{ url('embed_delivery_start', { hashid: delivery_form|hashid(12) }) }}" width="600" height="800" frameborder="0"></iframe>{% endset %}
+      <pre><code class="language-html">{{ iframe_code|e }}</code></pre>
+      <hr>
+      {% include "_partials/sdk.html.twig" with {
+        url: url('embed_delivery_start', { hashid: delivery_form|hashid(12) })
+      } %}
+      <hr>
+    {% endif %}
+    <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+  {{ form_end(embed_settings_form) }}
 
 {% endblock %}
 

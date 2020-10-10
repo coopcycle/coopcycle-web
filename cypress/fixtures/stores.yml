@@ -73,3 +73,9 @@ AppBundle\Entity\Sylius\Product:
     name: Livraison à la demande
     slug: livraison-a-la-demande
     enabled: true
+
+AppBundle\Entity\DeliveryForm:
+  delivery_form:
+    pricingRuleSet: '@pricing_rule_set_1'
+    withVehicle: false
+    withWeight: false
