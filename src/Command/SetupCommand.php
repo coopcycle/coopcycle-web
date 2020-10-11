@@ -119,7 +119,8 @@ class SetupCommand extends Command
         'USD',
         'SEK',
         'BRL',
-        'ARS'
+        'ARS',
+        'CRC',
     ];
 
     public function __construct(
