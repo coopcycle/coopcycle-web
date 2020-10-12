@@ -184,7 +184,7 @@ class CheckoutAddressType extends AbstractType
 
             // When the restaurant accepts quotes and the customer is allowed,
             // we add another submit button
-            if ($restaurant->isQuotesAllowed() && $customer->hasUser() && $customer->getUser()->isQuotesAllowed()) {
+            if ($restaurant->isQuotesAllowed() && null !== $customer && $customer->hasUser() && $customer->getUser()->isQuotesAllowed()) {
                 $form->add('quote', SubmitType::class, [
                     'label' => 'form.checkout_address.quote.label'
                 ]);
