@@ -25,10 +25,6 @@ class NotificationList extends React.Component {
     return notifications
   }
 
-  componentDidUpdate() {
-    this.props.onUpdate()
-  }
-
   render() {
 
     const { notifications } = this.state

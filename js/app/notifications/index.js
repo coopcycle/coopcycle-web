@@ -10,10 +10,7 @@ function bootstrap($popover, options) {
     return
   }
 
-  let template = document.createElement('script')
-  template.type = 'text/template'
-  document.body.appendChild(template)
-
+  const el = document.createElement('div')
   const notificationsListRef = React.createRef()
 
   const initPopover = () => {
@@ -22,6 +19,7 @@ function bootstrap($popover, options) {
       placement: 'bottom',
       container: 'body',
       html: true,
+      content: el,
       template: `<div class="popover" role="tooltip">
         <div class="arrow"></div>
         <div class="popover-content nopadding"></div>
@@ -38,10 +36,6 @@ function bootstrap($popover, options) {
         data: JSON.stringify(notifications),
       })
     })
-  }
-
-  const setPopoverContent = () => {
-    $popover.attr('data-content', template.innerHTML)
   }
 
   const hostname = `//${window.location.hostname}`
@@ -67,13 +61,11 @@ function bootstrap($popover, options) {
         <NotificationList
           ref={ notificationsListRef }
           notifications={ notifications }
-          url={ options.notificationsURL }
-          emptyMessage={ options.emptyMessage }
-          onUpdate={ () => setPopoverContent() } />
+          url={ options.notificationsURL } />
       </I18nextProvider>,
-      template,
+      el,
       () => {
-        setPopoverContent()
+
         initPopover()
 
         socket.on(`notifications`, notification => notificationsListRef.current.unshift(notification))
