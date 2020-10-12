@@ -49,7 +49,38 @@ Feature: Food Tech
         "@context":"/api/contexts/Order",
         "@id":"/api/restaurants/1/orders",
         "@type":"hydra:Collection",
-        "hydra:member":@array@,
+        "hydra:member":[
+          {
+            "@id":"/api/orders/1",
+            "@type":"http://schema.org/Order",
+            "customer":{"@*@":"@*@"},
+            "restaurant":{"@*@":"@*@"},
+            "shippingAddress":{"@*@":"@*@"},
+            "shippedAt":"@string@.isDateTime()",
+            "reusablePackagingEnabled":false,
+            "reusablePackagingPledgeReturn":0,
+            "shippingTimeRange":@array@,
+            "takeaway":false,
+            "id":@integer@,
+            "number":null,
+            "notes":null,
+            "items":@array@,
+            "itemsTotal":1800,
+            "total":2150,
+            "state":"new",
+            "createdAt":"@string@.isDateTime()",
+            "taxTotal":@integer@,
+            "preparationExpectedAt":"@string@.isDateTime()",
+            "pickupExpectedAt":"@string@.isDateTime()",
+            "adjustments":{
+              "delivery":@array@,
+              "delivery_promotion":[],
+              "order_promotion":[],
+              "reusable_packaging":[],
+              "tax":@array@
+            }
+          }
+        ],
         "hydra:totalItems":1,
         "hydra:view":{
           "@id":"/api/restaurants/1/orders?date=2018-08-27",
