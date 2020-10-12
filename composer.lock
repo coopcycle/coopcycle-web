@@ -13629,16 +13629,16 @@
         },
         {
             "name": "symfony/contracts",
-            "version": "v1.1.9",
+            "version": "v1.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/contracts.git",
-                "reference": "8c4de0cf797f2eba4334a1d7a9b788c1b30a7579"
+                "reference": "011c20407c4b99d454f44021d023fb39ce23b73d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/contracts/zipball/8c4de0cf797f2eba4334a1d7a9b788c1b30a7579",
-                "reference": "8c4de0cf797f2eba4334a1d7a9b788c1b30a7579",
+                "url": "https://api.github.com/repos/symfony/contracts/zipball/011c20407c4b99d454f44021d023fb39ce23b73d",
+                "reference": "011c20407c4b99d454f44021d023fb39ce23b73d",
                 "shasum": ""
             },
             "require": {
@@ -13716,7 +13716,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-07-29T14:46:19+00:00"
+            "time": "2020-09-02T16:08:58+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -15152,16 +15152,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v4.4.13",
+            "version": "v4.4.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "9b8314080fb15e84e030f94488d9e1fa17adb846"
+                "reference": "d6cc026bc1fa3a7b126357103c3c2fc74595608b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/9b8314080fb15e84e030f94488d9e1fa17adb846",
-                "reference": "9b8314080fb15e84e030f94488d9e1fa17adb846",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/d6cc026bc1fa3a7b126357103c3c2fc74595608b",
+                "reference": "d6cc026bc1fa3a7b126357103c3c2fc74595608b",
                 "shasum": ""
             },
             "require": {
@@ -15339,7 +15339,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-09-02T08:11:15+00:00"
+            "time": "2020-10-04T07:48:33+00:00"
         },
         {
             "name": "symfony/webpack-encore-bundle",
@@ -18775,16 +18775,16 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v5.1.6",
+            "version": "v5.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "6753ea4cb2dab705e819b1ddd8833a5c98338650"
+                "reference": "150aeb91dd9dafe13ec8416abd62e435330ca12d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/6753ea4cb2dab705e819b1ddd8833a5c98338650",
-                "reference": "6753ea4cb2dab705e819b1ddd8833a5c98338650",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/150aeb91dd9dafe13ec8416abd62e435330ca12d",
+                "reference": "150aeb91dd9dafe13ec8416abd62e435330ca12d",
                 "shasum": ""
             },
             "require": {
@@ -18853,7 +18853,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-09-18T14:27:32+00:00"
+            "time": "2020-10-02T12:57:56+00:00"
         },
         {
             "name": "theseer/tokenizer",
