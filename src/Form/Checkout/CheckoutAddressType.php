@@ -25,16 +25,19 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CheckoutAddressType extends AbstractType
 {
-    private $tokenStorage;
+    private $translator;
+    private $priceFormatter;
+    private $loopeatClient;
+    private $loopeatContext;
+    private $session;
+    private $loopeatOAuthFlow;
 
     public function __construct(
-        TokenStorageInterface $tokenStorage,
         TranslatorInterface $translator,
         PriceFormatter $priceFormatter,
         LoopEatClient $loopeatClient,
@@ -42,7 +45,6 @@ class CheckoutAddressType extends AbstractType
         SessionInterface $session,
         string $loopeatOAuthFlow)
     {
-        $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
         $this->priceFormatter = $priceFormatter;
         $this->loopeatClient = $loopeatClient;
@@ -182,8 +184,7 @@ class CheckoutAddressType extends AbstractType
 
             // When the restaurant accepts quotes and the customer is allowed,
             // we add another submit button
-            $user = $this->tokenStorage->getToken()->getUser();
-            if ($restaurant->isQuotesAllowed() && $user->isQuotesAllowed()) {
+            if ($restaurant->isQuotesAllowed() && $customer->hasUser() && $customer->getUser()->isQuotesAllowed()) {
                 $form->add('quote', SubmitType::class, [
                     'label' => 'form.checkout_address.quote.label'
                 ]);
