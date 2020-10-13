@@ -5,14 +5,16 @@ namespace AppBundle\Twig;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class LocalBusinessRuntime implements RuntimeExtensionInterface
 {
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator, SerializerInterface $serializer)
     {
         $this->translator = $translator;
+        $this->serializer = $serializer;
     }
 
     public function type(LocalBusiness $entity): ?string
@@ -34,5 +36,15 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         }
 
         return '';
+    }
+
+    public function seo(LocalBusiness $entity): array
+    {
+        return $this->serializer->normalize($entity, 'jsonld', [
+            'resource_class' => LocalBusiness::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get',
+            'groups' => ['restaurant_seo', 'address']
+        ]);
     }
 }

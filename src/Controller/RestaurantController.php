@@ -396,15 +396,7 @@ class RestaurantController extends AbstractController
         }
         $this->customizeSeoPage($restaurant, $request);
 
-        $structuredData = $this->serializer->normalize($restaurant, 'jsonld', [
-            'resource_class' => LocalBusiness::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
-            'groups' => ['restaurant_seo', 'address']
-        ]);
-
         $delay = null;
-
 
         Carbon::setLocale($request->attributes->get('_locale'));
 
@@ -419,7 +411,6 @@ class RestaurantController extends AbstractController
 
         return $this->render('restaurant/index.html.twig', array(
             'restaurant' => $restaurant,
-            'structured_data' => $structuredData,
             'times' => $this->orderTimeHelper->getTimeInfo($cart),
             'delay' => $delay,
             'cart_form' => $cartForm->createView(),

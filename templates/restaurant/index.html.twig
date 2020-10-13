@@ -7,7 +7,7 @@
 
 {% block structured_data %}
 <script type="application/ld+json">
-{{ structured_data|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}
+{{ restaurant|restaurant_microdata|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}
 </script>
 {% endblock %}
 
