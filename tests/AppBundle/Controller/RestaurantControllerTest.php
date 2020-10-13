@@ -11,6 +11,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Form\Checkout\Action\Validator\AddProductToCart as AssertAddProductToCart;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -42,7 +43,9 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
@@ -221,10 +224,19 @@ class RestaurantControllerTest extends WebTestCase
         $errors = $this->prophesize(ConstraintViolationListInterface::class);
 
         $this->validator
-            ->validate($cart)
-            ->willReturn($errors->reveal());
+            ->validate(Argument::type('object'), Argument::any())
+            ->will(function ($args) use ($cart, $errors) {
 
-        $response = $this->controller->addProductToCartAction(1, $productCode, $request, $cartContext->reveal(), $translator->reveal());
+                if ($args[0] === $cart) {
+
+                    return $errors->reveal();
+                }
+
+                return $errors->reveal();
+            });
+
+        $response = $this->controller->addProductToCartAction(1, $productCode, $request,
+            $cartContext->reveal(), $translator->reveal());
 
         $this->assertInstanceOf(JsonResponse::class, $response);
 
@@ -301,7 +313,25 @@ class RestaurantControllerTest extends WebTestCase
             ->findOneByCode($productCode)
             ->willReturn($product->reveal());
 
-        $response = $this->controller->addProductToCartAction(1, $productCode, $request, $cartContext->reveal(), $translator->reveal());
+        $errors = $this->prophesize(ConstraintViolationListInterface::class);
+
+        $this->validator
+            ->validate(Argument::type('object'), Argument::any())
+            ->will(function ($args) use ($cart, $errors) {
+
+                if ($args[0] === $cart) {
+
+                    return $errors->reveal();
+                }
+
+                $errs = new ConstraintViolationList();
+                $errs->add(new ConstraintViolation('Restaurant mismatch', null, [], '', 'restaurant', null));
+
+                return $errs;
+            });
+
+        $response = $this->controller->addProductToCartAction(1, $productCode, $request,
+            $cartContext->reveal(), $translator->reveal());
 
         $this->assertInstanceOf(JsonResponse::class, $response);
 

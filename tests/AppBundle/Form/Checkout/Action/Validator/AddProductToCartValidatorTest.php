@@ -48,6 +48,7 @@ class AddProductToCartValidatorTest extends ConstraintValidatorTestCase
     {
         $product = $this->prophesize(Product::class);
         $product->isEnabled()->willReturn(true);
+        $product->getCode()->willReturn('ABCDEF');
 
         $restaurant = $this->prophesize(LocalBusiness::class);
         $restaurant->hasProduct($product->reveal())->willReturn(false);
@@ -62,6 +63,7 @@ class AddProductToCartValidatorTest extends ConstraintValidatorTestCase
         $this
             ->buildViolation($constraint->productNotBelongsTo)
             ->atPath('property.path.restaurant')
+            ->setParameter('%code%', 'ABCDEF')
             ->assertRaised();
     }
 

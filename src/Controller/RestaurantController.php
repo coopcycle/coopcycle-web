@@ -467,7 +467,6 @@ class RestaurantController extends AbstractController
      */
     public function addProductToCartAction($id, $code, Request $request,
         CartContextInterface $cartContext,
-        ValidatorInterface $validator,
         TranslatorInterface $translator)
     {
         $restaurant = $this->getDoctrine()
@@ -483,7 +482,7 @@ class RestaurantController extends AbstractController
         $action->cart = $cart;
         $action->clear = $request->request->getBoolean('_clear', false);
 
-        $violations = $validator->validate($action, new AssertAddProductToCart());
+        $violations = $this->validator->validate($action, new AssertAddProductToCart());
 
         if (count($violations) > 0) {
 
