@@ -4,9 +4,11 @@ namespace AppBundle\Sylius\Cart;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Webmozart\Assert\Assert;
 
 class RestaurantResolver
 {
@@ -78,8 +80,8 @@ class RestaurantResolver
             return true;
         }
 
-        if (!isset($data['restaurant'])) {
-            throw new \LogicException('No "restaurant" key found in original entity data. The column may have been renamed.');
+        if (!isset($data['vendor'])) {
+            throw new \LogicException('No "vendor" key found in original entity data. The column may have been renamed.');
         }
 
         $restaurant = $this->resolve();
@@ -92,6 +94,8 @@ class RestaurantResolver
             return true;
         }
 
-        return $data['restaurant'] === $restaurant;
+        Assert::isInstanceOf($data['vendor'], Vendor::class);
+
+        return $data['vendor']->getRestaurant() === $restaurant;
     }
 }

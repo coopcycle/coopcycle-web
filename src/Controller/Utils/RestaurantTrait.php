@@ -14,6 +14,7 @@ use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductTaxon;
+use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\ClosingRuleType;
 use AppBundle\Form\MenuEditorType;
@@ -294,7 +295,8 @@ trait RestaurantTrait
 
         $qb = $this->get('sylius.repository.order')
             ->createQueryBuilder('o')
-            ->andWhere('o.restaurant = :restaurant')
+            ->join(Vendor::class, 'v', Expr\Join::WITH, 'o.vendor = t.id')
+            ->andWhere('v.restaurant = :restaurant')
             ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
             ->andWhere('o.state != :state')
             ->setParameter('restaurant', $restaurant)
