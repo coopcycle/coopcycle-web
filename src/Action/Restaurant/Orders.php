@@ -3,7 +3,6 @@
 namespace AppBundle\Action\Restaurant;
 
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Entity\Sylius\OrderTarget;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,8 +26,7 @@ class Orders
 
         $date = new \DateTime($request->get('date'));
 
-        $qb->join(OrderTarget::class, 't', Expr\Join::WITH, 'o.target = t.id');
-        $qb->andWhere('t.restaurant = :restaurant');
+        $qb->andWhere('o.restaurant = :restaurant');
         $qb->setParameter('restaurant', $data);
 
         $qb->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE');
