@@ -112,6 +112,7 @@ class SettingsType extends AbstractType
             ->add('sms_enabled', CheckboxType::class, [
                 'required' => false,
                 'label' => 'form.settings.sms_enabled.label',
+                'disabled' => $this->isDemo,
             ])
             ->add('sms_gateway', ChoiceType::class, [
                 'choices' => [

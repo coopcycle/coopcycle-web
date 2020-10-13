@@ -445,6 +445,7 @@
 
     smsEnableSwitch = new CoopCycle.Switch(document.querySelector('#sms_enabled_switch'), {
       checked: $smsEnabledCheckbox.is(':checked'),
+      disabled: isDemo,
       onChange: function(checked) {
         $smsEnabledCheckbox.prop('checked', checked)
         $('#settings_sms_options').collapse('toggle');
