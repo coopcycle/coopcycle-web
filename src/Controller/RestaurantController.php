@@ -16,6 +16,8 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
+use AppBundle\Form\Checkout\Action\AddProductToCartAction as CheckoutAddProductToCart;
+use AppBundle\Form\Checkout\Action\Validator\AddProductToCart as AssertAddProductToCart;
 use AppBundle\Form\Order\CartType;
 use AppBundle\Form\PledgeType;
 use AppBundle\Service\EmailManager;
@@ -465,6 +467,7 @@ class RestaurantController extends AbstractController
      */
     public function addProductToCartAction($id, $code, Request $request,
         CartContextInterface $cartContext,
+        ValidatorInterface $validator,
         TranslatorInterface $translator)
     {
         $restaurant = $this->getDoctrine()
@@ -474,39 +477,28 @@ class RestaurantController extends AbstractController
 
         $cart = $cartContext->getCart();
 
-        if (!$product->isEnabled()) {
-            $errors = [
-                'items' => [
-                    [ 'message' => sprintf('Product %s is not enabled', $product->getCode()) ]
-                ]
-            ];
+        $action = new CheckoutAddProductToCart();
+        $action->restaurant = $restaurant;
+        $action->product = $product;
+        $action->cart = $cart;
+        $action->clear = $request->request->getBoolean('_clear', false);
+
+        $violations = $validator->validate($action, new AssertAddProductToCart());
+
+        if (count($violations) > 0) {
+
+            $errors = [];
+            foreach ($violations as $violation) {
+                $key = $violation->getPropertyPath();
+                $errors[$key][] = [
+                    'message' => $violation->getMessage()
+                ];
+            }
 
             return $this->jsonResponse($cart, $errors);
         }
 
-        if (!$restaurant->hasProduct($product)) {
-            $errors = [
-                'restaurant' => [
-                    [ 'message' => sprintf('Unable to add product %s', $product->getCode()) ]
-                ]
-            ];
-
-            return $this->jsonResponse($cart, $errors);
-        }
-
-        $clear = $request->request->getBoolean('_clear', false);
-
-        if ($cart->getRestaurant() !== $restaurant && !$clear) {
-            $errors = [
-                'restaurant' => [
-                    [ 'message' => sprintf('Restaurant mismatch') ]
-                ]
-            ];
-
-            return $this->jsonResponse($cart, $errors);
-        }
-
-        if ($clear) {
+        if ($action->clear) {
             $cart->clearItems();
             $cart->setShippingTimeRange(null);
             $cart->setRestaurant($restaurant);
