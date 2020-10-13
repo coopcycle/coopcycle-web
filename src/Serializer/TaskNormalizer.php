@@ -119,7 +119,8 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         if (isset($data['tags'])) {
-            $tags = $this->tagManager->fromSlugs($data['tags']);
+            $slugs = is_array($data['tags']) ? $data['tags'] : explode(' ', $data['tags']);
+            $tags = $this->tagManager->fromSlugs($slugs);
             $task->setTags($tags);
         }
 
