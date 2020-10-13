@@ -120,7 +120,6 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <one-to-many field="orders" target-entity="AppBundle\Entity\Sylius\Order" mapped-by="restaurant"/>
     <many-to-one field="address" target-entity="AppBundle\Entity\Address" fetch="EAGER">
       <cascade>
         <cascade-all/>

@@ -9,6 +9,7 @@ use AppBundle\Action\Restaurant\Close as CloseController;
 use AppBundle\Action\Restaurant\Menu;
 use AppBundle\Action\Restaurant\Deliveries as RestaurantDeliveriesController;
 use AppBundle\Action\Restaurant\Menus;
+use AppBundle\Action\Restaurant\Orders;
 use AppBundle\Action\Restaurant\Timing;
 use AppBundle\Annotation\Enabled;
 use AppBundle\Api\Dto\RestaurantInput;
@@ -99,11 +100,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "path"="/restaurants/{id}/timing",
  *       "controller"=Timing::class,
  *       "normalization_context"={"groups"={"restaurant_timing"}}
- *     }
- *   },
- *   subresourceOperations={
- *     "orders_get_subresource"={
- *       "security"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
+ *     },
+ *     "restaurant_orders"={
+ *       "method"="GET",
+ *       "path"="/restaurants/{id}/orders",
+ *       "controller"=Orders::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
  *     }
  *   }
  * )
@@ -270,7 +272,6 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
         $this->products = new ArrayCollection();
         $this->productOptions = new ArrayCollection();
         $this->taxons = new ArrayCollection();
-        $this->orders = new ArrayCollection();
         $this->stripeAccounts = new ArrayCollection();
         $this->preparationTimeRules = new ArrayCollection();
         $this->reusablePackagings = new ArrayCollection();

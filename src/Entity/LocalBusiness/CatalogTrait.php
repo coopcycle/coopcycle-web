@@ -13,11 +13,6 @@ trait CatalogTrait
     /**
      * @ApiSubresource
      */
-    protected $orders;
-
-    /**
-     * @ApiSubresource
-     */
     protected $products;
 
     protected $productOptions;
@@ -28,11 +23,6 @@ trait CatalogTrait
      * @Groups({"restaurant"})
      */
     protected $activeMenuTaxon;
-
-    public function getOrders()
-    {
-        return $this->orders;
-    }
 
     /* Products */
 
