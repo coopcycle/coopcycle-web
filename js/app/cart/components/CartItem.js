@@ -51,6 +51,11 @@ class CartItem extends React.Component {
     return (
       <div className="cart__item">
         <div className="cart__item__content">
+          <div className="cart__item__content__remove">
+            <a href="#" onClick={ this.props.onClickRemove }>
+              <i className="fa fa-lg fa-times"></i>
+            </a>
+          </div>
           <div className="cart__item__content__left">
             <div className="cart__item__quantity">
               <button type="button" className="cart__item__quantity__decrement"

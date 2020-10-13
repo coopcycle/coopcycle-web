@@ -198,6 +198,20 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     &__content {
       display: flex;
       justify-content: space-between;
+      &__remove {
+        a {
+          padding-right: 15px;
+          color: #cccccc;
+          &:hover,
+          &:visited,
+          &:focus {
+            text-decoration: none;
+          }
+          &:hover {
+            color: darken(#cccccc, 10%);
+          }
+        }
+      }
       &__left {
         min-width: 60px;
         max-width: 60px;
@@ -208,6 +222,9 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
       }
       &__right {
         text-align: right;
+        > span {
+          white-space: nowrap;
+        }
       }
     }
     &__quantity {

@@ -22,6 +22,10 @@ class CartItems extends React.Component {
     this.props.updateItemQuantity(itemID, quantity)
   }
 
+  _onRemoveItem(itemID) {
+    this.props.removeItem(itemID)
+  }
+
   render() {
 
     if (this.props.items.length === 0) {
@@ -41,7 +45,8 @@ class CartItems extends React.Component {
             quantity={ item.quantity }
             adjustments={ item.adjustments }
             showPricesTaxExcluded={ this.props.showPricesTaxExcluded }
-            onChangeQuantity={ quantity => this._onChangeQuantity(item.id, quantity) } />
+            onChangeQuantity={ quantity => this._onChangeQuantity(item.id, quantity) }
+            onClickRemove={ () => this._onRemoveItem(item.id) } />
         )) }
       </div>
     )
