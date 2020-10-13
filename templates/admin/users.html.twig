@@ -23,7 +23,7 @@
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="users-sort">
-        <li>{{ knp_pagination_sortable(customers, 'users.sort.newest'|trans, 'u.id', {}, { direction: 'desc' } )|raw }}</li>
+        <li>{{ knp_pagination_sortable(customers, 'users.sort.newest'|trans, 'c.id', {}, { direction: 'desc' } )|raw }}</li>
         <li>{{ knp_pagination_sortable(customers, 'users.sort.alphabetically'|trans, 'u.username', {}, { direction: 'asc' } )|raw }}</li>
       </ul>
     </div>

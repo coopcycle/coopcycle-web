@@ -330,18 +330,18 @@ class AdminController extends Controller
     {
         $qb = $this->getDoctrine()
             ->getRepository(Customer::class)
-            ->createQueryBuilder('u');
+            ->createQueryBuilder('c');
 
-        $qb->leftJoin(User::class, 'u2', Expr\Join::WITH, 'u.id = u2.customer');
+        $qb->leftJoin(User::class, 'u', Expr\Join::WITH, 'c.id = u.customer');
 
         $customers = $this->get('knp_paginator')->paginate(
             $qb,
             $request->query->getInt('page', 1),
             self::ITEMS_PER_PAGE,
             [
-                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'u.id',
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'c.id',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
-                PaginatorInterface::SORT_FIELD_WHITELIST => ['u.username', 'u.id'],
+                PaginatorInterface::SORT_FIELD_WHITELIST => ['u.username', 'c.id'],
                 PaginatorInterface::FILTER_FIELD_WHITELIST => ['u.roles', 'u.username']
             ]
         );
