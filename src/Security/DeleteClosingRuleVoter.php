@@ -4,9 +4,11 @@ namespace AppBundle\Security;
 
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Webmozart\Assert\Assert;
 
 class DeleteClosingRuleVoter extends Voter
 {
@@ -50,6 +52,8 @@ class DeleteClosingRuleVoter extends Voter
         $restaurant = $qb->getQuery()->getOneOrNullResult();
 
         if ($restaurant) {
+
+            Assert::isInstanceOf($user, User::class);
 
             return $user->ownsRestaurant($restaurant);
         }
