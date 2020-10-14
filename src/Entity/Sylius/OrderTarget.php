@@ -72,4 +72,13 @@ class OrderTarget
 
         return $target;
     }
+
+    public function toArray()
+    {
+        if (null !== $this->hub) {
+            return $this->hub->getRestaurants();
+        }
+
+        return [ $this->restaurant ];
+    }
 }

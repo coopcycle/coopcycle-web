@@ -45,27 +45,45 @@ class PreparationTimeCalculator
      */
     public function calculate(OrderInterface $order): string
     {
-        $preparation = '0 minutes';
-        foreach ($this->getConfig($order->getRestaurant()) as $expression => $value) {
+        $times = [];
 
-            $restaurantObject = new \stdClass();
-            $restaurantObject->state = $order->getRestaurant()->getState();
+        foreach ($order->getTarget()->toArray() as $restaurant) {
 
-            $orderObject = new \stdClass();
-            $orderObject->itemsTotal = $order->getItemsTotal();
+            $preparation = '0 minutes';
+            foreach ($this->getConfig($restaurant) as $expression => $value) {
 
-            $values = [
-                'restaurant' => $restaurantObject,
-                'order' => $orderObject,
-            ];
+                $restaurantObject = new \stdClass();
+                $restaurantObject->state = $restaurant->getState();
 
-            if (true === $this->language->evaluate($expression, $values)) {
-                $preparation = $value;
-                break;
+                $orderObject = new \stdClass();
+                $orderObject->itemsTotal = $order->getItemsTotal();
+
+                $values = [
+                    'restaurant' => $restaurantObject,
+                    'order' => $orderObject,
+                ];
+
+                if (true === $this->language->evaluate($expression, $values)) {
+                    $preparation = $value;
+                    break;
+                }
             }
+
+            $times[] = $preparation;
         }
 
-        return $preparation;
+        uasort($times, function ($a, $b) {
+            $now = new \DateTime();
+            $aDate = clone $now;
+            $bDate = clone $now;
+
+            $aDate->add(date_interval_create_from_date_string($a));
+            $bDate->add(date_interval_create_from_date_string($b));
+
+            return $aDate > $bDate ? -1 : 1;
+        });
+
+        return current($times);
     }
 
     private function getConfig(LocalBusiness $restaurant)
