@@ -255,6 +255,7 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'tax_rate' => $rate,
+            'show_left_menu' => $request->attributes->get('show_left_menu', true),
         ]);
     }
 

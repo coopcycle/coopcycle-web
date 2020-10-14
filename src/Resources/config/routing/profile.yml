@@ -357,6 +357,7 @@ profile_store_delivery_new:
             stores: profile_stores
             store: profile_store
             success: profile_store_deliveries
+        show_left_menu: false
     methods:  [ GET, POST ]
 
 profile_store_address_new:
