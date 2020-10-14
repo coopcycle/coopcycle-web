@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
   <entity name="AppBundle\Entity\LocalBusiness\FulfillmentMethod" table="restaurant_fulfillment_method">
-    <unique-constraints>
-      <unique-constraint columns="restaurant_id,type"/>
-    </unique-constraints>
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
@@ -17,10 +14,5 @@
         <option name="default">1</option>
       </options>
     </field>
-    <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="fulfillmentMethods">
-      <join-columns>
-        <join-column name="restaurant_id" referenced-column-name="id" on-delete="SET NULL"/>
-      </join-columns>
-    </many-to-one>
   </entity>
 </doctrine-mapping>

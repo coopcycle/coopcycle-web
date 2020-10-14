@@ -87,11 +87,19 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
-    <one-to-many field="fulfillmentMethods" target-entity="AppBundle\Entity\LocalBusiness\FulfillmentMethod" mapped-by="restaurant">
+    <many-to-many field="fulfillmentMethods" target-entity="AppBundle\Entity\LocalBusiness\FulfillmentMethod">
+      <join-table name="restaurant_fulfillment_methods">
+        <join-columns>
+          <join-column name="restaurant_id" referenced-column-name="id" />
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="method_id" referenced-column-name="id" unique="true" />
+        </inverse-join-columns>
+      </join-table>
       <cascade>
         <cascade-all/>
       </cascade>
-    </one-to-many>
+    </many-to-many>
     <many-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule">
       <join-table name="restaurant_closing_rule">
         <join-columns>

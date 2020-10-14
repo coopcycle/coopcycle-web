@@ -43,26 +43,6 @@ class FulfillmentMethod implements ToggleableInterface
     /**
      * @return mixed
      */
-    public function getRestaurant()
-    {
-        return $this->restaurant;
-    }
-
-    /**
-     * @param mixed $restaurant
-     *
-     * @return self
-     */
-    public function setRestaurant($restaurant)
-    {
-        $this->restaurant = $restaurant;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getType()
     {
         return $this->type;

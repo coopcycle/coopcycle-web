@@ -877,7 +877,6 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
         if (!$fulfillmentMethod) {
 
             $fulfillmentMethod = new FulfillmentMethod();
-            $fulfillmentMethod->setRestaurant($this);
             $fulfillmentMethod->setType($method);
 
             $this->fulfillmentMethods->add($fulfillmentMethod);
