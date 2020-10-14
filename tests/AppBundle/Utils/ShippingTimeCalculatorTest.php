@@ -6,6 +6,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Entity\Sylius\OrderTarget;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\ShippingTimeCalculator;
 use PHPUnit\Framework\TestCase;
@@ -51,6 +52,8 @@ class ShippingTimeCalculatorTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setAddress($restaurantAddress);
 
+        $target = OrderTarget::withRestaurant($restaurant);
+
         $this->routing
             ->getDuration(
                 Argument::type(GeoCoordinates::class),
@@ -60,8 +63,8 @@ class ShippingTimeCalculatorTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->getTarget()
+            ->willReturn($target);
         $order
             ->getShippingAddress()
             ->willReturn($shippingAddress);
@@ -79,10 +82,12 @@ class ShippingTimeCalculatorTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setAddress($restaurantAddress);
 
+        $target = OrderTarget::withRestaurant($restaurant);
+
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->getTarget()
+            ->willReturn($target);
         $order
             ->getShippingAddress()
             ->willReturn(null);

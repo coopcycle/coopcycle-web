@@ -55,4 +55,21 @@ class OrderTarget
 
         return $this;
     }
+
+    public function getAddress()
+    {
+        if (null !== $this->hub) {
+            return $this->hub->getAddress();
+        }
+
+        return $this->restaurant->getAddress();
+    }
+
+    public static function withRestaurant($restaurant)
+    {
+        $target = new self();
+        $target->setRestaurant($restaurant);
+
+        return $target;
+    }
 }

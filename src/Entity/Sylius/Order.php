@@ -955,4 +955,14 @@ class Order extends BaseOrder implements OrderInterface
 
         return $this->customer->getUser();
     }
+
+    public function getTarget(): ?OrderTarget
+    {
+        if (null !== $this->restaurant) {
+            $target = new OrderTarget();
+            $target->setRestaurant($this->restaurant);
+
+            return $target;
+        }
+    }
 }
