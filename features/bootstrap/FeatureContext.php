@@ -994,7 +994,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $closingRule = new ClosingRule();
-        $closingRule->setRestaurant($restaurant);
         $closingRule->setStartDate(new \DateTime($start));
         $closingRule->setEndDate(new \DateTime($end));
 
