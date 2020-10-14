@@ -246,7 +246,8 @@ class SettingsManager
 
         switch ($smsGateway) {
             case 'mailjet':
-                return isset($smsGatewayConfig['api_token']);
+                return in_array($this->country, ['be', 'es', 'de', 'fr'])
+                    && isset($smsGatewayConfig['api_token']);
             case 'twilio':
                 return isset(
                     $smsGatewayConfig['sid'],
