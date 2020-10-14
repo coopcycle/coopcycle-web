@@ -16,6 +16,7 @@ use AppBundle\Api\Dto\RestaurantInput;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
+use AppBundle\Entity\LocalBusiness\ClosingRulesTrait;
 use AppBundle\Entity\LocalBusiness\FoodEstablishmentTrait;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ImageTrait;
@@ -123,6 +124,7 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
     use ImageTrait;
     use OpenCloseTrait;
     use OrganizationAwareTrait;
+    use ClosingRulesTrait;
 
     /**
      * @var int
@@ -215,11 +217,6 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
      * @Assert\Type(type="string")
      */
     protected $deliveryPerimeterExpression = 'distance < 3000';
-
-    /**
-     * @Groups({"restaurant"})
-     */
-    protected $closingRules;
 
     protected $owners;
 
@@ -387,22 +384,6 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
         $this->address = $address;
 
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getClosingRules()
-    {
-        return $this->closingRules;
-    }
-
-    /**
-     * @param ClosingRule $closingRule
-     */
-    public function addClosingRule(ClosingRule $closingRule)
-    {
-        $this->closingRules->add($closingRule);
     }
 
     /**

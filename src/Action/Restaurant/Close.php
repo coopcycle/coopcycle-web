@@ -15,7 +15,6 @@ class Close
         $tomorrow->setTime(00, 00, 00);
 
         $closingRule = new ClosingRule();
-        $closingRule->setRestaurant($data);
         $closingRule->setStartDate($today);
         $closingRule->setEndDate($tomorrow);
 

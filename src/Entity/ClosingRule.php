@@ -21,14 +21,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class ClosingRule
 {
-
     /**
      * @var int
      * @Groups({"restaurant", "planning"})
      */
     private $id;
-
-    private $restaurant;
 
     /**
      * @Groups({"restaurant", "planning"})
@@ -51,22 +48,6 @@ class ClosingRule
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRestaurant()
-    {
-        return $this->restaurant;
-    }
-
-    /**
-     * @param mixed $restaurant
-     */
-    public function setRestaurant($restaurant)
-    {
-        $this->restaurant = $restaurant;
     }
 
     /**

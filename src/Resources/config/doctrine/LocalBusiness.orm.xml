@@ -92,11 +92,19 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <one-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule" mapped-by="restaurant">
+    <many-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule">
+      <join-table name="restaurant_closing_rule">
+        <join-columns>
+          <join-column name="restaurant_id" referenced-column-name="id" />
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="rule_id" referenced-column-name="id" unique="true" />
+        </inverse-join-columns>
+      </join-table>
       <cascade>
         <cascade-all/>
       </cascade>
-    </one-to-many>
+    </many-to-many>
     <one-to-many field="preparationTimeRules" target-entity="AppBundle\Entity\Restaurant\PreparationTimeRule" mapped-by="restaurant">
       <cascade>
         <cascade-all/>

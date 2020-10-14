@@ -23,5 +23,18 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
+    <many-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule">
+      <join-table name="hub_closing_rule">
+        <join-columns>
+          <join-column name="hub_id" referenced-column-name="id" />
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="rule_id" referenced-column-name="id" unique="true" />
+        </inverse-join-columns>
+      </join-table>
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </many-to-many>
   </entity>
 </doctrine-mapping>

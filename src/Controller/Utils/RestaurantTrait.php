@@ -587,10 +587,12 @@ trait RestaurantTrait
 
         if ($form->isSubmitted() && $form->isValid()) {
             $closingRule = $form->getData();
-            $closingRule->setRestaurant($restaurant);
-            $manager = $this->getDoctrine()->getManagerForClass(ClosingRule::class);
-            $manager->persist($closingRule);
-            $manager->flush();
+            $restaurant->addClosingRule($closingRule);
+
+            $this->getDoctrine()
+                ->getManagerForClass(LocalBusiness::class)
+                ->flush();
+
             $this->addFlash(
                 'notice',
                 $this->get('translator')->trans('global.changesSaved')

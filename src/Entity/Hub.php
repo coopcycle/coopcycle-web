@@ -2,10 +2,13 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\LocalBusiness\ClosingRulesTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class Hub
 {
+    use ClosingRulesTrait;
+
     private $id;
     private $name;
     private $address;
@@ -14,6 +17,7 @@ class Hub
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
+        $this->closingRules = new ArrayCollection();
     }
 
     /**
