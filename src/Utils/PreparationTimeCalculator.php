@@ -21,6 +21,7 @@ class PreparationTimeCalculator
 {
     private $config;
     private $language;
+    private $cache = [];
 
     /**
      * @param array $config
@@ -69,18 +70,21 @@ class PreparationTimeCalculator
 
     private function getConfig(LocalBusiness $restaurant)
     {
-        $rules = $restaurant->getPreparationTimeRules();
+        $oid = spl_object_hash($restaurant);
 
-        if (count($rules) > 0) {
+        if (!isset($this->cache[$oid])) {
 
+            $rules = $restaurant->getPreparationTimeRules();
             $config = [];
-            foreach ($rules as $rule) {
-                $config[$rule->getExpression()] = $rule->getTime();
+            if (count($rules) > 0) {
+                foreach ($rules as $rule) {
+                    $config[$rule->getExpression()] = $rule->getTime();
+                }
             }
 
-            return $config;
+            $this->cache[$oid] = $config;
         }
 
-        return $this->config;
+        return count($this->cache[$oid]) > 0 ? $this->cache[$oid] : $this->config;
     }
 }
