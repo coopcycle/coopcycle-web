@@ -341,7 +341,7 @@ trait StoreTrait
             6,
             [
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.doneBefore',
-                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
                 PaginatorInterface::SORT_FIELD_WHITELIST => ['t.doneBefore'],
                 PaginatorInterface::FILTER_FIELD_WHITELIST => []
             ]
