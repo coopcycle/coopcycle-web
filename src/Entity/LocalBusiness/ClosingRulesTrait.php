@@ -27,4 +27,12 @@ trait ClosingRulesTrait
     {
         $this->closingRules->add($closingRule);
     }
+
+    /**
+     * @param ClosingRule $closingRule
+     */
+    public function removeClosingRule(ClosingRule $closingRule)
+    {
+        $this->closingRules->removeElement($closingRule);
+    }
 }
