@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Utils;
 
+use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant\PreparationTimeRule;
 use AppBundle\Entity\Sylius\OrderTarget;
@@ -54,6 +55,45 @@ class PreparationTimeCalculatorTest extends TestCase
         return $order->reveal();
     }
 
+    private function createOrderWithHub($total, $config = [])
+    {
+        $hub = new Hub();
+
+        foreach ($config as $c) {
+
+            [ $state, $rules ] = $c;
+
+            $restaurant = new LocalBusiness();
+            $restaurant->setState($state);
+
+            foreach ($rules as $expr => $time) {
+                $rule = new PreparationTimeRule();
+                $rule->setExpression($expr);
+                $rule->setTime($time);
+
+                $restaurant->addPreparationTimeRule($rule);
+            }
+
+            $hub->addRestaurant($restaurant);
+        }
+
+        $target = new OrderTarget();
+        $target->setHub($hub);
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getTarget()
+            ->willReturn(
+                $target
+            );
+
+        $order
+            ->getItemsTotal()
+            ->willReturn($total);
+
+        return $order->reveal();
+    }
+
     public function calculateProvider()
     {
         return [
@@ -87,6 +127,15 @@ class PreparationTimeCalculatorTest extends TestCase
             [
                 $this->createOrder(1500, 'normal', ['order.itemsTotal > 0' => '70 minutes']),
                 '70 minutes',
+            ],
+            // hubs
+            [
+                $this->createOrderWithHub(1500, [
+                    [ 'normal', ['order.itemsTotal > 0' => '10 minutes'] ],
+                    [ 'normal', ['order.itemsTotal > 0' => '40 minutes'] ],
+                    [ 'normal', ['order.itemsTotal > 0' => '30 minutes'] ],
+                ]),
+                '40 minutes',
             ],
         ];
     }

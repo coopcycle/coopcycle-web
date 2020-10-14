@@ -83,4 +83,14 @@ class Hub
 
         return $this;
     }
+
+    /**
+     * @param mixed $restaurant
+     *
+     * @return self
+     */
+    public function addRestaurant($restaurant)
+    {
+        $this->restaurants->add($restaurant);
+    }
 }
