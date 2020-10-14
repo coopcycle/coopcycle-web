@@ -116,7 +116,8 @@ class SettingsType extends AbstractType
             ])
             ->add('sms_gateway', ChoiceType::class, [
                 'choices' => [
-                    'Mailjet' => 'mailjet'
+                    'Mailjet' => 'mailjet',
+                    'Twilio' => 'twilio'
                 ],
                 'required' => false,
                 'label' => 'form.settings.sms_gateway.label',

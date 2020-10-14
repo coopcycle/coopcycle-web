@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "03e53ec41fc0ea58eff74e6d987a6b24",
+    "content-hash": "dfbbfb02d59c4137d2a04e81c0623652",
     "packages": [
         {
             "name": "api-platform/core",
@@ -15805,6 +15805,56 @@
                 }
             ],
             "time": "2020-08-05T15:09:04+00:00"
+        },
+        {
+            "name": "twilio/sdk",
+            "version": "6.10.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twilio/twilio-php.git",
+                "reference": "05979210315ad66e684fe600acb1640fee293aa7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/05979210315ad66e684fe600acb1640fee293aa7",
+                "reference": "05979210315ad66e684fe600acb1640fee293aa7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^6.3 || ^7.0",
+                "phpunit/phpunit": ">=4.5",
+                "theseer/phpdox": "^0.12.0"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "An HTTP client to execute the API requests"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Twilio\\": "src/Twilio/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Twilio API Team",
+                    "email": "api@twilio.com"
+                }
+            ],
+            "description": "A PHP wrapper for Twilio's API",
+            "homepage": "http://github.com/twilio/twilio-php",
+            "keywords": [
+                "api",
+                "sms",
+                "twilio"
+            ],
+            "time": "2020-09-28T21:48:54+00:00"
         },
         {
             "name": "vich/uploader-bundle",

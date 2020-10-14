@@ -527,6 +527,9 @@ form.settings.sms_enabled.label: Enable SMS sending
 form.settings.sms.title: SMS
 form.settings.sms_gateway.label: SMS Gateway
 form.settings.sms_gateway_config.mailjet.api_token.label: Mailjet API Token
+form.settings.sms_gateway_config.twilio.sid.label: Twilio SID
+form.settings.sms_gateway_config.twilio.auth_token.label: Twilio Auth Token
+form.settings.sms_gateway_config.twilio.from.label: Twilio phone number
 form.suggest.name.label: Name
 form.suggest.name.help: Please indicate the exact name so that we can find it
 form.suggest.submit.label: Suggest now

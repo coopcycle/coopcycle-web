@@ -225,7 +225,7 @@ class SettingsManager
 
         $smsGateway = $this->get('sms_gateway');
 
-        if ('mailjet' !== $smsGateway) {
+        if (!$smsGateway || !in_array($smsGateway, ['mailjet', 'twilio'])) {
 
             return false;
         }
@@ -244,14 +244,18 @@ class SettingsManager
             return false;
         }
 
-        $whitelist = ['be', 'es', 'de', 'fr'];
-
-        if (!in_array($this->country, $whitelist)) {
-
-            return false;
+        switch ($smsGateway) {
+            case 'mailjet':
+                return isset($smsGatewayConfig['api_token']);
+            case 'twilio':
+                return isset(
+                    $smsGatewayConfig['sid'],
+                    $smsGatewayConfig['auth_token'],
+                    $smsGatewayConfig['from']
+                );
         }
 
-        return isset($smsGatewayConfig['api_token']);
+        return false;
     }
 
     public function set($name, $value, $section = null)
