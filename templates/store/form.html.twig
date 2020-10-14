@@ -104,6 +104,9 @@
       {% if form.packagesRequired is defined %}
         {{ form_row(form.packagesRequired) }}
       {% endif %}
+      {% if form.smsEnabled is defined %}
+        {{ form_row(form.smsEnabled) }}
+      {% endif %}
     {% endif %}
     <hr>
   {% endif %}

@@ -374,6 +374,7 @@ form.store_type.defaultAddress.label: Adresse par défaut
 form.store_type.time_slot.label: Tranche horaire
 form.store_type.weight_required.label: Exiger le poids
 form.store_type.packages_required.label: Exiger la marchandise
+form.store_type.sms_enabled.label: Envoyer un SMS au destinataire
 form.delivery.vehicle.placeholder: Choisissez un type de véhicule
 form.delivery.pickup.label: Retrait
 form.delivery.pickup.address_placeholder: Entrez l'adresse de retrait
