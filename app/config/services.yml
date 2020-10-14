@@ -862,3 +862,6 @@ services:
       $secret: '%secret%'
 
   AppBundle\Embed\Context: ~
+
+  AppBundle\Security\DeleteClosingRuleVoter:
+    tags: [ 'security.voter' ]
