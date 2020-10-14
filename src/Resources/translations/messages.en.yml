@@ -6,7 +6,7 @@ base.footer.companyRegister: Become a partner
 base.footer.RegisterMyRestaurant: Register my restaurant
 base.footer.help: Help
 base.footer.legal: Legal notice
-base.footer.suggest: Suggest a restaurant
+base.footer.suggest: Suggest a business
 base.footer.privacy: Privacy
 base.footer.terms: Terms of service
 adminDashboard.title: Admin dashboard
@@ -530,10 +530,10 @@ form.settings.sms_gateway_config.mailjet.api_token.label: Mailjet API Token
 form.suggest.name.label: Name
 form.suggest.name.help: Please indicate the exact name so that we can find it
 form.suggest.submit.label: Suggest now
-form.suggest.message: "Can't find your favourite restaurant ?\n<br>\nTell us its name\
-  \ and address. Then other users can vote to see it appear in the list of restaurants.\n\
-  <br>\nThis will allow us to better identify the restaurants to be approached and\
-  \ provide them the proof of a real demand.\n"
+form.suggest.message: "Can't find your favourite restaurant or shop?\n<br>\nTell us its name\
+  \ and address.\n\
+  <br>\nThis will allow us to better identify the businesses to be approached and\
+  \ provide them with proof of a real demand.\n"
 form.suggest.thank_you_message: Thank you for suggesting this restaurant!
 restaurant.suggest.message: "Help us convince %restaurant.name% to work with %brand_name%!\n\
   <br>\nTo see it on the platform, we need you and your voice to support our future\
