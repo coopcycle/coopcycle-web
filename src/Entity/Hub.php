@@ -86,8 +86,6 @@ class Hub
 
     /**
      * @param mixed $restaurant
-     *
-     * @return self
      */
     public function addRestaurant($restaurant)
     {
