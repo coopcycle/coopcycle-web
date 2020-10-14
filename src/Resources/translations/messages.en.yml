@@ -903,6 +903,8 @@ sylius.form.promotion_coupon.per_customer_usage_limit: Per customer usage limit
 deliveries.sort.newest: Newest first
 deliveries.sort.oldest: Oldest first
 deliveries.filter.clear: Show all
+deliveries.section.upcoming: Upcoming
+deliveries.section.past: Past
 orders.new: New order
 basics.copy: Copy
 orders.payment_link.send_by_email: Send payment link by email

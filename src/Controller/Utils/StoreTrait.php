@@ -5,6 +5,8 @@ namespace AppBundle\Controller\Utils;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\StoreType;
@@ -12,6 +14,8 @@ use AppBundle\Form\AddressType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
+use Carbon\Carbon;
+use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
@@ -263,7 +267,8 @@ trait StoreTrait
         return $this->renderStoreForm($store, $request);
     }
 
-    public function storeDeliveriesAction($id, Request $request, TranslatorInterface $translator)
+    public function storeDeliveriesAction($id, Request $request,
+        TranslatorInterface $translator, PaginatorInterface $paginator)
     {
         $store = $this->getDoctrine()
             ->getRepository(Store::class)
@@ -293,20 +298,50 @@ trait StoreTrait
             return $this->redirectToRoute($routes['import_success']);
         }
 
+        $today = Carbon::now();
+
+        $after = new \DateTime('+2 days');
+        $after->setTime(0, 0, 0);
+
         $qb = $this->getDoctrine()
             ->getRepository(Delivery::class)
             ->createQueryBuilder('d')
+            ->join(TaskCollectionItem::class, 'i', Expr\Join::WITH, 'i.parent = d.id')
+            ->join(Task::class, 't', Expr\Join::WITH, 'i.task = t.id')
             ->andWhere('d.store = :store')
             ->setParameter('store', $store);
 
-        $deliveries = $this->get('knp_paginator')->paginate(
-            $qb,
+        $qbToday = (clone $qb)
+            ->andWhere('t.type = :dropoff')
+            ->andWhere('t.doneAfter > :after')
+            ->andWhere('t.doneBefore < :before')
+            ->setParameter('dropoff', Task::TYPE_DROPOFF)
+            ->setParameter('after', $today->copy()->hour(0)->minute(0)->second(0))
+            ->setParameter('before', $today->copy()->hour(23)->minute(59)->second(59));
+
+        $qbUpcoming = (clone $qb)
+            ->andWhere('t.type = :dropoff')
+            ->andWhere('t.doneAfter > :after')
+            ->setParameter('dropoff', Task::TYPE_DROPOFF)
+            ->setParameter('after', $today->copy()->add(1, 'day')->hour(0)->minute(0)->second(0))
+            ->orderBy('t.doneBefore', 'asc')
+            ;
+
+        $qbPast = (clone $qb)
+            ->andWhere('t.type = :dropoff')
+            ->andWhere('t.doneBefore < :after')
+            ->setParameter('dropoff', Task::TYPE_DROPOFF)
+            ->setParameter('after', $today->copy()->sub(1, 'day')->hour(23)->minute(59)->second(59))
+            ;
+
+        $deliveries = $paginator->paginate(
+            $qbPast,
             $request->query->getInt('page', 1),
             6,
             [
-                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'd.createdAt',
-                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
-                PaginatorInterface::SORT_FIELD_WHITELIST => ['d.createdAt'],
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.doneBefore',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
+                PaginatorInterface::SORT_FIELD_WHITELIST => ['t.doneBefore'],
                 PaginatorInterface::FILTER_FIELD_WHITELIST => []
             ]
         );
@@ -315,6 +350,8 @@ trait StoreTrait
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'deliveries' => $deliveries,
+            'today' => $qbToday->getQuery()->getResult(),
+            'upcoming' => $qbUpcoming->getQuery()->getResult(),
             'routes' => $this->getDeliveryRoutes(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],

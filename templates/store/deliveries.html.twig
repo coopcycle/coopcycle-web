@@ -8,18 +8,21 @@
 <li>{% trans %}stores.deliveries{% endtrans %}</li>
 {% endblock %}
 
-{% block content %}
-<div class="text-right mb-4">
-  <a href="{{ path(routes.store_new, { id: store.id }) }}" class="btn btn-success pull-right">
-    <i class="fa fa-plus"></i> {{ 'delivery.createNew'|trans }}
-  </a>
-  <div class="dropdown pull-right mr-4">
-    {% include '_partials/delivery/sort.html.twig' %}
+{% block subnav %}
+  <div class="text-right">
+    <a href="#" class="btn btn-success mr-4" data-toggle="modal" data-target="#export-deliveries-modal">
+      <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
+    </a>
+    <div class="dropdown mr-4 d-inline-block">
+      {% include '_partials/delivery/sort.html.twig' %}
+    </div>
+    <a href="{{ path(routes.store_new, { id: store.id }) }}" class="btn btn-success">
+      <i class="fa fa-plus"></i> {{ 'delivery.createNew'|trans }}
+    </a>
   </div>
-  <a href="#" class="btn btn-success pull-right mr-4" data-toggle="modal" data-target="#export-deliveries-modal">
-    <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
-  </a>
-</div>
+{% endblock %}
+
+{% block content %}
 
 {% if delivery_import_form.vars.submitted and (not delivery_import_form.vars.valid and not delivery_import_form.file.vars.valid) %}
   <div class="alert alert-danger">
@@ -31,6 +34,13 @@
   </div>
 {% endif %}
 
+<h3>{{ 'basics.today'|trans }}</h3>
+{% include '_partials/delivery/list.html.twig' with { deliveries: today } %}
+
+<h3>{{ 'deliveries.section.upcoming'|trans }}</h3>
+{% include '_partials/delivery/list.html.twig' with { deliveries: upcoming } %}
+
+<h3>{{ 'deliveries.section.past'|trans }}</h3>
 {% include '_partials/delivery/list.html.twig' %}
 
 <nav class="text-center">

@@ -6,6 +6,7 @@
     <th>{{ 'delivery.table.heading.owner'|trans }}</th>
     {% endif %}
     <th>{{ 'delivery.table.heading.summary'|trans }}</th>
+    <th>{{ 'task.type.DROPOFF'|trans }}</th>
     <th>{{ 'delivery.table.heading.courier'|trans }}</th>
     {% if with_order is defined and with_order %}
     <th class="text-center">{{ 'delivery.table.heading.order'|trans }}</th>
@@ -30,7 +31,7 @@
         {% endif %}
       </td>
       {% endif %}
-      <td>
+      <td width="40%">
         <small><i class="fa fa-cube"></i> {{ delivery.pickup.address.streetAddress }}</small>
         <br>
         <small><i class="fa fa-arrow-down"></i> {{ delivery.dropoff.address.streetAddress }}</small>
@@ -38,6 +39,15 @@
         <small>{{ delivery.distance|meters_to_kilometers }}</small>
       </td>
       <td>
+        <small>
+          {% if delivery.dropoff.before|date('Ymd') == 'now'|date('Ymd') %}
+            {{ delivery.dropoff.before|ago }}
+          {% else %}
+            {{ delivery.dropoff.before|format_datetime('short', 'short') }}
+          {% endif %}
+        </small>
+      </td>
+      <td width="10%">
         {% if delivery.pickup.isAssigned() and delivery.dropoff.isAssigned() %}
           {% if delivery.pickup.assignedCourier == delivery.dropoff.assignedCourier %}
             <a href="{{ path('admin_user_details', { username: delivery.pickup.assignedCourier.username }) }}">

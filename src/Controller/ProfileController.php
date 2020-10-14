@@ -25,6 +25,7 @@ use AppBundle\Utils\OrderEventCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
@@ -94,7 +95,8 @@ class ProfileController extends Controller
         SlugifyInterface $slugify,
         TranslatorInterface $translator,
         JWTEncoderInterface $jwtEncoder,
-        IriConverterInterface $iriConverter)
+        IriConverterInterface $iriConverter,
+        PaginatorInterface $paginator)
     {
         $user = $this->getUser();
 
@@ -114,7 +116,7 @@ class ProfileController extends Controller
 
             $request->attributes->set('routes', $routes);
 
-            return $this->storeDeliveriesAction($store->getId(), $request, $translator);
+            return $this->storeDeliveriesAction($store->getId(), $request, $translator, $paginator);
 
             // FIXME Forward doesn't copy request attributes
             // return $this->forward('AppBundle\Controller\ProfileController::storeDeliveriesAction', [

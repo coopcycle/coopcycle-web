@@ -1,7 +1,7 @@
 <button class="btn btn-default dropdown-toggle" type="button" id="deliveries-sort"
   data-toggle="dropdown"
   aria-haspopup="true" aria-expanded="true">
-  {% if deliveries.isSorted('d.createdAt') %}
+  {% if deliveries.isSorted('t.doneBefore') or deliveries.isSorted('d.createdAt') %}
     {% if deliveries.direction == 'asc' %}
       {{ 'deliveries.sort.oldest'|trans }}
     {% else %}
@@ -11,6 +11,8 @@
   <span class="caret"></span>
 </button>
 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="deliveries-sort">
-  <li>{{ knp_pagination_sortable(deliveries, 'deliveries.sort.newest'|trans, 'd.createdAt', {}, { direction: 'desc' } )|raw }}</li>
-  <li>{{ knp_pagination_sortable(deliveries, 'deliveries.sort.oldest'|trans, 'd.createdAt', {}, { direction: 'asc' } )|raw }}</li>
+  <li>{{ knp_pagination_sortable(deliveries,
+    'deliveries.sort.newest'|trans, deliveries.paginatorOptions.defaultSortFieldName, {}, { direction: 'desc' } )|raw }}</li>
+  <li>{{ knp_pagination_sortable(deliveries,
+    'deliveries.sort.oldest'|trans, deliveries.paginatorOptions.defaultSortFieldName, {}, { direction: 'asc' } )|raw }}</li>
 </ul>
