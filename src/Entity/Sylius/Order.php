@@ -964,5 +964,7 @@ class Order extends BaseOrder implements OrderInterface
 
             return $target;
         }
+
+        return null;
     }
 }
