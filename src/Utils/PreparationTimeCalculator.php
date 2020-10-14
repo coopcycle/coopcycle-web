@@ -36,10 +36,16 @@ class PreparationTimeCalculator
         return $this->config;
     }
 
-    public function calculate(OrderInterface $order)
+    /**
+     * Returns a time expression string, for ex. "15 minutes".
+     *
+     * @param OrderInterface $order
+     * @return string
+     */
+    public function calculate(OrderInterface $order): string
     {
         $preparation = '0 minutes';
-        foreach ($this->config as $expression => $value) {
+        foreach ($this->getConfig($order->getRestaurant()) as $expression => $value) {
 
             $restaurantObject = new \stdClass();
             $restaurantObject->state = $order->getRestaurant()->getState();
@@ -59,6 +65,23 @@ class PreparationTimeCalculator
         }
 
         return $preparation;
+    }
+
+    private function getConfig(LocalBusiness $restaurant)
+    {
+        $rules = $restaurant->getPreparationTimeRules();
+
+        if (count($rules) > 0) {
+
+            $config = [];
+            foreach ($rules as $rule) {
+                $config[$rule->getExpression()] = $rule->getTime();
+            }
+
+            return $config;
+        }
+
+        return $this->config;
     }
 
     public function createForRestaurant(LocalBusiness $restaurant)

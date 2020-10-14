@@ -2,7 +2,8 @@
 
 namespace Tests\AppBundle\Utils;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Restaurant\PreparationTimeRule;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\PreparationTimeCalculator;
 use PHPUnit\Framework\TestCase;
@@ -26,10 +27,17 @@ class PreparationTimeCalculatorTest extends TestCase
         ];
     }
 
-    private function createOrder($total, $state = 'normal')
+    private function createOrder($total, $state = 'normal', array $customConfig = [])
     {
-        $restaurant = new Restaurant();
+        $restaurant = new LocalBusiness();
         $restaurant->setState($state);
+        foreach ($customConfig as $expr => $time) {
+            $rule = new PreparationTimeRule();
+            $rule->setExpression($expr);
+            $rule->setTime($time);
+
+            $restaurant->addPreparationTimeRule($rule);
+        }
 
         $order = $this->prophesize(OrderInterface::class);
         $order
@@ -70,6 +78,11 @@ class PreparationTimeCalculatorTest extends TestCase
             [
                 $this->createOrder(6000, 'rush'),
                 '45 minutes',
+            ],
+            // custom config
+            [
+                $this->createOrder(1500, 'normal', ['order.itemsTotal > 0' => '70 minutes']),
+                '70 minutes',
             ],
         ];
     }
