@@ -140,10 +140,7 @@ class OrderTimeHelper
     {
         $now = Carbon::now();
 
-        $preparationTime = $this->preparationTimeCalculator
-            ->createForRestaurant($cart->getRestaurant())
-            ->calculate($cart);
-
+        $preparationTime = $this->preparationTimeCalculator->calculate($cart);
         $shippingTime = $this->shippingTimeCalculator->calculate($cart);
 
         $ranges = $this->getShippingTimeRanges($cart);

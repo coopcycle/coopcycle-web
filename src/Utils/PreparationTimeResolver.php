@@ -62,17 +62,6 @@ class PreparationTimeResolver
 
     private function getPreparationTime(OrderInterface $order)
     {
-        $oid = spl_object_hash($order);
-
-        // Optimization
-        // No need to recalculate the preparation time
-        // for the same order in the same thread
-        if (!isset($this->cache[$oid])) {
-            $this->cache[$oid] = $this->preparationTimeCalculator
-                ->createForRestaurant($order->getRestaurant())
-                ->calculate($order);
-        }
-
-        return $this->cache[$oid];
+        return $this->preparationTimeCalculator->calculate($order);
     }
 }

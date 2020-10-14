@@ -102,10 +102,6 @@ class PreparationTimeResolverTest extends TestCase
             ->calculate($order->reveal())
             ->willReturn($preparationTime);
 
-        $this->preparationTimeCalculator
-            ->createForRestaurant($this->restaurant->reveal())
-            ->willReturn($this->preparationTimeCalculator->reveal());
-
         $this->pickupTimeResolver
             ->resolve($order->reveal(), $dropoff)
             ->willReturn($pickup);

@@ -83,21 +83,4 @@ class PreparationTimeCalculator
 
         return $this->config;
     }
-
-    public function createForRestaurant(LocalBusiness $restaurant)
-    {
-        $preparationTimeRules = $restaurant->getPreparationTimeRules();
-
-        if (count($preparationTimeRules) > 0) {
-            $config = [];
-
-            foreach ($preparationTimeRules as $preparationTimeRule) {
-                $config[$preparationTimeRule->getExpression()] = $preparationTimeRule->getTime();
-            }
-
-            return new self($config);
-        }
-
-        return $this;
-    }
 }
