@@ -36,5 +36,18 @@
         <cascade-all/>
       </cascade>
     </many-to-many>
+    <many-to-many field="fulfillmentMethods" target-entity="AppBundle\Entity\LocalBusiness\FulfillmentMethod">
+      <join-table name="hub_fulfillment_method">
+        <join-columns>
+          <join-column name="hub_id" referenced-column-name="id" />
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="method_id" referenced-column-name="id" unique="true" />
+        </inverse-join-columns>
+      </join-table>
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </many-to-many>
   </entity>
 </doctrine-mapping>

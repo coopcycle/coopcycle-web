@@ -3,11 +3,13 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\LocalBusiness\ClosingRulesTrait;
+use AppBundle\Entity\LocalBusiness\FulfillmentMethodsTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class Hub
 {
     use ClosingRulesTrait;
+    use FulfillmentMethodsTrait;
 
     private $id;
     private $name;
@@ -18,6 +20,10 @@ class Hub
     {
         $this->restaurants = new ArrayCollection();
         $this->closingRules = new ArrayCollection();
+
+        $this->fulfillmentMethods = new ArrayCollection();
+        $this->addFulfillmentMethod('delivery', true);
+        $this->addFulfillmentMethod('collection', false);
     }
 
     /**
