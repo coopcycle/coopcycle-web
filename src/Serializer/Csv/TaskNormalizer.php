@@ -32,6 +32,12 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
+        $isObject = array_keys($data) !== range(0, count($data) - 1);
+
+        if ($isObject) {
+            $data = [ $data ];
+        }
+
         $bulk = array_map(function ($item) use ($context) {
 
             // This is needed, because CsvDecoder will transform empty rows to empty strings,
