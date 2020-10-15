@@ -533,10 +533,9 @@ form.settings.sms_gateway_config.twilio.from.label: Twilio phone number
 form.suggest.name.label: Name
 form.suggest.name.help: Please indicate the exact name so that we can find it
 form.suggest.submit.label: Suggest now
-form.suggest.message: "Can't find your favourite restaurant or shop?\n<br>\nTell us its name\
-  \ and address.\n\
-  <br>\nThis will allow us to better identify the businesses to be approached and\
-  \ provide them with proof of a real demand.\n"
+form.suggest.message: "Can't find your favourite restaurant or shop?\n<br>\nTell us\
+  \ its name and address.\n<br>\nThis will allow us to better identify the businesses\
+  \ to be approached and provide them with proof of a real demand.\n"
 form.suggest.thank_you_message: Thank you for suggesting this restaurant!
 restaurant.suggest.message: "Help us convince %restaurant.name% to work with %brand_name%!\n\
   <br>\nTo see it on the platform, we need you and your voice to support our future\
@@ -600,25 +599,34 @@ form.local_business.stripe_account.link_ok: "This restaurant is linked to a Stri
   \ target=\"_blank\">Stripe dashboard</a>.\n"
 form.settings.mercadopago.title: Mercado Pago
 form.local_business.mercadopago_account.title: MercadoPago Account
-form.local_business.mercadopago_account.success: MercadoPago account successfully connected
+form.local_business.mercadopago_account.success: MercadoPago account successfully
+  connected
 form.local_business.mercadopago.connect_button.text: Connect with Mercado Pago
 form.mercadopago_livemode.enable.label: Use Mercadopago in « live » mode
 form.mercadopago_livemode.enable.alert: In « live » mode, credit cards will be charged.
 form.mercadopago_livemode.disable.label: Use Mercadopago in « test » mode
-form.mercadopago_livemode.disable.alert: In « test » mode, credit cards will not be charged.
-form.mercadopago_livemode.disable_and_enable_maintenance.label: Switch to « test » mode and enable maintenance
-form.mercadopago_livemode.disable_and_enable_maintenance.alert: You are in « live » mode.<br>If you switch to « test » mode, maintenance will be enabled automatically.
-form.settings.mercadopago_testmode.help: 'In « test » mode, you will have to use <a href="https://www.mercadopago.com.ar/developers/en/guides/online-payments/checkout-api/testing#bookmark_how_to_test_your_integration">test credit cards</a> numbers to pay on the platform. <strong>No money will be exchanged.</strong> '
-form.settings.mercadopago_enable_livemode.help: To enable « live » mode, you need to configure « live » keys first.
+form.mercadopago_livemode.disable.alert: In « test » mode, credit cards will not be
+  charged.
+form.mercadopago_livemode.disable_and_enable_maintenance.label: Switch to « test »
+  mode and enable maintenance
+form.mercadopago_livemode.disable_and_enable_maintenance.alert: You are in « live
+  » mode.<br>If you switch to « test » mode, maintenance will be enabled automatically.
+form.settings.mercadopago_testmode.help: 'In « test » mode, you will have to use <a
+  href="https://www.mercadopago.com.ar/developers/en/guides/online-payments/checkout-api/testing#bookmark_how_to_test_your_integration">test
+  credit cards</a> numbers to pay on the platform. <strong>No money will be exchanged.</strong> '
+form.settings.mercadopago_enable_livemode.help: To enable « live » mode, you need
+  to configure « live » keys first.
 form.settings.mercadopago.publishable_key.label: Publishable key
-form.settings.mercadopago.publishable_key.help: "Get the <a href=\"\
-  https://www.mercadopago.com.%country%/developers/panel/credentials\" target=\"_blank\">publishable key</a>"
+form.settings.mercadopago.publishable_key.help: "Get the <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+  \ target=\"_blank\">publishable key</a>"
 form.settings.mercadopago.access_token.label: Access token
-form.settings.mercadopago.access_token.help: "Get the <a href=\"\
-  https://www.mercadopago.com.%country%/developers/panel/credentials\" target=\"_blank\">access token</a>"
+form.settings.mercadopago.access_token.help: "Get the <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+  \ target=\"_blank\">access token</a>"
 form.settings.mercadopago.app_id.label: Application ID
-form.settings.mercadopago.app_id.help: You need to <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">create an application</a> to obtain your application ID.
-form.settings.mercadopago.redirect_uri.help: "When configuring your app, use the following redirect URI: <code>%redirect_uri%</code>"
+form.settings.mercadopago.app_id.help: You need to <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">create
+  an application</a> to obtain your application ID.
+form.settings.mercadopago.redirect_uri.help: "When configuring your app, use the following\
+  \ redirect URI: <code>%redirect_uri%</code>"
 form.menu_item.name.label: Name
 form.menu_item.price.label: Price
 form.menu_item_modifier.name.label: Name
@@ -865,7 +873,7 @@ delivery.table.heading.courier: Courier
 delivery.table.heading.order: Order
 delivery.table.heading.owner: Owner
 search.users: Search a user…
-search.orders: Search an order (number, customer email)…
+search.orders: Search an order (number, customer email…)
 allergens.CEREALS_CONTAINING_GLUTEN: Cereals containing gluten
 allergens.CRUSTACEANS: Crustaceans
 allergens.EGGS: Eggs
@@ -1081,22 +1089,32 @@ refund.list.liable_party: Liable party
 refund.list.comments: Comments
 refund.list.debit_total: Total amount due by the platform to the business
 refund.list.refunded_at: Refunded at
-refund.list.disclaimer.admin: "When the platform is responsible for the incident, \
-  it means the platform owes the merchant the amount of the refund, because the merchant actually refunded the customer."
+refund.list.disclaimer.admin: "When the platform is responsible for the incident,\
+  \ it means the platform owes the merchant the amount of the refund, because the\
+  \ merchant actually refunded the customer."
 form.time_slot.choices.error.empty: The list of choices cannot be empty
 form.attach_to_org.modal.title: Attach to store
 loopeat.oauth_connect.success: LoopEat account connected successfully!
-loopeat.oauth_redirect.warning: You will be redirected to the LoopEat website to login or create your account
-authentication.register_benefits: Register for a faster checkout experience. You will also be able to find your previous orders history.
+loopeat.oauth_redirect.warning: You will be redirected to the LoopEat website to login
+  or create your account
+authentication.register_benefits: Register for a faster checkout experience. You will
+  also be able to find your previous orders history.
 form.checkout_address.telephone.help: To contact you in case of a problem
-guest_checkout.user_with_same_email_exists: An account with the same email already exists. Please log in to continue, or use another email to order without creating an account.
+guest_checkout.user_with_same_email_exists: An account with the same email already
+  exists. Please log in to continue, or use another email to order without creating
+  an account.
 guest_checkout.use_another_email: Use another email
 restaurant.form.section.embed: Embed
-restaurant.embed.disclaimer: You can embed the checkout directly on your website. Follow the instructions below to get started.
+restaurant.embed.disclaimer: You can embed the checkout directly on your website.
+  Follow the instructions below to get started.
 restaurant.embed.step_1: 'Add the <code>coopcycle.js</code> script to your page'
-restaurant.embed.step_2: 'Add the <code>data-coopcycle-embed="%url%"</code> to a clickable HTML element'
-restaurant.embed.greeting: That's all! Now when visitors click on the button, it opens a window directly on your website.
+restaurant.embed.step_2: 'Add the <code>data-coopcycle-embed="%url%"</code> to a clickable
+  HTML element'
+restaurant.embed.greeting: That's all! Now when visitors click on the button, it opens
+  a window directly on your website.
 form.settings.guest_checkout_enabled.label: Enable guest checkout
 order.list.reorder: Reorder
 homepage.form.title: Do you need something delivered?
-homepage.form.content: "<strong>%brand_name%</strong> is operating local and non polluting on-demand bike delivery services. Ship a single package, or fulfill recuring shipping for your business."
+homepage.form.content: "<strong>%brand_name%</strong> is operating local and non polluting\
+  \ on-demand bike delivery services. Ship a single package, or fulfill recuring shipping\
+  \ for your business."
