@@ -29,8 +29,6 @@ use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
 use AppBundle\Sylius\Product\ProductInterface;
-use AppBundle\Utils\OpeningHoursSpecification;
-use AppBundle\Utils\TimeRange;
 use AppBundle\Validator\Constraints\IsActivableRestaurant as AssertIsActivableRestaurant;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
