@@ -197,6 +197,23 @@
             "asap": "Au plus tôt",
             "time_slot": "Tranche horaire"
         },
-        "PLEASE_SELECT_ADDRESS": "Veuillez sélectionner une adresse dans la liste déroulante"
+        "PLEASE_SELECT_ADDRESS": "Veuillez sélectionner une adresse dans la liste déroulante",
+        "DOWNLOAD_EXAMPLE_SPREADSHEET": "Télécharger un fichier d'exemple",
+        "cancel": {
+            "reason": {
+                "RUSH_HOUR": "Heure de pointe",
+                "SOLD_OUT": "Stock épuisé",
+                "CUSTOMER": "Demande client"
+            }
+        },
+        "DROPZONE_INVALID_FILE_TYPE": "Vous ne pouvez pas charger des fichiers de type \"{{- type}}\"",
+        "ENTER_YOUR_POSTCODE": "Entrez votre code postal",
+        "RULE_PICKER_LINE_PACKAGES": "Paquets",
+        "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Activer les clusters",
+        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Toujours afficher les tâche non assignées",
+        "ADMIN_DASHBOARD_ORDERS_TAKEAWAY_ALERT": "Cette commande sera retirée sur place par le client",
+        "ADMIN_DASHBOARD_ORDERS_REFUSE_REASON": "Pour quelle raison refusez-vous cette commande ?",
+        "ADMIN_DASHBOARD_ORDERS_CANCEL_REASON": "Pour quelle raison annulez-vous cette commande ?",
+        "ADMIN_DASHBOARD_ORDERS_TIMELINE": "Historique"
     }
 }
