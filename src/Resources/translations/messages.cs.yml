@@ -4,7 +4,7 @@ navbar.myAccount: Můj účet
 base.footer.contactUs: Kontaktujte nás
 base.footer.help: Nápověda
 base.footer.legal: Zákonné oznámení
-base.footer.suggest: Navrhněte restauraci
+base.footer.suggest: Navrhnout firmu
 adminDashboard.title: Řídicí panel administrátora
 adminDashboard.configuration: Konfigurace
 adminDashboard.tooltip.orders: Správa objednávek restaurací
@@ -128,8 +128,8 @@ restaurant.unavailable: Nedostupné
 restaurant.disabledWarning: "Tato restaurace je neaktivní, takže návštěvníci webu\
   \ nemohou tuto stránku vidět. Pokud chcete, můžete ji <a target=\"_blank\" href=\"\
   %restaurantEditUrl%\"> aktivovat v administraci</a>.\n"
-restaurant.closedWarningWithDelay: Objednejte nyní na později. Objednávejte alespoň  %delay%
-  předem.
+restaurant.closedWarningWithDelay: Objednejte nyní na později. Objednávejte alespoň
+  %delay% předem.
 restaurant.temporaryClosedWarning: Tato restaurace je uzavřena do <strong>% date%
   </strong>. I přesto si můžete objednat na později!
 restaurant.noMenuWarning: "Tato restaurace zatím nemá nabídku\n"
@@ -137,8 +137,8 @@ restaurant.quotes_disclaimer.authenticated: Tato restaurace také přijímá obj
   na nabídky. Chcete-li vytvořit nabídky, musíte být referenčním zákazníkem. <a href="%contact_us%">
   Kontaktujte nás </a> pro více informací.
 restaurant.quotes_disclaimer.not_authenticated: Tato restaurace také přijímá objednávky
-  na nabídky. Pokud jste referenční zákazník,  <a href="%login%"> přihlašte se</a>
-  abyste vytvořil nabídku.  <a href="%contact_us%">Kontaktujte nás </a> pro více informací.
+  na nabídky. Pokud jste referenční zákazník, <a href="%login%">přihlašte se</a> abyste
+  vytvořil nabídku. <a href="%contact_us%">Kontaktujte nás </a> pro více informací.
 restaurant.form.noPricingRule: Nebyla nastavena žádná cenová pravidla, <a href="%editPricingRule%">
   kliknutím zde vytvořte první</a>.
 restaurant.form.enabled.tooltip: "Pokud je deaktivováno, restaurace není na webu viditelná.\
@@ -210,7 +210,7 @@ restaurant.contract.calculation_info: Můžete restauraci účtovat jinou část
   částku (např. na základě vzdálenosti).
 restaurant.contract.takeAwayFeeRate.label: Poplatek platformy za odnos s sebou
 restaurant.contract.takeAwayFeeRate.help: Tolik procent bude platformou vyhrazeno
-  z celkového součtu ceny  produktů
+  z celkového součtu ceny produktů
 restaurant.menus.noMenus: Zatím jste nevytvořili žádnou nabídku.
 restaurant.menus.activate: Aktivovat
 restaurant.menus.activated: Bylo aktivováno menu « %menu_name% » . Nyní se zobrazí
@@ -280,7 +280,7 @@ order.cart.title: Košík
 order.items.products_with_count: Produkty (%count%)
 order.summary.heading: Objednávka %number% (#%id%)
 order.total_excluding_tax: Celkem (bez DPH)
-order.total_including_tax: Celkem  (vč. DPH)
+order.total_including_tax: Celkem (vč. DPH)
 order.items_total: Celkem produktů
 order.total_tax: DPH
 order.total_tax_by_rate: Celkem %name%
@@ -327,12 +327,12 @@ order.adjustment_type.reusable_packaging: Balení
 order.adjustment_type.tip: Spropitné
 order_item.adjustment_type.reusable_packaging: '%quantity% × obal(y)'
 order.list.total: Celkem
-order.list.shippedAt: Čas  doručení
+order.list.shippedAt: Čas doručení
 order.list.type: Typ
 order.list.customer: Zákazník
 order.list.state: Stav
 order.list.summary: Shrnutí
-order.list.summary.restaurant.text: Doručení v restauraci  <a href="%restaurant_url%">%restaurant_name%</a>
+order.list.summary.restaurant.text: Doručení v restauraci <a href="%restaurant_url%">%restaurant_name%</a>
 order.list.summary.deleted_restaurant.text: Doručení v restauraci %restaurant_name%
 order.list.summary.delivery.text: Doručení %distance%, %vehicle%
 order.list.receipt: Účtenka
@@ -343,7 +343,7 @@ task.form.create: Vytvořit úlohu
 task.form.timeWindow: Časové okno
 task.form.showHistory: Zobrazit historii
 task.form.modal.moreOptions: Více možností
-task.form.edit: Změnit úlohu  %id%
+task.form.edit: Změnit úlohu %id%
 task.form.dateRange: Časové období
 task.form.finish: Dokončit úlohu
 task.form.details: Detaily úlohy
@@ -361,7 +361,7 @@ form.task.telephone.label: Telefon
 form.task.recipient.label: Kontakt
 form.task.recipient.help: Zadejte jméno kontaktní osoby
 form.task.dropoff.doorstep.label: Zanechání zásilky u dveří
-form.task_event.notes.placeholder: 'Příklad:  adresa nebyla nalezena, žádný problém…'
+form.task_event.notes.placeholder: 'Příklad: adresa nebyla nalezena, žádný problém…'
 form.task_event.notes.help: Komentář můžete upravit
 form.task_complete.done.label: Hotovo
 form.task_complete.fail.label: Nahlásit problém
@@ -419,7 +419,7 @@ form.order.payment_refund.label: Vrátit peníze
 form.order.refund_modal.title: Vrátit peníze
 form.order.refuse.refund.alert: Tato objednávka byla placena platební metodou, která
   nespravuje předautorizace. Pokud ji odmítnete, bude platba vrácena. Jste si jist?
-form.payment.refund_amount.label: Částka
+form.payment.refund_amount.label: Vrácená částka
 form.payment.refund_amount.help: Částka, kterou určíte, bude vrácena zákazníkovi
 form.address.addressLocality.label: Město
 form.address.postalCode.label: PSČ
@@ -438,7 +438,7 @@ form.preparation_time_rule.time.label: Čas
 form.preparation_time.defaults_warning: "Tato restaurace zatím nemá vlastní čas na\
   \ přípravu. Výchozí pravidla byla zkopírována níže, můžete je změnit.\n"
 form.settings.date_time: Datum a čas
-form.settings.brand_name.label: Jméno  značky
+form.settings.brand_name.label: Jméno značky
 form.settings.stripe.title: Účet Stripe
 form.settings.stripe.help: 'Stripe je platební služba, kterou používáme ke zpracování
   kreditních karet. Chcete-li použít část platformy pro elektronický obchod, je nutné
@@ -447,7 +447,7 @@ form.settings.stripe.help: 'Stripe je platební služba, kterou používáme ke 
   zde </a>), které zaplatí majitel obchodu. '
 form.settings.stripe_testmode.help: 'V režimu «test» budete muset platit na platformě
   pomocí <a href="https://stripe.com/docs/testing"> testovacích kreditních karet </a>.
-  <strong> Nebudou zaplaceny  žádné peníze. </strong> '
+  <strong> Nebudou zaplaceny žádné peníze.</strong> '
 form.settings.stripe_enable_livemode.help: Chcete-li aktivovat režim «live», musíte
   nejprve nakonfigurovat tlačítka «live».
 form.settings.stripe_publishable_key.label: Stripe veřejný klíč
@@ -465,8 +465,8 @@ form.settings.google_api_key.help: "Vytvořte si účet Google a získejte <a hr
   https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
   > klíč API </a>\n"
 form.settings.latlng.label: Zeměpisné souřadnice
-form.settings.latlng.help: "Určete výchozí zeměpisnou šířku a délku. Můžete  ji získat\
-  \ na <a href=\"https://www.latlong.net/\"> latlong.net </a>\n"
+form.settings.latlng.help: "Určete výchozí zeměpisnou šířku a délku. Můžete ji získat\
+  \ na <a href=\"https://www.latlong.net/\">latlong.net </a>\n"
 form.settings.administrator_email.label: E-mail správce
 form.settings.administrator_email.help: Na tento e-mail budou zaslána oznámení
 form.settings.phone_number.label: Telefonní číslo
@@ -479,9 +479,8 @@ form.suggest.name.label: Název
 form.suggest.name.help: Uveďte přesný název, abychom jej mohli najít
 form.suggest.submit.label: Navrhněte
 form.suggest.message: "Nemůžete najít svou oblíbenou restauraci?\n<br>\nSdělte nám\
-  \ její jméno a adresu. Poté mohou ostatní uživatelé hlasovat, aby se zobrazila v\
-  \ seznamu restaurací.\n<br>\nTo nám umožní lépe identifikovat restaurace, které\
-  \ mají být osloveny, a poskytnout jim důkaz skutečné poptávky.\n"
+  \ její jméno a adresu. \n<br>\nTo nám umožní lépe identifikovat firmy, které mají\
+  \ být osloveny, a poskytnout jim důkaz skutečné poptávky.\n"
 form.suggest.thank_you_message: Děkujeme za doporučení této restaurace!
 restaurant.suggest.message: "Pomozte nám přesvědčit %restaurant.name%, aby pracoval\
   \ s %brand_name%!\n<br>\nAbychom to viděli na platformě, potřebujeme vás a váš hlas,\
@@ -587,7 +586,7 @@ basics.hours: '%count% hodina|%count% hodin'
 task.receipt.reference: 'Reference: <strong>%ref%</strong>'
 task.receipt.attached_images: Připojené obrázky
 task.receipt.received_by: Zásilka převzata od <strong>%name%</strong>
-task.receipt.message: Tímto potvrzujeme, že jsme vaši zásilku doručili na  <strong>%address%</strong>
+task.receipt.message: Tímto potvrzujeme, že jsme vaši zásilku doručili na <strong>%address%</strong>
   v <strong>%date%</strong>
 task.receipt.greeting: Vážený zákazníku,
 basics.free: zdarma
@@ -600,7 +599,7 @@ form.delivery_import.file.label: Soubor
 delivery.import.success_message: Váš soubor byl úspěšně zpracován, %count% dodávek
   bylo vytvořeno
 receipt.emitter_details: Objednávka v restauraci <strong>%restaurant_name%</strong>
-receipt.billing_details: Objednávka placená kreditní kartou dne  %date%
+receipt.billing_details: Objednávka placená kreditní kartou dne %date%
 receipt.total: Celkem (vč. DPH)
 receipt.footer_item.total_incl_tax: Celkem (vč. DPH)
 receipt.footer_item.total_excl_tax: Celkem (bez DPH)
@@ -609,7 +608,7 @@ receipt.line_item.total: Celkem
 receipt.line_item.quantity: Množství
 receipt.line_item.unit_price: Jednotková cena
 receipt.line_item.name: Produkt
-receipt.title: 'Účtenka  objednávky #% number%'
+receipt.title: 'Účtenka objednávky #%number%'
 form.local_business.iso_code.fr.rcs_number: RCS číslo
 form.local_business.iso_code.fr.vat_number: DIČ číslo
 form.local_business.iso_code.fr.siret: Číslo SIRET
@@ -634,7 +633,7 @@ time_range.last_day: '[Včera] [%range%]'
 time_range.next_day: '[Zítra] [%range%]'
 time_range.same_day: '[Dnes] [%range%]'
 time_range: mezi %start% a %end%
-time_slot.human_readable: '%day% mezi  %start% a %end%'
+time_slot.human_readable: '%day% mezi %start% a %end%'
 restricted_diets.VEGETARIAN_DIET: Vegetariánská
 restricted_diets.VEGAN_DIET: Veganská
 restricted_diets.LOW_SALT_DIET: Neslaná
@@ -666,7 +665,7 @@ delivery.table.heading.courier: Kurýr
 delivery.table.heading.summary: Souhrn
 promotions.create_credit_note_coupon: Přidat dobropis
 promotions.add_free_delivery_coupon: Přidat promo kupón «doručení zdarma»
-promotions.promotion_coupon.success: Váš  kód kupónu %code% byl zohledněn v účtu
+promotions.promotion_coupon.success: Váš kód kupónu %code% byl zohledněn v účtu
 promotions.heading.credit_note.help: Vytvořit jedinečné dobropisy pro zákazníky
 promotions.heading.credit_note: Dobropisy
 promotions.heading.free_delivery.help: Vytvořit promo kupóny k nabídnutí doručení
@@ -682,18 +681,18 @@ authentication.already_registered: Již jste registrován?
 authentication.create_account: Vytvořit účet
 authentication.not_registered_yet: Nejste registrován?
 authentication.forgot_password: Zapomenuté heslo?
-profile.password.change: Změnit  heslo
-basics.send_invitation.confirm: Vaše pozvánka  byla odeslána! Nyní můžete upravit
-  nastavení nového uživatele.
+profile.password.change: Změnit heslo
+basics.send_invitation.confirm: Vaše pozvánka byla odeslána! Nyní můžete upravit nastavení
+  nového uživatele.
 basics.send_invitation: Poslat pozvánku
 basics.net_income: Čistý příjem
 basics.platform_fees: Poplatky platformy
 basics.stripe_fees: Poplatky Stripe
 basics.total_including_tax: Celkem včetně všech daní
 basics.date_range: Od %start% do %end%
-basics.updated_at: Aktualizováno  %date%
-basics.created_at: Vytvořeno v  %date%
-basics.no_entries: Zatím  žádný prvek
+basics.updated_at: Aktualizováno %date%
+basics.created_at: Vytvořeno v %date%
+basics.no_entries: Zatím žádný prvek
 basics.are_you_sure: Jste si jist?
 basics.today: Dnes
 basics.name: Jméno
@@ -719,11 +718,11 @@ embed.delivery.confirm_message: Vaše objednávka byla odeslána a brzy obdrží
 embed.delivery.submit.help: Kliknutím objednat doručení.
 embed.delivery.summary: 'Požádali jste o doručení dne <strong>%dropoff_date% </strong>
   na následující adrese: <strong>%dropoff_address% </strong> <br> Vypočítali jsme
-  vzdálenost <strong>%distance%  kilometrů </strong> . <br> Cena dodání je <strong>%total_excluding_tax%
+  vzdálenost <strong>%distance% kilometrů </strong> . <br> Cena dodání je <strong>%total_excluding_tax%
   (bez DPH); </strong>%total_including_tax% (vč. DPH). <br> <br> Pokud jsou některé
   z výše uvedených podrobností nesprávné, změňte je kliknutím na tlačítko Upravit. '
 social.sign_in_with_facebook: Přihlásit přes Facebook
-activity.order.fulfilled: "Objednávka  #order/#%aggregate_id% je naplněna\n"
+activity.order.fulfilled: "Objednávka #order/#%aggregate_id% je naplněna\n"
 activity.order.dropped: "@%owner% zrušil objednávku #order/%aggregate_id%\n"
 activity.order.picked: "@%owner% vybral objednávku #order/%aggregate_id%\n"
 activity.order.refused: "Objednávka #order/%aggregate_id% byla odmítnuta\n"
@@ -733,7 +732,7 @@ activity.task.cancelled: "@%owner% zrušil úkol číslo #task/%aggregate_id%\n"
 activity.task.failed: "@%owner% nemůže dokončit úkol číslo #task/%aggregate_id%\n"
 activity.task.done: "@%owner% dokončil úkol číslo #task/%aggregate_id%\n"
 activity.task.started: "@%owner% zahájil úkol číslo #task/%aggregate_id%\n"
-activity.task.unassigned: "@%owner% odpojil  úkol číslo #task/%aggregate_id%\n"
+activity.task.unassigned: "@%owner% odpojil úkol číslo #task/%aggregate_id%\n"
 activity.task.assigned: "@%owner% přiřadil úkol číslo #task/%aggregate_id%\n"
 activity.task.created: "@%owner% vytvořil úkol číslo #task/%aggregate_id%\n"
 adminDashboard.activity.title: Aktivita
@@ -743,7 +742,7 @@ index.our_shops: Naše obchody
 index.view_all_restaurants: Zobrazit všechny restaurace
 index.our_restaurants: Naše restaurace
 index.banner: Vynikající jídla doručená do vašeho domova.
-index.map.tip: Použijte mapu  k nalezení restaurací
+index.map.tip: Použijte mapu k nalezení restaurací
 admin.settings.missing_mandatory_settings: "Chybí povinná nastavení.\nChcete-li je\
   \ nakonfigurovat, přejděte na <a href=\"%settings_url%\"> stránku nastavení </a>.\n"
 meta.title: Dodací platforma pro podnikání vlastněné pracovníky
@@ -759,8 +758,8 @@ stores.settings: Nastavení
 stores.manage: Spravovat
 roles.ROLE_STORE.help: 'Majitel obchodu: spravuje přiřazené obchody, spravuje dodávky
   …'
-roles.ROLE_RESTAURANT.help: 'Majitel restaurace: spravuje  přidělenou restauraci,
-  spravuje objednávky…'
+roles.ROLE_RESTAURANT.help: 'Majitel restaurace: spravuje přidělenou restauraci, spravuje
+  objednávky…'
 roles.ROLE_COURIER.help: "Kurýr: Vidí čekající úkoly, upravuje přiřazené úkoly…\n"
 roles.ROLE_ADMIN.help: "Administrátor: Plný přístup ke všem funkcím\n"
 user.profile.givenName: Křestní jméno
@@ -809,7 +808,7 @@ form.credit_note.restaurant.help: Promo akce bude použitelná pouze při objedn
 form.credit_note.name.help: Název propagační akce, která se zobrazí v košíku
 form.credit_note.name.label: Název
 form.credit_note.amount.label: Částka
-form.credit_note.user_search.help: Promo akci  bude moci použít pouze tento uživatel
+form.credit_note.user_search.help: Promo akci bude moci použít pouze tento uživatel
 form.api_app.client_secret.label: Tajný klíč
 form.api_app.client_id.label: Identifikátor
 form.api_app.store.label: Obchod
@@ -836,7 +835,7 @@ form.checkout_address.telephone.label: Telefonní číslo
 form.checkout_address.promotion_coupon.label: Kód kupónu
 form.checkout_address.notes.help: Vaše poznámka bude předána do restaurace
 form.checkout_address.notes.placeholder: "Příklad: bez omáčky, bez rajčat…\n"
-form.checkout_address.notes.label: Nechte poznámku pro  restauraci
+form.checkout_address.notes.label: Nechte poznámku pro restauraci
 form.product_option_value.price.label: Cena
 form.product_option_value.value.label: Hodnota
 form.product_option.preview_title: Náhled možnosti
@@ -922,7 +921,7 @@ form.stripe_livemode.enable.label: Použít Stripe v režimu «live»
 form.banner.message.label: Zpráva která se zobrazí v banneru
 form.banner.disable.alert: Chystáte se zakázat banner
 form.banner.enable.alert: Chystáte se povolit banner
-form.banner.disable.label: Zakázat  banner
+form.banner.disable.label: Zakázat banner
 form.banner.enable.label: Povolit banner
 mardown_formatting.help: Text můžete formátovat pomocí Markdown syntaxe
 form.maintenance.message.label: Zpráva
@@ -947,11 +946,11 @@ basics.allow_edit: Umožnit úpravy
 fulfillment_method.collection: Vyzvednutí
 fulfillment_method.delivery: Doručení
 basics.close: Zavřít
-sms.with_tracking: "Dobrý den,\nNáš kurýr  je na cestě do %address%.\nSledujte jej\
+sms.with_tracking: "Dobrý den,\nNáš kurýr je na cestě do %address%.\nSledujte jej\
   \ na %link%\n"
-sms.simple: "Dobrý den,\nNáš kurýr  je na cestě do %address%.\n"
+sms.simple: "Dobrý den,\nNáš kurýr je na cestě do %address%.\n"
 spreadsheet.download_example: Stáhnout příklad tabulky
-order.refund.total_amount: Tato objednávka byla vrácena v částce  %amount%
+order.refund.total_amount: Tato objednávka byla vrácena v částce %amount%
 promotion_rule.is_customer: '%username% je zákazník'
 promotion_rule.is_restaurant: '%restaurant% je restaurace'
 nav.about_us: O nás
@@ -1051,3 +1050,65 @@ adminDashboard.users.orders_count: Počet objednávek
 base.footer.RegisterMyRestaurant: Zaregistrovat moji restauraci
 base.footer.companyRegister: Stát se partnerem
 form.time_slot.choices.error.empty: Seznam možností nemůže být prázdný
+restaurant.embed.step_2: Přidejte <code>data-coopcycle-embed="%url%"</code> do HTML
+  prvku, na který lze kliknout
+order.list.reorder: Přeskupit
+restaurant.form.section.embed: Odebírané
+authentication.register_benefits: Zaregistrujte se a získejte možnost rychlejšího
+  placení. Budete také moci najít historii vašich předchozích objednávek.
+deliveries.section.past: Minulé
+form.settings.mercadopago_testmode.help: 'V režimu «test» budete muset použít <a href="https://www.mercadopago.com.ar/developers/en/guides/online-payments/checkout-api/testing#bookmark_how_to_test_your_integration">
+  testovací čísla kreditní karty </a> platící na platformě. <strong> Žádné peníze
+  nebudou utraceny. </strong> '
+homepage.form.content: <strong>% brand_name%</strong> provozuje místní a neznečišťující
+  služby doručování kolem na vyžádání. Zašlete jeden balíček nebo využijte opakovanou
+  přepravu pro vaši firmu.
+restaurant.embed.step_1: Přidejte na stránku skript <code>coopcycle.js</code>
+guest_checkout.user_with_same_email_exists: Účet se stejným e-mailem již existuje.
+  Chcete-li pokračovat, přihlaste se, nebo použijte jiný e-mail k objednání bez vytvoření
+  účtu.
+loopeat.oauth_connect.success: Účet LoopEat byl úspěšně připojen!
+search.orders: Vyhledat objednávku (číslo, e-mail zákazníka…)
+form.mercadopago_livemode.disable_and_enable_maintenance.label: Přepnout do režimu
+  «test» a povolit údržbu
+form.mercadopago_livemode.enable.label: Použijte Mercadopago v režimu «live»
+form.settings.sms_gateway.label: SMS brána
+form.settings.sms_enabled.label: Povolit odesílání SMS
+order.payer.email: E-mail
+homepage.form.title: Potřebujete něco doručit?
+form.settings.guest_checkout_enabled.label: Povolit placení hostů
+restaurant.embed.greeting: To je vše! Když nyní návštěvníci kliknou na tlačítko, otevře
+  se okno přímo na vašem webu.
+restaurant.embed.disclaimer: Pokladnu můžete vložit přímo na svůj web. Začněte podle
+  níže uvedených pokynů.
+guest_checkout.use_another_email: Použijte jiný e-mail
+form.checkout_address.telephone.help: Kontaktovat vás v případě problému
+loopeat.oauth_redirect.warning: Budete přesměrováni na web LoopEat, abyste se přihlásili
+  nebo vytvořili svůj účet
+form.attach_to_org.modal.title: Připojit k obchodu
+deliveries.section.upcoming: Nadcházející
+form.settings.mercadopago_enable_livemode.help: Chcete-li aktivovat režim «live»,
+  musíte nejprve nakonfigurovat tlačítka «live».
+form.mercadopago_livemode.disable_and_enable_maintenance.alert: Jste v režimu «live»
+  . <br> Pokud přepnete do režimu «test» , bude automaticky zapmuta údržba.
+form.mercadopago_livemode.disable.alert: V režimu «test» nebudou čísla kreditních
+  karet použita.
+form.mercadopago_livemode.disable.label: Použijte Mercadopago v režimu « test »
+form.mercadopago_livemode.enable.alert: V «live» režimu budou čísla kreditních karet
+  použita.
+form.local_business.mercadopago_account.success: Účet MercadoPago byl úspěšně připojen
+form.settings.sms_gateway_config.twilio.from.label: Twilio telefonní číslo
+form.settings.sms_gateway_config.twilio.auth_token.label: Twilio Auth Token
+form.settings.sms_gateway_config.twilio.sid.label: Twilio SID
+form.settings.sms_gateway_config.mailjet.api_token.label: Mailjet API Token
+form.settings.sms.title: SMS
+form.payment.last_update.label: Poslední aktualizace
+form.payment.amount.label: Částka
+form.payment.state.label: Stav
+form.store_type.package_set.placeholder: Vyberte sadu balíčků
+form.store_type.time_slot.placeholder: Vyberte časový slot
+checkout.breadcrumb.confirm: Potvrzení
+order.payer.identificationNumber: Identifikační číslo
+order.payer.identificationType: ID typ
+order.payer.title: Informace o kupujícím
+profile.fullName: Celé jméno
