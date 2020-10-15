@@ -83,6 +83,15 @@ class OrderTarget
         return $this->restaurant->hasClosingRuleFor($date, $now);
     }
 
+    public function isFulfillmentMethodEnabled($method)
+    {
+        if (null !== $this->hub) {
+            return $this->hub->isFulfillmentMethodEnabled($method);
+        }
+
+        return $this->restaurant->isFulfillmentMethodEnabled($method);
+    }
+
     public static function withRestaurant($restaurant)
     {
         $target = new self();
