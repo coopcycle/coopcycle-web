@@ -3,7 +3,8 @@
 namespace Tests\AppBundle\Utils;
 
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\OrderTarget;
 use AppBundle\Utils\PreparationTimeResolver;
 use AppBundle\Utils\ShippingDateFilter;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +21,7 @@ class ShippingDateFilterTest extends TestCase
 
     public function setUp(): void
     {
-        $this->restaurant = $this->prophesize(Restaurant::class);
+        $this->restaurant = $this->prophesize(LocalBusiness::class);
         $this->preparationTimeResolver = $this->prophesize(PreparationTimeResolver::class);
 
         $this->filter = new ShippingDateFilter(
@@ -91,7 +92,7 @@ class ShippingDateFilterTest extends TestCase
         $expected)
     {
         $this->restaurant
-            ->hasClosingRuleFor($preparation)
+            ->hasClosingRuleFor($preparation, Argument::any())
             ->willReturn($hasClosingRuleForNow);
 
         $this->restaurant
@@ -100,8 +101,10 @@ class ShippingDateFilterTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getRestaurant()
-            ->willReturn($this->restaurant->reveal());
+            ->getTarget()
+            ->willReturn(
+                OrderTarget::withRestaurant($this->restaurant->reveal())
+            );
         $order
             ->getFulfillmentMethod()
             ->willReturn('delivery');

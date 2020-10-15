@@ -65,6 +65,24 @@ class OrderTarget
         return $this->restaurant->getAddress();
     }
 
+    public function getOpeningHours($method = 'delivery')
+    {
+        if (null !== $this->hub) {
+            return $this->hub->getOpeningHours($method);
+        }
+
+        return $this->restaurant->getOpeningHours($method);
+    }
+
+    public function hasClosingRuleFor(\DateTime $date = null, \DateTime $now = null): bool
+    {
+        if (null !== $this->hub) {
+            return $this->hub->hasClosingRuleFor($date, $now);
+        }
+
+        return $this->restaurant->hasClosingRuleFor($date, $now);
+    }
+
     public static function withRestaurant($restaurant)
     {
         $target = new self();
