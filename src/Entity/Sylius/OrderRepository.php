@@ -156,4 +156,27 @@ class OrderRepository extends BaseOrderRepository
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    public function search($q)
+    {
+        $qb = $this->createQueryBuilder('o');
+
+        $qb
+            ->join(Customer::class, 'c', Join::WITH, 'o.customer = c.id')
+            // ->andWhere('o.state != :state_cart')
+            ->add('where', $qb->expr()->orX(
+                $qb->expr()->gt('SIMILARITY(o.number, :q)', 0),
+                $qb->expr()->gt('SIMILARITY(c.email, :q)', 0)
+            ))
+            ->add('where', $qb->expr()->neq('o.state', ':state_cart'))
+            ->addOrderBy('SIMILARITY(o.number, :q)', 'DESC')
+            ->addOrderBy('SIMILARITY(c.email, :q)', 'DESC')
+            ->addOrderBy('o.createdAt', 'DESC')
+            ->setParameter('q', strtolower($q))
+            ->setParameter('state_cart', OrderInterface::STATE_CART);
+
+        $qb->setMaxResults(10);
+
+        return $qb->getQuery()->getResult();
+    }
 }

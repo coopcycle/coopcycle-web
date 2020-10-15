@@ -23,6 +23,7 @@ use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
@@ -167,6 +168,29 @@ class AdminController extends Controller
             ->getResult();
 
         return [ $orders, $pages, $page ];
+    }
+
+    /**
+     * @Route("/admin/orders/search", name="admin_orders_search")
+     */
+    public function searchOrdersAction(Request $request,
+        OrderRepository $orderRepository)
+    {
+        $results = $orderRepository->search($request->query->get('q'));
+
+        $data = [];
+        foreach ($results as $order) {
+            $data[] = [
+                'id' => $order->getId(),
+                'name' => sprintf('%s (%s)',
+                    $order->getNumber(),
+                    $order->getCustomer()->getEmailCanonical()
+                ),
+                'path' => $this->generateUrl('admin_order', ['id' => $order->getId()]),
+            ];
+        }
+
+        return new JsonResponse($data);
     }
 
     /**

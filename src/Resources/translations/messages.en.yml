@@ -865,6 +865,7 @@ delivery.table.heading.courier: Courier
 delivery.table.heading.order: Order
 delivery.table.heading.owner: Owner
 search.users: Search a user…
+search.orders: Search an order (number, customer email)…
 allergens.CEREALS_CONTAINING_GLUTEN: Cereals containing gluten
 allergens.CRUSTACEANS: Crustaceans
 allergens.EGGS: Eggs

@@ -12,17 +12,22 @@
   <input type="hidden" name="show_canceled" value="{{ show_canceled ? 'on' : 'off' }}">
 </form>
 
-<div class="text-right">
-  <span class="mr-2">
-    <label class="mr-2">{{ 'adminDashboard.orders.showCanceled'|trans }}</label>
-    <span id="show-cancelled-switch"></span>
-  </span>
-  <button class="btn btn-primary btn-success" type="button" data-toggle="modal" data-target="#order-export-modal">
-    <i class="fa fa-download"></i> {{ 'adminDashboard.dashboard.export'|trans }}
-  </button>
-  <a class="btn btn-default" href="{{ path('admin_foodtech_dashboard', { date: 'now'|date('Y-m-d') }) }}">
-    <i class="fa fa-th-large"></i> Dashboard
-  </a>
+<div class="d-flex flex-row mb-4">
+  <div class="w-50">
+    <div id="orders-search"></div>
+  </div>
+  <div class="w-50 text-right">
+    <span class="mr-2">
+      <label class="mr-2">{{ 'adminDashboard.orders.showCanceled'|trans }}</label>
+      <span id="show-cancelled-switch"></span>
+    </span>
+    <button class="btn btn-primary btn-success" type="button" data-toggle="modal" data-target="#order-export-modal">
+      <i class="fa fa-download"></i> {{ 'adminDashboard.dashboard.export'|trans }}
+    </button>
+    <a class="btn btn-default" href="{{ path('admin_foodtech_dashboard', { date: 'now'|date('Y-m-d') }) }}">
+      <i class="fa fa-th-large"></i> Dashboard
+    </a>
+  </div>
 </div>
 
 {% include "admin/pagination.html.twig" %}
@@ -74,6 +79,14 @@ new CoopCycle.Switch(document.querySelector('#show-cancelled-switch'), {
       .find('[name="show_canceled"]')
       .val(checked ? 'on' : 'off');
     $settingsForm.submit();
+  }
+});
+
+new CoopCycle.Search(document.querySelector('#orders-search'), {
+  url: "{{ path('admin_orders_search') }}",
+  placeholder: "{{ 'search.orders'|trans }}",
+  onSuggestionSelected: function(suggestion) {
+    window.location.href = suggestion.path;
   }
 });
 
