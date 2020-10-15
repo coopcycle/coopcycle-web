@@ -999,3 +999,55 @@ form.registration.legal.label: Souhlasím s podmínkami a zásadami ochrany osob
 base.footer.terms: Podmínky služby
 base.footer.privacy: Soukromí
 authentication.choose_password: Zvolte si své heslo
+refund.list.disclaimer.admin: Pokud je za incident odpovědná platforma, znamená to,
+  že platforma dluží obchodníkovi částku vrácení peněz, protože obchodník zákazníkovi
+  skutečně vrátil peníze.
+refund.list.refunded_at: Vráceno na
+refund.list.debit_total: Celková částka splatná platformou podniku
+refund.list.comments: Komentáře
+refund.list.liable_party: Povinná strana
+refund.list.amount: Vrácená částka
+form:
+  restaurant:
+    b2b:
+      label: Chcete navrhnout speciální nabídky pro společnosti?
+    contact_referent:
+      label: Kontaktní osoba pro restauraci
+    name:
+      label: Název restaurace
+basics.configure: Konfigurovat
+basics.description: Popis
+form.customize.custom_banner.help: Ujistěte se, že banner je opakovatelný vzor SVG
+form.customize.custom_banner.label: Vlastní banner
+form.local_business.mercadopago.connect_button.text: Připojit na Mercado Pago
+form.settings.mercadopago.redirect_uri.help: 'Při konfiguraci aplikace použijte následující
+  identifikátor URI přesměrování: <code>%redirect_uri%</code>'
+form.settings.mercadopago.app_id.help: Chcete-li získat ID aplikace, musíte <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">
+  vytvořit aplikaci </a>.
+form.settings.mercadopago.app_id.label: Application ID
+form.settings.mercadopago.access_token.help: Získejte <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+  target="_blank"> přístupový token </a>
+form.settings.mercadopago.access_token.label: Přístupový token
+form.settings.mercadopago.title: Mercado Pago
+form.settings.mercadopago.publishable_key.help: Získejte <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+  target="_blank"> klíč k publikování </a>
+form.settings.mercadopago.publishable_key.label: Publikovatelný klíč
+form.company.make_the_request.label: Poslat žádost
+form.address.company.meal_estimate.label: Odhadovaný počet jídel (za den)
+form.address.company.collaborator_number.label: Počet zaměstnanců
+form.address.company.function.label: Pozice kontaktní osoby
+form.address.company.business_reference.label: Kontaktní osoba pro společnost
+form.address.company_name.label: Jméno společnosti
+form.payment.refund_application_fee.help: "Pokud zaškrtnete toto políčko, provize\
+  \ účtovaná platformou partnerovi bude vrácena proporcionálně\n<br>\n<a href=\"https://stripe.com/docs/connect/direct-charges#issuing-refunds\"\
+  > Další informace </a>\n"
+form.payment.refund_comment.help: Popište, co se stalo
+form.payment.refund_comment.label: Komentáře
+form.payment.refund_liable.help: Která strana odpovídá za incident?
+form.payment.refund_liable.label: Povinná strana
+adminDashboard.users.last_order: Poslední objednávka
+adminDashboard.users.registered_at: Registrovaný
+adminDashboard.users.orders_count: Počet objednávek
+base.footer.RegisterMyRestaurant: Zaregistrovat moji restauraci
+base.footer.companyRegister: Stát se partnerem
+form.time_slot.choices.error.empty: Seznam možností nemůže být prázdný

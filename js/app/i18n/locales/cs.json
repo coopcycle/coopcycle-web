@@ -214,6 +214,7 @@
         "ORDER_TIMELINE_CANCELLED_TITLE": "Objednávka zrušena {{date}}",
         "ORDER_TIMELINE_DROPPED_TITLE": "Objednávka doručena {{date}}",
         "DOWNLOAD_EXAMPLE_SPREADSHEET": "Stáhnout příklad tabulky",
-        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Vždy zobrazovat nepřiřazené"
+        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Vždy zobrazovat nepřiřazené",
+        "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Povolené klastry mapy"
     }
 }
