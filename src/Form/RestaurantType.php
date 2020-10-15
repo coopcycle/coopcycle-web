@@ -7,6 +7,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Form\Restaurant\FulfillmentMethodType;
 use AppBundle\Form\Restaurant\LoopeatType;
+use AppBundle\Form\Restaurant\ShippingOptionsTrait;
 use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\FormEvent;
@@ -23,9 +24,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RestaurantType extends LocalBusinessType
 {
+    use ShippingOptionsTrait {
+        buildForm as buildShippingOptionsForm;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
+
+        $this->buildShippingOptionsForm($builder, $options);
 
         $builder
             ->add('type', LocalBusinessTypeChoiceType::class)
@@ -34,21 +41,6 @@ class RestaurantType extends LocalBusinessType
                 'label' => 'localBusiness.form.description',
                 'help' => 'mardown_formatting.help',
                 'attr' => ['rows' => '5']
-            ])
-            ->add('orderingDelayDays', IntegerType::class, [
-                'label' => 'localBusiness.form.orderingDelayDays',
-                'mapped' => false
-            ])
-            ->add('shippingOptionsDays', IntegerType::class, [
-                'label' => 'localBusiness.form.shippingOptionsDays',
-                'attr' => [
-                    'min' => 1,
-                    'max' => 6
-                ]
-            ])
-            ->add('orderingDelayHours', IntegerType::class, [
-                'label' => 'localBusiness.form.orderingDelayHours',
-                'mapped' => false
             ])
             ->add('fulfillmentMethods', CollectionType::class, [
                 'entry_type' => FulfillmentMethodType::class,
@@ -122,14 +114,6 @@ class RestaurantType extends LocalBusinessType
             $restaurant = $event->getData();
             $form = $event->getForm();
 
-            $orderingDelayMinutes = $restaurant->getOrderingDelayMinutes();
-            $orderingDelayDays = $orderingDelayMinutes / (60 * 24);
-            $remainder = $orderingDelayMinutes % (60 * 24);
-            $orderingDelayHours = $remainder / 60;
-
-            $form->get('orderingDelayHours')->setData($orderingDelayHours);
-            $form->get('orderingDelayDays')->setData($orderingDelayDays);
-
             if ($form->has('enabledFulfillmentMethods')) {
 
                 $enabledFulfillmentMethods = [];
@@ -193,12 +177,6 @@ class RestaurantType extends LocalBusinessType
 
                 $form = $event->getForm();
                 $restaurant = $form->getData();
-
-                $orderingDelayDays = $form->get('orderingDelayDays')->getData();
-                $orderingDelayHours = $form->get('orderingDelayHours')->getData();
-                $restaurant->setOrderingDelayMinutes(
-                    ($orderingDelayDays * 60 * 24) + ($orderingDelayHours * 60)
-                );
 
                 if ($form->has('enabledFulfillmentMethods')) {
                     $enabledFulfillmentMethods = $form->get('enabledFulfillmentMethods')->getData();
