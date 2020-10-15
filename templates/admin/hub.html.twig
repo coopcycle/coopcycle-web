@@ -1,0 +1,15 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+  {{ form_widget(form) }}
+  <button type="submit" class="btn btn-block btn-primary">
+    {{ 'basics.save'|trans }}
+  </button>
+{{ form_end(form) }}
+{% endblock %}

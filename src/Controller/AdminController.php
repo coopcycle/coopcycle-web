@@ -14,6 +14,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Hub;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Organization;
@@ -36,6 +37,7 @@ use AppBundle\Form\CustomizeType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\GeoJSONUploadType;
+use AppBundle\Form\HubType;
 use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\MercadopagoLivemodeType;
@@ -1910,5 +1912,31 @@ class AdminController extends Controller
                 'organization' => $organization,
             ]
         );
+    }
+
+    public function hubAction($id, Request $request)
+    {
+        $hub = $this->getDoctrine()->getRepository(Hub::class)->find($id);
+
+        if (!$hub) {
+            throw $this->createNotFoundException(sprintf('Hub #%d does not exist', $id));
+        }
+
+        $form = $this->createForm(HubType::class, $hub);
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_hub');
+        }
+
+        return $this->render('admin/hub.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

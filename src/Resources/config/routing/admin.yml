@@ -66,6 +66,12 @@ admin_orders:
             order: admin_order
     methods:  [ GET, POST ]
 
+admin_hub:
+    path: /admin/restaurants/hubs/{id}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::hubAction
+    methods: [ GET, POST ]
+
 admin_restaurant_new:
     path: /admin/restaurants/new
     defaults:
