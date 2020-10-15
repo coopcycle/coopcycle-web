@@ -3,6 +3,7 @@
 namespace AppBundle\Security;
 
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -54,6 +55,8 @@ class OrderActionsVoter extends Voter
         if (!$this->authorizationChecker->isGranted('ROLE_RESTAURANT')) {
             return false;
         }
+
+        Assert::isInstanceOf($user, User::class);
 
         return $user->ownsRestaurant($subject->getRestaurant());
     }
