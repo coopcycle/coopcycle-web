@@ -99,7 +99,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="PUT",
  *       "path"="/orders/{id}/accept",
  *       "controller"=OrderAccept::class,
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())",
+ *       "security"="is_granted('accept', object)",
  *       "deserialize"=false,
  *       "swagger_context"={
  *         "summary"="Accepts a Order resource."
@@ -109,7 +109,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="PUT",
  *       "path"="/orders/{id}/refuse",
  *       "controller"=OrderRefuse::class,
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())",
+ *       "security"="is_granted('refuse', object)",
  *       "swagger_context"={
  *         "summary"="Refuses a Order resource."
  *       }
@@ -118,7 +118,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="PUT",
  *       "path"="/orders/{id}/delay",
  *       "controller"=OrderDelay::class,
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())",
+ *       "security"="is_granted('delay', object)",
  *       "swagger_context"={
  *         "summary"="Delays a Order resource."
  *       }
@@ -127,7 +127,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="PUT",
  *       "path"="/orders/{id}/fulfill",
  *       "controller"=OrderFulfill::class,
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())",
+ *       "security"="is_granted('fulfill', object)",
  *       "swagger_context"={
  *         "summary"="Fulfills a Order resource."
  *       }
@@ -136,7 +136,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="PUT",
  *       "path"="/orders/{id}/cancel",
  *       "controller"=OrderCancel::class,
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())",
+ *       "security"="is_granted('cancel', object)",
  *       "swagger_context"={
  *         "summary"="Cancels a Order resource."
  *       }

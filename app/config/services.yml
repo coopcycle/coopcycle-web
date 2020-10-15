@@ -865,3 +865,6 @@ services:
 
   AppBundle\Security\DeleteClosingRuleVoter:
     tags: [ 'security.voter' ]
+
+  AppBundle\Security\OrderActionsVoter:
+    tags: [ 'security.voter' ]
