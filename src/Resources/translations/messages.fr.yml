@@ -135,8 +135,8 @@ restaurant.form.noPricingRule: Aucune règle de tarification n'a été instauré
 restaurant.form.allow_stripe_connect.label: Autoriser le restaurant à gérer lui-même
   son compte Stripe
 restaurant.form.deposit_refund_enabled.label: Activer le système de consignes
-restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre
-  restaurant
+restaurant.form.temporaryClosingRule: Cliquez ici pour fermer temporairement votre
+  restaurant.
 restaurant.form.accessPlanning: Accéder au planning
 restaurant.form.createRestaurant: Créer un restaurant
 restaurant.form.exclusive.label: Ce restaurant est une exclusivité
@@ -290,7 +290,7 @@ order.payment.card_number.label: Numéro de carte
 order.payment.total: Payer %total%
 order.payment.card_number.help: 'Un <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">numéro de test</a> Stripe est pré-rempli. Aucun compte
-  ne sera débité. '
+  ne sera débité.'
 order.payment.cvc: CVC
 order.payment.redirect.help: Vous serez redirigé·e vers le site Internet de votre
   banque pour compléter la transaction
@@ -381,7 +381,7 @@ form.delivery.dropoff.label: Dépôt
 form.delivery.dropoff.address_placeholder: Entrez l'adresse de dépôt
 form.delivery.weight.label: Poids
 form.delivery.weight.help: Veuillez indiquer le poids en grammes (1kg = 1000g)
-form.delivery.vehicle.label: Type de véhicule
+form.delivery.vehicle.label: Vélo classique, ou vélo cargo ?
 form.delivery.pickup.doneBefore.label: Heure de retrait
 form.delivery.dropoff.doneBefore.label: Heure de dépôt
 form.delivery.distance.label: Distance
@@ -411,7 +411,7 @@ form.delivery_embed.name.label: Nom
 form.delivery_embed.name.help: Votre nom ou le nom de l'entreprise
 form.delivery_embed.telephone.label: Numéro de téléphone
 form.delivery_embed.vehicle.disclaimer: Nous livrons en vélo cargo les objets de plus
-  de 50x40x20 (cm) ou dont le poids excède 6kg
+  de 50x40x20 (cm) ou dont le poids excède 6kg.
 form.address.streetAddress.label: Adresse
 form.address.streetAddress.error.noLatLng: Veuillez sélectionner une adresse dans
   la liste déroulante
@@ -552,7 +552,7 @@ form.menu_editor.help: "Utilisez l'éditeur ci-dessous pour composer les élemen
   \ de la vente, déposez-le dans la section « Produits » à droite\n<br>\nN'oubliez\
   \ pas de cliquer sur le bouton « Enregistrer les modifications » ci-dessous\n"
 form.menu_editor.products.help: "Pour ajouter des produits dans la liste de droite,\
-  \ ajoutez-les d'abord au <a href=\"%products_url%\">catalogue</a>\n"
+  \ ajoutez-les d'abord au <a href=\"%products_url%\">catalogue</a>"
 form.menu_editor.taxon_modal.title: Modifier une section
 form.product.name.label: Nom
 form.product.description.label: Description
@@ -569,7 +569,7 @@ form.product.confirm.help: "Vous avez modifié le nom du produit. S'il s'agit d'
   \ <strong>modification mineure</strong> (faute d'orthographe, majuscule…), cliquez\
   \ sur « Confirmer la modification ».\n<br>\nDans le cas contraire, vous devez <a\
   \ href=\"%link%\">créer un nouveau produit</a>, afin de pouvoir distinguer les produits\
-  \ vendus et conserver un historique.\n"
+  \ vendus et conserver un historique. "
 form.product.reusable_packaging_enabled.label: Activer les emballages réutilisables
   pour ce produit
 form.product.reusable_packaging.label: Type d'emballage réutilisable
@@ -585,7 +585,7 @@ form.product_option_value.price.label: Prix
 form.product_option.additional.label: Cette option est un supplément
 form.product_option.additional.help: Le client pourra choisir plusieurs valeurs, sans
   être obligé d'en choisir au moins une
-form.checkout_address.notes.label: Une remarque ?
+form.checkout_address.notes.label: Laissez un message pour le restaurant
 form.checkout_address.notes.placeholder: "Exemple : sans sauce, sans tomates…\n"
 form.checkout_address.notes.help: Votre remarque sera transmise au restaurant
 form.checkout_address.promotion_coupon.label: Code promotionnel
@@ -682,7 +682,7 @@ roles.ROLE_ADMIN.help: "Administrateur : Accès total à toutes les fonctions\n"
 roles.ROLE_COURIER.help: "Coursier : visualiser les courses à faire, changer l'état\
   \ des courses qui lui sont assignées…\n"
 roles.ROLE_RESTAURANT.help: "Restaurant : gérer les restaurants qui lui sont assignés,\
-  \ gérer les commandes…\n"
+  \ gérer les commandes…"
 roles.ROLE_STORE.help: 'Magasin : gérer les magasins qui lui sont assignés, créer
   des courses…'
 stores.manage: Gérer
@@ -771,13 +771,13 @@ activity.order.dropped: "@%owner% a livré la commande #order/%aggregate_id%\n"
 activity.order.fulfilled: "La commande #order/%aggregate_id% est terminée\n"
 social.sign_in_with_facebook: Se connecter avec Facebook
 embed.delivery.summary: "Vous avez demandé une course qui vous sera déposée le <strong>%dropoff_date%</strong>\
-  \ à l'adresse suivante : <strong>%dropoff_address%</strong>\n<br>\nNous avons calculé\
-  \ une distance de <strong>%distance% kilomètres</strong>.\n<br>\nSelon nos tarifs,\
+  \ à l'adresse suivante : <strong>%dropoff_address%</strong><br>Nous avons calculé\
+  \ une distance de <strong>%distance% kilomètres</strong>. <br>Selon nos tarifs,\
   \ cette course vous coûtera <strong>%total_excluding_tax% HT</strong> (%total_including_tax%\
   \ TTC). "
 embed.delivery.submit.help: Cliquez pour confirmer le devis et commander la course.
 embed.delivery.confirm_message: "Nous avons bien enregistré votre demande. Votre course\
-  \ est en attente de validation.\n<br>\nNous allons vous envoyer un email d'ici quelques\
+  \ est en attente de validation. Nous allons vous envoyer un email d'ici quelques\
   \ minutes. Vous recevrez un second mail dès que la course est confirmée."
 deliveryForm.noPriceWarning: Le tarif ne peut être calculé. Veuillez intégrer un nouveau
   prix.
