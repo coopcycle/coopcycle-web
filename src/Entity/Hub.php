@@ -4,12 +4,15 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\LocalBusiness\ClosingRulesTrait;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethodsTrait;
+use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
+use AppBundle\Entity\LocalBusiness\ShippingOptionsTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class Hub
 {
     use ClosingRulesTrait;
     use FulfillmentMethodsTrait;
+    use ShippingOptionsTrait;
 
     private $id;
     private $name;
