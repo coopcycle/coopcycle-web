@@ -423,7 +423,8 @@ form.address.description.label: Instructions
 form.address.description.placeholder: 2ème porte à gauche…
 form.address.company.label: Entreprise
 form.address.company_name.label: Nom de l'entreprise
-form.address.company.business_reference.label: Contact de la personne référente pour l’entreprise
+form.address.company.business_reference.label: Contact de la personne référente pour
+  l’entreprise
 form.address.company.function.label: Poste
 form.address.company.collaborator_number.label: Nombre de collaborateur-ices
 form.address.company.meal_estimate.label: Estimation du nombre de repas (par jour)
@@ -1031,15 +1032,71 @@ refund.list.liable_party: Partie responsable
 refund.list.amount: Montant du remboursement
 refund.list.comments: Commentaires
 loopeat.oauth_connect.success: Votre compte LoopEat est connecté !
-loopeat.oauth_redirect.warning: Vous allez être redirigé·e vers le site de LoopEat pour vous identifier ou créer votre compte
-authentication.register_benefits: Créez un compte pour commander plus rapidement. Vous pourrez aussi retrouver l'historique de vos commandes précédentes.
-guest_checkout.user_with_same_email_exists: Un compte avec le même email existe déjà. Veuillez vous connecter pour continuer, ou utilisez un autre email pour commander sans créer de compte.
+loopeat.oauth_redirect.warning: Vous allez être redirigé·e vers le site de LoopEat
+  pour vous identifier ou créer votre compte
+authentication.register_benefits: Créez un compte pour commander plus rapidement.
+  Vous pourrez aussi retrouver l'historique de vos commandes précédentes.
+guest_checkout.user_with_same_email_exists: Un compte avec le même email existe déjà.
+  Veuillez vous connecter pour continuer, ou utilisez un autre email pour commander
+  sans créer de compte.
 guest_checkout.use_another_email: Utiliser un autre email
 form.checkout_address.telephone.help: Pour vous contacter en cas de problème
-restaurant.embed.disclaimer: Vous pouvez intégrer le tunnel de commande directement sur votre site. Suivez les instructions ci-dessous pour démarrer.
+restaurant.embed.disclaimer: Vous pouvez intégrer le tunnel de commande directement
+  sur votre site. Suivez les instructions ci-dessous pour démarrer.
 restaurant.embed.step_1: 'Ajoutez le script <code>coopcycle.js</code> à votre page'
-restaurant.embed.step_2: "Ajoutez l'attribut <code>data-coopcycle-embed=\"%url%\"</code> à un élément HTML cliquable"
-restaurant.embed.greeting: C'est tout ! Désormais, quand les visiteurs cliquent sur le bouton, une fenêtre s'ouvre directement sur votre site.
+restaurant.embed.step_2: "Ajoutez l'attribut <code>data-coopcycle-embed=\"%url%\"\
+  </code> à un élément HTML cliquable"
+restaurant.embed.greeting: C'est tout ! Désormais, quand les visiteurs cliquent sur
+  le bouton, une fenêtre s'ouvre directement sur votre site.
 form.settings.guest_checkout_enabled.label: Autoriser à commander sans créer de compte
 homepage.form.title: Vous avez besoin d'une livraison ?
-homepage.form.content: "<strong>%brand_name%</strong> propose des services locaux et non polluants de livraison à vélo à la demande. Expédiez un colis ponctuellement ou de manière récurrente pour votre entreprise."
+homepage.form.content: "<strong>%brand_name%</strong> propose des services locaux\
+  \ et non polluants de livraison à vélo à la demande. Expédiez un colis ponctuellement\
+  \ ou de manière récurrente pour votre entreprise."
+restaurant.form.section.embed: Intégration
+form.attach_to_org.modal.title: Associer au magasin
+basics.kilos: Kilos
+promotion_rule.is_customer: Le client est %username%
+promotion_rule.is_restaurant: Le restaurant est %restaurant%
+food_establishment.BAR_OR_PUB: Bar ou pub
+food_establishment.BAKERY: Boulangerie
+order.export.heading.fulfillment_method: Réalisation
+basics.view_example: Voir un exemple
+form.delivery_import.store.label: Magasin
+form.time_slot.choices.error.empty: La liste de choix ne peut pas être vide
+store.FLORIST: Fleuriste
+order.list.reorder: Commander de nouveau
+search.orders: Rechercher une commande (numéro, email du client…)
+basics.configure: Configurer
+basics.updated_at: Mis à jour le %date%
+basics.description: Description
+basics.import: Importer
+activity.task.started: "@%owner% a démarré la tâche #task/%aggregate_id%\n"
+form.customize.custom_banner.help: Assurez-vous que la bannière est un motif SVG qui
+  se répète
+form.customize.custom_banner.label: Bannière personnalisée
+form.customize.custom_privacy.label: Contenu de la politique de confidentialité personnalisée
+form.customize.custom_privacy_enabled.label: Activer la politique de confidentialité
+  personnalisée
+form.customize.custom_terms.label: Contenu de la page conditions générales personnalisées
+form.customize.custom_terms_enabled.label: Activer les conditions générales personnalisées
+form.customize.custom_legal.label: Contenu de la page mentions légales personnalisées
+form.customize.custom_legal_enabled.label: Activer les mentions légales personnalisées
+form.menu_editor.name.help: C'est uniquement pour vous, pour distinguer les menus.
+  Ce n'est pas affiché au client.
+form.settings.sms_gateway_config.twilio.from.label: Numéro de téléphone Twilio
+form.settings.sms_gateway_config.twilio.auth_token.label: Auth Token Twilio
+form.settings.sms_gateway_config.twilio.sid.label: SID Twillio
+form.settings.sms_gateway_config.mailjet.api_token.label: Token d'API Mailjet
+form.settings.sms_gateway.label: Passerelle SMS
+form.settings.sms.title: SMS
+form.settings.sms_enabled.label: Activer l'envoi de SMS
+form.payment.refund_comment.help: Veuillez décrire ce qu'il s'est passé
+form.payment.refund_comment.label: Commentaires
+form.payment.refund_liable.help: Qui est responsable de l'incident ?
+form.order.refuse.refund.alert: Cette commande a été payée avec une méthode qui ne
+  supporte pas les pré-autorisations. Si vous la refusez, le paiement sera remboursé.
+  Êtes-vous sûr ?
+form.store_type.package_set.placeholder: Choisissez un ensemble de paquets
+form.store_type.time_slot.placeholder: Choisissez une tranche horaire
+order.payment.waiting_failure: Votre banque a décliné le paiement
