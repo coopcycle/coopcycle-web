@@ -56,6 +56,8 @@ class OrderTarget
         return $this;
     }
 
+    /* BEGIN Common interface between Restaurant & Hub */
+
     public function getAddress()
     {
         if (null !== $this->hub) {
@@ -91,6 +93,17 @@ class OrderTarget
 
         return $this->restaurant->isFulfillmentMethodEnabled($method);
     }
+
+    public function getFulfillmentMethod(string $method)
+    {
+        if (null !== $this->hub) {
+            return $this->hub->getFulfillmentMethod($method);
+        }
+
+        return $this->restaurant->getFulfillmentMethod($method);
+    }
+
+    /* END Common interface between Restaurant & Hub */
 
     public static function withRestaurant($restaurant)
     {

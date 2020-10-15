@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
+use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -251,18 +252,18 @@ class TimeSlot
         return $this;
     }
 
-    public static function fromLocalBusiness(LocalBusiness $business, FulfillmentMethod $fulfillmentMethod): TimeSlot
+    public static function create(ShippingOptionsInterface $options, FulfillmentMethod $fulfillmentMethod): TimeSlot
     {
         $timeSlot = new self();
         $timeSlot->setWorkingDaysOnly(false);
 
-        $minutes = $business->getOrderingDelayMinutes();
+        $minutes = $options->getOrderingDelayMinutes();
         if ($minutes > 0) {
             $hours = (int) $minutes / 60;
             $timeSlot->setPriorNotice(sprintf('%d %s', $hours, ($hours > 1 ? 'hours' : 'hour')));
         }
 
-        $shippingOptionsDays = $business->getShippingOptionsDays();
+        $shippingOptionsDays = $options->getShippingOptionsDays();
         if ($shippingOptionsDays > 0) {
             $timeSlot->setInterval(sprintf('%d days', $shippingOptionsDays));
         }

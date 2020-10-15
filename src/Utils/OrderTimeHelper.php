@@ -113,7 +113,7 @@ class OrderTimeHelper
             $ranges = [];
 
             $choiceLoader = new TimeSlotChoiceLoader(
-                TimeSlot::fromLocalBusiness($restaurant, $fulfillmentMethod),
+                TimeSlot::create($restaurant, $fulfillmentMethod),
                 $this->country
             );
             $choiceList = $choiceLoader->loadChoiceList();
@@ -166,8 +166,8 @@ class OrderTimeHelper
                 ->format(\DateTime::ATOM);
         }
 
-        $restaurant = $cart->getRestaurant();
-        $fulfillmentMethod = $restaurant->getFulfillmentMethod($cart->getFulfillmentMethod());
+        $target = $cart->getTarget();
+        $fulfillmentMethod = $target->getFulfillmentMethod($cart->getFulfillmentMethod());
 
         return [
             'behavior' => $fulfillmentMethod->getOpeningHoursBehavior(),
