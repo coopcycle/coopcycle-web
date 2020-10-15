@@ -21,6 +21,8 @@ use AppBundle\Entity\LocalBusiness\FoodEstablishmentTrait;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethodsTrait;
 use AppBundle\Entity\LocalBusiness\ImageTrait;
+use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
+use AppBundle\Entity\LocalBusiness\ShippingOptionsTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Enum\FoodEstablishment;
@@ -113,7 +115,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @AssertIsActivableRestaurant(groups="activable")
  * @Enabled
  */
-class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenCloseInterface, OrganizationAwareInterface
+class LocalBusiness extends BaseLocalBusiness implements
+    CatalogInterface,
+    OpenCloseInterface,
+    OrganizationAwareInterface,
+    ShippingOptionsInterface
 {
     use Timestampable;
     use SoftDeleteableEntity;
@@ -125,6 +131,7 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
     use OrganizationAwareTrait;
     use ClosingRulesTrait;
     use FulfillmentMethodsTrait;
+    use ShippingOptionsTrait;
 
     /**
      * @var int
@@ -176,17 +183,6 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
     protected $depositRefundOptin = true;
 
     protected $loopeatEnabled = false;
-
-    /**
-     * @var integer Additional time to delay ordering
-     */
-    protected $orderingDelayMinutes = 0;
-
-    /**
-     * @Assert\GreaterThan(1)
-     * @Assert\LessThanOrEqual(6)
-     */
-    protected $shippingOptionsDays = 2;
 
     protected $pledge;
 
@@ -435,38 +431,6 @@ class LocalBusiness extends BaseLocalBusiness implements CatalogInterface, OpenC
     public function setDeliveryPerimeterExpression(string $deliveryPerimeterExpression)
     {
         $this->deliveryPerimeterExpression = $deliveryPerimeterExpression;
-    }
-
-    /**
-     * @return int
-     */
-    public function getOrderingDelayMinutes()
-    {
-        return $this->orderingDelayMinutes;
-    }
-
-    /**
-     * @param int $orderingDelayMinutes
-     */
-    public function setOrderingDelayMinutes(int $orderingDelayMinutes)
-    {
-        $this->orderingDelayMinutes = $orderingDelayMinutes;
-    }
-
-    /**
-     * @return int
-     */
-    public function getShippingOptionsDays()
-    {
-        return $this->shippingOptionsDays;
-    }
-
-    /**
-     * @param int $shippingOptionsDays
-     */
-    public function setShippingOptionsDays(int $shippingOptionsDays)
-    {
-        $this->shippingOptionsDays = $shippingOptionsDays;
     }
 
     /**
