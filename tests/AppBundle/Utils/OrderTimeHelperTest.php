@@ -42,30 +42,6 @@ class OrderTimeHelperTest extends TestCase
         Carbon::setTestNow();
     }
 
-    private function createOrder($total, $shippedAt)
-    {
-        $restaurant = new LocalBusiness();
-        $restaurant->setState($state);
-
-        $order = $this->prophesize(OrderInterface::class);
-        $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
-        $order
-            ->getTarget()
-            ->willReturn(
-                OrderTarget::withRestaurant($restaurant)
-            );
-        $order
-            ->getItemsTotal()
-            ->willReturn($total);
-        $order
-            ->getShippedAt()
-            ->willReturn(new \DateTime($shippedAt));
-
-        return $order->reveal();
-    }
-
     public function testAsapWithSameDayShippingChoices()
     {
         Carbon::setTestNow(Carbon::parse('2020-03-31T14:25:00+02:00'));
@@ -81,6 +57,11 @@ class OrderTimeHelperTest extends TestCase
         $cart
             ->getRestaurant()
             ->willReturn($restaurant->reveal());
+        $cart
+            ->getTarget()
+            ->willReturn(
+                OrderTarget::withRestaurant($restaurant->reveal())
+            );
         $cart
             ->getFulfillmentMethod()
             ->willReturn('delivery');

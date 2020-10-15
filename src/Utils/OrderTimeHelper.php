@@ -68,19 +68,19 @@ class OrderTimeHelper
 
         if (!isset($this->choicesCache[$hash])) {
 
-            $restaurant = $cart->getRestaurant();
+            $target = $cart->getTarget();
 
             $choiceLoader = new AsapChoiceLoader(
-                $restaurant->getOpeningHours($cart->getFulfillmentMethod()),
-                $restaurant->getClosingRules(),
-                $restaurant->getShippingOptionsDays(),
-                $restaurant->getOrderingDelayMinutes()
+                $target->getOpeningHours($cart->getFulfillmentMethod()),
+                $target->getClosingRules(),
+                $target->getShippingOptionsDays(),
+                $target->getOrderingDelayMinutes()
             );
 
             $choiceList = $choiceLoader->loadChoiceList();
             $values = $this->filterChoices($cart, $choiceList->getValues());
 
-            if (empty($values) && 1 === $restaurant->getShippingOptionsDays()) {
+            if (empty($values) && 1 === $target->getShippingOptionsDays()) {
 
                 $choiceLoader->setShippingOptionsDays(2);
                 $choiceList = $choiceLoader->loadChoiceList();
@@ -100,8 +100,8 @@ class OrderTimeHelper
 
     public function getShippingTimeRanges(OrderInterface $cart)
     {
-        $restaurant = $cart->getRestaurant();
-        $fulfillmentMethod = $restaurant->getFulfillmentMethod($cart->getFulfillmentMethod());
+        $target = $cart->getTarget();
+        $fulfillmentMethod = $target->getFulfillmentMethod($cart->getFulfillmentMethod());
 
         $this->logger->info(sprintf('Cart has fulfillment method "%s" and behavior "%s"',
             $fulfillmentMethod->getType(),
@@ -113,7 +113,7 @@ class OrderTimeHelper
             $ranges = [];
 
             $choiceLoader = new TimeSlotChoiceLoader(
-                TimeSlot::create($restaurant, $fulfillmentMethod),
+                TimeSlot::create($target, $fulfillmentMethod),
                 $this->country
             );
             $choiceList = $choiceLoader->loadChoiceList();

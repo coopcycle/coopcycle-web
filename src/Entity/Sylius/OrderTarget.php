@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
+
 class OrderTarget
 {
     private $id;
@@ -101,6 +103,33 @@ class OrderTarget
         }
 
         return $this->restaurant->getFulfillmentMethod($method);
+    }
+
+    public function getOrderingDelayMinutes()
+    {
+        if (null !== $this->hub) {
+            return $this->hub->getOrderingDelayMinutes();
+        }
+
+        return $this->restaurant->getOrderingDelayMinutes();
+    }
+
+    public function getShippingOptionsDays()
+    {
+        if (null !== $this->hub) {
+            return $this->hub->getShippingOptionsDays();
+        }
+
+        return $this->restaurant->getShippingOptionsDays();
+    }
+
+    public function getClosingRules()
+    {
+        if (null !== $this->hub) {
+            return $this->hub->getClosingRules();
+        }
+
+        return $this->restaurant->getClosingRules();
     }
 
     /* END Common interface between Restaurant & Hub */
