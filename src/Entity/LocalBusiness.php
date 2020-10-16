@@ -447,7 +447,6 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setContract(Contract $contract)
     {
         $this->contract = $contract;
-        $contract->setRestaurant($this);
     }
 
     public function getOwners()
