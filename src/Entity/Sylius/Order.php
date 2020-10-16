@@ -84,7 +84,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())) or (object.getCustomer().hasUser() and object.getCustomer().getUser() == user)"
+ *       "access_control"="is_granted('view', object)"
  *     },
  *     "pay"={
  *       "method"="PUT",

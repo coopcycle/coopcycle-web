@@ -109,7 +109,7 @@ trait OrderTrait
     {
         $order = $this->get('sylius.repository.order')->find($id);
 
-        $this->accessControl($order);
+        $this->denyAccessUnlessGranted('view', $order);
 
         $receipt = $generator->create($order);
         $order->setReceipt($receipt);
@@ -127,7 +127,7 @@ trait OrderTrait
             'number'=> $orderNumber
         ]);
 
-        $this->accessControl($order);
+        $this->denyAccessUnlessGranted('view', $order);
 
         if (!$order->hasReceipt()) {
             throw $this->createNotFoundException(sprintf('Receipt for order "%s" does not exist', $orderNumber));
@@ -152,7 +152,7 @@ trait OrderTrait
             'number'=> $orderNumber
         ]);
 
-        $this->accessControl($order);
+        $this->denyAccessUnlessGranted('view', $order);
 
         $receipt = $generator->create($order);
 
