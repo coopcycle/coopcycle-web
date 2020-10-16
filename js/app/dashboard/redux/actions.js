@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import axios from 'axios'
+import { createAction } from 'redux-actions'
 import { taskComparator, withoutTasks, withLinkedTasks } from './utils'
 import { selectSelectedDate, selectTaskLists, selectAllTasks } from 'coopcycle-frontend-js/dispatch/redux'
 
@@ -57,7 +58,7 @@ function createClient(dispatch) {
                 return token
               })
               .then(token => onTokenFetched(token))
-              .catch(e => Promise.reject(e))
+              .catch(error => Promise.reject(error))
               .finally(() => {
                 isRefreshingToken = false
               })
@@ -89,8 +90,11 @@ export const SELECT_TASK = 'SELECT_TASK'
 export const SELECT_TASKS = 'SELECT_TASKS'
 export const CLEAR_SELECTED_TASKS = 'CLEAR_SELECTED_TASKS'
 export const SET_TASK_LIST_GROUP_MODE = 'SET_TASK_LIST_GROUP_MODE'
-export const ADD_TASK_LIST_REQUEST = 'ADD_TASK_LIST_REQUEST'
-export const ADD_TASK_LIST_REQUEST_SUCCESS = 'ADD_TASK_LIST_REQUEST_SUCCESS'
+
+export const CREATE_TASK_LIST_REQUEST = 'CREATE_TASK_LIST_REQUEST'
+export const CREATE_TASK_LIST_SUCCESS = 'CREATE_TASK_LIST_SUCCESS'
+export const CREATE_TASK_LIST_FAILURE = 'CREATE_TASK_LIST_FAILURE'
+
 export const SET_GEOLOCATION = 'SET_GEOLOCATION'
 export const SET_OFFLINE = 'SET_OFFLINE'
 export const OPEN_NEW_TASK_MODAL = 'OPEN_NEW_TASK_MODAL'
@@ -288,27 +292,20 @@ function setTaskListGroupMode(mode) {
   return { type: SET_TASK_LIST_GROUP_MODE, mode }
 }
 
-function addTaskListRequest(username) {
-  return { type: ADD_TASK_LIST_REQUEST, username }
-}
+const createTaskListRequest = createAction(CREATE_TASK_LIST_REQUEST)
+const createTaskListSuccess = createAction(CREATE_TASK_LIST_SUCCESS)
+const createTaskListFailure = createAction(CREATE_TASK_LIST_FAILURE)
 
-function addTaskListRequestSuccess(taskList) {
-  return { type: ADD_TASK_LIST_REQUEST_SUCCESS, taskList }
-}
-
-function addTaskList(username) {
+function createTaskList(date, username) {
 
   return function(dispatch, getState) {
-
-    let state = getState()
-    let date = selectSelectedDate(state)
 
     const url = window.Routing.generate('admin_task_list_create', {
       date: date.format('YYYY-MM-DD'),
       username
     })
 
-    dispatch(addTaskListRequest(username))
+    dispatch(createTaskListRequest())
 
     return axios.post(url, {}, {
       withCredentials: true,
@@ -316,11 +313,8 @@ function addTaskList(username) {
         'Content-Type': 'application/json'
       },
     })
-      .then(res => dispatch(addTaskListRequestSuccess(res.data)))
-      .catch(error => {
-        // eslint-disable-next-line no-console
-        console.error(error)
-      })
+      .then(res => dispatch(createTaskListSuccess(res.data)))
+      .catch(error => dispatch(createTaskListFailure(error)))
   }
 }
 
@@ -684,7 +678,7 @@ function loadTaskEvents(task) {
 
 export {
   updateTask,
-  addTaskList,
+  createTaskList,
   modifyTaskList,
   removeTasks,
   openAddUserModal,
