@@ -1157,7 +1157,7 @@ Feature: Carts
     And I send a "POST" request to "/api/carts/session" with body:
       """
       {
-        "restaurant": "/api/restaurants/5"
+        "restaurant": "/api/restaurants/4"
       }
       """
     Then the response status code should be 200
@@ -1171,7 +1171,7 @@ Feature: Carts
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
-          "restaurant":"/api/restaurants/5",
+          "restaurant":"/api/restaurants/4",
           "shippingAddress":null,
           "shippedAt":null,
           "shippingTimeRange": null,

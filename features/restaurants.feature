@@ -229,11 +229,11 @@ Feature: Manage restaurants
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
-    And the restaurant with id "3" has products:
+    And the restaurant with id "6" has products:
       | code      |
       | PIZZA     |
       | HAMBURGER |
-    And the restaurant with id "3" has menu:
+    And the restaurant with id "6" has menu:
       | section | product   |
       | Pizzas  | PIZZA     |
       | Burger  | HAMBURGER |
@@ -243,10 +243,10 @@ Feature: Manage restaurants
       | telephone  | 0033612345678     |
     And the setting "default_tax_category" has value "tva_livraison"
     And the setting "subject_to_vat" has value "1"
-    Given the user "bob" has ordered something for "2018-08-27 12:30:00" at the restaurant with id "3"
+    Given the user "bob" has ordered something for "2018-08-27 12:30:00" at the restaurant with id "6"
     And the user "bob" is authenticated
     When I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "GET" request to "/api/restaurants/3"
+    And the user "bob" sends a "GET" request to "/api/restaurants/6"
     Then the response status code should be 404
 
   Scenario: Retrieve a restaurant's menu
