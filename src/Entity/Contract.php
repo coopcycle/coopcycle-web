@@ -13,11 +13,6 @@ class Contract
     private $id;
 
     /**
-     * @var LocalBusiness
-     */
-    private $restaurant;
-
-    /**
      * @var int
      * The amount (in cents) charged by the platform.
      * @Assert\NotBlank
@@ -87,22 +82,6 @@ class Contract
      * @Assert\Type("float")
      */
     private $takeAwayFeeRate = 0.00;
-
-    /**
-     * @return LocalBusiness
-     */
-    public function getRestaurant()
-    {
-        return $this->restaurant;
-    }
-
-    /**
-     * @param LocalBusiness $restaurant
-     */
-    public function setRestaurant(LocalBusiness $restaurant)
-    {
-        $this->restaurant = $restaurant;
-    }
 
     /**
      * @return int

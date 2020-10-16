@@ -19,14 +19,6 @@
       </options>
     </field>
     <field name="takeAwayFeeRate" type="float" column="take_away_fee_rate"/>
-    <one-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="contract">
-      <cascade>
-        <cascade-persist/>
-      </cascade>
-      <join-columns>
-        <join-column name="restaurant_id" referenced-column-name="id"/>
-      </join-columns>
-    </one-to-one>
     <many-to-one field="variableDeliveryPrice" target-entity="AppBundle\Entity\Delivery\PricingRuleSet">
       <join-columns>
         <join-column name="variable_delivery_price_id" referenced-column-name="id" nullable="true"/>

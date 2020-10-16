@@ -81,11 +81,11 @@
       </options>
     </field>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
-    <one-to-one field="contract" target-entity="AppBundle\Entity\Contract" mapped-by="restaurant">
+    <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
       <cascade>
         <cascade-persist/>
       </cascade>
-    </one-to-one>
+    </many-to-one>
     <one-to-one field="pledge" target-entity="AppBundle\Entity\Restaurant\Pledge" mapped-by="restaurant">
       <cascade>
         <cascade-all/>
