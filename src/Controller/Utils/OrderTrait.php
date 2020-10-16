@@ -173,7 +173,7 @@ trait OrderTrait
     {
         $order = $this->get('sylius.repository.order')->find($id);
 
-        $this->accessControl($order->getRestaurant());
+        $this->denyAccessUnlessGranted('accept', $order);
 
         try {
             $orderManager->accept($order);
@@ -192,7 +192,7 @@ trait OrderTrait
     {
         $order = $this->get('sylius.repository.order')->find($id);
 
-        $this->accessControl($order->getRestaurant());
+        $this->denyAccessUnlessGranted('refuse', $order);
 
         $reason = $request->request->get('reason', null);
 
@@ -213,7 +213,7 @@ trait OrderTrait
     {
         $order = $this->get('sylius.repository.order')->find($id);
 
-        $this->accessControl($order->getRestaurant());
+        $this->denyAccessUnlessGranted('delay', $order);
 
         try {
             $orderManager->delay($order);
@@ -231,7 +231,7 @@ trait OrderTrait
     private function cancelOrderById($id, OrderManager $orderManager, $reason = null)
     {
         $order = $this->get('sylius.repository.order')->find($id);
-        $this->accessControl($order->getRestaurant());
+        $this->denyAccessUnlessGranted('cancel', $order);
 
         $orderManager->cancel($order, $reason);
         $this->get('sylius.manager.order')->flush();
@@ -254,7 +254,7 @@ trait OrderTrait
     public function fulfillOrderAction($id, Request $request, OrderManager $orderManager)
     {
         $order = $this->get('sylius.repository.order')->find($id);
-        $this->accessControl($order->getRestaurant());
+        $this->denyAccessUnlessGranted('fulfill', $order);
 
         try {
 
