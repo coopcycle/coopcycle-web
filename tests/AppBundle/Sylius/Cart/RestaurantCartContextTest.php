@@ -117,7 +117,7 @@ class RestaurantCartContextTest extends TestCase
         $restaurant->getName()->willReturn('Foo');
 
         $cartProphecy = $this->prophesize(OrderInterface::class);
-        $cartProphecy->getRestaurant()->willReturn($restaurant);
+        $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
         $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
 
         $expectedCart = $cartProphecy->reveal();
@@ -203,7 +203,7 @@ class RestaurantCartContextTest extends TestCase
         $restaurant->getName()->willThrow(new EntityNotFoundException());
 
         $cartProphecy = $this->prophesize(OrderInterface::class);
-        $cartProphecy->getRestaurant()->willReturn($restaurant);
+        $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
         $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
 
         $expectedCart = $cartProphecy->reveal();
