@@ -1,18 +1,30 @@
 import React from 'react'
+import axios from 'axios'
 
 class CartTop extends React.Component
 {
   constructor(props) {
     super(props)
     this.state = {
-      total: props.total,
-      itemsTotal: props.itemsTotal,
-      restaurant: props.restaurant
+      total: 0,
+      itemsTotal: 0,
+      restaurant: null,
     }
     this.anchorRef = React.createRef()
   }
 
   componentDidMount() {
+
+    axios
+      .get(this.props.url)
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState(response.data)
+        }
+      })
+      // eslint-disable-next-line
+      .catch((e) => { /* do nothing */ })
+
     // When the component is mounted, we add a listener on the DOM element
     // The main cart (on the restaurant page) will trigger events on the DOM element
     this.anchorRef.current.addEventListener('cart:change', e => this._onCartChange(e.detail))

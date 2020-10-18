@@ -63,7 +63,7 @@ function notifyListeners(cart) {
   listeners.forEach(listener => listener.dispatchEvent(event))
 }
 
-function handleAjaxResponse(res, dispatch) {
+function handleAjaxResponse(res, dispatch, broadcast = true) {
 
   const hasErrors = res.errors && _.size(res.errors) > 0
 
@@ -75,7 +75,9 @@ function handleAjaxResponse(res, dispatch) {
 
   $('#menu').LoadingOverlay('hide')
 
-  notifyListeners(res.cart)
+  if (broadcast) {
+    notifyListeners(res.cart)
+  }
 }
 
 const QUEUE_CART_ITEMS = 'QUEUE_CART_ITEMS'
@@ -226,8 +228,8 @@ export function sync() {
 
     if (cart.shippingAddress && !cart.shippingAddress.streetAddress) {
       postForm()
-        .then(res => handleAjaxResponse(res, dispatch))
-        .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+        .then(res => handleAjaxResponse(res, dispatch, false))
+        .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
     } else {
       dispatch(geocodeAndSync())
     }
@@ -243,8 +245,8 @@ export function changeDate() {
     dispatch(fetchRequest())
 
     postFormWithTime()
-      .then(res => handleAjaxResponse(res, dispatch))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+      .then(res => handleAjaxResponse(res, dispatch, false))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
   }
 }
 
@@ -289,8 +291,8 @@ export function changeAddress(address) {
           window.Routing.generate('restaurant_cart_address', { id: restaurant.id })
 
         $.post(url, { address: address['@id'] })
-          .then(res => handleAjaxResponse(res, dispatch))
-          .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+          .then(res => handleAjaxResponse(res, dispatch, false))
+          .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
 
       } else {
 
@@ -300,8 +302,8 @@ export function changeAddress(address) {
         dispatch(mapAddressFields(address))
 
         postForm()
-          .then(res => handleAjaxResponse(res, dispatch))
-          .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+          .then(res => handleAjaxResponse(res, dispatch, false))
+          .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
       }
 
     } else {
@@ -337,8 +339,8 @@ export function clearDate() {
     dispatch(fetchRequest())
 
     $.post(url)
-      .then(res => handleAjaxResponse(res, dispatch))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+      .then(res => handleAjaxResponse(res, dispatch, false))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
 
   }
 }

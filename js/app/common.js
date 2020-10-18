@@ -62,15 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const cartTopElement = document.querySelector('#cart-top')
   if (cartTopElement) {
-
-    const { restaurant, itemsTotal, total } = cartTopElement.dataset
-
-    render(
-      <CartTop
-        restaurant={ restaurant ? JSON.parse(restaurant) : null }
-        total={ total }
-        itemsTotal={ itemsTotal }
-      />, cartTopElement)
+    render(<CartTop url={ cartTopElement.dataset.url } />, cartTopElement)
   }
 
   const inputs = document.querySelectorAll('[data-widget="address-input"]')

@@ -13,8 +13,11 @@ use AppBundle\Enum\Store;
 use AppBundle\Form\DeliveryEmbedType;
 use Hashids\Hashids;
 use MyCLabs\Enum\Enum;
+use Sylius\Component\Order\Context\CartContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -106,5 +109,26 @@ class IndexController extends AbstractController
             'delivery_form' => $form ? $form->createView() : null,
             'hashid' => $deliveryForm ? $hashids->encode($deliveryForm->getId()) : '',
         ));
+    }
+
+    /**
+     * @Route("/cart.json", name="cart_json")
+     */
+    public function cartAsJsonAction(CartContextInterface $cartContext, Request $request)
+    {
+        $cart = $cartContext->getCart();
+
+        $data = [
+            'itemsTotal' => $cart->getItemsTotal(),
+            'total' => $cart->getTotal(),
+        ];
+
+        if (null !== $cart->getRestaurant()) {
+            $data['restaurant'] = [
+                'id' => $cart->getRestaurant()->getId(),
+            ];
+        }
+
+        return new JsonResponse($data);
     }
 }
