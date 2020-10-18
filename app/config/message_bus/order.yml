@@ -151,7 +151,6 @@ services:
       - '@fos_user.user_manager'
       - '@messenger.default_bus'
       - '@api_platform.iri_converter'
-      - '@serializer'
       - '@translator'
     tags:
         - name: event_subscriber
