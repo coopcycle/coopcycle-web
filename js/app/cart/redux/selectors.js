@@ -50,3 +50,14 @@ export const selectItemsTotal = createSelector(
     return itemsTotal
   }
 )
+
+export const selectVariableCustomerAmountEnabled = createSelector(
+  state => state.cart,
+  (cart) => {
+    if (cart.restaurant) {
+      return cart.restaurant.variableCustomerAmountEnabled
+    }
+
+    return false
+  }
+)
