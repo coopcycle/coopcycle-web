@@ -20,10 +20,12 @@
   <nav class="restaurant-banner">
     <div class="alert alert-warning text-center">
       {% if disabled_warning %}
-      <p class="mb-0">{{ 'restaurant.disabledWarning'|trans({ '%restaurantEditUrl%': restaurant_edit_url}) | raw }}</p>
+      <p class="mb-0">{{ 'restaurant.disabledWarning'|trans({ '%restaurantEditUrl%': restaurant_edit_url }) | raw }}</p>
       {% endif %}
       {% if preorder_warning %}
-      <p class="mb-0">{{ 'restaurant.closedWarningWithDelay'|trans({ '%delay%': delay }) }}</p>
+      <p class="mb-0">{{ 'restaurant.closedWarningWithDelay'|trans({
+        '%delay%': restaurant|restaurant_delay_for_humans(app.request.locale)
+      }) }}</p>
       {% endif %}
     </div>
   </nav>

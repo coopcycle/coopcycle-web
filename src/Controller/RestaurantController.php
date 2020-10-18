@@ -26,8 +26,6 @@ use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Order as OrderConstraint;
-use Carbon\Carbon;
-use Carbon\CarbonInterface;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Coordinate\Coordinate;
@@ -394,25 +392,12 @@ class RestaurantController extends AbstractController
                 }
             }
         }
+
         $this->customizeSeoPage($restaurant, $request);
-
-        $delay = null;
-
-        Carbon::setLocale($request->attributes->get('_locale'));
-
-        $now = Carbon::now();
-
-        $future = clone $now;
-        $future->addMinutes($restaurant->getOrderingDelayMinutes());
-
-        if ($restaurant->getOrderingDelayMinutes() > 0) {
-            $delay = $now->diffForHumans($future, ['syntax' => CarbonInterface::DIFF_ABSOLUTE]);
-        }
 
         return $this->render('restaurant/index.html.twig', array(
             'restaurant' => $restaurant,
             'times' => $this->orderTimeHelper->getTimeInfo($cart),
-            'delay' => $delay,
             'cart_form' => $cartForm->createView(),
             'addresses_normalized' => $this->getUserAddresses(),
         ));

@@ -5,6 +5,8 @@ namespace AppBundle\Twig;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -46,5 +48,21 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
             'item_operation_name' => 'get',
             'groups' => ['restaurant_seo', 'address']
         ]);
+    }
+
+    public function delayForHumans(LocalBusiness $restaurant, $locale): string
+    {
+        if ($restaurant->getOrderingDelayMinutes() > 0) {
+
+            Carbon::setLocale($locale);
+
+            $now = Carbon::now();
+            $future = clone $now;
+            $future->addMinutes($restaurant->getOrderingDelayMinutes());
+
+            return $now->diffForHumans($future, ['syntax' => CarbonInterface::DIFF_ABSOLUTE]);
+        }
+
+        return '';
     }
 }
