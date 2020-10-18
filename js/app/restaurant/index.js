@@ -269,15 +269,6 @@ window.initMap = function() {
   const times = JSON.parse(restaurantDataElement.dataset.times)
   const addresses = JSON.parse(addressesDataElement.dataset.addresses)
 
-  document.querySelectorAll('[data-opening-hours]').forEach(el => {
-    // FIXME Check parse errors
-    new OpeningHoursParser(el, {
-      openingHours: JSON.parse(el.dataset.openingHours),
-      locale: $('html').attr('lang'),
-      behavior: el.dataset.openingHoursBehavior,
-    })
-  })
-
   let cart = JSON.parse(restaurantDataElement.dataset.cart)
 
   if (!cart.shippingAddress) {
@@ -342,6 +333,15 @@ window.initMap = function() {
   )
 
 }
+
+document.querySelectorAll('[data-opening-hours]').forEach(el => {
+  // FIXME Check parse errors
+  new OpeningHoursParser(el, {
+    openingHours: JSON.parse(el.dataset.openingHours),
+    locale: $('html').attr('lang'),
+    behavior: el.dataset.openingHoursBehavior,
+  })
+})
 
 $('#menu').LoadingOverlay('show', {
   image: false,

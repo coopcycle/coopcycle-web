@@ -262,12 +262,7 @@ Iterating through all products, options… is a lot of database requests
 {% endif %}
 {% endcache %}
 
-{% set restaurant_json = {
-  id: restaurant.id,
-  openingHours: restaurant.openingHours,
-  openingHoursBehavior: restaurant.openingHoursBehavior
-} %}
-
+{% set restaurant_json = { id: restaurant.id } %}
 {% set cart = cart_provider.getCart() %}
 {% set cart_json = cart_provider.normalize(cart) %}
 
