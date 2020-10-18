@@ -23,12 +23,10 @@ use AppBundle\Service\SettingsManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Liip\ImagineBundle\Service\FilterService;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 use Ramsey\Uuid\Uuid;
-use Sonata\SeoBundle\Seo\SeoPageInterface;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository as SyliusEntityRepository;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
@@ -47,7 +45,6 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class FindOneByCodeRepository extends SyliusEntityRepository
 {
@@ -69,7 +66,6 @@ class RestaurantControllerTest extends WebTestCase
         self::bootKernel(['environment' => 'test']);
 
         $this->objectManager = $this->prophesize(EntityManagerInterface::class);
-        $this->seoPage = $this->prophesize(SeoPageInterface::class);
         $this->uploaderHelper = $this->prophesize(UploaderHelper::class);
         $this->validator = $this->prophesize(ValidatorInterface::class);
         $this->productRepository = $this->prophesize(FindOneByCodeRepository::class);
@@ -80,7 +76,6 @@ class RestaurantControllerTest extends WebTestCase
         $this->orderItemQuantityModifier = $this->prophesize(OrderItemQuantityModifierInterface::class);
         $this->orderModifier = $this->prophesize(OrderModifierInterface::class);
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
-        $this->imagineFilter = $this->prophesize(FilterService::class);
 
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
@@ -113,8 +108,6 @@ class RestaurantControllerTest extends WebTestCase
 
         $this->controller = new RestaurantController(
             $this->objectManager->reveal(),
-            $this->seoPage->reveal(),
-            $this->uploaderHelper->reveal(),
             $this->validator->reveal(),
             $this->productRepository->reveal(),
             $this->orderItemRepository->reveal(),
@@ -124,8 +117,7 @@ class RestaurantControllerTest extends WebTestCase
             $this->orderItemQuantityModifier->reveal(),
             $this->orderModifier->reveal(),
             $this->orderTimeHelper->reveal(),
-            $this->serializer,
-            $this->imagineFilter->reveal()
+            $this->serializer
         );
 
         $this->controller->setContainer($container->reveal());

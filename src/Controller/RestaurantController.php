@@ -30,9 +30,7 @@ use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
-use Liip\ImagineBundle\Service\FilterService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sonata\SeoBundle\Seo\SeoPageInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Product\Model\ProductInterface;
@@ -49,7 +47,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
@@ -62,27 +59,25 @@ class RestaurantController extends AbstractController
     const ITEMS_PER_PAGE = 21;
 
     private $orderManager;
-    private $seoPage;
-    private $uploaderHelper;
     private $serializer;
+
     /**
      * @var OrderTimeHelper
      */
     private OrderTimeHelper $orderTimeHelper;
-    /**
-     * @var FilterService
-     */
-    private FilterService $imagineFilter;
+
     /**
      * @var ValidatorInterface
      */
     private ValidatorInterface $validator;
+
     /**
      * @var RepositoryInterface
      */
     private RepositoryInterface $productRepository;
     private $productVariantResolver;
     private $orderItemFactory;
+
     /**
      * @var RepositoryInterface
      */
@@ -92,8 +87,6 @@ class RestaurantController extends AbstractController
 
     public function __construct(
         EntityManagerInterface $orderManager,
-        SeoPageInterface $seoPage,
-        UploaderHelper $uploaderHelper,
         ValidatorInterface $validator,
         RepositoryInterface $productRepository,
         RepositoryInterface $orderItemRepository,
@@ -103,12 +96,9 @@ class RestaurantController extends AbstractController
         $orderItemQuantityModifier,
         $orderModifier,
         OrderTimeHelper $orderTimeHelper,
-        SerializerInterface $serializer,
-        FilterService $imagineFilter)
+        SerializerInterface $serializer)
     {
         $this->orderManager = $orderManager;
-        $this->seoPage = $seoPage;
-        $this->uploaderHelper = $uploaderHelper;
         $this->validator = $validator;
         $this->productRepository = $productRepository;
         $this->orderItemRepository = $orderItemRepository;
@@ -119,7 +109,6 @@ class RestaurantController extends AbstractController
         $this->orderModifier = $orderModifier;
         $this->orderTimeHelper = $orderTimeHelper;
         $this->serializer = $serializer;
-        $this->imagineFilter = $imagineFilter;
     }
 
     private function jsonResponse(OrderInterface $cart, array $errors)
@@ -136,38 +125,6 @@ class RestaurantController extends AbstractController
             'times' => $this->orderTimeHelper->getTimeInfo($cart),
             'errors' => $errors,
         ]);
-    }
-
-    private function customizeSeoPage(LocalBusiness $restaurant, Request $request)
-    {
-        $this->seoPage->addTitle($restaurant->getName());
-
-        $description = $restaurant->getDescription();
-        if (!empty($description)) {
-            $this->seoPage->addMeta('name', 'description', $restaurant->getDescription());
-        }
-
-        $this->seoPage
-            ->addMeta('property', 'og:title', $this->seoPage->getTitle())
-            ->addMeta('property', 'og:description', sprintf('%s, %s %s',
-                $restaurant->getAddress()->getStreetAddress(),
-                $restaurant->getAddress()->getPostalCode(),
-                $restaurant->getAddress()->getAddressLocality()
-            ))
-            // https://developers.facebook.com/docs/reference/opengraph/object-type/restaurant.restaurant/
-            ->addMeta('property', 'og:type', 'restaurant.restaurant')
-            ->addMeta('property', 'restaurant:contact_info:street_address', $restaurant->getAddress()->getStreetAddress())
-            ->addMeta('property', 'restaurant:contact_info:locality', $restaurant->getAddress()->getAddressLocality())
-            ->addMeta('property', 'restaurant:contact_info:website', $restaurant->getWebsite())
-            ->addMeta('property', 'place:location:latitude', (string) $restaurant->getAddress()->getGeo()->getLatitude())
-            ->addMeta('property', 'place:location:longitude', (string) $restaurant->getAddress()->getGeo()->getLongitude())
-            ;
-
-        $imagePath = $this->uploaderHelper->asset($restaurant, 'imageFile');
-        if (null !== $imagePath) {
-            $this->seoPage->addMeta('property', 'og:image',
-                $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail'));
-        }
     }
 
     private function saveSession(Request $request, OrderInterface $cart)
@@ -392,8 +349,6 @@ class RestaurantController extends AbstractController
                 }
             }
         }
-
-        $this->customizeSeoPage($restaurant, $request);
 
         return $this->render('restaurant/index.html.twig', array(
             'restaurant' => $restaurant,

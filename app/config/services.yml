@@ -129,7 +129,6 @@ services:
   AppBundle\Controller\RestaurantController:
     arguments:
       $orderManager: '@sylius.manager.order'
-      $seoPage: '@sonata.seo.page'
       $validator: '@validator'
       $productRepository: '@sylius.repository.product'
       $orderItemRepository: '@sylius.repository.order_item'
@@ -159,7 +158,8 @@ services:
       - { name: kernel.event_subscriber }
 
   AppBundle\EventListener\SeoListener:
-    arguments: ['@translator', '@coopcycle.settings_manager', '@sonata.seo.page.default']
+    arguments:
+      $seoPage: '@sonata.seo.page.default'
     tags:
       - { name: kernel.event_listener, event: kernel.request }
 
