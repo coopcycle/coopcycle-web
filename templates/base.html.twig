@@ -78,14 +78,6 @@
       {% endif %}
     {% endif %}
 
-    {% if coopcycle_setting('foodtech_enabled') %}
-    {% set cart = cart_provider.getCart() %}
-    <div id="js-cart-data"
-      data-restaurant="{{ cart.restaurant ? cart_provider.normalize(cart).restaurant|json_encode|e('html_attr') }}"
-      data-items-total="{{ cart.itemsTotal|e('html_attr') }}"
-      data-total="{{ cart.total|e('html_attr') }}"></div>
-    {% endif %}
-
     <div id="cpccl_settings"
       data-latlng="{{ coopcycle_setting('latlng')|json_encode|e('html_attr') }}"></div>
 

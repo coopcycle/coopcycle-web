@@ -56,16 +56,14 @@ window._paq = [];
 /* Top cart */
 document.addEventListener('DOMContentLoaded', function() {
 
-  const cartTopElement = document.querySelector('#cart-top')
-  const cartDataElement = document.querySelector('#js-cart-data')
-
   // Set global timezone used in Moment.js
   const timezone = document.querySelector('body').dataset.timezone
   setTimezone(timezone)
 
-  if (cartTopElement && cartDataElement) {
+  const cartTopElement = document.querySelector('#cart-top')
+  if (cartTopElement) {
 
-    const { restaurant, itemsTotal, total } = cartDataElement.dataset
+    const { restaurant, itemsTotal, total } = cartTopElement.dataset
 
     render(
       <CartTop

@@ -65,14 +65,19 @@
           </ul>
         </li>
       </ul>
-
       <ul class="nav navbar-nav navbar-right">
-        <li id="cart-top">
+        {% if coopcycle_setting('foodtech_enabled') %}
+        {% set cart = cart_provider.getCart() %}
+        <li id="cart-top"
+          data-restaurant="{{ cart.restaurant ? cart_provider.normalize(cart).restaurant|json_encode|e('html_attr') }}"
+          data-items-total="{{ cart.itemsTotal|e('html_attr') }}"
+          data-total="{{ cart.total|e('html_attr') }}">
           <a href="#">
             <i class="fa fa-shopping-basket mr-2" aria-hidden="true"></i>
             <span>{{ 0|price_format }}</span>
           </a>
         </li>
+        {% endif %}
         {% if app.user %}
           {% include '_partials/user/account_dropdown.html.twig' %}
         {% else %}
