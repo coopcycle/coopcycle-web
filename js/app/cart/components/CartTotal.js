@@ -4,7 +4,6 @@ import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
 import {
-  selectIsSameRestaurant,
   selectShowPricesTaxExcluded,
   selectItems,
   selectItemsTotal,
@@ -134,17 +133,11 @@ class CartTotal extends React.Component {
 
 function mapStateToProps (state) {
 
-  const { cart } = state
-  const isSameRestaurant = selectIsSameRestaurant(state)
-
-  let total       = isSameRestaurant ? cart.total : 0
-  let adjustments = isSameRestaurant ? cart.adjustments : {}
-
   return {
     items: selectItems(state),
     itemsTotal: selectItemsTotal(state),
-    total,
-    adjustments,
+    total: state.cart.total,
+    adjustments: state.cart.adjustments,
     variableCustomerAmountEnabled: selectVariableCustomerAmountEnabled(state),
     showPricesTaxExcluded: selectShowPricesTaxExcluded(state),
   }

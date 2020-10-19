@@ -365,7 +365,23 @@ class RestaurantController extends AbstractController
         CartContextInterface $cartContext,
         IriConverterInterface $iriConverter)
     {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)->find($id);
+
+        if (!$restaurant) {
+            throw new NotFoundHttpException();
+        }
+
         $cart = $cartContext->getCart();
+
+        $isAnotherRestaurant = $this->isAnotherRestaurant($cart, $restaurant);
+
+        if ($isAnotherRestaurant) {
+            $cart->clearItems();
+            $cart->setShippingTimeRange(null);
+            $cart->setRestaurant($restaurant);
+        }
+
         $user = $this->getUser();
         if ($request->request->has('address') && $user && count($user->getAddresses()) > 0) {
 
