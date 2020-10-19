@@ -5,7 +5,7 @@ namespace Tests\AppBundle\Utils;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant\PreparationTimeRule;
-use AppBundle\Entity\Sylius\OrderTarget;
+use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\PreparationTimeCalculator;
 use PHPUnit\Framework\TestCase;
@@ -43,9 +43,9 @@ class PreparationTimeCalculatorTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getTarget()
+            ->getVendor()
             ->willReturn(
-                OrderTarget::withRestaurant($restaurant)
+                Vendor::withRestaurant($restaurant)
             );
 
         $order
@@ -77,14 +77,14 @@ class PreparationTimeCalculatorTest extends TestCase
             $hub->addRestaurant($restaurant);
         }
 
-        $target = new OrderTarget();
-        $target->setHub($hub);
+        $vendor = new Vendor();
+        $vendor->setHub($hub);
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getTarget()
+            ->getVendor()
             ->willReturn(
-                $target
+                $vendor
             );
 
         $order

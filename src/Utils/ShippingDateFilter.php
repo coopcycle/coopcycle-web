@@ -52,12 +52,12 @@ class ShippingDateFilter
             return false;
         }
 
-        $target = $order->getTarget();
+        $vendor = $order->getVendor();
         $fulfillmentMethod = $order->getFulfillmentMethod();
 
-        $openingHours = $target->getOpeningHours($fulfillmentMethod);
+        $openingHours = $vendor->getOpeningHours($fulfillmentMethod);
 
-        if ($target->hasClosingRuleFor($preparation)) {
+        if ($vendor->hasClosingRuleFor($preparation)) {
 
             $this->logger->info(sprintf('ShippingDateFilter::accept() - there is a closing rule for "%s"',
                 $preparation->format(\DateTime::ATOM))

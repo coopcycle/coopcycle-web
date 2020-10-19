@@ -68,19 +68,19 @@ class OrderTimeHelper
 
         if (!isset($this->choicesCache[$hash])) {
 
-            $target = $cart->getTarget();
+            $vendor = $cart->getVendor();
 
             $choiceLoader = new AsapChoiceLoader(
-                $target->getOpeningHours($cart->getFulfillmentMethod()),
-                $target->getClosingRules(),
-                $target->getShippingOptionsDays(),
-                $target->getOrderingDelayMinutes()
+                $vendor->getOpeningHours($cart->getFulfillmentMethod()),
+                $vendor->getClosingRules(),
+                $vendor->getShippingOptionsDays(),
+                $vendor->getOrderingDelayMinutes()
             );
 
             $choiceList = $choiceLoader->loadChoiceList();
             $values = $this->filterChoices($cart, $choiceList->getValues());
 
-            if (empty($values) && 1 === $target->getShippingOptionsDays()) {
+            if (empty($values) && 1 === $vendor->getShippingOptionsDays()) {
 
                 $choiceLoader->setShippingOptionsDays(2);
                 $choiceList = $choiceLoader->loadChoiceList();
@@ -100,8 +100,8 @@ class OrderTimeHelper
 
     public function getShippingTimeRanges(OrderInterface $cart)
     {
-        $target = $cart->getTarget();
-        $fulfillmentMethod = $target->getFulfillmentMethod($cart->getFulfillmentMethod());
+        $vendor = $cart->getVendor();
+        $fulfillmentMethod = $vendor->getFulfillmentMethod($cart->getFulfillmentMethod());
 
         $this->logger->info(sprintf('Cart has fulfillment method "%s" and behavior "%s"',
             $fulfillmentMethod->getType(),
@@ -113,7 +113,7 @@ class OrderTimeHelper
             $ranges = [];
 
             $choiceLoader = new TimeSlotChoiceLoader(
-                TimeSlot::create($target, $fulfillmentMethod),
+                TimeSlot::create($vendor, $fulfillmentMethod),
                 $this->country
             );
             $choiceList = $choiceLoader->loadChoiceList();
@@ -166,8 +166,8 @@ class OrderTimeHelper
                 ->format(\DateTime::ATOM);
         }
 
-        $target = $cart->getTarget();
-        $fulfillmentMethod = $target->getFulfillmentMethod($cart->getFulfillmentMethod());
+        $vendor = $cart->getVendor();
+        $fulfillmentMethod = $vendor->getFulfillmentMethod($cart->getFulfillmentMethod());
 
         return [
             'behavior' => $fulfillmentMethod->getOpeningHoursBehavior(),

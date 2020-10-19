@@ -4,7 +4,7 @@ namespace Tests\AppBundle\Utils;
 
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\Sylius\OrderTarget;
+use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\PreparationTimeCalculator;
@@ -58,9 +58,9 @@ class OrderTimeHelperTest extends TestCase
             ->getRestaurant()
             ->willReturn($restaurant->reveal());
         $cart
-            ->getTarget()
+            ->getVendor()
             ->willReturn(
-                OrderTarget::withRestaurant($restaurant->reveal())
+                Vendor::withRestaurant($restaurant->reveal())
             );
         $cart
             ->getFulfillmentMethod()

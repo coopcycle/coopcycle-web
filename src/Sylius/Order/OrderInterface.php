@@ -7,7 +7,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\OrderEvent;
-use AppBundle\Entity\Sylius\OrderTarget;
+use AppBundle\Entity\Vendor;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Customer\Model\CustomerAwareInterface;
@@ -161,7 +161,7 @@ interface OrderInterface extends
     public function getUser(): ?UserInterface;
 
     /**
-     * @return OrderTarget|null
+     * @return Vendor|null
      */
-    public function getTarget(): ?OrderTarget;
+    public function getVendor(): ?Vendor;
 }

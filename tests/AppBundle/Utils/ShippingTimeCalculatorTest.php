@@ -52,7 +52,7 @@ class ShippingTimeCalculatorTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setAddress($restaurantAddress);
 
-        $target = OrderTarget::withRestaurant($restaurant);
+        $vendor = Vendor::withRestaurant($restaurant);
 
         $this->routing
             ->getDuration(
@@ -63,8 +63,8 @@ class ShippingTimeCalculatorTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getTarget()
-            ->willReturn($target);
+            ->getVendor()
+            ->willReturn($vendor);
         $order
             ->getShippingAddress()
             ->willReturn($shippingAddress);
@@ -82,12 +82,12 @@ class ShippingTimeCalculatorTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setAddress($restaurantAddress);
 
-        $target = OrderTarget::withRestaurant($restaurant);
+        $vendor = Vendor::withRestaurant($restaurant);
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getTarget()
-            ->willReturn($target);
+            ->getVendor()
+            ->willReturn($vendor);
         $order
             ->getShippingAddress()
             ->willReturn(null);

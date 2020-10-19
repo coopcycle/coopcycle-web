@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Entity\Sylius;
+namespace AppBundle\Entity;
 
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 
-class OrderTarget
+class Vendor
 {
     private $id;
     private $restaurant;
@@ -136,10 +136,10 @@ class OrderTarget
 
     public static function withRestaurant($restaurant)
     {
-        $target = new self();
-        $target->setRestaurant($restaurant);
+        $vendor = new self();
+        $vendor->setRestaurant($restaurant);
 
-        return $target;
+        return $vendor;
     }
 
     public function toArray()

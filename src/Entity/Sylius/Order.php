@@ -23,6 +23,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -956,13 +957,13 @@ class Order extends BaseOrder implements OrderInterface
         return $this->customer->getUser();
     }
 
-    public function getTarget(): ?OrderTarget
+    public function getVendor(): ?Vendor
     {
         if (null !== $this->restaurant) {
-            $target = new OrderTarget();
-            $target->setRestaurant($this->restaurant);
+            $vendor = new Vendor();
+            $vendor->setRestaurant($this->restaurant);
 
-            return $target;
+            return $vendor;
         }
 
         return null;

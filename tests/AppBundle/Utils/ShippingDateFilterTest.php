@@ -4,7 +4,7 @@ namespace Tests\AppBundle\Utils;
 
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\Sylius\OrderTarget;
+use AppBundle\Entity\Vendor;
 use AppBundle\Utils\PreparationTimeResolver;
 use AppBundle\Utils\ShippingDateFilter;
 use PHPUnit\Framework\TestCase;
@@ -101,9 +101,9 @@ class ShippingDateFilterTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getTarget()
+            ->getVendor()
             ->willReturn(
-                OrderTarget::withRestaurant($this->restaurant->reveal())
+                Vendor::withRestaurant($this->restaurant->reveal())
             );
         $order
             ->getFulfillmentMethod()
