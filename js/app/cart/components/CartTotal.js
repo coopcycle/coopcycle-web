@@ -3,7 +3,12 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
-import { selectIsSameRestaurant, selectShowPricesTaxExcluded, selectItemsTotal, selectVariableCustomerAmountEnabled } from '../redux/selectors'
+import {
+  selectIsSameRestaurant,
+  selectShowPricesTaxExcluded,
+  selectItems,
+  selectItemsTotal,
+  selectVariableCustomerAmountEnabled } from '../redux/selectors'
 
 const Adjustment = ({ adjustment, tooltip }) => (
   <div>
@@ -132,12 +137,11 @@ function mapStateToProps (state) {
   const { cart } = state
   const isSameRestaurant = selectIsSameRestaurant(state)
 
-  let items       = isSameRestaurant ? cart.items : []
   let total       = isSameRestaurant ? cart.total : 0
   let adjustments = isSameRestaurant ? cart.adjustments : {}
 
   return {
-    items,
+    items: selectItems(state),
     itemsTotal: selectItemsTotal(state),
     total,
     adjustments,
