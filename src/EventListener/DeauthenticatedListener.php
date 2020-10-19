@@ -18,7 +18,6 @@ class DeauthenticatedListener
 
     public function logoutOnChange(DeauthenticatedEvent $event)
     {
-        $this->session->remove('restaurantId');
         $this->session->remove($this->sessionKeyName);
     }
 }

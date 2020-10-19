@@ -243,9 +243,6 @@ class RestaurantController extends AbstractController
             ]);
         }
 
-        // This will be used by RestaurantCartContext
-        $request->getSession()->set('restaurantId', $id);
-
         $cart = $cartContext->getCart();
 
         $isAnotherRestaurant = $this->isAnotherRestaurant($cart, $restaurant);

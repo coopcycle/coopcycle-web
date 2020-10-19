@@ -7,6 +7,7 @@ use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Sylius\Cart\RestaurantCartContext;
+use AppBundle\Sylius\Cart\RestaurantResolver;
 use Doctrine\ORM\EntityNotFoundException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -35,6 +36,7 @@ class RestaurantCartContextTest extends TestCase
         $this->orderFactory = $this->prophesize(OrderFactory::class);
         $this->restaurantRepository = $this->prophesize(LocalBusinessRepository::class);
         $this->channelContext = $this->prophesize(ChannelContextInterface::class);
+        $this->restaurantResolver = $this->prophesize(RestaurantResolver::class);
 
         $this->webChannel = $this->prophesize(ChannelInterface::class);
         $this->webChannel->getCode()->willReturn('web');
@@ -47,7 +49,8 @@ class RestaurantCartContextTest extends TestCase
             $this->orderFactory->reveal(),
             $this->restaurantRepository->reveal(),
             $this->sessionKeyName,
-            $this->channelContext->reveal()
+            $this->channelContext->reveal(),
+            $this->restaurantResolver->reveal()
         );
     }
 
@@ -55,8 +58,12 @@ class RestaurantCartContextTest extends TestCase
     {
         $this->expectException(CartNotFoundException::class);
 
+        $this->restaurantResolver
+            ->resolve()
+            ->willReturn(null);
+
         $this->session
-            ->has('restaurantId')
+            ->has($this->sessionKeyName)
             ->willReturn(false);
 
         $cart = $this->context->getCart();
@@ -64,12 +71,8 @@ class RestaurantCartContextTest extends TestCase
 
     public function testNothingStoredInSession()
     {
-        $this->session
-            ->has('restaurantId')
-            ->willReturn(true);
-
-        $this->session
-            ->get('restaurantId')
+        $this->restaurantResolver
+            ->resolve()
             ->willReturn(1);
 
         $this->session
@@ -97,12 +100,8 @@ class RestaurantCartContextTest extends TestCase
 
     public function testExistingCartStoredInSession()
     {
-        $this->session
-            ->has('restaurantId')
-            ->willReturn(true);
-
-        $this->session
-            ->get('restaurantId')
+        $this->restaurantResolver
+            ->resolve()
             ->willReturn(1);
 
         $this->session
@@ -134,12 +133,8 @@ class RestaurantCartContextTest extends TestCase
 
     public function testNonExistingCartStoredInSession()
     {
-        $this->session
-            ->has('restaurantId')
-            ->willReturn(true);
-
-        $this->session
-            ->get('restaurantId')
+        $this->restaurantResolver
+            ->resolve()
             ->willReturn(1);
 
         $this->session
@@ -183,12 +178,8 @@ class RestaurantCartContextTest extends TestCase
     {
         $this->expectException(CartNotFoundException::class);
 
-        $this->session
-            ->has('restaurantId')
-            ->willReturn(true);
-
-        $this->session
-            ->get('restaurantId')
+        $this->restaurantResolver
+            ->resolve()
             ->willReturn(1);
 
         $this->session
@@ -213,7 +204,6 @@ class RestaurantCartContextTest extends TestCase
             ->willReturn($expectedCart);
 
         $this->session->remove($this->sessionKeyName)->shouldBeCalled();
-        $this->session->remove('restaurantId')->shouldBeCalled();
 
         $cart = $this->context->getCart();
     }

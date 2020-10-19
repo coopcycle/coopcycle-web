@@ -39,7 +39,8 @@ final class RestaurantCartContext implements CartContextInterface
         FactoryInterface $orderFactory,
         LocalBusinessRepository $restaurantRepository,
         string $sessionKeyName,
-        ChannelContextInterface $channelContext)
+        ChannelContextInterface $channelContext,
+        RestaurantResolver $resolver)
     {
         $this->session = $session;
         $this->orderRepository = $orderRepository;
@@ -47,6 +48,7 @@ final class RestaurantCartContext implements CartContextInterface
         $this->restaurantRepository = $restaurantRepository;
         $this->sessionKeyName = $sessionKeyName;
         $this->channelContext = $channelContext;
+        $this->resolver = $resolver;
     }
 
     /**
@@ -54,9 +56,12 @@ final class RestaurantCartContext implements CartContextInterface
      */
     public function getCart(): OrderInterface
     {
-        if (!$this->session->has('restaurantId')) {
+        $restaurantId = $this->resolver->resolve();
 
-            throw new CartNotFoundException('There is no restaurant in session');
+        if (null === $restaurantId && !$this->session->has($this->sessionKeyName)) {
+
+            throw new CartNotFoundException('No restaurant could be resolved from request, '
+                . 'and no cart was found in session');
         }
 
         $cart = null;
@@ -80,10 +85,9 @@ final class RestaurantCartContext implements CartContextInterface
 
         if (null === $cart) {
 
-            $restaurant = $this->restaurantRepository->find($this->session->get('restaurantId'));
+            $restaurant = $this->restaurantRepository->find($restaurantId);
 
             if (null === $restaurant) {
-                $this->session->remove('restaurantId');
 
                 throw new CartNotFoundException('Restaurant does not exist');
             }

@@ -378,7 +378,6 @@ class OrderController extends AbstractController
         $this->objectManager->persist($cart);
         $this->objectManager->flush();
 
-        $session->set('restaurantId', $cart->getRestaurant()->getId());
         $session->set($this->sessionKeyName, $cart->getId());
 
         return $this->redirectToRoute('order');

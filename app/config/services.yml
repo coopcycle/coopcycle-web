@@ -326,6 +326,8 @@ services:
       - "@sylius.factory.product_variant"
     public: true
 
+  AppBundle\Sylius\Cart\RestaurantResolver: ~
+
   AppBundle\Sylius\Cart\RestaurantCartContext:
     arguments:
       $orderFactory: "@sylius.factory.order"
