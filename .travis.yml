@@ -140,4 +140,8 @@ script:
   - $(npm bin)/cypress run
 
 # after_failure:
-#   - cat var/logs/test-*.log
+#   - python -m pip install --upgrade pip
+#   - pip install python-swiftclient python-keystoneclient
+#   - pip install awscli
+#   - tar czvf $TRAVIS_BUILD_NUMBER.tgz -C cypress/screenshots .
+#   - aws --endpoint=$AWS_ENDPOINT s3 cp $TRAVIS_BUILD_NUMBER.tgz s3://cypress/$TRAVIS_BUILD_NUMBER.tgz --acl private
