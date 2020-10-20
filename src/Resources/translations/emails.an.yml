@@ -1,13 +1,13 @@
 registration.email.subject: |
-  Confirma o tuyo correu electronico
+  Confirma lo tuyo correu electronico
 registration.email.message: |
   <h2>Bienveniu/da ta %brand_name%, %username%</h2>
   Has recibiu este mensache porque t'has rechistrau recientment en una cuenta %brand_name%.
   <br>
-  Confirma o tuyo mail fendo click en o botón siguient.
-registration.email.confirm: 'Confirma o correu electronico'
+  Confirma lo tuyo correu fendo clic en o botón siguient.
+registration.email.confirm: 'Confirmar lo correu electronico'
 registration.email.disclaimer: 'Este vinclo nomás puede fer-se servir una vegada pa
-  validar a tuya cuenta'
+  validar la tuya cuenta'
 registration.email.textMessage: |
 resetting.email.message: ''
 resetting.email.reset: ''
@@ -15,11 +15,11 @@ order.view: ''
 order.public_url: |
 order.foodtech.accepted.delivery: ""
 order.foodtech.accepted.delivery.disclaimer: "Nos meteremos en contacto en caso de\
-  \ trobar problemas con a suya adreza"
-order.foodtech.accepted.collection: "Habrá de recullir-lo en o siguient horario:"
+  \ trobar problemas con a tuya adreza"
+order.foodtech.accepted.collection: "Habrás de recullir-lo en o siguient horario:"
 order.foodtech.accepted.collection.disclaimer: ""
 order.foodtech.cancelled: ""
-admin.order.created.subject: 'S''ha de confirmar a nueva comanda'
+admin.order.created.subject: 'S''ha de confirmar la nueva comanda'
 admin.order.created.body: |
   Ola,
   <br>
