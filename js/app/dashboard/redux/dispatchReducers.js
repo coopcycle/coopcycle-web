@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { moment } from 'coopcycle-frontend-js'
+import { moment } from '../../coopcycle-frontend-js'
 
 import { createTaskList, removedTasks, withoutTasks } from './utils'
 import {

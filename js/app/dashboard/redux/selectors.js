@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { moment } from 'coopcycle-frontend-js'
+import { moment } from '../../coopcycle-frontend-js'
 import { selectTaskLists } from '../../coopcycle-frontend-js/dispatch/redux'
 import { filter, includes, intersectionWith, isEqual } from 'lodash'
 
