@@ -69,7 +69,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="object.isReadableBy(user)"
+ *       "access_control"="is_granted('view', object)"
  *     },
  *     "put"={
  *       "method"="PUT",
@@ -611,25 +611,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     public function getCreatedAt()
     {
         return $this->createdAt;
-    }
-
-    public function isReadableBy(User $user)
-    {
-        if ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_COURIER')) {
-            return true;
-        }
-
-        if ($user->hasRole('ROLE_STORE')) {
-            $delivery = $this->getDelivery();
-            if (null !== $delivery) {
-                $store = $delivery->getStore();
-                if (null !== $store) {
-                    return $user->ownsStore($store);
-                }
-            }
-        }
-
-        return false;
     }
 
     public function getCompletedAt()

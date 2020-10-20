@@ -878,3 +878,6 @@ services:
   AppBundle\Controller\ArgumentResolver\AddressValueResolver:
     tags:
       - { name: controller.argument_value_resolver, priority: 50 }
+
+  AppBundle\Security\TaskOperationsVoter:
+    tags: [ 'security.voter' ]
