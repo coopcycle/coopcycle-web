@@ -31,6 +31,7 @@ use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Validator\Constraints\IsOrderModifiable as AssertOrderIsModifiable;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
 use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
+use AppBundle\Validator\Constraints\ShippingTimeRange as AssertShippingTimeRange;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -268,6 +269,9 @@ class Order extends BaseOrder implements OrderInterface
      */
     protected $tipAmount = null;
 
+    /**
+     * @AssertShippingTimeRange(groups={"Default", "ShippingTime"})
+     */
     protected $shippingTimeRange;
 
     /**
