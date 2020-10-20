@@ -18,10 +18,12 @@ class TaskOperationsVoter extends Voter
     ];
 
     private $authorizationChecker;
+    private $storeExtractor;
 
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker, TokenStoreExtractor $storeExtractor)
     {
         $this->authorizationChecker = $authorizationChecker;
+        $this->storeExtractor = $storeExtractor;
     }
 
     protected function supports($attribute, $subject)
@@ -40,8 +42,7 @@ class TaskOperationsVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         if (!is_object($user = $token->getUser())) {
-            // e.g. anonymous authentication
-            return false;
+            return $this->voteOnAttributeWithOAuth($attribute, $subject, $token);
         }
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')
@@ -65,5 +66,20 @@ class TaskOperationsVoter extends Voter
         }
 
         return false;
+    }
+
+    private function voteOnAttributeWithOAuth($attribute, $subject, TokenInterface $token)
+    {
+        if (!$this->authorizationChecker->isGranted('ROLE_OAUTH2_TASKS')) {
+            return false;
+        }
+
+        $store = $this->storeExtractor->extractStore();
+
+        if (null === $store) {
+            return false;
+        }
+
+        return $subject->getOrganization() === $store->getOrganization();
     }
 }

@@ -1238,6 +1238,10 @@ Feature: Tasks
       }
       """
     And all the tasks should belong to organization with name "Acme"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/tasks/1"
+    Then the response status code should be 200
 
   Scenario: Import tasks with CSV format (one line)
     Given the fixtures files are loaded:
