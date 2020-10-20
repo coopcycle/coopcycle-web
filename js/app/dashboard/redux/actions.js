@@ -1,8 +1,14 @@
 import _ from 'lodash'
 import axios from 'axios'
-import { createAction } from 'redux-actions'
 import { taskComparator, withoutTasks, withLinkedTasks } from './utils'
-import { selectSelectedDate, selectTaskLists, selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
+import {
+  selectSelectedDate,
+  selectTaskLists,
+  selectAllTasks,
+  createTaskListRequest,
+  createTaskListSuccess,
+  createTaskListFailure,
+} from '../../coopcycle-frontend-js/dispatch/redux'
 
 function createClient(dispatch) {
 
@@ -77,7 +83,6 @@ function createClient(dispatch) {
   return client
 }
 
-export const ADD_CREATED_TASK = 'ADD_CREATED_TASK'
 export const UPDATE_TASK = 'UPDATE_TASK'
 export const OPEN_ADD_USER = 'OPEN_ADD_USER'
 export const CLOSE_ADD_USER = 'CLOSE_ADD_USER'
@@ -90,10 +95,6 @@ export const SELECT_TASK = 'SELECT_TASK'
 export const SELECT_TASKS = 'SELECT_TASKS'
 export const CLEAR_SELECTED_TASKS = 'CLEAR_SELECTED_TASKS'
 export const SET_TASK_LIST_GROUP_MODE = 'SET_TASK_LIST_GROUP_MODE'
-
-export const CREATE_TASK_LIST_REQUEST = 'CREATE_TASK_LIST_REQUEST'
-export const CREATE_TASK_LIST_SUCCESS = 'CREATE_TASK_LIST_SUCCESS'
-export const CREATE_TASK_LIST_FAILURE = 'CREATE_TASK_LIST_FAILURE'
 
 export const SET_GEOLOCATION = 'SET_GEOLOCATION'
 export const SET_OFFLINE = 'SET_OFFLINE'
@@ -291,10 +292,6 @@ function clearSelectedTasks() {
 function setTaskListGroupMode(mode) {
   return { type: SET_TASK_LIST_GROUP_MODE, mode }
 }
-
-const createTaskListRequest = createAction(CREATE_TASK_LIST_REQUEST)
-const createTaskListSuccess = createAction(CREATE_TASK_LIST_SUCCESS)
-const createTaskListFailure = createAction(CREATE_TASK_LIST_FAILURE)
 
 function createTaskList(date, username) {
 

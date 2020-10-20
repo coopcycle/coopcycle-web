@@ -7,9 +7,6 @@ import {
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
   TASK_LIST_UPDATED,
-  CREATE_TASK_LIST_REQUEST,
-  CREATE_TASK_LIST_SUCCESS,
-  CREATE_TASK_LIST_FAILURE,
   SET_TASK_LISTS_LOADING,
 } from './actions'
 
@@ -46,7 +43,6 @@ const acceptTask = (task, date) => {
 }
 
 const initialState = {
-  taskListsLoading: false,
 }
 
 export default (state = initialState, action) => {
@@ -87,25 +83,6 @@ export default (state = initialState, action) => {
         ...state,
         taskListsLoading: false,
         taskLists: newTaskLists,
-      }
-
-    case CREATE_TASK_LIST_REQUEST:
-      return {
-        ...state,
-        taskListsLoading: true,
-      }
-
-    case CREATE_TASK_LIST_SUCCESS:
-      return {
-        ...state,
-        taskListsLoading: false,
-        taskLists: Array.prototype.concat(state.taskLists, action.payload),
-      }
-
-    case CREATE_TASK_LIST_FAILURE:
-      return {
-        ...state,
-        taskListsLoading: false,
       }
 
     case UPDATE_TASK:
@@ -191,7 +168,6 @@ export default (state = initialState, action) => {
         ...state,
         taskLists: newTaskLists,
       }
-
   }
 
   return state
