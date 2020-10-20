@@ -25,7 +25,6 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\ValidationUtils;
-use AppBundle\Validator\Constraints\Order as OrderConstraint;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Coordinate\Coordinate;
@@ -276,12 +275,11 @@ class RestaurantController extends AbstractController
             }
         }
 
-        $violations = $this->validator->validate($cart);
-        $violationCodes = [
-            OrderConstraint::SHIPPED_AT_EXPIRED,
-            OrderConstraint::SHIPPED_AT_NOT_AVAILABLE
-        ];
-        if (0 !== count($violations->findByCodes($violationCodes))) {
+        // This is useful to "cleanup" a cart that was stored
+        // with a time range that is now expired
+        // FIXME Maybe this should be moved to a Doctrine postLoad listener?
+        $violations = $this->validator->validate($cart, null, ['ShippingTime']);
+        if (count($violations) > 0) {
 
             $cart->setShippingTimeRange(null);
 
