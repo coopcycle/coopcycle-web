@@ -8,7 +8,7 @@ import { createTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, 
 import CourierSelect from './CourierSelect'
 import TaskList from './TaskList'
 
-import { selectTaskLists, selectSelectedDate } from 'coopcycle-frontend-js/dispatch/redux'
+import { selectTaskLists, selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
 
 class TaskLists extends React.Component {
 

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import { createAction } from 'redux-actions'
 import { taskComparator, withoutTasks, withLinkedTasks } from './utils'
-import { selectSelectedDate, selectTaskLists, selectAllTasks } from 'coopcycle-frontend-js/dispatch/redux'
+import { selectSelectedDate, selectTaskLists, selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
 
 function createClient(dispatch) {
 
