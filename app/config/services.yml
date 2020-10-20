@@ -870,3 +870,11 @@ services:
 
   AppBundle\Security\OrderActionsVoter:
     tags: [ 'security.voter' ]
+
+  # While adding a priority is optional, it’s recommended to add one to make sure the expected value is injected.
+  # The built-in RequestAttributeValueResolver, which fetches attributes from the Request, has a priority of 100.
+  # If your resolver also fetches Request attributes, set a priority of 100 or more.
+  # Otherwise, set a priority lower than 100 to make sure the argument resolver is not triggered when the Request attribute is present.
+  AppBundle\Controller\ArgumentResolver\AddressValueResolver:
+    tags:
+      - { name: controller.argument_value_resolver, priority: 50 }

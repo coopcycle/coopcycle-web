@@ -184,6 +184,14 @@ class RestaurantController extends AbstractController
     }
 
     /**
+     * @param string $type
+     * @param int $id
+     * @param string $slug
+     * @param Request $request
+     * @param SlugifyInterface $slugify
+     * @param CartContextInterface $cartContext
+     * @param Address|null $address
+     *
      * @Route("/{type}/{id}-{slug}", name="restaurant",
      *   requirements={
      *     "type"="(restaurant|store)",
@@ -199,7 +207,7 @@ class RestaurantController extends AbstractController
     public function indexAction($type, $id, $slug, Request $request,
         SlugifyInterface $slugify,
         CartContextInterface $cartContext,
-        IriConverterInterface $iriConverter)
+        Address $address = null)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
@@ -252,27 +260,13 @@ class RestaurantController extends AbstractController
             $cart->setRestaurant($restaurant);
         }
 
-        $user = $this->getUser();
-        if ($request->query->has('address') && $user && count($user->getAddresses()) > 0) {
+        if (null !== $address) {
+            $cart->setShippingAddress($address);
 
-            $addressIRI = base64_decode($request->query->get('address'));
+            $this->orderManager->persist($cart);
+            $this->orderManager->flush();
 
-            try {
-
-                $shippingAddress = $iriConverter->getItemFromIri($addressIRI);
-
-                if ($user->getAddresses()->contains($shippingAddress)) {
-                    $cart->setShippingAddress($shippingAddress);
-
-                    $this->orderManager->persist($cart);
-                    $this->orderManager->flush();
-
-                    $this->saveSession($request, $cart);
-                }
-
-            } catch (ItemNotFoundException $e) {
-                // Do nothing
-            }
+            $this->saveSession($request, $cart);
         }
 
         // This is useful to "cleanup" a cart that was stored
