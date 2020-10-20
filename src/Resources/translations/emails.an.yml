@@ -1,20 +1,33 @@
 registration.email.subject: |
+  Confirma o tuyo correu electronico
 registration.email.message: |
-registration.email.confirm: ''
-registration.email.disclaimer: ''
+  <h2>Bienveniu/da ta %brand_name%, %username%</h2>
+  Has recibiu este mensache porque t'has rechistrau recientment en una cuenta %brand_name%.
+  <br>
+  Confirma o tuyo mail fendo click en o botón siguient.
+registration.email.confirm: 'Confirma o correu electronico'
+registration.email.disclaimer: 'Este vinclo nomás puede fer-se servir una vegada pa
+  validar a tuya cuenta'
 registration.email.textMessage: |
 resetting.email.message: ''
 resetting.email.reset: ''
 order.view: ''
 order.public_url: |
 order.foodtech.accepted.delivery: ""
-order.foodtech.accepted.delivery.disclaimer: ""
-order.foodtech.accepted.collection: ""
+order.foodtech.accepted.delivery.disclaimer: "Nos meteremos en contacto en caso de\
+  \ trobar problemas con a suya adreza"
+order.foodtech.accepted.collection: "Habrá de recullir-lo en o siguient horario:"
 order.foodtech.accepted.collection.disclaimer: ""
 order.foodtech.cancelled: ""
-admin.order.created.subject: ''
+admin.order.created.subject: 'S''ha de confirmar a nueva comanda'
 admin.order.created.body: |
+  Ola,
+  <br>
+  S'ha creyau una nueva comanda.
 admin.order_foodtech.created.body: |
+  Ola,
+  <br>
+  S'ha creyau una nueva comanda pa <strong>%restaurant.name%</strong>.
 admin.pledge.subject: ''
 admin.send_invitation.subject: ''
 admin.send_invitation.body: |
@@ -22,7 +35,7 @@ admin.send_invitation.create_password: ''
 admin.pledge.body: |
 user.pledge.subject: ''
 user.pledge.body: |
-owner.order.created.subject: ''
+owner.order.created.subject: 'Nueva comanda pa confirmar'
 owner.order.created.body: |
 order.created.subject: ''
 order.created.body: ""
@@ -30,15 +43,18 @@ order.accepted.subject: ''
 order.accepted.body.intro: ""
 order.cancelled.subject: ''
 order.cancelled.body.intro: |
+  Ola,
+  <br>
+  Lo sentimos, pero s'ha cancelau a tuya comanda.
 order.delayed.subject: ''
 order.delayed.body: |
 task.done.subject: ''
 task.done.body: |
 task.failed.subject: ''
 task.failed.body: |
-order.payment.subject: ''
+order.payment.subject: 'Pago d''a tuya comanda %order.number%'
 order.payment.body: ""
-covid_19.subject: ''
+covid_19.subject: 'COVID-19 | Instruccions importants pa la tuya comanda'
 covid_19.body: ""
 
 order.expiring_authorization.subject: ''
