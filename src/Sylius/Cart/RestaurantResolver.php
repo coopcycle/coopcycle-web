@@ -2,6 +2,8 @@
 
 namespace AppBundle\Sylius\Cart;
 
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusinessRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class RestaurantResolver
@@ -10,6 +12,8 @@ class RestaurantResolver
      * @var RequestStack
      */
     private RequestStack $requestStack;
+
+    private $restaurantRepository;
 
     private static $routes = [
         'restaurant',
@@ -23,15 +27,16 @@ class RestaurantResolver
     /**
      * @param RequestStack $requestStack
      */
-    public function __construct(RequestStack $requestStack)
+    public function __construct(RequestStack $requestStack, LocalBusinessRepository $repository)
     {
         $this->requestStack = $requestStack;
+        $this->repository = $repository;
     }
 
     /**
-     * @return int|null
+     * @return LocalBusiness|null
      */
-    public function resolve(): ?int
+    public function resolve(): ?LocalBusiness
     {
         $request = $this->requestStack->getMasterRequest();
 
@@ -45,6 +50,8 @@ class RestaurantResolver
             return null;
         }
 
-        return $request->attributes->getInt('id');
+        return $this->repository->find(
+            $request->attributes->getInt('id')
+        );
     }
 }

@@ -2,7 +2,6 @@
 
 namespace AppBundle\Sylius\Cart;
 
-use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
@@ -20,8 +19,6 @@ final class RestaurantCartContext implements CartContextInterface
     private $orderRepository;
 
     private $orderFactory;
-
-    private $restaurantRepository;
 
     private $sessionKeyName;
 
@@ -42,7 +39,6 @@ final class RestaurantCartContext implements CartContextInterface
         SessionInterface $session,
         OrderRepositoryInterface $orderRepository,
         FactoryInterface $orderFactory,
-        LocalBusinessRepository $restaurantRepository,
         string $sessionKeyName,
         ChannelContextInterface $channelContext,
         RestaurantResolver $resolver)
@@ -50,7 +46,6 @@ final class RestaurantCartContext implements CartContextInterface
         $this->session = $session;
         $this->orderRepository = $orderRepository;
         $this->orderFactory = $orderFactory;
-        $this->restaurantRepository = $restaurantRepository;
         $this->sessionKeyName = $sessionKeyName;
         $this->channelContext = $channelContext;
         $this->resolver = $resolver;
@@ -86,18 +81,11 @@ final class RestaurantCartContext implements CartContextInterface
 
         if (null === $cart) {
 
-            $restaurantId = $this->resolver->resolve();
-
-            if (null === $restaurantId) {
-
-                throw new CartNotFoundException('No restaurant could be resolved from request');
-            }
-
-            $restaurant = $this->restaurantRepository->find($restaurantId);
+            $restaurant = $this->resolver->resolve();
 
             if (null === $restaurant) {
 
-                throw new CartNotFoundException('Restaurant does not exist');
+                throw new CartNotFoundException('No restaurant could be resolved from request');
             }
 
             $cart = $this->orderFactory->createForRestaurant($restaurant);
