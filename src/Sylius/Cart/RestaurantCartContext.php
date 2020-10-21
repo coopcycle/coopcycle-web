@@ -3,11 +3,12 @@
 namespace AppBundle\Sylius\Cart;
 
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
-use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -23,10 +24,14 @@ final class RestaurantCartContext implements CartContextInterface
     private $restaurantRepository;
 
     private $sessionKeyName;
+
     /**
      * @var ChannelContextInterface
      */
     private ChannelContextInterface $channelContext;
+
+    /** @var OrderInterface|null */
+    private $cart;
 
     /**
      * @param SessionInterface $session
@@ -54,14 +59,10 @@ final class RestaurantCartContext implements CartContextInterface
     /**
      * {@inheritdoc}
      */
-    public function getCart(): OrderInterface
+    public function getCart(): BaseOrderInterface
     {
-        $restaurantId = $this->resolver->resolve();
-
-        if (null === $restaurantId && !$this->session->has($this->sessionKeyName)) {
-
-            throw new CartNotFoundException('No restaurant could be resolved from request, '
-                . 'and no cart was found in session');
+        if (null !== $this->cart) {
+            return $this->cart;
         }
 
         $cart = null;
@@ -85,6 +86,13 @@ final class RestaurantCartContext implements CartContextInterface
 
         if (null === $cart) {
 
+            $restaurantId = $this->resolver->resolve();
+
+            if (null === $restaurantId) {
+
+                throw new CartNotFoundException('No restaurant could be resolved from request');
+            }
+
             $restaurant = $this->restaurantRepository->find($restaurantId);
 
             if (null === $restaurant) {
@@ -94,6 +102,8 @@ final class RestaurantCartContext implements CartContextInterface
 
             $cart = $this->orderFactory->createForRestaurant($restaurant);
         }
+
+        $this->cart = $cart;
 
         return $cart;
     }

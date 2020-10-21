@@ -96,6 +96,9 @@ class RestaurantCartContextTest extends TestCase
 
         $this->assertNotNull($cart);
         $this->assertSame($expectedCart, $cart);
+
+        // Multiple calls should not recreate an instance
+        $this->assertSame($cart, $this->context->getCart());
     }
 
     public function testExistingCartStoredInSession()
@@ -204,6 +207,40 @@ class RestaurantCartContextTest extends TestCase
             ->willReturn($expectedCart);
 
         $this->session->remove($this->sessionKeyName)->shouldBeCalled();
+
+        $cart = $this->context->getCart();
+    }
+
+    public function testNonExistingCartStoredInSessionWithNoRestaurantInContext()
+    {
+        $this->expectException(CartNotFoundException::class);
+
+        $this->restaurantResolver
+            ->resolve()
+            ->willReturn(null);
+
+        $this->session
+            ->has($this->sessionKeyName)
+            ->willReturn(true);
+
+        $this->session
+            ->get($this->sessionKeyName)
+            ->willReturn(1);
+
+        $this->orderRepository
+            ->findCartById(1)
+            ->willReturn(null);
+
+        $restaurantProphecy = $this->prophesize(LocalBusiness::class);
+        $restaurant = $restaurantProphecy->reveal();
+
+        $this->restaurantRepository
+            ->find(1)
+            ->willReturn($restaurant);
+
+        $this->session
+            ->remove($this->sessionKeyName)
+            ->shouldBeCalled();
 
         $cart = $this->context->getCart();
     }

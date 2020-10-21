@@ -126,13 +126,6 @@ class RestaurantController extends AbstractController
         ]);
     }
 
-    private function saveSession(Request $request, OrderInterface $cart)
-    {
-        // TODO Find a better way to do this
-        $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
-        $request->getSession()->set($sessionKeyName, $cart->getId());
-    }
-
     private function getContextSlug(LocalBusiness $business)
     {
         return $business->getContext() === Store::class ? 'store' : 'restaurant';
@@ -265,8 +258,6 @@ class RestaurantController extends AbstractController
 
             $this->orderManager->persist($cart);
             $this->orderManager->flush();
-
-            $this->saveSession($request, $cart);
         }
 
         // This is useful to "cleanup" a cart that was stored
@@ -322,8 +313,6 @@ class RestaurantController extends AbstractController
 
                 $this->orderManager->persist($cart);
                 $this->orderManager->flush();
-
-                $this->saveSession($request, $cart);
 
                 return $this->jsonResponse($cart, $errors);
 
@@ -478,8 +467,6 @@ class RestaurantController extends AbstractController
         $this->orderManager->persist($cart);
         $this->orderManager->flush();
 
-        $this->saveSession($request, $cart);
-
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
 
@@ -508,8 +495,6 @@ class RestaurantController extends AbstractController
         if (!$isAnotherRestaurant) {
             $this->orderManager->persist($cart);
             $this->orderManager->flush();
-
-            $this->saveSession($request, $cart);
         }
 
         $errors = $this->validator->validate($cart);
