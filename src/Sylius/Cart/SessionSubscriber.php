@@ -20,16 +20,21 @@ final class SessionSubscriber implements EventSubscriberInterface
     /** @var string */
     private $sessionKeyName;
 
+    /** @var bool */
+    private $enabled;
+
     /** @var LoggerInterface|null */
     private $logger;
 
     public function __construct(
         CartContextInterface $cartContext,
         string $sessionKeyName,
+        bool $enabled,
         LoggerInterface $logger = null)
     {
         $this->cartContext = $cartContext;
         $this->sessionKeyName = $sessionKeyName;
+        $this->enabled = $enabled;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -42,6 +47,10 @@ final class SessionSubscriber implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         if (!$event->isMasterRequest()) {
             return;
         }

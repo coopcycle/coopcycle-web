@@ -885,6 +885,7 @@ services:
   AppBundle\Sylius\Cart\SessionSubscriber:
     arguments:
       $sessionKeyName: "%sylius_cart_restaurant_session_key_name%"
+      $enabled: "%foodtech_enabled%"
     tags:
       - { name: kernel.event_subscriber }
       - { name: monolog.logger, channel: checkout }
