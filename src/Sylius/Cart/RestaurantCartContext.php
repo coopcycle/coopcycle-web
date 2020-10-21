@@ -77,6 +77,18 @@ final class RestaurantCartContext implements CartContextInterface
                     $this->session->remove($this->sessionKeyName);
                 }
             }
+
+            // This happens when the user has a cart stored in session,
+            // and is browsing another restaurant.
+            // In this case, we want to show an empty cart to the user.
+            if (null !== $cart) {
+                $restaurant = $this->resolver->resolve();
+                if (null !== $restaurant && $restaurant !== $cart->getRestaurant()) {
+                    $cart->clearItems();
+                    $cart->setShippingTimeRange(null);
+                    $cart->setRestaurant($restaurant);
+                }
+            }
         }
 
         if (null === $cart) {
@@ -85,7 +97,7 @@ final class RestaurantCartContext implements CartContextInterface
 
             if (null === $restaurant) {
 
-                throw new CartNotFoundException('No restaurant could be resolved from request');
+                throw new CartNotFoundException('No restaurant could be resolved from request.');
             }
 
             $cart = $this->orderFactory->createForRestaurant($restaurant);

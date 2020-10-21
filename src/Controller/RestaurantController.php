@@ -22,6 +22,7 @@ use AppBundle\Form\Order\CartType;
 use AppBundle\Form\PledgeType;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Cart\RestaurantResolver;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\ValidationUtils;
@@ -131,11 +132,6 @@ class RestaurantController extends AbstractController
         return $business->getContext() === Store::class ? 'store' : 'restaurant';
     }
 
-    private function isAnotherRestaurant(OrderInterface $cart, LocalBusiness $restaurant)
-    {
-        return null !== $cart->getId() && $cart->getRestaurant() !== $restaurant;
-    }
-
     /**
      * @Route("/restaurants", name="restaurants")
      */
@@ -200,6 +196,7 @@ class RestaurantController extends AbstractController
     public function indexAction($type, $id, $slug, Request $request,
         SlugifyInterface $slugify,
         CartContextInterface $cartContext,
+        RestaurantResolver $restaurantResolver,
         Address $address = null)
     {
         $restaurant = $this->getDoctrine()
@@ -245,14 +242,6 @@ class RestaurantController extends AbstractController
 
         $cart = $cartContext->getCart();
 
-        $isAnotherRestaurant = $this->isAnotherRestaurant($cart, $restaurant);
-
-        if ($isAnotherRestaurant) {
-            $cart->clearItems();
-            $cart->setShippingTimeRange(null);
-            $cart->setRestaurant($restaurant);
-        }
-
         if (null !== $address) {
             $cart->setShippingAddress($address);
 
@@ -268,7 +257,7 @@ class RestaurantController extends AbstractController
 
             $cart->setShippingTimeRange(null);
 
-            if (!$isAnotherRestaurant) {
+            if ($restaurantResolver->accept($cart)) {
                 $this->orderManager->persist($cart);
                 $this->orderManager->flush();
             }
@@ -306,13 +295,10 @@ class RestaurantController extends AbstractController
                 // Customer may be browsing the available restaurants
                 // Make sure the request targets the same restaurant
                 // If not, we don't persist the cart
-                if ($isAnotherRestaurant) {
-
-                    return $this->jsonResponse($cart, $errors);
+                if ($restaurantResolver->accept($cart)) {
+                    $this->orderManager->persist($cart);
+                    $this->orderManager->flush();
                 }
-
-                $this->orderManager->persist($cart);
-                $this->orderManager->flush();
 
                 return $this->jsonResponse($cart, $errors);
 
@@ -351,14 +337,6 @@ class RestaurantController extends AbstractController
         }
 
         $cart = $cartContext->getCart();
-
-        $isAnotherRestaurant = $this->isAnotherRestaurant($cart, $restaurant);
-
-        if ($isAnotherRestaurant) {
-            $cart->clearItems();
-            $cart->setShippingTimeRange(null);
-            $cart->setRestaurant($restaurant);
-        }
 
         $user = $this->getUser();
         if ($request->request->has('address') && $user && count($user->getAddresses()) > 0) {
@@ -421,12 +399,6 @@ class RestaurantController extends AbstractController
             return $this->jsonResponse($cart, $errors);
         }
 
-        if ($action->clear) {
-            $cart->clearItems();
-            $cart->setShippingTimeRange(null);
-            $cart->setRestaurant($restaurant);
-        }
-
         $cartItem = $this->orderItemFactory->createNew();
 
         if (!$product->hasOptions()) {
@@ -475,23 +447,18 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/restaurant/{id}/cart/clear-time", name="restaurant_cart_clear_time", methods={"POST"})
      */
-    public function clearCartTimeAction($id, Request $request, CartContextInterface $cartContext)
+    public function clearCartTimeAction($id, Request $request,
+        CartContextInterface $cartContext,
+        RestaurantResolver $restaurantResolver)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
 
         $cart = $cartContext->getCart();
 
-        $isAnotherRestaurant = $this->isAnotherRestaurant($cart, $restaurant);
-
-        if ($isAnotherRestaurant) {
-            $cart->clearItems();
-            $cart->setRestaurant($restaurant);
-        }
-
         $cart->setShippingTimeRange(null);
 
-        if (!$isAnotherRestaurant) {
+        if ($restaurantResolver->accept($cart)) {
             $this->orderManager->persist($cart);
             $this->orderManager->flush();
         }

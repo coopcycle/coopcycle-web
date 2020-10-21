@@ -4,6 +4,8 @@ namespace AppBundle\Sylius\Cart;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Sylius\Order\OrderInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class RestaurantResolver
@@ -14,6 +16,8 @@ class RestaurantResolver
     private RequestStack $requestStack;
 
     private $restaurantRepository;
+
+    private $entityManager;
 
     private static $routes = [
         'restaurant',
@@ -26,11 +30,16 @@ class RestaurantResolver
 
     /**
      * @param RequestStack $requestStack
+     * @param LocalBusinessRepository $repository
      */
-    public function __construct(RequestStack $requestStack, LocalBusinessRepository $repository)
+    public function __construct(
+        RequestStack $requestStack,
+        LocalBusinessRepository $repository,
+        EntityManagerInterface $entityManager)
     {
         $this->requestStack = $requestStack;
         $this->repository = $repository;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -53,5 +62,36 @@ class RestaurantResolver
         return $this->repository->find(
             $request->attributes->getInt('id')
         );
+    }
+
+    /**
+     * @return bool
+     */
+    public function accept(OrderInterface $cart): bool
+    {
+        $data = $this->entityManager
+            ->getUnitOfWork()
+            ->getOriginalEntityData($cart);
+
+        // This means it is a new object, not persisted yet
+        if (!is_array($data) || empty($data)) {
+            return true;
+        }
+
+        if (!isset($data['restaurant'])) {
+            throw new \LogicException('No "restaurant" key found in original entity data. The column may have been renamed.');
+        }
+
+        $restaurant = $this->resolve();
+
+        if (null === $restaurant) {
+            throw new \LogicException('No restaurant could be resolved from request.');
+        }
+
+        if ($cart->getId() === null) {
+            return true;
+        }
+
+        return $data['restaurant'] === $restaurant;
     }
 }

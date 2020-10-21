@@ -86,6 +86,7 @@ class AddProductToCartValidatorTest extends ConstraintValidatorTestCase
         $restaurant->hasProduct($product->reveal())->willReturn(true);
 
         $this->resolver->resolve()->willReturn($restaurant->reveal());
+        $this->resolver->accept($cart->reveal())->willReturn(false);
 
         $action = new AddProductToCartAction();
         $action->product = $product->reveal();
@@ -111,6 +112,7 @@ class AddProductToCartValidatorTest extends ConstraintValidatorTestCase
         $restaurant->hasProduct($product->reveal())->willReturn(true);
 
         $this->resolver->resolve()->willReturn($restaurant->reveal());
+        $this->resolver->accept($cart->reveal())->willReturn(false);
 
         $action = new AddProductToCartAction();
         $action->product = $product->reveal();

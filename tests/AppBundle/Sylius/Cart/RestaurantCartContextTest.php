@@ -5,10 +5,12 @@ namespace Tests\AppBundle\Sylius\Cart;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Cart\RestaurantCartContext;
 use AppBundle\Sylius\Cart\RestaurantResolver;
 use Doctrine\ORM\EntityNotFoundException;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
@@ -93,13 +95,14 @@ class RestaurantCartContextTest extends TestCase
         $this->assertSame($cart, $this->context->getCart());
     }
 
-    public function testExistingCartStoredInSession()
+    public function testExistingCartStoredInSessionWithSameRestaurant()
     {
-        $restaurant = $this->prophesize(LocalBusiness::class)->reveal();
+        $restaurant = $this->prophesize(LocalBusiness::class);
+        $restaurant->getName()->willReturn('Foo');
 
         $this->restaurantResolver
             ->resolve()
-            ->willReturn($restaurant);
+            ->willReturn($restaurant->reveal());
 
         $this->session
             ->has($this->sessionKeyName)
@@ -109,23 +112,57 @@ class RestaurantCartContextTest extends TestCase
             ->get($this->sessionKeyName)
             ->willReturn(1);
 
-        $restaurant = $this->prophesize(LocalBusiness::class);
-        $restaurant->getName()->willReturn('Foo');
-
-        $cartProphecy = $this->prophesize(OrderInterface::class);
-        $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
-        $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
-
-        $expectedCart = $cartProphecy->reveal();
+        $expectedCart = $this->prophesize(Order::class);
+        $expectedCart->getRestaurant()->willReturn($restaurant->reveal());
+        $expectedCart->getChannel()->willReturn($this->webChannel->reveal());
 
         $this->orderRepository
             ->findCartById(1)
-            ->willReturn($expectedCart);
+            ->willReturn($expectedCart->reveal());
 
         $cart = $this->context->getCart();
 
         $this->assertNotNull($cart);
-        $this->assertSame($expectedCart, $cart);
+        $this->assertSame($expectedCart->reveal(), $cart);
+
+        $expectedCart->clearItems()->shouldNotHaveBeenCalled();
+    }
+
+    public function testExistingCartStoredInSessionWithAnotherRestaurant()
+    {
+        $restaurant = $this->prophesize(LocalBusiness::class);
+        $restaurant->getName()->willReturn('Foo');
+
+        $otherRestaurant = $this->prophesize(LocalBusiness::class);
+
+        $this->restaurantResolver
+            ->resolve()
+            ->willReturn($otherRestaurant->reveal());
+
+        $this->session
+            ->has($this->sessionKeyName)
+            ->willReturn(true);
+
+        $this->session
+            ->get($this->sessionKeyName)
+            ->willReturn(1);
+
+        $expectedCart = $this->prophesize(Order::class);
+        $expectedCart->getRestaurant()->willReturn($restaurant->reveal());
+        $expectedCart->getChannel()->willReturn($this->webChannel->reveal());
+
+        $this->orderRepository
+            ->findCartById(1)
+            ->willReturn($expectedCart->reveal());
+
+        $cart = $this->context->getCart();
+
+        $this->assertNotNull($cart);
+        $this->assertSame($expectedCart->reveal(), $cart);
+
+        $expectedCart->clearItems()->shouldHaveBeenCalled();
+        $expectedCart->setShippingTimeRange(null)->shouldHaveBeenCalled();
+        $expectedCart->setRestaurant($otherRestaurant->reveal())->shouldHaveBeenCalled();
     }
 
     public function testNonExistingCartStoredInSession()

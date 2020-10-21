@@ -21,7 +21,7 @@ class AddProductToCartValidator extends ConstraintValidator
         $restaurant = $this->resolver->resolve();
 
         if (null === $restaurant) {
-            throw new LogicException('No restaurant could be resolved from request');
+            throw new LogicException('No restaurant could be resolved from request.');
         }
 
         if (!$value->product->isEnabled()) {
@@ -44,7 +44,7 @@ class AddProductToCartValidator extends ConstraintValidator
             return;
         }
 
-        if ($value->cart->getRestaurant() !== $restaurant && !$value->clear) {
+        if (!$this->resolver->accept($value->cart) && !$value->clear) {
             $this->context
                 ->buildViolation($constraint->notSameRestaurant)
                 ->atPath('restaurant')
