@@ -138,7 +138,7 @@ function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
 }
 
-export function assignAfter(username, task, after) {
+function assignAfter(username, task, after) {
 
   return function(dispatch, getState) {
 
@@ -295,7 +295,7 @@ function setTaskListGroupMode(mode) {
 
 function createTaskList(date, username) {
 
-  return function(dispatch, getState) {
+  return function(dispatch) {
 
     const url = window.Routing.generate('admin_task_list_create', {
       date: date.format('YYYY-MM-DD'),
@@ -674,6 +674,7 @@ function loadTaskEvents(task) {
 }
 
 export {
+  assignAfter,
   updateTask,
   createTaskList,
   modifyTaskList,

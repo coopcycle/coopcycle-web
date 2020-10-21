@@ -7,7 +7,6 @@ import {
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
   TASK_LIST_UPDATED,
-  SET_TASK_LISTS_LOADING,
 } from './actions'
 
 const replaceOrAddTask = (tasks, task) => {
