@@ -8,6 +8,7 @@ use AppBundle\Entity\Sylius\Product;
 use AppBundle\Form\Checkout\Action\AddProductToCartAction as CheckoutAddProductToCart;
 use AppBundle\Form\Checkout\Action\Validator\AddProductToCart;
 use AppBundle\Form\Checkout\Action\Validator\AddProductToCartValidator;
+use AppBundle\Sylius\Cart\RestaurantResolver;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -17,12 +18,16 @@ class AddProductToCartValidatorTest extends ConstraintValidatorTestCase
 
     public function setUp() :void
     {
+        $this->resolver = $this->prophesize(RestaurantResolver::class);
+
         parent::setUp();
     }
 
     protected function createValidator()
     {
-        return new AddProductToCartValidator();
+        return new AddProductToCartValidator(
+            $this->resolver->reveal()
+        );
     }
 
     public function testDifferentRestaurantWithoutClear()
@@ -34,9 +39,10 @@ class AddProductToCartValidatorTest extends ConstraintValidatorTestCase
         $product->isEnabled()->willReturn(true);
         $restaurant->hasProduct($product->reveal())->willReturn(true);
 
+        $this->resolver->resolve()->willReturn($restaurant->reveal());
+
         $action = new CheckoutAddProductToCart();
 
-        $action->restaurant = $restaurant->reveal();
         $action->product = $product->reveal();
         $action->cart = $cart->reveal();
         $action->clear = false;
@@ -59,9 +65,10 @@ class AddProductToCartValidatorTest extends ConstraintValidatorTestCase
         $product->isEnabled()->willReturn(true);
         $restaurant->hasProduct($product->reveal())->willReturn(true);
 
+        $this->resolver->resolve()->willReturn($restaurant->reveal());
+
         $action = new CheckoutAddProductToCart();
 
-        $action->restaurant = $restaurant->reveal();
         $action->product = $product->reveal();
         $action->cart = $cart->reveal();
         $action->clear = true;

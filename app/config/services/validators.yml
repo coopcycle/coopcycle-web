@@ -55,3 +55,7 @@ services:
   AppBundle\Validator\Constraints\ShippingTimeRangeValidator:
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Form\Checkout\Action\Validator\AddProductToCartValidator:
+    tags:
+      - { name: validator.constraint_validator }

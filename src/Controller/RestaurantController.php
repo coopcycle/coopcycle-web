@@ -402,7 +402,6 @@ class RestaurantController extends AbstractController
         $cart = $cartContext->getCart();
 
         $action = new CheckoutAddProductToCart();
-        $action->restaurant = $restaurant;
         $action->product = $product;
         $action->cart = $cart;
         $action->clear = $request->request->getBoolean('_clear', false);

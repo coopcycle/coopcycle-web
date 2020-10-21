@@ -9,7 +9,6 @@ use AppBundle\Form\Checkout\Action\Validator\AddProductToCart as AssertAddProduc
  */
 class AddProductToCartAction
 {
-    public $restaurant;
     public $product;
     public $cart;
     public $clear = false;
