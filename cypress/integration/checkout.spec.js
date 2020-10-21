@@ -488,4 +488,47 @@ context('Checkout', () => {
 
     cy.location('pathname').should('match', /\/order\/confirm\/[a-zA-Z0-9]+/)
   })
+
+  it('start ordering in one restaurant, then navigate to another restaurant', () => {
+
+    cy.server()
+    cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postCrazyHamburger')
+    cy.route('POST', '/fr/restaurant/*-pizza-express').as('postPizzaExpress')
+    cy.route('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
+
+    cy.visit('/fr/')
+
+    cy.clickRestaurant(
+      'Crazy Hamburger',
+      /\/fr\/restaurant\/[0-9]+-crazy-hamburger/
+    )
+
+    cy.wait('@postCrazyHamburger')
+
+    cy.contains('Cheese Cake').click()
+
+    cy.wait('@postProduct')
+
+    cy.get('.ReactModal__Content--enter-address').should('be.visible')
+    cy.get('.cart__items').invoke('text').should('match', /Cheese Cake/)
+
+    cy.get('.ReactModal__Content--enter-address .close').click()
+
+    cy.visit('/fr/')
+
+    cy.clickRestaurant(
+      'Pizza Express',
+      /\/fr\/restaurant\/[0-9]+-pizza-express/
+    )
+
+    cy.wait('@postPizzaExpress')
+
+    cy.get('#cart .panel-body .cart .alert-warning').should('have.text', 'Votre panier est vide')
+
+    cy.contains('Pizza Margherita').click()
+
+    cy.wait('@postProduct')
+
+    cy.get('.ReactModal__Content--restaurant').should('be.visible')
+  })
 })
