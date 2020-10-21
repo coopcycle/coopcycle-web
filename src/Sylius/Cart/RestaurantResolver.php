@@ -15,7 +15,7 @@ class RestaurantResolver
      */
     private RequestStack $requestStack;
 
-    private $restaurantRepository;
+    private $repository;
 
     private $entityManager;
 
