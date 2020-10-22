@@ -1,13 +1,13 @@
-global.changesSaved: Els teus canvis han estat guardats.
+global.changesSaved: Els teus canvis s'han desat.
 navbar.login: Iniciar sessió
 navbar.myAccount: El meu compte
-base.footer.contactUs: Contacteu-nos
+base.footer.contactUs: Contacta'ns
 base.footer.help: Ajuda
 base.footer.legal: Avís legal
-base.footer.suggest: Suggereix un restaurant
+base.footer.suggest: Suggereix un establiment
 adminDashboard.title: Tauler d’administrador
 adminDashboard.configuration: Configuració
-adminDashboard.tooltip.orders: Gestiona les comandes de restaurants
+adminDashboard.tooltip.orders: Gestiona les comandes del restaurant
 adminDashboard.tooltip.deliveries: Gestiona les entregues
 adminDashboard.tooltip.stores: Gestiona les botigues
 adminDashboard.tooltip.restaurants: Gestiona els restaurants
@@ -15,11 +15,11 @@ adminDashboard.tooltip.users: Gestiona els comptes d’usuari
 adminDashboard.dashboard.title: Panell
 adminDashboard.dashboard.import: Importa
 adminDashboard.dashboard.export: Exporta
-adminDashboard.dashboard.importTasks: Tasques d’importació
-adminDashboard.dashboard.exportTasks: Tasques d’exportació
+adminDashboard.dashboard.importTasks: Importar tasques
+adminDashboard.dashboard.exportTasks: Exportar tasques
 adminDashboard.dashboard.deleteTaskGroup: Suprimeix el grup de tasques
 adminDashboard.dashboard.displayByGroups: Visualització per grups
-adminDashboard.dashboard.displayAll: Mostra tot
+adminDashboard.dashboard.displayAll: Mostra-ho tot
 adminDashboard.deliveries.title: Entregues
 adminDashboard.deliveries.type: Tipus
 adminDashboard.deliveries.dueDate: Data de venciment
@@ -220,7 +220,7 @@ order.total_tax: IVA
 order.total_tax_by_rate: Total %name%
 order.preparation_expected_at: Preparació esperada al %date%
 order.shipping_date.title: La vostra data d’enviament
-order.payment.title: Informació de tu pagament
+order.payment.title: Informació del teu pagament
 order.payment.expiration.label: Caducitat
 order.payment.month.label: Mes
 order.payment.year.label: Any
@@ -231,7 +231,7 @@ order.delivery_time: Lliurament %time%
 order.payment.card_number.help: Hem introduït un <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">número de targeta de prova</a> stripe. No s'efectuarà
   cap càrrec en compte.
-order.state.cart: Cistell de compra
+order.state.cart: Cistella de compra
 order.state.accepted: Acceptat
 order.state.refused: Refusat
 order.state.new: Nou
@@ -253,7 +253,7 @@ order.list.type: Tipus
 order.list.customer: Client
 order.list.state: Estat
 order.list.summary: Resum
-order.list.summary.restaurant.text: Lliurament al restaurant<a href="%restaurant_url%">%restaurant_name%</a>
+order.list.summary.restaurant.text: Lliurament al restaurant <a href="%restaurant_url%">%restaurant_name%</a>
 order.list.summary.deleted_restaurant.text: Lliurament al restaurant %restaurant_name%
 order.list.summary.delivery.text: Entrega %distance%, %vehicle%
 order.list.receipt: Recibo
@@ -280,7 +280,7 @@ form.task.status.label: Estat
 form.task_event.notes.placeholder: 'Ex: adreça no trobada, cap problema …'
 form.task_event.notes.help: Podeu editar el comentari
 form.task_complete.done.label: Completa
-form.task_complete.fail.label: Informe del problema
+form.task_complete.fail.label: Informar del problema
 task.type.PICKUP: Recollida
 task.type.DROPOFF: Entrega
 task.previous_task_not_completed_yet: La tasca anterior no s'ha completat encara
@@ -323,7 +323,7 @@ form.order.fulfill.label: Complir
 form.order.payment_complete.label: Completa
 form.order.payment_refund.label: Devolució
 form.order.refund_modal.title: Devolució
-form.payment.refund_amount.label: Import
+form.payment.refund_amount.label: Import retornat
 form.payment.refund_amount.help: L’import que especifiqueu es retornarà al client
 form.address.addressLocality.label: Ciutat
 form.address.postalCode.label: Codi Postal
@@ -648,9 +648,9 @@ adminDashboard.package_sets.title: Paquets
 form.store_type.package_set.label: Conjunt de paquets
 form.delivery.package.label: Paquet
 form.delivery.packages.label: Paquets
-adminDashboard.tags.confirm_delete: Segur que voleu suprimir aquesta etiqueta? Aquesta
-  serà eliminada dels respectius elements que l'utilitzen i l'etiqueta ja no els agruparà
-  més.
+adminDashboard.tags.confirm_delete: "Segur que voleu suprimir aquesta etiqueta? \n\
+  Serà eliminada dels respectius elements que l'utilitzen i l'etiqueta ja no els agruparà\
+  \ més."
 restaurant.stats.order_number: Número d'ordre
 restaurant.stats.delivered_on: Entregat el
 restaurant.stats.total_products_including_all_taxes: Total de productes incloent tots
@@ -704,8 +704,8 @@ order.payment.redirect.help: Serà redirigit a l'entitat bancària per a complet
   seu pagament
 order.payment.waiting_for_confirmation: Esperant la confirmació del seu banc…
 order.payment.do_not_close: No tanqui aquesta pàgina
-order.payment.waiting_success: El seu banc a confirmat el pagament
-order.payment.waiting_failure: El seu banc a rebutjat el pagament
+order.payment.waiting_success: El seu banc ha confirmat el pagament
+order.payment.waiting_failure: El seu banc ha rebutjat el pagament
 order.notes: Notes dels clients
 order.adjustment_type.tip: Propina
 order.list.generate_receipt: Generar
@@ -940,7 +940,7 @@ sms.simple: "Hola,\nEl nostre missatger aquesta en camí a %address%.\n"
 sms.with_tracking: "Hola,\nEl nostre missatger aquesta en camí a %address%.\nSegueix-ho\
   \ en %link%\n"
 fulfillment_method.delivery: Lliurament
-fulfillment_method.collection: recollida
+fulfillment_method.collection: Recollida
 form.price_with_tax.tax_incl.label: Preu (amb IVA)
 restaurant_promotion.offer_delivery.help: Això li permet oferir les despeses d'enviament
   <strong>amb els teus propis diners</strong>. El seu marge es veurà disminuït per
@@ -948,3 +948,77 @@ restaurant_promotion.offer_delivery.help: Això li permet oferir les despeses d'
   percebudes per la plataforma.
 form.offer_delivery.coupon_code.help: És la seva responsabilitat comunicar aquest
   codi al client, ja sigui personalment o a través de les xarxes socials
+base.footer.privacy: Privacitat
+base.footer.terms: Termes del servei
+form.time_slot.choices.error.empty: La llista d'opcions no pot estar buida
+order.payer.title: Informacó del comprador
+order.payer.email: Correu electronic
+order.payer.identificationType: Tipus de document identificatiu
+profile.fullName: Nom complet
+order.payer.identificationNumber: Número del document
+form.store_type.time_slot.placeholder: Escull una franja horària
+form.payment.state.label: Estat
+form.payment.last_update.label: Última actualització
+checkout.breadcrumb.confirm: Confirmació
+form.payment.amount.label: Import
+form.payment.refund_liable.help: Qui és responsable de l'incident?
+form.payment.refund_comment.help: Per favor descriu el que ha succeït
+form.address.company_name.label: Nom de l'empresa
+form.payment.refund_liable.label: Part responsable
+form.payment.refund_comment.label: Comentaris
+form.address.company.business_reference.label: Persona de contacte de l'entitat
+form.address.company.function.label: Càrrec de la persona de contacte
+form.address.company.collaborator_number.label: Nombre de persones treballadores
+form.address.company.meal_estimate.label: Nombre estimat d'àpats diaris
+form.company.make_the_request.label: Enviar sol·licitud
+form.settings.sms_enabled.label: Habilitar enviament de SMS
+deliveries.section.past: Antigues
+order.export.heading.tip: Propina
+form:
+  restaurant:
+    name:
+      label: Nom del restaurant
+    contact_referent:
+      label: Persona de contacte de l'establiment
+refund.list.amount: Import retornat
+refund.list.liable_party: Part responsable
+refund.list.comments: Comentaris
+form.checkout_address.telephone.help: Per contactar-te en cas d'incident
+guest_checkout.user_with_same_email_exists: Ja existeix un compte amb el mateix correu
+  electrònic. Si us plau inicia sessió per continuar o fes servir un altre correu
+  electrònic per fer una comanda sense registrar-te.
+guest_checkout.use_another_email: Fer servir un altre correu electrònic
+homepage.form.title: Necessites que et portem alguna cosa?
+localBusiness.form.use_different_business_address.label: Direcció d'empresa diferent
+localBusiness.form.business_address.label: Adreça de l'establiment
+form.pricing_rule_set.strategy.label: Mètode de càlcul
+form.pricing_rule_set.strategy.map.label: Totes les regles que coincideixen
+restaurant.form.cuisines.label: Estils de cuina
+user.edit.enabled.label: Habilitat
+form.pricing_rule_set.strategy.find.label: La primera regla que coincideix
+restaurant.form.section.taxonomy: Tarificació
+form.settings.subject_to_vat.label: Subjecte a IVA
+form.store_type.weight_required.label: Sol·licitar el pes
+form.registration.legal.label: Accepto els Termes i Condicions i la Política de Privacitat
+form.registration.legal.help: Marcant aquesta casella, aceptes els nostres<a href="%terms_url%">Termes
+  i Condicions</a> i la <a href="%privacy_url%">Política de Privadesa</a>.
+form.customize.motto.help: Això es mostrarà a la pàgina d'inici
+deliveries.section.upcoming: Properes
+authentication.register_benefits: Registra't per fer comandes amb més agilitat. També
+  podràs consultar el teu historial de comandes.
+authentication.choose_password: Escull contrassenya
+receipt.line_item.tax_total: IVA
+order.export.heading.fulfillment_method: Realització
+form.receipt.billing_address.label: Direcció de facturació
+form.receipt.billing_address.help: Si vols fer servir una direcció de facturació diferent,
+  introdueix-la aquí
+order.refund.total_amount: Aquesta comanda ha sigut reemborsada per un import de %amount%
+form.product_tax_category_choice.placeholder: Escull impost
+base.footer.companyRegister: Comença a col·laborar
+base.footer.RegisterMyRestaurant: Registrar el meu establiment
+adminDashboard.users.orders_count: Nombre de comandes
+adminDashboard.users.last_order: Última Comanda
+adminDashboard.users.registered_at: Registrat
+form.settings.mercadopago.publishable_key.label: Clau publicable
+basics.description: Descripció
+basics.configure: Configuració
