@@ -327,7 +327,8 @@ class RestaurantController extends AbstractController
      */
     public function changeAddressAction($id, Request $request,
         CartContextInterface $cartContext,
-        IriConverterInterface $iriConverter)
+        IriConverterInterface $iriConverter,
+        RestaurantResolver $restaurantResolver)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
@@ -350,8 +351,10 @@ class RestaurantController extends AbstractController
                 if ($user->getAddresses()->contains($shippingAddress)) {
                     $cart->setShippingAddress($shippingAddress);
 
-                    $this->orderManager->persist($cart);
-                    $this->orderManager->flush();
+                    if ($restaurantResolver->accept($cart)) {
+                        $this->orderManager->persist($cart);
+                        $this->orderManager->flush();
+                    }
                 }
 
             } catch (ItemNotFoundException $e) {
