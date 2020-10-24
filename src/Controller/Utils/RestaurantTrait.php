@@ -664,14 +664,6 @@ trait RestaurantTrait
         $qb->andWhere('p.id = rp.id');
         $qb->setParameter('restaurant', $restaurant);
 
-        $forms = [];
-        foreach ($qb->getQuery()->getResult() as $product) {
-            $forms[$product->getId()] =
-                $this->createRestaurantProductForm($restaurant, $product)->createView();
-        }
-
-        $routes = $request->attributes->get('routes');
-
         $products = $this->get('knp_paginator')->paginate(
             $qb,
             $request->query->getInt('page', 1),
@@ -682,6 +674,14 @@ trait RestaurantTrait
                 PaginatorInterface::SORT_FIELD_WHITELIST => ['t.name'],
             ]
         );
+
+        $forms = [];
+        foreach ($products as $product) {
+            $forms[$product->getId()] =
+                $this->createRestaurantProductForm($restaurant, $product)->createView();
+        }
+
+        $routes = $request->attributes->get('routes');
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
