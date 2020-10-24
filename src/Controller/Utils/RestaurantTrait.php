@@ -12,6 +12,7 @@ use AppBundle\Entity\Restaurant\PreparationTimeRule;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\ClosingRuleType;
@@ -35,12 +36,15 @@ use AppBundle\Utils\RestaurantStats;
 use AppBundle\Utils\ValidationUtils;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Expr;
+use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use MercadoPago;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Product\Model\ProductTranslation;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
@@ -650,19 +654,34 @@ trait RestaurantTrait
 
         $this->accessControl($restaurant);
 
-        $routes = $request->attributes->get('routes');
-
-        // TODO Use Criteria API for ordering
-        $products = $restaurant->getProducts()->toArray();
-        usort($products, function ($a, $b) {
-            return $a->getName() < $b->getName() ? -1 : 1;
-        });
+        $qb = $this->getDoctrine()
+            ->getRepository(Product::class)
+            ->createQueryBuilder('p');
+        $qb->innerJoin(ProductTranslation::class, 't', Expr\Join::WITH, 't.translatable = p.id');
+        $qb->innerJoin(LocalBusiness::class, 'r', Expr\Join::WITH, '1 = 1');
+        $qb->innerJoin('r.products', 'rp');
+        $qb->andWhere('r.id = :restaurant');
+        $qb->andWhere('p.id = rp.id');
+        $qb->setParameter('restaurant', $restaurant);
 
         $forms = [];
-        foreach ($products as $product) {
+        foreach ($qb->getQuery()->getResult() as $product) {
             $forms[$product->getId()] =
                 $this->createRestaurantProductForm($restaurant, $product)->createView();
         }
+
+        $routes = $request->attributes->get('routes');
+
+        $products = $this->get('knp_paginator')->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            10,
+            [
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.name',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
+                PaginatorInterface::SORT_FIELD_WHITELIST => ['t.name'],
+            ]
+        );
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
