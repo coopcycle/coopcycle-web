@@ -8,7 +8,8 @@ import {
   createTaskListRequest,
   createTaskListSuccess,
   createTaskListFailure,
-} from '../../coopcycle-frontend-js/dispatch/redux'
+} from '../../coopcycle-frontend-js/logistics/redux'
+import {moment} from "../../coopcycle-frontend-js";
 
 function createClient(dispatch) {
 
@@ -181,7 +182,7 @@ function removeTasks(username, tasks) {
   }
 }
 
-function updateTask(task) {
+function _updateTask(task) {
   return {type: UPDATE_TASK, task}
 }
 
@@ -449,6 +450,29 @@ function closeImportModal() {
   return { type: CLOSE_IMPORT_MODAL }
 }
 
+const acceptTask = (task, date) => {
+
+  const dateAsRange = moment.range(
+    moment(date).set({ hour:  0, minute:  0, second:  0 }),
+    moment(date).set({ hour: 23, minute: 59, second: 59 })
+  )
+
+  const range = moment.range(
+    moment(task.doneAfter),
+    moment(task.doneBefore)
+  )
+
+  return range.overlaps(dateAsRange)
+}
+
+function updateTask(dispatch, getState, task) {
+  let date = selectSelectedDate(getState)
+
+  if (acceptTask(task, date)) {
+    dispatch(_updateTask(task))
+  }
+}
+
 function createTask(task) {
 
   return function(dispatch, getState) {
@@ -491,7 +515,7 @@ function createTask(task) {
     })
       .then(response => {
         dispatch(createTaskSuccess())
-        dispatch(updateTask(response.data))
+        updateTask(dispatch, getState, response.data)
         dispatch(closeNewTaskModal())
       })
       .catch(error => dispatch(createTaskFailure(error)))
@@ -520,7 +544,7 @@ function startTask(task) {
     })
       .then(response => {
         dispatch(createTaskSuccess())
-        dispatch(updateTask(response.data))
+        updateTask(dispatch, getState, response.data)
         dispatch(closeNewTaskModal())
       })
       .catch(error => dispatch(completeTaskFailure(error)))
@@ -549,7 +573,7 @@ function completeTask(task, notes = '', success = true) {
     })
       .then(response => {
         dispatch(createTaskSuccess())
-        dispatch(updateTask(response.data))
+        updateTask(dispatch, getState, response.data)
         dispatch(closeNewTaskModal())
       })
       .catch(error => dispatch(completeTaskFailure(error)))
@@ -578,7 +602,7 @@ function cancelTask(task) {
     })
       .then(response => {
         dispatch(createTaskSuccess())
-        dispatch(updateTask(response.data))
+        updateTask(dispatch, getState, response.data)
         dispatch(closeNewTaskModal())
       })
       .catch(error => dispatch(cancelTaskFailure(error)))
@@ -612,7 +636,7 @@ function cancelTasks(tasks) {
     Promise.all(requests)
       .then(values => {
         dispatch(createTaskSuccess())
-        values.forEach(response => dispatch(updateTask(response.data)))
+        values.forEach(response => updateTask(dispatch, getState, response.data))
       })
       .catch(error => dispatch(cancelTaskFailure(error)))
   }
@@ -640,7 +664,7 @@ function duplicateTask(task) {
     })
       .then(response => {
         dispatch(createTaskSuccess(response.data))
-        dispatch(updateTask(response.data))
+        updateTask(dispatch, getState, response.data)
         dispatch(closeNewTaskModal())
       })
       .catch(error => dispatch(cancelTaskFailure(error)))

@@ -54,14 +54,14 @@ export const socketIO = ({ dispatch, getState }) => {
       },
     })
 
-    socket.on('task:started', data => dispatch(updateTask(data.task)))
-    socket.on('task:done', data => dispatch(updateTask(data.task)))
-    socket.on('task:failed', data => dispatch(updateTask(data.task)))
-    socket.on('task:cancelled', data => dispatch(updateTask(data.task)))
-    socket.on('task:created', data => dispatch(updateTask(data.task)))
+    socket.on('task:started', data => updateTask(dispatch, getState, data.task))
+    socket.on('task:done', data => updateTask(dispatch, getState, data.task))
+    socket.on('task:failed', data => updateTask(dispatch, getState, data.task))
+    socket.on('task:cancelled', data => updateTask(dispatch, getState, data.task))
+    socket.on('task:created', data => updateTask(dispatch, getState, data.task))
 
-    socket.on('task:assigned', data => dispatch(updateTask(data.task)))
-    socket.on('task:unassigned', data => dispatch(updateTask(data.task)))
+    socket.on('task:assigned', data => updateTask(dispatch, getState, data.task))
+    socket.on('task:unassigned', data => updateTask(dispatch, getState, data.task))
 
     socket.on('task_import:success', data => dispatch(importSuccess(data.token)))
     socket.on('task_import:failure', data => dispatch(importError(data.token, data.message)))
@@ -86,7 +86,7 @@ export const socketIO = ({ dispatch, getState }) => {
 }
 
 function getKey(state) {
-  return state.dispatch.date.format('YYYY-MM-DD')
+  return state.logistics.date.format('YYYY-MM-DD')
 }
 
 export const persistFilters = ({ getState }) => (next) => (action) => {

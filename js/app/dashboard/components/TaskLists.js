@@ -8,7 +8,7 @@ import { createTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, 
 import CourierSelect from './CourierSelect'
 import TaskList from './TaskList'
 
-import { selectTaskLists, selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectTaskLists, selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 
 class TaskLists extends React.Component {
 
@@ -111,7 +111,7 @@ function mapStateToProps (state) {
     addModalIsOpen: state.addModalIsOpen,
     taskLists: selectTaskLists(state),
     date: selectSelectedDate(state),
-    taskListsLoading: state.dispatch.taskListsLoading,
+    taskListsLoading: state.logistics.ui.taskListsLoading,
     taskModalIsOpen: state.taskModalIsOpen,
   }
 }

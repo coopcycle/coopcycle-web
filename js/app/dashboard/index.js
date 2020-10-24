@@ -4,7 +4,6 @@ import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
 import moment from 'moment'
-import _ from 'lodash'
 
 import i18n from '../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
@@ -16,6 +15,7 @@ import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
 let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve
+import { taskListUtils } from '../coopcycle-frontend-js/logistics/redux'
 
 const mapLoaded = new Promise((resolve) => mapLoadedResolve = resolve)
 const navbarLoaded = new Promise((resolve) => navbarLoadedResolve = resolve)
@@ -25,14 +25,33 @@ function start() {
 
   const dashboardEl = document.getElementById('dashboard')
 
-  const date = moment(dashboardEl.dataset.date)
-  const tasks = JSON.parse(dashboardEl.dataset.tasks)
+  let date = moment(dashboardEl.dataset.date)
+  let tasks = JSON.parse(dashboardEl.dataset.tasks)
+
+  let taskEntities = new Map()
+  for (let task of tasks) {
+    taskEntities.set(task["@id"], task)
+  }
+
+  // normalize data, keep only task ids, instead of the whole objects
+  let taskLists = JSON.parse(dashboardEl.dataset.taskLists)
+  taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
+  let taskListEntities = new Map()
+  for (let taskList of taskLists) {
+    taskListEntities.set(taskList["@id"], taskList)
+  }
 
   let preloadedState = {
-    dispatch: {
-      unassignedTasks: _.filter(tasks, task => !task.isAssigned),
-      taskLists: JSON.parse(dashboardEl.dataset.taskLists),
+    logistics : {
       date,
+      entities: {
+        tasks: {
+          items: taskEntities
+        },
+        taskLists: {
+          items: taskListEntities
+        }
+      }
     },
     tags: JSON.parse(dashboardEl.dataset.tags),
     couriersList: JSON.parse(dashboardEl.dataset.couriersList),

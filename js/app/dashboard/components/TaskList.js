@@ -10,7 +10,7 @@ import Task from './Task'
 import TaskListPopoverContent from './TaskListPopoverContent'
 import { removeTasks, modifyTaskList, togglePolyline } from '../redux/actions'
 import { selectFilteredTasks } from '../redux/selectors'
-import { selectSelectedDate, selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectSelectedDate, selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
 moment.locale($('html').attr('lang'))
 

@@ -6,7 +6,7 @@ import { Input } from 'antd'
 import Fuse from 'fuse.js'
 
 import { toggleSearch } from '../redux/actions'
-import { selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
 import Task from './Task'
 
