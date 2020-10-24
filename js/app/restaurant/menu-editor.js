@@ -26,6 +26,14 @@ function resolveProductInput(taxonId, productId) {
     .filter((index, el) => $(el).val() === productId)
 }
 
+function reorderSource() {
+  const els = Array.from(source.querySelectorAll('[data-product-id]'))
+  els.sort((a, b) => a.textContent.trim() < b.textContent.trim() ? -1 : 1)
+  els.forEach(el => {
+    el.parentNode.appendChild(el)
+  })
+}
+
 function reorderProducts(taxonId) {
 
   const container = document
@@ -174,6 +182,11 @@ productContainers.forEach(container => {
         removeProduct(taxonId, productId)
         reorderProducts(taxonId)
       }
+
+      if (e.from.hasAttribute('data-draggable-target') &&
+        e.to.hasAttribute('data-draggable-source')) {
+        reorderSource()
+      }
     },
   })
 })
@@ -187,3 +200,5 @@ sectionContainers.forEach(container => {
     },
   })
 })
+
+reorderSource()
