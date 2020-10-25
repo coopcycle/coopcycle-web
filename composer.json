@@ -109,7 +109,8 @@
         "league/omnipay": "^3",
         "mercadopago/dx-php": "^2.1.1",
         "egulias/email-validator": "^2.1",
-        "twilio/sdk": "^6.10"
+        "twilio/sdk": "^6.10",
+        "friendsofsymfony/rest-bundle": "^3.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
