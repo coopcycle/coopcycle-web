@@ -11,6 +11,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant\Pledge;
@@ -170,6 +171,33 @@ class RestaurantController extends AbstractController
             'address' => $request->query->has('address') ? $request->query->get('address') : null,
             'local_business_context' => $repository->getContext(),
         ));
+    }
+
+    /**
+     * @Route("/hub/{id}-{slug}", name="hub",
+     *   requirements={
+     *     "id"="(\d+)",
+     *     "slug"="([a-z0-9-]+)"
+     *   },
+     *   defaults={
+     *     "slug"=""
+     *   }
+     * )
+     */
+    public function hubAction($id, $slug, Request $request,
+        SlugifyInterface $slugify,
+        CartContextInterface $cartContext,
+        IriConverterInterface $iriConverter)
+    {
+        $hub = $this->getDoctrine()->getRepository(Hub::class)->find($id);
+
+        if (!$hub) {
+            throw new NotFoundHttpException();
+        }
+
+        return $this->render('restaurant/hub.html.twig', [
+            'hub' => $hub,
+        ]);
     }
 
     /**
