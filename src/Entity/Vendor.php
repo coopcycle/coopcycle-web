@@ -58,6 +58,11 @@ class Vendor
         return $this;
     }
 
+    public function isHub(): bool
+    {
+        return $this->hub !== null;
+    }
+
     /* BEGIN Common interface between Restaurant & Hub */
 
     public function getAddress()
@@ -105,6 +110,15 @@ class Vendor
         return $this->restaurant->getFulfillmentMethod($method);
     }
 
+    public function getFulfillmentMethods()
+    {
+        if (null !== $this->hub) {
+            return $this->hub->getFulfillmentMethods();
+        }
+
+        return $this->restaurant->getFulfillmentMethods();
+    }
+
     public function getOrderingDelayMinutes()
     {
         if (null !== $this->hub) {
@@ -132,12 +146,32 @@ class Vendor
         return $this->restaurant->getClosingRules();
     }
 
+    /**
+     * @return Contract
+     */
+    public function getContract()
+    {
+        if (null !== $this->hub) {
+            return $this->hub->getContract();
+        }
+
+        return $this->restaurant->getContract();
+    }
+
     /* END Common interface between Restaurant & Hub */
 
-    public static function withRestaurant($restaurant)
+    public static function withRestaurant(LocalBusiness $restaurant)
     {
         $vendor = new self();
         $vendor->setRestaurant($restaurant);
+
+        return $vendor;
+    }
+
+    public static function withHub(Hub $hub)
+    {
+        $vendor = new self();
+        $vendor->setHub($hub);
 
         return $vendor;
     }

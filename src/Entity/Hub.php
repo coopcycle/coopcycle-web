@@ -6,18 +6,23 @@ use AppBundle\Entity\LocalBusiness\ClosingRulesTrait;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethodsTrait;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsTrait;
+use AppBundle\OpeningHours\OpenCloseInterface;
+use AppBundle\OpeningHours\OpenCloseTrait;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class Hub
+class Hub implements OpenCloseInterface
 {
     use ClosingRulesTrait;
     use FulfillmentMethodsTrait;
     use ShippingOptionsTrait;
+    use OpenCloseTrait;
 
     private $id;
     private $name;
     private $address;
     private $restaurants;
+    private $contract;
 
     public function __construct()
     {
@@ -103,5 +108,21 @@ class Hub
     public function addRestaurant($restaurant)
     {
         $this->restaurants->add($restaurant);
+    }
+
+    /**
+     * @return Contract
+     */
+    public function getContract()
+    {
+        return $this->contract;
+    }
+
+    /**
+     * @param Contract $contract
+     */
+    public function setContract(Contract $contract)
+    {
+        $this->contract = $contract;
     }
 }

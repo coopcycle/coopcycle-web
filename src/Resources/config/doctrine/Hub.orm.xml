@@ -23,6 +23,11 @@
         <join-column name="address_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
+    <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </many-to-one>
     <many-to-many field="restaurants" target-entity="AppBundle\Entity\LocalBusiness">
       <join-table name="hub_restaurant">
         <join-columns>
