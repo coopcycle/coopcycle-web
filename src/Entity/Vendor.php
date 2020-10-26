@@ -158,6 +158,15 @@ class Vendor
         return $this->restaurant->getContract();
     }
 
+    public function getName()
+    {
+        if (null !== $this->hub) {
+            return $this->hub->getName();
+        }
+
+        return $this->restaurant->getName();
+    }
+
     /* END Common interface between Restaurant & Hub */
 
     public static function withRestaurant(LocalBusiness $restaurant)

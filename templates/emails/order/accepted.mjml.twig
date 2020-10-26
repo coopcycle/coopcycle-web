@@ -5,7 +5,7 @@
   <mj-text align="left" line-height="20px">
   {{ 'order.accepted.body.intro' | trans({}, 'emails') | raw }}
   </mj-text>
-  {% if order.foodtech %}
+  {% if order.hasVendor() %}
   <mj-text align="left" line-height="20px">
   {{ ('order.foodtech.accepted.' ~ order.fulfillmentMethod)|trans({}, 'emails')|raw }}
   </mj-text>
@@ -13,12 +13,16 @@
   {{ order.shippingTimeRange|time_range_for_humans }}
   </mj-text>
   <mj-text align="left" line-height="20px">
+  {% set telephone = coopcycle_setting('phone_number') %}
+  {% if not order.vendor.isHub() %}
+    {% set telephone = order.vendor.restaurant.telephone %}
+  {% endif %}
   {{ ('order.foodtech.accepted.' ~ order.fulfillmentMethod ~ '.disclaimer')|trans({
-    '%name%': order.restaurant.name,
-    '%phone_number%': order.restaurant.telephone|phone_number_format('NATIONAL')
+    '%name%': order.vendor.name,
+    '%phone_number%': telephone|phone_number_format('NATIONAL')
   }, 'emails')|raw }}
   </mj-text>
-  {% if order.restaurant.loopeatEnabled and order.reusablePackagingEnabled %}
+  {% if not order.vendor.isHub() and order.vendor.restaurant.loopeatEnabled and order.reusablePackagingEnabled %}
   <mj-text align="left" line-height="20px">
   {{ ('order.loopeat.accepted')|trans({}, 'emails')|raw }}
   </mj-text>

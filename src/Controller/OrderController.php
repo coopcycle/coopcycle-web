@@ -91,7 +91,7 @@ class OrderController extends AbstractController
 
         $order = $cartContext->getCart();
 
-        if (null === $order || null === $order->getRestaurant()) {
+        if (null === $order || null === $order->getVendor()) {
 
             return $this->redirectToRoute('homepage');
         }
@@ -201,7 +201,7 @@ class OrderController extends AbstractController
 
         $order = $cartContext->getCart();
 
-        if (null === $order || null === $order->getRestaurant()) {
+        if (null === $order || null === $order->getVendor()) {
 
             return $this->redirectToRoute('homepage');
         }
@@ -216,7 +216,6 @@ class OrderController extends AbstractController
 
         $parameters =  [
             'order' => $order,
-            'restaurant' => $order->getRestaurant(),
             'shipping_range' => $this->getShippingRange($order),
         ];
 

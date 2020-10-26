@@ -15,12 +15,15 @@
 
 <ol class="multi-step-list mb-5">
   <li class="multi-step-item">
-    <a class="item-wrap" href="{{ path('restaurant', {'id': order.restaurant.id, 'slug': order.restaurant.name|slugify }) }}">
+    <a class="item-wrap" href="{{ path((order.vendor.isHub() ? 'hub' : 'restaurant'), {
+        id: (order.vendor.isHub() ? order.vendor.hub.id : order.vendor.restaurant.id),
+        slug: order.vendor.name|slugify
+      }) }}">
       <span class="item-title">
         <span class="mr-2">
           <i class="fa fa-shopping-basket fa-lg"></i>
         </span>
-        <span class="d-none d-lg-inline d-xl-inline">{{ order.restaurant.name }}</span>
+        <span class="d-none d-lg-inline d-xl-inline">{{ order.vendor.name }}</span>
       </span>
     </a>
   </li>

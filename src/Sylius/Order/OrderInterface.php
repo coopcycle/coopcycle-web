@@ -164,4 +164,9 @@ interface OrderInterface extends
      * @return Vendor|null
      */
     public function getVendor(): ?Vendor;
+
+    /**
+     * @return boolean
+     */
+    public function hasVendor(): bool;
 }

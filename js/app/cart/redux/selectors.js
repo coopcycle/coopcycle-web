@@ -4,12 +4,12 @@ import _ from 'lodash'
 import { totalTaxExcluded } from '../../utils/tax'
 
 export const selectIsDeliveryEnabled = createSelector(
-  state => state.cart.restaurant.fulfillmentMethods,
+  state => state.cart.vendor.fulfillmentMethods,
   (fulfillmentMethods) => _.includes(fulfillmentMethods, 'delivery')
 )
 
 export const selectIsCollectionEnabled = createSelector(
-  state => state.cart.restaurant.fulfillmentMethods,
+  state => state.cart.vendor.fulfillmentMethods,
   (fulfillmentMethods) => _.includes(fulfillmentMethods, 'collection')
 )
 
@@ -39,8 +39,8 @@ export const selectItemsTotal = createSelector(
 export const selectVariableCustomerAmountEnabled = createSelector(
   state => state.cart,
   (cart) => {
-    if (cart.restaurant) {
-      return cart.restaurant.variableCustomerAmountEnabled
+    if (cart.vendor) {
+      return cart.vendor.variableCustomerAmountEnabled
     }
 
     return false

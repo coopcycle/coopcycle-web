@@ -9,6 +9,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Vendor;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTextEncoder;
@@ -107,6 +108,9 @@ class CreateTasksTest extends TestCase
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
         $order
             ->getShippingAddress()
             ->willReturn($shippingAddress);

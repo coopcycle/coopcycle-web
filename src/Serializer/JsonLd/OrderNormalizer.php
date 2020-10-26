@@ -170,6 +170,32 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 ];
             }
 
+            $vendor = $object->getVendor();
+            if (null === $vendor) {
+                $data['vendor'] = null;
+            } else {
+
+                $fulfillmentMethods = [];
+                foreach ($vendor->getFulfillmentMethods() as $fulfillmentMethod) {
+                    if ($fulfillmentMethod->isEnabled()) {
+                        $fulfillmentMethods[] = $fulfillmentMethod->getType();
+                    }
+                }
+
+                $data['vendor'] = [
+                    'id' => $vendor->getId(),
+                    'variableCustomerAmountEnabled' =>
+                        $vendor->getContract() !== null ? $vendor->getContract()->isVariableCustomerAmountEnabled() : false,
+                    'address' => [
+                        'latlng' => [
+                            $vendor->getAddress()->getGeo()->getLatitude(),
+                            $vendor->getAddress()->getGeo()->getLongitude(),
+                        ]
+                    ],
+                    'fulfillmentMethods' => $fulfillmentMethods,
+                ];
+            }
+
             $data['takeaway'] = $object->isTakeaway();
         }
 

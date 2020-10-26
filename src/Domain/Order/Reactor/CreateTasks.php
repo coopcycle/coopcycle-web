@@ -33,7 +33,7 @@ class CreateTasks
             return;
         }
 
-        $pickupAddress = $order->getRestaurant()->getAddress();
+        $pickupAddress = $order->getVendor()->getAddress();
         $dropoffAddress = $order->getShippingAddress();
 
         $duration = $this->routing->getDuration(

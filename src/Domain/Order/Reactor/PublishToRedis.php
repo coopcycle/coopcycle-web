@@ -33,7 +33,7 @@ class PublishToRedis
                 $this->socketIoManager->toAdmins($event);
             }
 
-            if (!$order->isFoodtech()) {
+            if (!$order->hasVendor() || $order->getVendor()->isHub()) {
                 return;
             }
 

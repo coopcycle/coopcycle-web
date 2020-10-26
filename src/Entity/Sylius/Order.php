@@ -443,7 +443,12 @@ class Order extends BaseOrder implements OrderInterface
      */
     public function isFoodtech(): bool
     {
-        return null !== $this->getRestaurant();
+        return $this->hasVendor();
+    }
+
+    public function hasVendor(): bool
+    {
+        return null !== $this->getVendor();
     }
 
     /**
