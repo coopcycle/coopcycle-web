@@ -125,4 +125,30 @@ class Hub implements OpenCloseInterface
     {
         $this->contract = $contract;
     }
+
+    /**
+     * @return int
+     */
+    public function getItemsTotalForRestaurant(OrderInterface $order, LocalBusiness $restaurant): int
+    {
+        $total = 0;
+        foreach ($order->getItems() as $item) {
+            if ($restaurant->hasProduct($item->getVariant()->getProduct())) {
+                $total += $item->getTotal();
+            }
+        }
+
+        return $total;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPercentageForRestaurant(OrderInterface $order, LocalBusiness $restaurant): float
+    {
+        $total = $order->getItemsTotal();
+        $itemsTotal = $this->getItemsTotalForRestaurant($order, $restaurant);
+
+        return round($itemsTotal / $total, 2);
+    }
 }
