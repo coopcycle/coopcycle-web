@@ -444,6 +444,11 @@ services:
         arguments:
             - '@coopcycle.utils.restaurant_filter'
 
+  AppBundle\Entity\HubRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Hub
+
   AppBundle\Service\Routing\Osrm:
     arguments:
       $client: '@csa_guzzle.client.osrm'
