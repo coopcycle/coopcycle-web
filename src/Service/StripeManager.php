@@ -39,10 +39,12 @@ class StripeManager
     {
         $order = $payment->getOrder();
 
-        $restaurant = $order->getRestaurant();
-        if (null === $restaurant) {
+        $vendor = $order->getVendor();
+        if (null === $vendor || $vendor->isHub()) {
             return;
         }
+
+        $restaurant = $order->getRestaurant();
 
         $livemode = $this->settingsManager->isStripeLivemode();
         $stripeAccount = $restaurant->getStripeAccount($livemode);
@@ -58,10 +60,12 @@ class StripeManager
 
         $order = $payment->getOrder();
 
-        $restaurant = $order->getRestaurant();
-        if (null === $restaurant) {
-            return $options;
+        $vendor = $order->getVendor();
+        if (null === $vendor || $vendor->isHub()) {
+            return;
         }
+
+        $restaurant = $order->getRestaurant();
 
         $livemode = $this->settingsManager->isStripeLivemode();
         $stripeAccount = $restaurant->getStripeAccount($livemode);
@@ -225,7 +229,10 @@ class StripeManager
 
         $stripeOptions = [];
 
-        if (null !== $order->getRestaurant()) {
+        // If the vendor is a hub, we don't use Stripe connect when authorizing transaction
+        // Instead, we use Transfers when capturing transaction
+        $vendor = $order->getVendor();
+        if (null !== $vendor && !$vendor->isHub()) {
 
             $livemode = $this->settingsManager->isStripeLivemode();
             $stripeAccount = $order->getRestaurant()->getStripeAccount($livemode);
@@ -284,12 +291,36 @@ class StripeManager
 
         // When we are using sources (like giropay),
         // the charge is already captured
-        if ($charge->captured) {
+        if (!$charge->captured) {
 
-            return $charge;
+            $charge->capture();
+
+            // Creating transfers for a hub needs to
+            // be done here (after capture) to avoid error
+            // "Cannot use an uncaptured charge as a source_transaction"
+            $order = $payment->getOrder();
+            $vendor = $order->getVendor();
+            if ($vendor->isHub()) {
+
+                $livemode = $this->settingsManager->isStripeLivemode();
+                $hub = $vendor->getHub();
+
+                foreach ($hub->getRestaurants() as $restaurant) {
+
+                    $stripeAccount = $restaurant->getStripeAccount($livemode);
+                    $feePart = $order->getFeeTotal() * $hub->getPercentageForRestaurant($order, $restaurant);
+
+                    // @see https://stripe.com/docs/connect/charges-transfers
+                    Stripe\Transfer::create([
+                        'amount' => $hub->getItemsTotalForRestaurant($order, $restaurant) - $feePart,
+                        'currency' => strtolower($payment->getCurrencyCode()),
+                        'destination' => $stripeAccount->getStripeUserId(),
+                        // @see https://stripe.com/docs/connect/charges-transfers#transfer-availability
+                        'source_transaction' => $payment->getCharge(),
+                    ]);
+                }
+            }
         }
-
-        $charge->capture();
 
         return $charge;
     }

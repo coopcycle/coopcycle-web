@@ -3,12 +3,15 @@
 namespace Tests\AppBundle\Service;
 
 use AppBundle\Entity\Contract;
+use AppBundle\Entity\Hub;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Payment;
+use AppBundle\Entity\Vendor;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -108,6 +111,11 @@ class StripeManagerTest extends TestCase
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(
+                Vendor::withRestaurant($restaurant)
+            );
 
         $payment->setOrder($order->reveal());
 
@@ -145,6 +153,11 @@ class StripeManagerTest extends TestCase
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(
+                Vendor::withRestaurant($restaurant)
+            );
 
         $payment->setOrder($order->reveal());
 
@@ -186,6 +199,11 @@ class StripeManagerTest extends TestCase
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(
+                Vendor::withRestaurant($restaurant)
+            );
 
         $payment->setOrder($order->reveal());
 
@@ -218,6 +236,11 @@ class StripeManagerTest extends TestCase
             ->getRestaurant()
             ->willReturn($restaurant);
         $order
+            ->getVendor()
+            ->willReturn(
+                Vendor::withRestaurant($restaurant)
+            );
+        $order
             ->getLastPayment(PaymentInterface::STATE_NEW)
             ->willReturn($payment);
         $order
@@ -244,6 +267,51 @@ class StripeManagerTest extends TestCase
         $this->stripeManager->authorize($payment);
     }
 
+    public function testAuthorizeWithHub()
+    {
+        $payment = new Payment();
+        $payment->setAmount(3000);
+        $payment->setStripeToken('tok_123456');
+        $payment->setCurrencyCode('EUR');
+
+        $stripeAccount = $this->prophesize(StripeAccount::class);
+        $order = $this->prophesize(OrderInterface::class);
+        $contract = $this->prophesize(Contract::class);
+
+        $restaurant1 = $this->createRestaurant('acct_123', $paysStripeFee = true);
+        $restaurant2 = $this->createRestaurant('acct_456', $paysStripeFee = true);
+
+        $hub = $this->prophesize(Hub::class);
+
+        $vendor = new Vendor();
+        $vendor->setHub($hub->reveal());
+
+        $order
+            ->getNumber()
+            ->willReturn('000001');
+        $order
+            ->getTotal()
+            ->willReturn(3000);
+        $order
+            ->getFeeTotal()
+            ->willReturn(750);
+        $order
+            ->getVendor()
+            ->willReturn($vendor);
+
+        $payment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequest('POST', '/v1/charges', [
+            'amount' => 3000,
+            'currency' => 'eur',
+            'source' => 'tok_123456',
+            'description' => 'Order 000001',
+            'capture' => 'false',
+        ]);
+
+        $this->stripeManager->authorize($payment);
+    }
+
     public function testCaptureWithOwnAccount()
     {
         $payment = new Payment();
@@ -251,10 +319,15 @@ class StripeManagerTest extends TestCase
         $payment->setCurrencyCode('EUR');
         $payment->setCharge('ch_123456');
 
+        $restaurant = $this->createRestaurant('acct_123456', $paysStripeFee = false);
+
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getRestaurant()
-            ->willReturn($this->createRestaurant('acct_123456', $paysStripeFee = false));
+            ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
 
         $payment->setOrder($order->reveal());
 
@@ -271,10 +344,15 @@ class StripeManagerTest extends TestCase
         $payment->setCurrencyCode('EUR');
         $payment->setCharge('ch_123456');
 
+        $restaurant = $this->createRestaurant('acct_123456', $paysStripeFee = true);
+
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getRestaurant()
-            ->willReturn($this->createRestaurant('acct_123456', $paysStripeFee = true));
+            ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
 
         $payment->setOrder($order->reveal());
 
@@ -300,14 +378,105 @@ class StripeManagerTest extends TestCase
         ]);
         $payment->setPaymentIntent($paymentIntent);
 
+        $restaurant = $this->createRestaurant('acct_123456');
+
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getRestaurant()
-            ->willReturn($this->createRestaurant('acct_123456'));
+            ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
         $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequestForAccount('GET', '/v1/payment_intents/pi_12345678', 'acct_123456');
         $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_intents/pi_12345678/capture', 'acct_123456', ["amount_to_capture" => 3000]);
+
+        $this->stripeManager->capture($payment);
+    }
+
+    public function testCaptureWithHubs()
+    {
+        $payment = new Payment();
+        $payment->setAmount(3000);
+        $payment->setStripeToken('tok_123456');
+        $payment->setCurrencyCode('EUR');
+        $payment->setCharge('ch_123456');
+
+        $stripeAccount = $this->prophesize(StripeAccount::class);
+        $order = $this->prophesize(OrderInterface::class);
+        $contract = $this->prophesize(Contract::class);
+
+        $restaurant1 = $this->createRestaurant('acct_123', $paysStripeFee = true);
+        $restaurant2 = $this->createRestaurant('acct_456', $paysStripeFee = true);
+
+        $hub = $this->prophesize(Hub::class);
+        $hub
+            ->getRestaurants()
+            ->willReturn([ $restaurant1, $restaurant2 ]);
+        $hub
+            ->getPercentageForRestaurant(
+                $order->reveal(),
+                Argument::type(Restaurant::class)
+            )
+            ->will(function ($args) use ($restaurant1, $restaurant2) {
+                if ($args[1] === $restaurant1) {
+                    return 0.76;
+                }
+                if ($args[1] === $restaurant2) {
+                    return 0.24;
+                }
+            });
+        $hub
+            ->getItemsTotalForRestaurant(
+                $order->reveal(),
+                Argument::type(Restaurant::class)
+            )
+            ->will(function ($args) use ($restaurant1, $restaurant2) {
+                if ($args[1] === $restaurant1) {
+                    return 1700;
+                }
+                if ($args[1] === $restaurant2) {
+                    return 550;
+                }
+            });
+
+        $vendor = new Vendor();
+        $vendor->setHub($hub->reveal());
+
+        $order
+            ->getNumber()
+            ->willReturn('000001');
+        $order
+            ->getTotal()
+            ->willReturn(3000);
+        $order
+            ->getFeeTotal()
+            ->willReturn(750);
+        $order
+            ->getVendor()
+            ->willReturn($vendor);
+
+        // Total = 30.00
+        // Items = 22.50
+        // Fees  =  7.50
+
+        $payment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequest('GET', '/v1/charges/ch_123456');
+        $this->shouldSendStripeRequest('POST', '/v1/charges/ch_123456/capture');
+        $this->shouldSendStripeRequest('POST', '/v1/transfers', [
+            'amount' => 1130, // = 1700 - (750 * 0.76),
+            'currency' => 'eur',
+            'destination' => 'acct_123',
+            'source_transaction' => 'ch_123456',
+        ]);
+        $this->shouldSendStripeRequest('POST', '/v1/transfers', [
+            'amount' => 370, // = 550 - (750 * 0.24),
+            'currency' => 'eur',
+            'destination' => 'acct_456',
+            'source_transaction' => 'ch_123456',
+        ]);
 
         $this->stripeManager->capture($payment);
     }
@@ -321,6 +490,8 @@ class StripeManagerTest extends TestCase
         $payment->setCharge('ch_123456');
         $payment->setPaymentMethod('pm_123456');
 
+        $restaurant = $this->createRestaurant('acct_123456');
+
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getId()
@@ -330,7 +501,10 @@ class StripeManagerTest extends TestCase
             ->willReturn('ABC');
         $order
             ->getRestaurant()
-            ->willReturn($this->createRestaurant('acct_123456'));
+            ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
         $order
             ->getFeeTotal()
             ->willReturn(750);
@@ -360,6 +534,8 @@ class StripeManagerTest extends TestCase
         $payment->setCharge('ch_123456');
         $payment->setPaymentMethod('pm_123456');
 
+        $restaurant = $this->createRestaurant('acct_123456', $paysStripeFee = false);
+
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getId()
@@ -369,7 +545,10 @@ class StripeManagerTest extends TestCase
             ->willReturn('ABC');
         $order
             ->getRestaurant()
-            ->willReturn($this->createRestaurant('acct_123456', $paysStripeFee = false));
+            ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
         $order
             ->getTotal()
             ->willReturn(3000);
@@ -398,13 +577,18 @@ class StripeManagerTest extends TestCase
 
     public function testConfirmIntent()
     {
+        $restaurant = $this->createRestaurant('acct_123456');
+
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getId()
             ->willReturn(1);
         $order
             ->getRestaurant()
-            ->willReturn($this->createRestaurant('acct_123456'));
+            ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
 
         $payment = new Payment();
         $payment->setStripeUserId('acct_123456');
@@ -458,6 +642,11 @@ class StripeManagerTest extends TestCase
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(
+                Vendor::withRestaurant($restaurant)
+            );
 
         $payment->setOrder($order->reveal());
 
