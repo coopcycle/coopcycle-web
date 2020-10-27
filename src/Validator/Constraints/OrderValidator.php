@@ -110,7 +110,6 @@ class OrderValidator extends ConstraintValidator
         $isNew = $order->getId() === null || $order->getState() === OrderInterface::STATE_CART;
 
         if ($isNew) {
-
             if ($order->containsDisabledProduct()) {
                 $this->context->buildViolation($constraint->containsDisabledProductMessage)
                     ->atPath('items')
@@ -119,8 +118,6 @@ class OrderValidator extends ConstraintValidator
 
                 return;
             }
-
-
         } else {
             if (null === $order->getShippingTimeRange()) {
                 $this->context->buildViolation($constraint->shippedAtNotEmptyMessage)
