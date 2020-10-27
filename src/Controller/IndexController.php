@@ -123,12 +123,6 @@ class IndexController extends AbstractController
             'total' => $cart->getTotal(),
         ];
 
-        if (null !== $cart->getRestaurant()) {
-            $data['restaurant'] = [
-                'id' => $cart->getRestaurant()->getId(),
-            ];
-        }
-
         return new JsonResponse($data);
     }
 }

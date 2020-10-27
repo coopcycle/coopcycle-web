@@ -8,7 +8,6 @@ class CartTop extends React.Component
     this.state = {
       total: 0,
       itemsTotal: 0,
-      restaurant: null,
     }
     this.anchorRef = React.createRef()
   }
@@ -31,19 +30,15 @@ class CartTop extends React.Component
   }
 
   _onCartChange(cart) {
-    const { itemsTotal, total, restaurant } = cart
-    this.setState({ itemsTotal, total, restaurant })
+    const { itemsTotal, total } = cart
+    this.setState({ itemsTotal, total })
   }
 
   render() {
 
-    const { restaurant, total, itemsTotal } = this.state
+    const { total, itemsTotal } = this.state
 
-    let anchorURL = '#'
-    if (restaurant) {
-      anchorURL = window.Routing.generate('restaurant', { id: restaurant.id })
-    }
-
+    const anchorURL = itemsTotal > 0 ? this.props.href : '#'
     const amount = itemsTotal > 0 ? total : itemsTotal
 
     return (

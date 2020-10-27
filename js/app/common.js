@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const cartTopElement = document.querySelector('#cart-top')
   if (cartTopElement) {
-    render(<CartTop url={ cartTopElement.dataset.url } />, cartTopElement)
+    render(<CartTop url={ cartTopElement.dataset.url } href={ cartTopElement.dataset.href } />, cartTopElement)
   }
 
   const inputs = document.querySelectorAll('[data-widget="address-input"]')
