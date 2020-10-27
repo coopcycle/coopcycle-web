@@ -9,10 +9,6 @@
   {% set step = 4 %}
 {% endif %}
 
-{% if (restaurant is not defined) and (order is defined) %}
-  {% set restaurant = order.restaurant %}
-{% endif %}
-
 <ol class="multi-step-list mb-5">
   <li class="multi-step-item">
     <a class="item-wrap" href="{{ path((order.vendor.isHub() ? 'hub' : 'restaurant'), {
