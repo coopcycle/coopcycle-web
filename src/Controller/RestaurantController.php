@@ -401,7 +401,8 @@ class RestaurantController extends AbstractController
      */
     public function addProductToCartAction($id, $code, Request $request,
         CartContextInterface $cartContext,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        RestaurantResolver $restaurantResolver)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
@@ -429,6 +430,10 @@ class RestaurantController extends AbstractController
 
             return $this->jsonResponse($cart, $errors);
         }
+
+        // This may "upgrade" the order target,
+        // i.e switch from pointing to a single restaurant to pointing to a hub
+        $restaurantResolver->changeVendor($cart);
 
         $cartItem = $this->orderItemFactory->createNew();
 

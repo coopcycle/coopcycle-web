@@ -17,8 +17,12 @@ class OrderListener
 
         if (null !== $vendor) {
             if (!$entityManager->contains($vendor)) {
+                $params = $vendor->isHub() ?
+                    ['hub' => $vendor->getHub()] : ['restaurant' => $vendor->getRestaurant()];
+
                 $existingVendor = $entityManager->getRepository(Vendor::class)
-                    ->findOneBy(['restaurant' => $vendor->getRestaurant()]);
+                    ->findOneBy($params);
+
                 if (null !== $existingVendor) {
                     $order->setVendor($existingVendor);
                 } else {

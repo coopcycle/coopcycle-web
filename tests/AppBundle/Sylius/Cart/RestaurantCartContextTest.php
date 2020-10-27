@@ -5,7 +5,9 @@ namespace Tests\AppBundle\Sylius\Cart;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Cart\RestaurantCartContext;
 use AppBundle\Sylius\Cart\RestaurantResolver;
 use Doctrine\ORM\EntityNotFoundException;
@@ -114,7 +116,16 @@ class RestaurantCartContextTest extends TestCase
 
         $expectedCart = $this->prophesize(Order::class);
         $expectedCart->getRestaurant()->willReturn($restaurant->reveal());
+        $expectedCart->getVendor()->willReturn(
+            Vendor::withRestaurant(
+                $restaurant->reveal()
+            )
+        );
         $expectedCart->getChannel()->willReturn($this->webChannel->reveal());
+
+        $this->restaurantResolver
+            ->accept($expectedCart->reveal())
+            ->willReturn(true);
 
         $this->orderRepository
             ->findCartById(1)
@@ -150,6 +161,15 @@ class RestaurantCartContextTest extends TestCase
         $expectedCart = $this->prophesize(Order::class);
         $expectedCart->getRestaurant()->willReturn($restaurant->reveal());
         $expectedCart->getChannel()->willReturn($this->webChannel->reveal());
+        $expectedCart->getVendor()->willReturn(
+            Vendor::withRestaurant(
+                $restaurant->reveal()
+            )
+        );
+
+        $this->restaurantResolver
+            ->accept($expectedCart->reveal())
+            ->willReturn(false);
 
         $this->orderRepository
             ->findCartById(1)
@@ -225,6 +245,7 @@ class RestaurantCartContextTest extends TestCase
 
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
+        $cartProphecy->getVendor()->willReturn(Vendor::withRestaurant($restaurant->reveal()));
         $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
 
         $expectedCart = $cartProphecy->reveal();

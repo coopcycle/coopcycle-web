@@ -12,6 +12,7 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\Checkout\Action\Validator\AddProductToCart as AssertAddProductToCart;
+use AppBundle\Sylius\Cart\RestaurantResolver;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -76,6 +77,7 @@ class RestaurantControllerTest extends WebTestCase
         $this->orderItemQuantityModifier = $this->prophesize(OrderItemQuantityModifierInterface::class);
         $this->orderModifier = $this->prophesize(OrderModifierInterface::class);
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
+        $this->restaurantResolver = $this->prophesize(RestaurantResolver::class);
 
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
@@ -228,7 +230,7 @@ class RestaurantControllerTest extends WebTestCase
             });
 
         $response = $this->controller->addProductToCartAction(1, $productCode, $request,
-            $cartContext->reveal(), $translator->reveal());
+            $cartContext->reveal(), $translator->reveal(), $this->restaurantResolver->reveal());
 
         $this->assertInstanceOf(JsonResponse::class, $response);
 
@@ -323,7 +325,7 @@ class RestaurantControllerTest extends WebTestCase
             });
 
         $response = $this->controller->addProductToCartAction(1, $productCode, $request,
-            $cartContext->reveal(), $translator->reveal());
+            $cartContext->reveal(), $translator->reveal(), $this->restaurantResolver->reveal());
 
         $this->assertInstanceOf(JsonResponse::class, $response);
 

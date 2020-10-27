@@ -69,9 +69,14 @@ final class RestaurantCartContext implements CartContextInterface
                 $this->session->remove($this->sessionKeyName);
             } else {
                 try {
+
                     // We need to call a method on the restaurant object
                     // so that Doctrine eventually triggers EntityNotFoundException
-                    $restaurant = $cart->getRestaurant()->getName();
+                    $noop = $cart->getVendor()->getRestaurant();
+                    if (null !== $noop) {
+                        $noop->getName();
+                    }
+
                 } catch (EntityNotFoundException $e) {
                     $cart = null;
                     $this->session->remove($this->sessionKeyName);
@@ -82,11 +87,12 @@ final class RestaurantCartContext implements CartContextInterface
             // and is browsing another restaurant.
             // In this case, we want to show an empty cart to the user.
             if (null !== $cart) {
-                $restaurant = $this->resolver->resolve();
-                if (null !== $restaurant && $restaurant !== $cart->getRestaurant()) {
-                    $cart->clearItems();
-                    $cart->setShippingTimeRange(null);
-                    $cart->setRestaurant($restaurant);
+                if ($restaurant = $this->resolver->resolve()) {
+                    if (!$this->resolver->accept($cart)) {
+                        $cart->clearItems();
+                        $cart->setShippingTimeRange(null);
+                        $cart->setRestaurant($restaurant);
+                    }
                 }
             }
         }
