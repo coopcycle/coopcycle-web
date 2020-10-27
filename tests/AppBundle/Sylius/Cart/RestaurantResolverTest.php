@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Sylius\Cart;
 
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Cart\RestaurantResolver;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -76,7 +77,7 @@ class RestaurantResolverTest extends TestCase
         $this->unitOfWork
             ->getOriginalEntityData($cart->reveal())
             ->willReturn([
-                'restaurant' => $restaurant->reveal()
+                'vendor' => Vendor::withRestaurant($restaurant->reveal())
             ]);
 
         $resolver = new RestaurantResolver(
@@ -111,7 +112,7 @@ class RestaurantResolverTest extends TestCase
         $this->unitOfWork
             ->getOriginalEntityData($cart->reveal())
             ->willReturn([
-                'restaurant' => $restaurant->reveal()
+                'vendor' => Vendor::withRestaurant($restaurant->reveal())
             ]);
 
         $resolver = new RestaurantResolver(
@@ -146,7 +147,7 @@ class RestaurantResolverTest extends TestCase
         $this->unitOfWork
             ->getOriginalEntityData($cart->reveal())
             ->willReturn([
-                'restaurant' => $restaurant->reveal()
+                'vendor' => Vendor::withRestaurant($restaurant->reveal())
             ]);
 
         $resolver = new RestaurantResolver(

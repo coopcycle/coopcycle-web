@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Sylius;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -18,8 +19,9 @@ class OrderRepository extends BaseOrderRepository
     public function findCartsByRestaurant(LocalBusiness $restaurant)
     {
         return $this->createQueryBuilder('o')
+            ->join(Vendor::class, 'v', Join::WITH, 'o.vendor = v.id')
             ->andWhere('o.state = :state')
-            ->andWhere('o.restaurant = :restaurant')
+            ->andWhere('v.restaurant = :restaurant')
             ->setParameter('state', OrderInterface::STATE_CART)
             ->setParameter('restaurant', $restaurant)
             ->getQuery()
@@ -31,7 +33,7 @@ class OrderRepository extends BaseOrderRepository
     {
         $qb = $this->createQueryBuilder('o');
         $qb
-            ->andWhere('o.restaurant IS NOT NULL')
+            ->andWhere('o.vendor IS NOT NULL')
             ->andWhere('o.state != :state')
             ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
             ->setParameter('state', OrderInterface::STATE_CART)
@@ -45,7 +47,8 @@ class OrderRepository extends BaseOrderRepository
     {
         $qb = $this->createQueryBuilder('o');
         $qb
-            ->andWhere('o.restaurant = :restaurant')
+            ->join(Vendor::class, 'v', Join::WITH, 'o.vendor = v.id')
+            ->andWhere('v.restaurant = :restaurant')
             ->andWhere('o.state != :state_cart')
             ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
             ->setParameter('restaurant', $restaurant)

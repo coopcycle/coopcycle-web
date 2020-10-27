@@ -233,7 +233,7 @@ class Order extends BaseOrder implements OrderInterface
 {
     protected $customer;
 
-    protected $restaurant;
+    protected $vendor;
 
     /**
      * @Assert\Valid(groups={"cart"})
@@ -430,12 +430,23 @@ class Order extends BaseOrder implements OrderInterface
      */
     public function getRestaurant(): ?LocalBusiness
     {
-        return $this->restaurant;
+        if (null === $this->vendor) {
+
+            return null;
+        }
+
+        return $this->vendor->getRestaurant();
     }
 
+    /**
+     * @SerializedName("restaurant")
+     */
     public function setRestaurant(?LocalBusiness $restaurant): void
     {
-        $this->restaurant = $restaurant;
+        $vendor = new Vendor();
+        $vendor->setRestaurant($restaurant);
+
+        $this->vendor = $vendor;
     }
 
     /**
@@ -968,13 +979,11 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getVendor(): ?Vendor
     {
-        if (null !== $this->restaurant) {
-            $vendor = new Vendor();
-            $vendor->setRestaurant($this->restaurant);
+        return $this->vendor;
+    }
 
-            return $vendor;
-        }
-
-        return null;
+    public function setVendor(?Vendor $vendor): void
+    {
+        $this->vendor = $vendor;
     }
 }
