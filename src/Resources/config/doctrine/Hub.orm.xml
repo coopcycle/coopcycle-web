@@ -15,6 +15,11 @@
         <option name="default">2</option>
       </options>
     </field>
+    <field name="deliveryPerimeterExpression" type="string" column="delivery_perimeter_expression" nullable="false">
+      <options>
+        <option name="default">distance &lt; 3000</option>
+      </options>
+    </field>
     <many-to-one field="address" target-entity="AppBundle\Entity\Address">
       <cascade>
         <cascade-persist/>
