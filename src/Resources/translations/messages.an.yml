@@ -34,7 +34,7 @@ adminDashboard.deliveries.originAddress: 'Adreza d''orichen'
 adminDashboard.deliveries.deliveryAddress: 'Adreza d''entrega'
 adminDashboard.embed.title: 'Integración'
 adminDashboard.package_sets.title: 'Paquetz'
-adminDashboard.customize.title: ''
+adminDashboard.customize.title: 'Personalizar'
 embed.delivery.title: 'Formulario de creyación d''entrega'
 embed.delivery.configure_pricing_rule_set: 'En primeras has de configurar una regla
   de tarificación pa aplicar'
@@ -1061,9 +1061,9 @@ order.reusable_packaging.pledge_return.disclaimer: ''
 form:
   restaurant:
     name:
-      label: ''
+      label: 'Nombre d''o restaurant'
     contact_referent:
-      label: ''
+      label: 'Persona de contacto d''o restaurant'
     b2b:
       label: ''
 refund.list.amount: 'Amonto tornau'
@@ -1072,7 +1072,7 @@ refund.list.comments: 'Comentarios'
 refund.list.debit_total: 'Importe total adeudado per la plataforma a la interpresa'
 refund.list.refunded_at: 'Tornau en'
 refund.list.disclaimer.admin: ""
-form.time_slot.choices.error.empty: ''
+form.time_slot.choices.error.empty: 'La lista d''opcions no puede estar vueda'
 form.attach_to_org.modal.title: ''
 loopeat.oauth_connect.success: ''
 loopeat.oauth_redirect.warning: ''
@@ -1085,8 +1085,9 @@ guest_checkout.user_with_same_email_exists: 'Ya existe una cuenta con o mesmo co
 guest_checkout.use_another_email: 'Usar unatro correu electronico'
 restaurant.form.section.embed: ''
 restaurant.embed.disclaimer: ''
-restaurant.embed.step_1: ''
-restaurant.embed.step_2: ''
+restaurant.embed.step_1: 'Anyade lo <code>coopcycle.js</code> a la tuya pachina'
+restaurant.embed.step_2: 'Anyade lo <code>data-coopcycle-embed="%url%"</code> a un
+  elemento HTML clicable'
 restaurant.embed.greeting: ''
 form.settings.guest_checkout_enabled.label: ''
 order.list.reorder: ''
