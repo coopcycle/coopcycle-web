@@ -4,9 +4,10 @@ namespace AppBundle\Validator;
 
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
-use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Vendor;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\PriceFormatter;
@@ -76,7 +77,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $maxDistanceExpression,
         $canDeliver)
     {
-        $restaurant = $this->prophesize(Restaurant::class);
+        $restaurant = $this->prophesize(LocalBusiness::class);
 
         $restaurant
             ->getAddress()
@@ -101,7 +102,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         return $restaurant;
     }
 
-    private function createOrderProphecy(Restaurant $restaurant, ?Address $shippingAddress, $takeaway = false)
+    private function createOrderProphecy(LocalBusiness $restaurant, ?Address $shippingAddress, $takeaway = false)
     {
         $order = $this->prophesize(Order::class);
 
@@ -112,6 +113,14 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
+
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
+
+        $order
+            ->hasVendor()
+            ->willReturn(true);
 
         $order
             ->getShippingAddress()

@@ -40,7 +40,7 @@ class OrderValidator extends ConstraintValidator
         return count($errors) === 0;
     }
 
-    private function validateRestaurant($object, Constraint $constraint)
+    private function validateVendor($object, Constraint $constraint)
     {
         $order = $object;
         $isNew = $order->getId() === null || $order->getState() === OrderInterface::STATE_CART;
@@ -49,9 +49,9 @@ class OrderValidator extends ConstraintValidator
             return;
         }
 
-        $restaurant = $order->getRestaurant();
+        $vendor = $order->getVendor();
 
-        $fulfillmentMethod = $restaurant->getFulfillmentMethod($object->getFulfillmentMethod());
+        $fulfillmentMethod = $vendor->getFulfillmentMethod($object->getFulfillmentMethod());
         $minimumAmount = $fulfillmentMethod->getMinimumAmount();
 
         $itemsTotal = $order->getItemsTotal();
@@ -86,11 +86,11 @@ class OrderValidator extends ConstraintValidator
         }
 
         $distance = $this->routing->getDistance(
-            $restaurant->getAddress()->getGeo(),
+            $vendor->getAddress()->getGeo(),
             $shippingAddress->getGeo()
         );
 
-        if (!$restaurant->canDeliverAddress($order->getShippingAddress(), $distance, $this->expressionLanguage)) {
+        if (!$vendor->canDeliverAddress($order->getShippingAddress(), $distance, $this->expressionLanguage)) {
             $this->context->buildViolation($constraint->addressTooFarMessage)
                 ->atPath('shippingAddress')
                 ->setCode(Order::ADDRESS_TOO_FAR)
@@ -129,8 +129,8 @@ class OrderValidator extends ConstraintValidator
             }
         }
 
-        if (null !== $order->getRestaurant()) {
-            $this->validateRestaurant($object, $constraint);
+        if ($order->hasVendor()) {
+            $this->validateVendor($object, $constraint);
         }
     }
 }

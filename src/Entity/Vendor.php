@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class Vendor
 {
@@ -165,6 +166,15 @@ class Vendor
         }
 
         return $this->restaurant->getName();
+    }
+
+    public function canDeliverAddress(Address $address, $distance, ExpressionLanguage $language = null)
+    {
+        if (null !== $this->hub) {
+            return $this->hub->canDeliverAddress($address, $distance, $language);
+        }
+
+        return $this->restaurant->canDeliverAddress($address, $distance, $language);
     }
 
     /* END Common interface between Restaurant & Hub */
