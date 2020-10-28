@@ -22,6 +22,7 @@ const composeEnhancers = (typeof window !== 'undefined' &&
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 
 const reducer = (state, action) => {
+  //todo move more properties from webReducers inside `lastmile` state
   let rootState = webReducers(state, action)
 
   let lastmileState = combineReducers({

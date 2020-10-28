@@ -1,4 +1,9 @@
-import {MODIFY_TASK_LIST_REQUEST, MODIFY_TASK_LIST_REQUEST_SUCCESS, TASK_LIST_UPDATED, UPDATE_TASK} from "./actions";
+import {
+  MODIFY_TASK_LIST_REQUEST,
+  MODIFY_TASK_LIST_REQUEST_SUCCESS,
+  TASK_LIST_UPDATED,
+  UPDATE_TASK
+} from "./actions";
 import _ from "lodash";
 import { taskListUtils, objectUtils } from '../../coopcycle-frontend-js/lastmile/redux'
 
@@ -59,52 +64,12 @@ export default (state = initialState, action) => {
       }
     }
     case UPDATE_TASK: {
-      let taskLists = Array.from(state.items.values())
-      let newItems = objectUtils.copyMap(state.items)
-
-      let taskList = taskListUtils.findTaskList(taskLists, action.task)
+      let newItems
 
       if (action.task.isAssigned) {
-        let targetTaskList = _.find(taskLists, taskList => taskList.username === action.task.assignedTo)
-
-        if (taskList != null) {
-          if (targetTaskList['@id'] !== taskList['@id']) {
-            //unassign
-            let newTaskList = {
-              ...taskList,
-              itemIds: taskListUtils.removeTaskId(taskList.itemIds, action.task['@id'])
-            }
-
-            newItems.set(taskList['@id'], newTaskList)
-          }
-        }
-
-        //assign
-        if (targetTaskList != null) {
-          let newTaskList = {
-            ...targetTaskList,
-            itemIds: taskListUtils.addTaskIdIfMissing(targetTaskList.itemIds, action.task['@id'])
-          }
-
-          newItems.set(targetTaskList['@id'], newTaskList)
-
-        } else {
-          let newTaskList = taskListUtils.createTaskList(action.task.assignedTo, [action.task])
-          newTaskList = taskListUtils.replaceTasksWithIds(newTaskList)
-
-          newItems.set(newTaskList['@id'], newTaskList)
-        }
-
+        newItems = taskListUtils.addAssignedTask(state, action.task)
       } else {
-        if (taskList != null) {
-          //unassign
-          let newTaskList = {
-            ...taskList,
-            itemIds: taskListUtils.removeTaskId(taskList.itemIds, action.task['@id'])
-          }
-
-          newItems.set(taskList['@id'], newTaskList)
-        }
+        newItems = taskListUtils.removeUnassignedTask(state, action.task)
       }
 
       return {
