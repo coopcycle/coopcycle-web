@@ -1,7 +1,0 @@
-<span>
-  <span>{{ option_value.value }}</span>
-  {% if option.strategy == 'option_value' and option_value.price > 0 %}
-  <br>
-  <small class="text-muted">+{{ option_value.price|price_format }}</small>
-  {% endif %}
-</span>

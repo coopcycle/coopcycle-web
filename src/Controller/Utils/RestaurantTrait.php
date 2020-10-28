@@ -50,11 +50,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
@@ -846,7 +848,9 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    public function restaurantProductOptionPreviewAction(Request $request, LocaleProviderInterface $localeProvider)
+    public function restaurantProductOptionPreviewAction(Request $request,
+        NormalizerInterface $serializer,
+        LocaleProviderInterface $localeProvider)
     {
         $productOption = $this->get('sylius.factory.product_option')
             ->createNew();
@@ -866,12 +870,9 @@ trait RestaurantTrait
                 }
             }
 
-            return $this->render('restaurant/_partials/option.html.twig', $this->withRoutes([
-                'product' => [
-                    'code' => Uuid::uuid4()->toString()
-                ],
-                'option' => $productOption,
-            ]));
+            return new JsonResponse(
+                $serializer->normalize($productOption, 'json', ['groups' => ['product_option']])
+            );
         }
 
         throw new BadRequestHttpException();

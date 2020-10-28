@@ -1,4 +1,8 @@
 import { debounce } from 'lodash'
+import React from 'react'
+import { render } from 'react-dom'
+
+import { OptionGroup } from '../restaurant/components/ProductOptionsModal'
 
 if ($('#product_option_strategy').val() !== 'option_value') {
   $('#product_option_values').find("input[name$='[price]']").closest('.form-group').hide();
@@ -68,9 +72,11 @@ const updatePreview = debounce(() => {
     url : $('#preview').data('url'),
     type: $form.attr('method'),
     data : $form.serialize(),
-    success: function(html) {
-      $('#preview').empty().append($(html))
-      $previewLoader.addClass('hidden')
+    success: function(data) {
+      render(<OptionGroup
+        index={ 0 }
+        option={ data }
+        onChange={ () => {} } />, document.getElementById('preview'), () => $previewLoader.addClass('hidden'))
     }
   })
 }, 500)

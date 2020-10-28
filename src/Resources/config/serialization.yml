@@ -111,6 +111,39 @@ Sylius\Component\Product\Model\Product:
     enabled:
       groups: ['product', 'product_update']
 
+Sylius\Component\Product\Model\ProductOption:
+  attributes:
+    name:
+      groups: ['product_option']
+    code:
+      groups: ['product_option']
+    values:
+      groups: ['product_option']
+    strategy:
+      groups: ['product_option']
+    additional:
+      groups: ['product_option']
+    valuesRange:
+      groups: ['product_option']
+
+Sylius\Component\Product\Model\ProductOptionValue:
+  attributes:
+    value:
+      groups: ['product_option']
+    code:
+      groups: ['product_option']
+    price:
+      groups: ['product_option']
+
+AppBundle\DataType\NumRange:
+  attributes:
+    lower:
+      groups: ['product_option']
+    upper:
+      groups: ['product_option']
+    isUpperInfinite:
+      groups: ['product_option']
+
 AppBundle\Entity\LocalBusiness\FulfillmentMethod:
   attributes:
     type:

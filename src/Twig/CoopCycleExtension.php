@@ -7,6 +7,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use Hashids\Hashids;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -69,7 +70,6 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('coopcycle_asset', array(AssetsRuntime::class, 'asset')),
             new TwigFunction('coopcycle_asset_base64', array(AssetsRuntime::class, 'assetBase64')),
             new TwigFunction('local_business_path', array(UrlGeneratorRuntime::class, 'localBusinessPath')),
-            new TwigFunction('product_option_index', array($this, 'productOptionIndex')),
             new TwigFunction('coopcycle_has_about_us', array(AppearanceRuntime::class, 'hasAboutUs')),
             new TwigFunction('coopcycle_has_banner', array(AssetsRuntime::class, 'hasCustomBanner')),
         );
@@ -102,29 +102,36 @@ class CoopCycleExtension extends AbstractExtension
         }
     }
 
-    public function normalize($object)
+    public function normalize($object, $resourceClass = Address::class, $groups = [], $format = 'jsonld')
     {
-        if ($object instanceof PersistentCollection) {
+        if ($resourceClass === Address::class && empty($groups)) {
+            $groups = ['address'];
+        }
+
+        $context = [
+            'groups' => $groups,
+        ];
+
+        if ('jsonld' === $format) {
+            $context = array_merge($context, [
+                'resource_class' => $resourceClass,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+            ]);
+        }
+
+        if ($object instanceof Collection) {
 
             $collection = [];
-
             foreach ($object as $item) {
-                if ($item instanceof Address) {
-                    $normalized = $this->serializer->normalize($item, 'jsonld', [
-                        'resource_class' => Address::class,
-                        'operation_type' => 'item',
-                        'item_operation_name' => 'get',
-                        'groups' => ['address']
-                    ]);
-
-                    $collection[] = $normalized;
-                }
+                $collection[] =
+                    $this->serializer->normalize($item, $format, $context);
             }
 
             return $collection;
         }
 
-        return $object;
+        return $this->serializer->normalize($object, $format, $context);
     }
 
     public function dateCalendar($context, $date)
@@ -152,11 +159,6 @@ class CoopCycleExtension extends AbstractExtension
     public function isInstanceof($var, $class)
     {
         return $var instanceof $class;
-    }
-
-    public function productOptionIndex()
-    {
-        return new ProductOptionIndex();
     }
 
     public function getIriFromItem($item)

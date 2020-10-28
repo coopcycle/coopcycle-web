@@ -161,7 +161,12 @@
                 <button
                   class="menu-item"
                   data-toggle="modal"
-                  data-target="#{{ product.code }}-options">
+                  data-target="#product-options"
+                  data-form-action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code })|e('html_attr') }}"
+                  data-product-code="{{ product.code|e('html_attr') }}"
+                  data-product-name="{{ product.name|e('html_attr') }}"
+                  data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
+                  data-product-options="{{ product.options|coopcycle_normalize('AppBundle\\Entity\\Sylius\\ProductOption', ['product_option'], 'json')|json_encode|e('html_attr') }}">
                   {% include '_partials/restaurant/menu_item_inner.html.twig' %}
                 </button>
               </div>
@@ -201,66 +206,19 @@
 
 {# Modals for product options #}
 
-{#
-WARNING
-We cache the following block for performance
-Iterating through all products, options… is a lot of database requests
-#}
-{% cache ('restaurant_' ~ restaurant.id ~ '_modals_v0.3') restaurant %}
-{% if restaurant.menuTaxon is not null %}
-  {% for child in restaurant.menuTaxon.children %}
-    {% for product in child.products %}
-      {% if product.enabled and product.hasOptions() %}
-      <div id="{{ product.code }}-options" class="modal fade">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-              <h4 class="modal-title">{{ product.name }}</h4>
-            </div>
-            <div class="modal-body">
-              {% set variant = product|sylius_resolve_variant %}
-              <form
-                action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
-                data-product-options
-                data-product-price="{{ variant.price }}">
-                {% set option_index = product_option_index() %}
-                {% for option in product.options %}
-                  {% include 'restaurant/_partials/option.html.twig' with { option_index: option_index } %}
-                {% endfor %}
-                {% set product_quantity_input_id = ('product-' ~ product.code ~ '-quantity') %}
-                <div class="row">
-                  <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-                    <div class="form-group">
-                      <div class="quantity-input-group">
-                        <button class="quantity-input-group__decrement" type="button"
-                          data-stepper data-target="#{{ product_quantity_input_id }}" data-direction="down">
-                          <i class="fa fa-2x fa-minus-circle"></i>
-                        </button>
-                        <input type="number" min="1" step="1" value="1" id="{{ product_quantity_input_id }}" data-product-quantity>
-                        <button class="quantity-input-group__increment" type="button"
-                          data-stepper data-target="#{{ product_quantity_input_id }}" data-direction="up">
-                          <i class="fa fa-2x fa-plus-circle"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <button type="submit" class="btn btn-block btn-primary" disabled>
-                  <span data-product-total>{{ variant.price|price_format }}</span>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
+<div id="product-options" class="modal fade">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title"></h4>
       </div>
-      {% endif %}
-    {% endfor %}
-  {% endfor %}
-{% endif %}
-{% endcache %}
+      <div class="modal-body"></div>
+    </div>
+  </div>
+</div>
 
 {% set restaurant_json = { id: restaurant.id } %}
 {% set cart = cart_provider.getCart() %}
