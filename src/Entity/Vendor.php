@@ -5,7 +5,7 @@ namespace AppBundle\Entity;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
-class Vendor
+class Vendor implements ShippingOptionsInterface
 {
     private $id;
     private $restaurant;
@@ -175,6 +175,15 @@ class Vendor
         }
 
         return $this->restaurant->canDeliverAddress($address, $distance, $language);
+    }
+
+    public function getDeliveryPerimeterExpression()
+    {
+        if (null !== $this->hub) {
+            return $this->hub->getDeliveryPerimeterExpression();
+        }
+
+        return $this->restaurant->getDeliveryPerimeterExpression();
     }
 
     /* END Common interface between Restaurant & Hub */
