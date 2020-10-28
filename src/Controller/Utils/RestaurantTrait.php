@@ -295,7 +295,7 @@ trait RestaurantTrait
 
         $qb = $this->get('sylius.repository.order')
             ->createQueryBuilder('o')
-            ->join(Vendor::class, 'v', Expr\Join::WITH, 'o.vendor = t.id')
+            ->join(Vendor::class, 'v', Expr\Join::WITH, 'o.vendor = v.id')
             ->andWhere('v.restaurant = :restaurant')
             ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
             ->andWhere('o.state != :state')

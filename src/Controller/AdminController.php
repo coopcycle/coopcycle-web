@@ -608,7 +608,7 @@ class AdminController extends Controller
         // Allow filtering by store & restaurant with KnpPaginator
         $qb->leftJoin(Store::class, 's', Expr\Join::WITH, 's.id = d.store');
         $qb->leftJoin(Order::class, 'o', Expr\Join::WITH, 'o.id = d.order');
-        $qb->leftJoin(Vendor::class, 'v', Expr\Join::WITH, 'o.vendor = t.id');
+        $qb->leftJoin(Vendor::class, 'v', Expr\Join::WITH, 'o.vendor = v.id');
         $qb->leftJoin(LocalBusiness::class, 'r', Expr\Join::WITH, 'v.restaurant = r.id');
 
         $deliveries = $this->get('knp_paginator')->paginate(
