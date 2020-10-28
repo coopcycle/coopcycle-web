@@ -7,7 +7,7 @@ import _ from 'lodash'
 
 import { antdLocale } from '../../i18n'
 import { openFiltersModal, resetFilters, openSettings, openImportModal } from '../redux/actions'
-import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
+import { selectSelectedDate } from '../../coopcycle-frontend-js/lastmile/redux'
 
 class Navbar extends React.Component {
 

@@ -10,7 +10,7 @@ Dropzone.autoDiscover = false
 import "dropzone/dist/dropzone.css"
 
 import { closeImportModal, addImport } from '../redux/actions'
-import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
+import { selectSelectedDate } from '../../coopcycle-frontend-js/lastmile/redux'
 
 const mimeTypes = [
   'application/vnd.oasis.opendocument.spreadsheet',

@@ -1,13 +1,13 @@
-import { createStore, applyMiddleware, compose } from 'redux'
+import {createStore, applyMiddleware, compose, combineReducers} from 'redux'
 import thunk from 'redux-thunk'
 import reduceReducers from 'reduce-reducers';
 import { socketIO, persistFilters } from './middlewares'
 import {
-  reducer as coreReducer,
+  dateReducer,
   taskEntityReducers as coreTaskEntityReducers,
   taskListEntityReducers as coreTaskListEntityReducers,
   uiReducers as coreUiReducers,
-} from '../../coopcycle-frontend-js/logistics/redux'
+} from '../../coopcycle-frontend-js/lastmile/redux'
 import webReducers from './reducers'
 import webTaskEntityReducers from './taskEntityReducers'
 import webTaskListEntityReducers from './taskListEntityReducers'
@@ -24,21 +24,18 @@ const composeEnhancers = (typeof window !== 'undefined' &&
 const reducer = (state, action) => {
   let rootState = webReducers(state, action)
 
-  let logisticsState = coreReducer(state.logistics, action)
-  let taskEntityState =  reduceReducers(coreTaskEntityReducers, webTaskEntityReducers)(state.logistics.entities.tasks, action)
-  let taskListEntityState =  reduceReducers(coreTaskListEntityReducers, webTaskListEntityReducers)(state.logistics.entities.taskLists, action)
-  let uiState = reduceReducers(coreUiReducers, webUiReducers)(state.logistics.ui, action)
+  let lastmileState = combineReducers({
+    date: dateReducer,
+    entities: combineReducers({
+      tasks: reduceReducers(coreTaskEntityReducers, webTaskEntityReducers),
+      taskLists: reduceReducers(coreTaskListEntityReducers, webTaskListEntityReducers),
+    }),
+    ui: reduceReducers(coreUiReducers, webUiReducers)
+  })(state.lastmile, action)
 
   return {
     ...rootState,
-    logistics: {
-      ...logisticsState,
-      entities: {
-        tasks: taskEntityState,
-        taskLists: taskListEntityState,
-      },
-      ui: uiState
-    }
+    lastmile: lastmileState
   }
 }
 

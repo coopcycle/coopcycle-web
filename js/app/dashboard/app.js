@@ -6,7 +6,7 @@ import _ from 'lodash'
 
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { selectAllTasks, selectTaskLists } from '../coopcycle-frontend-js/logistics/redux'
+import { selectAllTasks, selectTaskLists } from '../coopcycle-frontend-js/lastmile/redux'
 
 import {
   setCurrentTask,

@@ -1,33 +1,16 @@
 import {MODIFY_TASK_LIST_REQUEST, MODIFY_TASK_LIST_REQUEST_SUCCESS, TASK_LIST_UPDATED, UPDATE_TASK} from "./actions";
 import _ from "lodash";
-import { taskListUtils, objectUtils } from '../../coopcycle-frontend-js/logistics/redux'
-import {createTaskList} from "./utils";
+import { taskListUtils, objectUtils } from '../../coopcycle-frontend-js/lastmile/redux'
 
 const initialState = {
   items: new Map()
 }
 
-const replaceOrAddTaskId = (taskIds, taskId) => {
-
-  const taskIdIndex = _.findIndex(taskIds, t => t === taskId)
-
-  if (-1 !== taskIdIndex) {
-
-    const newTaskIds = taskIds.slice(0)
-    newTaskIds.splice(taskIdIndex, 1, Object.assign({}, taskIds[taskIdIndex], taskId))
-
-    return newTaskIds
-  }
-
-  return taskIds.concat([ taskId ])
-}
-
-const removeTaskId = (taskIds, taskId) => _.filter(taskIds, t => t !== taskId)
-
 export default (state = initialState, action) => {
   switch (action.type) {
     case MODIFY_TASK_LIST_REQUEST: {
-      let taskList = _.find(state.items.values(), taskList => taskList.username === action.username)
+      let taskLists = Array.from(state.items.values())
+      let taskList = _.find(taskLists, taskList => taskList.username === action.username)
 
       let newTaskList = {
         ...taskList,
@@ -76,21 +59,20 @@ export default (state = initialState, action) => {
       }
     }
     case UPDATE_TASK: {
+      let taskLists = Array.from(state.items.values())
       let newItems = objectUtils.copyMap(state.items)
 
-      let taskList = _.find(state.items.values(), taskList => {
-        return _.includes(taskList.itemIds, action.task['@id'])
-      })
+      let taskList = taskListUtils.findTaskList(taskLists, action.task)
 
       if (action.task.isAssigned) {
-        let targetTaskList = _.find(state.items.values(), taskList => taskList.username === action.task.assignedTo)
+        let targetTaskList = _.find(taskLists, taskList => taskList.username === action.task.assignedTo)
 
         if (taskList != null) {
           if (targetTaskList['@id'] !== taskList['@id']) {
             //unassign
             let newTaskList = {
               ...taskList,
-              itemIds: removeTaskId(taskList.itemIds, action.task['@id'])
+              itemIds: taskListUtils.removeTaskId(taskList.itemIds, action.task['@id'])
             }
 
             newItems.set(taskList['@id'], newTaskList)
@@ -100,14 +82,14 @@ export default (state = initialState, action) => {
         //assign
         if (targetTaskList != null) {
           let newTaskList = {
-            ...taskList,
-            itemIds: replaceOrAddTaskId(targetTaskList.itemIds, action.task['@id'])
+            ...targetTaskList,
+            itemIds: taskListUtils.addTaskIdIfMissing(targetTaskList.itemIds, action.task['@id'])
           }
 
           newItems.set(targetTaskList['@id'], newTaskList)
 
         } else {
-          let newTaskList = createTaskList(action.task.assignedTo, [action.task])
+          let newTaskList = taskListUtils.createTaskList(action.task.assignedTo, [action.task])
           newTaskList = taskListUtils.replaceTasksWithIds(newTaskList)
 
           newItems.set(newTaskList['@id'], newTaskList)
@@ -118,7 +100,7 @@ export default (state = initialState, action) => {
           //unassign
           let newTaskList = {
             ...taskList,
-            itemIds: removeTaskId(taskList.itemIds, action.task['@id'])
+            itemIds: taskListUtils.removeTaskId(taskList.itemIds, action.task['@id'])
           }
 
           newItems.set(taskList['@id'], newTaskList)

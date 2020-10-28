@@ -1,5 +1,5 @@
 import {MODIFY_TASK_LIST_REQUEST, MODIFY_TASK_LIST_REQUEST_SUCCESS, UPDATE_TASK} from "./actions";
-import { taskUtils } from '../../coopcycle-frontend-js/logistics/redux'
+import { taskUtils } from '../../coopcycle-frontend-js/lastmile/redux'
 
 const initialState = {
   items: new Map()

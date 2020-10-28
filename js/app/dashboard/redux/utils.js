@@ -1,22 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment'
 
-export function createTaskList(username, items = []) {
-
-  return {
-    '@context': '/api/contexts/TaskList',
-    '@id': null,
-    '@type': 'TaskList',
-    distance: 0,
-    duration: 0,
-    polyline: '',
-    createdAt: moment().format(),
-    updatedAt: moment().format(),
-    username,
-    items,
-  }
-}
-
 export function taskComparator(a, b) {
   return a['@id'] === b['@id']
 }

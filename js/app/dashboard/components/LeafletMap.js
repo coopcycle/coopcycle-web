@@ -5,7 +5,7 @@ import MapProxy from './MapProxy'
 import _ from 'lodash'
 import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction } from '../redux/actions'
 import { selectFilteredTasks } from '../redux/selectors'
-import { selectAllTasks, selectTaskLists, selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
+import { selectAllTasks, selectTaskLists, selectSelectedDate } from '../../coopcycle-frontend-js/lastmile/redux'
 
 class LeafletMap extends Component {
 

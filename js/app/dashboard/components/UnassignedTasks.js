@@ -10,7 +10,7 @@ import Task from './Task'
 import TaskGroup from './TaskGroup'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
-import { selectUnassignedTasks } from '../../coopcycle-frontend-js/logistics/redux'
+import { selectUnassignedTasks } from '../../coopcycle-frontend-js/lastmile/redux'
 
 const UnassignedTasksPopoverContentWithTrans = withTranslation()(UnassignedTasksPopoverContent)
 
