@@ -23,7 +23,10 @@ const OptionValue = ({ index, option, optionValue, onClick }) => (
         type="radio"
         name={ `options[${index}][code]` }
         value={ optionValue.code }
-        onClick={ onClick } />
+        onClick={ () => {
+          window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
+          onClick()
+        }} />
       <OptionValueLabel option={ option } optionValue={ optionValue } />
     </label>
   </div>
