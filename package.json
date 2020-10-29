@@ -128,6 +128,7 @@
     "sortablejs": "^1.12.0",
     "store": "^2.0.12",
     "styled-components": "^5.2.0",
+    "swiper": "^6.3.4",
     "to-string-loader": "^1.1.6",
     "x-data-spreadsheet": "^1.1.7"
   }

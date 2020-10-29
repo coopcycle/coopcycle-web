@@ -193,6 +193,7 @@
         "CROPPIE_CANCEL": "Cancel",
         "DROPZONE_DEFAULT_MESSAGE": "Drop files here",
         "DROPZONE_INVALID_FILE_TYPE": "You can't upload files of type \"{{- type}}\"",
+        "DROPZONE_REMOVE_FILE": "Remove file",
         "TAGS_SELECT_PLACEHOLDER": "Select tags…",
         "ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS": "Unassign all tasks?",
         "TIME_RANGE": "between {{start}} and {{end}}",
