@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
-import { reducer as coreReducer } from 'coopcycle-frontend-js/dispatch/redux'
+import { reducer as coreReducer } from '../../coopcycle-frontend-js/dispatch/redux'
 import webReducer from './reducers'
 import webDispatchReducer from './dispatchReducers'
 import reduceReducers from 'reduce-reducers';

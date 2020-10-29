@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { moment } from 'coopcycle-frontend-js'
+import { moment } from '../../coopcycle-frontend-js'
 
 import {
   OPEN_ADD_USER,
