@@ -160,24 +160,20 @@ export const OptionGroup = forwardRef(({ index, option, onChange }, ref) => {
   )
 })
 
-const getOffset = (option, prev, index) => {
+const getOffset = (options, index) => {
 
-  if (!prev || !prev.additional) {
-    return index
+  if (index === 0) {
+    return 0
   }
 
-  return (index + prev.values.length) - 1
+  const prevOption = options[index - 1]
+  const prevOffset = getOffset(options, (index - 1))
+
+  return prevOffset + (prevOption.additional ? prevOption.values.length : 1)
 }
 
-const getOffsets = (options) => options.map((option, index) => {
-
-  let prev = null
-  if (index > 0) {
-    prev = options[index - 1]
-  }
-
-  return getOffset(option, prev, index)
-})
+/* Exported to be able to test it */
+export const getOffsets = (options) => options.map((option, index) => getOffset(options, index))
 
 export default ({ code, price, options, formAction, onSubmit }) => {
 
