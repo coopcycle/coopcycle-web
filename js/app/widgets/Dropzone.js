@@ -49,7 +49,7 @@ export default function(el, options) {
 
       // @see https://github.com/enyo/dropzone/wiki/FAQ#how-to-show-files-already-stored-on-server
       const images = options.images && Array.isArray(options.images) ?
-        options.images : (options.image || [])
+        options.images : ([ options.image ] || [])
 
       images.forEach(image => {
         $.ajax({
