@@ -13,6 +13,7 @@ use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Zone;
@@ -60,6 +61,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
+use Vich\UploaderBundle\Handler\UploadHandler;
 
 trait RestaurantTrait
 {
@@ -1312,5 +1314,42 @@ trait RestaurantTrait
         // TODO Implement
 
         throw $this->createNotFoundException();
+    }
+
+    public function deleteProductImageAction($restaurantId, $productId, $imageName,
+        Request $request,
+        UploadHandler $uploadHandler)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        $this->accessControl($restaurant);
+
+        $product = $this->get('sylius.repository.product')
+            ->find($productId);
+
+        if (!$product) {
+            throw $this->createNotFoundException();
+        }
+
+        $image = $this->getDoctrine()
+            ->getRepository(ProductImage::class)
+            ->findOneByImageName($imageName);
+
+        if (!$image) {
+            throw $this->createNotFoundException();
+        }
+
+        if (!$product->getImages()->contains($image)) {
+            throw new BadRequestHttpException(sprintf('Product "%s" does not belong to product #%d', $imageName, $productId));
+        }
+
+        $uploadHandler->remove($image, 'imageFile');
+
+        $product->getImages()->removeElement($image);
+        $this->getDoctrine()->getManagerForClass(Product::class)->flush();
+
+        return new Response('', 204);
     }
 }

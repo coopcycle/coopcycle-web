@@ -1,5 +1,8 @@
 {% set variant = product|sylius_resolve_variant %}
-{% set product_image = coopcycle_asset(product, 'imageFile', 'product_thumbnail') %}
+{% set product_image = null %}
+{% if product.images|length > 0 %}
+  {% set product_image = coopcycle_asset(product.images.first(), 'imageFile', 'product_thumbnail') %}
+{% endif %}
 
 <span class="menu-item-inner">
   <span class="menu-item-content-wrapper">

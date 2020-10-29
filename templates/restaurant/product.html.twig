@@ -91,10 +91,16 @@
 
 {{ form_end(form) }}
 
+{% set product_images = [] %}
+{% for product_image in product.images %}
+  {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', 'product_thumbnail') ]) %}
+{% endfor %}
+
 <div id="product-form-data"
   data-action-url="{{ oneup_uploader_endpoint('product') }}"
   data-product-id="{{ product.id }}"
-  data-product-image="{{ coopcycle_asset(product, 'imageFile', 'product_thumbnail') }}"></div>
+  data-product-image="{{ product_images|length > 0 ? product_images|first : '' }}"
+  data-product-images="{{ product_images|json_encode|e('html_attr') }}"></div>
 
 {% endblock %}
 

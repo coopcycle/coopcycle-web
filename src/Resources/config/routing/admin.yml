@@ -191,6 +191,12 @@ admin_restaurant_product_new:
             restaurant: admin_restaurant
             products: admin_restaurant_products
 
+admin_delete_restaurant_product_image:
+    path: /admin/restaurants/{restaurantId}/products/{productId}/images/{imageName}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::deleteProductImageAction
+    methods: [ DELETE ]
+
 admin_restaurant_product:
     path: /admin/restaurants/{restaurantId}/products/{productId}
     defaults:

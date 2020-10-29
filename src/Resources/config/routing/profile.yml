@@ -209,6 +209,12 @@ profile_restaurant_product_new:
             restaurant: profile_restaurant
             products: profile_restaurant_products
 
+profile_delete_restaurant_product_image:
+    path: /profile/restaurants/{restaurantId}/products/{productId}/images/{imageName}
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::deleteProductImageAction
+    methods: [ DELETE ]
+
 profile_restaurant_product:
     path: /profile/restaurants/{restaurantId}/products/{productId}
     defaults:

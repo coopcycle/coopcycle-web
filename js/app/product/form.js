@@ -21,9 +21,19 @@ $(function() {
         params: {
           type: 'product',
           id: formData.dataset.productId
+        },
+        addRemoveLinks: true,
+        deleteOthersAfterUpload: false,
+        init: function() {
+          this.on('removedfile', function(file) {
+            $.ajax({
+              url: window.location.pathname + '/images/' + file.name,
+              type: 'DELETE',
+            })
+          })
         }
       },
-      image: formData.dataset.productImage,
+      images: JSON.parse(formData.dataset.productImages),
       size: [ 256, 256 ]
     })
   }
