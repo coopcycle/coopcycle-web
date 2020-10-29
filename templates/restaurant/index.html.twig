@@ -148,13 +148,29 @@
             {% else %}
               {% if not product.hasOptions() %}
               <div class="restaurant-menu-section-item">
-                <form method="post"
-                  action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
-                  data-product-simple>
-                  <button class="menu-item" type="submit">
+                {% if product.images|length > 1 %}
+                  {% set product_images = [] %}
+                  {% for product_image in product.images %}
+                    {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', 'product_thumbnail') ]) %}
+                  {% endfor %}
+                  <button class="menu-item" type="button"
+                    data-toggle="modal"
+                    data-target="#product-details"
+                    data-product-name="{{ product.name|e('html_attr') }}"
+                    data-product-images="{{ product_images|json_encode|e('html_attr') }}"
+                    data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
+                    data-form-action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}">
                     {% include '_partials/restaurant/menu_item_inner.html.twig' %}
                   </button>
-                </form>
+                {% else %}
+                  <form method="post"
+                    action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
+                    data-product-simple>
+                    <button class="menu-item" type="submit">
+                      {% include '_partials/restaurant/menu_item_inner.html.twig' %}
+                    </button>
+                  </form>
+                {% endif %}
               </div>
               {% else %}
               <div class="restaurant-menu-section-item">
@@ -216,6 +232,26 @@
         <h4 class="modal-title"></h4>
       </div>
       <div class="modal-body"></div>
+    </div>
+  </div>
+</div>
+
+<div id="product-details" class="modal fade">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="" data-product-simple>
+          <div data-swiper></div>
+          <hr />
+          <button class="btn btn-lg btn-block btn-primary" type="submit"></button>
+        </form>
+      </div>
     </div>
   </div>
 </div>

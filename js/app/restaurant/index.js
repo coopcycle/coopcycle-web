@@ -16,6 +16,7 @@ import { addItem, addItemWithOptions, queueAddItem } from '../cart/redux/actions
 import Cart from '../cart/components/Cart'
 import { validateForm } from '../utils/address'
 import ProductOptionsModal from './components/ProductOptionsModal'
+import ProductDetailsModal from './components/ProductDetailsModal'
 
 require('gasparesganga-jquery-loading-overlay')
 
@@ -38,6 +39,7 @@ window.initMap = function() {
 
   $('form[data-product-simple]').on('submit', function(e) {
     e.preventDefault()
+    $(e.currentTarget).closest('.modal').modal('hide')
     store.dispatch(queueAddItem($(this).attr('action'), 1))
   })
 
@@ -88,6 +90,39 @@ window.initMap = function() {
   $('#product-options').on('hidden.bs.modal', function() {
     unmountComponentAtNode(this.querySelector('.modal-body'))
     window._paq.push(['trackEvent', 'Checkout', 'hideOptions'])
+  })
+
+  $('#product-details').on('show.bs.modal', function(event) {
+
+    const images = JSON.parse(event.relatedTarget.dataset.productImages)
+    const productPrice = JSON.parse(event.relatedTarget.dataset.productPrice)
+
+    const $modal = $(this)
+    $modal.find('.modal-title').text(event.relatedTarget.dataset.productName)
+    $modal.find('form').attr('action', event.relatedTarget.dataset.formAction)
+    $modal.find('button[type="submit"]').text((productPrice / 100).formatMoney())
+
+    const $placeholder = $('<div>')
+    $placeholder.addClass('d-flex')
+    $placeholder.addClass('overflow-hidden')
+    images.forEach(image => {
+      const $img = $('<img>')
+      $img.attr('src', image)
+      $placeholder.append($img)
+    })
+    $('.modal-body [data-swiper]').append($placeholder)
+  })
+
+  $('#product-details').on('shown.bs.modal', function(event) {
+    const images = JSON.parse(event.relatedTarget.dataset.productImages)
+    render(
+      <ProductDetailsModal images={ images } />,
+      this.querySelector('.modal-body [data-swiper]')
+    )
+  })
+
+  $('#product-details').on('hidden.bs.modal', function() {
+    unmountComponentAtNode(this.querySelector('.modal-body [data-swiper]'))
   })
 
   const restaurantDataElement = document.querySelector('#js-restaurant-data')
