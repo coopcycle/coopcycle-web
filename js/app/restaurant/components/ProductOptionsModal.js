@@ -34,7 +34,7 @@ const OptionValue = ({ index, option, optionValue, onClick }) => (
 
 const AdditionalOptionValue = forwardRef(({ index, valueIndex, option, optionValue, onChange }, ref) => {
 
-  if (option.additional && option.valuesRange) {
+  if (option.valuesRange) {
 
     const [ quantity, setQuantity ] = useState(0)
 
@@ -59,6 +59,10 @@ const AdditionalOptionValue = forwardRef(({ index, valueIndex, option, optionVal
           step="1"
           min="0"
           value={ quantity }
+          onChange={ e => {
+            setQuantity(parseInt(e.currentTarget.value, 10))
+            setTimeout(() => onChange(), 0)
+          }}
           { ...inputProps } />
         <label htmlFor={ '' } onClick={ () => {
           setQuantity(quantity + 1)
@@ -220,7 +224,9 @@ export default ({ code, price, options, formAction, onSubmit }) => {
                   } }>
                   <i className="fa fa-2x fa-minus-circle"></i>
                 </button>
-                <input type="number" min="1" step="1" value={ quantity } data-product-quantity />
+                <input type="number" min="1" step="1" value={ quantity }
+                  data-product-quantity
+                  onChange={ e => setQuantity(parseInt(e.currentTarget.value, 10)) }  />
                 <button className="quantity-input-group__increment" type="button"
                   onClick={ () => setQuantity(quantity + 1) }>
                   <i className="fa fa-2x fa-plus-circle"></i>
@@ -229,7 +235,7 @@ export default ({ code, price, options, formAction, onSubmit }) => {
             </div>
           </div>
         </div>
-        <button type="submit" className="btn btn-block btn-primary" disabled={ disabled }>
+        <button type="submit" className="btn btn-lg btn-block btn-primary" disabled={ disabled }>
           <span data-product-total>{ ((total * quantity) / 100).formatMoney() }</span>
         </button>
       </form>
