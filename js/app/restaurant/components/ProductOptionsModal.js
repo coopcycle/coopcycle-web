@@ -3,6 +3,7 @@ import React, {
   createRef,
   useImperativeHandle,
   forwardRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const OptionValueLabel = ({ option, optionValue }) => (
   <span>
@@ -89,6 +90,24 @@ const AdditionalOptionValue = forwardRef(({ index, valueIndex, option, optionVal
   }
 })
 
+const ValuesRange = ({ option }) => {
+
+  const { t } = useTranslation()
+
+  if (option.additional) {
+    if (option.valuesRange.lower > 0 || !option.valuesRange.isUpperInfinite) {
+      return (
+        <small className="ml-2">{ t('CART_PRODUCT_OPTIONS_VALUES_RANGE', {
+          min: option.valuesRange.lower,
+          max: option.valuesRange.upper,
+        }) }</small>
+      )
+    }
+  }
+
+  return null
+}
+
 export const OptionGroup = forwardRef(({ index, option, onChange }, ref) => {
 
   const [ valid, setValid ] = useState(false)
@@ -107,7 +126,10 @@ export const OptionGroup = forwardRef(({ index, option, onChange }, ref) => {
 
   return (
     <div ref={ ref }>
-      <h4>{ option.name }</h4>
+      <h4>
+        <span>{ option.name }</span>
+        <ValuesRange option={ option } />
+      </h4>
       <div className="list-group">
         { option.values.map((optionValue, optionValueIndex) => {
 
