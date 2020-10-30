@@ -7,13 +7,15 @@ use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
-use AppBundle\Serializer\VroomNormalizer;
+use AppBundle\Serializer\RoutingProblemNormalizer;
 use AppBundle\Entity\Task;
 use Prophecy\PhpUnit\ProphecyTrait;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Vehicle;
+use AppBundle\Entity\RoutingProblem;
 
-class VroomNormalizerTest extends TestCase
+class RoutingProblemNormalizerTest extends TestCase
 {
     use ProphecyTrait;
 
@@ -43,16 +45,27 @@ class VroomNormalizerTest extends TestCase
         $task3->getAddress()->willReturn($address3);
 
         $taskList = [$task1->reveal(), $task2->reveal(), $task3->reveal()];
-        $normalizer = new VroomNormalizer();
-        $result = $normalizer->normalize($taskList);
-        $this->assertEquals(["jobs"=>[
-        ["id"=>1, "location"=>[5.5, 5.5]],
-        ["id"=>2, "location"=>[25.5, 15.5]],
-        ["id"=>3, "location"=>[45.5, 35.5]],
-        ],
-        "vehicles"=>[
-            ["id"=>1]
-        ]
+        $vehicle1 = new Vehicle(1, $address1, $address1);
+        $routingProblem = new RoutingProblem();
+
+        foreach($taskList as $task){
+            $routingProblem->addTask($task);
+        }
+        $routingProblem->addVehicle($vehicle1);
+
+        $normalizer = new RoutingProblemNormalizer();
+
+        $result = $normalizer->normalize($routingProblem);
+
+        $this->assertEquals([
+            "jobs"=>[
+                ["id"=>1, "location"=>[5.5, 5.5]],
+                ["id"=>2, "location"=>[25.5, 15.5]],
+                ["id"=>3, "location"=>[45.5, 35.5]],
+            ],
+            "vehicles"=>[
+                ["id"=>1, "start"=>[5.5, 5.5], "end"=>[5.5, 5.5]]
+            ]
         ], $result);
     }
 }

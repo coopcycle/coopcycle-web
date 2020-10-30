@@ -7,13 +7,15 @@ use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
-use AppBundle\Serializer\VroomNormalizer;
+use AppBundle\Serializer\RoutingProblemNormalizer;
 use AppBundle\Entity\Task;
 use Prophecy\PhpUnit\ProphecyTrait;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
 use AppBundle\Service\RouteOptimizer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use AppBundle\Entity\Vehicle;
+use AppBundle\Entity\RoutingProblem;
 
 class RouteOptimizerTest extends KernelTestCase
 {
@@ -47,12 +49,22 @@ class RouteOptimizerTest extends KernelTestCase
         $address3 = new Address();
         $address3->setGeo(new GeoCoordinates( 48.876006045998984,  2.3466110229492188));
         $task3->getAddress()->willReturn($address3);
+        $vehicle1 = new Vehicle(1, $address1, $address1);
 
         $taskList = [$task1->reveal(), $task2->reveal(), $task3->reveal()];
-        $normalizer = new VroomNormalizer();
-        $optimizer = new RouteOptimizer($normalizer, $this->client);
-        $result = $optimizer->optimize($taskList);
 
+        $routingProblem = new RoutingProblem();
+
+        foreach($taskList as $task)
+        {
+            $routingProblem->addTask($task);
+        }
+
+        $routingProblem->addVehicle($vehicle1);
+
+        $normalizer = new RoutingProblemNormalizer();
+        $optimizer = new RouteOptimizer($normalizer, $this->client);
+        $result = $optimizer->optimize($routingProblem);
 
         $this->assertSame($result[0], $task1->reveal());
         $this->assertSame($result[1], $task3->reveal());
