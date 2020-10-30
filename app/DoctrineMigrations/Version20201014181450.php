@@ -36,8 +36,12 @@ final class Version20201014181450 extends AbstractMigration
 
         $this->addSql('INSERT INTO restaurant_closing_rule (restaurant_id, rule_id) SELECT restaurant_id, id FROM closing_rule');
 
-        $this->addSql('ALTER TABLE closing_rule DROP CONSTRAINT fk_4b164485b1e7706e');
-        $this->addSql('DROP INDEX idx_4b164485b1e7706e');
+        $this->addSql('ALTER TABLE closing_rule DROP CONSTRAINT IF EXISTS fk_4b164485b1e7706e');
+        $this->addSql('DROP INDEX IF EXISTS idx_4b164485b1e7706e');
+
+        $this->addSql('ALTER TABLE closing_rule DROP CONSTRAINT IF EXISTS fk_85178a51b1e7706e');
+        $this->addSql('DROP INDEX IF EXISTS idx_85178a51b1e7706e');
+
         $this->addSql('ALTER TABLE closing_rule DROP restaurant_id');
     }
 
