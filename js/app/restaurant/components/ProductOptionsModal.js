@@ -95,11 +95,31 @@ const ValuesRange = ({ option }) => {
   const { t } = useTranslation()
 
   if (option.additional) {
-    if (option.valuesRange.lower > 0 || !option.valuesRange.isUpperInfinite) {
+
+    const min = parseInt(option.valuesRange.lower, 10)
+    const max = option.valuesRange.isUpperInfinite ? Infinity : parseInt(option.valuesRange.upper, 10)
+
+    if (min === 0 && max !== Infinity) {
+      return (
+        <small className="ml-2">{ t('CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO', {
+          count: max,
+        }) }</small>
+      )
+    }
+
+    if (min > 0 && max === Infinity) {
+      return (
+        <small className="ml-2">{ t('CART_PRODUCT_OPTIONS_VALUES_RANGE_AT_LEAST', {
+          count: min,
+        }) }</small>
+      )
+    }
+
+    if (min > 0 && max !== Infinity) {
       return (
         <small className="ml-2">{ t('CART_PRODUCT_OPTIONS_VALUES_RANGE', {
-          min: option.valuesRange.lower,
-          max: option.valuesRange.upper,
+          min,
+          max,
         }) }</small>
       )
     }
