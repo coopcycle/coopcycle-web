@@ -108,9 +108,22 @@ const ValuesRange = ({ option }) => {
   return null
 }
 
+function getInitialValidValue(option) {
+  if (!option.additional) {
+    return false
+  }
+
+  if (option.valuesRange) {
+    const min = parseInt(option.valuesRange.lower, 10)
+    return min === 0
+  }
+
+  return true
+}
+
 export const OptionGroup = forwardRef(({ index, option, onChange }, ref) => {
 
-  const [ valid, setValid ] = useState(false)
+  const [ valid, setValid ] = useState(getInitialValidValue(option))
 
   const optionValueRefs = []
 
