@@ -3,7 +3,7 @@
 namespace AppBundle\Entity;
 
 /**
- * A VroomProblem represents a set of jobs and vehicles to be optimized through the vroom api
+ * a Vehicle represents a method of transportation with certain capacities for accomplishing tasks
  **/
 
 class Vehicle

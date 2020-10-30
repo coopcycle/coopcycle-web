@@ -3,7 +3,7 @@
 namespace AppBundle\Entity;
 
 /**
- * A VroomProblem represents a set of jobs and vehicles to be optimized through the vroom api
+ * a RoutingProblem represents a set of tasks and vehicles
  **/
 
 class RoutingProblem
@@ -31,7 +31,12 @@ class RoutingProblem
     public function removeTask(Task $task)
     {
         $id = $task->getId();
-        //TODO - remove by id
+        if(($key = array_search($id, $this->tasks)) !== false)
+        {
+            unset($this->tasks[$key]);
+            return true;
+        }
+        return false;
     }
 
     public function getVehicles(): array
@@ -47,7 +52,12 @@ class RoutingProblem
     public function removeVehicle(Vehicle $vehicle)
     {
         $id = $vehicle->getId();
-        //TODO remove by id
+        if(($key = array_search($id, $this->vehicles)) !== false)
+        {
+            unset($this->vehicles[$key]);
+            return true;
+        }
+        return false;
     }
 
 }

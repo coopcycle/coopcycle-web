@@ -6,9 +6,12 @@ use AppBundle\Serializer\RoutingProblemNormalizer;
 use AppBundle\Entity\RoutingProblem;
 use GuzzleHttp\Client;
 
+/**
+* a class to connect a given routing problem with the vroom api to return optimal results
+*/
+
 class RouteOptimizer
 {
-    private $vehicles;
     private $normalizer;
 
     public function __construct(RoutingProblemNormalizer $normalizer, Client $client)
@@ -18,6 +21,11 @@ class RouteOptimizer
     }
 
     public function optimize(RoutingProblem $routingProblem)
+    /**
+    * return a list of tasks sorted into an optimal route as obtained from the vroom api
+    *
+    * @param RoutingProblem $routingProblem a set of jobs and vehicles to optimally dispatch
+    */
     {
          $response = $this->client->request('POST', '', [
             'headers' => ['Content-Type'=> 'application/json'],
@@ -37,7 +45,6 @@ class RouteOptimizer
         }
 
         // sort tasks by ids in steps
-        // TODO - sort more efficiently
         usort($tasks, function($a, $b) use($jobIds){
             $ka = array_search($a->getId(), $jobIds);
             $kb = array_search($b->getId(), $jobIds);
