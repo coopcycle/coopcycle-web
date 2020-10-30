@@ -870,6 +870,7 @@ services:
   AppBundle\EventSubscriber\RegistrationInitializeListener:
     arguments:
       $orderRepository: '@sylius.repository.order'
+      $customerRepository: '@sylius.repository.customer'
       $secret: '%secret%'
 
   AppBundle\Embed\Context: ~

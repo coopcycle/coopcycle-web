@@ -3,7 +3,9 @@
 namespace AppBundle\EventSubscriber;
 
 use FOS\UserBundle\FOSUserEvents;
+use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\GetResponseUserEvent;
+use FOS\UserBundle\Util\CanonicalizerInterface;
 use Hashids\Hashids;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,12 +17,21 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RegistrationInitializeListener implements EventSubscriberInterface
 {
     private $orderRepository;
+    private $customerRepository;
+    private $canonicalizer;
     private $requestStack;
     private $secret;
 
-    public function __construct(RepositoryInterface $orderRepository, RequestStack $requestStack, string $secret)
+    public function __construct(
+        RepositoryInterface $orderRepository,
+        RepositoryInterface $customerRepository,
+        CanonicalizerInterface $canonicalizer,
+        RequestStack $requestStack,
+        string $secret)
     {
         $this->orderRepository = $orderRepository;
+        $this->customerRepository = $customerRepository;
+        $this->canonicalizer = $canonicalizer;
         $this->requestStack = $requestStack;
         $this->secret = $secret;
     }
@@ -32,6 +43,7 @@ class RegistrationInitializeListener implements EventSubscriberInterface
     {
         return array(
             FOSUserEvents::REGISTRATION_INITIALIZE => 'onRegistrationInitialize',
+            FOSUserEvents::REGISTRATION_SUCCESS => 'onRegistrationSuccess',
         );
     }
 
@@ -71,5 +83,19 @@ class RegistrationInitializeListener implements EventSubscriberInterface
         $user->setTelephone($customer->getPhoneNumber());
 
         $user->setCustomer($customer);
+    }
+
+    public function onRegistrationSuccess(FormEvent $event)
+    {
+        $form = $event->getForm();
+
+        $emailCanonical = $this->canonicalizer->canonicalize($form->get('email')->getData());
+
+        $user = $form->getData();
+        $customer = $this->customerRepository->findOneBy(['emailCanonical' => $emailCanonical]);
+
+        if (null !== $customer) {
+            $user->setCustomer($customer);
+        }
     }
 }
