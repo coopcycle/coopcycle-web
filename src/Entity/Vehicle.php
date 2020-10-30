@@ -2,8 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\Task;
-
 /**
  * A VroomProblem represents a set of jobs and vehicles to be optimized through the vroom api
  **/

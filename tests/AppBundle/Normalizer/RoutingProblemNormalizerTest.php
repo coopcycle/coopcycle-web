@@ -2,10 +2,6 @@
 
 namespace Tests\AppBundle\Normalizer;
 
-use AppBundle\Entity\ClosingRule;
-use AppBundle\OpeningHours\OpenCloseInterface;
-use AppBundle\OpeningHours\OpenCloseTrait;
-use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use AppBundle\Serializer\RoutingProblemNormalizer;
 use AppBundle\Entity\Task;
@@ -28,23 +24,28 @@ class RoutingProblemNormalizerTest extends TestCase
 
     public function testNormalization()
     {
-        $task1 = $this->prophesize(Task::class);
-        $task2 = $this->prophesize(Task::class);
-        $task3 = $this->prophesize(Task::class);
-        $task1->getId()->willReturn(1);
-        $task2->getId()->willReturn(2);
-        $task3->getId()->willReturn(3);
+        $coords = [
+            new GeoCoordinates(48.87261892829001, 2.3363113403320312),
+            new GeoCoordinates(48.86923158125418, 2.3548507690429683),
+            new GeoCoordinates(48.876006045998984,  2.3466110229492188)
+            ];
+        $taskList = [];
+        $task_id = 0;
         $address1 = new Address();
-        $address1->setGeo(new GeoCoordinates(5.5, 5.5));
-        $task1->getAddress()->willReturn($address1);
-        $address2 = new Address();
-        $address2->setGeo(new GeoCoordinates(15.5, 25.5));
-        $task2->getAddress()->willReturn($address2);
-        $address3 = new Address();
-        $address3->setGeo(new GeoCoordinates(35.5, 45.5));
-        $task3->getAddress()->willReturn($address3);
+        $address1->setGeo($coords[0]);
 
-        $taskList = [$task1->reveal(), $task2->reveal(), $task3->reveal()];
+        // create list of task prophecies
+        foreach($coords as $coord)
+        {
+            $task_proph = $this->prophesize(Task::class);
+            $task_proph->getId()->willReturn($task_id);
+            $address = new Address();
+            $address->setGeo($coord);
+            $task_proph->getAddress()->willReturn($address);
+            $taskList[] = $task_proph->reveal();
+            $task_id += 1;
+        }
+
         $vehicle1 = new Vehicle(1, $address1, $address1);
         $routingProblem = new RoutingProblem();
 
@@ -59,12 +60,12 @@ class RoutingProblemNormalizerTest extends TestCase
 
         $this->assertEquals([
             "jobs"=>[
-                ["id"=>1, "location"=>[5.5, 5.5]],
-                ["id"=>2, "location"=>[25.5, 15.5]],
-                ["id"=>3, "location"=>[45.5, 35.5]],
+                ["id"=>0, "location"=>[2.3363113403320312, 48.87261892829001]],
+                ["id"=>1, "location"=>[2.3548507690429683, 48.86923158125418]],
+                ["id"=>2, "location"=>[2.3466110229492188, 48.876006045998984]],
             ],
             "vehicles"=>[
-                ["id"=>1, "start"=>[5.5, 5.5], "end"=>[5.5, 5.5]]
+                ["id"=>1, "start"=>[2.3363113403320312, 48.87261892829001], "end"=>[2.3363113403320312, 48.87261892829001]]
             ]
         ], $result);
     }

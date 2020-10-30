@@ -2,11 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Api\Filter\DateFilter;
-use Symfony\Component\Serializer\Annotation\Groups;
-
 /**
  * A VroomProblem represents a set of jobs and vehicles to be optimized through the vroom api
  **/
