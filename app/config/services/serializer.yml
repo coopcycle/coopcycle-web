@@ -67,5 +67,10 @@ services:
       $normalizer: "@serializer.normalizer.object"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
+  AppBundle\Serializer\NumRangeNormalizer:
+    arguments:
+      $normalizer: "@serializer.normalizer.object"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
   AppBundle\Serializer\Csv\TaskNormalizer:
     tags: [ { name: serializer.normalizer, priority: 128 } ]
