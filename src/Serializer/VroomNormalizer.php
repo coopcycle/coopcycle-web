@@ -11,9 +11,14 @@ class VroomNormalizer implements NormalizerInterface
 
     public function normalize($object, $format = null, array $context = array())
     {
-        $data = [];
+        $data = ["jobs"=> [],
+        "vehicles"=>[
+            ["id"=>1]
+            ]
+        ];
         foreach($object as $task){
-            $data[] = ["id"=>$task->getId(), "location"=>[$task->getAddress()->getGeo()->getLongitude(), $task->getAddress()->getGeo()->getLatitude()]];
+            $data["jobs"][] = ["id"=>$task->getId(), "location"=>[$task->getAddress()->getGeo()->getLongitude(), $task->getAddress()->getGeo()->getLatitude()]];
+
         }
         return $data;
     }

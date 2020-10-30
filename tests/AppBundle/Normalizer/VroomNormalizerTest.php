@@ -45,10 +45,14 @@ class VroomNormalizerTest extends TestCase
         $taskList = [$task1->reveal(), $task2->reveal(), $task3->reveal()];
         $normalizer = new VroomNormalizer();
         $result = $normalizer->normalize($taskList);
-        $this->assertEquals([
+        $this->assertEquals(["jobs"=>[
         ["id"=>1, "location"=>[5.5, 5.5]],
         ["id"=>2, "location"=>[25.5, 15.5]],
         ["id"=>3, "location"=>[45.5, 35.5]],
+        ],
+        "vehicles"=>[
+            ["id"=>1]
+        ]
         ], $result);
     }
 }
