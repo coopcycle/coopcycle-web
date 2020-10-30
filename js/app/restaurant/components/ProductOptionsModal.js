@@ -214,11 +214,16 @@ const getOffset = (options, index) => {
 /* Exported to be able to test it */
 export const getOffsets = (options) => options.map((option, index) => getOffset(options, index))
 
+function getInitialDisabledValue(options) {
+  const validOptions = options.filter(option => getInitialValidValue(option))
+  return validOptions.length < options.length
+}
+
 export default ({ code, price, options, formAction, onSubmit }) => {
 
   const [ quantity, setQuantity ] = useState(1)
   const [ total, setTotal ] = useState(price * quantity)
-  const [ disabled, setDisabled ] = useState(true)
+  const [ disabled, setDisabled ] = useState(getInitialDisabledValue(options))
 
   const optionGroups = []
 
