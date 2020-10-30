@@ -13,8 +13,9 @@ class VroomNormalizer implements NormalizerInterface
     {
         $data = ["jobs"=> [],
         "vehicles"=>[
-            ["id"=>1]
-            ]
+            ["id"=>1,
+            "start"=>[$object[0]->getAddress()->getGeo()->getLongitude(), $object[0]->getAddress()->getGeo()->getLatitude()],
+            ]]
         ];
         foreach($object as $task){
             $data["jobs"][] = ["id"=>$task->getId(), "location"=>[$task->getAddress()->getGeo()->getLongitude(), $task->getAddress()->getGeo()->getLatitude()]];

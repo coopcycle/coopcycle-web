@@ -20,18 +20,26 @@ class RouteOptimizer
     {
         // TODO - convert tasks to jobs
         // TODO - convert vehicles
-         $response = $this->client->request('POST', '/', [
+         $response = $this->client->request('POST', '', [
+                                                'headers' => ['Content-Type'=> 'application/json'],
                                                 'body' => json_encode($this->normalizer->normalize($tasks)),
                                             ]);
 
          $data = json_decode((string) $response->getBody(), true);
-         var_dump($data);
+         $firstRoute = $data['routes'][0];
+         array_shift($firstRoute['steps']);
+         $jobIds = [];
+         foreach($firstRoute['steps'] as $step){
+            $jobIds[] = $step['id'];
+         }
+         usort($tasks, function($a, $b) use($jobIds){
+            $ka = array_search($a->getId(), $jobIds);
+            $kb = array_search($b->getId(), $jobIds);
+            return ($ka-$kb);
+         });
+         return $tasks;
     }
 
-    private function sendVroomRequest($action)
-    {
-
-    }
 }
 
 ?>
