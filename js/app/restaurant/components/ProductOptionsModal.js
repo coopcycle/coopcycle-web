@@ -33,61 +33,68 @@ const OptionValue = ({ index, option, optionValue, onClick }) => (
   </div>
 )
 
+const defaultValuesRange = {
+  lower: '0',
+  upper: null,
+  isUpperInfinite: true,
+}
+
+const getValuesRange = option => option.valuesRange || defaultValuesRange
+
 const AdditionalOptionValue = forwardRef(({ index, valueIndex, option, optionValue, onChange }, ref) => {
 
-  if (option.valuesRange) {
+  const valuesRange = getValuesRange(option)
 
-    const [ quantity, setQuantity ] = useState(0)
+  const [ quantity, setQuantity ] = useState(0)
 
-    useImperativeHandle(ref, () => ({
-      getQuantity: () => quantity,
-      getTotal: () => optionValue.price * quantity,
-    }))
+  useImperativeHandle(ref, () => ({
+    getQuantity: () => quantity,
+    getTotal: () => optionValue.price * quantity,
+  }))
 
-    let inputProps = {}
-    if (!option.valuesRange.isUpperInfinite) {
-      inputProps = { ...inputProps, max: option.valuesRange.upper }
-    }
+  let inputProps = {}
+  if (!valuesRange.isUpperInfinite) {
+    inputProps = { ...inputProps, max: valuesRange.upper }
+  }
 
-    const realIndex = index + valueIndex
+  const realIndex = index + valueIndex
 
-    return (
-      <div className="product-option-item-range" ref={ ref }>
-        <input type="hidden" name={ `options[${realIndex}][code]` } value={ optionValue.code } />
-        <input
-          name={ `options[${realIndex}][quantity]` }
-          type="number"
-          step="1"
-          min="0"
-          value={ quantity }
-          onChange={ e => {
-            setQuantity(parseInt(e.currentTarget.value, 10))
-            setTimeout(() => onChange(), 0)
-          }}
-          { ...inputProps } />
-        <label htmlFor={ '' } onClick={ () => {
+  return (
+    <div className="product-option-item-range" ref={ ref }>
+      <input type="hidden" name={ `options[${realIndex}][code]` } value={ optionValue.code } />
+      <input
+        name={ `options[${realIndex}][quantity]` }
+        type="number"
+        step="1"
+        min="0"
+        value={ quantity }
+        onChange={ e => {
+          setQuantity(parseInt(e.currentTarget.value, 10))
+          setTimeout(() => onChange(), 0)
+        }}
+        { ...inputProps } />
+      <label htmlFor={ '' } onClick={ () => {
+        setQuantity(quantity + 1)
+        setTimeout(() => onChange(), 0)
+      }}>
+        <OptionValueLabel option={ option } optionValue={ optionValue } />
+      </label>
+      <div className="product-option-item-range-buttons">
+        <button className="button-icon--decrement" type="button" onClick={ () => {
+          quantity > 0 && setQuantity(quantity - 1)
+          setTimeout(() => onChange(), 0)
+        }}>
+          <i className="fa fa-lg fa-minus-circle"></i>
+        </button>
+        <button className="button-icon--increment" type="button" onClick={ () => {
           setQuantity(quantity + 1)
           setTimeout(() => onChange(), 0)
         }}>
-          <OptionValueLabel option={ option } optionValue={ optionValue } />
-        </label>
-        <div className="product-option-item-range-buttons">
-          <button className="button-icon--decrement" type="button" onClick={ () => {
-            quantity > 0 && setQuantity(quantity - 1)
-            setTimeout(() => onChange(), 0)
-          }}>
-            <i className="fa fa-lg fa-minus-circle"></i>
-          </button>
-          <button className="button-icon--increment" type="button" onClick={ () => {
-            setQuantity(quantity + 1)
-            setTimeout(() => onChange(), 0)
-          }}>
-            <i className="fa fa-lg fa-plus-circle"></i>
-          </button>
-        </div>
+          <i className="fa fa-lg fa-plus-circle"></i>
+        </button>
       </div>
-    )
-  }
+    </div>
+  )
 })
 
 const ValuesRange = ({ option }) => {
@@ -96,8 +103,10 @@ const ValuesRange = ({ option }) => {
 
   if (option.additional) {
 
-    const min = parseInt(option.valuesRange.lower, 10)
-    const max = option.valuesRange.isUpperInfinite ? Infinity : parseInt(option.valuesRange.upper, 10)
+    const valuesRange = getValuesRange(option)
+
+    const min = parseInt(valuesRange.lower, 10)
+    const max = valuesRange.isUpperInfinite ? Infinity : parseInt(valuesRange.upper, 10)
 
     if (min === 0 && max !== Infinity) {
       return (
@@ -133,12 +142,10 @@ function getInitialValidValue(option) {
     return false
   }
 
-  if (option.valuesRange) {
-    const min = parseInt(option.valuesRange.lower, 10)
-    return min === 0
-  }
+  const valuesRange = getValuesRange(option)
+  const min = parseInt(valuesRange.lower, 10)
 
-  return true
+  return min === 0
 }
 
 export const OptionGroup = forwardRef(({ index, option, onChange }, ref) => {
@@ -192,20 +199,19 @@ export const OptionGroup = forwardRef(({ index, option, onChange }, ref) => {
                   )
 
                   let isValid = true
-                  if (option.valuesRange) {
+                  const valuesRange = getValuesRange(option)
+                  const min = parseInt(valuesRange.lower, 10)
 
-                    const min = parseInt(option.valuesRange.lower, 10)
-
-                    if (totalQuantity < min) {
+                  if (totalQuantity < min) {
+                    isValid = false
+                  }
+                  if (!valuesRange.isUpperInfinite) {
+                    const max = parseInt(valuesRange.upper, 10)
+                    if (totalQuantity > max) {
                       isValid = false
                     }
-                    if (!option.valuesRange.isUpperInfinite) {
-                      const max = parseInt(option.valuesRange.upper, 10)
-                      if (totalQuantity > max) {
-                        isValid = false
-                      }
-                    }
                   }
+
                   setValid(isValid)
                   setTimeout(() => onChange(), 0)
                 }} />
