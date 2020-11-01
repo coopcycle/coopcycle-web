@@ -435,8 +435,8 @@ form.delivery.duration.label: 'Durada'
 form.delivery.store.label: 'Botiga'
 form.delivery.store.placeholder: 'Busca una botiga…'
 form.delivery.price.label: 'Pre'
-form.delivery.to_be_confirmed.warning: 'Vusté ha de confirmar la orden'
-form.delivery.has_order.info: 'Esta entrega esta vinculada a una orden'
+form.delivery.to_be_confirmed.warning: 'Has de confirmar lo pediu'
+form.delivery.has_order.info: 'Esta entrega ye vinclada a un pediu'
 form.delivery.package.label: 'Paquet'
 form.delivery.packages.label: 'Paquetz'
 form.delivery.time_slot.label: 'Intervalo de tiempo'
@@ -452,15 +452,17 @@ form.order.refund_modal.title: 'Reembolso'
 form.order.refuse.refund.alert: 'Este pediu se pagó con un metodo de pago que no chestiona
   las autorizacions previas. Si lo refusa, se reembolsará lo pago. Yes seguro?'
 form.payment.state.label: 'Estau'
-form.payment.amount.label: 'Amonto'
-form.payment.refund_amount.label: 'Amonto de reembolso'
-form.payment.last_update.label: 'Ultima actualización'
+form.payment.amount.label: 'Importe'
+form.payment.refund_amount.label: 'Importe de reembolso'
+form.payment.last_update.label: 'Zaguera actualización'
 form.payment.refund_amount.help: 'L''importe que especifique será tornau a lo client'
-form.payment.refund_liable.label: ''
-form.payment.refund_liable.help: ''
+form.payment.refund_liable.label: 'Parte responsable'
+form.payment.refund_liable.help: 'Qui ye responsable de l''incident?'
 form.payment.refund_comment.label: 'Comentarios'
-form.payment.refund_comment.help: ''
-form.payment.refund_application_fee.help: ""
+form.payment.refund_comment.help: 'Per favor, describe lo que ha pasau'
+form.payment.refund_application_fee.help: "Si marca esta caixeta, la comisión cobrada\
+  \ per la plataforma a lo socio/a se reembolsará proporcionalment\n<br>\n<a href=\"\
+  https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Más información</a>\n"
 form.address.addressLocality.label: 'Ciudat'
 form.address.postalCode.label: 'Codigo postal'
 form.address.description.label: 'Instruccions'
@@ -468,14 +470,14 @@ form.address.description.placeholder: '2ª puerta a la zurda…'
 form.address.streetAddress.label: 'Adreza'
 form.address.streetAddress.error.noLatLng: 'Tría una adreza en o menú desplegable'
 form.address.name.label: 'Nombre'
-form.address.name.placeholder: 'Casa, usina…'
+form.address.name.placeholder: 'Casa, treballo…'
 form.address.company.label: 'Interpresa'
-form.address.company_name.label: ''
-form.address.company.business_reference.label: ''
-form.address.company.function.label: ''
+form.address.company_name.label: 'Nombre d''a interpresa'
+form.address.company.business_reference.label: 'Persona de contacto d''a entidat'
+form.address.company.function.label: 'Cargo d''a persona de contacto'
 form.address.company.collaborator_number.label: 'Numero de personas treballadoras'
-form.address.company.meal_estimate.label: ''
-form.company.make_the_request.label: ''
+form.address.company.meal_estimate.label: 'Numero estimau de minchadas (per día)'
+form.company.make_the_request.label: 'Ninviar requesta'
 form.pricing_rule_set.name.label: 'Nombre'
 form.pricing_rule_set.rules.label: 'Reglas'
 form.pricing_rule_set.strategy.label: 'Metodo de calculo'
@@ -493,11 +495,15 @@ form.preparation_time.defaults_warning: "Este restaurant encara no tiene garra t
 form.settings.date_time: 'Día y hora'
 form.settings.brand_name.label: 'Nombre de la Marca'
 form.settings.stripe.title: 'Conta Stripe'
-form.settings.stripe.help: ''
-form.settings.stripe_testmode.help: 'En modo « test », debe usar <a href="https://stripe.com/docs/testing">numeros
-  de tarchetas de preba</a> pa pagar. <strong>No s''intercambiará diners.</strong> '
-form.settings.stripe_enable_livemode.help: 'Pa activar lo modo « live », en primeras
-  ameneste configurar las credencials « live ».'
+form.settings.stripe.help: 'Stripe ye lo servicio de pago que femos servir pa chestionar
+  tarchetas de credito. Pa usar la parte d''e-commerce d''a plataforma ye necesario
+  configruar esta sección, asinas como Stripe Connect. Stripe prene una tarifa de
+  0.25cts + 1.4% por pago (precios actualizaus <a href="https://stripe.com/fr/pricing">here</a>),
+  a pagar por l''amo d''a botiga. '
+form.settings.stripe_testmode.help: 'En modo «test», debe usar <a href="https://stripe.com/docs/testing">numeros
+  de tarchetas de preba</a> pa pagar. <strong>No s''intercambiarán diners.</strong> '
+form.settings.stripe_enable_livemode.help: 'Pa activar lo modo «live», primo has de
+  configurar las credencials «live».'
 form.settings.stripe_publishable_key.label: 'Clau publica de Stripe'
 form.settings.stripe_publishable_key.help: "Creya una cuenta Stripe pa obtener la\
   \ tuya <a href=\"https://stripe.com/docs/dashboard#api-keys\">clau publica</a>\n"
@@ -508,7 +514,7 @@ form.settings.stripe_connect_client_id.label: 'Identificador de Stripe Connect'
 form.settings.stripe_connect_client_id.help: "Puetz trobar lo tuyo identificador en\
   \ a <a href=\"https://dashboard.stripe.com/account/applications/settings\">pachina\
   \ de parametros</a>\n"
-form.settings.google_api_key.label: 'Clau API de google'
+form.settings.google_api_key.label: 'Clau de l''API de Google'
 form.settings.google_api_key.help: "Creya una cuenta Google pa obtener la tuya <a\
   \ href=\"https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
   >clau API</a>\n"
@@ -521,9 +527,9 @@ form.settings.phone_number.label: 'Numero de telefono'
 form.settings.phone_number.help: 'Este numero s''amostrará a los clients'
 form.settings.enable_restaurant_pledges.label: 'Permitir a los clients sucherir restaurants'
 form.settings.company_logo.label: 'Logo d''interpresa'
-form.settings.company_logo.help: 'Este logo s''usará pa facturas y comprobantes d''entrega'
+form.settings.company_logo.help: 'Este logo s''usará pa facturas y comprobants d''entrega'
 form.settings.subject_to_vat.label: 'Sozmetiu a l''IVA'
-form.settings.sms_enabled.label: ''
+form.settings.sms_enabled.label: 'Habilitar ninvio de SMS'
 form.settings.sms.title: ''
 form.settings.sms_gateway.label: ''
 form.settings.sms_gateway_config.mailjet.api_token.label: ''
@@ -534,19 +540,20 @@ form.suggest.name.label: 'Nombre'
 form.suggest.name.help: 'Indique lo nombre completo pa que podamos trobar-lo'
 form.suggest.submit.label: 'Sucherir agora'
 form.suggest.message: "No trobas lo tuyo restaurant favorito?\n<br>\nDi-nos lo suyo\
-  \ nombre y adreza. Dimpués, atros usuarios pueden votar pa veyer-lo amaneixer en\
-  \ a lista de restaurants.\n<br>\nEsto nos permitirá identificar millor los restaurants\
+  \ nombre y adreza. Dimpués, atras personas usuarias pueden votar pa veyer-lo amaneixer\
+  \ en a lista de restaurants.\n<br>\nEsto nos permitirá identificar millor los restaurants\
   \ a los quals nos endrezaremos y proporcionar-les la preba d'una demanda real.\n"
 form.suggest.thank_you_message: 'Gracias per sucherir este restaurant!'
-restaurant.suggest.message: "Aduya-nos a convencer %restaurant.name% treballar con\
-  \ %brand_name%!\n<br>\nPa veyer-lo en a plataforma, amenestemos que vusté y la suya\
-  \ voz refirmen nuestra futura solicitut de colaboración con esta marca.\n"
+restaurant.suggest.message: "Aduya-nos a convencer a %restaurant.name% pa treballar\
+  \ con %brand_name%!\n<br>\nPa veyer-lo en a plataforma, nos fa falta que vusatros\
+  \ y la vuestra voz refirmen la nuestra futura solicitut de colaboración con esta\
+  \ marca.\n"
 restaurant.suggest.vote: 'Vota per %name%'
 pledge.suggested_by: 'Sucheriu per @%username%'
 restaurant.suggest.has_voted: 'Ya has votau per este restaurant!'
 restaurant.suggest.banner_disclaimer: 'Este restaurant no ye disponible en este momento.
   Vota per %restaurant.name%!'
-pledge.vote_count_equals_two: '%first_user% y %second_user% he votau per este restaurant'
+pledge.vote_count_equals_two: '%first_user% y %second_user% han votau per este restaurant'
 pledge.vote_count_equals_one: '%username% ha votau per este restaurant'
 pledge.accept: 'Acceptar'
 pledge.reject: 'Refusar'
@@ -556,31 +563,31 @@ form.maintenance.enable.alert: 'Yes a punto d''activar lo mantenimiento.<br>Nom�
   los administradors tendrán acceso a lo puesto.'
 form.maintenance.disable.alert: 'Yes a punto de desactivar lo mantenimiento'
 form.maintenance.message.label: 'Mensache'
-mardown_formatting.help: 'Puetz formatear texto usando la sintaxi Markdown'
-form.banner.enable.label: 'Activar la bandera'
-form.banner.disable.label: 'Desactivar la bandera'
-form.banner.enable.alert: 'Yes a punto d''activar la bandera'
-form.banner.disable.alert: 'Yes a punto de desactivar la bandera'
-form.banner.message.label: 'Mensache amostrau en a bandera'
-form.stripe_livemode.enable.label: 'Utilizar Stripe en modo « live »'
-form.stripe_livemode.enable.alert: 'En modo « live », las tarchetas de credito serán
+mardown_formatting.help: 'Puetz formatear lo texto usando la sintaxi Markdown'
+form.banner.enable.label: 'Activar lo banner'
+form.banner.disable.label: 'Desactivar lo banner'
+form.banner.enable.alert: 'Yes a punto d''activar lo banner'
+form.banner.disable.alert: 'Yes a punto de desactivar lo banner'
+form.banner.message.label: 'Mensache amostrau en o banner'
+form.stripe_livemode.enable.label: 'Utilizar Stripe en modo «live»'
+form.stripe_livemode.enable.alert: 'En modo «live», las tarchetas de credito serán
   cargadas.'
-form.stripe_livemode.disable.label: 'Utilizar Stripe en modo « test »'
-form.stripe_livemode.disable.alert: 'En modo « test », las tarchetas de credito no
-  serán cargadas.'
-form.stripe_livemode.disable_and_enable_maintenance.label: 'Utilizar lo modo « test
-  » y activar lo mantenimiento'
+form.stripe_livemode.disable.label: 'Utilizar Stripe en modo «test»'
+form.stripe_livemode.disable.alert: 'En modo «test», las tarchetas de credito no serán
+  cargadas.'
+form.stripe_livemode.disable_and_enable_maintenance.label: 'Utilizar lo modo «test»
+  y activar lo mantenimiento'
 form.stripe_livemode.disable_and_enable_maintenance.alert: 'Yes utilizando lo modo
-  « live ».<br>Si quiere pasar en modo « test », lo "mantenimiento s''activará automaticament.'
+  «live».<br>Si quiere pasar a modo «test», lo mantenimiento s''activará automaticament.'
 form.settings.currency_code.label: 'Moneda'
 form.delivery_embed.name.label: 'Nombre'
 form.delivery_embed.name.help: 'Lo vuestro nombre u lo nombre d''a interpresa'
 form.delivery_embed.telephone.label: 'Numero de telefono'
-form.delivery_embed.vehicle.disclaimer: 'Entregamos en bicicleta de carga articlos
-  de mas de 50x40x20 (cm) y/u que lo suyo peso exceda los 6 kg.'
+form.delivery_embed.vehicle.disclaimer: 'Entregamos en bicicleta cargo articlos de
+  mas de 50x40x20 (cm) y/u que lo suyo peso exceda los 6 kg.'
 form.registration.username.help: "Lo suyo nombre d'usuario no puede tener mas de 15\
-  \ caracters. Un nombre de \"usuario solo puede contener caracters alfanumericos\
-  \ (letras A-Z, numeros 0-9) con a excepción de guións baixos.\n"
+  \ caracters. Un nombre de usuario solo puede contener caracters alfanumericos (letras\
+  \ A-Z, numeros 0-9) con a excepción de guions baixos.\n"
 form.registration.legal.label: 'Accepto los Termins y Condicions y la Politica de
   Privacidat'
 form.registration.legal.help: 'En marcar esta caixeta, acceptas los nuestros <a href="%terms_url%">Termins
@@ -593,35 +600,33 @@ form.local_business.stripe_account.not_configured: 'No puetz connectar una cuent
   encara'
 form.local_business.stripe_account.success: 'Conta Stripe connectada con exito'
 form.local_business.stripe_account.need_stripe_account: "Encara no has creyau una\
-  \ cuenta Stripe pa este restaurant. Stripe és una plataforma de pagos que nos permite\
+  \ cuenta Stripe pa este restaurant. Stripe ye una plataforma de pagos que nos permite\
   \ chestionar de forma segura los pagos con tarcheta de credito y las transferencia\
-  \ a la tuya cuenta bancaria.<br>\nPa creyar una cuenta Stripe pa este restaurant\
+  \ a la tuya cuenta bancaria.<br>\nPa creyar una cuenta Stripe pa este restaurant,\
   \ per favor fe <a href=\"%stripeAuthorizeURL%\">clic aquí</a>.\n"
 form.local_business.stripe_account.link_ok: "Este restaurant ha estau enlazau a una\
   \ cuenta Stripe y puede recibir pagos d'a plataforma.<br>\nPa chestionar la tuya\
-  \ cuenta Stripe per favor usa lo <a href=\"https://dashboard.stripe.com/\" target=\"\
+  \ cuenta Stripe, per favor usa lo <a href=\"https://dashboard.stripe.com/\" target=\"\
   _blank\">panel d'administración de Stripe</a>.\n"
 form.settings.mercadopago.title: ''
-form.local_business.mercadopago_account.title: 'Conta de MercadoPago'
-form.local_business.mercadopago_account.success: 'Conta MercadoPago connectada con
+form.local_business.mercadopago_account.title: 'Cuenta de MercadoPago'
+form.local_business.mercadopago_account.success: 'Cuenta MercadoPago connectada con
   exito'
 form.local_business.mercadopago.connect_button.text: 'Connectar con Mercadopago'
-form.mercadopago_livemode.enable.label: 'Utilizar Mercadopago en modo « producción
-  »'
-form.mercadopago_livemode.enable.alert: 'En modo « producción », las tarchetas de
-  credito serán cargadas.'
-form.mercadopago_livemode.disable.label: 'Utilizar Mercadopago en modo « test »'
-form.mercadopago_livemode.disable.alert: 'En modo « test », las tarchetas de credito
+form.mercadopago_livemode.enable.label: 'Utilizar Mercadopago en modo «producción»'
+form.mercadopago_livemode.enable.alert: 'En modo «producción», las tarchetas de credito
+  serán cargadas.'
+form.mercadopago_livemode.disable.label: 'Utilizar Mercadopago en modo «test»'
+form.mercadopago_livemode.disable.alert: 'En modo «test», las tarchetas de credito
   no serán cargadas.'
 form.mercadopago_livemode.disable_and_enable_maintenance.label: 'Utilizar lo modo
-  « test » y activar lo mantenimiento'
+  «test» y activar lo mantenimiento'
 form.mercadopago_livemode.disable_and_enable_maintenance.alert: 'Yes utilizando lo
-  modo « live ».<br>Si quiere pasar en modo « test », lo "mantenimiento s''activará
-  automaticament.'
-form.settings.mercadopago_testmode.help: 'En modo « test », debe usar <a href="https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba">numeros
+  modo «live».<br>Si quiere pasar en modo «test», lo mantenimiento s''activará automaticament.'
+form.settings.mercadopago_testmode.help: 'En modo «test», ha d''usar <a href="https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba">numeros
   de tarchetas de preba</a> pa pagar. <strong>No s''intercambiará diners.</strong> '
-form.settings.mercadopago_enable_livemode.help: 'Pa activar lo modo « live », en primeras
-  ameneste configurar las credencials « live ».'
+form.settings.mercadopago_enable_livemode.help: 'Pa activar lo modo «live», primero
+  necesita configurar las credencials «live».'
 form.settings.mercadopago.publishable_key.label: 'Clau de publicación'
 form.settings.mercadopago.publishable_key.help: "Obtienga la <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
   \ target=\"_blank\">clau de publicación</a>"
@@ -629,8 +634,9 @@ form.settings.mercadopago.access_token.label: 'Token d''acceso'
 form.settings.mercadopago.access_token.help: "Obtienga lo <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
   \ target=\"_blank\">token d'acceso</a>"
 form.settings.mercadopago.app_id.label: 'ID d''Aplicación'
-form.settings.mercadopago.app_id.help: ''
-form.settings.mercadopago.redirect_uri.help: "Quan configure lo suyo app, use la siguient\
+form.settings.mercadopago.app_id.help: 'Necesita <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">creyar
+  una aplicación</a> pa obtener lo suyo ID d''Aplicación.'
+form.settings.mercadopago.redirect_uri.help: "Quan configure la suyo app, use la siguient\
   \ URI de redirección: <code>%redirect_uri%</code>"
 form.menu_item.name.label: 'Nombre'
 form.menu_item.price.label: 'Pre'
@@ -639,31 +645,35 @@ form.menu_item_modifier.price.label: 'Pre'
 form.menu_item_modifier.calculusStrategy.label: 'Calculo d''o pre'
 form.menu_taxon.name.label: 'Nombre'
 form.menu_taxon.add_child.label: 'Anyadir una sección'
-form.menu_taxon.child_name.placeholder: "Eixemplo : platos, postres…\n"
+form.menu_taxon.child_name.placeholder: "Eixemplo: platos, postres…\n"
 form.menu_editor.products_panel.title: 'Productos'
 form.menu_editor.save.label: 'Alzar cambios'
 form.menu_editor.help: "Use lo editor contino pa componer los elementos d'o menú\n\
   <br>\nArrociega y suelta los productos en as seccions d'a cucha\n<br>\nSi deseya\
   \ retirar un producto d'o menú, lo deposite en a sección \"Productos\" a la dreita\n\
-  <br>\nNo ixuplides fer clic en o botón « Alzar cambios » contino\n"
-form.menu_editor.products.help: 'Pa anyadir productos en a lista d''a dreita, agregalos
-  a lo <a href="%products_url%">catalogo</a>en primeras'
+  <br>\nNo olbides fer clic en o botón «Alzar cambios» contino\n"
+form.menu_editor.products.help: 'Pa anyadir productos en a lista d''a dreita, adhibe-los
+  a lo <a href="%products_url%">catalogo</a>primero'
 form.menu_editor.taxon_modal.title: 'Modificar una seccion'
-form.menu_editor.name.help: ''
+form.menu_editor.name.help: 'Esto ye pa que pueda columbrar los menús. Esto no s''amuestra
+  a lo client.'
 form.product.name.label: 'Nombre'
 form.product.description.label: 'Descripción'
 form.product.price.label: 'Pre'
-form.product.taxCategory.label: 'Imposaus'
+form.product.taxCategory.label: 'Impuestos'
 form.product.enabled.label: 'Activau'
 form.product.allergens.label: 'Alergenos'
 form.product.allergens.help: 'Este producto contiene los siguients alérgenos?'
 form.product.restricted_diets.label: 'Dietas restrinchidas'
 form.product.restricted_diets.help: 'Este producto s''achusta a las siguients dietas?'
 form.product.confirm.label: 'Confirmar cambios'
-form.product.confirm.help: ""
-form.product.reusable_packaging_enabled.label: 'Habilite lo envoltorio reutilizable
+form.product.confirm.help: "Has cambiau lo nombre d'o producto. Si ye una <strong>modificación\
+  \ menor</strong> (error d'ortografía, mayuscla…), faiga clic en «Confirmar cambios».\n\
+  <br>\nSi no, ha de creyar <a href=\"%link%\">un nuevo producto</a>, pa que pueda\
+  \ columbrar los productos que vende y mantener un historial. "
+form.product.reusable_packaging_enabled.label: 'Habilite l''empaquetache reutilizable
   pa este producto'
-form.product.reusable_packaging.label: 'Tipo de envoltorio reutilizable'
+form.product.reusable_packaging.label: 'Tipo d''empaquetache reutilizable'
 form.product.reusable_packaging_unit.label: 'Numero d''unidatz'
 form.product_option.name.label: 'Nombre'
 form.product_option.strategy.label: 'Calculo d''o pre'
@@ -672,7 +682,7 @@ form.product_option.values.title: 'Valors'
 form.product_option.values.help: 'Has de definir una lista de valors pa esta opción'
 form.product_option.additional.label: 'Esta opción ye adicional'
 form.product_option.additional.help: 'Lo client puede triar quantas valors, sin haber
-  de que triar a lo menos un'
+  de triar-ne a lo menos un'
 form.product_option.preview_title: 'Opción vista previa'
 form.product_option_value.value.label: 'Valor'
 form.product_option_value.price.label: 'Pre'
@@ -687,33 +697,33 @@ form.checkout_address.reusable_packaging_loopeat_enabled.label: 'Quiero usar con
   LoopEat'
 form.checkout_address.add_promotion.label: 'Aplicar'
 form.checkout_address.tip_amount.label: 'Propina'
-form.checkout_address.tip_amount.help: 'Muitas gracias❤'
+form.checkout_address.tip_amount.help: 'Muitas gracias ❤'
 form.checkout_address.add_tip.label: 'Aplicar'
 form.checkout_address.quote.label: 'Solicitar presupuesto'
-form.checkout_address.takeaway.disclaimer: 'Has optado per fer clic y replegar. Vusté
-  ye responsable de replegar lo suyo pediu lo día y la hora triaus.'
+form.checkout_address.takeaway.disclaimer: 'Has optau per fer clic y recullir. Yes
+  responsable de recullir lo tuyo pediu lo día y la hora triaus.'
 form.checkout_address.takeaway.contact: 'Si tiene bell problema, contacte con o establimiento
   %telefono%.'
-form.checkout_address.takeaway.no_show_disclaimer: 'Tienga en cuenta - si no replega,
+form.checkout_address.takeaway.no_show_disclaimer: 'Para cuenta: si no lo reculles,
   se le cobrará l''importe total d''o pediu.'
 form.checkout_payment.method.label: 'Tríe un metodo de pago'
 form.checkout_address.reusable_packaging.loopeat.learn_more: 'Saber mas sobre LoopEat'
-form.task_export.start.label: 'Encieto'
+form.task_export.start.label: 'Iniciar'
 form.task_export.end.label: 'Final'
 form.api_app.name.label: 'Nombre de l''aplicación'
 form.api_app.store.label: 'Botiga'
 form.api_app.client_id.label: 'Login'
 form.api_app.client_secret.label: 'Clau secreta'
-form.credit_note.user_search.help: 'Lo esconto nomás será utilizable per este usuario'
-form.credit_note.amount.label: 'Suma'
+form.credit_note.user_search.help: 'La promoción nomás será utilizada per este usuario'
+form.credit_note.amount.label: 'Importe'
 form.credit_note.name.label: 'Nombre'
-form.credit_note.name.help: 'Lo nombre d''o esconto que s''amostrará en a cesta'
-form.credit_note.restaurant.help: 'Lo esconto nomás se podrá utilizar pa pedir en
+form.credit_note.name.help: 'Lo nombre de la promoción que s''amostrará en a cesta'
+form.credit_note.restaurant.help: 'La promoción nomás se podrá utilizar pa pedir en
   este restaurant. Deixe vuedo pa aplicar a totz los restaurants.'
 form.resend_confirmation_email.submit.label: 'Reninviar correu electronico'
 form.embed_settings.with_vehicle.label: 'Anyadir la posibilidat de triar lo tipo de
   vehíclo'
-form.embed_settings.with_weight.label: 'Consultar peso de bienes'
+form.embed_settings.with_weight.label: 'Consultar peso de biens'
 form.time_slot.name.label: 'Nombre'
 form.time_slot.interval.label: 'Intervalo'
 form.time_slot.working_days_only.label: 'Permitir triar nomás días laborals'
@@ -732,39 +742,44 @@ form.reusable_packaging.price.label: 'Pre'
 form.reusable_packaging.on_hand.label: 'Cantidat'
 form.deposit_refund_settings.deposit_refund_optin.label: 'Lo sistema de reembolso
   ye opcional'
-form.deposit_refund_settings.deposit_refund_optin.help: ''
+form.deposit_refund_settings.deposit_refund_optin.help: 'Quan o sistema de deposito-devolución
+  sía opcional, podrá triar si quiere u no los empaquetaches. Quan en sía obligatorio,
+  los empaquetaches s''anyadirán a lo total d''o pediu automaticament.'
 form.new_order.variant_name.label: 'Nombre d''o producto'
 form.new_order.variant_name.help: 'Lo nombre que amaneixerá en o resumen d''o pediu
   y la factura'
 form.new_order.variant_price.label: 'Pre'
-form.customize.about_us_enabled.label: ''
-form.customize.about_us.label: ''
-form.customize.motto.label: ''
-form.customize.motto.help: ''
-form.customize.custom_legal_enabled.label: ''
-form.customize.custom_legal.label: ''
-form.customize.custom_terms_enabled.label: ''
-form.customize.custom_terms.label: ''
-form.customize.custom_privacy_enabled.label: ''
-form.customize.custom_privacy.label: ''
-form.customize.custom_banner.label: ''
-form.customize.custom_banner.help: ''
+form.customize.about_us_enabled.label: 'Habilitar la pachina «about us»'
+form.customize.about_us.label: 'Conteniu d''a pachina «about us»'
+form.customize.motto.label: 'Lema'
+form.customize.motto.help: 'Esto s''amostrará en la pachina d''inicio'
+form.customize.custom_legal_enabled.label: 'Habilitar aviso legal personalizau'
+form.customize.custom_legal.label: 'Conteniu d''a pachina d''aviso legal personalizau'
+form.customize.custom_terms_enabled.label: 'Habilitar termins y condicions personalizaus'
+form.customize.custom_terms.label: 'Conteniu d''a pachina termins y condicions'
+form.customize.custom_privacy_enabled.label: 'Habilitar la politica de privacidat
+  personalizada'
+form.customize.custom_privacy.label: 'Conteniu personalizau d''a pachina politica
+  de privacidat'
+form.customize.custom_banner.label: 'Banner personalizau'
+form.customize.custom_banner.help: 'Asegure-se que lo banner sía un patrón SVG que
+  se repita'
 promotion_coupon.used.label: 'Numero d''usos'
 product_option.strategy.free: 'Gratis'
 product_option.strategy.option_value: 'Cada opción tiene un pre diferent'
 roles.ROLE_ADMIN: 'Administrador'
-roles.ROLE_COURIER: ''
-roles.ROLE_RESTAURANT: ''
-roles.ROLE_STORE: ''
+roles.ROLE_COURIER: 'Mensachero'
+roles.ROLE_RESTAURANT: 'Restaurant'
+roles.ROLE_STORE: 'Botiga'
 roles.ROLE_USER: 'Usuario'
 user.edit.roles.help: 'Configura los permisos d''este usuario'
 user.edit.enabled.label: 'Activau'
 user.edit.enabled.help: 'Un usuario desactivau sera desconnectau y no podrá tornar
-  a encetar sesión en a plataforma.'
-user.profile.familyName: 'Apellidos'
+  a iniciar sesión en a plataforma.'
+user.profile.familyName: 'Apellius'
 user.profile.givenName: 'Nombre'
-roles.ROLE_ADMIN.help: "Administrador : Acceso completo a totas las opcions\n"
-roles.ROLE_COURIER.help: "Mensajero: veyer fayenas pendients, modificar fayenas asignadas…\n"
+roles.ROLE_ADMIN.help: "Administrador: Acceso completo a totas las opcions\n"
+roles.ROLE_COURIER.help: "Mensachero: veyer fayenas pendients, modificar fayenas asignadas…\n"
 roles.ROLE_RESTAURANT.help: 'Propietario de restaurant: chestionar restaurants asignaus,
   chestionar pedius…'
 roles.ROLE_STORE.help: 'Propietario de botiga: chestionar botigas asignadas, chestionar
@@ -776,12 +791,12 @@ stores.users: 'Usuarios'
 stores.pricing_rule_set: 'Tarificación'
 stores.api_keys: 'Claus API'
 stores.deliveries: 'Entregas'
-stores.deliveries.heading: ''
+stores.deliveries.heading: 'Entrea #%delivery_id% - %delivery_distance%'
 stores.deliveries.task_unassigned: 'No asignada'
 stores.addresses: 'Adrezas'
 meta.title: 'Plataforma de lochistica pa cooperativas'
 admin.settings.missing_mandatory_settings: "Qualques achustes obligatorios no han\
-  \ estau configuraus.\nVeyes a la <a href=\"%settings_url%\">pachina d'achustes</a>\
+  \ estau configuraus.\nIr ta la <a href=\"%settings_url%\">pachina d'achustes</a>\
   \ pa configurar-los.\n"
 index.map.tip: 'Usa lo mapa pa trobar restaurants'
 index.banner: ''
@@ -792,23 +807,29 @@ index.view_all_shops: 'Veyer totas las botigas'
 notifications.empty: 'Garra notificación'
 adminDashboard.statistics: 'Estatisticas'
 adminDashboard.activity.title: 'Actividat'
-activity.task.created: ""
-activity.task.assigned: ""
-activity.task.unassigned: ""
-activity.task.started: ""
-activity.task.done: ""
-activity.task.failed: ""
-activity.task.cancelled: ""
-activity.order.created: ""
-activity.order.accepted: ""
-activity.order.refused: ""
-activity.order.picked: ""
-activity.order.dropped: ""
-activity.order.fulfilled: ""
+activity.task.created: "@%owner% fayena creyada #task/%aggregate_id%\n"
+activity.task.assigned: "@%owner% fayena asignada #task/%aggregate_id%\n"
+activity.task.unassigned: "@%owner% fayena no asignada #task/%aggregate_id%\n"
+activity.task.started: "@%owner% fayena iniciada #task/%aggregate_id%\n"
+activity.task.done: "@%owner% fayena completada #task/%aggregate_id%\n"
+activity.task.failed: "@%owner% imposible completar la fayena #task/%aggregate_id%\n"
+activity.task.cancelled: "@%owner% ha cancelau la fayena #task/%aggregate_id%\n"
+activity.order.created: "Lo pediu #order/%aggregate_id% ha estau creyau por @%owner%\n"
+activity.order.accepted: "Lo pediu #order/%aggregate_id% ha estau acceptau\n"
+activity.order.refused: "Lo pediu #order/%aggregate_id% ha estau refusau\n"
+activity.order.picked: "@%owner% ha recibiu lo pediu #order/%aggregate_id%\n"
+activity.order.dropped: "@%owner% ha entregau lo pediu #order/%aggregate_id%\n"
+activity.order.fulfilled: "Pediu #order/#%aggregate_id% ye rematau\n"
 social.sign_in_with_facebook: 'Connecta-te con Facebook'
-embed.delivery.summary: ""
+embed.delivery.summary: "Ha solicitau un pediu que será entregau en <strong>%dropoff_date%</strong>\
+  \ a la siguient adreza: <strong>%dropoff_address%</strong> <br> Calculamos la distancia\
+  \ de <strong>%distance% kilometros</strong>. <br> Lo pre d'o pediu ye <strong>%total_excluding_tax%\
+  \ (sin IVA); </strong> %total_including_tax% (sin IVA). <br><br>Si bell detalle\
+  \ anterior ye incorrecto, lo podrás cambiar fendo clic en o botón \"Editar\". "
 embed.delivery.submit.help: 'Fe clic pa confirmar lo pediu y realizar la entrega.'
-embed.delivery.confirm_message: ''
+embed.delivery.confirm_message: 'Lo suyo pediu d''entrega s''ha realizau y recibirá
+  un resumen por correu electronico en breu. Verificaremos lo suyo pediu y le ninviaremos
+  un correu electronico de confirmación antes con antes.'
 pagination.previous: 'Anterior'
 pagination.next: 'Siguient'
 basics.view: 'Veyer'
@@ -827,14 +848,14 @@ basics.tax_category: 'IVA'
 basics.export: 'Exportar'
 basics.import: 'Importar'
 basics.name: 'Nombre'
-basics.description: ''
+basics.description: 'Descripción'
 basics.today: 'Hue'
 basics.are_you_sure: 'Yes segur@?'
-basics.no_entries: 'Ningun elemento per lo momento'
-basics.created_at: ''
-basics.updated_at: ''
+basics.no_entries: 'Garra elemento per lo momento'
+basics.created_at: 'Creyau lo %date%'
+basics.updated_at: 'Actualizau lo %date%'
 basics.date_range: 'Dende %start% dica %end%'
-basics.total_including_tax: 'Total incluyindo totz los imposaus'
+basics.total_including_tax: 'Total incluyindo totz los impuestos'
 basics.stripe_fees: 'Tarifas de Stripe'
 basics.platform_fees: 'Tarifas de plataforma'
 basics.net_income: 'Ingresos netos'
@@ -843,46 +864,45 @@ basics.send_invitation.confirm: 'La tuya invitación ha estau ninviada! Agora pu
   editar los achustes d''o nuevo usuario.'
 basics.configure: 'Configurar'
 profile.password.change: 'Cambiar la clau'
-authentication.forgot_password: 'Clau ixuplidada?'
-authentication.not_registered_yet: 'Encara no estas rechistrau?'
+authentication.forgot_password: 'Clau olbidada?'
+authentication.not_registered_yet: 'Encara no yes rechistrau?'
 authentication.create_account: 'Creya la tuya cuenta'
 authentication.already_registered: 'Ya tiens una cuenta?'
 authentication.sign_in: 'Rechistra-te'
-authentication.choose_password: ''
+authentication.choose_password: 'Tría la tuya clau'
 maintenance.text: 'Puesto en mantenimiento. Tornaremos luego'
 api_apps.breadcrumb: 'Clients API'
 api_apps.created.message: 'Lo client ha estau anyadiu. Utilice las credencials contino
   pa autenticar.'
-promotions.breadcrumb: 'Descuentos'
+promotions.breadcrumb: 'Promocions'
 promotions.breadcrumb.new_credit_note: 'Nueva nota de credito'
 promotions.heading.free_delivery: 'Entrega gratis'
-promotions.heading.free_delivery.help: 'Creyar codigos promocionals pa ofrir entrega'
+promotions.heading.free_delivery.help: 'Creyar codigos promocionals pa ofrir entregas'
 promotions.heading.credit_note: 'Notas de credito'
-promotions.heading.credit_note.help: 'Creyar notas de credito solas pa los clients'
+promotions.heading.credit_note.help: 'Creyar cupons exclusivos pa los clients'
 promotions.promotion_coupon.success: 'Lo tuyo codigo promocional %code% ha estau preso
   en cuenta'
-promotions.add_free_delivery_coupon: 'Anyadir un cupón de promoción " ninvio gratuito
-  "'
-promotions.create_credit_note_coupon: 'Anyadir una nota de credito'
+promotions.add_free_delivery_coupon: 'Anyadir un cupón de promoción "ninvio gratuito"'
+promotions.create_credit_note_coupon: 'Anyadir un cupón'
 delivery.table.heading.summary: 'Resumen'
-delivery.table.heading.courier: 'Mensajero'
+delivery.table.heading.courier: 'Mensachero'
 delivery.table.heading.order: 'Pediu'
-delivery.table.heading.owner: ''
+delivery.table.heading.owner: 'Propietario'
 search.users: 'Buscar un usuario…'
-search.orders: ''
-allergens.CEREALS_CONTAINING_GLUTEN: 'Cereales que contienen gluten'
+search.orders: 'Buscar un pediu (numero, email d''o client...)'
+allergens.CEREALS_CONTAINING_GLUTEN: 'Cereals que contienen gluten'
 allergens.CRUSTACEANS: 'Crustáceos'
 allergens.EGGS: 'Uegos'
-allergens.FISH: 'Pescau'
-allergens.PEANUTS: 'Cacahuetes'
+allergens.FISH: 'Peix'
+allergens.PEANUTS: 'Calcauetz'
 allergens.SOYBEANS: 'Soya'
 allergens.MILK: 'Leit'
 allergens.NUTS: 'Nueces'
 allergens.CELERY: 'Apio'
 allergens.MUSTARD: 'Mostaza'
-allergens.SESAME_SEEDS: 'Simients de sésamo'
-allergens.SULPHUR_DIOXIDE_SULPHITES: 'Dióxido de azufre y sulfitos'
-allergens.LUPIN: 'Altramuz'
+allergens.SESAME_SEEDS: 'Simients de sesamo'
+allergens.SULPHUR_DIOXIDE_SULPHITES: 'Dioxido d''azufre y sulfitos'
+allergens.LUPIN: 'Tramuso'
 allergens.MOLLUSCS: 'Moluscos'
 restricted_diets.DIABETIC_DIET: 'Diabetico'
 restricted_diets.GLUTEN_FREE_DIET: 'Sin gluten'
@@ -892,29 +912,29 @@ restricted_diets.KOSHER_DIET: 'Kosher'
 restricted_diets.LOW_CALORIE_DIET: 'Baixo en calorías'
 restricted_diets.LOW_FAT_DIET: 'Baixo en grasa'
 restricted_diets.LOW_LACTOSE_DIET: 'Baixa lactosa'
-restricted_diets.LOW_SALT_DIET: 'Baixo en sale'
+restricted_diets.LOW_SALT_DIET: 'Baixo en sal'
 restricted_diets.VEGAN_DIET: 'Vegano'
 restricted_diets.VEGETARIAN_DIET: 'Vechetariano'
 time_slot.human_readable: '%day% entre %start% y %end%'
 time_range: 'entre %start% y %end%'
 time_range.same_day: '[Hue] [%range%]'
-time_range.next_day: '[Maitín] [%range%]'
+time_range.next_day: '[Manyana] [%range%]'
 time_range.last_day: '[Ahiere] [%range%]'
-time_range.same_else: '[LO] LL [%range%]'
+time_range.same_else: '[Lo] LL [%range%]'
 resend_confirmation_email.disclaimer: 'Si no ha recibiu lo correu electronico de confirmación,
   faga clic en o botón.'
 sylius.ui.code: 'Codigo'
-sylius.form.promotion_coupon.per_customer_usage_limit: 'Limite d''uso per client'
-deliveries.sort.newest: 'La mas nueva en primeras'
-deliveries.sort.oldest: 'Los mas viellos en primeras'
+sylius.form.promotion_coupon.per_customer_usage_limit: 'Per limite d''uso d''o client'
+deliveries.sort.newest: 'La mas nueva primero'
+deliveries.sort.oldest: 'Los mas viellos primero'
 deliveries.filter.clear: 'Amostrar tot'
-deliveries.section.upcoming: ''
-deliveries.section.past: ''
+deliveries.section.upcoming: 'Siguients'
+deliveries.section.past: 'Anteriors'
 orders.new: 'Nuevo pediu'
 basics.copy: 'Copiar'
 orders.payment_link.send_by_email: 'Ninviar vinclo de pago per correu electronico'
 orders.payment_link.sent: 'Email ninviau con exito'
-orders.payment_refunded: 'Pago reembolsado con exito'
+orders.payment_refunded: 'Pago reembolsau con exito'
 form.min_max.lower.label: 'Numero minimo'
 form.min_max.upper.label: 'Numero maximo'
 form.min_max.infinity.label: 'Sin maximo'
@@ -922,7 +942,7 @@ form.local_business.iso_code.fr.siret: 'Numero SIRET'
 form.local_business.iso_code.fr.vat_number: 'Numero IVA'
 form.local_business.iso_code.fr.rcs_number: 'Numero RCS'
 form.local_business.iso_code.ar.cuit: 'CUIT/CUIL'
-receipt.title: 'Recibimiento d''o pediu #%number%'
+receipt.title: 'Recibo d''o pediu #%number%'
 receipt.line_item.name: 'Producto'
 receipt.line_item.unit_price: 'Pre per unidat'
 receipt.line_item.quantity: 'Cantidat'
@@ -932,7 +952,7 @@ receipt.footer_item.total_products: 'Total productos'
 receipt.footer_item.total_excl_tax: 'Total (sin IVA)'
 receipt.footer_item.total_incl_tax: 'Total (IVA incl.)'
 receipt.total: 'Total (IVA incl.)'
-receipt.billing_details: ''
+receipt.billing_details: 'Pediu pagau con tarcheta de credito lo %date%'
 receipt.emitter_details: 'Pediu en o restaurant <strong>%restaurant_name%</strong>'
 delivery.import.success_message: 'Lo suyo fichero se procesó correctament, se creyoron
   %count% entregas'
@@ -941,10 +961,11 @@ form.delivery_import.store.label: 'Botiga'
 basics.view_example: 'Veyer eixemplo'
 notifications.restaurant.new_order: 'Nuevo pediu per confirmar'
 profile.loopeat.connect: 'Connectar la mía cuenta de LoopEat'
-profile.loopeat.connected: 'Conta de LoopEat connectada'
+profile.loopeat.connected: 'Cuenta de LoopEat connectada'
 basics.free: 'gratis'
 task.receipt.greeting: 'Queriu client,'
-task.receipt.message: ''
+task.receipt.message: 'Por la present confirmamos que hemos entregau lo suyo paquet
+  en <strong>%address%</strong> en <strong>%date%</strong>'
 task.receipt.received_by: 'Lo paquet estió recibiu per <strong>%name%</strong>'
 task.receipt.attached_images: 'Imachens adchuntas'
 task.receipt.reference: 'Referencia: <strong>%ref%</strong>'
@@ -954,7 +975,7 @@ basics.weeks: '%count% week|%count% semanas'
 basics.none: 'Garra'
 basics.yes: 'Si'
 basics.no: 'No'
-notifications.messenger_approaching: 'Hey %customer%! Lo nuestro mensajero %messenger%
+notifications.messenger_approaching: 'Hey %customer%! Lo nuestro mensachero %messenger%
   ye quasi con tu. Prepara-te!'
 order.export.heading.restaurant_name: 'Restaurant'
 order.export.heading.order_number: 'Numero de pediu'
@@ -963,20 +984,20 @@ order.export.heading.completed_at: 'Completau en'
 order.export.heading.total_products_excl_tax: 'Productos totals (sin IVA)'
 order.export.heading.total_products_incl_tax: 'Producto total (IVA incl.)'
 order.export.heading.delivery_fee: 'Gastos de ninvio'
-order.export.heading.packaging_fee: 'Embalaje'
+order.export.heading.packaging_fee: 'Empaquetache'
 order.export.heading.tip: 'Propina'
 order.export.heading.total_incl_tax: 'Total (IVA incl.)'
 order.export.heading.stripe_fee: 'Comisión Stripe'
 order.export.heading.platform_fee: 'Comisión plataforma'
 order.export.heading.net_revenue: 'Ingresos netos'
 order.export.heading.completed_by: 'Completau per'
-form.order_export.date.label: ''
-form.order_export.messenger.label: 'Adhibir una columna con lo/la mensajero que completó
-  lo pediu'
+form.order_export.date.label: 'Calendata'
+form.order_export.messenger.label: 'Adhibir una columna con lo/la mensachero/a que
+  completó lo pediu'
 basics.show: 'Amostrar'
 basics.hide: 'Amagar'
 food_establishment.BAKERY: 'Panadería'
-food_establishment.BAR_OR_PUB: ''
+food_establishment.BAR_OR_PUB: 'Tabierna u pub'
 food_establishment.BREWERY: 'Cervecería'
 food_establishment.CAFE_OR_COFFEE_SHOP: 'Cafetería'
 food_establishment.DISTILLERY: 'Destilería'
@@ -990,82 +1011,88 @@ store.BOOK_STORE: 'Librería'
 store.CLOTHING_STORE: 'Botiga de ropa'
 store.COMPUTER_STORE: 'Botiga d''informatica'
 store.CONVENIENCE_STORE: 'Botiga de conveniencia'
-store.DEPARTMENT_STORE: 'Grans almagazenes'
+store.DEPARTMENT_STORE: 'Grans almagazens'
 store.ELECTRONIC_STORE: 'Botiga d''electronica'
 store.FLORIST: 'Floristería'
 store.FURNITURE_STORE: 'Mueblería'
 store.GARDEN_STORE: 'Botiga de chardinería'
 store.GROCERY_STORE: 'Botiga d''alimentación'
-store.HARDWARE_STORE: ''
+store.HARDWARE_STORE: 'Ferretería'
 store.HOBBY_SHOP: 'Botiga de pasatiempos'
-store.HOME_GOODS_STORE: 'Botiga d''articlos pa lo fogar'
+store.HOME_GOODS_STORE: 'Botiga d''articlos pa la casa'
 store.JEWELRY_STORE: 'Joyería'
 store.LIQUOR_STORE: 'Licorería'
 store.MENS_CLOTHING_STORE: 'Botiga de ropa d''hombre'
 store.MOBILE_PHONE_STORE: 'Botiga de telefonía'
 store.MOVIE_RENTAL_STORE: 'Video club'
 store.MUSIC_STORE: 'Botiga de mosica'
-store.OFFICE_EQUIPMENT_STORE: 'Botiga material d''usina'
+store.OFFICE_EQUIPMENT_STORE: 'Botiga material d''oficina'
 store.OUTLET_STORE: 'Botiga Outlet'
-store.PAWN_SHOP: 'Casa de empeños'
+store.PAWN_SHOP: 'Casa d''empeños'
 store.PET_STORE: 'Botiga de mascotas'
 store.SHOE_STORE: 'Zapatería'
 store.SPORTING_GOODS_STORE: 'Botiga d''esporte'
 store.TIRE_SHOP: 'Botiga de pneumaticos'
 store.TOY_STORE: 'Juguetería'
-store.WHOLESALE_STORE: 'Almacén a lo per mayor'
-form.local_business_type.food_establishment: 'Establimiento de minchada'
+store.WHOLESALE_STORE: 'Almagazén per mayor'
+form.local_business_type.food_establishment: 'Establimiento de minchar'
 form.local_business_type.store: 'Botiga'
 form.local_business_type.label: 'Tipo de negocio'
 form.local_business_type.help: 'Los tipos son usando lo <a href="https://schema.org/">schema.org</a>
   vocabulario pa <a href="https://schema.org/FoodEstablishment">establimientos de
   minchar</a> y <a href="https://schema.org/Store">botigas</a>'
-notifications.tasks_changed: ''
+notifications.tasks_changed: 'Fayena pa %date% cambiada!'
 restaurant_promotion.offer_delivery: 'Ofrir tarifas d''entrega'
 restaurant_promotion.offer_delivery.help: 'Esto le permite ofrir los gastos de ninvio
-  <strong>con os tuyos propios diners</strong>. La suya marguin se veyerá disminuyiu
-  per l''amonto d''os gastos de ninvio. Esto<strong>no disminuyirá</strong> las tarifas
-  percitas per la plataforma.'
+  <strong>con os tuyos propios diners</strong>. La suya marguin se veyerá disminuyida
+  per l''importe d''os gastos de ninvio. Esto<strong>no disminuyirá</strong> las tarifas
+  percibidas per la plataforma.'
 form.offer_delivery.coupon_code.error.exists: 'Este codigo ya existe'
-form.offer_delivery.coupon_code.help: ''
+form.offer_delivery.coupon_code.help: 'Ye la suya responsabilidat comunicar este codigo
+  a lo client, ya sía personalment u a traviés d''os retz socials'
 users.all: 'Totz los usuarios'
-users.couriers: 'Mensajeros'
-users.restaurant_owners: 'Duenyos de restaurants'
-users.store_owners: 'Duenyos de botigas'
-users.administrators: 'Administradors'
+users.couriers: 'Mensachers/as'
+users.restaurant_owners: 'Amos/as de restaurants'
+users.store_owners: 'Amos/as de botigas'
+users.administrators: 'Administradors/as'
 users.sort.alphabetically: 'Alfabeticament'
 users.sort.newest: 'Rechistrau recientment'
 sms.simple: |
   Ola,
-  Nuestro mensajero esta en camín a %address%.
+  Lo nuestro mensachero/a ye en camín ta %address%.
 sms.with_tracking: |
   Ola,
-  nuestro mensajero esta en camín a %address%.
-  Sigue-lo en %link%
-basics.close: 'Amán'
+  lo nuestro mensachero/a ye en camín ta %address%.
+  Puetz fer-le seguimiento en %link%
+basics.close: 'Cerca'
 fulfillment_method.delivery: 'Entrega'
-fulfillment_method.collection: 'Replegada'
+fulfillment_method.collection: 'Recullida'
 basics.allow_edit: 'Permitir edición'
 form.price_with_tax.tax_excl.label: 'Pre (sin IVA)'
 form.price_with_tax.tax_incl.label: 'Pre (IVA incl.)'
-confirm.deposit_refund_enabled: ''
-info.deposit_refund: ''
+confirm.deposit_refund_enabled: 'Lo sistema de deposito-reembolso ye habilitau, agora
+  puede <a href="%url%"> configurar los empaquetaches</a>.'
+info.deposit_refund: 'Cada entrada d''a lista siguient representa un tipo d''envase
+  (chicot, gran…). Una vegada creyaus los empaquetaches, puede configurar-los pa cada
+  producto.'
 form.receipt.billing_address.label: 'Adreza de facturación'
 form.receipt.billing_address.help: 'Si deseya utilizar una adreza de facturación diferent,
-  la introduzca aquí'
-promotion_rule.is_restaurant: ''
-promotion_rule.is_customer: ''
-order.refund.total_amount: ''
-spreadsheet.download_example: ''
+  introduzca-la aquí'
+promotion_rule.is_restaurant: 'Lo restaurant ye %restaurant%'
+promotion_rule.is_customer: 'Client ye %username%'
+order.refund.total_amount: 'Este pediu ha estau reembolsau por una cantidat de %amount%'
+spreadsheet.download_example: 'Descarga una fuella d''eixemplo'
 nav.about_us: ''
-basics.tax_incl: ''
-basics.tax_excl: ''
+basics.tax_incl: 'Impuestos incl.'
+basics.tax_excl: 'Impuestos excl.'
 basics.kilos: ''
-form.product_tax_category_choice.placeholder: ''
-form.package_with_quantity.package.placeholder: ''
-form.time_slot.same_day_cutoff.label: ''
-form.time_slot.same_day_cutoff.help: ''
-order.reusable_packaging.pledge_return.disclaimer: ''
+form.product_tax_category_choice.placeholder: 'Tría impuesto'
+form.package_with_quantity.package.placeholder: 'Tría un tipo de paquet'
+form.time_slot.same_day_cutoff.label: 'Cutoff mesmo día'
+form.time_slot.same_day_cutoff.help: 'Per eixemplo, si seleccionas las 11:00, las
+  opcions d''o mesmo día no s''amostrarán dimpués d''as 11:00'
+order.reusable_packaging.pledge_return.disclaimer: 'Lo/la client ha indicau que se
+  tornarán %count% paquetz'
 form:
   restaurant:
     name:
@@ -1074,30 +1101,37 @@ form:
       label: 'Persona de contacto d''o restaurant'
     b2b:
       label: ''
-refund.list.amount: 'Amonto tornau'
+refund.list.amount: 'Importe tornau'
 refund.list.liable_party: 'Parte responsable'
 refund.list.comments: 'Comentarios'
-refund.list.debit_total: 'Importe total adeudado per la plataforma a la interpresa'
+refund.list.debit_total: 'Importe total adeudau per la plataforma a la interpresa'
 refund.list.refunded_at: 'Tornau en'
-refund.list.disclaimer.admin: ""
+refund.list.disclaimer.admin: "Quan a plataforma ye responsable de l'incident, significa\
+  \ que la plataforma le debe a la persona comerciant l'importe d'o reembolso, porque\
+  \ la persona comerciant realment reembolsó a la client."
 form.time_slot.choices.error.empty: 'La lista d''opcions no puede estar vueda'
-form.attach_to_org.modal.title: ''
-loopeat.oauth_connect.success: ''
-loopeat.oauth_redirect.warning: ''
+form.attach_to_org.modal.title: 'Adchuntar a la botiga'
+loopeat.oauth_connect.success: 'Cuenta LoopEat connectada con exito!'
+loopeat.oauth_redirect.warning: 'T''imos a endrezar a lo sitio web de LoopEat pa iniciar
+  sesión u creyar la tuya cuenta'
 authentication.register_benefits: 'Creya una cuenta pa pedir mas rapidament. Tamién
-  podrás recuperar lo "historial d''os tuyos pedius anteriors.'
-form.checkout_address.telephone.help: 'Pa contactar con tu en caso d''un problema'
+  podrás recuperar lo tuyo historial de pedius.'
+form.checkout_address.telephone.help: 'Pa contactar con tu en caso d''incident'
 guest_checkout.user_with_same_email_exists: 'Ya existe una cuenta con o mesmo correu
-  electronico. Per favor, encieta sesión pa continar, u usa unatro correu electronico
+  electronico. Per favor, inicia sesión pa continar, u usa unatro correu electronico
   pa fer un pediu sin creyar una cuenta.'
 guest_checkout.use_another_email: 'Usar unatro correu electronico'
 restaurant.form.section.embed: ''
-restaurant.embed.disclaimer: ''
+restaurant.embed.disclaimer: 'Puede incrustar lo pago directament en a suya web. Siga
+  las instruccions contino pa encomenzar.'
 restaurant.embed.step_1: 'Anyade lo <code>coopcycle.js</code> a la tuya pachina'
 restaurant.embed.step_2: 'Anyade lo <code>data-coopcycle-embed="%url%"</code> a un
   elemento HTML clicable'
-restaurant.embed.greeting: ''
-form.settings.guest_checkout_enabled.label: ''
-order.list.reorder: ''
-homepage.form.title: ''
-homepage.form.content: ""
+restaurant.embed.greeting: 'That''s all! Agora, quan los/las visitants fan clic en
+  o botón, s''ubre una finiestra directament en a suya web.'
+form.settings.guest_checkout_enabled.label: 'Habilitar lo pago invitau'
+order.list.reorder: 'Tornar a pedir'
+homepage.form.title: 'Necesitas qualcosa pa entregar?'
+homepage.form.content: "<strong>%brand_name%</strong> opera localment servicios d'entrega\
+  \ con bicicletas no contaminants. Ninvie un paquet u complete lo ninvio recursivo\
+  \ pa lo suyo negocio."
