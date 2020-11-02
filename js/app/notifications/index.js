@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { render } from 'react-dom'
 import { Badge, Popover } from 'antd'
+import Centrifuge from 'centrifuge'
 
 import NotificationList from './NotificationList'
 
@@ -10,19 +11,28 @@ const zeroStyle = {
   boxShadow: '0 0 0 1px #d9d9d9 inset'
 }
 
-const Notifications = ({ initialNotifications, initialCount, onOpen, socket }) => {
+const Notifications = ({ initialNotifications, initialCount, onOpen, centrifuge, namespace, username }) => {
 
   const [ visible, setVisible ] = useState(false)
   const [ notifications, setNotifications ] = useState(initialNotifications)
   const [ count, setCount ] = useState(initialCount)
 
   useEffect(() => {
-    socket.on(`notifications`, notification => {
-      const newNotifications = notifications.slice()
-      newNotifications.unshift(notification)
-      setNotifications(newNotifications)
+    centrifuge.subscribe(`${namespace}_events#${username}`, message => {
+      const { event } = message.data
+
+      switch (event.name) {
+        case 'notifications':
+          const newNotifications = notifications.slice()
+          newNotifications.unshift(event.data)
+          setNotifications(newNotifications)
+          break
+        case 'notifications:count':
+          setCount(event.data)
+          break
+      }
     })
-    socket.on(`notifications:count`, count => setCount(count))
+    centrifuge.connect()
   }, [])
 
   useEffect(() => {
@@ -56,16 +66,8 @@ function bootstrap(el, options) {
     return
   }
 
-  const hostname = `//${window.location.hostname}`
-                 + (window.location.port ? `:${window.location.port}` : '')
-
-  const socket = io(hostname, {
-    path: '/tracking/socket.io',
-    query: {
-      token: options.jwt,
-    },
-    transports: [ 'websocket' ],
-  })
+  const centrifuge = new Centrifuge(`ws://${window.location.hostname}/centrifugo/connection/websocket`)
+  centrifuge.setToken(options.token)
 
   $.getJSON(options.notificationsURL, { format: 'json' })
   .then(result => {
@@ -83,7 +85,9 @@ function bootstrap(el, options) {
           data: JSON.stringify(notificationsIds),
         })
       }}
-      socket={ socket } />, el)
+      centrifuge={ centrifuge }
+      namespace={ options.namespace }
+      username={ options.username } />, el)
   })
   .catch(() => { /* Fail silently */ })
 }
@@ -92,8 +96,10 @@ $.getJSON(window.Routing.generate('profile_jwt'))
   .then(result => {
     const options = {
       notificationsURL: window.Routing.generate('profile_notifications'),
-      markAsReadURL: window.Routing.generate('profile_notifications_mark_as_read'),
-      jwt: result.jwt,
+      markAsReadURL:    window.Routing.generate('profile_notifications_mark_as_read'),
+      token:     result.cent_tok,
+      namespace: result.cent_ns,
+      username:  result.cent_usr,
     }
     bootstrap(document.querySelector('#notifications'), options)
   })

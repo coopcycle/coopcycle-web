@@ -139,11 +139,6 @@ class SocketIoManager
                 'data' => $this->redis->llen($listKey),
             ];
 
-            $channel = sprintf('users:%s', $user->getUsername());
-
-            $this->redis->publish($channel, json_encode($notificationsPayload));
-            $this->redis->publish($channel, json_encode($notificationsCountPayload));
-
             $this->centrifugoClient->publish(
                 $this->getEventsChannelName($user),
                 ['event' => $notificationsPayload]
