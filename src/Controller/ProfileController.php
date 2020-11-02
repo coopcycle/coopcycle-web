@@ -32,6 +32,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterfa
 use Cocur\Slugify\SlugifyInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use phpcent\Client as CentrifugoClient;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -346,7 +347,9 @@ class ProfileController extends Controller
     /**
      * @Route("/profile/jwt", methods={"GET"}, name="profile_jwt")
      */
-    public function jwtAction(Request $request, JWTManagerInterface $jwtManager)
+    public function jwtAction(Request $request,
+        JWTManagerInterface $jwtManager,
+        CentrifugoClient $centrifugoClient)
     {
         $user = $this->getUser();
 
@@ -369,6 +372,9 @@ class ProfileController extends Controller
 
         return new JsonResponse([
             'jwt' => $request->getSession()->get('_jwt'),
+            'cent_ns'  => $this->getParameter('centrifugo_namespace'),
+            'cent_usr' => $user->getUsername(),
+            'cent_tok' => $centrifugoClient->generateConnectionToken($user->getUsername(), (time() + 3600)),
         ]);
     }
 
