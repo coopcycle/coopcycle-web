@@ -463,7 +463,9 @@ class ProfileController extends Controller
             $request->getSession()->set('_jwt', $jwtManager->create($user));
         }
 
-        return new JsonResponse($request->getSession()->get('_jwt'));
+        return new JsonResponse([
+            'jwt' => $request->getSession()->get('_jwt'),
+        ]);
     }
 
     /**

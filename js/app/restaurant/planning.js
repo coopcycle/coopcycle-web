@@ -155,8 +155,8 @@ class ClosingRulesCalendar extends React.Component {
 }
 
 $.getJSON(window.Routing.generate('profile_jwt'))
-  .then(tok => {
-    token = tok
+  .then(result => {
+    token = result.jwt
     render(
       <ClosingRulesCalendar rules={closingRules} />,
       document.getElementById('calendar-planning')

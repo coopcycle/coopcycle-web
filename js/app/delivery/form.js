@@ -165,9 +165,9 @@ if (priceEl) {
     image: false,
   })
   $.getJSON(window.Routing.generate('profile_jwt'))
-    .then(token => {
+    .then(result => {
       $('form[name="delivery"]').LoadingOverlay('hide')
-      pricePreview = new PricePreview(priceEl, { token })
+      pricePreview = new PricePreview(priceEl, { token: result.jwt })
     })
 }
 

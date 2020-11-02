@@ -42,7 +42,7 @@ document.querySelectorAll('table[data-entity="product"] tbody tr').forEach(row =
     <Switch
       size="small"
       onChange={ checked => {
-        $.getJSON(window.Routing.generate('profile_jwt')).then(token => {
+        $.getJSON(window.Routing.generate('profile_jwt')).then(result => {
           axios({
             method: 'put',
             url: baseURL + iri,
@@ -52,7 +52,7 @@ document.querySelectorAll('table[data-entity="product"] tbody tr').forEach(row =
             headers: {
               'Accept': 'application/ld+json',
               'Content-Type': 'application/ld+json',
-              Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${result.token}`
             }
           })
         })

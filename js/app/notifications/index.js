@@ -77,11 +77,11 @@ function bootstrap($popover, options) {
 }
 
 $.getJSON(window.Routing.generate('profile_jwt'))
-  .then(jwt => {
+  .then(result => {
     const options = {
       notificationsURL: window.Routing.generate('profile_notifications'),
       markAsReadURL: window.Routing.generate('profile_notifications_mark_as_read'),
-      jwt: jwt,
+      jwt: result.jwt,
       elements: {
         count: document.querySelector('#notifications .badge')
       },
