@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import moment from 'moment'
+import { moment } from '../../coopcycle-frontend-js';
 
 export function taskComparator(a, b) {
   return a['@id'] === b['@id']
@@ -10,15 +10,6 @@ export function withoutTasks(state, tasks) {
   return _.differenceWith(
     state,
     _.intersectionWith(state, tasks, taskComparator),
-    taskComparator
-  )
-}
-
-export function removedTasks(state, tasks) {
-
-  return _.differenceWith(
-    state,
-    tasks,
     taskComparator
   )
 }
@@ -80,4 +71,19 @@ export const nowToPercentage = (now) => {
   const nowAsSeconds = moment(now).diff(start, 'seconds')
 
   return nowAsSeconds / 86400
+}
+
+export const isInDateRange = (task, date) => {
+
+  const dateAsRange = moment.range(
+    moment(date).set({ hour:  0, minute:  0, second:  0 }),
+    moment(date).set({ hour: 23, minute: 59, second: 59 })
+  )
+
+  const range = moment.range(
+    moment(task.doneAfter),
+    moment(task.doneBefore)
+  )
+
+  return range.overlaps(dateAsRange)
 }

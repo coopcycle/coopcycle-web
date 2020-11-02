@@ -5,7 +5,7 @@ import {
   UPDATE_TASK
 } from "./actions";
 import _ from "lodash";
-import { taskListUtils, objectUtils } from '../../coopcycle-frontend-js/lastmile/redux'
+import {taskListUtils as utils} from '../../coopcycle-frontend-js/lastmile/redux'
 
 const initialState = {
   items: new Map()
@@ -14,16 +14,16 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case MODIFY_TASK_LIST_REQUEST: {
-      let taskLists = Array.from(state.items.values())
-      let taskList = _.find(taskLists, taskList => taskList.username === action.username)
+      let entities = Array.from(state.items.values())
+      let entity = _.find(entities, taskList => taskList.username === action.username)
 
-      let newTaskList = {
-        ...taskList,
-        itemIds: taskListUtils.tasksToIds(action.tasks),
+      let newEntity = {
+        ...entity,
+        itemIds: utils.tasksToIds(action.tasks),
       }
 
-      let newItems = objectUtils.copyMap(state.items)
-      newItems.set(newTaskList['@id'], newTaskList)
+      let newItems = new Map(state.items)
+      newItems.set(newEntity[utils.taskListKey], newEntity)
 
       return {
         ...state,
@@ -31,10 +31,10 @@ export default (state = initialState, action) => {
       }
     }
     case MODIFY_TASK_LIST_REQUEST_SUCCESS: {
-      let newTaskList = taskListUtils.replaceTasksWithIds(action.taskList)
+      let newEntity = utils.replaceTasksWithIds(action.taskList)
 
-      let newItems = objectUtils.copyMap(state.items)
-      newItems.set(newTaskList['@id'], newTaskList)
+      let newItems = new Map(state.items)
+      newItems.set(newEntity[utils.taskListKey], newEntity)
 
       return {
         ...state,
@@ -42,21 +42,35 @@ export default (state = initialState, action) => {
       }
     }
     case TASK_LIST_UPDATED: {
-      let taskList = state.items.get(action.taskList['@id'])
+      let entity = state.items.get(action.taskList[utils.taskListKey])
 
-      if (taskList == null) {
+      if (entity == null) {
         return state
       }
 
-      let newTaskList = {
-        ...taskList,
+      // items: [
+      //   {
+      //     task: '/api/tasks/21',
+      //     position: 0
+      //   },
+      //   {
+      //     task: '/api/tasks/18',
+      //     position: 1
+      //   }
+      // ],
+      let taskCollectionItems = action.taskList.items
+      let itemIds = taskCollectionItems.map(item => item.task)
+
+      let newEntity = {
+        ...entity,
+        itemIds,
         distance: action.taskList.distance,
         duration: action.taskList.duration,
         polyline: action.taskList.polyline,
       }
 
-      let newItems = objectUtils.copyMap(state.items)
-      newItems.set(newTaskList['@id'], newTaskList)
+      let newItems = new Map(state.items)
+      newItems.set(newEntity[utils.taskListKey], newEntity)
 
       return {
         ...state,
@@ -67,9 +81,9 @@ export default (state = initialState, action) => {
       let newItems
 
       if (action.task.isAssigned) {
-        newItems = taskListUtils.addAssignedTask(state, action.task)
+        newItems = utils.addAssignedTask(state, action.task)
       } else {
-        newItems = taskListUtils.removeUnassignedTask(state, action.task)
+        newItems = utils.removeUnassignedTask(state, action.task)
       }
 
       return {

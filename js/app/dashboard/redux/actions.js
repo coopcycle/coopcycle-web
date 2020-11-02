@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import axios from 'axios'
-import { taskComparator, withoutTasks, withLinkedTasks } from './utils'
+import { taskComparator, withoutTasks, withLinkedTasks, isInDateRange } from './utils'
 import {
   selectSelectedDate,
   selectTaskLists,
@@ -9,7 +9,6 @@ import {
   createTaskListSuccess,
   createTaskListFailure,
 } from '../../coopcycle-frontend-js/lastmile/redux'
-import {moment} from "../../coopcycle-frontend-js";
 
 function createClient(dispatch) {
 
@@ -450,26 +449,11 @@ function closeImportModal() {
   return { type: CLOSE_IMPORT_MODAL }
 }
 
-const acceptTask = (task, date) => {
-
-  const dateAsRange = moment.range(
-    moment(date).set({ hour:  0, minute:  0, second:  0 }),
-    moment(date).set({ hour: 23, minute: 59, second: 59 })
-  )
-
-  const range = moment.range(
-    moment(task.doneAfter),
-    moment(task.doneBefore)
-  )
-
-  return range.overlaps(dateAsRange)
-}
-
 function updateTask(task) {
   return function(dispatch, getState) {
     let date = selectSelectedDate(getState())
 
-    if (acceptTask(task, date)) {
+    if (isInDateRange(task, date)) {
       dispatch(_updateTask(task))
     }
   }

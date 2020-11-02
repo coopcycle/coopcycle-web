@@ -1,34 +1,11 @@
 import {
-  removedTasks,
   withoutTasks,
   withLinkedTasks,
   timeframeToPercentage,
   nowToPercentage,
+  isInDateRange,
 } from '../redux/utils'
-
-describe('removedTasks', () => {
-
-  it('should return expected results', () => {
-    const tasks = [
-      { '@id': '/api/tasks/1' },
-      { '@id': '/api/tasks/2' },
-      { '@id': '/api/tasks/3' },
-      { '@id': '/api/tasks/4' },
-      { '@id': '/api/tasks/5' }
-    ]
-
-    const actual = removedTasks(tasks, [
-      { '@id': '/api/tasks/1'},
-      { '@id': '/api/tasks/2'},
-      { '@id': '/api/tasks/5'}
-    ])
-
-    expect(actual).toEqual([
-      { '@id': '/api/tasks/3'},
-      { '@id': '/api/tasks/4'},
-    ])
-  })
-})
+import { moment } from '../../coopcycle-frontend-js';
 
 describe('withoutTasks', () => {
 
@@ -146,5 +123,35 @@ describe('nowToPercentage', () => {
     expect(nowToPercentage('2020-02-27 00:00:00')).toEqual(0.0)
     expect(nowToPercentage('2020-02-27 12:00:00')).toEqual(0.5)
     expect(nowToPercentage('2020-02-27 18:00:00')).toEqual(0.75)
+  })
+})
+
+describe('isInDateRange', () => {
+  it('should return false (task out of range)', () => {
+    let task = {
+      '@id': 1,
+      status: 'TODO',
+      isAssigned: false,
+      doneAfter: '2019-11-21 09:00:00',
+      doneBefore: '2019-11-21 13:00:00',
+    }
+
+    const date = moment('2019-11-20')
+
+    expect(isInDateRange(task, date)).toEqual(false)
+  })
+
+  it('should return true (task inside the range)', () => {
+    const task = {
+      '@id': 1,
+      status: 'TODO',
+      isAssigned: false,
+      doneAfter: '2019-11-19 09:00:00',
+      doneBefore: '2019-11-21 19:00:00',
+    }
+
+    const date = moment('2019-11-20')
+
+    expect(isInDateRange(task, date)).toEqual(true)
   })
 })
