@@ -11,6 +11,7 @@ use AppBundle\Entity\User;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Sylius\Order\OrderInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
+use phpcent\Client as CentrifugoClient;
 use Redis;
 use Ramsey\Uuid\Uuid;
 use SimpleBus\Message\Name\NamedMessage;
@@ -35,7 +36,9 @@ class SocketIoManager
         TokenStorageInterface $tokenStorage,
         SerializerInterface $serializer,
         IriConverterInterface $iriConverter,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        CentrifugoClient $centrifugoClient,
+        string $namespace)
     {
         $this->redis = $redis;
         $this->userManager = $userManager;
@@ -43,6 +46,8 @@ class SocketIoManager
         $this->serializer = $serializer;
         $this->iriConverter = $iriConverter;
         $this->translator = $translator;
+        $this->centrifugoClient = $centrifugoClient;
+        $this->namespace = $namespace;
     }
 
     public function toAdmins($message, array $data = [])
@@ -93,12 +98,18 @@ class SocketIoManager
         }
 
         $channel = sprintf('users:%s', $user->getUsername());
-        $payload = json_encode([
+        $payload = [
             'name' => $messageName,
             'data' => $data
-        ]);
+        ];
 
-        $this->redis->publish($channel, $payload);
+        $this->centrifugoClient->publish(
+            $this->getEventsChannelName($user),
+            ['event' => $payload]
+        );
+
+        $this->redis->publish($channel, json_encode($payload));
+
         $this->createNotification($user, $message);
     }
 
@@ -119,19 +130,28 @@ class SocketIoManager
             $this->redis->lpush($listKey, $uuid);
             $this->redis->hset($hashKey, $uuid, json_encode($payload));
 
-            $notificationsPayload = json_encode([
+            $notificationsPayload = [
                 'name' => 'notifications',
                 'data' => $payload,
-            ]);
-            $notificationsCountPayload = json_encode([
+            ];
+            $notificationsCountPayload = [
                 'name' => 'notifications:count',
                 'data' => $this->redis->llen($listKey),
-            ]);
+            ];
 
             $channel = sprintf('users:%s', $user->getUsername());
 
-            $this->redis->publish($channel, $notificationsPayload);
-            $this->redis->publish($channel, $notificationsCountPayload);
+            $this->redis->publish($channel, json_encode($notificationsPayload));
+            $this->redis->publish($channel, json_encode($notificationsCountPayload));
+
+            $this->centrifugoClient->publish(
+                $this->getEventsChannelName($user),
+                ['event' => $notificationsPayload]
+            );
+            $this->centrifugoClient->publish(
+                $this->getEventsChannelName($user),
+                ['event' => $notificationsCountPayload]
+            );
         }
     }
 
@@ -178,5 +198,10 @@ class SocketIoManager
         $channel = sprintf('users:%s', $user->getUsername());
 
         $this->redis->publish($channel, $notificationsCountPayload);
+    }
+
+    private function getEventsChannelName(UserInterface $user)
+    {
+        return sprintf('%s_events#%s', $this->namespace, $user->getUsername());
     }
 }
