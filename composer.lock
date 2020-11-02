@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4a3583cdf02565924dbc35b54dac1ea4",
+    "content-hash": "f4ad1683265a327ca6b711b47c840663",
     "packages": [
         {
             "name": "api-platform/core",
@@ -909,6 +909,52 @@
                 "source": "https://github.com/php-cache/tag-interop/tree/master"
             },
             "time": "2017-03-13T09:14:27+00:00"
+        },
+        {
+            "name": "centrifugal/phpcent",
+            "version": "3.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/centrifugal/phpcent.git",
+                "reference": "3590d26ed2f59f5238f5f9e1842228d3d2aed5af"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/centrifugal/phpcent/zipball/3590d26ed2f59f5238f5f9e1842228d3d2aed5af",
+                "reference": "3590d26ed2f59f5238f5f9e1842228d3d2aed5af",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "5.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "phpcent\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP library to communicate with Centrifugo HTTP API",
+            "homepage": "https://github.com/centrifugal/phpcent",
+            "keywords": [
+                "centrifugo",
+                "messaging",
+                "realtime",
+                "websocket"
+            ],
+            "support": {
+                "issues": "https://github.com/centrifugal/phpcent/issues",
+                "source": "https://github.com/centrifugal/phpcent/tree/master"
+            },
+            "time": "2020-08-07T18:26:02+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -18525,7 +18571,7 @@
                 "issues": "https://github.com/coduo/php-matcher/issues",
                 "source": "https://github.com/coduo/php-matcher/tree/5.0.1"
             },
-            "time": "2020-10-09T13:31:33+00:00"
+            "time": "2020-10-09T13:30:26+00:00"
         },
         {
             "name": "coduo/php-to-string",

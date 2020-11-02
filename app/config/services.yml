@@ -1045,3 +1045,13 @@ services:
   AppBundle\Service\RouteOptimizer:
     arguments:
       $client: '@csa_guzzle.client.vroom'
+
+  phpcent\Client:
+    arguments:
+      - '%env(CENTRIFUGO_API_URL)%'
+      - '%env(CENTRIFUGO_API_KEY)%'
+      - '%env(CENTRIFUGO_TOKEN_HMAC_SECRET_KEY)%'
+
+  AppBundle\Service\SocketIoManager:
+    arguments:
+      $namespace: '%centrifugo_namespace%'
