@@ -107,6 +107,7 @@ services:
     depends_on:
       - php
       - nodejs
+      - centrifugo
     ports:
       - '80:80'
     volumes:
@@ -202,6 +203,23 @@ services:
       - "1491:1491"
     volumes:
       - ./sonic.cfg:/etc/sonic.cfg
+
+  centrifugo:
+    image: centrifugo/centrifugo
+    ports:
+      - "8100:8000"
+    volumes:
+      - ./centrifugo:/centrifugo
+    depends_on:
+      - redis
+    environment:
+      - CENTRIFUGO_TOKEN_HMAC_SECRET_KEY
+      - CENTRIFUGO_API_KEY
+      - CENTRIFUGO_V3_USE_OFFSET=true
+      - CENTRIFUGO_ENGINE=redis
+      - CENTRIFUGO_REDIS_URL=redis://redis:6379
+      - CENTRIFUGO_ADMIN_PASSWORD=centrifugo
+      - CENTRIFUGO_ADMIN_SECRET=centrifugo
 
 volumes:
   node_modules_node:
