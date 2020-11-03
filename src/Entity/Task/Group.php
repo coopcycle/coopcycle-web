@@ -11,6 +11,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Validator\Constraints\TaskGroup as AssertTaskGroup;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -54,7 +55,6 @@ class Group implements TaggableInterface
 
     /**
      * @Assert\Valid()
-     * @Groups({"task_group"})
      */
     protected $tasks;
 
@@ -80,9 +80,15 @@ class Group implements TaggableInterface
         return $this;
     }
 
+    /**
+     * @see https://api-platform.com/docs/core/serialization/#collection-relation
+     * @see https://github.com/api-platform/core/pull/1534
+     *
+     * @Groups({"task_group"})
+     */
     public function getTasks()
     {
-        return $this->tasks;
+        return $this->tasks->getValues();
     }
 
     public function removeTask(Task $task)

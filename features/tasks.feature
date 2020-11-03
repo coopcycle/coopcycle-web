@@ -1222,6 +1222,8 @@ Feature: Tasks
       type,address.streetAddress,address.telephone,address.name,after,before,tags
       pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
       dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
+      dropoff,"68, rue du Faubourg Saint Denis Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
+      dropoff,"42, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
       """
     Then the response status code should be 201
     And the JSON should match:
@@ -1232,6 +1234,8 @@ Feature: Tasks
         "@type":"TaskGroup",
         "name":@string@,
         "tasks":[
+          "@string@.matchRegex('#/api/tasks/[0-9]+#')",
+          "@string@.matchRegex('#/api/tasks/[0-9]+#')",
           "@string@.matchRegex('#/api/tasks/[0-9]+#')",
           "@string@.matchRegex('#/api/tasks/[0-9]+#')"
         ]
