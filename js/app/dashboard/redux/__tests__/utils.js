@@ -4,8 +4,8 @@ import {
   timeframeToPercentage,
   nowToPercentage,
   isInDateRange,
-} from '../redux/utils'
-import { moment } from '../../coopcycle-frontend-js';
+} from '../utils'
+import { moment } from '../../../coopcycle-frontend-js';
 
 describe('withoutTasks', () => {
 

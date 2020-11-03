@@ -1,4 +1,4 @@
-import { default as taskListEntityReducers } from '../redux/taskListEntityReducers'
+import { default as taskListEntityReducers } from '../taskListEntityReducers'
 
 describe('taskListEntityReducers', () => {
 
@@ -102,7 +102,7 @@ describe('taskListEntityReducers', () => {
       })
     })
   })
-  
+
   describe('TASK_LIST_UPDATED', () => {
     it('should update a task list', () => {
       let initialItems = new Map()

@@ -1,4 +1,4 @@
-import { default as taskEntityReducers } from '../redux/taskEntityReducers'
+import { default as taskEntityReducers } from '../taskEntityReducers'
 
 describe('taskEntityReducers', () => {
 
