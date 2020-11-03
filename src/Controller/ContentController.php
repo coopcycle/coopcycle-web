@@ -16,6 +16,7 @@ class ContentController extends AbstractController
 {
     /**
      * @Route({
+     *   "an": "/sobre-nosotros",
      *   "ca": "/sobre-nosaltres",
      *   "de": "/uber-uns",
      *   "en": "/about-us",
