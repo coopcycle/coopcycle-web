@@ -61,7 +61,7 @@
         "ADMIN_DASHBOARD_FILTERS_TAB_GENERAL": "Cheneral",
         "ADMIN_DASHBOARD_FILTERS_TAB_TAGS": "Etiquetas",
         "ADMIN_DASHBOARD_FILTERS_TAB_COURIERS": "Mensachers",
-        "ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE": "Franja horaria",
+        "ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE": "Faixa horaria",
         "ADMIN_DASHBOARD_FILTERS_SHOW": "Amostrar",
         "ADMIN_DASHBOARD_FILTERS_HIDE": "Amagar",
         "ADMIN_DASHBOARD_TASK_CAPTION": "{{- address}} antes de {{da-te}}",
@@ -212,7 +212,7 @@
         },
         "OPENING_HOURS_BEHAVIOR": {
             "asap": "Antes con antes",
-            "time_slot": "Intervalo de tiempo"
+            "time_slot": "Faixa horaria"
         },
         "PLEASE_SELECT_ADDRESS": "Tría una adreza en o menú desplegable",
         "DOWNLOAD_EXAMPLE_SPREADSHEET": "Descarga una fuella d'eixemplo"
