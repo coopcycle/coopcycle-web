@@ -49,6 +49,24 @@ Enable`, and `Maps API dashboard > APIs > Places API for Web > Enable`).
 
 ### Run the application
 
+#### Configure the environment
+
+Copy the `.env.dist` file and rename it to `.env`. Then, a few mandatory environment variables must be declared before continuing configuring a development environment.
+
+- `GOOGLE_API_KEY`
+  - A Google API key that supports `Geocoding API` and `Places API`.
+- `COOPCYCLE_COUNTRY`
+  - Options: `be`, `ca-bc`, `de`, `es`, `fr`, `gb`, `pl`, `ar`.
+- `COOPCYCLE_LOCALE`
+  - Options: `cs`, `en`, `es`, `fr`, `pt`, `ca`.
+- `COOPCYCLE_REGION`
+  - Options: `be`, `ca-bc`, `de`, `es`, `fr`, `gb`, `pl`, `ar`.
+- `COOPCYCLE_REGION_LAT_LNG`
+  - This latitude/longitude value will be used to generate restaurant seeds around that area.
+- `COOPCYCLE_LEGACY_TAXES`
+  - When activated (`1`), default (french) values will be used.
+  - If deactivated, taxations according to `COOPCYCLE_COUNTRY` will be used.
+
 #### Start the Docker containers
 
 ```
