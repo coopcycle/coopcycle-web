@@ -4,23 +4,34 @@ namespace AppBundle\Security;
 
 use Cocur\Slugify\SlugifyInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
+use FOS\UserBundle\Util\CanonicalizerInterface;
 use HWI\Bundle\OAuthBundle\OAuth\Response\UserResponseInterface;
 use HWI\Bundle\OAuthBundle\Security\Core\User\FOSUBUserProvider as BaseProvider;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 /**
  * @see https://github.com/hwi/HWIOAuthBundle/blob/master/Resources/doc/4-integrating_fosub.md
  */
 class FOSUBUserProvider extends BaseProvider
 {
+    private $slugify;
+    private $canonicalizer;
+    private $customerRepository;
+
     public function __construct(
         UserManagerInterface $userManager,
         array $properties,
-        SlugifyInterface $slugify)
+        SlugifyInterface $slugify,
+        CanonicalizerInterface $canonicalizer,
+        RepositoryInterface $customerRepository)
     {
         parent::__construct($userManager, $properties);
 
         $this->slugify = $slugify;
+        $this->canonicalizer = $canonicalizer;
+        $this->customerRepository = $customerRepository;
     }
 
     /**
@@ -34,13 +45,31 @@ class FOSUBUserProvider extends BaseProvider
         $user = $this->userManager->findUserBy(array($property => $username));
         if (null === $user) {
 
+            $email = $response->getEmail();
+
+            if (empty($email)) {
+                // FIXME
+                // This should be checked sooner, because the only way
+                // to get the email is to disconnect the app on Facebook,
+                // and re-authorize it
+                throw new AuthenticationException();
+            }
+
+            $emailCanonical = $this->canonicalizer->canonicalize($email);
+
             // Also try to match by email
-            $user = $this->userManager->findUserByEmail($response->getEmail());
+            $user = $this->userManager->findUserBy(['emailCanonical' => $emailCanonical]);
             if (null === $user) {
                 $user = $this->createUserFromNickname($response->getNickname());
-                $user->setEmail($response->getEmail());
+                $user->setEmail($emailCanonical);
                 $user->setPassword(base64_encode(random_bytes(32)));
                 $user->setEnabled(true);
+
+                // The customer may have ordered previously as a guest
+                $customer = $this->customerRepository->findOneBy(['emailCanonical' => $emailCanonical]);
+                if (null !== $customer) {
+                    $user->setCustomer($customer);
+                }
             }
 
             $service = $response->getResourceOwner()->getName();
