@@ -52,7 +52,7 @@ document.querySelectorAll('table[data-entity="product"] tbody tr').forEach(row =
             headers: {
               'Accept': 'application/ld+json',
               'Content-Type': 'application/ld+json',
-              Authorization: `Bearer ${result.token}`
+              Authorization: `Bearer ${result.jwt}`
             }
           })
         })
