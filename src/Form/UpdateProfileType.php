@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -101,6 +102,12 @@ class UpdateProfileType extends AbstractType
                         'expanded' => true,
                         'multiple' => true,
                         'data' => $data
+                    ]);
+                }
+
+                if ($user->getCustomer()->hasLoopEatCredentials()) {
+                    $event->getForm()->add('loopeatDisconnect', SubmitType::class, [
+                        'label' => 'profile.loopeat.disconnect',
                     ]);
                 }
 

@@ -910,6 +910,7 @@ receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</stron
 notifications.restaurant.new_order: Nouvelle commande à confirmer
 profile.loopeat.connect: Connecter mon compte LoopEat
 profile.loopeat.connected: Compte LoopEat connecté
+profile.loopeat.disconnect: Déconnecter mon compte LoopEat
 basics.free: gratuit
 task.receipt.greeting: Cher client, chère cliente,
 task.receipt.message: Par la présente, nous confirmons que nous avons bien livré votre
