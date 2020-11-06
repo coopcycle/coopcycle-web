@@ -4,45 +4,43 @@ import {
   TASK_LIST_UPDATED,
   UPDATE_TASK
 } from "./actions";
-import _ from "lodash";
 import {taskListUtils as utils} from '../../coopcycle-frontend-js/lastmile/redux'
 
 const initialState = {
-  items: new Map()
+  byUsername: {}
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case MODIFY_TASK_LIST_REQUEST: {
-      let entities = Array.from(state.items.values())
-      let entity = _.find(entities, taskList => taskList.username === action.username)
+      let entity = state.byUsername[action.username]
+
+      console.assert(entity != null, `entity is null: username: ${action.username}`)
 
       let newEntity = {
         ...entity,
         itemIds: utils.tasksToIds(action.tasks),
       }
 
-      let newItems = new Map(state.items)
-      newItems.set(newEntity[utils.taskListKey], newEntity)
+      let newItems = utils.upsertTaskList(state.byUsername, newEntity)
 
       return {
         ...state,
-        items: newItems,
+        byUsername: newItems,
       }
     }
     case MODIFY_TASK_LIST_REQUEST_SUCCESS: {
       let newEntity = utils.replaceTasksWithIds(action.taskList)
 
-      let newItems = new Map(state.items)
-      newItems.set(newEntity[utils.taskListKey], newEntity)
+      let newItems = utils.upsertTaskList(state.byUsername, newEntity)
 
       return {
         ...state,
-        items: newItems,
+        byUsername: newItems,
       }
     }
     case TASK_LIST_UPDATED: {
-      let entity = state.items.get(action.taskList[utils.taskListKey])
+      let entity = state.byUsername[action.taskList[utils.taskListKey]]
 
       if (entity == null) {
         return state
@@ -69,12 +67,11 @@ export default (state = initialState, action) => {
         polyline: action.taskList.polyline,
       }
 
-      let newItems = new Map(state.items)
-      newItems.set(newEntity[utils.taskListKey], newEntity)
+      let newItems = utils.upsertTaskList(state.byUsername, newEntity)
 
       return {
         ...state,
-        items: newItems,
+        byUsername: newItems,
       }
     }
     case UPDATE_TASK: {
@@ -88,7 +85,7 @@ export default (state = initialState, action) => {
 
       return {
         ...state,
-        items: newItems,
+        byUsername: newItems,
       }
     }
     default:
