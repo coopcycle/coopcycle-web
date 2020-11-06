@@ -3,12 +3,14 @@
 namespace AppBundle\Action;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
+use AppBundle\Message\UpdateLocation as UpdateLocationMessage;
 use Doctrine\Persistence\ManagerRegistry;
 use Redis;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Psr\Log\LoggerInterface;
 
 class UpdateLocation
@@ -16,7 +18,7 @@ class UpdateLocation
     use TokenStorageTrait;
 
     protected $doctrine;
-    protected $redis;
+    protected $messageBus;
     protected $tile38;
     protected $fleetKey;
     protected $logger;
@@ -24,14 +26,14 @@ class UpdateLocation
     public function __construct(
         TokenStorageInterface $tokenStorage,
         ManagerRegistry $doctrine,
-        Redis $redis,
+        MessageBusInterface $messageBus,
         Redis $tile38,
         string $fleetKey,
         LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
         $this->doctrine = $doctrine;
-        $this->redis = $redis;
+        $this->messageBus = $messageBus;
         $this->tile38 = $tile38;
         $this->fleetKey = $fleetKey;
         $this->logger = $logger;
@@ -71,14 +73,18 @@ class UpdateLocation
             return $a['time'] < $b['time'] ? -1 : 1;
         });
 
+        $locations = [];
         foreach ($data as $location) {
-            $key = sprintf('tracking:%s', $username);
-            $this->redis->rpush($key, json_encode([
-                'latitude' => (float) $location['latitude'],
+            $locations[] = [
+                'latitude'  => (float) $location['latitude'],
                 'longitude' => (float) $location['longitude'],
                 'timestamp' => (int) $location['time'],
-            ]));
+            ];
         }
+
+        $this->messageBus->dispatch(
+            new UpdateLocationMessage($username, $locations)
+        );
 
         $lastLocation = array_pop($data);
 

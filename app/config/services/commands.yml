@@ -35,10 +35,6 @@ services:
     tags:
       - { name: 'console.command', command: 'craue:setting:create' }
 
-  AppBundle\Command\FlushTrackingCommand:
-    tags:
-      - { name: 'console.command', command: 'coopcycle:tracking:flush' }
-
   AppBundle\Command\ImportStripeFeeCommand:
     arguments:
       $orderRepository: '@sylius.repository.order'
