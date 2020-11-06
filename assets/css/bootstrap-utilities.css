@@ -1073,6 +1073,20 @@
   color: inherit !important;
 }
 
+.text-wrap {
+  white-space: normal !important;
+}
+
+.text-nowrap {
+  white-space: nowrap !important;
+}
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .lh-1 {
   line-height: 1 !important;
 }

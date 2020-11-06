@@ -222,7 +222,7 @@ order.state.new: Nuevo
 order.state.refused: Rechazado
 order.state.accepted: Aceptado
 order.state.cancelled: Cancelado
-order.state.fulfilled: Entregado
+order.state.fulfilled: Cumplido
 payment.state.cart: Cesta
 payment.state.new: Nuevo
 payment.state.authorized: Autorizado

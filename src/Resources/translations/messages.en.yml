@@ -325,7 +325,7 @@ order.state.cart: Cart
 order.state.accepted: Accepted
 order.state.refused: Refused
 order.state.new: New
-order.state.fulfilled: Delivered
+order.state.fulfilled: Fulfilled
 order.state.cancelled: Cancelled
 order.reusable_packaging.alert: This order must be packed in reusable packaging
 order.public_link: Shareable link

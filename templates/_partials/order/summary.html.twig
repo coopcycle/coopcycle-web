@@ -1,0 +1,25 @@
+{% if order.fulfillmentMethod is not empty and order.fulfillmentMethod == 'collection' %}
+  <i class="fa fa-cube mr-2"></i>
+{% else %}
+  <i class="fa fa-bicycle mr-2"></i>
+{% endif %}
+<span>
+{% if order.hasVendor() %}
+  {% if not order.vendor.isHub() %}
+    {% if order.vendor.restaurant.deleted or not order.vendor.restaurant.enabled %}
+      {% trans with {
+        '%restaurant_name%': order.vendor.restaurant.name
+      } %}order.list.summary.deleted_restaurant.text{% endtrans %}
+    {% else %}
+      {% trans with {
+        '%restaurant_url%': path(routes.restaurant, { id: order.vendor.restaurant.id }),
+        '%restaurant_name%': order.vendor.restaurant.name
+      } %}order.list.summary.restaurant.text{% endtrans %}
+    {% endif %}
+  {% endif %}
+{% else %}
+  {% for item in order.items %}
+    {{ item.variant.name }}
+  {% endfor %}
+{% endif %}
+</span>

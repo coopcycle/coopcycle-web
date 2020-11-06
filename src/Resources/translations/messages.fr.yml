@@ -296,10 +296,10 @@ order.payment.redirect.help: Vous serez redirigé·e vers le site Internet de vo
   banque pour compléter la transaction
 order.payment.waiting_for_confirmation: En attente de la confirmation de votre banque…
 order.state.cart: Panier
-order.state.accepted: Accepté
-order.state.refused: Refusé
+order.state.accepted: Acceptée
+order.state.refused: Refusée
 order.state.new: Nouveau
-order.state.fulfilled: Livrée
+order.state.fulfilled: Réalisée
 order.state.cancelled: Annulée
 order.adjustment_type.delivery: Livraison
 order.adjustment_type.platform_fees: Frais CoopCycle

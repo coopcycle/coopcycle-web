@@ -1,7 +1,6 @@
 <table class="table">
   <thead>
     <th>#</th>
-    <th>{% trans %}order.list.type{% endtrans %}</th>
     {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
     <th>{% trans %}order.list.customer{% endtrans %}</th>
     {% endif %}
@@ -30,13 +29,6 @@
         {% endif %}
       </a>
     </td>
-    <td width="5%">
-      {% if order.hasVendor() %}
-        <i class="fa fa-cutlery"></i>
-      {% else %}
-        <i class="fa fa-bicycle"></i>
-      {% endif %}
-    </td>
     {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
     <td width="10%">
       {% if order.customer is not null %}
@@ -44,27 +36,8 @@
       {% endif %}
     </td>
     {% endif %}
-    <td width="10%">{% include '_partials/order/state.html.twig' %}</td>
-    <td>
-      {% if order.hasVendor() %}
-        {% if not order.vendor.isHub() %}
-          {% if order.vendor.restaurant.deleted or not order.vendor.restaurant.enabled %}
-            {% trans with {
-              '%restaurant_name%': order.vendor.restaurant.name
-            } %}order.list.summary.deleted_restaurant.text{% endtrans %}
-          {% else %}
-            {% trans with {
-              '%restaurant_url%': path(routes.restaurant, { id: order.vendor.restaurant.id }),
-              '%restaurant_name%': order.vendor.restaurant.name
-            } %}order.list.summary.restaurant.text{% endtrans %}
-          {% endif %}
-        {% endif %}
-      {% else %}
-        {% for item in order.items %}
-          {{ item.variant.name }}
-        {% endfor %}
-      {% endif %}
-    </td>
+    <td width="5%">{% include '_partials/order/state.html.twig' %}</td>
+    <td>{% include '_partials/order/summary.html.twig' %}</td>
     {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
     <td class="text-right">
       <span>{{ (order.itemsTotal - order.itemsTaxTotal)|price_format }}</span>
