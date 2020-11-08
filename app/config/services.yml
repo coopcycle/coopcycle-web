@@ -134,7 +134,6 @@ services:
       $orderItemRepository: '@sylius.repository.order_item'
       $orderItemFactory: '@sylius.factory.order_item'
       $productVariantResolver: '@coopcycle.sylius.product_variant_resolver.lazy'
-      $productOptionValueRepository: '@sylius.repository.product_option_value'
       $orderItemQuantityModifier: '@sylius.order_item_quantity_modifier'
       $orderModifier: '@sylius.order_modifier'
       $serializer: '@serializer'
@@ -733,7 +732,6 @@ services:
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:
-      $productOptionValueRepository: "@sylius.repository.product_option_value"
       $orderItemFactory: "@sylius.factory.order_item"
       $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
 
@@ -899,3 +897,7 @@ services:
     tags:
       - { name: kernel.event_subscriber }
       - { name: monolog.logger, channel: checkout }
+
+  AppBundle\Utils\OptionsPayloadConverter:
+    arguments:
+      $productOptionValueRepository: '@sylius.repository.product_option_value'

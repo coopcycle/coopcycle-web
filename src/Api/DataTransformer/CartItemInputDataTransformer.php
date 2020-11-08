@@ -10,24 +10,24 @@ use AppBundle\Api\Resource\Pricing;
 use AppBundle\Serializer\DeliveryNormalizer;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
+use AppBundle\Utils\OptionsPayloadConverter;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 class CartItemInputDataTransformer implements DataTransformerInterface
 {
     public function __construct(
         ProductRepositoryInterface $productRepository,
-        RepositoryInterface $productOptionValueRepository,
+        OptionsPayloadConverter $optionsPayloadConverter,
         LazyProductVariantResolverInterface $variantResolver,
         FactoryInterface $orderItemFactory,
         OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         OrderModifierInterface $orderModifier)
     {
         $this->productRepository = $productRepository;
-        $this->productOptionValueRepository = $productOptionValueRepository;
+        $this->optionsPayloadConverter = $optionsPayloadConverter;
         $this->variantResolver = $variantResolver;
         $this->orderItemFactory = $orderItemFactory;
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
@@ -49,25 +49,7 @@ class CartItemInputDataTransformer implements DataTransformerInterface
             if (!$product->hasNonAdditionalOptions() && empty($data->options)) {
                 $productVariant = $this->variantResolver->getVariant($product);
             } else {
-                $optionValues = new \SplObjectStorage();
-                foreach ($data->options as $option) {
-                    // Legacy
-                    if (is_string($option)) {
-                        $optionValue = $this->productOptionValueRepository->findOneByCode($option);
-                        $optionValues->attach($optionValue);
-                    } else {
-                        $optionValue = $this->productOptionValueRepository->findOneByCode($option['code']);
-                        if ($optionValue && $product->hasOptionValue($optionValue)) {
-                            $quantity = isset($option['quantity']) ? (int) $option['quantity'] : 0;
-                            if (!$optionValue->getOption()->isAdditional() || null === $optionValue->getOption()->getValuesRange()) {
-                                $quantity = 1;
-                            }
-                            if ($quantity > 0) {
-                                $optionValues->attach($optionValue, $quantity);
-                            }
-                        }
-                    }
-                }
+                $optionValues = $this->optionsPayloadConverter->convert($product, $data->options);
                 $productVariant = $this->variantResolver->getVariantForOptionValues($product, $optionValues);
             }
         }

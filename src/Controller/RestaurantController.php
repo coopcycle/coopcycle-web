@@ -25,6 +25,7 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Cart\RestaurantResolver;
 use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\ValidationUtils;
 use Cocur\Slugify\SlugifyInterface;
@@ -93,7 +94,6 @@ class RestaurantController extends AbstractController
         RepositoryInterface $orderItemRepository,
         $orderItemFactory,
         $productVariantResolver,
-        RepositoryInterface $productOptionValueRepository,
         $orderItemQuantityModifier,
         $orderModifier,
         OrderTimeHelper $orderTimeHelper,
@@ -105,7 +105,6 @@ class RestaurantController extends AbstractController
         $this->orderItemRepository = $orderItemRepository;
         $this->orderItemFactory = $orderItemFactory;
         $this->productVariantResolver = $productVariantResolver;
-        $this->productOptionValueRepository = $productOptionValueRepository;
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
         $this->orderModifier = $orderModifier;
         $this->orderTimeHelper = $orderTimeHelper;
@@ -402,7 +401,8 @@ class RestaurantController extends AbstractController
     public function addProductToCartAction($id, $code, Request $request,
         CartContextInterface $cartContext,
         TranslatorInterface $translator,
-        RestaurantResolver $restaurantResolver)
+        RestaurantResolver $restaurantResolver,
+        OptionsPayloadConverter $optionsPayloadConverter)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
@@ -440,27 +440,10 @@ class RestaurantController extends AbstractController
         if (!$product->hasOptions()) {
             $productVariant = $this->productVariantResolver->getVariant($product);
         } else {
-
             if (!$request->request->has('options') && !$product->hasNonAdditionalOptions()) {
                 $productVariant = $this->productVariantResolver->getVariant($product);
             } else {
-
-                $optionValues = new \SplObjectStorage();
-                foreach ($request->request->get('options') as $option) {
-                    if (isset($option['code'])) {
-                        $optionValue = $this->productOptionValueRepository->findOneByCode($option['code']);
-                        if ($optionValue && $product->hasOptionValue($optionValue)) {
-                            $quantity = isset($option['quantity']) ? (int) $option['quantity'] : 0;
-                            if (!$optionValue->getOption()->isAdditional() || null === $optionValue->getOption()->getValuesRange()) {
-                                $quantity = 1;
-                            }
-                            if ($quantity > 0) {
-                                $optionValues->attach($optionValue, $quantity);
-                            }
-                        }
-                    }
-                }
-
+                $optionValues = $optionsPayloadConverter->convert($product, $request->request->get('options'));
                 $productVariant = $this->productVariantResolver->getVariantForOptionValues($product, $optionValues);
             }
         }

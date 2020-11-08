@@ -8,6 +8,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\DateUtils;
+use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\PriceFormatter;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Bundle\PromotionBundle\Doctrine\ORM\PromotionCouponRepository;
@@ -17,7 +18,6 @@ use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -43,7 +43,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         ObjectNormalizer $objectNormalizer,
         ChannelContextInterface $channelContext,
         ProductRepositoryInterface $productRepository,
-        RepositoryInterface $productOptionValueRepository,
+        OptionsPayloadConverter $optionsPayloadConverter,
         LazyProductVariantResolverInterface $variantResolver,
         FactoryInterface $orderItemFactory,
         OrderItemQuantityModifierInterface $orderItemQuantityModifier,
@@ -57,7 +57,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->normalizer = $normalizer;
         $this->channelContext = $channelContext;
         $this->productRepository = $productRepository;
-        $this->productOptionValueRepository = $productOptionValueRepository;
+        $this->optionsPayloadConverter = $optionsPayloadConverter;
         $this->variantResolver = $variantResolver;
         $this->orderItemFactory = $orderItemFactory;
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
@@ -240,29 +240,10 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 if (!$product->hasOptions()) {
                     $productVariant = $this->variantResolver->getVariant($product);
                 } else {
-
                     if (!$product->hasNonAdditionalOptions() && (!isset($item['options']) || empty($item['options']))) {
                         $productVariant = $this->variantResolver->getVariant($product);
                     } else {
-                        $optionValues = new \SplObjectStorage();
-                        foreach ($item['options'] as $option) {
-                            // Legacy
-                            if (is_string($option)) {
-                                $optionValue = $this->productOptionValueRepository->findOneByCode($option);
-                                $optionValues->attach($optionValue);
-                            } else {
-                                $optionValue = $this->productOptionValueRepository->findOneByCode($option['code']);
-                                if ($optionValue && $product->hasOptionValue($optionValue)) {
-                                    $quantity = isset($option['quantity']) ? (int) $option['quantity'] : 0;
-                                    if (!$optionValue->getOption()->isAdditional() || null === $optionValue->getOption()->getValuesRange()) {
-                                        $quantity = 1;
-                                    }
-                                    if ($quantity > 0) {
-                                        $optionValues->attach($optionValue, $quantity);
-                                    }
-                                }
-                            }
-                        }
+                        $optionValues = $this->optionsPayloadConverter->convert($product, $item['options']);
                         $productVariant = $this->variantResolver->getVariantForOptionValues($product, $optionValues);
                     }
                 }

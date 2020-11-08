@@ -44,7 +44,6 @@ services:
     arguments:
       $normalizer: "@api_platform.jsonld.normalizer.item"
       $objectNormalizer: "@serializer.normalizer.object"
-      $productOptionValueRepository: "@sylius.repository.product_option_value"
       $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
       $orderItemFactory: "@sylius.factory.order_item"
       $promotionCouponRepository: "@sylius.repository.promotion_coupon"
