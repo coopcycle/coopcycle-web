@@ -69,6 +69,10 @@ class CartTotal extends React.Component {
       adjustments = adjustments.concat(this.props.adjustments.reusable_packaging)
     }
 
+    if (Object.prototype.hasOwnProperty.call(this.props.adjustments, 'order_promotion')) {
+      adjustments = adjustments.concat(this.props.adjustments.order_promotion)
+    }
+
     if (Object.prototype.hasOwnProperty.call(this.props.adjustments, 'delivery_promotion')) {
       adjustments = adjustments.concat(this.props.adjustments.delivery_promotion)
     }
