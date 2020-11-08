@@ -278,6 +278,16 @@ services:
         label: 'Fixed discount'
         form_type: AppBundle\Form\Sylius\Promotion\Action\FixedDiscountConfigurationType
 
+  sylius.promotion_action.percentage_discount:
+    class: AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand
+    arguments:
+      - "@sylius.factory.adjustment"
+    tags:
+      - name: sylius.promotion_action
+        type: order_percentage_discount
+        label: 'Percentage discount'
+        form_type: AppBundle\Form\Sylius\Promotion\Action\AppBundle\Form\Sylius\Promotion\Action\PercentageDiscountConfigurationType
+
   sylius.promotion.eligibility_checker.promotion_coupon_per_customer_usage_limit:
     class: AppBundle\Sylius\Promotion\Checker\Eligibility\PromotionCouponPerCustomerUsageLimitEligibilityChecker
     arguments:
