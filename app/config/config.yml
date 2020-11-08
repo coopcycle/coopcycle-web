@@ -592,6 +592,7 @@ fos_js_routing:
         - admin_task_list_create
         - admin_task_list_modify
         - admin_task_receipt
+        - admin_users_search
         - profile_jwt
         - profile_notifications
         - profile_notifications_mark_as_read

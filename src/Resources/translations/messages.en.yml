@@ -704,7 +704,10 @@ form.api_app.store.label: Store
 form.api_app.client_id.label: Identifier
 form.api_app.client_secret.label: Secret key
 form.credit_note.user_search.help: The promotion will only be usable by this user
+form.credit_note.user_search.label: User
+form.credit_note.type.label: Discount type
 form.credit_note.amount.label: Amount
+form.credit_note.percentage.label: Percentage
 form.credit_note.name.label: Name
 form.credit_note.name.help: The name of the promotion that will be displayed in the
   cart
@@ -1119,3 +1122,6 @@ homepage.form.title: Do you need something delivered?
 homepage.form.content: "<strong>%brand_name%</strong> is operating local and non polluting\
   \ on-demand bike delivery services. Ship a single package, or fulfill recuring shipping\
   \ for your business."
+promotion_action.percentage_discount: '%percentage% discount'
+promotion_action.delivery_percentage_discount: '%percentage% discount on delivery fees'
+promotion_action.fixed_discount: '%amount% discount'

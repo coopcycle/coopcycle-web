@@ -9,28 +9,38 @@
 
 {% block content %}
 {{ form_start(form) }}
-
-  <div class="form-group">
-    <div id="user-search"></div>
-    <span class="help-block">{{ 'form.credit_note.user_search.help'|trans }}</span>
-  </div>
-
   {{ form_widget(form) }}
-
   <button type="submit" class="btn btn-block btn-primary">
     {{ 'basics.save'|trans }}
   </button>
-
 {{ form_end(form) }}
 {% endblock %}
 
 {% block scripts %}
+{{ encore_entry_script_tags('search-user') }}
 <script>
-new CoopCycle.Search(document.querySelector('#user-search'), {
-  url: "{{ path('admin_users_search', { format: 'json'  }) }}",
-  placeholder: "{{ 'search.users'|trans }}",
-  onSuggestionSelected: function(suggestion) {
-    $('#credit_note_username').val(suggestion.username);
+$('[data-promotion-action-configuration-key="percentage"]')
+  .closest('.form-group')
+  .addClass('d-none');
+
+$('#credit_note_type input[type="radio"]').on('change', function() {
+  switch ($(this).val()) {
+    case 'order_fixed_discount':
+      $('[data-promotion-action-configuration-key="percentage"]')
+        .closest('.form-group')
+        .addClass('d-none');
+      $('[data-promotion-action-configuration-key="amount"]')
+        .closest('.form-group')
+        .removeClass('d-none');
+      break;
+    case 'order_percentage_discount':
+      $('[data-promotion-action-configuration-key="amount"]')
+        .closest('.form-group')
+        .addClass('d-none');
+      $('[data-promotion-action-configuration-key="percentage"]')
+        .closest('.form-group')
+        .removeClass('d-none');
+      break;
   }
 });
 </script>
