@@ -71,6 +71,13 @@ class StoreType extends LocalBusinessType
                 ->add('tags', TagsType::class, [
                     'mapped' => false,
                 ]);
+
+            if ($this->settingsManager->get('sms_enabled')) {
+                $builder->add('smsEnabled', CheckboxType::class, [
+                    'label' => 'form.store_type.sms_enabled.label',
+                    'required' => false,
+                ]);
+            }
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {

@@ -411,6 +411,7 @@ form.store_type.package_set.label: Package set
 form.store_type.package_set.placeholder: Choose a package set
 form.store_type.weight_required.label: Require input of weight
 form.store_type.packages_required.label: Require input of packages
+form.store_type.sms_enabled.label: Send SMS to recipients
 form.delivery.vehicle.placeholder: Choose a vehicle type
 form.delivery.pickup.label: Collection address
 form.delivery.pickup.address_placeholder: House number and street name, area, postcode,

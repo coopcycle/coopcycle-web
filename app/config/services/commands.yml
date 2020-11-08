@@ -115,3 +115,7 @@ services:
       $push: '@coopcycle.domain.order.reactor.send_remote_push_notification'
     tags:
       - { name: 'console.command', command: 'coopcycle:notifications:order' }
+
+  AppBundle\Command\SmsCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:notifications:sms' }

@@ -145,6 +145,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $packagesRequired = false;
 
+    private $smsEnabled = false;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
@@ -446,5 +448,15 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         $this->packagesRequired = $packagesRequired;
 
         return $this;
+    }
+
+    public function isSmsEnabled()
+    {
+        return $this->smsEnabled;
+    }
+
+    public function setSmsEnabled($smsEnabled)
+    {
+        $this->smsEnabled = $smsEnabled;
     }
 }
