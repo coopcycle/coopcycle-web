@@ -189,3 +189,41 @@ $('#guest-checkout-signin').on('shown.bs.collapse', function () {
 $('#guest-checkout-signin').on('hidden.bs.collapse', function () {
   $(this).find('input[type="password"]').prop('required', false)
 })
+
+$('#checkout_address_addPromotion').on('click', function(e) {
+
+  e.preventDefault()
+
+  const $form = $('form[name="checkout_address"]')
+
+  const data = {
+    'checkout_address[promotionCoupon]': $('#checkout_address_promotionCoupon').val(),
+    'checkout_address[addPromotion]': '',
+    'checkout_address[_token]': $('#checkout_address__token').val(),
+  }
+
+  $('form[name="checkout_address"] table').LoadingOverlay('show', {
+    image: false,
+  })
+  mainSubmitBtn.setAttribute('disabled', true)
+  mainSubmitBtn.classList.add('disabled')
+
+  $.ajax({
+    url : $form.attr('action'),
+    type: $form.attr('method'),
+    data : data,
+    success: function(html) {
+
+      $('form[name="checkout_address"] table').replaceWith(
+        $(html).find('form[name="checkout_address"] table')
+      )
+
+      $('#checkout_address_promotionCoupon').val('')
+      $('#promotion-coupon-collapse').collapse('hide')
+
+      $('form[name="checkout_address"] table').LoadingOverlay('hide')
+      mainSubmitBtn.removeAttribute('disabled')
+      mainSubmitBtn.classList.remove('disabled')
+    }
+  })
+})

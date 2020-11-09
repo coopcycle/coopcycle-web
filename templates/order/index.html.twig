@@ -74,7 +74,7 @@
                   {{ form.promotionCoupon.vars.label|trans }}
                 </a>
                 <div class="collapse" id="promotion-coupon-collapse">
-                  {{ form_row(form.promotionCoupon) }}
+                  {{ form_row(form.promotionCoupon, { label: false }) }}
                 </div>
                 {# We use an input group with the button #}
                 {# {{ form_row(form.addPromotion) }} #}
