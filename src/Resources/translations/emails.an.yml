@@ -18,14 +18,14 @@ resetting.email.reset: 'Restablir la mía clau'
 order.view: 'Veyer lo pediu'
 order.public_url: |
   Pa seguir lo estau d'o tuyo pediu, <a href="%order.public_url%">faiga clic aquí</a>.
-order.foodtech.accepted.delivery: "Se l'entregará en o siguient horario:"
+order.foodtech.accepted.delivery: "Le'n entregaremos en o siguient horario:"
 order.foodtech.accepted.delivery.disclaimer: "Nos meteremos en contacto en o caso\
   \ de trobar problemas con a suya adreza"
-order.foodtech.accepted.collection: "Habrá de replegar-lo en o siguient horario:"
+order.foodtech.accepted.collection: "Habrá de recullir-lo en o siguient horario:"
 order.foodtech.accepted.collection.disclaimer: "Si tiene bell problema, contacte con\
-  \ <strong>%name%</strong> en <strong>%phone_number%</strong> con prou antelación\
-  \ pa cancelar lo suyo pediu."
-order.foodtech.cancelled: "Lo restaurant no puede preparar lo tuyo pediu %order.number%.\n\
+  \ <strong>%name%</strong> en <strong>%phone_number%</strong> con prou tiempo pa\
+  \ cancelar lo suyo pediu."
+order.foodtech.cancelled: "Lo restaurant no puede aprestar lo tuyo pediu %order.number%.\n\
   <br>\nLa tuya cuenta no ha estau cargada.\n"
 admin.order.created.subject: 'Nuevo pediu pa confirmar'
 admin.order.created.body: |
@@ -94,15 +94,15 @@ covid_19.body: "<h1>Instruccions a seguir pa la suya entrega</h1>\n<p>Dada la pa
   \ lo suyo pediu en a suya puerta, pa que no haiga d'acercar-se a la persona que\
   \ viene a entregar. Puede u no deixar propina.</p>\n<h2>2. Desempaque lo suyo pediu\
   \ dimpués de recibir-lo</h2>\n<p>Lo virus puede sobrevivir en superficies de cartón\
-  \ y plastico qualques días. L'empaquetau ye, per tanto, una rota d'alto risgo de\
-  \ transmisión d'o virus.\nPor lo tanto, le pedimos que <strong>desempaquete lo suyo\
-  \ pediu y transfiera lo conteniu a platos</strong>.</p>\n<h2>3. Tire lo embalaje.</h2>\n\
-  <p>Una vegada que lo suyo pediu sía desempaquetado, s'asegure de <strong>tirar lo\
-  \ envoltorio a una vasuera zarrada</strong> Pa privar tocar-la distraitament mas\
-  \ tarde.</p>\n<h2>4. Limpiese las mans!</h2>\n<p>Una vegada que haiga desempacau\
-  \ lo suyo pediu y repuyau lo embalaje,<strong>limpiese las mans!</strong></p>\n"
+  \ y plastico qualques días. L'empaquetache ye, per tanto, una rota d'alto risgo\
+  \ de transmisión d'o virus.\nPor lo tanto, le pedimos que <strong>desempaquete lo\
+  \ suyo pediu y transfiera lo conteniu a platos</strong>.</p>\n<h2>3. Tire l'empaquetache.</h2>\n\
+  <p>Una vegada que lo suyo pediu sía desempaquetau, s'asegure de <strong>tirar l'empaquetache\
+  \ a una vasuera zarrada</strong> Pa privar tocar-la distraitament mas tarde.</p>\n\
+  <h2>4. Limpie-se las mans!</h2>\n<p>Una vegada que haiga desempacau lo suyo pediu\
+  \ y repuyau l'embalache,<strong>limpie-se las mans!</strong></p>\n"
 
-order.expiring_authorization.subject: 'L''autorización de pago expirará luego'
+order.expiring_authorization.subject: 'L''autorización de pago vencerá luego'
 order.expiring_authorization.text: 'L''autorización de pago pa lo pediu <strong>%order.number%</strong>
-  expirará luego. <br> Completa lo pediu antes que l''autorización expire pa no perder
+  vencerá luego. <br> Completa lo pediu antes que l''autorización no venza pa no perder
   los diners.'
