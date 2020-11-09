@@ -114,7 +114,6 @@
         "ADMIN_DASHBOARD_CANCEL_TASK_CONFIRM": "Yes seguro que deseyas cancelar la fayena #{{id}}?",
         "ADMIN_DASHBOARD_VIEW_MODE_CLASSIC": "Amostrar tot",
         "ADMIN_DASHBOARD_VIEW_MODE_BY_GROUP": "Amostrar per grupos",
-        "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "",
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Formatos de fichero admitius: csv, ods, xlsx",
         "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Clusters de mapas activaus",
         "USER_EDIT_ENABLED_LABEL": "Activau",
