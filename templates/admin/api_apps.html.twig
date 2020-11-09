@@ -20,6 +20,7 @@
   </thead>
   <tbody>
   {% for api_app in api_apps %}
+    <tr>
       <td width="5%">
         <a href="{{ path('admin_api_app', { id: api_app.id }) }}">
           #{{ api_app.id }}
