@@ -11,6 +11,7 @@ import { initReactI18next } from 'react-i18next'
 import moment from 'moment'
 import 'moment-timezone'
 
+import an from './locales/an.json'
 import ca from './locales/ca.json'
 import de from './locales/de.json'
 import en from './locales/en.json'
@@ -51,7 +52,7 @@ i18next
   .use(initReactI18next)
   .init({
     fallbackLng: 'en',
-    resources: { ca, de, en, fr, es, pl, "pt-BR": pt_BR },
+    resources: { an, ca, de, en, fr, es, pl, "pt-BR": pt_BR },
     ns: ['common'],
     defaultNS: 'common',
     debug: process.env.DEBUG
