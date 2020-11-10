@@ -72,10 +72,22 @@ Feature: Carts
         "notes":null,
         "items":[],
         "itemsTotal":0,
-        "total":0,
+        "total":350,
         "shippedAt":null,
         "shippingTimeRange":null,
-        "adjustments":@...@,
+        "adjustments":{
+          "delivery":[
+            {
+              "id":@integer@,
+              "label":@string@,
+              "amount":@integer@
+            }
+          ],
+          "delivery_promotion":[],
+          "order_promotion":[],
+          "reusable_packaging":[],
+          "tax":[]
+        },
         "fulfillmentMethod":"delivery"
       }
       """
@@ -134,9 +146,15 @@ Feature: Carts
         "notes":null,
         "items":[],
         "itemsTotal":0,
-        "total":0,
+        "total":350,
         "adjustments":{
-          "delivery":[],
+          "delivery":[
+            {
+              "id":@integer@,
+              "label":@string@,
+              "amount":@integer@
+            }
+          ],
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
@@ -200,9 +218,15 @@ Feature: Carts
         "notes":null,
         "items":[],
         "itemsTotal":0,
-        "total":0,
+        "total":350,
         "adjustments":{
-          "delivery":[],
+          "delivery":[
+            {
+              "id":@integer@,
+              "label":@string@,
+              "amount":@integer@
+            }
+          ],
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
@@ -252,9 +276,15 @@ Feature: Carts
         "notes":null,
         "items":[],
         "itemsTotal":0,
-        "total":0,
+        "total":350,
         "adjustments":{
-          "delivery":[],
+          "delivery":[
+            {
+              "id":@integer@,
+              "label":@string@,
+              "amount":@integer@
+            }
+          ],
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
@@ -1294,9 +1324,15 @@ Feature: Carts
         "notes":null,
         "items":[],
         "itemsTotal":0,
-        "total":0,
+        "total":350,
         "adjustments":{
-          "delivery":[],
+          "delivery":[
+            {
+              "id":@integer@,
+              "label":@string@,
+              "amount":@integer@
+            }
+          ],
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
