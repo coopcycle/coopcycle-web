@@ -105,9 +105,7 @@ Feature: Tasks
           }
         ],
         "hydra:totalItems":2,
-        "hydra:search":{
-          "@*@":"@*@"
-        }
+        "hydra:search":@...@
       }
       """
 
