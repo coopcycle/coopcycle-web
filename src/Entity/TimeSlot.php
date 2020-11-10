@@ -257,7 +257,7 @@ class TimeSlot
         $timeSlot = new self();
         $timeSlot->setWorkingDaysOnly(false);
 
-        $minutes = $options->getOrderingDelayMinutes();
+        $minutes = $fulfillmentMethod->getOrderingDelayMinutes();
         if ($minutes > 0) {
             $hours = (int) $minutes / 60;
             $timeSlot->setPriorNotice(sprintf('%d %s', $hours, ($hours > 1 ? 'hours' : 'hour')));

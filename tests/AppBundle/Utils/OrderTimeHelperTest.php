@@ -69,6 +69,7 @@ class OrderTimeHelperTest extends TestCase
         $fulfillmentMethod = new FulfillmentMethod();
         $fulfillmentMethod->setOpeningHours(["Mo-Su 13:00-15:00"]);
         $fulfillmentMethod->setOpeningHoursBehavior('asap');
+        $fulfillmentMethod->setOrderingDelayMinutes(0);
 
         $restaurant
             ->getShippingOptionsDays()
@@ -84,9 +85,6 @@ class OrderTimeHelperTest extends TestCase
             ->getFulfillmentMethod('delivery')
             ->willReturn($fulfillmentMethod);
 
-        $restaurant
-            ->getOrderingDelayMinutes()
-            ->willReturn(0);
         $restaurant
             ->getClosingRules()
             ->willReturn(new ArrayCollection());

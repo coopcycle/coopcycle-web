@@ -220,7 +220,6 @@ AppBundle\Entity\LocalBusiness:
   crazy_hamburger:
     name: Crazy Hamburger
     address: "@address_1"
-    orderingDelayMinutes: 0
     openingHours: ['Mo-Su 09:30-23:30']
     enabled: true
     contract: "@contract_1"
@@ -236,7 +235,6 @@ AppBundle\Entity\LocalBusiness:
   pizza_express:
     name: Pizza Express
     address: "@address_2"
-    orderingDelayMinutes: 0
     openingHours: ['Mo-Su 09:30-23:30']
     enabled: true
     contract: "@contract_2"
@@ -250,7 +248,6 @@ AppBundle\Entity\LocalBusiness:
   zero_waste_inc:
     name: Zero Waste Inc.
     address: "@address_2"
-    orderingDelayMinutes: 0
     openingHours: ['Mo-Su 09:30-23:30']
     enabled: true
     contract: "@contract_3"

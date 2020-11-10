@@ -14,7 +14,7 @@
 {% block banner %}
 
   {% set disabled_warning = ( not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) ) %}
-  {% set preorder_warning = ( restaurant.orderingDelayMinutes > 0 ) %}
+  {% set preorder_warning = ( restaurant.isFulfillmentMethodEnabled('delivery') and restaurant.getFulfillmentMethod('delivery').orderingDelayMinutes > 0 ) %}
 
   {% if disabled_warning or preorder_warning %}
   <nav class="restaurant-banner">

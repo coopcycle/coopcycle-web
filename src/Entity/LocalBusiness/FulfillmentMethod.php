@@ -33,6 +33,11 @@ class FulfillmentMethod implements ToggleableInterface
     private $minimumAmount = 0;
 
     /**
+     * @var int Additional time to delay ordering
+     */
+    protected $orderingDelayMinutes = 0;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -142,5 +147,21 @@ class FulfillmentMethod implements ToggleableInterface
         $this->minimumAmount = $minimumAmount;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrderingDelayMinutes()
+    {
+        return $this->orderingDelayMinutes;
+    }
+
+    /**
+     * @param int $orderingDelayMinutes
+     */
+    public function setOrderingDelayMinutes(int $orderingDelayMinutes)
+    {
+        $this->orderingDelayMinutes = $orderingDelayMinutes;
     }
 }

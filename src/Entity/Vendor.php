@@ -120,15 +120,6 @@ class Vendor implements ShippingOptionsInterface
         return $this->restaurant->getFulfillmentMethods();
     }
 
-    public function getOrderingDelayMinutes()
-    {
-        if (null !== $this->hub) {
-            return $this->hub->getOrderingDelayMinutes();
-        }
-
-        return $this->restaurant->getOrderingDelayMinutes();
-    }
-
     public function getShippingOptionsDays()
     {
         if (null !== $this->hub) {

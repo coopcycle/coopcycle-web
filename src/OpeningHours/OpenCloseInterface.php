@@ -42,9 +42,4 @@ interface OpenCloseInterface
      * @param int $shippingOptionsDays
      */
     public function setShippingOptionsDays(int $shippingOptionsDays);
-
-    /**
-     * @return int
-     */
-    public function getOrderingDelayMinutes();
 }

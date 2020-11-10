@@ -5,11 +5,6 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name"/>
-    <field name="orderingDelayMinutes" type="integer" column="ordering_delay_minutes" nullable="false">
-      <options>
-        <option name="default">0</option>
-      </options>
-    </field>
     <field name="shippingOptionsDays" type="integer" column="shipping_options_days" nullable="false">
       <options>
         <option name="default">2</option>

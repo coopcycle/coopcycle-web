@@ -52,13 +52,14 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
     public function delayForHumans(LocalBusiness $restaurant, $locale): string
     {
-        if ($restaurant->getOrderingDelayMinutes() > 0) {
+        if ($restaurant->isFulfillmentMethodEnabled('delivery')
+        &&  $restaurant->getFulfillmentMethod('delivery')->getOrderingDelayMinutes() > 0) {
 
             Carbon::setLocale($locale);
 
             $now = Carbon::now();
             $future = clone $now;
-            $future->addMinutes($restaurant->getOrderingDelayMinutes());
+            $future->addMinutes($restaurant->getFulfillmentMethod('delivery')->getOrderingDelayMinutes());
 
             return $now->diffForHumans($future, ['syntax' => CarbonInterface::DIFF_ABSOLUTE]);
         }

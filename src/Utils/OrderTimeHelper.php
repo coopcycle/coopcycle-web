@@ -74,7 +74,9 @@ class OrderTimeHelper
                 $vendor->getOpeningHours($cart->getFulfillmentMethod()),
                 $vendor->getClosingRules(),
                 $vendor->getShippingOptionsDays(),
-                $vendor->getOrderingDelayMinutes()
+                $vendor->getFulfillmentMethod(
+                    $cart->getFulfillmentMethod()
+                )->getOrderingDelayMinutes()
             );
 
             $choiceList = $choiceLoader->loadChoiceList();
