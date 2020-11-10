@@ -56,6 +56,7 @@ use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 
 /**
  * Defines application features from the specific context.
@@ -114,7 +115,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         IriConverterInterface $iriConverter,
         HttpMessageFactoryInterface $httpMessageFactory,
         Redis $tile38,
-        FakerGenerator $faker)
+        FakerGenerator $faker,
+        OrderProcessorInterface $orderProcessor)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -133,6 +135,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->httpMessageFactory = $httpMessageFactory;
         $this->tile38 = $tile38;
         $this->faker = $faker;
+        $this->orderProcessor = $orderProcessor;
     }
 
     public function setKernel(KernelInterface $kernel)
@@ -876,6 +879,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             ->createForRestaurant($restaurant);
 
         $cart->setCustomer($user->getCustomer());
+
+        $this->orderProcessor->process($cart);
 
         $this->getContainer()->get('sylius.manager.order')->persist($cart);
         $this->getContainer()->get('sylius.manager.order')->flush();
