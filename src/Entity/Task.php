@@ -202,6 +202,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     private $id;
 
     /**
+     * @Assert\Choice({"PICKUP", "DROPOFF"})
      * @Groups({"task", "task_create", "task_edit"})
      */
     private $type = self::TYPE_DROPOFF;
