@@ -4,10 +4,10 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\Task\Assign as TaskAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
+use AppBundle\Action\Task\Events as TaskEvents;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
@@ -162,11 +162,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "swagger_context"={
  *         "summary"="Duplicates a Task"
  *       }
- *     }
- *   },
- *   subresourceOperations={
- *     "events_get_subresource"={
- *       "security"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))"
+ *     },
+ *     "task_events"={
+ *       "method"="GET",
+ *       "path"="/tasks/{id}/events",
+ *       "controller"=TaskEvents::class,
+ *       "security"="is_granted('view', object)",
+ *       "swagger_context"={
+ *         "summary"="Retrieves events for a Task"
+ *       }
  *     }
  *   }
  * )
@@ -236,9 +240,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface
      */
     private $comments;
 
-    /**
-     * @ApiSubresource
-     */
     private $events;
 
     private $createdAt;

@@ -1421,3 +1421,39 @@ Feature: Tasks
          ]
       }
       """
+
+  Scenario: Authorized to retrieve task events
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    Given the store with name "Acme" has imported tasks:
+      | type    | address.streetAddress                 | after            | before           |
+      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+    Given the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/tasks/1/events"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/task_events/1",
+            "@type":"TaskEvent",
+            "name":"task:created",
+            "data":[],
+            "createdAt":"@string@.isDateTime()"
+          }
+        ],
+        "hydra:totalItems":1,
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
