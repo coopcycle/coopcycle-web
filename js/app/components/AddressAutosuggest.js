@@ -74,17 +74,6 @@ const localized = {
   }
 }
 
-// https://developers.google.com/maps/documentation/javascript/places#place_search_fields
-// https://developers.google.com/places/web-service/details#fields
-// Fields correspond to Place Search results, and are divided into three billing categories: Basic, Contact, and Atmosphere.
-// Basic fields are billed at base rate, and incur no additional charges.
-// Contact and Atmosphere fields are billed at a higher rate.
-const placeDetailsFields = [
-  'address_components',
-  'geometry',
-  'types',
-]
-
 // WARNING
 // Do *NOT* use arrow functions, to allow binding
 const generic = {
@@ -135,8 +124,6 @@ const generic = {
 
     if (suggestion.type === 'prediction') {
 
-      const { sessionToken } = this.state
-
       // https://developers.google.com/places/web-service/session-tokens
       // The session begins when the user starts typing a query,
       // and concludes when they select a place and a call to Place Details is made.
@@ -144,11 +131,10 @@ const generic = {
 
       const { placeId } = suggestion
 
-      // https://developers.google.com/maps/documentation/javascript/reference/places-service
-      this.placesService.getDetails({ placeId, fields: placeDetailsFields, sessionToken }, (place, status) => {
+      this.geocoder.geocode({ placeId }, (results, status) => {
+        if (status === this.geocoderOK && results.length === 1) {
 
-        if (status === this.placesServiceOK && place) {
-
+          const place = results[0]
           const lat = place.geometry.location.lat()
           const lng = place.geometry.location.lng()
           const geohash = ngeohash.encode(lat, lng, 11)
@@ -264,11 +250,8 @@ class AddressAutosuggest extends Component {
     this.autocompleteOK = window.google.maps.places.PlacesServiceStatus.OK
     this.autocompleteZeroResults = window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS
 
-    // https://developers.google.com/maps/documentation/javascript/reference/places-service
-    // PlacesService(HTMLDivElement|Map)
-    // Creates a new instance of the PlacesService that renders attributions in the specified container.
-    this.placesService = new google.maps.places.PlacesService(document.createElement('div'))
-    this.placesServiceOK = window.google.maps.places.PlacesServiceStatus.OK
+    this.geocoder = new window.google.maps.Geocoder()
+    this.geocoderOK = window.google.maps.GeocoderStatus.OK
 
     const addresses = this.props.addresses.map(address => ({
       ...address,
