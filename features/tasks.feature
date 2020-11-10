@@ -83,34 +83,31 @@ Feature: Tasks
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/TaskEvent",
-        "@id":"/api/tasks/2/events",
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
             "@id":"@string@.startsWith('/api/task_events')",
             "@type":"TaskEvent",
-            "id":@integer@,
-            "task":"/api/tasks/2",
             "name":"task:created",
             "data":[],
-            "metadata":[],
             "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/task_events')",
             "@type":"TaskEvent",
-            "id":@integer@,
-            "task":"/api/tasks/2",
             "name":"task:assigned",
             "data":{
               "username":"bob"
             },
-            "metadata":[],
             "createdAt":"@string@.isDateTime()"
           }
         ],
-        "hydra:totalItems":2
+        "hydra:totalItems":2,
+        "hydra:search":{
+          "@*@":"@*@"
+        }
       }
       """
 
