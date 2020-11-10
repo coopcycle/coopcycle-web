@@ -1118,7 +1118,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
             $task = new Task();
 
-            $task->setType($data['type']);
+            $task->setType(strtoupper($data['type']));
             $task->setAfter(new \DateTime($data['after']));
             $task->setBefore(new \DateTime($data['before']));
             $task->setAddress($address);
