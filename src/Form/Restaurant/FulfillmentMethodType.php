@@ -49,17 +49,6 @@ class FulfillmentMethodType extends AbstractType
                 ],
                 'expanded' => true,
                 'multiple' => false,
-            ])
-            ->add('minimumAmount', MoneyType::class, [
-                'label' => 'restaurant.contract.minimumCartAmount.label',
-            ])
-            ->add('orderingDelayDays', IntegerType::class, [
-                'label' => 'localBusiness.form.orderingDelayDays',
-                'mapped' => false
-            ])
-            ->add('orderingDelayHours', IntegerType::class, [
-                'label' => 'localBusiness.form.orderingDelayHours',
-                'mapped' => false
             ]);
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
@@ -74,12 +63,29 @@ class FulfillmentMethodType extends AbstractType
             $form = $event->getForm();
             $fulfillmentMethod = $event->getData();
 
-            if ($form->has('allowEdit')) {
-                $allowEdit = $fulfillmentMethod->hasOption('allow_edit')
-                    && true === $fulfillmentMethod->getOption('allow_edit');
+            $allowEdit = $this->authorizationChecker->isGranted('ROLE_ADMIN')
+                || 'collection' === $fulfillmentMethod->getType()
+                || ($fulfillmentMethod->hasOption('allow_edit') && true === $fulfillmentMethod->getOption('allow_edit'));
 
+            if ($form->has('allowEdit')) {
                 $form->get('allowEdit')->setData($allowEdit);
             }
+
+            $form
+                ->add('minimumAmount', MoneyType::class, [
+                    'label' => 'restaurant.contract.minimumCartAmount.label',
+                    'disabled' => !$allowEdit,
+                ])
+                ->add('orderingDelayDays', IntegerType::class, [
+                    'label' => 'localBusiness.form.orderingDelayDays',
+                    'mapped' => false,
+                    'disabled' => !$allowEdit,
+                ])
+                ->add('orderingDelayHours', IntegerType::class, [
+                    'label' => 'localBusiness.form.orderingDelayHours',
+                    'mapped' => false,
+                    'disabled' => !$allowEdit,
+                ]);
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
