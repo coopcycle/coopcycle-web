@@ -194,6 +194,17 @@ class RestaurantController extends AbstractController
             throw new NotFoundHttpException();
         }
 
+        $expectedSlug = $slugify->slugify($hub->getName());
+        $redirectToCanonicalRoute = $slug !== $expectedSlug;
+
+        if ($redirectToCanonicalRoute) {
+
+            return $this->redirectToRoute('hub', [
+                'id' => $id,
+                'slug' => $expectedSlug,
+            ], Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         return $this->render('restaurant/hub.html.twig', [
             'hub' => $hub,
         ]);
