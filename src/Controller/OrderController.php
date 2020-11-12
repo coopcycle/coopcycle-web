@@ -154,6 +154,12 @@ class OrderController extends AbstractController
 
             if ($form->isValid()) {
 
+                // https://github.com/coopcycle/coopcycle-web/issues/1910
+                // Maybe a better would be to use "empty_data" option in CheckoutAddressType
+                if (null !== $originalPromotionCoupon && null === $order->getPromotionCoupon()) {
+                    $order->setPromotionCoupon($originalPromotionCoupon);
+                }
+
                 $orderProcessor->process($order);
 
                 $isQuote = $form->getClickedButton() && 'quote' === $form->getClickedButton()->getName();
