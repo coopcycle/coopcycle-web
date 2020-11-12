@@ -134,10 +134,13 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                 if ($defaultVariant) {
                     $product->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
+                    // @see https://github.com/coopcycle/coopcycle-app/issues/286
+                    $description = !empty(trim($product->getDescription())) ? $product->getDescription() : null;
+
                     $item = [
                         '@type' => 'MenuItem',
                         'name' => $product->getName(),
-                        'description' => $product->getDescription(),
+                        'description' => $description,
                         'identifier' => $product->getCode(),
                         'enabled' => $product->isEnabled(),
                         'offers' => [
