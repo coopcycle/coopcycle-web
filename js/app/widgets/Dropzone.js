@@ -1,4 +1,5 @@
 import Dropzone from 'dropzone'
+import _ from 'lodash'
 import i18n from '../i18n'
 import croppieTransformFile from '../dropzone/croppie'
 
@@ -51,7 +52,7 @@ export default function(el, options) {
       const images = options.images && Array.isArray(options.images) ?
         options.images : ([ options.image ] || [])
 
-      images.forEach(image => {
+      _.filter(images, image => !_.isEmpty(image)).forEach(image => {
         $.ajax({
           type: 'HEAD',
           async: true,
