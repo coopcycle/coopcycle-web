@@ -101,7 +101,7 @@ restaurants.placeholder.text: Properament arribaran nous restaurants!
 localBusiness.form.orderingDelayMinutes: Retard addicional abans de fer la comanda
 localBusiness.form.orderingDelayMinutes.help: Utilitzeu aquest camp per afegir una
   estona abans de permetre comandes del client. Aquest paràmetre no canvia els temps
-  de cocció (20 minuts) i ciclisme (25 minuts).
+  de cocció i ciclisme.
 localBusiness.form.orderingDelayDays: Dia/Dies
 localBusiness.form.orderingDelayHours: Hora/Hores
 localBusiness.form.name: Nom

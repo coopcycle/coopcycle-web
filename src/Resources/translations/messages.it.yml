@@ -130,7 +130,7 @@ restaurant.form.enabled.tooltip: "Quando disabilitato, un ristorante non è visi
   \ alla pagina del ristorante.\n"
 localBusiness.form.orderingDelayMinutes.help: Usa questo campo per inserire del tempo
   supplementare prima dell'ordine di un cliente. Questa impostazione non cambia il
-  tempo necessario alla cottura (20 minuti) e alla consegna (25 minuti).
+  tempo necessario alla cottura e alla consegna.
 localBusiness.form.orderingDelayHours: Ora(e)
 restaurant.contract.feeRate.help: Questa percentuale verrà trattenuta dalla piattaforma
   sul totale dei prodotti

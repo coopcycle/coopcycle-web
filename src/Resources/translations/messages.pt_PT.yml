@@ -109,7 +109,7 @@ restaurants.placeholder.text: Novos restaurantes estão a chegar em breve!
 localBusiness.form.orderingDelayMinutes: Atraso adicional antes de fazer o pedido
 localBusiness.form.orderingDelayMinutes.help: Use este campo para adicionar algum
   tempo antes do cliente poder pedir. Esta configuração não altera o tempo de confeção
-  (20 minutos) ou de transporte (25 minutos).
+  ou de transporte.
 localBusiness.form.enabled: Ativado
 localBusiness.form.orderingDelayDays: Dia(s)
 localBusiness.form.orderingDelayHours: Hora(s)

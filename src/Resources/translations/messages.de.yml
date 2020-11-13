@@ -182,7 +182,7 @@ restaurants.placeholder.text: Neue Restaurants folgen demnächst!
 localBusiness.form.orderingDelayMinutes: Zusätzliche Verzögerung vor der Bestellung
 localBusiness.form.orderingDelayMinutes.help: Nutzen Sie dieses Feld um eine Zeit
   festzulegen, bevor der Kunde bestellen kann. Diese Einstellung ändert die Kochzeit
-  (20 Minuten) und die Auslieferungszeit (25 Minuten) nicht.
+  und die Auslieferungszeit nicht.
 localBusiness.form.orderingDelayDays: Tag(e)
 localBusiness.form.orderingDelayHours: Stunde(n)
 localBusiness.form.description: Beschreibung

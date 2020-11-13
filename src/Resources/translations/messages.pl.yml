@@ -175,7 +175,7 @@ restaurants.visible_by_you_only: Widoczny tylko przez ciebie
 localBusiness.form.orderingDelayMinutes: Dodatkowe opóźnienie przed złożeniem zamówienia
 localBusiness.form.orderingDelayMinutes.help: Użyj tego pola, aby dodać trochę czasu
   zanim klient będzie mógł złożyć zamówienie. To ustawienie nie zmienia czasu potrzebnego
-  do przygotowania zamówienia (20 minut) i jazdę rowerem (25 minut).
+  do przygotowania zamówienia i jazdę rowerem.
 localBusiness.form.orderingDelayDays: Dzień/Dni
 localBusiness.form.orderingDelayHours: Godzina/Godziny
 localBusiness.form.legalName: Nazwa prawna

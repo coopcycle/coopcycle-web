@@ -63,9 +63,8 @@ class FulfillmentMethodType extends AbstractType
             $form = $event->getForm();
             $fulfillmentMethod = $event->getData();
 
-            $allowEdit = $this->authorizationChecker->isGranted('ROLE_ADMIN')
-                || 'collection' === $fulfillmentMethod->getType()
-                || ($fulfillmentMethod->hasOption('allow_edit') && true === $fulfillmentMethod->getOption('allow_edit'));
+            $allowEdit =
+                ($fulfillmentMethod->hasOption('allow_edit') && true === $fulfillmentMethod->getOption('allow_edit'));
 
             if ($form->has('allowEdit')) {
                 $form->get('allowEdit')->setData($allowEdit);

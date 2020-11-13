@@ -114,7 +114,7 @@ restaurants.placeholder.text: New restaurants are coming soon!
 localBusiness.form.orderingDelayMinutes: Additional delay before ordering
 localBusiness.form.orderingDelayMinutes.help: Use this field to add some time before
   the customer can order. This setting doesn't change the time needed for cooking
-  (20 minutes) and cycling (25 minutes).
+  and cycling.
 localBusiness.form.enabled: Enabled
 localBusiness.form.orderingDelayDays: Day(s)
 localBusiness.form.orderingDelayHours: Hour(s)

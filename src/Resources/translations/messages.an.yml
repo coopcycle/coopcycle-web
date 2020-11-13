@@ -114,7 +114,7 @@ restaurants.placeholder.text: 'A escape plegarán nuevos restaurants!'
 localBusiness.form.orderingDelayMinutes: 'Retardo adicional antes d''o pediu'
 localBusiness.form.orderingDelayMinutes.help: 'Usa estes campos pa anyadir un tiempo
   adicional antes d''o pediu d''un usuario. Esta opción no cambia los tiempos de cocina
-  (20 menutos) ni d''entrega (25 menutos).'
+  ni d''entrega.'
 localBusiness.form.enabled: 'Habilitau'
 localBusiness.form.orderingDelayDays: 'Día(s)'
 localBusiness.form.orderingDelayHours: 'Hora(s)'

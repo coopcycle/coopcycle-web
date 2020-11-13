@@ -107,7 +107,7 @@ restaurants.placeholder.text: Nové restaurace už se chystají!
 localBusiness.form.orderingDelayMinutes: Další zpoždění před objednáním
 localBusiness.form.orderingDelayMinutes.help: Pomocí tohoto pole můžete přidat nějaký
   čas, než si zákazník může objednat. Toto nastavení nemění čas potřebný pro vaření
-  (20 minut) a dovoz (25 minut).
+  a dovoz.
 localBusiness.form.enabled: Povoleno
 localBusiness.form.orderingDelayDays: Den (dny)
 localBusiness.form.orderingDelayHours: Hodina(y)
