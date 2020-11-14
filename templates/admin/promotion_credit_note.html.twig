@@ -19,29 +19,46 @@
 {% block scripts %}
 {{ encore_entry_script_tags('search-user') }}
 <script>
-$('[data-promotion-action-configuration-key="percentage"]')
-  .closest('.form-group')
-  .addClass('d-none');
 
-$('#credit_note_type input[type="radio"]').on('change', function() {
-  switch ($(this).val()) {
+function handleCreditNoteType(type) {
+  switch (type) {
     case 'order_fixed_discount':
       $('[data-promotion-action-configuration-key="percentage"]')
         .closest('.form-group')
         .addClass('d-none');
+      $('[data-promotion-action-configuration-key="percentage"]')
+        .prop('required', false);
+
       $('[data-promotion-action-configuration-key="amount"]')
         .closest('.form-group')
         .removeClass('d-none');
+      $('[data-promotion-action-configuration-key="amount"]')
+        .prop('required', true);
       break;
     case 'order_percentage_discount':
       $('[data-promotion-action-configuration-key="amount"]')
         .closest('.form-group')
         .addClass('d-none');
+      $('[data-promotion-action-configuration-key="amount"]')
+        .prop('required', false);
+
       $('[data-promotion-action-configuration-key="percentage"]')
         .closest('.form-group')
         .removeClass('d-none');
+      $('[data-promotion-action-configuration-key="percentage"]')
+        .prop('required', true);
       break;
   }
+}
+
+$('[data-promotion-action-configuration-key="percentage"]')
+  .closest('.form-group')
+  .addClass('d-none');
+
+handleCreditNoteType($('#credit_note_type input[type="radio"]').val());
+
+$('#credit_note_type input[type="radio"]').on('change', function() {
+  handleCreditNoteType($(this).val());
 });
 </script>
 {% endblock %}
