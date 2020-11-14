@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class Vendor implements ShippingOptionsInterface
@@ -175,6 +176,23 @@ class Vendor implements ShippingOptionsInterface
         }
 
         return $this->restaurant->getDeliveryPerimeterExpression();
+    }
+
+    public function getOwners()
+    {
+        if (null !== $this->hub) {
+            $owners = new ArrayCollection();
+            foreach ($this->hub->getRestaurants() as $restaurant) {
+                foreach ($restaurant->getOwners() as $owner) {
+                    $owners->add($owner);
+                }
+
+            }
+
+            return $owners;
+        }
+
+        return $this->restaurant->getOwners();
     }
 
     /* END Common interface between Restaurant & Hub */

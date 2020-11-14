@@ -86,7 +86,7 @@ class SendEmail
         $this->eventBus->handle(new EmailSent($order, $this->settingsManager->get('administrator_email')));
 
         // Send email to restaurant owners
-        $owners = $order->getRestaurant()->getOwners()->toArray();
+        $owners = $order->getVendor()->getOwners()->toArray();
         if (count($owners) > 0) {
 
             $ownerMails = [];
