@@ -70,20 +70,25 @@ class FulfillmentMethodType extends AbstractType
                 $form->get('allowEdit')->setData($allowEdit);
             }
 
+            $disabled = !$allowEdit;
+            if ($this->authorizationChecker->isGranted('ROLE_ADMIN') || 'collection' === $fulfillmentMethod->getType()) {
+                $disabled = false;
+            }
+
             $form
                 ->add('minimumAmount', MoneyType::class, [
                     'label' => 'restaurant.contract.minimumCartAmount.label',
-                    'disabled' => !$allowEdit,
+                    'disabled' => $disabled,
                 ])
                 ->add('orderingDelayDays', IntegerType::class, [
                     'label' => 'localBusiness.form.orderingDelayDays',
                     'mapped' => false,
-                    'disabled' => !$allowEdit,
+                    'disabled' => $disabled,
                 ])
                 ->add('orderingDelayHours', IntegerType::class, [
                     'label' => 'localBusiness.form.orderingDelayHours',
                     'mapped' => false,
-                    'disabled' => !$allowEdit,
+                    'disabled' => $disabled,
                 ]);
         });
 
