@@ -65,6 +65,4 @@
 
 {% block scripts %}
 {{ encore_entry_script_tags('delivery-embed-start-form') }}
-<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&language={{ app.request.locale }}&callback=initMap"
-  async defer></script>
 {% endblock %}

@@ -15,10 +15,9 @@ import Navbar from './components/Navbar'
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
-let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve, initMapResolve
+let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve
 
 const mapLoaded = new Promise((resolve) => mapLoadedResolve = resolve)
-const mapInitialized = new Promise((resolve) => initMapResolve = resolve)
 const navbarLoaded = new Promise((resolve) => navbarLoadedResolve = resolve)
 const dashboardLoaded = new Promise((resolve) => dashboardLoadedResolve = resolve)
 
@@ -55,7 +54,7 @@ function start() {
   const store = createStoreFromPreloadedState(preloadedState)
 
   Promise
-    .all([ mapLoaded, mapInitialized, navbarLoaded, dashboardLoaded ])
+    .all([ mapLoaded, navbarLoaded, dashboardLoaded ])
     .then(() => {
       anim.stop()
       anim.destroy()
@@ -106,10 +105,6 @@ const anim = lottie.loadAnimation({
   autoplay: true,
   path: '/img/loading.json'
 })
-
-window.initMap = function() {
-  initMapResolve()
-}
 
 anim.addEventListener('DOMLoaded', function() {
   setTimeout(() => start(), 800)

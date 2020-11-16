@@ -50,6 +50,7 @@
     "@babel/preset-react": "^7.12.1",
     "@babel/register": "^7.12.1",
     "@symfony/webpack-encore": "^0.31.0",
+    "algoliasearch": "^4.6.0",
     "antd": "^3.26.20",
     "autoprefixer": "^9.8.6",
     "axios": "^0.19.2",

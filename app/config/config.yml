@@ -146,6 +146,8 @@ twig:
         context_channel: "@sylius.context.channel"
         loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
         embed_context: '@AppBundle\Embed\Context'
+        algolia_places_app_id: '%env(ALGOLIA_PLACES_APP_ID)%'
+        algolia_places_api_key: '%env(ALGOLIA_PLACES_API_KEY)%'
     exception_controller: null
 
 # Doctrine Configuration

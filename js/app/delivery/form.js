@@ -78,85 +78,81 @@ function serializeAddress(address) {
   }
 }
 
-window.initMap = function() {
-
-  form = new DeliveryForm('delivery', {
-    onReady: function(delivery) {
-      if (delivery.pickup.address) {
-        createMarker({
-          latitude: delivery.pickup.address.geo.latitude,
-          longitude: delivery.pickup.address.geo.longitude
-        }, 'pickup')
-      }
-      if (delivery.dropoff.address) {
-        createMarker({
-          latitude: delivery.dropoff.address.geo.latitude,
-          longitude: delivery.dropoff.address.geo.longitude
-        }, 'dropoff')
-      }
-    },
-    onChange: function(delivery) {
-
-      if (delivery.pickup.address) {
-        createMarker({
-          latitude: delivery.pickup.address.geo.latitude,
-          longitude: delivery.pickup.address.geo.longitude
-        }, 'pickup')
-        $('#delivery_pickup_panel_title').text(delivery.pickup.address.streetAddress)
-      }
-      if (delivery.dropoff.address) {
-        createMarker({
-          latitude: delivery.dropoff.address.geo.latitude,
-          longitude: delivery.dropoff.address.geo.longitude
-        }, 'dropoff')
-        $('#delivery_dropoff_panel_title').text(delivery.dropoff.address.streetAddress)
-      }
-
-      if (delivery.pickup.address && delivery.dropoff.address) {
-
-        this.disable()
-
-        const updateDistance = new Promise((resolve) => {
-          route(delivery).then((infos) => {
-            $('#delivery_distance').text(`${infos.kms} Km`)
-            resolve()
-          })
-        })
-
-        const updatePrice = new Promise((resolve) => {
-          if (delivery.store && pricePreview) {
-            const deliveryAsPayload = {
-              ...delivery,
-              pickup: {
-                ...delivery.pickup,
-                address: serializeAddress(delivery.pickup.address)
-              },
-              dropoff: {
-                ...delivery.dropoff,
-                address: serializeAddress(delivery.dropoff.address)
-              }
-            }
-
-            pricePreview.update(deliveryAsPayload).then(() => resolve())
-          } else {
-            resolve()
-          }
-        })
-
-        Promise.all([
-          updateDistance,
-          updatePrice,
-        ])
-        .then(() => {
-          form.enable()
-        })
-        // eslint-disable-next-line no-console
-        .catch(e => console.error(e))
-      }
+form = new DeliveryForm('delivery', {
+  onReady: function(delivery) {
+    if (delivery.pickup.address) {
+      createMarker({
+        latitude: delivery.pickup.address.geo.latitude,
+        longitude: delivery.pickup.address.geo.longitude
+      }, 'pickup')
     }
-  })
+    if (delivery.dropoff.address) {
+      createMarker({
+        latitude: delivery.dropoff.address.geo.latitude,
+        longitude: delivery.dropoff.address.geo.longitude
+      }, 'dropoff')
+    }
+  },
+  onChange: function(delivery) {
 
-}
+    if (delivery.pickup.address) {
+      createMarker({
+        latitude: delivery.pickup.address.geo.latitude,
+        longitude: delivery.pickup.address.geo.longitude
+      }, 'pickup')
+      $('#delivery_pickup_panel_title').text(delivery.pickup.address.streetAddress)
+    }
+    if (delivery.dropoff.address) {
+      createMarker({
+        latitude: delivery.dropoff.address.geo.latitude,
+        longitude: delivery.dropoff.address.geo.longitude
+      }, 'dropoff')
+      $('#delivery_dropoff_panel_title').text(delivery.dropoff.address.streetAddress)
+    }
+
+    if (delivery.pickup.address && delivery.dropoff.address) {
+
+      this.disable()
+
+      const updateDistance = new Promise((resolve) => {
+        route(delivery).then((infos) => {
+          $('#delivery_distance').text(`${infos.kms} Km`)
+          resolve()
+        })
+      })
+
+      const updatePrice = new Promise((resolve) => {
+        if (delivery.store && pricePreview) {
+          const deliveryAsPayload = {
+            ...delivery,
+            pickup: {
+              ...delivery.pickup,
+              address: serializeAddress(delivery.pickup.address)
+            },
+            dropoff: {
+              ...delivery.dropoff,
+              address: serializeAddress(delivery.dropoff.address)
+            }
+          }
+
+          pricePreview.update(deliveryAsPayload).then(() => resolve())
+        } else {
+          resolve()
+        }
+      })
+
+      Promise.all([
+        updateDistance,
+        updatePrice,
+      ])
+      .then(() => {
+        form.enable()
+      })
+      // eslint-disable-next-line no-console
+      .catch(e => console.error(e))
+    }
+  }
+})
 
 const priceEl = document.getElementById('delivery-price')
 

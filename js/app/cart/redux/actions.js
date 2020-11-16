@@ -1,8 +1,8 @@
 import { createAction } from 'redux-actions'
 import _ from 'lodash'
 
-import i18n, { getCountry } from '../../i18n'
-import { placeToAddress } from '../../utils/GoogleMaps'
+import i18n, { localeDetector, getCountry } from '../../i18n'
+import { hitToAddress, initSearch } from '../../utils/algolia'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const FETCH_SUCCESS = 'FETCH_SUCCESS'
@@ -184,8 +184,7 @@ export function removeItem(itemID) {
 
 function geocodeAndSync() {
 
-  const geocoder = new window.google.maps.Geocoder()
-  const geocoderOK = window.google.maps.GeocoderStatus.OK
+  const search = initSearch()
 
   return (dispatch, getState) => {
 
@@ -202,13 +201,19 @@ function geocodeAndSync() {
       return
     }
 
-    geocoder.geocode({ address: cart.shippingAddress.streetAddress }, (results, status) => {
+    search({
+      query: cart.shippingAddress.streetAddress,
+      type: 'address',
+      language: localeDetector(),
+      countries: [ getCountry() || 'en' ],
+      hitsPerPage: 1,
+    }).then(results => {
 
       $('#menu').LoadingOverlay('hide')
 
-      if (status === geocoderOK && results.length > 0) {
-        const place = results[0]
-        const address = placeToAddress(place, cart.shippingAddress.streetAddress)
+      if (results.nbHits > 0) {
+        const hit = results.hits[0]
+        const address = hitToAddress(hit, cart.shippingAddress.streetAddress)
         dispatch(changeAddress({
           ...cart.shippingAddress,
           ...address,

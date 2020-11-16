@@ -6,39 +6,36 @@ import './embed-start.scss'
 
 const getDateTimePickerContainer = trigger => trigger.parentNode
 
-window.initMap = function() {
+$.each(['pickup', 'dropoff'], function(index, type) {
 
-  $.each(['pickup', 'dropoff'], function(index, type) {
+  const doneBeforeEl = document.querySelector(`#delivery_${type}_doneBefore`)
 
-    const doneBeforeEl = document.querySelector(`#delivery_${type}_doneBefore`)
-
-    if (doneBeforeEl) {
-      new DateTimePicker(document.querySelector(`#delivery_${type}_doneBefore_widget`), {
-        defaultValue: doneBeforeEl.value,
-        getDatePickerContainer: getDateTimePickerContainer,
-        getTimePickerContainer: getDateTimePickerContainer,
-        onChange: function(date) {
-          if (date) {
-            document.querySelector(`#delivery_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
-          }
+  if (doneBeforeEl) {
+    new DateTimePicker(document.querySelector(`#delivery_${type}_doneBefore_widget`), {
+      defaultValue: doneBeforeEl.value,
+      getDatePickerContainer: getDateTimePickerContainer,
+      getTimePickerContainer: getDateTimePickerContainer,
+      onChange: function(date) {
+        if (date) {
+          document.querySelector(`#delivery_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
         }
-      })
-    }
-
-    new AddressBook(document.querySelector(`#delivery_${type}_address`), {
-      existingAddressControl: document.querySelector(`#delivery_${type}_address_existingAddress`),
-      newAddressControl: document.querySelector(`#delivery_${type}_address_newAddress_streetAddress`),
-      isNewAddressControl: document.querySelector(`#delivery_${type}_address_isNewAddress`),
+      }
     })
+  }
 
+  new AddressBook(document.querySelector(`#delivery_${type}_address`), {
+    existingAddressControl: document.querySelector(`#delivery_${type}_address_existingAddress`),
+    newAddressControl: document.querySelector(`#delivery_${type}_address_newAddress_streetAddress`),
+    isNewAddressControl: document.querySelector(`#delivery_${type}_address_isNewAddress`),
   })
 
-  const packages = document.querySelector(`#delivery_packages`)
+})
 
-  if (packages) {
-    const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
-    createPackagesWidget('delivery', packagesRequired)
-  }
+const packages = document.querySelector(`#delivery_packages`)
+
+if (packages) {
+  const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
+  createPackagesWidget('delivery', packagesRequired)
 }
 
 function setBillingAddressRequired(required) {

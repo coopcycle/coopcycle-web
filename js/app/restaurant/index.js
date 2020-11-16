@@ -28,7 +28,7 @@ window._paq = window._paq || []
 
 let store
 
-window.initMap = function() {
+const init = function() {
 
   const container = document.getElementById('cart')
 
@@ -216,3 +216,5 @@ document.querySelectorAll('[data-opening-hours]').forEach(el => {
 $('#menu').LoadingOverlay('show', {
   image: false,
 })
+
+init()

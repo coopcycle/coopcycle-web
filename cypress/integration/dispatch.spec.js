@@ -82,11 +82,11 @@ context('Checkout', () => {
 
     cy.get('.ReactModal__Content--task-form')
       .find('ul[role="listbox"] li', { timeout: 5000 })
-      .contains('91 Rue de Rivoli, Paris, France')
+      .contains('91 Rue de Rivoli, Paris 4e Arrondissement, France')
       .click()
 
     cy.get('.ReactModal__Content--task-form input[type="search"]')
-      .should('have.value', '91 Rue de Rivoli, Paris, France')
+      .should('have.value', '91 Rue de Rivoli, Paris 4e Arrondissement, France')
 
     // FIXME
     // Make it work without wait

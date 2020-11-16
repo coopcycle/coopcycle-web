@@ -30,11 +30,11 @@ context('Delivery', () => {
     // https://docs.cypress.io/guides/references/best-practices.html#Selecting-Elements
     cy.get('#delivery_pickup_address input[type="search"]')
         .type('23 av claude vellefaux', { timeout: 15000 })
-    cy.contains('23 Avenue Claude Vellefaux, Paris, France').click()
+    cy.contains('23 Avenue Claude Vellefaux, Paris 10e Arrondissement, France').click()
 
     cy.get('#delivery_dropoff_address input[type="search"]')
         .type('72 rue st maur', { timeout: 15000 })
-    cy.contains('72 Rue St Maur, Paris, France').click()
+    cy.contains('72 Rue Saint-Maur, Paris 11e Arrondissement, France').click()
 
     cy.wait('@apiRoutingRoute')
 
@@ -54,7 +54,7 @@ context('Delivery', () => {
     cy.get('#delivery_pickup_address')
       .find('.react-autosuggest__suggestions-container')
       .find('ul[role="listbox"] li', { timeout: 5000 })
-      .contains('91 Rue de Rivoli, Paris, France')
+      .contains('91 Rue de Rivoli, Paris 4e Arrondissement, France')
       .click()
 
     cy.get('#delivery_pickup_address_newAddress_latitude')
@@ -70,7 +70,7 @@ context('Delivery', () => {
     cy.get('#delivery_dropoff_address')
       .find('.react-autosuggest__suggestions-container')
       .find('ul[role="listbox"] li', { timeout: 5000 })
-      .contains('120 Rue St Maur')
+      .contains('120 Rue Saint-Maur')
       .click()
 
     cy.get('#delivery_dropoff_address_newAddress_latitude')
