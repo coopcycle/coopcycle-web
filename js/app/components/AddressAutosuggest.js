@@ -10,8 +10,6 @@ import _ from 'lodash'
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
 
-import { hitToAddress, initSearch } from '../utils/algolia'
-import PoweredByAlgolia from './AddressAutosuggest/algolia.svg'
 import {
   placeholder as placeholderGB,
   getInitialState as getInitialStateGB,
@@ -20,6 +18,27 @@ import {
   theme as themeGB,
   poweredBy as poweredByGB,
   highlightFirstSuggestion as highlightFirstSuggestionGB } from './AddressAutosuggest/gb'
+
+import {
+  onSuggestionsFetchRequested as onSuggestionsFetchRequestedAlgolia,
+  poweredBy as poweredByAlgolia,
+  transformSuggestion as transformSuggestionAlgolia,
+  geocode as geocodeAlgolia,
+  } from './AddressAutosuggest/algolia'
+
+import {
+  onSuggestionsFetchRequested as onSuggestionsFetchRequestedLocationIQ,
+  poweredBy as poweredByLocationIQ,
+  transformSuggestion as transformSuggestionLocationIQ,
+  geocode as geocodeLocationIQ,
+  } from './AddressAutosuggest/locationiq'
+
+import {
+  onSuggestionsFetchRequested as onSuggestionsFetchRequestedGE,
+  poweredBy as poweredByGE,
+  transformSuggestion as transformSuggestionGE,
+  geocode as geocodeGE,
+  } from './AddressAutosuggest/geocode-earth'
 
 const theme = {
   container:                'react-autosuggest__container address-autosuggest__container',
@@ -67,6 +86,27 @@ const localized = {
   }
 }
 
+const adapters = {
+  algolia: {
+    onSuggestionsFetchRequested: onSuggestionsFetchRequestedAlgolia,
+    poweredBy: poweredByAlgolia,
+    transformSuggestion: transformSuggestionAlgolia,
+    geocode: geocodeAlgolia,
+  },
+  locationiq: {
+    onSuggestionsFetchRequested: onSuggestionsFetchRequestedLocationIQ,
+    poweredBy: poweredByLocationIQ,
+    transformSuggestion: transformSuggestionLocationIQ,
+    geocode: geocodeLocationIQ,
+  },
+  'geocode-earth': {
+    onSuggestionsFetchRequested: onSuggestionsFetchRequestedGE,
+    poweredBy: poweredByGE,
+    transformSuggestion: transformSuggestionGE,
+    geocode: geocodeGE,
+  },
+}
+
 // WARNING
 // Do *NOT* use arrow functions, to allow binding
 const generic = {
@@ -88,21 +128,17 @@ const generic = {
       sessionToken: null,
     }
   },
-  onSuggestionsFetchRequested: function({ value }) {
-    this.search({
-      query: value,
-      type: 'address',
-      language: localeDetector(),
-      countries: [ getCountry() || 'en' ],
-      hitsPerPage: 7,
-    }).then(this._autocompleteCallback.bind(this))
+  onSuggestionsFetchRequested: function() {
+    this.setState({
+      suggestions: [],
+    })
   },
   onSuggestionSelected: function (event, { suggestion }) {
 
     if (suggestion.type === 'prediction') {
       const geohash = ngeohash.encode(suggestion.lat, suggestion.lng, 11)
       const address = {
-        ...hitToAddress(suggestion.hit),
+        ...this.transformSuggestion(suggestion),
         geohash,
       }
 
@@ -134,12 +170,15 @@ const generic = {
       this.props.onAddressSelected(suggestion.value, address, suggestion.type)
     }
   },
+  transformSuggestion: function(suggestion) {
+    return suggestion.hit
+  },
   theme: function(theme) {
     return theme
   },
   poweredBy: function() {
     return (
-      <img src={ PoweredByAlgolia } />
+      <span></span>
     )
   },
   highlightFirstSuggestion: function() {
@@ -147,10 +186,15 @@ const generic = {
   }
 }
 
-const localize = (func, thisArg) => {
+const localize = (func, adapter, thisArg) => {
   if (Object.prototype.hasOwnProperty.call(localized, getCountry())
   &&  Object.prototype.hasOwnProperty.call(localized[getCountry()], func)) {
     return localized[getCountry()][func].bind(thisArg)
+  }
+
+  if (Object.prototype.hasOwnProperty.call(adapters, adapter)
+  &&  Object.prototype.hasOwnProperty.call(adapters[adapter], func)) {
+    return adapters[adapter][func].bind(thisArg)
   }
 
   return generic[func].bind(thisArg)
@@ -177,24 +221,29 @@ class AddressAutosuggest extends Component {
   constructor(props) {
     super(props)
 
+    const el = document.getElementById('autocomplete-adapter')
+    const adapter = (el && el.dataset.value) || 'algolia'
+
+    this.country = getCountry() || 'en'
+    this.language = localeDetector()
+
     // Localized methods
     this.onSuggestionsFetchRequested = debounce(
-      localize('onSuggestionsFetchRequested', this),
+      localize('onSuggestionsFetchRequested', adapter, this),
       350
     )
-    this.getInitialState = localize('getInitialState', this)
-    this.onSuggestionSelected = localize('onSuggestionSelected', this)
-    this.placeholder = localize('placeholder', this)
-    this.poweredBy = localize('poweredBy', this)
-    this.theme = localize('theme', this)
-    this.highlightFirstSuggestion = localize('highlightFirstSuggestion', this)
+    this.getInitialState = localize('getInitialState', adapter, this)
+    this.onSuggestionSelected = localize('onSuggestionSelected', adapter, this)
+    this.transformSuggestion = localize('transformSuggestion', adapter, this)
+    this.placeholder = localize('placeholder', adapter, this)
+    this.poweredBy = localize('poweredBy', adapter, this)
+    this.theme = localize('theme', adapter, this)
+    this.highlightFirstSuggestion = localize('highlightFirstSuggestion', adapter, this)
 
     this.state = this.getInitialState()
   }
 
   componentDidMount() {
-
-    this.search = initSearch()
 
     const addresses = this.props.addresses.map(address => ({
       ...address,
@@ -234,21 +283,9 @@ class AddressAutosuggest extends Component {
     }
   }
 
-  _autocompleteCallback(results) {
+  _autocompleteCallback(predictionsAsSuggestions) {
 
     let suggestions = []
-
-    let predictionsAsSuggestions = results.hits.map((hit, idx) => ({
-      type: 'prediction',
-      value: `${hit.locale_names[0]}, ${hit.city[0]}, ${hit.country}`,
-      id: hit.objectID,
-      description: `${hit.locale_names[0]}, ${hit.city[0]}, ${hit.country}`,
-      index: idx,
-      lat: hit._geoloc.lat,
-      lng: hit._geoloc.lng,
-      hit,
-    }))
-
     let multiSection = false
 
     if (this.props.addresses.length > 0) {
@@ -424,3 +461,11 @@ AddressAutosuggest.propTypes = {
 }
 
 export default withTranslation()(AddressAutosuggest)
+
+export const geocode = (text) => {
+
+  const el = document.getElementById('autocomplete-adapter')
+  const adapter = (el && el.dataset.value) || 'algolia'
+
+  return localize('geocode', adapter, null)(text, (getCountry() || 'en'), localeDetector())
+}

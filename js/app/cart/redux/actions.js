@@ -1,8 +1,8 @@
 import { createAction } from 'redux-actions'
 import _ from 'lodash'
 
-import i18n, { localeDetector, getCountry } from '../../i18n'
-import { hitToAddress, initSearch } from '../../utils/algolia'
+import i18n, { getCountry } from '../../i18n'
+import { geocode } from '../../components/AddressAutosuggest'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const FETCH_SUCCESS = 'FETCH_SUCCESS'
@@ -184,8 +184,6 @@ export function removeItem(itemID) {
 
 function geocodeAndSync() {
 
-  const search = initSearch()
-
   return (dispatch, getState) => {
 
     const { cart } = getState()
@@ -201,19 +199,11 @@ function geocodeAndSync() {
       return
     }
 
-    search({
-      query: cart.shippingAddress.streetAddress,
-      type: 'address',
-      language: localeDetector(),
-      countries: [ getCountry() || 'en' ],
-      hitsPerPage: 1,
-    }).then(results => {
+    geocode(cart.shippingAddress.streetAddress).then(address => {
 
       $('#menu').LoadingOverlay('hide')
 
-      if (results.nbHits > 0) {
-        const hit = results.hits[0]
-        const address = hitToAddress(hit, cart.shippingAddress.streetAddress)
+      if (address) {
         dispatch(changeAddress({
           ...cart.shippingAddress,
           ...address,

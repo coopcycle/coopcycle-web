@@ -148,6 +148,9 @@ twig:
         embed_context: '@AppBundle\Embed\Context'
         algolia_places_app_id: '%env(ALGOLIA_PLACES_APP_ID)%'
         algolia_places_api_key: '%env(ALGOLIA_PLACES_API_KEY)%'
+        locationiq_access_token: '%env(LOCATIONIQ_ACCESS_TOKEN)%'
+        autocomplete_adapter: '%env(COOPCYCLE_AUTOCOMPLETE_ADAPTER)%'
+        geocode_earth_api_key: '%env(GEOCODE_EARTH_API_KEY)%'
     exception_controller: null
 
 # Doctrine Configuration
