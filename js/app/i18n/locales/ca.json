@@ -153,6 +153,7 @@
             "time_slot": "Franja Horària"
         },
         "PLEASE_SELECT_ADDRESS": "Sel·lecciona una direcció en el menú desplegable",
-        "DOWNLOAD_EXAMPLE_SPREADSHEET": "Descarrega un exemple de cuadrícula"
+        "DOWNLOAD_EXAMPLE_SPREADSHEET": "Descarrega un exemple de cuadrícula",
+        "ADMIN_DASHBOARD_ORDERS_PACKAGING_ALERT": "Aquesta comanda ha d'estar encapsada en un embalatge reutilitzable"
     }
 }
