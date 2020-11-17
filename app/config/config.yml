@@ -315,6 +315,10 @@ snc_redis:
             options:
                 # https://github.com/phpredis/phpredis/issues/70#issuecomment-348997806
                 read_write_timeout: -1
+        shared:
+            type: phpredis
+            alias: shared
+            dsn: "%env(COOPCYCLE_REDIS_DSN)%"
     session:
         client: session
         prefix: "session:"

@@ -3,7 +3,6 @@
 namespace Tests\AppBundle\Service;
 
 use AppBundle\Service\Geocoder;
-use AppBundle\Service\SettingsManager;
 use Geocoder\Geocoder as GeocoderInterface;
 use Geocoder\Location;
 use Geocoder\Model\AddressCollection;
@@ -11,6 +10,7 @@ use Geocoder\Model\Coordinates;
 use Geocoder\Model\Country;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Spatie\GuzzleRateLimiterMiddleware\Store;
 
 class GeocoderTest extends TestCase
 {
@@ -20,10 +20,10 @@ class GeocoderTest extends TestCase
 
     public function setUp(): void
     {
-        $settingsManager = $this->prophesize(SettingsManager::class);
         $this->innerGeocoder = $this->prophesize(GeocoderInterface::class);
+        $this->rateLimiterStore = $this->prophesize(Store::class);
 
-        $this->geocoder = new Geocoder($settingsManager->reveal(), 'fr', 'fr');
+        $this->geocoder = new Geocoder($this->rateLimiterStore->reveal(), '', 'fr', 'fr', 1);
         $this->geocoder->setGeocoder($this->innerGeocoder->reveal());
     }
 

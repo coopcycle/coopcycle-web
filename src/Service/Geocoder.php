@@ -4,34 +4,46 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Service\SettingsManager;
 use Geocoder\Geocoder as GeocoderInterface;
 use Geocoder\Location;
 use Geocoder\Provider\Addok\Addok as AddokProvider;
 use Geocoder\Provider\Chain\Chain as ChainProvider;
-use Geocoder\Provider\GoogleMaps\GoogleMaps as GoogleMapsProvider;
-use Geocoder\Provider\Nominatim\Nominatim as NominatimProvider;
+use Geocoder\Provider\OpenCage\OpenCage as OpenCageProvider;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\StatefulGeocoder;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\HandlerStack;
 use Http\Adapter\Guzzle6\Client;
 use PredictHQ\AddressFormatter\Formatter as AddressFormatter;
+use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
+use Spatie\GuzzleRateLimiterMiddleware\Store as RateLimiterStore;
 
 class Geocoder
 {
-    private $settingsManager;
+    private $rateLimiterStore;
+    private $openCageApiKey;
     private $country;
     private $locale;
+    private $rateLimitPerSecond;
+
     private $geocoder;
     private $addressFormatter;
 
     /**
      * FIXME Inject providers through constructor (needs a CompilerPass)
      */
-    public function __construct(SettingsManager $settingsManager, $country, $locale)
+    public function __construct(
+        RateLimiterStore $rateLimiterStore,
+        string $openCageApiKey,
+        string $country,
+        string $locale,
+        int $rateLimitPerSecond)
     {
-        $this->settingsManager = $settingsManager;
+        $this->rateLimiterStore = $rateLimiterStore;
+        $this->openCageApiKey = $openCageApiKey;
         $this->country = $country;
         $this->locale = $locale;
+        $this->rateLimitPerSecond = $rateLimitPerSecond;
     }
 
     private function getGeocoder()
@@ -47,17 +59,31 @@ class Geocoder
                 $providers[] = AddokProvider::withBANServer($httpClient);
             }
 
-            // Add Google provider only if api key is configured
-            $apiKey = $this->settingsManager->get('google_api_key');
-            if (!empty($apiKey)) {
-                $region = strtoupper($this->country);
-                $providers[] = new GoogleMapsProvider($httpClient, $region, $apiKey);
+            // Add OpenCage provider only if api key is configured
+            if (!empty($this->openCageApiKey)) {
+                $providers[] = $this->createOpenCageProvider();
             }
 
             $this->geocoder = new StatefulGeocoder(new ChainProvider($providers), $this->locale);
         }
 
         return $this->geocoder;
+    }
+
+    private function createOpenCageProvider()
+    {
+        // @see https://github.com/geocoder-php/Geocoder/blob/master/docs/cookbook/rate-limiting.md
+
+        $rateLimiter =
+            RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
+
+        $stack = HandlerStack::create();
+        $stack->push($rateLimiter);
+
+        $httpClient  = new GuzzleClient(['handler' => $stack, 'timeout' => 30.0]);
+        $httpAdapter = new Client($httpClient);
+
+        return new OpenCageProvider($httpAdapter, $this->openCageApiKey);
     }
 
     /**

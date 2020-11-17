@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4a66dbe9cda6f401cdee8b12d6249e89",
+    "content-hash": "096f5f33a68b626fd2611e8a22415c1c",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3946,6 +3946,66 @@
             "time": "2020-02-09T15:42:11+00:00"
         },
         {
+            "name": "geocoder-php/algolia-places-provider",
+            "version": "0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geocoder-php/algolia-places-provider.git",
+                "reference": "5a63625bd04519329e42c4a9a4cc2ccca0be66e3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geocoder-php/algolia-places-provider/zipball/5a63625bd04519329e42c4a9a4cc2ccca0be66e3",
+                "reference": "5a63625bd04519329e42c4a9a4cc2ccca0be66e3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "geocoder-php/common-http": "^4.1",
+                "php": "^7.2",
+                "willdurand/geocoder": "^4.0"
+            },
+            "provide": {
+                "geocoder-php/provider-implementation": "1.0"
+            },
+            "require-dev": {
+                "geocoder-php/provider-integration-tests": "^1.1",
+                "php-http/curl-client": "^1.7",
+                "php-http/message": "^1.0",
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Geocoder\\Provider\\AlgoliaPlaces\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Lalanne",
+                    "email": "lalanne.fabien@gmail.com"
+                }
+            ],
+            "description": "Geocoder AlgoliaPlaces adapter",
+            "homepage": "http://geocoder-php.org/Geocoder/",
+            "support": {
+                "source": "https://github.com/geocoder-php/algolia-places-provider/tree/master"
+            },
+            "time": "2020-07-04T13:18:10+00:00"
+        },
+        {
             "name": "geocoder-php/chain-provider",
             "version": "4.2.0",
             "source": {
@@ -4070,65 +4130,6 @@
             "time": "2020-07-04T13:18:10+00:00"
         },
         {
-            "name": "geocoder-php/google-maps-provider",
-            "version": "4.5.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/geocoder-php/google-maps-provider.git",
-                "reference": "830e5cd42eba6cb42a7a72788049edcb73f2d632"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/geocoder-php/google-maps-provider/zipball/830e5cd42eba6cb42a7a72788049edcb73f2d632",
-                "reference": "830e5cd42eba6cb42a7a72788049edcb73f2d632",
-                "shasum": ""
-            },
-            "require": {
-                "geocoder-php/common-http": "^4.0",
-                "php": "^7.2",
-                "willdurand/geocoder": "^4.0"
-            },
-            "provide": {
-                "geocoder-php/provider-implementation": "1.0"
-            },
-            "require-dev": {
-                "geocoder-php/provider-integration-tests": "^1.0",
-                "php-http/curl-client": "^1.7",
-                "php-http/message": "^1.0",
-                "phpunit/phpunit": "^7.5"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "4.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Geocoder\\Provider\\GoogleMaps\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "William Durand",
-                    "email": "william.durand1@gmail.com"
-                }
-            ],
-            "description": "Geocoder GoogleMaps adapter",
-            "homepage": "http://geocoder-php.org/Geocoder/",
-            "support": {
-                "source": "https://github.com/geocoder-php/google-maps-provider/tree/master"
-            },
-            "time": "2020-07-04T13:18:10+00:00"
-        },
-        {
             "name": "geocoder-php/nominatim-provider",
             "version": "5.2.0",
             "source": {
@@ -4186,6 +4187,118 @@
                 "source": "https://github.com/geocoder-php/nominatim-provider/tree/master"
             },
             "time": "2020-07-04T13:18:10+00:00"
+        },
+        {
+            "name": "geocoder-php/open-cage-provider",
+            "version": "4.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geocoder-php/open-cage-provider.git",
+                "reference": "50a438369a2c9efb17722cbdd947f731b00b54ba"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geocoder-php/open-cage-provider/zipball/50a438369a2c9efb17722cbdd947f731b00b54ba",
+                "reference": "50a438369a2c9efb17722cbdd947f731b00b54ba",
+                "shasum": ""
+            },
+            "require": {
+                "geocoder-php/common-http": "^4.0",
+                "php": "^7.2",
+                "willdurand/geocoder": "^4.0"
+            },
+            "provide": {
+                "geocoder-php/provider-implementation": "1.0"
+            },
+            "require-dev": {
+                "geocoder-php/provider-integration-tests": "^1.2",
+                "php-http/curl-client": "^1.7",
+                "php-http/message": "^1.0",
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Geocoder\\Provider\\OpenCage\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William Durand",
+                    "email": "william.durand1@gmail.com"
+                }
+            ],
+            "description": "Geocoder OpenCage adapter",
+            "homepage": "http://geocoder-php.org/Geocoder/",
+            "support": {
+                "source": "https://github.com/geocoder-php/open-cage-provider/tree/master"
+            },
+            "time": "2020-07-04T13:18:10+00:00"
+        },
+        {
+            "name": "geocoder-php/photon-provider",
+            "version": "0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geocoder-php/photon-provider.git",
+                "reference": "abdc6a289721b0c6cff3be1587ab1d2685e3d2b2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geocoder-php/photon-provider/zipball/abdc6a289721b0c6cff3be1587ab1d2685e3d2b2",
+                "reference": "abdc6a289721b0c6cff3be1587ab1d2685e3d2b2",
+                "shasum": ""
+            },
+            "require": {
+                "geocoder-php/common-http": "^4.1",
+                "php": "^7.2",
+                "willdurand/geocoder": "^4.0"
+            },
+            "provide": {
+                "geocoder-php/provider-implementation": "1.0"
+            },
+            "require-dev": {
+                "geocoder-php/provider-integration-tests": "^1.0",
+                "php-http/curl-client": "^1.7",
+                "php-http/message": "^1.0",
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Geocoder\\Provider\\Photon\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonathan Beliën"
+                }
+            ],
+            "description": "Geocoder Photon adapter",
+            "homepage": "http://geocoder-php.org/Geocoder/",
+            "support": {
+                "source": "https://github.com/geocoder-php/photon-provider/tree/0.2.0"
+            },
+            "time": "2020-07-04T13:50:45+00:00"
         },
         {
             "name": "gesdinet/jwt-refresh-token-bundle",
@@ -12082,6 +12195,58 @@
                 "source": "https://github.com/sonata-project/SonataSeoBundle/tree/2.12.0"
             },
             "time": "2020-09-07T19:38:01+00:00"
+        },
+        {
+            "name": "spatie/guzzle-rate-limiter-middleware",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/guzzle-rate-limiter-middleware.git",
+                "reference": "00ab9edcc0d69871a222f991e56efce802520910"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/guzzle-rate-limiter-middleware/zipball/00ab9edcc0d69871a222f991e56efce802520910",
+                "reference": "00ab9edcc0d69871a222f991e56efce802520910",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3|^7.0",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "larapack/dd": "^1.0",
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\GuzzleRateLimiterMiddleware\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian De Deyne",
+                    "email": "sebastiandedeyne@gmail.com",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A rate limiter for Guzzle",
+            "homepage": "https://github.com/spatie/guzzle-rate-limiter-middleware",
+            "keywords": [
+                "guzzle-rate-limiter-middleware",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/guzzle-rate-limiter-middleware/issues",
+                "source": "https://github.com/spatie/guzzle-rate-limiter-middleware/tree/2.0.0"
+            },
+            "time": "2020-10-06T07:08:27+00:00"
         },
         {
             "name": "spomky-labs/base64url",

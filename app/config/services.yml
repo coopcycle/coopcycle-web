@@ -89,6 +89,8 @@ services:
   League\Flysystem\Filesystem $receiptsFilesystem: '@receipts_filesystem'
   FOS\UserBundle\Util\CanonicalizerInterface: '@fos_user.util.canonicalizer.default'
 
+  Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
+
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
       $isFoodtechEnabled: '%foodtech_enabled%'
@@ -529,9 +531,15 @@ services:
 
   AppBundle\Service\Geocoder:
     arguments:
-      - "@coopcycle.settings_manager"
-      - "%country_iso%"
-      - "%kernel.default_locale%"
+      $openCageApiKey: "%env(OPENCAGE_API_KEY)%"
+      $country: "%country_iso%"
+      $locale: "%kernel.default_locale%"
+      $rateLimitPerSecond: 1
+
+  AppBundle\Geocoder\RateLimiterStore:
+    arguments:
+      $redis: '@snc_redis.shared'
+      $service: opencage
 
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber:
     arguments:
