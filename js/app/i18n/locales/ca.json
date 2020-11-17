@@ -154,6 +154,8 @@
         },
         "PLEASE_SELECT_ADDRESS": "Sel·lecciona una direcció en el menú desplegable",
         "DOWNLOAD_EXAMPLE_SPREADSHEET": "Descarrega un exemple de cuadrícula",
-        "ADMIN_DASHBOARD_ORDERS_PACKAGING_ALERT": "Aquesta comanda ha d'estar encapsada en un embalatge reutilitzable"
+        "ADMIN_DASHBOARD_ORDERS_PACKAGING_ALERT": "Aquesta comanda ha d'estar encapsada en un embalatge reutilitzable",
+        "OPENING_HOURS_RANGE_TIME_SLOT": "De {{fromDay}} a {{toDay}}, entre {{open}} i {{close}}",
+        "OPENING_HOURS_SINGLE_TIME_SLOT": "El {{day}} entre {{open}} i {{close}}"
     }
 }
