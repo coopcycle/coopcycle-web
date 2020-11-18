@@ -39,7 +39,7 @@ export const onSuggestionsFetchRequested = function({ value }) {
   const latlon = getBoundaryCircleLatlon()
   const [ lat, lon ] = latlon.split(',')
 
-  client.get(`/v1/autocomplete?text=${encodeURIComponent(value)}&size=5&api_key=${getApiKey()}&boundary.circle.lat=${lat}&boundary.circle.lon=${lon}`)
+  client.get(`/v1/autocomplete?text=${encodeURIComponent(value)}&size=5&api_key=${getApiKey()}&boundary.circle.lat=${lat}&boundary.circle.lon=${lon}&lang=${this.language}`)
     .then(response => {
 
       const predictionsAsSuggestions = response.data.features.map((feature, idx) => ({
