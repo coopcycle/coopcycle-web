@@ -306,7 +306,7 @@ order.state.cart: Košík
 order.state.accepted: Přijato
 order.state.refused: Odmítnuto
 order.state.new: Nový
-order.state.fulfilled: Doručeno
+order.state.fulfilled: Splněno
 order.state.cancelled: Zrušeno
 order.reusable_packaging.alert: Tato objednávka musí být zabalena do opakovaně použitelném
   obalu
@@ -1112,3 +1112,10 @@ order.payer.identificationNumber: Identifikační číslo
 order.payer.identificationType: ID typ
 order.payer.title: Informace o kupujícím
 profile.fullName: Celé jméno
+promotion_action.fixed_discount: '%amount% sleva'
+promotion_action.delivery_percentage_discount: '%percentage% sleva na dopravě'
+promotion_action.percentage_discount: '%percentage% sleva'
+profile.loopeat.disconnect: Odpojit LoopEat
+form.credit_note.percentage.label: Procento
+form.credit_note.type.label: Typ slevy
+form.credit_note.user_search.label: Uživatel

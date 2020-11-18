@@ -72,3 +72,7 @@ order.foodtech.accepted.collection: 'Haurà de recollir-ho en el següent horari
 order.foodtech.accepted.delivery.disclaimer: Ens posarem en contacte en el cas de
   trobar problemes amb la seva adreça
 order.foodtech.accepted.delivery: 'Se li lliurarà en el següent horari:'
+order.expiring_authorization.text: L'autorització del pagament per la comanda <strong>%order.number%</strong>
+  caducarà aviat. <br> Hauries de completar la comanda abans que l'autorització caduqui
+  per evitar perdre els diners.
+order.expiring_authorization.subject: Una autorització de pagament caducarà aviat

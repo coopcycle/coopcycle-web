@@ -1022,3 +1022,19 @@ adminDashboard.users.registered_at: Registrat
 form.settings.mercadopago.publishable_key.label: Clau publicable
 basics.description: Descripció
 basics.configure: Configuració
+form.settings.sms_gateway_config.twilio.from.label: Número de telèfon de Twilio
+form.settings.sms_gateway_config.twilio.auth_token.label: Twilio Auth Token
+form.settings.sms_gateway_config.twilio.sid.label: Twilio SID
+form.settings.sms_gateway_config.mailjet.api_token.label: Mailjet API Token
+form.settings.sms_gateway.label: SMS Gateway
+form.settings.sms.title: SMS
+form.pricing_rule_set.strategy.help: Les pautes es valoren de dalt a baix. Depenent
+  del mètode de càlcul triat, o bé la primera pauta que coincideixi decidirà el preu,
+  o bé el preu es calcularà sumant totes les pautes que coincideixin.
+form.payment.refund_application_fee.help: "Si marqueu aquesta casella, la comissió\
+  \ que cobra la plataforma al soci es retornarà proporcionalment \n<br> \n<a href=\"\
+  https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Learn more</a>\n"
+form.store_type.packages_required.label: Requerir l'entrada de paquets
+form.store_type.package_set.placeholder: Triar un conjunt de paquets
+restaurant.form.section.loopeat: LoopEat
+adminDashboard.customize.title: Personalitzar
