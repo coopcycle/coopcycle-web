@@ -76,7 +76,7 @@
         "ADMIN_DASHBOARD_COMPLETE_FORM_FAILURE": "Comunicar un problema",
         "ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_LABEL": "Comentarios",
         "ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_PLACEHOLDER": "Ejemplo: dirección no encontrada, no hay problema…",
-        "ADMIN_DASHBOARD_TASK_FORM_SHOW_HISTORY": "Ver el historial",
+        "ADMIN_DASHBOARD_TASK_FORM_SHOW_HISTORY": "Mostrar el historial",
         "ADMIN_DASHBOARD_SEARCH": "Buscar",
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Visualización de rutas",
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES": "A vuelo de pájaro",
