@@ -127,9 +127,9 @@ class OrderTimeHelper
             return $ranges;
         }
 
-        return array_map(function (string $date) {
+        return array_map(function (string $date) use ($fulfillmentMethod) {
 
-            return DateUtils::dateTimeToTsRange(new \DateTime($date), 5);
+            return DateUtils::dateTimeToTsRange(new \DateTime($date), $fulfillmentMethod->getOption('round', 5));
         }, $this->getChoices($cart));
     }
 

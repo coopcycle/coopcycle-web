@@ -1101,3 +1101,4 @@ form.order.refuse.refund.alert: Cette commande a été payée avec une méthode 
 form.store_type.package_set.placeholder: Choisissez un ensemble de paquets
 form.store_type.time_slot.placeholder: Choisissez une tranche horaire
 order.payment.waiting_failure: Votre banque a décliné le paiement
+form.fulfillment_method.options.round.label: Approximation des créneaux

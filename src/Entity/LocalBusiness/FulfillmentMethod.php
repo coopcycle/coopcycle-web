@@ -116,9 +116,9 @@ class FulfillmentMethod implements ToggleableInterface
     /**
      * @return mixed
      */
-    public function getOption($name)
+    public function getOption($name, $default = null)
     {
-        return isset($this->options[$name]) ? $this->options[$name] : null;
+        return isset($this->options[$name]) ? $this->options[$name] : $default;
     }
 
     /**

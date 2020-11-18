@@ -1125,3 +1125,4 @@ homepage.form.content: "<strong>%brand_name%</strong> is operating local and non
 promotion_action.percentage_discount: '%percentage% discount'
 promotion_action.delivery_percentage_discount: '%percentage% discount on delivery fees'
 promotion_action.fixed_discount: '%amount% discount'
+form.fulfillment_method.options.round.label: Slot approximation

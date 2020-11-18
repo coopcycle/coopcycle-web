@@ -57,9 +57,20 @@ class FulfillmentMethodType extends AbstractType
                 'required' => false,
                 'mapped' => false,
             ]);
+            $builder->add('round', ChoiceType::class, array(
+                'label' => 'form.fulfillment_method.options.round.label',
+                'mapped' => false,
+                'choices' => [
+                    '5 minutes'  => 5,
+                    '15 minutes' => 15,
+                ],
+                'expanded' => true,
+                'multiple' => false,
+            ));
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
             $form = $event->getForm();
             $fulfillmentMethod = $event->getData();
 
@@ -68,6 +79,11 @@ class FulfillmentMethodType extends AbstractType
 
             if ($form->has('allowEdit')) {
                 $form->get('allowEdit')->setData($allowEdit);
+            }
+
+            $round = $fulfillmentMethod->getOption('round', 5);
+            if ($form->has('round')) {
+                $form->get('round')->setData($round);
             }
 
             $disabled = !$allowEdit;
