@@ -906,7 +906,7 @@ form.local_business_type.store: Botiga
 form.local_business_type.help: Els tipus estan usant el <a href="https://schema.org/">schema.org</a>
   vocabulari per a <a href="https://schema.org/FoodEstablishment">establiments de
   menjar</a> i <a href="https://schema.org/Store">botigues</a>
-localBusiness.form.enabled: Habilitat
+localBusiness.form.enabled: Activat
 notifications.tasks_changed: Tasca per a %date% canviada!
 localBusiness.form.openingHoursBehavior.time_slot: Franja Horària
 restaurant.quotes_disclaimer.not_authenticated: Aquest restaurant tabmien accepta
