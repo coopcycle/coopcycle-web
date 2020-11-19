@@ -53,6 +53,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('oauth2_proxy', array(OAuthRuntime::class, 'modifyUrl')),
             new TwigFilter('restaurant_microdata', array(LocalBusinessRuntime::class, 'seo')),
             new TwigFilter('restaurant_delay_for_humans', array(LocalBusinessRuntime::class, 'delayForHumans')),
+            new TwigFilter('grams_to_kilos', array($this, 'gramsToKilos')),
         );
     }
 
@@ -165,5 +166,10 @@ class CoopCycleExtension extends AbstractExtension
     public function getIriFromItem($item)
     {
         return $this->iriConverter->getIriFromItem($item);
+    }
+
+    public function gramsToKilos($grams)
+    {
+        return sprintf('%s kg', number_format($grams / 1000, 2));
     }
 }

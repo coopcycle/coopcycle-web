@@ -35,8 +35,12 @@
         <small><i class="fa fa-cube"></i> {{ delivery.pickup.address.streetAddress }}</small>
         <br>
         <small><i class="fa fa-arrow-down"></i> {{ delivery.dropoff.address.streetAddress }}</small>
+        {% set details = [ delivery.distance|meters_to_kilometers ] %}
+        {% if delivery.weight is not empty %}
+          {% set details = details|merge([ delivery.weight|grams_to_kilos ]) %}
+        {% endif %}
         <br>
-        <small>{{ delivery.distance|meters_to_kilometers }}</small>
+        <small>{{ details|join(' - ') }}</small>
       </td>
       <td>
         <small>
