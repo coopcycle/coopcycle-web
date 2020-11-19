@@ -52,15 +52,6 @@ class DeliveryType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (true === $options['with_weight']) {
-            $builder
-                ->add('weight', NumberType::class, [
-                    'required' => false,
-                    'html5' => true,
-                    'label' => 'form.delivery.weight.label',
-                ]);
-        }
-
         if (true === $options['with_vehicle']) {
             $builder->add('vehicle', ChoiceType::class, [
                 'required' => true,
@@ -123,14 +114,29 @@ class DeliveryType extends AbstractType
                 'with_recipient_details' => $options['with_dropoff_recipient_details'],
                 'with_doorstep' => $options['with_dropoff_doorstep'],
             ]);
+        });
 
-            if ($form->has('weight') && null !== $store && $store->isWeightRequired()) {
+        // Add weight field if needed
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
-                $config = $form->get('weight')->getConfig();
-                $options = $config->getOptions();
-                $options['required'] = true;
+            $form = $event->getForm();
+            $delivery = $event->getData();
+            $store = $delivery->getStore();
 
-                $form->add('weight', get_class($config->getType()->getInnerType()), $options);
+            if (true === $options['with_weight']) {
+
+                $required = null !== $store && $store->isWeightRequired();
+
+                $form
+                    ->add('weight', NumberType::class, [
+                        'required' => $required,
+                        'html5' => true,
+                        'label' => 'form.delivery.weight.label',
+                    ]);
+
+                if (null !== $delivery->getId() && null !== $delivery->getWeight()) {
+                    $form->get('weight')->setData($delivery->getWeight() / 1000);
+                }
             }
         });
 
