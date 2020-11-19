@@ -12,17 +12,40 @@ const getSearch = function() {
   return search
 }
 
+let aroundLatLng = null
+function getAroundLatLng() {
+  if (null === aroundLatLng) {
+    const el = document.getElementById('algolia-places')
+    if (el) {
+      aroundLatLng = el.dataset.aroundLatLng
+    }
+  }
+
+  return aroundLatLng
+}
+
 export const onSuggestionsFetchRequested = function({ value }) {
 
   const searchFunc = getSearch()
+  const aroundLatLngValue = getAroundLatLng()
 
-  searchFunc({
+  let searchParams = {
     query: value,
     type: 'address',
     language: this.language,
     countries: [ this.country ],
     hitsPerPage: 7,
-  }).then(results => {
+  }
+
+  if (aroundLatLngValue) {
+    searchParams = {
+      ...searchParams,
+      aroundLatLng: aroundLatLngValue,
+      aroundRadius: 50000,
+    }
+  }
+
+  searchFunc(searchParams).then(results => {
 
     const predictionsAsSuggestions = results.hits.map((hit, idx) => ({
       type: 'prediction',
@@ -54,16 +77,27 @@ export const transformSuggestion = function (suggestion) {
 export const geocode = function (text, country = 'en', language = 'en') {
 
   const searchFunc = getSearch()
+  const aroundLatLngValue = getAroundLatLng()
 
   return new Promise((resolve) => {
 
-    searchFunc({
+    let searchParams = {
       query: text,
       type: 'address',
       language,
       countries: [ country ],
       hitsPerPage: 1,
-    }).then(results => {
+    }
+
+    if (aroundLatLngValue) {
+      searchParams = {
+        ...searchParams,
+        aroundLatLng: aroundLatLngValue,
+        aroundRadius: 50000,
+      }
+    }
+
+    searchFunc(searchParams).then(results => {
       if (results.nbHits > 0) {
         resolve(hitToAddress(results.hits[0], text))
       } else {

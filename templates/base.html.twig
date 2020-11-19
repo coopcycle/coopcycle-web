@@ -97,9 +97,13 @@
     <div id="geocode-earth" data-api-key="{{ geocode_earth_api_key }}"
       data-boundary-circle-latlon="{{ coopcycle_setting('latlng')|e('html_attr') }}"></div>
     {% elseif autocomplete_adapter|default('algolia') == 'locationiq' %}
-    <div id="locationiq" data-access-token="{{ locationiq_access_token }}"></div>
+    <div id="locationiq"
+      data-access-token="{{ locationiq_access_token }}"></div>
     {% else %}
-    <div id="algolia-places" data-app-id="{{ algolia_places_app_id }}" data-api-key="{{ algolia_places_api_key }}"></div>
+    <div id="algolia-places"
+      data-app-id="{{ algolia_places_app_id }}"
+      data-api-key="{{ algolia_places_api_key }}"
+      data-around-lat-lng="{{ coopcycle_setting('latlng')|e('html_attr') }}"></div>
     {% endif %}
 
     {% block scripts_common %}
