@@ -124,6 +124,13 @@ class FulfillmentMethodType extends AbstractType
                     $form->get('allowEdit')->getData()
                 );
             }
+            if ($form->has('round')) {
+                $round = (int) $form->get('round')->getData();
+                $fulfillmentMethod->setOption(
+                    'round',
+                    ($round > 0 ? $round : 5)
+                );
+            }
         });
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
