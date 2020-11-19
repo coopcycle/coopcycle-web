@@ -319,7 +319,7 @@ profile_delivery:
       _controller: AppBundle\Controller\ProfileController::deliveryAction
       layout: 'profile.html.twig'
       routes:
-          success: profile_deliveries
+          success: fos_user_profile_show
   methods:  [ GET, POST ]
 
 profile_stores:

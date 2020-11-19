@@ -99,10 +99,7 @@ trait DeliveryTrait
 
             $delivery = $form->getData();
 
-            if ($delivery->getId() === null) {
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-            }
-
+            $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
             $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
 
             return $this->redirectToRoute($routes['success']);
