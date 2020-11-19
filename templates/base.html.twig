@@ -92,15 +92,13 @@
       {{ encore_entry_script_tags('notifications') }}
     {% endif %}
 
-    <div id="autocomplete-adapter" data-value="{{ autocomplete_adapter }}"></div>
-    {% if autocomplete_adapter|default('algolia') == 'locationiq' %}
-    <div id="locationiq" data-access-token="{{ locationiq_access_token }}"></div>
-    {% endif %}
+    <div id="autocomplete-adapter" data-value="{{ autocomplete_adapter|default('algolia') }}"></div>
     {% if autocomplete_adapter|default('algolia') == 'geocode-earth' %}
     <div id="geocode-earth" data-api-key="{{ geocode_earth_api_key }}"
       data-boundary-circle-latlon="{{ coopcycle_setting('latlng')|e('html_attr') }}"></div>
-    {% endif %}
-    {% if autocomplete_adapter|default('algolia') == 'algolia' %}
+    {% elseif autocomplete_adapter|default('algolia') == 'locationiq' %}
+    <div id="locationiq" data-access-token="{{ locationiq_access_token }}"></div>
+    {% else %}
     <div id="algolia-places" data-app-id="{{ algolia_places_app_id }}" data-api-key="{{ algolia_places_api_key }}"></div>
     {% endif %}
 
