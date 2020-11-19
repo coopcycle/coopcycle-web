@@ -3,7 +3,7 @@ import Autosuggest from 'react-autosuggest'
 import PropTypes from 'prop-types'
 import ngeohash from 'ngeohash'
 import Fuse from 'fuse.js'
-import { includes, filter, debounce } from 'lodash'
+import { includes, filter, debounce, throttle } from 'lodash'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
@@ -120,11 +120,31 @@ const generic = {
       console.warn('Using a string for the "address" prop is deprecated, use an object instead.')
     }
 
+    let multiSection = false
+    const suggestions = []
+
+    if (this.props.addresses.length > 0) {
+
+      multiSection = true
+
+      const addressesAsSuggestions = this.props.addresses.map((address, idx) => ({
+        type: 'address',
+        value: address.streetAddress,
+        address: address,
+        index: idx,
+      }))
+
+      suggestions.push({
+        title: this.props.t('SAVED_ADDRESSES'),
+        suggestions: addressesAsSuggestions
+      })
+    }
+
     return {
       value: _.isObject(this.props.address) ?
         (this.props.address.streetAddress || '') : (_.isString(this.props.address) ? this.props.address : ''),
-      suggestions: [],
-      multiSection: false,
+      suggestions,
+      multiSection,
       sessionToken: null,
     }
   },
@@ -208,7 +228,17 @@ const renderSuggestion = suggestion => (
   </div>
 )
 
-const shouldRenderSuggestions = value => value.trim().length > 3
+// https://github.com/moroshko/react-autosuggest#should-render-suggestions-prop
+function shouldRenderSuggestions(value) {
+
+  // This allows rendering suggestions for saved adresses
+  // when the user just focuses the input without typing anything
+  if (value.trimStart().length === 0 && this.state.multiSection) {
+    return true
+  }
+
+  return value.trimStart().length > 3 || value.trimStart().endsWith(' ')
+}
 
 const renderSectionTitle = section => (
   <strong>{ section.title }</strong>
@@ -227,11 +257,33 @@ class AddressAutosuggest extends Component {
     this.country = getCountry() || 'en'
     this.language = localeDetector()
 
-    // Localized methods
-    this.onSuggestionsFetchRequested = debounce(
+    // https://www.peterbe.com/plog/how-to-throttle-and-debounce-an-autocomplete-input-in-react
+    this.onSuggestionsFetchRequestedThrottled = throttle(
       localize('onSuggestionsFetchRequested', adapter, this),
-      350
+      400
     )
+    this.onSuggestionsFetchRequestedDebounced = debounce(
+      localize('onSuggestionsFetchRequested', adapter, this),
+      400
+    )
+
+    this.onSuggestionsFetchRequested = ({ value }) => {
+
+      // We still to check if text is not empty,
+      // because shouldRenderSuggestions() may return true even when nothing was typed
+      // This happens when there are saved adresses
+      if (value.trimStart().length === 0) {
+        return
+      }
+
+      if (value.trimStart().length < 5) {
+        this.onSuggestionsFetchRequestedThrottled({ value })
+      } else {
+        this.onSuggestionsFetchRequestedDebounced({ value })
+      }
+    }
+
+    // Localized methods
     this.getInitialState = localize('getInitialState', adapter, this)
     this.onSuggestionSelected = localize('onSuggestionSelected', adapter, this)
     this.transformSuggestion = localize('transformSuggestion', adapter, this)
@@ -338,8 +390,14 @@ class AddressAutosuggest extends Component {
   }
 
   onSuggestionsClearRequested() {
+
+    let suggestions = []
+    if (this.props.addresses.length > 0 && this.state.multiSection) {
+      suggestions = filter(this.state.suggestions, section => section.title === this.props.t('SAVED_ADDRESSES'))
+    }
+
     this.setState({
-      suggestions: []
+      suggestions
     })
   }
 
@@ -422,7 +480,7 @@ class AddressAutosuggest extends Component {
         renderInputComponent={ this.renderInputComponent.bind(this) }
         renderSuggestionsContainer={ this.renderSuggestionsContainer.bind(this) }
         renderSuggestion={ renderSuggestion }
-        shouldRenderSuggestions={ shouldRenderSuggestions }
+        shouldRenderSuggestions={ shouldRenderSuggestions.bind(this) }
         renderSectionTitle={ renderSectionTitle }
         highlightFirstSuggestion={ highlightFirstSuggestion }
         getSectionSuggestions={ getSectionSuggestions }
