@@ -4,6 +4,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Utils\GeoUtils;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputOption;
@@ -48,6 +49,8 @@ Class DeduplicateCustomerAddressesCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $dryRun = $input->getOption('dry-run');
+
         $getCustomerEmail = $this->connection
             ->prepare("SELECT email_canonical FROM sylius_customer WHERE id = :id");
 
@@ -157,8 +160,91 @@ Class DeduplicateCustomerAddressesCommand extends ContainerAwareCommand
                 ['Email', 'ID', 'Street address', 'Telephone', 'Contact name'],
                 $tableData
             );
+
+            // https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/transactions-and-concurrency.html
+            if (!$dryRun) {
+                $this->io->text('Starting transaction…');
+                $this->connection->beginTransaction(); // suspend auto-commit
+            }
+
+            try {
+
+                foreach ($sortedDuplicates as $coords => $addresses) {
+
+                    $bestAddress = array_shift($addresses);
+                    $otherAddressesIds = array_map(fn($address) => $address['id'], $addresses);
+
+                    $updateTaskAddressSQL =
+                        sprintf('UPDATE task SET address_id = :best_address_id WHERE address_id IN (:other_addresses_ids)');
+                    $updateOrderAddressSQL =
+                        sprintf('UPDATE sylius_order SET shipping_address_id = :best_address_id WHERE shipping_address_id IN (:other_addresses_ids)');
+                    $deleteCustomerAddressesSQL =
+                        sprintf('DELETE FROM sylius_customer_address WHERE address_id IN (:other_addresses_ids)');
+                    $deleteAddressesSQL =
+                        sprintf('DELETE FROM address WHERE id IN (:other_addresses_ids)');
+
+                    $this->debugStatement($updateTaskAddressSQL, [
+                        'best_address_id' => $bestAddress['id'],
+                        'other_addresses_ids' => $otherAddressesIds,
+                    ]);
+                    $this->debugStatement($updateOrderAddressSQL, [
+                        'best_address_id' => $bestAddress['id'],
+                        'other_addresses_ids' => $otherAddressesIds,
+                    ]);
+
+                    $this->debugStatement($deleteCustomerAddressesSQL, [
+                        'other_addresses_ids' => $otherAddressesIds,
+                    ]);
+                    $this->debugStatement($deleteAddressesSQL, [
+                        'other_addresses_ids' => $otherAddressesIds,
+                    ]);
+
+                    if (!$dryRun) {
+                        $this->connection->executeQuery(
+                            $updateTaskAddressSQL,
+                            [ 'best_address_id' => $bestAddress['id'],     'other_addresses_ids' => $otherAddressesIds ],
+                            [ 'best_address_id' => ParameterType::INTEGER, 'other_addresses_ids' => Connection::PARAM_INT_ARRAY ]
+                        );
+                        $this->connection->executeQuery(
+                            $updateOrderAddressSQL,
+                            [ 'best_address_id' => $bestAddress['id'],     'other_addresses_ids' => $otherAddressesIds ],
+                            [ 'best_address_id' => ParameterType::INTEGER, 'other_addresses_ids' => Connection::PARAM_INT_ARRAY ]
+                        );
+
+                        $this->connection->executeQuery(
+                            $deleteCustomerAddressesSQL,
+                            [ 'other_addresses_ids' => $otherAddressesIds ],
+                            [ 'other_addresses_ids' => Connection::PARAM_INT_ARRAY ]
+                        );
+                        $this->connection->executeQuery(
+                            $deleteAddressesSQL,
+                            [ 'other_addresses_ids' => $otherAddressesIds ],
+                            [ 'other_addresses_ids' => Connection::PARAM_INT_ARRAY ]
+                        );
+                    }
+                }
+
+                if (!$dryRun) {
+                    $this->io->text('Commit transaction…');
+                    $this->connection->commit();
+                }
+
+            } catch (\Exception $e) {
+                $this->connection->rollBack();
+                throw $e;
+            }
         }
 
         return 0;
+    }
+
+    private function debugStatement($sql, $params)
+    {
+        $parts = [];
+        foreach ($params as $key => $value) {
+            $parts[] = sprintf('%s = %s', $key, (is_array($value) ? implode(',', $value) : $value));
+        }
+
+        $this->io->text(sprintf('%s with params %s', $sql, implode(', ', $parts)));
     }
 }
