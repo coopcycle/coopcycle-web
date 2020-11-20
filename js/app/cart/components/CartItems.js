@@ -5,7 +5,7 @@ import _ from 'lodash'
 
 import CartItem from './CartItem'
 import { removeItem, updateItemQuantity } from '../redux/actions'
-import { selectItems, selectShowPricesTaxExcluded } from '../redux/selectors'
+import { selectItems, selectItemsGroups, selectShowPricesTaxExcluded } from '../redux/selectors'
 
 class CartItems extends React.Component {
 
@@ -26,17 +26,15 @@ class CartItems extends React.Component {
     this.props.removeItem(itemID)
   }
 
-  render() {
+  renderItems(items) {
 
-    if (this.props.items.length === 0) {
-      return (
-        <div className="alert alert-warning">{ this.props.t("CART_EMPTY") }</div>
-      )
-    }
+    // Make sure items are always in the same order
+    // We order them by id asc
+    items.sort((a, b) => a.id - b.id)
 
     return (
-      <div className="cart__items">
-        { this.props.items.map((item, key) => (
+      <div>
+        { items.map((item, key) => (
           <CartItem
             key={ key }
             id={ item.id }
@@ -52,18 +50,46 @@ class CartItems extends React.Component {
     )
   }
 
+  render() {
+
+    if (this.props.items.length === 0) {
+      return (
+        <div className="alert alert-warning">{ this.props.t("CART_EMPTY") }</div>
+      )
+    }
+
+    if (_.size(this.props.itemsGroups) > 1) {
+
+      return (
+        <div className="cart__items">
+          { _.map(this.props.itemsGroups, (items, title) => {
+            return (
+              <>
+                <h5 className="text-muted">{ title }</h5>
+                { this.renderItems(items) }
+              </>
+            )
+          })}
+        </div>
+      )
+    }
+
+    return (
+      <div className="cart__items">
+        { this.renderItems(this.props.items) }
+      </div>
+    )
+  }
 }
 
 function mapStateToProps (state) {
 
   const items = selectItems(state)
-
-  // Make sure items are always in the same order
-  // We order them by id asc
-  items.sort((a, b) => a.id - b.id)
+  const itemsGroups = selectItemsGroups(state)
 
   return {
     items,
+    itemsGroups,
     showPricesTaxExcluded: selectShowPricesTaxExcluded(state),
   }
 }

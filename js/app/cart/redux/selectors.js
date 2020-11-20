@@ -15,6 +15,11 @@ export const selectIsCollectionEnabled = createSelector(
 
 export const selectItems = state => state.cart.items
 
+export const selectItemsGroups = createSelector(
+  selectItems,
+  (items) =>  _.groupBy(items, 'vendor.name')
+)
+
 export const selectShowPricesTaxExcluded = createSelector(
   state => state.country,
   (country) => country === 'ca'

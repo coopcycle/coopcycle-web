@@ -478,6 +478,10 @@ Feature: Carts
                   "amount":@integer@
                 }
               ]
+            },
+            "vendor": {
+              "@id":@string@,
+              "name":@string@
             }
           }
         ],
@@ -573,6 +577,10 @@ Feature: Carts
                   "amount":@integer@
                 }
               ]
+            },
+            "vendor": {
+              "@id":@string@,
+              "name":@string@
             }
           }
         ],
@@ -668,6 +676,10 @@ Feature: Carts
                   "amount":@integer@
                 }
               ]
+            },
+            "vendor": {
+              "@id":@string@,
+              "name":@string@
             }
           }
         ],
