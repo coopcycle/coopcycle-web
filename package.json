@@ -65,7 +65,7 @@
     "cleave.js": "^1.6.0",
     "clipboard": "^2.0.6",
     "codemirror": "^5.58.2",
-    "coopcycle-frontend-js": "git+https://git@github.com/coopcycle/coopcycle-frontend-js.git#1.1.0-beta.1",
+    "coopcycle-frontend-js": "git+https://git@github.com/coopcycle/coopcycle-frontend-js.git#2.0.0-beta.2",
     "core-js": "^3.6.5",
     "croppie": "^2.6.5",
     "cypress": "^4.8.0",
