@@ -9,10 +9,14 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        {% if is_granted('ROLE_ADMIN') and order.restaurant is not empty %}
+        {% if is_granted('ROLE_ADMIN') and order.hasVendor() %}
+        {% if order.vendor.isHub() %}
+        <span>{{ order.vendor.name }}</span>
+        {% else %}
         <a href="{{ path('admin_restaurant', { id: order.restaurant.id  }) }}">{{ order.restaurant.name }}</a>
         {% endif %}
         <span class="mx-1">›</span>
+        {% endif %}
         <span>{{ 'order.summary.heading'|trans({ '%number%': order.number, '%id%': order.id }) }}</span>
       </span>
     </div>

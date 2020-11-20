@@ -986,4 +986,30 @@ class Order extends BaseOrder implements OrderInterface
     {
         $this->vendor = $vendor;
     }
+
+    public function getItemsGroupedByVendor()
+    {
+        $hash = new \SplObjectStorage();
+
+        foreach ($this->getItems() as $item) {
+
+            $product = $item->getVariant()->getProduct();
+            $hub = $this->getVendor()->getHub();
+
+            $vendor = null;
+            foreach ($hub->getRestaurants() as $restaurant) {
+                if ($restaurant->hasProduct($product)) {
+                    $vendor = $restaurant;
+                    break;
+                }
+            }
+
+            if ($vendor) {
+                $items = isset($hash[$vendor]) ? $hash[$vendor] : [];
+                $hash[$vendor] = array_merge($items, [ $item ]);
+            }
+        }
+
+        return $hash;
+    }
 }

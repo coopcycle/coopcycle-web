@@ -1,0 +1,28 @@
+{% set options_adjustments = item.getAdjustments('menu_item_modifier') %}
+{% set packaging_adjustments = item.getAdjustments('reusable_packaging') %}
+<tr>
+  <td>
+    <span class="text-muted">{{ item.quantity }} ×</span> {{ item.variant.name }}
+    {% if options_adjustments|length > 0 or packaging_adjustments|length > 0 %}
+    <ul class="list-unstyled">
+    {% for adjustment in options_adjustments %}
+      <li>
+        <small class="text-muted">
+          {{ adjustment.label }} {{ adjustment.amount|price_format }}
+        </small>
+      </li>
+    {% endfor %}
+    {% for adjustment in packaging_adjustments %}
+      <li>
+        <small class="text-muted">
+          {{ adjustment.label }} {{ adjustment.amount|price_format }}
+        </small>
+      </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+  </td>
+  <td class="text-right">
+    {{ item.total|price_format }}
+  </td>
+</tr>
