@@ -37,8 +37,7 @@ class PublishToRedis
                 return;
             }
 
-            $restaurant = $order->getRestaurant();
-            $owners = $restaurant->getOwners();
+            $owners = $order->getVendor()->getOwners();
 
             if (count($owners) === 0) {
                 return;

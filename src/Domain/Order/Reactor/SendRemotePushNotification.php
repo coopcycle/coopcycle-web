@@ -46,7 +46,7 @@ class SendRemotePushNotification
             );
 
             // Send to owners
-            $owners = $order->getRestaurant()->getOwners()->toArray();
+            $owners = $order->getVendor()->getOwners()->toArray();
 
             if (count($owners) > 0) {
 
@@ -59,10 +59,10 @@ class SendRemotePushNotification
                     ],
                 ];
 
-                $users = array_unique($owners);
                 $users = array_map(function ($user) {
                     return $user->getUsername();
                 }, $owners);
+                $users = array_unique($owners);
 
                 $this->messageBus->dispatch(
                     new PushNotification($message, $users, $data)

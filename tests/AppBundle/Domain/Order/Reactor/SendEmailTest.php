@@ -6,12 +6,16 @@ use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Reactor\SendEmail;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
+use AppBundle\Sylius\Product\ProductInterface;
+use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -27,12 +31,27 @@ class SendEmailTest extends TestCase
         $this->emailManager = $this->prophesize(EmailManager::class);
         $this->settingsManager = $this->prophesize(SettingsManager::class);
         $this->eventBus = $this->prophesize(MessageBus::class);
+        $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
         $this->sendEmail = new SendEmail(
             $this->emailManager->reveal(),
             $this->settingsManager->reveal(),
-            $this->eventBus->reveal()
+            $this->eventBus->reveal(),
+            $this->localBusinessRepository->reveal()
         );
+    }
+
+    private function createOrderItem(ProductInterface $product)
+    {
+        $item = $this->prophesize(OrderItemInterface::class);
+
+        $variant = $this->prophesize(ProductVariantInterface::class);
+
+        $variant->getProduct()->willReturn($product);
+
+        $item->getVariant()->willReturn($variant->reveal());
+
+        return $item->reveal();
     }
 
     public function testOrderCreatedWithRestaurant()
@@ -82,7 +101,7 @@ class SendEmailTest extends TestCase
             ->willReturn(new \Swift_Message());
 
         $this->emailManager
-            ->createOrderCreatedMessageForOwner($order->reveal())
+            ->createOrderCreatedMessageForOwner($order->reveal(), Argument::type(LocalBusiness::class))
             ->willReturn(new \Swift_Message());
 
         $this->emailManager
@@ -118,6 +137,9 @@ class SendEmailTest extends TestCase
         $hub->addRestaurant($restaurant1->reveal());
         $hub->addRestaurant($restaurant2->reveal());
 
+        $product1 = $this->prophesize(ProductInterface::class);
+        $product2 = $this->prophesize(ProductInterface::class);
+
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->isFoodtech()
@@ -128,6 +150,20 @@ class SendEmailTest extends TestCase
         $order
             ->getVendor()
             ->willReturn(Vendor::withHub($hub));
+        $order
+            ->getItems()
+            ->willReturn(new ArrayCollection([
+                $this->createOrderItem($product1->reveal()),
+                $this->createOrderItem($product2->reveal()),
+            ]));
+
+        $this->localBusinessRepository
+            ->findOneByProduct($product1->reveal())
+            ->willReturn($restaurant1->reveal());
+
+        $this->localBusinessRepository
+            ->findOneByProduct($product2->reveal())
+            ->willReturn($restaurant2->reveal());
 
         $this->emailManager
             ->createOrderCreatedMessageForCustomer($order->reveal())
@@ -142,12 +178,12 @@ class SendEmailTest extends TestCase
             ->willReturn(new \Swift_Message());
 
         $this->emailManager
-            ->createOrderCreatedMessageForOwner($order->reveal())
+            ->createOrderCreatedMessageForOwner($order->reveal(), Argument::type(LocalBusiness::class))
             ->willReturn(new \Swift_Message());
 
         $this->emailManager
             ->sendTo(Argument::type(\Swift_Message::class), Argument::any())
-            ->shouldBeCalledTimes(4);
+            ->shouldBeCalledTimes(5);
 
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
     }

@@ -133,6 +133,7 @@ services:
       - '@coopcycle.email_manager'
       - '@coopcycle.settings_manager'
       - '@event_bus'
+      - '@AppBundle\Entity\LocalBusinessRepository'
     tags:
         - name: event_subscriber
           subscribes_to: order:created

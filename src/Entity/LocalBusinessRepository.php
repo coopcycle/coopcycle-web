@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
+use AppBundle\Entity\Sylius\Product;
 use AppBundle\Utils\RestaurantFilter;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
@@ -224,5 +225,15 @@ class LocalBusinessRepository extends EntityRepository
         ;
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findOneByProduct($product)
+    {
+        $qb = $this->createQueryBuilder('r');
+        $qb->innerJoin('r.products', 'rp');
+        $qb->andWhere('rp.id = :product');
+        $qb->setParameter('product', $product);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }
