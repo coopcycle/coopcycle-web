@@ -5,7 +5,11 @@
 {% endif %}
 <span>
 {% if order.hasVendor() %}
-  {% if not order.vendor.isHub() %}
+  {% if order.vendor.isHub() %}
+    {% trans with {
+        '%name%': order.vendor.name
+      } %}order.list.summary.hub.text{% endtrans %}
+  {% else %}
     {% if order.vendor.restaurant.deleted or not order.vendor.restaurant.enabled %}
       {% trans with {
         '%restaurant_name%': order.vendor.restaurant.name

@@ -1126,3 +1126,4 @@ promotion_action.percentage_discount: '%percentage% discount'
 promotion_action.delivery_percentage_discount: '%percentage% discount on delivery fees'
 promotion_action.fixed_discount: '%amount% discount'
 form.fulfillment_method.options.round.label: Slot approximation
+order.list.summary.hub.text: Order at hub %name%
