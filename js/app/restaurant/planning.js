@@ -82,7 +82,7 @@ class ClosingRulesCalendar extends React.Component {
   }
 
   onDeleteClick(closingRule) {
-    if (window.confirm('are you sure ?')) {
+    if (window.confirm('Are you sure ?')) {
       axios({
         method: 'DELETE',
         url: `${baseURL}/api/opening_hours_specifications/${closingRule.id}`,

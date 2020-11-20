@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "delete"={
  *       "method"="DELETE",
  *       "controller"=DeleteClosingRule::class,
- *       "security"="is_granted('ROLE_RESTAURANT') and is_granted('delete', object)"
+ *       "security"="is_granted('delete', object)"
  *     },
  *   },
  * )
