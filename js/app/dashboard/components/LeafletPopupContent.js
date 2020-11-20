@@ -27,9 +27,19 @@ export default class extends Component {
           <span>
             { i18n.t('ADMIN_DASHBOARD_TASK_CAPTION_SHORT', { id: task.id }) }
           </span>
-          <a className="task__edit" onClick={ this.props.onEditClick }>
+          <a className="task__edit" href="#" onClick={ (e) => {
+            e.preventDefault()
+            this.props.onEditClick()
+          }}>
             <i className="fa fa-pencil"></i>
           </a>
+          <a className="task__edit" href="#" onClick={ (e) => {
+            e.preventDefault()
+            this.props.onRepositionClick(task)
+          }}>
+            <i className="fa fa-dot-circle-o"></i>
+          </a>
+
         </div>
         <div>
           { addressAsText(task.address) }

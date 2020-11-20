@@ -88,6 +88,7 @@ export default class MapProxy {
     this.drawPolylineLayerGroup.addTo(this.map)
 
     this.onEditClick = options.onEditClick
+    this.onRepositionClick = options.onRepositionClick
 
     this.tasksLayerGroup = new L.LayerGroup()
     this.tasksLayerGroup.addTo(this.map)
@@ -154,7 +155,8 @@ export default class MapProxy {
       render(<LeafletPopupContent
         task={ task }
         ref={ popupComponent }
-        onEditClick={ () => this.onEditClick(task) } />, el, cb)
+        onEditClick={ () => this.onEditClick(task) }
+        onRepositionClick={ this.onRepositionClick } />, el, cb)
 
       const popup = L.popup()
         .setContent(el)

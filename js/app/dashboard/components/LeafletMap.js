@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
-import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction } from '../redux/actions'
+import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction, openMarkerModal } from '../redux/actions'
 import { selectFilteredTasks } from '../redux/selectors'
 import { selectAllTasks, selectTaskLists, selectSelectedDate } from '../../coopcycle-frontend-js/lastmile/redux'
 
@@ -40,6 +40,7 @@ class LeafletMap extends Component {
     })
     this.proxy = new MapProxy(this.map, {
       onEditClick: this.props.setCurrentTask,
+      onRepositionClick: this.props.openMarkerModal,
       onTaskMouseDown: task => {
         if (task.isAssigned) {
           this.proxy.disableDragging()
@@ -196,6 +197,7 @@ function mapDispatchToProps (dispatch) {
     assignAfter: (username, task, after) => dispatch(assignAfter(username, task, after)),
     selectTask: task => dispatch(selectTask(task)),
     selectTasks: tasks => dispatch(selectTasksAction(tasks)),
+    openMarkerModal: (task) => dispatch(openMarkerModal(task)),
   }
 }
 

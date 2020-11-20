@@ -18,7 +18,8 @@ import {
   closeSettings,
   closeImportModal,
   modifyTaskList,
-  clearSelectedTasks } from './redux/actions'
+  clearSelectedTasks,
+  closeMarkerModal } from './redux/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
 import ContextMenu from './components/ContextMenu'
@@ -27,6 +28,7 @@ import FiltersModalContent from './components/FiltersModalContent'
 import SettingsModalContent from './components/SettingsModalContent'
 import ImportModalContent from './components/ImportModalContent'
 import SearchPanel from './components/SearchPanel'
+import MarkerModalContent from './components/MarkerModalContent'
 
 class DashboardApp extends React.Component {
 
@@ -192,6 +194,14 @@ class DashboardApp extends React.Component {
           shouldCloseOnOverlayClick={ true }>
           <ImportModalContent />
         </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.markerModalIsOpen }
+          onRequestClose={ () => this.props.closeMarkerModal() }
+          className="ReactModal__Content--reposition-marker"
+          shouldCloseOnOverlayClick={ true }>
+          <MarkerModalContent />
+        </Modal>
         <ToastContainer />
       </div>
     )
@@ -210,6 +220,7 @@ function mapStateToProps(state) {
     allTasks: selectAllTasks(state),
     taskLists: selectTaskLists(state),
     selectedTasks: state.selectedTasks,
+    markerModalIsOpen: state.lastmile.ui.markerModalIsOpen,
   }
 }
 
@@ -226,6 +237,7 @@ function mapDispatchToProps (dispatch) {
     closeImportModal: () => dispatch(closeImportModal()),
     modifyTaskList: (username, tasks) => dispatch(modifyTaskList(username, tasks)),
     clearSelectedTasks: () => dispatch(clearSelectedTasks()),
+    closeMarkerModal: () => dispatch(closeMarkerModal()),
   }
 }
 

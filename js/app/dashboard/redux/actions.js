@@ -133,6 +133,8 @@ export const IMPORT_SUCCESS = 'IMPORT_SUCCESS'
 export const IMPORT_ERROR = 'IMPORT_ERROR'
 export const OPEN_IMPORT_MODAL = 'OPEN_IMPORT_MODAL'
 export const CLOSE_IMPORT_MODAL = 'CLOSE_IMPORT_MODAL'
+export const OPEN_MARKER_MODAL = 'OPEN_MARKER_MODAL'
+export const CLOSE_MARKER_MODAL = 'CLOSE_MARKER_MODAL'
 
 function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
@@ -449,6 +451,17 @@ function closeImportModal() {
   return { type: CLOSE_IMPORT_MODAL }
 }
 
+export function openMarkerModal(task) {
+  return { type: OPEN_MARKER_MODAL, task }
+}
+
+export function closeMarkerModal() {
+  return { type: CLOSE_MARKER_MODAL }
+}
+
+// FIXME
+// The name is bad. It does not persist data on the server
+// It just updates the state
 function updateTask(task) {
   return function(dispatch, getState) {
     let date = selectSelectedDate(getState())
@@ -459,6 +472,9 @@ function updateTask(task) {
   }
 }
 
+// FIXME
+// The name is bad. It sends a POST or PUT request to the API
+// Maybe something like "postTask", or "saveTask"?
 function createTask(task) {
 
   return function(dispatch, getState) {
