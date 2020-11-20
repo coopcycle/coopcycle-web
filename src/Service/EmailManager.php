@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Task;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -103,15 +104,27 @@ class EmailManager
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
 
-    public function createOrderCreatedMessageForOwner(OrderInterface $order)
+    public function createOrderCreatedMessageForOwner(OrderInterface $order, LocalBusiness $restaurant = null)
     {
+        if (null === $restaurant) {
+            $vendor = $order->getVendor();
+            if ($vendor->isHub()) {
+                // To stay retro-compatible
+                // FIXME
+                // This doesn't mean that the order contains a product from the merchant
+                $restaurant = $vendor->getHub()->getRestaurants()->first();
+            } else {
+                $restaurant = $vendor->getRestaurant();
+            }
+        }
+
         $subject = $this->translator->trans(
             'owner.order.created.subject',
             ['%order.number%' => $order->getNumber()],
             'emails');
-        $body = $this->mjml->render($this->templating->render('emails/order/created.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/order/created_for_owner.mjml.twig', [
             'order' => $order,
-            'is_owner' => true
+            'restaurant' => $restaurant,
         ]));
 
         return $this->createHtmlMessage($subject, $body);
