@@ -33,8 +33,8 @@ export const onSuggestionsFetchRequested = function({ value }) {
     query: value,
     type: 'address',
     language: this.language,
-    countries: [ this.country ],
     hitsPerPage: 7,
+    getRankingInfo: true,
   }
 
   if (aroundLatLngValue) {
@@ -42,6 +42,11 @@ export const onSuggestionsFetchRequested = function({ value }) {
       ...searchParams,
       aroundLatLng: aroundLatLngValue,
       aroundRadius: 50000,
+    }
+  } else {
+    searchParams = {
+      ...searchParams,
+      countries: [ this.country ],
     }
   }
 
@@ -85,8 +90,8 @@ export const geocode = function (text, country = 'en', language = 'en') {
       query: text,
       type: 'address',
       language,
-      countries: [ country ],
       hitsPerPage: 1,
+      getRankingInfo: true,
     }
 
     if (aroundLatLngValue) {
@@ -94,6 +99,11 @@ export const geocode = function (text, country = 'en', language = 'en') {
         ...searchParams,
         aroundLatLng: aroundLatLngValue,
         aroundRadius: 50000,
+      }
+    } else {
+      searchParams = {
+        ...searchParams,
+        countries: [ country ],
       }
     }
 
