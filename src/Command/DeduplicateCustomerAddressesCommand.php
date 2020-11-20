@@ -179,7 +179,7 @@ Class DeduplicateCustomerAddressesCommand extends ContainerAwareCommand
                     $updateOrderAddressSQL =
                         sprintf('UPDATE sylius_order SET shipping_address_id = :best_address_id WHERE shipping_address_id IN (:other_addresses_ids)');
                     $deleteCustomerAddressesSQL =
-                        sprintf('DELETE FROM sylius_customer_address WHERE address_id IN (:other_addresses_ids)');
+                        sprintf('DELETE FROM sylius_customer_address WHERE customer_id = :customer_id AND address_id IN (:other_addresses_ids)');
                     $deleteAddressesSQL =
                         sprintf('DELETE FROM address WHERE id IN (:other_addresses_ids)');
 
@@ -193,6 +193,7 @@ Class DeduplicateCustomerAddressesCommand extends ContainerAwareCommand
                     ]);
 
                     $this->debugStatement($deleteCustomerAddressesSQL, [
+                        'customer_id' => $customer['customer_id'],
                         'other_addresses_ids' => $otherAddressesIds,
                     ]);
                     $this->debugStatement($deleteAddressesSQL, [
@@ -213,8 +214,8 @@ Class DeduplicateCustomerAddressesCommand extends ContainerAwareCommand
 
                         $this->connection->executeQuery(
                             $deleteCustomerAddressesSQL,
-                            [ 'other_addresses_ids' => $otherAddressesIds ],
-                            [ 'other_addresses_ids' => Connection::PARAM_INT_ARRAY ]
+                            [ 'customer_id' => $customer['customer_id'], 'other_addresses_ids' => $otherAddressesIds ],
+                            [ 'customer_id' => ParameterType::INTEGER,   'other_addresses_ids' => Connection::PARAM_INT_ARRAY ]
                         );
                         $this->connection->executeQuery(
                             $deleteAddressesSQL,
