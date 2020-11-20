@@ -136,7 +136,7 @@ const generic = {
 
       suggestions.push({
         title: this.props.t('SAVED_ADDRESSES'),
-        suggestions: addressesAsSuggestions
+        suggestions: addressesAsSuggestions.slice(0, 5),
       })
     }
 
