@@ -89,19 +89,72 @@ Class DeduplicateCustomerAddressesCommand extends ContainerAwareCommand
             }
 
             $tableData = [];
+            $sortedDuplicates = [];
             foreach ($duplicates as $coords => $addresses) {
+
+                usort($addresses, function ($a, $b) {
+
+                    // Both have description
+                    if (!empty($a['description']) && !empty($b['description'])) {
+
+                        // Both have telephone
+                        if (!empty($a['telephone']) && !empty($b['telephone'])) {
+
+                            // Both have contact name
+                            if (!empty($a['contact_name']) && !empty($b['contact_name'])) {
+                                return $a['id'] > $b['id'] ? -1 : 1;
+                            }
+
+                            if (!empty($a['contact_name']) && empty($b['contact_name'])) {
+                                return -1;
+                            }
+
+                            if (empty($a['contact_name']) && !empty($b['contact_name'])) {
+                                return 1;
+                            }
+
+                            return $a['id'] > $b['id'] ? -1 : 1;
+                        }
+
+                        if (!empty($a['telephone']) && empty($b['telephone'])) {
+                            return -1;
+                        }
+
+                        if (empty($a['telephone']) && !empty($b['telephone'])) {
+                            return 1;
+                        }
+
+                        return $a['id'] > $b['id'] ? -1 : 1;
+                    }
+
+                    if (!empty($a['description']) && empty($b['description'])) {
+                        return -1;
+                    }
+
+                    if (empty($a['description']) && !empty($b['description'])) {
+                        return -1;
+                    }
+
+                    return $a['id'] > $b['id'] ? -1 : 1;
+                });
+
+                $sortedDuplicates[$coords] = $addresses;
+            }
+
+            foreach ($sortedDuplicates as $coords => $addresses) {
                 foreach ($addresses as $addr) {
                     $tableData[] = [
                         $email,
                         $addr['id'],
                         $addr['street_address'],
-                        $addr['coords']
+                        $addr['telephone'],
+                        $addr['contact_name']
                     ];
                 }
             }
 
             $this->io->table(
-                ['Email', 'ID', 'Street address', 'Coords'],
+                ['Email', 'ID', 'Street address', 'Telephone', 'Contact name'],
                 $tableData
             );
         }
