@@ -122,5 +122,6 @@ services:
   AppBundle\Command\BuildIndexCommand:
     arguments:
       $projectDir: '%kernel.project_dir%'
+      $sslmode: '%env(COOPCYCLE_POSTGRES_SSLMODE)%'
     tags:
       - { name: 'console.command', command: 'coopcycle:index:build' }

@@ -17,10 +17,11 @@ Class BuildIndexCommand extends ContainerAwareCommand
     private $connection;
     private $projectDir;
 
-    public function __construct(Connection $connection, string $projectDir)
+    public function __construct(Connection $connection, string $projectDir, string $sslmode)
     {
         $this->connection = $connection;
         $this->projectDir = $projectDir;
+        $this->sslmode    = $sslmode;
 
         parent::__construct();
     }
@@ -50,9 +51,11 @@ Class BuildIndexCommand extends ContainerAwareCommand
         $tnt->loadConfig([
             'driver'    => 'pgsql',
             'host'      => $this->connection->getHost(),
+            'port'      => $this->connection->getPort(),
             'database'  => $this->connection->getDatabase(),
             'username'  => $this->connection->getUsername(),
             'password'  => $this->connection->getPassword(),
+            'sslmode'   => $this->sslmode,
             'storage'   => $tntSearchDir,
             'stemmer'   => PorterStemmer::class // optional
         ]);
