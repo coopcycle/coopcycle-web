@@ -15,6 +15,7 @@ export default (state = initialState, action) => {
     case MODIFY_TASK_LIST_REQUEST: {
       let entity = state.byUsername[action.username]
 
+      // eslint-disable-next-line no-console
       console.assert(entity != null, `entity is null: username: ${action.username}`)
 
       let newEntity = {
