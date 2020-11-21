@@ -116,9 +116,11 @@ services:
       - { name: 'console.command', command: 'coopcycle:notifications:order' }
 
   AppBundle\Command\DeduplicateCustomerAddressesCommand:
-    # arguments:
-    #   $orderRepository: '@sylius.repository.order'
-    #   $websocket: '@coopcycle.domain.order.reactor.publish_to_redis'
-    #   $push: '@coopcycle.domain.order.reactor.send_remote_push_notification'
     tags:
       - { name: 'console.command', command: 'coopcycle:data:deduplicate-addresses' }
+
+  AppBundle\Command\BuildIndexCommand:
+    arguments:
+      $projectDir: '%kernel.project_dir%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:index:build' }
