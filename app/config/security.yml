@@ -167,8 +167,17 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
+        # Disable session to improve performance
+        # TraceableFirewallListener will be skipped
+
         restaurant_fulfillment_timing:
             pattern: ^/restaurant/[0-9]+/timing$
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+
+        search_restaurants:
+            pattern: ^/search/restaurants
             methods: [ GET ]
             stateless: true
             anonymous: ~
