@@ -45,8 +45,10 @@ Class BuildIndexCommand extends ContainerAwareCommand
         $tntSearchDir = $this->projectDir . '/var/tntsearch';
 
         if (!file_exists($tntSearchDir)) {
-            mkdir($tntSearchDir, 0755);
+            mkdir($tntSearchDir);
         }
+
+        chmod($tntSearchDir, 0775);
 
         $tnt->loadConfig([
             'driver'    => 'pgsql',
