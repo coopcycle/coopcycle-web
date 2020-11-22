@@ -3,25 +3,29 @@
 namespace AppBundle\Command;
 
 use Doctrine\DBAL\Connection;
+use Psonic\Client;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use TeamTNT\TNTSearch\TNTSearch;
-use TeamTNT\TNTSearch\Stemmer\PorterStemmer;
 
 Class BuildIndexCommand extends ContainerAwareCommand
 {
     private $connection;
-    private $projectDir;
+    private $ingestClient;
+    private $controlClient;
+    private $sonicSecretPassword;
+    private $namespace;
 
-    public function __construct(Connection $connection, string $projectDir, string $sslmode)
+    public function __construct(Connection $connection, Client $ingestClient, Client $controlClient, string $sonicSecretPassword, string $namespace)
     {
         $this->connection = $connection;
-        $this->projectDir = $projectDir;
-        $this->sslmode    = $sslmode;
+        $this->ingestClient = $ingestClient;
+        $this->controlClient = $controlClient;
+        $this->sonicSecretPassword = $sonicSecretPassword;
+        $this->namespace = $namespace;
 
         parent::__construct();
     }
@@ -40,31 +44,25 @@ Class BuildIndexCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $tnt = new TNTSearch;
+        $ingest  = new \Psonic\Ingest($this->ingestClient);
+        $control = new \Psonic\Control($this->controlClient);
 
-        $tntSearchDir = $this->projectDir . '/var/tntsearch';
+        $ingest->connect($this->sonicSecretPassword);
+        $control->connect($this->sonicSecretPassword);
 
-        if (!file_exists($tntSearchDir)) {
-            mkdir($tntSearchDir);
+        $stmt = $this->connection->executeQuery('SELECT id, name FROM restaurant');
+
+        $this->io->text(sprintf('Indexing restaurants into collection "restaurants" of bucket "%s"', $this->namespace));
+
+        while ($restaurant = $stmt->fetch()) {
+            $response = $ingest->push('restaurants', $this->namespace, $restaurant['id'], $restaurant['name']);
+            $status = $response->getStatus(); // Should be "OK"
         }
 
-        chmod($tntSearchDir, 0775);
+        $control->consolidate();
 
-        $tnt->loadConfig([
-            'driver'    => 'pgsql',
-            'host'      => $this->connection->getHost(),
-            'port'      => $this->connection->getPort(),
-            'database'  => $this->connection->getDatabase(),
-            'username'  => $this->connection->getUsername(),
-            'password'  => $this->connection->getPassword(),
-            'sslmode'   => $this->sslmode,
-            'storage'   => $tntSearchDir,
-            'stemmer'   => PorterStemmer::class // optional
-        ]);
-
-        $indexer = $tnt->createIndex('restaurants.index');
-        $indexer->query('SELECT id, name FROM restaurant;');
-        $indexer->run();
+        $ingest->disconnect();
+        $control->disconnect();
 
         return 0;
     }

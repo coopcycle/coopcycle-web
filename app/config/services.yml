@@ -919,3 +919,23 @@ services:
   AppBundle\Utils\OptionsPayloadConverter:
     arguments:
       $productOptionValueRepository: '@sylius.repository.product_option_value'
+
+  Psonic\Client:
+    arguments:
+      - '%env(SONIC_HOST)%'
+      - '%env(SONIC_PORT)%'
+      - 30
+
+  sonic.ingest.client:
+    class: Psonic\Client
+    arguments:
+      - '%env(SONIC_HOST)%'
+      - '%env(SONIC_PORT)%'
+      - 30
+
+  sonic.control.client:
+    class: Psonic\Client
+    arguments:
+      - '%env(SONIC_HOST)%'
+      - '%env(SONIC_PORT)%'
+      - 30

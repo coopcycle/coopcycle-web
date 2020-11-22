@@ -114,7 +114,8 @@
         "spatie/guzzle-rate-limiter-middleware": "^2.0",
         "geocoder-php/photon-provider": "^0.2.0",
         "geocoder-php/algolia-places-provider": "^0.2.0",
-        "teamtnt/tntsearch": "dev-undefined-mysql-constant as 2.4"
+        "teamtnt/tntsearch": "dev-undefined-mysql-constant as 2.4",
+        "ppshobi/psonic": "^1.2"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

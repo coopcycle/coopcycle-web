@@ -121,7 +121,9 @@ services:
 
   AppBundle\Command\BuildIndexCommand:
     arguments:
-      $projectDir: '%kernel.project_dir%'
-      $sslmode: '%env(COOPCYCLE_POSTGRES_SSLMODE)%'
+      $ingestClient: '@sonic.ingest.client'
+      $controlClient: '@sonic.control.client'
+      $sonicSecretPassword: '%env(SONIC_SECRET_PASSWORD)%'
+      $namespace: '%sonic_namespace%'
     tags:
       - { name: 'console.command', command: 'coopcycle:index:build' }

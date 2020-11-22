@@ -42,6 +42,8 @@ parameters:
     sentry_public_dsn: "%env(COOPCYCLE_SENTRY_DSN)%"
     foodtech_enabled: "%env(bool:COOPCYCLE_FOODTECH_ENABLED)%"
     b2b_enabled: '%env(bool:COOPCYCLE_B2B_ENABLED)%'
+    sonic_namespace: '%database_name%'
+    sonic_secret_password: '%env(SONIC_SECRET_PASSWORD)%'
 
 services:
     tag_manager.cache:

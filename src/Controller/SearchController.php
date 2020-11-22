@@ -4,58 +4,37 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\LocalBusinessRepository;
 use Doctrine\DBAL\Connection;
+use Psonic\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use TeamTNT\TNTSearch\TNTSearch;
-use TeamTNT\TNTSearch\Stemmer\PorterStemmer;
 
 class SearchController extends AbstractController
 {
     /**
      * @Route("/search/restaurants", name="search_restaurants")
      */
-    public function restaurantsAction(Request $request, Connection $connection, LocalBusinessRepository $repository)
+    public function restaurantsAction(Request $request, LocalBusinessRepository $repository, Client $client)
     {
-        $tnt = new TNTSearch;
+        $search = new \Psonic\Search($client);
+        $search->connect($this->getParameter('sonic_secret_password'));
 
-        $projectDir = $this->getParameter('kernel.project_dir');
-        $tntSearchDir = $projectDir . '/var/tntsearch';
+        $ids = $search->query('restaurants', $this->getParameter('sonic_namespace'), $request->query->get('q'));
 
-        if (!file_exists($tntSearchDir)) {
-            mkdir($tntSearchDir, 0755);
-        }
+        $search->disconnect();
 
-        if (!file_exists($tntSearchDir . '/restaurants.index')) {
-            return new JsonResponse(['hits' => []]);
-        }
-
-        $tnt->loadConfig([
-            'driver'    => 'pgsql',
-            'host'      => $connection->getHost(),
-            'database'  => $connection->getDatabase(),
-            'username'  => $connection->getUsername(),
-            'password'  => $connection->getPassword(),
-            'storage'   => $tntSearchDir,
-            'stemmer'   => PorterStemmer::class // optional
-        ]);
-
-        $tnt->selectIndex('restaurants.index');
-
-        $res = $tnt->search($request->query->get('q'), 5);
-
-        if ($res['hits'] === 0) {
+        if (count($ids) === 0) {
             return new JsonResponse(['hits' => []]);
         }
 
         // to display the results you need an additional query against your application database
         // SELECT * FROM articles WHERE id IN $res ORDER BY FIELD(id, $res);
         $qb = $repository->createQueryBuilder('r');
-        $qb->add('where', $qb->expr()->in('r.id', $res['ids']));
+        $qb->add('where', $qb->expr()->in('r.id', $ids));
 
         // TODO Filter disabled restaurants
-        // TODO Use usort to reorder, ORDER BY FIELD(...) is only for MySQL
+        // TODO Use usort to reorder
 
         $results = $qb->getQuery()->getResult();
 
