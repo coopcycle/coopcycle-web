@@ -4,7 +4,6 @@ namespace AppBundle\Action;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Message\UpdateLocation as UpdateLocationMessage;
-use Doctrine\Persistence\ManagerRegistry;
 use Redis;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -17,7 +16,6 @@ class UpdateLocation
 {
     use TokenStorageTrait;
 
-    protected $doctrine;
     protected $messageBus;
     protected $tile38;
     protected $fleetKey;
@@ -25,14 +23,12 @@ class UpdateLocation
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        ManagerRegistry $doctrine,
         MessageBusInterface $messageBus,
         Redis $tile38,
         string $fleetKey,
         LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->doctrine = $doctrine;
         $this->messageBus = $messageBus;
         $this->tile38 = $tile38;
         $this->fleetKey = $fleetKey;
