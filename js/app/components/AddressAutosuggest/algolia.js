@@ -63,7 +63,7 @@ export const onSuggestionsFetchRequested = function({ value }) {
       hit,
     }))
 
-    this._autocompleteCallback(predictionsAsSuggestions)
+    this._autocompleteCallback(predictionsAsSuggestions, value)
   })
 }
 

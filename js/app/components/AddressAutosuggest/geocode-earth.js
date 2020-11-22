@@ -53,7 +53,7 @@ export const onSuggestionsFetchRequested = function({ value }) {
         'geocode-earth': feature,
       }))
 
-      this._autocompleteCallback(predictionsAsSuggestions)
+      this._autocompleteCallback(predictionsAsSuggestions, value)
     })
 }
 

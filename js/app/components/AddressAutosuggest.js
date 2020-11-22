@@ -146,6 +146,7 @@ const generic = {
       suggestions,
       multiSection,
       sessionToken: null,
+      lastValueWithResults: '',
     }
   },
   onSuggestionsFetchRequested: function() {
@@ -269,7 +270,7 @@ class AddressAutosuggest extends Component {
 
     this.onSuggestionsFetchRequested = ({ value }) => {
 
-      // We still to check if text is not empty,
+      // We still need to check if text is not empty here,
       // because shouldRenderSuggestions() may return true even when nothing was typed
       // This happens when there are saved adresses
       if (value.trimStart().length === 0) {
@@ -335,10 +336,12 @@ class AddressAutosuggest extends Component {
     }
   }
 
-  _autocompleteCallback(predictionsAsSuggestions) {
+  _autocompleteCallback(predictionsAsSuggestions, value) {
 
     let suggestions = []
     let multiSection = false
+
+    const { lastValueWithResults } = this.state
 
     if (this.props.addresses.length > 0) {
 
@@ -379,13 +382,30 @@ class AddressAutosuggest extends Component {
       } else {
         suggestions = predictionsAsSuggestions
       }
+
     } else {
       suggestions = predictionsAsSuggestions
+    }
+
+    // UX optimization
+    // When there are no suggestions returned by the autocomplete service,
+    // we keep showing the previously returned suggestions.
+    // This is useful because some users think they have to type their apartment number
+    //
+    // Ex:
+    // The user types "4 av victoria paris 4" -> 2 suggestions
+    // The user types "4 av victoria paris 4 bâtiment B" -> 0 suggestions
+    if (predictionsAsSuggestions.length === 0 &&
+      lastValueWithResults.length > 0 &&
+      value.length > lastValueWithResults.length &&
+      value.includes(lastValueWithResults)) {
+      return
     }
 
     this.setState({
       suggestions,
       multiSection,
+      lastValueWithResults: predictionsAsSuggestions.length > 0 ? value : ''
     })
   }
 

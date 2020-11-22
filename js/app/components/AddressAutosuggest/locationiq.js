@@ -35,7 +35,7 @@ export const onSuggestionsFetchRequested = function({ value }) {
         locationiq: result,
       }))
 
-      this._autocompleteCallback(predictionsAsSuggestions)
+      this._autocompleteCallback(predictionsAsSuggestions, value)
     })
 }
 
