@@ -17,14 +17,6 @@
         <join-column name="address_id" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
-    <one-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="pledge">
-      <cascade>
-        <cascade-all/>
-      </cascade>
-      <join-columns>
-        <join-column name="restaurant_id" referenced-column-name="id"/>
-      </join-columns>
-    </one-to-one>
     <one-to-many field="votes" target-entity="AppBundle\Entity\Restaurant\PledgeVote" mapped-by="pledge">
       <cascade>
         <cascade-all/>

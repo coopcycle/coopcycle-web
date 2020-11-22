@@ -81,7 +81,7 @@
         <cascade-persist/>
       </cascade>
     </many-to-one>
-    <one-to-one field="pledge" target-entity="AppBundle\Entity\Restaurant\Pledge" mapped-by="restaurant">
+    <one-to-one field="pledge" target-entity="AppBundle\Entity\Restaurant\Pledge">
       <cascade>
         <cascade-all/>
       </cascade>

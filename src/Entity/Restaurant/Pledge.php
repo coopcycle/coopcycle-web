@@ -27,8 +27,6 @@ class Pledge {
 
 	protected $createdAt;
 
-    protected $restaurant;
-
     protected $votes;
 
 
@@ -161,26 +159,6 @@ class Pledge {
     public function setVotes($votes)
     {
         $this->votes = $votes;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRestaurant()
-    {
-        return $this->restaurant;
-    }
-
-    /**
-     * @param mixed $restaurant
-     *
-     * @return self
-     */
-    public function setRestaurant($restaurant)
-    {
-        $this->restaurant = $restaurant;
 
         return $this;
     }

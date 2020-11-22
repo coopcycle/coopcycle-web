@@ -494,8 +494,6 @@ class LocalBusiness extends BaseLocalBusiness implements
      */
     public function setPledge($pledge)
     {
-        $pledge->setRestaurant($this);
-
         $this->pledge = $pledge;
 
         return $this;
