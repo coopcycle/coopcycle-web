@@ -113,6 +113,7 @@ framework:
             'AppBundle\Message\PushNotification': async
             'AppBundle\Message\ImportTasks': async
             'AppBundle\Message\Sms': async
+            'AppBundle\Message\UpdateLocation': async
     workflows:
         enabled: true
 
