@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
 import moment from 'moment'
+import _ from 'lodash'
 
 import i18n from '../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
@@ -14,7 +15,6 @@ import Navbar from './components/Navbar'
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
-import { taskUtils, taskListUtils } from '../coopcycle-frontend-js/lastmile/redux'
 let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve
 
 const mapLoaded = new Promise((resolve) => mapLoadedResolve = resolve)
@@ -25,30 +25,14 @@ function start() {
 
   const dashboardEl = document.getElementById('dashboard')
 
-  let date = moment(dashboardEl.dataset.date)
-  let tasks = JSON.parse(dashboardEl.dataset.tasks)
-
-  let taskEntities = taskUtils.upsertTasks({}, tasks)
-
-  // normalize data, keep only task ids, instead of the whole objects
-  let taskLists = JSON.parse(dashboardEl.dataset.taskLists)
-  taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
-  let taskListEntities = {}
-  for (let taskList of taskLists) {
-    taskListEntities[taskList[taskListUtils.taskListKey]] = taskList
-  }
+  const date = moment(dashboardEl.dataset.date)
+  const tasks = JSON.parse(dashboardEl.dataset.tasks)
 
   let preloadedState = {
-    lastmile : {
+    dispatch: {
+      unassignedTasks: _.filter(tasks, task => !task.isAssigned),
+      taskLists: JSON.parse(dashboardEl.dataset.taskLists),
       date,
-      entities: {
-        tasks: {
-          byId: taskEntities
-        },
-        taskLists: {
-          byUsername: taskListEntities
-        }
-      }
     },
     tags: JSON.parse(dashboardEl.dataset.tags),
     couriersList: JSON.parse(dashboardEl.dataset.couriersList),

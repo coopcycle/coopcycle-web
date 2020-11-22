@@ -7,7 +7,7 @@ import _ from 'lodash'
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
 import { selectIsVisibleTask } from '../redux/selectors'
-import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-frontend-js/lastmile/redux'
+import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-frontend-js/dispatch/redux'
 
 import { addressAsText } from '../utils'
 import TaskEta from './TaskEta'
