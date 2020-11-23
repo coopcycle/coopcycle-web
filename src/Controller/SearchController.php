@@ -8,21 +8,31 @@ use Psonic\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Intl\Languages;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SearchController extends AbstractController
 {
     /**
      * @Route("/search/restaurants", name="search_restaurants")
      */
-    public function restaurantsAction(Request $request, LocalBusinessRepository $repository, Client $client)
+    public function restaurantsAction(Request $request,
+        LocalBusinessRepository $repository,
+        Client $client,
+        UrlGeneratorInterface $urlGenerator)
     {
+        $locale = $request->getLocale();
+
         $search = new \Psonic\Search($client);
         $search->connect($this->getParameter('sonic_secret_password'));
 
-        $ids = $search->query('restaurants', $this->getParameter('sonic_namespace'), $request->query->get('q'));
+        $ids = $search->query('restaurants', $this->getParameter('sonic_namespace'),
+            $request->query->get('q'), $limit = null, $offset = null, Languages::getAlpha3Code($locale));
 
         $search->disconnect();
+
+        $ids = array_filter($ids);
 
         if (count($ids) === 0) {
             return new JsonResponse(['hits' => []]);
@@ -42,6 +52,9 @@ class SearchController extends AbstractController
         foreach ($results as $result) {
             $hits[] = [
                 'name' => $result->getName(),
+                'url' => $trackingUrl = $urlGenerator->generate('restaurant', [
+                    'id' => $result->getId(),
+                ])
             ];
         }
 
