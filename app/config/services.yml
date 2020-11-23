@@ -106,7 +106,7 @@ services:
 
   AppBundle\LoopEat\Client:
     arguments:
-      $config: { base_uri: "%loopeat_base_url%", timeout: 5.0 }
+      $config: { base_uri: "%loopeat_base_url%" }
     calls:
       - method: setLoopEatClientId
         arguments:
