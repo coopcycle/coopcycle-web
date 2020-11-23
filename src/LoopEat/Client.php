@@ -163,7 +163,7 @@ class Client extends BaseClient
         return json_decode((string) $response->getBody(), true);
     }
 
-    public function return(Customer $customer, $quantity = 1)
+    public function return(Customer $customer, $quantity = 1): bool
     {
         $this->logger->info(sprintf('Returning %d Loopeats from "%s"',
             $quantity, $customer->getEmailCanonical()));
@@ -202,9 +202,10 @@ class Client extends BaseClient
         $this->logger->info(sprintf('Successfully returned %d Loopeats from "%s"',
             $quantity, $customer->getEmailCanonical()));
 
+        return true;
     }
 
-    public function grab(Customer $customer, LocalBusiness $restaurant, $quantity = 1)
+    public function grab(Customer $customer, LocalBusiness $restaurant, $quantity = 1): bool
     {
         $this->logger->info(sprintf('Grabbing %d Loopeats at "%s" for "%s"',
             $quantity, $restaurant->getName(), $customer->getEmailCanonical()));

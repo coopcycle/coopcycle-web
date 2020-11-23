@@ -36,15 +36,19 @@ class GrabLoopEats
 
         // TODO Make sure the reusable packagings are actually from LoopEat
 
-        $this->client->return($order->getCustomer(), $order->getReusablePackagingPledgeReturn());
-        $this->client->grab($order->getCustomer(), $order->getRestaurant(), $order->getReusablePackagingQuantity());
+        // Make sure we call "grab" only if "return" has succeeded
+        if ($this->client->return($order->getCustomer(), $order->getReusablePackagingPledgeReturn())) {
 
-        Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
-        Assert::isInstanceOf($order->getCustomer(), OAuthCredentialsInterface::class);
+            if ($this->client->grab($order->getCustomer(), $order->getRestaurant(), $order->getReusablePackagingQuantity())) {
 
-        // When this is a guest checkout, we clear the credentials after grabbing
-        if (!$order->getCustomer()->hasUser()) {
-            $order->getCustomer()->clearLoopEatCredentials();
+                Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
+                Assert::isInstanceOf($order->getCustomer(), OAuthCredentialsInterface::class);
+
+                // When this is a guest checkout, we clear the credentials after grabbing
+                if (!$order->getCustomer()->hasUser()) {
+                    $order->getCustomer()->clearLoopEatCredentials();
+                }
+            }
         }
     }
 }
