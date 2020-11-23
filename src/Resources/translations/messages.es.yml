@@ -399,25 +399,36 @@ form.local_business.stripe_account.link_ok: "Éste restaurante ha sido enlazado 
   >panel de administración de Stripe</a>.\n"
 form.settings.mercadopago.title: Mercado Pago
 form.local_business.mercadopago_account.title: Cuenta de MercadoPago
-form.local_business.mercadopago_account.success: Cuenta MercadoPago conectada con éxito
+form.local_business.mercadopago_account.success: Cuenta MercadoPago conectada con
+  éxito
 form.local_business.mercadopago.connect_button.text: 'Conectar con Mercadopago'
-form.mercadopago_livemode.enable.label: Utilizar Mercadopago en modo « producción »
-form.mercadopago_livemode.enable.alert: En modo « producción », las tarjetas de crédito serán cargadas.
+form.mercadopago_livemode.enable.label: Utilizar Mercadopago en modo « producción
+  »
+form.mercadopago_livemode.enable.alert: En modo « producción », las tarjetas de crédito
+  serán cargadas.
 form.mercadopago_livemode.disable.label: Utilizar Mercadopago en modo « test »
-form.mercadopago_livemode.disable.alert: En modo « test », las tarjetas de crédito no serán cargadas.
-form.mercadopago_livemode.disable_and_enable_maintenance.label: Utilizar el modo « test » y activar el mantenimiento
-form.mercadopago_livemode.disable_and_enable_maintenance.alert: Estás utilizando el modo « live ».<br>Si quiere pasar en modo « test », el mantenimiento se activará automáticamente.
-form.settings.mercadopago_testmode.help: 'En modo « test », debe usar <a href="https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba">números de tarjetas de prueba</a> para pagar. <strong>No se intercambiará dinero.</strong> '
-form.settings.mercadopago_enable_livemode.help: Para activar el modo « live », primero necesita configurar las credenciales « live ».
+form.mercadopago_livemode.disable.alert: En modo « test », las tarjetas de crédito
+  no serán cargadas.
+form.mercadopago_livemode.disable_and_enable_maintenance.label: Utilizar el modo «
+  test » y activar el mantenimiento
+form.mercadopago_livemode.disable_and_enable_maintenance.alert: Estás utilizando el
+  modo « live ».<br>Si quiere pasar en modo « test », el mantenimiento se activará
+  automáticamente.
+form.settings.mercadopago_testmode.help: 'En modo « test », debe usar <a href="https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba">números
+  de tarjetas de prueba</a> para pagar. <strong>No se intercambiará dinero.</strong> '
+form.settings.mercadopago_enable_livemode.help: Para activar el modo « live », primero
+  necesita configurar las credenciales « live ».
 form.settings.mercadopago.publishable_key.label: Clave de publicación
-form.settings.mercadopago.publishable_key.help: "Obtenga la <a href=\"\
-  https://www.mercadopago.com.%country%/developers/panel/credentials\" target=\"_blank\">clave de publicación</a>"
+form.settings.mercadopago.publishable_key.help: "Obtenga la <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+  \ target=\"_blank\">clave de publicación</a>"
 form.settings.mercadopago.access_token.label: Token de acceso
-form.settings.mercadopago.access_token.help: "Obtenga el <a href=\"\
-  https://www.mercadopago.com.%country%/developers/panel/credentials\" target=\"_blank\">token de acceso</a>"
+form.settings.mercadopago.access_token.help: "Obtenga el <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+  \ target=\"_blank\">token de acceso</a>"
 form.settings.mercadopago.app_id.label: ID de Aplicación
-form.settings.mercadopago.app_id.help: Necesita <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">crear una aplicación</a> para obtener su ID de Aplicación.
-form.settings.mercadopago.redirect_uri.help: "Cuando configure su app, use la siguiente URI de redirección: <code>%redirect_uri%</code>"
+form.settings.mercadopago.app_id.help: Necesita <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">crear
+  una aplicación</a> para obtener su ID de Aplicación.
+form.settings.mercadopago.redirect_uri.help: "Cuando configure su app, use la siguiente\
+  \ URI de redirección: <code>%redirect_uri%</code>"
 form.menu_item.name.label: Nombre
 form.menu_item.price.label: Precio
 form.menu_item_modifier.name.label: Nombre
@@ -629,10 +640,10 @@ embed.delivery.specify_billing_address: Especifica una dirección de facturació
 embed.delivery.billing_address: Dirección de Envio
 embed.delivery.summary: "Has solicitado un pedido que será entregado en <strong>%dropoff_date%</strong>\
   \ a la siguiente dirección: <strong>%dropoff_address%</strong> <br> Calculamos la\
-  \ distancia de <strong>%distance% kilometers</strong>. <br> El prescio del pedido\
-  \ es <strong>%total_excluding_tax% (sin IVA); </strong> %total_including_tax% (sin\
-  \ IVA). <br><br>If any of the above details are incorrect, please change them by\
-  \ clicking the 'Edit' button. "
+  \ distancia de <strong>%distance% kilometers</strong>. <br> El precio del pedido\
+  \ es <strong>%total_excluding_tax% (sin IVA); </strong> %total_including_tax% (con\
+  \ IVA). <br><br>Si alguno de estos datos están equivocados, por favor, cambialos\
+  \ através de el butón de editar. "
 embed.delivery.submit.help: Haz clic para confirmar el pedido y realizar la entrega.
 embed.delivery.confirm_message: Su pedido de entrega se ha realizado y recibirá un
   resumen por correo electrónico en breve. Verificaremos su pedido y le enviaremos
@@ -1008,7 +1019,10 @@ refund.list.refunded_at: Devuelto en
 refund.list.liable_party: Parte responsable
 refund.list.amount: Monto devuelto
 refund.list.comments: Comentarios
-authentication.register_benefits: Crea una cuenta para pedir más rápidamente. También podrás recuperar el historial de tus pedidos anteriores.
+authentication.register_benefits: Crea una cuenta para pedir más rápidamente. También
+  podrás recuperar el historial de tus pedidos anteriores.
 form.checkout_address.telephone.help: Para contactar contigo en caso de un problema
-guest_checkout.user_with_same_email_exists: Ya existe una cuenta con el mismo correo electrónico. Por favor, inicia sesión para continuar, o usa otro correo electrónico para hacer un pedido sin crear una cuenta.
+guest_checkout.user_with_same_email_exists: Ya existe una cuenta con el mismo correo
+  electrónico. Por favor, inicia sesión para continuar, o usa otro correo electrónico
+  para hacer un pedido sin crear una cuenta.
 guest_checkout.use_another_email: Usar otro correo electrónico

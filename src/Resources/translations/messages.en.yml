@@ -808,11 +808,11 @@ activity.order.picked: "@%owner% has picked order #order/%aggregate_id%\n"
 activity.order.dropped: "@%owner% has dropped order #order/%aggregate_id%\n"
 activity.order.fulfilled: "Order #order/#%aggregate_id% is fulfilled\n"
 social.sign_in_with_facebook: Sign in with Facebook
-embed.delivery.summary: "You have requested a delivery on<strong>%dropoff_date%</strong>\
+embed.delivery.summary: "You have requested a delivery on <strong>%dropoff_date%</strong>\
   \ at the following address: <strong>%dropoff_address%</strong> <br> We calculated\
   \ a distance of <strong>%distance% kilometers</strong>. <br> The delivery price\
   \ is <strong>%total_excluding_tax% (excl. VAT); </strong> %total_including_tax%\
-  \ (excl. VAT). <br><br>If any of the above details are incorrect, please change\
+  \ (incl. VAT). <br><br>If any of the above details are incorrect, please change\
   \ them by clicking the 'Edit' button. "
 embed.delivery.submit.help: Click to book the delivery.
 embed.delivery.confirm_message: Your delivery order has been placed and you will receive
@@ -1123,7 +1123,8 @@ homepage.form.content: "<strong>%brand_name%</strong> is operating local and non
   \ on-demand bike delivery services. Ship a single package, or fulfill recuring shipping\
   \ for your business."
 promotion_action.percentage_discount: '%percentage% discount'
-promotion_action.delivery_percentage_discount: '%percentage% discount on delivery fees'
+promotion_action.delivery_percentage_discount: '%percentage% discount on delivery
+  fees'
 promotion_action.fixed_discount: '%amount% discount'
 form.fulfillment_method.options.round.label: Slot approximation
 order.list.summary.hub.text: Order at hub %name%

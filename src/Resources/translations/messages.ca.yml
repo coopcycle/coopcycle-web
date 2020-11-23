@@ -381,10 +381,9 @@ form.settings.enable_restaurant_pledges.label: Permet als clients suggerir resta
 form.suggest.name.label: Nom
 form.suggest.name.help: Indiqueu el nom exacte perquè el puguem trobar
 form.suggest.submit.label: Suggeriu ara
-form.suggest.message: "No trobeu el vostre restaurant preferit?\n<br>\nDona'ns el\
-  \ seu nom i adreça. Aleshores altres usuaris poden votar perque aparegui a la llista\
-  \ de restaurants.\n<br>\nAixò ens permetrà identificar millor els restaurants que\
-  \ s’han d’acostar i proporcionar-los la prova d’una demanda real.\n"
+form.suggest.message: "No trobes el teu restaurant preferit?\n<br>\nDona'ns el seu\
+  \ nom i l'adreça. \n<br>\nAixò ens permetrà contactar-hi per a poder incloure'ls\
+  \ al nostre llistat de restaurants.\n"
 form.suggest.thank_you_message: Gràcies per suggerir aquest restaurant!
 restaurant.suggest.message: "Ajuda'ns a convèncer a %restaurant.name% per treballar\
   \ %brand_name%!\n<br>\nPer veure-la a la plataforma, necessitem que vosaltres i\
@@ -560,12 +559,12 @@ activity.order.picked: "@%owner% ha rebut la comanda #order/%aggregate_id%\n"
 activity.order.dropped: "@%owner% ha entregat la comanda #order/%aggregate_id%\n"
 activity.order.fulfilled: "Comanda #order/#%aggregate_id% és complerta\n"
 social.sign_in_with_facebook: Inicieu la sessió amb Facebook
-embed.delivery.summary: "Has demanat un lliurament damunt<strong>%dropoff_data%</strong>\
-  \ a l'adreça següent: <strong>%dropoff_adreça%</strong> <br> Vam calcular un trajecte\
-  \ de %quilòmetres% <strong>de trajecte</strong>. <br> El total de preu del lliurament\
-  \ <strong>%total_excluding_tax% (excl. IVA); </strong> %total_including_tax% (excl.\
-  \ IVA). <br><br>Si qualsevol del per sobre dels detalls són incorrectes, per favor\
-  \ canviar-los per fer clic l''Edita' botó. "
+embed.delivery.summary: "Has fet una comanda que serà lliurada el <strong>%dropoff_date%</strong>\
+  \ a l'adreça següent: <strong>%dropoff_adress%</strong> <br> Hem calculat un trajecte\
+  \ de <strong>%distance% quilòmetres</strong>. <br> El preu total del lliurament\
+  \ és de <strong>%total_excluding_tax% (sense IVA); </strong> %total_including_tax%\
+  \ (amb IVA). <br><br>Si algun dels detalls esmentats és incorrecte, pots canviar-ho\
+  \ fent clic a \"Editar\". "
 embed.delivery.submit.help: Fes clic per a confirmar la comanda i realitzar el lliurament.
 embed.delivery.confirm_message: La seva comanda de lliurament s'ha realitzat i rebrà
   un resum per correu electrònic en breu. Verificarem la seva comanda i li enviarem
@@ -751,7 +750,7 @@ index.view_all_shops: Veure totes les botigues
 form.checkout_address.reusable_packaging_loopeat_enabled.label: Vull usar contenidors
   LoopEat
 form.checkout_address.add_promotion.label: Aplicar
-form.checkout_address.tip_amount.label: propina o consejo a qué se refiere?
+form.checkout_address.tip_amount.label: Propina
 form.checkout_address.tip_amount.help: Moltes gràcies❤
 form.checkout_address.add_tip.label: Aplicar
 form.checkout_address.quote.label: Sol·licitar pressupost
@@ -906,10 +905,10 @@ form.local_business_type.food_establishment: Establiment de menjar
 form.local_business_type.store: Botiga
 form.local_business_type.help: Els tipus estan usant el <a href="https://schema.org/">schema.org</a>
   vocabulari per a <a href="https://schema.org/FoodEstablishment">establiments de
-  menjar</a> i  <a href="https://schema.org/Store">botigues</a>
-localBusiness.form.enabled: Habilitat
+  menjar</a> i <a href="https://schema.org/Store">botigues</a>
+localBusiness.form.enabled: Activat
 notifications.tasks_changed: Tasca per a %date% canviada!
-localBusiness.form.openingHoursBehavior.time_slot: Interval de temps
+localBusiness.form.openingHoursBehavior.time_slot: Franja Horària
 restaurant.quotes_disclaimer.not_authenticated: Aquest restaurant tabmien accepta
   comandes en cita. Si vostè és un client referenciat, <a href="%login%">Connecti's
   </a> per a crear una cita. <a href="%contact_us%">Contacti'ns</a> per a més informació.
@@ -980,6 +979,8 @@ form:
       label: Nom del restaurant
     contact_referent:
       label: Persona de contacte de l'establiment
+    b2b:
+      label: Voleu proposar ofertes especials per a empreses?
 refund.list.amount: Import retornat
 refund.list.liable_party: Part responsable
 refund.list.comments: Comentaris
@@ -1038,3 +1039,103 @@ form.store_type.packages_required.label: Requerir l'entrada de paquets
 form.store_type.package_set.placeholder: Triar un conjunt de paquets
 restaurant.form.section.loopeat: LoopEat
 adminDashboard.customize.title: Personalitzar
+form.settings.mercadopago_testmode.help: "En mode « test », cal utilitzar <a href=\"\
+  https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba\"\
+  >prova els números de les targetes de crèdit </a> per pagar a la plataforma. <strong>No\
+  \ s'intercanviaran diners.</strong> "
+homepage.form.content: <strong>%brand_name%</strong> funciona a nivell local i realitza
+  l'entrega a domicili en vehicles no contaminants. Estalvieu envasos i unifiqueu
+  al màxim els enviaments.?
+promotion_action.fixed_discount: '%amount% de descompte'
+promotion_action.delivery_percentage_discount: "%percentage% de descompte en les despeses\
+  \ d'enviament?"
+promotion_action.percentage_discount: '%percentage% de descompte'
+order.list.reorder: Reordenar
+form.settings.guest_checkout_enabled.label: Activar el checkout (procés de compra)?
+restaurant.form.section.embed: Inserir
+restaurant.embed.disclaimer: Podeu inserir el checkout (procés de compra) directament
+  al vostre lloc web. Seguiu les instruccions següents per començar.?
+restaurant.embed.greeting: Això és tot! Quan els visitants facin clic al botó, s'obrirà
+  una finestra al vostre web.
+restaurant.embed.step_2: Afegir el <code>data-coopcycle-embed="% url%"</code> a un
+  element HTML clicable
+restaurant.embed.step_1: Afegeix l'escriptura <code>coopcycle.js</code> a la teva
+  pàgina?
+loopeat.oauth_redirect.warning: Sereu redirigits al web de LoopEat per iniciar la
+  sessió o crear el vostre compte
+loopeat.oauth_connect.success: Compte de LoopEat connectat amb èxit!
+form.attach_to_org.modal.title: Adjuntar a la botiga o magatzem?
+refund.list.disclaimer.admin: Quan la plataforma és responsable de l'incident, la
+  plataforma deu al restaurant l'import de la devolució, ja que el restaurant ja ha
+  retornat aquest import al client.
+refund.list.refunded_at: Reemborsat a
+refund.list.debit_total: Import total que la plataforma ha de pagar al restaurant
+confirm.deposit_refund_enabled: El sistema de devolució de dipòsits està habilitat,
+  ara podeu <a href="%url%"> configurar els envasos</a>.
+info.deposit_refund: Cada entrada de la llista següent representa un tipus d'envàs
+  (petit, gran...). Un cop triat l'envàs, podeu configurar-ne un per a cada producte.
+form.package_with_quantity.package.placeholder: Triar un tipus d'envàs
+order.reusable_packaging.pledge_return.disclaimer: El client ha indicat que es retornaran%
+  count% envasos
+form.time_slot.same_day_cutoff.help: Per exemple, si trieu les 11:00, les opcions
+  del mateix dia no es mostraran després de les 11:00
+form.time_slot.same_day_cutoff.label: Límit del mateix dia
+basics.kilos: Quilos
+basics.tax_excl: Sense IVA
+basics.tax_incl: Amb IVA
+nav.about_us: Sobre nosaltres
+spreadsheet.download_example: Baixar un exemple de fulla de càlcul
+promotion_rule.is_customer: Client és %username%
+promotion_rule.is_restaurant: Restaurant és %restaurant%
+profile.loopeat.disconnect: Desconnectar LoopEat
+time_range.same_else: '[En] LL [%range%]'
+search.orders: Cercar una comanda (telèfon, mail del client ...)
+delivery.table.heading.owner: Propietari
+form.customize.custom_banner.help: Assegureu-vos que el bàner sigui un patró SVG repetible
+form.customize.custom_banner.label: Bàner personalitzat
+form.customize.custom_privacy.label: Contingut de la pàgina de política personalitzada
+  de privadesa
+form.customize.custom_privacy_enabled.label: Activar la política personalitzada de
+  privadesa
+form.customize.custom_terms.label: Contingut de la pàgina de termes i condicions personalitzades
+form.customize.custom_terms_enabled.label: Activar els termes i condicions personalitzades
+form.customize.custom_legal.label: Contingut de la pàgina d'avís legal personalitzat
+form.customize.custom_legal_enabled.label: Activar l'avís legal personalitzat
+form.customize.motto.label: Lema
+form.customize.about_us.label: Contingut de la nostra pàgina
+form.customize.about_us_enabled.label: Activar la nostra pàgina
+form.deposit_refund_settings.deposit_refund_optin.help: Quan el sistema de devolució
+  de dipòsit sigui opcional, podrà triar si vol o no els embalatges. Quan sigui obligatori,
+  els embalatges s'afegiran al total de la comanda automàticament. --------No sé què
+  vol dir?
+form.credit_note.percentage.label: Percentatge
+form.credit_note.type.label: Tipus de descompte
+form.credit_note.user_search.label: Usuari
+form.menu_editor.name.help: Això només us permet distingir els menús. Això no es mostra
+  al client.
+form.settings.mercadopago.redirect_uri.help: 'Quan configuri la seva app, utilitzi
+  la següent URL de redirecció: <code>%redirect_uri%</code>'
+form.settings.mercadopago.app_id.help: Necessita <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">crear
+  una aplicació</a> para obtenir la seva ID.
+form.settings.mercadopago.app_id.label: ID de l'aplicació
+form.settings.mercadopago.access_token.help: Obtenir la <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+  target="_blank">fitxa d'accés</a>
+form.settings.mercadopago.access_token.label: Fitxa d'accés
+form.settings.mercadopago_enable_livemode.help: Per activar el mode « live », primer
+  necessites configurar les claus del mode « live ».
+form.settings.mercadopago.publishable_key.help: Obtenir la <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+  target="_blank">clau per publicar</a>
+form.mercadopago_livemode.disable.label: Utilitzar Mercado Pago en mode « test »
+form.local_business.mercadopago_account.success: El compte de Mercado Pago s'ha connectat
+  amb èxit
+form.mercadopago_livemode.enable.label: Utilitzar Mercado Pago en mode « live »
+form.local_business.mercadopago.connect_button.text: Connectar amb Mercado Pago
+form.mercadopago_livemode.enable.alert: En mode « live », les targetes de crèdit seran
+  carregades.
+form.mercadopago_livemode.disable_and_enable_maintenance.alert: Estàs utilitzant el
+  mode « live ».<br>Si vols passar a mode « test », el manteniment s'activarà automàticament.
+form.mercadopago_livemode.disable_and_enable_maintenance.label: Utilitzar el mode
+  « test » i activar el manteniment
+form.mercadopago_livemode.disable.alert: En mode « test », les targetes de crèdit
+  no seran carregades.
+form.settings.mercadopago.title: Mercado Pago
