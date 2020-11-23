@@ -74,6 +74,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('local_business_path', array(UrlGeneratorRuntime::class, 'localBusinessPath')),
             new TwigFunction('coopcycle_has_about_us', array(AppearanceRuntime::class, 'hasAboutUs')),
             new TwigFunction('coopcycle_has_banner', array(AssetsRuntime::class, 'hasCustomBanner')),
+            new TwigFunction('coopcycle_restaurants_suggestions', array(LocalBusinessRuntime::class, 'restaurantsSuggestions')),
         );
     }
 
