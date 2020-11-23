@@ -33,7 +33,7 @@ export const onSuggestionsFetchRequested = function({ value }) {
     query: value,
     type: 'address',
     language: this.language,
-    hitsPerPage: 7,
+    hitsPerPage: 5,
     getRankingInfo: true,
   }
 
