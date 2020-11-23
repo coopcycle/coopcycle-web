@@ -206,6 +206,7 @@
                 "NO_SHOW": "No mostrar"
             }
         },
-        "PLEASE_SELECT_ADDRESS": "Selecciona una dirección en el menú desplegable"
+        "PLEASE_SELECT_ADDRESS": "Selecciona una dirección en el menú desplegable",
+        "RESTAURANTS_AND_STORES": "Restaurantes y tiendas locales"
     }
 }

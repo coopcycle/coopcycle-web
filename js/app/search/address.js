@@ -36,10 +36,14 @@ document.querySelectorAll('[data-search="address"]').forEach((container) => {
     const addresses =
       container.dataset.addresses ? JSON.parse(container.dataset.addresses) : []
 
+    const restaurants =
+      container.dataset.restaurants ? JSON.parse(container.dataset.restaurants) : []
+
     render(
       <AddressAutosuggest
         address={ resolveAddress() }
         addresses={ addresses }
+        restaurants={ restaurants }
         geohash={ store.get('search_geohash', '') }
         onAddressSelected={ (value, address, type) => {
 

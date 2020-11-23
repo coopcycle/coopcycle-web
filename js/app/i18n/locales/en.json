@@ -219,6 +219,7 @@
             "time_slot": "Time slot"
         },
         "PLEASE_SELECT_ADDRESS": "Please select an address in the dropdown",
-        "DOWNLOAD_EXAMPLE_SPREADSHEET": "Download an example spreadsheet"
+        "DOWNLOAD_EXAMPLE_SPREADSHEET": "Download an example spreadsheet",
+        "RESTAURANTS_AND_STORES": "Restaurants & stores"
     }
 }

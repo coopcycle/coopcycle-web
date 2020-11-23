@@ -3,7 +3,7 @@ import Autosuggest from 'react-autosuggest'
 import PropTypes from 'prop-types'
 import ngeohash from 'ngeohash'
 import Fuse from 'fuse.js'
-import { includes, filter, debounce, throttle } from 'lodash'
+import { filter, debounce, throttle } from 'lodash'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
@@ -190,6 +190,12 @@ const generic = {
 
       this.props.onAddressSelected(suggestion.value, address, suggestion.type)
     }
+
+    if (suggestion.type === 'restaurant') {
+      window.location.href = window.Routing.generate('restaurant', {
+        id: suggestion.restaurant.id
+      })
+    }
   },
   transformSuggestion: function(suggestion) {
     return suggestion.hit
@@ -312,6 +318,11 @@ class AddressAutosuggest extends Component {
     }
 
     this.fuse = new Fuse(addresses, fuseOptions)
+    this.fuseForRestaurants = new Fuse(this.props.restaurants, {
+      ...fuseOptions,
+      threshold: 0.2,
+      keys: ['name']
+    })
 
     if (this.props.autofocus) {
       this.autosuggest.input.focus()
@@ -343,9 +354,31 @@ class AddressAutosuggest extends Component {
 
     const { lastValueWithResults } = this.state
 
-    if (this.props.addresses.length > 0) {
+    if (this.props.restaurants.length > 0) {
 
-      const { value } = this.state
+      const restoResults = this.fuseForRestaurants.search(value, {
+        ...defaultFuseSearchOptions,
+        ...this.props.fuseSearchOptions,
+      })
+
+      if (restoResults.length > 0) {
+
+        const restaurantsAsSuggestions = restoResults.map((fuseResult, idx) => ({
+          type: 'restaurant',
+          value: fuseResult.item.name,
+          restaurant: fuseResult.item,
+          index: idx,
+        }))
+
+        suggestions.push({
+          title: this.props.t('RESTAURANTS_AND_STORES'),
+          suggestions: restaurantsAsSuggestions
+        })
+        multiSection = true
+      }
+    }
+
+    if (this.props.addresses.length > 0) {
 
       const fuseResults = this.fuse.search(value, {
         ...defaultFuseSearchOptions,
@@ -354,8 +387,6 @@ class AddressAutosuggest extends Component {
 
       if (fuseResults.length > 0) {
 
-        multiSection = true
-
         const addressesAsSuggestions = fuseResults.map((fuseResult, idx) => ({
           type: 'address',
           value: fuseResult.item.streetAddress,
@@ -363,26 +394,21 @@ class AddressAutosuggest extends Component {
           index: idx,
         }))
 
-        const addressesValues = addressesAsSuggestions.map(suggestion => suggestion.value)
-
         suggestions.push({
           title: this.props.t('SAVED_ADDRESSES'),
           suggestions: addressesAsSuggestions
         })
-
-        predictionsAsSuggestions =
-          filter(predictionsAsSuggestions, suggestion => !includes(addressesValues, suggestion.value))
-
-        if (predictionsAsSuggestions.length > 0) {
-          suggestions.push({
-            title: this.props.t('ADDRESS_SUGGESTIONS'),
-            suggestions: filter(predictionsAsSuggestions, suggestion => !includes(addressesValues, suggestion.value))
-          })
-        }
-      } else {
-        suggestions = predictionsAsSuggestions
+        multiSection = true
       }
+    }
 
+    if (multiSection) {
+      if (predictionsAsSuggestions.length > 0) {
+        suggestions.push({
+          title: this.props.t('ADDRESS_SUGGESTIONS'),
+          suggestions: predictionsAsSuggestions,
+        })
+      }
     } else {
       suggestions = predictionsAsSuggestions
     }
@@ -513,6 +539,7 @@ class AddressAutosuggest extends Component {
 AddressAutosuggest.defaultProps = {
   address: '',
   addresses: [],
+  restaurants: [],
   required: false,
   reportValidity: false,
   preciseOnly: false,
@@ -525,6 +552,7 @@ AddressAutosuggest.defaultProps = {
 AddressAutosuggest.propTypes = {
   address: PropTypes.oneOfType([ PropTypes.object, PropTypes.string ]).isRequired,
   addresses: PropTypes.array.isRequired,
+  restaurants: PropTypes.array,
   geohash: PropTypes.string.isRequired,
   onAddressSelected: PropTypes.func.isRequired,
   required: PropTypes.bool,
