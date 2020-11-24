@@ -34,6 +34,10 @@ class AjaxSessionCloseListener
             return;
         }
 
+        if (!$request->hasPreviousSession() || !$request->getSession()->isStarted()) {
+            return;
+        }
+
         $session = $request->getSession();
         $session->save();
     }

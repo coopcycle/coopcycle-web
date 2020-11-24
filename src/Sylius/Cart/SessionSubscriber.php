@@ -63,7 +63,7 @@ final class SessionSubscriber implements EventSubscriberInterface
 
         $request = $event->getRequest();
 
-        if (!$request->hasSession() || !$request->getSession()->isStarted()) {
+        if (!$request->hasPreviousSession() || !$request->getSession()->isStarted()) {
             $this->logger->debug('SessionSubscriber | no session, skipping');
             return;
         }

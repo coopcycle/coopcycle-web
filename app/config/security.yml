@@ -176,11 +176,11 @@ security:
         # an AJAX request invoking SessionSubscriber may clear the cart,
         # because of the mechanism to cleanup carts with disabled restaurant.
 
-        # restaurant_fulfillment_timing:
-        #     pattern: ^/restaurant/[0-9]+/timing$
-        #     methods: [ GET ]
-        #     stateless: true
-        #     anonymous: ~
+        restaurant_fulfillment_timing:
+            pattern: ^/restaurant/[0-9]+/timing$
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
 
         # search_restaurants:
         #     pattern: ^/search/restaurants
