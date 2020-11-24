@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2493635b8dcbf12e80cd0b997845a390",
+    "content-hash": "0d5c337eb264ac81f2e7d0a68018c2a5",
     "packages": [
         {
             "name": "api-platform/core",
@@ -2913,6 +2913,7 @@
                 "issues": "https://github.com/doctrine/reflection/issues",
                 "source": "https://github.com/doctrine/reflection/tree/1.2.2"
             },
+            "abandoned": "roave/better-reflection",
             "time": "2020-10-27T21:46:55+00:00"
         },
         {
@@ -3801,6 +3802,7 @@
                 "issues": "https://github.com/fzaninotto/Faker/issues",
                 "source": "https://github.com/fzaninotto/Faker/tree/v1.9.1"
             },
+            "abandoned": true,
             "time": "2019-12-12T13:22:17+00:00"
         },
         {
@@ -5274,9 +5276,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hwi/HWIOAuthBundle/issues",
-                "source": "https://github.com/hwi/HWIOAuthBundle/tree/1.2.0"
+                "source": "https://github.com/hwi/HWIOAuthBundle/tree/master"
             },
-            "time": "2020-10-19T11:02:20+00:00"
+            "time": "2020-11-15T21:34:43+00:00"
         },
         {
             "name": "illuminate/cache",
@@ -14077,8 +14079,11 @@
             },
             "require": {
                 "babdev/pagerfanta-bundle": "^2.5",
+                "doctrine/collections": "^1.6",
                 "doctrine/doctrine-bundle": "^1.12 || ^2.0",
-                "doctrine/persistence": "^1.3",
+                "doctrine/event-manager": "^1.1",
+                "doctrine/inflector": "^1.4 || ^2.0",
+                "doctrine/persistence": "^1.3 || ^2.0",
                 "php": "^7.3",
                 "stof/doctrine-extensions-bundle": "^1.2",
                 "sylius/registry": "^1.2",
@@ -14088,16 +14093,16 @@
                 "symfony/framework-bundle": "^4.4 || ^5.1",
                 "symfony/security-csrf": "^4.4 || ^5.1",
                 "symfony/translation": "^4.4 || ^5.1",
-                "symfony/twig-bundle": "^4.4 || ^5.1",
                 "symfony/validator": "^4.4 || ^5.1",
                 "symfony/yaml": "^4.4 || ^5.1",
-                "webmozart/assert": "^1.8",
-                "winzou/state-machine-bundle": "^0.3.2 || ^0.4.3 || ^0.5"
+                "webmozart/assert": "^1.8"
             },
             "conflict": {
-                "friendsofsymfony/rest-bundle": "<3.0 >=4.0",
-                "jms/serializer-bundle": "<3.5 >=4.0",
-                "willdurand/hateoas-bundle": "<2.0 >=3.0"
+                "friendsofsymfony/rest-bundle": "<3.0 || >=4.0",
+                "jms/serializer-bundle": "<3.5 || >=4.0",
+                "symfony/twig-bundle": "<4.4 || >=5.0 <5.1 || >=6.0",
+                "willdurand/hateoas-bundle": "<2.0 || >=3.0",
+                "winzou/state-machine-bundle": "<0.3.2 || >=0.4 <0.4.3 || >=0.6"
             },
             "replace": {
                 "sylius/resource": "self.version"
@@ -14112,16 +14117,18 @@
                 "pamil/phpspec-skip-example-extension": "^4.1",
                 "phpspec/phpspec": "^6.1",
                 "phpspec/prophecy-phpunit": "^2.0",
-                "phpstan/phpstan": "0.12.49",
+                "phpstan/phpstan": "0.12.57",
                 "phpstan/phpstan-phpunit": "0.12.16",
                 "phpstan/phpstan-webmozart-assert": "0.12.7",
                 "phpunit/phpunit": "^9.4",
                 "sylius-labs/coding-standard": "^3.0",
                 "sylius/grid-bundle": "^1.2",
                 "symfony/dependency-injection": "^4.4 || ^5.1",
+                "symfony/twig-bundle": "^4.4 || ^5.1",
                 "twig/twig": "^2.12 || ^3.0",
-                "vimeo/psalm": "3.17.1",
-                "willdurand/hateoas-bundle": "^2.0"
+                "vimeo/psalm": "4.2.1",
+                "willdurand/hateoas-bundle": "^2.0",
+                "winzou/state-machine-bundle": "^0.3.2 || ^0.4.3 || ^0.5"
             },
             "suggest": {
                 "doctrine/orm": "^2.5",
@@ -14171,9 +14178,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Sylius/SyliusResourceBundle/issues",
-                "source": "https://github.com/Sylius/SyliusResourceBundle/tree/v1.7.0-BETA.3"
+                "source": "https://github.com/Sylius/SyliusResourceBundle/tree/v1.7.0-BETA.5"
             },
-            "time": "2020-10-15T18:14:42+00:00"
+            "time": "2020-11-23T15:00:21+00:00"
         },
         {
             "name": "sylius/taxation",
@@ -16222,58 +16229,6 @@
             "time": "2020-01-31T15:31:59+00:00"
         },
         {
-            "name": "teamtnt/tntsearch",
-            "version": "dev-undefined-mysql-constant",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/alexsegura/tntsearch",
-                "reference": "209d226ce885b7eeab1db45b7358abb061bfddfc"
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "ext-pdo_sqlite": "*",
-                "ext-sqlite3": "*",
-                "php": "~7.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "7.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "TeamTNT\\TNTSearch\\": "src"
-                },
-                "files": [
-                    "helper/helpers.php"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nenad Tičarić",
-                    "email": "nticaric@gmail.com",
-                    "homepage": "http://www.tntstudio.us",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A fully featured full text search engine written in PHP",
-            "homepage": "https://github.com/teamtnt/tntsearch",
-            "keywords": [
-                "bm25",
-                "fulltext",
-                "fuzzy search",
-                "geosearch",
-                "search",
-                "stemming",
-                "teamtnt",
-                "text classification",
-                "tntsearch"
-            ],
-            "time": "2020-11-21T13:02:12+00:00"
-        },
-        {
             "name": "theofidry/alice-data-fixtures",
             "version": "1.3.0",
             "source": {
@@ -17519,114 +17474,6 @@
                 "source": "https://github.com/willdurand/Negotiation/tree/2.x"
             },
             "time": "2017-05-14T17:21:12+00:00"
-        },
-        {
-            "name": "winzou/state-machine",
-            "version": "0.3.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/winzou/state-machine.git",
-                "reference": "37f03a316b9a461ed443906e158bab8d358542df"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/winzou/state-machine/zipball/37f03a316b9a461ed443906e158bab8d358542df",
-                "reference": "37f03a316b9a461ed443906e158bab8d358542df",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0",
-                "symfony/event-dispatcher": "~2.1|~3.0|~4.0",
-                "symfony/expression-language": "~2.4|~3.0|~4.0",
-                "symfony/property-access": "~2.1|~3.0|~4.0"
-            },
-            "require-dev": {
-                "phpspec/phpspec": "~2.0",
-                "twig/twig": "~1.0"
-            },
-            "suggest": {
-                "twig/twig": "Access the state machine in your twig templates (~1.0)"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "SM": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Alexandre Bacco",
-                    "email": "alexandre.bacco@gmail.com",
-                    "homepage": "http://alex.bacco.fr"
-                }
-            ],
-            "description": "A very lightweight yet powerful PHP state machine",
-            "homepage": "https://github.com/winzou/StateMachine",
-            "keywords": [
-                "callback",
-                "event",
-                "state",
-                "statemachine"
-            ],
-            "support": {
-                "issues": "https://github.com/winzou/state-machine/issues",
-                "source": "https://github.com/winzou/state-machine/tree/master"
-            },
-            "time": "2018-02-11T18:07:15+00:00"
-        },
-        {
-            "name": "winzou/state-machine-bundle",
-            "version": "0.4.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/winzou/StateMachineBundle.git",
-                "reference": "b1857e458751a0e87dee5c281530a94e3954f5d2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/winzou/StateMachineBundle/zipball/b1857e458751a0e87dee5c281530a94e3954f5d2",
-                "reference": "b1857e458751a0e87dee5c281530a94e3954f5d2",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">5.3.0",
-                "symfony/framework-bundle": "~2.1|~3.0|^4.0",
-                "winzou/state-machine": "^0.3"
-            },
-            "require-dev": {
-                "phpspec/phpspec": "~2.0"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-4": {
-                    "winzou\\Bundle\\StateMachineBundle\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Alexandre Bacco",
-                    "homepage": "http://alex.bacco.fr"
-                }
-            ],
-            "description": "Bundle for the very lightweight yet powerful PHP state machine",
-            "keywords": [
-                "bundle",
-                "statemachine",
-                "symfony"
-            ],
-            "support": {
-                "issues": "https://github.com/winzou/StateMachineBundle/issues",
-                "source": "https://github.com/winzou/StateMachineBundle/tree/0.4.3"
-            },
-            "time": "2020-07-27T08:34:11+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",
@@ -19943,6 +19790,114 @@
                 }
             ],
             "time": "2020-07-12T23:59:07+00:00"
+        },
+        {
+            "name": "winzou/state-machine",
+            "version": "0.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/winzou/state-machine.git",
+                "reference": "37f03a316b9a461ed443906e158bab8d358542df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/winzou/state-machine/zipball/37f03a316b9a461ed443906e158bab8d358542df",
+                "reference": "37f03a316b9a461ed443906e158bab8d358542df",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "symfony/event-dispatcher": "~2.1|~3.0|~4.0",
+                "symfony/expression-language": "~2.4|~3.0|~4.0",
+                "symfony/property-access": "~2.1|~3.0|~4.0"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "~2.0",
+                "twig/twig": "~1.0"
+            },
+            "suggest": {
+                "twig/twig": "Access the state machine in your twig templates (~1.0)"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "SM": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexandre Bacco",
+                    "email": "alexandre.bacco@gmail.com",
+                    "homepage": "http://alex.bacco.fr"
+                }
+            ],
+            "description": "A very lightweight yet powerful PHP state machine",
+            "homepage": "https://github.com/winzou/StateMachine",
+            "keywords": [
+                "callback",
+                "event",
+                "state",
+                "statemachine"
+            ],
+            "support": {
+                "issues": "https://github.com/winzou/state-machine/issues",
+                "source": "https://github.com/winzou/state-machine/tree/master"
+            },
+            "time": "2018-02-11T18:07:15+00:00"
+        },
+        {
+            "name": "winzou/state-machine-bundle",
+            "version": "0.4.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/winzou/StateMachineBundle.git",
+                "reference": "b1857e458751a0e87dee5c281530a94e3954f5d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/winzou/StateMachineBundle/zipball/b1857e458751a0e87dee5c281530a94e3954f5d2",
+                "reference": "b1857e458751a0e87dee5c281530a94e3954f5d2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">5.3.0",
+                "symfony/framework-bundle": "~2.1|~3.0|^4.0",
+                "winzou/state-machine": "^0.3"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "~2.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "winzou\\Bundle\\StateMachineBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexandre Bacco",
+                    "homepage": "http://alex.bacco.fr"
+                }
+            ],
+            "description": "Bundle for the very lightweight yet powerful PHP state machine",
+            "keywords": [
+                "bundle",
+                "statemachine",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/winzou/StateMachineBundle/issues",
+                "source": "https://github.com/winzou/StateMachineBundle/tree/0.4.3"
+            },
+            "time": "2020-07-27T08:34:11+00:00"
         }
     ],
     "aliases": [],
@@ -19953,7 +19908,6 @@
         "hwi/oauth-bundle": 20,
         "drupal/core-vendor-hardening": 20,
         "sylius/resource-bundle": 20,
-        "teamtnt/tntsearch": 20,
         "behat/symfony2-extension": 20,
         "behat/mink": 20
     },

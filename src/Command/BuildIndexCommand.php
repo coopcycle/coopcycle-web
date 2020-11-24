@@ -34,7 +34,7 @@ Class BuildIndexCommand extends ContainerAwareCommand
     {
         $this
             ->setName('coopcycle:index:build')
-            ->setDescription('Build TNTSearch index.');
+            ->setDescription('Build Sonic index.');
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
