@@ -170,17 +170,23 @@ security:
         # Disable session to improve performance
         # TraceableFirewallListener will be skipped
 
-        restaurant_fulfillment_timing:
-            pattern: ^/restaurant/[0-9]+/timing$
-            methods: [ GET ]
-            stateless: true
-            anonymous: ~
+        # FIXME
+        # Causes a problem in AppBundle\Sylius\Cart\SessionSubscriber
+        # When an admin adds products to the cart of a *DISABLED* restaurant,
+        # an AJAX request invoking SessionSubscriber may clear the cart,
+        # because of the mechanism to cleanup carts with disabled restaurant.
 
-        search_restaurants:
-            pattern: ^/search/restaurants
-            methods: [ GET ]
-            stateless: true
-            anonymous: ~
+        # restaurant_fulfillment_timing:
+        #     pattern: ^/restaurant/[0-9]+/timing$
+        #     methods: [ GET ]
+        #     stateless: true
+        #     anonymous: ~
+
+        # search_restaurants:
+        #     pattern: ^/search/restaurants
+        #     methods: [ GET ]
+        #     stateless: true
+        #     anonymous: ~
 
         web:
             pattern:            ^/
