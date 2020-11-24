@@ -82,6 +82,8 @@ context('Checkout', () => {
     cy.get('form[name="checkout_payment"]').submit()
 
     cy.location('pathname').should('match', /\/order\/confirm\/[a-zA-Z0-9]+/)
+
+    cy.get('#order-timeline').contains('Commande en attente de validation')
   })
 
   it('order something at restaurant with existing address', () => {
@@ -487,6 +489,8 @@ context('Checkout', () => {
     cy.get('form[name="checkout_payment"]').submit()
 
     cy.location('pathname').should('match', /\/order\/confirm\/[a-zA-Z0-9]+/)
+
+    cy.get('#order-timeline').contains('Commande en attente de validation')
   })
 
   it('start ordering in one restaurant, then navigate to another restaurant', () => {
