@@ -8,16 +8,22 @@
   </thead>
   {% if with_items %}
   <tbody>
-  {% set itemsGroups = order.getItemsGroupedByVendor() %}
-  {% if itemsGroups|length > 1 %}
-    {% for vendor in itemsGroups %}
-      <tr>
-        <th colspan="2">{{ vendor.name }}</th>
-      </tr>
-      {% for item in itemsGroups[vendor] %}
+  {% if order.hasVendor() %}
+    {% set itemsGroups = order.getItemsGroupedByVendor() %}
+    {% if itemsGroups|length > 1 %}
+      {% for vendor in itemsGroups %}
+        <tr>
+          <th colspan="2">{{ vendor.name }}</th>
+        </tr>
+        {% for item in itemsGroups[vendor] %}
+          {% include '_partials/order/item.html.twig' with { item: item } %}
+        {% endfor %}
+      {% endfor %}
+    {% else %}
+      {% for item in order.items %}
         {% include '_partials/order/item.html.twig' with { item: item } %}
       {% endfor %}
-    {% endfor %}
+    {% endif %}
   {% else %}
     {% for item in order.items %}
       {% include '_partials/order/item.html.twig' with { item: item } %}
