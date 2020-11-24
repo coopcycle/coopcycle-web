@@ -179,8 +179,9 @@ security:
         restaurant_fulfillment_timing:
             pattern: ^/restaurant/[0-9]+/timing$
             methods: [ GET ]
-            stateless: true
-            anonymous: ~
+            # stateless: true
+            # anonymous: ~
+            security: false
 
         # search_restaurants:
         #     pattern: ^/search/restaurants
