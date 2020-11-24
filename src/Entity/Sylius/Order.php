@@ -994,14 +994,18 @@ class Order extends BaseOrder implements OrderInterface
         foreach ($this->getItems() as $item) {
 
             $product = $item->getVariant()->getProduct();
-            $hub = $this->getVendor()->getHub();
 
-            $vendor = null;
-            foreach ($hub->getRestaurants() as $restaurant) {
-                if ($restaurant->hasProduct($product)) {
-                    $vendor = $restaurant;
-                    break;
+            if ($this->getVendor()->isHub()) {
+                $hub = $this->getVendor()->getHub();
+                $vendor = null;
+                foreach ($hub->getRestaurants() as $restaurant) {
+                    if ($restaurant->hasProduct($product)) {
+                        $vendor = $restaurant;
+                        break;
+                    }
                 }
+            } else {
+                $vendor = $this->getVendor()->getRestaurant();
             }
 
             if ($vendor) {
