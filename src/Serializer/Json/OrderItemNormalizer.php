@@ -66,10 +66,14 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
             $object->getVariant()->getProduct()
         );
 
-        $data['vendor'] = [
-            '@id' => $this->iriConverter->getIriFromItem($restaurant),
-            'name' => $restaurant->getName(),
-        ];
+        if ($restaurant) {
+            $data['vendor'] = [
+                '@id' => $this->iriConverter->getIriFromItem($restaurant),
+                'name' => $restaurant->getName(),
+            ];
+        } else {
+            $data['vendor'] = null;
+        }
 
         return $data;
     }
