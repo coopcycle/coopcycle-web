@@ -60,7 +60,7 @@
         "twig/twig": "^2.0",
         "sylius/order-bundle": "^1.7.5",
         "sylius/payment-bundle": "^1.7.5",
-        "laravolt/avatar": "^3.2",
+        "laravolt/avatar": "^4.0",
         "sylius/product-bundle": "^1.7.5",
         "sylius/taxonomy-bundle": "^1.7.5",
         "sonata-project/seo-bundle": "^2.5",
