@@ -60,6 +60,7 @@ const locationiqToAddress = (locationiq) => ({
   postalCode: (locationiq.address && locationiq.address.postcode) || '',
   streetAddress: locationiq.display_name,
   isPrecise: true,
+  needsGeocoding: false,
 })
 
 export const transformSuggestion = function (suggestion) {

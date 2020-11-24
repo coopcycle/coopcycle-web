@@ -6,6 +6,7 @@ import Fuse from 'fuse.js'
 import { filter, debounce, throttle } from 'lodash'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
+import axios from 'axios'
 
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
@@ -147,6 +148,7 @@ const generic = {
       multiSection,
       sessionToken: null,
       lastValueWithResults: '',
+      disabled: this.props.disabled,
     }
   },
   onSuggestionsFetchRequested: function() {
@@ -157,22 +159,48 @@ const generic = {
   onSuggestionSelected: function (event, { suggestion }) {
 
     if (suggestion.type === 'prediction') {
-      const geohash = ngeohash.encode(suggestion.lat, suggestion.lng, 11)
-      const address = {
-        ...this.transformSuggestion(suggestion),
-        geohash,
-      }
+
+      let address = this.transformSuggestion(suggestion)
 
       // If the component was configured for,
       // report validity if the address is not precise enough
-      if (this.props.reportValidity && this.props.preciseOnly && !address.isPrecise) {
+      if (this.props.reportValidity && this.props.preciseOnly && (!address.isPrecise && !address.needsGeocoding)) {
         this.autosuggest.input.setCustomValidity(this.props.t('CART_ADDRESS_NOT_ENOUGH_PRECISION'))
         if (HTMLInputElement.prototype.reportValidity) {
           this.autosuggest.input.reportValidity()
         }
       }
 
-      this.props.onAddressSelected(this.state.value, address, suggestion.type)
+      if (address.isPrecise && address.needsGeocoding) {
+
+        this.setState({ disabled: true })
+
+        axios
+          .get(`/search/geocode?address=${encodeURIComponent(address.streetAddress)}`)
+          .then(geocoded => {
+            this.setState({ disabled: false })
+            address = {
+              ...address,
+              ...geocoded.data,
+              geo: geocoded.data,
+              geohash: ngeohash.encode(geocoded.data.latitude, geocoded.data.longitude, 11),
+              isPrecise: true,
+              needsGeocoding: false,
+            }
+            this.props.onAddressSelected(this.state.value, address, suggestion.type)
+          })
+          .catch(() => {
+            this.setState({ disabled: false })
+            this.props.onAddressSelected(this.state.value, address, suggestion.type)
+          })
+
+      } else {
+        address = {
+          ...address,
+          geohash: ngeohash.encode(address.geo.latitude, address.geo.longitude, 11),
+        }
+        this.props.onAddressSelected(this.state.value, address, suggestion.type)
+      }
     }
 
     if (suggestion.type === 'address') {
@@ -198,7 +226,7 @@ const generic = {
     }
   },
   transformSuggestion: function(suggestion) {
-    return suggestion.hit
+    return suggestion
   },
   theme: function(theme) {
     return theme
@@ -495,7 +523,7 @@ class AddressAutosuggest extends Component {
       onChange: this.onChange.bind(this),
       type: "search",
       required: this.props.required,
-      disabled: this.props.disabled,
+      disabled: this.state.disabled,
     }
 
     if (this.props.inputName) {
@@ -573,5 +601,29 @@ export const geocode = (text) => {
   const el = document.getElementById('autocomplete-adapter')
   const adapter = (el && el.dataset.value) || 'algolia'
 
-  return localize('geocode', adapter, null)(text, (getCountry() || 'en'), localeDetector())
+  return new Promise((resolve) => {
+    localize('geocode', adapter, null)(text, (getCountry() || 'en'), localeDetector())
+      .then(address => {
+
+        if (!address || (address.isPrecise && !address.needsGeocoding)) {
+          return resolve(address)
+        }
+
+        axios
+          .get(`/search/geocode?address=${encodeURIComponent(address.streetAddress)}`)
+          .then(geocoded => {
+            resolve({
+              ...address,
+              ...geocoded.data,
+              geo: geocoded.data,
+              geohash: ngeohash.encode(geocoded.data.latitude, geocoded.data.longitude, 11),
+              isPrecise: true,
+              needsGeocoding: false,
+            })
+          })
+          .catch(() => {
+            resolve(address)
+          })
+      })
+  })
 }

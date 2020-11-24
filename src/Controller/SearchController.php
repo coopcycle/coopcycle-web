@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Service\Geocoder;
 use Doctrine\DBAL\Connection;
 use Psonic\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -59,5 +60,21 @@ class SearchController extends AbstractController
         }
 
         return new JsonResponse(['hits' => $hits]);
+    }
+
+    /**
+     * @Route("/search/geocode", name="search_geocode")
+     */
+    public function geocodeAction(Request $request, Geocoder $geocoder)
+    {
+        if ($address = $geocoder->geocode($request->query->get('address'))) {
+
+            return new JsonResponse([
+                'latitude' => $address->getGeo()->getLatitude(),
+                'longitude' => $address->getGeo()->getLongitude(),
+            ]);
+        }
+
+        return new JsonResponse([], 400);
     }
 }

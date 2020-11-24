@@ -379,7 +379,7 @@ class TaskModalContent extends React.Component {
                     geohash={ '' }
                     onAddressSelected={ (value, address) => {
                       const cleanAddress =
-                        _.omit(address, ['isPrecise', 'latitude', 'longitude', 'addressRegion', 'geohash'])
+                        _.omit(address, ['isPrecise', 'latitude', 'longitude', 'addressRegion', 'geohash', 'needsGeocoding'])
 
                       address = {
                         ...values.address,

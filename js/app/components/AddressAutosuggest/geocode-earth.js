@@ -81,6 +81,7 @@ const featureToAddress = (feature) => ({
   postalCode: feature.properties.postalcode || '',
   streetAddress: feature.properties.label,
   isPrecise: true,
+  needsGeocoding: false,
 })
 
 export const transformSuggestion = function (suggestion) {

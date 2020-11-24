@@ -52,7 +52,11 @@ export const hitToAddress = (hit, value = '') => {
     addressRegion: hit.administrative[0] || '',
     postalCode: hit.postcode[0] || '',
     streetAddress,
-    // street_address indicates a precise street address
-    isPrecise: true,
+    // https://community.algolia.com/places/examples.html#using-_rankinginfo
+    // By default, Places only offers precision up to the street level,
+    // which means that all the house numbers of a street will have the same geolocation.
+    // However, Places offers house level precision in France
+    isPrecise: Object.prototype.hasOwnProperty.call(hit._rankingInfo, 'roadNumberPrecision'),
+    needsGeocoding: Object.prototype.hasOwnProperty.call(hit._rankingInfo, 'roadNumberPrecision') && hit._rankingInfo.roadNumberPrecision === 'centroid',
   }
 }

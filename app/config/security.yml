@@ -179,8 +179,6 @@ security:
         restaurant_fulfillment_timing:
             pattern: ^/restaurant/[0-9]+/timing$
             methods: [ GET ]
-            # stateless: true
-            # anonymous: ~
             security: false
 
         # search_restaurants:
@@ -188,6 +186,11 @@ security:
         #     methods: [ GET ]
         #     stateless: true
         #     anonymous: ~
+
+        search_geocode:
+            pattern: ^/search/geocode
+            methods: [ GET ]
+            security: false
 
         web:
             pattern:            ^/
