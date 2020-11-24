@@ -4,6 +4,7 @@ namespace AppBundle\Form\Restaurant;
 
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Form\Type\MoneyType;
+use Carbon\CarbonInterval;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -139,12 +140,16 @@ class FulfillmentMethodType extends AbstractType
             $form = $event->getForm();
 
             $orderingDelayMinutes = $fulfillmentMethod->getOrderingDelayMinutes();
-            $orderingDelayDays = $orderingDelayMinutes / (60 * 24);
-            $remainder = $orderingDelayMinutes % (60 * 24);
-            $orderingDelayHours = $remainder / 60;
 
-            $form->get('orderingDelayHours')->setData($orderingDelayHours);
+            $cascade = CarbonInterval::minutes($orderingDelayMinutes)
+                ->cascade()
+                ->toArray();
+
+            $orderingDelayDays = $cascade['days'];
+            $orderingDelayHours = $cascade['hours'];
+
             $form->get('orderingDelayDays')->setData($orderingDelayDays);
+            $form->get('orderingDelayHours')->setData($orderingDelayHours);
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
