@@ -96,7 +96,7 @@
         "oneup/flysystem-bundle": "^3.1",
         "drupal/core-vendor-hardening": "9.0.x-dev",
         "league/flysystem-aws-s3-v3": "^1.0",
-        "sylius/resource-bundle": "dev-master",
+        "sylius/resource-bundle": "v1.7.0-BETA.1",
         "twig/cache-extension": "^1.4",
         "kreait/firebase-bundle": "^2.2",
         "phpdocumentor/reflection-docblock": "^4.0",
