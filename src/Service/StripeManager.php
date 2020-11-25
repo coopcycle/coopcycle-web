@@ -299,7 +299,13 @@ class StripeManager
             // be done here (after capture) to avoid error
             // "Cannot use an uncaptured charge as a source_transaction"
             $order = $payment->getOrder();
+
+            if (!$order->hasVendor()) {
+                return $charge;
+            }
+
             $vendor = $order->getVendor();
+
             if ($vendor->isHub()) {
 
                 $livemode = $this->settingsManager->isStripeLivemode();
