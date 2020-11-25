@@ -105,7 +105,25 @@ Feature: Tasks
           }
         ],
         "hydra:totalItems":2,
-        "hydra:search":@...@
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/tasks/2/events{?date,assigned}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":[
+            {
+              "@type":"IriTemplateMapping",
+              "variable":"date",
+              "property":"date",
+              "required":false
+            },
+            {
+              "@type":"IriTemplateMapping",
+              "variable":"assigned",
+              "property":"assigned",
+              "required":false
+            }
+          ]
+        }
       }
       """
 
