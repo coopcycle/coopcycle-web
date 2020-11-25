@@ -60,9 +60,14 @@ class StripeManager
 
         $order = $payment->getOrder();
 
+        if (!$order->hasVendor()) {
+            return $options;
+        }
+
         $vendor = $order->getVendor();
-        if (null === $vendor || $vendor->isHub()) {
-            return;
+
+        if ($vendor->isHub()) {
+            return $options;
         }
 
         $restaurant = $order->getRestaurant();

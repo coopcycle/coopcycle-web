@@ -323,6 +323,9 @@ class StripeManagerTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
             ->getRestaurant()
             ->willReturn($restaurant);
         $order
@@ -347,6 +350,9 @@ class StripeManagerTest extends TestCase
         $restaurant = $this->createRestaurant('acct_123456', $paysStripeFee = true);
 
         $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
@@ -381,6 +387,9 @@ class StripeManagerTest extends TestCase
         $restaurant = $this->createRestaurant('acct_123456');
 
         $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
@@ -454,6 +463,9 @@ class StripeManagerTest extends TestCase
             ->getFeeTotal()
             ->willReturn(750);
         $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
             ->getVendor()
             ->willReturn($vendor);
 
@@ -500,6 +512,9 @@ class StripeManagerTest extends TestCase
             ->getNumber()
             ->willReturn('ABC');
         $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
             ->getRestaurant()
             ->willReturn($restaurant);
         $order
@@ -544,6 +559,9 @@ class StripeManagerTest extends TestCase
             ->getNumber()
             ->willReturn('ABC');
         $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
             ->getRestaurant()
             ->willReturn($restaurant);
         $order
@@ -583,6 +601,9 @@ class StripeManagerTest extends TestCase
         $order
             ->getId()
             ->willReturn(1);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
@@ -639,6 +660,9 @@ class StripeManagerTest extends TestCase
         $order
             ->getFeeTotal()
             ->willReturn(750);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
