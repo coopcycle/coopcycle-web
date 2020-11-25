@@ -81,9 +81,12 @@ class ProductTaxCategoryChoiceType extends AbstractType
                 0.0
             );
 
-            return sprintf('%s (%s%%)',
+            $formatter = new \NumberFormatter($this->country, \NumberFormatter::PERCENT);
+            $formatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
+
+            return sprintf('%s (%s)',
                 $this->translator->trans($taxCategory->getName(), [], 'taxation'),
-                number_format($amount * 100, 2)
+                $formatter->format($amount)
             );
         });
 
