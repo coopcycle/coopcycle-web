@@ -34,9 +34,6 @@
       <cascade>
         <cascade-all/>
       </cascade>
-      <order-by>
-        <order-by-field name="createdAt" direction="DESC"/>
-      </order-by>
     </one-to-many>
     <one-to-many field="images" target-entity="AppBundle\Entity\TaskImage" mapped-by="task">
       <cascade>

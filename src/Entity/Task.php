@@ -432,7 +432,14 @@ class Task implements TaggableInterface, OrganizationAwareInterface
 
     public function getEvents()
     {
-        return $this->events;
+        $iterator = $this->events->getIterator();
+        $iterator->uasort(function (TaskEvent $a, TaskEvent $b) {
+            return $a->getCreatedAt() < $b->getCreatedAt() ? -1 : 1;
+        });
+
+        return new ArrayCollection(
+            iterator_to_array($iterator)
+        );
     }
 
     public function containsEventWithName($name)
@@ -552,7 +559,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
 
     public function getLastEvent($name)
     {
-        $criteria = Criteria::create()->orderBy(array("created_at" => Criteria::DESC));
+        $criteria = Criteria::create()->orderBy(array('created_at' => Criteria::DESC));
 
         foreach ($this->getEvents()->matching($criteria) as $event) {
             if ($event->getName() === $name) {
