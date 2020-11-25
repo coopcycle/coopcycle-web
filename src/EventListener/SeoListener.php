@@ -30,6 +30,10 @@ class SeoListener
      */
     private UploaderHelper $uploaderHelper;
 
+    private static $excluded = [
+        'search_geocode',
+    ];
+
     public function __construct(
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
@@ -60,6 +64,11 @@ class SeoListener
 
         // Skip if this is an AJAX request
         if ($request->isXmlHttpRequest()) {
+            return;
+        }
+
+        // Skip if this is explicitly excluded
+        if ($request->attributes->has('_route') && in_array($request->attributes->get('_route'), self::$excluded)) {
             return;
         }
 

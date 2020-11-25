@@ -17,6 +17,7 @@ class LocaleListener implements EventSubscriberInterface
     private static $blacklist = [
         'restaurant_fulfillment_timing',
         'fos_js_routing_js',
+        'search_geocode',
     ];
 
     public function __construct($defaultLocale = 'en')
