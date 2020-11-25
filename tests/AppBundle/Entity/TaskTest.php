@@ -69,7 +69,8 @@ class TaskTest extends TestCase
     public function testHasEvent()
     {
         $event = new TaskEvent($this->task, "PICKUP");
-        $this->task->getEvents()->add($event);
+        $this->task->addEvent($event);
+
         $this->assertTrue($this->task->hasEvent("PICKUP"));
         $this->assertFalse($this->task->hasEvent("DROPOFF"));
     }
@@ -93,10 +94,10 @@ class TaskTest extends TestCase
         $event3 = $this->createTaskEvent('task:assigned', new \DateTime('2018-04-11 14:00:00'));
         $event4 = $this->createTaskEvent('task:unassigned', new \DateTime('2018-04-11 15:00:00'));
 
-        $this->task->getEvents()->add($event1);
-        $this->task->getEvents()->add($event2);
-        $this->task->getEvents()->add($event3);
-        $this->task->getEvents()->add($event4);
+        $this->task->addEvent($event1);
+        $this->task->addEvent($event2);
+        $this->task->addEvent($event3);
+        $this->task->addEvent($event4);
 
         $this->assertSame($this->task->getLastEvent('task:assigned'), $event3);
     }
