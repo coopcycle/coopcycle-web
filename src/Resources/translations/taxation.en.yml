@@ -19,3 +19,4 @@ tax_category.base_standard: Base › Standard rate
 tax_category.base_intermediary: Base › Intermediary rate
 tax_category.base_reduced: Base › Reduced rate
 tax_category.base_super_reduced: Base › Super reduced rate
+tax_category.base_exempt: Base › Tax exempt

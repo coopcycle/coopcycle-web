@@ -139,3 +139,22 @@ base_reduced:
       reduced: 0.05
     ar:
       reduced: 0.025
+
+base_exempt:
+  rates:
+    be:
+      zero: 0.00
+    ca-bc:
+      zero: 0.00
+    de:
+      zero: 0.00
+    es:
+      zero: 0.00
+    fr:
+      zero: 0.00
+    gb:
+      zero: 0.00
+    pl:
+      zero: 0.00
+    ar:
+      zero: 0.00

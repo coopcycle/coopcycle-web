@@ -33,6 +33,7 @@ class ProductTaxCategoryChoiceLoader implements ChoiceLoaderInterface
         'BASE_STANDARD',
         'BASE_INTERMEDIARY',
         'BASE_REDUCED',
+        'BASE_EXEMPT',
     ];
 
     public function __construct(
