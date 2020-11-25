@@ -148,7 +148,7 @@ const generic = {
       multiSection,
       sessionToken: null,
       lastValueWithResults: '',
-      disabled: this.props.disabled,
+      loading: false,
     }
   },
   onSuggestionsFetchRequested: function() {
@@ -173,12 +173,12 @@ const generic = {
 
       if (address.isPrecise && address.needsGeocoding) {
 
-        this.setState({ disabled: true })
+        this.setState({ loading: true })
 
         axios
           .get(`/search/geocode?address=${encodeURIComponent(address.streetAddress)}`)
           .then(geocoded => {
-            this.setState({ disabled: false })
+            this.setState({ loading: false })
             address = {
               ...address,
               ...geocoded.data,
@@ -190,7 +190,7 @@ const generic = {
             this.props.onAddressSelected(this.state.value, address, suggestion.type)
           })
           .catch(() => {
-            this.setState({ disabled: false })
+            this.setState({ loading: false })
             this.props.onAddressSelected(this.state.value, address, suggestion.type)
           })
 
@@ -523,7 +523,7 @@ class AddressAutosuggest extends Component {
       onChange: this.onChange.bind(this),
       type: "search",
       required: this.props.required,
-      disabled: this.state.disabled,
+      disabled: this.props.disabled || this.state.loading,
     }
 
     if (this.props.inputName) {
