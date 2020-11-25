@@ -215,6 +215,9 @@ AppBundle\Entity\Contract:
   contract_3:
     flatDeliveryPrice: 350
     feeRate: 0.00
+  contract_4:
+    flatDeliveryPrice: 350
+    feeRate: 0.00
 
 AppBundle\Entity\LocalBusiness:
   crazy_hamburger:
