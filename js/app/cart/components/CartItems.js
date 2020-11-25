@@ -64,10 +64,10 @@ class CartItems extends React.Component {
         <div className="cart__items">
           { _.map(this.props.itemsGroups, (items, title) => {
             return (
-              <>
+              <React.Fragment key={ title }>
                 <h5 className="text-muted">{ title }</h5>
                 { this.renderItems(items) }
-              </>
+              </React.Fragment>
             )
           })}
         </div>
