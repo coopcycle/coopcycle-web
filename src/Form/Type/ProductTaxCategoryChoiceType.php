@@ -81,9 +81,9 @@ class ProductTaxCategoryChoiceType extends AbstractType
                 0.0
             );
 
-            return sprintf('%s (%d%%)',
+            return sprintf('%s (%s%%)',
                 $this->translator->trans($taxCategory->getName(), [], 'taxation'),
-                $amount * 100
+                number_format($amount * 100, 2)
             );
         });
 
