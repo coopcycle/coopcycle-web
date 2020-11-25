@@ -3,9 +3,10 @@
 namespace Tests\AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\Contract;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderDepositRefundProcessor;
 use AppBundle\Entity\Sylius\ProductVariant;
@@ -54,7 +55,7 @@ class OrderDepositRefundProcessorTest extends TestCase
         return $contract;
     }
 
-    private function createOrderItem(Restaurant $restaurant, ReusablePackaging $reusablePackaging, $quantity, $units, $enabled)
+    private function createOrderItem(LocalBusiness $restaurant, ReusablePackaging $reusablePackaging, $quantity, $units, $enabled)
     {
         $orderItem = $this->prophesize(OrderItemInterface::class);
         $variant = $this->prophesize(ProductVariant::class);
@@ -91,7 +92,7 @@ class OrderDepositRefundProcessorTest extends TestCase
     {
         $order = new Order();
 
-        $restaurant = new Restaurant();
+        $restaurant = new LocalBusiness();
         $restaurant->setDepositRefundEnabled(false);
 
         $order->setRestaurant($restaurant);
@@ -109,7 +110,7 @@ class OrderDepositRefundProcessorTest extends TestCase
     public function testOrderDoesNotContainReusablePackagingDoesNothing()
     {
         $order = new Order();
-        $restaurant = new Restaurant();
+        $restaurant = new LocalBusiness();
 
         $restaurant->setDepositRefundEnabled(true);
         $order->setRestaurant($restaurant);
@@ -131,7 +132,7 @@ class OrderDepositRefundProcessorTest extends TestCase
         $reusablePackaging = new ReusablePackaging();
         $reusablePackaging->setPrice(100);
 
-        $restaurant = new Restaurant();
+        $restaurant = new LocalBusiness();
         $restaurant->setDepositRefundEnabled(true);
         $restaurant->addReusablePackaging($reusablePackaging);
 
@@ -140,8 +141,11 @@ class OrderDepositRefundProcessorTest extends TestCase
             ->isReusablePackagingEnabled()
             ->willReturn(true);
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
         $order
             ->removeAdjustmentsRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
             ->shouldBeCalled();

@@ -27,11 +27,16 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
     {
         $order->removeAdjustmentsRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT);
 
-        $restaurant = $order->getRestaurant();
-
-        if (null === $restaurant) {
+        if (!$order->hasVendor()) {
             return;
         }
+
+        // For the moment, not supported on hubs
+        if ($order->getVendor()->isHub()) {
+            return;
+        }
+
+        $restaurant = $order->getVendor()->getRestaurant();
 
         if ($restaurant->isDepositRefundOptin()) {
             if (!$restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {

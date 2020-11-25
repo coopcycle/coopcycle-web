@@ -46,9 +46,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
     {
         Assert::isInstanceOf($order, OrderInterface::class);
 
-        $restaurant = $order->getRestaurant();
-
-        if (null === $restaurant) {
+        if (!$order->hasVendor()) {
             return;
         }
 
@@ -58,7 +56,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         $order->removeAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
         $order->removeAdjustments(AdjustmentInterface::TIP_ADJUSTMENT);
 
-        $contract = $restaurant->getContract();
+        $contract = $order->getVendor()->getContract();
         $feeRate = $contract->getFeeRate();
 
         $delivery = null;
