@@ -5,7 +5,7 @@ namespace AppBundle\EventSubscriber;
 use AppBundle\Annotation\HideSoftDeleted;
 use Doctrine\Common\Annotations\Reader as AnnotationReader;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -20,7 +20,7 @@ class HideSoftDeletedSubscriber implements EventSubscriberInterface
         $this->annotationReader = $annotationReader;
     }
 
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(ControllerEvent $event)
     {
         $controller = $event->getController();
 

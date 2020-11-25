@@ -11,7 +11,7 @@ use Doctrine\DBAL\Types\Type;
 /**
  * A Doctrine filter that adds "enabled = X" to SQL queries.
  *
- * @see https://api-platform.com/docs/core/filters#using-doctrine-filters
+ * @see https://api-platform.com/docs/core/filters/#using-doctrine-orm-filters
  * @see http://blog.michaelperrin.fr/2014/12/05/doctrine-filters/
  */
 final class EnabledFilter extends SQLFilter
