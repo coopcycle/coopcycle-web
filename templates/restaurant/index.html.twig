@@ -39,7 +39,13 @@
   {% block restaurant_nav %}
     {% if not embed_context.enabled %}
     <div class="homepage-restaurants__show-more text-left mb-4">
-      {% if restaurant.context == 'AppBundle\\Enum\\Store' %}
+      {% set hub = coopcycle_hub_resolve(restaurant) %}
+      {% if hub is not null %}
+        <a class="restaurant-show-more" href="{{ path('hub', { id: hub.id, slug: hub.name|slugify }) }}">
+          <i class="fa fa-arrow-left mr-2"></i>
+          <span>{% trans %}index.view_all_merchants{% endtrans %}</span>
+        </a>
+      {% elseif restaurant.context == 'AppBundle\\Enum\\Store' %}
         <a class="restaurant-show-more" href="{{ path('stores') }}">
           <i class="fa fa-arrow-left mr-2"></i>
           <span>{% trans %}index.view_all_shops{% endtrans %}</span>

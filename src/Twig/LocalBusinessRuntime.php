@@ -4,6 +4,7 @@ namespace AppBundle\Twig;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\HubRepository;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use Carbon\Carbon;
@@ -20,11 +21,13 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         TranslatorInterface $translator,
         SerializerInterface $serializer,
         LocalBusinessRepository $repository,
+        HubRepository $hubRepository,
         CacheInterface $appCache)
     {
         $this->translator = $translator;
         $this->serializer = $serializer;
         $this->repository = $repository;
+        $this->hubRepository = $hubRepository;
         $this->appCache = $appCache;
     }
 
@@ -98,5 +101,10 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
             return $suggestions;
         });
+    }
+
+    public function resolveHub(LocalBusiness $restaurant)
+    {
+        return $this->hubRepository->findOneByRestaurant($restaurant);
     }
 }
