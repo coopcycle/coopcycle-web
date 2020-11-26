@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { hitToAddress, initSearch } from '../../utils/algolia'
+import { hitToAddress, initSearch, formatAddress } from '../../utils/algolia'
 import PoweredByAlgolia from './algolia.svg'
 
 let search = null
@@ -54,9 +54,9 @@ export const onSuggestionsFetchRequested = function({ value }) {
 
     const predictionsAsSuggestions = results.hits.map((hit, idx) => ({
       type: 'prediction',
-      value: `${hit.locale_names[0]}, ${hit.city[0]}, ${hit.country}`,
+      value: formatAddress(hit),
       id: hit.objectID,
-      description: `${hit.locale_names[0]}, ${hit.city[0]}, ${hit.country}`,
+      description: formatAddress(hit),
       index: idx,
       lat: hit._geoloc.lat,
       lng: hit._geoloc.lng,

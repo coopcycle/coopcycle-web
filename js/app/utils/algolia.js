@@ -33,11 +33,13 @@ export const initSearch = () => {
   }
 }
 
+export const formatAddress = hit => `${hit.locale_names[0]}, ${hit.postcode[0]} ${hit.city[0]}, ${hit.country}`
+
 // https://community.algolia.com/places/api-clients.html#json-answer
 export const hitToAddress = (hit, value = '') => {
 
   const streetAddress = value ?
-    value : `${hit.locale_names[0]}, ${hit.city[0]}, ${hit.country}`
+    value : formatAddress(hit)
 
   return {
     // FIXME Use "geo" key everywhere, and remove
