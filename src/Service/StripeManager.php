@@ -322,13 +322,12 @@ class StripeManager
                     foreach ($subVendors as $restaurant) {
 
                         $stripeAccount = $restaurant->getStripeAccount($livemode);
-
                         $transferAmount = $order->getTransferAmount($restaurant);
 
                         if ($transferAmount > 0) {
                             // @see https://stripe.com/docs/connect/charges-transfers
                             Stripe\Transfer::create([
-                                'amount' => $order->getTransferAmount($restaurant),
+                                'amount' => $transferAmount,
                                 'currency' => strtolower($payment->getCurrencyCode()),
                                 'destination' => $stripeAccount->getStripeUserId(),
                                 // @see https://stripe.com/docs/connect/charges-transfers#transfer-availability

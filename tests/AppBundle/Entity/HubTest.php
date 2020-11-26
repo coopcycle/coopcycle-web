@@ -112,6 +112,14 @@ class HubTest extends TestCase
         $bread1Variant = $this->createProductVariant($bread1);
         $bread2Variant = $this->createProductVariant($bread2);
 
+        $beer1 = $this->createProduct();
+        $beer2 = $this->createProduct();
+
+        $brewery = $this->createRestaurant([$beer1, $beer2]);
+
+        $beer1Variant = $this->createProductVariant($beer1);
+        $beer2Variant = $this->createProductVariant($beer2);
+
         //
 
         $order = $this->prophesize(OrderInterface::class);
@@ -119,18 +127,22 @@ class HubTest extends TestCase
         $order
             ->getItems()
             ->willReturn(new ArrayCollection([
-                $this->createOrderItem($flower1Variant, 500),
-                $this->createOrderItem($flower2Variant, 700),
-                $this->createOrderItem($bread1Variant, 600),
-                $this->createOrderItem($bread2Variant, 300),
+                $this->createOrderItem($flower1Variant, 2000),
+                $this->createOrderItem($flower2Variant,  700),
+                $this->createOrderItem($bread1Variant,   300),
+                $this->createOrderItem($bread2Variant,   300),
+                $this->createOrderItem($beer1Variant,    300),
+                $this->createOrderItem($beer2Variant,    400),
             ]));
-        $order->getItemsTotal()->willReturn(2100);
+
+        $order->getItemsTotal()->willReturn(4000);
 
         $hub = new Hub();
         $hub->addRestaurant($flowerShop);
         $hub->addRestaurant($bakery);
 
-        $this->assertEquals(0.57, $hub->getPercentageForRestaurant($order->reveal(), $flowerShop));
-        $this->assertEquals(0.43, $hub->getPercentageForRestaurant($order->reveal(), $bakery));
+        $this->assertEquals(0.6750, $hub->getPercentageForRestaurant($order->reveal(), $flowerShop));
+        $this->assertEquals(0.1500, $hub->getPercentageForRestaurant($order->reveal(), $bakery));
+        $this->assertEquals(0.1750, $hub->getPercentageForRestaurant($order->reveal(), $brewery));
     }
 }

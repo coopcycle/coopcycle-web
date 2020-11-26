@@ -149,6 +149,6 @@ class Hub implements OpenCloseInterface
         $total = $order->getItemsTotal();
         $itemsTotal = $this->getItemsTotalForRestaurant($order, $restaurant);
 
-        return round($itemsTotal / $total, 2);
+        return round($itemsTotal / $total, 4);
     }
 }

@@ -39,7 +39,10 @@ final class OrderVendorProcessor implements OrderProcessorInterface
             return;
         }
 
-        $order->removeAdjustments(AdjustmentInterface::VENDOR_FEE_ADJUSTMENT);
+        if (!in_array($order->getState(), [ OrderInterface::STATE_CART ])) {
+            return;
+        }
+
         $order->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT);
 
         $vendor = $order->getVendor();
@@ -56,27 +59,12 @@ final class OrderVendorProcessor implements OrderProcessorInterface
 
         $hub = $vendor->getHub();
 
+        $rest = ($order->getTotal() - $order->getFeeTotal());
+
         foreach ($subVendors as $subVendor) {
 
-            $vendorFee =
-                $order->getFeeTotal() * $hub->getPercentageForRestaurant($order, $subVendor);
-
-            $vendorFeeAdjustment = $this->adjustmentFactory->createWithData(
-                AdjustmentInterface::VENDOR_FEE_ADJUSTMENT,
-                $this->translator->trans('order.adjustment_type.vendor_fee'),
-                $vendorFee,
-                $neutral = true
-            );
-            $vendorFeeAdjustment->setOriginCode(
-                $subVendor->asOriginCode()
-            );
-
-            $order->addAdjustment($vendorFeeAdjustment);
-
-            // ---
-
-            $transferAmount =
-                $hub->getItemsTotalForRestaurant($order, $subVendor) - $vendorFee;
+            $percentageForVendor = $hub->getPercentageForRestaurant($order, $subVendor);
+            $transferAmount = ($rest * $percentageForVendor);
 
             $transferAmountAdjustment = $this->adjustmentFactory->createWithData(
                 AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT,
