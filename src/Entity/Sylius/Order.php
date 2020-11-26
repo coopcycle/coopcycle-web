@@ -987,7 +987,7 @@ class Order extends BaseOrder implements OrderInterface
         $this->vendor = $vendor;
     }
 
-    public function getItemsGroupedByVendor()
+    public function getItemsGroupedByVendor(): \SplObjectStorage
     {
         $hash = new \SplObjectStorage();
 
@@ -1015,5 +1015,34 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return $hash;
+    }
+
+    public function getVendors(): array
+    {
+        $vendors = [];
+
+        foreach ($this->getItems() as $item) {
+
+            $product = $item->getVariant()->getProduct();
+
+            if ($this->getVendor()->isHub()) {
+                $hub = $this->getVendor()->getHub();
+                $vendor = null;
+                foreach ($hub->getRestaurants() as $restaurant) {
+                    if ($restaurant->hasProduct($product)) {
+                        $vendor = $restaurant;
+                        break;
+                    }
+                }
+            } else {
+                $vendor = $this->getVendor()->getRestaurant();
+            }
+
+            if ($vendor && !in_array($vendor, $vendors, true)) {
+                $vendors[] = $vendor;
+            }
+        }
+
+        return $vendors;
     }
 }
