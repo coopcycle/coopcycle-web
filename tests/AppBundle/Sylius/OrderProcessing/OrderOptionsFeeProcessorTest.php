@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Sylius\OrderProcessing;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
@@ -11,6 +12,7 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
 use AppBundle\Sylius\OrderProcessing\OrderOptionsFeeProcessor;
 use AppBundle\Sylius\OrderProcessing\OrderOptionsProcessor;
+use AppBundle\Sylius\OrderProcessing\OrderVendorProcessor;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
@@ -59,6 +61,8 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
 
         $this->promotionRepository = $this->prophesize(PromotionRepositoryInterface::class);
 
+        $this->iriConverter = $this->prophesize(IriConverterInterface::class);
+
         $this->orderFeeProcessor = new OrderFeeProcessor(
             $this->adjustmentFactory,
             $this->translator->reveal(),
@@ -68,11 +72,19 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         );
         $this->orderOptionsProcessor = new OrderOptionsProcessor($this->adjustmentFactory);
 
+        $this->orderVendorProcessor = new OrderVendorProcessor(
+            $this->adjustmentFactory,
+            $this->translator->reveal(),
+            $this->iriConverter->reveal(),
+            new NullLogger()
+        );
+
         $this->compositeProcessor = new CompositeOrderProcessor();
 
         $this->optionsFeeProcessor = new OrderOptionsFeeProcessor(
             $this->orderOptionsProcessor,
-            $this->orderFeeProcessor
+            $this->orderFeeProcessor,
+            $this->orderVendorProcessor
         );
     }
 

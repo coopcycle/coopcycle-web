@@ -223,6 +223,13 @@ services:
     tags:
       - { name: monolog.logger, channel: fee_calculation }
 
+  sylius.order_processing.order_vendor_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderVendorProcessor
+    arguments:
+      $adjustmentFactory: "@sylius.factory.adjustment"
+    tags:
+      - { name: monolog.logger, channel: fee_calculation }
+
   AppBundle\Sylius\OrderProcessing\OrderDisabledProductProcessor:
     tags:
       - { name: sylius.order_processor, priority: 96 }
@@ -239,6 +246,7 @@ services:
     arguments:
       - "@sylius.order_processing.order_options_processor"
       - "@sylius.order_processing.order_fee_processor"
+      - "@sylius.order_processing.order_vendor_processor"
     tags:
       - { name: sylius.order_processor, priority: 48 }
 

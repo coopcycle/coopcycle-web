@@ -10,12 +10,16 @@ final class OrderOptionsFeeProcessor implements OrderProcessorInterface
 {
     private $compositeProcessor;
 
-    public function __construct(OrderOptionsProcessor $optionsProcessor, OrderFeeProcessor $feeProcessor)
+    public function __construct(
+        OrderOptionsProcessor $optionsProcessor,
+        OrderFeeProcessor $feeProcessor,
+        OrderVendorProcessor $vendorProcessor)
     {
         $this->compositeProcessor = new CompositeOrderProcessor();
 
         $this->compositeProcessor->addProcessor($optionsProcessor, 64);
         $this->compositeProcessor->addProcessor($feeProcessor, 32);
+        $this->compositeProcessor->addProcessor($vendorProcessor, 16);
     }
 
     /**
