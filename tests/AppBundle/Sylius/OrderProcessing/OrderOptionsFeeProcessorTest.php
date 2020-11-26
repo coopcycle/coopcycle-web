@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\Sylius\OrderProcessing;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
@@ -61,7 +60,6 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
 
         $this->promotionRepository = $this->prophesize(PromotionRepositoryInterface::class);
 
-        $this->iriConverter = $this->prophesize(IriConverterInterface::class);
 
         $this->orderFeeProcessor = new OrderFeeProcessor(
             $this->adjustmentFactory,
@@ -75,7 +73,6 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $this->orderVendorProcessor = new OrderVendorProcessor(
             $this->adjustmentFactory,
             $this->translator->reveal(),
-            $this->iriConverter->reveal(),
             new NullLogger()
         );
 
