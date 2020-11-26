@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Service;
 
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Hub;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Payment;
@@ -423,32 +424,6 @@ class StripeManagerTest extends TestCase
         $hub
             ->getRestaurants()
             ->willReturn([ $restaurant1, $restaurant2 ]);
-        $hub
-            ->getPercentageForRestaurant(
-                $order->reveal(),
-                Argument::type(Restaurant::class)
-            )
-            ->will(function ($args) use ($restaurant1, $restaurant2) {
-                if ($args[1] === $restaurant1) {
-                    return 0.76;
-                }
-                if ($args[1] === $restaurant2) {
-                    return 0.24;
-                }
-            });
-        $hub
-            ->getItemsTotalForRestaurant(
-                $order->reveal(),
-                Argument::type(Restaurant::class)
-            )
-            ->will(function ($args) use ($restaurant1, $restaurant2) {
-                if ($args[1] === $restaurant1) {
-                    return 1700;
-                }
-                if ($args[1] === $restaurant2) {
-                    return 550;
-                }
-            });
 
         $vendor = new Vendor();
         $vendor->setHub($hub->reveal());
@@ -466,8 +441,21 @@ class StripeManagerTest extends TestCase
             ->hasVendor()
             ->willReturn(true);
         $order
+            ->getVendors()
+            ->willReturn([ $restaurant1, $restaurant2 ]);
+        $order
             ->getVendor()
             ->willReturn($vendor);
+        $order
+            ->getTransferAmount(Argument::type(LocalBusiness::class))
+            ->will(function ($args) use ($restaurant1, $restaurant2) {
+                if ($args[0] === $restaurant1) {
+                    return 1130;
+                }
+                if ($args[0] === $restaurant2) {
+                    return 370;
+                }
+            });
 
         // Total = 30.00
         // Items = 22.50

@@ -313,22 +313,29 @@ class StripeManager
 
             if ($vendor->isHub()) {
 
-                $livemode = $this->settingsManager->isStripeLivemode();
-                $hub = $vendor->getHub();
+                $subVendors = $order->getVendors();
 
-                foreach ($hub->getRestaurants() as $restaurant) {
+                if (count($subVendors) > 1) {
 
-                    $stripeAccount = $restaurant->getStripeAccount($livemode);
-                    $feePart = $order->getFeeTotal() * $hub->getPercentageForRestaurant($order, $restaurant);
+                    $livemode = $this->settingsManager->isStripeLivemode();
 
-                    // @see https://stripe.com/docs/connect/charges-transfers
-                    Stripe\Transfer::create([
-                        'amount' => $hub->getItemsTotalForRestaurant($order, $restaurant) - $feePart,
-                        'currency' => strtolower($payment->getCurrencyCode()),
-                        'destination' => $stripeAccount->getStripeUserId(),
-                        // @see https://stripe.com/docs/connect/charges-transfers#transfer-availability
-                        'source_transaction' => $payment->getCharge(),
-                    ]);
+                    foreach ($subVendors as $restaurant) {
+
+                        $stripeAccount = $restaurant->getStripeAccount($livemode);
+
+                        $transferAmount = $order->getTransferAmount($restaurant);
+
+                        if ($transferAmount > 0) {
+                            // @see https://stripe.com/docs/connect/charges-transfers
+                            Stripe\Transfer::create([
+                                'amount' => $order->getTransferAmount($restaurant),
+                                'currency' => strtolower($payment->getCurrencyCode()),
+                                'destination' => $stripeAccount->getStripeUserId(),
+                                // @see https://stripe.com/docs/connect/charges-transfers#transfer-availability
+                                'source_transaction' => $payment->getCharge(),
+                            ]);
+                        }
+                    }
                 }
             }
         }

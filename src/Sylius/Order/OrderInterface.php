@@ -174,4 +174,9 @@ interface OrderInterface extends
      * @return array
      */
     public function getVendors(): array;
+
+    /**
+     * @return int
+     */
+    public function getTransferAmount(LocalBusiness $subVendor): int;
 }

@@ -71,15 +71,6 @@ class OrderVendorProcessorTest extends KernelTestCase
                 ->willReturn(null);
         }
 
-        // $contract = $this->prophesize(Contract::class);
-        // $contract
-        //     ->isRestaurantPaysStripeFee()
-        //     ->willReturn($paysStripeFee);
-
-        // $restaurant
-        //     ->getContract()
-        //     ->willReturn($contract->reveal());
-
         return $restaurant->reveal();
     }
 
