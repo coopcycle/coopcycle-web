@@ -428,8 +428,7 @@ class Order extends BaseOrder implements OrderInterface
     public function getTransferAmount(LocalBusiness $subVendor): int
     {
         foreach ($this->getAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT) as $adjustment) {
-            // FIXME This is BAD
-            if ($adjustment->getOriginCode() === sprintf('/api/restaurants/%d', $subVendor->getId())) {
+            if ($adjustment->getOriginCode() === $subVendor->asOriginCode()) {
                 return $adjustment->getAmount();
             }
         }

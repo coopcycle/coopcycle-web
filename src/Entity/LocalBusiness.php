@@ -786,4 +786,9 @@ class LocalBusiness extends BaseLocalBusiness implements
 
         return null;
     }
+
+    public function asOriginCode(): string
+    {
+        return (string) $this->getId();
+    }
 }

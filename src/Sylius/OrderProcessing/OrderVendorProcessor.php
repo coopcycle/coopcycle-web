@@ -2,7 +2,6 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Psr\Log\LoggerInterface;
@@ -17,18 +16,15 @@ final class OrderVendorProcessor implements OrderProcessorInterface
 {
     private $adjustmentFactory;
     private $translator;
-    private $iriConverter;
     private $logger;
 
     public function __construct(
         AdjustmentFactoryInterface $adjustmentFactory,
         TranslatorInterface $translator,
-        IriConverterInterface $iriConverter,
         LoggerInterface $logger)
     {
         $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
-        $this->iriConverter = $iriConverter;
         $this->logger = $logger;
     }
 
@@ -72,7 +68,7 @@ final class OrderVendorProcessor implements OrderProcessorInterface
                 $neutral = true
             );
             $vendorFeeAdjustment->setOriginCode(
-                $this->iriConverter->getIriFromItem($subVendor)
+                $subVendor->asOriginCode()
             );
 
             $order->addAdjustment($vendorFeeAdjustment);
@@ -89,7 +85,7 @@ final class OrderVendorProcessor implements OrderProcessorInterface
                 $neutral = true
             );
             $transferAmountAdjustment->setOriginCode(
-                $this->iriConverter->getIriFromItem($subVendor)
+                $subVendor->asOriginCode()
             );
 
             $order->addAdjustment($transferAmountAdjustment);

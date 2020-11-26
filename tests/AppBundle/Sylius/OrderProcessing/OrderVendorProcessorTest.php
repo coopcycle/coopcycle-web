@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\Sylius\OrderProcessing;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\StripeAccount;
@@ -43,19 +42,18 @@ class OrderVendorProcessorTest extends KernelTestCase
 
         $this->adjustmentFactory = static::$kernel->getContainer()->get('sylius.factory.adjustment');
 
-        $this->iriConverter = $this->prophesize(IriConverterInterface::class);
-
         $this->orderProcessor = new OrderVendorProcessor(
             $this->adjustmentFactory,
             $this->translator->reveal(),
-            $this->iriConverter->reveal(),
             new NullLogger()
         );
     }
 
-    private function createRestaurant($stripeUserId = null, $paysStripeFee = true)
+    private function createRestaurant($originCode, $stripeUserId = null, $paysStripeFee = true)
     {
         $restaurant = $this->prophesize(LocalBusiness::class);
+
+        $restaurant->asOriginCode()->willReturn($originCode);
 
         if ($stripeUserId) {
             $stripeAccount = $this->prophesize(StripeAccount::class);
@@ -90,9 +88,9 @@ class OrderVendorProcessorTest extends KernelTestCase
 
     public function testProcessWithHub()
     {
-        $restaurant1 = $this->createRestaurant('acct_123', $paysStripeFee = true);
-        $restaurant2 = $this->createRestaurant('acct_456', $paysStripeFee = true);
-        $restaurant3 = $this->createRestaurant('acct_789', $paysStripeFee = true);
+        $restaurant1 = $this->createRestaurant('1', 'acct_123', $paysStripeFee = true);
+        $restaurant2 = $this->createRestaurant('2', 'acct_456', $paysStripeFee = true);
+        $restaurant3 = $this->createRestaurant('3', 'acct_789', $paysStripeFee = true);
 
         $hub = $this->prophesize(Hub::class);
         $hub
@@ -164,17 +162,6 @@ class OrderVendorProcessorTest extends KernelTestCase
         $payment->setCharge('ch_123456');
         $payment->setOrder($order->reveal());
 
-        $this->iriConverter
-            ->getIriFromItem(Argument::type(LocalBusiness::class))
-            ->will(function ($args) use ($restaurant1, $restaurant2) {
-                if ($args[0] === $restaurant1) {
-                    return '/api/restaurants/1';
-                }
-                if ($args[0] === $restaurant2) {
-                    return '/api/restaurants/2';
-                }
-            });
-
         $order
             ->removeAdjustments(Argument::that(function (string $type) {
                 return in_array($type, [
@@ -188,19 +175,19 @@ class OrderVendorProcessorTest extends KernelTestCase
             ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
 
                 if (AdjustmentInterface::VENDOR_FEE_ADJUSTMENT === $adjustment->getType()) {
-                    if ('/api/restaurants/1' === $adjustment->getOriginCode()) {
+                    if ('1' === $adjustment->getOriginCode()) {
                         return 570 === $adjustment->getAmount();
                     }
-                    if ('/api/restaurants/2' === $adjustment->getOriginCode()) {
+                    if ('2' === $adjustment->getOriginCode()) {
                         return 180 === $adjustment->getAmount();
                     }
                 }
 
                 if (AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT === $adjustment->getType()) {
-                    if ('/api/restaurants/1' === $adjustment->getOriginCode()) {
+                    if ('1' === $adjustment->getOriginCode()) {
                         return 1130 === $adjustment->getAmount();
                     }
-                    if ('/api/restaurants/2' === $adjustment->getOriginCode()) {
+                    if ('2' === $adjustment->getOriginCode()) {
                         return 370 === $adjustment->getAmount();
                     }
                 }
