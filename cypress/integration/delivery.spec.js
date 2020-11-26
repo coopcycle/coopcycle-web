@@ -30,11 +30,11 @@ context('Delivery', () => {
     // https://docs.cypress.io/guides/references/best-practices.html#Selecting-Elements
     cy.get('#delivery_pickup_address input[type="search"]')
         .type('23 av claude vellefaux', { timeout: 15000 })
-    cy.contains('23 Avenue Claude Vellefaux, Paris 10e Arrondissement, France').click()
+    cy.contains('23 Avenue Claude Vellefaux, 75010 Paris, France').click()
 
     cy.get('#delivery_dropoff_address input[type="search"]')
         .type('72 rue st maur', { timeout: 15000 })
-    cy.contains('72 Rue Saint-Maur, Paris 11e Arrondissement, France').click()
+    cy.contains('72 Rue Saint-Maur, 75011 Paris, France').click()
 
     cy.wait('@apiRoutingRoute')
 
