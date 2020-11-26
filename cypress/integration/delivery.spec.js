@@ -54,7 +54,7 @@ context('Delivery', () => {
     cy.get('#delivery_pickup_address')
       .find('.react-autosuggest__suggestions-container')
       .find('ul[role="listbox"] li', { timeout: 5000 })
-      .contains('91 Rue de Rivoli, Paris 4e Arrondissement, France')
+      .contains('91 Rue de Rivoli, 75004 Paris, France')
       .click()
 
     cy.get('#delivery_pickup_address_newAddress_latitude')
