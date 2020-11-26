@@ -47,7 +47,7 @@ context('Checkout (hubs)', () => {
     cy.searchAddress(
       '.ReactModal__Content--enter-address',
       '91 rue de rivoli paris',
-      '91 Rue de Rivoli, Paris 4e Arrondissement, France'
+      '91 Rue de Rivoli, 75004 Paris, France'
     )
 
     cy.wait('@postPizzaExpress')
