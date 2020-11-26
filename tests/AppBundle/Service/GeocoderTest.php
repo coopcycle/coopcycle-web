@@ -3,12 +3,15 @@
 namespace Tests\AppBundle\Service;
 
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\SettingsManager;
 use Geocoder\Geocoder as GeocoderInterface;
 use Geocoder\Location;
 use Geocoder\Model\AddressCollection;
 use Geocoder\Model\Coordinates;
 use Geocoder\Model\Country;
+use Geocoder\Query\GeocodeQuery;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Spatie\GuzzleRateLimiterMiddleware\Store;
 
@@ -22,8 +25,13 @@ class GeocoderTest extends TestCase
     {
         $this->innerGeocoder = $this->prophesize(GeocoderInterface::class);
         $this->rateLimiterStore = $this->prophesize(Store::class);
+        $this->settingsManager = $this->prophesize(SettingsManager::class);
 
-        $this->geocoder = new Geocoder($this->rateLimiterStore->reveal(), '', 'fr', 'fr', 1);
+        $this->geocoder = new Geocoder(
+            $this->rateLimiterStore->reveal(),
+            $this->settingsManager->reveal(),
+            '', 'fr', 'fr', 1
+        );
         $this->geocoder->setGeocoder($this->innerGeocoder->reveal());
     }
 
@@ -59,8 +67,6 @@ class GeocoderTest extends TestCase
                 $this->createLocation(11, 'Rue des Panoyaux', '75020', 'Paris', 'FR', 48.867432, 2.385274),
                 '11 Rue des Panoyaux, 75020 Paris'
             ],
-
-
         ];
     }
 
@@ -70,7 +76,9 @@ class GeocoderTest extends TestCase
     public function testAddressIsFormattedForCountry($text, Location $location, $expected)
     {
         $this->innerGeocoder
-            ->geocode($text)
+            ->geocodeQuery(Argument::that(function (GeocodeQuery $query) use ($text) {
+                return $query->getText() === $text;
+            }))
             ->willReturn(new AddressCollection([ $location ]));
 
         $address = $this->geocoder->geocode($text);

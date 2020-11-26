@@ -10,6 +10,7 @@ use Geocoder\Provider\Addok\Addok as AddokProvider;
 use Geocoder\Provider\Chain\Chain as ChainProvider;
 use Geocoder\Provider\OpenCage\OpenCage as OpenCageProvider;
 use Geocoder\Query\GeocodeQuery;
+use Geocoder\Query\ReverseQuery;
 use Geocoder\StatefulGeocoder;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
@@ -21,6 +22,7 @@ use Spatie\GuzzleRateLimiterMiddleware\Store as RateLimiterStore;
 class Geocoder
 {
     private $rateLimiterStore;
+    private $settingsManager;
     private $openCageApiKey;
     private $country;
     private $locale;
@@ -34,12 +36,14 @@ class Geocoder
      */
     public function __construct(
         RateLimiterStore $rateLimiterStore,
+        SettingsManager $settingsManager,
         string $openCageApiKey,
         string $country,
         string $locale,
         int $rateLimitPerSecond)
     {
         $this->rateLimiterStore = $rateLimiterStore;
+        $this->settingsManager = $settingsManager;
         $this->openCageApiKey = $openCageApiKey;
         $this->country = $country;
         $this->locale = $locale;
@@ -99,7 +103,12 @@ class Geocoder
      */
     public function geocode($value)
     {
-        $results = $this->getGeocoder()->geocode($value);
+        $query = GeocodeQuery::create($value)
+            ->withData('proximity', $this->settingsManager->get('latlng'));
+
+        $results = $this->getGeocoder()->geocodeQuery(
+            $query
+        );
 
         if (count($results) > 0) {
             $result = $results->first();
