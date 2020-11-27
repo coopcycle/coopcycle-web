@@ -8,10 +8,19 @@
 {% block content %}
 {{ form_start(form) }}
   {{ form_row(form.name) }}
+  {{ form_row(form.enabledFulfillmentMethods) }}
   {{ form_row(form.fulfillmentMethods, { label: false }) }}
   {{ form_widget(form) }}
   <button type="submit" class="btn btn-block btn-primary">
     {{ 'basics.save'|trans }}
   </button>
 {{ form_end(form) }}
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('restaurant-fulfillment-methods') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('restaurant-fulfillment-methods') }}
 {% endblock %}

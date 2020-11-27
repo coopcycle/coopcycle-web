@@ -25,6 +25,7 @@ Encore
   .addEntry('register', './js/app/register/index.js')
   .addEntry('restaurant', './js/app/restaurant/index.js')
   .addEntry('restaurant-form', './js/app/restaurant/form.js')
+  .addEntry('restaurant-fulfillment-methods', './js/app/restaurant/fulfillment-methods.js')
   .addEntry('restaurant-list', './js/app/restaurant/list.js')
   .addEntry('restaurant-menu-editor', './js/app/restaurant/menu-editor.js')
   .addEntry('restaurant-planning', './js/app/restaurant/planning.js')

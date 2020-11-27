@@ -6,23 +6,36 @@ use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Form\Restaurant\ShippingOptionsTrait;
 use AppBundle\Form\Restaurant\FulfillmentMethodType;
+use AppBundle\Form\Restaurant\FulfillmentMethodsTrait;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class HubType extends AbstractType
 {
-    use ShippingOptionsTrait {
-        buildForm as buildShippingOptionsForm;
+    use ShippingOptionsTrait, FulfillmentMethodsTrait {
+        ShippingOptionsTrait::buildForm as buildShippingOptionsForm;
+        FulfillmentMethodsTrait::buildForm as buildFulfillmentMethodsForm;
+    }
+
+    protected $authorizationChecker;
+
+    public function __construct(
+        AuthorizationCheckerInterface $authorizationChecker)
+    {
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->buildShippingOptionsForm($builder, $options);
+        $this->buildFulfillmentMethodsForm($builder, $options);
 
         $builder
             ->add('name', TextType::class, ['label' => 'basics.name'])
@@ -37,16 +50,6 @@ class HubType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
-            ])
-            ->add('fulfillmentMethods', CollectionType::class, [
-                'entry_type' => FulfillmentMethodType::class,
-                'entry_options' => [
-                    'label' => false,
-                    'block_prefix' => 'fulfillment_method_item',
-                ],
-                'allow_add' => false,
-                'allow_delete' => false,
-                'prototype' => false,
             ]);
     }
 

@@ -8,6 +8,7 @@ use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Form\Restaurant\FulfillmentMethodType;
 use AppBundle\Form\Restaurant\LoopeatType;
 use AppBundle\Form\Restaurant\ShippingOptionsTrait;
+use AppBundle\Form\Restaurant\FulfillmentMethodsTrait;
 use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\FormEvent;
@@ -24,8 +25,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RestaurantType extends LocalBusinessType
 {
-    use ShippingOptionsTrait {
-        buildForm as buildShippingOptionsForm;
+    use ShippingOptionsTrait, FulfillmentMethodsTrait {
+        ShippingOptionsTrait::buildForm as buildShippingOptionsForm;
+        FulfillmentMethodsTrait::buildForm as buildFulfillmentMethodsForm;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -33,6 +35,7 @@ class RestaurantType extends LocalBusinessType
         parent::buildForm($builder, $options);
 
         $this->buildShippingOptionsForm($builder, $options);
+        $this->buildFulfillmentMethodsForm($builder, $options);
 
         $builder
             ->add('type', LocalBusinessTypeChoiceType::class)
@@ -87,17 +90,6 @@ class RestaurantType extends LocalBusinessType
                     'label' => 'restaurant.form.deposit_refund_enabled.label',
                     'required' => false,
                 ])
-                ->add('enabledFulfillmentMethods', ChoiceType::class, [
-                    'choices'  => [
-                        'fulfillment_method.delivery' => 'delivery',
-                        'fulfillment_method.collection' => 'collection',
-                    ],
-                    'label' => 'restaurant.form.fulfillment_methods.label',
-                    'required' => false,
-                    'expanded' => true,
-                    'multiple' => true,
-                    'mapped' => false,
-                ])
                 ->add('delete', SubmitType::class, [
                     'label' => 'basics.delete',
                 ]);
@@ -114,19 +106,6 @@ class RestaurantType extends LocalBusinessType
 
             $restaurant = $event->getData();
             $form = $event->getForm();
-
-            if ($form->has('enabledFulfillmentMethods')) {
-
-                $enabledFulfillmentMethods = [];
-                if ($restaurant->isFulfillmentMethodEnabled('delivery')) {
-                    $enabledFulfillmentMethods[] = 'delivery';
-                }
-                if ($restaurant->isFulfillmentMethodEnabled('collection')) {
-                    $enabledFulfillmentMethods[] = 'collection';
-                }
-
-                $form->get('enabledFulfillmentMethods')->setData($enabledFulfillmentMethods);
-            }
 
             if (null !== $restaurant->getId()) {
 
@@ -178,13 +157,6 @@ class RestaurantType extends LocalBusinessType
 
                 $form = $event->getForm();
                 $restaurant = $form->getData();
-
-                if ($form->has('enabledFulfillmentMethods')) {
-                    $enabledFulfillmentMethods = $form->get('enabledFulfillmentMethods')->getData();
-
-                    $restaurant->addFulfillmentMethod('delivery', in_array('delivery', $enabledFulfillmentMethods));
-                    $restaurant->addFulfillmentMethod('collection', in_array('collection', $enabledFulfillmentMethods));
-                }
 
                 if ($form->has('allowStripeConnect')) {
                     $allowStripeConnect = $form->get('allowStripeConnect')->getData();

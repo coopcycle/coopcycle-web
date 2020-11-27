@@ -219,3 +219,6 @@ services:
 
   AppBundle\Form\Type\LegalType:
     tags: [ form.type ]
+
+  AppBundle\Form\HubType:
+    tags: [ form.type ]
