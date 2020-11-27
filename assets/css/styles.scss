@@ -140,6 +140,14 @@ h1, h2, h3, h4, h5, h6 {
   vertical-align: middle;
 }
 
+.modal {
+  @media (max-width: $screen-xs-max) {
+    .modal-dialog {
+      width: calc(100% - 20px);
+    }
+  }
+}
+
 // ------------------ Admin ------------------
 
 .store-opening-hours {
