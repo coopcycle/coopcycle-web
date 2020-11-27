@@ -9,12 +9,12 @@ SwiperCore.use([ Pagination ])
 
 export default ({ images }) => (
   <Swiper
-    slidesPerView={ 2 }
+    slidesPerView={ 1 }
     centeredSlides={ true }
     pagination={{ clickable: true }}
   >
     { images.map((image, index) => (
-      <SwiperSlide key={ `image-${index}` }>
+      <SwiperSlide key={ `image-${index}` } style={{ textAlign: 'center' }}>
         <img src={ image } />
       </SwiperSlide>
     )) }
