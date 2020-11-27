@@ -146,7 +146,6 @@ const generic = {
         (this.props.address.streetAddress || '') : (_.isString(this.props.address) ? this.props.address : ''),
       suggestions,
       multiSection,
-      sessionToken: null,
       lastValueWithResults: '',
       loading: false,
     }

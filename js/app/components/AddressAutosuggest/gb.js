@@ -89,10 +89,23 @@ export function onSuggestionsFetchRequested({ value }) {
         }
       })
   } else {
+
+    const parts = [ value ]
+    if (this.state.postcode.admin_district) {
+      parts.push(this.state.postcode.admin_district)
+    }
+    if (this.state.postcode.admin_county) {
+      parts.push(this.state.postcode.admin_county)
+    }
+    parts.push(this.state.postcode.postcode)
+
     this.setState({
       suggestions: [{
         type: 'manual_address',
-        value,
+        // https://ideal-postcodes.co.uk/guides/good-addressing-guidelines
+        // https://postcoder.com/address-lookup
+        // Ex: 10 Beaconsfield Street, York, North Yorkshire, YO24 4ND
+        value: parts.join(', '),
       }],
     })
   }
@@ -131,7 +144,7 @@ export function onSuggestionSelected(event, { suggestion }) {
 export function poweredBy() {
 
   return (
-    <img src={ IdealPostcodes } />
+    <img style={{ maxWidth: '130px' }} src={ IdealPostcodes } />
   )
 }
 
