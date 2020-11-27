@@ -51,6 +51,8 @@ const init = function() {
 
     const productOptions =
       JSON.parse(event.relatedTarget.dataset.productOptions)
+    const productImages =
+      JSON.parse(event.relatedTarget.dataset.productImages)
 
     render(
       <ProductOptionsModal
@@ -75,22 +77,44 @@ const init = function() {
           $modal.modal('hide')
 
         } } />,
-      this.querySelector('.modal-body')
+      this.querySelector('.modal-body [data-options-container]')
     )
+
+    if (productImages.length > 1) {
+      const $placeholder = $('<div>')
+      $placeholder.addClass('d-flex')
+      $placeholder.addClass('overflow-hidden')
+      productImages.forEach(image => {
+        const $img = $('<img>')
+        $img.attr('src', image)
+        $placeholder.append($img)
+      })
+      $(event.relatedTarget).find('.modal-body [data-swiper]').append($placeholder)
+    }
+
   })
 
-  $('#product-options').on('shown.bs.modal', function() {
+  $('#product-options').on('shown.bs.modal', function(event) {
     var $form = $(this).find('form[data-product-options]')
     if ($form.length === 1) {
       window._paq.push(['trackEvent', 'Checkout', 'showOptions'])
       // $form.find('button[type="submit"]').prop('disabled', !isValid($form))
     }
+
+    const images = JSON.parse(event.relatedTarget.dataset.productImages)
+    render(
+      <ProductDetailsModal images={ images } />,
+      this.querySelector('.modal-body [data-swiper]')
+    )
   })
 
   $('#product-options').on('hidden.bs.modal', function() {
-    unmountComponentAtNode(this.querySelector('.modal-body'))
+    unmountComponentAtNode(this.querySelector('.modal-body [data-options-container]'))
+    unmountComponentAtNode(this.querySelector('.modal-body [data-swiper]'))
     window._paq.push(['trackEvent', 'Checkout', 'hideOptions'])
   })
+
+  // ---
 
   $('#product-details').on('show.bs.modal', function(event) {
 
@@ -110,7 +134,7 @@ const init = function() {
       $img.attr('src', image)
       $placeholder.append($img)
     })
-    $('.modal-body [data-swiper]').append($placeholder)
+    $(event.relatedTarget).find('.modal-body [data-swiper]').append($placeholder)
   })
 
   $('#product-details').on('shown.bs.modal', function(event) {

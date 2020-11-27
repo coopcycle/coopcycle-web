@@ -152,13 +152,13 @@
                 </a>
               </div>
             {% else %}
+              {% set product_images = [] %}
+              {% for product_image in product.images %}
+                {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', 'product_thumbnail') ]) %}
+              {% endfor %}
               {% if not product.hasOptions() %}
               <div class="restaurant-menu-section-item">
                 {% if product.images|length > 1 %}
-                  {% set product_images = [] %}
-                  {% for product_image in product.images %}
-                    {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', 'product_thumbnail') ]) %}
-                  {% endfor %}
                   <button class="menu-item" type="button"
                     data-toggle="modal"
                     data-target="#product-details"
@@ -187,6 +187,7 @@
                   data-form-action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code })|e('html_attr') }}"
                   data-product-code="{{ product.code|e('html_attr') }}"
                   data-product-name="{{ product.name|e('html_attr') }}"
+                  data-product-images="{{ product_images|json_encode|e('html_attr') }}"
                   data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
                   data-product-options="{{ product.options|coopcycle_normalize('AppBundle\\Entity\\Sylius\\ProductOption', ['product_option'], 'json')|json_encode|e('html_attr') }}">
                   {% include '_partials/restaurant/menu_item_inner.html.twig' %}
@@ -237,7 +238,10 @@
         </button>
         <h4 class="modal-title"></h4>
       </div>
-      <div class="modal-body"></div>
+      <div class="modal-body">
+        <div data-swiper></div>
+        <div data-options-container></div>
+      </div>
     </div>
   </div>
 </div>
