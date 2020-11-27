@@ -82,3 +82,40 @@
 
 </div>
 {% endblock %}
+
+{% block contract_widget %}
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="alert alert-info">{% trans %}restaurant.contract.calculation_info{% endtrans %}</div>
+      <div class="row">
+        <div class="col-sm-6">
+          {{ form_row(form.variableDeliveryPriceEnabled) }}
+          {{ form_row(form.flatDeliveryPrice) }}
+          {{ form_row(form.variableDeliveryPrice) }}
+        </div>
+        <div class="col-sm-6">
+          {{ form_row(form.variableCustomerAmountEnabled) }}
+          {{ form_row(form.customerAmount) }}
+          {{ form_row(form.variableCustomerAmount) }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{ form_row(form.feeRate) }}
+  {{ form_row(form.takeAwayFeeRate) }}
+
+  <p>
+    <a class="help-block collapsed" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_advanced">
+      <i class="fa fa-plus"></i>
+      <i class="fa fa-minus"></i>
+      <span>{% trans %}restaurant.contract.showAdvanced{% endtrans %}</span>
+    </a>
+  </p>
+
+  <div class="collapse" id="{{ form.vars.id }}_advanced">
+    {{ form_row(form.restaurantPaysStripeFee, { help: 'restaurant.contract.restaurantPaysStripeFee.help' }) }}
+  </div>
+
+{% endblock %}

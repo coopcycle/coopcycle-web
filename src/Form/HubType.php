@@ -39,6 +39,7 @@ class HubType extends AbstractType
 
         $builder
             ->add('name', TextType::class, ['label' => 'basics.name'])
+            ->add('contract', ContractType::class)
             ->add('restaurants', CollectionType::class, [
                 'entry_type' => EntityType::class,
                 'entry_options' => [

@@ -92,4 +92,8 @@ class ContractType extends AbstractType
         ]);
     }
 
+    public function getBlockPrefix()
+    {
+        return 'contract';
+    }
 }
