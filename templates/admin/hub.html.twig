@@ -1,12 +1,14 @@
 {% extends "admin.html.twig" %}
 
-{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% form_theme form 'form/restaurant.html.twig' %}
 
 {% block breadcrumb %}
 {% endblock %}
 
 {% block content %}
 {{ form_start(form) }}
+  {{ form_row(form.name) }}
+  {{ form_row(form.fulfillmentMethods, { label: false }) }}
   {{ form_widget(form) }}
   <button type="submit" class="btn btn-block btn-primary">
     {{ 'basics.save'|trans }}

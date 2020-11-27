@@ -46,6 +46,7 @@ class RestaurantType extends LocalBusinessType
                 'entry_type' => FulfillmentMethodType::class,
                 'entry_options' => [
                     'label' => false,
+                    'block_prefix' => 'fulfillment_method_item',
                 ],
                 'allow_add' => false,
                 'allow_delete' => false,
