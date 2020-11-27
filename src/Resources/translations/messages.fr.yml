@@ -1104,3 +1104,4 @@ order.payment.waiting_failure: Votre banque a décliné le paiement
 form.fulfillment_method.options.round.label: Approximation des créneaux
 order.list.summary.hub.text: Commande au hub %name%
 index.view_all_merchants: Voir toutes les boutiques
+form.hub.restaurants.label: Liste des boutiques

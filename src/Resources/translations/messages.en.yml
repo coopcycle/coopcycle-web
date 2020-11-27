@@ -1129,3 +1129,4 @@ promotion_action.fixed_discount: '%amount% discount'
 form.fulfillment_method.options.round.label: Slot approximation
 order.list.summary.hub.text: Order at hub %name%
 index.view_all_merchants: View all merchants
+form.hub.restaurants.label: List of merchants
