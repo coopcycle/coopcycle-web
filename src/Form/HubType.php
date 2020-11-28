@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -54,6 +55,19 @@ class HubType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
             ]);
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        usort($view['restaurants']->children, function (FormView $a, FormView $b) {
+
+            /** @var LocalBusiness $objectA */
+            $objectA = $a->vars['data'];
+            /** @var LocalBusiness $objectB */
+            $objectB = $b->vars['data'];
+
+            return ($objectA->getName() < $objectB->getName()) ? -1 : 1;
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)
