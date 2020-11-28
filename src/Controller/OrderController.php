@@ -134,8 +134,11 @@ class OrderController extends AbstractController
             $promotionCouponWasAdded =
                 null === $originalPromotionCoupon && null !== $order->getPromotionCoupon();
 
+            $promotionCouponWasSubmitted =
+                $form->getClickedButton() && 'addPromotion' === $form->getClickedButton()->getName();
+
             // In those cases, we always reload the page
-            if ($reusablePackagingWasChanged || $tipWasAdded || $promotionCouponWasAdded || $reusablePackagingPledgeReturnWasChanged) {
+            if ($reusablePackagingWasChanged || $tipWasAdded || $promotionCouponWasAdded || $promotionCouponWasSubmitted || $reusablePackagingPledgeReturnWasChanged) {
 
                 if ($promotionCouponWasAdded) {
                     $this->addFlash(
