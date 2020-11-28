@@ -37,7 +37,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
      */
     public function type($entityOrText): ?string
     {
-        $type = $entityOrText instanceof LocalBusiness ? $entity->getType() : $entityOrText;
+        $type = $entityOrText instanceof LocalBusiness ? $entityOrText->getType() : $entityOrText;
 
         if (Store::isValid($type)) {
             foreach (Store::values() as $value) {
