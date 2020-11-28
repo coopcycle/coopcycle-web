@@ -76,21 +76,6 @@ class ProfileController extends Controller
         ];
     }
 
-    private function handleSwitchRequest(Request $request, Collection $items, $queryKey, $sessionKey)
-    {
-        if ($request->query->has($queryKey)) {
-            foreach ($items as $item) {
-                if ($item->getId() === $request->query->getInt($queryKey)) {
-                    $request->getSession()->set($sessionKey, $item->getId());
-
-                    return $this->redirectToRoute('fos_user_profile_show');
-                }
-            }
-
-            throw $this->createAccessDeniedException();
-        }
-    }
-
     public function indexAction(Request $request,
         SlugifyInterface $slugify,
         TranslatorInterface $translator,
@@ -101,11 +86,6 @@ class ProfileController extends Controller
         $user = $this->getUser();
 
         if ($user->hasRole('ROLE_STORE') && $request->attributes->has('_store')) {
-
-            if ($response = $this->handleSwitchRequest($request, $user->getStores(), 'store', '_store')) {
-
-                return $response;
-            }
 
             $store = $request->attributes->get('_store');
 
@@ -125,11 +105,6 @@ class ProfileController extends Controller
         }
 
         if ($user->hasRole('ROLE_RESTAURANT') && $request->attributes->has('_restaurant')) {
-
-            if ($response = $this->handleSwitchRequest($request, $user->getRestaurants(), 'restaurant', '_restaurant')) {
-
-                return $response;
-            }
 
             $restaurant = $request->attributes->get('_restaurant');
 

@@ -5,24 +5,28 @@ namespace AppBundle\EventSubscriber;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ProfileSubscriber implements EventSubscriberInterface
 {
     private $tokenStorage;
+    private $urlGenerator;
 
     private static $blacklist = [
         'profile_notifications',
         'profile_jwt',
     ];
 
-    public function __construct(TokenStorageInterface $tokenStorage)
+    public function __construct(TokenStorageInterface $tokenStorage, UrlGeneratorInterface $urlGenerator)
     {
         $this->tokenStorage = $tokenStorage;
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -92,12 +96,48 @@ class ProfileSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (count($stores) > 0 && $user->hasRole('ROLE_STORE')) {
-            $request->attributes->set('_store', $this->findResourceInSession($request, $stores, '_store'));
+        if ($route === 'fos_user_profile_show' && ($request->query->has('store') || $request->query->has('restaurant'))) {
+            if ($request->query->has('store')) {
+                foreach ($stores as $store) {
+                    if ($store->getId() === $request->query->getInt('store')) {
+                        $request->getSession()->set('_store', $store->getId());
+                        $request->getSession()->remove('_restaurant');
+                        $event->setResponse(
+                            new RedirectResponse($this->urlGenerator->generate('fos_user_profile_show'))
+                        );
+                        return;
+                    }
+                }
+            }
+            if ($request->query->has('restaurant')) {
+                foreach ($restaurants as $restaurant) {
+                    if ($restaurant->getId() === $request->query->getInt('restaurant')) {
+                        $request->getSession()->set('_restaurant', $restaurant->getId());
+                        $request->getSession()->remove('_store');
+                        $event->setResponse(
+                            new RedirectResponse($this->urlGenerator->generate('fos_user_profile_show'))
+                        );
+                        return;
+                    }
+                }
+            }
         }
 
-        if (count($restaurants) > 0 && $user->hasRole('ROLE_RESTAURANT')) {
+        if ($request->getSession()->has('_store')) {
+            $request->attributes->set('_store', $this->findResourceInSession($request, $stores, '_store'));
+        } elseif ($request->getSession()->has('_restaurant')) {
             $request->attributes->set('_restaurant', $this->findResourceInSession($request, $restaurants, '_restaurant'));
+        } else {
+            if (count($stores) > 0 && count($restaurants) > 0) {
+                $request->attributes->set('_store', $this->findResourceInSession($request, $stores, '_store'));
+            } else {
+                if (count($stores) > 0) {
+                    $request->attributes->set('_store', $this->findResourceInSession($request, $stores, '_store'));
+                }
+                if (count($restaurants)) {
+                    $request->attributes->set('_restaurant', $this->findResourceInSession($request, $restaurants, '_restaurant'));
+                }
+            }
         }
     }
 
