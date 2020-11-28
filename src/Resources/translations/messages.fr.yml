@@ -1101,3 +1101,10 @@ form.order.refuse.refund.alert: Cette commande a été payée avec une méthode 
 form.store_type.package_set.placeholder: Choisissez un ensemble de paquets
 form.store_type.time_slot.placeholder: Choisissez une tranche horaire
 order.payment.waiting_failure: Votre banque a décliné le paiement
+store.SHOE_STORE: Magasin de chaussures
+store.MUSIC_STORE: Magasin de musique
+store.JEWELRY_STORE: Bijouterie
+store.GROCERY_STORE: Épicerie
+store.ELECTRONIC_STORE: Magasin d'électronique
+store.CLOTHING_STORE: Magasin de vêtements
+store.BOOK_STORE: Librairie
