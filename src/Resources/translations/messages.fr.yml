@@ -1109,13 +1109,13 @@ basics.search: Rechercher…
 store.SHOE_STORE: Chaussures
 store.MUSIC_STORE: Magasin de musique
 store.JEWELRY_STORE: Bijoux
-store.GROCERY_STORE: Produits locaux
+store.GROCERY_STORE: Épicerie
 store.ELECTRONIC_STORE: Magasin d'électronique
-store.CLOTHING_STORE: Mode et accessoire
+store.CLOTHING_STORE: Mode et accessoires
 store.BOOK_STORE: Librairie
-store.HOME_GOODS_STORE: Zéro déchet
+store.HOME_GOODS_STORE: Articles de maison
 store.CONVENIENCE_STORE: Cosmétiques
-store.GARDEN_STORE: Végétal
+store.GARDEN_STORE: Jardinerie
 store.HOBBY_SHOP: Loisirs
 store.FURNITURE_STORE: Ameublement
 store.COMPUTER_STORE: Informatique
