@@ -106,6 +106,7 @@
   {{ form_row(form.feeRate) }}
   {{ form_row(form.takeAwayFeeRate) }}
 
+  {% if form.restaurantPaysStripeFee is defined %}
   <p>
     <a class="help-block collapsed" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_advanced">
       <i class="fa fa-plus"></i>
@@ -113,9 +114,9 @@
       <span>{% trans %}restaurant.contract.showAdvanced{% endtrans %}</span>
     </a>
   </p>
-
   <div class="collapse" id="{{ form.vars.id }}_advanced">
     {{ form_row(form.restaurantPaysStripeFee, { help: 'restaurant.contract.restaurantPaysStripeFee.help' }) }}
   </div>
+  {% endif %}
 
 {% endblock %}
