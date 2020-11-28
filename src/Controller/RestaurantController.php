@@ -207,6 +207,7 @@ class RestaurantController extends AbstractController
 
         return $this->render('restaurant/hub.html.twig', [
             'hub' => $hub,
+            'business_type_filter' => $request->query->get('type'),
         ]);
     }
 

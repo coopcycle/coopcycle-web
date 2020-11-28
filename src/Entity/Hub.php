@@ -161,4 +161,17 @@ class Hub implements OpenCloseInterface
 
         return round($itemsTotal / $total, 4);
     }
+
+    /**
+     * @return array
+     */
+    public function getBusinessTypes(): array
+    {
+        $types = [];
+        foreach ($this->getRestaurants() as $restaurant) {
+            $types[] = $restaurant->getType();
+        }
+
+        return array_unique($types);
+    }
 }
