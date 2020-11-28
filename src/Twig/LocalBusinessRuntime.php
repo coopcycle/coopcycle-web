@@ -31,11 +31,17 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         $this->appCache = $appCache;
     }
 
-    public function type(LocalBusiness $entity): ?string
+    /**
+     * @param string|LocalBusiness $entityOrText
+     * @return string
+     */
+    public function type($entityOrText): ?string
     {
-        if (Store::isValid($entity->getType())) {
+        $type = $entityOrText instanceof LocalBusiness ? $entity->getType() : $entityOrText;
+
+        if (Store::isValid($type)) {
             foreach (Store::values() as $value) {
-                if ($value->getValue() === $entity->getType()) {
+                if ($value->getValue() === $type) {
 
                     return $this->translator->trans(sprintf('store.%s', $value->getKey()));
                 }
@@ -43,7 +49,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         }
 
         foreach (FoodEstablishment::values() as $value) {
-            if ($value->getValue() === $entity->getType()) {
+            if ($value->getValue() === $type) {
 
                 return $this->translator->trans(sprintf('food_establishment.%s', $value->getKey()));
             }
