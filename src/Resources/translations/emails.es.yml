@@ -56,19 +56,19 @@ admin.send_invitation.body: "Hola %username%,\n<br>\nEste correo es una invitaci
   \ un clic en el siguiente enlace.\n"
 admin.send_invitation.subject: ¡Invitación a CoopCycle!
 covid_19.subject: COVID-19 | Instrucciones importantes para tu pedido
-covid_19.body: "<h1>instrucciones a seguir para su entrega</h1>\n<p>Dada la pandemia\
-  \ actual de COVID-19 (Coronavirus), usted <strong>must strictly</strong> siga las\
-  \ siguientes instrucciones:</p>\n<h2>1. Manten distancia solcial</h2>\n<p>Dejaremos\
-  \ su pedido en su puerta, para que no tenga que acercarse a la persona que viene\
-  \ a entregar. Puede o no dejar propina.</p>\n<h2>2. Desembale su pedido después\
-  \ de recibirlo</h2>\n<p>El virus puede sobrevivir en superficies de cartón y plástico\
-  \ durante varios días. El empaquetado es, por lo tanto, una ruta de alto riesgo\
-  \ de transmisión del virus.\nPor lo tanto, le pedimos que <strong>desempaquete su\
-  \ pedido y transfiera el contenido a platos</strong>.</p>\n<h2>3. Tire el embalaje.</h2>\n\
+covid_19.body: "<h1>instrucciones a seguir para su entrega</h1>\n<p>Debido a la pandemia\
+  \ actual de COVID-19 (Coronavirus), usted <strong>debe estrictamente</strong> seguir\
+  \ las siguientes instrucciones:</p>\n<h2>1. Respetar el distanciamiento social</h2>\n\
+  <p>Dejaremos su pedido en su puerta  para que no tenga que acercarse a la persona\
+  \ que viene a entregar. No es necesario que deje propina.</p>\n<h2>2. Desembale\
+  \ su pedido después de recibirlo</h2>\n<p>El virus puede sobrevivir en superficies\
+  \ de cartón y plástico durante varios días. El empaquetado es, por lo tanto, una\
+  \ ruta de alto riesgo de transmisión del virus.\nPor lo tanto, le pedimos que <strong>desempaquete\
+  \ su pedido y transfiera el contenido a platos</strong>.</p>\n<h2>3. Tire el embalaje.</h2>\n\
   <p>Una vez que su pedido esté desempaquetado, asegúrese de <strong>tirar el envoltorio\
   \ a una basura cerrada</strong> Para evitar tocarla inadvertidamente más tarde.</p>\n\
-  <h2>4. Limpiese las manos!</h2>\n<p>Una vez que haya desempacado su pedido y desechado\
-  \ el embalaje,<strong>limpiese las manos!</strong></p>\n"
+  <h2>4. Límpiese las manos!</h2>\n<p>Una vez que haya desempacado su pedido y desechado\
+  \ el embalaje,<strong>límpiese las manos!</strong></p>\n"
 order.payment.body: "Hola,\n<br>\nHemos completado una entrega que nos ha pedido.\n\
   <br>\nA continuación encontrará un enlace que le permite pagar con tarjeta de crédito.\n"
 order.payment.subject: Pago de tu pedido %order.number%

@@ -1106,3 +1106,10 @@ order.list.summary.hub.text: Commande au hub %name%
 index.view_all_merchants: Voir toutes les boutiques
 form.hub.restaurants.label: Liste des boutiques
 basics.search: Rechercher…
+store.SHOE_STORE: Magasin de chaussures
+store.MUSIC_STORE: Magasin de musique
+store.JEWELRY_STORE: Bijouterie
+store.GROCERY_STORE: Épicerie
+store.ELECTRONIC_STORE: Magasin d'électronique
+store.CLOTHING_STORE: Magasin de vêtements
+store.BOOK_STORE: Librairie
