@@ -1944,6 +1944,7 @@ class AdminController extends Controller
         $form = $this->createForm(HubType::class, $hub);
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
+            $this->getDoctrine()->getManager()->persist($hub);
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash(
@@ -1951,7 +1952,7 @@ class AdminController extends Controller
                 $this->get('translator')->trans('global.changesSaved')
             );
 
-            return $this->redirectToRoute('admin_hub');
+            return $this->redirectToRoute('admin_hub', ['id' => $id]);
         }
 
         return $this->render('admin/hub.html.twig', [

@@ -7,10 +7,18 @@
 
 {% block content %}
 {{ form_start(form) }}
+
   {{ form_row(form.name) }}
+
+  {{ form_row(form.restaurants) }}
+
+  <hr />
+
   {{ form_row(form.enabledFulfillmentMethods) }}
   {{ form_row(form.fulfillmentMethods, { label: false }) }}
+
   {{ form_widget(form) }}
+
   <button type="submit" class="btn btn-block btn-primary">
     {{ 'basics.save'|trans }}
   </button>
@@ -23,4 +31,26 @@
 
 {% block scripts %}
   {{ encore_entry_script_tags('restaurant-fulfillment-methods') }}
+  <script>
+    var $restaurants = $('#hub_restaurants')
+    new CoopCycle.Search(document.querySelector('#restaurant-search'), {
+      url: "{{ path('admin_restaurants_search', { format: 'json' }) }}",
+      placeholder: "{{ 'basics.search'|trans }}",
+      onSuggestionSelected: function(suggestion) {
+
+        var newRestaurant = $restaurants.attr('data-prototype');
+
+        newRestaurant = newRestaurant.replace(/__name__/g, $restaurants.find('tbody > tr').length);
+        newRestaurant = newRestaurant.replace(/__value__/g, suggestion.id);
+        newRestaurant = newRestaurant.replace(/__restaurant_name__/g, suggestion.name);
+
+        $restaurants.find('tbody').append($(newRestaurant));
+      }
+    });
+
+    $(document).on('click', '[data-remove="restaurant"]', function(e) {
+      e.preventDefault();
+      $(this).closest('tr').remove();
+    });
+  </script>
 {% endblock %}

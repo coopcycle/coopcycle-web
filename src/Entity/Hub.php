@@ -103,11 +103,21 @@ class Hub implements OpenCloseInterface
     }
 
     /**
-     * @param mixed $restaurant
+     * @param LocalBusiness $restaurant
      */
-    public function addRestaurant($restaurant)
+    public function addRestaurant(LocalBusiness $restaurant)
     {
-        $this->restaurants->add($restaurant);
+        if (!$this->restaurants->contains($restaurant)) {
+            $this->restaurants->add($restaurant);
+        }
+    }
+
+    /**
+     * @param LocalBusiness $restaurant
+     */
+    public function removeRestaurant(LocalBusiness $restaurant): void
+    {
+        $this->restaurants->removeElement($restaurant);
     }
 
     /**

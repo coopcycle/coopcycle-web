@@ -1105,3 +1105,4 @@ form.fulfillment_method.options.round.label: Approximation des créneaux
 order.list.summary.hub.text: Commande au hub %name%
 index.view_all_merchants: Voir toutes les boutiques
 form.hub.restaurants.label: Liste des boutiques
+basics.search: Rechercher…
