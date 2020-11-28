@@ -101,11 +101,15 @@ const init = function() {
       // $form.find('button[type="submit"]').prop('disabled', !isValid($form))
     }
 
-    const images = JSON.parse(event.relatedTarget.dataset.productImages)
-    render(
-      <ProductDetailsModal images={ images } />,
-      this.querySelector('.modal-body [data-swiper]')
-    )
+    const productImages =
+      JSON.parse(event.relatedTarget.dataset.productImages)
+
+    if (productImages.length > 1) {
+      render(
+        <ProductDetailsModal images={ productImages } />,
+        this.querySelector('.modal-body [data-swiper]')
+      )
+    }
   })
 
   $('#product-options').on('hidden.bs.modal', function() {
