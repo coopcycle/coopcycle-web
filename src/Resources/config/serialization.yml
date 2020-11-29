@@ -39,6 +39,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order']
     restaurant:
       groups: ['order', 'order_create', 'cart', 'order_update']
+    vendor:
+      groups: ['order']
     shippingAddress:
       groups: ['order', 'order_create', 'cart', 'order_update']
     shippedAt:
@@ -152,3 +154,10 @@ AppBundle\Entity\LocalBusiness\FulfillmentMethod:
       groups: ['restaurant']
     enabled:
       groups: ['restaurant']
+
+AppBundle\Entity\Vendor:
+  attributes:
+    name:
+      groups: ['order']
+    address:
+      groups: ['order']

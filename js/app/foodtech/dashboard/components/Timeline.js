@@ -21,7 +21,7 @@ export default withTranslation()(({ order, t }) => {
         </div>
         <ul className="list-unstyled">
           <li>
-            <span>{ order.restaurant.address.streetAddress }</span>
+            <span>{ order.vendor.address.streetAddress }</span>
           </li>
           { order.takeaway && (
           <li>
