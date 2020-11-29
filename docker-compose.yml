@@ -22,6 +22,7 @@ services:
     build:
       dockerfile: './docker/nodejs/Dockerfile'
       context: '.'
+    image: coopcycle/node
     depends_on:
       - postgres
       - redis
@@ -37,6 +38,7 @@ services:
     build:
       dockerfile: './docker/webpack/Dockerfile'
       context: '.'
+    image: coopcycle/webpack
     ports:
       - '8080:8080'
     volumes:
