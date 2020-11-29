@@ -17,6 +17,8 @@ if [ ! -f var/jwt/public.pem ]; then
     openssl rsa -pubout -passin pass:coursiers -in var/jwt/private.pem -out var/jwt/public.pem
 fi
 
+composer self-update --2
+
 if [ "$APP_ENV" = 'prod' ]; then
     composer install --prefer-dist --no-plugins --no-progress --no-suggest --no-dev --optimize-autoloader --classmap-authoritative
 else
