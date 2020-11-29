@@ -719,7 +719,7 @@ embed.delivery.submit.help: Kliknutím objednat doručení.
 embed.delivery.summary: 'Požádali jste o doručení dne <strong>%dropoff_date% </strong>
   na následující adrese: <strong>%dropoff_address% </strong> <br> Vypočítali jsme
   vzdálenost <strong>%distance% kilometrů </strong> . <br> Cena dodání je <strong>%total_excluding_tax%
-  (bez DPH); </strong>%total_including_tax% (vč. DPH). <br> <br> Pokud jsou některé
+  (bez DPH); </strong>%total_including_tax% (včetně DPH). <br> <br> Pokud jsou některé
   z výše uvedených podrobností nesprávné, změňte je kliknutím na tlačítko Upravit. '
 social.sign_in_with_facebook: Přihlásit přes Facebook
 activity.order.fulfilled: "Objednávka #order/#%aggregate_id% je naplněna\n"
@@ -1119,3 +1119,8 @@ profile.loopeat.disconnect: Odpojit LoopEat
 form.credit_note.percentage.label: Procento
 form.credit_note.type.label: Typ slevy
 form.credit_note.user_search.label: Uživatel
+basics.search: Vyhledávání…
+form.hub.restaurants.label: Seznam obchodníků
+index.view_all_merchants: Zobrazit všechny obchodníky
+order.list.summary.hub.text: Objednávka na %name%
+form.fulfillment_method.options.round.label: Aproximace slotu
