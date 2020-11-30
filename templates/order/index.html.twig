@@ -53,6 +53,9 @@
     <div class="row">
       <div class="col-xs-12">
         {% include 'order/breadcrumb.html.twig' %}
+
+        {{ form_errors(form) }}
+
         <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h4>
         <div class="border-bottom mb-5">
 
@@ -125,7 +128,7 @@
         <div class="d-flex flex-row justify-content-between align-items-center py-3">
           <span class="text-success">
             <i class="fa fa-clock-o fa-lg mr-2"></i>
-            <strong>{{ shipping_range|time_range_for_humans }}</strong>
+            <strong>{{ form.shippingTimeRange.vars.value|time_range_for_humans }}</strong>
           </span>
           <div>
             {% if form.quote is defined %}

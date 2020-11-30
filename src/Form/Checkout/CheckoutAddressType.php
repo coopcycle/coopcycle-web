@@ -2,12 +2,15 @@
 
 namespace AppBundle\Form\Checkout;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
+use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\LoopEatOrder;
+use AppBundle\Validator\Constraints\ShippingTimeRangeJump;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
 use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -27,11 +30,13 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class CheckoutAddressType extends AbstractType
 {
     private $translator;
     private $priceFormatter;
+    private $orderTimeHelper;
     private $loopeatClient;
     private $loopeatContext;
     private $session;
@@ -40,6 +45,7 @@ class CheckoutAddressType extends AbstractType
     public function __construct(
         TranslatorInterface $translator,
         PriceFormatter $priceFormatter,
+        OrderTimeHelper $orderTimeHelper,
         LoopEatClient $loopeatClient,
         LoopEatContext $loopeatContext,
         SessionInterface $session,
@@ -47,6 +53,7 @@ class CheckoutAddressType extends AbstractType
     {
         $this->translator = $translator;
         $this->priceFormatter = $priceFormatter;
+        $this->orderTimeHelper = $orderTimeHelper;
         $this->loopeatClient = $loopeatClient;
         $this->loopeatContext = $loopeatContext;
         $this->session = $session;
@@ -93,6 +100,46 @@ class CheckoutAddressType extends AbstractType
 
             // Disable shippingAddress.streetAddress
             $this->disableChildForm($form, 'streetAddress');
+        });
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $order = $event->getData();
+
+            $range =
+                $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
+
+            $form->add('shippingTimeRange', HiddenType::class, [
+                'data' => implode(' - ', [
+                    $range->getLower()->format(\DateTime::ATOM),
+                    $range->getUpper()->format(\DateTime::ATOM),
+                ]),
+                'mapped' => false,
+                'constraints' => [
+                    new Assert\Callback([
+                        'callback' => function ($value, ExecutionContextInterface $context) use ($order) {
+
+                            if (null !== $order->getShippingTimeRange()) {
+                                return;
+                            }
+
+                            $displayed  = TsRange::parse($value);
+                            $calculated = $this->orderTimeHelper->getShippingTimeRange($order);
+
+                            $validator = $context->getValidator();
+
+                            $violations = $validator->validate([
+                                $displayed, $calculated
+                            ], new ShippingTimeRangeJump());
+
+                            foreach ($violations as $violation) {
+                                $context->addViolation($violation->getMessage());
+                            }
+                        }
+                    ]),
+                ],
+            ]);
         });
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {

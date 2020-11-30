@@ -33,3 +33,5 @@ time_range.no_weekday: No seleccionó un día de la semana
 product.name.modified: Has cambiado el nombre del producto
 
 task.before.mustBeGreaterThanAfter: La franja horaria no es válida
+
+time_range_jump.next_day: Ya no es posible hacer un pedido para hoy

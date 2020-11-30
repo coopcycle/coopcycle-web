@@ -51,3 +51,5 @@ order.collection.not_available: The "collection" fulfillment method is not avail
 task_group.ref.duplicate: The ref "%ref%" appears multiple times
 
 checkout.user_with_same_email_exists: An account with the same email already exists
+
+time_range_jump.next_day: It is no longer possible to order for today
