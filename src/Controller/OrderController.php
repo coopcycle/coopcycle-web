@@ -307,12 +307,15 @@ class OrderController extends AbstractController
             sprintf('loopeat.order.%d.refresh_token', $id);
 
         if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
+
             $order->getCustomer()->setLoopeatAccessToken(
                 $session->get($loopeatAccessTokenKey)
             );
             $order->getCustomer()->setLoopeatRefreshToken(
                 $session->get($loopeatRefreshTokenKey)
             );
+
+            $this->objectManager->flush();
 
             $session->remove($loopeatAccessTokenKey);
             $session->remove($loopeatRefreshTokenKey);
