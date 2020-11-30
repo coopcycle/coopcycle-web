@@ -55,6 +55,7 @@ Feature: Food Tech
             "@id":"/api/orders/1",
             "@type":"http://schema.org/Order",
             "customer":{"@*@":"@*@"},
+            "vendor":{"@*@":"@*@"},
             "restaurant":{"@*@":"@*@"},
             "shippingAddress":{"@*@":"@*@"},
             "shippedAt":"@string@.isDateTime()",

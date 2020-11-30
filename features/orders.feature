@@ -622,6 +622,7 @@ Feature: Orders
           "telephone": "+33612345678",
           "phoneNumber": "+33612345678"
         },
+        "vendor":{"@*@":"@*@"},
         "restaurant":{
           "@id":"/api/restaurants/1",
           "@type":"http://schema.org/Restaurant",
