@@ -26,13 +26,22 @@ services:
     depends_on:
       - postgres
       - redis
+      - tile38
     ports:
       - '8000:8000'
       - '8001:8001'
       - '8002:8002'
     volumes:
-      - 'node_modules:/srv/coopcycle/node_modules'
-      - './:/srv/coopcycle:cached'
+      - 'node_modules_node:/srv/coopcycle/node_modules'
+      - './js:/srv/coopcycle/js'
+      - './var/jwt:/srv/coopcycle/var/jwt'
+      - './.env:/srv/coopcycle/.env'
+      - './.eslintrc.js:/srv/coopcycle/.eslintrc.js'
+      - './babel.config.js:/srv/coopcycle/babel.config.js'
+      - './jest.config.js:/srv/coopcycle/jest.config.js'
+      - './pm2.config.js:/srv/coopcycle/pm2.config.js'
+    # environment:
+    #   - APP_ENV
 
   webpack:
     build:
@@ -42,8 +51,17 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - 'node_modules:/srv/coopcycle/node_modules'
-      - './:/srv/coopcycle:cached'
+      - 'node_modules_webpack:/srv/coopcycle/node_modules'
+      - './assets:/srv/coopcycle/assets'
+      - './js:/srv/coopcycle/js'
+      - './web:/srv/coopcycle/web'
+      - './.env:/srv/coopcycle/.env'
+      - './.eslintrc.js:/srv/coopcycle/.eslintrc.js'
+      - './babel.config.js:/srv/coopcycle/babel.config.js'
+      - './jest.config.js:/srv/coopcycle/jest.config.js'
+      - './postcss.config.js:/srv/coopcycle/postcss.config.js'
+      - './webpack.config.js:/srv/coopcycle/webpack.config.js'
+      - './webpack.sdk.config.js:/srv/coopcycle/webpack.sdk.config.js'
 
   osrm:
     build: './docker/osrm'
@@ -73,6 +91,8 @@ services:
       - GOOGLE_API_KEY
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY
+      - ALGOLIA_PLACES_APP_ID
+      - ALGOLIA_PLACES_API_KEY
     volumes:
       - 'php_cache:/var/www/html/var/cache'
       - './:/var/www/html:cached'
@@ -196,7 +216,8 @@ services:
       - ./sonic.cfg:/etc/sonic.cfg
 
 volumes:
-  node_modules:
+  node_modules_node:
+  node_modules_webpack:
   pg_data:
   php_cache:
   minio_data:
