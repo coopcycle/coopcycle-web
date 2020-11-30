@@ -18,8 +18,16 @@ class OrderRuntime implements RuntimeExtensionInterface
         $this->locale = $locale;
     }
 
-    public function timeRangeForHumans(TsRange $range)
+    /**
+     * @param TsRange|string $range
+     * @return string
+     */
+    public function timeRangeForHumans($range)
     {
+        if (!$range instanceof TsRange) {
+            $range = TsRange::parse($range);
+        }
+
         $rangeAsText = $this->translator->trans('time_range', [
             '%start%' => Carbon::instance($range->getLower())->locale($this->locale)->isoFormat('LT'),
             '%end%'   => Carbon::instance($range->getUpper())->locale($this->locale)->isoFormat('LT'),
