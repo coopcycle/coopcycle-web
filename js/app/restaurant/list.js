@@ -1,5 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
+import moment from 'moment'
 
 import { asText } from '../components/ShippingTimeRange'
 
@@ -20,13 +21,16 @@ document.querySelectorAll('[data-fulfillment]').forEach(el => {
       return
     }
 
+    const ranges = []
     if (data.delivery && data.delivery.range) {
-      render(<FulfillmentBadge range={ data.delivery.range } />, el)
-      return
+      ranges.push(data.delivery.range)
+    }
+    if (data.collection && data.collection.range) {
+      ranges.push(data.collection.range)
     }
 
-    if (data.collection && data.collection.range) {
-      render(<FulfillmentBadge range={ data.collection.range } />, el)
-    }
+    ranges.sort((a, b) => moment(a[0]).isSame(b[0]) ? 0 : (moment(a[0]).isBefore(b[0]) ? -1 : 1))
+
+    render(<FulfillmentBadge range={ ranges[0] } />, el)
   })
 })
