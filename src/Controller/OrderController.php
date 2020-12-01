@@ -17,7 +17,6 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
-use AppBundle\Utils\OrderTimeHelper;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -42,33 +41,18 @@ class OrderController extends AbstractController
     use OrderConfirmTrait;
 
     private $objectManager;
-    private $orderTimeHelper;
     private $logger;
 
     public function __construct(
         EntityManagerInterface $objectManager,
-        OrderTimeHelper $orderTimeHelper,
         FactoryInterface $orderFactory,
         string $sessionKeyName,
         LoggerInterface $logger)
     {
         $this->objectManager = $objectManager;
-        $this->orderTimeHelper = $orderTimeHelper;
         $this->orderFactory = $orderFactory;
         $this->sessionKeyName = $sessionKeyName;
         $this->logger = $logger;
-    }
-
-    private function getShippingRange(OrderInterface $order): TsRange
-    {
-        $range = $order->getShippingTimeRange();
-
-        if (null !== $range) {
-
-            return $range;
-        }
-
-        return $this->orderTimeHelper->getShippingTimeRange($order);
     }
 
     /**
@@ -187,7 +171,6 @@ class OrderController extends AbstractController
 
         return $this->render('order/index.html.twig', array(
             'order' => $order,
-            'shipping_range' => $this->getShippingRange($order),
             'form' => $form->createView(),
         ));
     }
@@ -225,7 +208,6 @@ class OrderController extends AbstractController
 
         $parameters =  [
             'order' => $order,
-            'shipping_range' => $this->getShippingRange($order),
         ];
 
         $form->handleRequest($request);
