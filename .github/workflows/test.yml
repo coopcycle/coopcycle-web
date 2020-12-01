@@ -99,9 +99,9 @@ jobs:
         run: docker-compose exec -T webpack node_modules/.bin/encore dev
       - name: Run Cypress
         uses: cypress-io/github-action@v2
-      - name: Print logs
-        if: always()
-        run: cat var/logs/*.log
+      # - name: Print logs
+      #   if: always()
+      #   run: cat var/logs/*.log
       # - name: Upload screenshots
       #   if: always()
       #   run: |
