@@ -73,6 +73,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       ALGOLIA_PLACES_APP_ID: ${{ secrets.ALGOLIA_PLACES_APP_ID }}
       ALGOLIA_PLACES_API_KEY: ${{ secrets.ALGOLIA_PLACES_API_KEY }}
+      ALGOLIA_PLACES_ADDRESS_TEMPLATE: county
     steps:
       - uses: actions/checkout@v2
       - name: Create .env file

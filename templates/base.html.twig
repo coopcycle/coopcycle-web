@@ -103,7 +103,8 @@
     <div id="algolia-places"
       data-app-id="{{ algolia_places_app_id }}"
       data-api-key="{{ algolia_places_api_key }}"
-      data-around-lat-lng="{{ coopcycle_setting('latlng')|e('html_attr') }}"></div>
+      data-around-lat-lng="{{ coopcycle_setting('latlng')|e('html_attr') }}"
+      data-address-template="{{ algolia_places_address_template }}"></div>
     {% endif %}
 
     {% block scripts_common %}

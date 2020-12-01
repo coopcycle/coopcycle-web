@@ -97,6 +97,7 @@ services:
       - STRIPE_SECRET_KEY
       - ALGOLIA_PLACES_APP_ID
       - ALGOLIA_PLACES_API_KEY
+      - ALGOLIA_PLACES_ADDRESS_TEMPLATE
     volumes:
       - 'php_cache:/var/www/html/var/cache'
       - './:/var/www/html:cached'
