@@ -10,7 +10,6 @@ use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\LoopEatOrder;
-use AppBundle\Validator\Constraints\ShippingTimeRangeJump;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
 use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -20,7 +19,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
@@ -30,13 +28,11 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class CheckoutAddressType extends AbstractType
 {
     private $translator;
     private $priceFormatter;
-    private $orderTimeHelper;
     private $loopeatClient;
     private $loopeatContext;
     private $session;
@@ -53,15 +49,18 @@ class CheckoutAddressType extends AbstractType
     {
         $this->translator = $translator;
         $this->priceFormatter = $priceFormatter;
-        $this->orderTimeHelper = $orderTimeHelper;
         $this->loopeatClient = $loopeatClient;
         $this->loopeatContext = $loopeatContext;
         $this->session = $session;
         $this->loopeatOAuthFlow = $loopeatOAuthFlow;
+
+        parent::__construct($orderTimeHelper);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $builder
             ->add('shippingAddress', AddressType::class, [
                 'label' => false,
@@ -100,52 +99,6 @@ class CheckoutAddressType extends AbstractType
 
             // Disable shippingAddress.streetAddress
             $this->disableChildForm($form, 'streetAddress');
-        });
-
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
-
-            $form = $event->getForm();
-            $order = $event->getData();
-
-            $range =
-                $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
-
-            $form->add('shippingTimeRange', HiddenType::class, [
-                'data' => implode(' - ', [
-                    $range->getLower()->format(\DateTime::ATOM),
-                    $range->getUpper()->format(\DateTime::ATOM),
-                ]),
-                'mapped' => false,
-                'constraints' => [
-                    new Assert\Callback([
-                        'callback' => function ($value, ExecutionContextInterface $context) use ($order) {
-
-                            if (null !== $order->getShippingTimeRange()) {
-                                return;
-                            }
-
-                            // This happens when submitting a partial form
-                            // (for ex. when adding tips)
-                            if (null === $value) {
-                                return;
-                            }
-
-                            $displayed  = TsRange::parse($value);
-                            $calculated = $this->orderTimeHelper->getShippingTimeRange($order);
-
-                            $validator = $context->getValidator();
-
-                            $violations = $validator->validate([
-                                $displayed, $calculated
-                            ], new ShippingTimeRangeJump());
-
-                            foreach ($violations as $violation) {
-                                $context->addViolation($violation->getMessage());
-                            }
-                        }
-                    ]),
-                ],
-            ]);
         });
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
