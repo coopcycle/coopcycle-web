@@ -124,6 +124,12 @@ class CheckoutAddressType extends AbstractType
                                 return;
                             }
 
+                            // This happens when submitting a partial form
+                            // (for ex. when adding tips)
+                            if (null === $value) {
+                                return;
+                            }
+
                             $displayed  = TsRange::parse($value);
                             $calculated = $this->orderTimeHelper->getShippingTimeRange($order);
 
