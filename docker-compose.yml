@@ -39,6 +39,8 @@ services:
       - './.eslintrc.js:/srv/coopcycle/.eslintrc.js'
       - './babel.config.js:/srv/coopcycle/babel.config.js'
       - './jest.config.js:/srv/coopcycle/jest.config.js'
+      - './package.json:/srv/coopcycle/package.json'
+      - './package-lock.json:/srv/coopcycle/package-lock.json'
       - './pm2.config.js:/srv/coopcycle/pm2.config.js'
     # environment:
     #   - APP_ENV
@@ -59,6 +61,8 @@ services:
       - './.eslintrc.js:/srv/coopcycle/.eslintrc.js'
       - './babel.config.js:/srv/coopcycle/babel.config.js'
       - './jest.config.js:/srv/coopcycle/jest.config.js'
+      - './package.json:/srv/coopcycle/package.json'
+      - './package-lock.json:/srv/coopcycle/package-lock.json'
       - './postcss.config.js:/srv/coopcycle/postcss.config.js'
       - './webpack.config.js:/srv/coopcycle/webpack.config.js'
       - './webpack.sdk.config.js:/srv/coopcycle/webpack.sdk.config.js'
