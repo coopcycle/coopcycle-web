@@ -32,16 +32,9 @@ services:
       - '8001:8001'
       - '8002:8002'
     volumes:
-      - 'node_modules_node:/srv/coopcycle/node_modules'
-      - './js:/srv/coopcycle/js'
-      - './var/jwt:/srv/coopcycle/var/jwt'
-      - './.env:/srv/coopcycle/.env'
-      - './.eslintrc.js:/srv/coopcycle/.eslintrc.js'
-      - './babel.config.js:/srv/coopcycle/babel.config.js'
-      - './jest.config.js:/srv/coopcycle/jest.config.js'
-      - './package.json:/srv/coopcycle/package.json'
-      - './package-lock.json:/srv/coopcycle/package-lock.json'
-      - './pm2.config.js:/srv/coopcycle/pm2.config.js'
+      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+      - '.:/srv/coopcycle'
+      - 'node_modules_node:/srv/coopcycle/node_modules/'
     # environment:
     #   - APP_ENV
 
@@ -53,19 +46,9 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - 'node_modules_webpack:/srv/coopcycle/node_modules'
-      - './assets:/srv/coopcycle/assets'
-      - './js:/srv/coopcycle/js'
-      - './web:/srv/coopcycle/web'
-      - './.env:/srv/coopcycle/.env'
-      - './.eslintrc.js:/srv/coopcycle/.eslintrc.js'
-      - './babel.config.js:/srv/coopcycle/babel.config.js'
-      - './jest.config.js:/srv/coopcycle/jest.config.js'
-      - './package.json:/srv/coopcycle/package.json'
-      - './package-lock.json:/srv/coopcycle/package-lock.json'
-      - './postcss.config.js:/srv/coopcycle/postcss.config.js'
-      - './webpack.config.js:/srv/coopcycle/webpack.config.js'
-      - './webpack.sdk.config.js:/srv/coopcycle/webpack.sdk.config.js'
+      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+      - '.:/srv/coopcycle'
+      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
 
   osrm:
     build: './docker/osrm'
