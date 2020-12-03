@@ -2,10 +2,9 @@
 
 namespace AppBundle\Doctrine\Filter;
 
-use AppBundle\Annotation\Enabled;
+use AppBundle\Entity\LocalBusiness;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter;
-use Doctrine\Common\Annotations\Reader;
 use Doctrine\DBAL\Types\Type;
 
 /**
@@ -14,18 +13,11 @@ use Doctrine\DBAL\Types\Type;
  * @see https://api-platform.com/docs/core/filters/#using-doctrine-orm-filters
  * @see http://blog.michaelperrin.fr/2014/12/05/doctrine-filters/
  */
-final class EnabledFilter extends SQLFilter
+final class RestaurantFilter extends SQLFilter
 {
-    private $reader;
-
-    public function addFilterConstraint(ClassMetadata $targetEntity, $targetTableAlias)
+    public function addFilterConstraint(ClassMetadata $metadata, $targetTableAlias)
     {
-        if (empty($this->reader)) {
-            return '';
-        }
-
-        $enabledAware = $this->reader->getClassAnnotation($targetEntity->getReflectionClass(), Enabled::class);
-        if (!$enabledAware) {
+        if ($metadata->getReflectionClass()->getName() !== LocalBusiness::class) {
             return '';
         }
 
@@ -45,10 +37,5 @@ final class EnabledFilter extends SQLFilter
         }
 
         return sprintf('%s.enabled = %s', $targetTableAlias, $enabled);
-    }
-
-    public function setAnnotationReader(Reader $reader)
-    {
-        $this->reader = $reader;
     }
 }

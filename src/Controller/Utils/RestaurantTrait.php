@@ -38,6 +38,7 @@ use AppBundle\Utils\RestaurantStats;
 use AppBundle\Utils\ValidationUtils;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
@@ -799,8 +800,13 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    public function restaurantProductOptionAction($restaurantId, $optionId, Request $request)
+    public function restaurantProductOptionAction($restaurantId, $optionId, Request $request, EntityManagerInterface $entityManager)
     {
+        $filterCollection = $entityManager->getFilters();
+        if ($filterCollection->isEnabled('disabled_filter')) {
+            $filterCollection->disable('disabled_filter');
+        }
+
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
@@ -863,6 +869,15 @@ trait RestaurantTrait
         if ($form->isSubmitted() && $form->isValid()) {
 
             $productOption = $form->getData();
+
+            $enabledValues = $productOption->getValues()->filter(function ($value) {
+                return $value->isEnabled();
+            });
+
+            $productOption->getValues()->clear();
+            foreach ($enabledValues as $optionValue) {
+                $productOption->getValues()->add($optionValue);
+            }
 
             foreach ($productOption->getValues() as $optionValue) {
                 // FIXME We shouldn't need to call setCurrentLocale

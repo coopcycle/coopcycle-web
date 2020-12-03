@@ -36,7 +36,7 @@ trait OrderTrait
 
     public function orderListAction(Request $request, TranslatorInterface $translator, EntityManagerInterface $em)
     {
-        $filter = $em->getFilters()->disable('enabled_filter');
+        $filter = $em->getFilters()->disable('restaurant_filter');
 
         $response = new Response();
 

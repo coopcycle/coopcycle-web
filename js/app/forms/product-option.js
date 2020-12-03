@@ -4,22 +4,41 @@ import { render } from 'react-dom'
 
 import { OptionGroup } from '../restaurant/components/ProductOptionsModal'
 
+var $previewLoader = $('#preview-loader')
+var $form = $('form[name="product_option"]')
+
+const updatePreview = debounce(() => {
+  $previewLoader.removeClass('hidden')
+  $.ajax({
+    url : $('#preview').data('url'),
+    type: $form.attr('method'),
+    data : $form.serialize(),
+    success: function(data) {
+      render(<OptionGroup
+        index={ 0 }
+        option={ data }
+        onChange={ () => {} } />, document.getElementById('preview'), () => $previewLoader.addClass('hidden'))
+    }
+  })
+}, 500)
+
 if ($('#product_option_strategy').val() !== 'option_value') {
-  $('#product_option_values').find("input[name$='[price]']").closest('.form-group').hide();
+  $('#product_option_values').find('[data-shown="option_value"]').hide();
 }
 
 $('#product_option_strategy').on('change', function() {
   var value = $(this).val();
   if (value === 'option_value') {
-    $('#product_option_values').find("input[name$='[price]']").closest('.form-group').show();
+    $('#product_option_values').find('[data-shown="option_value"]').show();
   } else {
-    $('#product_option_values').find("input[name$='[price]']").closest('.form-group').hide();
+    $('#product_option_values').find('[data-shown="option_value"]').hide();
   }
 });
 
 $(document).on('click', '[data-delete-row]', function() {
   var target = $(this).data('target');
   $(target).remove();
+  updatePreview()
 });
 
 $('#add-option-value').on('click', function(e) {
@@ -33,10 +52,12 @@ $('#add-option-value').on('click', function(e) {
   var $form = $(form);
 
   if ($('#product_option_strategy').val() !== 'option_value') {
-    $form.find("input[name$='[price]']").closest('.form-group').hide();
+    $form.find('[data-shown="option_value"]').hide();
   }
 
   $form.find("input[name$='[price]']").val(0)
+
+  $form.find('[data-delete-row]').prop('disabled', false)
 
   $('#product_option_values').append($form);
 
@@ -62,24 +83,6 @@ if (!$('#product_option_additional').is(':checked')) {
 if ($('#product_option_valuesRange_infinity').is(':checked')) {
   $('#product_option_valuesRange_upper').prop('disabled', true);
 }
-
-var $previewLoader = $('#preview-loader')
-var $form = $('form[name="product_option"]')
-
-const updatePreview = debounce(() => {
-  $previewLoader.removeClass('hidden')
-  $.ajax({
-    url : $('#preview').data('url'),
-    type: $form.attr('method'),
-    data : $form.serialize(),
-    success: function(data) {
-      render(<OptionGroup
-        index={ 0 }
-        option={ data }
-        onChange={ () => {} } />, document.getElementById('preview'), () => $previewLoader.addClass('hidden'))
-    }
-  })
-}, 500)
 
 $('body').on('change', 'form[name="product_option"] input,select', updatePreview);
 // $form.find('input,select').on('change', updatePreview);

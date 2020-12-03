@@ -27,8 +27,8 @@ class TimingController extends AbstractController
     {
         $filterCollection = $entityManager->getFilters();
 
-        if ($filterCollection->isEnabled('enabled_filter')) {
-            $filterCollection->disable('enabled_filter');
+        if ($filterCollection->isEnabled('restaurant_filter')) {
+            $filterCollection->disable('restaurant_filter');
         }
 
         $data = [];

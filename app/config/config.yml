@@ -218,8 +218,11 @@ doctrine:
             soft_deleteable:
                 class:   Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
                 enabled: false
-            enabled_filter:
-                class:   AppBundle\Doctrine\Filter\EnabledFilter
+            restaurant_filter:
+                class:   AppBundle\Doctrine\Filter\RestaurantFilter
+                enabled: true
+            disabled_filter:
+                class:   AppBundle\Doctrine\Filter\DisabledFilter
                 enabled: true
         resolve_target_entities:
             Sylius\Component\Order\Model\OrderInterface: AppBundle\Sylius\Order\OrderInterface

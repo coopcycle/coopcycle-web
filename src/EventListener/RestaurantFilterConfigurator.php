@@ -10,10 +10,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Common\Annotations\Reader;
 use Doctrine\DBAL\Types\Type;
 
-class EnabledFilterConfigurator
+class RestaurantFilterConfigurator
 {
     protected $em;
     protected $tokenStorage;
@@ -25,13 +24,11 @@ class EnabledFilterConfigurator
         EntityManagerInterface $em,
         TokenStorageInterface $tokenStorage,
         LocalBusinessRepository $restaurantRepository,
-        Reader $reader,
         CacheInterface $enabledFilterConfiguratorCache)
     {
         $this->em = $em;
         $this->tokenStorage = $tokenStorage;
         $this->restaurantRepository = $restaurantRepository;
-        $this->reader = $reader;
         $this->cache = $enabledFilterConfiguratorCache;
     }
 
@@ -61,8 +58,7 @@ class EnabledFilterConfigurator
             });
         }
 
-        $filter = $this->em->getFilters()->enable('enabled_filter');
-        $filter->setAnnotationReader($this->reader);
+        $filter = $this->em->getFilters()->enable('restaurant_filter');
         $filter->setParameter('enabled', true, Type::BOOLEAN);
 
         if (count($restaurants) > 0) {

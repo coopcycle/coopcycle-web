@@ -11,7 +11,6 @@ use AppBundle\Action\Restaurant\Deliveries as RestaurantDeliveriesController;
 use AppBundle\Action\Restaurant\Menus;
 use AppBundle\Action\Restaurant\Orders;
 use AppBundle\Action\Restaurant\Timing;
-use AppBundle\Annotation\Enabled;
 use AppBundle\Api\Dto\RestaurantInput;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
@@ -112,7 +111,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * )
  * @Vich\Uploadable
  * @AssertIsActivableRestaurant(groups="activable")
- * @Enabled
  */
 class LocalBusiness extends BaseLocalBusiness implements
     CatalogInterface,

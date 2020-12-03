@@ -217,7 +217,7 @@ class ProfileController extends Controller
         IriConverterInterface $iriConverter,
         EntityManagerInterface $em)
     {
-        $filter = $em->getFilters()->disable('enabled_filter');
+        $filter = $em->getFilters()->disable('restaurant_filter');
 
         $order = $this->container->get('sylius.repository.order')->find($id);
 

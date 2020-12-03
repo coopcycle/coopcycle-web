@@ -1122,3 +1122,5 @@ store.COMPUTER_STORE: Informatique
 store.BIKE_STORE: Cycles
 store.AUTO_PARTS_STORE: Automobile
 store.TOY_STORE: Jeux
+basics.enabled: Activé
+form.option_value.value.placeholder: ex. frites, salade…
