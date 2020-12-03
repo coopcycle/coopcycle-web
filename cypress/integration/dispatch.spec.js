@@ -15,7 +15,7 @@ context('Checkout', () => {
     })
   })
 
-  it('make basic dispatch operations', () => {
+  it.skip('make basic dispatch operations', () => {
 
     cy.server()
     cy.route('POST', '/api/tasks').as('postTask')
