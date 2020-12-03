@@ -95,6 +95,18 @@ class CustomizeType extends AbstractType
                 ]);
         }
 
+        $builder
+            ->add('orderConfirmEnabled', CheckboxType::class, [
+                'required' => false,
+                'label' => 'form.customize.order_confirm_enabled.label',
+            ])
+            ->add('orderConfirm', TextareaType::class, [
+                'required' => false,
+                'label' => 'form.customize.order_confirm.label',
+                'attr' => ['rows' => '12'],
+                'help' => 'mardown_formatting.help',
+            ]);
+
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
 
@@ -102,6 +114,11 @@ class CustomizeType extends AbstractType
 
             $form->get('aboutUs')->setData($aboutUs);
             $form->get('aboutUsEnabled')->setData($aboutUsEnabled);
+
+            [ $orderConfirm, $orderConfirmEnabled ] = $this->getContentData('order_confirm.md');
+
+            $form->get('orderConfirm')->setData($orderConfirm);
+            $form->get('orderConfirmEnabled')->setData($orderConfirmEnabled);
 
             foreach (['legal', 'terms', 'privacy'] as $type) {
                 [ $content, $enabled ] = $this->getContentData(sprintf('custom_%s.md', $type));
@@ -132,6 +149,20 @@ class CustomizeType extends AbstractType
 
             $this->appCache->delete('content.about_us');
             $this->appCache->delete('content.about_us.exists');
+
+            // Order confirm
+
+            $orderConfirmEnabled = $form->get('orderConfirmEnabled')->getData();
+            $orderConfirm = $form->get('orderConfirm')->getData();
+
+            $this->onContentSubmit(
+                'order_confirm.md',
+                $orderConfirm,
+                $orderConfirmEnabled
+            );
+
+            $this->appCache->delete('content.order_confirm');
+            $this->appCache->delete('content.order_confirm.exists');
 
             // Custom legal, terms, privacy
 

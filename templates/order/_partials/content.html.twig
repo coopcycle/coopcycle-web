@@ -27,5 +27,16 @@
         </div>
       </div>
     {% endif %}
+    {% if order.state == 'new' and custom_message is not empty %}
+      <div class="border mb-3">
+        <h4 class="bg-light p-3 m-0">
+          <i class="fa fa-info-circle mr-2"></i>
+          <span>{{ coopcycle_setting('brand_name') }}</span>
+          </h4>
+        <div class="px-3 py-4">
+          {{ custom_message|markdown }}
+        </div>
+      </div>
+    {% endif %}
   </div>
 </div>

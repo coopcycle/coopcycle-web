@@ -43,6 +43,19 @@
     <hr>
   {% endfor %}
 
+  {{ form_row(form.orderConfirmEnabled) }}
+  <div class="form-group">
+    {{ form_label(form.orderConfirm) }}
+    <div class="d-flex" style="max-height: 400px;">
+      <div class="w-50">{{ form_widget(form.orderConfirm, { attr: { 'data-preview': '#order-confirm-preview' } }) }}</div>
+      <div class="w-50 border p-4" style="overflow: scroll;">
+        <div id="order-confirm-preview" class="about-us"></div>
+      </div>
+    </div>
+    {{ form_help(form.orderConfirm) }}
+  </div>
+  <hr>
+
   <div class="form-group">
     <label class="control-label">{{ 'form.customize.custom_banner.label'|trans }}</label>
     <div>

@@ -20,6 +20,7 @@ use AppBundle\Utils\OrderEventCollection;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
+use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
@@ -266,6 +267,7 @@ class OrderController extends AbstractController
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
         SessionInterface $session,
+        Filesystem $assetsFilesystem,
         Request $request)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
@@ -319,6 +321,11 @@ class OrderController extends AbstractController
             'exp' => $exp->getTimestamp(),
         ])->getToken();
 
+        $customMessage = null;
+        if ($assetsFilesystem->has('order_confirm.md')) {
+            $customMessage = $assetsFilesystem->read('order_confirm.md');
+        }
+
         return $this->render('order/foodtech.html.twig', [
             'order' => $order,
             'events' => (new OrderEventCollection($order))->toArray(),
@@ -329,6 +336,7 @@ class OrderController extends AbstractController
             'reset' => $resetSession,
             'track_goal' => $trackGoal,
             'jwt' => $jwt,
+            'custom_message' => $customMessage,
         ]);
     }
 
