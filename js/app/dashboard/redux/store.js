@@ -7,7 +7,7 @@ import {
   taskEntityReducers as coreTaskEntityReducers,
   taskListEntityReducers as coreTaskListEntityReducers,
   uiReducers as coreUiReducers,
-} from '../../coopcycle-frontend-js/lastmile/redux'
+} from '../../coopcycle-frontend-js/logistics/redux'
 import webReducers from './reducers'
 import webTaskEntityReducers from './taskEntityReducers'
 import webTaskListEntityReducers from './taskListEntityReducers'
@@ -22,21 +22,21 @@ const composeEnhancers = (typeof window !== 'undefined' &&
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 
 const reducer = (state, action) => {
-  //todo move more properties from webReducers inside `lastmile` state
+  //todo move more properties from webReducers inside `logistics` state
   let rootState = webReducers(state, action)
 
-  let lastmileState = combineReducers({
+  let logisticsState = combineReducers({
     date: dateReducer,
     entities: combineReducers({
       tasks: reduceReducers(coreTaskEntityReducers, webTaskEntityReducers),
       taskLists: reduceReducers(coreTaskListEntityReducers, webTaskListEntityReducers),
     }),
     ui: reduceReducers(coreUiReducers, webUiReducers)
-  })(state.lastmile, action)
+  })(state.logistics, action)
 
   return {
     ...rootState,
-    lastmile: lastmileState
+    logistics: logisticsState
   }
 }
 

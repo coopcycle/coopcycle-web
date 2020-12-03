@@ -4,7 +4,7 @@ import {
   TASK_LIST_UPDATED,
   UPDATE_TASK
 } from "./actions";
-import {taskListUtils as utils} from '../../coopcycle-frontend-js/lastmile/redux'
+import {taskListUtils as utils} from '../../coopcycle-frontend-js/logistics/redux'
 
 const initialState = {
   byUsername: {}

@@ -8,7 +8,7 @@ import {
   createTaskListRequest,
   createTaskListSuccess,
   createTaskListFailure,
-} from '../../coopcycle-frontend-js/lastmile/redux'
+} from '../../coopcycle-frontend-js/logistics/redux'
 
 function createClient(dispatch) {
 

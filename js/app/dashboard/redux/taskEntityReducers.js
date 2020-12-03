@@ -1,5 +1,5 @@
 import {MODIFY_TASK_LIST_REQUEST, MODIFY_TASK_LIST_REQUEST_SUCCESS, UPDATE_TASK} from "./actions";
-import { taskUtils as utils } from '../../coopcycle-frontend-js/lastmile/redux'
+import { taskUtils as utils } from '../../coopcycle-frontend-js/logistics/redux'
 
 const initialState = {
   byId: {}

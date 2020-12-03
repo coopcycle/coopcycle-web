@@ -14,7 +14,7 @@ import Navbar from './components/Navbar'
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
-import { taskUtils, taskListUtils } from '../coopcycle-frontend-js/lastmile/redux'
+import { taskUtils, taskListUtils } from '../coopcycle-frontend-js/logistics/redux'
 let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve
 
 const mapLoaded = new Promise((resolve) => mapLoadedResolve = resolve)
@@ -39,7 +39,7 @@ function start() {
   }
 
   let preloadedState = {
-    lastmile : {
+    logistics : {
       date,
       entities: {
         tasks: {
