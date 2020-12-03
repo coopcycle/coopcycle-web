@@ -222,3 +222,6 @@ services:
 
   AppBundle\Form\HubType:
     tags: [ form.type ]
+
+  AppBundle\Form\Checkout\ChargeStripeSourceType:
+    tags: [ form.type ]
