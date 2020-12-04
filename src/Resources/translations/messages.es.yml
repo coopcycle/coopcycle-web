@@ -1040,3 +1040,14 @@ adminDashboard.users.orders_count: Numero de pedidos
 adminDashboard.customize.title: Personalizar
 base.footer.RegisterMyRestaurant: Registrar mi restaurante
 base.footer.companyRegister: Conviértete en socio
+form.address.company.function.label: Puesto de la persona de contacto
+form.address.company.business_reference.label: Persona de contacto de la empresa
+form.address.company_name.label: Nombre de la empresa
+form.payment.refund_application_fee.help: "Si marca esta casilla, la comisión cobrada\
+  \ por la plataforma al socio se reembolsará proporcionalmente\n<br>\n<a href=\"\
+  https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Más información</a>\n"
+form.payment.refund_comment.help: Por favor describa lo que ha sucedido
+form.payment.refund_comment.label: Comentarios
+form.payment.refund_liable.help: Cuál de las partes es responsable por el incidente?
+form.payment.refund_liable.label: Parte responsable
+form.store_type.packages_required.label: Pedir los paquetes
