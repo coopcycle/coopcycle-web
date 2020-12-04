@@ -153,8 +153,15 @@
               </div>
             {% else %}
               {% set product_images = [] %}
-              {% for product_image in product.images %}
-                {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', 'product_thumbnail') ]) %}
+              {% set images_16x9 = product.images|filter(image => image.ratio == '16:9') %}
+              {% if images_16x9|length > 0 %}
+                {% set product_images_filtered = images_16x9 %}
+              {% else %}
+                {% set product_images_filtered = product.images|filter(image => image.ratio == '1:1') %}
+              {% endif %}
+              {% for product_image in product_images_filtered %}
+                {% set imagine_filter = ('product_thumbnail_' ~ (product_image.ratio|replace({ ':': 'x' }))) %}
+                {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', imagine_filter) ]) %}
               {% endfor %}
               {% if not product.hasOptions() %}
               <div class="restaurant-menu-section-item">

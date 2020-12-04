@@ -15,7 +15,7 @@ export default ({ images }) => (
   >
     { images.map((image, index) => (
       <SwiperSlide key={ `image-${index}` } style={{ textAlign: 'center' }}>
-        <img src={ image } />
+        <img src={ image } className="img-responsive" />
       </SwiperSlide>
     )) }
   </Swiper>
