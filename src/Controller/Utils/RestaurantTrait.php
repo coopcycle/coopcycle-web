@@ -1148,16 +1148,13 @@ trait RestaurantTrait
         $end->setDate($date->format('Y'), $date->format('m'), $date->format('t'));
         $end->setTime(23, 59, 59);
 
-        $orders = $this->get('sylius.repository.order')
+        $fulfilledOrders = $this->get('sylius.repository.order')
             ->findOrdersByRestaurantAndDateRange(
                 $restaurant,
                 $start,
-                $end
+                $end,
+                $state = 'fulfilled'
             );
-
-        $fulfilledOrders = array_filter($orders, function($order) {
-            return $order->getState() === 'fulfilled';
-        });
 
         $stats = new RestaurantStats(
             $this->getParameter('kernel.default_locale'),

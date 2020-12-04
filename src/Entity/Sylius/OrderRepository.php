@@ -43,16 +43,16 @@ class OrderRepository extends BaseOrderRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findOrdersByRestaurantAndDateRange(LocalBusiness $restaurant, \DateTime $start, \DateTime $end)
+    public function findOrdersByRestaurantAndDateRange(LocalBusiness $restaurant, \DateTime $start, \DateTime $end, $state)
     {
         $qb = $this->createQueryBuilder('o');
         $qb
             ->join(Vendor::class, 'v', Join::WITH, 'o.vendor = v.id')
             ->andWhere('v.restaurant = :restaurant')
-            ->andWhere('o.state != :state_cart')
+            ->andWhere('o.state = :state')
             ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
             ->setParameter('restaurant', $restaurant)
-            ->setParameter('state_cart', OrderInterface::STATE_CART)
+            ->setParameter('state', $state)
             ->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')))
             ->addOrderBy('o.shippingTimeRange', 'DESC')
             ;
