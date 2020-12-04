@@ -122,7 +122,10 @@ final class UploadListener
             );
 
             $object = new ProductImage();
+            $object->setRatio($request->get('ratio', '1:1'));
+
             $product->addImage($object);
+
         } else {
             return;
         }

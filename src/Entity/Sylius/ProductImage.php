@@ -41,6 +41,11 @@ class ProductImage
      */
     private $imageName;
 
+    /**
+     * @var string
+     */
+    private $ratio = '1:1';
+
     private $updatedAt;
 
     public function setImageName($imageName)
@@ -88,5 +93,18 @@ class ProductImage
     public function setProduct($product)
     {
         $this->product = $product;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRatio()
+    {
+        return $this->ratio;
+    }
+
+    public function setRatio($ratio)
+    {
+        $this->ratio = $ratio;
     }
 }
