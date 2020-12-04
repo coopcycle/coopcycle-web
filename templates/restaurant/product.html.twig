@@ -33,7 +33,11 @@
   <div class="row">
     <div class="col-sm-3">
       {% if product.id is not null %}
-      <div id="product-image-dropzone"></div>
+      <a href="#" id="image-editor"
+        class="d-flex align-items-center justify-content-center border text-decoration-none"
+        style="padding: 10rem;">
+        <i class="fa fa-3x fa-camera"></i>
+      </a>
       {% endif %}
     </div>
     <div class="col-sm-9">
@@ -93,15 +97,22 @@
 
 {% set product_images = [] %}
 {% for product_image in product.images %}
-  {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', 'product_thumbnail') ]) %}
+  {% set imagine_filter = ('product_thumbnail_' ~ (product_image.ratio|replace({ ':': 'x' }))) %}
+  {% set product_images = product_images|merge([ {
+    ratio: product_image.ratio,
+    thumbnail: coopcycle_asset(product_image, 'imageFile', imagine_filter)
+  } ]) %}
 {% endfor %}
 
 <div id="product-form-data"
   data-action-url="{{ oneup_uploader_endpoint('product') }}"
   data-product-id="{{ product.id }}"
-  data-product-image="{{ product_images|length > 0 ? product_images|first : '' }}"
   data-product-images="{{ product_images|json_encode|e('html_attr') }}"></div>
 
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('product-form') }}
 {% endblock %}
 
 {% block scripts %}
