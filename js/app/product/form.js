@@ -6,6 +6,7 @@ import numbro from 'numbro'
 
 import '../i18n'
 import { calculate } from '../utils/tax'
+import { openEditor } from './image-editor'
 
 Dropzone.autoDiscover = false
 
@@ -131,3 +132,17 @@ document.querySelectorAll('[data-tax-categories]').forEach(el => {
     taxExcludedEl.value = numbro(taxExcluded / 100).format({ mantissa: 2 })
   })
 })
+
+const imageEditor = document.getElementById('image-editor')
+const formData = document.querySelector('#product-form-data')
+
+if (imageEditor && formData) {
+  imageEditor.addEventListener('click', function(e) {
+    e.preventDefault()
+    openEditor({
+      existingImages: JSON.parse(formData.dataset.productImages),
+      actionUrl: formData.dataset.actionUrl,
+      productId: formData.dataset.productId
+    })
+  })
+}

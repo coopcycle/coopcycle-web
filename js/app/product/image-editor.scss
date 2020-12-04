@@ -1,0 +1,52 @@
+.image-editor {
+
+  height: 100vh;
+
+  &-nav {
+    position: relative;
+  }
+
+  &-close {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 15px;
+  }
+
+  &-cropper {
+
+    position: relative;
+    display: flex;
+    height: 100%;
+    max-height: 100%;
+
+    &-crop-btn {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+  }
+
+  &-gallery {
+
+    padding: 2em;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 2em;
+
+    &-item {
+      position: relative;
+      &-remove {
+        position: absolute;
+        top: -12px;
+        right: -12px;
+      }
+      &-ratio-16x9 {
+        grid-column: span 2;
+      }
+    }
+  }
+
+}
