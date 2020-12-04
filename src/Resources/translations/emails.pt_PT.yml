@@ -5,14 +5,14 @@ registration.email.message: "<h2>Bem-vindo ao (à) %brand_name%, %username%</h2>
 registration.email.confirm: Confirmar e-mail
 registration.email.disclaimer: Esta ligação só pode ser usada uma vez para validar
   a sua conta
-admin.order.created.body: "Olá,\n<br>\nFoi criado um novo pedido.\n"
-admin.order.created.subject: Novo pedido a ser confirmado
-order.foodtech.cancelled: "O restaurante é incapaz de preparar o seu pedido %order.number%.\n\
+admin.order.created.body: "Olá,\n<br>\nFoi feito um novo pedido.\n"
+admin.order.created.subject: Novo pedido em confirmação
+order.foodtech.cancelled: "O restaurante não pode satisfazer o seu pedido %order.number%.\n\
   <br>\nA sua conta não será debitada.\n"
 order.foodtech.accepted.collection.disclaimer: Caso haja um problema, contacte com
-  a antecedência suficiente <strong>%name%</strong> usando o número <strong>%phone_number%</strong>  por
-  forma a cancelar o seu pedido.
-order.foodtech.accepted.collection: 'Terá de o levantar no tempo indicado:'
+  a antecedência suficiente <strong>%name%</strong> usando o número <strong>%phone_number%</strong>
+  para poder cancelar o seu pedido.
+order.foodtech.accepted.collection: 'Terá de levantar o pedido no tempo indicado:'
 order.foodtech.accepted.delivery.disclaimer: Contactá-lo-emos no caso de haver um
   problema para encontrar o seu endereço
 order.foodtech.accepted.delivery: 'Ser-lhe-á entregue no tempo indicado:'
@@ -26,23 +26,23 @@ registration.email.textMessage: "Bem-vindo à %brand_name%, %username%,\\n\\n\nE
   \ a receber esta mensagem porque se inscreveu recentemente na %brand_name%.\\n\n\
   Para confirmar o seu email, por favor pressione na seguinte hiperligação: <a href=\"\
   %confirmationUrl%\" rel=\"notrack\">%confirmationUrl%</a>.\n"
-order.cancelled.subject: O seu pedido %order.number% foi cancelado
-order.accepted.body.intro: "Olá,\n<br>\nO seu pedido está confirmado."
-order.accepted.subject: Pedido %order.number% foi confirmado
+order.cancelled.subject: O seu pedido %order.number% foi anulado
+order.accepted.body.intro: "Olá,\n<br>\nO seu pedido foi confirmado."
+order.accepted.subject: O pedido %order.number% foi confirmado
 order.created.body: "Olá,\n<br>\nRecebemos o seu pedido.\n<br>\nVerificaremos seu\
   \ pedido o mais rápido possível e enviaremos um e-mail quando ele for confirmado.\n"
-order.created.subject: Pedido %order.number% foi recebido
-owner.order.created.body: "Olá,\n<br>\nUm novo pedido foi feito para <strong>%restaurant.name%</strong>.\n"
-owner.order.created.subject: Novo pedido para confirmar
-user.pledge.body: "Olá,\n<br>\ngraças a si, %pledge.name% está agora no CoopCycle!\n"
-user.pledge.subject: A sua sugestão está agora no CoopCycle!
-admin.pledge.body: "Olá,\n<br>\n%username% gostaria %pledge.name% de estar no CoopCycle!\n"
-admin.send_invitation.create_password: Criar a minha password
-admin.send_invitation.body: "Olá %username%,\n<br>\nEste é um convite para o espaço\
-  \ CoopCycle. Para finalizar a criação da sua conta, clique no link a seguir.\n"
-admin.send_invitation.subject: Convite para CoopCycle!
+order.created.subject: Pedido %order.number% recebido
+owner.order.created.body: "Olá,\n<br>\num novo pedido foi efetuado para <strong>%restaurant.name%</strong>.\n"
+owner.order.created.subject: Novo pedido em confirmação
+user.pledge.body: "Olá,\n<br>\ngraças a si, %pledge.name% já está na CoopCycle!\n"
+user.pledge.subject: A sua sugestão foi admitida na CoopCycle!
+admin.pledge.body: "Olá,\n<br>\n%username% gostaria %pledge.name% de estar na CoopCycle!\n"
+admin.send_invitation.create_password: Criar a minha senha
+admin.send_invitation.body: "Olá %username%, \n<br>\nEste é um convite ao Espaço CoopCycle,\
+  \ para terminar o seu registo por favor clique na seguinte ligação\n"
+admin.send_invitation.subject: Convite à CoopCycle!
 admin.pledge.subject: Foi enviada uma nova sugestão!
-admin.order_foodtech.created.body: "Olá,\n<br>\nFoi criado um novo pedido para <strong>%restaurant.name%</strong>.\n"
+admin.order_foodtech.created.body: "Olá,\n<br>\nFoi feito um novo pedido para <strong>%restaurant.name%</strong>.\n"
 covid_19.body: "<h1>Instruções a seguir para a sua entrega</h1>\n<p>Dada a atual pandemia\
   \ de COVID-19 (Coronavírus), você <strong>deve seguir rigorosamente</strong> as\
   \ seguintes instruções:</p>\n<h2>1. Respeitar a distância social</h2>\n<p>Deixaremos\
@@ -68,3 +68,7 @@ order.delayed.body: "Olá,\n<br>\nLamentamos, mas o seu pedido será adiado por 
   \ minutos.\n<br>\nPedimos desculpa pelo inconveniente.\n"
 order.delayed.subject: O seu pedido %order.number% foi adiado
 order.cancelled.body.intro: "Olá,\n<br>\nLamentamos, mas seu pedido foi cancelado.\n"
+order.expiring_authorization.text: A autorização de pagamento para encomenda <strong>%order.number%</strong>
+  expirará em breve. <br> Deverá completar a encomenda antes de a autorização expirar
+  para evitar perder dinheiro.
+order.expiring_authorization.subject: Uma autorização de pagamento expirará em breve
