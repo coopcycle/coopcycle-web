@@ -1026,3 +1026,17 @@ guest_checkout.user_with_same_email_exists: Ya existe una cuenta con el mismo co
   electrónico. Por favor, inicia sesión para continuar, o usa otro correo electrónico
   para hacer un pedido sin crear una cuenta.
 guest_checkout.use_another_email: Usar otro correo electrónico
+form.store_type.package_set.placeholder: Elija un paquete conjunto
+form.store_type.time_slot.placeholder: Elija una franja horaria
+profile.fullName: Nombre completo
+restaurant.form.section.loopeat: LoopEat
+restaurant.form.section.taxonomy: Taxonomía
+localBusiness.form.business_address.label: Dirección comercial
+localBusiness.form.use_different_business_address.label: Utilice una dirección comercial
+  diferente
+adminDashboard.users.last_order: Último pedido
+adminDashboard.users.registered_at: Registrad@
+adminDashboard.users.orders_count: Numero de pedidos
+adminDashboard.customize.title: Personalizar
+base.footer.RegisterMyRestaurant: Registrar mi restaurante
+base.footer.companyRegister: Conviértete en socio
