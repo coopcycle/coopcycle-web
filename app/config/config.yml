@@ -85,6 +85,8 @@ framework:
                 adapter: cache.adapter.filesystem
             restart_workers_signal.cache:
                 adapter: cache.adapter.redis
+            twig.cache:
+                adapter: cache.app
     messenger:
         buses:
             messenger.bus.default:

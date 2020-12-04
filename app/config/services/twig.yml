@@ -38,7 +38,7 @@ services:
   twig.cache_extension.provider:
     class: Twig\CacheExtension\CacheProvider\PsrCacheAdapter
     arguments:
-      $cache: '@cache.app'
+      $cache: '@twig.cache'
 
   twig.cache_extension.key_generator:
     class: AppBundle\Twig\CacheExtension\KeyGenerator
