@@ -44,6 +44,7 @@ parameters:
     b2b_enabled: '%env(bool:COOPCYCLE_B2B_ENABLED)%'
     sonic_namespace: '%database_name%'
     sonic_secret_password: '%env(SONIC_SECRET_PASSWORD)%'
+    restaurant_menu_cache_annotation: 'restaurant_menu_v0.4'
 
 services:
     tag_manager.cache:
@@ -157,6 +158,7 @@ twig:
         locationiq_access_token: '%env(LOCATIONIQ_ACCESS_TOKEN)%'
         autocomplete_adapter: '%env(COOPCYCLE_AUTOCOMPLETE_ADAPTER)%'
         geocode_earth_api_key: '%env(GEOCODE_EARTH_API_KEY)%'
+        restaurant_menu_cache_annotation: '%restaurant_menu_cache_annotation%'
     exception_controller: null
 
 # Doctrine Configuration

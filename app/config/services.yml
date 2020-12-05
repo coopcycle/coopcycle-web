@@ -90,6 +90,7 @@ services:
   FOS\UserBundle\Util\CanonicalizerInterface: '@fos_user.util.canonicalizer.default'
 
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
+  Twig\CacheExtension\Extension: '@twig.cache_extension'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -700,6 +701,10 @@ services:
   AppBundle\EventSubscriber\ApiLogSubscriber:
     tags:
       - { name: monolog.logger, channel: api }
+
+  AppBundle\EventSubscriber\ClearTwigCacheSubscriber:
+    arguments:
+      $annotation: '%restaurant_menu_cache_annotation%'
 
   AppBundle\EventListener\Upload\UploadListener:
     arguments:

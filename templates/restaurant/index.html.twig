@@ -133,7 +133,7 @@
     We cache the following block for performance
     Iterating through all products, options… is a lot of database requests
     #}
-    {% cache ('restaurant_' ~ restaurant.id ~ '_menu_v0.3') restaurant %}
+    {% cache restaurant_menu_cache_annotation restaurant %}
     <div class="col-xs-12 col-sm-8" id="menu">
       <div class="restaurant-menu-wrapper">
       {% for child in restaurant.menuTaxon.children %}

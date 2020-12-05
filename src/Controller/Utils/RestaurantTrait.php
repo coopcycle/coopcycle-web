@@ -49,6 +49,7 @@ use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
@@ -63,6 +64,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
 
 trait RestaurantTrait
@@ -460,7 +462,8 @@ trait RestaurantTrait
     /**
      * @HideSoftDeleted
      */
-    public function restaurantMenuTaxonAction($restaurantId, $menuId, Request $request)
+    public function restaurantMenuTaxonAction($restaurantId, $menuId, Request $request,
+        EventDispatcherInterface $dispatcher)
     {
         $routes = $request->attributes->get('routes');
 
@@ -564,6 +567,10 @@ trait RestaurantTrait
             }
 
             $this->get('sylius.manager.taxon')->flush();
+
+            if ($restaurant->getMenuTaxon() === $menuTaxon) {
+                $dispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
+            }
 
             $this->addFlash(
                 'notice',
@@ -700,7 +707,8 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    public function restaurantProductAction($restaurantId, $productId, Request $request)
+    public function restaurantProductAction($restaurantId, $productId, Request $request,
+        EventDispatcherInterface $dispatcher)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -733,6 +741,8 @@ trait RestaurantTrait
             }
 
             $this->get('sylius.manager.product')->flush();
+
+            $dispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
 
             return $this->redirectToRoute($routes['products'], ['id' => $restaurantId]);
         }
