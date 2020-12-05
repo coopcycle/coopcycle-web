@@ -3,9 +3,11 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use League\Csv\Writer as CsvWriter;
@@ -20,10 +22,6 @@ class RestaurantStats implements \IteratorAggregate, \Countable
     private $translator;
     private $withRestaurantName;
     private $withMessenger;
-
-    private $itemsTotal = 0;
-    private $total = 0;
-    private $itemsTaxTotal = 0;
 
     private $taxTotals = [];
     private $taxColumns = [];
@@ -116,8 +114,24 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getItemsTaxTotal(): int
     {
-        // return $this->itemsTaxTotal;
-        return 0;
+        // select sum(a.amount)
+        // from sylius_adjustment a
+        // left join sylius_order_item oi on a.order_item_id = oi.id
+        // where oi.order_id in (...) and a.type = 'tax'
+
+        $qb = $this->qb->getEntityManager()
+            ->getRepository(Adjustment::class)
+            ->createQueryBuilder('a');
+
+        $qb
+            ->select('SUM(a.amount)')
+            ->leftJoin(OrderItem::class, 'oi', Expr\Join::WITH, 'a.orderItem = oi.id')
+            ->where($qb->expr()->in('oi.order', $this->ids))
+            ->andWhere('a.type = :type')
+            ->setParameter('type', AdjustmentInterface::TAX_ADJUSTMENT)
+            ;
+
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     public function getTaxTotalByRate($taxRate): int
