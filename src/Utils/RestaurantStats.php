@@ -44,27 +44,55 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         $this->translator = $translator;
         $this->withRestaurantName = $withRestaurantName;
         $this->withMessenger = $withMessenger;
+        $this->taxesHelper = new TaxesHelper($taxRateRepository, $translator);
 
         $qbForIds = clone $qb;
         $qbForIds->select('o.id')->setFirstResult(null)->setMaxResults(null);
 
         $this->ids = array_map(fn($row) => $row['id'], $qbForIds->getQuery()->getArrayResult());
 
-        $taxesHelper = new TaxesHelper($taxRateRepository, $translator);
-
-        foreach ($this->orders as $index => $order) {
-
-            $taxTotals = $taxesHelper->getTaxTotals($order, $itemsOnly = true);
-
-            $this->taxTotals[$index] = $taxTotals;
-            $this->taxColumns = array_merge($this->taxColumns, array_keys($taxTotals));
-        }
-
-        $this->taxColumns = array_unique($this->taxColumns);
+        $this->compileTaxes();
 
         $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
         $this->numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
         $this->numberFormatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
+    }
+
+    private function compileTaxes()
+    {
+        $qb = $this->qb->getEntityManager()
+            ->getRepository(Adjustment::class)
+            ->createQueryBuilder('a');
+
+        $qb
+            ->select('a.originCode')
+            ->addSelect('COALESCE(IDENTITY(a.order), IDENTITY(oi.order)) AS order')
+            ->addSelect('SUM(a.amount) AS amount')
+            ->leftJoin(OrderItem::class, 'oi', Expr\Join::WITH, 'a.orderItem = oi.id')
+            ->where('a.type = :type')
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->in('oi.order', $this->ids),
+                    $qb->expr()->in('a.order', $this->ids)
+                )
+            )
+            ->setParameter('type', AdjustmentInterface::TAX_ADJUSTMENT)
+            ->addGroupBy('order')
+            ->addGroupBy('a.originCode')
+            ;
+
+        $taxTotals = [];
+        $taxColumns = [];
+        foreach ($qb->getQuery()->getArrayResult() as $taxSum) {
+            if (!isset($taxTotals[$taxSum['order']])) {
+                $taxTotals[$taxSum['order']] = [];
+            }
+            $taxTotals[$taxSum['order']][$taxSum['originCode']] = $taxSum['amount'];
+            $taxColumns[] = $taxSum['originCode'];
+        }
+
+        $this->taxColumns = array_unique($taxColumns);
+        $this->taxTotals = $taxTotals;
     }
 
     private function isTaxColumn($column)
@@ -132,30 +160,6 @@ class RestaurantStats implements \IteratorAggregate, \Countable
             ;
 
         return $qb->getQuery()->getSingleScalarResult();
-    }
-
-    public function getTaxTotalByRate($taxRate): int
-    {
-        // $total = 0;
-        // foreach ($this->orders as $order) {
-        //     $total += $order->getTaxTotalByRate($taxRate);
-        // }
-
-        // return $total;
-
-        return 0;
-    }
-
-    public function getItemsTaxTotalByRate($taxRate): int
-    {
-        // $total = 0;
-        // foreach ($this->orders as $order) {
-        //     $total += $order->getItemsTaxTotalByRate($taxRate);
-        // }
-
-        // return $total;
-
-        return 0;
     }
 
     private function getAdjustmentTotalResult()
@@ -280,7 +284,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
     {
         if ($this->isTaxColumn($column)) {
 
-            return $column;
+            return $this->taxesHelper->translate($column);
         }
 
         return $this->translator->trans(sprintf('order.export.heading.%s', $column));
@@ -293,7 +297,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         if ($this->isTaxColumn($column)) {
 
             return $this->formatNumber(
-                $this->taxTotals[$index][$column] ?? 0
+                $this->taxTotals[$order->getId()][$column] ?? 0
             );
         }
 

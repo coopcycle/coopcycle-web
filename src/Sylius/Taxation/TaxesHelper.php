@@ -63,4 +63,14 @@ class TaxesHelper
 
         return $values;
     }
+
+    public function translate($code): string
+    {
+        $taxRate = $this->taxRateRepository->findOneByCode($code);
+
+        return sprintf('%s %d%%',
+            $this->translator->trans($taxRate->getName(), [], 'taxation'),
+            ($taxRate->getAmount() * 100)
+        );
+    }
 }
