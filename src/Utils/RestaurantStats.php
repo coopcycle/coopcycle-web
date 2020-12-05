@@ -60,6 +60,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     private function compileTaxes()
     {
+        if (count($this->ids) === 0) {
+            return;
+        }
+
         $qb = $this->qb->getEntityManager()
             ->getRepository(Adjustment::class)
             ->createQueryBuilder('a');
@@ -128,6 +132,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getItemsTotal(): int
     {
+        if (count($this->ids) === 0) {
+            return 0;
+        }
+
         $result = $this->getOrderTotalResult();
 
         return $result['itemsTotal'];
@@ -135,6 +143,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getTotal(): int
     {
+        if (count($this->ids) === 0) {
+            return 0;
+        }
+
         $result = $this->getOrderTotalResult();
 
         return $result['total'];
@@ -142,6 +154,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getItemsTaxTotal(): int
     {
+        if (count($this->ids) === 0) {
+            return 0;
+        }
+
         // select sum(a.amount)
         // from sylius_adjustment a
         // left join sylius_order_item oi on a.order_item_id = oi.id
@@ -187,6 +203,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getAdjustmentsTotal(?string $type = null): int
     {
+        if (count($this->ids) === 0) {
+            return 0;
+        }
+
         $result = $this->getAdjustmentTotalResult();
 
         foreach ($result as $row) {
@@ -212,6 +232,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getFeeTotal(): int
     {
+        if (count($this->ids) === 0) {
+            return 0;
+        }
+
         $result = $this->getAdjustmentTotalResult();
 
         foreach ($result as $row) {
@@ -225,6 +249,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getStripeFeeTotal(): int
     {
+        if (count($this->ids) === 0) {
+            return 0;
+        }
+
         $result = $this->getAdjustmentTotalResult();
 
         foreach ($result as $row) {
