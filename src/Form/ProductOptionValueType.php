@@ -28,6 +28,7 @@ class ProductOptionValueType extends AbstractType
             ])
             ->add('enabled', CheckboxType::class, [
                 'label' => 'basics.enabled',
+                'required' => false,
             ]);
     }
 
