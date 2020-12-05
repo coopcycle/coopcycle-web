@@ -222,14 +222,23 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getAdjustmentsTotalRecursively(?string $type = null): int
     {
-        // $total = 0;
-        // foreach ($this->orders as $order) {
-        //     $total += $order->getAdjustmentsTotalRecursively($type);
-        // }
+        if (count($this->ids) === 0) {
+            return 0;
+        }
 
-        // return $total;
+        $qb = $this->qb->getEntityManager()
+            ->getRepository(Adjustment::class)
+            ->createQueryBuilder('a');
 
-        return 0;
+        $qb
+            ->select('SUM(a.amount)')
+            ->leftJoin(OrderItem::class, 'oi', Expr\Join::WITH, 'a.orderItem = oi.id')
+            ->where($qb->expr()->in('oi.order', $this->ids))
+            ->andWhere('a.type = :type')
+            ->setParameter('type', $type)
+            ;
+
+        return $qb->getQuery()->getSingleScalarResult() ?? 0;
     }
 
     public function getFeeTotal(): int
