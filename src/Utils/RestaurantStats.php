@@ -2,16 +2,20 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Sylius\Order\AdjustmentInterface;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use League\Csv\Writer as CsvWriter;
+use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RestaurantStats implements \IteratorAggregate, \Countable
 {
+    private $qb;
     private $orders;
     private $translator;
     private $withRestaurantName;
@@ -26,26 +30,31 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     private $numberFormatter;
 
+    private $orderTotalResult;
+    private $adjustmentTotalResult;
+
     public function __construct(
         string $locale,
-        Paginator $orders,
+        QueryBuilder $qb,
         RepositoryInterface $taxRateRepository,
         TranslatorInterface $translator,
         bool $withRestaurantName = false,
         bool $withMessenger = false)
     {
-        $this->orders = $orders;
+        $this->qb = $qb;
+        $this->orders = new Paginator($qb->getQuery());
         $this->translator = $translator;
         $this->withRestaurantName = $withRestaurantName;
         $this->withMessenger = $withMessenger;
 
+        $qbForIds = clone $qb;
+        $qbForIds->select('o.id')->setFirstResult(null)->setMaxResults(null);
+
+        $this->ids = array_map(fn($row) => $row['id'], $qbForIds->getQuery()->getArrayResult());
+
         $taxesHelper = new TaxesHelper($taxRateRepository, $translator);
 
-        foreach ($orders as $index => $order) {
-
-            $this->itemsTotal    += $order->getItemsTotal();
-            $this->total         += $order->getTotal();
-            $this->itemsTaxTotal += $order->getItemsTaxTotal();
+        foreach ($this->orders as $index => $order) {
 
             $taxTotals = $taxesHelper->getTaxTotals($order, $itemsOnly = true);
 
@@ -70,89 +79,148 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         return $this->numberFormatter->format($amount / 100);
     }
 
+    private function getOrderTotalResult()
+    {
+        if (null === $this->orderTotalResult) {
+            $qb = $this->qb->getEntityManager()
+                ->getRepository(Order::class)
+                ->createQueryBuilder('o');
+
+            $qb
+                ->select('SUM(o.total) as total')
+                ->addSelect('SUM(o.itemsTotal) as itemsTotal')
+                ->where($qb->expr()->in('o.id', $this->ids))
+                ;
+
+            $result = $qb->getQuery()->getScalarResult();
+
+            $this->orderTotalResult = current($result);
+        }
+
+        return $this->orderTotalResult;
+    }
+
     public function getItemsTotal(): int
     {
-    	return $this->itemsTotal;
+        $result = $this->getOrderTotalResult();
+
+        return $result['itemsTotal'];
     }
 
     public function getTotal(): int
     {
-    	return $this->total;
+        $result = $this->getOrderTotalResult();
+
+        return $result['total'];
     }
 
     public function getItemsTaxTotal(): int
     {
-        return $this->itemsTaxTotal;
+        // return $this->itemsTaxTotal;
+        return 0;
     }
 
     public function getTaxTotalByRate($taxRate): int
     {
-        $total = 0;
-        foreach ($this->orders as $order) {
-            $total += $order->getTaxTotalByRate($taxRate);
-        }
+        // $total = 0;
+        // foreach ($this->orders as $order) {
+        //     $total += $order->getTaxTotalByRate($taxRate);
+        // }
 
-        return $total;
+        // return $total;
+
+        return 0;
     }
 
     public function getItemsTaxTotalByRate($taxRate): int
     {
-        $total = 0;
-        foreach ($this->orders as $order) {
-            $total += $order->getItemsTaxTotalByRate($taxRate);
+        // $total = 0;
+        // foreach ($this->orders as $order) {
+        //     $total += $order->getItemsTaxTotalByRate($taxRate);
+        // }
+
+        // return $total;
+
+        return 0;
+    }
+
+    private function getAdjustmentTotalResult()
+    {
+        if (null === $this->adjustmentTotalResult) {
+
+            $qb = $this->qb->getEntityManager()
+                ->getRepository(Adjustment::class)
+                ->createQueryBuilder('a');
+
+            $qb
+                ->select('a.type')
+                ->addSelect('a.originCode')
+                ->addSelect('SUM(a.amount) as amount')
+                ->where($qb->expr()->in('a.order', $this->ids))
+                ->addGroupBy('a.type')
+                ->addGroupBy('a.originCode')
+                ;
+
+            $this->adjustmentTotalResult = $qb->getQuery()->getScalarResult();
         }
 
-        return $total;
+        return $this->adjustmentTotalResult;
     }
 
     public function getAdjustmentsTotal(?string $type = null): int
     {
-        $total = 0;
-        foreach ($this->orders as $order) {
-            $total += $order->getAdjustmentsTotal($type);
+        $result = $this->getAdjustmentTotalResult();
+
+        foreach ($result as $row) {
+            if ($row['type'] === $type) {
+                return $row['amount'];
+            }
         }
 
-        return $total;
+        return 0;
     }
 
     public function getAdjustmentsTotalRecursively(?string $type = null): int
     {
-        $total = 0;
-        foreach ($this->orders as $order) {
-            $total += $order->getAdjustmentsTotalRecursively($type);
-        }
+        // $total = 0;
+        // foreach ($this->orders as $order) {
+        //     $total += $order->getAdjustmentsTotalRecursively($type);
+        // }
 
-        return $total;
+        // return $total;
+
+        return 0;
     }
 
     public function getFeeTotal(): int
     {
-        $total = 0;
-        foreach ($this->orders as $order) {
-            $total += $order->getFeeTotal();
+        $result = $this->getAdjustmentTotalResult();
+
+        foreach ($result as $row) {
+            if ($row['type'] === AdjustmentInterface::FEE_ADJUSTMENT) {
+                return $row['amount'];
+            }
         }
 
-        return $total;
+        return 0;
     }
 
     public function getStripeFeeTotal(): int
     {
-        $total = 0;
-        foreach ($this->orders as $order) {
-            $total += $order->getStripeFeeTotal();
+        $result = $this->getAdjustmentTotalResult();
+
+        foreach ($result as $row) {
+            if ($row['type'] === AdjustmentInterface::STRIPE_FEE_ADJUSTMENT) {
+                return $row['amount'];
+            }
         }
 
-        return $total;
+        return 0;
     }
 
     public function getRevenue(): int
     {
-        $total = 0;
-        foreach ($this->orders as $order) {
-            $total += $order->getRevenue();
-        }
-
-        return $total;
+        return $this->getTotal() - $this->getFeeTotal() - $this->getStripeFeeTotal();
     }
 
     public function count()

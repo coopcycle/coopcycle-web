@@ -1168,7 +1168,7 @@ trait RestaurantTrait
 
         $stats = new RestaurantStats(
             $this->getParameter('kernel.default_locale'),
-            new Paginator($qb->getQuery()),
+            $qb,
             $this->get('sylius.repository.tax_rate'),
             $translator
         );
