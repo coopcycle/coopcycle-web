@@ -41,6 +41,8 @@ class RestaurantStats implements \IteratorAggregate, \Countable
     {
         $this->qb = $qb;
         $this->orders = new Paginator($qb->getQuery());
+        $this->ordersIterator = $this->orders->getIterator();
+
         $this->translator = $translator;
         $this->withRestaurantName = $withRestaurantName;
         $this->withMessenger = $withMessenger;
@@ -276,7 +278,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getIterator()
     {
-        return $this->orders->getIterator();
+        return $this->ordersIterator;
     }
 
     public function getColumns()
@@ -320,7 +322,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getRowValue($column, $index)
     {
-        $order = $this->orders->getIterator()->offsetGet($index);
+        $order = $this->ordersIterator->offsetGet($index);
 
         if ($this->isTaxColumn($column)) {
 
