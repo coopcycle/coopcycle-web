@@ -57,7 +57,7 @@ class OrderRepository extends BaseOrderRepository
             ->addOrderBy('o.shippingTimeRange', 'DESC')
             ;
 
-        return $qb->getQuery()->getResult();
+        return $qb;
     }
 
     public function findOrdersByDateRange(\DateTime $start, \DateTime $end)

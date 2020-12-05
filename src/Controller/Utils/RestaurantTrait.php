@@ -40,6 +40,7 @@ use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
@@ -1116,7 +1117,10 @@ trait RestaurantTrait
         ]));
     }
 
-    public function statsAction($id, Request $request, SlugifyInterface $slugify, TranslatorInterface $translator)
+    public function statsAction($id, Request $request,
+        SlugifyInterface $slugify,
+        TranslatorInterface $translator,
+        PaginatorInterface $paginator)
     {
         $tab = $request->query->get('tab', 'orders');
 
@@ -1148,7 +1152,9 @@ trait RestaurantTrait
         $end->setDate($date->format('Y'), $date->format('m'), $date->format('t'));
         $end->setTime(23, 59, 59);
 
-        $fulfilledOrders = $this->get('sylius.repository.order')
+        $maxResults = 50;
+
+        $qb = $this->get('sylius.repository.order')
             ->findOrdersByRestaurantAndDateRange(
                 $restaurant,
                 $start,
@@ -1156,9 +1162,13 @@ trait RestaurantTrait
                 $state = 'fulfilled'
             );
 
+        $qb
+            ->setFirstResult($request->query->getInt('page', 1) - 1)
+            ->setMaxResults($maxResults);
+
         $stats = new RestaurantStats(
             $this->getParameter('kernel.default_locale'),
-            $fulfilledOrders,
+            new Paginator($qb->getQuery()),
             $this->get('sylius.repository.tax_rate'),
             $translator
         );
@@ -1187,6 +1197,17 @@ trait RestaurantTrait
             'start' => $start,
             'end' => $end,
             'tab' => $tab,
+            'pagination' => $paginator->paginate(
+                $qb,
+                $request->query->getInt('page', 1),
+                $maxResults,
+                [
+                    PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'o.shippingTimeRange',
+                    PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
+                    PaginatorInterface::SORT_FIELD_WHITELIST => ['o.shippingTimeRange'],
+                    PaginatorInterface::FILTER_FIELD_WHITELIST => []
+                ]
+            )
         ]));
     }
 

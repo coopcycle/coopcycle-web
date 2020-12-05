@@ -4,6 +4,8 @@ namespace AppBundle\Utils;
 
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Sylius\Order\AdjustmentInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use League\Csv\Writer as CsvWriter;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -26,13 +28,13 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function __construct(
         string $locale,
-        $orders,
+        Paginator $orders,
         RepositoryInterface $taxRateRepository,
         TranslatorInterface $translator,
         bool $withRestaurantName = false,
         bool $withMessenger = false)
     {
-        $this->orders = array_values($orders);
+        $this->orders = $orders;
         $this->translator = $translator;
         $this->withRestaurantName = $withRestaurantName;
         $this->withMessenger = $withMessenger;
@@ -40,8 +42,9 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         $taxesHelper = new TaxesHelper($taxRateRepository, $translator);
 
         foreach ($orders as $index => $order) {
-    		$this->itemsTotal += $order->getItemsTotal();
-    		$this->total += $order->getTotal();
+
+            $this->itemsTotal    += $order->getItemsTotal();
+            $this->total         += $order->getTotal();
             $this->itemsTaxTotal += $order->getItemsTaxTotal();
 
             $taxTotals = $taxesHelper->getTaxTotals($order, $itemsOnly = true);
@@ -159,7 +162,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getIterator()
     {
-        return new \ArrayIterator($this->orders);
+        return $this->orders->getIterator();
     }
 
     public function getColumns()
@@ -203,7 +206,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getRowValue($column, $index)
     {
-        $order = $this->orders[$index];
+        $order = $this->orders->getIterator()->offsetGet($index);
 
         if ($this->isTaxColumn($column)) {
 
@@ -319,15 +322,23 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         $csv->insertOne($headings);
 
         $records = [];
-        foreach ($this->orders as $index => $order) {
 
-            $record = [];
-            foreach ($this->getColumns() as $column) {
-                $record[] = $this->getRowValue($column, $index);
+        $pageCount =
+            ceil(count($this->orders) / $this->orders->getQuery()->getMaxResults());
+
+        for ($p = 1; $p <= $pageCount; $p++) {
+
+            $this->orders->getQuery()->setFirstResult($p - 1);
+
+            foreach ($this->orders as $index => $order) {
+                $record = [];
+                foreach ($this->getColumns() as $column) {
+                    $record[] = $this->getRowValue($column, $index);
+                }
+                $records[] = $record;
             }
-
-            $records[] = $record;
         }
+
         $csv->insertAll($records);
 
         return $csv->getContent();
