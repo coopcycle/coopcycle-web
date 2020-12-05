@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity\Sylius;
 
-use Doctrine\Common\Comparable;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
 
@@ -61,18 +60,5 @@ class ProductTaxon
     public function setPosition(?int $position): void
     {
         $this->position = $position;
-    }
-
-    /**
-     * Fix "Nesting level too deep - recursive dependency?"
-     * @see https://github.com/Atlantic18/DoctrineExtensions/issues/1726
-     */
-    public function compareTo($other)
-    {
-        if ($other->getPosition() === $this->getPosition()) {
-            return 0;
-        }
-
-        return $this->getPosition() < $other->getPosition() ? -1 : 1;
     }
 }

@@ -9,6 +9,7 @@ use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Comparable;
 use Sylius\Component\Product\Model\Product as BaseProduct;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
@@ -31,7 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   }
  * )
  */
-class Product extends BaseProduct implements ProductInterface
+class Product extends BaseProduct implements ProductInterface, Comparable
 {
     protected $deletedAt;
 
@@ -285,5 +286,14 @@ class Product extends BaseProduct implements ProductInterface
         $image->setProduct($this);
 
         $this->images->add($image);
+    }
+
+    /**
+     * Fix "Nesting level too deep - recursive dependency?"
+     * @see https://github.com/Atlantic18/DoctrineExtensions/pull/2185
+     */
+    public function compareTo($other)
+    {
+        return $this === $other;
     }
 }
