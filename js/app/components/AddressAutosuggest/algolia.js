@@ -72,12 +72,32 @@ const initSearch = () => {
   }
 }
 
-const formatAddress = hit => {
-  if (getAddressTemplate() === 'county') {
-    return `${hit.locale_names[0]}, ${hit.postcode[0]} ${hit.county[0]}, ${hit.country}`
+/* Exported to make it testable */
+export const formatAddress = (hit, template) => {
+
+  template = template || getAddressTemplate()
+
+  const parts = [
+    hit.locale_names[0]
+  ]
+
+  if (hit.postcode && hit.postcode[0]) {
+    if (template === 'county') {
+      parts.push(`${hit.postcode[0]} ${hit.county[0]}`)
+    } else {
+      parts.push(`${hit.postcode[0]} ${hit.city[0]}`)
+    }
+  } else {
+    if (template === 'county') {
+      parts.push(hit.county[0])
+    } else {
+      parts.push(hit.city[0])
+    }
   }
 
-  return `${hit.locale_names[0]}, ${hit.postcode[0]} ${hit.city[0]}, ${hit.country}`
+  parts.push(hit.country)
+
+  return parts.join(', ')
 }
 
 // https://community.algolia.com/places/api-clients.html#json-answer
