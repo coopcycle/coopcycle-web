@@ -25,9 +25,15 @@ class RoutingProblemNormalizer implements NormalizerInterface
                 "location"=>[
                     $task->getAddress()->getGeo()->getLongitude(),
                     $task->getAddress()->getGeo()->getLatitude()
+                ],
+                "time_windows" => [
+                    [
+                        (int) $task->getAfter()->format('U'),
+                        (int) $task->getBefore()->format('U')
+                    ]
                 ]
             ];
-         }
+        }
 
         foreach ($object->getVehicles() as $vehicle) {
 

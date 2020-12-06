@@ -16,7 +16,6 @@ class RouteOptimizerTest extends KernelTestCase
 {
     use ProphecyTrait;
 
-
     public function setUp(): void
     {
         parent::setUp();
@@ -24,38 +23,48 @@ class RouteOptimizerTest extends KernelTestCase
         self::bootKernel();
 
         $this->client = self::$container->get('csa_guzzle.client.vroom');
-
     }
 
     public function testOptimize()
     {
         $coords = [
-            new GeoCoordinates(48.87261892829001, 2.3363113403320312),
-            new GeoCoordinates(48.86923158125418, 2.3548507690429683),
-            new GeoCoordinates( 48.876006045998984,  2.3466110229492188)
+            new GeoCoordinates(48.87261892829001,  2.3363113403320312),
+            new GeoCoordinates(48.86923158125418,  2.3548507690429683),
+            new GeoCoordinates(48.876006045998984, 2.3466110229492188)
             ];
         $taskList = [];
         $task_id = 0;
         $address1 = new Address();
         $address1->setGeo($coords[0]);
 
+        $now = new \DateTime();
+
+        $after = clone $now;
+        $after->setTime(0, 0, 0);
+
+        $before = clone $now;
+        $before->setTime(23, 59, 59);
+
         // create list of task prophecies
         foreach($coords as $coord)
         {
-            $task_proph = $this->prophesize(Task::class);
-            $task_proph->getId()->willReturn($task_id);
             $address = new Address();
             $address->setGeo($coord);
+
+            $task_proph = $this->prophesize(Task::class);
+            $task_proph->getId()->willReturn($task_id);
             $task_proph->getAddress()->willReturn($address);
+            $task_proph->getAfter()->willReturn($after);
+            $task_proph->getBefore()->willReturn($before);
+
             $taskList[] = $task_proph->reveal();
             $task_id += 1;
         }
-        $vehicle1 = new Vehicle(1, $address1, $address1);
+        $vehicle1 = new Vehicle(1, $address1);
 
         $routingProblem = new RoutingProblem();
 
-        foreach($taskList as $task)
-        {
+        foreach ($taskList as $task) {
             $routingProblem->addTask($task);
         }
 
@@ -68,6 +77,5 @@ class RouteOptimizerTest extends KernelTestCase
         $this->assertSame($result[0], $taskList[0]);
         $this->assertSame($result[1], $taskList[2]);
         $this->assertSame($result[2], $taskList[1]);
-
     }
 }
