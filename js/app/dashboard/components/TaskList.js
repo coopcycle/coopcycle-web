@@ -8,7 +8,7 @@ import _ from 'lodash'
 
 import Task from './Task'
 import TaskListPopoverContent from './TaskListPopoverContent'
-import { removeTasks, modifyTaskList, togglePolyline } from '../redux/actions'
+import { removeTasks, modifyTaskList, togglePolyline, optimizeTaskList } from '../redux/actions'
 import { selectFilteredTasks } from '../redux/selectors'
 import { selectSelectedDate, selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
 
@@ -132,6 +132,17 @@ class TaskList extends React.Component {
               &nbsp;&nbsp;
               <i className={ collapsed ? 'fa fa-caret-down' : 'fa fa-caret-up' }></i>
             </a>
+            { tasks.length > 1 && (
+            <a href="#" onClick={ e => {
+              e.preventDefault()
+              this.props.optimizeTaskList({
+                '@id': this.props.uri,
+                username: this.props.username,
+              })
+            }} className="mr-2" style={{ color: '#f1c40f' }} label="Optimize">
+              <i className="fa fa-bolt"></i>
+            </a>
+            )}
             { uncompletedTasks.length > 0 && (
             <a onClick={ e => this.onClickUnassign(e) } className="taskList__panel-title__unassign">
               <i className="fa fa-close"></i>
@@ -206,6 +217,7 @@ function mapDispatchToProps(dispatch) {
     removeTasks: (username, tasks) => dispatch(removeTasks(username, tasks)),
     modifyTaskList: (username, tasks) => dispatch(modifyTaskList(username, tasks)),
     togglePolyline: (username) => dispatch(togglePolyline(username)),
+    optimizeTaskList: (taskList) => dispatch(optimizeTaskList(taskList)),
   }
 }
 
