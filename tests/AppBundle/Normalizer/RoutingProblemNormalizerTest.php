@@ -9,6 +9,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
 use AppBundle\DataType\RoutingProblem;
+use AppBundle\DataType\RoutingProblem\Job;
 use AppBundle\DataType\RoutingProblem\Vehicle;
 
 class RoutingProblemNormalizerTest extends TestCase
@@ -53,8 +54,8 @@ class RoutingProblemNormalizerTest extends TestCase
         $vehicle1 = new Vehicle(1, $address1, $address1);
         $routingProblem = new RoutingProblem();
 
-        foreach($taskList as $task){
-            $routingProblem->addTask($task);
+        foreach ($taskList as $task){
+            $routingProblem->addJob(Job::fromTask($task));
         }
         $routingProblem->addVehicle($vehicle1);
 

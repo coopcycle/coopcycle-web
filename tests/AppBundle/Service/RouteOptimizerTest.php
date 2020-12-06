@@ -2,15 +2,14 @@
 
 namespace Tests\AppBundle\Normalizer;
 
-use AppBundle\Serializer\RoutingProblemNormalizer;
-use AppBundle\Entity\Task;
-use Prophecy\PhpUnit\ProphecyTrait;
-use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskCollection;
+use AppBundle\Serializer\RoutingProblemNormalizer;
 use AppBundle\Service\RouteOptimizer;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use AppBundle\DataType\RoutingProblem;
-use AppBundle\DataType\RoutingProblem\Vehicle;
 
 class RouteOptimizerTest extends KernelTestCase
 {
@@ -31,7 +30,8 @@ class RouteOptimizerTest extends KernelTestCase
             new GeoCoordinates(48.87261892829001,  2.3363113403320312),
             new GeoCoordinates(48.86923158125418,  2.3548507690429683),
             new GeoCoordinates(48.876006045998984, 2.3466110229492188)
-            ];
+        ];
+
         $taskList = [];
         $task_id = 0;
         $address1 = new Address();
@@ -60,19 +60,14 @@ class RouteOptimizerTest extends KernelTestCase
             $taskList[] = $task_proph->reveal();
             $task_id += 1;
         }
-        $vehicle1 = new Vehicle(1, $address1);
 
-        $routingProblem = new RoutingProblem();
-
-        foreach ($taskList as $task) {
-            $routingProblem->addTask($task);
-        }
-
-        $routingProblem->addVehicle($vehicle1);
+        $taskCollection = $this->prophesize(TaskCollection::class);
+        $taskCollection->getTasks()->willReturn($taskList);
 
         $normalizer = new RoutingProblemNormalizer();
         $optimizer = new RouteOptimizer($normalizer, $this->client);
-        $result = $optimizer->optimize($routingProblem);
+
+        $result = $optimizer->optimize($taskCollection->reveal());
 
         $this->assertSame($result[0], $taskList[0]);
         $this->assertSame($result[1], $taskList[2]);

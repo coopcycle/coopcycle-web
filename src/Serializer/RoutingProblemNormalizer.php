@@ -11,7 +11,6 @@ use AppBundle\DataType\RoutingProblem;
 
 class RoutingProblemNormalizer implements NormalizerInterface
 {
-
     public function normalize($object, $format = null, array $context = array())
     {
         $data = [
@@ -19,19 +18,11 @@ class RoutingProblemNormalizer implements NormalizerInterface
             "vehicles"=>[],
         ];
 
-        foreach ($object->getTasks() as $task) {
+        foreach ($object->getJobs() as $job) {
             $data["jobs"][] = [
-                "id"=>$task->getId(),
-                "location"=>[
-                    $task->getAddress()->getGeo()->getLongitude(),
-                    $task->getAddress()->getGeo()->getLatitude()
-                ],
-                "time_windows" => [
-                    [
-                        (int) $task->getAfter()->format('U'),
-                        (int) $task->getBefore()->format('U')
-                    ]
-                ]
+                "id"=>$job->id,
+                "location"=>$job->location,
+                "time_windows" => $job->time_windows
             ];
         }
 

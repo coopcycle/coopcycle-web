@@ -3,6 +3,7 @@
 namespace AppBundle\DataType;
 
 use AppBundle\Entity\Task;
+use AppBundle\DataType\RoutingProblem\Job;
 use AppBundle\DataType\RoutingProblem\Vehicle;
 
 /**
@@ -12,34 +13,17 @@ use AppBundle\DataType\RoutingProblem\Vehicle;
  */
 class RoutingProblem
 {
-    private $tasks;
-    private $vehicles;
+    private $jobs = [];
+    private $vehicles = [];
 
-    public function __construct()
+    public function getJobs(): array
     {
-        $this->tasks = [];
-        $this->vehicles = [];
+        return $this->jobs;
     }
 
-    public function getTasks(): array
+    public function addJob(Job $job)
     {
-        return $this->tasks;
-    }
-
-    public function addTask(Task $task)
-    {
-        $this->tasks[] = $task;
-    }
-
-    public function removeTask(Task $task)
-    {
-        $id = $task->getId();
-        if(($key = array_search($id, $this->tasks)) !== false)
-        {
-            unset($this->tasks[$key]);
-            return true;
-        }
-        return false;
+        $this->jobs[] = $job;
     }
 
     public function getVehicles(): array
@@ -51,16 +35,4 @@ class RoutingProblem
     {
         $this->vehicles[] = $vehicle;
     }
-
-    public function removeVehicle(Vehicle $vehicle)
-    {
-        $id = $vehicle->getId();
-        if(($key = array_search($id, $this->vehicles)) !== false)
-        {
-            unset($this->vehicles[$key]);
-            return true;
-        }
-        return false;
-    }
-
 }

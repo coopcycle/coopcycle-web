@@ -3,6 +3,7 @@
 namespace AppBundle\Action\TaskList;
 
 use AppBundle\DataType\RoutingProblem;
+use AppBundle\DataType\RoutingProblem\Job;
 use AppBundle\DataType\RoutingProblem\Vehicle;
 use AppBundle\Entity\TaskList;
 use AppBundle\Service\RouteOptimizer;
@@ -18,20 +19,7 @@ final class Optimize
 
     public function __invoke($data)
     {
-        $problem = new RoutingProblem();
-
-        foreach ($data->getTasks() as $task) {
-            $problem->addTask($task);
-        }
-
-        $firstTask = current($data->getTasks());
-
-        $vehicle = new Vehicle(1);
-        $vehicle->setStart($firstTask->getAddress());
-
-        $problem->addVehicle($vehicle);
-
-        $optimizedTasks = $this->optimizer->optimize($problem);
+        $optimizedTasks = $this->optimizer->optimize($data);
 
         $data->getItems()->clear();
 
