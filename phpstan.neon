@@ -36,3 +36,4 @@ parameters:
         - '#Call to an undefined method Faker\\Generator::[a-zA-Z]+\(\)#'
         - '#Property MercadoPago\\Payment::\$payer \(object\) does not accept array<string, mixed>#'
         - '#Access to protected property MercadoPago\\Payment::\$[a-zA-Z_]#'
+        - '#Method AppBundle\\Entity\\Sylius\\Product::compareTo\(\) should return int but returns bool#'
