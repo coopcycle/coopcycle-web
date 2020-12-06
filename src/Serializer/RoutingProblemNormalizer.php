@@ -32,6 +32,7 @@ class RoutingProblemNormalizer implements NormalizerInterface
         foreach($object->getVehicles() as $vehicle){
             $data["vehicles"][] = [
                 "id"=>$vehicle->getId(),
+                "profile"=>"bike",
                 "start"=>[
                     $vehicle->getStart()->getGeo()->getLongitude(),
                     $vehicle->getStart()->getGeo()->getLatitude(),
