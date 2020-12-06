@@ -168,7 +168,7 @@ class ProfileController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             if ($editForm->getClickedButton() && 'loopeatDisconnect' === $editForm->getClickedButton()->getName()) {
-                $user->clearLoopEatCredentials();
+                $user->getCustomer()->clearLoopEatCredentials();
             }
 
             $userManager->updateUser($user);
