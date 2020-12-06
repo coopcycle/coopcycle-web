@@ -101,6 +101,7 @@ class RestaurantCartContextTest extends TestCase
     {
         $restaurant = $this->prophesize(LocalBusiness::class);
         $restaurant->getName()->willReturn('Foo');
+        $restaurant->isEnabled()->willReturn(true);
 
         $this->restaurantResolver
             ->resolve()
@@ -143,6 +144,7 @@ class RestaurantCartContextTest extends TestCase
     {
         $restaurant = $this->prophesize(LocalBusiness::class);
         $restaurant->getName()->willReturn('Foo');
+        $restaurant->isEnabled()->willReturn(true);
 
         $otherRestaurant = $this->prophesize(LocalBusiness::class);
 
@@ -229,7 +231,42 @@ class RestaurantCartContextTest extends TestCase
         $this->expectException(CartNotFoundException::class);
 
         $restaurant = $this->prophesize(LocalBusiness::class);
-        $restaurant->getName()->willThrow(new EntityNotFoundException());
+        $restaurant->isEnabled()->willReturn(false);
+
+        $this->restaurantResolver
+            ->resolve()
+            ->willReturn(null);
+
+        $this->session
+            ->has($this->sessionKeyName)
+            ->willReturn(true);
+
+        $this->session
+            ->get($this->sessionKeyName)
+            ->willReturn(1);
+
+        $cartProphecy = $this->prophesize(OrderInterface::class);
+        $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
+        $cartProphecy->getVendor()->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+        $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
+
+        $expectedCart = $cartProphecy->reveal();
+
+        $this->orderRepository
+            ->findCartById(1)
+            ->willReturn($expectedCart);
+
+        $this->session->remove($this->sessionKeyName)->shouldBeCalled();
+
+        $cart = $this->context->getCart();
+    }
+
+    public function testExistingCartStoredInSessionThrowingEntityNotFoundException()
+    {
+        $this->expectException(CartNotFoundException::class);
+
+        $restaurant = $this->prophesize(LocalBusiness::class);
+        $restaurant->isEnabled()->willThrow(new EntityNotFoundException());
 
         $this->restaurantResolver
             ->resolve()
