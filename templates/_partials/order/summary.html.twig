@@ -10,7 +10,7 @@
         '%name%': order.vendor.name
       } %}order.list.summary.hub.text{% endtrans %}
   {% else %}
-    {% if order.vendor.restaurant.deleted or not order.vendor.restaurant.enabled %}
+    {% if order.vendor.restaurant.deleted %}
       {% trans with {
         '%restaurant_name%': order.vendor.restaurant.name
       } %}order.list.summary.deleted_restaurant.text{% endtrans %}
