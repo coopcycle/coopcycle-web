@@ -18,16 +18,11 @@ class Vehicle
 
     private $end; // an address that this vehicle needs to end at
 
-    public function __construct(int $id, Address $start, Address $end)
+    public function __construct(int $id, Address $start = null, Address $end = null)
     {
         $this->id = $id;
         $this->start = $start;
         $this->end = $end;
-    }
-
-    public function setId(int $id)
-    {
-        $this->id = $id;
     }
 
     public function getId()
