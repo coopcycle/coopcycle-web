@@ -3,7 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Serializer\RoutingProblemNormalizer;
-use AppBundle\Entity\RoutingProblem;
+use AppBundle\DataType\RoutingProblem;
 use GuzzleHttp\Client;
 
 /**

@@ -9,8 +9,8 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
 use AppBundle\Service\RouteOptimizer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use AppBundle\Entity\Vehicle;
-use AppBundle\Entity\RoutingProblem;
+use AppBundle\DataType\RoutingProblem;
+use AppBundle\DataType\RoutingProblem\Vehicle;
 
 class RouteOptimizerTest extends KernelTestCase
 {

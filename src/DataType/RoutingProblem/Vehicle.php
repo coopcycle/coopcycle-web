@@ -1,6 +1,8 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace AppBundle\DataType\RoutingProblem;
+
+use AppBundle\Entity\Address;
 
 /**
  * a Vehicle represents a method of transportation with certain capacities for accomplishing tasks.

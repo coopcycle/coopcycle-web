@@ -1,15 +1,18 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace AppBundle\DataType;
+
+use AppBundle\Entity\Task;
+use AppBundle\DataType\RoutingProblem\Vehicle;
 
 /**
  * a RoutingProblem represents a set of tasks and vehicles
- **/
-
+ *
+ * @see https://github.com/VROOM-Project/vroom/blob/master/docs/API.md
+ */
 class RoutingProblem
 {
     private $tasks;
-
     private $vehicles;
 
     public function __construct()

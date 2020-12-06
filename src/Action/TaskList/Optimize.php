@@ -2,8 +2,8 @@
 
 namespace AppBundle\Action\TaskList;
 
-use AppBundle\Entity\RoutingProblem;
-use AppBundle\Entity\Vehicle;
+use AppBundle\DataType\RoutingProblem;
+use AppBundle\DataType\RoutingProblem\Vehicle;
 use AppBundle\Entity\TaskList;
 use AppBundle\Service\RouteOptimizer;
 

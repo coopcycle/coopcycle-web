@@ -8,8 +8,8 @@ use AppBundle\Entity\Task;
 use Prophecy\PhpUnit\ProphecyTrait;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\Vehicle;
-use AppBundle\Entity\RoutingProblem;
+use AppBundle\DataType\RoutingProblem;
+use AppBundle\DataType\RoutingProblem\Vehicle;
 
 class RoutingProblemNormalizerTest extends TestCase
 {

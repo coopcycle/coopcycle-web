@@ -3,7 +3,7 @@
 namespace AppBundle\Serializer;
 
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use AppBundle\Entity\RoutingProblem;
+use AppBundle\DataType\RoutingProblem;
 
 /**
 * normalizes a given RoutingProblem into the Vroom api request format
