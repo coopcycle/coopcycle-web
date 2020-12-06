@@ -26,9 +26,7 @@ trait AccessControlTrait
         }
 
         if ($object instanceof LocalBusiness) {
-            if (!AccessControl::restaurant($this->getUser(), $object)) {
-                throw new AccessDeniedHttpException();
-            }
+            $this->denyAccessUnlessGranted('edit', $object);
         }
 
         if ($object instanceof Store) {
