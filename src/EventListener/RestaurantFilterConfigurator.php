@@ -3,79 +3,42 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\LocalBusinessRepository;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\DBAL\Types\Type;
 
 class RestaurantFilterConfigurator
 {
     protected $em;
-    protected $tokenStorage;
-    protected $restaurantRepository;
-    protected $reader;
-    protected $cache;
 
-    public function __construct(
-        EntityManagerInterface $em,
-        TokenStorageInterface $tokenStorage,
-        LocalBusinessRepository $restaurantRepository,
-        CacheInterface $enabledFilterConfiguratorCache)
+    protected static $routes = [
+        'homepage',
+        'restaurants',
+        'api_restaurants_get_collection',
+    ];
+
+    public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
-        $this->tokenStorage = $tokenStorage;
-        $this->restaurantRepository = $restaurantRepository;
-        $this->cache = $enabledFilterConfiguratorCache;
     }
 
-    public function onKernelRequest()
+    public function onKernelRequest(RequestEvent $event)
     {
-        $restaurants = [];
+        $request = $event->getRequest();
 
-        if ($user = $this->getUser()) {
-
-            // If this is an admin, we don't enable the filter
-            if ($user->hasRole('ROLE_ADMIN')) {
-                return;
-            }
-
-            $restaurants = $this->cache->get($user->getUsername(), function (ItemInterface $item) use ($user) {
-
-                $item->expiresAfter(600);
-
-                $restaurants = [];
-                if ($user->hasRole('ROLE_RESTAURANT')) {
-                    $restaurants = $user->getRestaurants()->toArray();
-                }
-
-                return array_map(function (LocalBusiness $restaurant) {
-                    return $restaurant->getId();
-                }, $restaurants);
-            });
-        }
-
-        $filter = $this->em->getFilters()->enable('restaurant_filter');
-        $filter->setParameter('enabled', true, Type::BOOLEAN);
-
-        if (count($restaurants) > 0) {
-            $filter->setParameter('restaurants', $restaurants, Type::SIMPLE_ARRAY);
-        }
-    }
-
-    private function getUser()
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
+        if (!$request->attributes->has('_route')) {
             return;
         }
 
-        if (!is_object($user = $token->getUser())) {
+        $route = $request->attributes->get('_route');
+
+        if (!in_array($route, self::$routes)) {
             return;
         }
 
-        return $user;
+        if ($this->em->getFilters()->isEnabled('disabled_filter')) {
+            $filter = $this->em->getFilters()->getFilter('disabled_filter');
+            $filter->add(LocalBusiness::class);
+        }
+
     }
 }

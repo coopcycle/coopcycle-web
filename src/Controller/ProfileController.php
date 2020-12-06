@@ -214,11 +214,8 @@ class ProfileController extends Controller
         DeliveryManager $deliveryManager,
         JWTManagerInterface $jwtManager,
         JWSProviderInterface $jwsProvider,
-        IriConverterInterface $iriConverter,
-        EntityManagerInterface $em)
+        IriConverterInterface $iriConverter)
     {
-        $filter = $em->getFilters()->disable('restaurant_filter');
-
         $order = $this->container->get('sylius.repository.order')->find($id);
 
         if ($order->getCustomer()->hasUser() && $order->getCustomer()->getUser() !== $this->getUser()) {

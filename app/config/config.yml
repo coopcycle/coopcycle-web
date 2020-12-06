@@ -220,9 +220,6 @@ doctrine:
             soft_deleteable:
                 class:   Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
                 enabled: false
-            restaurant_filter:
-                class:   AppBundle\Doctrine\Filter\RestaurantFilter
-                enabled: true
             disabled_filter:
                 class:   AppBundle\Doctrine\Filter\DisabledFilter
                 enabled: true

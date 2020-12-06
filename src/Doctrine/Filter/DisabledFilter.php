@@ -15,18 +15,23 @@ use Doctrine\DBAL\Types\Type;
  */
 final class DisabledFilter extends SQLFilter
 {
-    private static $classes = [
+    private $classes = [
         ProductOptionValue::class
     ];
 
     public function addFilterConstraint(ClassMetadata $metadata, $targetTableAlias)
     {
-        if (!in_array($metadata->getReflectionClass()->getName(), self::$classes)) {
+        if (!in_array($metadata->getReflectionClass()->getName(), $this->classes)) {
             return '';
         }
 
         return sprintf('%s.enabled = %s',
             $targetTableAlias, $this->getConnection()->quote(true, Type::BOOLEAN)
         );
+    }
+
+    public function add(string $class)
+    {
+        $this->classes[] = $class;
     }
 }

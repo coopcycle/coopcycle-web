@@ -34,10 +34,8 @@ trait OrderTrait
         return new JsonResponse($orderNormalized, 200);
     }
 
-    public function orderListAction(Request $request, TranslatorInterface $translator, EntityManagerInterface $em)
+    public function orderListAction(Request $request, TranslatorInterface $translator)
     {
-        $filter = $em->getFilters()->disable('restaurant_filter');
-
         $response = new Response();
 
         $showCanceled = false;

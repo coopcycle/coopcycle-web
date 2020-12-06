@@ -62,7 +62,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "normalization_context"={"groups"={"restaurant", "address", "order"}}
+ *       "normalization_context"={"groups"={"restaurant", "address", "order"}},
+ *       "security"="is_granted('view', object)"
  *     },
  *     "restaurant_menu"={
  *       "method"="GET",
@@ -80,13 +81,13 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "method"="PUT",
  *       "input"=RestaurantInput::class,
  *       "denormalization_context"={"groups"={"restaurant_update"}},
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "close"={
  *       "method"="PUT",
  *       "path"="/restaurants/{id}/close",
  *       "controller"=CloseController::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "restaurant_deliveries"={
  *       "method"="GET",
@@ -105,7 +106,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "method"="GET",
  *       "path"="/restaurants/{id}/orders",
  *       "controller"=Orders::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
+ *       "security"="is_granted('edit', object)"
  *     }
  *   }
  * )

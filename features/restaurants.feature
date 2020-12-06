@@ -247,7 +247,7 @@ Feature: Manage restaurants
     And the user "bob" is authenticated
     When I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/restaurants/6"
-    Then the response status code should be 404
+    Then the response status code should be 403
 
   Scenario: Retrieve a restaurant's menu
     Given the fixtures files are loaded:

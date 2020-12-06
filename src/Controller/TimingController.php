@@ -25,12 +25,6 @@ class TimingController extends AbstractController
         OrderTimeHelper $orderTimeHelper,
         CacheInterface $appCache)
     {
-        $filterCollection = $entityManager->getFilters();
-
-        if ($filterCollection->isEnabled('restaurant_filter')) {
-            $filterCollection->disable('restaurant_filter');
-        }
-
         $data = [];
 
         $deliveryCacheKey = sprintf('restaurant.%d.delivery.timing', $id);
