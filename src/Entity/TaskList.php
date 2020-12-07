@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Action\TaskList\Create as CreateTaskListController;
+use AppBundle\Action\TaskList\Optimize as OptimizeController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -29,7 +30,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN')"
- *     }
+ *     },
+ *     "optimize"={
+ *        "method"="GET",
+ *        "path"="/task_lists/{id}/optimize",
+ *        "controller"=OptimizeController::class,
+ *        "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
  *   },
  *   attributes={
  *     "normalization_context"={"groups"={"task_collection", "task", "address"}}

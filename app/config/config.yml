@@ -477,6 +477,10 @@ csa_guzzle:
             config:
                 base_uri: "%router.request_context.scheme%://%router.request_context.host%"
                 lazy: true
+        vroom:
+            config:
+                base_uri: "%env(VROOM_HOST)%"
+                lazy: true
 
 sylius_taxation:
     resources:

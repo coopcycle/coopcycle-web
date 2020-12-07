@@ -955,3 +955,9 @@ services:
       - '%env(SONIC_HOST)%'
       - '%env(SONIC_PORT)%'
       - 30
+
+  AppBundle\Serializer\RoutingProblemNormalizer: ~
+
+  AppBundle\Service\RouteOptimizer:
+    arguments:
+      $client: '@csa_guzzle.client.vroom'

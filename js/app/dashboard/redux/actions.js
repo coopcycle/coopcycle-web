@@ -134,6 +134,8 @@ export const IMPORT_ERROR = 'IMPORT_ERROR'
 export const OPEN_IMPORT_MODAL = 'OPEN_IMPORT_MODAL'
 export const CLOSE_IMPORT_MODAL = 'CLOSE_IMPORT_MODAL'
 
+export const OPTIMIZE_TASK_LIST = 'OPTIMIZE_TASK_LIST'
+
 function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
 }
@@ -670,6 +672,32 @@ function loadTaskEvents(task) {
         dispatch(loadTaskEventsSuccess(task, response.data['hydra:member']))
       })
       .catch(error => dispatch(loadTaskEventsFailure(error)))
+  }
+}
+
+export function optimizeTaskList(taskList) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    const url = `${taskList['@id']}/optimize`
+
+    createClient(dispatch).request({
+      method: 'get',
+      url,
+      data: {},
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        dispatch(modifyTaskList(taskList.username, response.data.items))
+      })
+      // eslint-disable-next-line no-console
+      .catch(error => console.log(error))
   }
 }
 
