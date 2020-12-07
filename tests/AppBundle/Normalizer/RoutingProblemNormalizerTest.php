@@ -87,6 +87,7 @@ class RoutingProblemNormalizerTest extends TestCase
                     ]
                 ],
             ],
+            "shipments"=>[],
             "vehicles"=>[
                 ["id"=>1, "profile"=>"bike", "start"=>[2.3363113403320312, 48.87261892829001], "end"=>[2.3363113403320312, 48.87261892829001],]
             ]

@@ -15,6 +15,7 @@ class RoutingProblemNormalizer implements NormalizerInterface
     {
         $data = [
             "jobs"=> [],
+            "shipments"=> [],
             "vehicles"=>[],
         ];
 
@@ -23,6 +24,21 @@ class RoutingProblemNormalizer implements NormalizerInterface
                 "id"=>$job->id,
                 "location"=>$job->location,
                 "time_windows" => $job->time_windows
+            ];
+        }
+
+        foreach ($object->getShipments() as $shipment) {
+            $data["shipments"][] = [
+                "pickup"=>[
+                    "id"=>$shipment->pickup->id,
+                    "location"=>$shipment->pickup->location,
+                    "time_windows" => $shipment->pickup->time_windows
+                ],
+                "delivery"=>[
+                    "id"=>$shipment->delivery->id,
+                    "location"=>$shipment->delivery->location,
+                    "time_windows" => $shipment->delivery->time_windows
+                ]
             ];
         }
 

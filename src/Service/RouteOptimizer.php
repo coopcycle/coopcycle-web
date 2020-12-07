@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Serializer\RoutingProblemNormalizer;
 use AppBundle\DataType\RoutingProblem;
 use AppBundle\DataType\RoutingProblem\Job;
+use AppBundle\DataType\RoutingProblem\Shipment;
 use AppBundle\DataType\RoutingProblem\Vehicle;
 use AppBundle\Entity\TaskCollection;
 use GuzzleHttp\Client;
@@ -31,18 +32,7 @@ class RouteOptimizer
      */
     public function optimize(TaskCollection $taskCollection)
     {
-        $routingProblem = new RoutingProblem();
-
-        foreach ($taskCollection->getTasks() as $task) {
-            $routingProblem->addJob(Job::fromTask($task));
-        }
-
-        $firstTask = current($taskCollection->getTasks());
-
-        $vehicle = new Vehicle(1);
-        $vehicle->setStart($firstTask->getAddress());
-
-        $routingProblem->addVehicle($vehicle);
+        $routingProblem = $this->createRoutingProblem($taskCollection);
 
         // TODO Catch Exception
         $response = $this->client->request('POST', '', [
@@ -72,5 +62,38 @@ class RouteOptimizer
         });
 
         return $tasks;
+    }
+
+    /**
+     * @param TaskCollection $taskCollection
+     * @return RoutingProblem
+     */
+    public function createRoutingProblem(TaskCollection $taskCollection)
+    {
+        $routingProblem = new RoutingProblem();
+
+        $deliveries = [];
+        foreach ($taskCollection->getTasks() as $task) {
+            if (null !== $task->getDelivery()) {
+                if (!in_array($task->getDelivery(), $deliveries, true)) {
+                    $deliveries[] = $task->getDelivery();
+                }
+            } else {
+                $routingProblem->addJob(Job::fromTask($task));
+            }
+        }
+
+        foreach ($deliveries as $delivery) {
+            $routingProblem->addShipment(Shipment::fromDelivery($delivery));
+        }
+
+        $firstTask = current($taskCollection->getTasks());
+
+        $vehicle = new Vehicle(1);
+        $vehicle->setStart($firstTask->getAddress());
+
+        $routingProblem->addVehicle($vehicle);
+
+        return $routingProblem;
     }
 }
