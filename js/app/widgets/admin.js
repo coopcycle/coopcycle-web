@@ -1,3 +1,4 @@
+import Changelog from './Changelog'
 import ColorPicker from './ColorPicker'
 import ConfirmDelete from './ConfirmDelete'
 import Dropzone from './Dropzone'
@@ -14,6 +15,7 @@ import './admin.scss'
 
 window.CoopCycle = window.CoopCycle || {}
 
+window.CoopCycle.Changelog = Changelog
 window.CoopCycle.ColorPicker = ColorPicker
 window.CoopCycle.ConfirmDelete = ConfirmDelete
 window.CoopCycle.Dropzone = Dropzone
