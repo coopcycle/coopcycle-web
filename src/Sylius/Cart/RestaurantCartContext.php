@@ -11,6 +11,7 @@ use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class RestaurantCartContext implements CartContextInterface
 {
@@ -27,6 +28,11 @@ final class RestaurantCartContext implements CartContextInterface
      */
     private ChannelContextInterface $channelContext;
 
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    private AuthorizationCheckerInterface $authorizationChecker;
+
     /** @var OrderInterface|null */
     private $cart;
 
@@ -41,7 +47,8 @@ final class RestaurantCartContext implements CartContextInterface
         FactoryInterface $orderFactory,
         string $sessionKeyName,
         ChannelContextInterface $channelContext,
-        RestaurantResolver $resolver)
+        RestaurantResolver $resolver,
+        AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->session = $session;
         $this->orderRepository = $orderRepository;
@@ -49,6 +56,7 @@ final class RestaurantCartContext implements CartContextInterface
         $this->sessionKeyName = $sessionKeyName;
         $this->channelContext = $channelContext;
         $this->resolver = $resolver;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -70,7 +78,8 @@ final class RestaurantCartContext implements CartContextInterface
                 $this->session->remove($this->sessionKeyName);
             } else {
                 try {
-                    if (!$cart->getVendor()->isHub() && !$cart->getVendor()->getRestaurant()->isEnabled()) {
+                    if (!$cart->getVendor()->isHub() && !$cart->getVendor()->getRestaurant()->isEnabled()
+                        && !$this->authorizationChecker->isGranted('edit', $cart->getVendor()->getRestaurant())) {
                         $cart = null;
                         $this->session->remove($this->sessionKeyName);
                     }
