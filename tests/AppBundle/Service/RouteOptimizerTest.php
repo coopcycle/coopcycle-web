@@ -118,6 +118,7 @@ class RouteOptimizerTest extends KernelTestCase
             $task_proph->getAddress()->willReturn($address);
             $task_proph->getAfter()->willReturn($after);
             $task_proph->getBefore()->willReturn($before);
+            $task_proph->getDelivery()->willReturn(null);
 
             $taskList[] = $task_proph->reveal();
             $task_id += 1;
