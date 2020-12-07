@@ -3,6 +3,8 @@ import DropzoneWidget from '../widgets/Dropzone'
 import Sortable from 'sortablejs'
 import _ from 'lodash'
 import numbro from 'numbro'
+import { createStore } from 'redux'
+import { createAction } from 'redux-actions'
 
 import '../i18n'
 import { calculate } from '../utils/tax'
@@ -133,16 +135,39 @@ document.querySelectorAll('[data-tax-categories]').forEach(el => {
   })
 })
 
+const SET_IMAGES = '@product/SET_IMAGES'
+const setImages = createAction(SET_IMAGES)
+
 const imageEditor = document.getElementById('image-editor')
 const formData = document.querySelector('#product-form-data')
 
 if (imageEditor && formData) {
+
+  const store = createStore((state = {}, action) => {
+
+    switch (action.type) {
+      case SET_IMAGES:
+
+        return {
+          ...state,
+          images: action.payload,
+        }
+    }
+
+    return state
+  })
+
+  store.dispatch(
+    setImages(JSON.parse(formData.dataset.productImages))
+  )
+
   imageEditor.addEventListener('click', function(e) {
     e.preventDefault()
     openEditor({
-      existingImages: JSON.parse(formData.dataset.productImages),
+      existingImages: store.getState().images,
       actionUrl: formData.dataset.actionUrl,
-      productId: formData.dataset.productId
+      productId: formData.dataset.productId,
+      onClose: (images) => store.dispatch(setImages(images)),
     })
   })
 }

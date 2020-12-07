@@ -55,7 +55,7 @@ const NavBtn = ({ ratio, size, onClick, canvas, selected }) => (
 const Gallery = ({ images, onDelete }) => (
   <div className="image-editor-gallery">
     { _.map(images, (image, key) => (
-      <div className={ classNames({
+      <div key={ `product-image-${key}` } className={ classNames({
         'image-editor-gallery-item': true,
         'image-editor-gallery-item-ratio-16x9': image.ratio === '16:9'
       }) }>
@@ -168,7 +168,7 @@ const Editor = ({ onClose, actionUrl, productId, existingImages }) => {
 
   return (
     <div className="d-flex flex-column w-100 image-editor">
-      <Navbar onClose={ onClose } onClickTab={ tab => setTab(tab) } />
+      <Navbar onClose={ () => onClose(images) } onClickTab={ tab => setTab(tab) } />
       <div className="d-flex w-100 h-100 overflow-auto">
         { tab === 'gallery' && (
           <Gallery images={ images } onDelete={ image => {
@@ -237,7 +237,7 @@ const Editor = ({ onClose, actionUrl, productId, existingImages }) => {
   )
 }
 
-export function openEditor({ actionUrl, productId, existingImages }) {
+export function openEditor({ actionUrl, productId, existingImages, onClose }) {
 
   const editor = document.createElement('div')
   editor.style.position = 'fixed'
@@ -255,8 +255,10 @@ export function openEditor({ actionUrl, productId, existingImages }) {
     existingImages={ existingImages }
     actionUrl={ actionUrl }
     productId={ productId }
-    onClose={ () => {
+    onClose={ (images) => {
       unmountComponentAtNode(editor)
       document.body.removeChild(editor)
+
+      onClose(images)
     }} />, editor)
 }
