@@ -5,6 +5,8 @@ import React, {
   forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import ProductImagesCarousel from './ProductImagesCarousel'
+
 const OptionValueLabel = ({ option, optionValue }) => (
   <span>
     <span>{ optionValue.value }</span>
@@ -245,7 +247,7 @@ function getInitialDisabledValue(options) {
   return validOptions.length < options.length
 }
 
-export default ({ code, price, options, formAction, onSubmit }) => {
+export default ({ code, price, options, images, formAction, onSubmit }) => {
 
   const [ quantity, setQuantity ] = useState(1)
   const [ total, setTotal ] = useState(price * quantity)
@@ -257,6 +259,9 @@ export default ({ code, price, options, formAction, onSubmit }) => {
 
   return (
     <div id={ `${code}-options` }>
+      { images.length > 1 && (
+        <ProductImagesCarousel images={ images } />
+      ) }
       <form key={ `product-${code}` } data-product-options action={ formAction } onSubmit={ onSubmit }>
         { options.map((option, index) => {
 

@@ -16,7 +16,7 @@ import { addItem, addItemWithOptions, queueAddItem } from '../cart/redux/actions
 import Cart from '../cart/components/Cart'
 import { validateForm } from '../utils/address'
 import ProductOptionsModal from './components/ProductOptionsModal'
-import ProductDetailsModal from './components/ProductDetailsModal'
+import ProductImagesCarousel from './components/ProductImagesCarousel'
 
 require('gasparesganga-jquery-loading-overlay')
 
@@ -60,6 +60,7 @@ const init = function() {
         code={ event.relatedTarget.dataset.productCode }
         options={ productOptions }
         formAction={ event.relatedTarget.dataset.formAction }
+        images={ productImages }
         onSubmit={ (e) => {
           e.preventDefault()
 
@@ -79,42 +80,14 @@ const init = function() {
         } } />,
       this.querySelector('.modal-body [data-options-container]')
     )
-
-    if (productImages.length > 1) {
-      const $placeholder = $('<div>')
-      $placeholder.addClass('d-flex')
-      $placeholder.addClass('overflow-hidden')
-      productImages.forEach(image => {
-        const $img = $('<img>')
-        $img.attr('src', image)
-        $placeholder.append($img)
-      })
-      $(event.relatedTarget).find('.modal-body [data-swiper]').append($placeholder)
-    }
-
   })
 
-  $('#product-options').on('shown.bs.modal', function(event) {
-    var $form = $(this).find('form[data-product-options]')
-    if ($form.length === 1) {
-      window._paq.push(['trackEvent', 'Checkout', 'showOptions'])
-      // $form.find('button[type="submit"]').prop('disabled', !isValid($form))
-    }
-
-    const productImages =
-      JSON.parse(event.relatedTarget.dataset.productImages)
-
-    if (productImages.length > 1) {
-      render(
-        <ProductDetailsModal images={ productImages } />,
-        this.querySelector('.modal-body [data-swiper]')
-      )
-    }
+  $('#product-options').on('shown.bs.modal', function() {
+    window._paq.push(['trackEvent', 'Checkout', 'showOptions'])
   })
 
   $('#product-options').on('hidden.bs.modal', function() {
     unmountComponentAtNode(this.querySelector('.modal-body [data-options-container]'))
-    unmountComponentAtNode(this.querySelector('.modal-body [data-swiper]'))
     window._paq.push(['trackEvent', 'Checkout', 'hideOptions'])
   })
 
@@ -130,27 +103,14 @@ const init = function() {
     $modal.find('form').attr('action', event.relatedTarget.dataset.formAction)
     $modal.find('button[type="submit"]').text((productPrice / 100).formatMoney())
 
-    const $placeholder = $('<div>')
-    $placeholder.addClass('d-flex')
-    $placeholder.addClass('overflow-hidden')
-    images.forEach(image => {
-      const $img = $('<img>')
-      $img.attr('src', image)
-      $placeholder.append($img)
-    })
-    $(event.relatedTarget).find('.modal-body [data-swiper]').append($placeholder)
-  })
-
-  $('#product-details').on('shown.bs.modal', function(event) {
-    const images = JSON.parse(event.relatedTarget.dataset.productImages)
     render(
-      <ProductDetailsModal images={ images } />,
-      this.querySelector('.modal-body [data-swiper]')
+      <ProductImagesCarousel images={ images } />,
+      this.querySelector('.modal-body [data-carousel-container]')
     )
   })
 
   $('#product-details').on('hidden.bs.modal', function() {
-    unmountComponentAtNode(this.querySelector('.modal-body [data-swiper]'))
+    unmountComponentAtNode(this.querySelector('.modal-body [data-carousel-container]'))
   })
 
   const restaurantDataElement = document.querySelector('#js-restaurant-data')
