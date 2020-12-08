@@ -80,7 +80,7 @@ const featureToAddress = (feature) => ({
   addressRegion: feature.properties.region || '',
   postalCode: feature.properties.postalcode || '',
   streetAddress: formatStreetAddress(feature),
-  isPrecise: true,
+  isPrecise: Object.prototype.hasOwnProperty.call(feature.properties, 'housenumber'),
   needsGeocoding: false,
 })
 
