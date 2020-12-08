@@ -86,6 +86,10 @@ const featureToAddress = (feature) => ({
 
 const formatStreetAddress = (feature) => {
 
+  if (!feature.properties.postalcode) {
+    return feature.properties.label
+  }
+
   const parts = [
     feature.properties.name,
     `${feature.properties.postalcode} ${feature.properties.locality}`,
