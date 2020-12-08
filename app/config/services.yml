@@ -543,7 +543,7 @@ services:
       $openCageApiKey: "%env(OPENCAGE_API_KEY)%"
       $country: "%country_iso%"
       $locale: "%kernel.default_locale%"
-      $rateLimitPerSecond: 1
+      $rateLimitPerSecond: 15
 
   AppBundle\Geocoder\RateLimiterStore:
     arguments:
