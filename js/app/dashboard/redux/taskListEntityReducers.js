@@ -7,43 +7,46 @@ import {
 import {taskListUtils as utils} from '../../coopcycle-frontend-js/logistics/redux'
 
 const initialState = {
-  byUsername: {}
+  byId: {}
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case MODIFY_TASK_LIST_REQUEST: {
-      let entity = state.byUsername[action.username]
+      let entity = utils.findTaskListByUsername(state.byId, action.username)
 
-      // eslint-disable-next-line no-console
-      console.assert(entity != null, `entity is null: username: ${action.username}`)
+      if (entity === undefined) {
+        // eslint-disable-next-line no-console
+        console.assert(false, `entity is undefined: username: ${action.username}`)
+
+        return state
+      }
 
       let newEntity = {
         ...entity,
         itemIds: utils.tasksToIds(action.tasks),
       }
 
-      let newItems = utils.upsertTaskList(state.byUsername, newEntity)
+      let newItems = utils.upsertTaskList(state.byId, newEntity)
 
       return {
         ...state,
-        byUsername: newItems,
+        byId: newItems,
       }
     }
     case MODIFY_TASK_LIST_REQUEST_SUCCESS: {
       let newEntity = utils.replaceTasksWithIds(action.taskList)
-
-      let newItems = utils.upsertTaskList(state.byUsername, newEntity)
+      let newItems = utils.upsertTaskList(state.byId, newEntity)
 
       return {
         ...state,
-        byUsername: newItems,
+        byId: newItems,
       }
     }
     case TASK_LIST_UPDATED: {
-      let entity = state.byUsername[action.taskList[utils.taskListKey]]
+      let entityByUsername = utils.findTaskListByUsername(state.byId, action.taskList['username'])
 
-      if (entity == null) {
+      if (entityByUsername === undefined) {
         return state
       }
 
@@ -61,32 +64,36 @@ export default (state = initialState, action) => {
       let itemIds = taskCollectionItems.map(item => item.task)
 
       let newEntity = {
-        ...entity,
+        ...entityByUsername,
         itemIds,
         distance: action.taskList.distance,
         duration: action.taskList.duration,
         polyline: action.taskList.polyline,
       }
 
-      let newItems = utils.upsertTaskList(state.byUsername, newEntity)
+      if (entityByUsername['@id'] != action.taskList['@id']) {
+        newEntity['@id'] = action.taskList['@id']
+      }
+
+      let newItems = utils.upsertTaskList(state.byId, newEntity)
 
       return {
         ...state,
-        byUsername: newItems,
+        byId: newItems,
       }
     }
     case UPDATE_TASK: {
       let newItems
 
       if (action.task.isAssigned) {
-        newItems = utils.addAssignedTask(state, action.task)
+        newItems = utils.addAssignedTask(state.byId, action.task)
       } else {
-        newItems = utils.removeUnassignedTask(state, action.task)
+        newItems = utils.removeUnassignedTask(state.byId, action.task)
       }
 
       return {
         ...state,
-        byUsername: newItems,
+        byId: newItems,
       }
     }
     default:

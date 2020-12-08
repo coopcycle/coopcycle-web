@@ -35,7 +35,7 @@ function start() {
   taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
   let taskListEntities = {}
   for (let taskList of taskLists) {
-    taskListEntities[taskList[taskListUtils.taskListKey]] = taskList
+    taskListEntities[taskList['@id']] = taskList
   }
 
   let preloadedState = {
@@ -46,7 +46,7 @@ function start() {
           byId: taskEntities
         },
         taskLists: {
-          byUsername: taskListEntities
+          byId: taskListEntities
         }
       }
     },
