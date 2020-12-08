@@ -20,7 +20,7 @@ class Dashboard extends React.Component {
       0: props.t('RESTAURANT_DASHBOARD_DELAY_MARK_NONE'),
       15: '15min',
       30: '30min',
-      45: '30min',
+      45: '45min',
       60: '1h',
       75: '1h15',
       90: '1h30',
