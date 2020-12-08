@@ -44,9 +44,9 @@ export const onSuggestionsFetchRequested = function({ value }) {
 
       const predictionsAsSuggestions = response.data.features.map((feature, idx) => ({
         type: 'prediction',
-        value: feature.properties.label,
+        value: formatStreetAddress(feature),
         id: feature.properties.id,
-        description: feature.properties.label,
+        description: formatStreetAddress(feature),
         index: idx,
         lat: feature.geometry.coordinates[1],
         lng: feature.geometry.coordinates[0],
@@ -79,10 +79,21 @@ const featureToAddress = (feature) => ({
   addressLocality: feature.properties.locality || '',
   addressRegion: feature.properties.region || '',
   postalCode: feature.properties.postalcode || '',
-  streetAddress: feature.properties.label,
+  streetAddress: formatStreetAddress(feature),
   isPrecise: true,
   needsGeocoding: false,
 })
+
+const formatStreetAddress = (feature) => {
+
+  const parts = [
+    feature.properties.name,
+    `${feature.properties.postalcode} ${feature.properties.locality}`,
+    feature.properties.country,
+  ]
+
+  return parts.join(', ')
+}
 
 export const transformSuggestion = function (suggestion) {
 
