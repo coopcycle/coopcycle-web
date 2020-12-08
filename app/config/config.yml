@@ -115,6 +115,7 @@ framework:
             'AppBundle\Message\Email': async
             'AppBundle\Message\PushNotification': async
             'AppBundle\Message\ImportTasks': async
+            'AppBundle\Message\OrderReceiptEmail': async
             'AppBundle\Message\Sms': async
             'AppBundle\Message\UpdateLocation': async
     workflows:

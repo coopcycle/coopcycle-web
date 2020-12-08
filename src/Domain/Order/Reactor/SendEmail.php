@@ -9,13 +9,16 @@ use AppBundle\Domain\Order\Event\OrderCancelled;
 use AppBundle\Domain\Order\Event\OrderCreated;
 use AppBundle\Domain\Order\Event\OrderDelayed;
 use AppBundle\Domain\Order\Event\OrderRefused;
+use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Message\OrderReceiptEmail;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\Collection;
 use SimpleBus\Message\Bus\MessageBus;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class SendEmail
 {
@@ -28,11 +31,13 @@ class SendEmail
         EmailManager $emailManager,
         SettingsManager $settingsManager,
         MessageBus $eventBus,
+        MessageBusInterface $messageBus,
         LocalBusinessRepository $restaurantRepository)
     {
         $this->emailManager = $emailManager;
         $this->settingsManager = $settingsManager;
         $this->eventBus = $eventBus;
+        $this->messageBus = $messageBus;
         $this->restaurantRepository = $restaurantRepository;
     }
 
@@ -64,6 +69,13 @@ class SendEmail
             } else {
                 $this->handleOnDemandOrderCreated($event);
             }
+        }
+
+        if ($event instanceof OrderFulfilled && $order->hasVendor()) {
+            // This email is sent asynchronously
+            $this->messageBus->dispatch(
+                new OrderReceiptEmail($order->getNumber())
+            );
         }
     }
 

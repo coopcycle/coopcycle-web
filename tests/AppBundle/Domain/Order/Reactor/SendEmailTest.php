@@ -10,6 +10,7 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Sylius\Customer;
+use AppBundle\Message\OrderReceiptEmail;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -22,6 +23,8 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
 use Symfony\Component\Mime\Email;
 use SimpleBus\Message\Bus\MessageBus;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class SendEmailTest extends TestCase
 {
@@ -32,12 +35,20 @@ class SendEmailTest extends TestCase
         $this->emailManager = $this->prophesize(EmailManager::class);
         $this->settingsManager = $this->prophesize(SettingsManager::class);
         $this->eventBus = $this->prophesize(MessageBus::class);
+        $this->messageBus = $this->prophesize(MessageBusInterface::class);
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
+
+        $this->messageBus
+            ->dispatch(Argument::type(OrderReceiptEmail::class))
+            ->will(function ($args) {
+                return new Envelope($args[0]);
+            });
 
         $this->sendEmail = new SendEmail(
             $this->emailManager->reveal(),
             $this->settingsManager->reveal(),
             $this->eventBus->reveal(),
+            $this->messageBus->reveal(),
             $this->localBusinessRepository->reveal()
         );
     }
@@ -187,5 +198,30 @@ class SendEmailTest extends TestCase
             ->shouldBeCalledTimes(5);
 
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
+    }
+
+    public function testOrderFulfilled()
+    {
+        $customer = $this->prophesize(Customer::class);
+
+        $customer->getEmail()->willReturn('john@example.com');
+        $customer->getFullName()->willReturn('John Doe');
+
+        $restaurant = $this->prophesize(LocalBusiness::class);
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->getNumber()
+            ->willReturn('ABC123');
+
+        call_user_func_array($this->sendEmail, [ new Event\OrderFulfilled($order->reveal()) ]);
+
+        $this
+            ->messageBus
+            ->dispatch(new OrderReceiptEmail('ABC123'))
+            ->shouldHaveBeenCalled();
     }
 }

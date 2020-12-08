@@ -261,4 +261,14 @@ class EmailManager
     {
         return $this->createExpiringAuthorizationReminderMessage($order, false);
     }
+
+    public function createOrderReceiptMessage(OrderInterface $order)
+    {
+        $subject = $this->translator->trans('order.receipt.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/order/receipt.mjml.twig', [
+            'order' => $order,
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
 }

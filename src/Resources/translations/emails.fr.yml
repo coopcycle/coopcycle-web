@@ -128,3 +128,6 @@ order.expiring_authorization.text:
   Vous devriez finaliser la commande avant l'expiration de la pré-autorisation pour éviter de perdre de l'argent.
 registration.company: Demande d'enregistrement d'entreprise
 registration.restaurant: Nouvelle demande d'ajout de restaurant
+
+order.receipt.subject: Reçu pour votre commande %order.number%
+order.receipt.body: "Bonjour,\n<br>\nVeuillez trouver ci-joint le reçu pour votre commande."

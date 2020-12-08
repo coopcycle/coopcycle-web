@@ -103,3 +103,6 @@ order.expiring_authorization.text:
   The payment authorization for order <strong>%order.number%</strong> will expire soon.
   <br>
   You should complete the order before the authorization expires to avoid losing money.
+
+order.receipt.subject: Receipt for your order %order.number%
+order.receipt.body: "Hello,\n<br>\nPlease find attached the receipt for your order."
