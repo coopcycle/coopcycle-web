@@ -74,14 +74,14 @@ class SendEmail
         // Send email to customer
         $this->emailManager->sendTo(
             $this->emailManager->createOrderCreatedMessageForCustomer($order),
-            [$order->getCustomer()->getEmail() => $order->getCustomer()->getFullName()]
+            sprintf('%s <%s>', $order->getCustomer()->getFullName(), $order->getCustomer()->getEmail())
         );
         $this->eventBus->handle(new EmailSent($order, $order->getCustomer()->getEmail()));
 
         // Send email with instructions to customer
         $this->emailManager->sendTo(
             $this->emailManager->createCovid19Message(),
-            [$order->getCustomer()->getEmail() => $order->getCustomer()->getFullName()]
+            sprintf('%s <%s>', $order->getCustomer()->getFullName(), $order->getCustomer()->getEmail())
         );
         $this->eventBus->handle(new EmailSent($order, $order->getCustomer()->getEmail()));
 
@@ -125,12 +125,12 @@ class SendEmail
 
         $ownerMails = [];
         foreach ($owners as $owner) {
-            $ownerMails[$owner->getEmail()] = $owner->getFullName();
+            $ownerMails[] = sprintf('%s <%s>', $owner->getFullName(), $owner->getEmail());
         }
 
         $this->emailManager->sendTo(
             $this->emailManager->createOrderCreatedMessageForOwner($order, $restaurant),
-            $ownerMails
+            ...$ownerMails
         );
         foreach ($ownerMails as $email => $alias) {
             $this->eventBus->handle(new EmailSent($order, $email));

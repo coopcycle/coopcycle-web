@@ -20,6 +20,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
+use Symfony\Component\Mime\Email;
 use SimpleBus\Message\Bus\MessageBus;
 
 class SendEmailTest extends TestCase
@@ -90,22 +91,22 @@ class SendEmailTest extends TestCase
 
         $this->emailManager
             ->createOrderCreatedMessageForCustomer($order->reveal())
-            ->willReturn(new \Swift_Message());
+            ->willReturn(new Email());
 
         $this->emailManager
             ->createCovid19Message()
-            ->willReturn(new \Swift_Message());
+            ->willReturn(new Email());
 
         $this->emailManager
             ->createOrderCreatedMessageForAdmin($order->reveal())
-            ->willReturn(new \Swift_Message());
+            ->willReturn(new Email());
 
         $this->emailManager
             ->createOrderCreatedMessageForOwner($order->reveal(), Argument::type(LocalBusiness::class))
-            ->willReturn(new \Swift_Message());
+            ->willReturn(new Email());
 
         $this->emailManager
-            ->sendTo(Argument::type(\Swift_Message::class), Argument::any())
+            ->sendTo(Argument::type(Email::class), Argument::any(), Argument::any())
             ->shouldBeCalledTimes(4);
 
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
@@ -167,22 +168,22 @@ class SendEmailTest extends TestCase
 
         $this->emailManager
             ->createOrderCreatedMessageForCustomer($order->reveal())
-            ->willReturn(new \Swift_Message());
+            ->willReturn(new Email());
 
         $this->emailManager
             ->createCovid19Message()
-            ->willReturn(new \Swift_Message());
+            ->willReturn(new Email());
 
         $this->emailManager
             ->createOrderCreatedMessageForAdmin($order->reveal())
-            ->willReturn(new \Swift_Message());
+            ->willReturn(new Email());
 
         $this->emailManager
             ->createOrderCreatedMessageForOwner($order->reveal(), Argument::type(LocalBusiness::class))
-            ->willReturn(new \Swift_Message());
+            ->willReturn(new Email());
 
         $this->emailManager
-            ->sendTo(Argument::type(\Swift_Message::class), Argument::any())
+            ->sendTo(Argument::type(Email::class), Argument::any())
             ->shouldBeCalledTimes(5);
 
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);

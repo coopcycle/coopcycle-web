@@ -134,12 +134,12 @@ class WatchExpiringAuthorizationCommand extends Command
 
                     $ownerMails = [];
                     foreach ($owners as $owner) {
-                        $ownerMails[$owner->getEmail()] = $owner->getFullName();
+                        $ownerMails[] = sprintf('%s <%s>', $owner->getFullName(), $owner->getEmail());
                     }
 
                     $this->emailManager->sendTo(
                         $this->emailManager->createExpiringAuthorizationReminderMessageForOwner($order),
-                        $ownerMails
+                        ...$ownerMails
                     );
                 }
 

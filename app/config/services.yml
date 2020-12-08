@@ -529,12 +529,7 @@ services:
 
   AppBundle\Service\EmailManager:
     arguments:
-      - "@mailer"
-      - "@twig"
-      - "@mjml"
-      - "@translator"
-      - "@coopcycle.settings_manager"
-      - "%transactional_address%"
+      $transactionalAddress: "%transactional_address%"
 
   AppBundle\Service\RemotePushNotificationManager: ~
 
@@ -824,9 +819,7 @@ services:
     tags:
       - { name: monolog.processor, channel: api }
 
-  AppBundle\MessageHandler\EmailHandler:
-    arguments:
-      $transport: '@swiftmailer.transport.real'
+  AppBundle\MessageHandler\EmailHandler: ~
 
   AppBundle\Api\Swagger\SwaggerDecorator:
       decorates: 'api_platform.swagger.normalizer.api_gateway'

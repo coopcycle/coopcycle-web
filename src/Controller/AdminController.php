@@ -1519,8 +1519,11 @@ class AdminController extends Controller
 
         $message = call_user_func_array([$emailManager, $method], [$order]);
 
+        // An email must have a "To", "Cc", or "Bcc" header."
+        $message->to('dev@coopcycle.org');
+
         $response = new Response();
-        $response->setContent($message->getBody());
+        $response->setContent((string) $message->getHtmlBody());
 
         return $response;
     }
@@ -1542,8 +1545,11 @@ class AdminController extends Controller
         }
         $message = call_user_func_array([$emailManager, $method], [$task]);
 
+        // An email must have a "To", "Cc", or "Bcc" header."
+        $message->to('dev@coopcycle.org');
+
         $response = new Response();
-        $response->setContent($message->getBody());
+        $response->setContent((string) $message->getHtmlBody());
 
         return $response;
     }
@@ -1582,8 +1588,11 @@ class AdminController extends Controller
 
         $message = $emailManager->createInvitationMessage($invitation);
 
+        // An email must have a "To", "Cc", or "Bcc" header."
+        $message->to('dev@coopcycle.org');
+
         $response = new Response();
-        $response->setContent($message->getBody());
+        $response->setContent((string) $message->getHtmlBody());
 
         return $response;
     }
@@ -1595,8 +1604,11 @@ class AdminController extends Controller
     {
         $message = $emailManager->createCovid19Message();
 
+        // An email must have a "To", "Cc", or "Bcc" header."
+        $message->to('dev@coopcycle.org');
+
         $response = new Response();
-        $response->setContent($message->getBody());
+        $response->setContent((string) $message->getHtmlBody());
 
         return $response;
     }

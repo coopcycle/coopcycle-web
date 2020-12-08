@@ -119,6 +119,8 @@ framework:
             'AppBundle\Message\UpdateLocation': async
     workflows:
         enabled: true
+    mailer:
+        dsn: '%env(COOPCYCLE_MAIL_URL)%'
 
 # Twig Configuration
 twig:

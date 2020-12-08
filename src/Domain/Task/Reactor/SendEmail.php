@@ -50,12 +50,12 @@ class SendEmail
 
                 $ownerMails = [];
                 foreach ($owners as $owner) {
-                    $ownerMails[$owner->getEmail()] = $owner->getFullName();
+                    $ownerMails[] = sprintf('%s <%s>', $owner->getFullName(), $owner->getEmail());
                 }
 
                 $this->emailManager->sendTo(
                     $this->emailManager->createTaskCompletedMessage($task),
-                    $ownerMails
+                    ...$ownerMails
                 );
             }
         }

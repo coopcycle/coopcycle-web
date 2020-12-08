@@ -3,13 +3,16 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Task;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use AppBundle\Entity\Restaurant\Pledge;
-use AppBundle\Entity\Invitation;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 use Twig\Environment as TwigEnvironment;
 
 class EmailManager
@@ -22,7 +25,7 @@ class EmailManager
     private $transactionalAddress;
 
     public function __construct(
-        \Swift_Mailer $mailer,
+        MailerInterface $mailer,
         TwigEnvironment $templating,
         RendererInterface $mjml,
         TranslatorInterface $translator,
@@ -37,61 +40,67 @@ class EmailManager
         $this->transactionalAddress = $transactionalAddress;
     }
 
-    private function getFrom()
+    private function getFrom(): Address
     {
-        return [
-            $this->transactionalAddress => $this->settingsManager->get('brand_name')
-        ];
+        return Address::fromString(
+            sprintf('%s <%s>', $this->settingsManager->get('brand_name'), $this->transactionalAddress)
+        );
     }
 
-    private function getReplyTo()
+    private function getReplyTo(): Address
     {
-        return [
-            $this->settingsManager->get('administrator_email') => $this->settingsManager->get('brand_name')
-        ];
+        return Address::fromString(
+            sprintf('%s <%s>', $this->settingsManager->get('brand_name'), $this->settingsManager->get('administrator_email'))
+        );
     }
 
-    public function createHtmlMessage($subject = null, $body = null)
+    public function createHtmlMessage($subject = null, $body = null): Email
     {
-        $message = new \Swift_Message($subject);
+        $message = (new Email())
+            ->subject($subject)
+            ->sender($this->getFrom())
+            ->from($this->getFrom());
 
         if ($body) {
-            $message->setBody($body, 'text/html');
+            $message = $message->html($body);
         }
-
-        $message->setSender($this->getFrom());
-        $message->setFrom($this->getFrom());
 
         return $message;
     }
 
-    public function createHtmlMessageWithReplyTo($subject = null, $body = null)
+    public function createHtmlMessageWithReplyTo($subject = null, $body = null): Email
     {
-        $message = $this->createHtmlMessage($subject, $body);
-
         // Allow replying to the administrator
-        $message->setReplyTo($this->getReplyTo());
-
-        return $message;
+        return $this->createHtmlMessage($subject, $body)
+            ->replyTo($this->getReplyTo());
     }
 
-    public function send(\Swift_Message $message)
+    public function send(Email $message)
     {
-        // FIXME Filter array instead
-        foreach ($message->getTo() as $address => $name) {
-            if (1 === preg_match('/demo\.coopcycle\.org$/', $address)) {
-                return;
+        $addresses = [];
+        foreach ($message->getTo() as $address) {
+            if (1 === preg_match('/demo\.coopcycle\.org$/', $address->getAddress())) {
+                continue;
             }
+            $addresses[] = $address;
         }
+
+        if (count($addresses) === 0) {
+            return;
+        }
+
+        $message->to(...$addresses);
 
         $this->mailer->send($message);
     }
 
-    public function sendTo(\Swift_Message $message, $to)
+    /**
+     * @param Email $message
+     * @param Address|string ...$to
+     */
+    public function sendTo(Email $message, ...$to)
     {
-        $message->setTo($to);
-
-        $this->send($message);
+        $this->send($message->to(...$to));
     }
 
     public function createOrderCreatedMessageForCustomer(OrderInterface $order)
