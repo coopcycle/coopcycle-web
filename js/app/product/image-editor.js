@@ -6,6 +6,8 @@ import axios from 'axios'
 import _ from 'lodash'
 import classNames from 'classnames'
 import basename from 'locutus/php/filesystem/basename'
+import Modal from 'react-modal'
+import { Progress } from 'antd'
 
 import './image-editor.scss'
 import 'cropperjs/dist/cropper.css'
@@ -98,6 +100,9 @@ const Editor = ({ onClose, actionUrl, productId, existingImages }) => {
   const [ images, setImages ] = useState(existingImages)
   const [ tab, setTab ] = useState('gallery')
 
+  const [ uploadProgress, setUploadProgress ] = useState(0)
+  const [ modalVisible, setModalVisible ] = useState(false)
+
   useEffect(() => {
     cropper && cropper.setAspectRatio(ratioToFloat(ratio))
   }, [ ratio ])
@@ -129,6 +134,12 @@ const Editor = ({ onClose, actionUrl, productId, existingImages }) => {
       })
     })
 
+    // https://github.com/axios/axios/blob/master/examples/upload/index.html
+    const onUploadProgress = (progressEvent) => {
+      const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+      setUploadProgress(percentCompleted)
+    }
+
     Promise.all(blobs)
       .then(values => {
 
@@ -144,10 +155,16 @@ const Editor = ({ onClose, actionUrl, productId, existingImages }) => {
 
           return axios.post(actionUrl, formData, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            onUploadProgress,
           })
         })
 
-        axios.all(uploaders).then(() => {
+        setModalVisible(true)
+
+        Promise.all(uploaders).then(() => {
+
+          setModalVisible(false)
+          setUploadProgress(0)
 
           const newImages = _.map(files, (file, ratio) => ({
             ratio,
@@ -233,6 +250,17 @@ const Editor = ({ onClose, actionUrl, productId, existingImages }) => {
           </React.Fragment>
         ) }
       </div>
+      <Modal
+        isOpen={ modalVisible }
+        style={{
+          content: { minWidth: '33.3333%' },
+          overlay: { zIndex: 4 }
+        }}
+        shouldCloseOnOverlayClick={ false }
+        contentLabel={ 'Upload progress' }
+        className="ReactModal__Content--restaurant">
+        <Progress percent={ uploadProgress } status="active" />
+      </Modal>
     </div>
   )
 }
@@ -246,10 +274,12 @@ export function openEditor({ actionUrl, productId, existingImages, onClose }) {
   editor.style.right = 0
   editor.style.top = 0
   editor.style.bottom = 0
-  editor.style.zIndex = 9999
+  editor.style.zIndex = 3
   editor.style.backgroundColor = '#fff'
 
   document.body.appendChild(editor)
+
+  Modal.setAppElement(editor)
 
   render(<Editor
     existingImages={ existingImages }
