@@ -225,6 +225,3 @@ services:
 
   AppBundle\Form\Checkout\ChargeStripeSourceType:
     tags: [ form.type ]
-
-  AppBundle\Form\Checkout\CompleteGiropayPaymentIntent:
-    tags: [ form.type ]

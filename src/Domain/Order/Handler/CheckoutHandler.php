@@ -77,7 +77,8 @@ class CheckoutHandler
         try {
 
             if ($payment->getPaymentIntent()) {
-                if ($payment->getPaymentIntent() !== $stripeToken) {
+
+                if (!$payment->isGiropay() && $payment->getPaymentIntent() !== $stripeToken) {
                     $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, 'Payment Intent mismatch'));
                     return;
                 }

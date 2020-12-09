@@ -15,6 +15,7 @@ use Hashids\Hashids;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
+use SimpleBus\Message\Bus\MessageBus;
 use Stripe;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
@@ -37,6 +38,8 @@ class StripeControllerTest extends TestCase
     public function setUp(): void
     {
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+        $this->orderManager = $this->prophesize(OrderManager::class);
+        $this->eventBus = $this->prophesize(MessageBus::class);
         $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);
         $this->stripeManager = $this->prophesize(StripeManager::class);
 
@@ -110,8 +113,7 @@ class StripeControllerTest extends TestCase
             $hashId,
             $request,
             $this->orderNumberAssigner->reveal(),
-            $this->stripeManager->reveal(),
-            $this->entityManager->reveal()
+            $this->stripeManager->reveal()
         );
 
         $this->assertInstanceOf(JsonResponse::class, $response);
@@ -165,8 +167,7 @@ class StripeControllerTest extends TestCase
             $hashId,
             $request,
             $this->orderNumberAssigner->reveal(),
-            $this->stripeManager->reveal(),
-            $this->entityManager->reveal()
+            $this->stripeManager->reveal()
         );
 
         $this->assertInstanceOf(JsonResponse::class, $response);
