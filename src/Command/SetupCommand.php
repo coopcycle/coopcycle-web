@@ -501,6 +501,13 @@ class SetupCommand extends Command
 
     private function configureStripeWebhooks(OutputInterface $output)
     {
+        $secretKey = $this->settingsManager->get('stripe_secret_key');
+
+        if (null === $secretKey) {
+            $output->writeln('Stripe secret key is not configured, skipping');
+            return;
+        }
+
         // https://stripe.com/docs/api/webhook_endpoints/create?lang=php
         $webhookSecret = $this->settingsManager->get('stripe_webhook_secret');
 
@@ -515,7 +522,7 @@ class SetupCommand extends Command
         $output->writeln(sprintf('Configuring Stripe webhooks with url "%s"', $url));
 
         $stripe = new Stripe\StripeClient([
-            'api_key' => $this->settingsManager->get('stripe_secret_key'),
+            'api_key' => $secretKey,
             'stripe_version' => StripeManager::STRIPE_API_VERSION,
         ]);
 
