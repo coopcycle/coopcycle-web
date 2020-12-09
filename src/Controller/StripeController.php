@@ -9,6 +9,7 @@ use AppBundle\Service\StripeManager;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Stripe;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class StripeController extends AbstractController
 {
+    public function __construct(string $secret, LoggerInterface $logger)
+    {
+        $this->secret = $secret;
+        $this->logger = $logger;
+    }
+
     /**
      * @Route("/stripe/connect/standard", name="stripe_connect_standard_account")
      */

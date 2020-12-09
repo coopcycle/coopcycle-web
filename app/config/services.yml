@@ -102,8 +102,6 @@ services:
       $objectManager: '@sylius.manager.order'
       $orderFactory: '@sylius.factory.order'
       $sessionKeyName: "%sylius_cart_restaurant_session_key_name%"
-    tags:
-      - { name: monolog.logger, channel: stripe }
 
   AppBundle\LoopEat\Client:
     arguments:
@@ -153,6 +151,12 @@ services:
   AppBundle\Controller\PaymentController:
     arguments:
       $secret: '%secret%'
+
+  AppBundle\Controller\StripeController:
+    arguments:
+      $secret: '%secret%'
+    tags:
+      - { name: monolog.logger, channel: stripe }
 
   AppBundle\EventListener\LocaleListener:
     arguments: ['%kernel.default_locale%']
