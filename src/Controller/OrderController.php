@@ -199,16 +199,18 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
+        $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
+
         // Make sure to call StripeManager::configurePayment()
         // It will resolve the Stripe account that will be used
-        $stripeManager->configurePayment(
-            $order->getLastPayment(PaymentInterface::STATE_CART)
-        );
+        // TODO Make sure we are using Stripe, not MercadoPago
+        $stripeManager->configurePayment($payment);
 
         $form = $this->createForm(CheckoutPaymentType::class, $order);
 
         $parameters =  [
             'order' => $order,
+            'payment' => $payment,
         ];
 
         $form->handleRequest($request);
