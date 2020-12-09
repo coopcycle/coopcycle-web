@@ -8,12 +8,16 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
+use Hashids\Hashids;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Psr\Log\LoggerInterface;
 use Stripe;
+use Stripe\Exception\ApiErrorException;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -221,5 +225,113 @@ class StripeController extends AbstractController
         $this->logger->info(sprintf('Source "%s" refers to payment #%d', $source->id, $payment->getId()));
 
         return new Response('', 200);
+    }
+
+    /**
+     * @see https://stripe.com/docs/payments/accept-a-payment-synchronously#web-create-payment-intent
+     *
+     * @Route("/stripe/payment/{hashId}/create-intent", name="stripe_create_payment_intent", methods={"POST"})
+     */
+    public function createPaymentIntentAction($hashId, Request $request,
+        OrderNumberAssignerInterface $orderNumberAssigner,
+        StripeManager $stripeManager)
+    {
+        $hashids = new Hashids($this->secret, 8);
+
+        $decoded = $hashids->decode($hashId);
+        if (count($decoded) !== 1) {
+
+            return new JsonResponse(['error' =>
+                ['message' => sprintf('Payment with hash "%s" does not exist', $hashId)]
+            ], 400);
+        }
+
+        $paymentId = current($decoded);
+
+        $payment = $this->entityManager
+            ->getRepository(PaymentInterface::class)
+            ->find($paymentId);
+
+        if (null === $payment) {
+
+            return new JsonResponse(['error' =>
+                ['message' => sprintf('Payment with id "%d" does not exist', $paymentId)]
+            ], 400);
+        }
+
+        $content = $request->getContent();
+
+        $data = !empty($content) ? json_decode($content, true) : [];
+
+        if (!isset($data['payment_method_id'])) {
+
+            return new JsonResponse(['error' =>
+                ['message' => 'No payment_method_id key found in request']
+            ], 400);
+        }
+
+        $order = $payment->getOrder();
+
+        // Assign order number now because it is needed for Stripe
+        $orderNumberAssigner->assignNumber($order);
+
+        $stripeManager->configure();
+
+        try {
+
+            $payment->setPaymentMethod($data['payment_method_id']);
+
+            $intent = $stripeManager->createIntent($payment);
+            $payment->setPaymentIntent($intent);
+
+            $this->entityManager->flush();
+
+        } catch (ApiErrorException $e) {
+
+            return new JsonResponse(['error' =>
+                ['message' => $e->getMessage()]
+            ], 400);
+        }
+
+        $this->logger->info(
+            sprintf('Order #%d | Created payment intent %s', $order->getId(), $payment->getPaymentIntent())
+        );
+
+        $response = [];
+
+        if ($payment->requiresUseStripeSDK()) {
+
+            $this->logger->info(
+                sprintf('Order #%d | Payment Intent requires action "%s"', $order->getId(), $payment->getPaymentIntentNextAction())
+            );
+
+            $response = [
+                'requires_action' => true,
+                'payment_intent_client_secret' => $payment->getPaymentIntentClientSecret()
+            ];
+
+        // When the status is "succeeded", it means we captured automatically
+        // When the status is "requires_capture", it means we separated authorization and capture
+        } elseif ('succeeded' === $payment->getPaymentIntentStatus() || $payment->requiresCapture()) {
+
+            $this->logger->info(
+                sprintf('Order #%d | Payment Intent status is "%s"', $order->getId(), $payment->getPaymentIntentStatus())
+            );
+
+            // The payment didn’t need any additional actions and completed!
+            // Handle post-payment fulfillment
+            $response = [
+                'requires_action' => false,
+                'payment_intent' => $payment->getPaymentIntent()
+            ];
+
+        } else {
+
+            return new JsonResponse(['error' =>
+                ['message' => 'Invalid PaymentIntent status']
+            ], 400);
+        }
+
+        return new JsonResponse($response);
     }
 }
