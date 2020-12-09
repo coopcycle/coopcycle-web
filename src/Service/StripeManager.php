@@ -153,6 +153,41 @@ class StripeManager
     }
 
     /**
+     * @see https://stripe.com/docs/payments/giropay/accept-a-payment#create-payment-intent
+     *
+     * @param PaymentInterface $payment
+     * @return Stripe\PaymentIntent
+     */
+    public function createGiropayIntent(PaymentInterface $payment): Stripe\PaymentIntent
+    {
+        $this->configure();
+
+        $order = $payment->getOrder();
+
+        $payload = [
+            'amount' => $payment->getAmount(),
+            'currency' => strtolower($payment->getCurrencyCode()),
+            'description' => sprintf('Order %s', $order->getNumber()),
+            'payment_method_types' => ['giropay'],
+            // TODO Add statement descriptor
+            // 'statement_descriptor' => '...',
+        ];
+
+        $this->configurePayment($payment);
+
+        $payload = $this->configureCreateIntentPayload($payment, $payload);
+        $stripeOptions = $this->getStripeOptions($payment);
+
+        $this->logger->info(
+            sprintf('Order #%d | StripeManager::createGiropayIntent | %s', $order->getId(), json_encode($payload))
+        );
+
+        $intent = Stripe\PaymentIntent::create($payload, $stripeOptions);
+
+        return $intent;
+    }
+
+    /**
      * @return Stripe\PaymentIntent
      */
     public function confirmIntent(PaymentInterface $payment): Stripe\PaymentIntent

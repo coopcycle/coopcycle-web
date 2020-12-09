@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @see https://stripe.com/docs/connect/standard-accounts
@@ -353,5 +354,74 @@ class StripeController extends AbstractController
         }
 
         return new JsonResponse($response);
+    }
+
+    /**
+     * @see https://stripe.com/docs/payments/giropay/accept-a-payment#create-payment-intent
+     *
+     * @Route("/stripe/payment/{hashId}/giropay/create-intent", name="stripe_create_giropay_payment_intent", methods={"POST"})
+     */
+    public function createGiropayPaymentIntentAction($hashId, Request $request,
+        OrderNumberAssignerInterface $orderNumberAssigner,
+        StripeManager $stripeManager,
+        EntityManagerInterface $entityManager)
+    {
+        $hashids = new Hashids($this->secret, 8);
+
+        $decoded = $hashids->decode($hashId);
+        if (count($decoded) !== 1) {
+
+            return new JsonResponse(['error' =>
+                ['message' => sprintf('Payment with hash "%s" does not exist', $hashId)]
+            ], 400);
+        }
+
+        $paymentId = current($decoded);
+
+        $payment = $entityManager
+            ->getRepository(PaymentInterface::class)
+            ->find($paymentId);
+
+        if (null === $payment) {
+
+            return new JsonResponse(['error' =>
+                ['message' => sprintf('Payment with id "%d" does not exist', $paymentId)]
+            ], 400);
+        }
+
+        $order = $payment->getOrder();
+
+        // Assign order number now because it is needed for Stripe
+        $orderNumberAssigner->assignNumber($order);
+
+        try {
+
+            $payment->setState(PaymentInterface::STATE_PROCESSING);
+            $payment->setPaymentMethodTypes(['giropay']);
+
+            $intent = $stripeManager->createGiropayIntent($payment);
+            $payment->setPaymentIntent($intent);
+
+            $entityManager->flush();
+
+        } catch (ApiErrorException $e) {
+
+            return new JsonResponse(['error' =>
+                ['message' => $e->getMessage()]
+            ], 400);
+        }
+
+        $this->logger->info(
+            sprintf('Order #%d | Created payment intent %s', $order->getId(), $payment->getPaymentIntent())
+        );
+
+        $returnUrl = $this->generateUrl('payment_confirm', [
+            'hashId' => $hashids->encode($payment->getId()),
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return new JsonResponse([
+            'payment_intent_client_secret' => $payment->getPaymentIntentClientSecret(),
+            'return_url' => $returnUrl,
+        ]);
     }
 }

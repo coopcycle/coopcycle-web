@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 const style = {
   base: {
     color: '#32325d',
@@ -43,6 +45,34 @@ export default {
           resolve(result.token.id)
         }
       })
+    })
+  },
+  // @see https://stripe.com/docs/payments/giropay/accept-a-payment#confirm-giropay-payment
+  // https://stripe.com/docs/js/payment_intents/confirm_giropay_payment
+  confirmGiropayPayment() {
+
+    return new Promise((resolve, reject) => {
+
+      axios.post(this.config.gatewayConfig.createGiropayPaymentIntentURL)
+        .then(response => {
+          this.stripe.confirmGiropayPayment(
+            response.data.payment_intent_client_secret,
+            {
+              payment_method: {
+                billing_details: {
+                  name: this.config.cardholderNameElement.value
+                }
+              },
+              return_url: response.data.return_url,
+            }
+          ).then(function(result) {
+            if (result.error) {
+              reject(new Error(result.error.message))
+            } else {
+              resolve()
+            }
+          })
+        })
     })
   }
 }
