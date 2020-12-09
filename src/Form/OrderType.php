@@ -66,8 +66,7 @@ class OrderType extends AbstractType
                         $completedPayment =
                             $order->getLastPayment(PaymentInterface::STATE_COMPLETED);
 
-                        if (null !== $completedPayment && $completedPayment->hasSource()
-                            && 'giropay' === $completedPayment->getSourceType()) {
+                        if (null !== $completedPayment && $completedPayment->isGiropay()) {
                             $attr['data-message'] = $this->translator->trans('form.order.refuse.refund.alert');
                         }
 

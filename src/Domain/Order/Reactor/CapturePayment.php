@@ -48,8 +48,7 @@ class CapturePayment
         $completedPayment =
             $order->getLastPayment(PaymentInterface::STATE_COMPLETED);
 
-        if (null !== $completedPayment && $completedPayment->hasSource()
-            && 'giropay' === $completedPayment->getSourceType()) {
+        if (null !== $completedPayment && $completedPayment->isGiropay()) {
             return;
         }
 
