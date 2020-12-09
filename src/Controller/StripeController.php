@@ -6,12 +6,14 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Stripe;
+use Sylius\Component\Payment\Model\PaymentInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,9 +23,17 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class StripeController extends AbstractController
 {
-    public function __construct(string $secret, LoggerInterface $logger)
+    private $secret;
+    private $entityManager;
+    private $logger;
+
+    public function __construct(
+        string $secret,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger)
     {
         $this->secret = $secret;
+        $this->entityManager = $entityManager;
         $this->logger = $logger;
     }
 
@@ -185,7 +195,7 @@ class StripeController extends AbstractController
         return new Response('', 200);
     }
 
-    private function handleChargeableSource(Stripe\Event $event)
+    private function handleChargeableSource(Stripe\Event $event): Response
     {
         $source = $event->data->object;
 
@@ -195,6 +205,20 @@ class StripeController extends AbstractController
         // Send email to customer
 
         $this->logger->info(sprintf('Chargeable source has id "%s"', $source->id));
+
+        $qb = $this->entityManager->getRepository(PaymentInterface::class)
+            ->createQueryBuilder('p')
+            ->andWhere('JSON_GET_FIELD_AS_TEXT(p.details, \'source_type\') = \'giropay\'')
+            ->andWhere('JSON_GET_FIELD_AS_TEXT(p.details, \'source\') = :source')
+            ->setParameter('source', $source->id);
+
+        $payment = $qb->getQuery()->getOneOrNullResult();
+
+        if (null === $payment) {
+            return new Response('', 200);
+        }
+
+        $this->logger->info(sprintf('Source "%s" refers to payment #%d', $source->id, $payment->getId()));
 
         return new Response('', 200);
     }
