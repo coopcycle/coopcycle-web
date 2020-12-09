@@ -12,6 +12,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Stripe;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -122,5 +123,49 @@ class StripeController extends AbstractController
         $this->addFlash('stripe_account', $stripeAccount->getId());
 
         return $this->redirect($redirect);
+    }
+
+    /**
+     * @see https://stripe.com/docs/connect/webhooks
+     *
+     * @Route("/stripe/webhook", name="stripe_webhook", methods={"POST"})
+     */
+    public function webhookAction(Request $request, StripeManager $stripeManager, SettingsManager $settingsManager)
+    {
+        $this->logger->info('Received webhook');
+
+        $stripeManager->configure();
+
+        $payload = $request->getContent();
+
+        $webhookSecret = $settingsManager->get('stripe_webhook_secret');
+        $signature = $request->headers->get('stripe-signature');
+
+        // Verify webhook signature and extract the event.
+        // See https://stripe.com/docs/webhooks/signatures for more information.
+
+        try {
+
+            $event = Stripe\Webhook::constructEvent(
+                $payload, $signature, $webhookSecret
+            );
+
+        } catch(\UnexpectedValueException $e) {
+
+            $this->logger->error($e->getMessage());
+
+            // Invalid payload.
+            return new Response('', 400);
+        } catch(Stripe\Exception\SignatureVerificationException $e) {
+
+            $this->logger->error($e->getMessage());
+
+            // Invalid Signature.
+            return new Response('', 400);
+        }
+
+        $this->logger->info(sprintf('Received event of type "%s"', $event->type));
+
+        return new Response('', 200);
     }
 }

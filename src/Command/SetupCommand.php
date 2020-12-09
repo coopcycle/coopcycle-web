@@ -4,6 +4,8 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\TaxCategory;
+use AppBundle\Service\SettingsManager;
+use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Taxation\TaxesInitializer;
 use AppBundle\Sylius\Taxation\TaxesProvider;
@@ -13,6 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
 use Psr\Log\LogLevel;
+use Stripe;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
 use Sylius\Component\Product\Model\ProductAttribute;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
@@ -32,6 +35,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SetupCommand extends Command
@@ -149,6 +153,8 @@ class SetupCommand extends Command
         ManagerRegistry $doctrine,
         SlugifyInterface $slugify,
         TranslatorInterface $translator,
+        SettingsManager $settingsManager,
+        UrlGeneratorInterface $urlGenerator,
         string $locale)
     {
         $this->productRepository = $productRepository;
@@ -184,6 +190,10 @@ class SetupCommand extends Command
         $this->slugify = $slugify;
 
         $this->translator = $translator;
+
+        $this->settingsManager = $settingsManager;
+
+        $this->urlGenerator = $urlGenerator;
 
         $this->locale = $locale;
 
@@ -234,6 +244,9 @@ class SetupCommand extends Command
 
         $output->writeln('<info>Checking Sylius taxes are present…</info>');
         $this->createSyliusTaxes($output);
+
+        $output->writeln('<info>Configuring Stripe webhook endpoint…</info>');
+        $this->configureStripeWebhooks($output);
 
         return 0;
     }
@@ -484,5 +497,41 @@ class SetupCommand extends Command
         );
 
         $taxesInitializer->initialize();
+    }
+
+    private function configureStripeWebhooks(OutputInterface $output)
+    {
+        // https://stripe.com/docs/api/webhook_endpoints/create?lang=php
+        $webhookSecret = $this->settingsManager->get('stripe_webhook_secret');
+
+        if (null !== $webhookSecret) {
+            $output->writeln('Stripe webhooks are already configured');
+            // TODO Make sure the URL is OK (in case hostname has changed)
+            return;
+        }
+
+        $url = $this->urlGenerator->generate('stripe_webhook', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $output->writeln(sprintf('Configuring Stripe webhooks with url "%s"', $url));
+
+        $stripe = new Stripe\StripeClient([
+            'api_key' => $this->settingsManager->get('stripe_secret_key'),
+            'stripe_version' => StripeManager::STRIPE_API_VERSION,
+        ]);
+
+        $webhookEndpoint = $stripe->webhookEndpoints->create([
+            'url' => $url,
+            'enabled_events' => [
+                'account.application.deauthorized',
+                'account.updated',
+                'payment_intent.succeeded',
+            ],
+            'connect' => true,
+        ]);
+
+        $this->settingsManager->set('stripe_webhook_secret', $webhookEndpoint->secret);
+        $this->settingsManager->flush();
+
+        $output->writeln('Stripe webhook endpoint created');
     }
 }
