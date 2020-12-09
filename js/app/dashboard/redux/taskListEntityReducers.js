@@ -27,7 +27,7 @@ export default (state = initialState, action) => {
         itemIds: utils.tasksToIds(action.tasks),
       }
 
-      let newItems = utils.upsertTaskList(state.byId, newEntity)
+      let newItems = utils.addOrReplaceTaskList(state.byId, newEntity)
 
       return {
         ...state,
@@ -36,7 +36,7 @@ export default (state = initialState, action) => {
     }
     case MODIFY_TASK_LIST_REQUEST_SUCCESS: {
       let newEntity = utils.replaceTasksWithIds(action.taskList)
-      let newItems = utils.upsertTaskList(state.byId, newEntity)
+      let newItems = utils.addOrReplaceTaskList(state.byId, newEntity)
 
       return {
         ...state,
@@ -75,7 +75,7 @@ export default (state = initialState, action) => {
         newEntity['@id'] = action.taskList['@id']
       }
 
-      let newItems = utils.upsertTaskList(state.byId, newEntity)
+      let newItems = utils.addOrReplaceTaskList(state.byId, newEntity)
 
       return {
         ...state,

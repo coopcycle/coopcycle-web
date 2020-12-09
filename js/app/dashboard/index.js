@@ -28,15 +28,12 @@ function start() {
   let date = moment(dashboardEl.dataset.date)
   let tasks = JSON.parse(dashboardEl.dataset.tasks)
 
-  let taskEntities = taskUtils.upsertTasks({}, tasks)
+  let taskEntities = taskUtils.addOrReplaceTasks({}, tasks)
 
   // normalize data, keep only task ids, instead of the whole objects
   let taskLists = JSON.parse(dashboardEl.dataset.taskLists)
   taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
-  let taskListEntities = {}
-  for (let taskList of taskLists) {
-    taskListEntities[taskList['@id']] = taskList
-  }
+  let taskListEntities = taskListUtils.addOrReplaceTaskLists({}, taskLists)
 
   let preloadedState = {
     logistics : {

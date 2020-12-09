@@ -8,7 +8,7 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case MODIFY_TASK_LIST_REQUEST: {
-      let newItems = utils.upsertTasks(state.byId, action.tasks)
+      let newItems = utils.addOrReplaceTasks(state.byId, action.tasks)
 
       return {
         ...state,
@@ -16,7 +16,7 @@ export default (state = initialState, action) => {
       }
     }
     case MODIFY_TASK_LIST_REQUEST_SUCCESS: {
-      let newItems = utils.upsertTasks(state.byId, action.taskList.items)
+      let newItems = utils.addOrReplaceTasks(state.byId, action.taskList.items)
 
       return {
         ...state,
@@ -24,7 +24,7 @@ export default (state = initialState, action) => {
       }
     }
     case UPDATE_TASK: {
-      let newItems = utils.upsertTasks(state.byId, [action.task])
+      let newItems = utils.addOrReplaceTasks(state.byId, [action.task])
 
       return {
         ...state,
