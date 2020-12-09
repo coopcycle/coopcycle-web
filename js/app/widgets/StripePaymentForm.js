@@ -94,7 +94,8 @@ export default function(form, options) {
         event.complete && enableBtn(submitButton)
         document.getElementById('card-errors').textContent = ''
       }
-    }
+    },
+    cardholderNameElement: options.cardholderNameElement,
   })
 
   cc.init(form)
