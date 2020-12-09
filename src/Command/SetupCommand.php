@@ -532,6 +532,10 @@ class SetupCommand extends Command
                 'account.application.deauthorized',
                 'account.updated',
                 'payment_intent.succeeded',
+                // Used for Giropay legacy integration
+                'source.chargeable',
+                'source.failed',
+                'source.canceled'
             ],
             'connect' => true,
         ]);
