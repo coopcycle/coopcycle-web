@@ -171,7 +171,30 @@ class StripeController extends AbstractController
             return new Response('', 400);
         }
 
-        $this->logger->info(sprintf('Received event of type "%s"', $event->type));
+        if ($event->account) {
+            $this->logger->info(sprintf('Received event of type "%s" from account "%s"', $event->type, $event->account));
+        } else {
+            $this->logger->info(sprintf('Received event of type "%s"', $event->type));
+        }
+
+        switch ($event->type) {
+            case 'source.chargeable':
+                return $this->handleChargeableSource($event);
+        }
+
+        return new Response('', 200);
+    }
+
+    private function handleChargeableSource(Stripe\Event $event)
+    {
+        $source = $event->data->object;
+
+        // TODO
+        // Retrieve payment from source
+        // Complete order
+        // Send email to customer
+
+        $this->logger->info(sprintf('Chargeable source has id "%s"', $source->id));
 
         return new Response('', 200);
     }
