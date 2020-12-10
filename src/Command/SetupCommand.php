@@ -508,41 +508,53 @@ class SetupCommand extends Command
             return;
         }
 
-        // https://stripe.com/docs/api/webhook_endpoints/create?lang=php
-        $webhookSecret = $this->settingsManager->get('stripe_webhook_secret');
-
-        if (null !== $webhookSecret) {
-            $output->writeln('Stripe webhooks are already configured');
-            // TODO Make sure the URL is OK (in case hostname has changed)
-            return;
-        }
-
-        $url = $this->urlGenerator->generate('stripe_webhook', [], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        $output->writeln(sprintf('Configuring Stripe webhooks with url "%s"', $url));
-
         $stripe = new Stripe\StripeClient([
             'api_key' => $secretKey,
             'stripe_version' => StripeManager::STRIPE_API_VERSION,
         ]);
 
-        $webhookEndpoint = $stripe->webhookEndpoints->create([
-            'url' => $url,
-            'enabled_events' => [
-                'account.application.deauthorized',
-                'account.updated',
-                'payment_intent.succeeded',
-                // Used for Giropay legacy integration
-                'source.chargeable',
-                'source.failed',
-                'source.canceled'
-            ],
-            'connect' => true,
-        ]);
+        $webhookEvents = [
+            'account.application.deauthorized',
+            'account.updated',
+            'payment_intent.succeeded',
+            'payment_intent.payment_failed',
+            // Used for Giropay legacy integration
+            'source.chargeable',
+            'source.failed',
+            'source.canceled',
+        ];
 
-        $this->settingsManager->set('stripe_webhook_secret', $webhookEndpoint->secret);
-        $this->settingsManager->flush();
+        $url = $this->urlGenerator->generate('stripe_webhook', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $output->writeln('Stripe webhook endpoint created');
+        $output->writeln(sprintf('Stripe webhook endpoint url is "%s"', $url));
+
+        // https://stripe.com/docs/api/webhook_endpoints/create?lang=php
+        $webhookId = $this->settingsManager->get('stripe_webhook_id');
+
+        if (null !== $webhookId) {
+
+            $output->writeln('Stripe webhook is already configured, updating…');
+
+            $webhookEndpoint = $stripe->webhookEndpoints->retrieve($webhookId);
+
+            $stripe->webhookEndpoints->update($webhookEndpoint->id, [
+                'url' => $url,
+                'enabled_events' => $webhookEvents,
+            ]);
+
+        } else {
+
+            $webhookEndpoint = $stripe->webhookEndpoints->create([
+                'url' => $url,
+                'enabled_events' => $webhookEvents,
+                'connect' => true,
+            ]);
+
+            $this->settingsManager->set('stripe_webhook_id', $webhookEndpoint->id);
+            $this->settingsManager->set('stripe_webhook_secret', $webhookEndpoint->secret);
+            $this->settingsManager->flush();
+
+            $output->writeln('Stripe webhook endpoint created');
+        }
     }
 }
