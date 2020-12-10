@@ -28,15 +28,18 @@ use Symfony\Component\Routing\Annotation\Route;
 class StripeController extends AbstractController
 {
     private $secret;
+    private $debug;
     private $entityManager;
     private $logger;
 
     public function __construct(
         string $secret,
+        bool $debug,
         EntityManagerInterface $entityManager,
         LoggerInterface $logger)
     {
         $this->secret = $secret;
+        $this->debug = $debug;
         $this->entityManager = $entityManager;
         $this->logger = $logger;
     }
@@ -167,11 +170,28 @@ class StripeController extends AbstractController
 
         try {
 
-            $event = Stripe\Webhook::constructEvent(
-                $payload, $signature, $webhookSecret
-            );
+            // Don't verify signature in debug mode,
+            // to allow simple usage of Stripe CLI
+            // @see https://stripe.com/docs/connect/webhooks#test-webhooks-locally
+            if ($this->debug) {
 
-        } catch(\UnexpectedValueException $e) {
+                $data = json_decode($payload, true);
+                $jsonError = json_last_error();
+                if (null === $data && JSON_ERROR_NONE !== $jsonError) {
+                    $msg = "Invalid payload: {$payload} "
+                      . "(json_last_error() was {$jsonError})";
+
+                    throw new Stripe\Exception\UnexpectedValueException($msg);
+                }
+
+                $event = Stripe\Event::constructFrom($data);
+            } else {
+                $event = Stripe\Webhook::constructEvent(
+                    $payload, $signature, $webhookSecret
+                );
+            }
+
+        } catch(Stripe\Exception\UnexpectedValueException $e) {
 
             $this->logger->error($e->getMessage());
 

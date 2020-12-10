@@ -46,6 +46,7 @@ class StripeControllerTest extends TestCase
 
         $this->controller = new StripeController(
             $this->secret,
+            true,
             $this->entityManager->reveal(),
             new NullLogger()
         );

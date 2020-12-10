@@ -155,6 +155,7 @@ services:
   AppBundle\Controller\StripeController:
     arguments:
       $secret: '%secret%'
+      $debug: '%kernel.debug%'
     tags:
       - { name: monolog.logger, channel: stripe }
 
