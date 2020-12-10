@@ -53,9 +53,21 @@ export default {
 
     return new Promise((resolve, reject) => {
 
+      let stripeOptions = {}
+
+      if (this.config.gatewayConfig.account) {
+        stripeOptions = {
+          ...stripeOptions,
+          stripeAccount: this.config.gatewayConfig.account,
+        }
+      }
+
+      // @see https://stripe.com/docs/payments/payment-methods/connect#creating-paymentmethods-directly-on-the-connected-account
+      const stripe = Stripe(this.config.gatewayConfig.publishableKey, stripeOptions)
+
       axios.post(this.config.gatewayConfig.createGiropayPaymentIntentURL)
         .then(response => {
-          this.stripe.confirmGiropayPayment(
+          stripe.confirmGiropayPayment(
             response.data.payment_intent_client_secret,
             {
               payment_method: {
