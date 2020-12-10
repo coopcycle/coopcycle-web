@@ -124,35 +124,68 @@ describe('taskEntityReducers', () => {
   })
 
   describe('UPDATE_TASK', () => {
-    it('should update task', () => {
-      expect(taskEntityReducers(
-        {
+    describe('task exists', () => {
+      it('should update task', () => {
+        expect(taskEntityReducers(
+          {
+            byId: {
+              '/api/tasks/1': {
+                '@id': '/api/tasks/1',
+                id : 1,
+                isAssigned: false,
+                position: 2,
+              },
+            },
+          },
+          {
+            type: 'UPDATE_TASK',
+            task: {
+              '@id': '/api/tasks/1',
+              id : 1,
+              isAssigned: true,
+              assignedTo: 'bot_1'
+            },
+          }
+        )).toEqual({
           byId: {
             '/api/tasks/1': {
               '@id': '/api/tasks/1',
               id : 1,
-              isAssigned: false,
+              isAssigned: true,
+              assignedTo: 'bot_1',
+              position: 2,
             },
           },
-        },
-        {
-          type: 'UPDATE_TASK',
-          task: {
-            '@id': '/api/tasks/1',
-            id : 1,
-            isAssigned: true,
-            assignedTo: 'bot_1'
+        })
+      })
+    })
+
+    describe('task does not exist', () => {
+      it('should add task', () => {
+        expect(taskEntityReducers(
+          {
+            byId: {
+            },
           },
-        }
-      )).toEqual({
-        byId: {
-          '/api/tasks/1': {
-            '@id': '/api/tasks/1',
-            id : 1,
-            isAssigned: true,
-            assignedTo: 'bot_1'
+          {
+            type: 'UPDATE_TASK',
+            task: {
+              '@id': '/api/tasks/1',
+              id : 1,
+              isAssigned: true,
+              assignedTo: 'bot_1'
+            },
+          }
+        )).toEqual({
+          byId: {
+            '/api/tasks/1': {
+              '@id': '/api/tasks/1',
+              id : 1,
+              isAssigned: true,
+              assignedTo: 'bot_1'
+            },
           },
-        },
+        })
       })
     })
   })

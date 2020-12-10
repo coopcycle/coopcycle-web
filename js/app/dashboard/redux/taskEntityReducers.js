@@ -24,7 +24,15 @@ export default (state = initialState, action) => {
       }
     }
     case UPDATE_TASK: {
-      let newItems = utils.addOrReplaceTasks(state.byId, [action.task])
+      let newItems = Object.assign({}, state.byId)
+      let task = action.task
+
+      if (Object.prototype.hasOwnProperty.call(state.byId, task['@id'])) {
+        // copy object to keep 'position' property
+        newItems[task['@id']] = Object.assign({}, state.byId[task['@id']], task)
+      } else {
+        newItems[task['@id']] = task
+      }
 
       return {
         ...state,
