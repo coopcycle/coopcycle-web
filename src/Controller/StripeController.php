@@ -2,8 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Domain\Order\Event\CheckoutFailed;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\StripeAccount;
+use AppBundle\Service\EmailManager;
+use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,6 +15,7 @@ use Hashids\Hashids;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Psr\Log\LoggerInterface;
+use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Stripe;
 use Stripe\Exception\ApiErrorException;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -155,7 +159,12 @@ class StripeController extends AbstractController
      *
      * @Route("/stripe/webhook", name="stripe_webhook", methods={"POST"})
      */
-    public function webhookAction(Request $request, StripeManager $stripeManager, SettingsManager $settingsManager)
+    public function webhookAction(Request $request,
+        StripeManager $stripeManager,
+        SettingsManager $settingsManager,
+        OrderManager $orderManager,
+        EventBus $eventBus,
+        EmailManager $emailManager)
     {
         $this->logger->info('Received webhook');
 
@@ -215,6 +224,10 @@ class StripeController extends AbstractController
         switch ($event->type) {
             case 'source.chargeable':
                 return $this->handleChargeableSource($event);
+            case 'payment_intent.succeeded':
+                return $this->handlePaymentIntentSucceeded($event, $orderManager);
+            case 'payment_intent.payment_faild':
+                return $this->handlePaymentIntentPaymentFailed($event, $eventBus, $emailManager);
         }
 
         return new Response('', 200);
@@ -244,6 +257,82 @@ class StripeController extends AbstractController
         }
 
         $this->logger->info(sprintf('Source "%s" refers to payment #%d', $source->id, $payment->getId()));
+
+        return new Response('', 200);
+    }
+
+    /**
+     * @return PaymentInterface|null
+     */
+    private function findOneByPaymentIntent(Stripe\PaymentIntent $paymentIntent): ?PaymentInterface
+    {
+        $qb = $this->entityManager->getRepository(PaymentInterface::class)
+            ->createQueryBuilder('p')
+            ->andWhere('JSON_GET_FIELD_AS_TEXT(p.details, \'payment_intent\') = :payment_intent')
+            ->setParameter('payment_intent', $paymentIntent->id);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    private function handlePaymentIntentSucceeded(Stripe\Event $event, OrderManager $orderManager): Response
+    {
+        $paymentIntent = $event->data->object;
+
+        $this->logger->info(sprintf('Payment Intent has id "%s"', $paymentIntent->id));
+
+        $payment = $this->findOneByPaymentIntent($paymentIntent);
+
+        if (null === $payment) {
+            $this->logger->error(sprintf('Payment Intent "%s" not found', $paymentIntent->id));
+
+            return new Response('', 200);
+        }
+
+        $order = $payment->getOrder();
+
+        // At the moment, we only manage successful intent via webhooks for Giropay
+        if ($payment->isGiropay() && PaymentInterface::STATE_PROCESSING === $payment->getState()) {
+
+            // FIXME
+            // Here we should check if the time range is still realistic
+            // We have no idea when the webhook is called actually
+
+            $orderManager->checkout($order);
+            $this->entityManager->flush();
+        }
+
+        return new Response('', 200);
+    }
+
+    private function handlePaymentIntentPaymentFailed(Stripe\Event $event, EventBus $eventBus, EmailManager $emailManager)
+    {
+        $paymentIntent = $event->data->object;
+
+        $this->logger->info(sprintf('Payment Intent has id "%s"', $paymentIntent->id));
+
+        $payment = $this->findOneByPaymentIntent($paymentIntent);
+
+        if (null === $payment) {
+            $this->logger->error(sprintf('Payment Intent "%s" not found', $paymentIntent->id));
+
+            return new Response('', 200);
+        }
+
+        $order = $payment->getOrder();
+
+        // At the moment, we only manage payment failed intent via webhooks for Giropay
+        if ($payment->isGiropay() && PaymentInterface::STATE_PROCESSING === $payment->getState()) {
+
+            // This will change payment state to "failed"
+            $eventBus->handle(
+                new CheckoutFailed($order, $payment, $paymentIntent->last_payment_error->message)
+            );
+
+            $emailManager->sendTo(
+                $emailManager->createOrderPaymentFailedMessage($order),
+                sprintf('%s <%s>', $order->getCustomer()->getFullName(), $order->getCustomer()->getEmail())
+            );
+        }
 
         return new Response('', 200);
     }
@@ -363,8 +452,7 @@ class StripeController extends AbstractController
      */
     public function createGiropayPaymentIntentAction($hashId, Request $request,
         OrderNumberAssignerInterface $orderNumberAssigner,
-        StripeManager $stripeManager,
-        EntityManagerInterface $entityManager)
+        StripeManager $stripeManager)
     {
         $hashids = new Hashids($this->secret, 8);
 
@@ -378,7 +466,7 @@ class StripeController extends AbstractController
 
         $paymentId = current($decoded);
 
-        $payment = $entityManager
+        $payment = $this->entityManager
             ->getRepository(PaymentInterface::class)
             ->find($paymentId);
 
@@ -402,7 +490,7 @@ class StripeController extends AbstractController
             $intent = $stripeManager->createGiropayIntent($payment);
             $payment->setPaymentIntent($intent);
 
-            $entityManager->flush();
+            $this->entityManager->flush();
 
         } catch (ApiErrorException $e) {
 

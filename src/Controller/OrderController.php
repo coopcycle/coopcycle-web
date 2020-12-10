@@ -218,6 +218,7 @@ class OrderController extends AbstractController
 
             $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
+            /** @deprecated */
             if ($payment->hasSource()) {
 
                 $payment->setState(PaymentInterface::STATE_PROCESSING);
@@ -286,6 +287,8 @@ class OrderController extends AbstractController
         if (null === $order) {
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
         }
+
+        // TODO Check if order is in expected state (new or superior)
 
         $loopeatAccessTokenKey =
             sprintf('loopeat.order.%d.access_token', $id);

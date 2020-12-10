@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Stripe;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -69,13 +70,6 @@ class PaymentController extends AbstractController
      */
     public function confirmAction($hashId, Request $request)
     {
-        // @see https://stripe.com/docs/sources/giropay#customer-action
-        // Stripe populates the redirect[return_url] with the following GET parameters when returning your customer to your website:
-        // - source: a string representing the original ID of the Source object
-        // - livemode: indicates if this is a live payment, either true or false
-        // - client_secret: used to confirm that the returning customer is the same one
-        //                  who triggered the creation of the source (source IDs are not considered secret)
-
         $hashids = new Hashids($this->secret, 8);
 
         $decoded = $hashids->decode($hashId);
@@ -93,13 +87,70 @@ class PaymentController extends AbstractController
             throw new BadRequestHttpException(sprintf('Payment with id "%d" does not exist', $paymentId));
         }
 
+        /** @deprecated */
+        if ($request->query->has('source') && $request->query->has('client_secret')) {
+
+            return $this->handlePaymentIntentWithSource($payment, $request);
+        }
+
+        $paymentIntent = $request->query->get('payment_intent');
+        $paymentIntentClientSecret = $request->query->get('payment_intent_client_secret');
+
+        if ($payment->getPaymentIntent() !== $paymentIntent) {
+            throw new BadRequestHttpException(sprintf('Payment Intent for payment with id "%d" does not match', $payment->getId()));
+        }
+
+        $order = $payment->getOrder();
+
+        $this->stripeManager->configure();
+
+        $stripeAccount = $payment->getStripeUserId();
+        $stripeOptions = [];
+
+        if (null !== $stripeAccount) {
+            $stripeOptions['stripe_account'] = $stripeAccount;
+        }
+
+        // We could check if the payment intent has already succeeded,
+        // but let's display a fancy confirmation page
+
+        if ($request->isMethod('POST')) {
+
+            // Double-check the intent status
+            $intent = Stripe\PaymentIntent::retrieve(
+                $request->query->get('payment_intent'),
+                $stripeOptions
+            );
+
+            if ('succeeded' === $intent->status) {
+                return $this->redirectToOrderConfirm($order);
+            }
+        }
+
+        return $this->render('order/wait_for_payment.html.twig', [
+            'order' => $order,
+            'shipping_range' => $this->orderTimeHelper->getShippingTimeRange($order),
+            'client_secret' => $paymentIntentClientSecret,
+            'stripe_options' => $stripeOptions,
+        ]);
+    }
+
+    private function handlePaymentIntentWithSource(PaymentInterface $payment, Request $request)
+    {
+        // @see https://stripe.com/docs/sources/giropay#customer-action
+        // Stripe populates the redirect[return_url] with the following GET parameters when returning your customer to your website:
+        // - source: a string representing the original ID of the Source object
+        // - livemode: indicates if this is a live payment, either true or false
+        // - client_secret: used to confirm that the returning customer is the same one
+        //                  who triggered the creation of the source (source IDs are not considered secret)
+
         $clientSecret = $request->query->get('client_secret');
         $sourceId = $request->query->get('source');
 
         // TODO Compare sources
 
         if ($payment->getSourceClientSecret() !== $clientSecret) {
-            throw new BadRequestHttpException(sprintf('Client secret for payment with id "%d" does not match', $paymentId));
+            throw new BadRequestHttpException(sprintf('Client secret for payment with id "%d" does not match', $payment->getId()));
         }
 
         $order = $payment->getOrder();
@@ -131,7 +182,7 @@ class PaymentController extends AbstractController
             return $this->handleChargeableSource($payment);
         }
 
-        return $this->render('order/wait_for_payment.html.twig', [
+        return $this->render('order/wait_for_payment_with_source.html.twig', [
             'order' => $order,
             'shipping_range' => $this->orderTimeHelper->getShippingTimeRange($order),
             'source_id' => $sourceId,
