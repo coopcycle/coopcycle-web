@@ -805,6 +805,12 @@ services:
             key: '%env(CDN_S3_CREDENTIALS_KEY)%'
             secret: '%env(CDN_S3_CREDENTIALS_SECRET)%'
           use_path_style_endpoint: true
+          # https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_configuration.html#config-retries
+          # https://www.digitalocean.com/docs/spaces/#limits
+          # https://www.digitalocean.com/docs/spaces/resources/performance-tips/#50x-errors
+          retries:
+            mode: standard
+            max_attempts: 3
 
   AppBundle\Service\StripeManager:
     arguments:
