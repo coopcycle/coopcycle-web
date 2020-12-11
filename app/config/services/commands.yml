@@ -127,3 +127,8 @@ services:
       $namespace: '%sonic_namespace%'
     tags:
       - { name: 'console.command', command: 'coopcycle:index:build' }
+
+  # @see Liip\ImagineBundle\Command\ResolveCacheCommand
+  AppBundle\Command\ResolveImagineCacheCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:imagine:cache:resolve' }
