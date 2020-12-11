@@ -683,7 +683,7 @@ liip_imagine:
                     max: 80
                     progressive: true
         product_thumbnail:
-            cache: cached_s3_flysystem
+            # cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -701,7 +701,7 @@ liip_imagine:
                     strip_all: true
                     level: 4
         product_thumbnail_1x1:
-            cache: cached_s3_flysystem
+            # cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -719,7 +719,7 @@ liip_imagine:
                     strip_all: true
                     level: 4
         product_thumbnail_16x9:
-            cache: cached_s3_flysystem
+            # cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -737,7 +737,7 @@ liip_imagine:
                     strip_all: true
                     level: 4
         product_thumbnail_4x3:
-            cache: cached_s3_flysystem
+            # cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
