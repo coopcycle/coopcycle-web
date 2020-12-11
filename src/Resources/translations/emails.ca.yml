@@ -1,12 +1,12 @@
-registration.email.subject: "Confirmació per correu electrònic\n"
-registration.email.message: "<h2>Benvingut a %brand_name%, %username%</h2>\nHas rebut\
-  \ aquest missatge perquè t'has registrat recentment a un compte %brand_name%.\n\
-  <br>\nConfirma la teva adreça de correu electrònic fent clic al botó següent.\n"
+registration.email.subject: "Confirmació el teu correu electrònic\n"
+registration.email.message: "<h2>Et donem la benvinguda a %brand_name%, %username%</h2>\n\
+  \nHas rebut aquest missatge perque t'has registrat recentment a %brand_name%.\n\
+  <br>\n\nConfirma la teva adreça de correu electrònic fent clic al botó següent.\n"
 registration.email.confirm: Confirma el correu electrònic
 registration.email.disclaimer: Aquest enllaç només es pot utilitzar una vegada per
   validar el vostre compte
-registration.email.textMessage: "Benvingut a %brand_name%, %username%,\\n\\n\nHeu\
-  \ rebut aquest missatge perquè us heu registrat recentment a un compte %brand_name%.\\\
+registration.email.textMessage: "Et donem la benvinguda a %brand_name%, %username%,\\\
+  n\\n\nHeu rebut aquest missatge perquè us heu registrat recentment a un compte %brand_name%.\\\
   n\nPer confirmar el correu electrònic, feu clic a l’enllaç següent: <a href=\"%confirmationUrl%\"\
   \ rel=\"notrack\">%confirmationUrl%</a>.\n"
 resetting.email.message: <h2>Hola %username%</h2> Per restablir la vostra contrasenya,
