@@ -4,7 +4,11 @@ import {
   TASK_LIST_UPDATED,
   UPDATE_TASK
 } from "./actions";
-import {taskListUtils as utils} from '../../coopcycle-frontend-js/logistics/redux'
+import {
+  taskUtils,
+  taskListUtils,
+  taskListEntityUtils,
+} from '../../coopcycle-frontend-js/logistics/redux'
 
 const initialState = {
   byId: {}
@@ -13,7 +17,7 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case MODIFY_TASK_LIST_REQUEST: {
-      let entity = utils.findTaskListByUsername(state.byId, action.username)
+      let entity = taskListEntityUtils.findTaskListByUsername(state.byId, action.username)
 
       if (entity === undefined) {
         // eslint-disable-next-line no-console
@@ -24,10 +28,10 @@ export default (state = initialState, action) => {
 
       let newEntity = {
         ...entity,
-        itemIds: utils.tasksToIds(action.tasks),
+        itemIds: taskUtils.tasksToIds(action.tasks),
       }
 
-      let newItems = utils.addOrReplaceTaskList(state.byId, newEntity)
+      let newItems = taskListEntityUtils.addOrReplaceTaskList(state.byId, newEntity)
 
       return {
         ...state,
@@ -35,8 +39,8 @@ export default (state = initialState, action) => {
       }
     }
     case MODIFY_TASK_LIST_REQUEST_SUCCESS: {
-      let newEntity = utils.replaceTasksWithIds(action.taskList)
-      let newItems = utils.addOrReplaceTaskList(state.byId, newEntity)
+      let newEntity = taskListUtils.replaceTasksWithIds(action.taskList)
+      let newItems = taskListEntityUtils.addOrReplaceTaskList(state.byId, newEntity)
 
       return {
         ...state,
@@ -44,7 +48,7 @@ export default (state = initialState, action) => {
       }
     }
     case TASK_LIST_UPDATED: {
-      let entityByUsername = utils.findTaskListByUsername(state.byId, action.taskList['username'])
+      let entityByUsername = taskListEntityUtils.findTaskListByUsername(state.byId, action.taskList['username'])
 
       if (entityByUsername === undefined) {
         return state
@@ -75,7 +79,7 @@ export default (state = initialState, action) => {
         newEntity['@id'] = action.taskList['@id']
       }
 
-      let newItems = utils.addOrReplaceTaskList(state.byId, newEntity)
+      let newItems = taskListEntityUtils.addOrReplaceTaskList(state.byId, newEntity)
 
       return {
         ...state,
@@ -86,9 +90,9 @@ export default (state = initialState, action) => {
       let newItems
 
       if (action.task.isAssigned) {
-        newItems = utils.addAssignedTask(state.byId, action.task)
+        newItems = taskListEntityUtils.addAssignedTask(state.byId, action.task)
       } else {
-        newItems = utils.removeUnassignedTask(state.byId, action.task)
+        newItems = taskListEntityUtils.removeUnassignedTask(state.byId, action.task)
       }
 
       return {
