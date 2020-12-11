@@ -31,7 +31,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         $this->appCache = $appCache;
     }
 
-    public function asset($obj, string $fieldName, string $filter): ?string
+    public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false): ?string
     {
         $mapping = $this->propertyMappingFactory->fromField($obj, $fieldName);
 
@@ -41,6 +41,10 @@ class AssetsRuntime implements RuntimeExtensionInterface
 
         if (!$uri) {
             return null;
+        }
+
+        if ($generateUrl) {
+            return $this->cacheManager->generateUrl($uri, $filter);
         }
 
         return $this->cacheManager->getBrowserPath($uri, $filter);
