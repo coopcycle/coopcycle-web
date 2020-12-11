@@ -4,6 +4,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Sylius\ProductImage;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use League\Flysystem\MountManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -46,24 +47,39 @@ Class ResolveImagineCacheCommand extends Command
     {
         $resolveCacheCommand = $this->getApplication()->find('liip:imagine:cache:resolve');
 
-        $images = $this->entityManager->getRepository(ProductImage::class)->findAll();
+        $qb =
+            $this->entityManager->getRepository(ProductImage::class)
+                ->createQueryBuilder('i')
+                ->setFirstResult(0)
+                ->setMaxResults(10)
+                ;
 
-        foreach ($images as $image) {
+        $paginator = new Paginator($qb->getQuery());
 
-            $mapping = $this->propertyMappingFactory->fromField($image, 'imageFile');
-            $fileSystem = $this->mountManager->getFilesystem($mapping->getUploadDestination());
-            $uri = $this->storage->resolveUri($image, 'imageFile');
+        $pageCount =
+            ceil(count($paginator) / $paginator->getQuery()->getMaxResults());
 
-            $filterName = sprintf('product_thumbnail_%s', str_replace(':', 'x', $image->getRatio()));
+        for ($p = 1; $p <= $pageCount; $p++) {
 
-            $arguments = [
-                'paths' => [ $uri ],
-                '--filter' => [ $filterName ],
-                '--no-colors' => true,
-            ];
+            $paginator->getQuery()->setFirstResult(($p - 1) * $paginator->getQuery()->getMaxResults());
 
-            $resolveCacheInput = new ArrayInput($arguments);
-            $returnCode = $resolveCacheCommand->run($resolveCacheInput, $output);
+            foreach ($paginator as $image) {
+
+                $mapping = $this->propertyMappingFactory->fromField($image, 'imageFile');
+                $fileSystem = $this->mountManager->getFilesystem($mapping->getUploadDestination());
+                $uri = $this->storage->resolveUri($image, 'imageFile');
+
+                $filterName = sprintf('product_thumbnail_%s', str_replace(':', 'x', $image->getRatio()));
+
+                $arguments = [
+                    'paths' => [ $uri ],
+                    '--filter' => [ $filterName ],
+                    '--no-colors' => true,
+                ];
+
+                $resolveCacheInput = new ArrayInput($arguments);
+                $returnCode = $resolveCacheCommand->run($resolveCacheInput, $output);
+            }
         }
 
         return 0;
