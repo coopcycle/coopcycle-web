@@ -457,7 +457,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
         for ($p = 1; $p <= $pageCount; $p++) {
 
-            $this->orders->getQuery()->setFirstResult($p - 1);
+            $this->orders->getQuery()->setFirstResult(($p - 1) * $this->orders->getQuery()->getMaxResults());
 
             foreach ($this->orders as $index => $order) {
                 $record = [];
