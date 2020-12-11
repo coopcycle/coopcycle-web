@@ -383,6 +383,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: product_imports
+        cdn:
+            awss3v3:
+                client: cdn_s3_client
+                bucket: '%env(CDN_S3_BUCKET)%'
+                prefix: ''
     filesystems:
         assets:
             adapter: assets
@@ -416,6 +421,10 @@ oneup_flysystem:
             adapter: product_imports
             alias: product_imports_filesystem
             mount: product_imports_filesystem
+        cdn:
+            adapter: cdn
+            alias: cdn_filesystem
+            mount: cdn_filesystem
 
 vich_uploader:
     db_driver: orm
@@ -639,6 +648,13 @@ liip_imagine:
         default:
             web_path:
                 web_root: '%kernel.project_dir%/web'
+        cdn:
+            flysystem:
+                filesystem_service: oneup_flysystem.cdn_filesystem
+                root_url:           '%env(CDN_ROOT_URL)%'
+                cache_prefix:       '%env(CDN_CACHE_PREFIX)%'
+                visibility:         public
+    cache: cdn
     filter_sets:
         cache: ~
         restaurant_thumbnail:
