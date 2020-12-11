@@ -88,6 +88,8 @@ framework:
                 adapter: cache.adapter.redis
             twig.cache:
                 adapter: cache.app
+            s3_flysystem.cache:
+                adapter: cache.app
     messenger:
         buses:
             messenger.bus.default:
@@ -649,13 +651,7 @@ liip_imagine:
         default:
             web_path:
                 web_root: '%kernel.project_dir%/web'
-        cdn:
-            flysystem:
-                filesystem_service: oneup_flysystem.cdn_filesystem
-                root_url:           '%env(CDN_ROOT_URL)%'
-                cache_prefix:       '%env(CDN_CACHE_PREFIX)%'
-                visibility:         public
-    cache: cdn
+    cache: ~
     filter_sets:
         cache: ~
         restaurant_thumbnail:
@@ -687,6 +683,7 @@ liip_imagine:
                     max: 80
                     progressive: true
         product_thumbnail:
+            cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -704,6 +701,7 @@ liip_imagine:
                     strip_all: true
                     level: 4
         product_thumbnail_1x1:
+            cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -721,6 +719,7 @@ liip_imagine:
                     strip_all: true
                     level: 4
         product_thumbnail_16x9:
+            cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -738,6 +737,7 @@ liip_imagine:
                     strip_all: true
                     level: 4
         product_thumbnail_4x3:
+            cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:

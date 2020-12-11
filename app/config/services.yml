@@ -812,6 +812,29 @@ services:
             mode: standard
             max_attempts: 3
 
+  # https://symfony.com/doc/current/bundles/LiipImagineBundle/cache-resolver/cache.html
+
+  coopcycle.imagine.cache.resolver.flysystem:
+    class: Liip\ImagineBundle\Imagine\Cache\Resolver\FlysystemResolver
+    arguments:
+      $flysystem: '@oneup_flysystem.cdn_filesystem'
+      $rootUrl: '%env(CDN_ROOT_URL)%'
+      $cachePrefix: '%env(CDN_CACHE_PREFIX)%'
+
+  coopcycle.imagine.cache.redis:
+    class: Symfony\Component\Cache\DoctrineProvider
+    arguments:
+      - '@s3_flysystem.cache'
+
+  coopcycle.imagine.cache.resolver.flysystem.cache:
+    class: Liip\ImagineBundle\Imagine\Cache\Resolver\CacheResolver
+    arguments:
+      - "@coopcycle.imagine.cache.redis"
+      - "@coopcycle.imagine.cache.resolver.flysystem"
+      - { prefix: "s3_flysystem" }
+    tags:
+      - { name: "liip_imagine.cache.resolver", resolver: "cached_s3_flysystem" }
+
   AppBundle\Service\StripeManager:
     arguments:
       $secret: '%secret%'
