@@ -6,7 +6,6 @@ import { I18nextProvider } from 'react-i18next'
 import moment from 'moment'
 
 import i18n from '../i18n'
-import _ from 'lodash'
 
 import { createStoreFromPreloadedState } from './redux/store'
 import DashboardApp from './app'
@@ -28,10 +27,9 @@ function start() {
   const dashboardEl = document.getElementById('dashboard')
 
   let date = moment(dashboardEl.dataset.date)
-  let tasks = JSON.parse(dashboardEl.dataset.tasks)
+  let unassignedTasks = JSON.parse(dashboardEl.dataset.unassignedTasks)
   let taskLists = JSON.parse(dashboardEl.dataset.taskLists)
 
-  let unassignedTasks = _.filter(tasks, task => !task.isAssigned)
   let assignedTasks = taskListUtils.assignedTasks(taskLists)
 
   let taskEntities = taskUtils.addOrReplaceTasks({}, unassignedTasks.concat(assignedTasks))
