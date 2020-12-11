@@ -448,6 +448,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
         $records = [];
 
+        if (null === $this->orders->getQuery()->getMaxResults()) {
+            $this->orders->getQuery()->setMaxResults(10);
+        }
+
         $pageCount =
             ceil(count($this->orders) / $this->orders->getQuery()->getMaxResults());
 

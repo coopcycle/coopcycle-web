@@ -68,19 +68,24 @@ trait OrderTrait
             $ordersToExport = $this->getDoctrine()->getRepository(Order::class)
                 ->findFulfilledOrdersByDateRange(
                     $start,
-                    $end
+                    $end,
+                    $asQueryBuilder = true
                 );
-
-            // TODO Manage empty list
 
             $stats = new RestaurantStats(
                 $this->getParameter('kernel.default_locale'),
                 $ordersToExport,
                 $this->get('sylius.repository.tax_rate'),
                 $translator,
-                true,
+                $withRestaurantName = true,
                 $withMessenger
             );
+
+            if (count($stats) === 0) {
+                $this->addFlash('error', $this->get('translator')->trans('order.export.empty'));
+
+                return $this->redirectToRoute($request->attributes->get('_route'));
+            }
 
             $filename = sprintf('coopcycle-orders-%s.csv', $date->format('Y-m-d'));
 

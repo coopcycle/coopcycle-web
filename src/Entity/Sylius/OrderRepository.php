@@ -73,7 +73,7 @@ class OrderRepository extends BaseOrderRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findFulfilledOrdersByDateRange(\DateTime $start, \DateTime $end)
+    public function findFulfilledOrdersByDateRange(\DateTime $start, \DateTime $end, $asQueryBuilder = false)
     {
         $qb = $this->createQueryBuilder('o');
 
@@ -82,6 +82,10 @@ class OrderRepository extends BaseOrderRepository
         $qb
             ->andWhere('o.state = :state_fulfilled')
             ->setParameter('state_fulfilled', OrderInterface::STATE_FULFILLED);
+
+        if ($asQueryBuilder) {
+            return $qb;
+        }
 
         return $qb->getQuery()->getResult();
     }
