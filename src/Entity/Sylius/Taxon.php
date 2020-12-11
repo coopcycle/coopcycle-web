@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Sylius;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Comparable;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
 use AppBundle\Action\Restaurant\ActivateMenu;
@@ -23,7 +24,7 @@ use AppBundle\Action\Restaurant\ActivateMenu;
  *   }
  * )
  */
-class Taxon extends BaseTaxon
+class Taxon extends BaseTaxon implements Comparable
 {
     private $taxonProducts;
 
@@ -58,5 +59,17 @@ class Taxon extends BaseTaxon
         return $this->taxonProducts->map(function (ProductTaxon $productTaxon): ProductInterface {
             return $productTaxon->getProduct();
         });
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see https://github.com/Sylius/Sylius/issues/10797
+     * @see https://github.com/Sylius/Sylius/pull/11329
+     * @see https://github.com/Atlantic18/DoctrineExtensions/pull/2185
+     */
+    public function compareTo($other)
+    {
+        return $this->code === $other->getCode();
     }
 }
