@@ -10,8 +10,6 @@ use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\LoopEatOrder;
-use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
-use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -70,27 +68,6 @@ class CheckoutAddressType extends AbstractType
                 'label' => 'form.checkout_address.notes.label',
                 'help' => 'form.checkout_address.notes.help',
                 'attr' => ['placeholder' => 'form.checkout_address.notes.placeholder']
-            ])
-            ->add('promotionCoupon', PromotionCouponToCodeType::class, [
-                'label' => 'form.checkout_address.promotion_coupon.label',
-                'required' => false,
-            ])
-            ->add('addPromotion', SubmitType::class, [
-                'label' => 'form.checkout_address.add_promotion.label'
-            ])
-            ->add('tipAmount', NumberType::class, [
-                'label' => 'form.checkout_address.tip_amount.label',
-                'mapped' => false,
-                'required' => false,
-                'html5' => true,
-                'attr'  => array(
-                    'min'  => 0,
-                    'step' => 0.5,
-                ),
-                'help' => 'form.checkout_address.tip_amount.help'
-            ])
-            ->add('addTip', SubmitType::class, [
-                'label' => 'form.checkout_address.add_tip.label'
             ]);
 
         $builder->get('shippingAddress')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
@@ -198,17 +175,6 @@ class CheckoutAddressType extends AbstractType
                 ]);
             }
         });
-
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-
-            $form = $event->getForm();
-            $order = $form->getData();
-
-            if ($form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName()) {
-                $tipAmount = $form->get('tipAmount')->getData();
-                $order->setTipAmount((int) ($tipAmount * 100));
-            }
-        });
     }
 
     private function disableChildForm(FormInterface $form, $name)
@@ -228,7 +194,6 @@ class CheckoutAddressType extends AbstractType
 
         $resolver->setDefault('constraints', [
             new LoopEatOrder(),
-            new PromotionSubjectCoupon()
         ]);
     }
 }

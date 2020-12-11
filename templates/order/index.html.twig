@@ -64,7 +64,7 @@
             {% include '_partials/order/items.html.twig' with {
               with_taxes: false,
               with_items: false,
-              with_tip_form: form.tipAmount
+              with_tip_form: form_tip
             } %}
             <div class="row">
               <div class="col-xs-12 col-sm-3 col-sm-offset-9 text-right">
@@ -74,20 +74,18 @@
                   aria-expanded="false"
                   aria-controls="promotion-coupon-collapse"
                   class="d-block mb-4 font-weight-bold">
-                  {{ form.promotionCoupon.vars.label|trans }}
+                  {{ 'form.checkout_address.promotion_coupon.label'|trans }}
                 </a>
                 <div class="collapse" id="promotion-coupon-collapse">
-                  {{ form_row(form.promotionCoupon, { label: false }) }}
+                  <div class="form-group">
+                    <div class="input-group input-group-sm">
+                      <input type="text" class="form-control" id="coupon-code">
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="apply-coupon">{{ 'form.checkout_address.add_promotion.label'|trans }}</button>
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                {# We use an input group with the button #}
-                {# {{ form_row(form.addPromotion) }} #}
-              </div>
-            </div>
-            <div class="row hidden">
-              <div class="col-xs-12 col-sm-3 col-sm-offset-9">
-                {{ form_row(form.tipAmount) }}
-                {# We use an input group with the button #}
-                {# {{ form_row(form.addPromotion) }} #}
               </div>
             </div>
             {% if form.reusablePackagingEnabled is defined %}
@@ -142,6 +140,18 @@
       </div>
     </nav>
     {{ form_end(form) }}
+
+    <div class="d-none">
+      {{ form_start(form_tip) }}
+        {{ form_widget(form_tip) }}
+      {{ form_end(form_tip) }}
+    </div>
+
+    <div class="d-none">
+      {{ form_start(form_coupon) }}
+        {{ form_widget(form_coupon) }}
+      {{ form_end(form_coupon) }}
+    </div>
 
     <div class="modal fade" id="modal-loopeat" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">

@@ -29,24 +29,6 @@
   {%- endif %}
 {%- endblock radio_widget %}
 
-{% block _checkout_address_promotionCoupon_widget %}
-<div class="input-group input-group-sm">
-  {{ form_widget(form) }}
-  <span class="input-group-btn">
-    {{ form_widget(form.parent.addPromotion, { attr: { class: 'btn-primary' } }) }}
-  </span>
-</div>
-{% endblock %}
-
-{% block _checkout_address_tipAmount_widget %}
-<div class="input-group input-group-sm">
-  {{ form_widget(form) }}
-  <span class="input-group-btn">
-    {{ form_widget(form.parent.addTip, { attr: { class: 'btn-primary' } }) }}
-  </span>
-</div>
-{% endblock %}
-
 {% block _checkout_address_shippingAddress_streetAddress_row %}
   {% set address = form.parent.vars.value %}
   {% if address is empty %}

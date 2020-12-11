@@ -11,7 +11,9 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Form\Checkout\CheckoutAddressType;
+use AppBundle\Form\Checkout\CheckoutCouponType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
+use AppBundle\Form\Checkout\CheckoutTipType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
@@ -94,8 +96,49 @@ class OrderController extends AbstractController
         $wasReusablePackagingEnabled = $order->isReusablePackagingEnabled();
         $originalReusablePackagingPledgeReturn = $order->getReusablePackagingPledgeReturn();
 
-        $form = $this->createForm(CheckoutAddressType::class, $order);
+        $tipForm = $this->createForm(CheckoutTipType::class);
+        $tipForm->handleRequest($request);
 
+        if ($tipForm->isSubmitted()) {
+
+            $tipAmount = $tipForm->get('amount')->getData();
+            $order->setTipAmount((int) ($tipAmount * 100));
+
+            $orderProcessor->process($order);
+            $this->objectManager->flush();
+
+            return $this->redirectToRoute('order');
+        }
+
+        $couponForm = $this->createForm(CheckoutCouponType::class, $order);
+        $couponForm->handleRequest($request);
+
+        if ($couponForm->isSubmitted()) {
+
+            $promotionCouponWasAdded =
+                null === $originalPromotionCoupon && null !== $order->getPromotionCoupon();
+
+            if ($promotionCouponWasAdded) {
+                $this->addFlash(
+                    'notice',
+                    $translator->trans('promotions.promotion_coupon.success', [
+                        '%code%' => $order->getPromotionCoupon()->getCode()
+                    ])
+                );
+            } else {
+                $this->addFlash(
+                    'error',
+                    'No coupon applied'
+                );
+            }
+
+            $orderProcessor->process($order);
+            $this->objectManager->flush();
+
+            return $this->redirectToRoute('order');
+        }
+
+        $form = $this->createForm(CheckoutAddressType::class, $order);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
@@ -113,26 +156,8 @@ class OrderController extends AbstractController
             $reusablePackagingPledgeReturnWasChanged =
                 $originalReusablePackagingPledgeReturn !== $order->getReusablePackagingPledgeReturn();
 
-            $tipWasAdded =
-                $form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName();
-
-            $promotionCouponWasAdded =
-                null === $originalPromotionCoupon && null !== $order->getPromotionCoupon();
-
-            $promotionCouponWasSubmitted =
-                $form->getClickedButton() && 'addPromotion' === $form->getClickedButton()->getName();
-
             // In those cases, we always reload the page
-            if ($reusablePackagingWasChanged || $tipWasAdded || $promotionCouponWasAdded || $promotionCouponWasSubmitted || $reusablePackagingPledgeReturnWasChanged) {
-
-                if ($promotionCouponWasAdded) {
-                    $this->addFlash(
-                        'notice',
-                        $translator->trans('promotions.promotion_coupon.success', [
-                            '%code%' => $order->getPromotionCoupon()->getCode()
-                        ])
-                    );
-                }
+            if ($reusablePackagingWasChanged || $reusablePackagingPledgeReturnWasChanged) {
 
                 $orderProcessor->process($order);
                 $this->objectManager->flush();
@@ -173,6 +198,8 @@ class OrderController extends AbstractController
         return $this->render('order/index.html.twig', array(
             'order' => $order,
             'form' => $form->createView(),
+            'form_tip' => $tipForm->createView(),
+            'form_coupon' => $couponForm->createView(),
         ));
     }
 

@@ -43,12 +43,11 @@ const updateTip = _.debounce(function() {
   const mask = document.querySelector('#tip-input').inputmask
   const newValue = mask.unmaskedvalue()
 
-  var $form = $('form[name="checkout_address"]')
+  var $form = $('form[name="checkout_tip"]')
 
   var data = {}
-  data['checkout_address[tipAmount]'] = newValue
-  data['checkout_address[addTip]'] = ''
-  data['checkout_address[_token]'] = $('#checkout_address__token').val()
+  data['checkout_tip[amount]'] = newValue
+  data['checkout_tip[_token]'] = $('#checkout_tip__token').val()
 
   $('form[name="checkout_address"] table').LoadingOverlay('show', {
     image: false,
@@ -190,16 +189,15 @@ $('#guest-checkout-signin').on('hidden.bs.collapse', function () {
   $(this).find('input[type="password"]').prop('required', false)
 })
 
-$('#checkout_address_addPromotion').on('click', function(e) {
+$('#apply-coupon').on('click', function(e) {
 
   e.preventDefault()
 
-  const $form = $('form[name="checkout_address"]')
+  const $form = $('form[name="checkout_coupon"]')
 
   const data = {
-    'checkout_address[promotionCoupon]': $('#checkout_address_promotionCoupon').val(),
-    'checkout_address[addPromotion]': '',
-    'checkout_address[_token]': $('#checkout_address__token').val(),
+    'checkout_coupon[promotionCoupon]': $('#coupon-code').val(),
+    'checkout_coupon[_token]': $('#checkout_coupon__token').val(),
   }
 
   $('form[name="checkout_address"] table').LoadingOverlay('show', {
@@ -218,7 +216,9 @@ $('#checkout_address_addPromotion').on('click', function(e) {
         $(html).find('form[name="checkout_address"] table')
       )
 
-      $('#checkout_address_promotionCoupon').val('')
+      enableTipInput()
+
+      $('#coupon-code').val('')
       $('#promotion-coupon-collapse').collapse('hide')
 
       $('form[name="checkout_address"] table').LoadingOverlay('hide')
