@@ -176,7 +176,7 @@
               {% endfor %}
               {% if not product.hasOptions() %}
               <div class="restaurant-menu-section-item">
-                {% if product.images|length > 1 %}
+                {% if product_images|length > 1 %}
                   <button class="menu-item" type="button"
                     data-toggle="modal"
                     data-target="#product-details"

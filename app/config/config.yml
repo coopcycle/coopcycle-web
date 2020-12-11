@@ -44,7 +44,7 @@ parameters:
     b2b_enabled: '%env(bool:COOPCYCLE_B2B_ENABLED)%'
     sonic_namespace: '%database_name%'
     sonic_secret_password: '%env(SONIC_SECRET_PASSWORD)%'
-    restaurant_menu_cache_annotation: 'restaurant_menu_v0.4'
+    restaurant_menu_cache_annotation: 'restaurant_menu_v0.5'
 
 services:
     tag_manager.cache:
