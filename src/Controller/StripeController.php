@@ -226,7 +226,7 @@ class StripeController extends AbstractController
                 return $this->handleChargeableSource($event);
             case 'payment_intent.succeeded':
                 return $this->handlePaymentIntentSucceeded($event, $orderManager);
-            case 'payment_intent.payment_faild':
+            case 'payment_intent.payment_failed':
                 return $this->handlePaymentIntentPaymentFailed($event, $eventBus, $emailManager);
         }
 
@@ -327,6 +327,7 @@ class StripeController extends AbstractController
             $eventBus->handle(
                 new CheckoutFailed($order, $payment, $paymentIntent->last_payment_error->message)
             );
+            $this->entityManager->flush();
 
             $emailManager->sendTo(
                 $emailManager->createOrderPaymentFailedMessage($order),
