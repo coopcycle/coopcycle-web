@@ -124,7 +124,6 @@ services:
 
   AppBundle\Form\Checkout\CheckoutCustomerType:
     arguments:
-      $customerFactory: '@sylius.factory.customer'
       $customerRepository: '@sylius.repository.customer'
     tags: [ form.type ]
 

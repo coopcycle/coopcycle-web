@@ -9,7 +9,6 @@ use AppBundle\Form\Type\PhoneNumberType;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as AssertUserWithSameEmailNotExists;
 use FOS\UserBundle\Util\CanonicalizerInterface;
-use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -20,25 +19,18 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 class CheckoutCustomerType extends AbstractType
 {
-    private $translator;
-    private $customerFactory;
     private $canonicalizer;
     private $customerRepository;
 
     public function __construct(
-        TranslatorInterface $translator,
-        FactoryInterface $customerFactory,
         CanonicalizerInterface $canonicalizer,
         RepositoryInterface $customerRepository)
     {
-        $this->translator = $translator;
-        $this->customerFactory = $customerFactory;
         $this->canonicalizer = $canonicalizer;
         $this->customerRepository = $customerRepository;
     }
