@@ -108,7 +108,7 @@ class ProfileController extends Controller
 
             $restaurant = $request->attributes->get('_restaurant');
 
-            return $this->statsAction($restaurant->getId(), $request, $slugify, $translator, $paginator);
+            return $this->statsAction($restaurant->getId(), $request, $slugify, $translator);
         }
 
         if ($user->hasRole('ROLE_COURIER')) {
