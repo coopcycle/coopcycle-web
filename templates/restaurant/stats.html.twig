@@ -81,7 +81,15 @@
   </tfoot>
 </table>
 <nav class="text-center">
-  {{ knp_pagination_render(pagination) }}
+  {% if pages > 1 %}
+  <ul class="pagination pagination-sm">
+      {% for i in 1..pages %}
+      <li {{ page == i ? 'class="active"' }}>
+        <a href="{{ path(app.request.attributes.get('_route'), { id: restaurant.id }|merge(app.request.query.all|merge({ page: i }))) }}">{{ i }}</a>
+      </li>
+      {% endfor %}
+  </ul>
+  {% endif %}
 </nav>
 {% endif %}
 

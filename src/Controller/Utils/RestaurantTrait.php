@@ -1129,8 +1129,7 @@ trait RestaurantTrait
 
     public function statsAction($id, Request $request,
         SlugifyInterface $slugify,
-        TranslatorInterface $translator,
-        PaginatorInterface $paginator)
+        TranslatorInterface $translator)
     {
         $tab = $request->query->get('tab', 'orders');
 
@@ -1173,7 +1172,7 @@ trait RestaurantTrait
             );
 
         $qb
-            ->setFirstResult($request->query->getInt('page', 1) - 1)
+            ->setFirstResult(($request->query->getInt('page', 1) - 1) * $maxResults)
             ->setMaxResults($maxResults);
 
         $stats = new RestaurantStats(
@@ -1207,17 +1206,8 @@ trait RestaurantTrait
             'start' => $start,
             'end' => $end,
             'tab' => $tab,
-            'pagination' => $paginator->paginate(
-                $qb,
-                $request->query->getInt('page', 1),
-                $maxResults,
-                [
-                    PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'o.shippingTimeRange',
-                    PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
-                    PaginatorInterface::SORT_FIELD_WHITELIST => ['o.shippingTimeRange'],
-                    PaginatorInterface::FILTER_FIELD_WHITELIST => []
-                ]
-            )
+            'page' => $request->query->getInt('page', 1),
+            'pages' => ceil(count($stats) / $maxResults),
         ]));
     }
 
