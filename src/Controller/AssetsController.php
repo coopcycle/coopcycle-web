@@ -46,7 +46,7 @@ class AssetsController extends AbstractController
      *
      * @Route("/media/cache/{filter}/{path}", name="liip_imagine_cache",
      *   requirements={
-     *     "filter"="[A-z0-9_-]*",
+     *     "filter"="^(?!resolve)[A-z0-9_-]*",
      *     "path"=".+"
      *   }
      * )
