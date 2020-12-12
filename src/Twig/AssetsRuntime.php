@@ -8,6 +8,7 @@ use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\MountManager;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
@@ -21,6 +22,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         PropertyMappingFactory $propertyMappingFactory,
         CacheManager $cacheManager,
         Filesystem $assetsFilesystem,
+        UrlGeneratorInterface $urlGenerator,
         CacheInterface $appCache)
     {
         $this->storage = $storage;
@@ -28,10 +30,11 @@ class AssetsRuntime implements RuntimeExtensionInterface
         $this->propertyMappingFactory = $propertyMappingFactory;
         $this->cacheManager = $cacheManager;
         $this->assetsFilesystem = $assetsFilesystem;
+        $this->urlGenerator = $urlGenerator;
         $this->appCache = $appCache;
     }
 
-    public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false): ?string
+    public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false, bool $cacheUrl = false): ?string
     {
         $mapping = $this->propertyMappingFactory->fromField($obj, $fieldName);
 
@@ -44,6 +47,14 @@ class AssetsRuntime implements RuntimeExtensionInterface
         }
 
         if ($generateUrl) {
+
+            if ($cacheUrl) {
+                return $this->urlGenerator->generate('liip_imagine_cache', [
+                    'path' => ltrim($uri, '/'),
+                    'filter' => $filter,
+                ], UrlGeneratorInterface::ABSOLUTE_URL);
+            }
+
             return $this->cacheManager->generateUrl($uri, $filter);
         }
 

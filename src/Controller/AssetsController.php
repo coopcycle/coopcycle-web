@@ -3,6 +3,11 @@
 namespace AppBundle\Controller;
 
 use League\Flysystem\Filesystem;
+use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
+use Liip\ImagineBundle\Exception\Imagine\Filter\NonExistingFilterException;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Liip\ImagineBundle\Imagine\Data\DataManager;
+use Liip\ImagineBundle\Imagine\Filter\FilterManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -33,5 +38,35 @@ class AssetsController extends AbstractController
         $response->headers->add(['Content-Type' => 'image/svg+xml']);
 
         return $response;
+    }
+
+    /**
+     * @see https://github.com/liip/LiipImagineBundle/issues/971
+     * @see https://github.com/liip/LiipImagineBundle/issues/1032
+     *
+     * @Route("/media/cache/{filter}/{path}", name="liip_imagine_cache",
+     *   requirements={
+     *     "filter"="[A-z0-9_-]*",
+     *     "path"=".+"
+     *   }
+     * )
+     */
+    public function liipImagineCacheAction($filter, $path, Request $request,
+        CacheManager $cacheManager,
+        DataManager $dataManager,
+        FilterManager $filterManager)
+    {
+        try {
+
+            $binary = $dataManager->find($filter, $path);
+            $binary = $filterManager->applyFilter($binary, $filter);
+
+            $cacheManager->store($binary, $path, $filter);
+
+            return new Response($binary->getContent(), 200, ['Content-Type' => $binary->getMimeType()]);
+
+        } catch (NotLoadableException|NonExistingFilterException $e) {
+            throw $this->createNotFoundException();
+        }
     }
 }

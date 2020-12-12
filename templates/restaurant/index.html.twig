@@ -172,7 +172,7 @@
 
                 This is why we set the 4th parameter to true, to *ALWAYS* return the filter URL.
                 #}
-                {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', imagine_filter, true) ]) %}
+                {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', imagine_filter, true, true) ]) %}
               {% endfor %}
               {% if not product.hasOptions() %}
               <div class="restaurant-menu-section-item">
