@@ -2,25 +2,31 @@
 
 namespace AppBundle\Payment;
 
+use AppBundle\Message\RetrieveStripeFee;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\StripeManager;
 use Omnipay\Common\Message\ResponseInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 class Gateway
 {
     private $resolver;
     private $stripeManager;
     private $mercadopagoManager;
+    private $messageBus;
 
     public function __construct(
         GatewayResolver $resolver,
         StripeManager $stripeManager,
-        MercadopagoManager $mercadopagoManager)
+        MercadopagoManager $mercadopagoManager,
+        MessageBusInterface $messageBus)
     {
         $this->resolver = $resolver;
         $this->stripeManager = $stripeManager;
         $this->mercadopagoManager = $mercadopagoManager;
+        $this->messageBus = $messageBus;
     }
 
     public function authorize(PaymentInterface $payment): ResponseInterface
@@ -54,6 +60,11 @@ class Gateway
             default:
 
                 $this->stripeManager->capture($payment);
+
+                $this->messageBus->dispatch(
+                    new RetrieveStripeFee($payment->getOrder()),
+                    [ new DelayStamp(30000) ]
+                );
 
                 return new StripeResponse([]);
         }

@@ -7,6 +7,7 @@ use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Order\Reactor\CapturePayment;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Message\RetrieveStripeFee;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\MercadopagoManager;
@@ -16,6 +17,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Stripe;
 
 class CapturePaymentTest extends TestCase
@@ -31,10 +34,18 @@ class CapturePaymentTest extends TestCase
 
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
 
+        $this->messageBus = $this->prophesize(MessageBusInterface::class);
+        $this->messageBus
+            ->dispatch(Argument::type(RetrieveStripeFee::class), Argument::type('array'))
+            ->will(function ($args) {
+                return new Envelope($args[0]);
+            });
+
         $this->gateway = new Gateway(
             $this->gatewayResolver->reveal(),
             $this->stripeManager->reveal(),
-            $this->mercadopagoManager->reveal()
+            $this->mercadopagoManager->reveal(),
+            $this->messageBus->reveal()
         );
 
         $this->capturePayment = new CapturePayment(
@@ -80,6 +91,11 @@ class CapturePaymentTest extends TestCase
         $order
             ->getLastPayment(PaymentInterface::STATE_COMPLETED)
             ->willReturn($payment);
+        $order
+            ->getNumber()
+            ->willReturn('ABC123');
+
+        $payment->setOrder($order->reveal());
 
         $this->stripeManager
             ->capture(Argument::type(PaymentInterface::class))
@@ -116,12 +132,25 @@ class CapturePaymentTest extends TestCase
         $order
             ->getLastPayment(PaymentInterface::STATE_COMPLETED)
             ->willReturn(null);
+        $order
+            ->getNumber()
+            ->willReturn('ABC123');
+
+        $payment->setOrder($order->reveal());
 
         $this->stripeManager
             ->capture($payment)
             ->shouldBeCalled();
 
         call_user_func_array($this->capturePayment, [ new OrderFulfilled($order->reveal()) ]);
+
+        $this
+            ->messageBus
+            ->dispatch(
+                new RetrieveStripeFee($order->reveal()),
+                Argument::type('array')
+            )
+            ->shouldHaveBeenCalled();
     }
 
     public function testDoesNothingForCancelledOrders()
@@ -152,6 +181,11 @@ class CapturePaymentTest extends TestCase
         $order
             ->getLastPayment(PaymentInterface::STATE_COMPLETED)
             ->willReturn(null);
+        $order
+            ->getNumber()
+            ->willReturn('ABC123');
+
+        $payment->setOrder($order->reveal());
 
         $this->stripeManager
             ->capture($payment)
@@ -188,11 +222,24 @@ class CapturePaymentTest extends TestCase
         $order
             ->getLastPayment(PaymentInterface::STATE_COMPLETED)
             ->willReturn(null);
+        $order
+            ->getNumber()
+            ->willReturn('ABC123');
+
+        $payment->setOrder($order->reveal());
 
         $this->stripeManager
             ->capture($payment)
             ->shouldBeCalled();
 
         call_user_func_array($this->capturePayment, [ new OrderCancelled($order->reveal(), OrderInterface::CANCEL_REASON_NO_SHOW) ]);
+
+        $this
+            ->messageBus
+            ->dispatch(
+                new RetrieveStripeFee($order->reveal()),
+                Argument::type('array')
+            )
+            ->shouldHaveBeenCalled();
     }
 }

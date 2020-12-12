@@ -879,6 +879,12 @@ services:
     arguments:
       $eventBus: '@simple_bus.event_bus'
 
+  AppBundle\MessageHandler\RetrieveStripeFeeHandler:
+    arguments:
+      $adjustmentFactory: '@sylius.factory.adjustment'
+    tags:
+      - { name: monolog.logger, channel: stripe }
+
   AppBundle\Service\MaintenanceManager: ~
 
   AppBundle\Service\SmsManager: ~
