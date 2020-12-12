@@ -23,21 +23,21 @@
   </div>
 </div>
 
-{% set refunds = [] %}
-{% for order in stats %}
-  {% if order.hasRefunds() %}
-    {% set refunds = refunds|merge(order.getRefunds()) %}
-  {% endif %}
-{% endfor %}
-
 <ul class="nav nav-tabs mb-4">
   <li role="presentation" {% if tab == 'orders' %}class="active"{% endif %}>
     <a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, tab: 'orders' })) }}">{{ 'restaurant.list.orders'|trans }} ({{ stats|length }})</a>
   </li>
   <li role="presentation" {% if tab == 'refunds' %}class="active"{% endif %}>
-    <a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, tab: 'refunds' })) }}">{{ 'restaurant.list.refunds'|trans }} ({{ refunds|length }})</a>
+    <a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, tab: 'refunds' })) }}">{{ 'restaurant.list.refunds'|trans }} ({{ refunded_orders|length }})</a>
   </li>
 </ul>
+
+{% set refunds = [] %}
+{% set refunded_orders_hash = {} %}
+{% for order in refunded_orders %}
+  {% set refunds = refunds|merge(order.getRefunds()) %}
+  {% set refunded_orders_hash = refunded_orders_hash|merge({ ('#' ~ order.id) : order }) %}
+{% endfor %}
 
 {% if tab == 'refunds' %}
   {% include 'restaurant/_partials/refunds.html.twig' %}
@@ -53,17 +53,27 @@
   </thead>
   <tbody>
     {% for order in stats %}
-      <tr class="{{ order.hasRefunds() ? 'text-danger' : '' }}">
+      <tr class="{{ ('#' ~ order.id) in refunded_orders_hash|keys ? 'text-danger' : '' }}">
         {% for column in stats.columns %}
         <td class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
           {{ stats.getRowValue(column, loop.parent.loop.index0) }}
         </td>
         {% endfor %}
         <td class="text-right">
-          {% if order.hasRefunds() %}
+          {% if ('#' ~ order.id) in refunded_orders_hash|keys %}
+            {% set refunded_order = refunded_orders_hash[('#' ~ order.id)] %}
             <button class="button-icon" data-toggle="tooltip" data-placement="left"
-              title="{{ 'order.refund.total_amount'|trans({ '%amount%': order.refundTotal|price_format }) }}">
+              title="{{ 'order.refund.total_amount'|trans({ '%amount%': refunded_order.refundTotal|price_format }) }}">
               <i class="fa fa-exclamation-circle"></i>
+            </button>
+          {% endif %}
+          {% if order.vendorType == 'hub' %}
+            <button class="button-icon" data-toggle="tooltip" data-placement="left"
+              title="{{ 'order.hub.sub_total.disclaimer'|trans({
+                '%column%': ('order.export.heading.net_revenue'|trans),
+                '%amount%': order.revenue|price_format
+              }) }}">
+              <i class="fa fa-circle text-warning"></i>
             </button>
           {% endif %}
         </td>
@@ -77,6 +87,7 @@
           <strong>{{ stats.getColumnTotal(column) }}</strong>
         </td>
       {% endfor %}
+      <td></td>
     </tr>
   </tfoot>
 </table>

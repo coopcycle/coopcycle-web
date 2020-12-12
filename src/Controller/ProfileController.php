@@ -81,7 +81,8 @@ class ProfileController extends Controller
         TranslatorInterface $translator,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
-        PaginatorInterface $paginator)
+        PaginatorInterface $paginator,
+        EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
 
@@ -108,7 +109,7 @@ class ProfileController extends Controller
 
             $restaurant = $request->attributes->get('_restaurant');
 
-            return $this->statsAction($restaurant->getId(), $request, $slugify, $translator);
+            return $this->statsAction($restaurant->getId(), $request, $slugify, $translator, $entityManager);
         }
 
         if ($user->hasRole('ROLE_COURIER')) {

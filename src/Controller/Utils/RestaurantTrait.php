@@ -12,6 +12,8 @@ use AppBundle\Entity\Restaurant\PreparationTimeRule;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderRepository;
+use AppBundle\Entity\Sylius\OrderView;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
@@ -1129,7 +1131,8 @@ trait RestaurantTrait
 
     public function statsAction($id, Request $request,
         SlugifyInterface $slugify,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        EntityManagerInterface $entityManager)
     {
         $tab = $request->query->get('tab', 'orders');
 
@@ -1163,17 +1166,23 @@ trait RestaurantTrait
 
         $maxResults = 50;
 
-        $qb = $this->get('sylius.repository.order')
-            ->findOrdersByRestaurantAndDateRange(
-                $restaurant,
-                $start,
-                $end,
-                $state = 'fulfilled'
-            );
+        $qb = $entityManager->getRepository(OrderView::class)
+            ->createQueryBuilder('ov');
 
+        $qb = OrderRepository::addShippingTimeRangeClause($qb, 'ov', $start, $end);
+        $qb->andWhere('ov.restaurant = :restaurant');
+        $qb->setParameter('restaurant', $restaurant->getId());
+        $qb->addOrderBy('ov.shippingTimeRange', 'DESC');
         $qb
             ->setFirstResult(($request->query->getInt('page', 1) - 1) * $maxResults)
             ->setMaxResults($maxResults);
+
+        $refundedOrders = $this->get('sylius.repository.order')
+            ->findRefundedOrdersByRestaurantAndDateRange(
+                $restaurant,
+                $start,
+                $end
+            );
 
         $stats = new RestaurantStats(
             $this->getParameter('kernel.default_locale'),
@@ -1203,6 +1212,7 @@ trait RestaurantTrait
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'stats' => $stats,
+            'refunded_orders' => $refundedOrders, // new ArrayCollection($refundedOrders),
             'start' => $start,
             'end' => $end,
             'tab' => $tab,

@@ -18,11 +18,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class RestaurantStats implements \IteratorAggregate, \Countable
 {
     private $qb;
+    private $result;
     private $orders;
     private $translator;
     private $withRestaurantName;
     private $withMessenger;
 
+    private $columnTotals = [];
     private $taxTotals = [];
     private $taxColumns = [];
 
@@ -40,6 +42,8 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         bool $withMessenger = false)
     {
         $this->qb = $qb;
+        $this->result = $qb->getQuery()->getResult();
+
         $this->orders = new Paginator($qb->getQuery());
         $this->ordersIterator = $this->orders->getIterator();
 
@@ -48,57 +52,104 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         $this->withMessenger = $withMessenger;
         $this->taxesHelper = new TaxesHelper($taxRateRepository, $translator);
 
-        $qbForIds = clone $qb;
-        $qbForIds->select('o.id')->setFirstResult(null)->setMaxResults(null);
-
-        $this->ids = array_map(fn($row) => $row['id'], $qbForIds->getQuery()->getArrayResult());
-
-        $this->compileTaxes();
-
         $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
         $this->numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
         $this->numberFormatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
+
+        $this->addAdjustments();
+        $this->computeTaxes();
+        $this->computeColumnTotals();
     }
 
-    private function compileTaxes()
+    private function addAdjustments()
     {
-        if (count($this->ids) === 0) {
-            return;
-        }
+        $qbForIds = clone $this->qb;
+        $qbForIds->select('ov.id')->setFirstResult(null)->setMaxResults(null);
+
+        $ids = array_map(fn($row) => $row['id'], $qbForIds->getQuery()->getArrayResult());
 
         $qb = $this->qb->getEntityManager()
             ->getRepository(Adjustment::class)
             ->createQueryBuilder('a');
 
         $qb
-            ->select('a.originCode')
-            ->addSelect('COALESCE(IDENTITY(a.order), IDENTITY(oi.order)) AS order')
-            ->addSelect('SUM(a.amount) AS amount')
+            ->select('a.type')
+            ->addSelect('a.amount')
+            ->addSelect('a.neutral')
+            ->addSelect('COALESCE(IDENTITY(a.order), IDENTITY(oi.order)) AS order_id')
+            ->addSelect('IDENTITY(a.orderItem) AS order_item_id')
+            ->addSelect('a.originCode AS origin_code')
             ->leftJoin(OrderItem::class, 'oi', Expr\Join::WITH, 'a.orderItem = oi.id')
-            ->where('a.type = :type')
             ->andWhere(
                 $qb->expr()->orX(
-                    $qb->expr()->in('oi.order', $this->ids),
-                    $qb->expr()->in('a.order', $this->ids)
+                    $qb->expr()->in('oi.order', $ids),
+                    $qb->expr()->in('a.order', $ids)
                 )
             )
-            ->setParameter('type', AdjustmentInterface::TAX_ADJUSTMENT)
-            ->addGroupBy('order')
-            ->addGroupBy('a.originCode')
             ;
 
-        $taxTotals = [];
-        $taxColumns = [];
-        foreach ($qb->getQuery()->getArrayResult() as $taxSum) {
-            if (!isset($taxTotals[$taxSum['order']])) {
-                $taxTotals[$taxSum['order']] = [];
+        $adjustments = $qb->getQuery()->getArrayResult();
+
+        $adjustmentsByOrderId = array_reduce($adjustments, function ($accumulator, $adjustment) {
+
+            if (!isset($accumulator[$adjustment['order_id']])) {
+                $accumulator[$adjustment['order_id']] = [];
             }
-            $taxTotals[$taxSum['order']][$taxSum['originCode']] = $taxSum['amount'];
-            $taxColumns[] = $taxSum['originCode'];
+
+            $accumulator[$adjustment['order_id']][] = $adjustment;
+
+            return $accumulator;
+
+        }, []);
+
+        $this->result = array_map(function ($order) use ($adjustmentsByOrderId) {
+
+            $order->adjustments = $adjustmentsByOrderId[$order->id];
+
+            return $order;
+
+        }, $this->result);
+    }
+
+    private function computeTaxes()
+    {
+        foreach ($this->result as $order) {
+
+            $taxAdjustments = array_filter($order->adjustments, fn($adjustment) => $adjustment['type'] === 'tax');
+            $taxRateCodes = array_map(fn($adjustment) => $adjustment['origin_code'], $taxAdjustments);
+
+            $this->taxTotals[$order->getId()] = array_combine(
+                $taxRateCodes,
+                array_pad([], count($taxRateCodes), 0)
+            );
+
+            foreach ($taxAdjustments as $adjustment) {
+                $this->taxTotals[$order->getId()][$adjustment['origin_code']] += $adjustment['amount'];
+            }
+
+            $this->taxColumns = array_merge($this->taxColumns, $taxRateCodes);
         }
 
-        $this->taxColumns = array_unique($taxColumns);
-        $this->taxTotals = $taxTotals;
+        $this->taxColumns = array_unique($this->taxColumns);
+    }
+
+    private function computeColumnTotals()
+    {
+        foreach ($this->getColumns() as $column) {
+
+            if (!$this->isNumericColumn($column)) {
+                continue;
+            }
+
+            $this->columnTotals[$column] = 0;
+
+            foreach ($this->result as $index => $order) {
+
+                $rowValue = $this->getRowValue($column, $index, false);
+
+                $this->columnTotals[$column] += $rowValue;
+            }
+        }
     }
 
     private function isTaxColumn($column)
@@ -106,178 +157,9 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         return in_array($column, $this->taxColumns);
     }
 
-    private function formatNumber(int $amount)
+    private function formatNumber(int $amount, $bypass = false)
     {
-        return $this->numberFormatter->format($amount / 100);
-    }
-
-    private function getOrderTotalResult()
-    {
-        if (null === $this->orderTotalResult) {
-            $qb = $this->qb->getEntityManager()
-                ->getRepository(Order::class)
-                ->createQueryBuilder('o');
-
-            $qb
-                ->select('SUM(o.total) as total')
-                ->addSelect('SUM(o.itemsTotal) as itemsTotal')
-                ->where($qb->expr()->in('o.id', $this->ids))
-                ;
-
-            $result = $qb->getQuery()->getScalarResult();
-
-            $this->orderTotalResult = current($result);
-        }
-
-        return $this->orderTotalResult;
-    }
-
-    public function getItemsTotal(): int
-    {
-        if (count($this->ids) === 0) {
-            return 0;
-        }
-
-        $result = $this->getOrderTotalResult();
-
-        return $result['itemsTotal'];
-    }
-
-    public function getTotal(): int
-    {
-        if (count($this->ids) === 0) {
-            return 0;
-        }
-
-        $result = $this->getOrderTotalResult();
-
-        return $result['total'];
-    }
-
-    public function getItemsTaxTotal(): int
-    {
-        if (count($this->ids) === 0) {
-            return 0;
-        }
-
-        // select sum(a.amount)
-        // from sylius_adjustment a
-        // left join sylius_order_item oi on a.order_item_id = oi.id
-        // where oi.order_id in (...) and a.type = 'tax'
-
-        $qb = $this->qb->getEntityManager()
-            ->getRepository(Adjustment::class)
-            ->createQueryBuilder('a');
-
-        $qb
-            ->select('SUM(a.amount)')
-            ->leftJoin(OrderItem::class, 'oi', Expr\Join::WITH, 'a.orderItem = oi.id')
-            ->where($qb->expr()->in('oi.order', $this->ids))
-            ->andWhere('a.type = :type')
-            ->setParameter('type', AdjustmentInterface::TAX_ADJUSTMENT)
-            ;
-
-        return $qb->getQuery()->getSingleScalarResult();
-    }
-
-    private function getAdjustmentTotalResult()
-    {
-        if (null === $this->adjustmentTotalResult) {
-
-            $qb = $this->qb->getEntityManager()
-                ->getRepository(Adjustment::class)
-                ->createQueryBuilder('a');
-
-            $qb
-                ->select('a.type')
-                ->addSelect('a.originCode')
-                ->addSelect('SUM(a.amount) as amount')
-                ->where($qb->expr()->in('a.order', $this->ids))
-                ->addGroupBy('a.type')
-                ->addGroupBy('a.originCode')
-                ;
-
-            $this->adjustmentTotalResult = $qb->getQuery()->getScalarResult();
-        }
-
-        return $this->adjustmentTotalResult;
-    }
-
-    public function getAdjustmentsTotal(?string $type = null): int
-    {
-        if (count($this->ids) === 0) {
-            return 0;
-        }
-
-        $result = $this->getAdjustmentTotalResult();
-
-        foreach ($result as $row) {
-            if ($row['type'] === $type) {
-                return $row['amount'];
-            }
-        }
-
-        return 0;
-    }
-
-    public function getAdjustmentsTotalRecursively(?string $type = null): int
-    {
-        if (count($this->ids) === 0) {
-            return 0;
-        }
-
-        $qb = $this->qb->getEntityManager()
-            ->getRepository(Adjustment::class)
-            ->createQueryBuilder('a');
-
-        $qb
-            ->select('SUM(a.amount)')
-            ->leftJoin(OrderItem::class, 'oi', Expr\Join::WITH, 'a.orderItem = oi.id')
-            ->where($qb->expr()->in('oi.order', $this->ids))
-            ->andWhere('a.type = :type')
-            ->setParameter('type', $type)
-            ;
-
-        return $qb->getQuery()->getSingleScalarResult() ?? 0;
-    }
-
-    public function getFeeTotal(): int
-    {
-        if (count($this->ids) === 0) {
-            return 0;
-        }
-
-        $result = $this->getAdjustmentTotalResult();
-
-        foreach ($result as $row) {
-            if ($row['type'] === AdjustmentInterface::FEE_ADJUSTMENT) {
-                return $row['amount'];
-            }
-        }
-
-        return 0;
-    }
-
-    public function getStripeFeeTotal(): int
-    {
-        if (count($this->ids) === 0) {
-            return 0;
-        }
-
-        $result = $this->getAdjustmentTotalResult();
-
-        foreach ($result as $row) {
-            if ($row['type'] === AdjustmentInterface::STRIPE_FEE_ADJUSTMENT) {
-                return $row['amount'];
-            }
-        }
-
-        return 0;
-    }
-
-    public function getRevenue(): int
-    {
-        return $this->getTotal() - $this->getFeeTotal() - $this->getStripeFeeTotal();
+        return $bypass ? $amount : $this->numberFormatter->format($amount / 100);
     }
 
     public function count()
@@ -329,15 +211,15 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         return $this->translator->trans(sprintf('order.export.heading.%s', $column));
     }
 
-    public function getRowValue($column, $index)
+    public function getRowValue($column, $index, $formatted = true)
     {
         $order = $this->ordersIterator->offsetGet($index);
 
         if ($this->isTaxColumn($column)) {
 
-            return $this->formatNumber(
+            return $formatted ? $this->formatNumber(
                 $this->taxTotals[$order->getId()][$column] ?? 0
-            );
+            ) : $this->taxTotals[$order->getId()][$column] ?? 0;
         }
 
         switch ($column) {
@@ -356,23 +238,23 @@ class RestaurantStats implements \IteratorAggregate, \Countable
             case 'completed_at';
                 return $order->getShippedAt()->format('Y-m-d H:i');
             case 'total_products_excl_tax':
-                return $this->formatNumber($order->getItemsTotal() - $order->getItemsTaxTotal());
+                return $this->formatNumber($order->getItemsTotal() - $order->getItemsTaxTotal(), !$formatted);
             case 'total_products_incl_tax':
-                return $this->formatNumber($order->getItemsTotal());
+                return $this->formatNumber($order->getItemsTotal(), !$formatted);
             case 'delivery_fee':
-                return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+                return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT), !$formatted);
             case 'packaging_fee':
-                return $this->formatNumber($order->getAdjustmentsTotalRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT));
+                return $this->formatNumber($order->getAdjustmentsTotalRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT), !$formatted);
             case 'tip':
-                return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT));
+                return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT), !$formatted);
             case 'total_incl_tax':
-                return $this->formatNumber($order->getTotal());
+                return $this->formatNumber($order->getTotal(), !$formatted);
             case 'stripe_fee':
-                return $this->formatNumber($order->getStripeFeeTotal());
+                return $this->formatNumber($order->getStripeFeeTotal(), !$formatted);
             case 'platform_fee':
-                return $this->formatNumber($order->getFeeTotal());
+                return $this->formatNumber($order->getFeeTotal(), !$formatted);
             case 'net_revenue':
-                return $this->formatNumber($order->getRevenue());
+                return $this->formatNumber($order->getRevenue(), !$formatted);
         }
 
         return '';
@@ -391,25 +273,8 @@ class RestaurantStats implements \IteratorAggregate, \Countable
             return $this->formatNumber($total);
         }
 
-        switch ($column) {
-            case 'total_products_excl_tax':
-                return $this->formatNumber($this->getItemsTotal() - $this->getItemsTaxTotal());
-            case 'total_products_incl_tax':
-                return $this->formatNumber($this->getItemsTotal());
-            case 'delivery_fee':
-                return $this->formatNumber($this->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
-            case 'packaging_fee':
-                return $this->formatNumber($this->getAdjustmentsTotalRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT));
-            case 'tip':
-                return $this->formatNumber($this->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT));
-            case 'total_incl_tax':
-                return $this->formatNumber($this->getTotal());
-            case 'stripe_fee':
-                return $this->formatNumber($this->getStripeFeeTotal());
-            case 'platform_fee':
-                return $this->formatNumber($this->getFeeTotal());
-            case 'net_revenue':
-                return $this->formatNumber($this->getRevenue());
+        if (isset($this->columnTotals[$column])) {
+            return $this->formatNumber($this->columnTotals[$column]);
         }
 
         return '';

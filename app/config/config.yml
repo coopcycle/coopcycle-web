@@ -203,7 +203,7 @@ doctrine:
 
         # Add a schema filter to avoid having PostGIS tables tiger.* & topology.* in migrations diff
         # https://symfony.com/doc/master/bundles/DoctrineMigrationsBundle/index.html#manual-tables
-        schema_filter: ~^(?!(tiger|topology)\.)~
+        schema_filter: ~^(?!((tiger|topology)\.)|view_)~
 
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"

@@ -1124,3 +1124,4 @@ store.AUTO_PARTS_STORE: Automobile
 store.TOY_STORE: Jeux
 basics.enabled: Activé
 form.option_value.value.placeholder: ex. frites, salade…
+order.hub.sub_total.disclaimer: Cette commande a été réalisée auprès de plusieurs marchands. La colonne "%column%" affiche le montant qui correspond à vos produits (%amount%).
