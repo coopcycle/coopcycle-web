@@ -4,6 +4,8 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderRepository;
+use AppBundle\Entity\Sylius\OrderView;
 use AppBundle\Form\OrderExportType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\ReceiptGenerator;
@@ -34,7 +36,7 @@ trait OrderTrait
         return new JsonResponse($orderNormalized, 200);
     }
 
-    public function orderListAction(Request $request, TranslatorInterface $translator)
+    public function orderListAction(Request $request, TranslatorInterface $translator, EntityManagerInterface $entityManager)
     {
         $response = new Response();
 
@@ -65,19 +67,18 @@ trait OrderTrait
             $start->setTime(0, 0, 1);
             $end->setTime(23, 59, 59);
 
-            $ordersToExport = $this->getDoctrine()->getRepository(Order::class)
-                ->findFulfilledOrdersByDateRange(
-                    $start,
-                    $end,
-                    $asQueryBuilder = true
-                );
+            $qb = $entityManager->getRepository(OrderView::class)
+                ->createQueryBuilder('ov');
+
+            $qb = OrderRepository::addShippingTimeRangeClause($qb, 'ov', $start, $end);
+            $qb->addOrderBy('ov.shippingTimeRange', 'DESC');
 
             $stats = new RestaurantStats(
                 $this->getParameter('kernel.default_locale'),
-                $ordersToExport,
+                $qb,
                 $this->get('sylius.repository.tax_rate'),
                 $translator,
-                $withRestaurantName = true,
+                $withVendorName = true,
                 $withMessenger
             );
 

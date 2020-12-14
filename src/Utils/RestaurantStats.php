@@ -21,7 +21,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
     private $result;
     private $orders;
     private $translator;
-    private $withRestaurantName;
+    private $withVendorName;
     private $withMessenger;
 
     private $columnTotals = [];
@@ -38,7 +38,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         QueryBuilder $qb,
         RepositoryInterface $taxRateRepository,
         TranslatorInterface $translator,
-        bool $withRestaurantName = false,
+        bool $withVendorName = false,
         bool $withMessenger = false)
     {
         $this->qb = $qb;
@@ -48,7 +48,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         $this->ordersIterator = $this->orders->getIterator();
 
         $this->translator = $translator;
-        $this->withRestaurantName = $withRestaurantName;
+        $this->withVendorName = $withVendorName;
         $this->withMessenger = $withMessenger;
         $this->taxesHelper = new TaxesHelper($taxRateRepository, $translator);
 
@@ -176,7 +176,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
     {
         $headings = [];
 
-        if ($this->withRestaurantName) {
+        if ($this->withVendorName) {
             $headings[] = 'restaurant_name';
         }
         if ($this->withMessenger) {
@@ -224,7 +224,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
         switch ($column) {
             case 'restaurant_name';
-                return null !== $order->getRestaurant() ? $order->getRestaurant()->getName() : '';
+                return $order->hasVendor() ? $order->vendorName : '';
             case 'order_number';
                 return $order->getNumber();
             case 'fulfillment_method';
@@ -313,24 +313,12 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
         $records = [];
 
-        if (null === $this->orders->getQuery()->getMaxResults()) {
-            $this->orders->getQuery()->setMaxResults(10);
-        }
-
-        $pageCount =
-            ceil(count($this->orders) / $this->orders->getQuery()->getMaxResults());
-
-        for ($p = 1; $p <= $pageCount; $p++) {
-
-            $this->orders->getQuery()->setFirstResult(($p - 1) * $this->orders->getQuery()->getMaxResults());
-
-            foreach ($this->orders as $index => $order) {
-                $record = [];
-                foreach ($this->getColumns() as $column) {
-                    $record[] = $this->getRowValue($column, $index);
-                }
-                $records[] = $record;
+        foreach ($this->result as $index => $order) {
+            $record = [];
+            foreach ($this->getColumns() as $column) {
+                $record[] = $this->getRowValue($column, $index);
             }
+            $records[] = $record;
         }
 
         $csv->insertAll($records);
