@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Entity\LocalBusiness;
@@ -21,6 +22,7 @@ class DashboardController extends AbstractController
 {
     use AccessControlTrait;
     use DeliveryTrait;
+    use OrderTrait;
     use RestaurantTrait;
     use StoreTrait;
 
@@ -67,6 +69,11 @@ class DashboardController extends AbstractController
     protected function getStoreList(Request $request)
     {
         return [ $this->getUser()->getStores(), 1, 1 ];
+    }
+
+    protected function getOrderList(Request $request)
+    {
+        return [];
     }
 
     public function indexAction(Request $request,

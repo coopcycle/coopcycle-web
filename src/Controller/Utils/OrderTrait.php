@@ -177,15 +177,15 @@ trait OrderTrait
         return $this->redirect($request->headers->get('referer'));
     }
 
-    public function acceptOrderAction($id, Request $request, OrderManager $orderManager)
+    public function acceptOrderAction($id, Request $request, OrderManager $orderManager, EntityManagerInterface $entityManager)
     {
-        $order = $this->get('sylius.repository.order')->find($id);
+        $order = $entityManager->getRepository(Order::class)->find($id);
 
         $this->denyAccessUnlessGranted('accept', $order);
 
         try {
             $orderManager->accept($order);
-            $this->get('sylius.manager.order')->flush();
+            $entityManager->flush();
         } catch (\Exception $e) {
             // TODO Add flash message
         }
@@ -196,9 +196,9 @@ trait OrderTrait
         }
     }
 
-    public function refuseOrderAction($id, Request $request, OrderManager $orderManager)
+    public function refuseOrderAction($id, Request $request, OrderManager $orderManager, EntityManagerInterface $entityManager)
     {
-        $order = $this->get('sylius.repository.order')->find($id);
+        $order = $entityManager->getRepository(Order::class)->find($id);
 
         $this->denyAccessUnlessGranted('refuse', $order);
 
@@ -206,7 +206,7 @@ trait OrderTrait
 
         try {
             $orderManager->refuse($order, $reason);
-            $this->get('sylius.manager.order')->flush();
+            $entityManager->flush();
         } catch (\Exception $e) {
             // TODO Add flash message
         }
@@ -217,15 +217,15 @@ trait OrderTrait
         }
     }
 
-    public function delayOrderAction($id, Request $request, OrderManager $orderManager)
+    public function delayOrderAction($id, Request $request, OrderManager $orderManager, EntityManagerInterface $entityManager)
     {
-        $order = $this->get('sylius.repository.order')->find($id);
+        $order = $entityManager->getRepository(Order::class)->find($id);
 
         $this->denyAccessUnlessGranted('delay', $order);
 
         try {
             $orderManager->delay($order);
-            $this->get('sylius.manager.order')->flush();
+            $entityManager->flush();
         } catch (\Exception $e) {
             // TODO Add flash message
         }
@@ -236,22 +236,22 @@ trait OrderTrait
         }
     }
 
-    private function cancelOrderById($id, OrderManager $orderManager, $reason = null)
+    private function cancelOrderById($id, OrderManager $orderManager, EntityManagerInterface $entityManager, $reason = null)
     {
-        $order = $this->get('sylius.repository.order')->find($id);
+        $order = $entityManager->getRepository(Order::class)->find($id);
         $this->denyAccessUnlessGranted('cancel', $order);
 
         $orderManager->cancel($order, $reason);
-        $this->get('sylius.manager.order')->flush();
+        $entityManager->flush();
 
         return $order;
     }
 
-    public function cancelOrderAction($id, Request $request, OrderManager $orderManager)
+    public function cancelOrderAction($id, Request $request, OrderManager $orderManager, EntityManagerInterface $entityManager)
     {
         $reason = $request->request->get('reason', null);
 
-        $order = $this->cancelOrderById($id, $orderManager, $reason);
+        $order = $this->cancelOrderById($id, $orderManager, $entityManager, $reason);
 
         if ($request->isXmlHttpRequest()) {
 
@@ -259,15 +259,15 @@ trait OrderTrait
         }
     }
 
-    public function fulfillOrderAction($id, Request $request, OrderManager $orderManager)
+    public function fulfillOrderAction($id, Request $request, OrderManager $orderManager, EntityManagerInterface $entityManager)
     {
-        $order = $this->get('sylius.repository.order')->find($id);
+        $order = $entityManager->getRepository(Order::class)->find($id);
         $this->denyAccessUnlessGranted('fulfill', $order);
 
         try {
 
             $orderManager->fulfill($order);
-            $this->get('sylius.manager.order')->flush();
+            $entityManager->flush();
 
         } catch (\Exception $e) {
             // TODO Add flash message
