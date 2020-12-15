@@ -20,8 +20,14 @@ class OrderExportType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('date', DateType::class, [
-                'label' => 'form.order_export.date.label',
+            ->add('start', DateType::class, [
+                'label' => 'form.task_export.start.label',
+                'widget' => 'single_text',
+                'format' => 'yyyy-MM-dd',
+                'data' => new \DateTime('now'),
+            ])
+            ->add('end', DateType::class, [
+                'label' => 'form.task_export.end.label',
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
                 'data' => new \DateTime('now'),

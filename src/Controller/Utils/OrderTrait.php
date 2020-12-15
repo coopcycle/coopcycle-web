@@ -57,12 +57,10 @@ trait OrderTrait
 
         if ($orderExportForm->isSubmitted() && $orderExportForm->isValid()) {
 
-            $date = $orderExportForm->get('date')->getData();
+            $start = $orderExportForm->get('start')->getData();
+            $end = $orderExportForm->get('end')->getData();
 
             $withMessenger = $orderExportForm->has('messenger') && $orderExportForm->get('messenger')->getData();
-
-            $start = clone $date;
-            $end = clone $date;
 
             $start->setTime(0, 0, 1);
             $end->setTime(23, 59, 59);

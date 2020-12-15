@@ -41,7 +41,8 @@
         <h4 class="modal-title">{{ 'adminDashboard.dashboard.export'|trans }}</h4>
       </div>
       <div class="modal-body">
-        {{ form_row(order_export_form.date) }}
+        {{ form_row(order_export_form.start) }}
+        {{ form_row(order_export_form.end) }}
         {% if order_export_form.messenger is defined %}
           {{ form_row(order_export_form.messenger) }}
         {% endif %}
@@ -63,10 +64,16 @@
 
 var $settingsForm = $('form[name="admin_orders_settings"]');
 
-new CoopCycle.DatePicker(document.querySelector('#order_export_date_widget'), {
+new CoopCycle.DatePicker(document.querySelector('#order_export_start_widget'), {
   defaultValue: "{{ 'now'|date('Y-m-d') }}",
   onChange: function(date, dateString) {
-    document.querySelector('#order_export_date').value = date.format('YYYY-MM-DD');
+    document.querySelector('#order_export_start').value = date.format('YYYY-MM-DD');
+  }
+});
+new CoopCycle.DatePicker(document.querySelector('#order_export_end_widget'), {
+  defaultValue: "{{ 'now'|date('Y-m-d') }}",
+  onChange: function(date, dateString) {
+    document.querySelector('#order_export_end').value = date.format('YYYY-MM-DD');
   }
 });
 
