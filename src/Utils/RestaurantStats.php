@@ -9,10 +9,10 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Persistence\ObjectRepository;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use League\Csv\Writer as CsvWriter;
 use Sylius\Component\Order\Model\Adjustment;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RestaurantStats implements \IteratorAggregate, \Countable
@@ -36,7 +36,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
     public function __construct(
         string $locale,
         QueryBuilder $qb,
-        RepositoryInterface $taxRateRepository,
+        ObjectRepository $taxRateRepository,
         TranslatorInterface $translator,
         bool $withVendorName = false,
         bool $withMessenger = false)

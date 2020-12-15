@@ -17,6 +17,7 @@ use AppBundle\Entity\Sylius\OrderView;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
+use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\ClosingRuleType;
@@ -1177,7 +1178,7 @@ trait RestaurantTrait
             ->setFirstResult(($request->query->getInt('page', 1) - 1) * $maxResults)
             ->setMaxResults($maxResults);
 
-        $refundedOrders = $this->get('sylius.repository.order')
+        $refundedOrders = $entityManager->getRepository(Order::class)
             ->findRefundedOrdersByRestaurantAndDateRange(
                 $restaurant,
                 $start,
@@ -1187,7 +1188,7 @@ trait RestaurantTrait
         $stats = new RestaurantStats(
             $this->getParameter('kernel.default_locale'),
             $qb,
-            $this->get('sylius.repository.tax_rate'),
+            $entityManager->getRepository(TaxRate::class),
             $translator
         );
 
