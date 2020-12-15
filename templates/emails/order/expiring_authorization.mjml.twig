@@ -9,7 +9,7 @@
     {% set route_name = 'admin_order' %}
     {% set url_params = { id: order.id } %}
   {% else %}
-    {% set route_name = 'profile_restaurant_dashboard' %}
+    {% set route_name = 'dashboard_restaurant_dashboard' %}
     {% set url_params = { restaurantId: order.restaurant.id, order: order.id } %}
   {% endif %}
   <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white"

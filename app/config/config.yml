@@ -634,13 +634,13 @@ fos_js_routing:
         - profile_jwt
         - profile_notifications
         - profile_notifications_mark_as_read
-        - profile_order_accept
-        - profile_order_refuse
-        - profile_order_cancel
-        - profile_order_delay
-        - profile_order_fulfill
-        - profile_restaurant_dashboard
-        - profile_restaurant_stats
+        - dashboard_order_accept
+        - dashboard_order_refuse
+        - dashboard_order_cancel
+        - dashboard_order_delay
+        - dashboard_order_fulfill
+        - dashboard_restaurant_dashboard
+        - dashboard_restaurant_stats
         - routing_route
         - user_avatar
 

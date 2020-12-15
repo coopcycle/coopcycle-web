@@ -1136,3 +1136,4 @@ form.option_value.value.placeholder: e.g. fries, salad…
 form.customize.order_confirm_enabled.label: Show a custom order confirmation message
 form.customize.order_confirm.label: This message will appear on the order confirmation page
 order.hub.sub_total.disclaimer: This order has been placed with several merchants. The "%column%" column shows the amount that corresponds to your products (%amount%).
+profile.dashboard_suggest: Looking to manage your orders & your deliveries? <a href="%link%">Discover your new dashboard</a> ✨

@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'profile_restaurant' %}
+{% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'dashboard_restaurant' %}
 {% set restaurant_edit_url = path(restaurant_edit_route, { id: restaurant.id }) %}
 
 {% form_theme cart_form 'form/cart.html.twig' %}

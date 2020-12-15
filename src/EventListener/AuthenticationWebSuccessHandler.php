@@ -65,7 +65,11 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
                     return new RedirectResponse($this->router->generate('admin_index'));
                 }
 
-                if ($user->hasRole('ROLE_STORE') || $user->hasRole('ROLE_RESTAURANT') || $user->hasRole('ROLE_COURIER')) {
+                if ($user->hasRole('ROLE_STORE') || $user->hasRole('ROLE_RESTAURANT')) {
+                    return new RedirectResponse($this->router->generate('dashboard'));
+                }
+
+                if ($user->hasRole('ROLE_COURIER')) {
                     return new RedirectResponse($this->router->generate('fos_user_profile_show'));
                 }
 

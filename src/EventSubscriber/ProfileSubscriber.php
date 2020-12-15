@@ -96,14 +96,14 @@ class ProfileSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($route === 'fos_user_profile_show' && ($request->query->has('store') || $request->query->has('restaurant'))) {
+        if ($route === 'dashboard' && ($request->query->has('store') || $request->query->has('restaurant'))) {
             if ($request->query->has('store')) {
                 foreach ($stores as $store) {
                     if ($store->getId() === $request->query->getInt('store')) {
                         $request->getSession()->set('_store', $store->getId());
                         $request->getSession()->remove('_restaurant');
                         $event->setResponse(
-                            new RedirectResponse($this->urlGenerator->generate('fos_user_profile_show'))
+                            new RedirectResponse($this->urlGenerator->generate('dashboard'))
                         );
                         return;
                     }
@@ -115,7 +115,7 @@ class ProfileSubscriber implements EventSubscriberInterface
                         $request->getSession()->set('_restaurant', $restaurant->getId());
                         $request->getSession()->remove('_store');
                         $event->setResponse(
-                            new RedirectResponse($this->urlGenerator->generate('fos_user_profile_show'))
+                            new RedirectResponse($this->urlGenerator->generate('dashboard'))
                         );
                         return;
                     }

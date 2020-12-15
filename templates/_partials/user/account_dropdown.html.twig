@@ -24,6 +24,12 @@
     {% endif %}
 
     <li role="separator" class="divider"></li>
+
+    {% if is_granted('DASHBOARD_VIEW') %}
+    <li><a href="{{ path('dashboard') }}">{{ 'adminDashboard.dashboard.title'|trans }}</a></li>
+    <li role="separator" class="divider"></li>
+    {% endif %}
+
     <li><a href="{{ path('fos_user_security_logout') }}">{% trans from 'FOSUserBundle' %}layout.logout{% endtrans %}</a></li>
   </ul>
 </li>

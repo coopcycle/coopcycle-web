@@ -1124,3 +1124,4 @@ store.TOY_STORE: Jeux
 basics.enabled: Activé
 form.option_value.value.placeholder: ex. frites, salade…
 order.hub.sub_total.disclaimer: Cette commande a été réalisée auprès de plusieurs marchands. La colonne "%column%" affiche le montant qui correspond à vos produits (%amount%).
+profile.dashboard_suggest: Vous cherchez à gérer vos commandes et vos livraisons ? <a href="%link%">Découvrez votre nouveau tableau de bord</a> ✨

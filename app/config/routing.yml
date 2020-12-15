@@ -55,6 +55,9 @@ facebook_login:
 coopcycle_admin:
     resource: '@AppBundle/Resources/config/routing/admin.yml'
 
+coopcycle_dashboard:
+    resource: '@AppBundle/Resources/config/routing/dashboard.yml'
+
 coopcycle_profile:
     resource: '@AppBundle/Resources/config/routing/profile.yml'
 

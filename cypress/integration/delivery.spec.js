@@ -22,7 +22,7 @@ context('Delivery', () => {
     cy.get('[name="_password"]').type('store_1')
     cy.get('[name="_submit"]').click()
 
-    cy.location('pathname').should('eq', '/profile/')
+    cy.location('pathname').should('eq', '/dashboard')
 
     cy.get('a').contains('Créer une livraison').click()
 

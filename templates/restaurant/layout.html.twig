@@ -1,7 +1,7 @@
 {% extends layout %}
 
 {% block subnav %}
-  <nav class="navbar navbar-default">
+  <nav class="navbar {% if layout == 'dashboard.html.twig' %}mb-0{% else %}navbar-default{% endif %}">
     <div class="container-fluid">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#restaurant-navbar" aria-expanded="false">
