@@ -52,59 +52,65 @@ trait OrderTrait
 
         [ $orders, $pages, $page ] = $this->getOrderList($request);
 
-        $orderExportForm = $this->createForm(OrderExportType::class);
-        $orderExportForm->handleRequest($request);
-
-        if ($orderExportForm->isSubmitted() && $orderExportForm->isValid()) {
-
-            $start = $orderExportForm->get('start')->getData();
-            $end = $orderExportForm->get('end')->getData();
-
-            $withMessenger = $orderExportForm->has('messenger') && $orderExportForm->get('messenger')->getData();
-
-            $start->setTime(0, 0, 1);
-            $end->setTime(23, 59, 59);
-
-            $qb = $entityManager->getRepository(OrderView::class)
-                ->createQueryBuilder('ov');
-
-            $qb = OrderRepository::addShippingTimeRangeClause($qb, 'ov', $start, $end);
-            $qb->addOrderBy('ov.shippingTimeRange', 'DESC');
-
-            $stats = new RestaurantStats(
-                $this->getParameter('kernel.default_locale'),
-                $qb,
-                $this->get('sylius.repository.tax_rate'),
-                $translator,
-                $withVendorName = true,
-                $withMessenger
-            );
-
-            if (count($stats) === 0) {
-                $this->addFlash('error', $this->get('translator')->trans('order.export.empty'));
-
-                return $this->redirectToRoute($request->attributes->get('_route'));
-            }
-
-            $filename = sprintf('coopcycle-orders-%s.csv', $date->format('Y-m-d'));
-
-            $response = new Response($stats->toCsv());
-            $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
-                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                $filename
-            ));
-
-            return $response;
-        }
-
-        return $this->render($request->attributes->get('template'), [
+        $parameters = [
             'orders' => $orders,
             'pages' => $pages,
             'page' => $page,
             'routes' => $request->attributes->get('routes'),
             'show_canceled' => $showCanceled,
-            'order_export_form' => $orderExportForm->createView(),
-        ], $response);
+        ];
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+
+            $orderExportForm = $this->createForm(OrderExportType::class);
+            $orderExportForm->handleRequest($request);
+
+            if ($orderExportForm->isSubmitted() && $orderExportForm->isValid()) {
+
+                $start = $orderExportForm->get('start')->getData();
+                $end = $orderExportForm->get('end')->getData();
+
+                $withMessenger = $orderExportForm->has('messenger') && $orderExportForm->get('messenger')->getData();
+
+                $start->setTime(0, 0, 1);
+                $end->setTime(23, 59, 59);
+
+                $qb = $entityManager->getRepository(OrderView::class)
+                    ->createQueryBuilder('ov');
+
+                $qb = OrderRepository::addShippingTimeRangeClause($qb, 'ov', $start, $end);
+                $qb->addOrderBy('ov.shippingTimeRange', 'DESC');
+
+                $stats = new RestaurantStats(
+                    $this->getParameter('kernel.default_locale'),
+                    $qb,
+                    $this->get('sylius.repository.tax_rate'),
+                    $translator,
+                    $withVendorName = true,
+                    $withMessenger
+                );
+
+                if (count($stats) === 0) {
+                    $this->addFlash('error', $this->get('translator')->trans('order.export.empty'));
+
+                    return $this->redirectToRoute($request->attributes->get('_route'));
+                }
+
+                $filename = sprintf('coopcycle-orders-%s-%s.csv', $start->format('Y-m-d'), $end->format('Y-m-d'));
+
+                $response = new Response($stats->toCsv());
+                $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                    $filename
+                ));
+
+                return $response;
+            }
+
+            $parameters['order_export_form'] = $orderExportForm->createView();
+        }
+
+        return $this->render($request->attributes->get('template'), $parameters, $response);
     }
 
     public function orderReceiptPreviewAction($id, Request $request, ReceiptGenerator $generator)
