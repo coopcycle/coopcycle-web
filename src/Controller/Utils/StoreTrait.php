@@ -16,6 +16,7 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use Carbon\Carbon;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
@@ -185,6 +186,7 @@ trait StoreTrait
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
         TaxRateResolverInterface $taxRateResolver,
+        EntityManagerInterface $entityManager,
         TranslatorInterface $translator)
     {
         $routes = $request->attributes->get('routes');
@@ -214,9 +216,12 @@ trait StoreTrait
                     $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
                     $order = $this->createOrderForDelivery($delivery, $price, $this->getUser()->getCustomer());
 
-                    $this->get('sylius.repository.order')->add($order);
+                    $entityManager->persist($order);
+                    $entityManager->flush();
+
                     $orderManager->onDemand($order);
-                    $this->get('sylius.manager.order')->flush();
+
+                    $entityManager->flush();
 
                     return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
