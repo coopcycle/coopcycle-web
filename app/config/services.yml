@@ -92,6 +92,15 @@ services:
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
   Twig\CacheExtension\Extension: '@twig.cache_extension'
 
+  # Autowiring variables in controllers
+
+  Doctrine\Persistence\ObjectRepository $productRepository: '@sylius.repository.product'
+  AppBundle\Entity\Sylius\TaxonRepository $taxonRepository: '@sylius.repository.taxon'
+  Sylius\Component\Product\Repository\ProductOptionRepositoryInterface $productOptionRepository: '@sylius.repository.product_option'
+  Sylius\Component\Resource\Factory\FactoryInterface $taxonFactory: '@sylius.factory.taxon'
+  Sylius\Component\Resource\Factory\FactoryInterface $productFactory: '@sylius.factory.product'
+  Sylius\Component\Resource\Factory\FactoryInterface $productOptionFactory: '@sylius.factory.product_option'
+
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
       $isFoodtechEnabled: '%foodtech_enabled%'
