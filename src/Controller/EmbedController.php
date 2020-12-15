@@ -13,6 +13,7 @@ use AppBundle\Form\DeliveryEmbedType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Util\CanonicalizerInterface;
 use Hashids\Hashids;
@@ -204,6 +205,7 @@ class EmbedController extends Controller
     public function deliveryProcessAction($hashid, Request $request,
         OrderRepositoryInterface $orderRepository,
         OrderManager $orderManager,
+        OrderFactory $orderFactory,
         EntityManagerInterface $objectManager,
         DeliveryManager $deliveryManager,
         CanonicalizerInterface $canonicalizer)
@@ -238,7 +240,7 @@ class EmbedController extends Controller
                 $deliveryForm->getPricingRuleSet(),
                 $deliveryManager
             );
-            $order = $this->createOrderForDelivery($delivery, $price, $customer);
+            $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $customer);
 
             if ($billingAddress = $form->get('billingAddress')->getData()) {
                 $this->setBillingAddress($order, $billingAddress);

@@ -61,6 +61,7 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
@@ -1784,6 +1785,7 @@ class AdminController extends Controller
 
     public function newOrderAction(Request $request,
         EntityManagerInterface $objectManager,
+        OrderFactory $orderFactory,
         OrderNumberAssignerInterface $orderNumberAssigner)
     {
         $delivery = new Delivery();
@@ -1797,7 +1799,7 @@ class AdminController extends Controller
             $variantName = $form->get('variantName')->getData();
             $variantPrice = $form->get('variantPrice')->getData();
 
-            $order = $this->createOrderForDelivery($delivery, $variantPrice);
+            $order = $this->createOrderForDelivery($orderFactory, $delivery, $variantPrice);
 
             $variant = $order->getItems()->get(0)->getVariant();
 

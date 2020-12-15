@@ -14,6 +14,7 @@ use AppBundle\Form\AddressType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
+use AppBundle\Sylius\Order\OrderFactory;
 use Carbon\Carbon;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\EntityManagerInterface;
@@ -185,6 +186,7 @@ trait StoreTrait
     public function newStoreDeliveryAction($id, Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
+        OrderFactory $orderFactory,
         TaxRateResolverInterface $taxRateResolver,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator)
@@ -214,7 +216,7 @@ trait StoreTrait
                 try {
 
                     $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $order = $this->createOrderForDelivery($delivery, $price, $this->getUser()->getCustomer());
+                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $this->getUser()->getCustomer());
 
                     $entityManager->persist($order);
                     $entityManager->flush();

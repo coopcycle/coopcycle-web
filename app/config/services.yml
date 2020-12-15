@@ -349,8 +349,12 @@ services:
   AppBundle\Sylius\Order\OrderFactory:
     decorates: sylius.factory.order
     arguments:
-      - '@AppBundle\Sylius\Order\OrderFactory.inner'
-      - "@sylius.context.channel"
+      $factory: '@AppBundle\Sylius\Order\OrderFactory.inner'
+      $channelContext: "@sylius.context.channel"
+      $orderItemFactory: "@sylius.factory.order_item"
+      $productVariantFactory: "@sylius.factory.product_variant"
+      $orderItemQuantityModifier: "@sylius.order_item_quantity_modifier"
+      $orderModifier: "@sylius.order_modifier"
     public: false
 
   coopcycle.sylius.product_variant_resolver.lazy:
