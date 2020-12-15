@@ -932,11 +932,11 @@ class AdminController extends Controller
         return [ $stores, 1, 1 ];
     }
 
-    public function newStoreAction(Request $request)
+    public function newStoreAction(Request $request, TranslatorInterface $translator)
     {
         $store = new Store();
 
-        return $this->renderStoreForm($store, $request);
+        return $this->renderStoreForm($store, $request, $translator);
     }
 
     /**

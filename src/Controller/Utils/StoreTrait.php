@@ -79,7 +79,7 @@ trait StoreTrait
         ]);
     }
 
-    public function storeAddressAction($storeId, $addressId, Request $request)
+    public function storeAddressAction($storeId, $addressId, Request $request, TranslatorInterface $translator)
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($storeId);
 
@@ -91,10 +91,10 @@ trait StoreTrait
             throw new AccessDeniedHttpException('Access denied');
         }
 
-        return $this->renderStoreAddressForm($store, $address, $request);
+        return $this->renderStoreAddressForm($store, $address, $request, $translator);
     }
 
-    public function newStoreAddressAction($id, Request $request)
+    public function newStoreAddressAction($id, Request $request, TranslatorInterface $translator)
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
 
@@ -102,10 +102,10 @@ trait StoreTrait
 
         $address = new Address();
 
-        return $this->renderStoreAddressForm($store, $address, $request);
+        return $this->renderStoreAddressForm($store, $address, $request, $translator);
     }
 
-    protected function renderStoreForm(Store $store, Request $request)
+    protected function renderStoreForm(Store $store, Request $request, TranslatorInterface $translator)
     {
         $form = $this->createForm(StoreType::class, $store);
 
@@ -121,7 +121,7 @@ trait StoreTrait
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $translator->trans('global.changesSaved')
             );
 
             return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);
@@ -139,7 +139,7 @@ trait StoreTrait
         ]);
     }
 
-    protected function renderStoreAddressForm(Store $store, Address $address, Request $request)
+    protected function renderStoreAddressForm(Store $store, Address $address, Request $request, TranslatorInterface $translator)
     {
         $routes = $request->attributes->get('routes');
 
@@ -166,7 +166,7 @@ trait StoreTrait
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $translator->trans('global.changesSaved')
             );
 
             return $this->redirectToRoute($routes['store'], ['id' => $store->getId()]);
@@ -184,7 +184,8 @@ trait StoreTrait
     public function newStoreDeliveryAction($id, Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
-        TaxRateResolverInterface $taxRateResolver)
+        TaxRateResolverInterface $taxRateResolver,
+        TranslatorInterface $translator)
     {
         $routes = $request->attributes->get('routes');
 
@@ -220,7 +221,7 @@ trait StoreTrait
                     return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
                 } catch (NoRuleMatchedException $e) {
-                    $message = $this->get('translator')->trans('delivery.price.error.priceCalculation', [], 'validators');
+                    $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                     $form->addError(new FormError($message));
                 }
 
@@ -259,13 +260,13 @@ trait StoreTrait
         ]);
     }
 
-    public function storeAction($id, Request $request)
+    public function storeAction($id, Request $request, TranslatorInterface $translator)
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
 
         $this->accessControl($store);
 
-        return $this->renderStoreForm($store, $request);
+        return $this->renderStoreForm($store, $request, $translator);
     }
 
     public function storeDeliveriesAction($id, Request $request,
