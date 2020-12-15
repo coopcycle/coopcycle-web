@@ -219,6 +219,7 @@
         "DROPZONE_REMOVE_FILE": "Odebrat soubor",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Vyberte maximálně {{count}} hodnot",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_AT_LEAST": "Vyberte alespoň {{count}} hodnoty",
-        "CART_PRODUCT_OPTIONS_VALUES_RANGE": "Vyberte prosím mezi hodnotami {{min}} a {{max}}"
+        "CART_PRODUCT_OPTIONS_VALUES_RANGE": "Vyberte prosím mezi hodnotami {{min}} a {{max}}",
+        "RESTAURANTS_AND_STORES": "Restaurace a obchody"
     }
 }
