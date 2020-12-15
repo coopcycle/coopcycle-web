@@ -68,6 +68,10 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
         $ids = array_map(fn($row) => $row['id'], $qbForIds->getQuery()->getArrayResult());
 
+        if (count($ids) === 0) {
+            return;
+        }
+
         $qb = $this->qb->getEntityManager()
             ->getRepository(Adjustment::class)
             ->createQueryBuilder('a');
