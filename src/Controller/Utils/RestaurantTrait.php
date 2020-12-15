@@ -293,9 +293,10 @@ trait RestaurantTrait
     }
 
     protected function renderRestaurantDashboard(
+        LocalBusiness $restaurant,
         Request $request,
         JWTManagerInterface $jwtManager,
-        LocalBusiness $restaurant)
+        EntityManagerInterface $entityManager)
     {
         $this->accessControl($restaurant);
 
@@ -304,7 +305,7 @@ trait RestaurantTrait
             $date = new \DateTime($request->query->get('date'));
         }
 
-        $qb = $this->get('sylius.repository.order')
+        $qb = $entityManager->getRepository(Order::class)
             ->createQueryBuilder('o')
             ->join(Vendor::class, 'v', Expr\Join::WITH, 'o.vendor = v.id')
             ->andWhere('v.restaurant = :restaurant')
@@ -322,7 +323,7 @@ trait RestaurantTrait
         $order = null;
         if ($request->query->has('order')) {
             $orderId = $request->query->getInt('order');
-            $order = $this->get('sylius.repository.order')->find($orderId);
+            $order = $entityManager->getRepository(Order::class)->find($orderId);
         }
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
@@ -352,13 +353,14 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    public function restaurantDashboardAction($restaurantId, Request $request, JWTManagerInterface $jwtManager)
+    public function restaurantDashboardAction($restaurantId, Request $request,
+        JWTManagerInterface $jwtManager, EntityManagerInterface $entityManager)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
-        return $this->renderRestaurantDashboard($request, $jwtManager, $restaurant);
+        return $this->renderRestaurantDashboard($restaurant, $request, $jwtManager, $entityManager);
     }
 
     public function restaurantMenuTaxonsAction($id, Request $request)
