@@ -29,7 +29,7 @@ profile_orders:
 dashboard_restaurant:
     path: /dashboard/restaurants/{id}
     defaults:
-        _controller: AppBundle\Controller\ProfileController::restaurantAction
+        _controller: AppBundle\Controller\DashboardController::restaurantAction
         layout: 'dashboard.html.twig'
         template: 'restaurant/form.html.twig'
         routes:
@@ -47,7 +47,7 @@ dashboard_restaurants:
     path: /dashboard/restaurants
     defaults:
         _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
-        path: /dashboard/
+        path: /dashboard
         permanent: false
     methods: [ GET ]
 
@@ -326,7 +326,7 @@ dashboard_stores:
     path: /dashboard/stores
     defaults:
         _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
-        path: /dashboard/
+        path: /dashboard
         permanent: false
     methods:  [ GET ]
 
