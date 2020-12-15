@@ -15,17 +15,20 @@ use AppBundle\Form\DeliveryImportType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Webmozart\Assert\Assert;
 
 trait StoreTrait
 {
@@ -188,6 +191,7 @@ trait StoreTrait
         DeliveryManager $deliveryManager,
         OrderFactory $orderFactory,
         TaxRateResolverInterface $taxRateResolver,
+        ProductVariantFactoryInterface $productVariantFactory,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator)
     {
@@ -248,7 +252,9 @@ trait StoreTrait
             }
         }
 
-        $variant = $this->get('sylius.factory.product_variant')
+        Assert::isInstanceOf($productVariantFactory, ProductVariantFactory::class);
+
+        $variant = $productVariantFactory
             ->createForDelivery($delivery, 0);
 
         $rate = $taxRateResolver->resolve($variant, [
