@@ -817,7 +817,6 @@ order.export.heading.stripe_fee: Comissió Stripe
 order.export.heading.platform_fee: Comissió plataforma
 order.export.heading.net_revenue: Ingressos nets
 order.export.heading.completed_by: Completat per
-form.order_export.date.label: Data
 form.order_export.messenger.label: Agregar una columna amb el/la missatger que va
   completar la comanda
 basics.show: Mostrar

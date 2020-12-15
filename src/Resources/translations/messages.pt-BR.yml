@@ -875,7 +875,6 @@ order.export.heading.stripe_fee: Taxa Stripe
 order.export.heading.platform_fee: Taxa da Plataforma
 order.export.heading.net_revenue: Receita líquida
 order.export.heading.completed_by: Finalizada por
-form.order_export.date.label: Data
 form.order_export.messenger.label: Adicionar coluna com entregador que finalizou o
   pedido
 basics.show: Exibir

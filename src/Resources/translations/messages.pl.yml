@@ -599,7 +599,6 @@ restricted_diets.HALAL_DIET: Halal
 restricted_diets.KOSHER_DIET: Koszerny
 restricted_diets.LOW_CALORIE_DIET: Niskokaloryczny
 restricted_diets.LOW_FAT_DIET: Niskotłuszczowy
-form.order_export.date.label: Data
 form.checkout_address.telephone.label: Numer telefonu
 form.product_option.add_value.label: Dodaj wartość
 form.product_option.strategy.label: Kalkulacja ceny

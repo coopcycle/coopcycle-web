@@ -781,7 +781,6 @@ order.export.heading.stripe_fee: Tariffa Stripe
 order.export.heading.platform_fee: Tariffa piattaforma
 order.export.heading.net_revenue: Guadagno netto
 order.export.heading.completed_by: Completato da
-form.order_export.date.label: Data
 basics.show: Mostra
 basics.hide: Nascondi
 food_establishment.BAR_OR_PUB: Bar o pub

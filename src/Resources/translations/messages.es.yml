@@ -770,7 +770,6 @@ form.reusable_packaging.name.label: Nombre
 order.export.heading.restaurant_name: Restaurante
 order.export.heading.net_revenue: Ingresos netos
 order.export.heading.completed_by: Completado por
-form.order_export.date.label: Fecha
 basics.show: Mostrar
 basics.import: Importar
 form.min_max.lower.label: Número mínimo

@@ -561,7 +561,6 @@ basics.hide: Skrýt
 basics.show: Zobrazit
 form.order_export.messenger.label: Přidejte sloupec s messengerem, který objednávku
   dokončil
-form.order_export.date.label: Datum
 order.export.heading.completed_by: Dokončeno
 order.export.heading.net_revenue: Čistý zisk
 order.export.heading.platform_fee: Poplatek Platformy

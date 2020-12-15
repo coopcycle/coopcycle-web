@@ -991,7 +991,6 @@ order.export.heading.stripe_fee: 'Comisión Stripe'
 order.export.heading.platform_fee: 'Comisión plataforma'
 order.export.heading.net_revenue: 'Ingresos netos'
 order.export.heading.completed_by: 'Completau per'
-form.order_export.date.label: 'Calendata'
 form.order_export.messenger.label: 'Adhibir una columna con lo/la mensachero/a que
   completó lo pediu'
 basics.show: 'Amostrar'
