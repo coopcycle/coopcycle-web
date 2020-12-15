@@ -70,7 +70,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
 
@@ -122,8 +122,10 @@ trait RestaurantTrait
     }
 
     protected function renderRestaurantForm(LocalBusiness $restaurant, Request $request,
+        ValidatorInterface $validator,
         JWTEncoderInterface $jwtEncoder,
-        IriConverterInterface $iriConverter)
+        IriConverterInterface $iriConverter,
+        TranslatorInterface $translator)
     {
         $form = $this->createForm(RestaurantType::class, $restaurant);
 
@@ -141,7 +143,7 @@ trait RestaurantTrait
 
                         $this->addFlash(
                             'notice',
-                            $this->get('translator')->trans('form.local_business.stripe_account.success')
+                            $translator->trans('form.local_business.stripe_account.success')
                         );
                     }
                 }
@@ -174,7 +176,7 @@ trait RestaurantTrait
                 }
 
                 // Make sure the restaurant can be enabled, or disable it
-                $violations = $this->get('validator')->validate($restaurant, null, ['activable']);
+                $violations = $validator->validate($restaurant, null, ['activable']);
                 if (count($violations) > 0) {
                     $restaurant->setEnabled(false);
                 }
@@ -199,14 +201,14 @@ trait RestaurantTrait
                 if (!$wasDepositRefundEnabled && $restaurant->isDepositRefundEnabled()) {
                     $this->addFlash(
                         'notice',
-                        $this->get('translator')->trans('confirm.deposit_refund_enabled', [
+                        $translator->trans('confirm.deposit_refund_enabled', [
                             '%url%' => $this->generateUrl($this->getRestaurantRoute('deposit_refund'), ['id' => $restaurant->getId()])
                         ])
                     );
                 } else {
                     $this->addFlash(
                         'notice',
-                        $this->get('translator')->trans('global.changesSaved')
+                        $translator->trans('global.changesSaved')
                     );
                 }
 
@@ -220,7 +222,6 @@ trait RestaurantTrait
             }
 
         } else {
-            $validator = $this->get('validator');
             $violations = $validator->validate($restaurant, null, ['activable']);
             $activationErrors = ValidationUtils::serializeValidationErrors($violations);
         }
@@ -276,7 +277,11 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    public function restaurantAction($id, Request $request, JWTEncoderInterface $jwtEncoder, IriConverterInterface $iriConverter)
+    public function restaurantAction($id, Request $request,
+        ValidatorInterface $validator,
+        JWTEncoderInterface $jwtEncoder,
+        IriConverterInterface $iriConverter,
+        TranslatorInterface $translator)
     {
         $repository = $this->getDoctrine()->getRepository(LocalBusiness::class);
 
@@ -284,16 +289,20 @@ trait RestaurantTrait
 
         $this->accessControl($restaurant);
 
-        return $this->renderRestaurantForm($restaurant, $request, $jwtEncoder, $iriConverter);
+        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator);
     }
 
-    public function newRestaurantAction(Request $request, JWTEncoderInterface $jwtEncoder, IriConverterInterface $iriConverter)
+    public function newRestaurantAction(Request $request,
+        ValidatorInterface $validator,
+        JWTEncoderInterface $jwtEncoder,
+        IriConverterInterface $iriConverter,
+        TranslatorInterface $translator)
     {
         // TODO Check roles
         $restaurant = new LocalBusiness();
         $restaurant->setContract(new Contract());
 
-        return $this->renderRestaurantForm($restaurant, $request, $jwtEncoder, $iriConverter);
+        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator);
     }
 
     protected function renderRestaurantDashboard(
@@ -418,7 +427,8 @@ trait RestaurantTrait
     }
 
     public function activateRestaurantMenuTaxonAction($restaurantId, $menuId, Request $request,
-        TaxonRepository $taxonRepository)
+        TaxonRepository $taxonRepository,
+        TranslatorInterface $translator)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -435,7 +445,7 @@ trait RestaurantTrait
 
         $this->addFlash(
             'notice',
-            $this->get('translator')->trans('restaurant.menus.activated', ['%menu_name%' => $menuTaxon->getName()])
+            $translator->trans('restaurant.menus.activated', ['%menu_name%' => $menuTaxon->getName()])
         );
 
         $routes = $request->attributes->get('routes');
@@ -478,7 +488,8 @@ trait RestaurantTrait
         TaxonRepository $taxonRepository,
         FactoryInterface $taxonFactory,
         EntityManagerInterface $entityManager,
-        EventDispatcherInterface $dispatcher)
+        EventDispatcherInterface $dispatcher,
+        TranslatorInterface $translator)
     {
         $routes = $request->attributes->get('routes');
 
@@ -512,7 +523,7 @@ trait RestaurantTrait
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $translator->trans('global.changesSaved')
             );
 
             return $this->redirect($request->headers->get('referer'));
@@ -589,7 +600,7 @@ trait RestaurantTrait
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $translator->trans('global.changesSaved')
             );
 
             return $this->redirect($request->headers->get('referer'));
@@ -604,7 +615,7 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    public function restaurantPlanningAction($id, Request $request)
+    public function restaurantPlanningAction($id, Request $request, TranslatorInterface $translator)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -629,7 +640,7 @@ trait RestaurantTrait
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $translator->trans('global.changesSaved')
             );
             return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
         }
@@ -833,7 +844,8 @@ trait RestaurantTrait
 
     public function restaurantProductOptionAction($restaurantId, $optionId, Request $request,
         ProductOptionRepositoryInterface $productOptionRepository,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator)
     {
         $filterCollection = $entityManager->getFilters();
         if ($filterCollection->isEnabled('disabled_filter')) {
@@ -876,7 +888,7 @@ trait RestaurantTrait
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $translator->trans('global.changesSaved')
             );
 
             return $this->redirect($request->headers->get('referer'));
@@ -1244,7 +1256,7 @@ trait RestaurantTrait
         ]));
     }
 
-    public function newRestaurantReusablePackagingAction($id, Request $request)
+    public function newRestaurantReusablePackagingAction($id, Request $request, TranslatorInterface $translator)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -1265,7 +1277,7 @@ trait RestaurantTrait
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $translator->trans('global.changesSaved')
             );
 
             return $this->redirectToRoute($this->getRestaurantRoute('deposit_refund'), ['id' => $id]);
@@ -1278,7 +1290,7 @@ trait RestaurantTrait
         ]));
     }
 
-    public function restaurantDepositRefundAction($id, Request $request)
+    public function restaurantDepositRefundAction($id, Request $request, TranslatorInterface $translator)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -1295,7 +1307,7 @@ trait RestaurantTrait
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $translator->trans('global.changesSaved')
             );
 
             $routes = $this->getRestaurantRoutes();
@@ -1325,7 +1337,7 @@ trait RestaurantTrait
         ]));
     }
 
-    public function newRestaurantPromotionAction($id, Request $request)
+    public function newRestaurantPromotionAction($id, Request $request, TranslatorInterface $translator)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -1357,7 +1369,7 @@ trait RestaurantTrait
 
                     // $this->addFlash(
                     //     'notice',
-                    //     $this->get('translator')->trans('global.changesSaved')
+                    //     $translator->trans('global.changesSaved')
                     // );
 
                     return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
