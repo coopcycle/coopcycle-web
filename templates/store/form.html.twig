@@ -5,7 +5,7 @@
 {% set admin_deliveries_pricing = path('admin_deliveries_pricing') %}
 
 {% block breadcrumb %}
-<li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+<li><a href="{{ path('stores'|route_for_layout) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
 <li>{% if store.id is not empty %}{{ store.name }}{% else %}{% trans %}adminDashboard.stores.createNew{% endtrans %}{% endif %}</li>
 {% endblock %}
 
@@ -124,7 +124,7 @@
               {% endif %}
             </td>
             <td class="text-right">
-              <a href="{{ path(store_address_route, { storeId: store.id, addressId: address.id }) }}">{{ 'basics.edit'|trans }}</a>
+              <a href="{{ path('store_address'|route_for_layout, { storeId: store.id, addressId: address.id }) }}">{{ 'basics.edit'|trans }}</a>
             </td>
           </tr>
         {% endfor %}
@@ -137,7 +137,7 @@
     {% endif %}
 
     <p class="text-right">
-      <a href="{{ path(store_address_new_route, { id: store.id }) }}" class="btn btn-success">
+      <a href="{{ path('store_address_new'|route_for_layout, { id: store.id }) }}" class="btn btn-success">
         <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
       </a>
     </p>

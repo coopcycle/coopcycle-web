@@ -63,6 +63,8 @@ class CoopCycleExtension extends AbstractExtension
                         'success' => 'admin_store_deliveries',
                         'store_deliveries' => 'admin_store_deliveries',
                         'store_delivery_new' => 'admin_store_delivery_new',
+                        'store_address_new' => 'admin_store_address_new',
+                        'store_address' => 'admin_store_address',
                     ];
                 } else {
                     $routes = [
@@ -71,6 +73,8 @@ class CoopCycleExtension extends AbstractExtension
                         'success' => 'dashboard_store_deliveries',
                         'store_deliveries' => 'dashboard_store_deliveries',
                         'store_delivery_new' => 'dashboard_store_delivery_new',
+                        'store_address_new' => 'dashboard_store_address_new',
+                        'store_address' => 'dashboard_store_address',
                     ];
                 }
 
