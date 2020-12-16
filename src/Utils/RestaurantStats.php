@@ -2,6 +2,9 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Task;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Sylius\Taxation\TaxesHelper;
@@ -56,19 +59,20 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         $this->numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
         $this->numberFormatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
 
+        $this->ids = $this->loadIds();
+
         $this->addAdjustments();
         $this->computeTaxes();
         $this->computeColumnTotals();
+
+        if ($withMessenger) {
+            $this->loadMessengers();
+        }
     }
 
     private function addAdjustments()
     {
-        $qbForIds = clone $this->qb;
-        $qbForIds->select('ov.id')->setFirstResult(null)->setMaxResults(null);
-
-        $ids = array_map(fn($row) => $row['id'], $qbForIds->getQuery()->getArrayResult());
-
-        if (count($ids) === 0) {
+        if (count($this->ids) === 0) {
             return;
         }
 
@@ -86,8 +90,8 @@ class RestaurantStats implements \IteratorAggregate, \Countable
             ->leftJoin(OrderItem::class, 'oi', Expr\Join::WITH, 'a.orderItem = oi.id')
             ->andWhere(
                 $qb->expr()->orX(
-                    $qb->expr()->in('oi.order', $ids),
-                    $qb->expr()->in('a.order', $ids)
+                    $qb->expr()->in('oi.order', $this->ids),
+                    $qb->expr()->in('a.order', $this->ids)
                 )
             )
             ;
@@ -154,6 +158,48 @@ class RestaurantStats implements \IteratorAggregate, \Countable
                 $this->columnTotals[$column] += $rowValue;
             }
         }
+    }
+
+    private function loadIds()
+    {
+        $qbForIds = clone $this->qb;
+        $qbForIds->select('ov.id')->setFirstResult(null)->setMaxResults(null);
+
+        return array_map(fn($row) => $row['id'], $qbForIds->getQuery()->getArrayResult());
+    }
+
+    private function loadMessengers()
+    {
+        if (count($this->ids) === 0) {
+            return;
+        }
+
+        $qb = $this->qb->getEntityManager()
+            ->getRepository(User::class)
+            ->createQueryBuilder('u');
+
+        $qb
+            ->select('IDENTITY(d.order) AS order_id')
+            ->addSelect('t.id AS task_id')
+            ->addSelect('u.username')
+            ->innerJoin(Task::class,     't', Expr\Join::WITH, 't.assignedTo = u.id')
+            ->innerJoin(Delivery::class, 'd', Expr\Join::WITH, 't.delivery = d.id')
+            ->andWhere(
+                $qb->expr()->in('d.order', $this->ids)
+            )
+            ->andWhere('t.type = :type')
+            ->setParameter('type', Task::TYPE_DROPOFF)
+            ;
+
+        $result = $qb->getQuery()->getArrayResult();
+
+        $this->messengers = array_reduce($result, function ($messengers, $value) {
+
+            $messengers[$value['order_id']] = $value['username'];
+
+            return $messengers;
+
+        }, []);
     }
 
     private function isTaxColumn($column)
@@ -234,11 +280,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
             case 'fulfillment_method';
                 return $order->getFulfillmentMethod();
             case 'completed_by';
-                if ($order->getFulfillmentMethod() === 'delivery') {
-                    $messenger = $order->getDelivery()->getDropoff()->getAssignedCourier();
-                    return $messenger ? $messenger->getUsername() : '';
-                }
-                return '';
+                return $order->getFulfillmentMethod() === 'delivery' ? ($this->messengers[$order->getId()] ?? '') : '';
             case 'completed_at';
                 return $order->getShippedAt()->format('Y-m-d H:i');
             case 'total_products_excl_tax':
