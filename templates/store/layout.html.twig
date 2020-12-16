@@ -1,0 +1,39 @@
+{% extends layout %}
+
+{% block subnav %}
+  <nav class="navbar {% if layout == 'dashboard.html.twig' %}mb-0{% else %}navbar-default{% endif %}">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#store-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <span class="navbar-brand">
+          {% if store.id is not empty %}
+            <a href="{{ path('store_deliveries'|route_for_layout, { id: store.id }) }}">{{ store.name }}</a>
+          {% else %}
+            {% trans %}basics.new{% endtrans %}
+          {% endif %}
+        </span>
+      </div>
+      <div class="collapse navbar-collapse" id="store-navbar">
+        {% if store.id is not empty %}
+        <div class="nav navbar-nav navbar-right ml-4">
+          <a href="{{ path('store_delivery_new'|route_for_layout, { id: store.id }) }}" class="btn btn-success navbar-btn">
+            <i class="fa fa-plus"></i> {{ 'delivery.createNew'|trans }}
+          </a>
+        </div>
+        {% endif %}
+        {% if store.id is not empty and is_granted('ROLE_ADMIN') %}
+        <div class="nav navbar-nav navbar-right">
+          <a href="{{ path('admin_store_users', { id: store.id }) }}" class="btn btn-default navbar-btn">
+            <i class="fa fa-user"></i>  {% trans %}stores.users{% endtrans %}
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+{% endblock %}

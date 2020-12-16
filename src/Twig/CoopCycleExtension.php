@@ -54,6 +54,29 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('restaurant_microdata', array(LocalBusinessRuntime::class, 'seo')),
             new TwigFilter('restaurant_delay_for_humans', array(LocalBusinessRuntime::class, 'delayForHumans')),
             new TwigFilter('grams_to_kilos', array($this, 'gramsToKilos')),
+            new TwigFilter('route_for_layout', function (\Twig\Environment $env, $context, $string) {
+
+                if ($context['layout'] === 'admin.html.twig') {
+                    $routes = [
+                        'stores' => 'admin_stores',
+                        'store' => 'admin_store',
+                        'success' => 'admin_store_deliveries',
+                        'store_deliveries' => 'admin_store_deliveries',
+                        'store_delivery_new' => 'admin_store_delivery_new',
+                    ];
+                } else {
+                    $routes = [
+                        'stores' => 'dashboard_stores',
+                        'store' => 'dashboard_store',
+                        'success' => 'dashboard_store_deliveries',
+                        'store_deliveries' => 'dashboard_store_deliveries',
+                        'store_delivery_new' => 'dashboard_store_delivery_new',
+                    ];
+                }
+
+                return $routes[$string] ?? '';
+
+            }, ['needs_context' => true, 'needs_environment' => true])
         );
     }
 
