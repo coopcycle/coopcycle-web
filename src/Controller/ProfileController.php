@@ -416,7 +416,9 @@ class ProfileController extends Controller
 
             $router->match($dashboardPath);
 
-            return $this->redirect($dashboardPath, 301);
+            $queryString = $request->getQueryString();
+
+            return $this->redirect($dashboardPath . (!empty($queryString) ? sprintf('?%s', $queryString) : ''), 301);
 
         } catch (RoutingException $e) {}
 
