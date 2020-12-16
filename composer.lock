@@ -7925,16 +7925,16 @@
         },
         {
             "name": "martin-georgiev/postgresql-for-doctrine",
-            "version": "v1.5.0",
+            "version": "v1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/martin-georgiev/postgresql-for-doctrine.git",
-                "reference": "ce7b1a203ba5e5a36dc1840132bb5472dec16fce"
+                "reference": "78f0fa995223a1080ec2f61a9c7f76e66db1b463"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/ce7b1a203ba5e5a36dc1840132bb5472dec16fce",
-                "reference": "ce7b1a203ba5e5a36dc1840132bb5472dec16fce",
+                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/78f0fa995223a1080ec2f61a9c7f76e66db1b463",
+                "reference": "78f0fa995223a1080ec2f61a9c7f76e66db1b463",
                 "shasum": ""
             },
             "require": {
@@ -7942,7 +7942,7 @@
                 "ext-ctype": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "php": "^7.2"
+                "php": "^7.2|^8.0"
             },
             "require-dev": {
                 "doctrine/orm": "~2.5",
@@ -7951,7 +7951,7 @@
                 "phpstan/phpstan": "^0.12",
                 "phpstan/phpstan-phpunit": "^0.12",
                 "phpunit/phpunit": "^8.5",
-                "sensiolabs-de/deptrac-shim": "^0.7.1",
+                "sensiolabs-de/deptrac-shim": "^0.10",
                 "sensiolabs/security-checker": "^6.0"
             },
             "suggest": {
@@ -7989,9 +7989,15 @@
             ],
             "support": {
                 "issues": "https://github.com/martin-georgiev/postgresql-for-doctrine/issues",
-                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/master"
+                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v1.5.1"
             },
-            "time": "2020-06-07T16:22:45+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/martin-georgiev",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-12-04T08:23:49+00:00"
         },
         {
             "name": "mercadopago/dx-php",
