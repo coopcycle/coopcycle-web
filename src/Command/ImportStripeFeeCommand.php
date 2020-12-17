@@ -31,8 +31,7 @@ class ImportStripeFeeCommand extends Command
         $this->orderRepository = $orderRepository;
         $this->orderManager = $orderManager;
         $this->adjustmentFactory = $adjustmentFactory;
-
-        $stripeManager->configure();
+        $this->stripeManager = $stripeManager;
 
         parent::__construct();
     }
@@ -69,6 +68,8 @@ class ImportStripeFeeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->stripeManager->configure();
+
         $options = array_filter($input->getOptions());
 
         if (isset($options['order']) && isset($options['date'])) {
