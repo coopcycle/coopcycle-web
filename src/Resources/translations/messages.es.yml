@@ -653,7 +653,7 @@ basics.continue: Continuar
 basics.created_at: Creado el %date%
 promotions.add_free_delivery_coupon: Añadir un cupón de promoción " envío gratuito
   "
-base.footer.suggest: Sugerir un restaurante
+base.footer.suggest: Sugerir un comercio
 adminDashboard.package_sets.title: Paquetes
 adminDashboard.restaurants.exclusive: Exclusivo
 adminDashboard.pledges.title: Sugerencias
@@ -687,9 +687,8 @@ form.settings.enable_restaurant_pledges.label: Permitir a los clientes sugerir r
 form.suggest.name.label: Nombre
 form.suggest.name.help: Indique el nombre exacto para que podamos encontrarlo
 form.suggest.submit.label: Sugerir ahora
-form.suggest.message: "¿No encuentras tu restaurante favorito?\n<br>\nDinos su nombre\
-  \ y dirección. Luego, otros usuarios pueden votar para verlo aparecer en la lista\
-  \ de restaurantes.\n<br>\nEsto nos permitirá identificar mejor los restaurantes\
+form.suggest.message: "¿No encuentras tu restaurante o comercio favorito?\n<br>\n\
+  Dinos su nombre y dirección. \n<br>\nEsto nos permitirá identificar mejor los locales\
   \ a los que nos dirigiremos y proporcionarles la prueba de una demanda real.\n"
 form.suggest.thank_you_message: ¡Gracias por sugerir este restaurante!
 restaurant.suggest.message: "Ayúdanos a convencer %restaurant.name% trabajar con %brand_name%!\n\
@@ -1051,3 +1050,76 @@ form.payment.refund_comment.label: Comentarios
 form.payment.refund_liable.help: Cuál de las partes es responsable por el incidente?
 form.payment.refund_liable.label: Parte responsable
 form.store_type.packages_required.label: Pedir los paquetes
+loopeat.oauth_connect.success: Cuenta de LoopEat conectado con éxito!
+form.attach_to_org.modal.title: Adjuntar a la tienda
+form.time_slot.choices.error.empty: La lista de opciones no puede ser vacío
+refund.list.disclaimer.admin: Cuando la plataforma es el responsable de un incidente,
+  quiere decir que la plataforma debe al comerciante el importe del reembolso porque
+  el comerciante ha reembolsado al cliente.
+form:
+  restaurant:
+    b2b:
+      label: Te gustaría tener ofertas especiales para compañias/oficinas?
+    contact_referent:
+      label: Persona de contacto para el restaurante
+    name:
+      label: Nombre del restaurante
+order.reusable_packaging.pledge_return.disclaimer: El cilente a indicado que %count%
+  envases serán devueltos
+form.time_slot.same_day_cutoff.help: Por ejemplo, si selecionas 11.00, opciones del
+  mismo día no se mostrarán después de las 11.00
+form.time_slot.same_day_cutoff.label: Hora de límite diario
+form.package_with_quantity.package.placeholder: Elije un tipo de envase
+form.product_tax_category_choice.placeholder: Elije una categoria de IVA
+basics.kilos: Kilos
+basics.tax_excl: Sin IVA
+basics.tax_incl: IVA incl.
+nav.about_us: Acerca de nosotros
+spreadsheet.download_example: Descarga una hoja de cálculo de ejemplo
+order.refund.total_amount: Este pedido ha sido reembolsado por un importe de %amount%
+promotion_rule.is_customer: Cliente es %username%
+promotion_rule.is_restaurant: Restaurante es %restaurant%
+info.deposit_refund: Cada hueco en la lista abajo representa un tipo de envase (grande,
+  pequeña...). Ya creadas los envases, puedes configurarlas para cada producto.
+confirm.deposit_refund_enabled: El sistema de deposito-reembolso está habilitada,
+  ahora puedes <a href="%url%">configurar los envases</a>.
+profile.loopeat.disconnect: Desconectar LoopEat
+deliveries.section.past: Pasado
+deliveries.section.upcoming: Próximo
+search.orders: Buscar un pedido (número, correo electrónico...)
+delivery.table.heading.owner: Dueño
+authentication.choose_password: Elije una contraseña
+basics.configure: Configurar
+basics.description: Descripción
+form.customize.custom_banner.help: Asegurate que la bannar es un patrón repetetivo
+  de SVG
+form.customize.custom_banner.label: Bannar personalizada
+form.customize.custom_privacy.label: Contenido de la página de política de privacidad
+form.customize.custom_privacy_enabled.label: Habilitar política de privacidad personalizado
+form.customize.custom_terms.label: Contenido para la página de terminos y condiciones
+  personalizados
+form.customize.custom_terms_enabled.label: Habilitar terminos y condiciones
+form.customize.custom_legal.label: Contenido de la página de nota legal personalizado
+form.customize.custom_legal_enabled.label: Habilitar nota legal personalizado
+form.customize.motto.help: Esto no será mostrado en la página de inicio
+form.customize.motto.label: Lema
+form.customize.about_us.label: Contenido para la página "Acerca de nosotros"
+form.customize.about_us_enabled.label: Habilitar página de "Acerca de nosotros"
+form.deposit_refund_settings.deposit_refund_optin.help: Cuando el sistema de depositar-reembolso
+  es opcional, el cliente podrá elejir si quiere el envase o no. Cuando es obligatorio,
+  el envase será añadido al pedido automaticamente.
+form.credit_note.percentage.label: Porcentaje
+form.credit_note.type.label: Tipo de descuento
+form.credit_note.user_search.label: Usuario
+form.menu_editor.name.help: Esto solo es para que tu puedes identificar tus varios
+  menús. El cliente no lo puede ver.
+form.settings.sms_gateway_config.twilio.from.label: Twilio número móvil
+form.settings.sms_gateway_config.twilio.auth_token.label: Twilio Auth Token
+form.settings.sms_gateway_config.twilio.sid.label: Twilio SID
+form.settings.sms_gateway_config.mailjet.api_token.label: Mailjet API Token
+form.settings.sms_gateway.label: SMS Gateway
+form.settings.sms.title: SMS
+form.settings.sms_enabled.label: Habilitar el envio de SMS
+form.company.make_the_request.label: Enviar solicitud
+form.address.company.meal_estimate.label: Número de comidas estimados (por día)
+form.address.company.collaborator_number.label: Número de trabajadores
