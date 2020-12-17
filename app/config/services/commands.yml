@@ -83,9 +83,9 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:setup' }
 
-  AppBundle\Command\RemotePushNotificationsCommand:
-    tags:
-      - { name: 'console.command', command: 'coopcycle:notifications:remote-push' }
+  # AppBundle\Command\RemotePushNotificationsCommand:
+  #   tags:
+  #     - { name: 'console.command', command: 'coopcycle:notifications:remote-push' }
 
   AppBundle\Command\ImportTasksCommand:
     arguments:
@@ -107,13 +107,13 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:orders:watch-expiring-authorization' }
 
-  AppBundle\Command\OrderNotificationCommand:
-    arguments:
-      $orderRepository: '@sylius.repository.order'
-      $websocket: '@coopcycle.domain.order.reactor.publish_to_redis'
-      $push: '@coopcycle.domain.order.reactor.send_remote_push_notification'
-    tags:
-      - { name: 'console.command', command: 'coopcycle:notifications:order' }
+  # AppBundle\Command\OrderNotificationCommand:
+  #   arguments:
+  #     $orderRepository: '@sylius.repository.order'
+  #     $websocket: '@coopcycle.domain.order.reactor.publish_to_redis'
+  #     $push: '@coopcycle.domain.order.reactor.send_remote_push_notification'
+  #   tags:
+  #     - { name: 'console.command', command: 'coopcycle:notifications:order' }
 
   AppBundle\Command\DeduplicateCustomerAddressesCommand:
     tags:
