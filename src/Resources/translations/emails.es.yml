@@ -72,3 +72,7 @@ covid_19.body: "<h1>instrucciones a seguir para su entrega</h1>\n<p>Debido a la 
 order.payment.body: "Hola,\n<br>\nHemos completado una entrega que nos ha pedido.\n\
   <br>\nA continuación encontrará un enlace que le permite pagar con tarjeta de crédito.\n"
 order.payment.subject: Pago de tu pedido %order.number%
+order.expiring_authorization.text: El autorización de pago para el pedido <strong>%order.number%</strong>
+  va a caducar pronto. <br> Debería terminar de hacer el pedido antes de que el autorización
+  caduca para evitar perder el dinero.
+order.expiring_authorization.subject: Un autorización de pago caducará pronto
