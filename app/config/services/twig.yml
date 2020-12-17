@@ -7,11 +7,14 @@ services:
   AppBundle\Twig\:
     resource: '../../../src/Twig/*'
 
-  League\Flysystem\Filesystem $assetsFilesystem: '@assets_filesystem'
-
   AppBundle\Twig\AppearanceRuntime:
     arguments:
       $logoFallback: '%kernel.project_dir%/web/img/logo.png'
+      $assetsFilesystem: '@assets_filesystem'
+
+  AppBundle\Twig\AssetsRuntime:
+    arguments:
+      $assetsFilesystem: '@assets_filesystem'
 
   AppBundle\Twig\TaxRateRuntime:
     arguments:
