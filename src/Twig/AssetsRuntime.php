@@ -8,8 +8,8 @@ use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\MountManager;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 use Vich\UploaderBundle\Storage\StorageInterface;
@@ -23,7 +23,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         CacheManager $cacheManager,
         Filesystem $assetsFilesystem,
         UrlGeneratorInterface $urlGenerator,
-        CacheInterface $appCache)
+        CacheInterface $projectCache)
     {
         $this->storage = $storage;
         $this->mountManager = $mountManager;
@@ -31,7 +31,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         $this->cacheManager = $cacheManager;
         $this->assetsFilesystem = $assetsFilesystem;
         $this->urlGenerator = $urlGenerator;
-        $this->appCache = $appCache;
+        $this->projectCache = $projectCache;
     }
 
     public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false, bool $cacheUrl = false): ?string
@@ -82,7 +82,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
 
     public function hasCustomBanner(): bool
     {
-        return $this->appCache->get('banner_svg_stat', function (ItemInterface $item) {
+        return $this->projectCache->get('banner_svg_stat', function (ItemInterface $item) {
 
             $item->expiresAfter(3600);
 

@@ -20,13 +20,13 @@ class AssetsController extends AbstractController
     /**
      * @Route("/assets/banner.svg", name="assets_banner_svg")
      */
-    public function bannerAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $appCache)
+    public function bannerAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $projectCache)
     {
         if (!$assetsFilesystem->has('banner.svg')) {
             throw $this->createNotFoundException();
         }
 
-        $svg = $appCache->get('banner_svg', function (ItemInterface $item) use ($assetsFilesystem) {
+        $svg = $projectCache->get('banner_svg', function (ItemInterface $item) use ($assetsFilesystem) {
 
             $item->expiresAfter(3600);
 

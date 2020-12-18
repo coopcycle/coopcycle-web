@@ -94,6 +94,8 @@ framework:
                 adapter: cache.app
             s3_flysystem.cache:
                 adapter: cache.app
+            project.cache:
+                adapter: cache.app
     messenger:
         buses:
             messenger.bus.default:

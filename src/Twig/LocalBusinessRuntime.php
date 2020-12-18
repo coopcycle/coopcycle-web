@@ -22,13 +22,13 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         SerializerInterface $serializer,
         LocalBusinessRepository $repository,
         HubRepository $hubRepository,
-        CacheInterface $appCache)
+        CacheInterface $projectCache)
     {
         $this->translator = $translator;
         $this->serializer = $serializer;
         $this->repository = $repository;
         $this->hubRepository = $hubRepository;
-        $this->appCache = $appCache;
+        $this->projectCache = $projectCache;
     }
 
     /**
@@ -87,7 +87,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
     public function restaurantsSuggestions(): array
     {
-        return $this->appCache->get('restaurant.suggestions', function (ItemInterface $item) {
+        return $this->projectCache->get('restaurant.suggestions', function (ItemInterface $item) {
 
             $item->expiresAfter(60 * 5);
 

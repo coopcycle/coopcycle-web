@@ -13,13 +13,13 @@ use AppBundle\Enum\Store;
 use AppBundle\Form\DeliveryEmbedType;
 use Hashids\Hashids;
 use MyCLabs\Enum\Enum;
+use Symfony\Contracts\Cache\CacheInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class IndexController extends AbstractController
@@ -62,7 +62,7 @@ class IndexController extends AbstractController
     /**
      * @HideSoftDeleted
      */
-    public function indexAction(LocalBusinessRepository $repository, CacheInterface $appCache)
+    public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache)
     {
         $user = $this->getUser();
 
@@ -73,9 +73,9 @@ class IndexController extends AbstractController
         }
 
         [ $restaurants, $restaurantsCount ] =
-            $this->getItems($repository, FoodEstablishment::class, $appCache, sprintf('homepage.restaurants.%s', $cacheKeySuffix));
+            $this->getItems($repository, FoodEstablishment::class, $projectCache, sprintf('homepage.restaurants.%s', $cacheKeySuffix));
         [ $stores, $storesCount ] =
-            $this->getItems($repository, Store::class, $appCache, sprintf('homepage.stores.%s', $cacheKeySuffix));
+            $this->getItems($repository, Store::class, $projectCache, sprintf('homepage.stores.%s', $cacheKeySuffix));
 
 
         $qb = $this->getDoctrine()

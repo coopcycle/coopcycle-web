@@ -15,20 +15,20 @@ class AppearanceRuntime implements RuntimeExtensionInterface
     private $settingsManager;
     private $assetsFilesystem;
     private $imagineFilter;
-    private $appCache;
+    private $projectCache;
     private $logoFallback;
 
     public function __construct(
         SettingsManager $settingsManager,
         Filesystem $assetsFilesystem,
         FilterService $imagineFilter,
-        CacheInterface $appCache,
+        CacheInterface $projectCache,
         string $logoFallback
     ) {
         $this->settingsManager = $settingsManager;
         $this->assetsFilesystem = $assetsFilesystem;
         $this->imagineFilter = $imagineFilter;
-        $this->appCache = $appCache;
+        $this->projectCache = $projectCache;
         $this->logoFallback = $logoFallback;
     }
 
@@ -43,7 +43,7 @@ class AppearanceRuntime implements RuntimeExtensionInterface
 
     public function companyLogo()
     {
-        return $this->appCache->get('content.company_logo.base_64', function (ItemInterface $item) {
+        return $this->projectCache->get('content.company_logo.base_64', function (ItemInterface $item) {
 
             $item->expiresAfter(60 * 60 * 24);
 
@@ -60,7 +60,7 @@ class AppearanceRuntime implements RuntimeExtensionInterface
 
     public function hasAboutUs()
     {
-        return $this->appCache->get('content.about_us.exists', function (ItemInterface $item) {
+        return $this->projectCache->get('content.about_us.exists', function (ItemInterface $item) {
 
             $item->expiresAfter(60 * 60 * 24);
 

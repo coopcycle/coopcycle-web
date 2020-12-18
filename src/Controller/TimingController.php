@@ -6,12 +6,12 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\OrderTimeHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class TimingController extends AbstractController
@@ -23,14 +23,14 @@ class TimingController extends AbstractController
         EntityManagerInterface $entityManager,
         OrderFactory $orderFactory,
         OrderTimeHelper $orderTimeHelper,
-        CacheInterface $appCache)
+        CacheInterface $projectCache)
     {
         $data = [];
 
         $deliveryCacheKey = sprintf('restaurant.%d.delivery.timing', $id);
         $collectionCacheKey = sprintf('restaurant.%d.collection.timing', $id);
 
-        $data['delivery'] = $appCache->get($deliveryCacheKey, function (ItemInterface $item)
+        $data['delivery'] = $projectCache->get($deliveryCacheKey, function (ItemInterface $item)
             use ($id, $entityManager, $orderFactory, $orderTimeHelper) {
 
             $restaurant = $entityManager->getRepository(LocalBusiness::class)->find($id);
@@ -56,7 +56,7 @@ class TimingController extends AbstractController
             ];
         });
 
-        $data['collection'] = $appCache->get($collectionCacheKey, function (ItemInterface $item)
+        $data['collection'] = $projectCache->get($collectionCacheKey, function (ItemInterface $item)
             use ($id, $entityManager, $orderFactory, $orderTimeHelper) {
 
             $restaurant = $entityManager->getRepository(LocalBusiness::class)->find($id);

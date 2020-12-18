@@ -3,8 +3,8 @@
 namespace AppBundle\Controller;
 
 use League\Flysystem\Filesystem;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,13 +27,13 @@ class ContentController extends AbstractController
      *   "pt-BR": "/sobre-nos"
      * }, name="about_us")
      */
-    public function aboutUsAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $appCache)
+    public function aboutUsAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $projectCache)
     {
         if (!$assetsFilesystem->has('about_us.md')) {
             throw $this->createNotFoundException();
         }
 
-        $aboutUs = $appCache->get('content.about_us', function (ItemInterface $item) use ($assetsFilesystem) {
+        $aboutUs = $projectCache->get('content.about_us', function (ItemInterface $item) use ($assetsFilesystem) {
 
             $item->expiresAfter(300);
 

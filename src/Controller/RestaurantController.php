@@ -557,7 +557,7 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/restaurants/map", name="restaurants_map")
      */
-    public function mapAction(Request $request, SlugifyInterface $slugify, CacheInterface $appCache)
+    public function mapAction(Request $request, SlugifyInterface $slugify, CacheInterface $projectCache)
     {
         $user = $this->getUser();
 
@@ -569,7 +569,7 @@ class RestaurantController extends AbstractController
 
         $cacheKey = sprintf('homepage.map.%s', $cacheKeySuffix);
 
-        $restaurants = $appCache->get($cacheKey, function (ItemInterface $item) use ($slugify) {
+        $restaurants = $projectCache->get($cacheKey, function (ItemInterface $item) use ($slugify) {
 
             $item->expiresAfter(60 * 30);
 

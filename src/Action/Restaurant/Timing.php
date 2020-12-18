@@ -7,8 +7,8 @@ use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\Timing as TimingObj;
 use AppBundle\Utils\TimeInfo;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class Timing
@@ -16,11 +16,11 @@ class Timing
     public function __construct(
         OrderFactory $orderFactory,
         OrderTimeHelper $orderTimeHelper,
-        CacheInterface $appCache)
+        CacheInterface $projectCache)
     {
         $this->orderFactory = $orderFactory;
         $this->orderTimeHelper = $orderTimeHelper;
-        $this->appCache = $appCache;
+        $this->projectCache = $projectCache;
     }
 
     private function toTimeInfo($data): TimeInfo
@@ -54,7 +54,7 @@ class Timing
 
         if ($restaurant->isFulfillmentMethodEnabled('delivery')) {
 
-            $result['delivery'] = $this->appCache->get($deliveryCacheKey, function (ItemInterface $item) use ($restaurant) {
+            $result['delivery'] = $this->projectCache->get($deliveryCacheKey, function (ItemInterface $item) use ($restaurant) {
 
                 $item->expiresAfter(60 * 5);
 
@@ -74,7 +74,7 @@ class Timing
 
         if ($restaurant->isFulfillmentMethodEnabled('collection')) {
 
-            $result['collection'] = $this->appCache->get($collectionCacheKey, function (ItemInterface $item) use ($restaurant) {
+            $result['collection'] = $this->projectCache->get($collectionCacheKey, function (ItemInterface $item) use ($restaurant) {
 
                 $item->expiresAfter(60 * 5);
 
