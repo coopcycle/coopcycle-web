@@ -100,6 +100,19 @@ class AppKernel extends Kernel
     }
 
     /**
+     * Backport of https://github.com/symfony/symfony/pull/37114
+     * {@inheritdoc}
+     */
+    public function getCacheDir()
+    {
+        if (isset($_SERVER['APP_CACHE_DIR'])) {
+            return $_SERVER['APP_CACHE_DIR'].'/'.$this->environment;
+        }
+
+        return parent::getCacheDir();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getLogDir()
