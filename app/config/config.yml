@@ -13,6 +13,7 @@ imports:
 parameters:
     env(COOPCYCLE_PUBLIC_KEY_FILE): "%kernel.project_dir%/var/jwt/public.pem"
     env(COOPCYCLE_PRIVATE_KEY_FILE): "%kernel.project_dir%/var/jwt/private.pem"
+    env(APP_PUBLIC_DIR): "%kernel.project_dir%/web"
     secret: "%env(APP_SECRET)%"
     country_iso: "%env(COOPCYCLE_COUNTRY)%"
     region_iso: "%env(COOPCYCLE_REGION)%"
@@ -653,7 +654,7 @@ liip_imagine:
     resolvers:
         default:
             web_path:
-                web_root: '%kernel.project_dir%/web'
+                web_root: '%env(APP_PUBLIC_DIR)%'
     cache: ~
     filter_sets:
         cache: ~
@@ -789,7 +790,7 @@ liip_imagine:
             filesystem:
                 # https://github.com/liip/LiipImagineBundle/pull/1094
                 allow_unresolvable_data_roots: true
-                data_root: '%kernel.project_dir%/web'
+                data_root: '%env(APP_PUBLIC_DIR)%'
         restaurant_images:
             flysystem:
                 filesystem_service: oneup_flysystem.restaurant_images_filesystem
