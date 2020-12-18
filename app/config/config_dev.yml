@@ -17,7 +17,7 @@ monolog:
     handlers:
         main:
             type: rotating_file
-            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/%kernel.environment%.log"
             level: debug
             max_files: 3
             channels: ["!event", "!api", "!stripe", "!loopeat"]
@@ -26,47 +26,47 @@ monolog:
             channels: ["!event", "!doctrine"]
         api:
             type: rotating_file
-            path: "%kernel.logs_dir%/api.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/api.%kernel.environment%.log"
             level: info
             formatter: monolog.formatter.json
             max_files: 3
             channels: [api]
         fee_calculation:
             type: rotating_file
-            path: "%kernel.logs_dir%/fee_calculation.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/fee_calculation.%kernel.environment%.log"
             level: info
             formatter: monolog.formatter.json
             max_files: 3
             channels: [fee_calculation]
         timing:
             type: rotating_file
-            path: "%kernel.logs_dir%/timing.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/timing.%kernel.environment%.log"
             level: info
             max_files: 3
             channels: [timing]
         geofencing:
             type: rotating_file
-            path: "%kernel.logs_dir%/geofencing.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/geofencing.%kernel.environment%.log"
             level: info
             formatter: monolog.formatter.json
             max_files: 3
             channels: [geofencing]
         stripe:
             type: rotating_file
-            path: "%kernel.logs_dir%/stripe.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/stripe.%kernel.environment%.log"
             level: info
             max_files: 3
             channels: [stripe]
         loopeat:
             type: rotating_file
-            path: "%kernel.logs_dir%/loopeat.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/loopeat.%kernel.environment%.log"
             level: info
             max_files: 3
             channels: [loopeat]
         mailer:
             level:    debug
             type:     stream
-            path:     '%kernel.logs_dir%/mailer.%kernel.environment%.log'
+            path:     '%env(APP_LOG_DIR)%/mailer.%kernel.environment%.log'
             channels: [mailer]
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration

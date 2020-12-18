@@ -14,6 +14,7 @@ parameters:
     env(COOPCYCLE_PUBLIC_KEY_FILE): "%kernel.project_dir%/var/jwt/public.pem"
     env(COOPCYCLE_PRIVATE_KEY_FILE): "%kernel.project_dir%/var/jwt/private.pem"
     env(APP_PUBLIC_DIR): "%kernel.project_dir%/web"
+    env(APP_LOG_DIR): "%kernel.logs_dir%"
     secret: "%env(APP_SECRET)%"
     country_iso: "%env(COOPCYCLE_COUNTRY)%"
     region_iso: "%env(COOPCYCLE_REGION)%"

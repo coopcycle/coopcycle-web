@@ -113,12 +113,13 @@ class AppKernel extends Kernel
     }
 
     /**
+     * Backport of https://github.com/symfony/symfony/pull/37114
      * {@inheritdoc}
      */
-    public function getLogDir()
+    public function getLogDir(): string
     {
         // Just to add the "s"
-        return $this->getProjectDir().'/var/logs';
+        return $_SERVER['APP_LOG_DIR'] ?? ($this->getProjectDir().'/var/logs');
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)
