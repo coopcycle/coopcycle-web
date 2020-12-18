@@ -125,7 +125,7 @@ class UserController extends AbstractController
      */
     public function avatarAction($username, Request $request)
     {
-        $dir = $this->getParameter('kernel.project_dir') . '/web/images/avatars/';
+        $dir = $this->getParameter('avatar_dir');
 
         if (!file_exists($dir)) {
             mkdir($dir, 0755);
