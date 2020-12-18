@@ -100,6 +100,7 @@ services:
   Sylius\Component\Resource\Factory\FactoryInterface $taxonFactory: '@sylius.factory.taxon'
   Sylius\Component\Resource\Factory\FactoryInterface $productFactory: '@sylius.factory.product'
   Sylius\Component\Resource\Factory\FactoryInterface $productOptionFactory: '@sylius.factory.product_option'
+  League\Flysystem\Filesystem $assetsFilesystem: '@assets_filesystem'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
