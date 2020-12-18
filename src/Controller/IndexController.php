@@ -138,4 +138,9 @@ class IndexController extends AbstractController
 
         return $response;
     }
+
+    public function redirectToLocaleAction(Request $request)
+    {
+        return new RedirectResponse(sprintf('/%s/', $this->getParameter('locale')), 302);
+    }
 }
