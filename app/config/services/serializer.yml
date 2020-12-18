@@ -17,7 +17,7 @@ services:
   AppBundle\Serializer\RestaurantNormalizer:
     arguments:
       $normalizer: "@api_platform.jsonld.normalizer.item"
-      $locale: "%kernel.default_locale%"
+      $locale: "%env(COOPCYCLE_LOCALE)%"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\TaskNormalizer:

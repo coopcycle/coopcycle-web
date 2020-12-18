@@ -170,7 +170,7 @@ services:
       - { name: monolog.logger, channel: stripe }
 
   AppBundle\EventListener\LocaleListener:
-    arguments: ['%kernel.default_locale%']
+    arguments: ['%env(COOPCYCLE_LOCALE)%']
     tags:
       - { name: kernel.event_subscriber }
 
@@ -556,7 +556,7 @@ services:
     arguments:
       $openCageApiKey: "%env(OPENCAGE_API_KEY)%"
       $country: "%country_iso%"
-      $locale: "%kernel.default_locale%"
+      $locale: "%env(COOPCYCLE_LOCALE)%"
       $rateLimitPerSecond: 15
 
   AppBundle\Geocoder\RateLimiterStore:
@@ -618,7 +618,7 @@ services:
       $assetsFilesystem: '@assets_filesystem'
       $phoneNumberNormalizer: '@misd_phone_number.serializer.normalizer'
       $country: '%country_iso%'
-      $locale: '%kernel.default_locale%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
 
   AppBundle\Action\Register:
     public: true
@@ -864,7 +864,7 @@ services:
       $httpClient: '@csa_guzzle.client.browserless'
       $filesystem: '@receipts_filesystem'
       $taxRateRepository: '@sylius.repository.tax_rate'
-      $locale: '%kernel.default_locale%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
 
   AppBundle\Service\TagManager:
     arguments:

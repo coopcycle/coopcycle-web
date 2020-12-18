@@ -52,7 +52,7 @@ services:
       $taxonFactory: '@sylius.factory.taxon'
       $taxCategoryRepository: '@sylius.repository.tax_category'
       $country: "%country_iso%"
-      $defaultLocale: "%kernel.default_locale%"
+      $defaultLocale: "%env(COOPCYCLE_LOCALE)%"
     tags:
       - { name: 'console.command', command: 'coopcycle:demo:init' }
 
@@ -79,7 +79,7 @@ services:
       $currencyFactory: '@sylius.factory.currency'
       $promotionFactory: '@sylius.factory.promotion'
       $taxCategoryFactory: '@sylius.factory.tax_category'
-      $locale: '%kernel.default_locale%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
     tags:
       - { name: 'console.command', command: 'coopcycle:setup' }
 

@@ -47,7 +47,7 @@ services:
       $translator: '@translator'
       $authorizationChecker: '@security.authorization_checker'
       $country: '%country_iso%'
-      $locale: '%kernel.default_locale%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
     tags: [ form.type ]
 
   AppBundle\Form\DeliveryEmbedType:
@@ -156,7 +156,7 @@ services:
   AppBundle\Form\Type\TimeSlotChoiceType:
     arguments:
       $country: '%country_iso%'
-      $locale: '%kernel.default_locale%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
     tags: [ form.type ]
 
   AppBundle\Form\Type\MoneyType:
