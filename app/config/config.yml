@@ -11,6 +11,8 @@ imports:
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    env(COOPCYCLE_PUBLIC_KEY_FILE): "%kernel.project_dir%/var/jwt/public.pem"
+    env(COOPCYCLE_PRIVATE_KEY_FILE): "%kernel.project_dir%/var/jwt/private.pem"
     secret: "%env(APP_SECRET)%"
     country_iso: "%env(COOPCYCLE_COUNTRY)%"
     region_iso: "%env(COOPCYCLE_REGION)%"
@@ -33,8 +35,8 @@ parameters:
     tile38_fleet_key: '%database_name%:fleet'
     tile38_doorstep_chan_namespace: '%database_name%'
     cors_allow_origin: http://localhost
-    jwt_public_key_path: "%kernel.project_dir%/%env(COOPCYCLE_PUBLIC_KEY_FILE)%"
-    jwt_private_key_path: "%kernel.project_dir%/%env(COOPCYCLE_PRIVATE_KEY_FILE)%"
+    jwt_public_key_path: "%env(COOPCYCLE_PUBLIC_KEY_FILE)%"
+    jwt_private_key_path: "%env(COOPCYCLE_PRIVATE_KEY_FILE)%"
     transactional_address: "%env(COOPCYCLE_MAIL_SENDER_ADDRESS)%"
     transactional_sender_name: "%env(COOPCYCLE_MAIL_SENDER_NAME)%"
     osrm_host: "%env(COOPCYCLE_OSRM_HOST)%"
