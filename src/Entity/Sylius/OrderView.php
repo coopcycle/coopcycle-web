@@ -176,15 +176,19 @@ class OrderView
 
         $parts[] = 'FROM sylius_order o';
         $parts[] = 'INNER JOIN sylius_order_item i ON (o.id = i.order_id)';
+        $parts[] = 'INNER JOIN sylius_product_variant va ON (va.id = i.variant_id)';
+        $parts[] = 'INNER JOIN sylius_product p ON (p.id = va.product_id)';
         $parts[] = 'LEFT JOIN vendor v ON (o.vendor_id = v.id)';
         $parts[] = 'LEFT JOIN hub h ON (v.hub_id = h.id)';
         $parts[] = 'LEFT JOIN hub_restaurant hr ON (hr.hub_id = h.id)';
         $parts[] = 'LEFT JOIN restaurant r ON (v.restaurant_id = r.id)';
-        $parts[] = 'INNER JOIN sylius_product_variant va ON (va.id = i.variant_id)';
-        $parts[] = 'INNER JOIN sylius_product p ON (p.id = va.product_id)';
-        $parts[] = 'INNER JOIN restaurant_product rp ON (rp.product_id = p.id AND rp.restaurant_id = COALESCE(v.restaurant_id, hr.restaurant_id))';
+        $parts[] = 'LEFT JOIN restaurant_product rp ON (rp.product_id = p.id AND rp.restaurant_id = COALESCE(v.restaurant_id, hr.restaurant_id))';
         // $parts[] = 'INNER JOIN sylius_adjustment a ON (a.order_id = o.id OR a.order_item_id = i.id)';
         $parts[] = 'WHERE o.state = \'fulfilled\'';
+        // This allows to
+        // - retrieve orders without vendors
+        // - filter out restaurants without items for hub orders
+        $parts[] = 'AND (o.vendor_id IS NULL OR rp.product_id IS NOT NULL)';
         $parts[] = 'GROUP BY o.id, o.number, v.id, h.id, COALESCE(v.restaurant_id, hr.restaurant_id), h.name, r.name';
         // $parts[] = 'HAVING (v.hub_id is null OR (v.hub_id IS not null AND a1.amount is not null))';
 
