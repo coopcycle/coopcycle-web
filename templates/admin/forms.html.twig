@@ -32,10 +32,10 @@
         {{ form.pricingRuleSet.name }}
       </td>
       <td>
-        {{ form.timeSlot.name }}
+        {{ form.timeSlot ? form.timeSlot.name : '' }}
       </td>
       <td>
-        {{ form.packageSet.name }}
+        {{ form.packageSet ? form.packageSet.name : '' }}
       </td>
       <td>
         <ul class="list-unstyled">

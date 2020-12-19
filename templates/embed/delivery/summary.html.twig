@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% form_theme form "bootstrap_3_layout.html.twig" %}
+{% form_theme form with ['form/delivery.html.twig', 'form/delivery_embed.html.twig'] %}
 
 {% block banner %}{% endblock %}
 {% block menu %}{% endblock %}
