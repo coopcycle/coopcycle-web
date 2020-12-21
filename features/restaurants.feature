@@ -136,7 +136,17 @@ Feature: Manage restaurants
         }
       ],
       "specialOpeningHoursSpecification":[],
-      "fulfillmentMethods":@array@
+      "fulfillmentMethods":@array@,
+      "potentialAction":{
+        "@type":"OrderAction",
+        "target":{
+          "@type":"EntryPoint",
+          "urlTemplate":@string@,
+          "inLanguage":"fr",
+          "actionPlatform":["http://schema.org/DesktopWebPlatform"]
+        },
+        "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
+      }
     }
     """
 
