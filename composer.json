@@ -112,7 +112,7 @@
         "friendsofsymfony/rest-bundle": "^3.0",
         "geocoder-php/open-cage-provider": "^4.4",
         "spatie/guzzle-rate-limiter-middleware": "^2.0",
-        "geocoder-php/photon-provider": "^0.2.0",
+        "geocoder-php/photon-provider": "^0.3.0",
         "geocoder-php/algolia-places-provider": "^0.2.0",
         "ppshobi/psonic": "^1.2",
         "doctrine/cache": "^1.10"
