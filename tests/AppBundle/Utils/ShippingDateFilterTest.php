@@ -69,6 +69,15 @@ class ShippingDateFilterTest extends TestCase
                 false,
             ],
             [
+                // More than 7 days
+                $now = new \DateTime('2018-10-12 11:00:00'),
+                $dropoff = new \DateTime('2018-10-19 11:30:00'),
+                $preparation = new \DateTime('2018-10-12 12:30:00'),
+                $openingHours = ['Mo-Su 11:30-14:30'],
+                $hasClosingRuleForNow = false,
+                false,
+            ],
+            [
                 // No problem
                 $now = new \DateTime('2018-10-12 11:00:00'),
                 $dropoff = new \DateTime('2018-10-12 12:45:00'),

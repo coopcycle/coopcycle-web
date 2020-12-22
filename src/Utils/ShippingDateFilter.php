@@ -75,6 +75,17 @@ class ShippingDateFilter
             return false;
         }
 
+        $diffInDays = Carbon::instance($now)->diffInDays(Carbon::instance($dropoff));
+
+        if ($diffInDays >= 7) {
+
+            $this->logger->info(sprintf('ShippingDateFilter::accept() - date "%s" is more than 7 days in the future',
+                $dropoff->format(\DateTime::ATOM))
+            );
+
+            return false;
+        }
+
         return true;
     }
 
