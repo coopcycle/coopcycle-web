@@ -999,4 +999,24 @@ class AsapChoiceLoaderTest extends TestCase
             '2019-12-21T00:00:00+02:00',
         ], $choices);
     }
+
+    public function testPreorderingDisabled()
+    {
+        Carbon::setTestNow(Carbon::parse('2020-12-23T09:30:00+02:00'));
+
+        $choiceLoader = new AsapChoiceLoader(["We-Fr 11:30-14:30"], null, 0, 5, false);
+        $choiceList = $choiceLoader->loadChoiceList();
+
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+        $values = $choiceList->getValues();
+
+        $this->assertContainsDates([
+            '2020-12-23T11:30:00+02:00',
+            '2020-12-23T14:15:00+02:00',
+        ], $choices);
+
+        $this->assertNotContainsDay('2020-12-24', $choices);
+        $this->assertNotContainsDay('2020-12-25', $choices);
+    }
 }

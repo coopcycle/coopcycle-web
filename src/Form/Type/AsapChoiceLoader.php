@@ -23,12 +23,14 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
         array $openingHours,
         Collection $closingRules = null,
         int $orderingDelayMinutes = 0,
-        int $rounding = 5)
+        int $rounding = 5,
+        bool $preOrderingAllowed = true)
     {
         $this->openingHours = $openingHours;
         $this->closingRules = $closingRules ?? new ArrayCollection();
         $this->orderingDelayMinutes = $orderingDelayMinutes;
         $this->rounding = $rounding;
+        $this->preOrderingAllowed = $preOrderingAllowed;
     }
 
     /**
@@ -58,7 +60,11 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
 
         $now->setTime($now->format('H'), $now->format('i'), 0);
 
-        $max = Carbon::instance($now)->add(7, 'days');
+        if ($this->preOrderingAllowed) {
+            $max = Carbon::instance($now)->add(7, 'days');
+        } else {
+            $max = Carbon::instance($now)->setTime(23, 59);
+        }
 
         if ($nextOpeningDate > $max) {
             return new ArrayChoiceList([], $value);
@@ -96,7 +102,9 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
 
             foreach ($period as $date) {
                 $cursor = $date;
-                $availabilities[] = $date->format(\DateTime::ATOM);
+                if ($date < $max) {
+                    $availabilities[] = $date->format(\DateTime::ATOM);
+                }
             }
 
             $nextOpeningDate = $openingHours->nextOpen($nextClosingDate);

@@ -14,6 +14,11 @@
         <option name="default">0</option>
       </options>
     </field>
+    <field name="preOrderingAllowed" type="boolean" column="pre_ordering_allowed">
+      <options>
+        <option name="default">1</option>
+      </options>
+    </field>
     <field name="enabled" type="boolean" column="enabled">
       <options>
         <option name="default">1</option>
