@@ -252,7 +252,7 @@ class TimeSlot
         return $this;
     }
 
-    public static function create(ShippingOptionsInterface $options, FulfillmentMethod $fulfillmentMethod): TimeSlot
+    public static function create(FulfillmentMethod $fulfillmentMethod, ShippingOptionsInterface $options): TimeSlot
     {
         $timeSlot = new self();
         $timeSlot->setWorkingDaysOnly(false);
