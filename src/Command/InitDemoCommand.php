@@ -260,7 +260,7 @@ class InitDemoCommand extends Command
             $providers[] = AddokProvider::withBANServer($httpAdapter);
         }
         $providers[] = new AlgoliaPlacesProvider($httpAdapter);
-        $providers[] = new PhotonProvider($httpAdapter, 'https://photon.komoot.io');
+        $providers[] = new PhotonProvider($httpAdapter);
 
         $statefulGeocoder =
             new StatefulGeocoder(new ChainProvider($providers), $this->defaultLocale);
