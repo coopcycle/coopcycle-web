@@ -3,9 +3,10 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import classNames from 'classnames'
+import i18n from '../../i18n'
 
 import { toggleMobileCart } from '../redux/actions'
-import { selectItems } from '../redux/selectors'
+import { selectItems, selectIsOrderingAvailable } from '../redux/selectors'
 
 const HeadingLeftIcon = ({ loading, warnings, errors }) => {
 
@@ -100,7 +101,9 @@ function mapStateToProps (state) {
   const warningAlerts = []
   const dangerAlerts = []
 
-  if (state.errors) {
+  if (!selectIsOrderingAvailable(state)) {
+    warningAlerts.push(i18n.t('CART_ORDERING_NOT_AVAILABLE_YET'))
+  } else if (state.errors) {
 
     // We don't display the error when restaurant has changed
     const errors = _.pickBy(state.errors, (value, key) => key !== 'restaurant')
@@ -121,6 +124,7 @@ function mapStateToProps (state) {
     warningAlerts,
     items: selectItems(state),
     total: state.cart.total,
+    isOrderingAvailable: selectIsOrderingAvailable(state),
   }
 }
 

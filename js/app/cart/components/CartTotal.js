@@ -123,7 +123,6 @@ class CartTotal extends React.Component {
             <span>{ this.props.t('CART_TOTAL') }</span>
             <strong className="pull-right">{ (total / 100).formatMoney() }</strong>
           </div>
-          <hr />
         </div>
       )
     }

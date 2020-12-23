@@ -218,6 +218,7 @@
         "CART_PRODUCT_OPTIONS_VALUES_RANGE": "Veuillez choisir entre {{min}} et {{max}} valeurs",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_AT_LEAST": "Veuillez choisir au moins {{count}} valeur(s)",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Veuillez choisir jusqu'à {{count}} valeur(s)",
-        "RESTAURANTS_AND_STORES": "Restaurants et magasins"
+        "RESTAURANTS_AND_STORES": "Restaurants et magasins",
+        "CART_ORDERING_NOT_AVAILABLE_YET": "Indisponible pour lʼinstant"
     }
 }

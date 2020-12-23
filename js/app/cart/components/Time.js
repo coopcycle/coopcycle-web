@@ -16,6 +16,7 @@ class Time extends React.Component {
   }
 
   render() {
+
     const cssClasses = [ 'cart__time' ]
     if (!this.props.today) {
       cssClasses.push('cart__time--not-today')

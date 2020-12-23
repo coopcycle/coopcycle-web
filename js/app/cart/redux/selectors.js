@@ -51,3 +51,18 @@ export const selectVariableCustomerAmountEnabled = createSelector(
     return false
   }
 )
+
+export const selectIsOrderingAvailable = createSelector(
+  state => state.cart,
+  state => state.times,
+  (cart, { range, ranges }) => {
+
+    const shippingTimeRange = cart.shippingTimeRange || range
+
+    if (!shippingTimeRange && ranges.length === 0) {
+      return false
+    }
+
+    return true
+  }
+)
