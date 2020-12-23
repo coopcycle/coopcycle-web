@@ -145,7 +145,7 @@ class FulfillmentMethodType extends AbstractType
                 ->cascade()
                 ->toArray();
 
-            $orderingDelayDays = $cascade['days'];
+            $orderingDelayDays = ($cascade['weeks'] * 7) + $cascade['days'];
             $orderingDelayHours = $cascade['hours'];
 
             $form->get('orderingDelayDays')->setData($orderingDelayDays);
