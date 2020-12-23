@@ -44,6 +44,8 @@
       {% set opening_hours_errors = opening_hours_errors|merge([ key ]) %}
     {% endif %}
   {% endfor %}
+
+
   {{ form_row(form.openingHours, { label: false, attr: {
     'data-widget': 'opening-hours',
     'data-errors': opening_hours_errors|json_encode,
@@ -54,32 +56,49 @@
   }}) }}
   {{ form_row(form.openingHoursBehavior, { row_attr: { class: 'd-none' } }) }}
 
-  {{ form_row(form.minimumAmount) }}
+  <hr />
 
-  <label class="control-label">{% trans %}localBusiness.form.orderingDelayMinutes{% endtrans %}</label>
-  <div class="row">
-    <div class="col-sm-3">
-      {{ form_row(form.orderingDelayDays) }}
+  <div class="form-horizontal">
+    {% if method == 'delivery' and form.allowEdit is defined %}
+    <div class="form-group">
+      <div class="col-sm-offset-7 col-sm-5">
+        {{ form_widget(form.allowEdit) }}
+      </div>
     </div>
-    <div class="col-sm-3">
-      {{ form_row(form.orderingDelayHours) }}
+    {% endif %}
+    <div class="form-group">
+      {{ form_label(form.minimumAmount, null, { label_attr: { class: 'col-sm-7' } }) }}
+      <div class="col-sm-5">
+        {{ form_widget(form.minimumAmount) }}
+      </div>
     </div>
+    <div class="form-group">
+      <label class="col-sm-7 control-label">{{ 'localBusiness.form.orderingDelayMinutes'|trans }}</label>
+      <div class="col-sm-5">
+        <div class="d-flex">
+          <div class="input-group mr-4">
+            {{ form_widget(form.orderingDelayDays, { attr: { size: 2 } }) }}
+            <span class="input-group-addon"><small>{{ form.orderingDelayDays.vars.label|trans }}</small></span>
+          </div>
+          <div class="input-group">
+            {{ form_widget(form.orderingDelayHours, { attr: { size: 2 } }) }}
+            <span class="input-group-addon"><small>{{ form.orderingDelayHours.vars.label|trans }}</small></span>
+          </div>
+        </div>
+        <span class="help-block mb-0">
+          {{ 'localBusiness.form.orderingDelayMinutes.help'| trans }}
+        </span>
+      </div>
+    </div>
+    {% if method == 'delivery' and form.round is defined %}
+    <div class="form-group">
+      {{ form_label(form.round, null, { label_attr: { class: 'col-sm-7' } }) }}
+      <div class="col-sm-5">
+        {{ form_widget(form.round) }}
+      </div>
+    </div>
+    {% endif %}
   </div>
-  <span class="help-block">
-    <i class="fa fa-info-circle"></i>&nbsp;{{ "localBusiness.form.orderingDelayMinutes.help" | trans | raw }}
-  </span>
-
-  {% if method == 'delivery' and (form.allowEdit is defined or form.round is defined) %}
-    <div class="border-top">
-      {% if form.allowEdit is defined %}
-        {{ form_row(form.allowEdit) }}
-      {% endif %}
-      {% if form.round is defined %}
-        {{ form_row(form.round) }}
-      {% endif %}
-    </div>
-  {% endif %}
-
 </div>
 {% endblock %}
 
