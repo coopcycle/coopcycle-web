@@ -44,7 +44,8 @@ export const asText = (value, short) => {
   const endDiff   = roundUp(range.end.diff(moment(), 'minutes'), 5)
 
   // We see it as "fast" if it's less than max. 45 minutes
-  const isFast = endDiff <= 45
+
+  const isFast = startDiff > 0 && endDiff <= 45
 
   let text = ''
   if (isToday && isFast) {
