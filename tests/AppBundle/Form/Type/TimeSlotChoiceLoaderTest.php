@@ -2,11 +2,13 @@
 
 namespace Tests\AppBundle\Form\Type;
 
+use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\TimeSlot\Choice;
 use AppBundle\Form\Type\TimeSlotChoice;
 use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Utils\TimeSlotChoiceWithDate;
+use Doctrine\Common\Collections\ArrayCollection;
 use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
 
@@ -312,6 +314,76 @@ class TimeSlotChoiceLoaderTest extends TestCase
         $this->assertTimeSlotChoice(
             new \DateTime('2019-10-21 11:00:00'),
             new \DateTime('2019-10-21 12:00:00'),
+            $choices[1]
+        );
+    }
+
+    public function testWithOpeningHoursAndClosingRules()
+    {
+        // Friday
+        Carbon::setTestNow(Carbon::parse('2020-12-23 09:00:00'));
+
+        $slot = new TimeSlot();
+        $slot->setWorkingDaysOnly(false);
+        $slot->setOpeningHours(['Mo-Fr 10:00-12:00']);
+
+        $closingRules = new ArrayCollection();
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime('2020-12-24 10:00:00'));
+        $closingRule->setEndDate(new \DateTime('2020-12-28 10:00:00'));
+
+        $closingRules->add($closingRule);
+
+        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr', $closingRules);
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertCount(2, $choices);
+
+        $this->assertTimeSlotChoice(
+            new \DateTime('2020-12-23 10:00:00'),
+            new \DateTime('2020-12-23 12:00:00'),
+            $choices[0]
+        );
+        $this->assertTimeSlotChoice(
+            new \DateTime('2020-12-28 10:00:00'),
+            new \DateTime('2020-12-28 12:00:00'),
+            $choices[1]
+        );
+    }
+
+    public function testWithOpeningHoursAndPastClosingRules()
+    {
+        // Friday
+        Carbon::setTestNow(Carbon::parse('2020-12-23 19:00:00'));
+
+        $slot = new TimeSlot();
+        $slot->setWorkingDaysOnly(false);
+        $slot->setOpeningHours(['Mo-Fr 10:00-12:00']);
+
+        $closingRules = new ArrayCollection();
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime('2019-12-24 10:00:00'));
+        $closingRule->setEndDate(new \DateTime('2019-12-28 10:00:00'));
+
+        $closingRules->add($closingRule);
+
+        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr', $closingRules);
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertCount(2, $choices);
+
+        $this->assertTimeSlotChoice(
+            new \DateTime('2020-12-24 10:00:00'),
+            new \DateTime('2020-12-24 12:00:00'),
+            $choices[0]
+        );
+        $this->assertTimeSlotChoice(
+            new \DateTime('2020-12-25 10:00:00'),
+            new \DateTime('2020-12-25 12:00:00'),
             $choices[1]
         );
     }

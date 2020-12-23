@@ -116,7 +116,8 @@ class OrderTimeHelper
 
             $choiceLoader = new TimeSlotChoiceLoader(
                 TimeSlot::create($vendor, $fulfillmentMethod),
-                $this->country
+                $this->country,
+                $vendor->getClosingRules()
             );
             $choiceList = $choiceLoader->loadChoiceList();
 

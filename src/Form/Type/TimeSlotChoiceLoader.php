@@ -5,6 +5,8 @@ namespace AppBundle\Form\Type;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Utils\OpeningHoursSpecification;
 use Carbon\Carbon;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -20,10 +22,11 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
     private $now;
     private $workingDaysProviderClass;
 
-    public function __construct(TimeSlot $timeSlot, string $country)
+    public function __construct(TimeSlot $timeSlot, string $country, Collection $closingRules = null)
     {
         $this->timeSlot = $timeSlot;
         $this->country = $country;
+        $this->closingRules = $closingRules ?? new ArrayCollection();
 
         $carbonToOHS = [
             Carbon::MONDAY    => 'Monday',
@@ -135,7 +138,22 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                             }
                         }
 
-                        if (!$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())) {
+                        $tsRange = $choice->toTsRange();
+                        $skip = false;
+
+                        foreach ($this->closingRules as $closingRule) {
+
+                            if ($closingRule->getEndDate() < $tsRange->getLower()) {
+                                continue;
+                            }
+
+                            if ($tsRange->getLower() >= $closingRule->getStartDate() && $closingRule->getEndDate() > $tsRange->getUpper()) {
+                                $skip = true;
+                                break;
+                            }
+                        }
+
+                        if (!$skip && !$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())) {
                             $choices[] = $choice;
                         }
                     }
