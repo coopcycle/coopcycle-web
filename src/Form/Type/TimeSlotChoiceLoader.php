@@ -4,12 +4,14 @@ namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Utils\OpeningHoursSpecification;
+use AppBundle\Validator\Constraints\ClosingRules as AssertClosingRules;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Validation;
 use Yasumi\Yasumi;
 
 class TimeSlotChoiceLoader implements ChoiceLoaderInterface
@@ -113,6 +115,9 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
 
         $choices = [];
         $count = 0;
+
+        $validator = Validation::createValidator();
+
         while ($count < $this->expectedCount) {
 
             if ($this->timeSlot->hasOpeningHours()) {
@@ -138,22 +143,11 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                             }
                         }
 
-                        $tsRange = $choice->toTsRange();
-                        $skip = false;
+                        $violations = $validator->validate($choice->toTsRange(), [
+                            new AssertClosingRules($this->closingRules)
+                        ]);
 
-                        foreach ($this->closingRules as $closingRule) {
-
-                            if ($closingRule->getEndDate() < $tsRange->getLower()) {
-                                continue;
-                            }
-
-                            if ($tsRange->getLower() >= $closingRule->getStartDate() && $closingRule->getEndDate() > $tsRange->getUpper()) {
-                                $skip = true;
-                                break;
-                            }
-                        }
-
-                        if (!$skip && !$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())) {
+                        if (count($violations) === 0 && !$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())) {
                             $choices[] = $choice;
                         }
                     }
