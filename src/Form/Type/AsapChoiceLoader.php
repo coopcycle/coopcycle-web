@@ -5,6 +5,7 @@ namespace AppBundle\Form\Type;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
+use AppBundle\Utils\DateUtils;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -24,11 +25,13 @@ class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
         array $openingHours,
         Collection $closingRules = null,
         ?int $numberOfDays = null,
-        int $orderingDelayMinutes = 0)
+        int $orderingDelayMinutes = 0,
+        int $rounding = 5)
     {
         $this->openingHours = $openingHours;
         $this->closingRules = $closingRules ?? new ArrayCollection();
         $this->orderingDelayMinutes = $orderingDelayMinutes;
+        $this->rounding = $rounding;
 
         if (null === $numberOfDays) {
             $numberOfDays = 2;
@@ -97,7 +100,7 @@ class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
                 $availabilities[] = $date->format(\DateTime::ATOM);
             }
 
-            return new ArrayChoiceList($availabilities, $value);
+            return new ArrayChoiceList($this->toChoices($availabilities), $value);
         }
 
         $numberOfDays = 0;
@@ -122,7 +125,7 @@ class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
 
         $availabilities = array_values(array_unique($availabilities));
 
-        return new ArrayChoiceList($availabilities, $value);
+        return new ArrayChoiceList($this->toChoices($availabilities), $value);
     }
 
     /**
@@ -152,6 +155,18 @@ class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
         } while (Carbon::instance($nextOpeningDate)->isSameDay($nextClosingDate));
 
         return $periods;
+    }
+
+    private function toChoices(array $availabilities)
+    {
+        return array_map(function (string $date) {
+
+            $tsRange = DateUtils::dateTimeToTsRange(new \DateTime($date), $this->rounding);
+
+            return new TsRangeChoice(
+                $tsRange
+            );
+        }, $availabilities);
     }
 
     /**

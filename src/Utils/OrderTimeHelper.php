@@ -6,6 +6,7 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Form\Type\AsapChoiceLoader;
 use AppBundle\Form\Type\TimeSlotChoiceLoader;
+use AppBundle\Form\Type\TsRangeChoice;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\PreparationTimeCalculator;
@@ -39,13 +40,18 @@ class OrderTimeHelper
 
     private function filterChoices(OrderInterface $cart, array $choices)
     {
-        return array_filter($choices, function ($date) use ($cart) {
+        return array_filter($choices, function (TsRangeChoice $choice) use ($cart) {
 
-            $result = $this->shippingDateFilter->accept($cart, new \DateTime($date));
+            $tsRange = $choice->toTsRange();
+
+            $avg = Carbon::instance($tsRange->getLower())
+                ->average($tsRange->getUpper());
+
+            $result = $this->shippingDateFilter->accept($cart, $avg);
 
             $this->logger->info(sprintf('ShippingDateFilter::accept() returned %s for %s',
                 var_export($result, true),
-                (new \DateTime($date))->format(\DateTime::ATOM))
+                $avg->format(\DateTime::ATOM))
             );
 
             return $result;
@@ -69,18 +75,20 @@ class OrderTimeHelper
         if (!isset($this->choicesCache[$hash])) {
 
             $vendor = $cart->getVendor();
+            $fulfillmentMethod = $vendor->getFulfillmentMethod(
+                $cart->getFulfillmentMethod()
+            );
 
             $choiceLoader = new AsapChoiceLoader(
                 $vendor->getOpeningHours($cart->getFulfillmentMethod()),
                 $vendor->getClosingRules(),
                 $vendor->getShippingOptionsDays(),
-                $vendor->getFulfillmentMethod(
-                    $cart->getFulfillmentMethod()
-                )->getOrderingDelayMinutes()
+                $fulfillmentMethod->getOrderingDelayMinutes(),
+                $fulfillmentMethod->getOption('round', 5)
             );
 
             $choiceList = $choiceLoader->loadChoiceList();
-            $values = $this->filterChoices($cart, $choiceList->getValues());
+            $values = $this->filterChoices($cart, $choiceList->getChoices());
 
             if (empty($values) && 1 === $vendor->getShippingOptionsDays()) {
 
@@ -128,9 +136,9 @@ class OrderTimeHelper
             return $ranges;
         }
 
-        return array_map(function (string $date) use ($fulfillmentMethod) {
+        return array_map(function ($choice) {
 
-            return DateUtils::dateTimeToTsRange(new \DateTime($date), $fulfillmentMethod->getOption('round', 5));
+            return $choice->toTsRange();
         }, $this->getChoices($cart));
     }
 
