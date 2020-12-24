@@ -115,7 +115,8 @@
         "geocoder-php/photon-provider": "^0.3.0",
         "geocoder-php/algolia-places-provider": "^0.2.0",
         "ppshobi/psonic": "^1.2",
-        "doctrine/cache": "^1.10"
+        "doctrine/cache": "^1.10",
+        "spatie/opening-hours": "^2.10"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
