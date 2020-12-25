@@ -3,11 +3,14 @@
 namespace AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
+use AppBundle\Entity\Vendor;
+use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Utils\TimeRange;
 use Carbon\Carbon;
+use Doctrine\Common\Collections\Collection;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Spatie\OpeningHours\OpeningHours;
 
 class ShippingDateFilter
 {
@@ -58,8 +61,6 @@ class ShippingDateFilter
         $vendor = $order->getVendor();
         $fulfillmentMethod = $order->getFulfillmentMethod();
 
-        $openingHours = $vendor->getOpeningHours($fulfillmentMethod);
-
         if ($vendor->hasClosingRuleFor($preparation)) {
 
             $this->logger->info(sprintf('ShippingDateFilter::accept() - there is a closing rule for "%s"',
@@ -69,7 +70,7 @@ class ShippingDateFilter
             return false;
         }
 
-        if (!$this->isOpen($openingHours, $preparation)) {
+        if (!$this->isOpen($vendor->getOpeningHours($fulfillmentMethod), $preparation, $vendor->getClosingRules())) {
 
             $this->logger->info(sprintf('ShippingDateFilter::accept() - closed at "%s"',
                 $preparation->format(\DateTime::ATOM))
@@ -92,26 +93,13 @@ class ShippingDateFilter
         return true;
     }
 
-    private function isOpen(array $openingHours, \DateTime $date): bool
+    private function isOpen(array $openingHours, \DateTime $date, Collection $closingRules = null): bool
     {
-        $cacheKey = implode('|', $openingHours);
+        $oh = SpatieOpeningHoursRegistry::get(
+            $openingHours,
+            $closingRules
+        );
 
-        if (!isset($this->openingHoursCache[$cacheKey])) {
-            $ranges = array_map(function ($oh) {
-                return TimeRange::create($oh);
-            }, $openingHours);
-            $this->openingHoursCache[$cacheKey] = $ranges;
-        }
-
-        $ohs = $this->openingHoursCache[$cacheKey];
-
-        foreach ($ohs as $oh) {
-            if ($oh->isOpen($date)) {
-
-                return true;
-            }
-        }
-
-        return false;
+        return $oh->isOpenAt($date);
     }
 }

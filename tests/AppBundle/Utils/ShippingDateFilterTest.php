@@ -3,11 +3,13 @@
 namespace Tests\AppBundle\Utils;
 
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Vendor;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\PreparationTimeResolver;
 use AppBundle\Utils\ShippingDateFilter;
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -39,7 +41,7 @@ class ShippingDateFilterTest extends TestCase
                 $dropoff = new \DateTime('2018-10-12 11:30:00'),
                 $preparation = new \DateTime('2018-10-12 11:15:00'),
                 $openingHours = ['Mo-Su 11:30-14:30'],
-                $hasClosingRuleForNow = false,
+                $closingRules = [],
                 false,
             ],
             [
@@ -48,7 +50,7 @@ class ShippingDateFilterTest extends TestCase
                 $dropoff = new \DateTime('2018-10-12 11:55:00'),
                 $preparation = new \DateTime('2018-10-12 11:45:00'),
                 $openingHours = ['Mo-Su 11:30-14:30'],
-                $hasClosingRuleForNow = false,
+                $closingRules = [],
                 false,
             ],
             [
@@ -57,7 +59,7 @@ class ShippingDateFilterTest extends TestCase
                 $dropoff = new \DateTime('2018-10-12 12:05:00'),
                 $preparation = new \DateTime('2018-10-12 11:50:00'),
                 $openingHours = ['Mo-Su 11:30-14:30'],
-                $hasClosingRuleForNow = false,
+                $closingRules = [],
                 false,
             ],
             [
@@ -66,7 +68,9 @@ class ShippingDateFilterTest extends TestCase
                 $dropoff = new \DateTime('2018-10-12 12:45:00'),
                 $preparation = new \DateTime('2018-10-12 12:30:00'),
                 $openingHours = ['Mo-Su 11:30-14:30'],
-                $hasClosingRuleForNow = true,
+                $closingRules = [
+                    ['2018-10-12 12:00:00', '2018-10-12 13:00:00']
+                ],
                 false,
             ],
             [
@@ -75,7 +79,7 @@ class ShippingDateFilterTest extends TestCase
                 $dropoff = new \DateTime('2018-10-19 11:30:00'),
                 $preparation = new \DateTime('2018-10-12 12:30:00'),
                 $openingHours = ['Mo-Su 11:30-14:30'],
-                $hasClosingRuleForNow = false,
+                $closingRules = [],
                 false,
             ],
             [
@@ -84,7 +88,7 @@ class ShippingDateFilterTest extends TestCase
                 $dropoff = new \DateTime('2018-10-12 12:45:00'),
                 $preparation = new \DateTime('2018-10-12 12:30:00'),
                 $openingHours = ['Mo-Su 11:30-14:30'],
-                $hasClosingRuleForNow = false,
+                $closingRules = [],
                 true,
             ],
         ];
@@ -98,12 +102,24 @@ class ShippingDateFilterTest extends TestCase
         \DateTime $dropoff,
         \DateTime $preparation,
         array $openingHours,
-        bool $hasClosingRuleForNow,
+        array $closingRules,
         $expected)
     {
+        $restaurantClosingRules = new ArrayCollection();
+        foreach ($closingRules as $rule) {
+            $closingRule = new ClosingRule();
+            $closingRule->setStartDate(new \DateTime($rule[0]));
+            $closingRule->setEndDate(new \DateTime($rule[1]));
+            $restaurantClosingRules->add($closingRule);
+        }
+
         $this->restaurant
             ->hasClosingRuleFor($preparation, Argument::any())
-            ->willReturn($hasClosingRuleForNow);
+            ->willReturn(false);
+
+        $this->restaurant
+            ->getClosingRules()
+            ->willReturn($restaurantClosingRules);
 
         $this->restaurant
             ->getOpeningHours('delivery')
