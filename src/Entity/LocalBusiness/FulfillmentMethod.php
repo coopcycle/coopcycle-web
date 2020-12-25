@@ -38,6 +38,11 @@ class FulfillmentMethod implements ToggleableInterface
     protected $orderingDelayMinutes = 0;
 
     /**
+     * @var boolean
+     */
+    protected $preOrderingAllowed = true;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -163,5 +168,21 @@ class FulfillmentMethod implements ToggleableInterface
     public function setOrderingDelayMinutes(int $orderingDelayMinutes)
     {
         $this->orderingDelayMinutes = $orderingDelayMinutes;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPreOrderingAllowed(): bool
+    {
+        return $this->preOrderingAllowed;
+    }
+
+    /**
+     * @param bool $preOrderingAllowed
+     */
+    public function setPreOrderingAllowed(bool $preOrderingAllowed)
+    {
+        $this->preOrderingAllowed = $preOrderingAllowed;
     }
 }

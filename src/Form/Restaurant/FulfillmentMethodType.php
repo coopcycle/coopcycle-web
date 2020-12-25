@@ -50,7 +50,13 @@ class FulfillmentMethodType extends AbstractType
                 ],
                 'expanded' => true,
                 'multiple' => false,
-            ]);
+            ])
+            ->add('preOrderingAllowed', CheckboxType::class, [
+                'label' => 'form.fulfillment_method.pre_ordering_allowed.label',
+                'help' => 'form.fulfillment_method.pre_ordering_allowed.help',
+                'required' => false,
+            ])
+            ;
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder->add('allowEdit', CheckboxType::class, [

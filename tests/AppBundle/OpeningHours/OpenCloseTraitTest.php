@@ -123,11 +123,11 @@ class OpenCloseTraitTest extends TestCase implements OpenCloseInterface
         $this->assertFalse($this->isOpen(new \DateTime('2017-05-17 13:45')));
 
         // Saturday
-        $this->assertFalse($this->isOpen(new \DateTime('2017-05-21 00:30')));
+        $this->assertTrue($this->isOpen(new \DateTime('2017-05-21 00:30')));
 
         // Sunday
         $this->assertFalse($this->isOpen(new \DateTime('2017-05-21 12:30')));
-        $this->assertTrue($this->isOpen(new \DateTime('2017-05-22 00:30')));
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-22 00:30')));
 
     }
 

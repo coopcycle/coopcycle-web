@@ -1125,3 +1125,5 @@ basics.enabled: Activé
 form.option_value.value.placeholder: ex. frites, salade…
 order.hub.sub_total.disclaimer: Cette commande a été réalisée auprès de plusieurs marchands. La colonne "%column%" affiche le montant qui correspond à vos produits (%amount%).
 profile.dashboard_suggest: Vous cherchez à gérer vos commandes et vos livraisons ? <a href="%link%">Découvrez votre nouveau tableau de bord</a> ✨
+form.fulfillment_method.pre_ordering_allowed.label: Autoriser les pré-commandes
+form.fulfillment_method.pre_ordering_allowed.help: Si vous décochez cette case, les client·es pourront ne pourront commander que pour le jour même.

@@ -59,6 +59,11 @@
   <hr />
 
   <div class="form-horizontal">
+    <div class="form-group">
+      <div class="col-sm-offset-7 col-sm-5">
+        {{ form_widget(form.preOrderingAllowed) }}
+      </div>
+    </div>
     {% if method == 'delivery' and form.allowEdit is defined %}
     <div class="form-group">
       <div class="col-sm-offset-7 col-sm-5">

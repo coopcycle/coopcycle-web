@@ -3,68 +3,34 @@
 namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\OpeningHours\OpenCloseInterface;
-use AppBundle\OpeningHours\OpenCloseTrait;
+use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use AppBundle\Utils\DateUtils;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Spatie\OpeningHours\OpeningHours;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 
-class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
+class AsapChoiceLoader implements ChoiceLoaderInterface
 {
-    use OpenCloseTrait;
-
     private $openingHours;
     private $closingRules;
-    private $numberOfDays;
+    private $orderingDelayMinutes;
 
     public function __construct(
         array $openingHours,
         Collection $closingRules = null,
-        ?int $numberOfDays = null,
         int $orderingDelayMinutes = 0,
-        int $rounding = 5)
+        int $rounding = 5,
+        bool $preOrderingAllowed = true)
     {
         $this->openingHours = $openingHours;
         $this->closingRules = $closingRules ?? new ArrayCollection();
         $this->orderingDelayMinutes = $orderingDelayMinutes;
         $this->rounding = $rounding;
-
-        if (null === $numberOfDays) {
-            $numberOfDays = 2;
-        }
-
-        if ($numberOfDays > 6) {
-            $numberOfDays = 6;
-        }
-
-        $this->numberOfDays = $numberOfDays;
-    }
-
-    /**
-     * @param int $shippingOptionsDays
-     */
-    public function setShippingOptionsDays(int $shippingOptionsDays)
-    {
-        $this->numberOfDays = $shippingOptionsDays;
-    }
-
-    public function getClosingRules()
-    {
-        return $this->closingRules;
-    }
-
-    public function getOpeningHours($method = 'delivery')
-    {
-        return $this->openingHours;
-    }
-
-    public function getOrderingDelayMinutes()
-    {
-        return $this->orderingDelayMinutes;
+        $this->preOrderingAllowed = $preOrderingAllowed;
     }
 
     /**
@@ -74,53 +40,75 @@ class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
     {
         $now = Carbon::now();
 
-        if ($this->getOrderingDelayMinutes() > 0) {
-            $now->modify(sprintf('+%d minutes', $this->getOrderingDelayMinutes()));
+        if ($this->orderingDelayMinutes > 0) {
+            $now->modify(sprintf('+%d minutes', $this->orderingDelayMinutes));
         }
 
-        $nextOpeningDate = $this->getNextOpeningDate($now);
-
-        if (is_null($nextOpeningDate)) {
+        if (count($this->openingHours) === 0) {
 
             return new ArrayChoiceList([], $value);
         }
 
         $availabilities = [];
 
-        $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
+        $openingHours = SpatieOpeningHoursRegistry::get($this->openingHours, $this->closingRules);
 
-        if (!$nextClosingDate) { // It is open 24/7
-            $nextClosingDate = Carbon::instance($now)->add($this->numberOfDays, 'days');
+        $nextOpeningDate = $openingHours->nextOpen($now);
+        $nextClosingDate = $openingHours->nextClose($nextOpeningDate);
+
+        $now = $this->roundTo15($now);
+
+        $now->setTime($now->format('H'), $now->format('i'), 0);
+
+        if ($this->preOrderingAllowed) {
+            $max = Carbon::instance($now)->add(7, 'days');
+        } else {
+            $max = Carbon::instance($now)->setTime(23, 59);
+        }
+
+        if ($nextOpeningDate > $max) {
+            return new ArrayChoiceList([], $value);
+        }
+
+        $range = $openingHours->currentOpenRange($now);
+
+        if ($range) {
+
+            $end = Carbon::instance($now)
+                ->setTime(
+                    $range->end()->hours(),
+                    $range->end()->minutes()
+                );
 
             $period = CarbonPeriod::create(
-                $nextOpeningDate, '15 minutes', $nextClosingDate,
+                $now, '15 minutes', $end,
                 CarbonPeriod::EXCLUDE_END_DATE
             );
+
             foreach ($period as $date) {
                 $availabilities[] = $date->format(\DateTime::ATOM);
             }
 
-            return new ArrayChoiceList($this->toChoices($availabilities), $value);
+            $nextClosingDate = $openingHours->nextClose($now);
         }
 
-        $numberOfDays = 0;
-        $days = [];
+        $cursor = Carbon::instance($now);
+        while ($cursor < $max) {
 
-        while ($numberOfDays < $this->numberOfDays) {
+            $period = CarbonPeriod::create(
+                $this->roundTo15($nextOpeningDate), '15 minutes', $nextClosingDate,
+                CarbonPeriod::EXCLUDE_END_DATE
+            );
 
-            $periods = $this->getPeriods($nextOpeningDate, $nextClosingDate);
-
-            foreach ($periods as $period) {
-                foreach ($period as $date) {
+            foreach ($period as $date) {
+                $cursor = $date;
+                if ($date < $max) {
                     $availabilities[] = $date->format(\DateTime::ATOM);
-                    $days[] = $date->format('Y-m-d');
                 }
             }
 
-            $numberOfDays = count(array_unique($days));
-
-            $nextOpeningDate = $this->getNextOpeningDate($nextClosingDate);
-            $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
+            $nextOpeningDate = $openingHours->nextOpen($nextClosingDate);
+            $nextClosingDate = $openingHours->nextClose($nextOpeningDate);
         }
 
         $availabilities = array_values(array_unique($availabilities));
@@ -128,33 +116,13 @@ class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
         return new ArrayChoiceList($this->toChoices($availabilities), $value);
     }
 
-    /**
-     * @param \DateTime $nextOpeningDate
-     * @param \DateTime $nextClosingDate
-     * @return CarbonPeriod[]
-     */
-    private function getPeriods(\DateTime $nextOpeningDate, \DateTime $nextClosingDate)
+    private function roundTo15(\DateTime $date)
     {
-        $periods = [];
+        while (($date->format('i') % 15) !== 0) {
+            $date->modify('+1 minute');
+        }
 
-        do {
-
-            $periods[] = CarbonPeriod::create(
-                $nextOpeningDate, '15 minutes', $nextClosingDate,
-                CarbonPeriod::EXCLUDE_END_DATE
-            );
-
-            $nextOpeningDate = $this->getNextOpeningDate($nextClosingDate);
-
-            if (!Carbon::instance($nextOpeningDate)->isSameDay($nextClosingDate)) {
-                break;
-            }
-
-            $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
-
-        } while (Carbon::instance($nextOpeningDate)->isSameDay($nextClosingDate));
-
-        return $periods;
+        return $date;
     }
 
     private function toChoices(array $availabilities)

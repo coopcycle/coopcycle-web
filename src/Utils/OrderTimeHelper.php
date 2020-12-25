@@ -77,22 +77,13 @@ class OrderTimeHelper
             $choiceLoader = new AsapChoiceLoader(
                 $vendor->getOpeningHours($cart->getFulfillmentMethod()),
                 $vendor->getClosingRules(),
-                $vendor->getShippingOptionsDays(),
                 $fulfillmentMethod->getOrderingDelayMinutes(),
-                $fulfillmentMethod->getOption('round', 5)
+                $fulfillmentMethod->getOption('round', 5),
+                $fulfillmentMethod->isPreOrderingAllowed()
             );
 
             $choiceList = $choiceLoader->loadChoiceList();
             $values = $this->filterChoices($cart, $choiceList->getChoices());
-
-            if (empty($values) && 1 === $vendor->getShippingOptionsDays()) {
-
-                $choiceLoader->setShippingOptionsDays(2);
-                $choiceList = $choiceLoader->loadChoiceList();
-                $values = $choiceList->getValues();
-
-                $values = $this->filterChoices($cart, $choiceList->getChoices());
-            }
 
             // FIXME Sort availabilities
 

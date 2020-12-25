@@ -1137,3 +1137,5 @@ form.customize.order_confirm_enabled.label: Show a custom order confirmation mes
 form.customize.order_confirm.label: This message will appear on the order confirmation page
 order.hub.sub_total.disclaimer: This order has been placed with several merchants. The "%column%" column shows the amount that corresponds to your products (%amount%).
 profile.dashboard_suggest: Looking to manage your orders & your deliveries? <a href="%link%">Discover your new dashboard</a> ✨
+form.fulfillment_method.pre_ordering_allowed.label: Allow pre-ordering
+form.fulfillment_method.pre_ordering_allowed.help: If you uncheck this box, customers will only be allowed to place same-day orders.
