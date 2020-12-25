@@ -242,8 +242,6 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $billingAddress;
 
-    protected $shippedAt;
-
     protected $payments;
 
     protected $delivery;
@@ -503,15 +501,20 @@ class Order extends BaseOrder implements OrderInterface
 
     /**
      * {@inheritdoc}
+     * @deprecated
+     * @SerializedName("shippedAt")
      */
     public function getShippedAt(): ?\DateTime
     {
-        return $this->shippedAt;
-    }
+        if (null !== $this->shippingTimeRange) {
 
-    public function setShippedAt(?\DateTime $shippedAt): void
-    {
-        $this->shippedAt = $shippedAt;
+            $lower = Carbon::make($this->shippingTimeRange->getLower());
+            $upper = Carbon::make($this->shippingTimeRange->getUpper());
+
+            return $lower->average($upper)->toDateTime();
+        }
+
+        return null;
     }
 
     /**
@@ -861,14 +864,6 @@ class Order extends BaseOrder implements OrderInterface
     public function setShippingTimeRange(?TsRange $shippingTimeRange)
     {
         $this->shippingTimeRange = $shippingTimeRange;
-
-        // Legacy
-        if (null !== $shippingTimeRange) {
-            $this->shippedAt =
-                Carbon::instance($shippingTimeRange->getLower())->average($shippingTimeRange->getUpper());
-        } else {
-            $this->shippedAt = null;
-        }
     }
 
     /**
