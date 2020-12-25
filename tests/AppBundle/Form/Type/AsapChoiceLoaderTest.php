@@ -95,6 +95,21 @@ class AsapChoiceLoaderTest extends TestCase
         $this->assertEquals($expected, $days);
     }
 
+    private function assertContainsTimeRanges(array $expected, array $choices)
+    {
+        $expected = array_map(function ($date) {
+            $range = new TsRange();
+            $range->setLower(new \DateTime($date[0]));
+            $range->setUpper(new \DateTime($date[1]));
+
+            return $range;
+        }, $expected);
+
+        foreach ($expected as $value) {
+            $this->assertContainsTimeRange($value, $this->toTimeRanges($choices));
+        }
+    }
+
     private function assertNotContainsDay($expected, array $dates)
     {
         $days = array_reduce($dates, function ($days, TsRangeChoice $item) {
@@ -412,21 +427,21 @@ class AsapChoiceLoaderTest extends TestCase
         $choices = $choiceList->getChoices();
         $values = $choiceList->getValues();
 
-        $this->assertContainsDates([
-            '2020-03-12T15:30:00+02:00',
-            '2020-03-12T15:45:00+02:00',
-            '2020-03-12T20:15:00+02:00',
-            '2020-03-12T20:30:00+02:00',
-            '2020-03-12T20:45:00+02:00',
-            '2020-03-12T21:00:00+02:00',
-            '2020-03-12T21:15:00+02:00',
-            '2020-03-12T21:30:00+02:00',
-            '2020-03-12T21:45:00+02:00',
-            '2020-03-12T22:00:00+02:00',
-            '2020-03-12T22:15:00+02:00',
-            '2020-03-12T22:30:00+02:00',
-            '2020-03-12T22:45:00+02:00',
-            '2020-03-12T23:00:00+02:00',
+        $this->assertContainsTimeRanges([
+            ['2020-03-12T15:25:00+02:00', '2020-03-12T15:35:00+02:00'],
+            ['2020-03-12T15:40:00+02:00', '2020-03-12T15:50:00+02:00'],
+            ['2020-03-12T20:10:00+02:00', '2020-03-12T20:20:00+02:00'],
+            ['2020-03-12T20:25:00+02:00', '2020-03-12T20:35:00+02:00'],
+            ['2020-03-12T20:40:00+02:00', '2020-03-12T20:50:00+02:00'],
+            ['2020-03-12T20:55:00+02:00', '2020-03-12T21:05:00+02:00'],
+            ['2020-03-12T21:10:00+02:00', '2020-03-12T21:20:00+02:00'],
+            ['2020-03-12T21:25:00+02:00', '2020-03-12T21:35:00+02:00'],
+            ['2020-03-12T21:40:00+02:00', '2020-03-12T21:50:00+02:00'],
+            ['2020-03-12T21:55:00+02:00', '2020-03-12T22:05:00+02:00'],
+            ['2020-03-12T22:10:00+02:00', '2020-03-12T22:20:00+02:00'],
+            ['2020-03-12T22:25:00+02:00', '2020-03-12T22:35:00+02:00'],
+            ['2020-03-12T22:40:00+02:00', '2020-03-12T22:50:00+02:00'],
+            ['2020-03-12T22:55:00+02:00', '2020-03-12T23:05:00+02:00'],
         ], $choices);
 
         $this->assertContainsDays([
