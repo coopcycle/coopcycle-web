@@ -96,7 +96,7 @@ class OrderTimeHelper
                 $choiceList = $choiceLoader->loadChoiceList();
                 $values = $choiceList->getValues();
 
-                $values = $this->filterChoices($cart, $choiceList->getValues());
+                $values = $this->filterChoices($cart, $choiceList->getChoices());
             }
 
             // FIXME Sort availabilities
