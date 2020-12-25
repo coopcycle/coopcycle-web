@@ -22,7 +22,7 @@ class ShippingDateFilter
 
     /**
      * @param OrderInterface $order
-     * @param \DateTime $dropoff
+     * @param TsRange $range
      *
      * @return bool
      */
