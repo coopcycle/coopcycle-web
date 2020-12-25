@@ -61,15 +61,6 @@ class ShippingDateFilter
         $vendor = $order->getVendor();
         $fulfillmentMethod = $order->getFulfillmentMethod();
 
-        if ($vendor->hasClosingRuleFor($preparation)) {
-
-            $this->logger->info(sprintf('ShippingDateFilter::accept() - there is a closing rule for "%s"',
-                $preparation->format(\DateTime::ATOM))
-            );
-
-            return false;
-        }
-
         if (!$this->isOpen($vendor->getOpeningHours($fulfillmentMethod), $preparation, $vendor->getClosingRules())) {
 
             $this->logger->info(sprintf('ShippingDateFilter::accept() - closed at "%s"',

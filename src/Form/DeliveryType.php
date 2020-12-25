@@ -11,7 +11,6 @@ use AppBundle\Form\Entity\PackageWithQuantity;
 use AppBundle\Form\Type\TimeSlotChoice;
 use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Service\RoutingInterface;
-use AppBundle\Utils\TimeRange;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

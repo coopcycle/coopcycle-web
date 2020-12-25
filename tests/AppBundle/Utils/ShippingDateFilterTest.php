@@ -114,10 +114,6 @@ class ShippingDateFilterTest extends TestCase
         }
 
         $this->restaurant
-            ->hasClosingRuleFor($preparation, Argument::any())
-            ->willReturn(false);
-
-        $this->restaurant
             ->getClosingRules()
             ->willReturn($restaurantClosingRules);
 
