@@ -5,6 +5,7 @@ namespace Tests\AppBundle\Utils;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Vendor;
+use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\PreparationTimeResolver;
 use AppBundle\Utils\ShippingDateFilter;
 use PHPUnit\Framework\TestCase;
@@ -118,10 +119,12 @@ class ShippingDateFilterTest extends TestCase
             ->getFulfillmentMethod()
             ->willReturn('delivery');
 
+        $tsRange = DateUtils::dateTimeToTsRange($dropoff, 5);
+
         $this->preparationTimeResolver
-            ->resolve($order->reveal(), $dropoff)
+            ->resolve($order->reveal(), $tsRange->getLower())
             ->willReturn($preparation);
 
-        $this->assertEquals($expected, $this->filter->accept($order->reveal(), $dropoff, $now));
+        $this->assertEquals($expected, $this->filter->accept($order->reveal(), $tsRange, $now));
     }
 }

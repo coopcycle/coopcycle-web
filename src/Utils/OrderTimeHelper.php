@@ -42,16 +42,11 @@ class OrderTimeHelper
     {
         return array_filter($choices, function (TsRangeChoice $choice) use ($cart) {
 
-            $tsRange = $choice->toTsRange();
-
-            $avg = Carbon::instance($tsRange->getLower())
-                ->average($tsRange->getUpper());
-
-            $result = $this->shippingDateFilter->accept($cart, $avg);
+            $result = $this->shippingDateFilter->accept($cart, $choice->toTsRange());
 
             $this->logger->info(sprintf('ShippingDateFilter::accept() returned %s for %s',
                 var_export($result, true),
-                $avg->format(\DateTime::ATOM))
+                (string) $choice
             );
 
             return $result;

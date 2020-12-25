@@ -53,7 +53,7 @@ class ShippingTimeRangeValidator extends ConstraintValidator
             $restaurant = $object->getRestaurant();
 
             if (null !== $value && null !== $restaurant && $restaurant->getOpeningHoursBehavior() === 'asap') {
-                if (false === $this->shippingDateFilter->accept($object, $value->getLower(), $now)) {
+                if (false === $this->shippingDateFilter->accept($object, $value, $now)) {
                     $this->context->buildViolation($constraint->shippedAtNotAvailableMessage)
                         ->setCode(ShippingTimeRange::SHIPPED_AT_NOT_AVAILABLE)
                         ->addViolation();

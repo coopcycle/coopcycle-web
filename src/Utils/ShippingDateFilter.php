@@ -2,6 +2,7 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\TimeRange;
 use Carbon\Carbon;
@@ -25,11 +26,13 @@ class ShippingDateFilter
      *
      * @return bool
      */
-    public function accept(OrderInterface $order, \DateTime $dropoff, \DateTime $now = null): bool
+    public function accept(OrderInterface $order, TsRange $range, \DateTime $now = null): bool
     {
         if (null === $now) {
             $now = Carbon::now();
         }
+
+        $dropoff = $range->getLower();
 
         // Obviously, we can't ship in the past
         if ($dropoff <= $now) {

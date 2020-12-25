@@ -2,6 +2,7 @@
 
 namespace AppBundle\Validator;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
@@ -133,7 +134,7 @@ class ShippingTimeRangeValidatorTest extends ConstraintValidatorTestCase
         $this->setObject($order);
 
         $this->shippingDateFilter
-            ->accept($order, $shippingTimeRange->getLower(), Argument::type(\DateTime::class))
+            ->accept($order, $shippingTimeRange, Argument::type(\DateTime::class))
             ->willReturn(false);
 
         $constraint = new ShippingTimeRangeConstraint();
@@ -178,7 +179,7 @@ class ShippingTimeRangeValidatorTest extends ConstraintValidatorTestCase
         $this->setObject($order);
 
         $this->shippingDateFilter
-            ->accept($order, $shippingTimeRange->getLower(), Argument::type(\DateTime::class))
+            ->accept($order, $shippingTimeRange, Argument::type(\DateTime::class))
             ->willReturn(false);
 
         $constraint = new ShippingTimeRangeConstraint();
@@ -223,7 +224,7 @@ class ShippingTimeRangeValidatorTest extends ConstraintValidatorTestCase
         $this->setObject($order);
 
         $this->shippingDateFilter
-            ->accept($order, $shippingTimeRange->getLower(), Argument::type(\DateTime::class))
+            ->accept($order, $shippingTimeRange, Argument::type(\DateTime::class))
             ->willReturn(false);
 
         $constraint = new ShippingTimeRangeConstraint();
@@ -260,7 +261,7 @@ class ShippingTimeRangeValidatorTest extends ConstraintValidatorTestCase
         $this->setObject($order->reveal());
 
         $this->shippingDateFilter
-            ->accept($order, $shippingTimeRange->getLower(), Argument::type(\DateTime::class))
+            ->accept($order, $shippingTimeRange, Argument::type(\DateTime::class))
             ->willReturn(false);
 
         $constraint = new ShippingTimeRangeConstraint();
@@ -299,7 +300,7 @@ class ShippingTimeRangeValidatorTest extends ConstraintValidatorTestCase
         $this->setObject($order);
 
         $this->shippingDateFilter
-            ->accept($order, Argument::type(\DateTime::class), Argument::type(\DateTime::class))
+            ->accept($order, Argument::type(TsRange::class), Argument::type(\DateTime::class))
             ->willReturn(true);
 
         $constraint = new ShippingTimeRangeConstraint();
