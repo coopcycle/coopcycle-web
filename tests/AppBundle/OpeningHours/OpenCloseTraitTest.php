@@ -82,4 +82,70 @@ class OpenCloseTraitTest extends TestCase implements OpenCloseInterface
 
         $this->assertEquals(new \DateTime('2019-01-01T10:00:00+02:00'), $nextOpeningDate);
     }
+
+    public function testIsOpen()
+    {
+        $this->openingHours = ['Mo-Sa 11:45-14:45'];
+
+        // Monday
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-15 11:44')));
+        $this->assertTrue($this->isOpen(new \DateTime('2017-05-15 11:45')));
+        $this->assertTrue($this->isOpen(new \DateTime('2017-05-15 12:30')));
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-15 11:25')));
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-15 14:45')));
+
+        // Tuesday
+        $this->assertTrue($this->isOpen(new \DateTime('2017-05-16 13:30')));
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-16 15:30')));
+
+        // Wednesday
+        $this->assertTrue($this->isOpen(new \DateTime('2017-05-17 13:45')));
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-17 19:30')));
+
+        // Sunday
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-21 12:30')));
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-21 00:30')));
+    }
+
+    public function testIsOpenOverlap()
+    {
+        $this->openingHours = ['Mo-Sa 20:45-01:00'];
+
+        // Monday
+        $this->assertTrue($this->isOpen(new \DateTime('2017-05-15 21:30')));
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-15 20:15')));
+
+        // Tuesday
+        $this->assertTrue($this->isOpen(new \DateTime('2017-05-17 00:30')));
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-16 15:30')));
+
+        // Wednesday
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-17 13:45')));
+
+        // Saturday
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-21 00:30')));
+
+        // Sunday
+        $this->assertFalse($this->isOpen(new \DateTime('2017-05-21 12:30')));
+        $this->assertTrue($this->isOpen(new \DateTime('2017-05-22 00:30')));
+
+    }
+
+    public function testIsOpenWithClosingRules()
+    {
+        $this->openingHours = ["Mo-Sa 10:00-19:00"];
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime('2019-08-05T12:00:00+02:00'));
+        $closingRule->setEndDate(new \DateTime('2019-08-06T12:00:00+02:00'));
+
+        $this->closingRules->add($closingRule);
+
+        $this->assertFalse(
+            $this->isOpen(new \DateTime('2019-08-05T12:00:00+02:00'))
+        );
+        $this->assertTrue(
+            $this->isOpen(new \DateTime('2019-08-06T13:00:00+02:00'))
+        );
+    }
 }
