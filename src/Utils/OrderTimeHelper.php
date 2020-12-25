@@ -78,7 +78,7 @@ class OrderTimeHelper
                 $vendor->getOpeningHours($cart->getFulfillmentMethod()),
                 $vendor->getClosingRules(),
                 $fulfillmentMethod->getOrderingDelayMinutes(),
-                $fulfillmentMethod->getOption('round', 5),
+                $fulfillmentMethod->getOption('range_duration', 10),
                 $fulfillmentMethod->isPreOrderingAllowed()
             );
 

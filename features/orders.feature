@@ -346,14 +346,14 @@ Feature: Orders
       {
         "preparation":"15 minutes",
         "shipping":"1 minutes",
-        "asap":"2017-09-02T12:00:00+02:00",
+        "asap":"2017-09-02T11:55:00+02:00",
         "range":[
-          "2017-09-02T11:55:00+02:00",
-          "2017-09-02T12:05:00+02:00"
+          "2017-09-02T11:50:00+02:00",
+          "2017-09-02T12:00:00+02:00"
         ],
         "today":true,
         "fast":false,
-        "diff":"55 - 65",
+        "diff":"50 - 60",
         "choices":@array@,
         "ranges":@array@,
         "behavior":@string@
@@ -680,7 +680,7 @@ Feature: Orders
         "notes": null,
         "createdAt":@string@,
         "shippedAt":"@string@.isDateTime()",
-        "shippingTimeRange":["2017-09-02T11:55:00+02:00","2017-09-02T12:05:00+02:00"],
+        "shippingTimeRange":["2017-09-02T11:50:00+02:00","2017-09-02T12:00:00+02:00"],
         "preparationExpectedAt":null,
         "pickupExpectedAt":null,
         "reusablePackagingEnabled": false,

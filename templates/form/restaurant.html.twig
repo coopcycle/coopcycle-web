@@ -95,11 +95,11 @@
         </span>
       </div>
     </div>
-    {% if method == 'delivery' and form.round is defined %}
+    {% if method == 'delivery' and form.rangeDuration is defined %}
     <div class="form-group">
-      {{ form_label(form.round, null, { label_attr: { class: 'col-sm-7' } }) }}
+      {{ form_label(form.rangeDuration, null, { label_attr: { class: 'col-sm-7' } }) }}
       <div class="col-sm-5">
-        {{ form_widget(form.round) }}
+        {{ form_widget(form.rangeDuration) }}
       </div>
     </div>
     {% endif %}

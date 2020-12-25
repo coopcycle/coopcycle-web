@@ -64,12 +64,13 @@ class FulfillmentMethodType extends AbstractType
                 'required' => false,
                 'mapped' => false,
             ]);
-            $builder->add('round', ChoiceType::class, array(
-                'label' => 'form.fulfillment_method.options.round.label',
+            $builder->add('rangeDuration', ChoiceType::class, array(
+                'label' => 'form.fulfillment_method.options.range_duration.label',
                 'mapped' => false,
                 'choices' => [
-                    '5 minutes'  => 5,
-                    '15 minutes' => 15,
+                    '10 minutes' => 10,
+                    '30 minutes' => 30,
+                    '60 minutes' => 60,
                 ],
                 'expanded' => true,
                 'multiple' => false,
@@ -88,9 +89,10 @@ class FulfillmentMethodType extends AbstractType
                 $form->get('allowEdit')->setData($allowEdit);
             }
 
-            $round = $fulfillmentMethod->getOption('round', 5);
-            if ($form->has('round')) {
-                $form->get('round')->setData($round);
+            if ($form->has('rangeDuration')) {
+                $form->get('rangeDuration')->setData(
+                    $fulfillmentMethod->getOption('range_duration', 10)
+                );
             }
 
             $disabled = !$allowEdit;
@@ -131,11 +133,11 @@ class FulfillmentMethodType extends AbstractType
                     $form->get('allowEdit')->getData()
                 );
             }
-            if ($form->has('round')) {
-                $round = (int) $form->get('round')->getData();
+            if ($form->has('rangeDuration')) {
+                $rangeDuration = (int) $form->get('rangeDuration')->getData();
                 $fulfillmentMethod->setOption(
-                    'round',
-                    ($round > 0 ? $round : 5)
+                    'range_duration',
+                    ($rangeDuration > 0 ? $rangeDuration : 10)
                 );
             }
         });

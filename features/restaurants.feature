@@ -180,12 +180,12 @@ Feature: Manage restaurants
         "@type":"TimeInfo",
         "@id":@string@,
         "range":[
-          "2020-09-18T11:55:00+02:00",
-          "2020-09-18T12:05:00+02:00"
+          "2020-09-18T11:50:00+02:00",
+          "2020-09-18T12:00:00+02:00"
         ],
         "today":false,
         "fast": false,
-        "diff":"1255 - 1265"
+        "diff":"1250 - 1260"
       },
       "collection":null
     }
@@ -210,7 +210,6 @@ Feature: Manage restaurants
     And I send a "GET" request to "/api/restaurants/1/timing"
     Then the response status code should be 200
     And the response should be in JSON
-    And print last response
     And the JSON should match:
     """
     {
@@ -222,12 +221,12 @@ Feature: Manage restaurants
         "@type":"TimeInfo",
         "@id":@string@,
         "range":[
-          "2020-09-17T12:25:00+02:00",
-          "2020-09-17T12:35:00+02:00"
+          "2020-09-17T12:30:00+02:00",
+          "2020-09-17T12:40:00+02:00"
         ],
         "today":true,
         "fast":true,
-        "diff":"25 - 35"
+        "diff":"30 - 40"
       },
       "collection":null
     }

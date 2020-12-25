@@ -1126,7 +1126,6 @@ promotion_action.percentage_discount: '%percentage% discount'
 promotion_action.delivery_percentage_discount: '%percentage% discount on delivery
   fees'
 promotion_action.fixed_discount: '%amount% discount'
-form.fulfillment_method.options.round.label: Slot approximation
 order.list.summary.hub.text: Order at hub %name%
 index.view_all_merchants: View all merchants
 form.hub.restaurants.label: List of merchants
@@ -1139,3 +1138,4 @@ order.hub.sub_total.disclaimer: This order has been placed with several merchant
 profile.dashboard_suggest: Looking to manage your orders & your deliveries? <a href="%link%">Discover your new dashboard</a> ✨
 form.fulfillment_method.pre_ordering_allowed.label: Allow pre-ordering
 form.fulfillment_method.pre_ordering_allowed.help: If you uncheck this box, customers will only be allowed to place same-day orders.
+form.fulfillment_method.options.range_duration.label: Range duration

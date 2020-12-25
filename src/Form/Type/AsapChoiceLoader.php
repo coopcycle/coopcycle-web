@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\Type;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use AppBundle\Utils\DateUtils;
@@ -18,18 +19,19 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
     private $openingHours;
     private $closingRules;
     private $orderingDelayMinutes;
+    private $rangeDuration;
 
     public function __construct(
         array $openingHours,
         Collection $closingRules = null,
         int $orderingDelayMinutes = 0,
-        int $rounding = 5,
+        int $rangeDuration = 10,
         bool $preOrderingAllowed = true)
     {
         $this->openingHours = $openingHours;
         $this->closingRules = $closingRules ?? new ArrayCollection();
         $this->orderingDelayMinutes = $orderingDelayMinutes;
-        $this->rounding = $rounding;
+        $this->rangeDuration = $rangeDuration ?? 10;
         $this->preOrderingAllowed = $preOrderingAllowed;
     }
 
@@ -49,14 +51,12 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
             return new ArrayChoiceList([], $value);
         }
 
-        $availabilities = [];
-
         $openingHours = SpatieOpeningHoursRegistry::get($this->openingHours, $this->closingRules);
 
         $nextOpeningDate = $openingHours->nextOpen($now);
         $nextClosingDate = $openingHours->nextClose($nextOpeningDate);
 
-        $now = $this->roundTo15($now);
+        $now = $this->roundToNext($now, $this->rangeDuration);
 
         $now->setTime($now->format('H'), $now->format('i'), 0);
 
@@ -70,6 +70,8 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
             return new ArrayChoiceList([], $value);
         }
 
+        $choices = [];
+
         $range = $openingHours->currentOpenRange($now);
 
         if ($range) {
@@ -81,12 +83,14 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
                 );
 
             $period = CarbonPeriod::create(
-                $now, '15 minutes', $end,
+                $now, sprintf('%d minutes', $this->rangeDuration), $end,
                 CarbonPeriod::EXCLUDE_END_DATE
             );
 
             foreach ($period as $date) {
-                $availabilities[] = $date->format(\DateTime::ATOM);
+                $choices[] = new TsRangeChoice(
+                    TsRange::create($date, $date->copy()->add($this->rangeDuration, 'minutes'))
+                );
             }
 
             $nextClosingDate = $openingHours->nextClose($now);
@@ -96,14 +100,16 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
         while ($cursor < $max) {
 
             $period = CarbonPeriod::create(
-                $this->roundTo15($nextOpeningDate), '15 minutes', $nextClosingDate,
+                $this->roundToNext($nextOpeningDate, $this->rangeDuration), sprintf('%d minutes', $this->rangeDuration), $nextClosingDate,
                 CarbonPeriod::EXCLUDE_END_DATE
             );
 
             foreach ($period as $date) {
                 $cursor = $date;
                 if ($date < $max) {
-                    $availabilities[] = $date->format(\DateTime::ATOM);
+                    $choices[] = new TsRangeChoice(
+                        TsRange::create($date, $date->copy()->add($this->rangeDuration, 'minutes'))
+                    );
                 }
             }
 
@@ -111,30 +117,16 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
             $nextClosingDate = $openingHours->nextClose($nextOpeningDate);
         }
 
-        $availabilities = array_values(array_unique($availabilities));
-
-        return new ArrayChoiceList($this->toChoices($availabilities), $value);
+        return new ArrayChoiceList($choices, $value);
     }
 
-    private function roundTo15(\DateTime $date)
+    private function roundToNext(\DateTime $date, int $value = 10)
     {
-        while (($date->format('i') % 15) !== 0) {
+        while (($date->format('i') % $value) !== 0) {
             $date->modify('+1 minute');
         }
 
         return $date;
-    }
-
-    private function toChoices(array $availabilities)
-    {
-        return array_map(function (string $date) {
-
-            $tsRange = DateUtils::dateTimeToTsRange(new \DateTime($date), $this->rounding);
-
-            return new TsRangeChoice(
-                $tsRange
-            );
-        }, $availabilities);
     }
 
     /**

@@ -51,7 +51,8 @@ class OrderTimeHelperTest extends TestCase
 
         $sameDayChoices = [
             '2020-03-31T14:30:00+02:00',
-            '2020-03-31T14:45:00+02:00',
+            '2020-03-31T14:40:00+02:00',
+            '2020-03-31T14:50:00+02:00',
         ];
 
         $cart = $this->prophesize(OrderInterface::class);
@@ -93,11 +94,7 @@ class OrderTimeHelperTest extends TestCase
         $this->shippingDateFilter
             ->accept($cart, Argument::type(TsRange::class))
             ->will(function ($args) use ($sameDayChoices) {
-
-                $avg = Carbon::instance($args[1]->getLower())
-                    ->average($args[1]->getUpper());
-
-                if (in_array($avg->format(\DateTime::ATOM), $sameDayChoices)) {
+                if (in_array($args[1]->getLower()->format(\DateTime::ATOM), $sameDayChoices)) {
                     return false;
                 }
 
@@ -106,7 +103,7 @@ class OrderTimeHelperTest extends TestCase
 
         $shippingTimeRange = $this->helper->getShippingTimeRange($cart->reveal());
 
-        $this->assertEquals(new \DateTime('2020-04-01 12:55:00'), $shippingTimeRange->getLower());
-        $this->assertEquals(new \DateTime('2020-04-01 13:05:00'), $shippingTimeRange->getUpper());
+        $this->assertEquals(new \DateTime('2020-04-01 13:00:00'), $shippingTimeRange->getLower());
+        $this->assertEquals(new \DateTime('2020-04-01 13:10:00'), $shippingTimeRange->getUpper());
     }
 }

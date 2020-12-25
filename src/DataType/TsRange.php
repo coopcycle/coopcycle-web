@@ -58,4 +58,14 @@ class TsRange
 
         return null;
     }
+
+    public static function create($lower, $upper): TsRange
+    {
+        $range = new self();
+
+        $range->setLower($lower);
+        $range->setUpper($upper);
+
+        return $range;
+    }
 }
