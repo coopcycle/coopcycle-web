@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Utils;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Vendor;
@@ -90,9 +91,13 @@ class OrderTimeHelperTest extends TestCase
             ->willReturn(new ArrayCollection());
 
         $this->shippingDateFilter
-            ->accept($cart, Argument::type(\DateTime::class))
+            ->accept($cart, Argument::type(TsRange::class))
             ->will(function ($args) use ($sameDayChoices) {
-                if (in_array($args[1]->format(\DateTime::ATOM), $sameDayChoices)) {
+
+                $avg = Carbon::instance($args[1]->getLower())
+                    ->average($args[1]->getUpper());
+
+                if (in_array($avg->format(\DateTime::ATOM), $sameDayChoices)) {
                     return false;
                 }
 
