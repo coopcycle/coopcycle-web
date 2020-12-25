@@ -24,7 +24,7 @@
       {% endif %}
       {% if preorder_warning %}
       <p class="mb-0">{{ 'restaurant.closedWarningWithDelay'|trans({
-        '%delay%': restaurant|restaurant_delay_for_humans(app.request.locale)
+        '%delay%': restaurant.getFulfillmentMethod('delivery').orderingDelayMinutes|delay_for_humans(app.request.locale)
       }) }}</p>
       {% endif %}
     </div>

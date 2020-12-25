@@ -68,21 +68,15 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         ]);
     }
 
-    public function delayForHumans(LocalBusiness $restaurant, $locale): string
+    public function delayForHumans(int $delay, $locale): string
     {
-        if ($restaurant->isFulfillmentMethodEnabled('delivery')
-        &&  $restaurant->getFulfillmentMethod('delivery')->getOrderingDelayMinutes() > 0) {
+        Carbon::setLocale($locale);
 
-            Carbon::setLocale($locale);
+        $now = Carbon::now();
+        $future = clone $now;
+        $future->addMinutes($delay);
 
-            $now = Carbon::now();
-            $future = clone $now;
-            $future->addMinutes($restaurant->getFulfillmentMethod('delivery')->getOrderingDelayMinutes());
-
-            return $now->diffForHumans($future, ['syntax' => CarbonInterface::DIFF_ABSOLUTE]);
-        }
-
-        return '';
+        return $now->diffForHumans($future, ['syntax' => CarbonInterface::DIFF_ABSOLUTE]);
     }
 
     public function restaurantsSuggestions(): array
