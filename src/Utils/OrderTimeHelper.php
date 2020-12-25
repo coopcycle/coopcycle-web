@@ -47,7 +47,7 @@ class OrderTimeHelper
             $this->logger->info(sprintf('ShippingDateFilter::accept() returned %s for %s',
                 var_export($result, true),
                 (string) $choice
-            );
+            ));
 
             return $result;
         });
