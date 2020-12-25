@@ -2,11 +2,13 @@
 
 namespace Tests\AppBundle\Form\Type;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Form\Type\AsapChoiceLoader;
 use AppBundle\Form\Type\TimeSlotChoice;
 use AppBundle\Form\Type\TsRangeChoice;
+use AppBundle\Utils\DateUtils;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +18,11 @@ class AsapChoiceLoaderTest extends TestCase
     public function tearDown(): void
     {
         Carbon::setTestNow();
+    }
+
+    private function rangeToString(TsRange $range)
+    {
+        return $range->getLower()->format('Y-m-d H:i').' - '.$range->getUpper()->format('Y-m-d H:i');
     }
 
     private function toAvgStrings($choices)
@@ -32,9 +39,23 @@ class AsapChoiceLoaderTest extends TestCase
         }, $choices);
     }
 
+    private function toTimeRanges($choices)
+    {
+        return array_map(fn(TsRangeChoice $choice) => $choice->toTsRange(), $choices);
+    }
+
     private function assertContainsDate($date, array $dates)
     {
         $this->assertContains(is_string($date) ? $date : $date->format(\DateTime::ATOM), $dates);
+    }
+
+    private function assertContainsTimeRange(TsRange $range, array $dates)
+    {
+        $toString = array_map(function (TsRange $range) {
+            return $this->rangeToString($range);
+        }, $dates);
+
+        $this->assertContains($this->rangeToString($range), $toString);
     }
 
     private function assertNotContainsDate($date, array $dates)
@@ -42,11 +63,14 @@ class AsapChoiceLoaderTest extends TestCase
         $this->assertNotContains(is_string($date) ? $date : $date->format(\DateTime::ATOM), $dates);
     }
 
-    private function assertContainsDates(array $expected, array $dates)
+    private function assertContainsDates(array $expected, array $choices)
     {
-        $averages = $this->toAvgStrings($dates);
-        foreach ($expected as $date) {
-            $this->assertContainsDate($date, $averages);
+        $expected = array_map(function ($date) {
+            return DateUtils::dateTimeToTsRange(new \DateTime($date), 5);
+        }, $expected);
+
+        foreach ($expected as $value) {
+            $this->assertContainsTimeRange($value, $this->toTimeRanges($choices));
         }
     }
 
