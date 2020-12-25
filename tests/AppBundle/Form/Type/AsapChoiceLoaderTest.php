@@ -16,18 +16,56 @@ class AsapChoiceLoaderTest extends TestCase
         Carbon::setTestNow();
     }
 
-    private function assertDays($expected, array $dates)
+    private function assertContainsDate($date, array $dates)
+    {
+        $this->assertContains(is_string($date) ? $date : $date->format(\DateTime::ATOM), $dates);
+    }
+
+    private function assertNotContainsDate($date, array $dates)
+    {
+        $this->assertNotContains(is_string($date) ? $date : $date->format(\DateTime::ATOM), $dates);
+    }
+
+    private function assertContainsDates(array $expected, array $dates)
+    {
+        foreach ($expected as $date) {
+            $this->assertContainsDate($date, $dates);
+        }
+    }
+
+    private function assertNotContainsDates(array $expected, array $dates)
+    {
+        foreach ($expected as $date) {
+            $this->assertNotContainsDate($date, $dates);
+        }
+    }
+
+    private function assertContainsDays($expected, array $dates)
     {
         $days = array_reduce($dates, function ($days, $item) {
             $day = (new \DateTime($item))->format('Y-m-d');
             if (!in_array($day, $days)) {
-                  $days[] = $day;
+                $days[] = $day;
             }
 
             return $days;
         }, []);
 
         $this->assertEquals($expected, $days);
+    }
+
+    private function assertNotContainsDay($expected, array $dates)
+    {
+        $days = array_reduce($dates, function ($days, $item) {
+            $day = (new \DateTime($item))->format('Y-m-d');
+            if (!in_array($day, $days)) {
+                $days[] = $day;
+            }
+
+            return $days;
+        }, []);
+
+        $this->assertNotContains($expected, $days);
     }
 
     private function assertNumberOfDays($expected, array $dates)
@@ -51,7 +89,7 @@ class AsapChoiceLoaderTest extends TestCase
         $choiceLoader = new AsapChoiceLoader(["Mo-Su 00:00-23:59"]);
         $choiceList = $choiceLoader->loadChoiceList();
 
-        $this->assertEquals([
+        $this->assertContainsDates([
             "2017-10-04T17:30:00+02:00",
             "2017-10-04T17:45:00+02:00",
             "2017-10-04T18:00:00+02:00",
@@ -246,29 +284,27 @@ class AsapChoiceLoaderTest extends TestCase
             "2017-10-06T17:15:00+02:00"
         ], $choiceList->getValues());
 
-        $choiceLoader->setShippingOptionsDays(3);
         $choiceList = $choiceLoader->loadChoiceList();
-
         $values = $choiceList->getValues();
 
-        $this->assertNumberOfDays(4, $values);
-
-        $this->assertDays([
+        $this->assertContainsDays([
             "2017-10-04",
             "2017-10-05",
             "2017-10-06",
-            "2017-10-07"
         ], $values);
     }
 
     public function testSameDay()
     {
+        // 2017-10-04 is a Wednesday
         Carbon::setTestNow(Carbon::parse('2017-10-04T17:30:00+02:00'));
 
         $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"]);
-        $choiceList = $choiceLoader->loadChoiceList();
 
-        $this->assertEquals([
+        $choiceList = $choiceLoader->loadChoiceList();
+        $values = $choiceList->getValues();
+
+        $this->assertContainsDates([
             '2017-10-04T17:30:00+02:00',
             '2017-10-04T17:45:00+02:00',
             '2017-10-04T18:00:00+02:00',
@@ -311,19 +347,11 @@ class AsapChoiceLoaderTest extends TestCase
             '2017-10-05T18:15:00+02:00',
             '2017-10-05T18:30:00+02:00',
             '2017-10-05T18:45:00+02:00',
-        ], $choiceList->getValues());
+        ], $values);
 
-        $choiceLoader->setShippingOptionsDays(3);
-        $choiceList = $choiceLoader->loadChoiceList();
-
-        $values = $choiceList->getValues();
-
-        $this->assertNumberOfDays(3, $values);
-
-        $this->assertDays([
+        $this->assertContainsDays([
             "2017-10-04",
             "2017-10-05",
-            "2017-10-06",
         ], $values);
     }
 
@@ -337,12 +365,11 @@ class AsapChoiceLoaderTest extends TestCase
         ];
 
         $choiceLoader = new AsapChoiceLoader($openingHours);
-        $choiceLoader->setShippingOptionsDays(1);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $values = $choiceList->getValues();
 
-        $this->assertEquals([
+        $this->assertContainsDates([
             '2020-03-12T15:30:00+02:00',
             '2020-03-12T15:45:00+02:00',
             '2020-03-12T20:15:00+02:00',
@@ -359,10 +386,11 @@ class AsapChoiceLoaderTest extends TestCase
             '2020-03-12T23:00:00+02:00',
         ], $values);
 
-        $this->assertNumberOfDays(1, $values);
+        $this->assertNumberOfDays(2, $values);
 
-        $this->assertDays([
+        $this->assertContainsDays([
             "2020-03-12",
+            "2020-03-13",
         ], $values);
 
         Carbon::setTestNow(Carbon::parse('2020-03-12T23:30:00+02:00'));
@@ -370,7 +398,7 @@ class AsapChoiceLoaderTest extends TestCase
         $choiceList = $choiceLoader->loadChoiceList();
         $values = $choiceList->getValues();
 
-        $this->assertEquals([
+        $this->assertContainsDates([
             '2020-03-13T13:15:00+02:00',
             '2020-03-13T13:30:00+02:00',
             '2020-03-13T13:45:00+02:00',
@@ -396,23 +424,30 @@ class AsapChoiceLoaderTest extends TestCase
             '2020-03-13T23:00:00+02:00',
         ], $values);
 
-        $this->assertNumberOfDays(1, $values);
+        $this->assertNumberOfDays(2, $values);
 
-        $this->assertDays([
+        $this->assertContainsDays([
             "2020-03-13",
+            "2020-03-14",
         ], $values);
     }
 
     public function testOnAnotherDay()
     {
+        // 2019-08-04 is a Sunday
         Carbon::setTestNow(Carbon::parse('2019-08-04T12:30:00+02:00'));
 
         $choiceLoader = new AsapChoiceLoader(["Tu-Sa 10:00-19:00"]);
-        $choiceList = $choiceLoader->loadChoiceList();
 
+        $choiceList = $choiceLoader->loadChoiceList();
         $values = $choiceList->getValues();
 
-        $this->assertEquals([
+        $this->assertContainsDays([
+            '2019-08-06',
+            '2019-08-07',
+        ], $values);
+
+        $this->assertContainsDates([
             '2019-08-06T10:00:00+02:00',
             '2019-08-06T10:15:00+02:00',
             '2019-08-06T10:30:00+02:00',
@@ -493,9 +528,11 @@ class AsapChoiceLoaderTest extends TestCase
         Carbon::setTestNow(Carbon::parse('2019-08-04T12:30:00+02:00'));
 
         $choiceLoader = new AsapChoiceLoader(["Tu 10:00-19:00", "Th-Sa 10:00-19:00"]);
-        $choiceList = $choiceLoader->loadChoiceList();
 
-        $this->assertEquals([
+        $choiceList = $choiceLoader->loadChoiceList();
+        $values = $choiceList->getValues();
+
+        $this->assertContainsDates([
             '2019-08-06T10:00:00+02:00',
             '2019-08-06T10:15:00+02:00',
             '2019-08-06T10:30:00+02:00',
@@ -569,20 +606,6 @@ class AsapChoiceLoaderTest extends TestCase
             '2019-08-08T18:30:00+02:00',
             '2019-08-08T18:45:00+02:00',
         ], $choiceList->getValues());
-
-        $choiceLoader->setShippingOptionsDays(4);
-        $choiceList = $choiceLoader->loadChoiceList();
-
-        $values = $choiceList->getValues();
-
-        $this->assertNumberOfDays(4, $values);
-
-        $this->assertDays([
-            "2019-08-06",
-            "2019-08-08",
-            "2019-08-09",
-            "2019-08-10",
-        ], $values);
     }
 
     public function testWithDelayedOrders()
@@ -590,10 +613,10 @@ class AsapChoiceLoaderTest extends TestCase
         Carbon::setTestNow(Carbon::parse('2017-10-04T17:30:00+02:00'));
 
         $delay = (2 * 24 * 60); // should order two days in advance
-        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], null, 2, $delay);
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], null, $delay);
         $choiceList = $choiceLoader->loadChoiceList();
 
-        $this->assertEquals([
+        $this->assertContainsDates([
             '2017-10-06T17:30:00+02:00',
             '2017-10-06T17:45:00+02:00',
             '2017-10-06T18:00:00+02:00',
@@ -646,7 +669,7 @@ class AsapChoiceLoaderTest extends TestCase
         $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"]);
         $choiceList = $choiceLoader->loadChoiceList();
 
-        $this->assertEquals([
+        $this->assertContainsDates([
             '2017-10-04T17:45:00+02:00',
             '2017-10-04T18:00:00+02:00',
             '2017-10-04T18:15:00+02:00',
@@ -713,9 +736,11 @@ class AsapChoiceLoaderTest extends TestCase
         $closingRules->add($closingRule);
 
         $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $closingRules);
-        $choiceList = $choiceLoader->loadChoiceList();
 
-        $this->assertEquals([
+        $choiceList = $choiceLoader->loadChoiceList();
+        $values = $choiceList->getValues();
+
+        $this->assertContainsDates([
             '2017-10-04T17:45:00+02:00',
             '2017-10-04T18:00:00+02:00',
             '2017-10-04T18:15:00+02:00',
@@ -724,7 +749,64 @@ class AsapChoiceLoaderTest extends TestCase
             '2017-10-05T18:15:00+02:00',
             '2017-10-05T18:30:00+02:00',
             '2017-10-05T18:45:00+02:00',
-        ], $choiceList->getValues());
+        ], $values);
+
+        $this->assertNotContainsDates([
+            '2017-10-04T18:30:00+02:00',
+            '2017-10-05T18:05:00+02:00',
+        ], $values);
+    }
+
+    public function testWithClosingRulesOnSameDay()
+    {
+        $this->markTestSkipped();
+
+        Carbon::setTestNow(Carbon::parse('2017-10-04T10:30:26+02:00'));
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime('2017-10-04T14:00:26+02:00'));
+        $closingRule->setEndDate(new \DateTime('2017-10-04T16:00:26+02:00'));
+
+        $closingRules = new ArrayCollection();
+        $closingRules->add($closingRule);
+
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $closingRules);
+
+        $choiceList = $choiceLoader->loadChoiceList();
+        $values = $choiceList->getValues();
+
+        $this->assertContainsDates([
+            '2017-10-04T16:00:00+02:00',
+        ], $values);
+
+        $this->assertNotContainsDates([
+            '2017-10-04T14:30:00+02:00',
+        ], $values);
+    }
+
+    public function testWithClosingRulesEmptyResult()
+    {
+        $this->markTestSkipped();
+
+        Carbon::setTestNow(Carbon::parse('2017-10-04T16:30:26+02:00'));
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime('2017-10-04T14:00:26+02:00'));
+        $closingRule->setEndDate(new \DateTime('2017-10-20T11:00:26+02:00'));
+
+        $closingRules = new ArrayCollection();
+        $closingRules->add($closingRule);
+
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $closingRules);
+
+        $choiceList = $choiceLoader->loadChoiceList();
+        $values = $choiceList->getValues();
+
+        $this->assertEmpty($values);
+
+        $this->assertNotContainsDates([
+            '2017-10-04T14:30:00+02:00',
+        ], $values);
     }
 
     public function testUntilLastMinuteOfDay()
@@ -734,7 +816,7 @@ class AsapChoiceLoaderTest extends TestCase
         $choiceLoader = new AsapChoiceLoader(["Mo-Su 18:00-23:59"]);
         $choiceList = $choiceLoader->loadChoiceList();
 
-        $this->assertEquals([
+        $this->assertContainsDates([
             '2020-09-07T18:00:00+02:00',
             '2020-09-07T18:15:00+02:00',
             '2020-09-07T18:30:00+02:00',
@@ -796,7 +878,7 @@ class AsapChoiceLoaderTest extends TestCase
         ]);
         $choiceList = $choiceLoader->loadChoiceList();
 
-        $this->assertEquals([
+        $this->assertContainsDates([
             '2020-09-09T12:00:00+02:00',
             '2020-09-09T12:15:00+02:00',
             '2020-09-09T12:30:00+02:00',
@@ -838,5 +920,26 @@ class AsapChoiceLoaderTest extends TestCase
             '2020-09-10T22:00:00+02:00',
             '2020-09-10T22:15:00+02:00',
         ], $choiceList->getValues());
+    }
+
+    public function testOpensOnThursday()
+    {
+        Carbon::setTestNow(Carbon::parse('2020-12-23T09:30:00+02:00'));
+
+        $choiceLoader = new AsapChoiceLoader(["Th-Fr 09:30-14:30","Th-Fr 20:30-23:00","Sa-Su 09:30-14:45","Sa-Su 19:15-01:15"]);
+        $choiceList = $choiceLoader->loadChoiceList();
+
+        $choiceList = $choiceLoader->loadChoiceList();
+        $values = $choiceList->getValues();
+
+        $this->assertContainsDates([
+            '2020-12-24T09:30:00+02:00'
+        ], $values);
+
+        $this->assertNotContainsDay('2020-12-23', $values);
+
+        $this->assertNotContainsDates([
+            '2020-12-23T10:00:00+02:00',
+        ], $values);
     }
 }
