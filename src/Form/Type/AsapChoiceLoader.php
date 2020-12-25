@@ -24,8 +24,7 @@ class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
         array $openingHours,
         Collection $closingRules = null,
         ?int $numberOfDays = null,
-        int $orderingDelayMinutes = 0,
-        \DateTime $now = null)
+        int $orderingDelayMinutes = 0)
     {
         $this->openingHours = $openingHours;
         $this->closingRules = $closingRules ?? new ArrayCollection();
@@ -40,7 +39,6 @@ class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
         }
 
         $this->numberOfDays = $numberOfDays;
-        $this->now = $now;
     }
 
     /**
@@ -71,7 +69,7 @@ class AsapChoiceLoader implements ChoiceLoaderInterface, OpenCloseInterface
      */
     public function loadChoiceList($value = null)
     {
-        $now = $this->now ?? Carbon::now();
+        $now = Carbon::now();
 
         if ($this->getOrderingDelayMinutes() > 0) {
             $now->modify(sprintf('+%d minutes', $this->getOrderingDelayMinutes()));
