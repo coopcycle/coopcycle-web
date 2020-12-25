@@ -58,7 +58,7 @@
           data-action="{{ path(routes.order_receipt_generate, { orderNumber: order.number }) }}">{{ 'order.list.generate_receipt'|trans }}</button>
       {% endif %}
     </td>
-    <td class="text-right">{{ order.shippedAt|localizeddate('short', 'short') }}</td>
+    <td class="text-right">{{ order.shippingTimeRange|time_range_for_humans_short }}</td>
     {% if with_reorder ?? false %}
     <td class="text-right">
       {% if order.hasVendor() and not order.vendor.isHub() and order.vendor.restaurant.enabled %}

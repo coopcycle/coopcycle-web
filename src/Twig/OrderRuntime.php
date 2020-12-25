@@ -47,4 +47,27 @@ class OrderRuntime implements RuntimeExtensionInterface
                 'sameElse' => $sameElse,
             ]);
     }
+
+    /**
+     * @param TsRange|string $range
+     * @return string
+     */
+    public function timeRangeForHumansShort($range)
+    {
+        if (!$range instanceof TsRange) {
+            $range = TsRange::parse($range);
+        }
+
+        $lower = Carbon::instance($range->getLower())->locale($this->locale);
+
+        $rangeAsText = implode(' - ', [
+            $lower->isoFormat('LT'),
+            Carbon::instance($range->getUpper())->locale($this->locale)->isoFormat('LT')
+        ]);
+
+        return sprintf('%s %s',
+            $lower->isoFormat('L'),
+            $rangeAsText
+        );
+    }
 }
