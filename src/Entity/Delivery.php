@@ -31,7 +31,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "denormalization_context"={"groups"={"delivery_create"}},
  *       "swagger_context"={
  *         "parameters"=Delivery::SWAGGER_CONTEXT_POST_PARAMETERS
- *       }
+ *       },
+ *       "security_post_denormalize"="is_granted('create', object)"
  *     },
  *     "check"={
  *       "method"="POST",
@@ -40,6 +41,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "status"=200,
  *       "validation_groups"={"Default", "delivery_check"},
  *       "denormalization_context"={"groups"={"delivery_create"}},
+ *       "security_post_denormalize"="is_granted('create', object)",
  *       "swagger_context"={
  *         "summary"="Asserts a Delivery is feasible",
  *         "parameters"=Delivery::SWAGGER_CONTEXT_POST_PARAMETERS
@@ -48,7 +50,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   },
  *   itemOperations={
  *     "get"={
- *       "method"="GET"
+ *       "method"="GET",
+ *       "security"="is_granted('create', object)"
  *     },
  *     "put"={
  *        "method"="PUT",

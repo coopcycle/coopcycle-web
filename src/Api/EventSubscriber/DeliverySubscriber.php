@@ -47,9 +47,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
     {
         // @see https://api-platform.com/docs/core/events/#built-in-event-listeners
         return [
-            KernelEvents::REQUEST => [
-                ['accessControl', EventPriorities::POST_DESERIALIZE],
-            ],
             KernelEvents::VIEW => [
                 ['setDefaults', EventPriorities::PRE_VALIDATE],
                 ['calculate', EventPriorities::PRE_VALIDATE],
@@ -62,49 +59,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
     private function matchRoute(Request $request)
     {
         return in_array($request->attributes->get('_route'), self::$matchingRoutes);
-    }
-
-    public function accessControl(RequestEvent $event)
-    {
-        $request = $event->getRequest();
-        if (!$this->matchRoute($request)) {
-            return;
-        }
-
-        $delivery = $request->attributes->get('data');
-
-        if (null !== ($token = $this->tokenStorage->getToken())) {
-
-            if ($token instanceof JWTUserToken) {
-
-                $user = $token->getUser();
-                $store = $delivery->getStore();
-
-                if ($store && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($store)) {
-                    return;
-                }
-
-            } else {
-                // TODO Move this to Delivery entity access_control
-                $roles = $token->getRoles();
-                foreach ($roles as $role) {
-                    if ($role->getRole() === 'ROLE_OAUTH2_DELIVERIES') {
-
-                        $store = $this->storeExtractor->extractStore();
-
-                        if (null === $delivery->getStore()) {
-                            return;
-                        }
-
-                        if ($delivery->getStore() === $store) {
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
-        throw new AccessDeniedException();
     }
 
     public function setDefaults(ViewEvent $event)
