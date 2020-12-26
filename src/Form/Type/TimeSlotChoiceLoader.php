@@ -20,11 +20,10 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
     private $country;
     private $OHSToCarbon;
     private $openingHoursSpecifications = [];
-    private $expectedCount = 0;
     private $now;
     private $workingDaysProviderClass;
 
-    public function __construct(TimeSlot $timeSlot, string $country, Collection $closingRules = null)
+    public function __construct(TimeSlot $timeSlot, string $country, Collection $closingRules = null, \DateTime $maxDate = null)
     {
         $this->timeSlot = $timeSlot;
         $this->country = $country;
@@ -44,8 +43,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
 
         $this->now = Carbon::now();
 
-        $this->expectedCount =
-            $this->now->diffInDays($this->now->copy()->add($timeSlot->getInterval()));
+        $this->maxDate = $maxDate ?? $this->now->copy()->add($timeSlot->getInterval());
 
         $this->workingDaysOnly = !$timeSlot->hasOpeningHours() && $timeSlot->isWorkingDaysOnly();
 
@@ -60,16 +58,6 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                 $this->workingDaysProviderClass = $providers[strtoupper($country)];
             }
         }
-    }
-
-    private function countNumberOfDays(array $choices)
-    {
-        $days = [];
-        foreach ($choices as $choice) {
-            $days[] = $choice->getDate()->format('Y-m-d');
-        }
-
-        return count(array_unique($days));
     }
 
     private function getCursor(\DateTimeInterface $now)
@@ -89,11 +77,12 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
         $newCursor = clone $cursor;
 
         if ($this->workingDaysOnly && null !== $this->workingDaysProviderClass) {
-            return Yasumi::nextWorkingDay($this->workingDaysProviderClass, $cursor);
-
+            $newCursor = Yasumi::nextWorkingDay($this->workingDaysProviderClass, $cursor);
+        } else {
+            $newCursor->modify('+1 day');
         }
 
-        $newCursor->modify('+1 day');
+        // $newCursor->setTime(0, 0, 0);
 
         return $newCursor;
     }
@@ -103,7 +92,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
      */
     public function loadChoiceList($value = null)
     {
-        if ($this->expectedCount <= 0) {
+        if ($this->maxDate <= $this->now) {
             return new ArrayChoiceList([], $value);
         }
 
@@ -114,11 +103,10 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
         $cursor = $this->getCursor($this->now);
 
         $choices = [];
-        $count = 0;
 
         $validator = Validation::createValidator();
 
-        while ($count < $this->expectedCount) {
+        while ($cursor <= $this->maxDate) {
 
             if ($this->timeSlot->hasOpeningHours()) {
                 foreach ($this->openingHoursSpecifications as $spec) {
@@ -143,11 +131,14 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                             }
                         }
 
-                        $violations = $validator->validate($choice->toTsRange(), [
+                        $tsRange = $choice->toTsRange();
+
+                        $violations = $validator->validate($tsRange, [
                             new AssertClosingRules($this->closingRules)
                         ]);
 
-                        if (count($violations) === 0 && !$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())) {
+                        if (count($violations) === 0 && !$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())
+                            && $tsRange->getLower() < $this->maxDate) {
                             $choices[] = $choice;
                         }
                     }
@@ -159,13 +150,14 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                         $timeSlotChoice->toTimeRange()
                     );
 
-                    if (!$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())) {
+                    $tsRange = $choice->toTsRange();
+
+                    if (!$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice()) && $tsRange->getLower() < $this->maxDate) {
                         $choices[] = $choice;
                     }
                 }
             }
 
-            $count = $this->countNumberOfDays($choices);
             $cursor = $this->moveCursor($cursor);
         }
 
