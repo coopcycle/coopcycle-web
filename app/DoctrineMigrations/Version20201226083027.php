@@ -26,6 +26,10 @@ final class Version20201226083027 extends AbstractMigration
 
         while ($fm = $stmt->fetch()) {
 
+            if (empty($fm['options'])) {
+                continue;
+            }
+
             $options = json_decode($fm['options'], true);
 
             $options['range_duration'] = ($options['round'] ?? 5) * 2;
