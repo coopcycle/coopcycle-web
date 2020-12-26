@@ -14,9 +14,13 @@ use Webmozart\Assert\Assert;
 class DeliveriesVoter extends Voter
 {
     const CREATE = 'create';
+    const VIEW   = 'view';
+    const EDIT   = 'edit';
 
     private static $actions = [
         self::CREATE,
+        self::VIEW,
+        self::EDIT,
     ];
 
     private $authorizationChecker;
@@ -60,7 +64,7 @@ class DeliveriesVoter extends Voter
 
                     $store = $this->storeExtractor->extractStore();
 
-                    if (null === $subject->getStore()) {
+                    if (self::CREATE === $attribute && null === $subject->getStore()) {
                         return true;
                     }
 

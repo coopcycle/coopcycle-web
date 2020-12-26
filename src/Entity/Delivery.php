@@ -51,17 +51,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "security"="is_granted('create', object)"
+ *       "security"="is_granted('view', object)"
  *     },
  *     "put"={
  *        "method"="PUT",
- *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())"
+ *        "security"="is_granted('edit', object)"
  *     },
  *     "pick"={
  *        "method"="PUT",
  *        "path"="/deliveries/{id}/pick",
  *        "controller"=PickDelivery::class,
- *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())",
+ *        "security"="is_granted('edit', object)"
  *        "swagger_context"={
  *          "summary"="Marks a Delivery as picked"
  *        }
@@ -70,7 +70,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *        "method"="PUT",
  *        "path"="/deliveries/{id}/drop",
  *        "controller"=DropDelivery::class,
- *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())",
+ *        "security"="is_granted('edit', object)"
  *        "swagger_context"={
  *          "summary"="Marks a Delivery as dropped"
  *        }
