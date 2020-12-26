@@ -84,13 +84,16 @@ class OrderFactory implements FactoryInterface
         return $order;
     }
 
-    public function createForDelivery(Delivery $delivery, int $price, ?CustomerInterface $customer = null)
+    public function createForDelivery(Delivery $delivery, int $price, ?CustomerInterface $customer = null, $attach = true)
     {
         Assert::isInstanceOf($this->productVariantFactory, ProductVariantFactory::class);
 
         $order = $this->factory->createNew();
 
-        $order->setDelivery($delivery);
+        if ($attach) {
+            $order->setDelivery($delivery);
+        }
+
         $order->setShippingAddress($delivery->getDropoff()->getAddress());
 
         $shippingTimeRange = new TsRange();

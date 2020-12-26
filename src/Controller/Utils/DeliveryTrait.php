@@ -36,9 +36,9 @@ trait DeliveryTrait
      *
      * @return OrderInterface
      */
-    protected function createOrderForDelivery(OrderFactory $factory, Delivery $delivery, int $price, ?CustomerInterface $customer = null)
+    protected function createOrderForDelivery(OrderFactory $factory, Delivery $delivery, int $price, ?CustomerInterface $customer = null, $attach = true)
     {
-        return $factory->createForDelivery($delivery, $price, $customer);
+        return $factory->createForDelivery($delivery, $price, $customer, $attach);
     }
 
     protected function createDeliveryForm(Delivery $delivery, array $options = [])
