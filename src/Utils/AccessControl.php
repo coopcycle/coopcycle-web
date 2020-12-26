@@ -34,14 +34,6 @@ class AccessControl
         return $isAdmin || $ownsRestaurant || $isCustomer;
     }
 
-    public static function restaurant(UserInterface $user, LocalBusiness $restaurant)
-    {
-        $isAdmin = $user->hasRole('ROLE_ADMIN');
-        $ownsRestaurant = $user->ownsRestaurant($restaurant);
-
-        return $isAdmin || $ownsRestaurant;
-    }
-
     public static function store(UserInterface $user, Store $store)
     {
         $isAdmin = $user->hasRole('ROLE_ADMIN');

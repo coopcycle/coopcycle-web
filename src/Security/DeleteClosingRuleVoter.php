@@ -63,9 +63,7 @@ class DeleteClosingRuleVoter extends Voter
 
         if ($restaurant) {
 
-            Assert::isInstanceOf($user, User::class);
-
-            return $user->ownsRestaurant($restaurant);
+            return $this->authorizationChecker->isGranted('edit', $restaurant);
         }
 
         return false;
