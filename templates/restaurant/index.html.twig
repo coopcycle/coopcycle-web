@@ -60,6 +60,12 @@
     {% endif %}
   {% endblock %}
 
+  {#
+  FIXME
+  May throw Spatie\OpeningHours\Exceptions\MaximumLimitExceeded
+  "No open date/time found in the next 366 days, use $openingHours->setDayLimit() to increase the limit."
+  For example, set holidays for 2 years
+
   {% if not restaurant.isOpen %}
     {% if restaurant.hasClosingRuleFor %}
     <div class="alert alert-danger text-center">
@@ -69,6 +75,7 @@
     </div>
     {% endif %}
   {% endif %}
+  #}
 
   {% if restaurant.quotesAllowed %}
     {% set trans_params = {
