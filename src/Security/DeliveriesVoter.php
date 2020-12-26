@@ -56,19 +56,8 @@ class DeliveriesVoter extends Voter
             if (self::CREATE === $attribute && null === $subject->getStore()) {
                 return true;
             }
-
-            if ($subject->getStore() === $this->storeExtractor->extractStore()) {
-                return true;
-            }
         }
 
-        $user = $token->getUser();
-        $store = $subject->getStore();
-
-        if ($store && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($store)) {
-            return true;
-        }
-
-        return false;
+        return $this->authorizationChecker->isGranted('edit', $subject->getStore());
     }
 }

@@ -44,15 +44,15 @@ class StoreVoter extends Voter
             return true;
         }
 
+        if ($this->authorizationChecker->isGranted('ROLE_OAUTH2_DELIVERIES')) {
+            return $subject === $this->storeExtractor->extractStore();
+        }
+
         $user = $token->getUser();
 
         if ($this->authorizationChecker->isGranted('ROLE_STORE')
             && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($subject)) {
             return true;
-        }
-
-        if ($this->authorizationChecker->isGranted('ROLE_OAUTH2_DELIVERIES')) {
-            return $subject === $this->storeExtractor->extractStore();
         }
 
         return false;
