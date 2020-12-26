@@ -62,20 +62,21 @@
 
   {#
   FIXME
-  May throw Spatie\OpeningHours\Exceptions\MaximumLimitExceeded
+  Calling restaurant.getNextOpeningDate() may throw Spatie\OpeningHours\Exceptions\MaximumLimitExceeded
   "No open date/time found in the next 366 days, use $openingHours->setDayLimit() to increase the limit."
   For example, set holidays for 2 years
+  #}
 
   {% if not restaurant.isOpen %}
-    {% if restaurant.hasClosingRuleFor %}
+    {% set closingRule = restaurant.matchClosingRuleFor %}
+    {% if closingRule is not empty %}
     <div class="alert alert-danger text-center">
-      {% trans with { '%date%': restaurant.getNextOpeningDate|localizeddate('medium', 'none') } %}
+      {% trans with { '%date%': closingRule.endDate|localizeddate('medium', 'none') } %}
       restaurant.temporaryClosedWarning
       {% endtrans %}
     </div>
     {% endif %}
   {% endif %}
-  #}
 
   {% if restaurant.quotesAllowed %}
     {% set trans_params = {

@@ -2,6 +2,7 @@
 
 namespace AppBundle\OpeningHours;
 
+use AppBundle\Entity\ClosingRule;
 use Doctrine\Common\Collections\Collection;
 
 interface OpenCloseInterface
@@ -37,6 +38,13 @@ interface OpenCloseInterface
      * @return boolean
      */
     public function hasClosingRuleFor(\DateTime $date = null, \DateTime $now = null): bool;
+
+    /**
+     * @param \DateTime|null $date
+     * @param \DateTime|null $now
+     * @return ClosingRule|null
+     */
+    public function matchClosingRuleFor(\DateTime $date = null, \DateTime $now = null): ?ClosingRule;
 
     /**
      * @param int $shippingOptionsDays

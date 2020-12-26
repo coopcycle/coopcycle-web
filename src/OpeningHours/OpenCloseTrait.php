@@ -2,6 +2,7 @@
 
 namespace AppBundle\OpeningHours;
 
+use AppBundle\Entity\ClosingRule;
 use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
@@ -41,6 +42,37 @@ trait OpenCloseTrait
         }
 
         return false;
+    }
+
+    public function matchClosingRuleFor(\DateTime $date = null, \DateTime $now = null): ?ClosingRule
+    {
+        $date = $date ?? Carbon::now();
+        $now = $now ?? Carbon::now();
+
+        $closingRules = $this->getClosingRules();
+
+        if (count($closingRules) === 0) {
+            return null;
+        }
+
+        // Optimisation
+        // When we look for a date in the future,
+        // It's useless to loop over "past" closing rules
+        if ($date >= $now && !$this->hasFutureClosingRules($closingRules, $now)) {
+
+            return null;
+        }
+
+        // WARNING
+        // This method may be called a *lot* of times
+        // Thus, we avoid using Criteria, because it would trigger a query every time
+        foreach ($closingRules as $closingRule) {
+            if ($date >= $closingRule->getStartDate() && $date <= $closingRule->getEndDate()) {
+                return $closingRule;
+            }
+        }
+
+        return null;
     }
 
     public function isOpen(\DateTime $now = null): bool
