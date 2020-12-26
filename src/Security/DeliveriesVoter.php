@@ -61,7 +61,7 @@ class DeliveriesVoter extends Voter
                     $store = $this->storeExtractor->extractStore();
 
                     if (null === $subject->getStore()) {
-                        continue;
+                        return true;
                     }
 
                     if ($subject->getStore() === $store) {
