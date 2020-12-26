@@ -61,7 +61,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *        "method"="PUT",
  *        "path"="/deliveries/{id}/pick",
  *        "controller"=PickDelivery::class,
- *        "security"="is_granted('edit', object)"
+ *        "security"="is_granted('edit', object)",
  *        "swagger_context"={
  *          "summary"="Marks a Delivery as picked"
  *        }
@@ -70,7 +70,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *        "method"="PUT",
  *        "path"="/deliveries/{id}/drop",
  *        "controller"=DropDelivery::class,
- *        "security"="is_granted('edit', object)"
+ *        "security"="is_granted('edit', object)",
  *        "swagger_context"={
  *          "summary"="Marks a Delivery as dropped"
  *        }

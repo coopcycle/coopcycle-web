@@ -26,9 +26,7 @@ trait AccessControlTrait
         }
 
         if ($object instanceof Store) {
-            if (!AccessControl::store($this->getUser(), $object)) {
-                throw new AccessDeniedHttpException();
-            }
+            $this->denyAccessUnlessGranted('edit', $object);
         }
     }
 }
