@@ -121,11 +121,13 @@
     <section class="restaurant-header-right">
       <p>{{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
       {% if restaurant.isFulfillmentMethodEnabled('delivery') %}
+      <h5 class="text-right">{{ 'fulfillment_method.delivery'|trans }}</h5>
       <div
         data-opening-hours="{{ restaurant.getOpeningHours('delivery')|json_encode|e('html_attr') }}"
         data-opening-hours-behavior="{{ restaurant.getOpeningHoursBehavior('delivery')|e('html_attr') }}"></div>
       {% endif %}
       {% if restaurant.isFulfillmentMethodEnabled('collection') %}
+      <h5 class="text-right">{{ 'fulfillment_method.collection'|trans }}</h5>
       <div
         data-opening-hours="{{ restaurant.getOpeningHours('collection')|json_encode|e('html_attr') }}"
         data-opening-hours-behavior="{{ restaurant.getOpeningHoursBehavior('collection')|e('html_attr') }}"></div>
