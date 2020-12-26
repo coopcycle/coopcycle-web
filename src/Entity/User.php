@@ -387,18 +387,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
         return $value;
     }
 
-    public function ownsProduct(ProductInterface $product)
-    {
-        foreach ($this->getRestaurants() as $restaurant) {
-            if ($restaurant->hasProduct($product)) {
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public function getMercadopagoAccounts()
     {
         return $this->mercadopagoAccounts;
