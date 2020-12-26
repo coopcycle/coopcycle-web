@@ -16,9 +16,7 @@ trait AccessControlTrait
     protected function accessControl($object)
     {
         if ($object instanceof Delivery) {
-            if (!AccessControl::delivery($this->getUser(), $object)) {
-                throw new AccessDeniedHttpException();
-            }
+            $this->denyAccessUnlessGranted('edit', $object);
         }
 
         if ($object instanceof LocalBusiness) {

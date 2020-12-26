@@ -47,32 +47,26 @@ class DeliveriesVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        if ($token instanceof JWTUserToken) {
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
 
-            $user = $token->getUser();
-            $store = $subject->getStore();
+        if ($this->authorizationChecker->isGranted('ROLE_OAUTH2_DELIVERIES')) {
 
-            if ($store && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($store)) {
+            if (self::CREATE === $attribute && null === $subject->getStore()) {
                 return true;
             }
 
-        } else {
-
-            $roles = $token->getRoles();
-            foreach ($roles as $role) {
-                if ($role->getRole() === 'ROLE_OAUTH2_DELIVERIES') {
-
-                    $store = $this->storeExtractor->extractStore();
-
-                    if (self::CREATE === $attribute && null === $subject->getStore()) {
-                        return true;
-                    }
-
-                    if ($subject->getStore() === $store) {
-                        return true;
-                    }
-                }
+            if ($subject->getStore() === $this->storeExtractor->extractStore()) {
+                return true;
             }
+        }
+
+        $user = $token->getUser();
+        $store = $subject->getStore();
+
+        if ($store && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($store)) {
+            return true;
         }
 
         return false;
