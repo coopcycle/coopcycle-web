@@ -52,9 +52,6 @@ final class OrderSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => [
-                ['addCartSessionContext', EventPriorities::PRE_READ],
-            ],
             KernelEvents::VIEW => [
                 ['preValidate', EventPriorities::PRE_VALIDATE],
                 ['timingResponse', EventPriorities::PRE_VALIDATE],
@@ -77,22 +74,6 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         return $user;
-    }
-
-    public function addCartSessionContext(RequestEvent $event)
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return;
-        }
-
-        $cartSession = new \stdClass();
-        $cartSession->cart = null;
-        if ($token instanceof JWTUserToken && $token->hasAttribute('cart')) {
-            $cartSession->cart = $token->getAttribute('cart');
-        }
-
-        $request = $event->getRequest();
-        $request->attributes->set('cart_session', $cartSession);
     }
 
     public function preValidate(ViewEvent $event)

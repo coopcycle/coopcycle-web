@@ -54,7 +54,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_ADMIN')"
  *     },
  *     "post"={
  *       "method"="POST",
@@ -86,13 +86,13 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('view', object)"
+ *       "security"="is_granted('view', object)"
  *     },
  *     "pay"={
  *       "method"="PUT",
  *       "path"="/orders/{id}/pay",
  *       "controller"=OrderPay::class,
- *       "access_control"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
+ *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
  *       "swagger_context"={
  *         "summary"="Pays a Order resource."
  *       }
@@ -156,7 +156,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *     "get_cart_timing"={
  *       "method"="GET",
  *       "path"="/orders/{id}/timing",
- *       "access_control"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())",
+ *       "security"="is_granted('session', object)",
  *       "swagger_context"={
  *         "summary"="Retrieves timing information about a Order resource.",
  *         "responses"={
@@ -171,7 +171,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="GET",
  *       "path"="/orders/{id}/validate",
  *       "normalization_context"={"groups"={"cart"}},
- *       "access_control"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())"
+ *       "security"="is_granted('session', object)"
  *     },
  *     "put_cart"={
  *       "method"="PUT",
@@ -179,7 +179,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "validation_groups"={"cart"},
  *       "normalization_context"={"groups"={"cart"}},
  *       "denormalization_context"={"groups"={"order_update"}},
- *       "security"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())"
+ *       "security"="is_granted('session', object)"
  *     },
  *     "post_cart_items"={
  *       "method"="POST",
@@ -189,7 +189,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "validation_groups"={"cart"},
  *       "denormalization_context"={"groups"={"cart"}},
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())",
+ *       "security"="is_granted('session', object)",
  *       "swagger_context"={
  *         "summary"="Adds items to a Order resource."
  *       }
@@ -201,7 +201,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "validation_groups"={"cart"},
  *       "denormalization_context"={"groups"={"cart"}},
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())"
+ *       "security"="is_granted('session', object)"
  *     },
  *     "delete_item"={
  *       "method"="DELETE",
@@ -212,7 +212,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "validate"=false,
  *       "write"=false,
  *       "status"=200,
- *       "security"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())",
+ *       "security"="is_granted('session', object)",
  *       "swagger_context"={
  *         "summary"="Deletes items from a Order resource."
  *       }
