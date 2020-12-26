@@ -28,8 +28,9 @@ class SpatieOpeningHoursRegistry
         if (!isset(self::$instances[$cacheKey])) {
 
             $data = SchemaDotOrgParser::parseCollection($openingHours);
+
             $data['overflow'] = true;
-            $data['exceptions'] = SchemaDotOrgParser::parseExceptions($closingRules, $data);
+            $data['exceptions'] = SchemaDotOrgParser::parseExceptions($closingRules, OpeningHours::mergeOverlappingRanges($data));
 
             self::$instances[$cacheKey] = OpeningHours::createAndMergeOverlappingRanges($data);
         }

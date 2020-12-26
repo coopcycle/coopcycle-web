@@ -4,9 +4,11 @@ namespace Tests\AppBundle\OpeningHours;
 
 use AppBundle\Entity\ClosingRule;
 use AppBundle\OpeningHours\SchemaDotOrgParser;
+use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
+use Spatie\OpeningHours\OpeningHours;
 
 class SchemaDotOrgParserTest extends TestCase
 {
@@ -112,5 +114,33 @@ class SchemaDotOrgParserTest extends TestCase
         $this->assertEmpty($exceptions['2017-09-03']);
 
         $this->assertArrayNotHasKey('2017-09-04', $exceptions);
+    }
+
+    public function testOverlappingRanges()
+    {
+        $closingRules = new ArrayCollection();
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime('2017-09-02 12:30:00'));
+        $closingRule->setEndDate(new \DateTime('2017-09-04 11:00:00'));
+
+        $closingRules->add($closingRule);
+
+        $rules = [
+            ["Th-Sa 10:00-15:30","Th-Sa 18:30-21:30","We 09:45-14:30","Su 12:30-15:30","Th-Fr 10:00-18:30"],
+            ["We 09:45-14:30","Th-Sa 10:00-18:30"],
+            ["Mo-Sa 12:00-15:45","Tu-We,Sa 20:15-22:45","Th-Fr 12:00-18:30"],
+            ["Tu-We,Sa 20:15-22:45","Th-Fr 12:00-18:30"],
+            ["Tu-Th 12:45-15:30","Tu-Sa 19:15-21:30","Fr-Su 12:45-16:00","Th-Fr 12:45-18:30"],
+            ["Tu-Th 12:45-15:30","Tu-Sa 19:15-21:30","Fr-Su 12:45-16:00"],
+            ["Mo-Su 10:30-16:00","Th-Fr 10:30-18:30"],
+            ["Mo-Su 10:30-16:00"],
+            ["Mo-We,Sa 07:30-16:00","Tu-We,Sa 19:00-21:00","Su 12:00-15:30","Th-Fr 09:00-18:00"],
+        ];
+
+        foreach ($rules as $value) {
+            $oh = SpatieOpeningHoursRegistry::get($value, $closingRules);
+            $this->assertInstanceOf(OpeningHours::class, $oh);
+        }
     }
 }

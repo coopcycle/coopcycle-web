@@ -11,6 +11,7 @@ use Carbon\CarbonPeriod;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Spatie\OpeningHours\OpeningHours;
+use Spatie\OpeningHours\Exceptions\MaximumLimitExceeded;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 
@@ -53,8 +54,12 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
 
         $openingHours = SpatieOpeningHoursRegistry::get($this->openingHours, $this->closingRules);
 
-        $nextOpeningDate = $openingHours->nextOpen($now);
-        $nextClosingDate = $openingHours->nextClose($nextOpeningDate);
+        try {
+            $nextOpeningDate = $openingHours->nextOpen($now);
+            $nextClosingDate = $openingHours->nextClose($nextOpeningDate);
+        } catch (MaximumLimitExceeded $e) {
+            return new ArrayChoiceList([], $value);
+        }
 
         $now = $this->roundToNext($now, $this->rangeDuration);
 
