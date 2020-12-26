@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Spatie\OpeningHours\OpeningHours;
+use Spatie\OpeningHours\Exceptions\OverlappingTimeRanges;
 
 class SpatieOpeningHoursRegistry
 {
@@ -30,9 +31,13 @@ class SpatieOpeningHoursRegistry
             $data = SchemaDotOrgParser::parseCollection($openingHours);
 
             $data['overflow'] = true;
-            $data['exceptions'] = SchemaDotOrgParser::parseExceptions($closingRules, OpeningHours::mergeOverlappingRanges($data));
+            $data['exceptions'] = SchemaDotOrgParser::parseExceptions($closingRules, $data);
 
-            self::$instances[$cacheKey] = OpeningHours::createAndMergeOverlappingRanges($data);
+            try {
+                self::$instances[$cacheKey] = OpeningHours::create($data);
+            } catch (OverlappingTimeRanges $e) {
+                self::$instances[$cacheKey] = OpeningHours::createAndMergeOverlappingRanges($data);
+            }
         }
 
         return self::$instances[$cacheKey];
