@@ -60,7 +60,7 @@ class OrderActionsVoter extends Voter
 
         Assert::isInstanceOf($user, User::class);
 
-        $ownsRestaurant = $user->ownsRestaurant($subject->getRestaurant());
+        $ownsRestaurant = $this->authorizationChecker->isGranted('edit', $subject->getRestaurant());
 
         $isCustomer = null !== $subject->getCustomer()
             && $subject->getCustomer()->hasUser()
@@ -72,6 +72,6 @@ class OrderActionsVoter extends Voter
         }
 
         // For actions like "accept", "refuse", etc...
-        return $this->authorizationChecker->isGranted('ROLE_RESTAURANT') && $ownsRestaurant;
+        return $ownsRestaurant;
     }
 }
