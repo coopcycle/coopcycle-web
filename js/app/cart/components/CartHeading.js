@@ -5,7 +5,7 @@ import _ from 'lodash'
 import classNames from 'classnames'
 
 import { toggleMobileCart } from '../redux/actions'
-import { selectItems } from '../redux/selectors'
+import { selectItems, selectErrorMessages, selectWarningMessages } from '../redux/selectors'
 
 const HeadingLeftIcon = ({ loading, warnings, errors }) => {
 
@@ -97,28 +97,11 @@ class CartHeading extends React.Component {
 
 function mapStateToProps (state) {
 
-  const warningAlerts = []
-  const dangerAlerts = []
-
-  if (state.errors) {
-
-    // We don't display the error when restaurant has changed
-    const errors = _.pickBy(state.errors, (value, key) => key !== 'restaurant')
-
-    _.forEach(errors, (errors, key) => {
-      if (key === 'shippingAddress') {
-        errors.forEach(error => dangerAlerts.push(error.message))
-      } else {
-        errors.forEach(error => warningAlerts.push(error.message))
-      }
-    })
-  }
-
   return {
     isMobileCartVisible: state.isMobileCartVisible,
     loading: state.isFetching,
-    dangerAlerts,
-    warningAlerts,
+    dangerAlerts: selectErrorMessages(state),
+    warningAlerts: selectWarningMessages(state),
     items: selectItems(state),
     total: state.cart.total,
   }

@@ -66,3 +66,55 @@ export const selectIsOrderingAvailable = createSelector(
     return true
   }
 )
+
+const selectSortedErrors = createSelector(
+  state => state.errors,
+  (errors) => {
+
+    // We don't display the error when restaurant has changed
+    const filteredErrors = _.pickBy(errors, (value, key) => key !== 'restaurant')
+
+    const errorsArray = _.reduce(filteredErrors, (acc, value, key) => {
+      value.forEach(err => acc.push({ ...err, propertyPath: key }))
+      return acc
+    }, [])
+
+    return errorsArray.sort((a, b) => {
+      if (a.propertyPath === 'shippingTimeRange' && b.propertyPath !== 'shippingTimeRange') {
+        return -1
+      }
+
+      return 0
+    })
+  }
+)
+
+export const selectErrorMessages = createSelector(
+  selectSortedErrors,
+  (errors) => {
+
+    const messages = []
+    _.forEach(errors, (error) => {
+      if (error.propertyPath === 'shippingAddress') {
+        messages.push(error.message)
+      }
+    })
+
+    return messages
+  }
+)
+
+export const selectWarningMessages = createSelector(
+  selectSortedErrors,
+  (errors) => {
+
+    const messages = []
+    _.forEach(errors, (error) => {
+      if (error.propertyPath !== 'shippingAddress') {
+        messages.push(error.message)
+      }
+    })
+
+    return messages
+  }
+)

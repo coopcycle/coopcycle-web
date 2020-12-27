@@ -48,7 +48,7 @@ class Cart extends Component {
                   disabled={ this.props.isCollectionOnly || this.props.takeaway }
                   required />
                 { this.props.isCollectionEnabled && (
-                <div className="text-center">
+                <div className="text-center mb-4">
                   <Takeaway
                     defaultChecked={ this.props.isCollectionOnly }
                     checked={ this.props.takeaway || this.props.isCollectionOnly }
