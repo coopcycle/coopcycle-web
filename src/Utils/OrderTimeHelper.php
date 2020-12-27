@@ -15,6 +15,7 @@ use AppBundle\Utils\ShippingTimeCalculator;
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Redis;
 
 class OrderTimeHelper
 {
@@ -23,17 +24,20 @@ class OrderTimeHelper
     private $shippingTimeCalculator;
     private $country;
     private $choicesCache = [];
+    private $extraTime;
 
     public function __construct(
         ShippingDateFilter $shippingDateFilter,
         PreparationTimeCalculator $preparationTimeCalculator,
         ShippingTimeCalculator $shippingTimeCalculator,
+        Redis $redis,
         string $country,
         LoggerInterface $logger = null)
     {
         $this->shippingDateFilter = $shippingDateFilter;
         $this->preparationTimeCalculator = $preparationTimeCalculator;
         $this->shippingTimeCalculator = $shippingTimeCalculator;
+        $this->redis = $redis;
         $this->country = $country;
         $this->logger = $logger ?? new NullLogger();
     }
@@ -63,6 +67,25 @@ class OrderTimeHelper
         return (int) $value;
     }
 
+    private function getExtraTime(): int
+    {
+        if (null === $this->extraTime) {
+            $extraTime = 0;
+            if ($value = $this->redis->get('foodtech:preparation_delay')) {
+                $extraTime = intval($value);
+            }
+
+            $this->extraTime = $extraTime;
+        }
+
+        return $this->extraTime;
+    }
+
+    private function getOrderingDelayMinutes(int $value)
+    {
+        return $value + $this->getExtraTime();
+    }
+
     private function getChoices(OrderInterface $cart)
     {
         $hash = sprintf('%s-%s', $cart->getFulfillmentMethod(), spl_object_hash($cart));
@@ -77,7 +100,7 @@ class OrderTimeHelper
             $choiceLoader = new AsapChoiceLoader(
                 $vendor->getOpeningHours($cart->getFulfillmentMethod()),
                 $vendor->getClosingRules(),
-                $fulfillmentMethod->getOrderingDelayMinutes(),
+                $this->getOrderingDelayMinutes($fulfillmentMethod->getOrderingDelayMinutes()),
                 $fulfillmentMethod->getOption('range_duration', 10),
                 $fulfillmentMethod->isPreOrderingAllowed()
             );

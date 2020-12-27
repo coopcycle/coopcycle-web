@@ -46,7 +46,6 @@ class PreparationTimeResolverTest extends TestCase
                 '20 minutes',
                 $expected = new \DateTime('2020-04-10 11:55:00'),
                 $dropoff  = new \DateTime('2020-04-10 12:30:00'),
-                $delay    = null,
             ],
             [
                 $takeaway = false,
@@ -54,15 +53,13 @@ class PreparationTimeResolverTest extends TestCase
                 '20 minutes',
                 $expected = new \DateTime('2020-04-10 11:55:00'),
                 $dropoff  = new \DateTime('2020-04-10 12:30:00'),
-                $delay    = '0',
             ],
             [
                 $takeaway = false,
                 $pickup   = new \DateTime('2020-04-10 12:15:00'),
                 '20 minutes',
-                $expected = new \DateTime('2020-04-10 11:45:00'),
+                $expected = new \DateTime('2020-04-10 11:55:00'),
                 $dropoff  = new \DateTime('2020-04-10 12:30:00'),
-                $delay    = '10',
             ],
             [
                 $takeaway = true,
@@ -70,7 +67,6 @@ class PreparationTimeResolverTest extends TestCase
                 '30 minutes',
                 $expected = new \DateTime('2020-04-10 11:45:00'),
                 $dropoff  = new \DateTime('2020-04-10 12:15:00'),
-                $delay    = null,
             ],
         ];
     }
@@ -83,12 +79,8 @@ class PreparationTimeResolverTest extends TestCase
         \DateTime $pickup,
         $preparationTime,
         \DateTime $expected,
-        \DateTime $dropoff = null,
-        $preparationDelay = null)
+        \DateTime $dropoff = null)
     {
-        $this->redis
-            ->get('foodtech:preparation_delay')
-            ->willReturn($preparationDelay);
 
         $order = $this->prophesize(OrderInterface::class);
         $order

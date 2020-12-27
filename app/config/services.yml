@@ -434,9 +434,7 @@ services:
 
   AppBundle\Utils\PickupTimeResolver: ~
 
-  AppBundle\Utils\PreparationTimeResolver:
-    arguments:
-      $redis: "@snc_redis.default"
+  AppBundle\Utils\PreparationTimeResolver: ~
 
   AppBundle\Utils\ShippingDateFilter:
     tags:
@@ -445,6 +443,7 @@ services:
   AppBundle\Utils\OrderTimeHelper:
     arguments:
       $country: "%country_iso%"
+      $redis: "@snc_redis.default"
     tags:
       - { name: monolog.logger, channel: timing }
 

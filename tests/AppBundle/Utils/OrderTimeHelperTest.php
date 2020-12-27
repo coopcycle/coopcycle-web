@@ -16,6 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Redis;
 
 class OrderTimeHelperTest extends TestCase
 {
@@ -29,11 +30,13 @@ class OrderTimeHelperTest extends TestCase
         $this->preparationTimeCalculator = $this->prophesize(PreparationTimeCalculator::class);
         $this->shippingDateFilter = $this->prophesize(ShippingDateFilter::class);
         $this->shippingTimeCalculator = $this->prophesize(ShippingTimeCalculator::class);
+        $this->redis = $this->prophesize(Redis::class);
 
         $this->helper = new OrderTimeHelper(
             $this->shippingDateFilter->reveal(),
             $this->preparationTimeCalculator->reveal(),
             $this->shippingTimeCalculator->reveal(),
+            $this->redis->reveal(),
             'fr'
         );
     }
