@@ -180,12 +180,12 @@ Feature: Manage restaurants
         "@type":"TimeInfo",
         "@id":@string@,
         "range":[
-          "2020-09-18T11:50:00+02:00",
-          "2020-09-18T12:00:00+02:00"
+          "2020-09-18T11:40:00+02:00",
+          "2020-09-18T11:50:00+02:00"
         ],
         "today":false,
         "fast": false,
-        "diff":"1250 - 1260"
+        "diff":"1240 - 1250"
       },
       "collection":null
     }
@@ -221,12 +221,12 @@ Feature: Manage restaurants
         "@type":"TimeInfo",
         "@id":@string@,
         "range":[
-          "2020-09-17T12:30:00+02:00",
-          "2020-09-17T12:40:00+02:00"
+          "2020-09-17T12:20:00+02:00",
+          "2020-09-17T12:30:00+02:00"
         ],
         "today":true,
         "fast":true,
-        "diff":"30 - 40"
+        "diff":"20 - 30"
       },
       "collection":null
     }

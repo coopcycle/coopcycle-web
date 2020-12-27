@@ -346,14 +346,14 @@ Feature: Orders
       {
         "preparation":"15 minutes",
         "shipping":"1 minutes",
-        "asap":"2017-09-02T11:55:00+02:00",
+        "asap":"2017-09-02T11:45:00+02:00",
         "range":[
-          "2017-09-02T11:50:00+02:00",
-          "2017-09-02T12:00:00+02:00"
+          "2017-09-02T11:40:00+02:00",
+          "2017-09-02T11:50:00+02:00"
         ],
         "today":true,
         "fast":false,
-        "diff":"50 - 60",
+        "diff":"40 - 50",
         "choices":@array@,
         "ranges":@array@,
         "behavior":@string@
@@ -428,7 +428,7 @@ Feature: Orders
       {
         "preparation":"@string@.matchRegex('/^[0-9]+ minutes$/')",
         "shipping":"@string@.matchRegex('/^[0-9]+ minutes$/')",
-        "asap":"@string@.startsWith('2017-09-04T11:45:00')",
+        "asap":"@string@.startsWith('2017-09-04T11:35:00')",
         "range": @array@,
         "today":@boolean@,
         "fast":@boolean@,
@@ -680,7 +680,7 @@ Feature: Orders
         "notes": null,
         "createdAt":@string@,
         "shippedAt":"@string@.isDateTime()",
-        "shippingTimeRange":["2017-09-02T11:50:00+02:00","2017-09-02T12:00:00+02:00"],
+        "shippingTimeRange":["2017-09-02T11:40:00+02:00","2017-09-02T11:50:00+02:00"],
         "preparationExpectedAt":null,
         "pickupExpectedAt":null,
         "reusablePackagingEnabled": false,
