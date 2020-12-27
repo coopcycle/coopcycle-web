@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import classNames from 'classnames'
-import i18n from '../../i18n'
 
 import { toggleMobileCart } from '../redux/actions'
 import { selectItems } from '../redux/selectors'
