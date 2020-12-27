@@ -34,11 +34,14 @@ class AbstractType extends BaseAbstractType
             $range =
                 $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
 
+            // Don't forget that $range may be NULL
+            $data = $range ? implode(' - ', [
+                $range->getLower()->format(\DateTime::ATOM),
+                $range->getUpper()->format(\DateTime::ATOM),
+            ]) : '';
+
             $form->add('shippingTimeRange', HiddenType::class, [
-                'data' => implode(' - ', [
-                    $range->getLower()->format(\DateTime::ATOM),
-                    $range->getUpper()->format(\DateTime::ATOM),
-                ]),
+                'data' => $data,
                 'mapped' => false,
                 'constraints' => [
                     new Assert\Callback([

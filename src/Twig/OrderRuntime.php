@@ -28,6 +28,11 @@ class OrderRuntime implements RuntimeExtensionInterface
             $range = TsRange::parse($range);
         }
 
+        if (!$range) {
+
+            return $this->translator->trans('order.shippingTimeRange.notAvailable', [], 'validators');
+        }
+
         $rangeAsText = $this->translator->trans('time_range', [
             '%start%' => Carbon::instance($range->getLower())->locale($this->locale)->isoFormat('LT'),
             '%end%'   => Carbon::instance($range->getUpper())->locale($this->locale)->isoFormat('LT'),
