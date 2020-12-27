@@ -444,10 +444,27 @@ h1, h2, h3, h4, h5, h6 {
   }
   &-right {
     flex: 4;
-    @extend .text-muted;
     text-align: right;
     @media (max-width: $screen-xs-max) {
       display: none;
+    }
+  }
+
+  .table-opening-hours {
+    font-size: $font-size-small;
+    thead > tr > th {
+      text-align: right;
+    }
+    tbody > tr > td,
+    tbody > tr > th {
+      border-top: none;
+    }
+    tbody > tr:not(.active) {
+      @extend .text-muted;
+    }
+    tbody > tr.active > td,
+    tbody > tr.active > th {
+      background-color: transparent;
     }
   }
 
