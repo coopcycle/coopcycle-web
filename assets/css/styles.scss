@@ -440,10 +440,10 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   &-body {
-    flex: 8;
+    flex: 1;
   }
   &-right {
-    flex: 4;
+    flex: 1;
     text-align: right;
     @media (max-width: $screen-xs-max) {
       display: none;
@@ -451,6 +451,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .table-opening-hours {
+    width: auto;
     font-size: $font-size-small;
     thead > tr > th {
       text-align: right;

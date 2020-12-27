@@ -105,6 +105,7 @@
     {% endif %}
     <section class="restaurant-header-body">
       <h1>{{ restaurant.name }}</h1>
+      <p class="d-none d-lg-block">{{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
       {% if restaurant.website is defined and restaurant.website is not empty %}
       <p>
         <a href="{{ restaurant.website }}" target="_blank">
@@ -112,14 +113,8 @@
         </a>
       </p>
       {% endif %}
-      {% if restaurant.description is defined and restaurant.description is not empty %}
-      <div class="restaurant-description text-muted">
-        {{ restaurant.description|markdown }}
-      </div>
-      {% endif %}
     </section>
     <section class="restaurant-header-right">
-      <p>{{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
       <div class="d-flex justify-content-end">
         {% include 'restaurant/_partials/opening_hours.html.twig' with {
           delivery:   restaurant.isFulfillmentMethodEnabled('delivery')   ? restaurant.getOpeningHours('delivery')   : [],
@@ -128,6 +123,12 @@
       </div>
     </section>
   </header>
+
+  {% if restaurant.description is defined and restaurant.description is not empty %}
+  <section class="restaurant-description text-muted d-none d-lg-block">
+    {{ restaurant.description|markdown }}
+  </section>
+  {% endif %}
 
   {% if restaurant.menuTaxon is not null %}
   <div class="row">
