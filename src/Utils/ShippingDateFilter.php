@@ -35,7 +35,7 @@ class ShippingDateFilter
             $now = Carbon::now();
         }
 
-        $dropoff = $range->getLower();
+        $dropoff = $range->getUpper();
 
         // Obviously, we can't ship in the past
         if ($dropoff <= $now) {

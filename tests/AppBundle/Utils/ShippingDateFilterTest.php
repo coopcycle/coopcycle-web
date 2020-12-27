@@ -134,7 +134,7 @@ class ShippingDateFilterTest extends TestCase
         $tsRange = DateUtils::dateTimeToTsRange($dropoff, 5);
 
         $this->preparationTimeResolver
-            ->resolve($order->reveal(), $tsRange->getLower())
+            ->resolve($order->reveal(), $tsRange->getUpper())
             ->willReturn($preparation);
 
         $this->assertEquals($expected, $this->filter->accept($order->reveal(), $tsRange, $now));
