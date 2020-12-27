@@ -18,9 +18,7 @@ class FulfillmentMethod implements ToggleableInterface
 
     /**
      * @var array
-     * @Assert\All({
-     *   @AssertTimeRange()
-     * })
+     *
      * @AssertNotOverlappingOpeningHours
      */
     private $openingHours = [];
