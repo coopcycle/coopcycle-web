@@ -1,0 +1,10 @@
+<ul class="list-unstyled">
+{% for day, opening_hours_for_day in opening_hours.forWeek() %}
+  {% if opening_hours_for_day|length > 0 %}
+  <li {% if opening_hours_for_day|opening_hours_for_day_matches(day) %}class="active"{% endif %}>
+    <span>{{ day|day_localized(app.request.locale) }}</span>
+    <span>{{ opening_hours_for_day|join(',')  }}</span>
+  </li>
+  {% endif %}
+{% endfor %}
+</ul>

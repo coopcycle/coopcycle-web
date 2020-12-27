@@ -9,7 +9,6 @@ import engine  from 'store/src/store-engine'
 import session from 'store/storages/sessionStorage'
 import cookie  from 'store/storages/cookieStorage'
 
-import OpeningHoursParser from '../widgets/OpeningHoursParser'
 import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from '../cart/redux/store'
 import { addItem, addItemWithOptions, queueAddItem } from '../cart/redux/actions'
@@ -191,15 +190,6 @@ const init = function() {
   )
 
 }
-
-document.querySelectorAll('[data-opening-hours]').forEach(el => {
-  // FIXME Check parse errors
-  new OpeningHoursParser(el, {
-    openingHours: JSON.parse(el.dataset.openingHours),
-    locale: $('html').attr('lang'),
-    behavior: el.dataset.openingHoursBehavior,
-  })
-})
 
 $('#menu').LoadingOverlay('show', {
   image: false,

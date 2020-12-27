@@ -444,10 +444,15 @@ h1, h2, h3, h4, h5, h6 {
   }
   &-right {
     flex: 4;
-    @extend .text-muted;
     text-align: right;
     @media (max-width: $screen-xs-max) {
       display: none;
+    }
+    ul {
+      font-size: $font-size-small;
+    }
+    ul li:not(.active) {
+      @extend .text-muted;
     }
   }
 

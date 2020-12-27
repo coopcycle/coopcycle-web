@@ -4,12 +4,16 @@ namespace AppBundle\Twig;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
+use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Carbon\Carbon;
+use Carbon\Translator as CarbonTranslator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use Hashids\Hashids;
+use Spatie\OpeningHours\OpeningHoursForDay;
+use Spatie\OpeningHours\Time;
 use Symfony\Component\Serializer\SerializerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -55,6 +59,9 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('restaurant_microdata', array(LocalBusinessRuntime::class, 'seo')),
             new TwigFilter('delay_for_humans', array(LocalBusinessRuntime::class, 'delayForHumans')),
             new TwigFilter('grams_to_kilos', array($this, 'gramsToKilos')),
+            new TwigFilter('opening_hours', array($this, 'openingHours')),
+            new TwigFilter('day_localized', array($this, 'dayLocalized')),
+            new TwigFilter('opening_hours_for_day_matches', array($this, 'openingHoursForDayMatches')),
         );
     }
 
@@ -174,5 +181,24 @@ class CoopCycleExtension extends AbstractExtension
     public function gramsToKilos($grams)
     {
         return sprintf('%s kg', number_format($grams / 1000, 2));
+    }
+
+    public function openingHours(array $openingHours)
+    {
+        return SpatieOpeningHoursRegistry::get($openingHours);
+    }
+
+    public function dayLocalized(string $day, string $locale)
+    {
+        return Carbon::instance(
+            new \DateTime(ucfirst($day))
+        )->locale($locale)->dayName;
+    }
+
+    public function openingHoursForDayMatches(OpeningHoursForDay $openingHoursForDay, string $day)
+    {
+        $now = Carbon::now();
+
+        return $day === strtolower($now->englishDayOfWeek) && $openingHoursForDay->isOpenAt(Time::fromDateTime($now));
     }
 }
