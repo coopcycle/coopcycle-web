@@ -99,6 +99,30 @@
 {% endblock %}
 
 {% block scripts %}
+
+{% set gateway = payment_gateway_resolver.resolve() %}
+{% set gateway_configs = {} %}
+
+{% if gateway == 'stripe' %}
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+{% set gateway_configs = gateway_configs|merge({
+  stripe: {
+    publishableKey: coopcycle_setting('stripe_publishable_key'),
+    createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: last_payment|hashid }),
+  }
+}) %}
+{% endif %}
+
+{% if gateway == 'mercadopago' %}
+<script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
+{% set gateway_configs = gateway_configs|merge({
+  mercadopago: {
+    publishableKey: coopcycle_setting('mercadopago_test_publishable_key'),
+    country: country
+  }
+}) %}
+{% endif %}
+
 {{ encore_entry_script_tags('delivery-map') }}
 <script>
 new CoopCycle.DeliveryMap('map', {
@@ -111,7 +135,9 @@ new CoopCycle.DeliveryMap('map', {
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
 new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
-  publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
+  card: "{{ gateway }}",
+  amount: {{ order.total }},
+  gatewayConfigs: {{ gateway_configs|json_encode|raw }},
   tokenElement: document.querySelector('#stripe_payment_stripeToken'),
   cardholderNameElement: document.querySelector('#stripe_payment_cardholderName')
 });

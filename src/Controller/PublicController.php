@@ -32,7 +32,9 @@ class PublicController extends AbstractController
     /**
      * @Route("/o/{number}", name="public_order")
      */
-    public function orderAction($number, Request $request, EntityManagerInterface $objectManager, StripeManager $stripeManager)
+    public function orderAction($number, Request $request,
+        EntityManagerInterface $objectManager,
+        StripeManager $stripeManager)
     {
         $order = $this->orderRepository->findOneBy([
             'number' => $number
@@ -84,14 +86,12 @@ class PublicController extends AbstractController
 
                     $stripeManager->configure();
 
-                    $charge = Stripe\Charge::create([
-                      'amount' => $lastPayment->getAmount(),
-                      'currency' => strtolower($lastPayment->getCurrencyCode()),
-                      'description' => sprintf('Order %s', $order->getNumber()),
-                      'source' => $stripeToken,
-                    ]);
+                    if ($lastPayment->requiresUseStripeSDK()) {
+                        $stripeManager->confirmIntent($lastPayment);
+                    }
 
-                    $lastPayment->setCharge($charge->id);
+                    $stripeManager->capture($lastPayment);
+
                     $lastPayment->setState(PaymentInterface::STATE_COMPLETED);
 
                 } catch (Stripe\Exception\ApiErrorException $e) {

@@ -324,6 +324,10 @@ class StripeManager
                 ]);
             }
 
+            if ($charge = $this->getChargeFromPaymentIntent($intent)) {
+                $this->createTransfersForHub($payment, $charge);
+            }
+
             // TODO Return charge
             return $intent;
         }
@@ -348,34 +352,7 @@ class StripeManager
                 return $charge;
             }
 
-            $vendor = $order->getVendor();
-
-            if ($vendor->isHub()) {
-
-                $subVendors = $order->getVendors();
-
-                if (count($subVendors) > 1) {
-
-                    $livemode = $this->settingsManager->isStripeLivemode();
-
-                    foreach ($subVendors as $restaurant) {
-
-                        $stripeAccount = $restaurant->getStripeAccount($livemode);
-                        $transferAmount = $order->getTransferAmount($restaurant);
-
-                        if ($transferAmount > 0) {
-                            // @see https://stripe.com/docs/connect/charges-transfers
-                            Stripe\Transfer::create([
-                                'amount' => $transferAmount,
-                                'currency' => strtolower($payment->getCurrencyCode()),
-                                'destination' => $stripeAccount->getStripeUserId(),
-                                // @see https://stripe.com/docs/connect/charges-transfers#transfer-availability
-                                'source_transaction' => $payment->getCharge(),
-                            ]);
-                        }
-                    }
-                }
-            }
+            $this->createTransfersForHub($payment, $charge);
         }
 
         return $charge;
@@ -439,5 +416,56 @@ class StripeManager
                 'return_url' => $returnUrl
             ]
         ], $stripeOptions);
+    }
+
+    /**
+     * @return Stripe\StripeObject|null
+     */
+    private function getChargeFromPaymentIntent(Stripe\PaymentIntent $intent): ?Stripe\StripeObject
+    {
+        // @see https://stripe.com/docs/api/payment_intents/object#payment_intent_object-charges
+        if (count($intent->charges->data) === 1) {
+            return current($intent->charges->data);
+        }
+
+        return null;
+    }
+
+    private function createTransfersForHub(PaymentInterface $payment, Stripe\StripeObject $charge)
+    {
+        $order = $payment->getOrder();
+
+        if (!$order->hasVendor()) {
+            return;
+        }
+
+        $vendor = $order->getVendor();
+
+        if ($vendor->isHub()) {
+
+            $subVendors = $order->getVendors();
+
+            if (count($subVendors) > 1) {
+
+                $livemode = $this->settingsManager->isStripeLivemode();
+
+                foreach ($subVendors as $restaurant) {
+
+                    $stripeAccount = $restaurant->getStripeAccount($livemode);
+                    $transferAmount = $order->getTransferAmount($restaurant);
+
+                    if ($transferAmount > 0) {
+                        // @see https://stripe.com/docs/connect/charges-transfers
+                        Stripe\Transfer::create([
+                            'amount' => $transferAmount,
+                            'currency' => strtolower($payment->getCurrencyCode()),
+                            'destination' => $stripeAccount->getStripeUserId(),
+                            // @see https://stripe.com/docs/connect/charges-transfers#transfer-availability
+                            'source_transaction' => $charge->id,
+                        ]);
+                    }
+                }
+            }
+        }
     }
 }

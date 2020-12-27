@@ -81,7 +81,7 @@ context('Checkout', () => {
 
     cy.get('form[name="checkout_payment"]').submit()
 
-    cy.location('pathname').should('match', /\/order\/confirm\/[a-zA-Z0-9]+/)
+    cy.location('pathname', { timeout: 30000 }).should('match', /\/order\/confirm\/[a-zA-Z0-9]+/)
 
     cy.get('#order-timeline').contains('Commande en attente de validation')
   })
