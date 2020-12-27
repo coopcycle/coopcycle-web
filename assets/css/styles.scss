@@ -448,11 +448,23 @@ h1, h2, h3, h4, h5, h6 {
     @media (max-width: $screen-xs-max) {
       display: none;
     }
-    ul {
-      font-size: $font-size-small;
+  }
+
+  .table-opening-hours {
+    font-size: $font-size-small;
+    thead > tr > th {
+      text-align: right;
     }
-    ul li:not(.active) {
+    tbody > tr > td,
+    tbody > tr > th {
+      border-top: none;
+    }
+    tbody > tr:not(.active) {
       @extend .text-muted;
+    }
+    tbody > tr.active > td,
+    tbody > tr.active > th {
+      background-color: transparent;
     }
   }
 
