@@ -9,6 +9,7 @@ use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Utils\DateUtils;
+use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\ShippingTimeRange as ShippingTimeRangeConstraint;
@@ -26,6 +27,7 @@ class ShippingTimeRangeValidatorTest extends ConstraintValidatorTestCase
     public function setUp(): void
     {
         $this->shippingDateFilter = $this->prophesize(ShippingDateFilter::class);
+        $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
 
         parent::setUp();
     }
@@ -33,7 +35,8 @@ class ShippingTimeRangeValidatorTest extends ConstraintValidatorTestCase
     protected function createValidator()
     {
         return new ShippingTimeRangeValidator(
-            $this->shippingDateFilter->reveal()
+            $this->shippingDateFilter->reveal(),
+            $this->orderTimeHelper->reveal()
         );
     }
 
@@ -270,6 +273,86 @@ class ShippingTimeRangeValidatorTest extends ConstraintValidatorTestCase
         $this->buildViolation($constraint->shippedAtNotAvailableMessage)
             ->setCode(ShippingTimeRangeConstraint::SHIPPED_AT_NOT_AVAILABLE)
             ->assertRaised();
+    }
+
+    public function testNoShippingTimeRangeAvailable()
+    {
+        $shippingAddressCoords = new GeoCoordinates();
+        $restaurantAddressCoords = new GeoCoordinates();
+
+        $shippingAddress = $this->createAddressProphecy($shippingAddressCoords);
+        $restaurantAddress = $this->createAddressProphecy($restaurantAddressCoords);
+
+        $restaurant = $this->createRestaurantProphecy(
+            $restaurantAddress->reveal(),
+            $minimumCartAmount = 2000,
+            $maxDistanceExpression = 'distance < 3000',
+            $canDeliver = true
+        );
+
+        $order = $this->createOrderProphecy(
+            $restaurant->reveal(),
+            $shippingAddress->reveal()
+        );
+
+        $this->orderTimeHelper
+            ->getShippingTimeRange($order->reveal())
+            ->willReturn(null);
+
+        $order = $order->reveal();
+
+        $this->setObject($order);
+
+        $this->shippingDateFilter
+            ->accept($order, Argument::type(TsRange::class), Argument::type(\DateTime::class))
+            ->willReturn(true);
+
+        $constraint = new ShippingTimeRangeConstraint();
+        $violations = $this->validator->validate(null, $constraint);
+
+        $this->buildViolation($constraint->shippingTimeRangeNotAvailableMessage)
+            ->setCode(ShippingTimeRangeConstraint::SHIPPING_TIME_RANGE_NOT_AVAILABLE)
+            ->assertRaised();
+    }
+
+    public function testNullWithShippingTimeRangeAvailable()
+    {
+        $shippingAddressCoords = new GeoCoordinates();
+        $restaurantAddressCoords = new GeoCoordinates();
+
+        $shippingAddress = $this->createAddressProphecy($shippingAddressCoords);
+        $restaurantAddress = $this->createAddressProphecy($restaurantAddressCoords);
+
+        $restaurant = $this->createRestaurantProphecy(
+            $restaurantAddress->reveal(),
+            $minimumCartAmount = 2000,
+            $maxDistanceExpression = 'distance < 3000',
+            $canDeliver = true
+        );
+
+        $order = $this->createOrderProphecy(
+            $restaurant->reveal(),
+            $shippingAddress->reveal()
+        );
+
+        $this->orderTimeHelper
+            ->getShippingTimeRange($order->reveal())
+            ->willReturn(
+                DateUtils::dateTimeToTsRange(new \DateTime('+1 hour'), 5)
+            );
+
+        $order = $order->reveal();
+
+        $this->setObject($order);
+
+        $this->shippingDateFilter
+            ->accept($order, Argument::type(TsRange::class), Argument::type(\DateTime::class))
+            ->willReturn(true);
+
+        $constraint = new ShippingTimeRangeConstraint();
+        $violations = $this->validator->validate(null, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testOrderIsValid()

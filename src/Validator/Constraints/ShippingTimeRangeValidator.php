@@ -3,6 +3,7 @@
 namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\ShippingDateFilter;
 use Carbon\Carbon;
 use Symfony\Component\Validator\Constraint;
@@ -12,10 +13,12 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 class ShippingTimeRangeValidator extends ConstraintValidator
 {
     private $shippingDateFilter;
+    private $orderTimeHelper;
 
-    public function __construct(ShippingDateFilter $shippingDateFilter)
+    public function __construct(ShippingDateFilter $shippingDateFilter, OrderTimeHelper $orderTimeHelper)
     {
         $this->shippingDateFilter = $shippingDateFilter;
+        $this->orderTimeHelper = $orderTimeHelper;
     }
 
     public function validate($value, Constraint $constraint)
@@ -32,12 +35,23 @@ class ShippingTimeRangeValidator extends ConstraintValidator
 
         $isNew = $object->getId() === null || $object->getState() === OrderInterface::STATE_CART;
 
-        // A new order with empty time range is valid
-        if ($isNew && null === $value) {
+        if (!$isNew) {
             return;
         }
 
-        if ($isNew) {
+        // A new order with empty time range is valid,
+        // as long as there is at least a future choice
+        if (null === $value) {
+
+            $range = $this->orderTimeHelper->getShippingTimeRange($object);
+
+            if (null == $range) {
+                $this->context
+                    ->buildViolation($constraint->shippingTimeRangeNotAvailableMessage)
+                    ->setCode(ShippingTimeRange::SHIPPING_TIME_RANGE_NOT_AVAILABLE)
+                    ->addViolation();
+            }
+        } else {
 
             if (null !== $value) {
                 if ($value->getLower() < $now) {
