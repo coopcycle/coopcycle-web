@@ -32,7 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "get"={
  *       "method"="GET",
  *       "normalizationContext"={"groups"={"task_group"}},
- *       "security"="is_granted('ROLE_OAUTH2_TASKS') and object.isAllowed(oauth2_context.store)"
+ *       "security"="is_granted('view', object)"
  *     }
  *   }
  * )
@@ -103,23 +103,5 @@ class Group implements TaggableInterface
         $task->setGroup($this);
 
         $this->tasks->add($task);
-    }
-
-    public function isAllowed(Store $store)
-    {
-        foreach ($this->getTasks() as $task) {
-
-            $organization = $task->getOrganization();
-
-            if ($organization === null) {
-                return false;
-            }
-
-            if ($organization !== $store->getOrganization()) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

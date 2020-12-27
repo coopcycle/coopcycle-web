@@ -47,7 +47,6 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
     {
         return [
             KernelEvents::REQUEST => [
-                [ 'addOAuthContext', 4 ],
                 [ 'security', 4 ],
             ],
         ];
@@ -65,29 +64,6 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
             'api_stores_get_item',
             'api_task_groups_get_item',
         ]);
-    }
-
-    public function addOAuthContext(RequestEvent $event)
-    {
-        $request = $event->getRequest();
-
-        if (!$this->supportsRequest($request)) {
-            return;
-        }
-
-        $oAuth2Context = new \stdClass();
-        if (null !== ($token = $this->tokenStorage->getToken()) && $token instanceof OAuth2Token) {
-
-            $accessToken = $this->accessTokenManager->find($token->getCredentials());
-            $client = $accessToken->getClient();
-
-            $apiApp = $this->doctrine->getRepository(ApiApp::class)
-                ->findOneByOauth2Client($client);
-
-            $oAuth2Context->store = $apiApp->getStore();
-        }
-
-        $request->attributes->set('oauth2_context', $oAuth2Context);
     }
 
     public function security(RequestEvent $event)
