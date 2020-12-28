@@ -27,10 +27,10 @@
         <span class="help-block">{{ "user.edit.enabled.help" | trans | raw }}</span>
       </div>
       {% if form.restaurants is defined %}
-        {{ form_row(form.restaurants) }}
+        {{ form_widget(form.restaurants, { attr: { 'data-search-url': path('admin_restaurants_search', { format: 'json'  }) } }) }}
       {% endif %}
       {% if form.stores is defined %}
-        {{ form_row(form.stores) }}
+        {{ form_widget(form.stores, { attr: { 'data-search-url': path('admin_stores_search', { format: 'json'  }) } }) }}
       {% endif %}
       {{ form_row(form.roles) }}
       <button type="submit" class="btn btn-block btn-primary">{% trans %}basics.save{% endtrans %}</button>
@@ -38,14 +38,11 @@
 {% endblock %}
 
 {% block styles %}
+  {{ encore_entry_link_tags('user-invite') }}
   {{ encore_entry_link_tags('user-form') }}
 {% endblock %}
 
 {% block scripts %}
-  <script>
-    window.AppData = window.AppData || {}
-    window.AppData.restaurantsSearchUrl = "{{ path('admin_restaurants_search', { format: 'json'  }) }}"
-    window.AppData.storesSearchUrl = "{{ path('admin_stores_search', { format: 'json'  }) }}"
-  </script>
+  {{ encore_entry_script_tags('user-invite') }}
   {{ encore_entry_script_tags('user-form') }}
 {% endblock %}

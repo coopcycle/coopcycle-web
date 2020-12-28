@@ -13,12 +13,8 @@ class SetPasswordInvitationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('plainPassword', RepeatedType::class, [
-            'type' => PasswordType::class,
-            'first_name' => 'password',
-            'second_name' => 'password_confirmation',
-            'invalid_message' => 'fos_user.password.mismatch'
-        ]);
+        $builder->remove('email');
+        $builder->remove('legal');
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -26,5 +22,10 @@ class SetPasswordInvitationType extends AbstractType
         $resolver->setDefaults([
             'csrf_protection' => false
         ]);
+    }
+
+    public function getParent()
+    {
+        return 'AppBundle\Form\RegistrationType';
     }
 }

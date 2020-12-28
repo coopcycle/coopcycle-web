@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Invitation;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Store;
 use AppBundle\Form\SetPasswordInvitationType;
 use AppBundle\Sylius\Order\OrderFactory;
 use Cocur\Slugify\SlugifyInterface;
@@ -171,6 +173,7 @@ class UserController extends AbstractController
      */
     public function confirmInvitationAction(Request $request, string $code,
         EntityManagerInterface $objectManager,
+        UserManagerInterface $userManager,
         UserManipulator $userManipulator,
         EventDispatcherInterface $eventDispatcher)
     {
@@ -180,12 +183,42 @@ class UserController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $form = $this->createForm(SetPasswordInvitationType::class);
+        $user = $userManager->createUser();
+        $user->setEmail($invitation->getEmail());
+
+        if ($grants = $invitation->getGrants()) {
+            if (isset($grants['roles'])) {
+                foreach ($grants['roles'] as $role) {
+                    $user->addRole($role);
+                }
+            }
+            if (isset($grants['restaurants'])) {
+                foreach ($grants['restaurants'] as $restaurantId) {
+                    if ($restaurant = $objectManager->getRepository(LocalBusiness::class)->find($restaurantId)) {
+                        $user->addRestaurant($restaurant);
+                        $user->addRole('ROLE_RESTAURANT');
+                    }
+
+                }
+            }
+            if (isset($grants['stores'])) {
+                foreach ($grants['stores'] as $storeId) {
+                    if ($store = $objectManager->getRepository(Store::class)->find($storeId)) {
+                        $user->addStore($store);
+                        $user->addRole('ROLE_STORE');
+                    }
+                }
+            }
+        }
+
+        $form = $this->createForm(SetPasswordInvitationType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $user = $invitation->getUser();
+            $user->setEnabled(true);
+
+            $userManager->updateUser($user);
 
             $userManipulator->changePassword($user->getUsername(), $form->get('plainPassword')->getData());
 

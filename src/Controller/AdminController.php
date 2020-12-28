@@ -72,6 +72,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
+use FOS\UserBundle\Util\CanonicalizerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Ramsey\Uuid\Uuid;
 use Redis;
@@ -415,27 +416,40 @@ class AdminController extends Controller
      */
     public function inviteUserAction(Request $request,
         EmailManager $emailManager,
-        UserManagerInterface $userManager,
         TokenGeneratorInterface $tokenGenerator,
-        EntityManagerInterface $objectManager)
+        EntityManagerInterface $objectManager,
+        CanonicalizerInterface $canonicalizer)
     {
-        $user = $userManager->createUser();
-
-        $form = $this->createForm(InviteUserType::class, $user);
+        $form = $this->createForm(InviteUserType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $randomPassword = random_bytes(24);
+            $invitation = $form->getData();
 
-            $user = $form->getData();
-            $user->setPlainPassword($randomPassword);
-            $user->setEnabled(true);
+            $roles = $form->get('roles')->getData();
+            $restaurants = $form->get('restaurants')->getData();
+            $stores = $form->get('stores')->getData();
 
-            $userManager->updateUser($user);
+            foreach ($roles as $role) {
+                $invitation->addRole($role);
+            }
 
-            $invitation = new Invitation();
-            $invitation->setUser($user);
+            foreach ($restaurants as $restaurant) {
+                $invitation->addRestaurant($restaurant);
+                $invitation->addRole('ROLE_RESTAURANT');
+            }
+
+            foreach ($stores as $store) {
+                $invitation->addStore($store);
+                $invitation->addRole('ROLE_STORE');
+            }
+
+            // TODO Check if already invited
+            // TODO Check if same email already exists
+
+            $invitation->setEmail($canonicalizer->canonicalize($invitation->getEmail()));
+            $invitation->setUser($this->getUser());
             $invitation->setCode($tokenGenerator->generateToken());
 
             $objectManager->persist($invitation);
@@ -443,7 +457,7 @@ class AdminController extends Controller
 
             // Send invitation email
             $message = $emailManager->createInvitationMessage($invitation);
-            $emailManager->sendTo($message, $user->getEmail());
+            $emailManager->sendTo($message, $invitation->getEmail());
             $invitation->setSentAt(new \DateTime());
 
             $objectManager->flush();
@@ -453,9 +467,7 @@ class AdminController extends Controller
                 $this->get('translator')->trans('basics.send_invitation.confirm')
             );
 
-            return $this->redirectToRoute('admin_user_edit', array(
-                'username' => $user->getUsername(),
-            ));
+            return $this->redirectToRoute('admin_users');
         }
 
         return $this->render('admin/user_invite.html.twig', [
