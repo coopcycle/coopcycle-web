@@ -559,17 +559,7 @@ class RestaurantController extends AbstractController
      */
     public function mapAction(Request $request, SlugifyInterface $slugify, CacheInterface $projectCache)
     {
-        $user = $this->getUser();
-
-        if ($user && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_RESTAURANT'))) {
-            $cacheKeySuffix = $user->getUsername();
-        } else {
-            $cacheKeySuffix = 'anonymous';
-        }
-
-        $cacheKey = sprintf('homepage.map.%s', $cacheKeySuffix);
-
-        $restaurants = $projectCache->get($cacheKey, function (ItemInterface $item) use ($slugify) {
+        $restaurants = $projectCache->get('homepage.map', function (ItemInterface $item) use ($slugify) {
 
             $item->expiresAfter(60 * 30);
 
@@ -588,7 +578,7 @@ class RestaurantController extends AbstractController
                         'slug' => $slugify->slugify($restaurant->getName())
                     ])
                 ];
-            }, $this->getDoctrine()->getRepository(LocalBusiness::class)->findAll());
+            }, $this->getDoctrine()->getRepository(LocalBusiness::class)->findBy(['enabled' => true]));
         });
 
         return $this->render('restaurant/map.html.twig', [
