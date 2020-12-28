@@ -640,6 +640,11 @@ services:
       $tile38: '@snc_redis.tile38'
       $fleetKey: '%tile38_fleet_key%'
 
+  AppBundle\Action\Order\Pay:
+    public: true
+    tags:
+      - { name: monolog.logger, channel: stripe }
+
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }
