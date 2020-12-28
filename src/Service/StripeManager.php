@@ -391,34 +391,6 @@ class StripeManager
     }
 
     /**
-     * @return Stripe\Source
-     */
-    public function createGiropaySource(PaymentInterface $payment, string $ownerName)
-    {
-        $this->configure();
-
-        $hashids = new Hashids($this->secret, 8);
-
-        $returnUrl = $this->urlGenerator->generate('payment_confirm', [
-            'hashId' => $hashids->encode($payment->getId()),
-        ], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        $stripeOptions = $this->getStripeOptions($payment);
-
-        return Stripe\Source::create([
-            'type' => 'giropay',
-            'amount' => $payment->getAmount(),
-            'currency' => strtolower($payment->getCurrencyCode()),
-            'owner' => [
-                'name' => $ownerName
-            ],
-            'redirect' => [
-                'return_url' => $returnUrl
-            ]
-        ], $stripeOptions);
-    }
-
-    /**
      * @return Stripe\StripeObject|null
      */
     private function getChargeFromPaymentIntent(Stripe\PaymentIntent $intent): ?Stripe\StripeObject

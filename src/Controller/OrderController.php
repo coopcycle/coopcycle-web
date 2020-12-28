@@ -245,19 +245,6 @@ class OrderController extends AbstractController
 
             $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
-            /** @deprecated */
-            if ($payment->hasSource()) {
-
-                $payment->setState(PaymentInterface::STATE_PROCESSING);
-
-                // TODO Freeze shipping time?
-                // Maybe better after source becomes chargeable
-
-                $this->objectManager->flush();
-
-                return $this->redirect($payment->getSourceRedirectUrl());
-            }
-
             $data = [
                 'stripeToken' => $form->get('stripePayment')->get('stripeToken')->getData()
             ];

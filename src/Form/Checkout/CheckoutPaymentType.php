@@ -80,34 +80,5 @@ class CheckoutPaymentType extends AbstractType
                     'multiple' => false,
                 ]);
         });
-
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-
-            $form = $event->getForm();
-            $order = $event->getData();
-
-            $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
-            if (!$form->has('method')) {
-
-                // This is needed if customer has selected
-                // another method previously, but didn't
-                // complete the process
-                $payment->clearSource();
-
-                return;
-            }
-
-            if ('giropay' === $form->get('method')->getData()) {
-
-                $ownerName = $form->get('stripePayment')
-                    ->get('cardholderName')->getData();
-
-                // TODO Catch Exception (source not enabled)
-                $source = $this->stripeManager->createGiropaySource($payment, $ownerName);
-
-                $payment->setSource($source);
-            }
-        });
     }
 }
