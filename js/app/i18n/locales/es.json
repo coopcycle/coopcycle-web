@@ -93,7 +93,7 @@
         "ORDER_TIMELINE_AFTER_ACCEPTED_TITLE": "El restaurante ahora debe preparar tu pedido",
         "ORDER_TIMELINE_AFTER_ACCEPTED_DESCRIPTION": "Te informaremos cuando el mensajero haya recuperado tu pedido",
         "ORDER_TIMELINE_AFTER_CREATED_TITLE": "Pedido en espera de confirmación",
-        "ORDER_TIMELINE_AFTER_CREATED_DESCRIPTION": "El restaurante tiene que confirmar su pedido. En caso de rechazo, no se cargará ningún importe a su tarjeta",
+        "ORDER_TIMELINE_AFTER_CREATED_DESCRIPTION": "El restaurante tiene que confirmar su pedido. En caso de rechazo, si tu cuenta ha sido cargada, recibiras la devolución en algunos días laborales, dependiendo de tu banco.",
         "ORDER_TIMELINE_AFTER_PICKED_TITLE": "¡El mensajero está de camino!",
         "ORDER_TIMELINE_AFTER_PICKED_DESCRIPTION": "¡Prepárate!",
         "RULE_PICKER_ADD_CONDITION": "Añade una condición",
