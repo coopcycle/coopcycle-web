@@ -319,7 +319,7 @@ dashboard_delivery:
       _controller: AppBundle\Controller\DashboardController::deliveryAction
       layout: 'dashboard.html.twig'
       routes:
-          success: fos_user_dashboard_show
+          success: dashboard
   methods:  [ GET, POST ]
 
 dashboard_stores:
