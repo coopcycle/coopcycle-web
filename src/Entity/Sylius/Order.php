@@ -15,6 +15,7 @@ use AppBundle\Action\Order\Cancel as OrderCancel;
 use AppBundle\Action\Order\Delay as OrderDelay;
 use AppBundle\Action\Order\Fulfill as OrderFulfill;
 use AppBundle\Action\Order\Pay as OrderPay;
+use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Action\MyOrders;
 use AppBundle\Api\Dto\CartItemInput;
@@ -87,6 +88,15 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *     "get"={
  *       "method"="GET",
  *       "security"="is_granted('view', object)"
+ *     },
+ *     "payment_details"={
+ *       "method"="GET",
+ *       "path"="/orders/{id}/payment",
+ *       "controller"=PaymentDetailsController::class,
+ *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
+ *       "swagger_context"={
+ *         "summary"="Get payment details for a Order resource."
+ *       }
  *     },
  *     "pay"={
  *       "method"="PUT",
