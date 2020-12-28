@@ -1,11 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { render } from 'react-dom'
 import ReactMarkdown from 'react-markdown'
 import changelogParser from '@release-notes/changelog-parser'
 import axios from 'axios'
 import moment from 'moment'
+import Cookies from 'js-cookie'
+import compareVersions from 'compare-versions'
 
 import { Badge, Popover } from 'antd'
+
+const getLatestVersion = releaseNotes => releaseNotes.releases[0].version
+
+const getNewReleasesCount = (releaseNotes, lastViewedVersion) => {
+
+  const newReleases = releaseNotes.releases.reduce((releases, release) => {
+    if (compareVersions.compare(release.version, lastViewedVersion, '>')) {
+      releases.push(release)
+    }
+
+    return releases
+  }, [])
+
+  return newReleases.length
+}
 
 const Release = ({ release }) => {
 
@@ -44,9 +61,26 @@ const ChangelogContent = ({ releaseNotes }) => {
   )
 }
 
-const Changelog = ({ releaseNotes }) => {
+const zeroStyle = {
+  backgroundColor: 'transparent',
+  color: 'inherit',
+  boxShadow: '0 0 0 1px #d9d9d9 inset'
+}
+
+const Changelog = ({ releaseNotes, newReleasesCount }) => {
 
   const [ visible, setVisible ] = useState(false)
+  const [ releasesCount, setReleasesCount ] = useState(newReleasesCount)
+
+  useEffect(() => {
+    if (visible) {
+      const latestVersion = getLatestVersion(releaseNotes)
+      Cookies.set('__changelog_latest', latestVersion)
+      setTimeout(() => setReleasesCount(0), 800)
+    }
+  }, [ visible ])
+
+  const badgeProps = releasesCount === 0 ? { style: zeroStyle } : {}
 
   return (
     <Popover
@@ -57,15 +91,30 @@ const Changelog = ({ releaseNotes }) => {
       onVisibleChange={ value => setVisible(value) }
     >
       <a href="#">
-        <Badge count={ releaseNotes.releases.length } />
+        <Badge count={ releasesCount } showZero { ...badgeProps } title={ `${releasesCount} new release(s)` } />
       </a>
     </Popover>
   )
 }
 
 export default function(el) {
+
+  const lastViewedVersion = Cookies.get('__changelog_latest')
+
   axios.get('/CHANGELOG.md').then(response => {
     const releaseNotes = changelogParser.parse(response.data)
-    render(<Changelog releaseNotes={ releaseNotes } />, el)
+
+    const latestVersion = getLatestVersion(releaseNotes)
+
+    let newReleasesCount = 0
+    if (lastViewedVersion !== latestVersion) {
+      if (!lastViewedVersion) {
+        newReleasesCount = releaseNotes.releases.length
+      } else {
+        newReleasesCount = getNewReleasesCount(releaseNotes, lastViewedVersion)
+      }
+    }
+
+    render(<Changelog releaseNotes={ releaseNotes } newReleasesCount={ newReleasesCount } />, el)
   })
 }
