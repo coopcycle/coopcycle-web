@@ -135,7 +135,9 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/restaurants", name="restaurants")
      */
-    public function listAction(Request $request, LocalBusinessRepository $repository)
+    public function listAction(Request $request,
+        LocalBusinessRepository $repository,
+        CacheInterface $projectCache)
     {
         $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * self::ITEMS_PER_PAGE;
@@ -151,7 +153,22 @@ class RestaurantController extends AbstractController
 
             $matches = $repository->findByLatLng($latitude, $longitude);
         } else {
-            $matches = $repository->findAllSorted();
+
+            $restaurantsIds = $projectCache->get('restaurant.list.ids', function (ItemInterface $item) use ($repository) {
+
+                $item->expiresAfter(60 * 5);
+
+                return array_map(function (LocalBusiness $restaurant) {
+
+                    return $restaurant->getId();
+                }, $repository->findAllSorted());
+            });
+
+            $matches = array_map(function ($id) use ($repository) {
+                return $repository->find($id);
+            }, $restaurantsIds);
+
+            $matches = array_values(array_filter($matches));
         }
 
         $count = count($matches);
