@@ -131,7 +131,12 @@ const generic = {
       const addressesAsSuggestions = this.props.addresses.map((address, idx) => ({
         type: 'address',
         value: address.streetAddress,
-        address: address,
+        address: {
+          ...address,
+          // Let's suppose saved addresses are precise
+          isPrecise: true,
+          needsGeocoding: false,
+        },
         index: idx,
       }))
 
@@ -333,7 +338,9 @@ class AddressAutosuggest extends Component {
 
     const addresses = this.props.addresses.map(address => ({
       ...address,
-      isPrecise: true, // Let's suppose saved addresses are precise
+      // Let's suppose saved addresses are precise
+      isPrecise: true,
+      needsGeocoding: false,
     }))
 
     let fuseOptions = { ...defaultFuseOptions }
