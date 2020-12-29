@@ -26,9 +26,12 @@ $(function() {
   })
 
   document.querySelectorAll('[data-enable-fulfillment-method]').forEach(checkbox => {
+
+    const enableFulfillmentMethod = checkbox.dataset.enableFulfillmentMethod
+
     checkbox.addEventListener('change', e => {
-      if (openingHoursInputs.has(e.target.value)) {
-        const widget = openingHoursInputs.get(e.target.value)
+      if (openingHoursInputs.has(enableFulfillmentMethod)) {
+        const widget = openingHoursInputs.get(enableFulfillmentMethod)
         if (e.target.checked) {
           widget.enable()
         } else {
