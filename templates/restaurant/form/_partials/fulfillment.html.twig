@@ -1,7 +1,3 @@
-{% if form.enabledFulfillmentMethods is defined %}
-  {{ form_row(form.enabledFulfillmentMethods) }}
-{% endif %}
-
 {{ form_row(form.fulfillmentMethods, { label: false }) }}
 
 {{ form_row(form.shippingOptionsDays) }}

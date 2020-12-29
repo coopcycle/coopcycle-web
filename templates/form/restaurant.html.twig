@@ -19,7 +19,10 @@
 
 {% block fulfillment_method_item_row %}
 <div class="panel panel-default">
-  <div class="panel-heading">{{ ('fulfillment_method.' ~ form.vars.value.type)|trans }}</div>
+  <div class="panel-heading">
+    {{ ('fulfillment_method.' ~ form.vars.value.type)|trans }}
+    <span class="pull-right">{{ form_widget(form.enabled, { label_attr: { class: 'checkbox-inline' } }) }}</span>
+  </div>
   <div class="panel-body">
     {{ form_row(form) }}
   </div>
@@ -44,7 +47,6 @@
       {% set opening_hours_errors = opening_hours_errors|merge([ key ]) %}
     {% endif %}
   {% endfor %}
-
 
   {{ form_row(form.openingHours, { label: false, attr: {
     'data-widget': 'opening-hours',

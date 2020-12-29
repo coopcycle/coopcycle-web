@@ -51,11 +51,6 @@ class FulfillmentMethodType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
             ])
-            ->add('preOrderingAllowed', CheckboxType::class, [
-                'label' => 'form.fulfillment_method.pre_ordering_allowed.label',
-                'help' => 'form.fulfillment_method.pre_ordering_allowed.help',
-                'required' => false,
-            ])
             ;
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
@@ -114,6 +109,20 @@ class FulfillmentMethodType extends AbstractType
                     'label' => 'localBusiness.form.orderingDelayHours',
                     'mapped' => false,
                     'disabled' => $disabled,
+                ])
+                ->add('preOrderingAllowed', CheckboxType::class, [
+                    'label' => 'form.fulfillment_method.pre_ordering_allowed.label',
+                    'help' => 'form.fulfillment_method.pre_ordering_allowed.help',
+                    'required' => false,
+                    'disabled' => $disabled,
+                ])
+                ->add('enabled', CheckboxType::class, [
+                    'label' => 'basics.enabled',
+                    'required' => false,
+                    'disabled' => $disabled,
+                    'attr' => [
+                        'data-enable-fulfillment-method' => $fulfillmentMethod->getType()
+                    ]
                 ]);
         });
 
