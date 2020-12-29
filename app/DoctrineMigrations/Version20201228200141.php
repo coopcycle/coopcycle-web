@@ -28,6 +28,8 @@ final class Version20201228200141 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN invitation.grants IS \'(DC2Type:json_array)\'');
         $this->addSql('CREATE INDEX IDX_F11D61A2A76ED395 ON invitation (user_id)');
 
+        $taskListsForUser = $this->connection->prepare('SELECT COUNT(*) AS count FROM task_list WHERE courier_id = :user_id');
+
         $restaurantsForUser = $this->connection->prepare('SELECT * FROM api_user_restaurant WHERE api_user_id = :user_id');
         $storesForUser = $this->connection->prepare('SELECT * FROM api_user_store WHERE api_user_id = :user_id');
 
@@ -35,6 +37,18 @@ final class Version20201228200141 extends AbstractMigration
         $allInvitations->execute();
 
         while ($invitation = $allInvitations->fetch()) {
+
+            $taskListsForUser->bindParam('user_id', $invitation['user_id']);
+            $taskListsForUser->execute();
+            $taskListsForUserResult = $taskListsForUser->fetch();
+
+            if ($taskListsForUserResult['count'] > 0) {
+                $this->addSql('DELETE FROM invitation WHERE code = :code AND user_id = :user_id', [
+                    'code' => $invitation['code'],
+                    'user_id' => $invitation['user_id'],
+                ]);
+                continue;
+            }
 
             $roles = unserialize($invitation['roles']);
 
