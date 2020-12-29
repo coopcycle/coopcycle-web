@@ -12,6 +12,9 @@ trait OpenCloseTrait
 {
     private $hasFutureClosingRulesCache = [];
     private $spatieOpeningHoursCache = [];
+    private $isOpenCache = [];
+    private $nextOpeningDateCache = [];
+    private $nextClosingDateCache = [];
 
     public function hasClosingRuleFor(\DateTime $date = null, \DateTime $now = null): bool
     {
@@ -81,9 +84,13 @@ trait OpenCloseTrait
             $now = Carbon::now();
         }
 
-        $openingHours = $this->getSpatieOpeningHours($this->getOpeningHours(), $this->getClosingRules());
+        if (!isset($this->isOpenCache[$now->format(\DateTime::ATOM)])) {
+            $openingHours = $this->getSpatieOpeningHours($this->getOpeningHours(), $this->getClosingRules());
 
-        return $openingHours->isOpenAt($now);
+            $this->isOpenCache[$now->format(\DateTime::ATOM)] = $openingHours->isOpenAt($now);
+        }
+
+        return $this->isOpenCache[$now->format(\DateTime::ATOM)];
     }
 
     public function getNextOpeningDate(\DateTime $now = null)
@@ -92,9 +99,13 @@ trait OpenCloseTrait
             $now = Carbon::now();
         }
 
-        $openingHours = $this->getSpatieOpeningHours($this->getOpeningHours(), $this->getClosingRules());
+        if (!isset($this->nextOpeningDateCache[$now->format(\DateTime::ATOM)])) {
+            $openingHours = $this->getSpatieOpeningHours($this->getOpeningHours(), $this->getClosingRules());
 
-        return $openingHours->nextOpen($now);
+            $this->nextOpeningDateCache[$now->format(\DateTime::ATOM)] = $openingHours->nextOpen($now);
+        }
+
+        return $this->nextOpeningDateCache[$now->format(\DateTime::ATOM)];
     }
 
     public function getNextClosingDate(\DateTime $now = null)
@@ -103,9 +114,13 @@ trait OpenCloseTrait
             $now = Carbon::now();
         }
 
-        $openingHours = $this->getSpatieOpeningHours($this->getOpeningHours(), $this->getClosingRules());
+        if (!isset($this->nextClosingDateCache[$now->format(\DateTime::ATOM)])) {
+            $openingHours = $this->getSpatieOpeningHours($this->getOpeningHours(), $this->getClosingRules());
 
-        return $openingHours->nextClose($now);
+            $this->nextClosingDateCache[$now->format(\DateTime::ATOM)] = $openingHours->nextClose($now);
+        }
+
+        return $this->nextClosingDateCache[$now->format(\DateTime::ATOM)];
     }
 
     private function hasFutureClosingRules(Collection $closingRules, \DateTime $now)
