@@ -17,7 +17,7 @@
   {% set preorder_warning = ( restaurant.isFulfillmentMethodEnabled('delivery') and restaurant.getFulfillmentMethod('delivery').orderingDelayMinutes > 0 ) %}
 
   {% if disabled_warning or preorder_warning %}
-  <nav class="restaurant-banner">
+  <nav class="restaurant-banner {% if embed_context.enabled %}mt-0{% endif %}">
     <div class="alert alert-warning text-center">
       {% if disabled_warning %}
       <p class="mb-0">{{ 'restaurant.disabledWarning'|trans({ '%restaurantEditUrl%': restaurant_edit_url }) | raw }}</p>
