@@ -65,8 +65,8 @@
             <a href="{{ path((selected_choice is instanceof('AppBundle\\Entity\\Store') ? 'dashboard_store' : 'dashboard_restaurant'), { id: selected_choice.id }) }}">{{ 'basics.edit'|trans }}</a>
           </li>
         {% endif %}
-        <li>
-          <a href="#" id="notifications">
+        <li id="notifications">
+          <a href="#">
             <span class="badge">0</span>
           </a>
         </li>

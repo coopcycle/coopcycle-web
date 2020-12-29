@@ -1,41 +1,59 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { render } from 'react-dom'
-import { I18nextProvider } from 'react-i18next'
+import { Badge, Popover } from 'antd'
+
 import NotificationList from './NotificationList'
-import i18n from '../i18n'
 
-function bootstrap($popover, options) {
+const zeroStyle = {
+  backgroundColor: 'transparent',
+  color: 'inherit',
+  boxShadow: '0 0 0 1px #d9d9d9 inset'
+}
 
-  if ($popover.length === 0) {
+const Notifications = ({ initialNotifications, initialCount, onOpen, socket }) => {
+
+  const [ visible, setVisible ] = useState(false)
+  const [ notifications, setNotifications ] = useState(initialNotifications)
+  const [ count, setCount ] = useState(initialCount)
+
+  useEffect(() => {
+    socket.on(`notifications`, notification => {
+      const newNotifications = notifications.slice()
+      newNotifications.unshift(notification)
+      setNotifications(newNotifications)
+    })
+    socket.on(`notifications:count`, count => setCount(count))
+  }, [])
+
+  useEffect(() => {
+    if (visible) {
+      onOpen(notifications)
+    }
+  }, [ visible ])
+
+  const badgeProps = count === 0 ?
+    { style: zeroStyle } : { style: { backgroundColor: '#52c41a' } }
+
+  return (
+    <Popover
+      placement="bottomRight"
+      content={ <NotificationList notifications={ notifications } /> }
+      title="Notifications"
+      trigger="click"
+      visible={ visible }
+      onVisibleChange={ value => setVisible(value) }
+    >
+      <a href="#">
+        <Badge count={ count } showZero { ...badgeProps } title={ `${count} new notification(s)` } />
+      </a>
+    </Popover>
+  )
+}
+
+function bootstrap(el, options) {
+
+  if (!el) {
     return
-  }
-
-  const el = document.createElement('div')
-  const notificationsListRef = React.createRef()
-
-  const initPopover = () => {
-
-    $popover.popover({
-      placement: 'bottom',
-      container: 'body',
-      html: true,
-      content: el,
-      template: `<div class="popover" role="tooltip">
-        <div class="arrow"></div>
-        <div class="popover-content nopadding"></div>
-      </div>`,
-    })
-
-    $popover.on('shown.bs.popover', () => {
-      const notifications = notificationsListRef.current
-        .toArray()
-        .map(notification => notification.id)
-      $.ajax(options.markAsReadURL, {
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(notifications),
-      })
-    })
   }
 
   const hostname = `//${window.location.hostname}`
@@ -54,24 +72,18 @@ function bootstrap($popover, options) {
 
     const { unread, notifications } = result
 
-    options.elements.count.innerHTML = unread
-
-    render(
-      <I18nextProvider i18n={ i18n }>
-        <NotificationList
-          ref={ notificationsListRef }
-          notifications={ notifications }
-          url={ options.notificationsURL } />
-      </I18nextProvider>,
-      el,
-      () => {
-
-        initPopover()
-
-        socket.on(`notifications`, notification => notificationsListRef.current.unshift(notification))
-        socket.on(`notifications:count`, count => options.elements.count.innerHTML = count)
-      }
-    )
+    render(<Notifications
+      initialNotifications={ notifications }
+      initialCount={ unread }
+      onOpen={ (notifications) => {
+        const notificationsIds = notifications.map(notification => notification.id)
+        $.ajax(options.markAsReadURL, {
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(notificationsIds),
+        })
+      }}
+      socket={ socket } />, el)
   })
   .catch(() => { /* Fail silently */ })
 }
@@ -82,9 +94,6 @@ $.getJSON(window.Routing.generate('profile_jwt'))
       notificationsURL: window.Routing.generate('profile_notifications'),
       markAsReadURL: window.Routing.generate('profile_notifications_mark_as_read'),
       jwt: result.jwt,
-      elements: {
-        count: document.querySelector('#notifications .badge')
-      },
     }
-    bootstrap($('#notifications'), options)
+    bootstrap(document.querySelector('#notifications'), options)
   })
