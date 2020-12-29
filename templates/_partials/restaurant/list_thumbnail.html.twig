@@ -13,6 +13,7 @@
   <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
   <div>
     <h4 class="restaurant-item__title">{{ restaurant.name|truncate(48, false, '…') }}</h4>
+    {% cache restaurant_caption_cache_annotation restaurant %}
     {% if restaurant.servesCuisine|length > 0 %}
       <p class="text-muted">{{ restaurant.servesCuisine|map(c => ("#{c.name}"|trans({}, 'cuisines')))|join(' · ') }}</p>
     {% elseif restaurant.description is not empty %}
@@ -20,6 +21,7 @@
     {% else %}
       <p class="text-muted">{{ restaurant.address.streetAddress }}</p>
     {% endif %}
+    {% endcache %}
     <div data-fulfillment="{{ path('restaurant_fulfillment_timing', { id: restaurant.id }) }}">
       {# Managed with React #}
       <span class="restaurant-item__time-range">

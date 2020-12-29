@@ -49,6 +49,7 @@ parameters:
     sonic_namespace: '%database_name%'
     sonic_secret_password: '%env(SONIC_SECRET_PASSWORD)%'
     restaurant_menu_cache_annotation: 'restaurant_menu_v0.5'
+    restaurant_caption_cache_annotation: 'restaurant_caption_v0.1'
     avatar_dir: '%env(APP_PUBLIC_DIR)%/images/avatars/'
 
 services:
@@ -172,6 +173,7 @@ twig:
         autocomplete_adapter: '%env(COOPCYCLE_AUTOCOMPLETE_ADAPTER)%'
         geocode_earth_api_key: '%env(GEOCODE_EARTH_API_KEY)%'
         restaurant_menu_cache_annotation: '%restaurant_menu_cache_annotation%'
+        restaurant_caption_cache_annotation: '%restaurant_caption_cache_annotation%'
         cdn_root_url: '%env(CDN_ROOT_URL)%'
     exception_controller: null
 
