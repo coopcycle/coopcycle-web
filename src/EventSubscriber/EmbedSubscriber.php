@@ -49,10 +49,10 @@ class EmbedSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         if ($request->query->has('embed')) {
-            if (!$request->query->getBoolean('embed')) {
-                $request->getSession()->remove('embed');
-            } else {
+            if ('' === $request->query->get('embed') || true === $request->query->getBoolean('embed')) {
                 $request->getSession()->set('embed', true);
+            } else {
+                $request->getSession()->remove('embed');
             }
         }
     }
