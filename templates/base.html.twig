@@ -8,6 +8,9 @@
     {{ sonata_seo_metadatas() }}
     {{ encore_entry_link_tags('common') }}
     {{ encore_entry_link_tags('widgets') }}
+    {% if app.user %}
+      {{ encore_entry_link_tags('notifications') }}
+    {% endif %}
     {% block styles_common %}
       {% block styles %}{% endblock %}
     {% endblock %}
