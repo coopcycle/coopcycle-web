@@ -675,8 +675,8 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/stores", name="stores")
      */
-    public function storeListAction(Request $request, LocalBusinessRepository $repository)
+    public function storeListAction(Request $request, LocalBusinessRepository $repository, CacheInterface $projectCache)
     {
-        return $this->listAction($request, $repository->withContext(Store::class));
+        return $this->listAction($request, $repository->withContext(Store::class), $projectCache);
     }
 }
