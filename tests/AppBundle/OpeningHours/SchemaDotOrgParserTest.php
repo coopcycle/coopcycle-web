@@ -116,6 +116,28 @@ class SchemaDotOrgParserTest extends TestCase
         $this->assertArrayNotHasKey('2017-09-04', $exceptions);
     }
 
+    public function testParseExceptions3()
+    {
+        $closingRules = new ArrayCollection();
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime('2020-12-31 15:00:00'));
+        $closingRule->setEndDate(new \DateTime('2021-01-01 22:30:00'));
+
+        $closingRules->add($closingRule);
+
+        $exceptions = SchemaDotOrgParser::parseExceptions(
+          $closingRules,
+          SchemaDotOrgParser::parseCollection(['Mo-Sa 11:30-13:30', 'Mo-Sa 19:00-21:30'])
+        );
+
+        $this->assertArrayHasKey('2020-12-31', $exceptions);
+        $this->assertEquals(['11:30-13:30'], $exceptions['2020-12-31']);
+
+        $this->assertArrayHasKey('2021-01-01', $exceptions);
+        $this->assertEmpty($exceptions['2021-01-01']);
+    }
+
     public function testOverlappingRanges()
     {
         $closingRules = new ArrayCollection();

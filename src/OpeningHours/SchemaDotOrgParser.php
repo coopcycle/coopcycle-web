@@ -143,11 +143,19 @@ class SchemaDotOrgParser
                     }
                 }
 
-                // $newRanges[] = $dayRange->format();
-                continue 2;
+                $newRanges[] = $dayRange->format();
             }
 
             $exceptions[$day] = $newRanges;
+        }
+
+        foreach ($exceptions as $day => $exceptionRanges) {
+            $weekDay = strtolower(Carbon::parse($day)->englishDayOfWeek);
+            if (!empty($exceptionRanges)) {
+                if ($exceptionRanges === $ranges[$weekDay]) {
+                    unset($exceptions[$day]);
+                }
+            }
         }
 
         return $exceptions;
