@@ -54,12 +54,6 @@ parameters:
     avatar_dir: '%env(APP_PUBLIC_DIR)%/images/avatars/'
 
 services:
-    tag_manager.cache:
-        parent: cache.adapter.redis
-        tags:
-          - name: cache.pool
-            provider: snc_redis.default
-            namespace: tag_manager
     cache.messenger.restart_workers_signal: '@restart_workers_signal.cache'
 
 framework:
@@ -96,6 +90,8 @@ framework:
             s3_flysystem.cache:
                 adapter: cache.app
             project.cache:
+                adapter: cache.app
+            tag_manager.cache:
                 adapter: cache.app
     messenger:
         buses:
