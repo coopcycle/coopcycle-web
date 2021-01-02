@@ -15,6 +15,7 @@ parameters:
     env(COOPCYCLE_PRIVATE_KEY_FILE): "%kernel.project_dir%/var/jwt/private.pem"
     env(APP_PUBLIC_DIR): "%kernel.project_dir%/web"
     env(APP_LOG_DIR): "%kernel.logs_dir%"
+    env(APP_VERSION): dev-master
     secret: "%env(APP_SECRET)%"
     country_iso: "%env(COOPCYCLE_COUNTRY)%"
     region_iso: "%env(COOPCYCLE_REGION)%"
@@ -84,7 +85,7 @@ framework:
     http_method_override: true
     assets: ~
     cache:
-        prefix_seed: "%database_name%"
+        prefix_seed: "%env(APP_VERSION)%"
         app: cache.adapter.redis
         default_redis_provider: "snc_redis.default"
         pools:
