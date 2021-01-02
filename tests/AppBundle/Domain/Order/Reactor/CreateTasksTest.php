@@ -10,6 +10,7 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Vendor;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTextEncoder;
@@ -25,7 +26,7 @@ class CreateTasksTest extends TestCase
 
     public function setUp(): void
     {
-        $this->routing = $this->prophesize(RoutingInterface::class);
+        $this->deliveryManager = $this->prophesize(DeliveryManager::class);
         $this->orderTextEncoder = $this->prophesize(OrderTextEncoder::class);
 
         $this->orderTextEncoder
@@ -33,7 +34,7 @@ class CreateTasksTest extends TestCase
             ->willReturn('Order XXX');
 
         $this->createTasks = new CreateTasks(
-            $this->routing->reveal(),
+            $this->deliveryManager->reveal(),
             $this->orderTextEncoder->reveal()
         );
     }
@@ -115,35 +116,19 @@ class CreateTasksTest extends TestCase
             ->getShippingAddress()
             ->willReturn($shippingAddress);
 
-        $this->routing
-            ->getDuration($restaurantAddressCoords, $shippingAddressCoords)
-            ->willReturn(60 * 15); // 15 minutes
+        $delivery = new Delivery();
+
+        $this->deliveryManager
+            ->createFromOrder($order->reveal())
+            ->willReturn($delivery);
 
         $order
-            ->setDelivery(Argument::that(function (Delivery $delivery) use (
-                $restaurantAddress, $shippingAddress, $shippingTimeRangeLower, $shippingTimeRangeUpper) {
-
-                $pickup = $delivery->getPickup();
-                $dropoff = $delivery->getDropoff();
-
-                $this->assertSame($restaurantAddress, $pickup->getAddress());
-                $this->assertSame($shippingAddress, $dropoff->getAddress());
-
-                // Dropoff average = 20:05
-                // Pickup average  = 19:50 (20:05 - 15 minutes)
-                $this->assertEquals(new \DateTime('2020-04-08 19:45:00'), $pickup->getAfter());
-                $this->assertEquals(new \DateTime('2020-04-08 19:55:00'), $pickup->getBefore());
-
-                $this->assertEquals($shippingTimeRangeLower, $dropoff->getAfter());
-                $this->assertEquals($shippingTimeRangeUpper, $dropoff->getBefore());
-
-                $this->assertEquals('Order XXX', $pickup->getComments());
-                $this->assertEquals('Order XXX', $dropoff->getComments());
-
-                return true;
-            }))
+            ->setDelivery($delivery)
             ->shouldBeCalled();
 
         call_user_func_array($this->createTasks, [ new OrderAccepted($order->reveal()) ]);
+
+        $this->assertEquals('Order XXX', $delivery->getPickup()->getComments());
+        $this->assertEquals('Order XXX', $delivery->getDropoff()->getComments());
     }
 }

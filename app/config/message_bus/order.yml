@@ -113,7 +113,7 @@ services:
   coopcycle.domain.order.reactor.create_tasks:
     class: AppBundle\Domain\Order\Reactor\CreateTasks
     arguments:
-      - '@routing_service'
+      - '@coopcycle.delivery.manager'
       - '@coopcycle.utils.order_text_encoder'
     tags:
         - name: event_subscriber

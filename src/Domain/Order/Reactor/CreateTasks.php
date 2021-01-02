@@ -4,21 +4,21 @@ namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\OrderAccepted;
 use AppBundle\Entity\Delivery;
-use AppBundle\Service\RoutingInterface;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\OrderTextEncoder;
 use Carbon\Carbon;
 
 class CreateTasks
 {
-    private $routing;
+    private $deliveryManager;
     private $orderTextEncoder;
 
     public function __construct(
-        RoutingInterface $routing,
+        DeliveryManager $deliveryManager,
         OrderTextEncoder $orderTextEncoder)
     {
-        $this->routing = $routing;
+        $this->deliveryManager = $deliveryManager;
         $this->orderTextEncoder = $orderTextEncoder;
     }
 
@@ -34,38 +34,12 @@ class CreateTasks
             return;
         }
 
-        $pickupAddress = $order->getVendor()->getAddress();
-        $dropoffAddress = $order->getShippingAddress();
-
-        $duration = $this->routing->getDuration(
-            $pickupAddress->getGeo(),
-            $dropoffAddress->getGeo()
-        );
-
-        $shippingTimeRange = $order->getShippingTimeRange();
-
-        $pickupTime = Carbon::instance($shippingTimeRange->getLower())
-            ->average($shippingTimeRange->getUpper())
-            ->subSeconds($duration);
-
-        $pickupTimeRange = DateUtils::dateTimeToTsRange($pickupTime, 5);
-
-        $delivery = new Delivery();
-
-        $pickup = $delivery->getPickup();
-        $pickup->setAddress($pickupAddress);
-        $pickup->setAfter($pickupTimeRange->getLower());
-        $pickup->setBefore($pickupTimeRange->getUpper());
-
-        $dropoff = $delivery->getDropoff();
-        $dropoff->setAddress($dropoffAddress);
-        $dropoff->setAfter($shippingTimeRange->getLower());
-        $dropoff->setBefore($shippingTimeRange->getUpper());
+        $delivery = $this->deliveryManager->createFromOrder($order);
 
         $orderAsText = $this->orderTextEncoder->encode($order, 'txt');
 
-        $pickup->setComments($orderAsText);
-        $dropoff->setComments($orderAsText);
+        $delivery->getPickup()->setComments($orderAsText);
+        $delivery->getDropoff()->setComments($orderAsText);
 
         $order->setDelivery($delivery);
     }
