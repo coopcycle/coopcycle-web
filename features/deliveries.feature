@@ -113,6 +113,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -136,6 +138,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -207,6 +211,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -230,6 +236,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -286,6 +294,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -309,6 +319,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -361,6 +373,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -384,6 +398,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -440,6 +456,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -463,6 +481,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -520,6 +540,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -543,6 +565,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":48.857127,
               "longitude":2.354766
             },
@@ -599,6 +623,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -622,6 +648,8 @@ Feature: Deliveries
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":48.857127,
               "longitude":2.354766
             },
@@ -686,6 +714,8 @@ Feature: Deliveries
             "@id":"/api/addresses/2",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
+              "@id":@string@,
               "latitude":48.864577,
               "longitude":2.333338
             },

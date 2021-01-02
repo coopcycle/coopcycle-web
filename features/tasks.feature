@@ -282,6 +282,8 @@ Feature: Tasks
           "contactName":"John Doe",
           "description":null,
           "geo":{
+            "@type":"GeoCoordinates",
+            "@id":@string@,
             "latitude":48.846656,
             "longitude":2.369052
           },
@@ -569,6 +571,8 @@ Feature: Tasks
           "lastName":null,
           "description": "Sonner à l'interphone",
           "geo":{
+            "@type":"GeoCoordinates",
+            "@id":@string@,
             "latitude":48.870473,
             "longitude":2.331933
           },
@@ -641,6 +645,8 @@ Feature: Tasks
           "lastName":null,
           "description": "Sonner à l'interphone",
           "geo":{
+            "@type":"GeoCoordinates",
+            "@id":@string@,
             "latitude":48.870473,
             "longitude":2.331933
           },
