@@ -3,6 +3,7 @@
 namespace AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -63,8 +64,8 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         if (!$order->isTakeAway() && ($contract->isVariableDeliveryPriceEnabled() || $contract->isVariableCustomerAmountEnabled())) {
             try {
                 $delivery = $this->getDelivery($order);
-            } catch (ShippingAddressMissingException $e) {
-                $this->logger->error('OrderFeeProcessor | address is missing');
+            } catch (ShippingAddressMissingException|NoAvailableTimeSlotException $e) {
+                $this->logger->error(sprintf('OrderFeeProcessor | %s', $e->getMessage()));
             }
         }
 

@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -509,5 +510,40 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $tipTotal = $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT);
         $this->assertEquals(300, $tipTotal);
+    }
+
+    public function testOrderWithVariableCustomerAmountAndNoAvailableTimeSlot()
+    {
+        $pricing = new PricingRuleSet();
+        $contract = self::createContract(350, 350, 0.00, false, null, true, $pricing);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(1000));
+
+        $this->deliveryManager
+            ->createFromOrder($order)
+            ->willThrow(new NoAvailableTimeSlotException());
+
+        $this->deliveryManager
+            ->getPrice(
+                Argument::type(Delivery::class),
+                Argument::type(PricingRuleSet::class)
+            )
+            ->shouldNotBeCalled();
+
+        $this->orderFeeProcessor->process($order);
+
+        $feeAdjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+        $deliveryAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+
+        $this->assertCount(1, $feeAdjustments);
+        $this->assertCount(1, $deliveryAdjustments);
+
+        $this->assertEquals(350, $order->getFeeTotal());
+        $this->assertEquals(350, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
     }
 }

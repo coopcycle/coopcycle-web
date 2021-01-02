@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\ShippingAddressMissingException;
+use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
@@ -80,7 +81,7 @@ class DeliveryManager
         $dropoffAddress = $order->getShippingAddress();
 
         if (null === $dropoffAddress) {
-            throw new ShippingAddressMissingException(sprintf('Order does not have a shipping address'));
+            throw new ShippingAddressMissingException('Order does not have a shipping address');
         }
 
         $distance = $this->routing->getDistance(
@@ -96,6 +97,10 @@ class DeliveryManager
         if (null === $dropoffTimeRange) {
             $dropoffTimeRange =
                 $this->orderTimeHelper->getShippingTimeRange($order);
+        }
+
+        if (null === $dropoffTimeRange) {
+            throw new NoAvailableTimeSlotException('No time slot is avaible');
         }
 
         $pickupTime = Carbon::instance($dropoffTimeRange->getLower())
