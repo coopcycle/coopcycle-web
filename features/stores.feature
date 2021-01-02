@@ -185,10 +185,14 @@ Feature: Stores
         "name":"Acme time slot",
         "choices":[
           {
+            "@type":"Choice",
+            "@id":@string@,
             "startTime":"12:00:00",
             "endTime":"14:00:00"
           },
           {
+            "@type":"Choice",
+            "@id":@string@,
             "startTime":"14:00:00",
             "endTime":"17:00:00"
           }
