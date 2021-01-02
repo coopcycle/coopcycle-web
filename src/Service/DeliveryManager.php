@@ -84,15 +84,6 @@ class DeliveryManager
             throw new ShippingAddressMissingException('Order does not have a shipping address');
         }
 
-        $distance = $this->routing->getDistance(
-            $pickupAddress->getGeo(),
-            $dropoffAddress->getGeo()
-        );
-        $duration = $this->routing->getDuration(
-            $pickupAddress->getGeo(),
-            $dropoffAddress->getGeo()
-        );
-
         $dropoffTimeRange = $order->getShippingTimeRange();
         if (null === $dropoffTimeRange) {
             $dropoffTimeRange =
@@ -102,6 +93,15 @@ class DeliveryManager
         if (null === $dropoffTimeRange) {
             throw new NoAvailableTimeSlotException('No time slot is avaible');
         }
+
+        $distance = $this->routing->getDistance(
+            $pickupAddress->getGeo(),
+            $dropoffAddress->getGeo()
+        );
+        $duration = $this->routing->getDuration(
+            $pickupAddress->getGeo(),
+            $dropoffAddress->getGeo()
+        );
 
         $pickupTime = Carbon::instance($dropoffTimeRange->getLower())
             ->average($dropoffTimeRange->getUpper())
