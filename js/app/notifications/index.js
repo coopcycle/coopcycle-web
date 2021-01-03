@@ -23,9 +23,11 @@ const Notifications = ({ initialNotifications, initialCount, onOpen, centrifuge,
 
       switch (event.name) {
         case 'notifications':
-          const newNotifications = notifications.slice()
-          newNotifications.unshift(event.data)
-          setNotifications(newNotifications)
+          setNotifications(prevNotifications => {
+            const newNotifications = [ event.data ]
+
+            return [ ...newNotifications, ...prevNotifications ]
+          })
           break
         case 'notifications:count':
           setCount(event.data)
