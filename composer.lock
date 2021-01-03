@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f4ad1683265a327ca6b711b47c840663",
+    "content-hash": "e5a50302a7578a94516f73f58b9c792b",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3991,66 +3991,6 @@
                 "source": "https://github.com/geo6/geocoder-php-addok-provider/tree/v1.2.0"
             },
             "time": "2020-02-09T15:42:11+00:00"
-        },
-        {
-            "name": "geocoder-php/algolia-places-provider",
-            "version": "0.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/geocoder-php/algolia-places-provider.git",
-                "reference": "5a63625bd04519329e42c4a9a4cc2ccca0be66e3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/geocoder-php/algolia-places-provider/zipball/5a63625bd04519329e42c4a9a4cc2ccca0be66e3",
-                "reference": "5a63625bd04519329e42c4a9a4cc2ccca0be66e3",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "geocoder-php/common-http": "^4.1",
-                "php": "^7.2",
-                "willdurand/geocoder": "^4.0"
-            },
-            "provide": {
-                "geocoder-php/provider-implementation": "1.0"
-            },
-            "require-dev": {
-                "geocoder-php/provider-integration-tests": "^1.1",
-                "php-http/curl-client": "^1.7",
-                "php-http/message": "^1.0",
-                "phpunit/phpunit": "^7.5"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Geocoder\\Provider\\AlgoliaPlaces\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Lalanne",
-                    "email": "lalanne.fabien@gmail.com"
-                }
-            ],
-            "description": "Geocoder AlgoliaPlaces adapter",
-            "homepage": "http://geocoder-php.org/Geocoder/",
-            "support": {
-                "source": "https://github.com/geocoder-php/algolia-places-provider/tree/master"
-            },
-            "time": "2020-07-04T13:18:10+00:00"
         },
         {
             "name": "geocoder-php/chain-provider",

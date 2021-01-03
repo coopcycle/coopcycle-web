@@ -17,7 +17,6 @@ use Fidry\AliceDataFixtures\LoaderInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use FOS\UserBundle\Util\UserManipulator;
 use Geocoder\Provider\Addok\Addok as AddokProvider;
-use Geocoder\Provider\AlgoliaPlaces\AlgoliaPlaces as AlgoliaPlacesProvider;
 use Geocoder\Provider\Chain\Chain as ChainProvider;
 use Geocoder\Provider\Photon\Photon as PhotonProvider;
 use Geocoder\StatefulGeocoder;
@@ -259,7 +258,6 @@ class InitDemoCommand extends Command
         if ('fr' === $this->country) {
             $providers[] = AddokProvider::withBANServer($httpAdapter);
         }
-        $providers[] = new AlgoliaPlacesProvider($httpAdapter);
         $providers[] = PhotonProvider::withKomootServer($httpAdapter);
 
         $statefulGeocoder =
