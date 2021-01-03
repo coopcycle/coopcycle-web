@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f4ad1683265a327ca6b711b47c840663",
+    "content-hash": "00ef6c50e13bfff74c5305f4f0dbe7e6",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3994,22 +3994,22 @@
         },
         {
             "name": "geocoder-php/algolia-places-provider",
-            "version": "0.2.0",
+            "version": "0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/geocoder-php/algolia-places-provider.git",
-                "reference": "5a63625bd04519329e42c4a9a4cc2ccca0be66e3"
+                "reference": "9f0c953aab32a6f9e4de96b8f46a9a6cfe9a91e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/geocoder-php/algolia-places-provider/zipball/5a63625bd04519329e42c4a9a4cc2ccca0be66e3",
-                "reference": "5a63625bd04519329e42c4a9a4cc2ccca0be66e3",
+                "url": "https://api.github.com/repos/geocoder-php/algolia-places-provider/zipball/9f0c953aab32a6f9e4de96b8f46a9a6cfe9a91e0",
+                "reference": "9f0c953aab32a6f9e4de96b8f46a9a6cfe9a91e0",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "geocoder-php/common-http": "^4.1",
-                "php": "^7.2",
+                "php": "^7.3 || ^8.0",
                 "willdurand/geocoder": "^4.0"
             },
             "provide": {
@@ -4017,9 +4017,9 @@
             },
             "require-dev": {
                 "geocoder-php/provider-integration-tests": "^1.1",
-                "php-http/curl-client": "^1.7",
+                "php-http/curl-client": "^2.2",
                 "php-http/message": "^1.0",
-                "phpunit/phpunit": "^7.5"
+                "phpunit/phpunit": "^9.5"
             },
             "type": "library",
             "extra": {
@@ -4048,9 +4048,9 @@
             "description": "Geocoder AlgoliaPlaces adapter",
             "homepage": "http://geocoder-php.org/Geocoder/",
             "support": {
-                "source": "https://github.com/geocoder-php/algolia-places-provider/tree/master"
+                "source": "https://github.com/geocoder-php/algolia-places-provider/tree/0.3.0"
             },
-            "time": "2020-07-04T13:18:10+00:00"
+            "time": "2020-12-21T16:41:18+00:00"
         },
         {
             "name": "geocoder-php/chain-provider",
