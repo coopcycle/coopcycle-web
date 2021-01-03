@@ -31,6 +31,11 @@ export const initialState = {
   order: null,
   date: moment().format('YYYY-MM-DD'),
   jwt: '',
+  centrifugo: {
+    token: '',
+    namespace: '',
+    username: '',
+  },
   restaurant: null,
   isFetching: false,
   acceptOrderRoute: 'admin_order_accept',

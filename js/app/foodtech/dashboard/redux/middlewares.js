@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { Howl } from 'howler'
+import Centrifuge from 'centrifuge'
 
 import {
   orderCreated,
@@ -13,39 +14,40 @@ import {
 import { asText } from '../../../components/ShippingTimeRange'
 import i18n from '../../../i18n'
 
-let socket
+let centrifuge
 
 export const socketIO = ({ dispatch, getState }) => {
 
-  if (!socket) {
+  if (!centrifuge) {
 
-    socket = io(`//${window.location.hostname}`, {
-      path: '/tracking/socket.io',
-      query: {
-        token: getState().jwt,
-      },
-      transports: [ 'websocket' ],
-    })
+    const { token, namespace, username } = getState().centrifugo
 
-    socket.on('order:created', event => {
-      dispatch(orderCreated(event.order))
-    })
+    const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
 
-    socket.on('order:accepted', event => {
-      dispatch(orderAccepted(event.order))
-    })
+    centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
+    centrifuge.setToken(token)
+    centrifuge.subscribe(`${namespace}_events#${username}`, message => {
+      const { event } = message.data
 
-    socket.on('order:refused', event => {
-      dispatch(orderRefused(event.order))
+      switch (event.name) {
+        case 'order:created':
+          dispatch(orderCreated(event.data.order))
+          break
+        case 'order:accepted':
+          dispatch(orderAccepted(event.data.order))
+          break
+        case 'order:refused':
+          dispatch(orderRefused(event.data.order))
+          break
+        case 'order:cancelled':
+          dispatch(orderCancelled(event.data.order))
+          break
+        case 'order:fulfilled':
+          dispatch(orderFulfilled(event.data.order))
+          break
+      }
     })
-
-    socket.on('order:cancelled', event => {
-      dispatch(orderCancelled(event.order))
-    })
-
-    socket.on('order:fulfilled', event => {
-      dispatch(orderFulfilled(event.order))
-    })
+    centrifuge.connect()
 
   }
 

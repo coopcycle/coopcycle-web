@@ -24,7 +24,12 @@ window.CoopCycle.FoodtechDashboard = (el, preloadedState, options) => {
 
       const state = {
         ...preloadedState,
-        jwt: result.jwt
+        jwt: result.jwt,
+        centrifugo: {
+          token:     result.cent_tok,
+          namespace: result.cent_ns,
+          username:  result.cent_usr,
+        }
       }
 
       const store = createStoreFromPreloadedState(state)
