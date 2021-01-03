@@ -66,7 +66,8 @@ function bootstrap(el, options) {
     return
   }
 
-  const centrifuge = new Centrifuge(`ws://${window.location.hostname}/centrifugo/connection/websocket`)
+  const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
+  const centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
   centrifuge.setToken(options.token)
 
   $.getJSON(options.notificationsURL, { format: 'json' })
