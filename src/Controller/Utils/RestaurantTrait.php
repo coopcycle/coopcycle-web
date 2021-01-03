@@ -47,7 +47,6 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ObjectRepository;
 use Knp\Component\Pager\PaginatorInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use MercadoPago;
 use Ramsey\Uuid\Uuid;
@@ -308,7 +307,6 @@ trait RestaurantTrait
     protected function renderRestaurantDashboard(
         LocalBusiness $restaurant,
         Request $request,
-        JWTManagerInterface $jwtManager,
         EntityManagerInterface $entityManager)
     {
         $this->accessControl($restaurant);
@@ -362,18 +360,17 @@ trait RestaurantTrait
             ]) : null,
             'routes' => $routes,
             'date' => $date,
-            'jwt' => $jwtManager->create($this->getUser()),
         ], $routes));
     }
 
     public function restaurantDashboardAction($restaurantId, Request $request,
-        JWTManagerInterface $jwtManager, EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
-        return $this->renderRestaurantDashboard($restaurant, $request, $jwtManager, $entityManager);
+        return $this->renderRestaurantDashboard($restaurant, $request, $entityManager);
     }
 
     public function restaurantMenuTaxonsAction($id, Request $request, FactoryInterface $taxonFactory)
