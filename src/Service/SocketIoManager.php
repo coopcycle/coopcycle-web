@@ -185,14 +185,15 @@ class SocketIoManager
             $this->redis->hdel($hashKey, $uuid);
         }
 
-        $notificationsCountPayload = json_encode([
+        $notificationsCountPayload = [
             'name' => 'notifications:count',
             'data' => $this->redis->llen($listKey),
-        ]);
+        ];
 
-        $channel = sprintf('users:%s', $user->getUsername());
-
-        $this->redis->publish($channel, $notificationsCountPayload);
+        $this->centrifugoClient->publish(
+            $this->getEventsChannelName($user),
+            ['event' => $notificationsCountPayload]
+        );
     }
 
     private function getEventsChannelName(UserInterface $user)
