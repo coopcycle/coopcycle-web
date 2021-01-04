@@ -3994,20 +3994,20 @@
         },
         {
             "name": "geocoder-php/chain-provider",
-            "version": "4.2.0",
+            "version": "4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/geocoder-php/chain-provider.git",
-                "reference": "f9f8d33e958eb795c80a86a98064793d2a1084aa"
+                "reference": "0f6241a89ee3f26021ef0036619b10081af53b18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/geocoder-php/chain-provider/zipball/f9f8d33e958eb795c80a86a98064793d2a1084aa",
-                "reference": "f9f8d33e958eb795c80a86a98064793d2a1084aa",
+                "url": "https://api.github.com/repos/geocoder-php/chain-provider/zipball/0f6241a89ee3f26021ef0036619b10081af53b18",
+                "reference": "0f6241a89ee3f26021ef0036619b10081af53b18",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2",
+                "php": "^7.3 || ^8.0",
                 "psr/log": "^1.0",
                 "willdurand/geocoder": "^4.0"
             },
@@ -4016,9 +4016,9 @@
             },
             "require-dev": {
                 "nyholm/nsa": "^1.1",
-                "php-http/curl-client": "^1.7",
+                "php-http/curl-client": "^2.2",
                 "php-http/message": "^1.0",
-                "phpunit/phpunit": "^7.5"
+                "phpunit/phpunit": "^9.5"
             },
             "type": "library",
             "extra": {
@@ -4047,9 +4047,9 @@
             "description": "Geocoder chain adapter",
             "homepage": "http://geocoder-php.org/Geocoder/",
             "support": {
-                "source": "https://github.com/geocoder-php/chain-provider/tree/4.2.0"
+                "source": "https://github.com/geocoder-php/chain-provider/tree/4.3.0"
             },
-            "time": "2020-07-04T13:18:10+00:00"
+            "time": "2020-12-21T16:41:18+00:00"
         },
         {
             "name": "geocoder-php/common-http",
