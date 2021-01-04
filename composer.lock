@@ -7998,16 +7998,16 @@
         },
         {
             "name": "mercadopago/dx-php",
-            "version": "2.1.1",
+            "version": "2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mercadopago/dx-php.git",
-                "reference": "b17ca2d555512b6489067e3166bb4beaab206cff"
+                "reference": "2ea4d51f6b29d568b3a06d430114467fc2ab6b90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mercadopago/dx-php/zipball/b17ca2d555512b6489067e3166bb4beaab206cff",
-                "reference": "b17ca2d555512b6489067e3166bb4beaab206cff",
+                "url": "https://api.github.com/repos/mercadopago/dx-php/zipball/2ea4d51f6b29d568b3a06d430114467fc2ab6b90",
+                "reference": "2ea4d51f6b29d568b3a06d430114467fc2ab6b90",
                 "shasum": ""
             },
             "require": {
@@ -8056,9 +8056,9 @@
             "description": "Mercado Pago PHP SDK",
             "homepage": "https://github.com/mercadopago/dx-php",
             "support": {
-                "source": "https://github.com/mercadopago/dx-php/tree/2.1.1"
+                "source": "https://github.com/mercadopago/dx-php/tree/2.2.1"
             },
-            "time": "2020-09-10T20:17:15+00:00"
+            "time": "2020-11-13T21:50:52+00:00"
         },
         {
             "name": "michelf/php-markdown",
