@@ -41,7 +41,14 @@ const server = http.createServer(function(request, response) {
     // process HTTP request. Since we're writing just WebSockets server
     // we don't have to implement anything.
 });
-const tokenVerifier = new TokenVerifier(process.env.COOPCYCLE_PUBLIC_KEY_FILE, db)
+
+let publicKeyFile
+if (!process.env.COOPCYCLE_PUBLIC_KEY_FILE) {
+  publicKeyFile = path.resolve(__dirname, '../../../var/jwt/public.pem')
+} else {
+  publicKeyFile = process.env.COOPCYCLE_PUBLIC_KEY_FILE
+}
+const tokenVerifier = new TokenVerifier(publicKeyFile, db)
 
 const io = require('socket.io')(server, { path: '/tracking/socket.io' });
 

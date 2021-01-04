@@ -3,6 +3,7 @@ var WebSocketServer = WebSocket.Server
 var http = require('http')
 var _ = require('lodash')
 var winston = require('winston')
+var path = require('path');
 
 var TokenVerifier = require('../TokenVerifier')
 
@@ -37,7 +38,13 @@ var server = http.createServer(function(request, response) {
     // we don't have to implement anything.
 });
 
-var tokenVerifier = new TokenVerifier(process.env.COOPCYCLE_PUBLIC_KEY_FILE, db)
+let publicKeyFile
+if (!process.env.COOPCYCLE_PUBLIC_KEY_FILE) {
+  publicKeyFile = path.resolve(__dirname, '../../../var/jwt/public.pem')
+} else {
+  publicKeyFile = process.env.COOPCYCLE_PUBLIC_KEY_FILE
+}
+const tokenVerifier = new TokenVerifier(publicKeyFile, db)
 
 var wsServer = new WebSocketServer({
     server: server,
