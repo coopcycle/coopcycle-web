@@ -208,8 +208,6 @@ services:
     image: centrifugo/centrifugo
     ports:
       - "8100:8000"
-    volumes:
-      - ./centrifugo:/centrifugo
     depends_on:
       - redis
     environment:
