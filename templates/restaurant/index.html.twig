@@ -71,7 +71,7 @@
     {% set closingRule = restaurant.matchClosingRuleFor %}
     {% if closingRule is not empty %}
     <div class="alert alert-danger text-center">
-      {% trans with { '%date%': closingRule.endDate|localizeddate('medium', 'none') } %}
+      {% trans with { '%date%': closingRule.endDate|format_datetime('medium', 'none') } %}
       restaurant.temporaryClosedWarning
       {% endtrans %}
     </div>

@@ -15,7 +15,7 @@
 <div class="alert alert-info">
   <i class="fa fa-globe"></i>  {% trans %}form.settings.date_time{% endtrans %}
   <span class="pull-right">
-    <span>{{ 'now'|localizeddate('none', 'short') }} {{ timezone }}</span>
+    <span>{{ 'now'|format_datetime('none', 'short') }} {{ timezone }}</span>
   </span>
 </div>
 

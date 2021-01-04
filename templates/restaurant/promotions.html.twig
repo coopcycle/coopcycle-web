@@ -56,7 +56,7 @@
       </td>
       <td>
         {% if coupon.expiresAt is not empty %}
-          {{ coupon.expiresAt|localizeddate('short', 'short') }}
+          {{ coupon.expiresAt|format_datetime('short', 'short') }}
         {% endif %}
       </td>
       <td class="text-right">

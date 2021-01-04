@@ -11,7 +11,7 @@
   <mj-section border-top="1px solid #ecedee" border-bottom="1px solid #ecedee">
     <mj-column>
       <mj-text align="center" line-height="20px">
-        {{ 'order.preparation_expected_at'|trans({ '%date%': order.preparationExpectedAt|localizeddate('none', 'short') }) }}
+        {{ 'order.preparation_expected_at'|trans({ '%date%': order.preparationExpectedAt|format_datetime('none', 'short') }) }}
       </mj-text>
     </mj-column>
   </mj-section>

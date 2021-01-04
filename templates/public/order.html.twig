@@ -40,7 +40,7 @@
         </div>
         <div class="panel-body">
           <p class="nomargin text-right">
-            <i class="fa fa-clock-o"></i> {{ 'basics.created_at'|trans({ '%date%': order.createdAt|localizeddate('medium', 'short') }) }}
+            <i class="fa fa-clock-o"></i> {{ 'basics.created_at'|trans({ '%date%': order.createdAt|format_datetime('medium', 'short') }) }}
           </p>
         </div>
         {% include "_partials/order/items.html.twig" %}
@@ -52,7 +52,7 @@
 
       {% if last_payment.state == 'completed' %}
         <div class="alert alert-success">
-          <i class="fa fa-check"></i> {{ 'embed.delivery.paid_at'|trans({ '%date%': last_payment.updatedAt|localizeddate('medium', 'short') }) }}
+          <i class="fa fa-check"></i> {{ 'embed.delivery.paid_at'|trans({ '%date%': last_payment.updatedAt|format_datetime('medium', 'short') }) }}
         </div>
       {% endif %}
 

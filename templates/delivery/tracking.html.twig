@@ -24,14 +24,14 @@
           <span>{{ delivery.pickup.address.streetAddress }}</span>
         </div>
         <div>
-          <small class="text-muted">{{ delivery.pickup.doneBefore|localizeddate('short', 'short') }}</small>
+          <small class="text-muted">{{ delivery.pickup.doneBefore|format_datetime('short', 'short') }}</small>
         </div>
         <div>
           <i class="fa fa-arrow-down"></i>
           <span>{{ delivery.dropoff.address.streetAddress }}</span>
         </div>
         <div>
-          <small class="text-muted">{{ delivery.dropoff.doneBefore|localizeddate('short', 'short') }}</small>
+          <small class="text-muted">{{ delivery.dropoff.doneBefore|format_datetime('short', 'short') }}</small>
         </div>
       </div>
     </div>

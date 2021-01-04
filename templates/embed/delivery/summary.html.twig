@@ -21,7 +21,7 @@
   {{ form_start(form, { action: path('embed_delivery_process', { hashid: hashid }) }) }}
   <div class="alert alert-info">
     {% trans with {
-      '%dropoff_date%': delivery.dropoff.doneBefore|localizeddate('medium', 'short'),
+      '%dropoff_date%': delivery.dropoff.doneBefore|format_datetime('medium', 'short'),
       '%dropoff_address%': dropoff.address.streetAddress,
       '%distance%': (delivery.distance / 1000)|round(2, 'floor'),
       '%total_including_tax%': price|price_format,

@@ -24,17 +24,11 @@ services:
     arguments:
       $locale: '%env(COOPCYCLE_LOCALE)%'
 
-  Twig_Extensions_Extension_Text:
-    class: Twig_Extensions_Extension_Text
-    tags:
-      - { name: twig.extension }
-
-  Twig_Extensions_Extension_Intl:
-    class: Twig_Extensions_Extension_Intl
-    tags:
-      - { name: twig.extension }
-
   Twig\Extra\Intl\IntlExtension:
+    tags:
+      - { name: twig.extension }
+
+  Twig\Extra\String\StringExtension:
     tags:
       - { name: twig.extension }
 

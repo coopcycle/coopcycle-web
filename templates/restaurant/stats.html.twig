@@ -11,8 +11,8 @@
 <div class="d-flex justify-content-between mb-4">
   <h3 class="nomargin">
   {% trans with {
-    '%start%': start|localizeddate('medium', 'none'),
-    '%end%': end|localizeddate('medium', 'none'),
+    '%start%': start|format_datetime('medium', 'none'),
+    '%end%': end|format_datetime('medium', 'none'),
   } %}basics.date_range{% endtrans %}
   </h3>
   <div class="d-flex align-items-center">

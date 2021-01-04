@@ -22,7 +22,7 @@
         {{ payment.refundTotal|price_format }}
       </td>
       <td class="text-right">
-        {{ payment.updatedAt|localizeddate('medium', 'short') }}
+        {{ payment.updatedAt|format_datetime('medium', 'short') }}
       </td>
       {% if is_granted('ROLE_ADMIN') %}
       <td class="text-right">
