@@ -81,8 +81,6 @@ TokenVerifier.prototype.verify = function(token) {
             })
         } else if (decoded.hasOwnProperty('msn')) {
           resolve({ courier: decoded.msn })
-        } else if (decoded.hasOwnProperty('ord')) {
-          resolve({ order: decoded.ord })
         }
 
       });

@@ -1,6 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import _ from 'lodash'
+import Centrifuge from 'centrifuge'
 
 import OrderTimeline from '../order/Timeline'
 
@@ -24,21 +25,42 @@ export default function(el, options) {
 
   if (!_.includes(['cancelled', 'fulfilled', 'refused'], options.order.state)) {
 
-    const socket = io(`//${window.location.hostname}`, {
-      path: '/tracking/socket.io',
-      transports: [ 'websocket' ],
-      query: {
-        token: options.jwt,
-      },
-    })
+    const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
 
-    socket.on('order:accepted',  event => handleEvent('order:accepted', event, options.order, timeline))
-    socket.on('order:refused',   event => handleEvent('order:refused', event, options.order, timeline))
-    socket.on('order:picked',    event => handleEvent('order:picked', event, options.order, timeline))
-    socket.on('order:dropped',   event => handleEvent('order:dropped', event, options.order, timeline))
-    socket.on('order:cancelled', event => handleEvent('order:cancelled', event, options.order, timeline))
-    socket.on('order:fulfilled', event => handleEvent('order:fulfilled', event, options.order, timeline))
+    const centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`, {
+      // In this case, we don't refresh the connection
+      // https://github.com/centrifugal/centrifuge-js#refreshendpoint
+      refreshAttempts: 0,
+      onRefresh: function(ctx, cb) {
+        cb({ status: 403 })
+      }
+    })
+    centrifuge.setToken(options.centrifugo.token)
+    centrifuge.subscribe(options.centrifugo.channel, message => {
+      const { event } = message.data
+
+      switch (event.name) {
+        case 'order:accepted':
+          handleEvent('order:accepted', event.data, options.order, timeline)
+          break
+        case 'order:refused':
+          handleEvent('order:refused', event.data, options.order, timeline)
+          break
+        case 'order:picked':
+          handleEvent('order:picked', event.data, options.order, timeline)
+          break
+        case 'order:dropped':
+          handleEvent('order:dropped', event.data, options.order, timeline)
+          break
+        case 'order:cancelled':
+          handleEvent('order:cancelled', event.data, options.order, timeline)
+          break
+        case 'order:fulfilled':
+          handleEvent('order:fulfilled', event.data, options.order, timeline)
+          break
+      }
+    })
+    centrifuge.connect()
 
   }
-
 }

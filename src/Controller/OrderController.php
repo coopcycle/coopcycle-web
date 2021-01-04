@@ -24,6 +24,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
+use phpcent\Client as CentrifugoClient;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
@@ -285,6 +286,7 @@ class OrderController extends AbstractController
         IriConverterInterface $iriConverter,
         SessionInterface $session,
         Filesystem $assetsFilesystem,
+        CentrifugoClient $centrifugoClient,
         Request $request)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
@@ -327,18 +329,10 @@ class OrderController extends AbstractController
         $resetSession = $flashBag->has('reset_session') && !empty($flashBag->get('reset_session'));
         $trackGoal = $flashBag->has('track_goal') && !empty($flashBag->get('track_goal'));
 
-        $exp = clone $order->getShippingTimeRange()->getUpper();
-        $exp->modify('+3 hours');
-
         // FIXME We may generate expired tokens
 
-        $jwt = $jwsProvider->create([
-            // We add a custom "ord" claim to the token,
-            // that will allow watching order events
-            'ord' => $iriConverter->getIriFromItem($order),
-            // Token expires 3 hours after expected completion
-            'exp' => $exp->getTimestamp(),
-        ])->getToken();
+        $exp = clone $order->getShippingTimeRange()->getUpper();
+        $exp->modify('+3 hours');
 
         $customMessage = null;
         if ($assetsFilesystem->has('order_confirm.md')) {
@@ -354,8 +348,11 @@ class OrderController extends AbstractController
             ]),
             'reset' => $resetSession,
             'track_goal' => $trackGoal,
-            'jwt' => $jwt,
             'custom_message' => $customMessage,
+            'centrifugo' => [
+                'token'   => $centrifugoClient->generateConnectionToken($order->getId(), $exp->getTimestamp()),
+                'channel' => sprintf('%s_order_events#%d', $this->getParameter('centrifugo_namespace'), $order->getId())
+            ]
         ]);
     }
 

@@ -80,13 +80,15 @@ class SocketIoManager
             $data = $message->normalize($this->serializer);
         }
 
-        $channel = sprintf('orders:%s', $this->iriConverter->getIriFromItem($order));
-        $payload = json_encode([
+        $payload = [
             'name' => $messageName,
             'data' => $data
-        ]);
+        ];
 
-        $this->redis->publish($channel, $payload);
+        $this->centrifugoClient->publish(
+            $this->getOrderChannelName($order),
+            ['event' => $payload]
+        );
     }
 
     public function toUser(UserInterface $user, $message, array $data = [])
@@ -199,5 +201,10 @@ class SocketIoManager
     private function getEventsChannelName(UserInterface $user)
     {
         return sprintf('%s_events#%s', $this->namespace, $user->getUsername());
+    }
+
+    private function getOrderChannelName(OrderInterface $order)
+    {
+        return sprintf('%s_order_events#%d', $this->namespace, $order->getId());
     }
 }

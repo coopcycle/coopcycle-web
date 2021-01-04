@@ -71,7 +71,6 @@ function bootstrap() {
     })
     sub.prefixedPSubscribe('users:*')
     sub.prefixedPSubscribe('couriers:*')
-    sub.prefixedPSubscribe('orders:*')
   })
 
   const createTile38ChannelIfNotExists = () => new Promise((resolve, reject) => {
@@ -136,9 +135,6 @@ const authMiddleware = function(socket, next) {
         } else {
           if (user.hasOwnProperty('courier')) {
             socket.courier = user.courier
-          }
-          if (user.hasOwnProperty('order')) {
-            socket.order = user.order
           }
         }
         next();
@@ -288,13 +284,6 @@ function initialize() {
           socket.join(`couriers:${socket.courier}`, (err) => {
             if (!err) {
               logger.info(`user joined room "couriers:${socket.courier}"`)
-            }
-          })
-        }
-        if (socket.order) {
-          socket.join(`orders:${socket.order}`, (err) => {
-            if (!err) {
-              logger.info(`user joined room "orders:${socket.order}"`)
             }
           })
         }
