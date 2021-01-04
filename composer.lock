@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e5a50302a7578a94516f73f58b9c792b",
+    "content-hash": "1a77ec52fbc5dba1b96567e78aececd7",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3946,21 +3946,21 @@
         },
         {
             "name": "geo6/geocoder-php-addok-provider",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/geo6/geocoder-php-addok-provider.git",
-                "reference": "f4434f2d9d32542b7dbc51565da119f2f6786d3f"
+                "reference": "5030967a6cdf6a29c5e9b08c78c2f2ddb68587c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/geo6/geocoder-php-addok-provider/zipball/f4434f2d9d32542b7dbc51565da119f2f6786d3f",
-                "reference": "f4434f2d9d32542b7dbc51565da119f2f6786d3f",
+                "url": "https://api.github.com/repos/geo6/geocoder-php-addok-provider/zipball/5030967a6cdf6a29c5e9b08c78c2f2ddb68587c0",
+                "reference": "5030967a6cdf6a29c5e9b08c78c2f2ddb68587c0",
                 "shasum": ""
             },
             "require": {
                 "geocoder-php/common-http": "^4.0",
-                "php": "^7.0",
+                "php": "^7.3 || ^8.0",
                 "willdurand/geocoder": "^4.0"
             },
             "provide": {
@@ -3968,9 +3968,9 @@
             },
             "require-dev": {
                 "geocoder-php/provider-integration-tests": "^1.0",
-                "php-http/curl-client": "^1.7 || ^2.0",
+                "php-http/curl-client": "^2.0",
                 "php-http/message": "^1.0",
-                "phpunit/phpunit": "^6.5 || ^7.5"
+                "phpunit/phpunit": "^9.5"
             },
             "type": "library",
             "autoload": {
@@ -3994,9 +3994,9 @@
             "description": "Geocoder addok adapter",
             "support": {
                 "issues": "https://github.com/geo6/geocoder-php-addok-provider/issues",
-                "source": "https://github.com/geo6/geocoder-php-addok-provider/tree/v1.2.0"
+                "source": "https://github.com/geo6/geocoder-php-addok-provider/tree/v1.3.0"
             },
-            "time": "2020-02-09T15:42:11+00:00"
+            "time": "2020-12-22T16:47:52+00:00"
         },
         {
             "name": "geocoder-php/chain-provider",
@@ -4183,21 +4183,21 @@
         },
         {
             "name": "geocoder-php/open-cage-provider",
-            "version": "4.4.0",
+            "version": "4.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/geocoder-php/open-cage-provider.git",
-                "reference": "50a438369a2c9efb17722cbdd947f731b00b54ba"
+                "reference": "b0dff6051e816b4ea49c12dbd917e3dac4e8e4fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/geocoder-php/open-cage-provider/zipball/50a438369a2c9efb17722cbdd947f731b00b54ba",
-                "reference": "50a438369a2c9efb17722cbdd947f731b00b54ba",
+                "url": "https://api.github.com/repos/geocoder-php/open-cage-provider/zipball/b0dff6051e816b4ea49c12dbd917e3dac4e8e4fb",
+                "reference": "b0dff6051e816b4ea49c12dbd917e3dac4e8e4fb",
                 "shasum": ""
             },
             "require": {
                 "geocoder-php/common-http": "^4.0",
-                "php": "^7.2",
+                "php": "^7.3 || ^8.0",
                 "willdurand/geocoder": "^4.0"
             },
             "provide": {
@@ -4205,9 +4205,9 @@
             },
             "require-dev": {
                 "geocoder-php/provider-integration-tests": "^1.2",
-                "php-http/curl-client": "^1.7",
+                "php-http/curl-client": "^2.2",
                 "php-http/message": "^1.0",
-                "phpunit/phpunit": "^7.5"
+                "phpunit/phpunit": "^9.5"
             },
             "type": "library",
             "extra": {
@@ -4236,9 +4236,9 @@
             "description": "Geocoder OpenCage adapter",
             "homepage": "http://geocoder-php.org/Geocoder/",
             "support": {
-                "source": "https://github.com/geocoder-php/open-cage-provider/tree/master"
+                "source": "https://github.com/geocoder-php/open-cage-provider/tree/4.5.0"
             },
-            "time": "2020-07-04T13:18:10+00:00"
+            "time": "2020-12-21T16:41:18+00:00"
         },
         {
             "name": "geocoder-php/photon-provider",
@@ -4295,16 +4295,16 @@
         },
         {
             "name": "gesdinet/jwt-refresh-token-bundle",
-            "version": "v0.9.1",
+            "version": "v0.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/markitosgv/JWTRefreshTokenBundle.git",
-                "reference": "1f2729e45b5eb28d6461d94dadeb0211a96754e8"
+                "reference": "1a6c512617eeb3083ceeb5d0c3eacda57e18e313"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/markitosgv/JWTRefreshTokenBundle/zipball/1f2729e45b5eb28d6461d94dadeb0211a96754e8",
-                "reference": "1f2729e45b5eb28d6461d94dadeb0211a96754e8",
+                "url": "https://api.github.com/repos/markitosgv/JWTRefreshTokenBundle/zipball/1a6c512617eeb3083ceeb5d0c3eacda57e18e313",
+                "reference": "1a6c512617eeb3083ceeb5d0c3eacda57e18e313",
                 "shasum": ""
             },
             "require": {
@@ -4346,9 +4346,9 @@
             ],
             "support": {
                 "issues": "https://github.com/markitosgv/JWTRefreshTokenBundle/issues",
-                "source": "https://github.com/markitosgv/JWTRefreshTokenBundle/tree/v0.9.1"
+                "source": "https://github.com/markitosgv/JWTRefreshTokenBundle/tree/v0.10.0"
             },
-            "time": "2020-02-04T16:08:46+00:00"
+            "time": "2020-12-23T21:17:04+00:00"
         },
         {
             "name": "giggsey/libphonenumber-for-php",
@@ -8888,16 +8888,16 @@
         },
         {
             "name": "notfloran/mjml-bundle",
-            "version": "v3.4.1",
+            "version": "v3.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/notFloran/mjml-bundle.git",
-                "reference": "10c9bc8a6a202b7a484ea36e8d90c43c4b0cc15a"
+                "reference": "ca2a3e4d7d64454cd753bf94c6af10d115889529"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/notFloran/mjml-bundle/zipball/10c9bc8a6a202b7a484ea36e8d90c43c4b0cc15a",
-                "reference": "10c9bc8a6a202b7a484ea36e8d90c43c4b0cc15a",
+                "url": "https://api.github.com/repos/notFloran/mjml-bundle/zipball/ca2a3e4d7d64454cd753bf94c6af10d115889529",
+                "reference": "ca2a3e4d7d64454cd753bf94c6af10d115889529",
                 "shasum": ""
             },
             "require": {
@@ -8935,9 +8935,9 @@
             ],
             "support": {
                 "issues": "https://github.com/notFloran/mjml-bundle/issues",
-                "source": "https://github.com/notFloran/mjml-bundle/tree/master"
+                "source": "https://github.com/notFloran/mjml-bundle/tree/v3.4.2"
             },
-            "time": "2020-04-26T17:52:29+00:00"
+            "time": "2020-11-10T12:59:05+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -16392,16 +16392,16 @@
         },
         {
             "name": "theofidry/alice-data-fixtures",
-            "version": "1.3.1",
+            "version": "1.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/theofidry/AliceDataFixtures.git",
-                "reference": "51e0e6dfbc191226feb1cbf90f8ab6ba98c99c97"
+                "reference": "d4e57d3b7208aa4fc6c1884efd4b5f72b4f91e1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/theofidry/AliceDataFixtures/zipball/51e0e6dfbc191226feb1cbf90f8ab6ba98c99c97",
-                "reference": "51e0e6dfbc191226feb1cbf90f8ab6ba98c99c97",
+                "url": "https://api.github.com/repos/theofidry/AliceDataFixtures/zipball/d4e57d3b7208aa4fc6c1884efd4b5f72b4f91e1f",
+                "reference": "d4e57d3b7208aa4fc6c1884efd4b5f72b4f91e1f",
                 "shasum": ""
             },
             "require": {
@@ -16471,7 +16471,7 @@
             ],
             "support": {
                 "issues": "https://github.com/theofidry/AliceDataFixtures/issues",
-                "source": "https://github.com/theofidry/AliceDataFixtures/tree/1.3.1"
+                "source": "https://github.com/theofidry/AliceDataFixtures/tree/1.3.2"
             },
             "funding": [
                 {
@@ -16479,7 +16479,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-29T19:28:35+00:00"
+            "time": "2020-12-31T12:56:03+00:00"
         },
         {
             "name": "trikoder/oauth2-bundle",
