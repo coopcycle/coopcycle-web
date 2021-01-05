@@ -421,7 +421,7 @@ class StripeManager
 
             $subVendors = $order->getVendors();
 
-            if (count($subVendors) > 1) {
+            if (count($subVendors) > 0) {
 
                 $livemode = $this->settingsManager->isStripeLivemode();
 

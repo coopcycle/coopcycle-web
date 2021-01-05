@@ -490,6 +490,73 @@ class StripeManagerTest extends TestCase
         $this->stripeManager->capture($payment);
     }
 
+    public function testCaptureWithHubsAndOneRestaurant()
+    {
+        $payment = new Payment();
+        $payment->setAmount(3000);
+        $payment->setStripeToken('tok_123456');
+        $payment->setCurrencyCode('EUR');
+        $payment->setCharge('ch_123456');
+
+        $stripeAccount = $this->prophesize(StripeAccount::class);
+        $order = $this->prophesize(OrderInterface::class);
+        $contract = $this->prophesize(Contract::class);
+
+        $restaurant1 = $this->createRestaurant('acct_123', $paysStripeFee = true);
+        $restaurant2 = $this->createRestaurant('acct_456', $paysStripeFee = true);
+
+        $hub = $this->prophesize(Hub::class);
+        $hub
+            ->getRestaurants()
+            ->willReturn([ $restaurant1, $restaurant2 ]);
+
+        $vendor = new Vendor();
+        $vendor->setHub($hub->reveal());
+
+        $order
+            ->getNumber()
+            ->willReturn('000001');
+        $order
+            ->getTotal()
+            ->willReturn(3000);
+        $order
+            ->getFeeTotal()
+            ->willReturn(750);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->getVendors()
+            ->willReturn([ $restaurant1 ]);
+        $order
+            ->getVendor()
+            ->willReturn($vendor);
+        $order
+            ->getTransferAmount(Argument::type(LocalBusiness::class))
+            ->will(function ($args) use ($restaurant1, $restaurant2) {
+                if ($args[0] === $restaurant1) {
+                    return 1130;
+                }
+            });
+
+        // Total = 30.00
+        // Items = 22.50
+        // Fees  =  7.50
+
+        $payment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequest('GET', '/v1/charges/ch_123456');
+        $this->shouldSendStripeRequest('POST', '/v1/charges/ch_123456/capture');
+        $this->shouldSendStripeRequest('POST', '/v1/transfers', [
+            'amount' => 1130, // = 1700 - (750 * 0.76),
+            'currency' => 'eur',
+            'destination' => 'acct_123',
+            'source_transaction' => 'ch_123456',
+        ]);
+
+        $this->stripeManager->capture($payment);
+    }
+
     public function testCreateIntent()
     {
         $payment = new Payment();
