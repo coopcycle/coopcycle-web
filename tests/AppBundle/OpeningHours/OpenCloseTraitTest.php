@@ -148,4 +148,34 @@ class OpenCloseTraitTest extends TestCase implements OpenCloseInterface
             $this->isOpen(new \DateTime('2019-08-06T13:00:00+02:00'))
         );
     }
+
+    public function testGetNextOpeningDate()
+    {
+        $this->openingHours = ['Mo-Sa 11:45-14:45'];
+
+        $this->assertEquals(new \DateTime('2017-05-16 11:45'), $this->getNextOpeningDate(new \DateTime('2017-05-16 06:30')));
+        $this->assertEquals(new \DateTime('2017-05-17 11:45'), $this->getNextOpeningDate(new \DateTime('2017-05-16 14:45')));
+        $this->assertEquals(new \DateTime('2017-05-17 11:45'), $this->getNextOpeningDate(new \DateTime('2017-05-16 15:30')));
+        $this->assertEquals(new \DateTime('2017-05-17 11:45'), $this->getNextOpeningDate(new \DateTime('2017-05-16 12:30')));
+    }
+
+    public function testGetNextOpeningDateOverlap()
+    {
+        $this->openingHours = ['Mo-Sa 20:45-01:00'];
+
+        $this->assertEquals(new \DateTime('2017-05-16 20:45'), $this->getNextOpeningDate(new \DateTime('2017-05-16 13:30')));
+        $this->assertEquals(new \DateTime('2017-05-16 20:45'), $this->getNextOpeningDate(new \DateTime('2017-05-16 01:30')));
+        $this->assertEquals(new \DateTime('2017-05-17 20:45'), $this->getNextOpeningDate(new \DateTime('2017-05-16 21:30')));
+        $this->assertEquals(new \DateTime('2017-05-17 20:45'), $this->getNextOpeningDate(new \DateTime('2017-05-16 21:13')));
+        $this->assertEquals(new \DateTime('2017-05-17 20:45'), $this->getNextOpeningDate(new \DateTime('2017-05-16 21:19')));
+    }
+
+    public function testGetNextOpeningDateWithEmptyOpeningHours()
+    {
+        $this->openingHours = [];
+
+        $now = new \DateTime('2021-01-05T12:00:00+02:00');
+
+        $this->assertNull($this->getNextOpeningDate($now));
+    }
 }
