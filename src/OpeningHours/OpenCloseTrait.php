@@ -7,6 +7,7 @@ use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
 use Spatie\OpeningHours\OpeningHours;
+use Spatie\OpeningHours\Exceptions\MaximumLimitExceeded;
 
 trait OpenCloseTrait
 {
@@ -99,13 +100,17 @@ trait OpenCloseTrait
             $now = Carbon::now();
         }
 
-        if (!isset($this->nextOpeningDateCache[$now->format(\DateTime::ATOM)])) {
-            $openingHours = $this->getSpatieOpeningHours($this->getOpeningHours(), $this->getClosingRules());
+        try {
+            if (!isset($this->nextOpeningDateCache[$now->format(\DateTime::ATOM)])) {
+                $openingHours = $this->getSpatieOpeningHours($this->getOpeningHours(), $this->getClosingRules());
 
-            $this->nextOpeningDateCache[$now->format(\DateTime::ATOM)] = $openingHours->nextOpen($now);
+                $this->nextOpeningDateCache[$now->format(\DateTime::ATOM)] = $openingHours->nextOpen($now);
+            }
+
+            return $this->nextOpeningDateCache[$now->format(\DateTime::ATOM)];
+        } catch (MaximumLimitExceeded $e) {
+            return null;
         }
-
-        return $this->nextOpeningDateCache[$now->format(\DateTime::ATOM)];
     }
 
     public function getNextClosingDate(\DateTime $now = null)
