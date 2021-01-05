@@ -54,7 +54,7 @@
     "algoliasearch": "^4.6.0",
     "antd": "^3.26.20",
     "autoprefixer": "^9.8.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^26.6.3",
     "babel-plugin-import": "^1.13.3",
