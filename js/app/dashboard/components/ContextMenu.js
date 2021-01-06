@@ -12,7 +12,7 @@ const CANCEL_MULTI = 'CANCEL_MULTI'
 const MOVE_TO_TOP = 'MOVE_TO_TOP'
 const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
 
-import { selectUnassignedTasks } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectUnassignedTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
 
 function _unassign(tasksToUnassign, removeTasks) {
