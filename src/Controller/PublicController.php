@@ -7,8 +7,7 @@ use AppBundle\Form\StripePaymentType;
 use AppBundle\Service\StripeManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
-use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
+use phpcent\Client as CentrifugoClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Stripe;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
@@ -118,8 +117,7 @@ class PublicController extends AbstractController
      * @Route("/d/{hashid}", name="public_delivery")
      */
     public function deliveryAction($hashid, Request $request,
-        JWTEncoderInterface $jwtEncoder,
-        JWSProviderInterface $jwsProvider)
+        CentrifugoClient $centrifugoClient)
     {
         $hashids = new Hashids($this->getParameter('secret'), 8);
 
@@ -141,25 +139,23 @@ class PublicController extends AbstractController
             $courier = $delivery->getPickup()->getAssignedCourier();
         }
 
-        $token = null;
+        $token = '';
+        $channel = '';
         if ($delivery->isAssigned() && !$delivery->isCompleted()) {
 
+            // Token expires 3 hours after expected completion
             $expiration = clone $delivery->getDropoff()->getDoneBefore();
             $expiration->modify('+3 hours');
 
-            $token = $jwsProvider->create([
-                // We add a custom "msn" claim to the token,
-                // that will allow tracking a messenger
-                'msn' => $courier->getUsername(),
-                // Token expires 3 hours after expected completion
-                'exp' => $expiration->getTimestamp(),
-            ])->getToken();
+            $channel = sprintf('%s_tracking#%s', $this->getParameter('centrifugo_namespace'), $courier->getUsername());
+            $token = $centrifugoClient->generateConnectionToken($courier->getUsername(), $expiration->getTimestamp());
         }
 
         return $this->render('delivery/tracking.html.twig', [
             'delivery' => $delivery,
             'courier' => $courier,
-            'token' => $token,
+            'centrifugo_token' => $token,
+            'centrifugo_channel' => $channel,
         ]);
     }
 }
