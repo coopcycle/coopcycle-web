@@ -53,6 +53,7 @@ parameters:
     restaurant_menu_cache_annotation: 'restaurant_menu_v0.5'
     restaurant_caption_cache_annotation: 'restaurant_caption_v0.1'
     avatar_dir: '%env(APP_PUBLIC_DIR)%/images/avatars/'
+    centrifugo_tracking_channel: '$%centrifugo_namespace%_tracking'
 
 services:
     cache.messenger.restart_workers_signal: '@restart_workers_signal.cache'

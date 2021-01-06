@@ -4,6 +4,7 @@ namespace AppBundle\Action;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Message\UpdateLocation as UpdateLocationMessage;
+use phpcent\Client as CentrifugoClient;
 use Redis;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -26,12 +27,16 @@ class UpdateLocation
         MessageBusInterface $messageBus,
         Redis $tile38,
         string $fleetKey,
+        CentrifugoClient $centrifugo,
+        string $trackingChannel,
         LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
         $this->messageBus = $messageBus;
         $this->tile38 = $tile38;
         $this->fleetKey = $fleetKey;
+        $this->centrifugo = $centrifugo;
+        $this->trackingChannel = $trackingChannel;
         $this->logger = $logger;
     }
 
@@ -106,6 +111,21 @@ class UpdateLocation
 
         $response =
             $this->tile38->rawCommand('EXPIRE', $this->fleetKey, $username, (60 * 30));
+
+        // Even if the current position stored in Tile38 should be the source of thruth,
+        // we send an update immediately using Centrifugo
+        // Utimately, this should be implemented using a worker that listens to a Tile38 CHAN
+
+        $this->logger->info(sprintf('Publishing message to Centrifugo channel "%s"', $this->trackingChannel));
+
+        $this->centrifugo->publish($this->trackingChannel, [
+            'user' => $username,
+            'coords' => [
+                'lat' => $lastLocation['latitude'],
+                'lng' => $lastLocation['longitude'],
+            ],
+            'ts' => $lastLocation['time'],
+        ]);
 
         return new JsonResponse([]);
     }
