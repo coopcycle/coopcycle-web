@@ -153,60 +153,6 @@ const authMiddleware = function(socket, next) {
   }
 }
 
-// @see https://github.com/NodeRedis/node-redis/blob/master/examples/scan.js
-
-let cursor = 0
-
-function scan () {
-
-  logger.info('Scanning…')
-
-  tile38Client.send_command('SCAN', [tile38FleetKey, 'CURSOR', cursor, 'LIMIT', '10'], function (err, res) {
-
-    if (err) throw err;
-
-    cursor = res[0];
-    const keys = res[1]
-
-    // Remember: more or less than COUNT or no keys may be returned
-    // See http://redis.io/commands/scan#the-count-option
-    // Also, SCAN may return the same key multiple times
-    // See http://redis.io/commands/scan#scan-guarantees
-    // Additionally, you should always have the code that uses the keys
-    // before the code checking the cursor.
-    if (keys.length > 0) {
-      keys.forEach(function(key) {
-        const [ username, data ] = key
-        const object = JSON.parse(data)
-        const [ lng, lat, timestamp ] = object.coordinates
-        io.in('dispatch').emit('tracking', {
-          user: username,
-          coords: { lat, lng },
-          ts: timestamp,
-        })
-      })
-    }
-
-    // It's important to note that the cursor and returned keys
-    // vary independently. The scan is never complete until redis
-    // returns a non-zero cursor. However, with MATCH and large
-    // collections, most iterations will return an empty keys array.
-
-    // Still, a cursor of zero DOES NOT mean that there are no keys.
-    // A zero cursor just means that the SCAN is complete, but there
-    // might be one last batch of results to process.
-
-    // From <http://redis.io/commands/scan>:
-    // 'An iteration starts when the cursor is set to 0,
-    // and terminates when the cursor returned by the server is 0.'
-    if (cursor === 0) {
-      return;
-    }
-
-    return scan();
-  })
-}
-
 function initialize() {
 
   sub.on('pmessage', function(patternWithPrefix, channelWithPrefix, message) {
@@ -282,7 +228,6 @@ function initialize() {
           socket.join('dispatch', (err) => {
             if (!err) {
               logger.info(`user "${socket.user.username}" joined room "dispatch"`)
-              scan()
             }
           })
         }

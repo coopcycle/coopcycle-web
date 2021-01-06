@@ -24,6 +24,7 @@ use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use phpcent\Client as CentrifugoClient;
 use Psr\Log\LoggerInterface;
+use Redis;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -58,10 +59,11 @@ trait AdminDashboardTrait
     public function dashboardAction(Request $request,
         TaskManager $taskManager,
         JWTManagerInterface $jwtManager,
-        CentrifugoClient $centrifugoClient)
+        CentrifugoClient $centrifugoClient,
+        Redis $tile38)
     {
         return $this->dashboardFullscreenAction((new \DateTime())->format('Y-m-d'),
-            $request, $taskManager, $jwtManager, $centrifugoClient);
+            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38);
     }
 
     /**
@@ -71,7 +73,8 @@ trait AdminDashboardTrait
     public function dashboardFullscreenAction($date, Request $request,
         TaskManager $taskManager,
         JWTManagerInterface $jwtManager,
-        CentrifugoClient $centrifugoClient)
+        CentrifugoClient $centrifugoClient,
+        Redis $tile38)
     {
         $hashids = new Hashids($this->getParameter('secret'), 8);
 
@@ -171,6 +174,8 @@ trait AdminDashboardTrait
             ];
         }
 
+        $positions = $this->loadPositions($tile38);
+
         return $this->render('admin/dashboard_iframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
@@ -184,7 +189,63 @@ trait AdminDashboardTrait
             'centrifugo_token' => $centrifugoClient->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600)),
             'centrifugo_tracking_channel' => sprintf('$%s_tracking', $this->getParameter('centrifugo_namespace')),
             'centrifugo_events_channel' => sprintf('%s_events#%s', $this->getParameter('centrifugo_namespace'), $this->getUser()->getUsername()),
+            'positions' => $positions,
         ]);
+    }
+
+    private function loadPositions(Redis $tile38, $cursor = 0, array $points = [])
+    {
+        $result = $tile38->rawCommand(
+            'SCAN',
+            $this->getParameter('tile38_fleet_key'),
+            'CURSOR',
+            $cursor,
+            'LIMIT',
+            '10'
+        );
+
+        $newCursor = $result[0];
+        $objects = $result[1];
+
+        // Remember: more or less than COUNT or no keys may be returned
+        // See http://redis.io/commands/scan#the-count-option
+        // Also, SCAN may return the same key multiple times
+        // See http://redis.io/commands/scan#scan-guarantees
+        // Additionally, you should always have the code that uses the keys
+        // before the code checking the cursor.
+        if (count($objects) > 0) {
+            foreach ($objects as $object) {
+                [$username, $data] = $object;
+                $point = json_decode($data, true);
+                // Warning: format is lng,lat
+                [$longitude, $latitude, $timestamp] = $point['coordinates'];
+
+                $points[] = [
+                    'username' => $username,
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                    'timestamp' => $timestamp,
+                ];
+            }
+        }
+
+        // It's important to note that the cursor and returned keys
+        // vary independently. The scan is never complete until redis
+        // returns a non-zero cursor. However, with MATCH and large
+        // collections, most iterations will return an empty keys array.
+
+        // Still, a cursor of zero DOES NOT mean that there are no keys.
+        // A zero cursor just means that the SCAN is complete, but there
+        // might be one last batch of results to process.
+
+        // From <http://redis.io/commands/scan>:
+        // 'An iteration starts when the cursor is set to 0,
+        // and terminates when the cursor returned by the server is 0.'
+        if ($newCursor === 0) {
+            return $points;
+        }
+
+        return $this->loadPositions($tile38, $newCursor, $points);
     }
 
     protected function getTaskList(\DateTime $date, UserInterface $user)

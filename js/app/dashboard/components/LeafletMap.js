@@ -98,6 +98,11 @@ class LeafletMap extends Component {
     })
 
     this._draw()
+
+    this.props.positions.forEach(position => {
+      const { username, coords, lastSeen } = position
+      this.proxy.setGeolocation(username, coords, lastSeen)
+    })
   }
 
   componentDidUpdate(prevProps) {

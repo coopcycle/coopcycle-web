@@ -24,6 +24,7 @@
     data-unassigned-tasks="{{ unassigned_tasks|json_encode|e('html_attr') }}"
     data-task-lists="{{ task_lists|json_encode|e('html_attr') }}"
     data-uploader-endpoint="{{ oneup_uploader_endpoint('tasks') }}"
+    data-positions="{{ positions|json_encode|e('html_attr') }}"
     data-nav="{{ nav ? 'on' : 'off' }}"
     data-example-spreadsheet-url="{{ path('spreadsheet_example_tasks') }}">
     <div class="dashboard__map">

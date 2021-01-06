@@ -38,6 +38,13 @@ function start() {
   taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
   let taskListEntities = taskListEntityUtils.addOrReplaceTaskLists({}, taskLists)
 
+  const preloadedPositions = JSON.parse(dashboardEl.dataset.positions)
+  const positions = preloadedPositions.map(pos => ({
+    username: pos.username,
+    coords: { lat: pos.latitude, lng: pos.longitude },
+    lastSeen: moment(pos.timestamp, 'X'),
+  }))
+
   let preloadedState = {
     logistics : {
       date,
@@ -59,6 +66,7 @@ function start() {
     centrifugoTrackingChannel: dashboardEl.dataset.centrifugoTrackingChannel,
     centrifugoEventsChannel: dashboardEl.dataset.centrifugoEventsChannel,
     nav: dashboardEl.dataset.nav,
+    positions,
   }
 
   const key = date.format('YYYY-MM-DD')
