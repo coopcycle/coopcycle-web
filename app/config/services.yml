@@ -641,6 +641,7 @@ services:
       $tile38: '@snc_redis.tile38'
       $fleetKey: '%tile38_fleet_key%'
       $trackingChannel: '%centrifugo_tracking_channel%'
+      $centrifugoNamespace: '%centrifugo_namespace%'
 
   AppBundle\Action\Order\Pay:
     public: true

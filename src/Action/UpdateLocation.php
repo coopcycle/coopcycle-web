@@ -29,6 +29,7 @@ class UpdateLocation
         string $fleetKey,
         CentrifugoClient $centrifugo,
         string $trackingChannel,
+        string $centrifugoNamespace,
         LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
@@ -37,6 +38,7 @@ class UpdateLocation
         $this->fleetKey = $fleetKey;
         $this->centrifugo = $centrifugo;
         $this->trackingChannel = $trackingChannel;
+        $this->centrifugoNamespace = $centrifugoNamespace;
         $this->logger = $logger;
     }
 
@@ -118,14 +120,18 @@ class UpdateLocation
 
         $this->logger->info(sprintf('Publishing message to Centrifugo channel "%s"', $this->trackingChannel));
 
-        $this->centrifugo->publish($this->trackingChannel, [
+        $locationMsg = [
             'user' => $username,
             'coords' => [
                 'lat' => $lastLocation['latitude'],
                 'lng' => $lastLocation['longitude'],
             ],
             'ts' => $lastLocation['time'],
-        ]);
+        ];
+        $courierChannel = sprintf('%s_tracking#%s', $this->centrifugoNamespace, $username);
+
+        $this->centrifugo->publish($this->trackingChannel, $locationMsg);
+        $this->centrifugo->publish($courierChannel, $locationMsg);
 
         return new JsonResponse([]);
     }
