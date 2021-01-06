@@ -10,6 +10,7 @@ import {
 } from './actions'
 import moment from 'moment'
 import _ from 'lodash'
+import Centrifuge from 'centrifuge'
 
 // If the user has not been seen for 5min, it is considered offline
 const OFFLINE_TIMEOUT = (5 * 60 * 1000)
@@ -18,6 +19,7 @@ const OFFLINE_TIMEOUT = (5 * 60 * 1000)
 const OFFLINE_TIMEOUT_INTERVAL = (30 * 1000)
 
 let socket
+let centrifuge
 
 function checkLastSeen(dispatch, getState) {
 
@@ -54,6 +56,11 @@ export const socketIO = ({ dispatch, getState }) => {
       },
     })
 
+    const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
+
+    centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
+    centrifuge.setToken(getState().centrifugoToken)
+
     socket.on('task:started', data => dispatch(updateTask(data.task)))
     socket.on('task:done', data => dispatch(updateTask(data.task)))
     socket.on('task:failed', data => dispatch(updateTask(data.task)))
@@ -68,10 +75,12 @@ export const socketIO = ({ dispatch, getState }) => {
 
     socket.on('task_collection:updated', data => dispatch(taskListUpdated(data.task_collection)))
 
-    socket.on('tracking', data => {
+    centrifuge.subscribe(getState().centrifugoTrackingChannel, function(message) {
       pulse()
-      dispatch(setGeolocation(data.user, data.coords, data.ts))
+      dispatch(setGeolocation(message.data.user, message.data.coords, message.data.ts))
     })
+
+    centrifuge.connect()
 
     setTimeout(() => {
       checkLastSeen(dispatch, getState)
