@@ -32,6 +32,11 @@ class DateTimePicker extends React.Component {
 
   onDateChange(date) {
 
+    // When the input has been cleared
+    if (!date) {
+      return
+    }
+
     let { value } = this.state
 
     if (!value) {
@@ -48,6 +53,11 @@ class DateTimePicker extends React.Component {
   }
 
   onTimeChange(date) {
+
+    // When the input has been cleared
+    if (!date) {
+      return
+    }
 
     let { value } = this.state
 
