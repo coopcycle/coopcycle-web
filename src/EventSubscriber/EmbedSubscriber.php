@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Controller\EmbedController;
 use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -27,13 +28,25 @@ class EmbedSubscriber implements EventSubscriberInterface
      */
     public function setCookieSameSiteNoneSecure(RequestEvent $event)
     {
-        $request = $event->getRequest();
-
         if ($this->debug) {
             return;
         }
 
-        if ($request->query->has('embed')) {
+        if (!$event->isMasterRequest()) {
+            return;
+        }
+
+        $request = $event->getRequest();
+
+        if (!$request->attributes->has('_controller')) {
+            return;
+        }
+
+        $controller = $request->attributes->get('_controller');
+
+        [$class, $method] = explode('::', $controller, 2);
+
+        if ($request->query->has('embed') || $class === EmbedController::class) {
             // @see Symfony\Component\HttpKernel\EventListener\SessionListener
             if ($this->storage instanceof NativeSessionStorage) {
                 $this->storage->setOptions([
@@ -61,10 +74,9 @@ class EmbedSubscriber implements EventSubscriberInterface
     {
         return [
             KernelEvents::REQUEST => [
-                // Run before Symfony\Component\HttpKernel\EventListener\SessionListener
-                ['setCookieSameSiteNoneSecure', 256],
-                // Run after Symfony\Component\HttpKernel\EventListener\SessionListener
-                ['onKernelRequest', 64],
+                // Run *AFTER* Symfony\Component\HttpKernel\EventListener\RouterListener (priority = 32)
+                ['setCookieSameSiteNoneSecure', 24],
+                ['onKernelRequest', 0],
             ],
         ];
     }
