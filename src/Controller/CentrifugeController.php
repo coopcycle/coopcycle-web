@@ -33,7 +33,7 @@ class CentrifugeController extends AbstractController
      * @see https://centrifugal.github.io/centrifugo/server/private_channels/
      * @see https://github.com/centrifugal/centrifuge-js#private-channels-subscription
      *
-     * @Route("/centrifuge/subscribe", name="centrifuge_refresh", methods={"POST"})
+     * @Route("/centrifuge/subscribe", name="centrifuge_subscribe", methods={"POST"})
      */
     public function subscribeAction(Request $request, CentrifugoClient $centrifugoClient)
     {
