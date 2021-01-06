@@ -62,6 +62,9 @@ const initialState = {
 
   selectedTasks: [],
   jwt: '',
+  centrifugoToken: '',
+  centrifugoTrackingChannel: '$coopcycle_tracking',
+  centrifugoEventsChannel: 'coopcycle_events',
   positions: [],
   offline: [],
   taskModalIsOpen: false,
@@ -453,6 +456,10 @@ const clustersEnabled = (state = initialState.clustersEnabled, action) => {
   return state
 }
 
+const centrifugoToken = (state = initialState.centrifugoToken) => state
+const centrifugoTrackingChannel = (state = initialState.centrifugoTrackingChannel) => state
+const centrifugoEventsChannel = (state = initialState.centrifugoEventsChannel) => state
+
 export default (state = initialState, action) => {
 
   const { filters, isDefaultFilters } = combinedFilters(state, action)
@@ -464,6 +471,9 @@ export default (state = initialState, action) => {
     taskListGroupMode: taskListGroupMode(state.taskListGroupMode, action),
     selectedTasks: selectedTasks(state.selectedTasks, action),
     jwt: jwt(state.jwt, action),
+    centrifugoToken: centrifugoToken(state.centrifugoToken, action),
+    centrifugoTrackingChannel: centrifugoTrackingChannel(state.centrifugoTrackingChannel, action),
+    centrifugoEventsChannel: centrifugoEventsChannel(state.centrifugoEventsChannel, action),
     positions: positions(state.positions, action),
     offline: offline(state.offline, action),
     taskModalIsOpen: taskModalIsOpen(state.taskModalIsOpen, action),

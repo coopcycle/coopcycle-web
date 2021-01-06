@@ -22,6 +22,7 @@ use FOS\UserBundle\Model\UserManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use phpcent\Client as CentrifugoClient;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
@@ -56,10 +57,11 @@ trait AdminDashboardTrait
      */
     public function dashboardAction(Request $request,
         TaskManager $taskManager,
-        JWTManagerInterface $jwtManager)
+        JWTManagerInterface $jwtManager,
+        CentrifugoClient $centrifugoClient)
     {
         return $this->dashboardFullscreenAction((new \DateTime())->format('Y-m-d'),
-            $request, $taskManager, $jwtManager);
+            $request, $taskManager, $jwtManager, $centrifugoClient);
     }
 
     /**
@@ -68,7 +70,8 @@ trait AdminDashboardTrait
      */
     public function dashboardFullscreenAction($date, Request $request,
         TaskManager $taskManager,
-        JWTManagerInterface $jwtManager)
+        JWTManagerInterface $jwtManager,
+        CentrifugoClient $centrifugoClient)
     {
         $hashids = new Hashids($this->getParameter('secret'), 8);
 
@@ -178,6 +181,9 @@ trait AdminDashboardTrait
             'task_group_form' => $taskGroupForm->createView(),
             'tags' => $normalizedTags,
             'jwt' => $jwtManager->create($this->getUser()),
+            'centrifugo_token' => $centrifugoClient->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600)),
+            'centrifugo_tracking_channel' => sprintf('$%s_tracking', $this->getParameter('centrifugo_namespace')),
+            'centrifugo_events_channel' => sprintf('%s_events#%s', $this->getParameter('centrifugo_namespace'), $this->getUser()->getUsername()),
         ]);
     }
 
