@@ -2,6 +2,7 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
@@ -28,10 +29,7 @@ class OrderTimelineCalculator
     {
         $timeline = new OrderTimeline();
 
-        $shippingTimeRange = $order->getShippingTimeRange();
-
-        $dropoff = Carbon::instance($shippingTimeRange->getLower())
-            ->average($shippingTimeRange->getUpper());
+        $dropoff = $order->getShippingTimeRange()->getUpper();
 
         if (!$order->isTakeaway()) {
             $timeline->setDropoffExpectedAt($dropoff);
@@ -52,18 +50,29 @@ class OrderTimelineCalculator
 
         $preparationExpectedAt = clone $timeline->getPreparationExpectedAt();
         $pickupExpectedAt = clone $timeline->getPickupExpectedAt();
-        $dropoffExpectedAt = clone $timeline->getDropoffExpectedAt();
 
         $preparationExpectedAt->modify(sprintf('+%d minutes', $delay));
         $pickupExpectedAt->modify(sprintf('+%d minutes', $delay));
-        $dropoffExpectedAt->modify(sprintf('+%d minutes', $delay));
 
         $timeline->setPreparationExpectedAt($preparationExpectedAt);
         $timeline->setPickupExpectedAt($pickupExpectedAt);
-        $timeline->setDropoffExpectedAt($dropoffExpectedAt);
+
+        if (null !== $timeline->getDropoffExpectedAt()) {
+            $dropoffExpectedAt = clone $timeline->getDropoffExpectedAt();
+            $dropoffExpectedAt->modify(sprintf('+%d minutes', $delay));
+            $timeline->setDropoffExpectedAt($dropoffExpectedAt);
+        }
+
+        $shippingTimeRange = $order->getShippingTimeRange();
+
+        $shippingTimeRangeLower = clone $shippingTimeRange->getLower();
+        $shippingTimeRangeUpper = clone $shippingTimeRange->getUpper();
+
+        $shippingTimeRangeLower->modify(sprintf('+%d minutes', $delay));
+        $shippingTimeRangeUpper->modify(sprintf('+%d minutes', $delay));
 
         $order->setShippingTimeRange(
-            DateUtils::dateTimeToTsRange($dropoffExpectedAt, 5)
+            TsRange::create($shippingTimeRangeLower, $shippingTimeRangeUpper)
         );
 
         $delivery = $order->getDelivery();

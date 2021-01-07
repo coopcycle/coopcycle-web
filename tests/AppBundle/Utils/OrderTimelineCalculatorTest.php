@@ -29,7 +29,7 @@ class OrderTimelineCalculatorTest extends TestCase
         $this->pickupTimeResolver = $this->prophesize(PickupTimeResolver::class);
     }
 
-    private function createOrder(\DateTime $shippedAt)
+    private function createOrder(TsRange $shippingTimeRange)
     {
         $order = $this->prophesize(OrderInterface::class);
         $order
@@ -37,7 +37,7 @@ class OrderTimelineCalculatorTest extends TestCase
             ->willReturn(false);
         $order
             ->getShippingTimeRange()
-            ->willReturn(DateUtils::dateTimeToTsRange($shippedAt, 5));
+            ->willReturn($shippingTimeRange);
 
         return $order->reveal();
     }
@@ -46,17 +46,26 @@ class OrderTimelineCalculatorTest extends TestCase
     {
         return [
             [
-                new \DateTime('2018-08-25 13:30:00'),
+                TsRange::create(
+                    new \DateTime('2018-08-25 13:25:00'),
+                    new \DateTime('2018-08-25 13:35:00')
+                ),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 13:05:00'),
             ],
             [
-                new \DateTime('2018-08-25 13:30:00'),
+                TsRange::create(
+                    new \DateTime('2018-08-25 13:25:00'),
+                    new \DateTime('2018-08-25 13:35:00')
+                ),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 13:00:00'),
             ],
             [
-                new \DateTime('2018-08-25 13:30:00'),
+                TsRange::create(
+                    new \DateTime('2018-08-25 13:25:00'),
+                    new \DateTime('2018-08-25 13:35:00')
+                ),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 12:45:00'),
             ],
@@ -67,18 +76,18 @@ class OrderTimelineCalculatorTest extends TestCase
      * @dataProvider calculateProvider
      */
     public function testCalculate(
-        \DateTime $dropoff,
+        TsRange $shippingTimeRange,
         \DateTime $pickup,
         \DateTime $preparation)
     {
-        $order = $this->createOrder($dropoff);
+        $order = $this->createOrder($shippingTimeRange);
 
         $this->preparationTimeResolver
-            ->resolve($order, $dropoff)
+            ->resolve($order, $shippingTimeRange->getUpper())
             ->willReturn($preparation);
 
         $this->pickupTimeResolver
-            ->resolve($order, $dropoff)
+            ->resolve($order, $shippingTimeRange->getUpper())
             ->willReturn($pickup);
 
         $calculator = new OrderTimelineCalculator(
@@ -88,30 +97,32 @@ class OrderTimelineCalculatorTest extends TestCase
 
         $timeline = $calculator->calculate($order);
 
-        $this->assertEquals($dropoff, $timeline->getDropoffExpectedAt());
+        $this->assertEquals($shippingTimeRange->getUpper(), $timeline->getDropoffExpectedAt());
         $this->assertEquals($pickup, $timeline->getPickupExpectedAt());
         $this->assertEquals($preparation, $timeline->getPreparationExpectedAt());
     }
 
     public function testCalculateForTakeaway()
     {
+        $shippingTimeRange = DateUtils::dateTimeToTsRange(new \DateTime('2018-08-25 13:30:00'), 5);
+
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->isTakeaway()
             ->willReturn(true);
         $order
             ->getShippingTimeRange()
-            ->willReturn(DateUtils::dateTimeToTsRange(new \DateTime('2018-08-25 13:30:00'), 5));
+            ->willReturn($shippingTimeRange);
 
         $pickup = new \DateTime('2018-08-25 13:30:00');
         $preparation = new \DateTime('2018-08-25 13:10:00');
 
         $this->preparationTimeResolver
-            ->resolve($order->reveal(), $pickup)
+            ->resolve($order->reveal(), $shippingTimeRange->getUpper())
             ->willReturn($preparation);
 
         $this->pickupTimeResolver
-            ->resolve($order->reveal(), $pickup)
+            ->resolve($order->reveal(), $shippingTimeRange->getUpper())
             ->willReturn($pickup);
 
         $calculator = new OrderTimelineCalculator(
@@ -151,6 +162,12 @@ class OrderTimelineCalculatorTest extends TestCase
             ->getTimeline()
             ->willReturn($timeline);
         $order
+            ->getShippingTimeRange()
+            ->willReturn(TsRange::create(
+                $dropoff->getAfter(),
+                $dropoff->getBefore()
+            ));
+        $order
             ->getDelivery()
             ->willReturn($delivery->reveal());
 
@@ -174,5 +191,42 @@ class OrderTimelineCalculatorTest extends TestCase
 
         $this->assertEquals(new \DateTime('2020-04-09 20:05:00'), $dropoff->getAfter());
         $this->assertEquals(new \DateTime('2020-04-09 20:15:00'), $dropoff->getBefore());
+    }
+
+    public function testDelayWithTakeaway()
+    {
+        $timeline = new OrderTimeline();
+        $timeline->setPreparationExpectedAt(new \DateTime('2020-04-09 19:30:00'));
+        $timeline->setPickupExpectedAt(new \DateTime('2020-04-09 19:45:00'));
+        $timeline->setDropoffExpectedAt(null);
+
+        $order = $this->prophesize(Order::class);
+        $order
+            ->getTimeline()
+            ->willReturn($timeline);
+        $order
+            ->getShippingTimeRange()
+            ->willReturn(TsRange::create(
+                new \DateTime('2020-04-09 19:35:00'),
+                new \DateTime('2020-04-09 19:45:00')
+            ));
+        $order
+            ->getDelivery()
+            ->willReturn(null);
+
+        $order
+            ->setShippingTimeRange(Argument::type(TsRange::class))
+            ->shouldBeCalled();
+
+        $calculator = new OrderTimelineCalculator(
+            $this->preparationTimeResolver->reveal(),
+            $this->pickupTimeResolver->reveal()
+        );
+
+        $calculator->delay($order->reveal(), 10);
+
+        $this->assertEquals(new \DateTime('2020-04-09 19:40:00'), $timeline->getPreparationExpectedAt());
+        $this->assertEquals(new \DateTime('2020-04-09 19:55:00'), $timeline->getPickupExpectedAt());
+        $this->assertNull($timeline->getDropoffExpectedAt());
     }
 }

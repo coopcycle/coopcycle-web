@@ -55,7 +55,7 @@ class OrderTimeline
         return $this->dropoffExpectedAt;
     }
 
-    public function setDropoffExpectedAt(\DateTime $dropoffExpectedAt)
+    public function setDropoffExpectedAt(?\DateTime $dropoffExpectedAt)
     {
         $this->dropoffExpectedAt = $dropoffExpectedAt;
 
