@@ -58,7 +58,8 @@
       data-dropoff="{{ [ delivery.dropoff.address.geo.latitude, delivery.dropoff.address.geo.longitude ]|json_encode|e('html_attr') }}"
       data-polyline="{{ delivery.polyline|e('html_attr') }}"
       data-is-completed="{{ delivery.completed|json_encode|e('html_attr') }}"
-      data-token="{{ token|json_encode|e('html_attr') }}"></div>
+      data-centrifugo-token="{{ centrifugo_token|json_encode|e('html_attr') }}"
+      data-centrifugo-channel="{{ centrifugo_channel|json_encode|e('html_attr') }}"></div>
 
     {{ encore_entry_script_tags('delivery-tracking') }}
 

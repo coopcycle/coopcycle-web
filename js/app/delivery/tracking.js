@@ -1,5 +1,6 @@
 import MapHelper from '../MapHelper'
 import L from 'leaflet'
+import Centrifuge from 'centrifuge'
 
 const polylineOptions = {
   color: '#3498DB',
@@ -25,7 +26,8 @@ const { polyline } = el.dataset
 const pickup = JSON.parse(el.dataset.pickup)
 const dropoff = JSON.parse(el.dataset.dropoff)
 const isCompleted = JSON.parse(el.dataset.isCompleted)
-const token = JSON.parse(el.dataset.token)
+const centrifugoToken = JSON.parse(el.dataset.centrifugoToken)
+const centrifugoChannel = JSON.parse(el.dataset.centrifugoChannel)
 
 const map = MapHelper.init('map')
 
@@ -45,24 +47,21 @@ group.addLayer(polylineMarker)
 
 map.fitBounds(group.getBounds())
 
-if (!isCompleted && token) {
-  let socket = io(`//${window.location.hostname}`, {
-    path: '/tracking/socket.io',
-    transports: [ 'websocket' ],
-    query: {
-      token,
-    },
-  })
+if (!isCompleted && centrifugoToken) {
 
-  socket.on('tracking', data => {
+  const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
 
+  const centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
+  centrifuge.setToken(centrifugoToken)
+
+  centrifuge.subscribe(centrifugoChannel, function(message) {
     const latLng = [
-      data.coords.lat,
-      data.coords.lng
+      message.data.coords.lat,
+      message.data.coords.lng
     ]
 
     if (!courierMarker) {
-      courierMarker = L.marker(latLng, { icon: createIcon(data.user) })
+      courierMarker = L.marker(latLng, { icon: createIcon(message.data.user) })
       courierMarker.setOpacity(1)
       courierMarker.addTo(map)
 
@@ -71,8 +70,9 @@ if (!isCompleted && token) {
     }
 
     courierMarker.setLatLng(latLng).update()
-
   })
+
+  centrifuge.connect()
 }
 
 if (isCompleted) {
