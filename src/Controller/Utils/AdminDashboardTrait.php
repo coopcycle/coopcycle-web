@@ -125,22 +125,22 @@ trait AdminDashboardTrait
             return $this->redirectToDashboard($request);
         }
 
-        $unassignedTasks = $this->getDoctrine()
+        $allTasks = $this->getDoctrine()
             ->getRepository(Task::class)
-            ->findUnassignedByDate($date);
+            ->findByDate($date);
 
         $taskLists = $this->getDoctrine()
             ->getRepository(TaskList::class)
             ->findByDate($date);
 
-        $unassignedTasksNormalized = array_map(function (Task $task) {
+        $allTasksNormalized = array_map(function (Task $task) {
             return $this->get('serializer')->normalize($task, 'jsonld', [
                 'resource_class' => Task::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
                 'groups' => ['task', 'delivery', 'address', sprintf('address_%s', $this->getParameter('country_iso'))]
             ]);
-        }, $unassignedTasks);
+        }, $allTasks);
 
         $taskListsNormalized = array_map(function (TaskList $taskList) {
             return $this->get('serializer')->normalize($taskList, 'jsonld', [
@@ -180,7 +180,7 @@ trait AdminDashboardTrait
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
             'couriers' => $couriers,
-            'unassigned_tasks' => $unassignedTasksNormalized,
+            'tasks' => $allTasksNormalized,
             'task_lists' => $taskListsNormalized,
             'task_export_form' => $taskExportForm->createView(),
             'task_group_form' => $taskGroupForm->createView(),

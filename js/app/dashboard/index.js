@@ -4,9 +4,9 @@ import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
 import moment from 'moment'
+import _ from 'lodash'
 
 import i18n from '../i18n'
-
 import { createStoreFromPreloadedState } from './redux/store'
 import DashboardApp from './app'
 import LeafletMap from './components/LeafletMap'
@@ -15,7 +15,6 @@ import Navbar from './components/Navbar'
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
-import { taskUtils, taskListUtils, taskListEntityUtils } from '../coopcycle-frontend-js/logistics/redux'
 let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve
 
 const mapLoaded = new Promise((resolve) => mapLoadedResolve = resolve)
@@ -26,17 +25,8 @@ function start() {
 
   const dashboardEl = document.getElementById('dashboard')
 
-  let date = moment(dashboardEl.dataset.date)
-  let unassignedTasks = JSON.parse(dashboardEl.dataset.unassignedTasks)
-  let taskLists = JSON.parse(dashboardEl.dataset.taskLists)
-
-  let assignedTasks = taskListUtils.assignedTasks(taskLists)
-
-  let taskEntities = taskUtils.addOrReplaceTasks({}, unassignedTasks.concat(assignedTasks))
-
-  // normalize data, keep only task ids, instead of the whole objects
-  taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
-  let taskListEntities = taskListEntityUtils.addOrReplaceTaskLists({}, taskLists)
+  const date = moment(dashboardEl.dataset.date)
+  const tasks = JSON.parse(dashboardEl.dataset.tasks)
 
   const preloadedPositions = JSON.parse(dashboardEl.dataset.positions)
   const positions = preloadedPositions.map(pos => ({
@@ -46,16 +36,10 @@ function start() {
   }))
 
   let preloadedState = {
-    logistics : {
+    dispatch: {
+      unassignedTasks: _.filter(tasks, task => !task.isAssigned),
+      taskLists: JSON.parse(dashboardEl.dataset.taskLists),
       date,
-      entities: {
-        tasks: {
-          byId: taskEntities
-        },
-        taskLists: {
-          byId: taskListEntities
-        }
-      }
     },
     tags: JSON.parse(dashboardEl.dataset.tags),
     couriersList: JSON.parse(dashboardEl.dataset.couriersList),

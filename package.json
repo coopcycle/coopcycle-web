@@ -67,7 +67,7 @@
     "clipboard": "^2.0.6",
     "codemirror": "^5.59.1",
     "compare-versions": "^3.6.0",
-    "coopcycle-frontend-js": "git+https://git@github.com/coopcycle/coopcycle-frontend-js.git#3.0.0-beta.2",
+    "coopcycle-frontend-js": "git+https://git@github.com/coopcycle/coopcycle-frontend-js.git#1.1.0-beta.1",
     "core-js": "^3.8.2",
     "cropperjs": "^1.5.9",
     "croppie": "^2.6.5",
