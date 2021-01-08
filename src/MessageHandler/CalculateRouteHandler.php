@@ -41,6 +41,10 @@ class CalculateRouteHandler implements MessageHandlerInterface
         $tasks = $this->objectManager->getRepository(Task::class)
             ->findByAddress($address);
 
+        if (count($tasks) === 0) {
+            return;
+        }
+
         $toUpdate = [];
 
         foreach ($tasks as $task) {
@@ -51,6 +55,10 @@ class CalculateRouteHandler implements MessageHandlerInterface
             foreach ($collections as $collection) {
                 $toUpdate[] = $collection;
             }
+        }
+
+        if (count($toUpdate) === 0) {
+            return;
         }
 
         foreach ($toUpdate as $collection) {
