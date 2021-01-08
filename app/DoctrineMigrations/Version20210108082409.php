@@ -19,8 +19,7 @@ final class Version20210108082409 extends AbstractMigration
 
     public function up(Schema $schema) : void
     {
-        $taskEvents = $this->connection->prepare('SELECT id, name, data, created_at FROM task_event WHERE task_id = :task_id ORDER BY created_at DESC');
-
+        $taskEvents = $this->connection->prepare('SELECT id, name, data, metadata, created_at FROM task_event WHERE task_id = :task_id ORDER BY created_at DESC');
         $getUserId = $this->connection->prepare('SELECT id FROM api_user WHERE username = :username');
 
         $tasks = $this->connection->prepare('SELECT id, done_before FROM task WHERE status = \'DONE\' AND assigned_to IS NULL');
@@ -31,17 +30,17 @@ final class Version20210108082409 extends AbstractMigration
             $taskEvents->bindParam('task_id', $task['id']);
             $taskEvents->execute();
 
-            $assignedTo = null;
+            $completedBy = null;
             while ($taskEvent = $taskEvents->fetch()) {
-                if ('task:assigned' === $taskEvent['name']) {
-                    $data = json_decode($taskEvent['data'], true);
-                    $assignedTo = $data['username'];
+                if ('task:done' === $taskEvent['name']) {
+                    $metadata = json_decode($taskEvent['metadata'], true);
+                    $completedBy = $metadata['username'];
                     break;
                 }
             }
 
-            if ($assignedTo) {
-                $getUserId->bindParam('username', $assignedTo);
+            if ($completedBy) {
+                $getUserId->bindParam('username', $completedBy);
                 $getUserId->execute();
                 $user = $getUserId->fetch();
 
