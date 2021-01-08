@@ -8,7 +8,7 @@ import _ from 'lodash'
 
 import Task from './Task'
 import TaskListPopoverContent from './TaskListPopoverContent'
-import { removeTasks, modifyTaskList, togglePolyline, optimizeTaskList } from '../redux/actions'
+import { removeTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
 import { selectFilteredTasks } from '../redux/selectors'
 import { selectSelectedDate, selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
@@ -215,7 +215,6 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return {
     removeTasks: (username, tasks) => dispatch(removeTasks(username, tasks)),
-    modifyTaskList: (username, tasks) => dispatch(modifyTaskList(username, tasks)),
     togglePolyline: (username) => dispatch(togglePolyline(username)),
     optimizeTaskList: (taskList) => dispatch(optimizeTaskList(taskList)),
   }
