@@ -2,19 +2,20 @@
 
 namespace AppBundle\Service;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Domain\Order\Event as OrderEvent;
 use AppBundle\Domain\HumanReadableEventInterface;
 use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Domain\Task\Event as TaskEvent;
 use AppBundle\Entity\User;
-use AppBundle\Action\Utils\TokenStorageTrait;
+use AppBundle\Message\TopBarNotification;
 use AppBundle\Sylius\Order\OrderInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use phpcent\Client as CentrifugoClient;
 use Redis;
 use Ramsey\Uuid\Uuid;
 use SimpleBus\Message\Name\NamedMessage;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -27,35 +28,36 @@ class SocketIoManager
     private $redis;
     private $userManager;
     private $serializer;
-    private $iriConverter;
     private $translator;
+    private $centrifugoClient;
+    private $messageBus;
+    private $namespace;
 
     public function __construct(
         Redis $redis,
         UserManagerInterface $userManager,
         TokenStorageInterface $tokenStorage,
         SerializerInterface $serializer,
-        IriConverterInterface $iriConverter,
         TranslatorInterface $translator,
         CentrifugoClient $centrifugoClient,
+        MessageBusInterface $messageBus,
         string $namespace)
     {
         $this->redis = $redis;
         $this->userManager = $userManager;
         $this->tokenStorage = $tokenStorage;
         $this->serializer = $serializer;
-        $this->iriConverter = $iriConverter;
         $this->translator = $translator;
         $this->centrifugoClient = $centrifugoClient;
+        $this->messageBus = $messageBus;
         $this->namespace = $namespace;
     }
 
     public function toAdmins($message, array $data = [])
     {
         $admins = $this->userManager->findUsersByRole('ROLE_ADMIN');
-        foreach ($admins as $user) {
-            $this->toUser($user, $message, $data);
-        }
+
+        $this->toUsers($admins, $message, $data);
     }
 
     public function toUserAndAdmins(UserInterface $user, $message, array $data = [])
@@ -67,9 +69,7 @@ class SocketIoManager
             $users[] = $user;
         }
 
-        foreach ($users as $user) {
-            $this->toUser($user, $message, $data);
-        }
+        $this->toUsers($users, $message, $data);
     }
 
     public function toOrderWatchers(OrderInterface $order, $message, array $data = [])
@@ -91,7 +91,12 @@ class SocketIoManager
         );
     }
 
-    public function toUser(UserInterface $user, $message, array $data = [])
+    /**
+     * @param UserInterface[] $users
+     * @param NamedMessage|string $message
+     * @param array $data
+     */
+    public function toUsers($users, $message, array $data = [])
     {
         $messageName = $message instanceof NamedMessage ? $message::messageName() : $message;
 
@@ -99,55 +104,59 @@ class SocketIoManager
             $data = $message->normalize($this->serializer);
         }
 
-        $channel = sprintf('users:%s', $user->getUsername());
         $payload = [
             'name' => $messageName,
             'data' => $data
         ];
 
-        $this->centrifugoClient->publish(
-            $this->getEventsChannelName($user),
+        //
+        // Redis (legacy)
+        //
+
+        $redisChannels = array_map(function (UserInterface $user) {
+            return sprintf('users:%s', $user->getUsername());
+        }, $users);
+
+        foreach ($redisChannels as $channel) {
+            $this->redis->publish($channel, json_encode($payload));
+        }
+
+        //
+        // Centrifugo
+        //
+
+        $centrifugoChannels = array_map(function (UserInterface $user) {
+            return $this->getEventsChannelName($user);
+        }, $users);
+
+        // We use broadcast to reduce the number of HTTP requests
+        $this->centrifugoClient->broadcast(
+            $centrifugoChannels,
             ['event' => $payload]
         );
 
-        $this->redis->publish($channel, json_encode($payload));
-
-        $this->createNotification($user, $message);
+        $this->createNotification($users, $message);
     }
 
-    private function createNotification(UserInterface $user, $message)
+    /**
+     * @param UserInterface[] $users
+     * @param mixed $message
+     */
+    private function createNotification($users, $message)
     {
+        // Since we use Centrifugo the execution time to publish events has increased.
+        // This is because for each event, it needs to send 3 HTTP requests.
+        // To improve performance, we manage top bar notifications via an async job.
         if ($message instanceof HumanReadableEventInterface) {
 
-            $uuid = Uuid::uuid4()->toString();
-            $listKey = sprintf('user:%s:notifications', $user->getUsername());
-            $hashKey = sprintf('user:%s:notifications_data', $user->getUsername());
+            $usernames = array_map(function (UserInterface $user) {
+                return $user->getUsername();
+            }, $users);
 
-            $payload = [
-                'id' => $uuid,
-                'message' => $message->forHumans($this->translator, $this->getUser()),
-                'timestamp' => (new \DateTime())->getTimestamp()
-            ];
+            $text = $message->forHumans($this->translator, $this->getUser());
 
-            $this->redis->lpush($listKey, $uuid);
-            $this->redis->hset($hashKey, $uuid, json_encode($payload));
-
-            $notificationsPayload = [
-                'name' => 'notifications',
-                'data' => $payload,
-            ];
-            $notificationsCountPayload = [
-                'name' => 'notifications:count',
-                'data' => $this->redis->llen($listKey),
-            ];
-
-            $this->centrifugoClient->publish(
-                $this->getEventsChannelName($user),
-                ['event' => $notificationsPayload]
-            );
-            $this->centrifugoClient->publish(
-                $this->getEventsChannelName($user),
-                ['event' => $notificationsCountPayload]
+            $this->messageBus->dispatch(
+                new TopBarNotification($usernames, $text)
             );
         }
     }

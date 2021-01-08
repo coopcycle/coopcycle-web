@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class Vendor implements ShippingOptionsInterface
@@ -178,7 +179,7 @@ class Vendor implements ShippingOptionsInterface
         return $this->restaurant->getDeliveryPerimeterExpression();
     }
 
-    public function getOwners()
+    public function getOwners(): Collection
     {
         if (null !== $this->hub) {
             $owners = new ArrayCollection();

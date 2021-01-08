@@ -33,6 +33,7 @@ use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Validator\Constraints\IsActivableRestaurant as AssertIsActivableRestaurant;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -424,7 +425,7 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->contract = $contract;
     }
 
-    public function getOwners()
+    public function getOwners(): Collection
     {
         return $this->owners;
     }

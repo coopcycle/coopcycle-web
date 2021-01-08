@@ -43,9 +43,7 @@ class PublishToRedis
                 return;
             }
 
-            foreach ($owners as $owner) {
-                $this->socketIoManager->toUser($owner, $event);
-            }
+            $this->socketIoManager->toUsers($owners->toArray(), $event);
 
         } catch (\Exception $e) {
 

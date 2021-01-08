@@ -910,6 +910,10 @@ services:
     tags:
       - { name: monolog.logger, channel: stripe }
 
+  AppBundle\MessageHandler\TopBarNotificationHandler:
+    arguments:
+      $namespace: '%centrifugo_namespace%'
+
   AppBundle\Service\MaintenanceManager: ~
 
   AppBundle\Service\SmsManager: ~
