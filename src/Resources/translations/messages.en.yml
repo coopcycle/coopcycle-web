@@ -123,6 +123,7 @@ localBusiness.form.description: Description
 localBusiness.form.legalName: Legal name
 localBusiness.form.website: Website
 localBusiness.form.telephone: Telephone
+localBusiness.form.telephone.help: "Example: Country code: %cc% Number: %phone%"
 localBusiness.form.openingHours: Opening hours
 localBusiness.form.deliveryPerimeterExpression: Zone or max distance for delivery
 localBusiness.form.shippingOptionsDays: Number of shipping choices (in days)

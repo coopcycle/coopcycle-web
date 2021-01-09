@@ -88,6 +88,7 @@ localBusiness.form.description: Descripción
 localBusiness.form.legalName: Nombre legal
 localBusiness.form.website: Sitio web
 localBusiness.form.telephone: Teléfono
+localBusiness.form.telephone.help: "Ejemplo: Código de país: %cc% Número: %phone%"
 localBusiness.form.openingHours: Horario de apertura
 localBusiness.form.deliveryPerimeterExpression: Zona o máxima distancia de reparto
 localBusiness.form.shippingOptionsDays: Opciones de entrega (en días)
