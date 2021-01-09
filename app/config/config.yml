@@ -126,7 +126,7 @@ framework:
             'AppBundle\Message\RetrieveStripeFee': async
             'AppBundle\Message\Sms': async
             'AppBundle\Message\UpdateLocation': async
-            'AppBundle\Message\TopBarNotificationHandler': async
+            'AppBundle\Message\TopBarNotification': async
     workflows:
         enabled: true
     mailer:
