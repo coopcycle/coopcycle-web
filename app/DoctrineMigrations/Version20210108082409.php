@@ -48,7 +48,7 @@ final class Version20210108082409 extends AbstractMigration
                     'user_id' => $user['id'],
                     'task_id' => $task['id'],
                 ]);
-                $this->addSql('DELETE FROM task_event WHERE task_id = :task_id AND name = \'task:unassigned\' AND created_at > (SELECT created_at FROM task_event WHERE task_id = :task_id AND name = \'task:done\')', [
+                $this->addSql('DELETE FROM task_event WHERE task_id = :task_id AND name = \'task:unassigned\' AND created_at > (SELECT created_at FROM task_event WHERE task_id = :task_id AND name = \'task:done\' ORDER BY created_at DESC LIMIT 1)', [
                     'task_id' => $task['id'],
                 ]);
             }
