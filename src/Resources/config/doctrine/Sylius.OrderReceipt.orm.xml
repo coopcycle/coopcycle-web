@@ -5,15 +5,6 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="billingAddress" type="text" column="billing_address" nullable="true"/>
-    <one-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="receipt">
-      <cascade>
-        <cascade-remove/>
-        <cascade-persist/>
-      </cascade>
-      <join-columns>
-        <join-column name="order_id" referenced-column-name="id"/>
-      </join-columns>
-    </one-to-one>
     <one-to-many field="lineItems" target-entity="AppBundle\Entity\Sylius\OrderReceiptLineItem" mapped-by="parent">
       <cascade>
         <cascade-all/>

@@ -119,10 +119,7 @@ trait OrderTrait
 
         $this->denyAccessUnlessGranted('view', $order);
 
-        $receipt = $generator->create($order);
-        $order->setReceipt($receipt);
-
-        $output = $generator->render($receipt);
+        $output = $generator->render($order);
 
         return new Response($output, 200, [
             'Content-Type' => 'application/pdf',
@@ -152,7 +149,7 @@ trait OrderTrait
         ]);
     }
 
-    public function generateOrderReceiptAction($orderNumber, Request $request, ReceiptGenerator $generator)
+    public function generateOrderReceiptAction($orderNumber, Request $request, ReceiptGenerator $generator, EntityManagerInterface $entityManager)
     {
         $billingAddress = $request->request->get('billingAddress');
 
@@ -170,9 +167,9 @@ trait OrderTrait
 
         $order->setReceipt($receipt);
 
-        $this->getDoctrine()->getManager()->flush();
+        $entityManager->flush();
 
-        $generator->generate($receipt, sprintf('%s.pdf', $order->getNumber()));
+        $generator->generate($order, sprintf('%s.pdf', $order->getNumber()));
 
         return $this->redirect($request->headers->get('referer'));
     }

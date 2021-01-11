@@ -832,8 +832,6 @@ class Order extends BaseOrder implements OrderInterface
 
     public function setReceipt($receipt)
     {
-        $receipt->setOrder($this);
-
         $this->receipt = $receipt;
     }
 
@@ -849,8 +847,6 @@ class Order extends BaseOrder implements OrderInterface
             $receipt = $this->receipt;
 
             $this->receipt = null;
-
-            $receipt->setOrder(null);
 
             return $receipt;
         }

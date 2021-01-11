@@ -27,7 +27,7 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
-    <one-to-one field="receipt" target-entity="AppBundle\Entity\Sylius\OrderReceipt" mapped-by="order">
+    <one-to-one field="receipt" target-entity="AppBundle\Entity\Sylius\OrderReceipt">
       <cascade>
         <cascade-remove/>
         <cascade-persist/>

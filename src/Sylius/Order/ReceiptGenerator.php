@@ -85,22 +85,28 @@ class ReceiptGenerator
         return $receipt;
     }
 
-    public function generate(OrderReceipt $receipt, $filename): bool
+    public function generate(OrderInterface $order, $filename): bool
     {
         if ($this->filesystem->has($filename)) {
             $this->filesystem->delete($filename);
         }
 
-        return $this->filesystem->write($filename, $this->render($receipt));
+        return $this->filesystem->write($filename, $this->render($order));
     }
 
-    public function render(OrderReceipt $receipt): string
+    public function render(OrderInterface $order): string
     {
+        if (!$order->hasReceipt()) {
+            $order->setReceipt(
+                $this->create($order)
+            );
+        }
+
         $html = $this->twig->render('order/receipt.pdf.twig', [
-            'receipt'      => $receipt,
-            'order_number' => $receipt->getOrder()->getNumber(),
-            'payment'      => $receipt->getOrder()->getLastPayment(),
-            'restaurant'   => $receipt->getOrder()->getRestaurant(),
+            'receipt'      => $order->getReceipt(),
+            'order_number' => $order->getNumber(),
+            'payment'      => $order->getLastPayment(),
+            'restaurant'   => $order->getRestaurant(),
             'locale'       => $this->locale,
         ]);
 

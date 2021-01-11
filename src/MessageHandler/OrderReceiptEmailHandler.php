@@ -38,16 +38,15 @@ class OrderReceiptEmailHandler implements MessageHandlerInterface
         }
 
         if (!$order->hasReceipt()) {
-            $receipt = $this->generator->create($order);
-            $order->setReceipt($receipt);
+            $order->setReceipt(
+                $this->generator->create($order)
+            );
             $this->entityManager->flush();
-        } else {
-            $receipt = $order->getReceipt();
         }
 
         $filename = sprintf('%s.pdf', $order->getNumber());
 
-        $this->generator->generate($receipt, $filename);
+        $this->generator->generate($order, $filename);
 
         $email = $this->emailManager->createOrderReceiptMessage($order);
         $email->attach(
