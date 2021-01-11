@@ -56,6 +56,14 @@ parameters:
     centrifugo_tracking_channel: '$%centrifugo_namespace%_tracking'
 
 services:
+    # It is important to set a namespace,
+    # so that Symfony doesn't use "framework.cache.prefix_seed"
+    restart_workers_signal.cache:
+        parent: cache.adapter.redis
+        tags:
+          - name: cache.pool
+            provider: snc_redis.default
+            namespace: messenger
     cache.messenger.restart_workers_signal: '@restart_workers_signal.cache'
 
 framework:
@@ -85,8 +93,6 @@ framework:
         app: cache.adapter.redis
         default_redis_provider: "snc_redis.default"
         pools:
-            restart_workers_signal.cache:
-                adapter: cache.app
             twig.cache:
                 adapter: cache.app
             s3_flysystem.cache:
