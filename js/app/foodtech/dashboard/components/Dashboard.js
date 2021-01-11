@@ -31,6 +31,10 @@ class Dashboard extends React.Component {
     $(function () {
       $('[data-toggle="popover"]').tooltip()
     })
+
+    if (this.props.initialOrder) {
+      this.props.setCurrentOrder({ '@id': this.props.initialOrder })
+    }
   }
 
   afterOpenModal() {
@@ -180,6 +184,7 @@ function mapStateToProps(state) {
     isRushEnabled: isRushEnabled,
     restaurant: state.restaurant,
     activeTab: state.activeTab,
+    initialOrder: state.initialOrder,
   }
 }
 

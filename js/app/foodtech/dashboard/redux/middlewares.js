@@ -9,8 +9,12 @@ import {
   orderCancelled,
   orderFulfilled,
   ORDER_CREATED,
+  initHttpClient,
+  INIT_HTTP_CLIENT,
+  refreshTokenSuccess,
 } from './actions'
 
+import createHttpClient from '../../../client'
 import { asText } from '../../../components/ShippingTimeRange'
 import i18n from '../../../i18n'
 
@@ -123,5 +127,30 @@ export const notification = ({ getState }) => {
     }
 
     return result
+  }
+}
+
+export const httpClient = ({ dispatch, getState }) => {
+
+  const fetchToken = window.Routing.generate('profile_jwt')
+
+  const httpClient = createHttpClient(
+    getState().jwt,
+    () => new Promise((resolve) => {
+      // TODO Check response is OK, reject promise
+      $.getJSON(fetchToken).then(result => resolve(result.jwt))
+    }),
+    token => dispatch(refreshTokenSuccess(token))
+  )
+
+  return next => action => {
+
+    const prevState = getState()
+
+    if (!prevState.httpClient && action.type !== INIT_HTTP_CLIENT) {
+      dispatch(initHttpClient(httpClient))
+    }
+
+    return next(action)
   }
 }

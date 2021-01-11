@@ -10,7 +10,7 @@
     {% set url_params = { id: order.id } %}
   {% else %}
     {% set route_name = 'dashboard_restaurant_dashboard' %}
-    {% set url_params = { restaurantId: order.restaurant.id, order: order.id } %}
+    {% set url_params = { restaurantId: order.restaurant.id, order: order|get_iri_from_item } %}
   {% endif %}
   <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white"
     href="{{ url(route_name, url_params) }}">

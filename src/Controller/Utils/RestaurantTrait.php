@@ -307,13 +307,26 @@ trait RestaurantTrait
     protected function renderRestaurantDashboard(
         LocalBusiness $restaurant,
         Request $request,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        IriConverterInterface $iriConverter)
     {
         $this->accessControl($restaurant);
 
         $date = new \DateTime('now');
         if ($request->query->has('date')) {
             $date = new \DateTime($request->query->get('date'));
+        }
+
+        if ($request->query->has('order')) {
+            $order = $request->query->get('order');
+            if (is_numeric($order)) {
+
+                return $this->redirectToRoute($request->attributes->get('_route'), [
+                    'restaurantId' => $restaurant->getId(),
+                    'date' => $date->format('Y-m-d'),
+                    'order' => $iriConverter->getItemIriFromResourceClass(Order::class, [$order])
+                ], 301);
+            }
         }
 
         $qb = $entityManager->getRepository(Order::class)
@@ -331,12 +344,6 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
-        $order = null;
-        if ($request->query->has('order')) {
-            $orderId = $request->query->getInt('order');
-            $order = $entityManager->getRepository(Order::class)->find($orderId);
-        }
-
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
@@ -350,27 +357,23 @@ trait RestaurantTrait
                 'resource_class' => Order::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
-                'groups' => ['order', 'address', 'dispatch']
+                'groups' => ['order_minimal', 'dispatch']
             ]),
-            'order_normalized' => $order ? $this->get('serializer')->normalize($order, 'jsonld', [
-                'resource_class' => Order::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
-                'groups' => ['order', 'address', 'dispatch']
-            ]) : null,
+            'initial_order' => $request->query->get('order'),
             'routes' => $routes,
             'date' => $date,
         ], $routes));
     }
 
     public function restaurantDashboardAction($restaurantId, Request $request,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        IriConverterInterface $iriConverter)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
-        return $this->renderRestaurantDashboard($restaurant, $request, $entityManager);
+        return $this->renderRestaurantDashboard($restaurant, $request, $entityManager, $iriConverter);
     }
 
     public function restaurantMenuTaxonsAction($id, Request $request, FactoryInterface $taxonFactory)

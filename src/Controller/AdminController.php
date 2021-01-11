@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
@@ -312,8 +313,19 @@ class AdminController extends Controller
         ]);
     }
 
-    public function foodtechDashboardAction($date, Request $request, Redis $redis)
+    public function foodtechDashboardAction($date, Request $request, Redis $redis, IriConverterInterface $iriConverter)
     {
+        if ($request->query->has('order')) {
+            $order = $request->query->get('order');
+            if (is_numeric($order)) {
+
+                return $this->redirectToRoute($request->attributes->get('_route'), [
+                    'date' => $date,
+                    'order' => $iriConverter->getItemIriFromResourceClass(Order::class, [$order])
+                ], 301);
+            }
+        }
+
         $date = new \DateTime($date);
 
         $orders = $this->get('sylius.repository.order')->findByDate($date);
@@ -322,7 +334,7 @@ class AdminController extends Controller
             'resource_class' => Order::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['order', 'address', 'dispatch']
+            'groups' => ['order_minimal', 'dispatch']
         ]);
 
         $preparationDelay = $redis->get('foodtech:preparation_delay');
@@ -334,6 +346,7 @@ class AdminController extends Controller
             'orders' => $orders,
             'date' => $date,
             'orders_normalized' => $ordersNormalized,
+            'initial_order' => $request->query->get('order'),
             'routes' => $request->attributes->get('routes'),
             'preparation_delay' => intval($preparationDelay),
         ]);

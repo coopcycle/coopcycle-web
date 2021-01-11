@@ -17,6 +17,7 @@
 var orders = {{ orders_normalized|json_encode()|raw }};
 new CoopCycle.FoodtechDashboard(document.querySelector('#foodtech-dashboard'), {
   orders: orders['hydra:member'],
+  initialOrder: {{ initial_order|json_encode()|raw }},
   date: "{{ date|date('Y-m-d') }}",
   currentRoute: "{{ current_route }}",
   preparationDelay: {{ preparation_delay }},

@@ -24,6 +24,8 @@ import {
   FULFILL_ORDER_REQUEST_FAILURE,
   SEARCH_RESULTS,
   ACTIVE_TAB,
+  INIT_HTTP_CLIENT,
+  REFRESH_TOKEN_SUCCESS,
 } from './actions'
 
 export const initialState = {
@@ -38,11 +40,6 @@ export const initialState = {
   },
   restaurant: null,
   isFetching: false,
-  acceptOrderRoute: 'admin_order_accept',
-  refuseOrderRoute: 'admin_order_refuse',
-  delayOrderRoute: 'admin_order_delay',
-  cancelOrderRoute: 'admin_order_cancel',
-  fulfillOrderRoute: 'admin_order_fulfill',
   currentRoute: 'admin_foodtech_dashboard',
   preparationDelay: 0,
   showSettings: true,
@@ -50,11 +47,13 @@ export const initialState = {
   searchQuery: '',
   searchResults: [],
   activeTab: 'new',
+  httpClient: null,
+  initialOrder: null,
 }
 
 function replaceOrder(orders, order) {
 
-  const orderIndex = _.findIndex(orders, o => o.id === order.id)
+  const orderIndex = _.findIndex(orders, o => o['@id'] === order['@id'])
   if (-1 !== orderIndex) {
     const newOrders = orders.slice()
     newOrders.splice(orderIndex, 1, Object.assign({}, order))
@@ -115,7 +114,19 @@ export default (state = initialState, action = {}) => {
     }
 
     const newOrders = state.orders.slice()
-    newOrders.push(action.payload)
+
+    // Make sure to keep only needed data
+    newOrders.push(_.pick(action.payload, [
+      '@id',
+      'customer',
+      'vendor',
+      'shippingTimeRange',
+      'shippingAddress',
+      'number',
+      'total',
+      'state',
+      'assignedTo',
+    ]))
 
     return {
       ...state,
@@ -170,6 +181,20 @@ export default (state = initialState, action = {}) => {
     return {
       ...state,
       activeTab: action.payload,
+    }
+
+  case INIT_HTTP_CLIENT:
+
+    return {
+      ...state,
+      httpClient: action.payload
+    }
+
+  case REFRESH_TOKEN_SUCCESS:
+
+    return {
+      ...state,
+      jwt: action.payload
     }
   }
 
