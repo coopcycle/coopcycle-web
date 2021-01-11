@@ -86,7 +86,7 @@ framework:
         default_redis_provider: "snc_redis.default"
         pools:
             restart_workers_signal.cache:
-                adapter: cache.adapter.redis
+                adapter: cache.app
             twig.cache:
                 adapter: cache.app
             s3_flysystem.cache:
