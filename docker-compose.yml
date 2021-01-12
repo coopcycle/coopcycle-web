@@ -29,8 +29,6 @@ services:
       - tile38
     ports:
       - '8000:8000'
-      - '8001:8001'
-      - '8002:8002'
     volumes:
       # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
       - '.:/srv/coopcycle'

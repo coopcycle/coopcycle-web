@@ -29,13 +29,6 @@ var apps = [{
   script: "./js/api/dispatch/index.js",
   watch: ["./js/api/dispatch/index.js", "./js/api/models/*.js", "./js/api/*.js"],
   port: (process.env.COOPCYCLE_DISPATCH_PORT && parseInt(process.env.COOPCYCLE_DISPATCH_PORT, 10)) || 8000
-}, {
-  name: "coopcycle-tracking-" + appName,
-  mergeLogs: true,
-  log_type : 'json',
-  script: "./js/api/tracking/index.js",
-  watch: ["./js/api/tracking/index.js", "./js/api/tracking/index.html"],
-  port: (process.env.COOPCYCLE_TRACKING_PORT && parseInt(process.env.COOPCYCLE_TRACKING_PORT, 10)) || 8001
 }];
 
 apps = _.map(apps, function(app) {
