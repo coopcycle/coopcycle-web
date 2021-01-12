@@ -26,6 +26,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "denormalization_context"={"groups"={"product_update"}},
  *       "access_control"="is_granted('edit', object)"
  *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "access_control"="is_granted('edit', object)"
+ *     }
  *   },
  *   attributes={
  *     "normalization_context"={"groups"={"product"}}

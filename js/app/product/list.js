@@ -1,11 +1,10 @@
 import React from 'react'
-import axios from 'axios'
 import { render, unmountComponentAtNode } from 'react-dom'
 import { Switch } from 'antd'
+import Popconfirm from 'antd/lib/popconfirm'
 
 import SpreadsheetDropzone from '../components/SpreadsheetDropzone'
-
-const baseURL = location.protocol + '//' + location.hostname
+import createHttpClient from '../client'
 
 $('#products-import-modal').on('show.bs.modal', function () {
 
@@ -27,36 +26,60 @@ $('#products-import-modal').on('hidden.bs.modal', function () {
   unmountComponentAtNode(el)
 })
 
-document.querySelectorAll('table[data-entity="product"] tbody tr').forEach(row => {
+const fetchToken = window.Routing.generate('profile_jwt')
 
-  const cell = row.querySelector('[data-cell="toggle"]')
-  cell.innerHTML = ''
+$.getJSON(fetchToken)
+  .then(result => {
 
-  const enabled = JSON.parse(row.dataset.enabled)
-  const iri = row.dataset.iri
+    const httpClient = createHttpClient(
+      result.jwt,
+      () => new Promise((resolve) => {
+        // TODO Check response is OK, reject promise
+        $.getJSON(fetchToken).then(result => resolve(result.jwt))
+      })
+    )
 
-  const container = document.createElement('div')
-  cell.appendChild(container)
+    document.querySelectorAll('table[data-entity="product"] tbody tr').forEach(row => {
 
-  render(
-    <Switch
-      size="small"
-      onChange={ checked => {
-        $.getJSON(window.Routing.generate('profile_jwt')).then(result => {
-          axios({
-            method: 'put',
-            url: baseURL + iri,
-            data: {
-              enabled: checked
-            },
-            headers: {
-              'Accept': 'application/ld+json',
-              'Content-Type': 'application/ld+json',
-              Authorization: `Bearer ${result.jwt}`
-            }
-          })
-        })
-      }}
-      defaultChecked={ enabled }
-    />, container)
-})
+      const cell = row.querySelector('[data-cell="toggle"]')
+      cell.innerHTML = ''
+
+      const enabled = JSON.parse(row.dataset.enabled)
+      const iri = row.dataset.iri
+
+      const container = document.createElement('div')
+      cell.appendChild(container)
+
+      render(
+        <Switch
+          size="small"
+          onChange={ checked => {
+            httpClient.put(iri, { enabled: checked })
+          }}
+          defaultChecked={ enabled }
+        />, container)
+
+      const deleteCell = row.querySelector('[data-cell="delete"]')
+
+      render(
+        <Popconfirm
+          placement="left"
+          title="Are you sure？"
+          okText="Yes"
+          cancelText="No"
+          onConfirm={ () => {
+            httpClient.delete(iri).then(res => {
+              if (res.status === 204) {
+                window.document.location.reload()
+              }
+            })
+          }}>
+          <a href="#">
+            <span className="glyphicon glyphicon-trash"></span>
+          </a>
+        </Popconfirm>,
+        deleteCell,
+      )
+
+    })
+  })

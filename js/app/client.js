@@ -13,8 +13,11 @@ export default function(token, refreshToken, refreshTokenCallback) {
     subscribers.forEach(callback => callback(t))
     subscribers = []
 
-    refreshTokenCallback(t)
     token = t
+
+    if (refreshTokenCallback && typeof refreshTokenCallback === 'function') {
+      refreshTokenCallback(t)
+    }
   }
 
   function addSubscriber(callback) {

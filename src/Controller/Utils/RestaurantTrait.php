@@ -716,12 +716,6 @@ trait RestaurantTrait
             ]
         );
 
-        $forms = [];
-        foreach ($products as $product) {
-            $forms[$product->getId()] =
-                $this->createRestaurantProductForm($restaurant, $product)->createView();
-        }
-
         $routes = $request->attributes->get('routes');
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
@@ -729,7 +723,6 @@ trait RestaurantTrait
             'products' => $products,
             'restaurant' => $restaurant,
             'restaurant_iri' => $iriConverter->getIriFromItem($restaurant),
-            'forms' => $forms,
         ], $routes));
     }
 

@@ -43,18 +43,10 @@
         <a href="{{ path(product_route, { restaurantId: restaurant.id, productId: product.id }) }}"
           class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> {{ 'basics.edit'|trans }}</a>
       </td>
-      <td class="text-center">
-        {% if forms[product.id] is defined %}
-          {% set product_form = forms[product.id] %}
-          {{ form_start(product_form, { action: path(product_route, { restaurantId: restaurant.id, productId: product.id }) }) }}
-            {{ form_widget(product_form.delete, { attr: {
-              class: 'btn-xs btn-danger btn-confirm-delete',
-              'data-confirm': 'delete',
-              'data-confirm-message': 'basics.are_you_sure'|trans
-            } }) }}
-            {{ form_widget(product_form._token) }}
-          {{ form_end(product_form, { render_rest: false }) }}
-        {% endif %}
+      <td class="text-right" data-cell="delete">
+        <a href="#">
+          <span class="glyphicon glyphicon-trash"></span>
+        </a>
       </td>
     </tr>
     {% endfor %}
@@ -94,7 +86,4 @@
 
 {% block scripts %}
 {{ encore_entry_script_tags('product-list') }}
-<script>
-  new CoopCycle.ConfirmDelete('[data-confirm="delete"]');
-</script>
 {% endblock %}
