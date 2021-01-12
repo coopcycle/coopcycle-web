@@ -17,7 +17,7 @@
   </mj-section>
   {% include 'emails/order/_partials/items.mjml.twig' %}
   <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white"
-    href="{{ url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order|get_iri_from_item }) }}">
+    href="{{ url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }) }}">
   {{ 'order.view' | trans({}, 'emails') }}
   </mj-button>
 </mj-column>
