@@ -70,37 +70,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->translator = $translator;
     }
 
-    public function normalizeAdjustments(Order $order)
-    {
-        $serializeAdjustment = function (BaseAdjustmentInterface $adjustment) {
-
-            return [
-                'id' => $adjustment->getId(),
-                'label' => $adjustment->getLabel(),
-                'amount' => $adjustment->getAmount(),
-            ];
-        };
-
-        $deliveryAdjustments =
-            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT)->toArray());
-        $deliveryPromotionAdjustments =
-            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)->toArray());
-        $orderPromotionAdjustments =
-            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT)->toArray());
-        $reusablePackagingAdjustments =
-            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->toArray());
-        $taxAdjustments =
-            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT)->toArray());
-
-        return [
-            AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
-            AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT => array_values($deliveryPromotionAdjustments),
-            AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT => array_values($orderPromotionAdjustments),
-            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments),
-            AdjustmentInterface::TAX_ADJUSTMENT => array_values($taxAdjustments),
-        ];
-    }
-
     public function normalize($object, $format = null, array $context = array())
     {
         // TODO Document why we use ObjectNormalizer for unsaved orders (?)
@@ -109,8 +78,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         } else {
             $data = $this->normalizer->normalize($object, $format, $context);
         }
-
-        $data['adjustments'] = $this->normalizeAdjustments($object);
 
         $restaurant = $object->getRestaurant();
 

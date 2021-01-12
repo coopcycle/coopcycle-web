@@ -38,6 +38,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Customer\Model\CustomerInterface;
+use Sylius\Component\Order\Model\AdjustmentInterface as BaseAdjustmentInterface;
 use Sylius\Component\Order\Model\Order as BaseOrder;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
@@ -1056,5 +1057,40 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return $vendors;
+    }
+
+    /**
+     * @SerializedName("adjustments")
+     * @Groups({"order", "cart"})
+     */
+    public function getAdjustmentsHash(): array
+    {
+        $serializeAdjustment = function (BaseAdjustmentInterface $adjustment) {
+
+            return [
+                'id' => $adjustment->getId(),
+                'label' => $adjustment->getLabel(),
+                'amount' => $adjustment->getAmount(),
+            ];
+        };
+
+        $deliveryAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT)->toArray());
+        $deliveryPromotionAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)->toArray());
+        $orderPromotionAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT)->toArray());
+        $reusablePackagingAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->toArray());
+        $taxAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT)->toArray());
+
+        return [
+            AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
+            AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT => array_values($deliveryPromotionAdjustments),
+            AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT => array_values($orderPromotionAdjustments),
+            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments),
+            AdjustmentInterface::TAX_ADJUSTMENT => array_values($taxAdjustments),
+        ];
     }
 }
