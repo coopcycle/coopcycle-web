@@ -76,9 +76,9 @@ Sylius\Component\Order\Model\Order:
     reusablePackagingPledgeReturn:
       groups: ['order', 'cart', 'order_update']
     takeaway:
-      groups: ['order']
+      groups: ['order', 'order_minimal']
     fulfillmentMethod:
-      groups: ['cart', 'order_update']
+      groups: ['cart', 'order_update', 'order_minimal']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:
