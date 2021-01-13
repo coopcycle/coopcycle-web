@@ -94,7 +94,7 @@
     "leaflet-polylinedecorator": "^1.6.0",
     "leaflet-providers": "^1.11.0",
     "leaflet.markercluster": "^1.4.1",
-    "less": "^3.12.2",
+    "less": "^3.13.1",
     "less-loader": "^6.2.0",
     "libphonenumber-js": "^1.9.7",
     "lottie-web": "^5.7.5",
