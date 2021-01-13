@@ -7,6 +7,7 @@ import {
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
   TASK_LIST_UPDATED,
+  TASK_LISTS_UPDATED,
 } from './actions'
 
 const replaceOrAddTask = (tasks, task) => {
@@ -166,6 +167,37 @@ export default (state = initialState, action) => {
       return {
         ...state,
         taskLists: newTaskLists,
+      }
+
+    case TASK_LISTS_UPDATED:
+
+      const matching = _.filter(
+        action.taskLists,
+        updated => -1 !== _.findIndex(newTaskLists, taskList => taskList['@id'] === updated['@id'])
+      )
+
+      if (matching.length === 0) {
+
+        return state
+      }
+
+      return {
+        ...state,
+        taskLists: _.map(newTaskLists, current => {
+          const newTaskList = _.find(matching, o => o['@id'] === current['@id'])
+
+          if (!newTaskList) {
+
+            return current
+          }
+
+          return {
+            ...current,
+            distance: newTaskList.distance,
+            duration: newTaskList.duration,
+            polyline: newTaskList.polyline,
+          }
+        }),
       }
   }
 

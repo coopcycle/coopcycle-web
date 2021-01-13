@@ -4,7 +4,7 @@ import {
   setOffline,
   importSuccess,
   importError,
-  taskListUpdated,
+  taskListsUpdated,
   SET_FILTER_VALUE,
   RESET_FILTERS,
 } from './actions'
@@ -71,9 +71,9 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task_import:failure':
           dispatch(importError(event.data.token, event.data.message))
           break
-        // case 'task_collection:updated':
-        //   dispatch(taskListUpdated(event.data.task_collection))
-        //   break
+        case 'task_collections:updated':
+          dispatch(taskListsUpdated(event.data.task_collections))
+          break
       }
     })
 

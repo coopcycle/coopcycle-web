@@ -7,17 +7,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 trait CollectionTrait
 {
     /**
-     * @Groups({"task_collection"})
+     * @Groups({"task_collection", "task_collections"})
      */
     protected $distance;
 
     /**
-     * @Groups({"task_collection"})
+     * @Groups({"task_collection", "task_collections"})
      */
     protected $duration;
 
     /**
-     * @Groups({"task_collection"})
+     * @Groups({"task_collection", "task_collections"})
      */
     protected $polyline = '';
 

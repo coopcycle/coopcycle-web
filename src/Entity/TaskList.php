@@ -9,6 +9,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Api\Filter\DateFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * A TaskList represents the daily planning for a courier.
@@ -94,5 +95,14 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
         }
 
         return parent::removeTask($task);
+    }
+
+    /**
+     * @SerializedName("username")
+     * @Groups({"task_collection"})
+     */
+    public function getUsername()
+    {
+        return $this->getCourier()->getUsername();
     }
 }

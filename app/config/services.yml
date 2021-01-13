@@ -903,6 +903,8 @@ services:
   AppBundle\MessageHandler\CalculateRouteHandler:
     arguments:
       $eventBus: '@simple_bus.event_bus'
+    tags:
+      - { name: monolog.logger, channel: messenger }
 
   AppBundle\MessageHandler\RetrieveStripeFeeHandler:
     arguments:

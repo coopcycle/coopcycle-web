@@ -37,8 +37,9 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        $data['items'] = $this->flattenItems($data['items']);
-        $data['username'] = $object->getCourier()->getUsername();
+        if (isset($data['items'])) {
+            $data['items'] = $this->flattenItems($data['items']);
+        }
 
         return $data;
     }
