@@ -40,7 +40,7 @@
     "sequelize": "^5.21.6",
     "whatwg-fetch": "^2.0.4",
     "winston": "^3.3.3",
-    "ws": "^7.3.0",
+    "ws": "^7.4.2",
     "xml2js": "^0.4.22"
   },
   "devDependencies": {
@@ -76,7 +76,7 @@
     "eslint": "^7.0.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-jest": "^23.20.0",
-    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react": "^7.22.0",
     "font-awesome": "^4.7.0",
     "fontawesome-markers": "^4.6.1",
     "formik": "^2.2.6",
@@ -131,8 +131,8 @@
     "redux-async-queue": "^1.0.0",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
-    "sass-loader": "^10.1.0",
-    "sortablejs": "^1.12.0",
+    "sass-loader": "^10.1.1",
+    "sortablejs": "^1.13.0",
     "store": "^2.0.12",
     "styled-components": "^5.2.1",
     "to-string-loader": "^1.1.6",
