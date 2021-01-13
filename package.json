@@ -96,7 +96,7 @@
     "leaflet.markercluster": "^1.4.1",
     "less": "^3.12.2",
     "less-loader": "^6.2.0",
-    "libphonenumber-js": "^1.7.54",
+    "libphonenumber-js": "^1.9.7",
     "lottie-web": "^5.7.5",
     "micromodal": "^0.4.6",
     "mocha": "^7.1.1",
