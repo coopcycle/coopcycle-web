@@ -61,8 +61,8 @@ adminDashboard.users.title: Usuaris
 adminDashboard.users.roles: Funcions
 adminDashboard.users.editUser: Edita l'usuari
 adminDashboard.users.edit.addStore: Afegeix una botiga
-adminDashboard.users.edit.addRestaurant: Afegiu un restaurant
-adminDashboard.users.createNew: Afegir usuari
+adminDashboard.users.edit.addRestaurant: Afegeix un restaurant
+adminDashboard.users.createNew: Afegeix un usuari
 adminDashboard.settings.title: Configuració
 adminDashboard.pricing.title: Preu
 adminDashboard.pricing.manage: Gestiona
@@ -81,27 +81,27 @@ adminDashboard.taxation.button: Afegir impostos
 adminDashboard.zones.title: Zones
 adminDashboard.zones.uploadGeoJSON: Carregueu un fitxer GeoJSON
 adminDashboard.zones.send: Envia
-adminDashboard.back.title: Tornar al lloc web
+adminDashboard.back.title: Torna al lloc web
 adminDashboard.promotions.title: Promocions
 adminDashboard.pledges.title: Suggeriments
 adminDashboard.time_slots.title: Franges horàries
-deliveryForm.noPriceWarning: No es pot calcular cap preu. Introduïu-lo.
-deliveryForm.noPriceFromPricingWarning: No es pot calcular cap preu a partir dels
-  preus. Introduïu-lo manualment o editeu els preus.
+deliveryForm.noPriceWarning: No es pot calcular cap preu. Introdueix-lo, si us plau.
+deliveryForm.noPriceFromPricingWarning: No es pot calcular cap preu a partir de les
+  tarifes. Introdueix-lo manualment o edita els preus.
 delivery.createNew: Crea una nova entrega
 delivery.tracking_link: Enllaç de seguiment
 delivery.with_id: 'Lliurament #%id%'
 help.title: Ajuda
 help.home: Inici
 restaurants.no_results: No hem trobat cap restaurant que coincideixi amb la cerca
-  ☹ <br> Proveu amb una adreça diferent
-restaurants.visible_by_you_only: Només és visible per tu
+  ☹ <br> Prova amb una adreça diferent
+restaurants.visible_by_you_only: Només és visible per a tu
 restaurants.placeholder.title: Una mica de paciència …
 restaurants.placeholder.text: Properament arribaran nous restaurants!
-localBusiness.form.orderingDelayMinutes: Retard addicional abans de fer la comanda
-localBusiness.form.orderingDelayMinutes.help: Utilitzeu aquest camp per afegir una
-  estona abans de permetre comandes del client. Aquest paràmetre no canvia els temps
-  de cocció i ciclisme.
+localBusiness.form.orderingDelayMinutes: Retard addicional abans de la comanda
+localBusiness.form.orderingDelayMinutes.help: Utilitza aquest camp per afegir un temps
+  addicional abans de la comanda d'un usuari. Aquest paràmetre no canvia els temps
+  de preparació del menjar ni el d'entrega.
 localBusiness.form.orderingDelayDays: Dia/Dies
 localBusiness.form.orderingDelayHours: Hora/Hores
 localBusiness.form.name: Nom
@@ -114,50 +114,50 @@ localBusiness.form.deliveryPerimeterExpression: Zona o distància màxima de lli
 restaurant.available: Disponible
 restaurant.unavailable: No disponible
 restaurant.disabledWarning: "Aquest restaurant està desactivat de manera que els visitants\
-  \ del lloc no poden veure aquesta pàgina. Si voleu, podeu <a target=\"_blank\" href=\"\
-  %restaurantEditUrl%\"> activar-lo a l'administrador </a>.\n"
-restaurant.closedWarningWithDelay: Demana ara per més endavant. Comproveu com a mínim
-  un %delay% per adelantat.
-restaurant.temporaryClosedWarning: Aquest restaurant està tancat fins a <strong>%
-  date% </strong>. Encara podreu demanar més endavant!
-restaurant.noMenuWarning: "Aquest restaurant no té cap menú de moment\n"
+  \ no poden veure aquesta pàgina. Si vols, pots <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
+  > activar-lo a l'administrador </a>.\n"
+restaurant.closedWarningWithDelay: Demana ara per més endavant. Demana com a mínim
+  %delay% abans.
+restaurant.temporaryClosedWarning: Aquest restaurant està tancat fins el <strong>%
+  date% </strong>. Pots fer comanda per a més endavant!
+restaurant.noMenuWarning: "De moment aquest restaurant no té cap carta\n"
 restaurant.form.enabled.tooltip: "Si està desactivat, un restaurant no és visible\
-  \ al lloc web. No es mostra als resultats de la cerca ni la seva pròpia pàgina no\
-  \ és accessible pels visitants.\n"
-restaurant.form.allow_stripe_connect.label: Permet al restaurant gestionar el compte
-  Stripe pel seu compte
-restaurant.form.temporaryClosingRule: Faci clic aquí per a desactivar temporalment
-  les comandes al seu restaurant.
-restaurant.form.accessPlanning: Planificació d’accés
-restaurant.form.createRestaurant: Crear restaurant
+  \ al lloc web. No apareix als resultats de la cerca i la seva pàgina no és accessible\
+  \ pels visitants.\n"
+restaurant.form.allow_stripe_connect.label: Permet que el restaurant gestioni el compte
+  Stripe tot sol
+restaurant.form.temporaryClosingRule: Fes clic aquí per desactivar temporalment les
+  comandes al teu restaurant.
+restaurant.form.accessPlanning: Accedeix al calendari
+restaurant.form.createRestaurant: Crea un restaurant
 restaurant.contract.title: Contracte
 restaurant.deliveryPerimeterExpression.title: Perímetre d’entrega
-restaurant.deliveryPerimeterExpression.help: Definiu el perímetre acceptat per als
-  enviaments. Podeu triar un radi (en km) o una zona
-restaurant.contract.minimumCartAmount.label: Mínim per comanda
+restaurant.deliveryPerimeterExpression.help: Defineix el perímetre acceptat per als
+  lliuraments. Podeu triar un radi (en km) o una zona
+restaurant.contract.minimumCartAmount.label: Comanda mínima
 restaurant.contract.flatDeliveryPrice.label: Import carregat per la plataforma
-restaurant.contract.flatDeliveryPrice.help: Aquest import no es mostrarà al carret
+restaurant.contract.flatDeliveryPrice.help: Aquest import no es mostrarà al carretó
   i no augmentarà l'import total
-restaurant.contract.customerAmount.label: Import pagat pel client
-restaurant.contract.customerAmount.help: Aquest import es mostrarà al carret i augmentarà
+restaurant.contract.customerAmount.label: Import pagat pel client/a
+restaurant.contract.customerAmount.help: Aquest import apareixerà al carretó i n'augmentarà
   l'import total
 restaurant.contract.feeRate.label: Percentatge de comissió de lliuraments
-restaurant.contract.feeRate.help: Aquest percentatge el mantindrà la plataforma sobre
+restaurant.contract.feeRate.help: Aquest percentatge el retindrà la plataforma sobre
   el total de productes
-restaurant.contract.restaurantPaysStripeFee.label: És responsable del cost de les
-  taxes de Stripe, devolucions i recàrrecs
-restaurant.contract.restaurantPaysStripeFee.help: Trieu qui serà el responsable del
-  cost de les taxes Stripe i la gestió de devolucions i recàrrecs
+restaurant.contract.restaurantPaysStripeFee.label: Responsable de la comissió Stripe,
+  devolucions i recàrrecs
+restaurant.contract.restaurantPaysStripeFee.help: Tria qui serà el responsable de
+  pagar la comissió de Stripe i de gestionar devolucions i recàrrecs
 restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurant
 restaurant.contract.restaurantPaysStripeFee.cooperative: Cooperativa
 restaurant.contract.onlyAdmin: Només un administrador pot editar els detalls del contracte.
-restaurant.contract.noContract: Sense dades de contracte. Poseu-vos en contacte amb
-  un administrador.
+restaurant.contract.noContract: No existeixen condicions del contracte. Posa't en
+  contacte amb un administrador.
 restaurant.contract.showAdvanced: Mostra la configuració avançada
-restaurant.menus.noMenus: De moment no heu creat cap menú.
+restaurant.menus.noMenus: De moment no has creat cap carta.
 restaurant.menus.activate: Activa
-restaurant.menus.activated: S'ha activat el menú «% menu_name%». Ara es mostrarà a
-  la pàgina del restaurant
+restaurant.menus.activated: S'ha activat la carta « % menu_name% ». Ara es mostrarà
+  a la pàgina del restaurant
 restaurant.closingForm.title: Afegiu un tancament temporal
 restaurant.closingForm.reason.label: Raó
 restaurant.closingForm.dates.label: Tancar de / a
@@ -668,33 +668,34 @@ basics.platform_fees: Comissions de la plataforma
 basics.net_income: Ingressos nets
 localBusiness.form.openingHoursBehavior.asap: Tan aviat com sigui possible
 localBusiness.form.shippingOptionsDays: Opcions d'entrega (en dies)
-adminDashboard.users.invite: Convida a un usuari
+adminDashboard.users.invite: Convida un usuari
 form.user.quotes_allowed.label: Permet a aquest usuari sol·licitar un pressupost
-restaurant.form.fulfillment_methods.label: Mètodes de compliment
+restaurant.form.fulfillment_methods.label: Mètodes d'execució
 restaurant.form.section.general: General
 restaurant.form.section.options: Opcions
-restaurant.form.section.fulfillment: Compliment
+restaurant.form.section.fulfillment: Execució
 restaurant.form.section.payment: Pagament
 restaurant.form.section.settlement: Liquidació
-localBusiness.form.openingHoursBehavior: Conducta d'obrir hores
+localBusiness.form.openingHoursBehavior: Comportament de l'horari d'obertura
 restaurant.contract.variableCustomerAmount.help: El preu pagat es calcularà utilitzant
-  el conjunt de regles de preus seleccionat
-restaurant.contract.variableCustomerAmount.placeholder: Si us plau seleccioni un conjunt
+  la tarifa seleccionada
+restaurant.contract.variableCustomerAmount.placeholder: Si us plau selecciona un conjunt
   de regles de preus
-restaurant.contract.variableCustomerAmountEnabled.label: Habilitar la quantitat variable
-  pagat per la client
-restaurant.contract.takeAwayFeeRate.label: Tarifa de plataforma per a portar
+restaurant.contract.variableCustomerAmountEnabled.label: Habilita la quantitat variable
+  pagada pel client
+restaurant.contract.takeAwayFeeRate.label: Tarifa de la plataforma per endur
 restaurant.contract.takeAwayFeeRate.help: Aquest percentatge serà retingut per la
-  plataforma en el total dels productes
-restaurant.form.noPricingRule: Cap tarifació ha estat implementada, <a href="%editPricingRule%">faci
-  clic aquí per a crear una</a>.
-restaurant.form.deposit_refund_enabled.label: Habilitar el sistema de dipòsit i reemborsament
+  plataforma del total dels productes
+restaurant.form.noPricingRule: Cap tarifa de preus ha estat implementada, <a href="%editPricingRule%">fes
+  clic aquí per crear-ne una</a>.
+restaurant.form.deposit_refund_enabled.label: Habilita el sistema de devolució de
+  dipòsits
 restaurant.form.exclusive.label: Aquest restaurant és exclusiu
-restaurant.form.quotes_allowed.label: "Aquest restaurant també accepta comandes en\
-  \ cites (ej: servei d'àpats)"
+restaurant.form.quotes_allowed.label: "Aquest restaurant també accepta comandes amb\
+  \ pressupost (per exemple, càterings)"
 restaurant.contract.variableDeliveryPrice.label: Quantitat cobrada per la plataforma
   (variable)
-restaurant.contract.variableDeliveryPriceEnabled.label: Habiliti la quantitat variable
+restaurant.contract.variableDeliveryPriceEnabled.label: Habilita la quantitat variable
   que cobra la plataforma
 restaurant.contract.variableDeliveryPriceEnabled.disclaimer: La quantitat es calcula
   dinàmicament
@@ -743,8 +744,8 @@ form.new_order.variant_name.help: El nom que apareixerà en el resum de la coman
   i la factura
 form.new_order.variant_price.label: Preu
 restaurant.quotes_disclaimer.authenticated: Aquest restaurant també accepta comandes
-  de cotització. Per a crear pressupostos, ha de ser un client referenciat.<a href="%contact_us%">Contact
-  us</a>per a més informació.
+  amb pressupost. Per fer un pressupost, ha de ser un client referenciat.<a href="%contact_us%">Contacta
+  amb nosaltres </a>per a més informació.
 index.our_shops: Botigues locals
 index.view_all_shops: Veure totes les botigues
 form.checkout_address.reusable_packaging_loopeat_enabled.label: Vull usar contenidors
@@ -756,7 +757,7 @@ form.checkout_address.add_tip.label: Aplicar
 form.checkout_address.quote.label: Sol·licitar pressupost
 form.credit_note.restaurant.help: El descompte només es podrà utilitzar per a demanar
   en aquest restaurant. Deixi buit per a aplicar a tots els restaurants.
-restaurant.form.loopeat_enabled.label: Habiliti el sistema de dipòsit i reemborsament
+restaurant.form.loopeat_enabled.label: Habilita el sistema de dipòsit i reemborsament
   de LoopEat
 basics.updated_at: Actualitzat en %date%
 basics.send_invitation: Enviar una invitació
@@ -847,12 +848,12 @@ store.LIQUOR_STORE: Licorería
 store.MENS_CLOTHING_STORE: Botiga de roba d'home
 store.MOBILE_PHONE_STORE: Botiga de telefonia
 store.MOVIE_RENTAL_STORE: Vídeo club
-restaurant.form.loopeat_disconnect.label: Desconertar LoopEat
+restaurant.form.loopeat_disconnect.label: Desconnecta LoopEat
 restaurant.form.featured.label: Aquest restaurant apareix en la pàgina d'inici
 restaurant.contract.variableDeliveryPrice.help: L'import cobrat es calcularà utilitzant
   el conjunt de regles de preus seleccionats
-restaurant.contract.variableDeliveryPrice.placeholder: Si us plau seleccioni un conjunt
-  de regles de preus
+restaurant.contract.variableDeliveryPrice.placeholder: Si us plau seleccioni una tarifa
+  de preus
 restaurant.list.depositRefund: Reemborsament de dipòsit
 restaurant.list.promotions: Promocions
 form.settings.company_logo.label: Logo d'empresa
@@ -893,7 +894,7 @@ store.PAWN_SHOP: Casa de préstecs
 store.PET_STORE: Botiga de mascotes
 food_establishment.BAKERY: Forn de pa
 form.time_slot.prior_notice_hours.label: Avís previ (hores)
-restaurant.form.giropay_enabled.label: Habilitar Giropay
+restaurant.form.giropay_enabled.label: Habilita Giropay
 activity.task.started: "@%owner% va començar tasca #task/%*aggregate_id%\n"
 form.min_max.infinity.label: Sense màxim
 receipt.billing_details: Comanda pagada amb targeta de crèdit el %date%
@@ -907,17 +908,18 @@ form.local_business_type.help: Els tipus estan usant el <a href="https://schema.
   menjar</a> i <a href="https://schema.org/Store">botigues</a>
 localBusiness.form.enabled: Activat
 notifications.tasks_changed: Tasca per a %date% canviada!
-localBusiness.form.openingHoursBehavior.time_slot: Franja Horària
-restaurant.quotes_disclaimer.not_authenticated: Aquest restaurant tabmien accepta
-  comandes en cita. Si vostè és un client referenciat, <a href="%login%">Connecti's
-  </a> per a crear una cita. <a href="%contact_us%">Contacti'ns</a> per a més informació.
-restaurant.contract.variableCustomerAmount.label: Import pagat per la client (variable)
-restaurant.contract.variableCustomerAmountEnabled.disclaimer: La quantitat es calcula
+localBusiness.form.openingHoursBehavior.time_slot: Franja horària
+restaurant.quotes_disclaimer.not_authenticated: Aquest restaurant també accepta comandes
+  amb pressupost. Si ets un client referenciat, <a href="%login%">connecta't </a>
+  per a fer un pressupost. <a href="%contact_us%">Contacta amb nosaltres</a> per a
+  més informació.
+restaurant.contract.variableCustomerAmount.label: Import pagat pel client/a (variable)
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: L'import es calcula
   dinàmicament
-restaurant.contract.calculation_info: Pot cobrar al restaurant una quantitat diferent
-  de la quantitat pagada pel client. <br> Per exemple, pot oferir el lliurament al
-  client mentre cobra una quantitat fixa al restaurant. <br> També pot configurar
-  una quantitat dinàmica (per exemple, en funció de la distància).
+restaurant.contract.calculation_info: Pots cobrar al restaurant un import diferent
+  de l'import pagat pel client. <br> Per exemple, pots oferir el lliurament al client
+  mentre cobres una quantitat fixa al restaurant. <br> També pot configurar un import
+  dinàmic (per exemple, en funció de la distància).
 form.order.refuse.refund.alert: Aquesta comanda es va pagar amb un mètode de pagament
   que no gestiona les autoritzacions prèvies. Si ho rebutja, es reemborsarà el pagament.
   Estàs segur?
@@ -989,14 +991,15 @@ guest_checkout.user_with_same_email_exists: Ja existeix un compte amb el mateix 
   electrònic per fer una comanda sense registrar-te.
 guest_checkout.use_another_email: Fer servir un altre correu electrònic
 homepage.form.title: Necessites que et portem alguna cosa?
-localBusiness.form.use_different_business_address.label: Direcció d'empresa diferent
+localBusiness.form.use_different_business_address.label: Utilitza una adreça comercial
+  diferent
 localBusiness.form.business_address.label: Adreça de l'establiment
 form.pricing_rule_set.strategy.label: Mètode de càlcul
 form.pricing_rule_set.strategy.map.label: Totes les regles que coincideixen
 restaurant.form.cuisines.label: Estils de cuina
 user.edit.enabled.label: Habilitat
 form.pricing_rule_set.strategy.find.label: La primera regla que coincideix
-restaurant.form.section.taxonomy: Tarificació
+restaurant.form.section.taxonomy: Classificació
 form.settings.subject_to_vat.label: Subjecte a IVA
 form.store_type.weight_required.label: Sol·licitar el pes
 form.registration.legal.label: Accepto els Termes i Condicions i la Política de Privacitat
@@ -1017,8 +1020,8 @@ form.product_tax_category_choice.placeholder: Escull impost
 base.footer.companyRegister: Comença a col·laborar
 base.footer.RegisterMyRestaurant: Registrar el meu establiment
 adminDashboard.users.orders_count: Nombre de comandes
-adminDashboard.users.last_order: Última Comanda
-adminDashboard.users.registered_at: Registrat
+adminDashboard.users.last_order: Darrera comanda
+adminDashboard.users.registered_at: Registrat/da
 form.settings.mercadopago.publishable_key.label: Clau publicable
 basics.description: Descripció
 basics.configure: Configuració
