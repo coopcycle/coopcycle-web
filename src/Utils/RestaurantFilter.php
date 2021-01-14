@@ -34,7 +34,7 @@ class RestaurantFilter
         $destinations =
             array_map(fn($restaurant) => $restaurant->getAddress()->getGeo(), $restaurants);
 
-
+        $matches = [];
         $distances = $this->routing->getDistances($source, ...$destinations);
 
         foreach ($distances as $i => $distance) {
