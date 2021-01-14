@@ -130,4 +130,22 @@ class Osrm extends Base
 
         return (int) $response['routes'][0]['duration'];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDistances(GeoCoordinates $source, GeoCoordinates ...$destinations)
+    {
+        $coords = array_merge([ $source ], $destinations);
+
+        $options = [
+            'sources' => '0',
+            'destinations' => implode(';', range(1, count($destinations))),
+            'annotations' => 'distance',
+        ];
+
+        $response = $this->getServiceResponse('table', $coords, $options);
+
+        return current($response['distances']);
+    }
 }

@@ -27,20 +27,25 @@ class RestaurantFilter
         $stopwatch = new Stopwatch();
         $stopwatch->start('RestaurantFilter::matchingLatLng');
 
-        // Calculate distance for each restaurant
         $hash = new \SplObjectStorage();
 
-        foreach ($restaurants as $restaurant) {
-            $distance = $this->routing->getDistance($restaurant->getAddress()->getGeo(), new GeoCoordinates($latitude, $longitude));
-            $hash[$restaurant] = $distance;
-        }
+        $source = new GeoCoordinates($latitude, $longitude);
 
-        $matches = [];
+        $destinations =
+            array_map(fn($restaurant) => $restaurant->getAddress()->getGeo(), $restaurants);
 
-        foreach ($hash as $restaurant) {
+
+        $distances = $this->routing->getDistances($source, ...$destinations);
+
+        foreach ($distances as $i => $distance) {
+
             $address = new Address();
-            $address->setGeo(new GeoCoordinates($latitude, $longitude));
-            if ($restaurant->canDeliverAddress($address, $hash[$restaurant], $this->expressionLanguage)) {
+            $address->setGeo($source);
+
+            $restaurant = $restaurants[$i];
+            $hash[$restaurant] = $distance;
+
+            if ($restaurant->canDeliverAddress($address, $distance, $this->expressionLanguage)) {
                 $matches[] = $restaurant;
             }
         }
