@@ -29,24 +29,26 @@ class ProfileSubscriber implements EventSubscriberInterface
         $this->urlGenerator = $urlGenerator;
     }
 
-    /**
-     * @return LocalBusiness|Store
-     */
     private function findResourceInSession(Request $request, Collection $items, $sessionKey)
     {
+        if (count($items) === 0) {
+            return;
+        }
+
         if ($request->getSession()->has($sessionKey)) {
             foreach ($items as $item) {
                 if ($item->getId() === $request->getSession()->get($sessionKey)) {
-
-                    return $item;
+                    $request->attributes->set($sessionKey, $item);
+                    return;
                 }
             }
+            // There is something in session, but we couldn't find it
+            $request->getSession()->remove($sessionKey);
         }
 
         $item = $items->first();
         $request->getSession()->set($sessionKey, $item->getId());
-
-        return $item;
+        $request->attributes->set($sessionKey, $item);
     }
 
     public function onKernelRequest(RequestEvent $event)
@@ -124,18 +126,18 @@ class ProfileSubscriber implements EventSubscriberInterface
         }
 
         if ($request->getSession()->has('_store')) {
-            $request->attributes->set('_store', $this->findResourceInSession($request, $stores, '_store'));
+            $this->findResourceInSession($request, $stores, '_store');
         } elseif ($request->getSession()->has('_restaurant')) {
-            $request->attributes->set('_restaurant', $this->findResourceInSession($request, $restaurants, '_restaurant'));
+            $this->findResourceInSession($request, $restaurants, '_restaurant');
         } else {
             if (count($stores) > 0 && count($restaurants) > 0) {
-                $request->attributes->set('_store', $this->findResourceInSession($request, $stores, '_store'));
+                $this->findResourceInSession($request, $stores, '_store');
             } else {
                 if (count($stores) > 0) {
-                    $request->attributes->set('_store', $this->findResourceInSession($request, $stores, '_store'));
+                    $this->findResourceInSession($request, $stores, '_store');
                 }
                 if (count($restaurants)) {
-                    $request->attributes->set('_restaurant', $this->findResourceInSession($request, $restaurants, '_restaurant'));
+                    $this->findResourceInSession($request, $restaurants, '_restaurant');
                 }
             }
         }
