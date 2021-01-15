@@ -1,0 +1,35 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path('admin_organizations') }}">{{ 'organizations.breadcrumb'|trans }}</a></li>
+{% endblock %}
+
+
+{% block content %}
+  <div class="text-right mb-4">
+    <a href="{{ path('admin_add_organization') }}" class="btn btn-success">
+      {{ 'basics.add'|trans }}
+    </a>
+  </div>
+
+  <table class="table">
+    <thead>
+      <th>{% trans %}sylius.form.attribute.name{% endtrans %}</th>
+      <th></th>
+    </thead>
+    <tbody>
+    {% for organization in organizations %}
+      <tr>
+        <td>
+          {{ organization.name }}
+        </td>
+        <td width="5%">
+          <a href="{{ path('admin_organization_configure', { id: organization.id }) }}">
+            {{ 'basics.configure'|trans }}
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

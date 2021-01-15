@@ -1,63 +1,41 @@
-const ConfigLoader = require('../ConfigLoader');
-const Metrics = require('../Metrics')
 const Sequelize = require('sequelize')
 
-module.exports = function(rootDir) {
-
-  var envMap = {
-    production: 'prod',
-    development: 'dev',
-    test: 'test'
-  };
-
-  try {
-
-    var configFile = 'config.yml';
-    if (envMap[process.env.NODE_ENV]) {
-      configFile = 'config_' + envMap[process.env.NODE_ENV] + '.yml';
-    }
-
-    var configLoader = new ConfigLoader(rootDir + '/app/config/' + configFile);
-    var config = configLoader.load();
-
-  } catch (e) {
-    throw e;
-  }
-
-  const metrics = new Metrics({
-    namespace: config.parameters.database_name,
-    host: config.parameters.statsd_host,
-    port: config.parameters.statsd_port,
-  })
+module.exports = function() {
 
   var redis = require('redis').createClient({
-    prefix: config.snc_redis.clients.default.options.prefix,
-    url: config.snc_redis.clients.default.dsn
+    prefix: process.env.COOPCYCLE_DB_NAME + ':',
+    url: process.env.COOPCYCLE_REDIS_DSN
   });
 
   var sub = require('../RedisClient')({
-    prefix: config.snc_redis.clients.default.options.prefix,
-    url: config.snc_redis.clients.default.dsn
+    prefix: process.env.COOPCYCLE_DB_NAME + ':',
+    url: process.env.COOPCYCLE_REDIS_DSN
   });
 
   var pub = require('../RedisClient')({
-    prefix: config.snc_redis.clients.default.options.prefix,
-    url: config.snc_redis.clients.default.dsn
+    prefix: process.env.COOPCYCLE_DB_NAME + ':',
+    url: process.env.COOPCYCLE_REDIS_DSN
   });
 
+  let port = 5432
+  if (process.env.COOPCYCLE_DB_PORT) {
+    port = parseInt(process.env.COOPCYCLE_DB_PORT, 10)
+  }
+
   var sequelize = new Sequelize(
-    config.doctrine.dbal.dbname,
-    config.doctrine.dbal.user,
-    config.doctrine.dbal.password,
+    process.env.COOPCYCLE_DB_NAME,
+    process.env.COOPCYCLE_DB_USER,
+    process.env.COOPCYCLE_DB_PASSWORD || null,
     {
-      host: config.doctrine.dbal.host,
+      host: process.env.COOPCYCLE_DB_HOST,
+      port: port,
       dialect: 'postgres',
       logging: false,
+      dialectOptions: { ssl: process.env.COOPCYCLE_POSTGRES_SSLMODE === 'require' }
     }
   );
 
   return {
-    metrics,
     redis,
     pub,
     sub,

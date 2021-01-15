@@ -3,198 +3,140 @@
 namespace Tests\AppBundle\Utils;
 
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Entity\Restaurant;
-use AppBundle\Utils\PreparationTimeCalculator;
-use AppBundle\Utils\ShippingTimeCalculator;
+use AppBundle\Entity\ClosingRule;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Vendor;
+use AppBundle\Utils\DateUtils;
+use AppBundle\Utils\PreparationTimeResolver;
 use AppBundle\Utils\ShippingDateFilter;
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
-use Predis\Client as Redis;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class ShippingDateFilterTest extends TestCase
 {
-    private $restaurant;
-    private $preparationTimeCalculator;
-    private $shippingTimeCalculator;
+    use ProphecyTrait;
 
-    private $shippingDateFilter;
+    private $restaurant;
+    private $preparationTimeResolver;
+    private $filter;
 
     public function setUp(): void
     {
-        $this->restaurant = $this->prophesize(Restaurant::class);
+        $this->restaurant = $this->prophesize(LocalBusiness::class);
+        $this->preparationTimeResolver = $this->prophesize(PreparationTimeResolver::class);
 
-        $this->redis = $this->prophesize(Redis::class);
-        $this->preparationTimeCalculator = $this->prophesize(PreparationTimeCalculator::class);
-        $this->shippingTimeCalculator = $this->prophesize(ShippingTimeCalculator::class);
-
-        $this->shippingDateFilter = new ShippingDateFilter(
-            $this->redis->reveal(),
-            $this->preparationTimeCalculator->reveal(),
-            $this->shippingTimeCalculator->reveal()
+        $this->filter = new ShippingDateFilter(
+            $this->preparationTimeResolver->reveal()
         );
     }
 
-    public function testDateInThePast()
-    {
-        $order = $this->prophesize(OrderInterface::class);
-
-        $shippingDate = new \DateTime('2018-10-12 19:30:00');
-        $now = new \DateTime('2018-10-12 20:00:00');
-
-        $this->assertFalse($this->shippingDateFilter->accept($order->reveal(), $shippingDate, $now));
-    }
-
-    public function acceptWhenRestaurantIsOpenProvider()
+    public function acceptProvider()
     {
         return [
             [
-                new \DateTime('2018-10-12 19:15:00'),
-                new \DateTime('2018-10-12 19:40:00'),
-                '15 minutes',
-                '10 minutes',
-                null,
+                // $preparation = 11:15, restaurant is closed
+                $now = new \DateTime('2018-10-12 11:00:00'),
+                $dropoff = new \DateTime('2018-10-12 11:30:00'),
+                $preparation = new \DateTime('2018-10-12 11:15:00'),
+                $openingHours = ['Mo-Su 11:30-14:30'],
+                $closingRules = [],
                 false,
             ],
             [
-                new \DateTime('2018-10-12 19:25:00'),
-                new \DateTime('2018-10-12 19:40:00'),
-                '10 minutes',
-                '10 minutes',
-                null,
+                // $dropoff < $now
+                $now = new \DateTime('2018-10-12 12:00:00'),
+                $dropoff = new \DateTime('2018-10-12 11:55:00'),
+                $preparation = new \DateTime('2018-10-12 11:45:00'),
+                $openingHours = ['Mo-Su 11:30-14:30'],
+                $closingRules = [],
                 false,
             ],
             [
-                new \DateTime('2018-10-12 19:15:00'),
-                new \DateTime('2018-10-12 19:55:00'),
-                '15 minutes',
-                '10 minutes',
-                '15',
+                // $preparation < $now
+                $now = new \DateTime('2018-10-12 12:00:00'),
+                $dropoff = new \DateTime('2018-10-12 12:05:00'),
+                $preparation = new \DateTime('2018-10-12 11:50:00'),
+                $openingHours = ['Mo-Su 11:30-14:30'],
+                $closingRules = [],
                 false,
             ],
             [
-                new \DateTime('2018-10-12 19:25:00'),
-                new \DateTime('2018-10-12 19:55:00'),
-                '15 minutes',
-                '10 minutes',
-                null,
-                true,
+                // closing rule
+                $now = new \DateTime('2018-10-12 11:00:00'),
+                $dropoff = new \DateTime('2018-10-12 12:45:00'),
+                $preparation = new \DateTime('2018-10-12 12:30:00'),
+                $openingHours = ['Mo-Su 11:30-14:30'],
+                $closingRules = [
+                    ['2018-10-12 12:00:00', '2018-10-12 13:00:00']
+                ],
+                false,
             ],
             [
-                new \DateTime('2018-10-12 19:25:00'),
-                new \DateTime('2018-10-12 19:55:00'),
-                '15 minutes',
-                '10 minutes',
-                '0',
-                true,
+                // More than 7 days
+                $now = new \DateTime('2018-10-12 11:00:00'),
+                $dropoff = new \DateTime('2018-10-19 11:30:00'),
+                $preparation = new \DateTime('2018-10-12 12:30:00'),
+                $openingHours = ['Mo-Su 11:30-14:30'],
+                $closingRules = [],
+                false,
             ],
             [
-                new \DateTime('2018-10-12 19:25:00'),
-                new \DateTime('2018-10-12 20:25:00'),
-                '15 minutes',
-                '10 minutes',
-                '30',
+                // No problem
+                $now = new \DateTime('2018-10-12 11:00:00'),
+                $dropoff = new \DateTime('2018-10-12 12:45:00'),
+                $preparation = new \DateTime('2018-10-12 12:30:00'),
+                $openingHours = ['Mo-Su 11:30-14:30'],
+                $closingRules = [],
                 true,
             ],
         ];
     }
 
     /**
-     * @dataProvider acceptWhenRestaurantIsOpenProvider
+     * @dataProvider acceptProvider
      */
-    public function testAcceptWhenRestaurantIsOpen(
+    public function testAccept(
         \DateTime $now,
-        \DateTime $shippingDate,
-        $preparationTime,
-        $shippingTime,
-        $preparationDelay,
+        \DateTime $dropoff,
+        \DateTime $preparation,
+        array $openingHours,
+        array $closingRules,
         $expected)
     {
-        $this->restaurant
-            ->isOpen($now)
-            ->willReturn(true);
+        $restaurantClosingRules = new ArrayCollection();
+        foreach ($closingRules as $rule) {
+            $closingRule = new ClosingRule();
+            $closingRule->setStartDate(new \DateTime($rule[0]));
+            $closingRule->setEndDate(new \DateTime($rule[1]));
+            $restaurantClosingRules->add($closingRule);
+        }
 
-        $this->redis
-            ->get('foodtech:preparation_delay')
-            ->willReturn($preparationDelay);
+        $this->restaurant
+            ->getClosingRules()
+            ->willReturn($restaurantClosingRules);
+
+        $this->restaurant
+            ->getOpeningHours('delivery')
+            ->willReturn($openingHours);
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getRestaurant()
-            ->willReturn($this->restaurant->reveal());
-
-        $this->preparationTimeCalculator
-            ->calculate(Argument::type(OrderInterface::class))
-            ->willReturn($preparationTime);
-
-        $this->preparationTimeCalculator
-            ->createForRestaurant(Argument::type(Restaurant::class))
-            ->willReturn($this->preparationTimeCalculator->reveal());
-
-        $this->shippingTimeCalculator
-            ->calculate(Argument::type(OrderInterface::class))
-            ->willReturn($shippingTime);
-
-        $this->assertEquals($expected, $this->shippingDateFilter->accept($order->reveal(), $shippingDate, $now));
-    }
-
-    public function acceptWhenRestaurantIsClosedProvider()
-    {
-        return [
-            [
-                new \DateTime('2018-10-12 13:15:00'),
-                '15 minutes',
-                '10 minutes',
-                new \DateTime('2018-10-12 19:00:00'),
-                new \DateTime('2018-10-12 19:20:00'),
-                false,
-            ],
-            [
-                new \DateTime('2018-10-12 13:15:00'),
-                '15 minutes',
-                '10 minutes',
-                new \DateTime('2018-10-12 19:00:00'),
-                new \DateTime('2018-10-12 19:30:00'),
-                true,
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider acceptWhenRestaurantIsClosedProvider
-     */
-    public function testAcceptWhenRestaurantIsClosed(
-        \DateTime $now,
-        $preparationTime,
-        $shippingTime,
-        \DateTime $nextOpeningDate,
-        \DateTime $shippingDate,
-        $expected)
-    {
-        $this->restaurant
-            ->isOpen($now)
-            ->willReturn(false);
-
-        $this->restaurant
-            ->getNextOpeningDate($now)
-            ->willReturn($nextOpeningDate);
-
-        $order = $this->prophesize(OrderInterface::class);
+            ->getVendor()
+            ->willReturn(
+                Vendor::withRestaurant($this->restaurant->reveal())
+            );
         $order
-            ->getRestaurant()
-            ->willReturn($this->restaurant->reveal());
+            ->getFulfillmentMethod()
+            ->willReturn('delivery');
 
-        $this->preparationTimeCalculator
-            ->calculate(Argument::type(OrderInterface::class))
-            ->willReturn($preparationTime);
+        $tsRange = DateUtils::dateTimeToTsRange($dropoff, 5);
 
-        $this->preparationTimeCalculator
-            ->createForRestaurant(Argument::type(Restaurant::class))
-            ->willReturn($this->preparationTimeCalculator->reveal());
+        $this->preparationTimeResolver
+            ->resolve($order->reveal(), $tsRange->getUpper())
+            ->willReturn($preparation);
 
-        $this->shippingTimeCalculator
-            ->calculate(Argument::type(OrderInterface::class))
-            ->willReturn($shippingTime);
-
-        $this->assertEquals($expected, $this->shippingDateFilter->accept($order->reveal(), $shippingDate, $now));
+        $this->assertEquals($expected, $this->filter->accept($order->reveal(), $tsRange, $now));
     }
 }

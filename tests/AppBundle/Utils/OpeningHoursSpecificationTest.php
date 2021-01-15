@@ -8,7 +8,7 @@ use AppBundle\Utils\OpeningHoursSpecification;
 
 class OpeningHoursSpecificationTest extends TestCase
 {
-    public function testFromOpeningHours()
+    public function testFromOpeningHoursWithRangeOfDays()
     {
         $openingHours = ['Mo-Fr 10:00-19:00', 'Sa 10:00-22:00', 'Su 10:00-21:00'];
 
@@ -27,6 +27,49 @@ class OpeningHoursSpecificationTest extends TestCase
         $this->assertEquals(['Sunday'], $openingHoursSpecification[2]->dayOfWeek);
         $this->assertEquals('10:00', $openingHoursSpecification[2]->opens);
         $this->assertEquals('21:00', $openingHoursSpecification[2]->closes);
+    }
+
+    public function testFromOpeningHoursWithListOfDays()
+    {
+        $openingHours = ["Tu,Th 18:00-20:00", "Tu,Th 20:00-20:30"];
+
+        $openingHoursSpecification = OpeningHoursSpecification::fromOpeningHours($openingHours);
+
+        $this->assertCount(2, $openingHoursSpecification);
+
+        $this->assertEquals(['Tuesday','Thursday'], $openingHoursSpecification[0]->dayOfWeek);
+        $this->assertEquals('18:00', $openingHoursSpecification[0]->opens);
+        $this->assertEquals('20:00', $openingHoursSpecification[0]->closes);
+
+        $this->assertEquals(['Tuesday','Thursday'], $openingHoursSpecification[1]->dayOfWeek);
+        $this->assertEquals('20:00', $openingHoursSpecification[1]->opens);
+        $this->assertEquals('20:30', $openingHoursSpecification[1]->closes);
+    }
+
+    public function testFromOpeningHoursWithDiscontinuedRange()
+    {
+        $openingHours = ['Tu-Th,Sa 16:00-18:00'];
+
+        $openingHoursSpecification = OpeningHoursSpecification::fromOpeningHours($openingHours);
+
+        $this->assertCount(1, $openingHoursSpecification);
+
+        $this->assertEquals(['Tuesday', 'Wednesday', 'Thursday', 'Saturday'], $openingHoursSpecification[0]->dayOfWeek);
+        $this->assertEquals('16:00', $openingHoursSpecification[0]->opens);
+        $this->assertEquals('18:00', $openingHoursSpecification[0]->closes);
+    }
+
+    public function testFromOpeningHoursWithSingleDay()
+    {
+        $openingHours = ['Tu 16:00-18:00'];
+
+        $openingHoursSpecification = OpeningHoursSpecification::fromOpeningHours($openingHours);
+
+        $this->assertCount(1, $openingHoursSpecification);
+
+        $this->assertEquals(['Tuesday'], $openingHoursSpecification[0]->dayOfWeek);
+        $this->assertEquals('16:00', $openingHoursSpecification[0]->opens);
+        $this->assertEquals('18:00', $openingHoursSpecification[0]->closes);
     }
 
     public function testFromClosingRule()

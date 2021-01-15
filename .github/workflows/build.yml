@@ -1,0 +1,36 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+jobs:
+  BUILD_ASSETS:
+    name: Build assets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - run: npm ci
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install python-swiftclient python-keystoneclient
+          pip install awscli
+      - name: Compile SDK for production
+        run: NODE_ENV=production npm run sdk:build
+      - name: Compile assets for production
+        run: |
+          NODE_ENV=production node_modules/.bin/encore production
+          cp web/js/coopcycle.js web/build
+      - name: Upload assets to storage
+        run: |
+          mkdir $GITHUB_SHA
+          tar czvf $GITHUB_SHA/assets.tgz -C web/build .
+          aws --endpoint=$AWS_ENDPOINT s3 cp $GITHUB_SHA/assets.tgz s3://sha1/$GITHUB_SHA.tgz --acl public-read
+        env:
+          AWS_ENDPOINT: ${{ secrets.AWS_ENDPOINT }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

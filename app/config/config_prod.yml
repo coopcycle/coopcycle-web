@@ -2,42 +2,111 @@ imports:
     - { resource: config.yml }
 
 framework:
+    php_errors:
+        log: true
+        throw: false
     assets:
-        json_manifest_path: "%kernel.project_dir%/web/manifest.json"
+        json_manifest_path: "%kernel.project_dir%/web/build/manifest.json"
+    # https://symfony.com/doc/current/cache.html#configuring-cache-with-frameworkbundle
+    # https://github.com/symfony/demo/blob/master/config/packages/prod/doctrine.yaml
+    cache:
+        pools:
+            doctrine.result_cache_pool:
+                adapter: cache.app
+            doctrine.system_cache_pool:
+                adapter: cache.system
 #    validation:
 #        cache: validator.mapping.cache.doctrine.apc
 #    serializer:
 #        cache: serializer.mapping.cache.doctrine.apc
+    session:
+        cookie_secure: true
 
-#doctrine:
-#    orm:
-#        metadata_cache_driver: apc
-#        result_cache_driver: apc
-#        query_cache_driver: apc
+parameters:
+    router.request_context.scheme: 'https'
+
+# https://github.com/doctrine/DoctrineBundle/releases/tag/2.0.1
+# https://symfony.com/blog/new-in-doctrinebundle-1-11-0
+# https://github.com/symfony/demo/blob/master/config/packages/prod/doctrine.yaml
+doctrine:
+    orm:
+        auto_generate_proxy_classes: false
+        metadata_cache_driver:
+            type: pool
+            pool: doctrine.system_cache_pool
+        query_cache_driver:
+            type: pool
+            pool: doctrine.system_cache_pool
+        result_cache_driver:
+            type: pool
+            pool: doctrine.result_cache_pool
 
 monolog:
     handlers:
         main:
-            type:         fingers_crossed
+            type: fingers_crossed
             action_level: error
-            handler:      nested
+            handler: nested
+            excluded_404s:
+                # regex: exclude all 404 errors from the logs
+                - ^/
         nested:
-            type:  rotating_file
-            path:  "%kernel.logs_dir%/%kernel.environment%.log"
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/%kernel.environment%.log"
             level: debug
+            formatter: monolog.formatter.json
             max_files: 7
-            channels: ["!api"]
+            channels: ["!api", "!stripe", "!loopeat"]
         api:
             type: rotating_file
-            path: "%kernel.logs_dir%/api.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/api.%kernel.environment%.log"
             level: info
-            formatter: AppBundle\Monolog\Formatter\ApiFormatter
+            formatter: monolog.formatter.json
             max_files: 7
             channels: [api]
+        messenger:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/messenger.%kernel.environment%.log"
+            level: debug
+            formatter: monolog.formatter.json
+            max_files: 7
+            channels: [messenger]
+        fee_calculation:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/fee_calculation.%kernel.environment%.log"
+            level: info
+            formatter: monolog.formatter.json
+            max_files: 7
+            channels: [fee_calculation]
+        timing:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/timing.%kernel.environment%.log"
+            level: info
+            max_files: 7
+            channels: [timing]
+        geofencing:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/geofencing.%kernel.environment%.log"
+            level: info
+            formatter: monolog.formatter.json
+            max_files: 7
+            channels: [geofencing]
+        stripe:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/stripe.%kernel.environment%.log"
+            level: info
+            max_files: 7
+            channels: [stripe]
+        loopeat:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/loopeat.%kernel.environment%.log"
+            level: info
+            max_files: 7
+            channels: [loopeat]
         mailer:
             level:    error
             type:     rotating_file
-            path:     '%kernel.logs_dir%/mailer.%kernel.environment%.log'
+            path:     '%env(APP_LOG_DIR)%/mailer.%kernel.environment%.log'
             max_files: 7
             channels: [mailer]
         console:
@@ -50,32 +119,10 @@ fos_user:
 
 sentry:
     dsn: '%sentry_public_dsn%'
-
-# see
-# https://github.com/liip/LiipImagineBundle/issues/1018
-# https://github.com/liip/LiipImagineBundle/issues/1144
-liip_imagine:
-    resolvers:
-        default:
-            web_path:
-                web_root: '%kernel.project_dir%/../../shared/web'
-    loaders:
-        default:
-            filesystem:
-                data_root:
-                    - '%kernel.project_dir%/../../shared/web'
-                    - '%kernel.project_dir%/web'
-
-services:
-    apns_php.logger:
-        class: AppBundle\Utils\ApnsPHPLogger
-        arguments: [ '@logger' ]
-    apns_php.push:
-        class: \ApnsPHP_Push
-        arguments:
-            - 0
-            - "%apns_certificate_file%"
-        calls:
-            - method: setLogger
-              arguments:
-                  - '@apns_php.logger'
+    options:
+        # https://github.com/getsentry/sentry-symfony#step-3-configure-the-sdk
+        # https://docs.sentry.io/platforms/php/#php-specific-options
+        excluded_exceptions:
+            - Symfony\Component\Security\Core\Exception\AccessDeniedException
+            - Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+            - ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException

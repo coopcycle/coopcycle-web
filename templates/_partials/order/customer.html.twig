@@ -1,0 +1,15 @@
+{% if customer.hasUser() %}
+  <a href="{{ path('admin_user_details', { username: customer.username }) }}"
+    class="d-inline-block text-truncate" style="max-width: 120px;"
+    title="{{ customer.user.username|e('html_attr') }}">
+    <i class="fa fa-user mr-1"></i>
+    <span>{{ customer.user.username }}</span>
+  </a>
+{% else %}
+  <span
+    class="d-inline-block text-truncate" style="max-width: 120px;"
+    title="{{ customer.emailCanonical|e('html_attr') }}">
+    <i class="fa fa-user mr-1"></i>
+    <span>{{ customer.emailCanonical }}</span>
+  </span>
+{% endif %}

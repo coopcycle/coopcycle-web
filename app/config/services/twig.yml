@@ -4,16 +4,68 @@ services:
     autowire: true
     autoconfigure: true
 
+  AppBundle\Twig\:
+    resource: '../../../src/Twig/*'
+
+  AppBundle\Twig\AppearanceRuntime:
+    arguments:
+      $logoFallback: '%kernel.project_dir%/web/img/logo.png'
+      $assetsFilesystem: '@assets_filesystem'
+
+  AppBundle\Twig\AssetsRuntime:
+    arguments:
+      $assetsFilesystem: '@assets_filesystem'
+
   AppBundle\Twig\TaxRateRuntime:
     arguments:
-      - "@sylius.repository.tax_rate"
+      $taxRateRepository: '@sylius.repository.tax_rate'
 
-  Twig_Extensions_Extension_Text:
-    class: Twig_Extensions_Extension_Text
+  AppBundle\Twig\OrderRuntime:
+    arguments:
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  Twig\Extra\Intl\IntlExtension:
     tags:
       - { name: twig.extension }
 
-  Twig_Extensions_Extension_Intl:
-    class: Twig_Extensions_Extension_Intl
+  Twig\Extra\String\StringExtension:
     tags:
       - { name: twig.extension }
+
+  twig.cache_extension.provider:
+    class: Twig\CacheExtension\CacheProvider\PsrCacheAdapter
+    arguments:
+      $cache: '@twig.cache'
+
+  twig.cache_extension.key_generator:
+    class: AppBundle\Twig\CacheExtension\KeyGenerator
+    arguments:
+      $slugify: '@slugify'
+
+  twig.cache_extension.strategy.black_hole:
+    class: Twig\CacheExtension\CacheStrategy\BlackholeCacheStrategy
+
+  twig.cache_extension.strategy.lifetime:
+    class: Twig\CacheExtension\CacheStrategy\LifetimeCacheStrategy
+    arguments:
+      $cache: '@twig.cache_extension.provider'
+
+  twig.cache_extension.strategy.generational:
+    class: Twig\CacheExtension\CacheStrategy\GenerationalCacheStrategy
+    arguments:
+      $cache: '@twig.cache_extension.provider'
+      $keyGenerator: '@twig.cache_extension.key_generator'
+      $lifetime: 300
+
+  twig.cache_extension:
+    class: Twig\CacheExtension\Extension
+    arguments:
+      $cacheStrategy: '@twig.cache_extension.strategy.generational'
+    tags:
+      - { name: twig.extension }
+
+  AppBundle\Twig\OAuthRuntime:
+    arguments:
+      $key: '%env(COOPCYCLE_OAUTH2_PROXY_JWT_KEY)%'
+      $proxyUri: '%env(COOPCYCLE_OAUTH2_PROXY_URI)%'
+      $enabled: '%env(bool:COOPCYCLE_OAUTH2_PROXY_ENABLED)%'

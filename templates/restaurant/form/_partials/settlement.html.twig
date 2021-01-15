@@ -1,0 +1,5 @@
+{% if form.contract is defined %}
+  {{ form_widget(form.contract) }}
+{% else %}
+  {% include "restaurant/form/_partials/contract_readonly.html.twig" with { restaurant: restaurant } %}
+{% endif %}

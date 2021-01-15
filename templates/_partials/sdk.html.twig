@@ -1,0 +1,8 @@
+<div class="mb-5">
+  <p>{% trans %}restaurant.embed.step_1{% endtrans %}</p>
+  <pre><code class="language-html">{{ ('<script src="' ~ absolute_url('/js/coopcycle.js') ~ '"></script>')|e }}</code></pre>
+</div>
+<div class="mb-5">
+  <p>{% trans with { '%url%': url } %}restaurant.embed.step_2{% endtrans %}</p>
+  <pre><code class="language-html">{{ ('<button type="button" data-coopcycle-embed="' ~ url ~  '">\nOrder now\n</button>')|e }}</code></pre>
+</div>

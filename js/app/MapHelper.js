@@ -2,16 +2,33 @@ import L from 'leaflet'
 import Polyline from '@mapbox/polyline'
 require('beautifymarker')
 
-function init(id, center, zoom = 13, zoomControl = true) {
+let settings = {}
 
-  if (!center && window.AppData && window.AppData.MapHelper && window.AppData.MapHelper.center) {
-    let [ latitude, longitude ] = window.AppData.MapHelper.center.split(',')
-    if (latitude && longitude) {
+function init(id, options = {}) {
+
+  let center
+  let zoom = 13
+  let zoomControl = true
+
+  if (settings.center) {
+    center = settings.center
+  } else {
+    const el = document.querySelector('#cpccl_settings')
+    if (el) {
+      let [ latitude, longitude ] = JSON.parse(el.dataset.latlng).split(',')
       center = [ parseFloat(latitude), parseFloat(longitude) ]
+      settings = {
+        ...settings,
+        center
+      }
     }
   }
 
   var map = L.map(id, { scrollWheelZoom: false, zoomControl })
+
+  if (options.onLoad) {
+    map.whenReady(options.onLoad)
+  }
 
   if (center && zoom) {
     map.setView(center, zoom)
@@ -69,11 +86,15 @@ function route(coordinates) {
   const markersAsString = coordinates
     .map(coordinate => coordinate[0] + ',' + coordinate[1])
     .join(';')
-  return $.getJSON(window.AppData.MapHelper.routeURL.replace('__COORDINATES__', markersAsString))
-    .then(response => {
-      const { routes } = response
-      return routes[0]
-    })
+
+  return new Promise((resolve, reject) => {
+    $.getJSON(window.Routing.generate('routing_route', { coordinates: markersAsString }))
+      .then(response => {
+        const { routes } = response
+        resolve(routes[0])
+      })
+      .catch(e => reject(e))
+  })
 }
 
 function getPolyline(origin, destination) {

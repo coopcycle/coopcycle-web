@@ -1,5 +1,29 @@
 Feature: Dispatch
 
+  Scenario: Not authorized to list task lists
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/task_lists"
+    Then the response status code should be 403
+
+  Scenario: Not authorized to retrieve task list
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/task_lists/1"
+    Then the response status code should be 403
+
   Scenario: Retrieve task lists
     Given the fixtures files are loaded:
       | dispatch.yml        |
@@ -72,6 +96,23 @@ Feature: Dispatch
       """
     Then the response status code should be 201
 
+  Scenario: Create task list already existing
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_COURIER"
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/task_lists" with body:
+      """
+      {
+        "date": "2018-12-02",
+        "courier": "/api/users/1"
+      }
+      """
+    Then the response status code should be 201
+
   Scenario: Administrator can assign task
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -95,32 +136,17 @@ Feature: Dispatch
         "@id":"/api/tasks/4",
         "@type":"Task",
         "id":4,
-        "type":"DROPOFF",
+        "type":"PICKUP",
         "status":"TODO",
         "address":@...@,
         "doneAfter":"@string@.isDateTime()",
         "doneBefore":"@string@.isDateTime()",
         "comments":null,
-        "events":[
-          {
-            "name":"task:assigned",
-            "data":{
-              "username":"sarah"
-            },
-            "createdAt":"@string@.isDateTime()"
-          },
-          {
-            "name":"task:created",
-            "data":[],
-            "createdAt":"@string@.isDateTime()"
-          }
-        ],
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"sarah",
         "previous":null,
         "next":null,
-        "deliveryColor":null,
         "group":null,
         "tags":@array@
       }
@@ -152,26 +178,11 @@ Feature: Dispatch
         "doneAfter":"@string@.isDateTime()",
         "doneBefore":"@string@.isDateTime()",
         "comments":null,
-        "events":[
-          {
-            "name":"task:assigned",
-            "data":{
-              "username":"sarah"
-            },
-            "createdAt":"@string@.isDateTime()"
-          },
-          {
-            "name":"task:created",
-            "data":[],
-            "createdAt":"@string@.isDateTime()"
-          }
-        ],
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"sarah",
         "previous":null,
         "next":null,
-        "deliveryColor":null,
         "group":null,
         "tags":@array@
       }
@@ -242,13 +253,11 @@ Feature: Dispatch
         "doneAfter":"@string@.isDateTime()",
         "doneBefore":"@string@.isDateTime()",
         "comments":null,
-        "events":@array@,
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":false,
         "assignedTo":null,
         "previous":null,
         "next":null,
-        "deliveryColor":null,
         "group":null,
         "tags":@array@
       }
@@ -266,4 +275,16 @@ Feature: Dispatch
       {}
       """
     Then the response status code should be 403
+    And the response should be in JSON
+
+  @debug
+  Scenario: Get optimized task list
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/task_lists/1/optimize"
+    Then the response status code should be 200
     And the response should be in JSON

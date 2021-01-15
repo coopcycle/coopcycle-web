@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Hub" repository-class="AppBundle\Entity\HubRepository" table="hub">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name"/>
+    <field name="shippingOptionsDays" type="integer" column="shipping_options_days" nullable="false">
+      <options>
+        <option name="default">2</option>
+      </options>
+    </field>
+    <field name="deliveryPerimeterExpression" type="string" column="delivery_perimeter_expression" nullable="false">
+      <options>
+        <option name="default">distance &lt; 3000</option>
+      </options>
+    </field>
+    <many-to-one field="address" target-entity="AppBundle\Entity\Address">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="address_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </many-to-one>
+    <many-to-many field="restaurants" target-entity="AppBundle\Entity\LocalBusiness">
+      <join-table name="hub_restaurant">
+        <join-columns>
+          <join-column name="hub_id" referenced-column-name="id" />
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="restaurant_id" referenced-column-name="id" />
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule">
+      <join-table name="hub_closing_rule">
+        <join-columns>
+          <join-column name="hub_id" referenced-column-name="id" />
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="rule_id" referenced-column-name="id" unique="true" />
+        </inverse-join-columns>
+      </join-table>
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </many-to-many>
+    <many-to-many field="fulfillmentMethods" target-entity="AppBundle\Entity\LocalBusiness\FulfillmentMethod">
+      <join-table name="hub_fulfillment_method">
+        <join-columns>
+          <join-column name="hub_id" referenced-column-name="id" />
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="method_id" referenced-column-name="id" unique="true" />
+        </inverse-join-columns>
+      </join-table>
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>

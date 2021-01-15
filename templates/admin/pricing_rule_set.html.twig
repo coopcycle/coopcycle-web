@@ -1,0 +1,64 @@
+{% extends "admin.html.twig" %}
+{% form_theme form 'form/pricing_rule_set.html.twig' %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_deliveries_pricing') }}">{% trans %}adminDashboard.pricing.title{% endtrans %}</a></li>
+{% endblock %}
+
+{% block content %}
+
+  {{ form_start(form) }}
+
+    {{ form_errors(form) }}
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.strategy) }}
+
+    <hr>
+
+    <div class="alert alert-warning {% if form.rules|length > 0 %}hidden{% endif %}">
+      {% trans %}adminDashboard.pricing.noRuleFound{% endtrans %}
+    </div>
+
+    {% if form.rules|length == 0 %}
+      {% do form.rules.setRendered %}
+    {% endif %}
+
+    {{ form_label(form.rules) }}
+
+    <ul
+        id="rule-set"
+        class="delivery-pricing-ruleset"
+        data-prototype="{{ form_widget(form.rules.vars.prototype)|e }}"
+        data-zones="{{ zones|json_encode|e('html_attr') }}"
+        data-packages="{{ packages|json_encode|e('html_attr') }}"
+    >
+        {% for rule in form.rules %}
+          <li class="delivery-pricing-ruleset__rule">
+            {{ form_errors(rule) }}
+            {{ form_widget(rule) }}
+          </li>
+        {% endfor %}
+    </ul>
+
+    <div class="form-group text-right">
+      <button type="button" id="add-pricing-rule" class="btn btn-success">
+        <i class="fa fa-plus"></i> {% trans %}adminDashboard.pricing.addRule{% endtrans %}
+      </button>
+    </div>
+
+    <button type="submit" class="btn btn-block btn-lg btn-primary">
+      {% trans %}basics.save{% endtrans %}
+    </button>
+
+  {{ form_end(form) }}
+
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('delivery-pricing-rules') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('delivery-pricing-rules') }}
+{% endblock %}

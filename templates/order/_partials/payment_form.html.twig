@@ -1,0 +1,38 @@
+{% form_theme payment_form 'bootstrap_3_layout.html.twig' %}
+
+{% set payment = payment_form.vars.value %}
+{% set refund_modal_id = 'refund-modal-' ~ payment.id %}
+
+<div class="modal fade" id="{{ refund_modal_id }}" tabindex="-1" role="dialog" aria-labelledby="{{ refund_modal_id }}-label">
+  <div class="modal-dialog" role="document">
+    {{ form_start(payment_form, { attr: { class: 'modal-content' } }) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="{{ refund_modal_id }}-label">
+          {% trans %}form.order.refund_modal.title{% endtrans %}
+        </h4>
+      </div>
+      <div class="modal-body">
+        {% if payment_form.amount is defined %}
+          {{ form_row(payment_form.amount) }}
+        {% endif %}
+        {% if payment_form.liable is defined %}
+          {{ form_row(payment_form.liable) }}
+        {% endif %}
+        {% if payment_form.comments is defined %}
+          {{ form_row(payment_form.comments) }}
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          {% trans %}basics.cancel{% endtrans %}
+        </button>
+        {% if payment_form.refund is defined %}
+          {{ form_widget(payment_form.refund, { attr: { class: 'btn btn-danger' } }) }}
+        {% endif %}
+      </div>
+    {{ form_end(payment_form) }}
+  </div>
+</div>

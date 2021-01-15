@@ -1,5 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
+import numbro from 'numbro'
 
 // @see http://symfony.com/doc/3.4/frontend/encore/legacy-apps.html
 const $ = require('jquery')
@@ -9,8 +10,10 @@ import '../../assets/css/main.scss'
 
 require('bootstrap-sass')
 
-import { setTimezone } from './i18n'
-import CartTop from './cart/CartTop.jsx'
+import './i18n'
+import { setTimezone, getCurrencySymbol } from './i18n'
+import CartTop from './cart/CartTop'
+import AddressAutosuggest from './widgets/AddressAutosuggest'
 
 global.ClipboardJS = require('clipboard')
 
@@ -22,38 +25,102 @@ if (!String.prototype.startsWith) {
   }
 }
 
-// additional method to format currencies
-Number.prototype.formatMoney = function(places, symbol, thousand, decimal) {
-  places = !isNaN(places = Math.abs(places)) ? places : 2
-  symbol = symbol !== undefined ? symbol : '€'
-  thousand = thousand || '.'
-  decimal = decimal || ','
-  var number = this,
-    negative = number < 0 ? '-' : '',
-    i = parseInt(number = Math.abs(+number || 0).toFixed(places), 10) + '',
-    j = (j = i.length) > 3 ? j % 3 : 0
-  return negative + (j ? i.substr(0, j) + thousand : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : '') + symbol
+// @see https://developer.mozilla.org/fr/docs/Web/API/Element/closest#Polyfill
+if (!Element.prototype.matches)
+  Element.prototype.matches = Element.prototype.msMatchesSelector ||
+                              Element.prototype.webkitMatchesSelector
+
+if (!Element.prototype.closest)
+  Element.prototype.closest = function(s) {
+    var el = this
+    if (!document.documentElement.contains(el)) return null
+    do {
+      if (el.matches(s)) return el
+      el = el.parentElement || el.parentNode
+    } while (el !== null && el.nodeType == 1)
+
+    return null
+  }
+
+Number.prototype.formatMoney = function() {
+
+  return numbro(this).format({
+    ...numbro.languageData().formats.fullWithTwoDecimals,
+    currencySymbol: getCurrencySymbol(),
+  })
 }
 
-window.CoopCycle = window.CoopCycle || {}
-window.CoopCycle.setTimezone = setTimezone
+// Initialize Matomo
+window._paq = [];
 
 /* Top cart */
 document.addEventListener('DOMContentLoaded', function() {
 
+  // Set global timezone used in Moment.js
+  const timezone = document.querySelector('body').dataset.timezone
+  setTimezone(timezone)
+
   const cartTopElement = document.querySelector('#cart-top')
-  const cartDataElement = document.querySelector('#js-cart-data')
+  if (cartTopElement) {
+    render(<CartTop url={ cartTopElement.dataset.url } href={ cartTopElement.dataset.href } />, cartTopElement)
+  }
 
-  if (cartTopElement && cartDataElement) {
+  const inputs = document.querySelectorAll('[data-widget="address-input"]')
+  if (inputs.length > 0) {
 
-    const { restaurant, itemsTotal, total } = cartDataElement.dataset
+    const addressElements = {
+      latitude: '$1ddress_latitude',
+      longitude: '$1ddress_longitude',
+      postalCode: '$1ddress_postalCode',
+      addressLocality: '$1ddress_addressLocality',
+    }
 
-    render(
-      <CartTop
-        restaurant={ restaurant ? JSON.parse(restaurant) : null }
-        total={ total }
-        itemsTotal={ itemsTotal }
-      />, cartTopElement)
+    inputs.forEach(el => {
+
+      // Try to build an address object
+      let address = {
+        streetAddress: el.value
+      }
+      for (const addressProp in addressElements) {
+        const addressEl = document.getElementById(
+          el.getAttribute('id').replace(/([aA])ddress_streetAddress/, addressElements[addressProp])
+        )
+        if (addressEl) {
+          address = {
+            ...address,
+            [addressProp]: addressEl.value
+          }
+        }
+      }
+
+      address = {
+        ...address,
+        geo: {
+          latitude: address.latitude,
+          longitude: address.longitude,
+        }
+      }
+
+      new AddressAutosuggest(
+        el.closest('.form-group'),
+        {
+          required: el.required,
+          address,
+          inputId: el.getAttribute('id'),
+          inputName: el.getAttribute('name'),
+          onAddressSelected: (text, address) => {
+            for (const addressProp in addressElements) {
+              const addressEl = document.getElementById(
+                el.getAttribute('id').replace(/([aA])ddress_streetAddress/, addressElements[addressProp])
+              )
+              if (addressEl) {
+                addressEl.value = address[addressProp]
+              }
+            }
+          }
+        }
+      )
+    })
   }
 
 })

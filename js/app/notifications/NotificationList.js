@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 
 moment.locale($('html').attr('lang'))
 
@@ -23,10 +23,6 @@ class NotificationList extends React.Component {
   toArray() {
     const { notifications } = this.state
     return notifications
-  }
-
-  componentDidUpdate() {
-    this.props.onUpdate()
   }
 
   render() {
@@ -55,4 +51,4 @@ class NotificationList extends React.Component {
   }
 }
 
-export default translate(['common'], { withRef: true })(NotificationList)
+export default withTranslation(['common'], { withRef: true })(NotificationList)

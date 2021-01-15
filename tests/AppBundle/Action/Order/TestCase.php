@@ -2,15 +2,18 @@
 
 namespace Tests\AppBundle\Action\Order;
 
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Service\OrderManager;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 abstract class TestCase extends BaseTestCase
 {
+    use ProphecyTrait;
+
     protected $action;
     protected $user;
     protected $actionClass;

@@ -2,11 +2,13 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Modal from 'react-modal'
 import _ from 'lodash'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 
-import { addTaskList, closeAddUserModal, openAddUserModal } from '../store/actions'
+import { createTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, closeNewTaskModal, setCurrentTask } from '../redux/actions'
+import CourierSelect from './CourierSelect'
 import TaskList from './TaskList'
-import autoScroll from 'dom-autoscroller'
+
+import { selectTaskLists, selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
 
 class TaskLists extends React.Component {
 
@@ -14,11 +16,9 @@ class TaskLists extends React.Component {
     super(props)
     this.state = {
       selectedCourier: '',
-      isDragging: false
     }
 
     this.addUser = this.addUser.bind(this)
-    this.onCourierSelect = this.onCourierSelect.bind(this)
   }
 
   componentDidMount() {
@@ -26,50 +26,27 @@ class TaskLists extends React.Component {
     $('#accordion').on('show.bs.collapse', '.collapse', () => {
       $('#accordion').find('.collapse.in').collapse('hide')
     })
-
-    const self = this
-
-    autoScroll([ this.refs.scrollable ], {
-      margin: 20,
-      maxSpeed: 5,
-      scrollWhenOutside: false,
-      // Can't use an arrow function, because "this" would be wrong
-      autoScroll: function() {
-        // Only scroll when the pointer is down, and there is a child being dragged.
-        return this.down && self.state.isDragging
-      }
-    })
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.isDragging !== prevProps.isDragging) {
-      this.setState({ isDragging: this.props.isDragging })
-    }
   }
 
   addUser() {
-    this.props.addTaskList(this.state.selectedCourier)
+    this.props.createTaskList(this.props.date, this.state.selectedCourier)
     this.props.closeAddUserModal()
-  }
-
-  onCourierSelect (e) {
-    this.setState({'selectedCourier': e.target.value })
   }
 
   render() {
 
-    const { addModalIsOpen, taskListsLoading, couriersList } = this.props
+    const { addModalIsOpen, taskListsLoading } = this.props
     let { taskLists } = this.props
-    let { selectedCourier } = this.state
 
     taskLists = _.orderBy(taskLists, 'username')
 
-    // filter out couriers that are already in planning
-    const availableCouriers = _.filter(couriersList, (courier) => !_.find(taskLists, (tL) => tL.username === courier.username))
-
+    const classNames = ['dashboard__panel', 'dashboard__panel--assignees']
+    if (this.props.hidden) {
+      classNames.push('hidden')
+    }
 
     return (
-      <div className="dashboard__panel dashboard__panel--assignees">
+      <div className={ classNames.join(' ') }>
         <h4>
           <span>{ this.props.t('DASHBOARD_ASSIGNED') }</span>
           { taskListsLoading ?
@@ -88,31 +65,23 @@ class TaskLists extends React.Component {
             <h4 className="modal-title" id="user-modal-label">{this.props.t('ADMIN_DASHBOARD_ADDUSER_TO_PLANNING')}</h4>
           </div>
           <div className="modal-body">
-            <form method="post" className="form-horizontal">
+            <form method="post" >
               <div className="form-group" data-action="dispatch">
-                <label htmlFor="courier" className="col-sm-2 control-label">
+                <label htmlFor="courier" className="control-label">
                   { this.props.t('ADMIN_DASHBOARD_COURIER') }
                 </label>
-                <div className="col-sm-10">
-                  <select name="courier" className="form-control" value={selectedCourier} onChange={(e) => this.onCourierSelect(e)}>
-                    <option></option>
-                    {
-                      availableCouriers.map(function (item, index) {
-                        return (<option value={ item.username } key={ index }>{item.username}</option>)
-                      })
-                    }
-                  </select>
-                </div>
+                <CourierSelect
+                  onChange={ courier => this.setState({ selectedCourier: courier.username }) }
+                  exclude />
               </div>
             </form>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-default" onClick={this.props.closeAddUserModal}>{this.props.t('ADMIN_DASHBOARD_CANCEL')}</button>
-            <button type="submit" className="btn btn-primary" onClick={(e) => this.addUser(e)}>{ this.props.t('ADMIN_DASHBOARD_ADD') }</button>
+            <button type="button" className="btn btn-default" onClick={ this.props.closeAddUserModal }>{this.props.t('ADMIN_DASHBOARD_CANCEL')}</button>
+            <button type="submit" className="btn btn-primary" onClick={ (e) => this.addUser(e) }>{ this.props.t('ADMIN_DASHBOARD_ADD') }</button>
           </div>
         </Modal>
         <div
-          ref="scrollable"
           id="accordion"
           className="dashboard__panel__scroll"
           style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
@@ -122,14 +91,12 @@ class TaskLists extends React.Component {
               return (
                 <TaskList
                   key={ taskList['@id'] }
-                  ref={ taskList['@id'] }
                   collapsed={ collapsed }
                   username={ taskList.username }
                   distance={ taskList.distance }
                   duration={ taskList.duration }
                   items={ taskList.items }
-                  taskListDidMount={ this.props.taskListDidMount }
-                />
+                  uri={ taskList['@id'] } />
               )
             })
           }
@@ -140,20 +107,26 @@ class TaskLists extends React.Component {
 }
 
 function mapStateToProps (state) {
+
   return {
     addModalIsOpen: state.addModalIsOpen,
-    taskLists: state.taskLists,
-    taskListsLoading: state.taskListsLoading,
-    isDragging: state.isDragging,
+    taskLists: selectTaskLists(state),
+    date: selectSelectedDate(state),
+    taskListsLoading: state.dispatch.taskListsLoading,
+    taskModalIsOpen: state.taskModalIsOpen,
   }
 }
 
 function mapDispatchToProps (dispatch) {
+
   return {
-    addTaskList: (date, username) => dispatch(addTaskList(date, username)),
+    createTaskList: (date, username) => dispatch(createTaskList(date, username)),
     openAddUserModal: () => { dispatch(openAddUserModal()) },
-    closeAddUserModal: () => { dispatch(closeAddUserModal()) }
+    closeAddUserModal: () => { dispatch(closeAddUserModal()) },
+    openNewTaskModal: () => dispatch(openNewTaskModal()),
+    closeNewTaskModal: () => dispatch(closeNewTaskModal()),
+    setCurrentTask: (task) => dispatch(setCurrentTask(task)),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(translate()(TaskLists))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(TaskLists))

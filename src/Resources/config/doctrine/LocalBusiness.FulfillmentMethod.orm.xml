@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\LocalBusiness\FulfillmentMethod" table="restaurant_fulfillment_method">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="type" type="string" column="type"/>
+    <field name="openingHours" type="json_array" column="opening_hours"/>
+    <field name="openingHoursBehavior" type="string" column="opening_hours_behavior" length="16" />
+    <field name="options" type="json_array" column="options" nullable="true"/>
+    <field name="minimumAmount" type="integer" column="minimum_amount"/>
+    <field name="orderingDelayMinutes" type="integer" column="ordering_delay_minutes" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="preOrderingAllowed" type="boolean" column="pre_ordering_allowed">
+      <options>
+        <option name="default">1</option>
+      </options>
+    </field>
+    <field name="enabled" type="boolean" column="enabled">
+      <options>
+        <option name="default">1</option>
+      </options>
+    </field>
+  </entity>
+</doctrine-mapping>

@@ -1,15 +1,21 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
-import reducers from './reducers'
-import { socketIO } from './middlewares'
+import reducers, { initialState } from './reducers'
+import { socketIO, title, notification, httpClient } from './middlewares'
 
-const middlewares = [ thunk, socketIO ]
+const middlewares = [ httpClient, thunk, socketIO, title, notification ]
+
+const composeEnhancers = (typeof window !== 'undefined' &&
+  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 
 export const createStoreFromPreloadedState = preloadedState => {
   return createStore(
     reducers,
-    preloadedState,
-    compose(
+    {
+      ...initialState,
+      ...preloadedState,
+    },
+    composeEnhancers(
       applyMiddleware(...middlewares)
     )
   )

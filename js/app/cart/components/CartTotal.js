@@ -1,27 +1,110 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
+import _ from 'lodash'
 
-import CartItem from './CartItem'
+import {
+  selectShowPricesTaxExcluded,
+  selectItems,
+  selectItemsTotal,
+  selectVariableCustomerAmountEnabled } from '../redux/selectors'
+
+const Adjustment = ({ adjustment, tooltip }) => (
+  <div>
+    <span>{ adjustment.label }</span>
+    { tooltip && (
+      <span className="ml-1" data-toggle="tooltip" data-placement="right" title={ tooltip }>
+        <i className="fa fa-info-circle"></i>
+      </span>
+    ) }
+    <strong className="pull-right">{ (adjustment.amount / 100).formatMoney() }</strong>
+  </div>
+)
+
+const groupTaxAdjustments = (adjustments, items) => {
+
+  const itemTaxAdjustments = _.reduce(items, (acc, item) => {
+    if (Object.prototype.hasOwnProperty.call(item.adjustments, 'tax')) {
+      return acc.concat(item.adjustments.tax)
+    }
+
+    return acc
+  }, [])
+
+  const merged  = adjustments.concat(itemTaxAdjustments)
+  const grouped = _.groupBy(merged, 'label')
+
+  return _.map(grouped, (items, key) => {
+    return {
+      label: key,
+      amount: _.sumBy(items, 'amount')
+    }
+  })
+}
 
 class CartTotal extends React.Component {
 
+  componentDidMount() {
+    if (this.props.variableCustomerAmountEnabled) {
+      $('body').tooltip({
+        selector: '[data-toggle="tooltip"]'
+      })
+    }
+  }
+
   renderAdjustments() {
 
-    const { adjustments } = this.props
+    const { items, variableCustomerAmountEnabled, showPricesTaxExcluded } = this.props
 
-    if (adjustments.hasOwnProperty('delivery')) {
-      return (
-        <div>
-          { adjustments.delivery.map(adjustment =>
-            <div key={ adjustment.id }>
-              <span>{ adjustment.label }</span>
-              <strong className="pull-right">{ (adjustment.amount / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
-            </div>
-          )}
-        </div>
-      )
+    let adjustments = []
+    let taxAdjustments = []
+
+    if (Object.prototype.hasOwnProperty.call(this.props.adjustments, 'tax')) {
+      taxAdjustments = this.props.adjustments.tax
     }
+
+    const deliveryAdjustments = this.props.adjustments.delivery || []
+
+    if (Object.prototype.hasOwnProperty.call(this.props.adjustments, 'reusable_packaging')) {
+      adjustments = adjustments.concat(this.props.adjustments.reusable_packaging)
+    }
+
+    if (Object.prototype.hasOwnProperty.call(this.props.adjustments, 'order_promotion')) {
+      adjustments = adjustments.concat(this.props.adjustments.order_promotion)
+    }
+
+    if (Object.prototype.hasOwnProperty.call(this.props.adjustments, 'delivery_promotion')) {
+      adjustments = adjustments.concat(this.props.adjustments.delivery_promotion)
+    }
+
+    let deliveryAdjustmentProps = {}
+    if (variableCustomerAmountEnabled) {
+      deliveryAdjustmentProps = {
+        ...deliveryAdjustmentProps,
+        tooltip: this.props.t('CART_DYNAMIC_DELIVERY_FEE'),
+      }
+    }
+
+    return (
+      <div>
+        { deliveryAdjustments.map(adjustment =>
+          <Adjustment
+            key={ adjustment.id }
+            adjustment={ _.first(deliveryAdjustments) }
+            { ...deliveryAdjustmentProps } />
+        )}
+        { showPricesTaxExcluded && groupTaxAdjustments(taxAdjustments, items).map(adjustment =>
+          <Adjustment
+            key={ adjustment.label }
+            adjustment={ adjustment } />
+        )}
+        { adjustments.map(adjustment =>
+          <Adjustment
+            key={ adjustment.id }
+            adjustment={ adjustment } />
+        )}
+      </div>
+    )
   }
 
   render() {
@@ -33,14 +116,13 @@ class CartTotal extends React.Component {
         <div>
           <div>
             <span>{ this.props.t('CART_TOTAL_PRODUCTS') }</span>
-            <strong className="pull-right">{ (itemsTotal / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
+            <strong className="pull-right">{ (itemsTotal / 100).formatMoney() }</strong>
           </div>
           { this.renderAdjustments() }
           <div>
             <span>{ this.props.t('CART_TOTAL') }</span>
-            <strong className="pull-right">{ (total / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
+            <strong className="pull-right">{ (total / 100).formatMoney() }</strong>
           </div>
-          <hr />
         </div>
       )
     }
@@ -54,23 +136,14 @@ class CartTotal extends React.Component {
 
 function mapStateToProps (state) {
 
-  const { cart, restaurant } = state
-
-  let itemsTotal = cart.itemsTotal
-  let total = cart.total
-  let adjustments = cart.adjustments
-
-  if (cart.restaurant.id !== restaurant.id) {
-    itemsTotal = 0
-    total = 0
-    adjustments = {}
-  }
-
   return {
-    itemsTotal,
-    total,
-    adjustments,
+    items: selectItems(state),
+    itemsTotal: selectItemsTotal(state),
+    total: state.cart.total,
+    adjustments: state.cart.adjustments,
+    variableCustomerAmountEnabled: selectVariableCustomerAmountEnabled(state),
+    showPricesTaxExcluded: selectShowPricesTaxExcluded(state),
   }
 }
 
-export default connect(mapStateToProps)(translate()(CartTotal))
+export default connect(mapStateToProps)(withTranslation()(CartTotal))

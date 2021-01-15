@@ -6,7 +6,7 @@ services:
     restart: always
     image: mdillon/postgis:9.4-alpine
     environment:
-      POSTGRES_DB: coopcycle
+      - POSTGRES_DB=${COOPCYCLE_DB_NAME}
     ports:
       - '5432:5432'
     volumes:
@@ -14,7 +14,7 @@ services:
 
   redis:
     restart: always
-    image: redis:alpine
+    image: redis:5-alpine
     ports:
       - '6379:6379'
 
@@ -22,26 +22,31 @@ services:
     build:
       dockerfile: './docker/nodejs/Dockerfile'
       context: '.'
+    image: coopcycle/node
     depends_on:
       - postgres
       - redis
+      - tile38
     ports:
       - '8000:8000'
-      - '8001:8001'
-      - '8002:8002'
     volumes:
-      - 'node_modules:/srv/coopcycle/node_modules'
-      - './:/srv/coopcycle:cached'
+      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+      - '.:/srv/coopcycle'
+      - 'node_modules_node:/srv/coopcycle/node_modules/'
+    # environment:
+    #   - APP_ENV
 
   webpack:
     build:
       dockerfile: './docker/webpack/Dockerfile'
       context: '.'
+    image: coopcycle/webpack
     ports:
       - '8080:8080'
     volumes:
-      - 'node_modules:/srv/coopcycle/node_modules'
-      - './:/srv/coopcycle:cached'
+      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+      - '.:/srv/coopcycle'
+      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
 
   osrm:
     build: './docker/osrm'
@@ -50,44 +55,63 @@ services:
     volumes:
       - './var/osrm:/data'
     environment:
-      OSRM_FILENAME: data.osrm
+      - OSRM_FILENAME=data.osrm
 
   php:
     build:
       dockerfile: './docker/php/Dockerfile'
       context: '.'
+    image: coopcycle/php
     depends_on:
       - postgres
       - redis
       - osrm
-      - graphite
       - stripe_mock
     links:
       - osrm
-      - graphite
       - stripe_mock
+      - browserless
     environment:
-      SYMFONY_ENV: dev
-      BEHAT_PARAMS: '{"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80","sessions":{"selenium2":{"selenium2":{"wd_host":"http://zalenium:4444/wd/hub"}}}}}}'
-      ASSETS_BASE_URL: http://webpack:8080
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
-      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      - 'BEHAT_PARAMS={"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80"}}}'
+      - GOOGLE_API_KEY
+      - STRIPE_PUBLISHABLE_KEY
+      - STRIPE_SECRET_KEY
+      - ALGOLIA_PLACES_APP_ID
+      - ALGOLIA_PLACES_API_KEY
+      - ALGOLIA_PLACES_ADDRESS_TEMPLATE
     volumes:
-      - 'php_cache:/srv/coopcycle/var/cache'
-      - './:/srv/coopcycle:cached'
+      - 'php_cache:/var/www/html/var/cache'
+      - './:/var/www/html:cached'
+    cap_add:
+      - SYS_ADMIN
+
+  php_worker:
+    build:
+      dockerfile: './docker/php_worker/Dockerfile'
+      context: '.'
+    depends_on:
+      - php
+    restart: always
+    environment:
+      - GOOGLE_API_KEY
+      - STRIPE_PUBLISHABLE_KEY
+      - STRIPE_SECRET_KEY
+    volumes:
+      - 'php_cache:/var/www/html/var/cache'
+      - './:/var/www/html:cached'
 
   nginx:
     image: 'nginx:1.11-alpine'
     depends_on:
       - php
       - nodejs
+      - centrifugo
     ports:
       - '80:80'
     volumes:
       - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
-      - './web:/srv/coopcycle/web:ro'
-      - './vendor:/srv/coopcycle/vendor:ro'
+      - './web:/var/www/html/web:ro'
+      - './vendor:/var/www/html/vendor:ro'
 
   nginx_test:
     image: 'nginx:1.11-alpine'
@@ -98,52 +122,105 @@ services:
       - '9080:80'
     volumes:
       - './docker/nginx_test/conf.d:/etc/nginx/conf.d:ro'
-      - './web:/srv/coopcycle/web:ro'
-      - './vendor:/srv/coopcycle/vendor:ro'
+      - './web:/var/www/html/web:ro'
+      - './vendor:/var/www/html/vendor:ro'
 
   smtp:
     image: namshi/smtp
     ports:
       - 25:25
 
-  graphite:
-    restart: always
-    image: graphiteapp/graphite-statsd:latest
-    ports:
-      - '7000:80'
-      - '2003-2004:2003-2004'
-      - '2023-2024:2023-2024'
-      - '8125:8125/udp'
-      - '8126:8126'
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - '3000:3000'
-    depends_on:
-      - graphite
-    links:
-      - graphite
-
   stripe_mock:
-    image: stripemock/stripe-mock:latest
+    image: stripemock/stripe-mock:v0.94.0
     ports:
       - '12111:12111'
 
-  zalenium:
-    image: dosel/zalenium
-    tty: true
-    volumes:
-      - /tmp/videos:/home/seluser/videos
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - 4444:4444
-    command: >
-      start --timeZone "Europe/Paris"
+  browserless:
+    image: browserless/chrome
+    restart: always
     environment:
-      - PULL_SELENIUM_IMAGE=true
+      - DEBUG=browserless/chrome*
+
+  mjml:
+    image: adrianrudnik/mjml-server
+    ports:
+      - 8889:80
+
+  minio:
+    image: minio/minio
+    command: server /data
+    ports:
+      - "9000:9000"
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ACCESS_KEY=${S3_CREDENTIALS_KEY}
+      - MINIO_SECRET_KEY=${S3_CREDENTIALS_SECRET}
+      - MINIO_REGION=${S3_REGION}
+
+  # https://github.com/minio/minio/issues/4882
+  # https://docs.min.io/docs/minio-client-complete-guide#policy
+  minio_client:
+    image: minio/mc
+    depends_on:
+      - minio
+    environment:
+      - S3_CREDENTIALS_KEY
+      - S3_CREDENTIALS_SECRET
+      - S3_REGION
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add coopcycle http://minio:9000 $S3_CREDENTIALS_KEY $S3_CREDENTIALS_SECRET;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/assets/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/products/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/receipts/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/restaurants/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/stores/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/tasks/;
+      /usr/bin/mc policy set public coopcycle/images/;
+      "
+
+  tile38:
+    image: tile38/tile38
+
+  vroom:
+    image: vroomvrp/vroom-docker:v1.8.0
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./vroom-conf/:/conf
+    environment:
+      - VROOM_ROUTER=osrm  # router to use, osrm or ors
+    depends_on:
+      - osrm
+
+  sonic:
+    image: valeriansaliou/sonic:v1.3.0
+    ports:
+      - "1491:1491"
+    volumes:
+      - ./sonic.cfg:/etc/sonic.cfg
+
+  centrifugo:
+    image: centrifugo/centrifugo
+    ports:
+      - "8100:8000"
+    depends_on:
+      - redis
+    environment:
+      - CENTRIFUGO_TOKEN_HMAC_SECRET_KEY
+      - CENTRIFUGO_API_KEY
+      - CENTRIFUGO_V3_USE_OFFSET=true
+      - CENTRIFUGO_ENGINE=redis
+      - CENTRIFUGO_REDIS_URL=redis://redis:6379
+      - CENTRIFUGO_ADMIN=true
+      - CENTRIFUGO_ADMIN_PASSWORD=centrifugo
+      - CENTRIFUGO_ADMIN_SECRET=centrifugo
 
 volumes:
-  node_modules:
+  node_modules_node:
+  node_modules_webpack:
   pg_data:
   php_cache:
+  minio_data:

@@ -1,0 +1,86 @@
+{% if deliveries|length > 0 %}
+<table class="table table-condensed">
+  <thead>
+    <th>#</th>
+    {% if with_store is defined and with_store %}
+    <th>{{ 'delivery.table.heading.owner'|trans }}</th>
+    {% endif %}
+    <th>{{ 'delivery.table.heading.summary'|trans }}</th>
+    <th>{{ 'task.type.DROPOFF'|trans }}</th>
+    <th>{{ 'delivery.table.heading.courier'|trans }}</th>
+    {% if with_order is defined and with_order %}
+    <th class="text-center">{{ 'delivery.table.heading.order'|trans }}</th>
+    {% endif %}
+    <th></th>
+    <th></th>
+  </thead>
+  <tbody>
+  {% for delivery in deliveries %}
+    <tr>
+      <td>
+        <a href="{{ path(routes.view, { id: delivery.id }) }}">#{{ delivery.id }}</a>
+      </td>
+      {% if with_store is defined and with_store %}
+      <td>
+        {% if delivery.owner is not empty %}
+          <a href="{{ path(deliveries.route, deliveries.params|merge({
+            (deliveries.paginatorOptions.filterFieldParameterName): delivery.owner is instanceof('AppBundle\\Entity\\LocalBusiness') ? 'r.id' : 's.id',
+            (deliveries.paginatorOptions.filterValueParameterName): delivery.owner.id })) }}">
+            {{ delivery.owner.name }}
+          </a>
+        {% endif %}
+      </td>
+      {% endif %}
+      <td width="40%">
+        <small><i class="fa fa-cube"></i> {{ delivery.pickup.address.streetAddress }}</small>
+        <br>
+        <small><i class="fa fa-arrow-down"></i> {{ delivery.dropoff.address.streetAddress }}</small>
+        {% set details = [ delivery.distance|meters_to_kilometers ] %}
+        {% if delivery.weight is not empty %}
+          {% set details = details|merge([ delivery.weight|grams_to_kilos ]) %}
+        {% endif %}
+        <br>
+        <small>{{ details|join(' - ') }}</small>
+      </td>
+      <td>
+        <small>
+          {% if delivery.dropoff.before|date('Ymd') == 'now'|date('Ymd') %}
+            {{ delivery.dropoff.before|ago }}
+          {% else %}
+            {{ delivery.dropoff.before|format_datetime('short', 'short') }}
+          {% endif %}
+        </small>
+      </td>
+      <td width="10%">
+        {% if delivery.pickup.isAssigned() and delivery.dropoff.isAssigned() %}
+          {% if delivery.pickup.assignedCourier == delivery.dropoff.assignedCourier %}
+            <a href="{{ path('admin_user_details', { username: delivery.pickup.assignedCourier.username }) }}">
+              <img src="{{ path('user_avatar', { username: delivery.pickup.assignedCourier.username }) }}" width="20" height="20"> @{{ delivery.pickup.assignedCourier.username }}
+            </a>
+          {% endif %}
+        {% endif %}
+      </td>
+      {% if with_order is defined and with_order %}
+      <td class="text-center">
+        {% if delivery.order is defined and delivery.order is not empty %}
+          <a href="{{ path('admin_order', { id: delivery.order.id }) }}">
+            {{ delivery.order.number }}
+          </a>
+        {% endif %}
+      </td>
+      {% endif %}
+      <td class="text-center" width="10%">
+        <small class="text-muted">{{ delivery.createdAt|ago }}</small>
+      </td>
+      <td class="text-right">
+        <a href="{{ path(routes.view, { id: delivery.id }) }}">{{ 'basics.view'|trans }}</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <p class="text-muted">
+  {% trans %}basics.no_entries{% endtrans %}
+  </p>
+{% endif %}

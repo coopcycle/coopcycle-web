@@ -1,77 +1,75 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import Sticky from 'react-stickynode'
-import _ from 'lodash'
-import md5 from 'locutus/php/strings/md5'
+import classNames from 'classnames'
 
 import AddressModal from './AddressModal'
+import DateModal from './DateModal'
 import RestaurantModal from './RestaurantModal'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
-import CartErrors from './CartErrors'
 import CartItems from './CartItems'
 import CartHeading from './CartHeading'
 import CartTotal from './CartTotal'
 import CartButton from './CartButton'
-import DatePicker from './DatePicker'
+import Time from './Time'
+import Takeaway from './Takeaway'
 
-import { changeAddress, changeDate, sync, geocodeAndSync } from '../redux/actions'
-
-let isXsDevice = $('.visible-xs').is(':visible')
+import { changeAddress, sync, disableTakeaway, enableTakeaway } from '../redux/actions'
+import { selectIsDeliveryEnabled, selectIsCollectionEnabled, selectIsOrderingAvailable } from '../redux/selectors'
 
 class Cart extends Component {
 
   componentDidMount() {
-
-    const { streetAddress, shippingAddress } = this.props
-
-    if (streetAddress && shippingAddress && !Array.isArray(shippingAddress.latlng)) {
-      this.props.geocodeAndSync()
-    } else {
-      this.props.sync()
-    }
+    this.props.sync()
   }
 
   render() {
 
-    const { items, isMobileCartVisible } = this.props
-
-    const panelClasses = ['panel', 'panel-default', 'cart-wrapper']
-    if (isMobileCartVisible) {
-      panelClasses.push('cart-wrapper--show')
-    }
+    const { isMobileCartVisible } = this.props
 
     return (
-      <Sticky enabled={ !isXsDevice } top={ 30 }>
-        <div className={ panelClasses.join(' ') }>
+      <Sticky>
+        <div className={ classNames({
+          'panel': true,
+          'panel-default': true,
+          'cart-wrapper': true,
+          'cart-wrapper--show': isMobileCartVisible }) }>
           <CartHeading />
           <div className="panel-body">
-            <CartErrors />
             <div className="cart">
-              <AddressAutosuggest
-                addresses={ this.props.addresses }
-                address={ this.props.streetAddress }
-                geohash={ '' }
-                key={ this.props.streetAddress }
-                onAddressSelected={ (value, address, type) => this.props.changeAddress(address) } />
-              <hr />
-              <DatePicker
-                dateInputName={ this.props.datePickerDateInputName }
-                timeInputName={ this.props.datePickerTimeInputName }
-                availabilities={ this.props.availabilities }
-                value={ _.first(this.props.availabilities) }
-                key={ md5(this.props.availabilities.join('|')) }
-                onChange={ (dateString) => this.props.changeDate(dateString) } />
-              <hr />
+              <div>
+                <AddressAutosuggest
+                  addresses={ this.props.addresses }
+                  address={ this.props.shippingAddress }
+                  geohash={ '' }
+                  key={ this.props.streetAddress }
+                  onAddressSelected={ (value, address) => this.props.changeAddress(address) }
+                  disabled={ this.props.isCollectionOnly || this.props.takeaway }
+                  required />
+                { this.props.isCollectionEnabled && (
+                <div className="text-center mb-4">
+                  <Takeaway
+                    defaultChecked={ this.props.isCollectionOnly }
+                    checked={ this.props.takeaway || this.props.isCollectionOnly }
+                    onChange={ enabled => enabled ? this.props.enableTakeaway() : this.props.disableTakeaway() }
+                    disabled={ this.props.loading || this.props.isCollectionOnly } />
+                </div>
+                )}
+                { this.props.isOrderingAvailable && <Time /> }
+              </div>
               <CartItems />
-              <hr />
-              <CartTotal />
-              <CartButton />
+              <div>
+                <CartTotal />
+                { this.props.isOrderingAvailable && <hr /> }
+                { this.props.isOrderingAvailable && <CartButton /> }
+              </div>
             </div>
           </div>
         </div>
         <AddressModal />
         <RestaurantModal />
+        <DateModal />
       </Sticky>
     )
   }
@@ -79,22 +77,17 @@ class Cart extends Component {
 
 function mapStateToProps(state) {
 
-  const { cart, restaurant } = state
-
-  let items = cart.items
-  if (cart.restaurant.id !== restaurant.id) {
-    items = []
-  }
-
   return {
-    items,
-    availabilities: state.availabilities,
-    datePickerDateInputName: state.datePickerDateInputName,
-    datePickerTimeInputName: state.datePickerTimeInputName,
     shippingAddress: state.cart.shippingAddress,
     streetAddress: state.cart.shippingAddress ? state.cart.shippingAddress.streetAddress : '',
     isMobileCartVisible: state.isMobileCartVisible,
     addresses: state.addresses,
+    isDeliveryEnabled: selectIsDeliveryEnabled(state),
+    isCollectionEnabled: selectIsCollectionEnabled(state),
+    isCollectionOnly: (selectIsCollectionEnabled(state) && !selectIsDeliveryEnabled(state)),
+    takeaway: state.cart.takeaway,
+    loading: state.isFetching,
+    isOrderingAvailable: selectIsOrderingAvailable(state),
   }
 }
 
@@ -102,10 +95,10 @@ function mapDispatchToProps(dispatch) {
 
   return {
     changeAddress: address => dispatch(changeAddress(address)),
-    changeDate: date => dispatch(changeDate(date)),
     sync: () => dispatch(sync()),
-    geocodeAndSync: () => dispatch(geocodeAndSync()),
+    enableTakeaway: () => dispatch(enableTakeaway()),
+    disableTakeaway: () => dispatch(disableTakeaway()),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(Cart))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Cart))

@@ -1,97 +1,108 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { render } from 'react-dom'
-import { I18nextProvider } from 'react-i18next'
+import { Badge, Popover } from 'antd'
+import Centrifuge from 'centrifuge'
+
 import NotificationList from './NotificationList'
-import i18n from '../i18n'
 
-function bootstrap($popover, options) {
+const zeroStyle = {
+  backgroundColor: 'transparent',
+  color: 'inherit',
+  boxShadow: '0 0 0 1px #d9d9d9 inset'
+}
 
-  if ($popover.length === 0) {
+const Notifications = ({ initialNotifications, initialCount, onOpen, centrifuge, namespace, username }) => {
+
+  const [ visible, setVisible ] = useState(false)
+  const [ notifications, setNotifications ] = useState(initialNotifications)
+  const [ count, setCount ] = useState(initialCount)
+
+  useEffect(() => {
+    centrifuge.subscribe(`${namespace}_events#${username}`, message => {
+      const { event } = message.data
+
+      switch (event.name) {
+        case 'notifications':
+          setNotifications(prevNotifications => {
+            const newNotifications = [ event.data ]
+
+            return [ ...newNotifications, ...prevNotifications ]
+          })
+          break
+        case 'notifications:count':
+          setCount(event.data)
+          break
+      }
+    })
+    centrifuge.connect()
+  }, [])
+
+  useEffect(() => {
+    if (visible) {
+      onOpen(notifications)
+    }
+  }, [ visible ])
+
+  const badgeProps = count === 0 ?
+    { style: zeroStyle } : { style: { backgroundColor: '#52c41a' } }
+
+  return (
+    <Popover
+      placement="bottomRight"
+      content={ <NotificationList notifications={ notifications } /> }
+      title="Notifications"
+      trigger="click"
+      visible={ visible }
+      onVisibleChange={ value => setVisible(value) }
+    >
+      <a href="#">
+        <Badge count={ count } showZero { ...badgeProps } title={ `${count} new notification(s)` } />
+      </a>
+    </Popover>
+  )
+}
+
+function bootstrap(el, options) {
+
+  if (!el) {
     return
   }
 
-  let template = document.createElement('script')
-  template.type = 'text/template'
-  document.body.appendChild(template)
-
-  const notificationsListRef = React.createRef()
-  const getNotificationsList = (ref) => ref.current.getWrappedInstance()
-
-  const initPopover = () => {
-
-    $popover.popover({
-      placement: 'bottom',
-      container: 'body',
-      html: true,
-      template: `<div class="popover" role="tooltip">
-        <div class="arrow"></div>
-        <div class="popover-content nopadding"></div>
-      </div>`,
-    })
-
-    $popover.on('shown.bs.popover', () => {
-      const notifications = getNotificationsList(notificationsListRef)
-        .toArray()
-        .map(notification => notification.id)
-      $.ajax(options.markAsReadURL, {
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(notifications),
-      })
-    })
-  }
-
-  const setPopoverContent = () => {
-    $popover.attr('data-content', template.innerHTML)
-  }
-
-  const socket = io(`//${window.location.hostname}`, {
-    path: '/tracking/socket.io',
-    transportOptions: {
-      polling: {
-        extraHeaders: {
-          Authorization: `Bearer ${options.jwt}`
-        }
-      }
-    }
-  })
-
-  socket.on(`notifications`, notification => getNotificationsList(notificationsListRef).unshift(notification))
-  socket.on(`notifications:count`, count => options.elements.count.innerHTML = count)
-
-  $.getJSON(options.unreadCountURL)
-    .then(count => options.elements.count.innerHTML = count)
+  const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
+  const centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
+  centrifuge.setToken(options.token)
 
   $.getJSON(options.notificationsURL, { format: 'json' })
-    .then(notifications => {
-      render(
-        <I18nextProvider i18n={ i18n }>
-          <NotificationList
-            ref={ notificationsListRef }
-            notifications={ notifications }
-            url={ options.notificationsURL }
-            emptyMessage={ options.emptyMessage }
-            onUpdate={ () => setPopoverContent() } />
-        </I18nextProvider>,
-        template,
-        () => {
-          setPopoverContent()
-          initPopover()
-        }
-      )
-    })
+  .then(result => {
+
+    const { unread, notifications } = result
+
+    render(<Notifications
+      initialNotifications={ notifications }
+      initialCount={ unread }
+      onOpen={ (notifications) => {
+        const notificationsIds = notifications.map(notification => notification.id)
+        $.ajax(options.markAsReadURL, {
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(notificationsIds),
+        })
+      }}
+      centrifuge={ centrifuge }
+      namespace={ options.namespace }
+      username={ options.username } />, el)
+  })
+  .catch(() => { /* Fail silently */ })
 }
 
 $.getJSON(window.Routing.generate('profile_jwt'))
-  .then(jwt => {
+  .then(result => {
     const options = {
       notificationsURL: window.Routing.generate('profile_notifications'),
-      unreadCountURL: window.Routing.generate('profile_notifications_unread'),
-      markAsReadURL: window.Routing.generate('profile_notifications_mark_as_read'),
-      jwt: jwt,
-      elements: {
-        count: document.querySelector('#notifications .badge')
-      },
+      markAsReadURL:    window.Routing.generate('profile_notifications_mark_as_read'),
+      token:     result.cent_tok,
+      namespace: result.cent_ns,
+      username:  result.cent_usr,
     }
-    bootstrap($('#notifications'), options)
+    bootstrap(document.querySelector('#notifications'), options)
   })

@@ -1,0 +1,25 @@
+AppBundle\Entity\Sylius\ProductOptionValue:
+  accompaniments_{1..5}:
+    code: <uuid()>
+    currentLocale: "<{currentLocale}>"
+    value: <accompanimentName()>
+  drinks_{1..3}:
+    code: <uuid()>
+    currentLocale: "<{currentLocale}>"
+    value: <drinkName()>
+
+AppBundle\Entity\Sylius\ProductOption:
+  accompaniments:
+    code: <uuid()>
+    strategy: free
+    currentLocale: "<{currentLocale}>"
+    name: Accompagnement
+    values: [ "@accompaniments_1", "@accompaniments_2", "@accompaniments_3", "@accompaniments_4", "@accompaniments_5" ]
+    additional: false
+  drinks:
+    code: <uuid()>
+    strategy: free
+    currentLocale: "<{currentLocale}>"
+    name: Boisson
+    values: [ "@drinks_1", "@drinks_2", "@drinks_3" ]
+    additional: false

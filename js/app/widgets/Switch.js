@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
-import Switch from 'antd/lib/switch'
+import { Switch } from 'antd'
 
 class SwitchWrapper extends Component {
 
@@ -36,9 +36,23 @@ class SwitchWrapper extends Component {
 
 export default function(el, options) {
 
-  const props = {
+  let props = {
     checked: options.checked,
     disabled: options.disabled || false,
+  }
+
+  if (options.checkedChildren) {
+    props = {
+      ...props,
+      checkedChildren: options.checkedChildren,
+    }
+  }
+
+  if (options.unCheckedChildren) {
+    props = {
+      ...props,
+      unCheckedChildren: options.unCheckedChildren,
+    }
   }
 
   const component = render(<SwitchWrapper { ...props } onChange={ options.onChange } />, el)

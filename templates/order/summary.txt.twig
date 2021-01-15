@@ -1,0 +1,20 @@
+{{ 'order.summary.heading'|trans({ '%number%': order.number, '%id%': order.id }) }}
+
+---
+
+{% for item in order.items %}
+{{ item.variant.product.name }} × {{ item.quantity }}
+{% for adjustment in item.getAdjustments('menu_item_modifier') %}
+  - {{ adjustment.label }}
+{% endfor %}
+{% for adjustment in item.getAdjustments('reusable_packaging') %}
+  - {{ adjustment.label }}
+{% endfor %}
+
+{% endfor %}
+
+{% if order.reusablePackagingPledgeReturn > 0 %}
+---
+
+{{ 'order.reusable_packaging.pledge_return.disclaimer'|trans({ '%count%': order.reusablePackagingPledgeReturn }) }}
+{% endif %}

@@ -1,0 +1,79 @@
+<nav class="navbar navbar-inverse rounded-0">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#dashboard-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand navbar-brand-img" href="{{ path('dashboard') }}" >
+        <img src="{{ coopcycle_company_logo() }}" />
+      </a>
+      <a class="navbar-brand hidden-sm hidden-xs" href="{{ path('dashboard') }}">
+        {{ coopcycle_setting('brand_name') }}
+      </a>
+    </div>
+    <div class="collapse navbar-collapse" id="dashboard-navbar">
+      <ul class="nav navbar-nav navbar-right">
+
+        {% set choices = [] %}
+
+        {% if is_granted('ROLE_STORE') and app.user.stores|length > 0 %}
+          {% for s in app.user.stores %}
+            {% set choices = choices|merge([ s ]) %}
+          {% endfor %}
+        {% endif %}
+        {% if is_granted('ROLE_RESTAURANT') and app.user.restaurants|length > 0 %}
+          {% for r in app.user.restaurants %}
+            {% set choices = choices|merge([ r ]) %}
+          {% endfor %}
+        {% endif %}
+
+        {% set store      = app.request.attributes.get('_store') %}
+        {% set restaurant = app.request.attributes.get('_restaurant') %}
+
+        {% set possible_choices = [ store, restaurant ]|filter(c => c is not empty) %}
+        {% set selected_choice  = possible_choices|first %}
+
+        {% if choices|length > 0 %}
+          {% if choices|length > 1 %}
+            <li class="dropdown">
+              <a class="admin-navbar__link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                {{ selected_choice.name }} <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                {% for choice in choices %}
+                  {# Use "same as" to avoid "Nesting level too deep - recursive dependency?" #}
+                  {# It can happen, because when not using strict comparison, #}
+                  {# PHP would compare all the properties of the objects #}
+                  {# {{ dump(choice is instanceof('AppBundle\\Entity\\Store')) }} #}
+                  {% if choice is not same as(selected_choice) %}
+                  <li>
+                    <a href="{{ path('dashboard', { (choice is instanceof('AppBundle\\Entity\\Store') ? 'store' : 'restaurant'): choice.id }) }}">
+                      {{ choice.name }}
+                    </a>
+                  </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </li>
+          {% else %}
+            <li><a>{{ selected_choice.name }}</a></li>
+          {% endif %}
+          <li>
+            <a href="{{ path((selected_choice is instanceof('AppBundle\\Entity\\Store') ? 'dashboard_store' : 'dashboard_restaurant'), { id: selected_choice.id }) }}">{{ 'basics.edit'|trans }}</a>
+          </li>
+        {% endif %}
+        <li id="notifications">
+          <a href="#">
+            <span class="badge">0</span>
+          </a>
+        </li>
+        <li>
+          <a class="admin-navbar__link" href="{{ path('homepage') }}"><i class="fa fa-sign-out"></i>  {% trans %}adminDashboard.back.title{% endtrans %}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

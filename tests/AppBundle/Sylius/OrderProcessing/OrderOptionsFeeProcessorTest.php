@@ -6,23 +6,30 @@ use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
 use AppBundle\Sylius\OrderProcessing\OrderOptionsFeeProcessor;
 use AppBundle\Sylius\OrderProcessing\OrderOptionsProcessor;
+use AppBundle\Sylius\OrderProcessing\OrderVendorProcessor;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Log\NullLogger;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Sylius\Component\Order\Processor\CompositeOrderProcessor;
+use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class OrderOptionsFeeProcessorTest extends KernelTestCase
 {
+    use ProphecyTrait;
+
     private $adjustmentFactory;
     private $orderItemQuantityModifier;
 
@@ -49,14 +56,32 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $this->orderItemQuantityModifier =
             static::$kernel->getContainer()->get('sylius.order_item_quantity_modifier');
 
-        $this->orderFeeProcessor = new OrderFeeProcessor($this->adjustmentFactory, $this->translator->reveal());
+        $this->deliveryManager = $this->prophesize(DeliveryManager::class);
+
+        $this->promotionRepository = $this->prophesize(PromotionRepositoryInterface::class);
+
+
+        $this->orderFeeProcessor = new OrderFeeProcessor(
+            $this->adjustmentFactory,
+            $this->translator->reveal(),
+            $this->deliveryManager->reveal(),
+            $this->promotionRepository->reveal(),
+            new NullLogger()
+        );
         $this->orderOptionsProcessor = new OrderOptionsProcessor($this->adjustmentFactory);
+
+        $this->orderVendorProcessor = new OrderVendorProcessor(
+            $this->adjustmentFactory,
+            $this->translator->reveal(),
+            new NullLogger()
+        );
 
         $this->compositeProcessor = new CompositeOrderProcessor();
 
         $this->optionsFeeProcessor = new OrderOptionsFeeProcessor(
             $this->orderOptionsProcessor,
-            $this->orderFeeProcessor
+            $this->orderFeeProcessor,
+            $this->orderVendorProcessor
         );
     }
 
@@ -84,15 +109,12 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         return $orderItem->reveal();
     }
 
-    private function createProductOption($strategy, $price = null)
+    private function createProductOption($strategy)
     {
         $option = $this->prophesize(ProductOptionInterface::class);
         $option
             ->getStrategy()
             ->willReturn($strategy);
-        $option
-            ->getPrice()
-            ->willReturn($price);
 
         return $option->reveal();
     }
@@ -119,6 +141,9 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $productVariant
             ->getOptionValues()
             ->willReturn(new ArrayCollection($optionValues));
+        $productVariant
+            ->getQuantityForOptionValue(Argument::type(ProductOptionValueInterface::class))
+            ->willReturn(1);
 
         return $productVariant->reveal();
     }
@@ -132,9 +157,9 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $this->compositeProcessor->addProcessor($this->orderFeeProcessor, 64);
         $this->compositeProcessor->addProcessor($this->orderOptionsProcessor, 48);
 
-        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION, 250);
-        $coffee = $this->createProductOptionValue($drinks, 'Coffee');
-        $tea = $this->createProductOptionValue($drinks, 'Tea');
+        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION_VALUE);
+        $coffee = $this->createProductOptionValue($drinks, 'Coffee', 250);
+        $tea = $this->createProductOptionValue($drinks, 'Tea', 250);
 
         $cookieVariant = $this->createProductVariant([ $coffee ]);
 
@@ -176,9 +201,9 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $this->compositeProcessor->addProcessor($this->orderFeeProcessor, 48);
         $this->compositeProcessor->addProcessor($this->orderOptionsProcessor, 64);
 
-        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION, 250);
-        $coffee = $this->createProductOptionValue($drinks, 'Coffee');
-        $tea = $this->createProductOptionValue($drinks, 'Tea');
+        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION_VALUE);
+        $coffee = $this->createProductOptionValue($drinks, 'Coffee', 250);
+        $tea = $this->createProductOptionValue($drinks, 'Tea', 250);
 
         $cookieVariant = $this->createProductVariant([ $coffee ]);
 
@@ -220,9 +245,9 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $this->compositeProcessor->addProcessor($this->orderFeeProcessor, 48);
         $this->compositeProcessor->addProcessor($this->orderOptionsProcessor, 64);
 
-        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION, 250);
-        $coffee = $this->createProductOptionValue($drinks, 'Coffee');
-        $tea = $this->createProductOptionValue($drinks, 'Tea');
+        $drinks = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION_VALUE);
+        $coffee = $this->createProductOptionValue($drinks, 'Coffee', 250);
+        $tea = $this->createProductOptionValue($drinks, 'Tea', 250);
 
         $cookieVariant = $this->createProductVariant([ $coffee ]);
 

@@ -1,0 +1,134 @@
+services:
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  AppBundle\Command\ApplyTaxesCommand:
+    arguments:
+      $orderTaxesProcessor: '@sylius.order_processing.order_taxes_processor'
+      $orderRepository: '@sylius.repository.order'
+      $orderManager: '@sylius.manager.order'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:orders:process-taxes' }
+
+  AppBundle\Command\BotCommand:
+    parent: M6Web\Bundle\DaemonBundle\Command\DaemonCommand
+    autowire: false
+    autoconfigure: false
+    public: false
+    arguments:
+      $doctrine: '@doctrine.orm.default_entity_manager'
+      $userManager: '@fos_user.user_manager'
+      $tokenManager: '@lexik_jwt_authentication.jwt_manager'
+      $routing: '@routing_service'
+      $settingsManager: '@coopcycle.settings_manager'
+      $apiClient: '@csa_guzzle.client.api'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:bot' }
+
+  AppBundle\Command\CreateSettingCommand:
+    arguments:
+      $entityName: '%craue_config.entity_name%'
+      $config: '@craue_config'
+    tags:
+      - { name: 'console.command', command: 'craue:setting:create' }
+
+  AppBundle\Command\ImportStripeFeeCommand:
+    arguments:
+      $orderRepository: '@sylius.repository.order'
+      $orderManager: '@sylius.manager.order'
+      $adjustmentFactory: '@sylius.factory.adjustment'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:orders:import-stripe-fee' }
+
+  AppBundle\Command\InitDemoCommand:
+    arguments:
+      $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
+      $faker: '@nelmio_alice.faker.generator'
+      $craueConfig: '@craue_config'
+      $configEntityName: '%craue_config.entity_name%'
+      $taxonFactory: '@sylius.factory.taxon'
+      $taxCategoryRepository: '@sylius.repository.tax_category'
+      $country: "%country_iso%"
+      $defaultLocale: "%env(COOPCYCLE_LOCALE)%"
+    tags:
+      - { name: 'console.command', command: 'coopcycle:demo:init' }
+
+  AppBundle\Command\LoadFixturesCommand:
+    arguments:
+      $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
+      $projectDir: '%kernel.project_dir%'
+      $environment: '%kernel.environment%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:fixtures:load' }
+
+  AppBundle\Command\SetupCommand:
+    arguments:
+      $productRepository: '@sylius.repository.product'
+      $productFactory: '@sylius.factory.product'
+      $productManager: '@sylius.manager.product'
+      $productAttributeRepository: '@sylius.repository.product_attribute'
+      $productAttributeManager: '@sylius.manager.product_attribute'
+      $localeRepository: '@sylius.repository.locale'
+      $localeFactory: '@sylius.factory.locale'
+      $channelRepository: '@sylius.repository.channel'
+      $channelFactory: '@sylius.factory.channel'
+      $currencyRepository: '@sylius.repository.currency'
+      $currencyFactory: '@sylius.factory.currency'
+      $promotionFactory: '@sylius.factory.promotion'
+      $taxCategoryFactory: '@sylius.factory.tax_category'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:setup' }
+
+  # AppBundle\Command\RemotePushNotificationsCommand:
+  #   tags:
+  #     - { name: 'console.command', command: 'coopcycle:notifications:remote-push' }
+
+  AppBundle\Command\ImportTasksCommand:
+    arguments:
+      $secret: '%secret%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:tasks:import' }
+
+  AppBundle\Command\GeofencingCommand:
+    arguments:
+      $tile38: '@snc_redis.tile38'
+      $doorstepChanNamespace: '%tile38_doorstep_chan_namespace%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:geofencing' }
+      - { name: 'monolog.logger', channel: 'geofencing' }
+
+  AppBundle\Command\WatchExpiringAuthorizationCommand:
+    arguments:
+      $orderRepository: '@sylius.repository.order'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:orders:watch-expiring-authorization' }
+
+  # AppBundle\Command\OrderNotificationCommand:
+  #   arguments:
+  #     $orderRepository: '@sylius.repository.order'
+  #     $websocket: '@coopcycle.domain.order.reactor.publish_to_redis'
+  #     $push: '@coopcycle.domain.order.reactor.send_remote_push_notification'
+  #   tags:
+  #     - { name: 'console.command', command: 'coopcycle:notifications:order' }
+
+  AppBundle\Command\DeduplicateCustomerAddressesCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:data:deduplicate-addresses' }
+
+  AppBundle\Command\BuildIndexCommand:
+    arguments:
+      $ingestClient: '@sonic.ingest.client'
+      $controlClient: '@sonic.control.client'
+      $sonicSecretPassword: '%env(SONIC_SECRET_PASSWORD)%'
+      $namespace: '%sonic_namespace%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:index:build' }
+
+  # @see Liip\ImagineBundle\Command\ResolveCacheCommand
+  AppBundle\Command\ResolveImagineCacheCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:imagine:cache:resolve' }

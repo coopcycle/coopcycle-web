@@ -1,0 +1,47 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.864577", "2.333338" ]
+  geo_2:
+    __construct: [ "48.846656", "2.369052" ]
+  geo_3:
+    __construct: [ "48.878658", "2.341055" ]
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_1"
+  address_2:
+    addressLocality: 'Paris'
+    postalCode: '75012'
+    streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
+    geo: "@geo_2"
+  address_3:
+    addressLocality: 'Paris'
+    postalCode: '75009'
+    streetAddress: '17, rue Milton 75009 Paris 9ème'
+    geo: "@geo_3"
+
+AppBundle\Entity\Contract:
+  contract_1:
+    flatDeliveryPrice: 350
+    customerAmount: 350
+    feeRate: 0.00
+  contract_2:
+    flatDeliveryPrice: 350
+    customerAmount: 350
+    feeRate: 0.00
+  contract_3:
+    flatDeliveryPrice: 350
+    customerAmount: 350
+    feeRate: 0.00
+
+AppBundle\Entity\LocalBusiness:
+  shop_1:
+    type: <(AppBundle\Enum\Store::GROCERY_STORE)>
+    name: Flower Express
+    address: "@address_1"
+    openingHours: ['Mo-Sa 11:30-14:30']
+    enabled: true
+    contract: "@contract_1"

@@ -1,0 +1,46 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.taxation.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+<table class="table">
+  <thead>
+    <th>{{ 'sylius.form.tax_category.name'|trans }}</th>
+    {% for country in countries %}
+    <th class="text-right">{{ (country|upper)|country_name }}</th>
+    {% endfor %}
+  </thead>
+  <tbody>
+  {% for category in categories %}
+  <tr>
+    <td>
+      {{ category.name }}
+    </td>
+    {% for country in countries %}
+      <td class="text-right">
+        {% set rates = [] %}
+        {% if category.rates[country] is defined %}
+          <ul class="list-unstyled">
+          {% for rate in category.rates[country] %}
+            <li>
+              <small>
+                <span class="mr-1">{{ rate.name|trans({}, 'taxation') }}</span>
+                <span>{{ (rate.amount * 100)|number_format(2, '.', ',') }} %</span>
+              </small>
+            </li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      </td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

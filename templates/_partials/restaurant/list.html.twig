@@ -1,0 +1,69 @@
+{% if restaurants|length > 0 %}
+  <table class="table">
+    <tbody>
+    {% for restaurant in restaurants %}
+      <tr>
+        <td width="1%">
+          <i class="fa fa-circle {% if restaurant.enabled %}text-success{% else %}text-danger{% endif %}"></i>
+        </td>
+        <td width="1%">{% if restaurant.state == 'rush' %}<i class="fa fa-fire"></i>{% endif %}</td>
+        <td width="5%"><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
+        <td width="20%">
+          <span>{{ restaurant.name }}</span>
+          <br>
+          <small class="text-muted">{{ restaurant|local_business_type }}</small>
+        </td>
+        <td width="25%">{{ restaurant.address.streetAddress }}</td>
+        <td class="text-right">
+          <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {% trans %}restaurant.list.manage{% endtrans %}   <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+              {% if is_granted('edit', restaurant) %}
+              <li>
+                <a href="{{ path(dashboard_route, { restaurantId: restaurant.id }) }}">
+                {% trans %}restaurant.list.orders{% endtrans %}
+                </a>
+              </li>
+              {% endif %}
+              {% if restaurant.menuTaxon is not null %}
+              <li>
+                <a href="{{ path(menu_taxon_route, { restaurantId: restaurant.id, menuId: restaurant.menuTaxon.id }) }}">
+                  {% trans %}restaurant.list.activeMenu{% endtrans %}
+                </a>
+              </li>
+              {% endif %}
+              <li>
+                <a href="{{ path(menu_taxons_route, { id: restaurant.id }) }}">
+                  {% trans %}restaurant.list.menus{% endtrans %}
+                </a>
+              </li>
+              <li>
+                <a href="{{ path(restaurant_route, { id: restaurant.id }) }}">
+                  {% trans %}restaurant.list.settings{% endtrans %}
+                </a>
+              </li>
+              <li>
+                <a href="{{ path(products_route, { id: restaurant.id }) }}">
+                  {% trans %}restaurant.list.products{% endtrans %}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </td>
+        <td class="text-right" width="5%">
+          <a target="_blank" href="{{ path('restaurant', { id: restaurant.id, 'slug': restaurant.name|slugify }) }}">
+            <i class="fa fa-external-link" aria-hidden="true"></i>
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}restaurant.list.norestaurant{% endtrans %}
+  <a href="{{ path('admin_restaurant_new') }}">{% trans %}restaurant.list.createNewRestaurant{% endtrans %}</a>
+  </div>
+{% endif %}

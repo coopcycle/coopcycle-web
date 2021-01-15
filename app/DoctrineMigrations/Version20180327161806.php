@@ -2,7 +2,7 @@
 
 namespace Application\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -29,7 +29,7 @@ class Version20180327161806 extends AbstractMigration implements ContainerAwareI
         return $deliveryOrderItems;
     }
 
-    public function up(Schema $schema)
+    public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
 
@@ -93,7 +93,7 @@ class Version20180327161806 extends AbstractMigration implements ContainerAwareI
         $this->addSql('CREATE INDEX IDX_77B587ED3B69A9AF ON sylius_order_item (variant_id)');
     }
 
-    public function down(Schema $schema)
+    public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
 

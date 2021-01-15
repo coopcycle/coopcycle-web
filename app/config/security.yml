@@ -19,7 +19,7 @@ security:
             id: fos_user.user_provider.username_email
         # jwt:
         #     lexik_jwt:
-        #         class: AppBundle\Entity\ApiUser
+        #         class: AppBundle\Entity\User
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -41,15 +41,106 @@ security:
             pattern: ^/oauth2/token$
             security: false
 
-        api_deliveries_create:
+        api_deliveries:
             pattern:   ^/api/deliveries
+            methods: [ GET, POST, PUT ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
+        api_tasks_import:
+            pattern:   ^/api/tasks/import
             methods: [ POST ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
+        api_task_events_get:
+            pattern:   ^/api/tasks/[0-9]+/events$
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
+        api_task_get:
+            pattern:   ^/api/tasks/[0-9]+$
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
+        api_task_groups:
+            pattern:   ^/api/task_groups/[0-9]+$
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
+        api_store_deliveries:
+            pattern:   ^/api/stores/[0-9]+/deliveries$
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
+        api_stores:
+            pattern:   ^/api/stores/[0-9]+$
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
+        api_time_slots:
+            pattern:   ^/api/time_slots/[0-9]+$
+            methods: [ GET ]
             stateless: true
             anonymous: ~
             bearer_token: true
 
         api_pricing_calculate_price:
             pattern:   ^/api/pricing/calculate-price
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
+        api_carts_session:
+            pattern:   ^/api/carts/session$
+            methods: [ POST ]
+            stateless: true
+            anonymous: ~
+            cart_session: true
+
+        api_carts:
+            pattern:   ^/api/orders/[0-9]+$
+            methods: [ PUT ]
+            stateless: true
+            anonymous: ~
+            cart_session: true
+
+        api_cart_items:
+            pattern:   ^/api/orders/[0-9]+/items$
+            methods: [ POST ]
+            stateless: true
+            anonymous: ~
+            cart_session: true
+
+        api_cart_item:
+            pattern:   ^/api/orders/[0-9]+/items/[0-9]+$
+            methods: [ PUT, DELETE ]
+            stateless: true
+            anonymous: ~
+            cart_session: true
+
+        api_cart_operations:
+            pattern:   ^/api/orders/[0-9]+/(assign|timing|validate)$
+            methods: [ GET, PUT ]
+            stateless: true
+            anonymous: ~
+            cart_session: true
+
+        api_me:
+            pattern:   ^/api/me$
             methods: [ GET ]
             stateless: true
             anonymous: ~
@@ -76,11 +167,44 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
+        # Disable session to improve performance
+        # TraceableFirewallListener will be skipped
+
+        # FIXME
+        # Causes a problem in AppBundle\Sylius\Cart\SessionSubscriber
+        # When an admin adds products to the cart of a *DISABLED* restaurant,
+        # an AJAX request invoking SessionSubscriber may clear the cart,
+        # because of the mechanism to cleanup carts with disabled restaurant.
+
+        restaurant_fulfillment_timing:
+            pattern: ^/restaurant/[0-9]+/timing$
+            methods: [ GET ]
+            security: false
+
+        # search_restaurants:
+        #     pattern: ^/search/restaurants
+        #     methods: [ GET ]
+        #     stateless: true
+        #     anonymous: ~
+
+        search_geocode:
+            pattern: ^/search/geocode
+            methods: [ GET ]
+            security: false
+
         web:
             pattern:            ^/
             form_login:
                 provider:       fos_userbundle
                 success_handler: coopcycle.web_success_handler
+            oauth:
+                resource_owners:
+                    facebook:             "/login/check-facebook"
+                login_path:        /login
+                use_forward:       false
+                failure_path:      /login
+                oauth_user_provider:
+                    service: coopcycle.user_provider
             logout: true
             anonymous: ~
             remember_me:
@@ -90,19 +214,24 @@ security:
             anonymous: ~
 
     access_control:
-        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/order, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/dashboard, roles: [ ROLE_ADMIN, ROLE_RESTAURANT, ROLE_STORE ] }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
-        - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/profile/jwt, roles: IS_AUTHENTICATED_REMEMBERED }
+        - { path: ^/profile/notifications, roles: IS_AUTHENTICATED_REMEMBERED }
+        - { path: ^/profile, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/_uploader/restaurant, roles: [ ROLE_ADMIN, ROLE_RESTAURANT ] }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/orders/timing, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/routing, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/settings, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/restaurants, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [ GET ] }
+        - { path: ^/api/carts/session$, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [ POST ] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

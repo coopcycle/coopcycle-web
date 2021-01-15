@@ -2,13 +2,19 @@
 
 namespace Tests\AppBundle\Utils;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Hub;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Restaurant\PreparationTimeRule;
+use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\PreparationTimeCalculator;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class PreparationTimeCalculatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $config;
 
     public function setUp(): void
@@ -23,15 +29,64 @@ class PreparationTimeCalculatorTest extends TestCase
         ];
     }
 
-    private function createOrder($total, $state = 'normal')
+    private function createOrder($total, $state = 'normal', array $customConfig = [])
     {
-        $restaurant = new Restaurant();
+        $restaurant = new LocalBusiness();
         $restaurant->setState($state);
+        foreach ($customConfig as $expr => $time) {
+            $rule = new PreparationTimeRule();
+            $rule->setExpression($expr);
+            $rule->setTime($time);
+
+            $restaurant->addPreparationTimeRule($rule);
+        }
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->getVendor()
+            ->willReturn(
+                Vendor::withRestaurant($restaurant)
+            );
+
+        $order
+            ->getItemsTotal()
+            ->willReturn($total);
+
+        return $order->reveal();
+    }
+
+    private function createOrderWithHub($total, $config = [])
+    {
+        $hub = new Hub();
+
+        foreach ($config as $c) {
+
+            [ $state, $rules ] = $c;
+
+            $restaurant = new LocalBusiness();
+            $restaurant->setState($state);
+
+            foreach ($rules as $expr => $time) {
+                $rule = new PreparationTimeRule();
+                $rule->setExpression($expr);
+                $rule->setTime($time);
+
+                $restaurant->addPreparationTimeRule($rule);
+            }
+
+            $hub->addRestaurant($restaurant);
+        }
+
+        $vendor = new Vendor();
+        $vendor->setHub($hub);
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getVendor()
+            ->willReturn(
+                $vendor
+            );
+
         $order
             ->getItemsTotal()
             ->willReturn($total);
@@ -67,6 +122,20 @@ class PreparationTimeCalculatorTest extends TestCase
             [
                 $this->createOrder(6000, 'rush'),
                 '45 minutes',
+            ],
+            // custom config
+            [
+                $this->createOrder(1500, 'normal', ['order.itemsTotal > 0' => '70 minutes']),
+                '70 minutes',
+            ],
+            // hubs
+            [
+                $this->createOrderWithHub(1500, [
+                    [ 'normal', ['order.itemsTotal > 0' => '10 minutes'] ],
+                    [ 'normal', ['order.itemsTotal > 0' => '40 minutes'] ],
+                    [ 'normal', ['order.itemsTotal > 0' => '30 minutes'] ],
+                ]),
+                '40 minutes',
             ],
         ];
     }

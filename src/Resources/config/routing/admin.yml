@@ -1,0 +1,508 @@
+admin_delivery:
+  path: /admin/deliveries/{id}
+  defaults:
+      _controller: AppBundle\Controller\AdminController::deliveryAction
+      layout: 'admin.html.twig'
+      routes:
+          success: admin_deliveries
+  methods:  [ GET, POST ]
+
+admin_order_receipt:
+    path:     /admin/orders/{orderNumber}/receipt.pdf
+    defaults: { _controller: AppBundle\Controller\AdminController::orderReceiptAction }
+    methods:  [ GET ]
+
+admin_order_receipt_generate:
+    path:     /admin/orders/{orderNumber}/generate-receipt
+    defaults: { _controller: AppBundle\Controller\AdminController::generateOrderReceiptAction }
+    methods:  [ POST ]
+
+admin_foodtech_dashboard:
+    path:     /admin/foodtech/dashboard/{date}
+    requirements:
+      date: '[0-9]{4}-[0-9]{2}-[0-9]{2}|__DATE__'
+    defaults:
+        _controller: AppBundle\Controller\AdminController::foodtechDashboardAction
+        layout: 'admin.html.twig'
+        template: 'admin/orders.html.twig'
+        routes:
+            restaurant: admin_restaurant
+            order_receipt: admin_order_receipt
+            order_receipt_generate: admin_order_receipt_generate
+            order: admin_order
+    methods:  [ GET ]
+
+admin_foodtech_settings:
+    path:     /admin/foodtech/settings
+    defaults:
+        _controller: AppBundle\Controller\AdminController::foodtechSettingsAction
+    methods:  [ POST ]
+
+admin_order_new:
+    path:     /admin/orders/new
+    defaults: { _controller: AppBundle\Controller\AdminController::newOrderAction }
+    methods:  [ GET, POST ]
+
+admin_order_receipt_preview:
+    path:     /admin/orders/{id}/receipt/preview
+    defaults: { _controller: AppBundle\Controller\AdminController::orderReceiptPreviewAction }
+    methods:  [ GET ]
+
+admin_order:
+    path:     /admin/orders/{id}
+    defaults: { _controller: AppBundle\Controller\AdminController::orderAction }
+    methods:  [ GET, POST ]
+
+admin_orders:
+    path:     /admin/orders
+    defaults:
+        _controller: AppBundle\Controller\AdminController::orderListAction
+        layout: 'admin.html.twig'
+        template: 'admin/orders.html.twig'
+        routes:
+            restaurant: admin_restaurant
+            order_receipt: admin_order_receipt
+            order_receipt_generate: admin_order_receipt_generate
+            order: admin_order
+    methods:  [ GET, POST ]
+
+admin_hub:
+    path: /admin/restaurants/hubs/{id}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::hubAction
+    methods: [ GET, POST ]
+
+admin_restaurant_new:
+    path: /admin/restaurants/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newRestaurantAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/form.html.twig'
+        routes:
+            success: admin_restaurant
+            restaurants: admin_restaurants
+            menu_taxons: admin_restaurant_menu_taxons
+            menu_taxon: admin_restaurant_menu_taxon
+            products: admin_restaurant_products
+            product_options: admin_restaurant_product_options
+            dashboard: admin_restaurant_dashboard
+            planning: admin_restaurant_planning
+    methods: [ GET, POST ]
+
+admin_restaurant:
+    path: /admin/restaurants/{id}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/form.html.twig'
+        routes:
+            success: admin_restaurant
+            restaurants: admin_restaurants
+            menu_taxons: admin_restaurant_menu_taxons
+            menu_taxon: admin_restaurant_menu_taxon
+            products: admin_restaurant_products
+            product_options: admin_restaurant_product_options
+            dashboard: admin_restaurant_dashboard
+            planning: admin_restaurant_planning
+    methods: [ GET, POST ]
+
+admin_restaurants:
+    path: /admin/restaurants
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantListAction
+        layout: 'admin.html.twig'
+        template: 'admin/restaurants.html.twig'
+        routes:
+            dashboard: admin_restaurant_dashboard
+            menu_taxon: admin_restaurant_menu_taxon
+            menu_taxons: admin_restaurant_menu_taxons
+            products: admin_restaurant_products
+            restaurant: admin_restaurant
+    methods: [ GET ]
+
+admin_restaurant_menu_taxons:
+    path: /admin/restaurants/{id}/menus
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantMenuTaxonsAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/menu_taxons.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            menu: admin_restaurant_menu_taxon
+            menu_activate: admin_restaurant_menu_taxon_activate
+            menu_taxon: admin_restaurant_menu_taxon
+    methods: [ GET, POST ]
+
+admin_restaurant_menu_taxon:
+    path: /admin/restaurants/{restaurantId}/menus/{menuId}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantMenuTaxonAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/menu_taxon.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            menu_taxons: admin_restaurant_menu_taxons
+            products: admin_restaurant_products
+            delete_section: admin_delete_restaurant_menu_taxon_child
+            success: admin_restaurant_menu_taxons
+    methods: [ GET, POST ]
+
+admin_restaurant_menu_taxon_activate:
+    path: /admin/restaurants/{restaurantId}/menus/{menuId}/activate
+    defaults:
+        _controller: AppBundle\Controller\AdminController::activateRestaurantMenuTaxonAction
+        layout: 'admin.html.twig'
+        routes:
+            menu_taxons: admin_restaurant_menu_taxons
+    methods: [ POST ]
+
+admin_delete_restaurant_menu_taxon_child:
+    path: /admin/restaurants/{restaurantId}/menus/{menuId}/sections/{sectionId}/delete
+    defaults:
+        _controller: AppBundle\Controller\AdminController::deleteRestaurantMenuTaxonChildAction
+        layout: 'admin.html.twig'
+        routes:
+            menu_taxon: admin_restaurant_menu_taxon
+    methods: [ POST ]
+
+admin_restaurant_products:
+    path: /admin/restaurants/{id}/products
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantProductsAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/products.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            product: admin_restaurant_product
+            new_product: admin_restaurant_product_new
+    methods: [ GET ]
+
+admin_restaurant_product_new:
+    path: /admin/restaurants/{id}/products/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newRestaurantProductAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/product.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            products: admin_restaurant_products
+
+admin_delete_restaurant_product_image:
+    path: /admin/restaurants/{restaurantId}/products/{productId}/images/{imageName}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::deleteProductImageAction
+    methods: [ DELETE ]
+
+admin_restaurant_product:
+    path: /admin/restaurants/{restaurantId}/products/{productId}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantProductAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/product.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            products: admin_restaurant_products
+
+admin_restaurant_planning:
+    path: /admin/restaurants/{id}/planning
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantPlanningAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/planning.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            success: admin_restaurant_planning
+    methods: [ GET, POST ]
+
+admin_restaurant_product_options:
+    path: /admin/restaurants/{id}/product-options
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantProductOptionsAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/product_options.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            product_option: admin_restaurant_product_option
+            new_product_option: admin_restaurant_product_option_new
+    methods: [ GET ]
+
+admin_restaurant_product_option_new:
+    path: /admin/restaurants/{id}/product-options/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newRestaurantProductOptionAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/product_option.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            product_options: admin_restaurant_product_options
+    methods: [ GET, POST ]
+
+admin_restaurant_product_option:
+    path: /admin/restaurants/{restaurantId}/product-options/{optionId}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantProductOptionAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/product_option.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            product_options: admin_restaurant_product_options
+    methods: [ GET, POST ]
+
+admin_restaurant_product_option_preview:
+    path: /admin/restaurants/product-options/preview
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantProductOptionPreviewAction
+    methods: [ POST ]
+
+admin_restaurant_dashboard:
+    path: /admin/restaurants/{restaurantId}/dashboard
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantDashboardAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/dashboard.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            dashboard: admin_restaurant_dashboard
+            user_details: user
+            order_accept: admin_order_accept
+            order_refuse: admin_order_refuse
+            order_cancel: admin_order_cancel
+            order_delay: admin_order_delay
+            order_fulfill: admin_order_fulfill
+    methods: [ GET ]
+
+admin_restaurant_preparation_time:
+    path: /admin/restaurants/{id}/preparation-time
+    defaults:
+        _controller: AppBundle\Controller\AdminController::preparationTimeAction
+        layout: 'admin.html.twig'
+        template: 'restaurant/preparation_time.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            success: admin_restaurant_preparation_time
+    methods: [ GET, POST ]
+
+admin_restaurant_stats:
+    path: /admin/restaurants/{id}/stats
+    defaults:
+        _controller: AppBundle\Controller\AdminController::statsAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+    methods: [ GET, POST ]
+
+admin_restaurant_new_reusable_packaging:
+    path: /admin/restaurants/{id}/deposit-refund/packagings/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newRestaurantReusablePackagingAction
+        layout: 'admin.html.twig'
+    methods: [ GET, POST ]
+
+admin_restaurant_deposit_refund:
+    path: /admin/restaurants/{id}/deposit-refund
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantDepositRefundAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+    methods: [ GET, POST ]
+
+admin_restaurant_promotions:
+    path: /admin/restaurants/{id}/promotions
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantPromotionsAction
+        layout: 'admin.html.twig'
+    methods: [ GET ]
+
+admin_restaurant_new_promotion:
+    path: /admin/restaurants/{id}/promotions/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newRestaurantPromotionAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurant_promotions: admin_restaurant_promotions
+    methods: [ GET, POST ]
+
+admin_restaurant_promotion:
+    path: /admin/restaurants/{restaurantId}/promotions/{promotionId}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantPromotionAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurant_promotions: admin_restaurant_promotions
+    methods: [ GET, POST ]
+
+admin_order_accept:
+    path: /admin/orders/{id}/accept
+    defaults:
+        _controller: AppBundle\Controller\AdminController::acceptOrderAction
+    methods: [ POST ]
+
+admin_order_refuse:
+    path: /admin/orders/{id}/refuse
+    defaults:
+        _controller: AppBundle\Controller\AdminController::refuseOrderAction
+    methods: [ POST ]
+
+admin_order_delay:
+    path: /admin/orders/{id}/delay
+    defaults:
+        _controller: AppBundle\Controller\AdminController::delayOrderAction
+    methods: [ POST ]
+
+admin_order_fulfill:
+    path: /admin/orders/{id}/fulfill
+    defaults:
+        _controller: AppBundle\Controller\AdminController::fulfillOrderAction
+    methods: [ POST ]
+
+admin_restaurant_stripe_oauth_redirect:
+    path: /admin/restaurants/{id}/stripe-oauth-redirect
+    defaults:
+        _controller: AppBundle\Controller\AdminController::stripeOAuthRedirectAction
+        redirect_after: admin_restaurant
+    methods: [ GET ]
+
+admin_restaurant_mercadopago_oauth_redirect:
+    path: /admin/restaurants/{id}/mercadopago-oauth-redirect
+    defaults:
+        _controller: AppBundle\Controller\AdminController::mercadopagoOAuthRedirectAction
+        redirect_after: admin_restaurant
+    methods: [ GET ]
+
+
+admin_order_cancel:
+    path: /admin/orders/{id}/cancel
+    defaults:
+        _controller: AppBundle\Controller\AdminController::cancelOrderAction
+    methods: [ POST ]
+
+admin_stores:
+    path: /admin/stores
+    defaults:
+        _controller: AppBundle\Controller\AdminController::storeListAction
+        layout: 'admin.html.twig'
+        template: 'admin/stores.html.twig'
+        routes:
+            store: admin_store
+            store_delivery_new: admin_store_delivery_new
+            store_deliveries: admin_store_deliveries
+    methods:  [ GET ]
+
+admin_store_new:
+    path: /admin/stores/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newStoreAction
+        layout: 'admin.html.twig'
+        routes:
+            stores: admin_stores
+            store: admin_store
+            store_delivery_new: admin_store_delivery_new
+            store_deliveries: admin_store_deliveries
+            store_address_new: admin_store_new_address
+            store_address: admin_store_address
+    methods:  [ GET, POST ]
+
+admin_store:
+    path: /admin/stores/{id}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::storeAction
+        layout: 'admin.html.twig'
+        routes:
+            stores: admin_stores
+            store: admin_store
+            store_delivery_new: admin_store_delivery_new
+            store_deliveries: admin_store_deliveries
+            store_address_new: admin_store_new_address
+            store_address: admin_store_address
+    methods:  [ GET, POST ]
+
+admin_store_deliveries:
+    path: /admin/stores/{id}/deliveries
+    defaults:
+        _controller: AppBundle\Controller\AdminController::storeDeliveriesAction
+        layout: 'admin.html.twig'
+        routes:
+            stores: admin_stores
+            store: admin_store
+    methods:  [ GET, POST ]
+
+admin_store_delivery_new:
+    path: /admin/stores/{id}/deliveries/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newStoreDeliveryAction
+        layout: 'admin.html.twig'
+        routes:
+            stores: admin_stores
+            store: admin_store
+            success: admin_store_deliveries
+    methods:  [ GET, POST ]
+
+admin_store_users:
+    path: /admin/stores/{id}/users
+    defaults:
+        _controller: AppBundle\Controller\AdminController::storeUsersAction
+        layout: 'admin.html.twig'
+        routes:
+            stores: admin_stores
+            store: admin_store
+    methods:  [ GET, POST ]
+
+admin_store_new_address:
+    path: /admin/stores/{id}/addresses/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newStoreAddressAction
+        layout: 'admin.html.twig'
+        routes:
+            stores: admin_stores
+            store: admin_store
+    methods:  [ GET, POST ]
+
+admin_store_address:
+    path: /admin/stores/{storeId}/addresses/{addressId}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::storeAddressAction
+        layout: 'admin.html.twig'
+        routes:
+            stores: admin_stores
+            store: admin_store
+    methods:  [ GET, POST ]
+
+admin_tag_new:
+    path: /admin/settings/tags/new
+    defaults:
+        _controller: AppBundle\Controller\TagController::newTagAction
+        template: 'admin/tag.html.twig'
+        redirect_route: admin_tags
+
+admin_tag:
+    path: /admin/settings/tags/{slug}
+    defaults:
+        _controller: AppBundle\Controller\TagController::tagAction
+        template: 'admin/tag.html.twig'
+        redirect_route: admin_tags
+
+admin_task_receipt:
+    path:     /admin/tasks/{id}/receipt.pdf
+    defaults: { _controller: AppBundle\Controller\AdminController::taskReceiptAction }
+    methods:  [ GET ]
+
+admin_customize:
+    path: /admin/customize
+    defaults:
+        _controller: AppBundle\Controller\AdminController::customizeAction
+        layout: 'admin.html.twig'
+    methods:  [ GET, POST ]

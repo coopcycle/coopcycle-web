@@ -1,18 +1,13 @@
 imports:
     - { resource: config.yml }
 
-parameters:
-  assets_base_urls: [ "http://localhost:8080" ]
-
 framework:
     router:
-        resource: "%kernel.root_dir%/config/routing_dev.yml"
+        resource: "%kernel.project_dir%/app/config/routing_dev.yml"
         strict_requirements: true
     profiler: { only_exceptions: false }
     session:
         save_path:   "/tmp"
-    assets:
-        base_urls: "%assets_base_urls%"
 
 web_profiler:
     toolbar: true
@@ -22,24 +17,56 @@ monolog:
     handlers:
         main:
             type: rotating_file
-            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/%kernel.environment%.log"
             level: debug
             max_files: 3
-            channels: ["!event", "!api"]
+            channels: ["!event", "!api", "!stripe", "!loopeat"]
         console:
             type:   console
             channels: ["!event", "!doctrine"]
         api:
             type: rotating_file
-            path: "%kernel.logs_dir%/api.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/api.%kernel.environment%.log"
             level: info
-            formatter: AppBundle\Monolog\Formatter\ApiFormatter
+            formatter: monolog.formatter.json
             max_files: 3
             channels: [api]
+        fee_calculation:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/fee_calculation.%kernel.environment%.log"
+            level: info
+            formatter: monolog.formatter.json
+            max_files: 3
+            channels: [fee_calculation]
+        timing:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/timing.%kernel.environment%.log"
+            level: info
+            max_files: 3
+            channels: [timing]
+        geofencing:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/geofencing.%kernel.environment%.log"
+            level: info
+            formatter: monolog.formatter.json
+            max_files: 3
+            channels: [geofencing]
+        stripe:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/stripe.%kernel.environment%.log"
+            level: info
+            max_files: 3
+            channels: [stripe]
+        loopeat:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/loopeat.%kernel.environment%.log"
+            level: info
+            max_files: 3
+            channels: [loopeat]
         mailer:
             level:    debug
             type:     stream
-            path:     '%kernel.logs_dir%/mailer.%kernel.environment%.log'
+            path:     '%env(APP_LOG_DIR)%/mailer.%kernel.environment%.log'
             channels: [mailer]
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
@@ -51,21 +78,15 @@ monolog:
         #    level:  info
 
 services:
-    apns_php.logger:
-        class: AppBundle\Utils\ApnsPHPLogger
-        arguments: [ '@logger' ]
-    apns_php.push:
-        class: \ApnsPHP_Push
+    twig.cache_extension:
+        class: Twig\CacheExtension\Extension
         arguments:
-            - 1
-            - "%apns_certificate_file%"
-        calls:
-            - method: setLogger
-              arguments:
-                  - '@apns_php.logger'
+            $cacheStrategy: '@twig.cache_extension.strategy.black_hole'
+        tags:
+            - { name: twig.extension }
 
 # Uncomment to send emails in dev
-#fos_user:
+# fos_user:
 #   registration:
 #       confirmation:
 #           enabled: true

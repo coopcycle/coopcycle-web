@@ -1,0 +1,32 @@
+<mjml>
+  <mj-head>
+    <mj-font name="Raleway" href="https://fonts.googleapis.com/css?family=Raleway:400,700" />
+    <mj-font name="Open Sans" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" />
+    <mj-attributes>
+      <mj-text align="center" color="#555" />
+      <mj-all font-family="'Open Sans', Arial, sans-serif" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#eee">
+    <mj-section>
+		  <mj-column>
+		    <mj-text font-family="Raleway, Arial, sans-serif">
+		      <h2>{{ coopcycle_setting('brand_name') }}</h2>
+		    </mj-text>
+		  </mj-column>
+		</mj-section>
+    <mj-section background-color="#fff">
+    {% block content %}
+    {% endblock %}
+    </mj-section>
+    <mj-section>
+		  <mj-column>
+		    <mj-text>
+		      {{ 'basics.powered_by'|trans|raw }}
+		    </mj-text>
+        <mj-spacer height="1px" />
+        <mj-image alt="CoopCycle" width="24px" src="https://coopcycle.org/images/logo.png" />
+		  </mj-column>
+		</mj-section>
+  </mj-body>
+</mjml>

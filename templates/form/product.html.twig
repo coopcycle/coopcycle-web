@@ -1,0 +1,13 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block _product_allergens_row %}
+  {{ block('choice_label') }}
+  {{ block('form_help') }}
+  {{ block('choice_widget_expanded') }}
+{% endblock %}
+
+{% block _product_restrictedDiets_row %}
+  {{ block('choice_label') }}
+  {{ block('form_help') }}
+  {{ block('choice_widget_expanded') }}
+{% endblock %}

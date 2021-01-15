@@ -1,0 +1,48 @@
+{% extends 'restaurant/layout.html.twig' %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li>{% trans %}restaurant.form.accessPlanning{% endtrans %}</li>
+{%  endblock %}
+
+{% block content %}
+  <h1 class="page-header">{% trans %}restaurant.list.planning{%  endtrans %}</h1>
+  <h3 id="closing-rules-form__title">{% trans %}restaurant.closingForm.title{% endtrans %}</h3>
+  {{ form_start(form, { attr: { id: 'closing-rules-form' }}) }}
+    <div class="row">
+      {# Hidden fields #}
+      {{ form_row(form.startDate) }}
+      {{ form_row(form.endDate) }}
+      <div class="form-group col-md-4">
+        <label class="control-label required" for="closing-rules-range-picker">{% trans %}restaurant.closingForm.dates.label{% endtrans %}</label>
+        <div id="closing-rules-range-picker">
+      </div>
+      </div>
+      <div class="col-md-4">
+        {{ form_row(form.reason) }}
+      </div>
+      <div class="col-md-2">
+        {{ form_widget(form.submit, { attr: { class: 'btn-block btn-primary', disabled: true } }) }}
+      </div>
+    </div>
+  {{ form_end(form) }}
+  <div class="row">
+    <div class="col-md-12" id="calendar-planning">
+    </div>
+  </div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('restaurant-planning') }}
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    window.AppData = window.AppData || {};
+    window.AppData.closingRules = {{ closing_rules_json|raw }};
+  </script>
+  {{ encore_entry_script_tags('restaurant-planning') }}
+{% endblock %}

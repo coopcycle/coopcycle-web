@@ -1,0 +1,64 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+@import "../../../assets/css/vars.scss";
+
+@import "~font-awesome/scss/_variables.scss";
+@import "~font-awesome/scss/_mixins.scss";
+@import "~font-awesome/scss/_animated.scss";
+
+.delivery-price {
+
+  border: 4px solid #0984e3;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  & > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+  }
+
+  &-label {
+    position: relative;
+    font-size: $font-size-large;
+    font-weight: 700;
+    background-color: #0984e3;
+    padding: 20px;
+    color: #ffffff;
+  }
+
+  &-value {
+    font-family: "Roboto Mono", monospace;
+    padding-right: 20px;
+    > span {
+      display: block;
+    }
+  }
+
+  &--error {
+    border: 4px solid $alert-danger-border;
+    color: $alert-danger-text;
+    .delivery-price-label {
+        background-color: $alert-danger-bg;
+    }
+  }
+
+  &--loading {
+    .delivery-price-label {
+      padding-right: 40px;
+    }
+    .delivery-price-label:after {
+      @include fa-icon();
+      content: $fa-var-spinner;
+      @extend .fa-pulse;
+      display: block;
+      position: absolute;
+      top: calc(50% - 10px);
+      right: $padding-base-horizontal;
+    }
+  }
+}
+
+@import "./packages.scss";

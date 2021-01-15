@@ -1,0 +1,16 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+<div class="container container--full-height">
+  <div class="row {{ embed_context.enabled ? 'pt-4' : '' }}">
+    <div class="col-xs-12">
+      {% include 'order/breadcrumb.html.twig' %}
+    </div>
+  </div>
+  {% include 'order/_partials/content.html.twig' %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% include 'order/_partials/scripts.html.twig' %}
+{% endblock %}

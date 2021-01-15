@@ -9,19 +9,29 @@ AppBundle\Entity\Base\GeoCoordinates:
 AppBundle\Entity\Address:
   address_1:
     addressLocality: 'Paris'
-    postalCode: 75010
+    postalCode: '75010'
     streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
     geo: "@geo_1"
   address_2:
     addressLocality: 'Paris'
-    postalCode: 75010
+    postalCode: '75010'
     streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
     geo: "@geo_2"
   address_3:
     addressLocality: 'Paris'
-    postalCode: 75010
+    postalCode: '75010'
     streetAddress: '17, rue Milton 75009 Paris 9ème'
     geo: "@geo_3"
+
+AppBundle\Entity\Tag:
+  tag_important:
+    name: Important
+    color: '#FF0000'
+
+AppBundle\Entity\Task\Group:
+  task_group_1:
+    name: 'Group #1'
+    tags: [ '@tag_important' ]
 
 AppBundle\Entity\Task:
   task_1:
@@ -34,6 +44,7 @@ AppBundle\Entity\Task:
     doneAfter: <identity(new \DateTime('2018-03-02 11:30:00'))>
     doneBefore: <identity(new \DateTime('2018-03-02 12:00:00'))>
     comments: "#bob"
+    group: "@task_group_1"
   task_3:
     address: "@address_2"
     doneAfter: <identity(new \DateTime('2018-03-02 12:00:00'))>
@@ -57,3 +68,9 @@ AppBundle\Entity\Task:
     doneBefore: <identity(new \DateTime('2018-03-02 12:30:00'))>
     comments: "#bob"
     status: "CANCELLED"
+  task_7:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-02-02 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-02-02 12:30:00'))>
+    comments: "#bob"
+    status: "DONE"

@@ -1,0 +1,51 @@
+{% if restaurant.id is not null %}
+<div class="row margin-bottom-md">
+  {% if restaurant.contract is not empty %}
+    <div class="col-md-12">
+      <div class="alert alert-warning">
+        {% trans %}restaurant.contract.onlyAdmin{% endtrans %}
+      </div>
+      <table class="table">
+        <tr>
+          <th>{% trans %}restaurant.contract.customerAmount.label{% endtrans %}</th>
+          <td class="text-right">
+            {% if restaurant.contract.variableCustomerAmountEnabled %}
+              {{ 'restaurant.contract.variableDeliveryPriceEnabled.disclaimer'|trans }}
+            {% else %}
+              {{ restaurant.contract.customerAmount|price_format }}
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th>{% trans %}restaurant.contract.flatDeliveryPrice.label{% endtrans %}</th>
+          <td class="text-right">
+            {% if restaurant.contract.variableDeliveryPriceEnabled %}
+              {{ 'restaurant.contract.variableDeliveryPriceEnabled.disclaimer'|trans }}
+            {% else %}
+              {{ restaurant.contract.flatDeliveryPrice|price_format }}
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th>{% trans %}restaurant.contract.feeRate.label{% endtrans %}</th>
+          <td class="text-right">{{ (restaurant.contract.feeRate * 100) }}%</td>
+        </tr>
+        <tr>
+          <th>{% trans %}restaurant.contract.takeAwayFeeRate.label{% endtrans %}</th>
+          <td class="text-right">{{ (restaurant.contract.takeAwayFeeRate * 100) }}%</td>
+        </tr>
+        <tr>
+          <th>{% trans %}restaurant.contract.restaurantPaysStripeFee.label{% endtrans %}</th>
+          <td class="text-right">{{ restaurant.contract.restaurantPaysStripeFee ? 'restaurant.contract.restaurantPaysStripeFee.restaurant' | trans : 'restaurant.contract.restaurantPaysStripeFee.cooperative' | trans }}</td>
+        </tr>
+      </table>
+    </div>
+  {% else %}
+    <div class="col-md-12">
+      <div class="alert alert-danger">
+        {% trans %}restaurant.contract.noContract{% endtrans %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endif %}

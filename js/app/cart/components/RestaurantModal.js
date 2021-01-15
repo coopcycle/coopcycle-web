@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
-import Sticky from 'react-stickynode'
-import _ from 'lodash'
+import { withTranslation } from 'react-i18next'
 import Modal from 'react-modal'
 
 import { goBackToRestaurant, retryLastAddItemRequest } from '../redux/actions'
@@ -14,19 +12,12 @@ class RestaurantModal extends Component {
   }
 
   closeModal() {
-    // this.setState({ addressModalIsOpen: false })
   }
 
-  render() {
+  renderModalContent() {
 
     return (
-      <Modal
-        isOpen={ this.props.isOpen }
-        onAfterOpen={ this.afterOpenModal.bind(this) }
-        onRequestClose={ this.closeModal.bind(this) }
-        shouldCloseOnOverlayClick={ false }
-        contentLabel={ this.props.t('CART_CHANGE_RESTAURANT_MODAL_LABEL') }
-        className="ReactModal__Content--restaurant">
+      <div>
         <div className="text-center">
           <p>
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_1') }
@@ -42,6 +33,21 @@ class RestaurantModal extends Component {
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_BTN_YES') }
           </button>
         </div>
+      </div>
+    )
+  }
+
+  render() {
+
+    return (
+      <Modal
+        isOpen={ this.props.isOpen }
+        onAfterOpen={ this.afterOpenModal.bind(this) }
+        onRequestClose={ this.closeModal.bind(this) }
+        shouldCloseOnOverlayClick={ false }
+        contentLabel={ this.props.t('CART_CHANGE_RESTAURANT_MODAL_LABEL') }
+        className="ReactModal__Content--restaurant">
+        { this.renderModalContent() }
       </Modal>
     )
   }
@@ -49,7 +55,7 @@ class RestaurantModal extends Component {
 
 function mapStateToProps(state) {
 
-  const hasError = state.errors.hasOwnProperty('restaurant')
+  const hasError = Object.prototype.hasOwnProperty.call(state.errors, 'restaurant')
 
   return {
     isOpen: hasError,
@@ -64,4 +70,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(RestaurantModal))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(RestaurantModal))

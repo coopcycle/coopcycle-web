@@ -1,0 +1,41 @@
+{% if delivery|length > 0 or collection|length > 0 %}
+
+  {% set days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] %}
+
+  {% set delivery_opening_hours = delivery|opening_hours %}
+  {% set collection_opening_hours = collection|opening_hours %}
+
+  <table class="table table-condensed table-opening-hours mb-0">
+    <thead>
+      <tr>
+        <th></th>
+        {% if delivery|length > 0 %}
+        <th>{{ 'fulfillment_method.delivery'|trans }}</th>
+        {% endif %}
+        {% if collection|length > 0 %}
+        <th>{{ 'fulfillment_method.collection'|trans }}</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for day in days %}
+
+        {% set delivery_ohfd   = delivery_opening_hours.forDay(day) %}
+        {% set collection_ohfd = collection_opening_hours.forDay(day) %}
+
+        {% if delivery_ohfd|length > 0 or collection_ohfd|length > 0 %}
+          <tr {% if delivery_ohfd|opening_hours_for_day_matches(day) or collection_ohfd|opening_hours_for_day_matches(day) %}class="active"{% endif %}>
+            <th>{{ day|day_localized(app.request.locale) }}</th>
+            {% if delivery|length > 0 %}
+            <td>{% if delivery_ohfd|length > 0 %}{{ delivery_ohfd|join(',') }}{% endif %}</td>
+            {% endif %}
+            {% if collection|length > 0 %}
+            <td>{% if collection_ohfd|length > 0 %}{{ collection_ohfd|join(',') }}{% endif %}</td>
+            {% endif %}
+          </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endif %}

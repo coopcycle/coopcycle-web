@@ -24,6 +24,8 @@ class AppKernel extends Kernel
             new Sylius\Bundle\CurrencyBundle\SyliusCurrencyBundle(),
             new Sylius\Bundle\ChannelBundle\SyliusChannelBundle(),
             new Sylius\Bundle\PromotionBundle\SyliusPromotionBundle(),
+            new Sylius\Bundle\PaymentBundle\SyliusPaymentBundle(),
+            new Sylius\Bundle\CustomerBundle\SyliusCustomerBundle(),
             // Sylius bundles need to be registered before DoctrineBundle
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
@@ -41,8 +43,6 @@ class AppKernel extends Kernel
             new Csa\Bundle\GuzzleBundle\CsaGuzzleBundle(),
             new Misd\PhoneNumberBundle\MisdPhoneNumberBundle(),
             new winzou\Bundle\StateMachineBundle\winzouStateMachineBundle(),
-            new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
-            new M6Web\Bundle\StatsdBundle\M6WebStatsdBundle(),
             new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
             new Craue\ConfigBundle\CraueConfigBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
@@ -59,37 +59,71 @@ class AppKernel extends Kernel
             new Liip\ImagineBundle\LiipImagineBundle(),
             new Oneup\UploaderBundle\OneupUploaderBundle(),
             new Trikoder\Bundle\OAuth2Bundle\TrikoderOAuth2Bundle(),
+            new NotFloran\MjmlBundle\MjmlBundle(),
+            new Sentry\SentryBundle\SentryBundle(),
+            new Http\HttplugBundle\HttplugBundle(),
+            new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
+            new M6Web\Bundle\DaemonBundle\M6WebDaemonBundle(),
+            new Oneup\FlysystemBundle\OneupFlysystemBundle(),
+            new Kreait\Firebase\Symfony\Bundle\FirebaseBundle(),
             new AppBundle\AppBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
             $bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
-            $bundles[] = new Symfony\Bundle\WebServerBundle\WebServerBundle();
-        } else if (in_array($this->getEnvironment(), ['prod'], true)) {
-            $bundles[] = new Sentry\SentryBundle\SentryBundle();
         }
 
         return $bundles;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getProjectDir(): string
+    {
+        if (isset($_ENV['APP_PROJECT_DIR'])) {
+            return $_ENV['APP_PROJECT_DIR'];
+        } elseif (isset($_SERVER['APP_PROJECT_DIR'])) {
+            return $_SERVER['APP_PROJECT_DIR'];
+        }
+
+        return parent::getProjectDir();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getRootDir()
     {
-        return __DIR__;
+        return $this->getProjectDir().'/app';
     }
 
+    /**
+     * Backport of https://github.com/symfony/symfony/pull/37114
+     * {@inheritdoc}
+     */
     public function getCacheDir()
     {
-        return dirname(__DIR__).'/var/cache/'.$this->getEnvironment();
+        if (isset($_SERVER['APP_CACHE_DIR'])) {
+            return $_SERVER['APP_CACHE_DIR'].'/'.$this->environment;
+        }
+
+        return parent::getCacheDir();
     }
 
-    public function getLogDir()
+    /**
+     * Backport of https://github.com/symfony/symfony/pull/37114
+     * {@inheritdoc}
+     */
+    public function getLogDir(): string
     {
-        return dirname(__DIR__).'/var/logs';
+        // Just to add the "s"
+        return $_SERVER['APP_LOG_DIR'] ?? ($this->getProjectDir().'/var/logs');
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load($this->getRootDir().'/config/config_'.$this->getEnvironment().'.yml');
+        $loader->load($this->getProjectDir().'/app/config/config_'.$this->getEnvironment().'.yml');
     }
 }

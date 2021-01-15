@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+  <head>
+    {{ sonata_seo_title() }}
+    {{ sonata_seo_link_canonical() }}
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    {{ sonata_seo_metadatas() }}
+    {{ encore_entry_link_tags('restaurants-map') }}
+  </head>
+  <body>
+    <div id="wrap">
+        <div class="map">
+          <div id="map"></div>
+        </div>
+    </div>
+    <div id="cpccl_settings"
+      data-latlng="{{ coopcycle_setting('latlng')|json_encode|e('html_attr') }}"></div>
+    <script>
+    window.__restaurants = {{ restaurants|raw }};
+    </script>
+    {{ encore_entry_script_tags('restaurants-map') }}
+  </body>
+</html>
+

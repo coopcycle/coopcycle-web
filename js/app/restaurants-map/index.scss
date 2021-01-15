@@ -1,0 +1,30 @@
+@import "~font-awesome/css/font-awesome.min.css";
+@import "~beautifymarker/leaflet-beautify-marker-icon.css";
+@import "~leaflet/dist/leaflet.css";
+
+html, body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+#wrap {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+#wrap .map {
+  display: flex;
+  flex: 7.5;
+}
+#map {
+  flex: 1;
+}
+#wrap .menu {
+  flex: 2.5;
+  overflow: auto;
+  background-color: #333;
+}

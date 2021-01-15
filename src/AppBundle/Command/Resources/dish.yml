@@ -1,7 +1,0 @@
-AppBundle\Entity\Sylius\Product:
-  product:
-    code: <uuid()>
-    currentLocale: fr
-    name: <dishName()>
-    slug: <uuid()>
-    enabled: true

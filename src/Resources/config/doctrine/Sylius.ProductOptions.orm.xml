@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity name="AppBundle\Entity\Sylius\ProductOptions" table="sylius_product_options">
+    <unique-constraints>
+      <unique-constraint name="sylius_product_option_unique" columns="product_id,option_id"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="position" type="integer" column="position">
+      <gedmo:sortable-position/>
+    </field>
+    <many-to-one field="product" target-entity="AppBundle\Entity\Sylius\Product" inversed-by="options">
+      <join-columns>
+        <join-column name="product_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+      </join-columns>
+      <gedmo:sortable-group />
+    </many-to-one>
+    <many-to-one field="option" target-entity="AppBundle\Entity\Sylius\ProductOption">
+      <join-columns>
+        <join-column name="option_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

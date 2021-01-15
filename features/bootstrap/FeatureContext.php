@@ -1,29 +1,40 @@
 <?php
 
+use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Order;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\DeliveryAddress;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Organization;
+use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Store\Token as StoreToken;
 use AppBundle\Entity\Task;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Entity\Sylius\Product;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Coduo\PHPMatcher\Factory\SimpleFactory;
+use Behat\Testwork\Tester\Result\TestResult;
+use Behat\Behat\Tester\Exception\PendingException;
+use Coduo\PHPMatcher\PHPMatcher;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
+use Faker\Generator as FakerGenerator;
 use FOS\UserBundle\Util\UserManipulator;
 use Behatch\HttpCall\HttpCallResultPool;
 use PHPUnit\Framework\Assert;
@@ -37,10 +48,15 @@ use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuthClient;
 use Trikoder\Bundle\OAuth2Bundle\Model\Grant;
 use Trikoder\Bundle\OAuth2Bundle\Model\Scope;
 use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
+use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use DMore\ChromeDriver\ChromeDriver;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpClient\Exception\TransportException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 
 /**
  * Defines application features from the specific context.
@@ -94,14 +110,19 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         SettingsManager $settingsManager,
         OrderTimelineCalculator $orderTimelineCalculator,
         UserManipulator $userManipulator,
-        AuthorizationServer $authorizationServer)
+        AuthorizationServer $authorizationServer,
+        Redis $redis,
+        IriConverterInterface $iriConverter,
+        HttpMessageFactoryInterface $httpMessageFactory,
+        Redis $tile38,
+        FakerGenerator $faker,
+        OrderProcessorInterface $orderProcessor)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
         $this->doctrine = $doctrine;
         $this->manager = $doctrine->getManager();
         $this->schemaTool = new SchemaTool($this->manager);
-        $this->classes = $this->manager->getMetadataFactory()->getAllMetadata();
         $this->httpCallResultPool = $httpCallResultPool;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->fixturesLoader = $fixturesLoader;
@@ -109,6 +130,12 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->orderTimelineCalculator = $orderTimelineCalculator;
         $this->userManipulator = $userManipulator;
         $this->authorizationServer = $authorizationServer;
+        $this->redis = $redis;
+        $this->iriConverter = $iriConverter;
+        $this->httpMessageFactory = $httpMessageFactory;
+        $this->tile38 = $tile38;
+        $this->faker = $faker;
+        $this->orderProcessor = $orderProcessor;
     }
 
     public function setKernel(KernelInterface $kernel)
@@ -130,17 +157,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $this->restContext = $environment->getContext('Behatch\Context\RestContext');
         $this->minkContext = $environment->getContext('Behat\MinkExtension\Context\MinkContext');
-
-        // @see https://github.com/minkphp/Mink/commit/acf5fb1ec70b7de4902daf75301356702a26e6da
-        // @see https://github.com/minkphp/Mink/issues/731
-        if (!$this->minkContext->getSession()->isStarted()) {
-            $this->minkContext->getSession()->start();
-        }
-    }
-
-    private function getSession()
-    {
-        return $this->minkContext->getSession();
     }
 
     /**
@@ -187,30 +203,16 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     public function unSetCarbon()
     {
         Carbon::setTestNow();
+
+        $this->redis->del('datetime:now');
     }
 
     /**
-     * @BeforeScenario @javascript
+     * @AfterScenario
      */
-    public function setGoogleApiKeySetting()
+    public function disableMaintenance()
     {
-        // TODO Verify the environment variable exists
-        $googleApiKey = getenv('GOOGLE_API_KEY');
-
-        $this->settingsManager->set('google_api_key', $googleApiKey);
-    }
-
-    /**
-     * @BeforeScenario @javascript
-     */
-    public function setStripeCredentialsSetting()
-    {
-        // TODO Verify the environment variables exist
-        $stripePublishableKey = getenv('STRIPE_PUBLISHABLE_KEY');
-        $stripeSecretKey = getenv('STRIPE_SECRET_KEY');
-
-        $this->settingsManager->set('stripe_test_publishable_key', $stripePublishableKey);
-        $this->settingsManager->set('stripe_test_secret_key', $stripeSecretKey);
+        $this->redis->del('maintenance');
     }
 
     /**
@@ -240,18 +242,27 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function theRedisDatabaseIsEmpty()
     {
-        $redis = $this->getContainer()->get('snc_redis.default');
-        foreach ($redis->keys('*') as $key) {
-            $redis->del($key);
+        foreach ($this->redis->keys('*') as $key) {
+            $this->redis->del($key);
         }
     }
 
     /**
      * @Given the current time is :datetime
      */
-    public function currentTimeIs(string $datetime) {
-        $now = new Carbon($datetime);
-        Carbon::setTestNow($now);
+    public function currentTimeIs(string $datetime)
+    {
+        Carbon::setTestNow(Carbon::parse($datetime));
+
+        $this->redis->set('datetime:now', Carbon::now()->toAtomString());
+    }
+
+    /**
+     * @Given the maintenance mode is on
+     */
+    public function enableMaintenance()
+    {
+        $this->redis->set('maintenance', '1');
     }
 
     /**
@@ -266,12 +277,12 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             throw new \RuntimeException("Can not convert given JSON string to valid JSON format.");
         }
 
-        $factory = new SimpleFactory();
-        $matcher = $factory->createMatcher();
+        $matcher = new PHPMatcher();
         $match = $matcher->match($responseJson, $expectedJson);
 
         if ($match !== true) {
-            throw new \RuntimeException("Expected JSON doesn't match response JSON.");
+            throw new \RuntimeException(sprintf("Expected JSON doesn't match response JSON.\n%s",
+                (string) $matcher->backtrace()));
         }
     }
 
@@ -304,6 +315,16 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         if (isset($data['confirmationToken'])) {
             $user->setConfirmationToken($data['confirmationToken']);
+            $needsUpdate = true;
+        }
+
+        if (isset($data['passwordRequestAge'])) {
+            $ageInSeconds = new DateInterval('PT'.$data['passwordRequestAge']."S");
+
+            $timestamp = new DateTime();
+            $timestamp->sub($ageInSeconds);
+
+            $user->setPasswordRequestedAt($timestamp);
             $needsUpdate = true;
         }
 
@@ -561,7 +582,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function theRestaurantWithIdHasProducts($id, TableNode $table)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $productCodes = array_map(function ($row) {
             return $row['code'];
@@ -572,7 +593,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             $restaurant->addProduct($product);
         }
 
-        $this->doctrine->getManagerForClass(Restaurant::class)->flush();
+        $this->doctrine->getManagerForClass(LocalBusiness::class)->flush();
     }
 
     /**
@@ -580,7 +601,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function theRestaurantWithIdHasMenu($id, TableNode $table)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $menu = $this->getContainer()->get('sylius.factory.taxon')->createNew();
         $menu->setCode(Uuid::uuid4()->toString());
@@ -609,7 +630,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $restaurant->addTaxon($menu);
         $restaurant->setMenuTaxon($menu);
 
-        $this->doctrine->getManagerForClass(Restaurant::class)->flush();
+        $this->doctrine->getManagerForClass(LocalBusiness::class)->flush();
     }
 
     /**
@@ -634,7 +655,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $userManager = $this->getContainer()->get('fos_user.user_manager');
         $user = $userManager->findUserByUsername($username);
 
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $user->addRestaurant($restaurant);
         $userManager->updateUser($user);
@@ -643,19 +664,30 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     /**
      * FIXME Too complicated, too low level
      */
-    private function createRandomOrder(Restaurant $restaurant, UserInterface $user, \DateTime $shippedAt = null)
+    private function createRandomOrder(LocalBusiness $restaurant, UserInterface $user, \DateTime $shippedAt = null)
     {
         $order = $this->getContainer()->get('sylius.factory.order')
             ->createForRestaurant($restaurant);
 
-        $order->setCustomer($user);
+        $order->setCustomer($user->getCustomer());
 
         if (null === $shippedAt) {
             // FIXME Using next opening date makes results change randomly
             $shippedAt = clone $restaurant->getNextOpeningDate();
             $shippedAt->modify('+30 minutes');
         }
-        $order->setShippedAt($shippedAt);
+
+        $rangeLower = clone $shippedAt;
+        $rangeUpper = clone $shippedAt;
+
+        $rangeLower->modify('-5 minutes');
+        $rangeUpper->modify('+5 minutes');
+
+        $range = new TsRange();
+        $range->setLower($rangeLower);
+        $range->setUpper($rangeUpper);
+
+        $order->setShippingTimeRange($range);
 
         // FIXME Allow specifying an address in test
         $order->setShippingAddress($restaurant->getAddress());
@@ -687,7 +719,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $userManager = $this->getContainer()->get('fos_user.user_manager');
         $user = $userManager->findUserByUsername($username);
 
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $order = $this->createRandomOrder($restaurant, $user);
         $order->setState(OrderInterface::STATE_NEW);
@@ -704,7 +736,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $userManager = $this->getContainer()->get('fos_user.user_manager');
         $user = $userManager->findUserByUsername($username);
 
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $order = $this->createRandomOrder($restaurant, $user, new \DateTime($date));
         $order->setState(OrderInterface::STATE_NEW);
@@ -741,622 +773,9 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function theRestaurantWithIdShouldHaveClosingRules($id, $count)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         Assert::assertEquals($count, count($restaurant->getClosingRules()));
-    }
-
-    private function findVisibleProductModal()
-    {
-        $session = $this->getSession();
-
-        $modal = $session->getPage()->waitFor(10, function($page) {
-            // FIXME The .modal selector is too general
-            foreach ($page->findAll('css', '.modal') as $modal) {
-                if ($modal->isVisible()) {
-                    return $modal;
-                }
-            }
-
-            return false;
-        });
-
-        return $modal;
-    }
-
-    /**
-     * @Given I wait for cart to be ready
-     */
-    public function waitCartReady()
-    {
-        $session = $this->getSession();
-
-        $cart = $session->getPage()->find('css', '#cart');
-
-        $isReady = $cart->waitFor(30, function($cart) {
-
-            if ($cart->getAttribute('data-ready') === 'true') {
-
-                return true;
-            }
-
-            return false;
-        });
-
-        Assert::assertTrue($isReady);
-    }
-
-    /**
-     * @Then the product options modal should appear
-     */
-    public function assertProductOptionsModalVisible()
-    {
-        $modal = $this->findVisibleProductModal();
-
-        Assert::assertNotNull($modal);
-        Assert::assertTrue($modal->isVisible());
-    }
-
-    /**
-     * @Then the address modal should appear
-     */
-    public function assertAddressModalVisible()
-    {
-        $session = $this->getSession();
-
-        $modal = $session->getPage()->waitFor(30, function($page) {
-
-            return $page->find('css', '.ReactModal__Content--enter-address');
-        });
-
-        Assert::assertNotNull($modal);
-        Assert::assertTrue($modal->isVisible());
-    }
-
-    /**
-     * @Given I check all the mandatory product options
-     */
-    public function checkAllMandatoryProductOptions()
-    {
-        $modal = $this->findVisibleProductModal();
-
-        Assert::assertTrue($modal->isVisible());
-
-        $form = $modal->find('css', 'form');
-
-        $listGroups = $form->findAll('css', '.list-group');
-
-        foreach ($listGroups as $listGroup) {
-            $optionName = $listGroup->find('css', 'input[type="radio"]')->getAttribute('name');
-
-            $optionValues = [];
-            foreach ($listGroup->findAll('css', 'input[type="radio"]') as $radio) {
-                $optionValues[] = $radio->getAttribute('value');
-            }
-
-            $listGroup->selectFieldOption($optionName, current($optionValues));
-        }
-    }
-
-    /**
-     * @Given I submit the product options modal
-     */
-    public function submitProductOptionsModal()
-    {
-        $modal = $this->findVisibleProductModal();
-
-        $modal->find('css', 'form button[type="submit"]')->press();
-    }
-
-    /**
-     * @Then the product :name should be added to the cart
-     */
-    public function assertProductAddedToCart($name)
-    {
-        $session = $this->getSession();
-
-        $cart = $session->getPage()->find('css', '#cart');
-
-        // FIXME For stability, we should check if loading has finished
-
-        $cartItem = $cart->waitFor(30, function($cart) use ($name) {
-
-            $cartItems = $cart->findAll('css', '.cart__items .cart__item');
-            if (count($cartItems) === 0) {
-
-                return false;
-            }
-
-            foreach ($cartItems as $cartItem) {
-                $cartItemName = $cartItem->find('css', '.cart__item__content__body > span:first-of-type')->getText();
-                if ($cartItemName === $name) {
-
-                    return $cartItem;
-                }
-            }
-        });
-
-        Assert::assertNotNull($cartItem);
-    }
-
-    /**
-     * @Given I click on restaurant :name
-     */
-    public function clickRestaurant($name)
-    {
-        $session = $this->getSession();
-
-        $restaurants = $session->getPage()->findAll('css', '.restaurant-list .restaurant-item');
-
-        foreach ($restaurants as $restaurant) {
-            $restaurantName = $restaurant->find('css', '.caption > h4')->getText();
-
-            if ($restaurantName === $name) {
-                $restaurant->click();
-                return;
-            }
-        }
-
-        throw new \Exception(sprintf('Restaurant with name "%s" was not found in page', $name));
-    }
-
-    /**
-     * @Given I click on menu item :name
-     */
-    public function clickMenuItem($name)
-    {
-        $session = $this->getSession();
-
-        $menuItems = $session->getPage()->findAll('css', '.menu-item');
-
-        foreach ($menuItems as $menuItem) {
-            $menuItemName = $menuItem->find('css', '.menu-item-content')->getText();
-
-            if ($menuItemName === $name) {
-                $menuItem->click();
-                return;
-            }
-        }
-
-        throw new \Exception(sprintf('Menu item with name "%s" was not found in page', $name));
-    }
-
-    /**
-     * @Then the product options modal submit button should not be disabled
-     */
-    public function assertProductOptionsModalSubmitButtonNotDisabled()
-    {
-        $modal = $this->findVisibleProductModal();
-
-        Assert::assertNotNull($modal);
-        Assert::assertTrue($modal->isVisible());
-
-        $button = $modal->find('css', 'form button[type="submit"]');
-
-        Assert::assertFalse($button->hasAttribute('disabled'));
-    }
-
-    /**
-     * @Given I enter address :address in the address modal
-     */
-    public function enterAddressInModal($address)
-    {
-        $session = $this->getSession();
-
-        $modal = $session->getPage()->waitFor(10, function($page) {
-
-            return $page->find('css', '.ReactModal__Content--enter-address');
-        });
-
-        Assert::assertNotNull($modal);
-        Assert::assertTrue($modal->isVisible());
-
-        // We can't use setValue for autocomplete because we lose focus
-        // Instead, we use low level method postValue
-        // @see https://github.com/Behat/MinkExtension/issues/257
-
-        $xpath = $this->getSession()->getSelectorsHandler()
-            ->selectorToXpath('css', '.ReactModal__Content--enter-address input[type="text"]');
-
-        $this->getSession()
-            ->getDriver()
-            ->getWebDriverSession()
-            ->element('xpath', $xpath)
-            ->postValue(['value' => [$address]]);
-    }
-
-    /**
-     * @Given I enter address :address in the homepage search
-     */
-    public function enterAddressInHomepageSearch($address)
-    {
-        // We can't use setValue for autocomplete because we lose focus
-        // Instead, we use low level method postValue
-        // @see https://github.com/Behat/MinkExtension/issues/257
-
-        $xpath = $this->getSession()->getSelectorsHandler()
-            ->selectorToXpath('css', '#address-search input[type="text"]');
-
-        $this->getSession()
-            ->getDriver()
-            ->getWebDriverSession()
-            ->element('xpath', $xpath)
-            ->postValue(['value' => [$address]]);
-    }
-
-    /**
-     * @Then I should see address suggestions in the address modal
-     */
-    public function assertAddressSuggestionsInModal()
-    {
-        $session = $this->getSession();
-
-        $addressPicker = $session->getPage()->find('css', '.ReactModal__Content--enter-address .address-autosuggest__container');
-
-        $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
-
-            $suggestions = $addressPicker->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
-
-            return count($suggestions) > 0 ? $suggestions : false;
-        });
-
-        Assert::assertNotCount(0, $suggestions);
-    }
-
-    /**
-     * @Then I should see address suggestions in the homepage search
-     */
-    public function assertAddressSuggestionsInHomepageSearch()
-    {
-        $session = $this->getSession();
-
-        $addressPicker = $session->getPage()->find('css', '#address-search .address-autosuggest__container');
-
-        $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
-
-            $suggestions = $addressPicker->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
-
-            return count($suggestions) > 0 ? $suggestions : false;
-        });
-
-        Assert::assertNotCount(0, $suggestions);
-    }
-
-    /**
-     * @Then I should see section :title in the homepage search suggestions
-     */
-    public function assertSectionInHomepageSearch($title)
-    {
-        $session = $this->getSession();
-
-        $addressPicker = $session->getPage()->find('css', '#address-search .address-autosuggest__container');
-
-        $sectionTitles = $addressPicker->waitFor(10, function($addressPicker) {
-
-            $sectionTitles =
-                $addressPicker->findAll('css', '.react-autosuggest__suggestions-container .react-autosuggest__section-title');
-
-            return count($sectionTitles) > 0 ? $sectionTitles : false;
-        });
-
-        Assert::assertNotCount(0, $sectionTitles);
-
-        $sectionTitlesAsString = array_map(function ($sectionTitle) {
-
-            return trim($sectionTitle->getText());
-        }, $sectionTitles);
-
-        Assert::assertContains($title, $sectionTitlesAsString);
-    }
-
-    /**
-     * @Then I should see address :address in section :title in the homepage search suggestions
-     */
-    public function assertAddressInSectionInHomepageSearch($address, $title)
-    {
-        $session = $this->getSession();
-
-        $addressPicker = $session->getPage()->find('css', '#address-search .address-autosuggest__container');
-
-        $sectionContainer = $addressPicker->waitFor(10, function($addressPicker) use ($title) {
-
-            $sectionContainers =
-                $addressPicker->findAll('css', '.react-autosuggest__suggestions-container .react-autosuggest__section-container');
-
-            foreach ($sectionContainers as $sectionContainer) {
-                $sectionTitle = $sectionContainer->find('css', '.react-autosuggest__section-title');
-                if (trim($sectionTitle->getText()) === $title) {
-
-                    return $sectionContainer;
-                }
-            }
-
-            return false;
-        });
-
-        Assert::assertNotNull($sectionContainer, sprintf('Section with title "%s" was not found on page', $title));
-
-        $suggestions = $sectionContainer->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
-
-        Assert::assertNotCount(0, $suggestions);
-
-        $suggestionsAsString = array_map(function ($suggestion) {
-
-            return trim($suggestion->getText());
-        }, $suggestions);
-
-        Assert::assertContains($address, $suggestionsAsString);
-    }
-
-    /**
-     * @Given I select address :address in section :title in the homepage search suggestions
-     */
-    public function selectAddressInSectionInHomepageSearch($address, $title)
-    {
-        $session = $this->getSession();
-
-        $addressPicker = $session->getPage()->find('css', '#address-search .address-autosuggest__container');
-
-        $sectionContainer = $addressPicker->waitFor(10, function($addressPicker) use ($title) {
-
-            $sectionContainers =
-                $addressPicker->findAll('css', '.react-autosuggest__suggestions-container .react-autosuggest__section-container');
-
-            foreach ($sectionContainers as $sectionContainer) {
-                $sectionTitle = $sectionContainer->find('css', '.react-autosuggest__section-title');
-                if (trim($sectionTitle->getText()) === $title) {
-
-                    return $sectionContainer;
-                }
-            }
-
-            return false;
-        });
-
-        Assert::assertNotNull($sectionContainer, sprintf('Section with title "%s" was not found on page', $title));
-
-        $suggestions = $sectionContainer->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
-
-        Assert::assertNotCount(0, $suggestions);
-
-        $suggestionsAsString = array_map(function ($suggestion) {
-
-            return trim($suggestion->getText());
-        }, $suggestions);
-
-        Assert::assertContains($address, $suggestionsAsString);
-
-        foreach ($suggestions as $suggestion) {
-            if (trim($suggestion->getText()) === $address) {
-                $suggestion->click();
-            }
-        }
-    }
-
-    /**
-     * @Given I select the first address suggestion in the address modal
-     */
-    public function selectFirstAddressSuggestionInModal()
-    {
-        $session = $this->getSession();
-
-        $addressPicker = $session->getPage()->find('css', '.ReactModal__Content--enter-address .address-autosuggest__container');
-
-        $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
-
-            $suggestions = $addressPicker->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
-
-            return count($suggestions) > 0 ? $suggestions : false;
-        });
-
-        Assert::assertNotCount(0, $suggestions);
-
-        // FIXME Use :nth-child selector to be more strict
-        $firstSuggestion = current($suggestions);
-
-        $firstSuggestion->click();
-    }
-
-    /**
-     * @Given I select the first address suggestion in the homepage search
-     */
-    public function selectFirstAddressSuggestionInHomepageSearch()
-    {
-        $session = $this->getSession();
-
-        $addressPicker = $session->getPage()->find('css', '#address-search .address-autosuggest__container');
-
-        $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
-
-            $suggestions = $addressPicker->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
-
-            return count($suggestions) > 0 ? $suggestions : false;
-        });
-
-        Assert::assertNotCount(0, $suggestions);
-
-        // FIXME Use :nth-child selector to be more strict
-        $firstSuggestion = current($suggestions);
-
-        $firstSuggestion->click();
-    }
-
-    /**
-     * @Then the address modal should disappear
-     */
-    public function assertAddressModalNotVisible()
-    {
-        $session = $this->getSession();
-
-        $timeout = 5;
-
-        $isHidden = $session->getPage()->waitFor($timeout, function($page) {
-
-            $modal = $page->find('css', '.ReactModal__Content--enter-address');
-
-            return null === $modal;
-        });
-
-        Assert::assertTrue($isHidden, sprintf('Address modal is still visible after %d seconds', $timeout));
-    }
-
-    /**
-     * @Then the cart address picker should contain :value
-     */
-    public function assertCartAddressPickerHasValue($value)
-    {
-        $session = $this->getSession();
-
-        $cart = $session->getPage()->find('css', '#cart');
-        $addressPicker = $cart->find('css', '.address-autosuggest__container');
-        $addressPickerInput = $addressPicker->find('css', 'input[type="text"]');
-
-        Assert::assertEquals($value, $addressPickerInput->getValue());
-    }
-
-    /**
-     * @Then the cart submit button should not be disabled
-     */
-    public function assertCartSubmitButtonNotDisabled()
-    {
-        $timeout = 5;
-
-        $isNotDisabled = $this->getSession()->getPage()->waitFor($timeout, function($page) {
-
-            $button = $page->find('css', '#cart .panel-body button[type="submit"]');
-
-            return false === $button->hasAttribute('disabled') && false === $button->hasClass('disabled');
-        });
-
-        Assert::assertTrue($isNotDisabled, sprintf('Submit button is still disabled after %d seconds', $timeout));
-    }
-
-    /**
-     * @Given I submit the cart
-     */
-    public function submitCart()
-    {
-        $session = $this->getSession();
-
-        $button = $session->getPage()->find('css', '#cart .panel-body button[type="submit"]');
-
-        $button->click();
-    }
-
-    /**
-     * @Given I login with username :username and password :password
-     */
-    public function loginWithUsernameAndPassword($username, $password)
-    {
-        $this->minkContext->fillField('username', $username);
-        $this->minkContext->fillField('password', $password);
-        $this->minkContext->pressButton('_submit');
-    }
-
-    /**
-     * @Given I enter test credit card details
-     */
-    public function enterTestCreditCardDetails()
-    {
-        $session = $this->getSession();
-
-        $iframe = $session->getPage()->waitFor(30, function($page) {
-
-            return $page->find('css', '.StripeElement iframe');
-        });
-
-        Assert::assertNotNull($iframe, 'Stripe iframe was not found on page');
-
-        $session->switchToIframe($iframe->getAttribute('name'));
-
-        // The Stripe element doesn't work when typing too fast,
-        // then we fill the field "slowly"
-        // @see https://stackoverflow.com/questions/52608566/selenium-send-keys-incorrect-order-in-stripe-credit-card-input
-        // @see https://gist.github.com/nruth/b2500074749e9f56e0b7
-
-        $xpath = $session->getSelectorsHandler()
-            ->selectorToXpath('css', 'input[name="cardnumber"]');
-
-        $pieces = str_split('4242424242424242', 2);
-        foreach ($pieces as $text) {
-            $session
-                ->getDriver()
-                ->getWebDriverSession()
-                ->element('xpath', $xpath)
-                ->postValue(['value' => [$text]]);
-
-            $session->wait(250);
-        }
-
-        $expMonth = date('m', strtotime('+1 month'));
-        $expYear = date('y', strtotime('+1 month'));
-
-        $xpath = $session->getSelectorsHandler()
-            ->selectorToXpath('css', 'input[name="exp-date"]');
-
-        $session
-            ->getDriver()
-            ->getWebDriverSession()
-            ->element('xpath', $xpath)
-            ->postValue(['value' => ["{$expMonth}"]]);
-
-        $session->wait(250);
-
-        $session
-            ->getDriver()
-            ->getWebDriverSession()
-            ->element('xpath', $xpath)
-            ->postValue(['value' => ["{$expYear}"]]);
-
-        $session->wait(250);
-
-        $this->minkContext->fillField('cvc', '123');
-
-        $session->switchToIframe();
-
-        $session->getPage()->find('css', 'form[name="checkout_payment"] button[type="submit"]')->click();
-
-        // FIXME There should be a better way
-        $session->wait(5000);
-    }
-
-    /**
-     * @Given I wait for url to match :regex
-     */
-    public function waitForURLToMatch($regex)
-    {
-        $addressMatches = $this->getSession()->getPage()->waitFor(30, function($page) use ($regex) {
-
-            try {
-
-                $this->minkContext->assertSession()->addressMatches(sprintf('#%s#', $regex));
-
-                return true;
-
-            } catch (ExpectationException $e) {
-            } catch (\Exception $e) {
-            }
-
-            return false;
-        });
-
-        Assert::assertTrue($addressMatches);
-    }
-
-    /**
-     * @Then the restaurant warning modal should appear
-     */
-    public function assertRestaurantWarningModalVisible()
-    {
-        $session = $this->getSession();
-
-        $modal = $session->getPage()->waitFor(30, function($page) {
-
-            return $page->find('css', '.ReactModal__Content--restaurant');
-        });
-
-        Assert::assertNotNull($modal);
-        Assert::assertTrue($modal->isVisible());
     }
 
     /**
@@ -1415,22 +834,332 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $identifier = $oAuthClient->getIdentifier();
         $secret = $oAuthClient->getSecret();
 
-        $headers = [
-            'Authorization' => sprintf('Basic %s', base64_encode(sprintf('%s:%s', $identifier, $secret))),
-        ];
-
         $body = [
             'grant_type' => 'client_credentials',
             'scope' => 'tasks deliveries'
         ];
 
-        $request = new ServerRequest([], [], null, null, 'php://temp', $headers, [], [], $body);
-        $response = new Response();
+        $request = $this->httpMessageFactory->createRequest(
+            Request::create('/uri', $method = 'POST', $parameters = $body, $cookies = [], $files = [], $server = [
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode(sprintf('%s:%s', $identifier, $secret))),
+            ], $content = null)
+        );
+        $response = $this->httpMessageFactory->createResponse(new Response());
 
         $response = $this->authorizationServer->respondToAccessTokenRequest($request, $response);
 
         $data = json_decode($response->getBody(), true);
 
         $this->oAuthTokens[$name] = $data['access_token'];
+    }
+
+    /**
+     * @Given the store with name :storeName has check expression :expression
+     */
+    public function storeHasCheckExpression($storeName, $expression)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $store->setCheckExpression($expression);
+
+        $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
+     * @Given the user :username has created a cart at restaurant with id :id
+     */
+    public function theUserHasCreatedACartAtRestaurantWithId($username, $id)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
+
+        $cart = $this->getContainer()->get('sylius.factory.order')
+            ->createForRestaurant($restaurant);
+
+        $cart->setCustomer($user->getCustomer());
+
+        $this->orderProcessor->process($cart);
+
+        $this->getContainer()->get('sylius.manager.order')->persist($cart);
+        $this->getContainer()->get('sylius.manager.order')->flush();
+    }
+
+    /**
+     * @Given there is a cart at restaurant with id :id
+     */
+    public function createCartAtRestaurantWithId($id)
+    {
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
+
+        $cart = $this->getContainer()->get('sylius.factory.order')
+            ->createForRestaurant($restaurant);
+
+        $this->getContainer()->get('sylius.manager.order')->persist($cart);
+        $this->getContainer()->get('sylius.manager.order')->flush();
+
+        return $cart;
+    }
+
+    private function getLastCartFromRestaurant(LocalBusiness $restaurant)
+    {
+        $carts = $this->getContainer()->get('sylius.repository.order')
+            ->findCartsByRestaurant($restaurant);
+
+        uasort($carts, function ($a, $b) {
+            if ($a->getCreatedAt() === $b->getCreatedAt()) {
+                return $a->getId() < $b->getId() ? -1 : 1;
+            }
+            return $a->getCreatedAt() < $b->getCreatedAt() ? -1 : 1;
+        });
+
+        return array_pop($carts);
+    }
+
+    /**
+     * @Given there is a token for the last cart at restaurant with id :id
+     */
+    public function thereIsATokenForTheLastCartAtRestaurantWithId($id)
+    {
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
+        $cart = $this->getLastCartFromRestaurant($restaurant);
+
+        $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
+
+        $payload = [
+            'sub' => $this->iriConverter->getIriFromItem($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+        ];
+        $this->jwt = $jwtEncoder->encode($payload);
+    }
+
+    /**
+     * @Given there is an expired token for the last cart at restaurant with id :id
+     */
+    public function thereIsAnExpiredTokenForTheLastCartAtRestaurantWithId($id)
+    {
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
+        $cart = $this->getLastCartFromRestaurant($restaurant);
+
+        $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
+
+        $payload = [
+            'sub' => $this->iriConverter->getIriFromItem($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+            'exp' => time() - (60 * 60),
+        ];
+        $this->jwt = $jwtEncoder->encode($payload);
+    }
+
+    /**
+     * @Given the client is authenticated with last response token
+     */
+    public function theClientIsAuthenticatedWithLastResponseToken()
+    {
+        $content = $this->minkContext->getSession()->getPage()->getContent();
+
+        $data = json_decode($content, true);
+
+        $this->jwt = $data['token'];
+    }
+
+    /**
+     * @When the :headerName header contains last response token
+     */
+    public function theHeaderContainsLastResponseToken($headerName)
+    {
+        $content = $this->minkContext->getSession()->getPage()->getContent();
+
+        $data = json_decode($content, true);
+
+        $this->restContext->iAddHeaderEqualTo($headerName, sprintf('Bearer %s', $data['token']));
+    }
+
+    /**
+     * @When the :headerName header contains a token for the last cart at restaurant with id :id
+     */
+    public function theHeaderContainsATokenForTheLastCartAtRestaurantWithId($headerName, $id)
+    {
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
+        $cart = $this->getLastCartFromRestaurant($restaurant);
+
+        $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
+
+        $payload = [
+            'sub' => $this->iriConverter->getIriFromItem($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+        ];
+
+        $this->restContext->iAddHeaderEqualTo($headerName, sprintf('Bearer %s', $jwtEncoder->encode($payload)));
+    }
+
+    /**
+     * @Given the restaurant with id :id is closed between :start and :end
+     */
+    public function theRestaurantWithIdIsClosedBetweenAnd($id, $start, $end)
+    {
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime($start));
+        $closingRule->setEndDate(new \DateTime($end));
+
+        $restaurant->addClosingRule($closingRule);
+
+        $em = $this->doctrine->getManagerForClass(LocalBusiness::class);
+        $em->flush();
+    }
+
+    /**
+     * @Then the Tile38 collection :collectionName should contain key :keyName with point :value
+     */
+    public function assertTile38CollectionContainsKeyWithPoint($collectionName, $keyName, $value)
+    {
+        $response =
+            $this->tile38->rawCommand('GET', $collectionName, $keyName);
+
+        [ $latitude, $longitude, $timestamp ] = explode(',', $value);
+
+        // {"type":"Point","coordinates":[2.352222,48.856613,1527855030]}
+
+        $data = json_decode($response, true);
+
+        Assert::assertArrayHasKey('type', $data);
+        Assert::assertArrayHasKey('coordinates', $data);
+        Assert::assertEquals([ $longitude, $latitude, $timestamp ], $data['coordinates']);
+    }
+
+    /**
+     * @Then the payment amount of order with IRI :iri should be :value
+     */
+    public function assertPaymentAmountOfOrderWithIriEquals($iri, $value)
+    {
+        $order = $this->iriConverter->getItemFromIri($iri);
+
+        $payment = $order->getLastPayment();
+
+        Assert::assertEquals($value, $payment->getAmount());
+    }
+
+    /**
+     * @Given the user :username has a remote push token with value :value for platform :platform
+     */
+    public function userHasRemotePushTokenWithValueForPlatform($username, $value, $platform)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+
+        $token = new RemotePushToken();
+        $token->setToken($value);
+        $token->setPlatform($platform);
+
+        $user->addRemotePushToken($token);
+
+        $userManager->updateUser($user);
+    }
+
+    /**
+     * @Given the restaurant with id :id has deposit-refund enabled
+     */
+    public function enableDepositRefund($id)
+    {
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
+        $restaurant->setDepositRefundEnabled(true);
+
+        $em = $this->doctrine->getManagerForClass(LocalBusiness::class);
+        $em->flush();
+    }
+
+    /**
+     * @Given the product with code :code has reusable packaging enabled with unit :units
+     */
+    public function enableReusablePackagingForProductWithQuantity($code, $unit)
+    {
+        $product = $this->doctrine->getRepository(Product::class)->findOneByCode($code);
+        $product->setReusablePackagingEnabled(true);
+        $product->setReusablePackagingUnit($unit);
+
+        $em = $this->doctrine->getManagerForClass(Product::class);
+        $em->flush();
+    }
+
+    /**
+     * @Then all the tasks should belong to organization with name :orgName
+     */
+    public function allTheTasksShouldBelongToOrganizationWithName($orgName)
+    {
+        $org = $this->doctrine->getRepository(Organization::class)->findOneByName($orgName);
+
+        if (!$org) {
+            throw new \RuntimeException(sprintf('Organization with name "%s" not found', $orgName));
+        }
+
+        $tasks = $this->doctrine->getRepository(Task::class)->findAll();
+
+        foreach ($tasks as $task) {
+            $organization = $task->getOrganization();
+            if (!$organization || $organization !== $org) {
+                Assert::fail(sprintf('Task #%d does not belong to organization with name "%s"', $task->getId(), $orgName));
+            }
+        }
+    }
+
+    /**
+     * @Given the store with name :storeName has imported tasks:
+     */
+    public function theStoreWithNameHasImportedTasks($storeName, TableNode $table)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $group = new Task\Group();
+        $group->setName(sprintf('Import %s', date('d/m H:i')));
+
+        foreach ($table->getColumnsHash() as $data) {
+
+            $latitude = $this->faker->latitude(48.85, 48.86);
+            $longitude = $this->faker->longitude(2.33, 2.34);
+
+            $address = new Address();
+            $address->setStreetAddress($data['address.streetAddress']);
+            $address->setGeo(new GeoCoordinates($latitude, $longitude));
+
+            $task = new Task();
+
+            $task->setType(strtoupper($data['type']));
+            $task->setAfter(new \DateTime($data['after']));
+            $task->setBefore(new \DateTime($data['before']));
+            $task->setAddress($address);
+            $task->setOrganization($store->getOrganization());
+
+            $group->addTask($task);
+        }
+
+        $this->doctrine->getManagerForClass(Task\Group::class)->persist($group);
+        $this->doctrine->getManagerForClass(Task\Group::class)->flush();
+    }
+
+    /**
+     * @Given a task with ref :ref exists and is attached to store with name :storeName
+     */
+    public function aTaskWithRefExistsAndIsAttachedToStoreWithName($ref, $storeName)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $latitude = $this->faker->latitude(48.85, 48.86);
+        $longitude = $this->faker->longitude(2.33, 2.34);
+
+        $address = new Address();
+        $address->setStreetAddress('1, Rue de Rivoli, Paris, France');
+        $address->setGeo(new GeoCoordinates($latitude, $longitude));
+
+        $task = new Task();
+
+        $task->setType('dropoff');
+        $task->setAfter(new \DateTime('+1 hour'));
+        $task->setBefore(new \DateTime('+2 hours'));
+        $task->setAddress($address);
+        $task->setOrganization($store->getOrganization());
+        $task->setRef($ref);
+
+        $this->doctrine->getManagerForClass(Task::class)->persist($task);
+        $this->doctrine->getManagerForClass(Task::class)->flush();
     }
 }

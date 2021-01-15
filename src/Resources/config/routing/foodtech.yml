@@ -1,0 +1,11 @@
+homepage:
+  path: /{_locale}/
+  defaults:
+    _controller: AppBundle\Controller\IndexController::indexAction
+  requirements:
+    _locale: '%locale_regex%'
+
+redirect_to_locale:
+  path: /
+  defaults:
+    _controller: AppBundle\Controller\IndexController::redirectToLocaleAction

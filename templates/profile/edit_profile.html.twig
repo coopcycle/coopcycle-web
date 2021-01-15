@@ -1,0 +1,13 @@
+{% extends "profile.html.twig" %}
+
+{% form_theme form 'form/edit_profile.html.twig' %}
+
+{% block content %}
+  <h2 class="page-header">
+    {% trans %}profile.editProfile{%  endtrans %}
+  </h2>
+  {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit" class="btn btn-block btn-primary">{% trans %}basics.save{% endtrans %}</button>
+  {{ form_end(form) }}
+{% endblock %}

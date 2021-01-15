@@ -1,0 +1,19 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block breadcrumb %}
+{% set api_app = form.vars.data %}
+{% set is_new_api_app = (api_app.id is null) %}
+<li><a href="{{ path('admin_api_apps') }}">{{ 'api_apps.breadcrumb'|trans }}</a></li>
+<li>{{ is_new_api_app ? 'basics.add'|trans : api_app.name }}</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+  {{ form_widget(form) }}
+  <button type="submit" class="btn btn-block btn-primary">
+    {{ 'basics.save'|trans }}
+  </button>
+{{ form_end(form) }}
+{% endblock %}

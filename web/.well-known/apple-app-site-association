@@ -1,0 +1,19 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "66HUGQ2V5L.org.coopcycle.CoopCycle",
+        "paths": [
+          "/register/confirm/*",
+          "/resetting/reset/*"
+        ]
+      }
+    ]
+  },
+  "activitycontinuation": {
+    "apps": [
+      "66HUGQ2V5L.org.coopcycle.CoopCycle"
+    ]
+  }
+}

@@ -1,0 +1,197 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+
+.FoodtechDashboard {
+
+  padding: 0 15px 15px 15px;
+
+  @media (max-width: $screen-xs-max) {
+    padding: 0;
+  }
+
+  height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+
+  &__Navbar {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    max-height: 10%;
+    height: 10%;
+
+    > div:first-child {
+      width: 50%;
+    }
+
+    @media (max-width: $screen-xs-max) {
+      padding: 0 15px;
+    }
+
+    .ant-calendar-picker {
+      margin-right: 0;
+    }
+    &__Search {
+      flex: 1;
+      padding: 0 25px;
+    }
+    &__Slider {
+      @media (max-width: $screen-xs-max) {
+        display: none;
+      }
+    }
+  }
+
+  $columns-gutter: 15px;
+
+  &__Columns {
+
+    flex: 1;
+    flex-direction: row;
+    justify-content: space-between;
+    display: flex;
+
+    max-height: 90%;
+
+    @media (max-width: $screen-xs-max) {
+      max-height: 80%;
+    }
+
+    @media (min-width: $screen-sm-min) {
+      margin-left: -($columns-gutter / 2);
+      margin-right: -($columns-gutter / 2);
+    }
+  }
+
+  &__Column {
+
+    display: flex;
+    flex-direction: column;
+    min-width: calc(25% - 2px);
+    overflow: hidden;
+
+    @media (min-width: $screen-sm-min) {
+      padding: 0 ($columns-gutter / 2);
+    }
+
+    @media (max-width: $screen-xs-max) {
+      width: 100%;
+      display: none;
+    }
+
+    > .panel {
+
+      flex: 1;
+      margin-bottom: 0;
+      overflow: auto;
+
+      .panel-heading {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .panel-body {
+        overflow-y: scroll;
+      }
+    }
+
+    &--active {
+      display: flex;
+    }
+  }
+
+  &__OrderCard {
+    cursor: pointer;
+  }
+
+  &__OrderCard:active,
+  &__OrderCard:hover {
+    border: 1px solid #bbb;
+  }
+
+}
+
+.FoodtechDashboard__Navbar > div > .ant-switch {
+  background-color: green;
+}
+
+.FoodtechDashboard__Navbar > div > .ant-switch-checked {
+  background-color: red;
+}
+
+.ReactModal__Overlay--foodtech {
+  z-index: 3;
+}
+
+.ReactModal__Content--foodtech {
+
+  max-height: 90%;
+  padding: 0;
+  border: none;
+
+  @media (min-width: $screen-lg-min) {
+    width: 50%;
+  }
+  @media (min-width: $screen-sm-min) and (max-width: $screen-md-max) {
+    width: 66.6666%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+    max-height: 80%;
+    height: 80%;
+  }
+
+  > .panel {
+    height: 100%;
+    margin-bottom: 0;
+    .panel-body {
+      overflow-y: auto;
+      height: calc(100% - 40px);
+    }
+  }
+  .ant-timeline-item.ant-timeline-item-last {
+    padding-bottom: 0;
+  }
+  .ant-timeline-item-last .ant-timeline-item-content {
+    min-height: inherit;
+  }
+}
+
+.order-number {
+  font-family: "Roboto Mono", monospace;
+}
+
+.FoodtechDashboard__TabNav {
+
+  @media (min-width: $screen-sm-min) {
+    display: none;
+  }
+
+  @media (max-width: $screen-xs-max) {
+
+    display: flex;
+    flex-direction: row;
+
+
+    width: 100%;
+    max-height: 10%;
+    height: 10%;
+
+    background-color: #ffffff;
+    border-top: 1px solid #dfdfdf;
+  }
+
+  .FoodtechDashboard__Tab {
+    &--active {
+      background-color: #efefef;
+    }
+  }
+}
+
+.rushInfoSize {
+  font-size: 1.5em;
+  margin-left: 0.2em;
+  top: 6px;
+}

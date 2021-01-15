@@ -1,0 +1,63 @@
+<h4>{% trans %}form.settings.stripe.title{% endtrans %}</h4>
+
+<div class="alert alert-info">
+  <i class="fa fa-info-circle"></i> {{ "form.settings.stripe.help" | trans | raw }}
+</div>
+
+<div class="form-group">
+  <label class="control-label">{% trans %}form.settings.stripe_publishable_key.label{% endtrans %}</label>
+  <div class="row">
+    <div class="col-md-6">
+      {{ form_widget(form.stripe.stripe_test_publishable_key) }}
+      <span class="help-block">{% trans %}form.settings.stripe_publishable_key.help{% endtrans %}</span>
+    </div>
+    <div class="col-md-6">
+      {{ form_widget(form.stripe.stripe_live_publishable_key) }}
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="control-label">{% trans %}form.settings.stripe_secret_key.label{% endtrans %}</label>
+  <div class="row">
+    <div class="col-md-6">
+      {{ form_widget(form.stripe.stripe_test_secret_key) }}
+      <span class="help-block">{% trans %}form.settings.stripe_secret_key.help{% endtrans %}</span>
+    </div>
+    <div class="col-md-6">
+      {{ form_widget(form.stripe.stripe_live_secret_key) }}
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="control-label">{% trans %}form.settings.stripe_connect_client_id.label{% endtrans %}</label>
+  <div class="row">
+    <div class="col-md-6">
+      {{ form_widget(form.stripe.stripe_test_connect_client_id) }}
+      <span class="help-block">{% trans %}form.settings.stripe_connect_client_id.help{% endtrans %}</span>
+    </div>
+    <div class="col-md-6">
+      {{ form_widget(form.stripe.stripe_live_connect_client_id) }}
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-danger">
+  <i class="fa fa-warning"></i> {{ 'form.stripe_livemode.enable.label'|trans }}
+  <div class="pull-right">
+    <div id="stripe_livemode_switch"></div>
+  </div>
+</div>
+
+{% if not stripe_livemode %}
+<p class="help-block">
+  <i class="fa fa-info-circle"></i> {{ 'form.settings.stripe_testmode.help'|trans|raw }}
+</p>
+{% endif %}
+
+{% if not can_enable_stripe_livemode %}
+<p class="help-block">
+  <i class="fa fa-info-circle"></i> {{ 'form.settings.stripe_enable_livemode.help'|trans|raw }}
+</p>
+{% endif %}

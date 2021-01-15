@@ -1,0 +1,49 @@
+adminDashboard.dashboard.courier: Koerier
+adminDashboard.deliveries.courier: Koerier
+adminDashboard.users.searchRestaurant: Restauranten bezoeken…
+delivery.list.courier: Koerier
+localBusiness.form.telephone: Telefoonnummer
+profile.telephone: Telefoonnummer
+profile.familyName: Naam
+profile.givenName: Voornaam
+order.list.customer: Klant
+form.task.courier.label: Koerier
+roles.ROLE_COURIER: Koerier
+roles.ROLE_RESTAURANT: Restaurant
+user.profile.familyName: Naam
+user.profile.givenName: Voornaam
+pagination.previous: Vorige
+pagination.next: Volgende
+navbar.myAccount: Mijn account
+profile.myAccount: Mijn account
+profile.myOrders: Mijn bestellingen
+profile.email: Email
+cart.widget.button: Mijn bestelling
+adminDashboard.deliveries.title: Bestellingen
+adminDashboard.deliveries.delivery: Bestelling
+adminDashboard.menuCategories.menu: menu
+adminDashboard.restaurants.title: Restauranten
+adminDashboard.users.title: Gebruikspersonen
+restaurant.available: Beschikbaar
+restaurant.unavailable: Niet beschikbaar
+profile.myDeliveries: Mijn bestellingen
+profile.myRestaurants: Mijn restauranten
+profile.myAddresses: Mijn adressen
+profile.addresses.newAddress: Nieuw adres
+profile.editProfile: 'De profiel wijzigen '
+profile.username: Username
+profile.accountType: soort rekening
+form.address.addressLocality.label: Stad
+form.address.postalCode.label: Postcode
+form.address.streetAddress.error.noLatLng: Gelieve een adres te kiezen aub
+roles.ROLE_USER: Gebruiker
+index.banner: lekkere gerechten aan huis geleverd
+global.changesSaved: Opgeslagen wijzigingen
+navbar.login: Login
+base.footer.contactUs: neem contact met ons op
+base.footer.help: hulp
+adminDashboard.configuration: configuratie
+adminDashboard.dashboard.add: Toevoegen
+help.title: hulp
+profile.addresses.add: Toevoegen
+basics.add: Toevoegen

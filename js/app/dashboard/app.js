@@ -1,162 +1,231 @@
 import React from 'react'
-import { findDOMNode } from 'react-dom'
 import { connect } from 'react-redux'
-import dragula from 'dragula'
+import Modal from 'react-modal'
+import { DragDropContext } from 'react-beautiful-dnd'
 import _ from 'lodash'
 
-import { assignTasks, updateTask, drakeDrag, drakeDragEnd } from './store/actions'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { selectAllTasks, selectTaskLists } from '../coopcycle-frontend-js/dispatch/redux'
+
+import {
+  setCurrentTask,
+  closeNewTaskModal,
+  closeFiltersModal,
+  toggleSearch,
+  closeSearch,
+  openSettings,
+  closeSettings,
+  closeImportModal,
+  modifyTaskList,
+  clearSelectedTasks } from './redux/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
 import ContextMenu from './components/ContextMenu'
-
-const drake = dragula({
-  copy: true,
-  copySortSource: false,
-  revertOnSpill: true,
-  accepts: (el, target, source) => target !== source
-})
-
-/**
- * Code to handle drag and drop from unassigned tasks to assigned
- */
-
-function onTaskDrop(allTasks, assignTasks, element, target) {
-
-  const username = $(target).data('username')
-  const isTask = element.hasAttribute('data-task-id')
-
-  let tasks = []
-
-  if (isTask) { // This is a single task
-
-    const task = _.find(allTasks, task => task['@id'] === element.getAttribute('data-task-id'))
-
-    // FIXME
-    // Make it work when more than 2 tasks are linked together
-    if (task.previous) {
-      tasks = [ _.find(allTasks, t => t['@id'] === task.previous), task ]
-    } else if (task.next) {
-      tasks = [ task, _.find(allTasks, t => t['@id'] === task.next) ]
-    } else {
-      tasks = [ task ]
-    }
-
-  } else { // This is a task group
-    const elements = Array.from(element.querySelectorAll('[data-task-id]'))
-    tasks = elements.map(el => _.find(allTasks, task => task['@id'] === el.getAttribute('data-task-id')))
-  }
-
-  assignTasks(username, tasks)
-
-  $(target).removeClass('dropzone--loading')
-
-  // Remove cloned element from dropzone
-  element.remove()
-}
-
-function configureDrag(drakeDrag) {
-  drake
-    .on('drag', function(el) {
-      let elements = [ el ]
-
-      // FIXME
-      // Make it work when more than 2 tasks are linked together
-      if (el.hasAttribute('data-previous') || el.hasAttribute('data-next')) {
-        const siblings = Array.from(el.parentNode.childNodes)
-        const linkedElements = _.filter(siblings, sibling =>
-          sibling.getAttribute('data-task-id') === (el.getAttribute('data-previous') || el.getAttribute('data-next')))
-        elements = elements.concat(linkedElements)
-      }
-
-      elements.forEach(el => el.classList.add('task__draggable--dragging'))
-
-      drakeDrag()
-    })
-    .on('cloned', function (clone) {
-      clone.classList.remove('task__draggable--dragging')
-    })
-    .on('over', function (el, container) {
-      if ($(container).hasClass('dropzone')) {
-        $(container).addClass('dropzone--over')
-      }
-    })
-    .on('out', function (el, container) {
-      if ($(container).hasClass('dropzone')) {
-        $(container).removeClass('dropzone--over')
-      }
-    })
-}
-
-function configureDragEnd(unassignedTasksContainer, drakeDragEnd) {
-  drake
-    .off('dragend')
-    .on('dragend', function () {
-      Array.from(unassignedTasksContainer.querySelectorAll('.task__draggable--dragging'))
-        .forEach(el => el.classList.remove('task__draggable--dragging'))
-      drakeDragEnd()
-    })
-}
-
-function configureDrop(allTasks, assignTasks) {
-  drake
-    .off('drop')
-    .on('drop', onTaskDrop.bind(null, allTasks, assignTasks))
-}
+import TaskModalContent from './components/TaskModalContent'
+import FiltersModalContent from './components/FiltersModalContent'
+import SettingsModalContent from './components/SettingsModalContent'
+import ImportModalContent from './components/ImportModalContent'
+import SearchPanel from './components/SearchPanel'
 
 class DashboardApp extends React.Component {
 
   componentDidMount() {
-
-    const unassignedTasksContainer = findDOMNode(this.refs.unassignedTasks).querySelector('.list-group')
-    drake.containers.push(unassignedTasksContainer)
-
-    configureDrag(this.props.drakeDrag)
-    configureDragEnd(unassignedTasksContainer, this.props.drakeDragEnd)
-    configureDrop(this.props.allTasks, this.props.assignTasks)
-
-    // This event is trigerred when the task modal is submitted successfully
-    $(document).on('task.form.success', '#task-edit-modal', (e) => {
-      const { task } = e
-      this.props.updateTask(task)
+    window.addEventListener('keydown', e => {
+      const isCtrl = (e.ctrlKey || e.metaKey)
+      if (e.keyCode === 114 || (isCtrl && e.keyCode === 70)) {
+        if (!this.props.searchIsOn) {
+          e.preventDefault()
+          this.props.toggleSearch()
+        }
+      }
+      if (e.keyCode === 27) {
+        this.props.closeSearch()
+      }
     })
-
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.allTasks !== prevProps.allTasks) {
-      configureDrop(this.props.allTasks, this.props.assignTasks)
-    }
   }
 
   render () {
     return (
       <div className="dashboard__aside-container">
-        <UnassignedTasks ref="unassignedTasks" />
-        <TaskLists
-          couriersList={ window.AppData.Dashboard.couriersList }
-          ref="taskLists"
-          taskListDidMount={ taskListComponent =>
-            drake.containers.push(findDOMNode(taskListComponent).querySelector('.panel .list-group'))
-          }
-        />
+        <DragDropContext
+          // https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/patterns/multi-drag.md
+          onDragStart={ result => {
+
+            // If the user is starting to drag something that is not selected then we need to clear the selection.
+            // https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/patterns/multi-drag.md#dragging
+            const isDraggableSelected =
+              !!_.find(this.props.selectedTasks, t => t['@id'] === result.draggableId)
+
+            if (!isDraggableSelected) {
+              this.props.clearSelectedTasks()
+            }
+
+          }}
+          onDragEnd={ result => {
+
+            // dropped nowhere
+            if (!result.destination) {
+              return;
+            }
+
+            const source = result.source;
+            const destination = result.destination;
+
+            // reodered inside the unassigned list, do nothing
+            if (
+              source.droppableId === destination.droppableId &&
+              source.droppableId === 'unassigned'
+            ) {
+              return;
+            }
+
+            // did not move anywhere - can bail early
+            if (
+              source.droppableId === destination.droppableId &&
+              source.index === destination.index
+            ) {
+              return;
+            }
+
+            // cannot unassign by drag'n'drop atm
+            if (source.droppableId.startsWith('assigned:') && destination.droppableId === 'unassigned') {
+              return
+            }
+
+            const username = destination.droppableId.replace('assigned:', '')
+            const taskList = _.find(this.props.taskLists, tl => tl.username === username)
+            const newTasks = [ ...taskList.items ]
+
+            if (this.props.selectedTasks.length > 1) {
+
+              // FIXME Manage linked tasks
+              // FIXME
+              // The tasks are dropped in the order they were selected
+              // Instead, we should respect the order of the unassigned tasks
+
+              Array.prototype.splice.apply(newTasks,
+                Array.prototype.concat([ result.destination.index, 0 ], this.props.selectedTasks))
+
+            } else if (result.draggableId.startsWith('group:')) {
+
+              const groupEl = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`)
+
+              const tasksFromGroup = Array
+                .from(groupEl.querySelectorAll('[data-task-id]'))
+                .map(el => _.find(this.props.allTasks, t => t['@id'] === el.getAttribute('data-task-id')))
+
+              Array.prototype.splice.apply(newTasks,
+                Array.prototype.concat([ result.destination.index, 0 ], tasksFromGroup))
+
+            } else {
+
+              // Reorder inside same list
+              if (source.droppableId === destination.droppableId) {
+                const [ removed ] = newTasks.splice(result.source.index, 1);
+                newTasks.splice(result.destination.index, 0, removed)
+              } else {
+
+                const task = _.find(this.props.allTasks, t => t['@id'] === result.draggableId)
+
+                newTasks.splice(result.destination.index, 0, task)
+
+                if (task && task.previous) {
+                  // If previous task is another day, will be null
+                  const previousTask = _.find(this.props.allTasks, t => t['@id'] === task.previous)
+                  if (previousTask) {
+                    Array.prototype.splice.apply(newTasks,
+                      Array.prototype.concat([ result.destination.index, 0 ], previousTask))
+                  }
+                } else if (task && task.next) {
+                  // If next task is another day, will be null
+                  const nextTask = _.find(this.props.allTasks, t => t['@id'] === task.next)
+                  if (nextTask) {
+                    Array.prototype.splice.apply(newTasks,
+                      Array.prototype.concat([ result.destination.index + 1, 0 ], nextTask))
+                  }
+                }
+
+              }
+
+            }
+
+            this.props.modifyTaskList(username, newTasks)
+
+          }}>
+          <UnassignedTasks />
+          <TaskLists couriersList={ this.props.couriersList } />
+        </DragDropContext>
+        <SearchPanel />
         <ContextMenu />
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.taskModalIsOpen }
+          onRequestClose={ () => {
+            this.props.setCurrentTask(null)
+          }}
+          className="ReactModal__Content--task-form"
+          shouldCloseOnOverlayClick={ true }>
+          <TaskModalContent />
+        </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.filtersModalIsOpen }
+          onRequestClose={ () => this.props.closeFiltersModal() }
+          className="ReactModal__Content--filters"
+          shouldCloseOnOverlayClick={ true }>
+          <FiltersModalContent />
+        </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.settingsModalIsOpen }
+          onRequestClose={ () => this.props.closeSettings() }
+          className="ReactModal__Content--settings"
+          shouldCloseOnOverlayClick={ true }>
+          <SettingsModalContent />
+        </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.importModalIsOpen }
+          onRequestClose={ () => this.props.closeImportModal() }
+          className="ReactModal__Content--import"
+          shouldCloseOnOverlayClick={ true }>
+          <ImportModalContent />
+        </Modal>
+        <ToastContainer />
       </div>
     )
   }
 }
 
 function mapStateToProps(state) {
+
   return {
-    allTasks: state.allTasks
+    taskModalIsOpen: state.taskModalIsOpen,
+    couriersList: state.couriersList,
+    filtersModalIsOpen: state.filtersModalIsOpen,
+    settingsModalIsOpen: state.settingsModalIsOpen,
+    searchIsOn: state.searchIsOn,
+    importModalIsOpen: state.importModalIsOpen,
+    allTasks: selectAllTasks(state),
+    taskLists: selectTaskLists(state),
+    selectedTasks: state.selectedTasks,
   }
 }
 
 function mapDispatchToProps (dispatch) {
+
   return {
-    assignTasks: (username, tasks) => { dispatch(assignTasks(username, tasks)) },
-    updateTask: (task) => { dispatch(updateTask(task)) },
-    drakeDrag: () => dispatch(drakeDrag()),
-    drakeDragEnd: () => dispatch(drakeDragEnd()),
+    setCurrentTask: (task) => dispatch(setCurrentTask(task)),
+    closeNewTaskModal: () => dispatch(closeNewTaskModal()),
+    closeFiltersModal: () => dispatch(closeFiltersModal()),
+    toggleSearch: () => dispatch(toggleSearch()),
+    closeSearch: () => dispatch(closeSearch()),
+    openSettings: () => dispatch(openSettings()),
+    closeSettings: () => dispatch(closeSettings()),
+    closeImportModal: () => dispatch(closeImportModal()),
+    modifyTaskList: (username, tasks) => dispatch(modifyTaskList(username, tasks)),
+    clearSelectedTasks: () => dispatch(clearSelectedTasks()),
   }
 }
 

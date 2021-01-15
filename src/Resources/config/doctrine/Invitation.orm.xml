@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Invitation" table="invitation">
+    <id name="code" type="string" column="code" length="180"/>
+    <field name="email" type="string" column="email" nullable="false"/>
+    <field name="sentAt" type="datetime" column="sent_at" nullable="true"/>
+    <field name="grants" type="json_array" column="grants" nullable="true"/>
+    <many-to-one field="user" target-entity="AppBundle\Entity\User" />
+  </entity>
+</doctrine-mapping>

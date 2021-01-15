@@ -1,0 +1,101 @@
+<?php
+
+namespace Tests\AppBundle\Spreadsheet;
+
+use AppBundle\Entity\Sylius\Product;
+use AppBundle\Spreadsheet\ProductSpreadsheetParser;
+use AppBundle\Utils\TaskSpreadsheetParser;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Sylius\Component\Taxation\Model\TaxCategory;
+use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Serializer\SerializerInterface;
+
+class ProductSpreadsheetParserTest extends KernelTestCase
+{
+    use ProphecyTrait;
+
+    private $filesystem;
+    private $taxCategoryRepository;
+    private $parser;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        self::bootKernel();
+
+        $adapter = new Local(__DIR__ . '/../Resources/spreadsheet');
+        $this->filesystem = new Filesystem($adapter);
+
+        $serializer = self::$container->get(SerializerInterface::class);
+        $productFactory = self::$container->get('sylius.factory.product');
+        $variantFactory = self::$container->get('sylius.factory.product_variant');
+        $this->taxCategoryRepository = $this->prophesize(TaxCategoryRepositoryInterface::class);
+
+        $this->parser = new ProductSpreadsheetParser(
+            $serializer,
+            $productFactory,
+            $variantFactory,
+            $this->taxCategoryRepository->reveal()
+        );
+    }
+
+    public function testValidCsv()
+    {
+        $foodTax = new TaxCategory();
+
+        $this->taxCategoryRepository->findOneBy(['name' => 'Food'])
+            ->willReturn($foodTax);
+
+        $file = $this->filesystem->get('products.csv');
+        $products = $this->parser->parse($file);
+
+        $this->assertCount(2, $products);
+
+        $this->assertEquals('Pizza Margherita', $products[0]->getName());
+        $this->assertTrue($products[0]->hasVariants());
+        $this->assertEquals(900, $products[0]->getVariants()->first()->getPrice());
+        $this->assertEquals($foodTax, $products[0]->getVariants()->first()->getTaxCategory());
+    }
+
+    public function testMissingPriceColumn()
+    {
+        $this->expectExceptionMessage('You must provide a "price_tax_incl" column');
+
+        $foodTax = new TaxCategory();
+
+        $this->taxCategoryRepository->findOneBy(['name' => 'Food'])
+            ->willReturn($foodTax);
+
+        $file = $this->filesystem->get('products_missing_price.csv');
+        $products = $this->parser->parse($file);
+    }
+
+    public function testUnknownTaxCategory()
+    {
+        $this->expectExceptionMessage('The tax category "Foobar" does not exist. Valid values are "Food", "Drink".');
+
+        $foodTax = new TaxCategory();
+        $foodTax->setName('Food');
+
+        $drinkTax = new TaxCategory();
+        $drinkTax->setName('Drink');
+
+        $this->taxCategoryRepository->findAll()
+            ->willReturn([$foodTax, $drinkTax]);
+        $this->taxCategoryRepository->findOneBy(['name' => 'Food'])
+            ->willReturn($foodTax);
+        $this->taxCategoryRepository->findOneBy(['name' => 'Drink'])
+            ->willReturn($foodTax);
+        $this->taxCategoryRepository->findOneBy(['name' => 'Foobar'])
+            ->willReturn(null);
+
+        $file = $this->filesystem->get('products_unknown_tax_category.csv');
+        $products = $this->parser->parse($file);
+    }
+}

@@ -1,0 +1,12 @@
+include:
+  - settings.yml
+  - sylius_channels.yml
+  - addresses.yml
+  - restaurants.yml
+
+AppBundle\Entity\Hub:
+  market:
+    name: market
+    address: '@address_1'
+    restaurants: ['@crazy_hamburger', '@pizza_express']
+    contract: "@contract_4"

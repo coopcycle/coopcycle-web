@@ -1,0 +1,47 @@
+{% if is_granted('ROLE_ADMIN') %}
+<div class="alert alert-info">
+  {{ 'refund.list.disclaimer.admin'|trans }}
+</div>
+{% endif %}
+
+<table class="table table-condensed">
+  <thead>
+    <th>{{ 'order.export.heading.order_number'|trans }}</th>
+    <th>{{ 'order.export.heading.completed_at'|trans }}</th>
+    <th>{{ 'refund.list.refunded_at'|trans }}</th>
+    <th>{{ 'refund.list.liable_party'|trans }}</th>
+    <th class="text-right">{{ 'order.export.heading.total_incl_tax'|trans }}</th>
+    <th class="text-right">{{ 'refund.list.amount'|trans }}</th>
+    <th class="text-right">{{ 'refund.list.comments'|trans }}</th>
+  </thead>
+  <tbody>
+    {% set total_credit = 0 %}
+    {% for refund in refunds %}
+      {% if refund.liableParty == 'platform' %}
+        {% set total_credit = total_credit + refund.amount %}
+      {% endif %}
+      <tr class="{{ refund.liableParty == 'merchant' ? 'text-muted' : '' }}">
+        <td>{{ refund.payment.order.number }}</td>
+        <td>{{ refund.payment.order.shippedAt|date('Y-m-d H:i') }}</td>
+        <td>{{ refund.createdAt|date('Y-m-d H:i') }}</td>
+        <td>{{ refund.liableParty }}</td>
+        <td class="text-right" width="10%">{{ refund.payment.order.total|price_format }}</td>
+        <td class="text-right" width="10%">{{ refund.amount|price_format }}</td>
+        <td class="text-right" width="10%">
+          {% if refund.comments is not empty %}
+          <button class="button-icon" data-toggle="tooltip" data-placement="left" title="{{ refund.comments|e('html_attr') }}">
+            <i class="fa fa-lg fa-comments-o"></i>
+          </button>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="5" class="text-right">{{ 'refund.list.debit_total'|trans }}</td>
+      <td class="text-right"><strong>{{ total_credit|price_format }}</strong></td>
+      <td></td>
+    </tr>
+  </tfoot>
+</table>

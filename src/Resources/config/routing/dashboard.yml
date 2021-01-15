@@ -1,0 +1,6 @@
+dashboard:
+    path: /dashboard
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::indexAction
+        layout: 'dashboard.html.twig'
+    methods: [ GET, POST ]

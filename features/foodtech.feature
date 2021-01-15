@@ -22,6 +22,7 @@ Feature: Food Tech
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |
@@ -42,13 +43,46 @@ Feature: Food Tech
     When the user "bob" sends a "GET" request to "/api/restaurants/1/orders?date=2018-08-27"
     Then the response status code should be 200
     And the response should be in JSON
+    # FIXME @id should be "/api/restaurants/1/orders"
     And the JSON should match:
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/restaurants/1/orders",
+        "@id":@string@,
         "@type":"hydra:Collection",
-        "hydra:member":@array@,
+        "hydra:member":[
+          {
+            "@id":"/api/orders/1",
+            "@type":"http://schema.org/Order",
+            "customer":{"@*@":"@*@"},
+            "vendor":{"@*@":"@*@"},
+            "restaurant":{"@*@":"@*@"},
+            "shippingAddress":{"@*@":"@*@"},
+            "shippedAt":"@string@.isDateTime()",
+            "reusablePackagingEnabled":false,
+            "reusablePackagingPledgeReturn":0,
+            "shippingTimeRange":@array@,
+            "takeaway":false,
+            "id":@integer@,
+            "number":null,
+            "notes":null,
+            "items":@array@,
+            "itemsTotal":1800,
+            "total":2150,
+            "state":"new",
+            "createdAt":"@string@.isDateTime()",
+            "taxTotal":@integer@,
+            "preparationExpectedAt":"@string@.isDateTime()",
+            "pickupExpectedAt":"@string@.isDateTime()",
+            "adjustments":{
+              "delivery":@array@,
+              "delivery_promotion":[],
+              "order_promotion":[],
+              "reusable_packaging":[],
+              "tax":@array@
+            }
+          }
+        ],
         "hydra:totalItems":1,
         "hydra:view":{
           "@id":"/api/restaurants/1/orders?date=2018-08-27",
@@ -76,6 +110,7 @@ Feature: Food Tech
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
     And the restaurant with id "1" has products:
@@ -110,6 +145,7 @@ Feature: Food Tech
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
     And the restaurant with id "1" has products:
@@ -142,6 +178,7 @@ Feature: Food Tech
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
     And the restaurant with id "1" has products:
@@ -178,12 +215,13 @@ Feature: Food Tech
       }
       """
 
-  Scenario: Accept order
+  Scenario: Accept order (with empty JSON payload)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
     And the restaurant with id "1" has products:
@@ -202,18 +240,109 @@ Feature: Food Tech
     And the user "bob" is authenticated
     And I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "PUT" request to "/api/orders/1/accept" with body:
-      """
-      {}
-      """
+    When the user "bob" sends a "PUT" request to "/api/orders/1/accept"
     Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders/1",
+        "@type":"http://schema.org/Order",
+        "customer":@...@,
+        "restaurant":@...@,
+        "shippingAddress":@...@,
+        "shippedAt":"@string@.isDateTime()",
+        "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
+        "id":1,
+        "number":null,
+        "notes":null,
+        "items":@array@,
+        "itemsTotal":1800,
+        "total":2150,
+        "state":"accepted",
+        "createdAt":"@string@.isDateTime()",
+        "taxTotal":222,
+        "preparationExpectedAt":"@string@.isDateTime()",
+        "pickupExpectedAt":"@string@.isDateTime()",
+        "adjustments":{
+          "delivery":@array@,
+          "delivery_promotion":[],
+          "order_promotion":[],
+          "reusable_packaging":[]
+        }
+      }
+      """
 
-  Scenario: Not authorized to accept order
+  Scenario: Accept order when restaurant is closed
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
+    # FIXME This is needed for email notifications. It should be defined once.
+    And the setting "administrator_email" has value "admin@coopcycle.org"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" is closed between "2018-08-27 12:00:00" and "2018-08-28 10:00:00"
+    Given the user "sarah" is loaded:
+      | email      | sarah@coopcycle.org |
+      | password   | 123456              |
+    And the user "sarah" has ordered something for "2018-08-27 12:30:00" at the restaurant with id "1"
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/orders/1/accept"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders/1",
+        "@type":"http://schema.org/Order",
+        "customer":@...@,
+        "restaurant":@...@,
+        "shippingAddress":@...@,
+        "shippedAt":"@string@.isDateTime()",
+        "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
+        "id":1,
+        "number":null,
+        "notes":null,
+        "items":@array@,
+        "itemsTotal":1800,
+        "total":2150,
+        "state":"accepted",
+        "createdAt":"@string@.isDateTime()",
+        "taxTotal":222,
+        "preparationExpectedAt":"@string@.isDateTime()",
+        "pickupExpectedAt":"@string@.isDateTime()",
+        "adjustments":{
+          "delivery":@array@,
+          "delivery_promotion":[],
+          "order_promotion":[],
+          "reusable_packaging":[]
+        }
+      }
+      """
+
+  Scenario: Not authorized to accept order (with empty JSON payload)
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
     And the restaurant with id "1" has products:
@@ -232,10 +361,7 @@ Feature: Food Tech
     And the user "bob" is authenticated
     And I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "PUT" request to "/api/orders/1/accept" with body:
-      """
-      {}
-      """
+    When the user "bob" sends a "PUT" request to "/api/orders/1/accept"
     Then the response status code should be 403
     And the JSON should match:
       """

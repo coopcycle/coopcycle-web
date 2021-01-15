@@ -1,0 +1,82 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.customize.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+
+  {{ form_row(form.motto) }}
+  <hr>
+
+  {{ form_row(form.aboutUsEnabled) }}
+  <div class="form-group">
+    {{ form_label(form.aboutUs) }}
+    <div class="d-flex" style="max-height: 400px;">
+      <div class="w-50">{{ form_widget(form.aboutUs, { attr: { 'data-preview': '#preview' } }) }}</div>
+      <div class="w-50 border p-4" style="overflow: scroll;">
+        <div id="preview" class="about-us"></div>
+      </div>
+    </div>
+    {{ form_help(form.aboutUs) }}
+  </div>
+  <hr>
+
+  {% set legal_types = ['legal', 'terms', 'privacy'] %}
+  {% for legal_type in legal_types %}
+    {% set enabled_key = ('custom' ~ (legal_type|capitalize) ~ 'Enabled') %}
+    {% set content_key = ('custom' ~ (legal_type|capitalize)) %}
+    {{ form_row(form[enabled_key]) }}
+    <div class="form-group">
+      {{ form_label(form[content_key]) }}
+      <div class="d-flex" style="max-height: 400px;">
+        <div class="w-50">{{ form_widget(form[content_key], { attr: { 'data-preview': ('#custom-' ~ legal_type ~ '-preview') } }) }}</div>
+        <div class="w-50 border p-4" style="overflow: scroll;">
+          <div id="{{ ('custom-' ~ legal_type ~ '-preview') }}" class="about-us"></div>
+        </div>
+      </div>
+      {{ form_help(form[content_key]) }}
+    </div>
+    <hr>
+  {% endfor %}
+
+  {{ form_row(form.orderConfirmEnabled) }}
+  <div class="form-group">
+    {{ form_label(form.orderConfirm) }}
+    <div class="d-flex" style="max-height: 400px;">
+      <div class="w-50">{{ form_widget(form.orderConfirm, { attr: { 'data-preview': '#order-confirm-preview' } }) }}</div>
+      <div class="w-50 border p-4" style="overflow: scroll;">
+        <div id="order-confirm-preview" class="about-us"></div>
+      </div>
+    </div>
+    {{ form_help(form.orderConfirm) }}
+  </div>
+  <hr>
+
+  <div class="form-group">
+    <label class="control-label">{{ 'form.customize.custom_banner.label'|trans }}</label>
+    <div>
+      <div class="dropzone dropzone--blue mb-3"
+        id="banner-dropzone"
+        data-dropzone-url="{{ oneup_uploader_endpoint('banner') }}" {% if coopcycle_has_banner() %}data-dropzone-image="{{ url('assets_banner_svg') }}"{% endif %}></div>
+    </div>
+    <spanclass="help-block">{{ 'form.customize.custom_banner.help'|trans }}</span>
+  </div>
+
+  <button type="submit" class="btn btn-block btn-lg btn-primary">
+    {{ 'basics.save'|trans }}
+  </button>
+
+{{ form_end(form) }}
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('customize-form') }}
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('customize-form') }}
+{% endblock %}

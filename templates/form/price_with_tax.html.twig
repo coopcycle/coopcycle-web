@@ -1,0 +1,30 @@
+{% block coopcycle_price_with_tax_widget %}
+
+  {% set tax_categories = {} %}
+  {% for tax_category in form.taxCategory.vars.choices %}
+    {% set normalized_tax_rates = [] %}
+    {% set tax_rates = legacy_taxes ?
+      tax_category.data.getRates() : tax_category.data.getRatesByCountry(region_iso) %}
+    {% for rate in tax_rates %}
+      {% set normalized_tax_rates = normalized_tax_rates|merge([ { 'amount': rate.amount } ]) %}
+    {% endfor %}
+    {% set tax_categories = tax_categories|merge({ (tax_category.data.code): normalized_tax_rates }) %}
+  {% endfor %}
+
+  <div class="row">
+    <div class="col-sm-4">
+      {{ form_row(form.taxExcluded) }}
+    </div>
+    <div class="col-sm-4">
+      {{ form_row(form.taxIncluded) }}
+    </div>
+    <div class="col-sm-4">
+      {{ form_row(form.taxCategory, { attr: {
+        'data-tax-incl': tax_incl|json_encode,
+        'data-tax-categories': tax_categories|json_encode,
+        'data-excluded': ('#' ~ form.taxExcluded.vars.id),
+        'data-included': ('#' ~ form.taxIncluded.vars.id)
+      } }) }}
+    </div>
+  </div>
+{% endblock %}

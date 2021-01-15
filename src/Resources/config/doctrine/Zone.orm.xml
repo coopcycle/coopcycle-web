@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Zone" table="zone">
+    <indexes>
+      <index name="idx_polygon" columns="polygon" flags="spatial"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name" nullable="false"/>
+    <field name="polygon" type="geojson" column="polygon" nullable="false">
+      <options>
+        <option name="geometry_type">POLYGON</option>
+        <option name="srid">4326</option>
+      </options>
+    </field>
+  </entity>
+</doctrine-mapping>

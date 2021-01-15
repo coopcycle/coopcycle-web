@@ -5,14 +5,18 @@ namespace Tests\AppBundle\Utils;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Entity\Vendor;
 use AppBundle\Service\RoutingInterface;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\ShippingTimeCalculator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class ShippingTimeCalculatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $routing;
     private $calculator;
 
@@ -48,6 +52,8 @@ class ShippingTimeCalculatorTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setAddress($restaurantAddress);
 
+        $vendor = Vendor::withRestaurant($restaurant);
+
         $this->routing
             ->getDuration(
                 Argument::type(GeoCoordinates::class),
@@ -57,8 +63,8 @@ class ShippingTimeCalculatorTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->getVendor()
+            ->willReturn($vendor);
         $order
             ->getShippingAddress()
             ->willReturn($shippingAddress);
@@ -76,10 +82,12 @@ class ShippingTimeCalculatorTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setAddress($restaurantAddress);
 
+        $vendor = Vendor::withRestaurant($restaurant);
+
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->getVendor()
+            ->willReturn($vendor);
         $order
             ->getShippingAddress()
             ->willReturn(null);

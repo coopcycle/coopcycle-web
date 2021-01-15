@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\RestaurantStripeAccount" table="restaurant_stripe_account">
+    <unique-constraints>
+      <unique-constraint name="restaurant_stripe_account_unique" columns="restaurant_id,stripe_account_id,livemode"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="livemode" type="boolean" column="livemode"/>
+    <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="stripeAccounts">
+      <join-columns>
+        <join-column name="restaurant_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="stripeAccount" target-entity="AppBundle\Entity\StripeAccount">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-columns>
+        <join-column name="stripe_account_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

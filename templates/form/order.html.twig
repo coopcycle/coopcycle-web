@@ -1,0 +1,192 @@
+{% extends "bootstrap_3_layout.html.twig" %}
+
+{% block choice_widget_expanded %}
+  {% if name == 'createDeliveryAddress' %}
+    <div class="form-group">
+      <div class="btn-group" data-toggle="buttons">
+      {% for child in form %}
+        {{ form_widget(child, { 'label_attr': {'class': 'btn btn-primary'} }) }}
+      {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    {{ parent() }}
+  {% endif %}
+{% endblock choice_widget_expanded %}
+
+{% block radio_widget -%}
+  {% set parent_label_class = parent_label_class|default(label_attr.class|default('')) %}
+  {% if 'btn' in parent_label_class %}
+    {% if checked %}
+      {% set parent_label_class = parent_label_class ~ ' active' %}
+    {% endif %}
+    {{ form_label(form, null, {
+      widget: block('radio_widget', 'form_div_layout.html.twig'),
+      label_attr: {class: parent_label_class}
+    }) }}
+  {% else %}
+    {{ parent() }}
+  {%- endif %}
+{%- endblock radio_widget %}
+
+{% block _checkout_address_shippingAddress_streetAddress_row %}
+  {% set address = form.parent.vars.value %}
+  {% if address is empty %}
+    {% set row_attr = row_attr|merge({
+      class: (row_attr.class|default('') ~ ' d-none')
+    }) %}
+  {% endif %}
+  {{ block('form_row') }}
+{% endblock %}
+
+{% block _checkout_address_reusablePackagingEnabled_row %}
+
+  {% set isLoopeat = attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}
+  {% set isChecked = form.vars.data %}
+
+  {% if isLoopeat %}
+
+    {% set loopeat_trans_prefix = 'form.checkout_address.reusable_packaging.loopeat' %}
+
+    {% set order = form.parent.vars.data %}
+    {% set pledge_return = form.parent.reusablePackagingPledgeReturn.vars.data %}
+    {% set missing = (order.reusablePackagingQuantity - loopeat_context.loopeatBalance - pledge_return) %}
+
+    {% if missing < 0 %}
+      {% set missing = 0 %}
+    {% endif %}
+
+    <div id="loopeat-block" class="p-3{{ isChecked ? " active": "" }}">
+      <div class="py-0 m-0">
+        {{ form_widget(form, { attr: attr|merge({
+          'data-loopeat-required': (order.reusablePackagingQuantity - pledge_return)
+        }) }) }}
+      </div>
+      {% if isChecked %}
+        <div>
+          <ul class="list-unstyled loopeat-summary">
+            <li>
+              <span class="loopeat-icon loopeat-icon-flying-circle"></span>
+              <span>
+                {{ (loopeat_trans_prefix ~ '.reusable_quantity.label')|trans({
+                  '%count%': order.reusablePackagingQuantity
+                })|raw }}
+              </span>
+            </li>
+            <li>
+              <span class="loopeat-icon loopeat-icon-euro"></span>
+              <span>
+                {{ (loopeat_trans_prefix ~ '.available_credits.label')|trans({
+                  '%count%': loopeat_context.loopeatBalance
+                })|raw }}
+                <em>{{ (loopeat_trans_prefix ~ '.available_credits.help')|trans }}</em>
+              </span>
+            </li>
+            {{ form_row(form.parent.reusablePackagingPledgeReturn) }}
+            <li>
+              {% if missing > 0 %}
+                <span class="loopeat-icon">🤔</span>
+                <strong>{{ 'loopeat.insufficient_balance'|trans({ '%count%': missing }, 'validators') }}</strong>
+              {% else %}
+                <span class="loopeat-icon">👍</span>
+                <strong>{{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}</strong>
+              {% endif %}
+            </li>
+          </ul>
+          <div id="loopeat-buttons" class="{% if missing == 0 %}d-none{% endif %}">
+            <div class="d-flex flex-row justify-content-between ">
+              <button type="button" id="checkout_address_cancelReusablePackaging" class="btn btn-link btn">
+                {{ 'basics.cancel'|trans }}
+              </button>
+              <a id="loopeat-add-credit" href="" class="btn btn-default">
+                {{ 'form.checkout_address.reusable_packaging.loopeat.add'|trans({ '%missing%': missing }) }}
+              </a>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        {# TODO: figure how to remove these fields from the form #}
+        <div class="d-none">
+          {{ form_widget(form.parent.reusablePackagingPledgeReturn) }}
+        </div>
+        <div class="my-2">
+          <a href="https://loopeat.fr/en-savoir-plus/" target="_blank">
+            <span class="mr-2">{{ 'form.checkout_address.reusable_packaging.loopeat.learn_more'|trans }}</span>
+            <i class="fa fa-external-link"></i>
+          </a>
+        </div>
+        <img class="loopeat-bowl1" src="{{ asset('img/loopeat/bowl1.png') }}" alt="Loopeat" />
+      {% endif %}
+    </div>
+  {% else %}
+    <div>
+      <div class="alert alert-info py-0 m-0">
+        {{ form_widget(form) }}
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block _checkout_address_reusablePackagingPledgeReturn_row %}
+  {% set max = (loopeat_context.loopeatCredit - loopeat_context.loopeatBalance) %}
+  <li>
+    <span class="loopeat-icon loopeat-icon-gamelle"></span>
+    <span>
+      {% if max > 0 %}
+        {{ form_widget(form) }}
+      {% else %}
+        {{ 'form.checkout_address.reusable_packaging.loopeat.no_pledge_label'|trans }}
+      {% endif %}
+    </span>
+  </li>
+{% endblock %}
+
+{% block _checkout_address_reusablePackagingPledgeReturn_widget %}
+
+  {% set max = (loopeat_context.loopeatCredit - loopeat_context.loopeatBalance) %}
+  {% set attr = attr|merge({ 'min': 0, 'max': max }) %}
+
+  <label for="{{ form.parent.reusablePackagingPledgeReturn.vars.id }}">
+    {{ 'form.checkout_address.reusable_packaging.loopeat.return_pledge_label'|trans({
+      '%field%': form_widget(form, { attr: attr, label_attr: { class: 'm-0' } })
+    })|raw }}
+  </label>
+{% endblock %}
+
+{% block _checkout_address_customer_row %}
+{% if form|length > 0 %}
+  <div class="border-bottom mb-5">
+    <div class="my-4">
+    {% if form.email is defined or form.phoneNumber is defined %}
+      {% if form.email is defined and form.phoneNumber is defined %}
+      <div class="row">
+        <div class="col-xs-12 col-sm-6">
+          {{ form_row(form.email) }}
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          {{ form_row(form.phoneNumber) }}
+        </div>
+      </div>
+      {% else %}
+        {% if form.email is defined %}
+          {{ form_row(form.email) }}
+        {% endif %}
+        {% if form.phoneNumber is defined %}
+          {{ form_row(form.phoneNumber) }}
+        {% endif %}
+      {% endif %}
+    {% endif %}
+    {% if form.fullName is defined %}
+    <div class="row">
+      <div class="col-xs-12">
+      {{ form_row(form.fullName) }}
+      </div>
+    </div>
+    {% endif %}
+    {% if form.legal is defined %}
+      {{ form_row(form.legal) }}
+    {% endif %}
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

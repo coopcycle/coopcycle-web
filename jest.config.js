@@ -71,7 +71,11 @@ module.exports = {
   // ],
 
   // A map from regular expressions to module names that allow to stub out resources with a single module
-  // moduleNameMapper: {},
+  // @see https://jestjs.io/docs/en/webpack
+  moduleNameMapper: {
+    "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/js/app/__mocks__/fileMock.js",
+    "\\.(s?css|less)$": "<rootDir>/js/app/__mocks__/styleMock.js"
+  },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
@@ -163,9 +167,12 @@ module.exports = {
   // transform: null,
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  // transformIgnorePatterns: [
-  //   "/node_modules/"
-  // ],
+  // all files inside node_modules are not transformed by default,
+  // you may use transformIgnorePatterns to allow transpiling such modules
+  transformIgnorePatterns: [
+    // "node_modules/(?!(react-native|my-project|react-native-button)/)"
+    "node_modules/(?!(coopcycle-frontend-js)/)"
+  ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,

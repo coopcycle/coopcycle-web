@@ -1,0 +1,24 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+<mj-column>
+  <mj-text align="left" line-height="20px">
+  {{ 'owner.order.created.body' | trans({
+    '%order.url%': url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }),
+    '%restaurant.name%': restaurant.name
+  }, 'emails') | raw }}
+  </mj-text>
+  <mj-section border-top="1px solid #ecedee" border-bottom="1px solid #ecedee">
+    <mj-column>
+      <mj-text align="center" line-height="20px">
+        {{ 'order.preparation_expected_at'|trans({ '%date%': order.preparationExpectedAt|format_datetime('none', 'short') }) }}
+      </mj-text>
+    </mj-column>
+  </mj-section>
+  {% include 'emails/order/_partials/items.mjml.twig' %}
+  <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white"
+    href="{{ url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }) }}">
+  {{ 'order.view' | trans({}, 'emails') }}
+  </mj-button>
+</mj-column>
+{% endblock %}

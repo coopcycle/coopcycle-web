@@ -2,6 +2,7 @@ html, body {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
   min-height: 100%;
   @media screen and (min-width: $screen-md-min) {
+    height: 100%;
     display: flex;
     flex-direction: column;
   }
@@ -19,6 +20,10 @@ h1, h2, h3, h4, h5, h6 {
   @media screen and (max-width: $screen-md-min) {
     margin-bottom: 10px;
   }
+}
+
+.table > tbody > tr > td {
+  vertical-align: middle;
 }
 
 .container--full-height {
@@ -41,12 +46,11 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   padding: $base-margin 0;
   margin-top: $base-margin-l;
-  background-color: $main-blue;
+  background-color: #212121;
   color: $white;
 
   a.footer-link {
     color: $white;
-    margin: 0 $base-margin-s;
   }
 
   @media screen and (max-width: $screen-md-min) {
@@ -54,8 +58,33 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.btn-google-play {
+  display: inline-block;
+  width: 180px;
+  margin-right: -12px;
+  & > img {
+    display: inline-block;
+    width: 100%;
+  }
+}
+
 .navbar-brand {
   font-family: "Raleway", Helvetica, Arial, sans-serif;
+}
+
+.navbar-brand.navbar-brand-img {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  img {
+    height: 30px;
+  }
+}
+
+.navbar-coopcycle {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 0;
+  border-bottom: 2px solid #ecf0f1;
 }
 
 .page-header {
@@ -105,6 +134,14 @@ h1, h2, h3, h4, h5, h6 {
   vertical-align: middle;
 }
 
+.modal {
+  @media (max-width: $screen-xs-max) {
+    .modal-dialog {
+      width: calc(100% - 20px);
+    }
+  }
+}
+
 // ------------------ Admin ------------------
 
 .store-opening-hours {
@@ -148,11 +185,19 @@ h1, h2, h3, h4, h5, h6 {
 .banner-title {
   color: $white;
   font-weight: 700;
-  margin-bottom: $bs-base-margin;
+  margin-top: 30px;
+  margin-bottom: 60px;
+  @media (max-width: $screen-xs-max) {
+    font-size: 26px;
+    text-align: center;
+  }
 }
 
 .banner-search {
   margin-top: $bs-base-margin * 2;
+  @media (max-width: $screen-xs-max) {
+    margin-top: 0;
+  }
 }
 
 .banner {
@@ -163,6 +208,11 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 20px;
   a {
     color: $light-orange;
+  }
+  &-message {
+    p {
+      display: inline;
+    }
   }
 }
 
@@ -175,35 +225,83 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .homepage-search {
+  position: relative;
   margin-top: -20px;
-  padding: 100px 0;
   background-color: $main-blue-light;
   background-image: url(../pattern.svg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
+  &-container {
+    position: relative;
+    display: flex;
+    width: 50%;
+    margin: 0 auto;
+    justify-content: center;
+    @media (max-width: $screen-sm-max) {
+      width: 80%;
+    }
+  }
+  margin-bottom: 50px;
+}
+
+.homepage-delivery {
+  // https://stackoverflow.com/questions/8541081/css-set-a-background-color-which-is-50-of-the-width-of-the-window
+  background: #212121;
+  padding: 60px 60px 0;
+  @media (min-width: $screen-sm-min) {
+    background: linear-gradient(0deg, #FFF 20%, #212121 0%);
+  }
+  @media (max-width: $screen-xs-max) {
+    padding-bottom: 60px;
+  }
+  margin-bottom: 40px;
+  form {
+    background: #FFFFFF;
+    box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 50px 40px;
+    button[type="submit"] {
+      background-color: #0076FF;
+    }
+  }
+  &-text {
+    color: #e5e5e5;
+  }
 }
 
 .homepage-map {
   margin-bottom: -40px;
-  background-color: #111;
-  padding: 30px 0;
   color: #ccc;
 }
 
-.homepage-restaurants {
-  &__title {
-    text-align: center;
-    margin: 20px 0;
+.homepage-searchbox-container {
+  position: absolute;
+  bottom: -40px;
+  width: 100%;
+  left: 0;
+}
+
+.homepage-searchbox {
+
+  padding: 20px 25px;
+  background-color: #ffff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.08);
+
+  .address-autosuggest__container {
+    margin: 0;
   }
-  &__show-more {
-    font-size: $font-size-large;
-    margin-bottom: 15px;
-    > a {
-      padding: 5px 0;
-      display: block;
-      width: 100%;
-    }
+
+}
+
+.restaurant-show-more {
+  font-size: $font-size-large;
+  color: #585858;
+  text-decoration: underline;
+  text-align: right;
+  &:hover {
+    color: lighten(#585858, 10%);
   }
 }
 
@@ -211,18 +309,22 @@ h1, h2, h3, h4, h5, h6 {
   color: #fff;
 }
 
-// ------------------ Cart ------------------
-
-#cart {
-  margin-top: $base-margin;
+.dashboard-subnav {
+  background-color: #ECFFFD;
+  border-bottom: 1px solid #BDFFF6;
+  margin-top: -20px;
+  .navbar {
+    .navbar-toggle {
+      background-color: darken(#ECFFFD, 50%);
+      border-color: white;
+      .icon-bar {
+        background-color: white;
+      }
+    }
+  }
 }
 
-// $panel-heading-padding is 10px 15px !default;
-// nth() allows to extract individual values
-$panel-heading-padding-vertical: nth($panel-heading-padding, 1);
-$panel-heading-padding-horizontal: nth($panel-heading-padding, 2);
-
-$cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 2));
+// ------------------ Cart ------------------
 
 .restaurant-menu-wrapper {
   // On mobile, add a margin to allow scrolling
@@ -231,191 +333,83 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   }
 }
 
-.cart-heading {
-  position: relative;
+.restaurant-menu-section {
+
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
 
   @media (max-width: $screen-xs-max) {
-    height: $navbar-height;
-    text-align: center;
-    color: $white !important;
-    background-color: $main-blue-light !important;
-    line-height: $cart-heading-line-height;
+    grid-template-columns: repeat(1, 1fr);
   }
 
-  &--warning {
-    @media (max-width: $screen-xs-max) {
-      background-color: $state-warning-bg !important;
-      color: $state-warning-text !important;
 
-      .cart-heading__left,
-      .cart-heading__right {
-        background-color: $state-warning-text;
-        color: $state-warning-bg;
+  &-item {
+    border: 1px solid $list-group-border;
+    & > * {
+      width: 100%;
+      min-height: 100%;
+      height: 100%;
+    }
+    &:hover,
+    &:focus {
+      color: $list-group-link-hover-color;
+      background-color: $list-group-hover-bg;
+      button.menu-item {
+        color: $list-group-link-color;
+        background-color: $list-group-hover-bg;
       }
     }
-  }
+    button.menu-item {
+      width: 100%;
+      min-height: 100%;
+      height: 100%;
 
-  &--success {
-    @media (max-width: $screen-xs-max) {
-      background-color: $state-success-bg !important;
-      color: $state-success-text !important;
+      // Reset button styles
+      // @see https://gist.github.com/MoOx/9137295
 
-      .cart-heading__left,
-      .cart-heading__right {
-        background-color: $state-success-text;
-        color: $state-success-bg;
-      }
+      border: none;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      overflow: visible;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: inherit;
+      line-height: normal;
+      -webkit-font-smoothing: inherit;
+      -moz-osx-font-smoothing: inherit;
+      -webkit-appearance: none;
 
-      .cart-heading__right {
-        display: none;
-      }
-
-      .cart-heading__button {
-        display: block;
-      }
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
     }
-  }
-}
-
-.cart-heading__right {
-  position: relative;
-  &:after {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -35px 0 0 -35px;
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    content: '';
-    opacity: 0;
-    pointer-events: none;
-    box-shadow: inset 0 0 0 35px rgba(111, 148, 182, 0);
-  }
-  &--ripple:after {
-    animation: ripple-effect-radomir 0.5s ease-out forwards;
-  }
-}
-
-.cart-heading__button {
-  display: none;
-
-  @media (max-width: $screen-xs-max) {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: $navbar-height;
-    height: $navbar-height;
-    background-color: $state-success-text;
-    color: $state-success-bg;
-    border: none;
-  }
-}
-
-.cart-heading__left,
-.cart-heading__right {
-  display: none;
-
-  @media (max-width: $screen-xs-max) {
-    display: block;
-    position: absolute;
-    width: $cart-heading-line-height;
-    height: $cart-heading-line-height;
-    border-radius: $cart-heading-line-height;
-    background-color: $main-blue;
-    top: $panel-heading-padding-vertical;
-  }
-}
-
-.cart-heading__left {
-  @media (max-width: $screen-xs-max) {
-    left: $panel-heading-padding-horizontal;
-  }
-}
-
-.cart-heading__right {
-  @media (max-width: $screen-xs-max) {
-    right: $panel-heading-padding-horizontal;
-  }
-}
-
-.cart-heading--title {
-  @media (max-width: $screen-xs-max) {
-    display: none;
-  }
-}
-
-.cart-heading--title-or-errors {
-  display: none;
-  @media (max-width: $screen-xs-max) {
-    display: inline;
-  }
-}
-
-.cart-wrapper {
-  height: 100%;
-
-  @media (max-width: $screen-xs-max) {
-    padding: 0;
-    margin-bottom: 0;
-    cursor: pointer;
-
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    transform: translateY(calc(100% - #{$navbar-height}));
-    transition: transform 0.4s;
-
-    &__messages {
-      display: none;
+    .menu-item-inner {
+      display: flex;
+      flex: 1;
     }
-  }
-}
-
-.cart-wrapper--show {
-  @media (max-width: $screen-xs-max) {
-    transform: translateY(0);
-  }
-}
-
-.cart {
-  &__items {
-    // @extend .list-group;
-  }
-  &__item {
-    padding: 10px 0;
-    &__adjustments {
-      @extend .text-muted;
-    }
-    &__content {
+    .menu-item-content-wrapper {
+      padding: 15px;
+      flex: 3;
+      flex-direction: column;
       display: flex;
       justify-content: space-between;
-      &__left {
-        min-width: 60px;
-        max-width: 60px;
-        .ant-input-number {
-          width: 100%;
-        }
-      }
-      &__body {
-        flex-grow: 1;
-        padding: 0 10px;
-      }
-      &__right {
-        text-align: right;
+    }
+    .menu-item-image-wrapper {
+      flex: 1;
+      align-self: center;
+      padding: 15px 15px 15px 0;
+      > img {
+        width: 100%;
       }
     }
   }
-}
-
-#map-wrapper {
-  padding: 60px 0;
 }
 
 .restaurant-title {
   display:inline-block;
-
 }
 
 .restaurant-header {
@@ -440,17 +434,32 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   }
 
   &-body {
-    flex: 8;
-    @media (max-width: $screen-xs-max) {
-      text-align: center;
-    }
+    flex: 1;
   }
   &-right {
-    flex: 4;
-    @extend .text-muted;
+    flex: 1;
     text-align: right;
     @media (max-width: $screen-xs-max) {
       display: none;
+    }
+  }
+
+  .table-opening-hours {
+    width: auto;
+    font-size: $font-size-small;
+    thead > tr > th {
+      text-align: right;
+    }
+    tbody > tr > td,
+    tbody > tr > th {
+      border-top: none;
+    }
+    tbody > tr:not(.active) {
+      @extend .text-muted;
+    }
+    tbody > tr.active > td,
+    tbody > tr.active > th {
+      background-color: transparent;
     }
   }
 
@@ -482,7 +491,14 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 }
 
 .restaurant-item {
+
   position: relative;
+  color: #212121;
+  &:hover {
+    color: lighten(#212121, 10%);
+  }
+  margin-bottom: $line-height-computed;
+
   &--disabled > * {
     opacity: 0.6;
   }
@@ -501,6 +517,24 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   &__top-right {
     right: 12px;
   }
+
+  &__title {
+    font-weight: 700;
+  }
+
+  &__time-range {
+    font-size: $font-size-small;
+    background: #E5E5E5;
+    border-radius: 4px;
+    padding: 5px 10px;
+  }
+
+  > img,
+  a > img {
+    @include img-responsive;
+    margin-right: auto;
+    margin-left: auto;
+  }
 }
 
 .restaurant-item:hover {
@@ -511,21 +545,6 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   opacity: 0.8;
 }
 
-.menu-item, .modifier-item {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding-right: 45px;
-}
-
-.menu-item:after {
-  font-family: 'Glyphicons Halflings';
-  content: "\002b";
-  color: #bdc3c7;
-  position: absolute;
-  right: 15px;
-}
-
 // TODO Add more precise selector
 button.menu-item:focus,
 button.menu-item:active {
@@ -533,48 +552,16 @@ button.menu-item:active {
    box-shadow: none;
 }
 
-// FIXME This is needed for FireFox
-.list-group-item {
-  > form > button.menu-item {
-    padding: 10px 45px 10px 15px;
-    width: 100%;
-    text-align: left;
-    border: none;
-    background-color: $list-group-bg;
-    color: $list-group-link-color;
-  }
-  &:first-child {
-    > form > button {
-      @include border-top-radius($list-group-border-radius);
-    }
-  }
-  &:last-child {
-    > form > button {
-      @include border-bottom-radius($list-group-border-radius);
-    }
-  }
-  &:hover,
-  &:focus {
-    > form > button {
-      color: $list-group-link-hover-color;
-      background-color: $list-group-hover-bg;
-    }
-  }
-}
-
-a.list-group-item.menu-item--unavailable {
+.menu-item.menu-item--unavailable {
+  display: block;
   color: #ddd;
   cursor: default;
-  padding-right: 15px;
-}
-
-.menu-item--unavailable:after {
-  content: none;
-}
-
-.menu-item .menu-item-content {
-  font-weight: bold;
-  width: 80%;
+  &:hover {
+    text-decoration: none;
+  }
+  .menu-item-price {
+    text-decoration: line-through;
+  }
 }
 
 .menu-item .menu-item-description,
@@ -584,12 +571,21 @@ a.list-group-item.menu-item--unavailable {
   font-weight: normal;
 }
 
-.menu-item .menu-item-price {
-  width: 20%;
-  text-align: right;
+.menu-item .menu-item-content {
+  margin-bottom: 5px;
 }
 
-.modifier-item {
+.menu-item .menu-item-name {
+  font-family: inherit;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+}
+
+.menu-item .menu-item-price {
+  white-space: nowrap;
+}
+
+.product-option-item {
   &:hover {
     background-color: $main-blue-light;
   }
@@ -602,56 +598,37 @@ a.list-group-item.menu-item--unavailable {
   }
 }
 
-.order-map__wrapper {
-  height: 100%;
-  position: relative;
-}
-
-.order-map {
-  flex: 1;
-  z-index: -1;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-}
-
-.order-map__column {
-  margin: 10px;
-  background-color: $white;
-  box-sizing: border-box;
-
-  h4 {
+.product-option-item-range {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  input[type="number"] {
+    @extend .form-control;
+    min-width: 10%;
+    width: 10%;
+    @media (max-width: $screen-xs-max) {
+      min-width: 20%;
+      width: 20%;
+    }
+    padding: 3px 6px;
+    margin-right: 8px;
+  }
+  label {
+    flex-grow: 1;
     margin: 0;
-    padding: 10px 15px;
-    border-bottom: 1px solid #ddd;
+    font-weight: 400;
+    padding: 6px 0;
+    hyphens: auto;
+    &:hover {
+      cursor: pointer;
+    }
   }
-
-  table {
-    margin-bottom: 0;
-  }
-
-  @media screen and (max-width: $screen-sm-max) {
-    margin: 0 0 20px;
-  }
-}
-
-.order-map__column-heading {
-  display: block;
-  color: $headings-color;
-  &:hover {
-    color: $headings-color;
-    text-decoration: none;
-    background-color: #eee;
-  }
-}
-
-.order-map__column-block {
-  padding: 10px 15px;
-  border-bottom: 1px solid #ddd;
-  &:last-of-type {
-    border-bottom: none;
+  &-buttons {
+    display: flex;
+    flex-direction: row;
+    @media (max-width: $screen-xs-max) {
+      flex-direction: column;
+    }
   }
 }
 
@@ -683,10 +660,6 @@ form[name="store"] #store_imageFile_file {
   overflow: hidden;
   position: absolute;
   z-index: -1;
-}
-
-.form-group-delete {
-  padding-top: ($line-height-computed + 5px);
 }
 
 // ------------------ Autosuggest ------------------
@@ -726,6 +699,28 @@ form[name="store"] #store_imageFile_file {
 
 // ------------------ React Modal ------------------
 
+// Copy default styles to be able to use overlayClassName prop
+// @see https://github.com/reactjs/react-modal/tree/master/docs/styles
+.ReactModal__Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+// Custom class to allow scrolling inside modal
+// @see https://github.com/reactjs/react-modal/issues/283
+.ReactModal__Overlay--overflow {
+  @media (max-width: $screen-xs-max) {
+    height: 100vh;
+    .ReactModal__Content {
+      overflow-y: auto;
+    }
+  }
+}
+
 .ReactModal__Content {
   position: absolute;
   top: 50%;
@@ -743,62 +738,11 @@ form[name="store"] #store_imageFile_file {
   // min-width: 50%;
 }
 
-.ReactModal__Content--select-courier {
-  width: 440px;
-}
-
-.ReactModal__Content--enter-address {
-  overflow: inherit;
-  @media (min-width: $screen-lg-min) {
-    width: 33%;
-  }
-  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-    width: 50%;
-  }
-  @media (max-width: $screen-xs-max) {
-    width: calc(100% - 30px);
-    height: 80%;
-  }
-}
-
-.ReactModal__Content--restaurant {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 20px;
-  @media (min-width: $screen-lg-min) {
-    width: 50%;
-  }
-  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-    width: 66%;
-  }
-  @media (max-width: $screen-xs-max) {
-    width: calc(100% - 30px);
-    height: 80%;
-  }
-  .ReactModal__Restaurant__button {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    > button {
-      margin-bottom: 15px;
-    }
-  }
-}
-
-.ReactModal__Content--foodtech {
-  width: 440px;
-  padding: 0;
-  border: none;
-  > .panel {
-    margin-bottom: 0;
-  }
-  .ant-timeline-item.ant-timeline-item-last {
-    padding-bottom: 0;
-  }
-  .ant-timeline-item-last .ant-timeline-item-content {
-    min-height: inherit;
-  }
+// Prevent scroll on html/body
+// https://github.com/reactjs/react-modal/blob/master/docs/styles/classes.md#for-the-documentbody-and-html-tag
+.ReactModal__Html--open,
+.ReactModal__Body--open {
+  overflow: hidden;
 }
 
 // ------------------ Order Timeline ------------------
@@ -897,10 +841,6 @@ form[name="store"] #store_imageFile_file {
   margin-top: 25px;
 }
 
-.restaurant-availability-errors {
-  list-style: initial;
-}
-
 .calendar-close {
   color: $white;
   background-color: $light-red;
@@ -908,67 +848,6 @@ form[name="store"] #store_imageFile_file {
   border-bottom: 1px solid $red;
   list-style: none;
   padding: $base-margin-xs $base-margin-xs;
-}
-
-table.task-table {
-  tbody {
-    tr {
-      border-left: 6px solid #fff;
-    }
-    tr.task--cancelled {
-      color: $gray-light;
-    }
-  }
-}
-
-.menuEditor {
-  display: flex;
-  &__left, &__right {
-    flex: 1;
-  }
-  &__left {
-    padding-right: 15px;
-  }
-  &__right {
-    padding-left: 15px;
-    display: flex;
-  }
-  &__productList {
-    flex: 1;
-  }
-  &__product {
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: lighten(lightgrey, 10%);
-  }
-  &__product:last-child {
-    margin-bottom: 0;
-  }
-
-  &__panel {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    &__title {
-      padding: 10px;
-      background-color: lightgrey;
-      color: #fff;
-      margin: 0;
-      > a {
-        color: #fff;
-        &:hover {
-          color: darken(#fff, 5%);
-        }
-      }
-    }
-    &__body {
-      flex: 1;
-      border: 2px dashed lightgrey;
-      border-top: none;
-      padding: 10px;
-      min-height: 50px;
-    }
-  }
 }
 
 .role-icons {
@@ -1060,7 +939,6 @@ table.task-table {
   }
 }
 
-
 .react-autosuggest__suggestions-container--open {
   display: block;
   border: 1px solid #aaa;
@@ -1084,7 +962,7 @@ table.task-table {
 }
 
 .text-monospace {
-  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+  font-family: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
 }
 
 #cart-top {
@@ -1147,6 +1025,10 @@ table.task-table {
   }
 }
 
+.btn-transparent {
+  background: transparent;
+}
+
 .map-container {
   flex: 1;
   display: flex;
@@ -1161,93 +1043,10 @@ table.task-table {
   font-size: 12px;
 }
 
-.FoodtechDashboard {
-
-  padding: 0 15px 15px 15px;
-  height: calc(100vh - 70px);
-  display: flex;
-  flex-direction: column;
-
-  &__Navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    > div:first-child {
-      width: 33.3333%;
-    }
-    .ant-calendar-picker {
-      margin-right: 0;
-    }
-  }
-
-  &__Columns {
-    flex: 1;
-    flex-direction: row;
-    justify-content: space-between;
-    display: flex;
-  }
-
-  &__Column {
-    display: flex;
-    flex-direction: column;
-    min-width: 24%;
-    overflow: hidden;
-    &.panel {
-      margin-bottom: 0;
-    }
-    & > .panel-body {
-      overflow-y: scroll;
-    }
-  }
-
-  &__OrderCard {
-    cursor: pointer;
-  }
-
-  &__OrderCard:active,
-  &__OrderCard:hover {
-    border: 1px solid #bbb;
-  }
-
-}
-
 // Make sure Google Place Autocomplete is always on top
 // Fix for Bootstrap's modal
 div.pac-container {
    z-index: 1050 !important;
-}
-
-.preparation_time_rules_preparationTimeRule {
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  border: 1px solid #ccc;
-  margin-bottom: 10px;
-  padding: 10px;
-
-  .form-group {
-    flex-grow: 1;
-    margin-bottom: 0;
-  }
-
-  .form-group:first-child {
-    margin-right: 10px;
-  }
-
-  &:before {
-    @include fa-icon();
-    content: $fa-var-arrows;
-    display: block;
-    margin-right: 10px;
-  }
-
-  .close {
-    margin-left: 10px;
-  }
-
 }
 
 .btn-confirm-delete {
@@ -1310,4 +1109,233 @@ div.pac-container {
     border: none;
     background-color: transparent;
   }
+}
+
+.button-icon--decrement,
+.button-icon--increment {
+  border: none;
+  background-color: transparent;
+  &[disabled] {
+    cursor: $cursor-disabled;
+    @include opacity(.65);
+  }
+}
+
+form[name="restaurant"] {
+  .help-block.collapsed .fa-minus {
+    display: none;
+  }
+  .help-block:not(.collapsed) .fa-plus {
+    display: none;
+  }
+}
+
+.btn-facebook {
+  background: #3B5998;
+  border-radius: 0;
+  color: #fff;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #263961;
+}
+
+.login-container {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  &__content {
+    min-width: 100%;
+  }
+}
+.btn-facebook:link, .btn-facebook:visited {
+  color: #fff;
+}
+.btn-facebook:active, .btn-facebook:hover {
+  background: #263961;
+  color: #fff;
+}
+
+.restaurant-pledge__image {
+  max-width: 66.6666%;
+}
+
+.delivery__tracking {
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: 100vh;
+
+  padding: 0;
+  margin: 0;
+
+  &__topnav,
+  &__bottomnav {
+    padding: 10px 20px;
+  }
+
+  &__topnav {
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+  }
+  &__bottomnav {
+    border-top: 1px solid #ccc;
+  }
+
+  &__map-container {
+    flex: 1;
+    display: flex;
+    position: relative;
+
+    &--completed:after {
+      content: '';
+      position: absolute;
+      height: 100%;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 401;
+    }
+  }
+
+  &__map {
+    flex: 1;
+  }
+}
+
+.product__form__options {
+  &--sortable {
+    > * {
+      border: 1px solid #ebebeb;
+      padding: 10px;
+      background-color: #fff;
+    }
+  }
+}
+
+.restaurant-banner {
+  margin-top: -20px;
+}
+
+#modal-loopeat {
+  @media (max-width: $screen-xs-max) {
+    .modal-dialog {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 10px;
+      .modal-content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        .modal-body {
+          flex: 1;
+          .embed-responsive.embed-responsive-16by9 {
+            height: 100%;
+            padding-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+.button-icon {
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  appearance: none;
+}
+
+.about-us {
+  font-size: $font-size-large;
+  letter-spacing: 0.02em;
+  h1, h2, h3, h4 {
+    font-weight: 700;
+  }
+  table {
+    @extend .table;
+    @extend .table-bordered;
+  }
+}
+
+.checkout-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  z-index: 3;
+}
+
+.table-order-items {
+  tbody tr,
+  tfoot tr {
+    td:last-child {
+      font-family: "Roboto Mono", monospace;
+    }
+  }
+}
+
+#delivery_pickup,
+#delivery_dropoff {
+  position: relative;
+  @media (max-width: $screen-sm-max) {
+    padding-top: 24px;
+  }
+  &:before {
+    @include fa-icon();
+    font-size: 24px;
+    display: block;
+    position: absolute;
+    top: 0;
+    color: #9980FA;
+    line-height: $line-height-base;
+    padding-left: 15px;
+    @media (max-width: $screen-sm-max) {
+      right: 0;
+    }
+  }
+  .form-group:first-child {
+    label {
+      font-size: $font-size-large;
+    }
+  }
+}
+
+#delivery_pickup {
+  &:before {
+    content: $fa-var-cube;
+  }
+}
+
+#delivery_dropoff {
+  &:before {
+    content: $fa-var-arrow-down;
+  }
+}
+
+#delivery_pickup_address,
+#delivery_dropoff_address {
+  .address-autosuggest__container {
+    margin: 0;
+  }
+}
+
+.map-distance-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 401;
+  padding: 5px;
+  background-color: #0984e3;
+  color: #ffffff;
 }

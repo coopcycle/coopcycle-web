@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity name="AppBundle\Entity\Store" table="store">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name" nullable="true"/>
+    <field name="enabled" type="boolean" column="enabled">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="imageName" type="string" column="image_name" precision="0" nullable="true"/>
+    <field name="website" type="string" column="website" nullable="true"/>
+    <field name="telephone" type="phone_number" column="telephone" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <field name="legalName" type="string" column="legal_name" nullable="true"/>
+    <field name="vatID" type="string" column="vat_id" nullable="true"/>
+    <field name="additionalProperties" type="json_array" column="additional_properties" nullable="true"/>
+    <field name="prefillPickupAddress" type="boolean" column="prefill_pickup_address"/>
+    <field name="createOrders" type="boolean" column="create_orders"/>
+    <field name="checkExpression" type="string" column="check_expression" nullable="true"/>
+    <field name="weightRequired" type="boolean" column="weight_required"/>
+    <field name="packagesRequired" type="boolean" column="packages_required"/>
+    <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-many>
+    <many-to-one field="address" target-entity="AppBundle\Entity\Address">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-columns>
+        <join-column name="default_address_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="stripeAccount" target-entity="AppBundle\Entity\StripeAccount">
+      <join-columns>
+        <join-column name="stripe_account_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="pricingRuleSet" target-entity="AppBundle\Entity\Delivery\PricingRuleSet">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="pricing_rule_set_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="timeSlot" target-entity="AppBundle\Entity\TimeSlot">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="time_slot_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="packageSet" target-entity="AppBundle\Entity\PackageSet">
+      <join-columns>
+        <join-column name="package_set_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="owners" target-entity="AppBundle\Entity\User" mapped-by="stores"/>
+    <many-to-many field="addresses" target-entity="AppBundle\Entity\Address">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-table name="store_address">
+        <join-columns>
+          <join-column name="store_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="address_id" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-one field="organization" target-entity="AppBundle\Entity\Organization">
+      <join-columns>
+        <join-column name="organization_id" referenced-column-name="id" nullable="false"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

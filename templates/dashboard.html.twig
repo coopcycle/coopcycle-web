@@ -1,0 +1,35 @@
+{% extends "base.html.twig" %}
+
+{% block menu %}
+  {% include "dashboard/nav.html.twig" %}
+{% endblock %}
+
+{% block banner %}
+{% endblock %}
+
+{% block body %}
+<section class="dashboard-subnav py-5 mb-5">
+  <div class="container container--full-height">
+  {% block subnav %}{% endblock %}
+  </div>
+</section>
+<div class="container container--full-height">
+  <div class="row">
+    <div class="col-xs-12">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('widgets-admin') }}
+{% endblock %}
+
+{% block scripts_common %}
+  {{ encore_entry_script_tags('widgets-admin') }}
+  {% block scripts %}{% endblock %}
+{% endblock %}

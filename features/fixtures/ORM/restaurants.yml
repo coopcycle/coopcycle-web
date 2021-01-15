@@ -9,53 +9,98 @@ AppBundle\Entity\Base\GeoCoordinates:
 AppBundle\Entity\Address:
   address_1:
     addressLocality: 'Paris'
-    postalCode: 75001
+    postalCode: '75001'
     streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
     geo: "@geo_1"
   address_2:
     addressLocality: 'Paris'
-    postalCode: 75012
+    postalCode: '75012'
     streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
     geo: "@geo_2"
   address_3:
     addressLocality: 'Paris'
-    postalCode: 75009
+    postalCode: '75009'
     streetAddress: '17, rue Milton 75009 Paris 9ème'
     geo: "@geo_3"
 
 AppBundle\Entity\Contract:
   contract_1:
-    minimumCartAmount: 1500
     flatDeliveryPrice: 350
+    customerAmount: 350
     feeRate: 0.00
   contract_2:
-    minimumCartAmount: 1500
     flatDeliveryPrice: 350
+    customerAmount: 350
     feeRate: 0.00
   contract_3:
-    minimumCartAmount: 1500
     flatDeliveryPrice: 350
+    customerAmount: 350
     feeRate: 0.00
 
-AppBundle\Entity\Restaurant:
+AppBundle\Entity\LocalBusiness:
   restaurant_1:
     name: 'Nodaiwa'
     address: "@address_1"
-    orderingDelayMinutes: 0
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
     contract: "@contract_1"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
   restaurant_2:
     name: 'Café Barjot'
     address: "@address_2"
     openingHours: ['Mo-Sa 11:30-14:30']
-    orderingDelayMinutes: 0
     enabled: true
     contract: "@contract_2"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+      - addFulfillmentMethod: ['collection', true]
+      - setOpeningHours:
+        - ['Mo-Sa 11:30-14:30']
+        - 'collection'
   restaurant_3:
     name: 'La Cantina Clandestina'
-    orderingDelayMinutes: 0
     address: "@address_3"
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
     contract: "@contract_3"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+  restaurant_4:
+    name: 'Wild Buffet'
+    address: "@address_3"
+    openingHours: ['Mo-Sa 11:30-14:30']
+    enabled: true
+    contract: "@contract_3"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    __calls:
+      - setDeletedAt:
+        - <identity(new \DateTime('2019-11-12 18:00:00'))>
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+      - disableFulfillmentMethod: ['delivery']
+      - addFulfillmentMethod: ['collection', true]
+      - setOpeningHours:
+        - ['Mo-Sa 11:30-14:30']
+        - 'collection'
+  restaurant_5:
+    name: 'I Want This Restaurant'
+    address: "@address_3"
+    enabled: true
+    state: pledge
+  restaurant_6:
+    name: 'Good Old Times'
+    address: "@address_3"
+    openingHours: ['Mo-Sa 11:30-14:30']
+    enabled: false
+    contract: "@contract_3"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]

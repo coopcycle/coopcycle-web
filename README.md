@@ -10,50 +10,61 @@ In each city, couriers are encouraged to organize into co-ops, and to run their 
 
 The software is under active development. If you would like to contribute we will be happy to hear from you! All instructions are [in the Contribute file](CONTRIBUTING.md).
 
-Coopcycle-web is the main repo, containing the web API, the front-end for the website and the dispatch algorithm : [ Technical Overview ](https://github.com/coopcycle/coopcycle-web/wiki/Technical-Overview). You can see it in action & test it here : https://demo.coopcycle.org
+Coopcycle-web is the main repo, containing the web API, the front-end for the website and the dispatch algorithm : [Technical Overview](https://github.com/coopcycle/coopcycle-web/wiki/Technical-Overview). You can see it in action & test it here : https://demo.coopcycle.org
 
-You can find a comprehensive list of our repos here : [ Our repos comprehensive list ](https://github.com/coopcycle/coopcycle-web/wiki/Our-repos-comprehensive-list).
+You can find a comprehensive list of our repos here : [Our repos comprehensive list](https://github.com/coopcycle/coopcycle-web/wiki/Our-repos-comprehensive-list).
 
 How to run a local instance
---------------
+---------------------------
 
 ### Prerequisites
 
-* Install [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install).
+Install [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install).
 
-    - On OSX : use [Docker for Mac](https://www.docker.com/docker-mac) which will provide you both `docker` and `docker-compose`. It doesn't rely on Virtualbox as Docker used to.
+#### OSX
 
-    - On Windows : use [Docker for Windows](https://www.docker.com/docker-windows) which will provide you both `docker` and `docker-compose`. Depending on your platform, Docker could be installed as Native or you have to install Docker toolbox which use VirtualBox instead of Hyper-V causing a lot a differences in implementations. If you have the luck to have a CPU that supports native Docker you can [share your hard disk as a virtual volume for your appliances](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/).
+Use [Docker for Mac](https://www.docker.com/docker-mac) which will provide you both `docker` and `docker-compose`.
 
-    You will need to [download openssl](http://gnuwin32.sourceforge.net/packages/openssl.htm) to generate certificates.
-    The make script suppose that both are found [in your Path environment variable](https://www.computerhope.com/issues/ch000549.htm).
+#### Windows
 
-    - On Linux : follow [the instructions for your distribution](https://docs.docker.com/engine/installation/). `docker-compose` binary is to be installed independently. You can use CoopCycle without root privileges, to do so run `sudo usermod -aG docker your-user` (will add you to the `docker` group).
+Use [Docker for Windows](https://www.docker.com/docker-windows) which will provide you both `docker` and `docker-compose`.
+Depending on your platform, Docker could be installed as Native or you have to install Docker toolbox which use VirtualBox instead of Hyper-V causing a lot a differences in implementations.
+If you have the luck to have a CPU that supports native Docker you can [share your hard disk as a virtual volume for your appliances](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/).
 
-* Setup Google Maps API
+#### Linux
 
-CoopCycle uses the Google Maps API for Geocoding, as well as the Places API.
-You will need to create a project in the Google Cloud Platform Console, and
-enable the Google Maps API. GCP will give you an API token that you will need
-later.  By default, the Geocoding and Places API will not be enabled, so you
-need to enable them as well (`Maps API dashboard > APIs > Geocoding API >
-Enable`, and `Maps API dashboard > APIs > Places API for Web > Enable`).
+Follow [the instructions for your distribution](https://docs.docker.com/install/). `docker-compose` binary is to be installed independently.
+Make sure:
+- to install `docker-compose` [following instructions](https://docs.docker.com/compose/install/) to get the **latest version**.
+- to follow the [post-installation steps](https://docs.docker.com/install/linux/linux-postinstall/).
 
-* (Linux) Setup permissions
+#### Setup OpenStreetMap geocoders (optional)
 
-If you are using Linux, you will need to allow the user `www-data` used by the
-php docker container to write files to your local disk. You can do this by running
-the following commands in the directory containing your local clone of the
-repository:
+CoopCycle uses [OpenStreetMap](https://www.openstreetmap.org/) to geocode addresses and provide autocomplete features.
+
+##### Address autocomplete
+
+To configure address autocomplete, choose a provider below, grab the credentials, and configure environment variables accordingly.
 
 ```
-sudo chown -R $(id -u):82 coopcycle-web
-sudo chmod -R g+w coopcycle-web
+ALGOLIA_PLACES_APP_ID
+ALGOLIA_PLACES_API_KEY
+LOCATIONIQ_ACCESS_TOKEN
+GEOCODE_EARTH_API_KEY
 ```
+
+- For [Algolia Places](https://community.algolia.com/places/), set `COOPCYCLE_AUTOCOMPLETE_ADAPTER=algolia`
+- For [Geocode Earth](https://geocode.earth/), set `COOPCYCLE_AUTOCOMPLETE_ADAPTER=geocode-earth`
+- For [LocationIQ](https://locationiq.com/), set `COOPCYCLE_AUTOCOMPLETE_ADAPTER=locationiq`
+
+##### Geocoding
+
+To configure geocoding, create an account on [OpenCage](https://opencagedata.com/), and configure the `OPENCAGE_API_KEY` environement variable.
 
 ### Run the application
 
-* Start the Docker containers
+#### Start the Docker containers
+
 ```
 docker-compose up
 ```
@@ -64,16 +75,7 @@ To create the schema & initialize the platform with demo data, run:
 make install
 ```
 
-* Or if needed with an additional UI to help you manage the containers environment
-
-Use the below command to get the [portainer](https://portainer.io/) UI:
-```
-docker-compose -f docker-compose.yml -f docker-compose-portainer.yml up
-```
-open http://localhost:9000 to access portainer
-Setup and confirm the admin password the first time you use it.
-
-* Open the platform in your browser
+#### Open the platform in your browser
 ```
 open http://localhost
 ```
@@ -81,32 +83,77 @@ open http://localhost
 Testing
 -------
 
-* Create the test database
+#### Create the test database
 
 ```
 docker-compose run php bin/console doctrine:schema:create --env=test
 ```
 
-* Launch the PHPUnit tests
+#### Launch the PHPUnit tests
 
 ```
 make phpunit
 ```
 
-* Launch the Behat tests
+#### Launch the Behat tests
 
 ```
 make behat
 ```
 
-* Launch the Mocha tests
+#### Launch the Mocha tests
 
 ```
 make mocha
 ```
+Debugging
+------------------
+#### 1. Install and enable xdebug in the php container
+
+```
+make enable-xdebug
+```
+> **Note:** If you've been working with this stack before you'll need to rebuild the php image for this command to work:
+> ```
+> docker-compose build php
+> docker-compose restart php nginx
+> ```
+
+#### 2. Enable php debug in VSCode
+
+1. Install a PHP Debug extension, this is tested with [felixfbecker.php-debug](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug) extension.
+2. Add the following configuration in your `.vscode/launch.json` of your workspace:
+
+```json
+{
+	"configurations": [
+    {
+      "name": "Listen for XDebug",
+      "type": "php",
+      "request": "launch",
+      "port": 9001,
+      "pathMappings": {
+          "/var/www/html": "${workspaceFolder}"
+      },
+      "xdebugSettings": {
+          "max_data": 65535,
+          "show_hidden": 1,
+          "max_children": 100,
+          "max_depth": 5
+      }
+    }
+  ]
+}
+```
+
+3. If you're having issues connecting the debugger yo can restart nginx and php containers to reload the xdebug extension.
+
+```
+docker-compose restart php nginx
+```
 
 Running migrations
--------
+------------------
 
 When pulling change from the remote, the database models may have changed. To apply the changes, you will need to run a database migration.
 
@@ -117,7 +164,7 @@ make migrations-migrate
 License
 -------
 
-The code is licensed under the [Peer Production License](https://wiki.p2pfoundation.net/Peer_Production_License), meaning you can use this software provided:
+The code is licensed under the [Coopyleft License](https://wiki.coopcycle.org/en:license), meaning you can use this software provided:
 
-* You are a worker-owned business or worker-owned collective
-* All financial gain, surplus, profits and benefits produced by the business or collective are distributed among the worker-owners
+- You are matching with the social and common company’s criteria as define by their national law, or by the European Commission in its [October 25th, 2011 communication](http://www.europarl.europa.eu/meetdocs/2009_2014/documents/com/com_com(2011)0681_/com_com(2011)0681_en.pdf), or by default by the Article 1 of the French law [n°2014-856 of July 31st, 2014](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000029313296&categorieLien=id) “relative à l’économie sociale et solidaire”
+- You are using a cooperative model in which workers are employees

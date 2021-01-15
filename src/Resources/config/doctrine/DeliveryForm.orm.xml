@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity name="AppBundle\Entity\DeliveryForm" table="delivery_form">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="withVehicle" type="boolean" column="with_vehicle"/>
+    <field name="withWeight" type="boolean" column="with_weight"/>
+    <field name="showHomepage" type="boolean" column="show_homepage"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <many-to-one field="pricingRuleSet" target-entity="AppBundle\Entity\Delivery\PricingRuleSet" />
+    <many-to-one field="timeSlot" target-entity="AppBundle\Entity\TimeSlot" />
+    <many-to-one field="packageSet" target-entity="AppBundle\Entity\PackageSet" />
+  </entity>
+</doctrine-mapping>

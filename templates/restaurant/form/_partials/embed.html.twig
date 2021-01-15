@@ -1,0 +1,9 @@
+<div class="alert alert-info">
+{{ 'restaurant.embed.disclaimer'|trans }}
+</div>
+
+{% include "_partials/sdk.html.twig" with {
+  url: url('restaurant', { id: restaurant.id, slug: restaurant.name|slugify })
+} %}
+
+<p>{{ 'restaurant.embed.greeting'|trans }}</p>

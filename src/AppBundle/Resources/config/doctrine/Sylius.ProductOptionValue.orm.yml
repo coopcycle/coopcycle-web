@@ -1,7 +1,0 @@
-AppBundle\Entity\Sylius\ProductOptionValue:
-    type: entity
-    table: sylius_product_option_value
-    fields:
-        price:
-            type: integer
-            nullable: true

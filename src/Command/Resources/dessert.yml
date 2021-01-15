@@ -1,0 +1,16 @@
+AppBundle\Entity\Sylius\ProductVariant:
+  variant:
+    currentLocale: "<{currentLocale}>"
+    name: Default
+    code: <uuid()>
+    price: <numberBetween(499, 999)>
+    taxCategory: "@taxCategory"
+
+AppBundle\Entity\Sylius\Product:
+  product:
+    code: <uuid()>
+    currentLocale: "<{currentLocale}>"
+    name: <dessertName()>
+    slug: <uuid()>
+    enabled: true
+    variants: [ "@variant" ]

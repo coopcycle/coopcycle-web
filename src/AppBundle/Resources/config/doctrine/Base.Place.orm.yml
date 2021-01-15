@@ -1,5 +1,0 @@
-AppBundle\Entity\Base\Place:
-    type: mappedSuperclass
-    table: place
-    id: {  }
-    lifecycleCallbacks: {  }

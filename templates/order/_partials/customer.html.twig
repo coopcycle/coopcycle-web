@@ -1,0 +1,13 @@
+<div class="d-flex flex-row justify-content-between border mb-4 p-4">
+  <div>
+    {% include '_partials/order/customer.html.twig' with { customer: order.customer } %}
+  </div>
+  <div>
+    <a href="mailto:{{ order.customer.emailCanonical }}"><i class="fa fa-envelope"></i>  {{ order.customer.emailCanonical }}</a>
+  </div>
+  {% if order.customer.phoneNumber is not empty %}
+  <div>
+    <i class="fa fa-phone"></i> {{ order.customer.phoneNumber }}
+  </div>
+  {% endif %}
+</div>

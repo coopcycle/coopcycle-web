@@ -1,0 +1,13 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block _time_slot_choices_entry_row %}
+  <div class="row">
+    <div class="col-sm-6">
+      {{ form_row(form.startTime) }}
+    </div>
+    <div class="col-sm-6">
+      {{ form_row(form.endTime) }}
+    </div>
+  </div>
+{% endblock %}
+

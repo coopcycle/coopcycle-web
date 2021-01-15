@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Address" table="address">
+    <indexes>
+      <index name="idx_address_geo" columns="geo" flags="spatial"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="description" type="text" column="description" nullable="true"/>
+    <field name="geo" type="geography" column="geo">
+      <options>
+        <option name="geometry_type">GEOMETRY</option>
+        <option name="srid">4326</option>
+      </options>
+    </field>
+    <field name="addressCountry" type="string" column="address_country" nullable="true"/>
+    <field name="addressLocality" type="string" column="address_locality" nullable="true"/>
+    <field name="addressRegion" type="string" column="address_region" nullable="true"/>
+    <field name="postalCode" type="string" column="postal_code" nullable="true"/>
+    <field name="postOfficeBoxNumber" type="string" column="post_office_box_number" nullable="true"/>
+    <field name="streetAddress" type="string" column="street_address"/>
+    <field name="company" type="string" column="company" nullable="true"/>
+    <field name="telephone" type="phone_number" column="telephone" nullable="true"/>
+    <field name="contactName" type="string" column="contact_name" nullable="true"/>
+    <entity-listeners>
+      <entity-listener class="AppBundle\Entity\Listener\AddressListener">
+        <lifecycle-callback type="preUpdate" method="preUpdate"/>
+      </entity-listener>
+    </entity-listeners>
+  </entity>
+</doctrine-mapping>

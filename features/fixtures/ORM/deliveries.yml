@@ -1,0 +1,56 @@
+include:
+  - stores.yml
+
+AppBundle\Entity\Delivery:
+  delivery_1:
+    __factory:
+      createWithAddress:
+        - "@address_1"
+        - "@address_2"
+    __calls:
+      - setPickupRange:
+        - <identity(new \DateTime('2019-11-12 18:00:00'))>
+        - <identity(new \DateTime('2019-11-12 18:30:00'))>
+      - setDropoffRange:
+        - <identity(new \DateTime('2019-11-12 19:00:00'))>
+        - <identity(new \DateTime('2019-11-12 19:30:00'))>
+    store: "@store_1"
+  delivery_2:
+    __factory:
+      createWithAddress:
+        - "@address_2"
+        - "@address_1"
+    __calls:
+      - setPickupRange:
+        - <identity(new \DateTime('2019-11-12 18:00:00'))>
+        - <identity(new \DateTime('2019-11-12 18:30:00'))>
+      - setDropoffRange:
+        - <identity(new \DateTime('2019-11-12 20:00:00'))>
+        - <identity(new \DateTime('2019-11-12 20:30:00'))>
+    store: "@store_1"
+  delivery_3:
+    __factory:
+      createWithAddress:
+        - "@address_2"
+        - "@address_3"
+    __calls:
+      - setPickupRange:
+        - <identity(new \DateTime('2019-11-12 18:00:00'))>
+        - <identity(new \DateTime('2019-11-12 18:30:00'))>
+      - setDropoffRange:
+        - <identity(new \DateTime('2019-11-12 20:00:00'))>
+        - <identity(new \DateTime('2019-11-12 20:30:00'))>
+    store: "@store_2"
+  delivery_4:
+    __factory:
+      createWithAddress:
+        - "@address_2"
+        - "@address_3"
+    __calls:
+      - setPickupRange:
+        - <identity(new \DateTime('2019-11-12 18:00:00'))>
+        - <identity(new \DateTime('2019-11-12 18:30:00'))>
+      - setDropoffRange:
+        - <identity(new \DateTime('2019-11-12 20:00:00'))>
+        - <identity(new \DateTime('2019-11-12 20:30:00'))>
+    store: "@store_2"

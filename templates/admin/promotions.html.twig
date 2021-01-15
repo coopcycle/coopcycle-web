@@ -1,0 +1,84 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_promotions') }}">{{ 'promotions.breadcrumb'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="text-right mb-4">
+  <div class="dropdown">
+    <button id="add-promotion" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-success">
+      <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="add-promotion">
+      <li>
+        <a href="{{ path('admin_new_promotion_coupon_from_template', { template: 'free_delivery' })}}">
+          {{ 'promotions.add_free_delivery_coupon'|trans }}
+        </a>
+      </li>
+      <li>
+        <a href="{{ path('admin_new_promotion_coupon_from_template', { template: 'credit_note' }) }}">
+          {{ 'promotions.create_credit_note_coupon'|trans }}
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<table class="table">
+  <thead>
+    <th>{% trans %}sylius.ui.code{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion.rules{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion.actions{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion_coupon.usage_limit{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion_coupon.per_customer_usage_limit{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion_coupon.expires_at{% endtrans %}</th>
+    <th class="text-right">{% trans %}promotion_coupon.used.label{% endtrans %}</th>
+  </thead>
+  <tbody>
+  {% for coupon in promotion_coupons %}
+    <tr>
+      <td width="5%">
+        <a href="{{ path('admin_promotion_coupon', { id: coupon.promotion.id, code: coupon.code }) }}">
+          {{ coupon.code }}
+        </a>
+      </td>
+      <td>
+        <ul class="list-unstyled">
+        {% for promotion_rule in coupon.promotion.rules %}
+          <li>
+            <small>{{ promotion_rule|promotion_rule_for_humans }}</small>
+          </li>
+        {% endfor %}
+        </ul>
+      </td>
+      <td>
+        <ul class="list-unstyled">
+        {% for promotion_action in coupon.promotion.actions %}
+          <li>
+            <small>{{ promotion_action|promotion_action_for_humans }}</small>
+          </li>
+        {% endfor %}
+        </ul>
+      </td>
+      <td>
+        {{ coupon.usageLimit }}
+      </td>
+      <td>
+        {{ coupon.perCustomerUsageLimit }}
+      </td>
+      <td>
+        {% if coupon.expiresAt is not empty %}
+          {{ coupon.expiresAt|format_datetime('short', 'short') }}
+        {% endif %}
+      </td>
+      <td class="text-right">
+        {{ coupon.used }}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

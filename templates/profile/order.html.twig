@@ -1,0 +1,14 @@
+{% extends "profile.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('profile_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
+<li>#{{ order.id }}</li>
+{% endblock %}
+
+{% block content %}
+  {% include 'order/_partials/content.html.twig' %}
+{% endblock %}
+
+{% block scripts %}
+{% include 'order/_partials/scripts.html.twig' %}
+{% endblock %}

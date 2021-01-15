@@ -1,0 +1,64 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_promotions') }}">{{ 'promotions.breadcrumb'|trans }}</a></li>
+<li>{{ 'promotions.breadcrumb.new_credit_note'|trans }}</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+  {{ form_widget(form) }}
+  <button type="submit" class="btn btn-block btn-primary">
+    {{ 'basics.save'|trans }}
+  </button>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('search-user') }}
+<script>
+
+function handleCreditNoteType(type) {
+  switch (type) {
+    case 'order_fixed_discount':
+      $('[data-promotion-action-configuration-key="percentage"]')
+        .closest('.form-group')
+        .addClass('d-none');
+      $('[data-promotion-action-configuration-key="percentage"]')
+        .prop('required', false);
+
+      $('[data-promotion-action-configuration-key="amount"]')
+        .closest('.form-group')
+        .removeClass('d-none');
+      $('[data-promotion-action-configuration-key="amount"]')
+        .prop('required', true);
+      break;
+    case 'order_percentage_discount':
+      $('[data-promotion-action-configuration-key="amount"]')
+        .closest('.form-group')
+        .addClass('d-none');
+      $('[data-promotion-action-configuration-key="amount"]')
+        .prop('required', false);
+
+      $('[data-promotion-action-configuration-key="percentage"]')
+        .closest('.form-group')
+        .removeClass('d-none');
+      $('[data-promotion-action-configuration-key="percentage"]')
+        .prop('required', true);
+      break;
+  }
+}
+
+$('[data-promotion-action-configuration-key="percentage"]')
+  .closest('.form-group')
+  .addClass('d-none');
+
+handleCreditNoteType($('#credit_note_type input[type="radio"]').val());
+
+$('#credit_note_type input[type="radio"]').on('change', function() {
+  handleCreditNoteType($(this).val());
+});
+</script>
+{% endblock %}

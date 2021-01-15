@@ -9,6 +9,15 @@ services:
   # Command Handlers
   #
 
+  coopcycle.domain.task.handler.start:
+    class: AppBundle\Domain\Task\Handler\StartHandler
+    arguments:
+      $eventRecorder: '@event_recorder'
+      $taskStateMachine: '@state_machine.task'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\Start
+
   coopcycle.domain.task.handler.mark_as_done:
     class: AppBundle\Domain\Task\Handler\MarkAsDoneHandler
     arguments:
@@ -58,11 +67,15 @@ services:
       - name: event_subscriber
         subscribes_to: task:unassigned
       - name: event_subscriber
+        subscribes_to: task:started
+      - name: event_subscriber
         subscribes_to: task:done
       - name: event_subscriber
         subscribes_to: task:failed
       - name: event_subscriber
         subscribes_to: task:cancelled
+      - name: event_subscriber
+        subscribes_to: task_collections:updated
 
   coopcycle.domain.task.reactor.send_email:
     class: AppBundle\Domain\Task\Reactor\SendEmail
@@ -75,12 +88,16 @@ services:
       - name: event_subscriber
         subscribes_to: task:failed
 
-  coopcycle.domain.task.reactor.send_remote_push_notification:
-    class: AppBundle\Domain\Task\Reactor\SendRemotePushNotification
+  coopcycle.domain.task.reactor.send_sms:
+    class: AppBundle\Domain\Task\Reactor\SendSms
     arguments:
-      - '@coopcycle.remote_push_notification_manager'
-      - '@api_platform.iri_converter'
-      - '@fos_user.user_manager'
+      - '@coopcycle.settings_manager'
+      - '@sylius.repository.order'
+      - '@messenger.default_bus'
+      - '@libphonenumber\PhoneNumberUtil'
+      - '@router'
+      - '@translator'
+      - '%secret%'
     tags:
       - name: event_subscriber
-        subscribes_to: task:created
+        subscribes_to: task:started

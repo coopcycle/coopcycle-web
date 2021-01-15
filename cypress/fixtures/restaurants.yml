@@ -1,0 +1,264 @@
+# Products
+
+include:
+  - sylius_taxation.yml
+
+# Packaging
+
+AppBundle\Entity\ReusablePackaging:
+  packaging_acme:
+    restaurant: "@zero_waste_inc"
+    price: 100
+    name: 'Acme'
+    onHold: 0
+    onHand: 9999
+    tracked: false
+
+AppBundle\Entity\Sylius\ProductOptionValue:
+  hamburger_accompaniment_french_fries:
+    code: HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES
+    currentLocale: fr
+    value: French Fries
+  hamburger_accompaniment_salad:
+    code: HAMBURGER_ACCOMPANIMENT_SALAD
+    currentLocale: fr
+    value: Salad
+  hamburger_drink_cola:
+    code: HAMBURGER_DRINK_COLA
+    currentLocale: fr
+    value: Cola
+  hamburger_drink_still_water:
+    code: HAMBURGER_DRINK_STILL_WATER
+    currentLocale: fr
+    value: Still Water
+
+AppBundle\Entity\Sylius\ProductOption:
+  hamburger_accompaniment:
+    code: HAMBURGER_ACCOMPANIMENT
+    strategy: free
+    currentLocale: fr
+    name: Hamburger Accompaniment
+    values: [ "@hamburger_accompaniment_french_fries", "@hamburger_accompaniment_salad" ]
+  hamburger_drink:
+    code: HAMBURGER_DRINK
+    strategy: free
+    currentLocale: fr
+    name: Hamburger Drink
+    values: [ "@hamburger_drink_cola", "@hamburger_drink_still_water" ]
+
+AppBundle\Entity\Sylius\ProductVariant:
+  pizza_margherita_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Pizza Margherita
+    code: PIZZA_MARGHERITA_DEFAULT
+    price: 1000
+  pizza_reina_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Pizza Reina
+    code: PIZZA_REINA_DEFAULT
+    price: 1000
+  hamburger_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Hamburger
+    code: HAMBURGER_DEFAULT
+    price: 1200
+  cheeseburger_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Cheeseburger
+    code: CHEESEBURGER_DEFAULT
+    price: 1200
+  cheesecake_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Cheese Cake
+    code: CHEESECAKE_DEFAULT
+    price: 800
+  carrotcake_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Carrot Cake
+    code: CARROTCAKE_DEFAULT
+    price: 600
+  chicken_salad_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Salade au poulet
+    code: CHICKEN_SALAD_DEFAULT
+    price: 600
+
+AppBundle\Entity\Sylius\Product:
+  pizza_margherita:
+    code: PIZZA_MARGHERITA
+    currentLocale: fr
+    name: Pizza Margherita
+    slug: pizza-margherita
+    enabled: true
+    variants: [ "@pizza_margherita_default" ]
+  pizza_reina:
+    code: PIZZA_REINA
+    currentLocale: fr
+    name: Pizza Reina
+    slug: pizza-reina
+    enabled: true
+    variants: [ "@pizza_reina_default" ]
+  hamburger:
+    code: HAMBURGER
+    currentLocale: fr
+    name: Hamburger
+    slug: hamburger
+    enabled: true
+    variants: [ "@hamburger_default" ]
+    options: [ "@hamburger_accompaniment", "@hamburger_drink" ]
+  cheeseburger:
+    code: CHEESEBURGER
+    currentLocale: fr
+    name: Cheeseburger
+    slug: cheeseburger
+    enabled: true
+    variants: [ "@cheeseburger_default" ]
+    options: [ "@hamburger_accompaniment", "@hamburger_drink" ]
+  cheesecake:
+    code: CHEESECAKE
+    currentLocale: fr
+    name: Cheese Cake
+    slug: cheesecake
+    enabled: true
+    variants: [ "@cheesecake_default" ]
+  carrotcake:
+    code: CARROTCAKE
+    currentLocale: fr
+    name: Carrot Cake
+    slug: carrotcake
+    enabled: true
+    variants: [ "@carrotcake_default" ]
+  chicken_salad:
+    code: CHICKEN_SALAD
+    currentLocale: fr
+    name: Salade au poulet
+    slug: chicken-salad
+    enabled: true
+    reusablePackagingEnabled: true
+    reusablePackagingUnit: 1
+    reusablePackaging: "@packaging_acme"
+    variants: [ "@chicken_salad_default" ]
+
+# Menus
+
+AppBundle\Entity\Sylius\Taxon:
+  crazy_hamburger_section_menus:
+    code: CRAZY_HAMBURGER_MENUS
+    currentLocale: fr
+    slug: crazy-hamburger-menus
+    name: Menus
+    __calls:
+      - addProduct: [ "@hamburger" ]
+      - addProduct: [ "@cheeseburger" ]
+  crazy_hamburger_section_desserts:
+    code: CRAZY_HAMBURGER_DESSERTS
+    currentLocale: fr
+    slug: crazy-hamburger-desserts
+    name: Desserts
+    __calls:
+      - addProduct: [ "@cheesecake" ]
+      - addProduct: [ "@carrotcake" ]
+  crazy_hamburger_menu:
+    code: CRAZY_HAMBURGER_ROOT
+    currentLocale: fr
+    slug: crazy-hamburger-root
+    name: Default
+    __calls:
+      - addChild: [ "@crazy_hamburger_section_menus" ]
+      - addChild: [ "@crazy_hamburger_section_desserts" ]
+  pizza_express_section_pizzas:
+    code: PIZZA_EXPRESS_PIZZAS
+    currentLocale: fr
+    slug: pizza-express-pizzas
+    name: Pizzas
+    __calls:
+      - addProduct: [ "@pizza_margherita" ]
+      - addProduct: [ "@pizza_reina" ]
+  pizza_express_menu:
+    code: PIZZA_EXPRESS_ROOT
+    currentLocale: fr
+    slug: pizza-express-root
+    name: Default
+    __calls:
+      - addChild: [ "@pizza_express_section_pizzas" ]
+  zero_waste_inc_section_salads:
+    code: ZERO_WASTE_SALADS
+    currentLocale: fr
+    slug: zero-waste-salads
+    name: Salades
+    __calls:
+      - addProduct: [ "@chicken_salad" ]
+  zero_waste_menu:
+    code: ZERO_WASTE_ROOT
+    currentLocale: fr
+    slug: zero-waste-root
+    name: Default
+    __calls:
+      - addChild: [ "@zero_waste_inc_section_salads" ]
+
+# Restaurants
+
+AppBundle\Entity\Contract:
+  contract_1:
+    flatDeliveryPrice: 350
+    feeRate: 0.00
+  contract_2:
+    flatDeliveryPrice: 350
+    feeRate: 0.00
+  contract_3:
+    flatDeliveryPrice: 350
+    feeRate: 0.00
+  contract_4:
+    flatDeliveryPrice: 350
+    feeRate: 0.00
+
+AppBundle\Entity\LocalBusiness:
+  crazy_hamburger:
+    name: Crazy Hamburger
+    address: "@address_1"
+    openingHours: ['Mo-Su 09:30-23:30']
+    enabled: true
+    contract: "@contract_1"
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+      - addProduct: [ "@hamburger" ]
+      - addProduct: [ "@cheeseburger" ]
+      - addProduct: [ "@cheesecake" ]
+      - addProduct: [ "@carrotcake" ]
+      - addTaxon: [ "@crazy_hamburger_menu" ]
+      - setMenuTaxon: [ "@crazy_hamburger_menu" ]
+  pizza_express:
+    name: Pizza Express
+    address: "@address_2"
+    openingHours: ['Mo-Su 09:30-23:30']
+    enabled: true
+    contract: "@contract_2"
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+      - addProduct: [ "@pizza_margherita" ]
+      - addProduct: [ "@pizza_reina" ]
+      - addTaxon: [ "@pizza_express_menu" ]
+      - setMenuTaxon: [ "@pizza_express_menu" ]
+  zero_waste_inc:
+    name: Zero Waste Inc.
+    address: "@address_2"
+    openingHours: ['Mo-Su 09:30-23:30']
+    enabled: true
+    contract: "@contract_3"
+    depositRefundEnabled: true
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+      - addReusablePackaging: [ "@packaging_acme" ]
+      - addProduct: [ "@chicken_salad" ]
+      - addTaxon: [ "@zero_waste_menu" ]
+      - setMenuTaxon: [ "@zero_waste_menu" ]

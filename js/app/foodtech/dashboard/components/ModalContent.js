@@ -1,27 +1,60 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
-import Timeline from 'antd/lib/timeline'
-import moment from 'moment'
+import { withTranslation } from 'react-i18next'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
+import { getCountry } from '../../../i18n'
 import {
   setCurrentOrder,
   acceptOrder,
   refuseOrder,
   delayOrder,
-  cancelOrder
+  cancelOrder,
+  fulfillOrder,
 } from '../redux/actions'
 
 import OrderItems from './OrderItems'
 import OrderTotal from './OrderTotal'
+import OrderNumber from './OrderNumber'
+import Timeline from './Timeline'
+import Button from './Button'
+
+const Reasons = withTranslation()(({ order, onClick, loading, t }) => {
+
+  return (
+    <div className="d-flex flex-row justify-content-between py-4 border-top">
+      <Button onClick={ () => onClick('CUSTOMER') } loading={ loading } icon="user" danger>
+        { t('cancel.reason.CUSTOMER') }
+      </Button>
+      <Button onClick={ () => onClick('SOLD_OUT') } loading={ loading } icon="times" danger>
+        { t('cancel.reason.SOLD_OUT') }
+      </Button>
+      <Button onClick={ () => onClick('RUSH_HOUR') } loading={ loading } icon="fire" danger>
+        { t('cancel.reason.RUSH_HOUR') }
+      </Button>
+      { (order.state === 'accepted' && order.takeaway) && (
+      <Button onClick={ () => onClick('NO_SHOW') } loading={ loading } icon="user-times" danger>
+        { t('cancel.reason.NO_SHOW') }
+      </Button>
+      )}
+    </div>
+  )
+})
 
 class ModalContent extends React.Component {
 
-  cancelOrder() {
+  constructor(props) {
+    super(props)
+    this.state = {
+      mode: 'default'
+    }
+    this.cancelOrder = this.cancelOrder.bind(this)
+  }
+
+  cancelOrder(reason) {
     const { order } = this.props
 
-    this.props.cancelOrder(order)
+    this.props.cancelOrder(order, reason)
   }
 
   delayOrder() {
@@ -30,10 +63,10 @@ class ModalContent extends React.Component {
     this.props.delayOrder(order)
   }
 
-  refuseOrder() {
+  refuseOrder(reason) {
     const { order } = this.props
 
-    this.props.refuseOrder(order)
+    this.props.refuseOrder(order, reason)
   }
 
   acceptOrder() {
@@ -42,105 +75,78 @@ class ModalContent extends React.Component {
     this.props.acceptOrder(order)
   }
 
-  renderTimeline() {
+  fulfillOrder() {
     const { order } = this.props
 
-    return (
-      <Timeline>
-        <Timeline.Item dot={<i className="fa fa-cutlery"></i>}>
-          <div>
-            <strong>Préparation à { moment(order.preparationExpectedAt).format('LT') }</strong>
-          </div>
-        </Timeline.Item>
-        <Timeline.Item dot={<i className="fa fa-cube"></i>}>
-          <div>
-            <strong>Pickup à { moment(order.pickupExpectedAt).format('LT') }</strong>
-          </div>
-          <span>{ order.restaurant.address.streetAddress }</span>
-        </Timeline.Item>
-        <Timeline.Item dot={<i className="fa fa-arrow-down"></i>}>
-          <div>
-            <strong>Dropoff à { moment(order.shippedAt).format('LT') }</strong>
-          </div>
-          <ul className="list-unstyled">
-            <li>{ order.shippingAddress.streetAddress }</li>
-            { order.shippingAddress.floor && (
-              <li>Étage : { order.shippingAddress.floor }</li>
-            ) }
-          </ul>
-          { order.shippingAddress.description && (
-            <div className="speech-bubble">
-              <i className="fa fa-quote-left"></i>  { order.shippingAddress.description }
-            </div>
-          ) }
-        </Timeline.Item>
-      </Timeline>
-    )
+    this.props.fulfillOrder(order)
   }
 
   renderButtons() {
+
     const { loading, order } = this.props
+    const { mode } = this.state
 
-    let btnAttrs = {}
-    if (loading) {
-      btnAttrs = {
-        ...btnAttrs,
-        disabled: true
-      }
-    }
+    if (mode === 'cancel') {
 
-    if (order.state === 'new') {
       return (
         <div>
-          <hr />
-          <div className="row">
-            <div className="col-sm-4">
-              <button onClick={ this.refuseOrder.bind(this) } className="btn btn-block btn-danger" { ...btnAttrs }>
-                { loading && (
-                  <span>
-                    <i className="fa fa-spinner fa-spin"></i>  </span>
-                )}
-                <i className="fa fa-ban" aria-hidden="true"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_REFUSE') }
-              </button>
-            </div>
-            <div className="col-sm-8">
-              <button onClick={ this.acceptOrder.bind(this) } className="btn btn-block btn-primary" { ...btnAttrs }>
-                { loading && (
-                  <span>
-                    <i className="fa fa-spinner fa-spin"></i>  </span>
-                )}
-                <i className="fa fa-check" aria-hidden="true"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_ACCEPT') }
-              </button>
-            </div>
+          <Reasons
+            order={ order }
+            loading={ loading }
+            onClick={ reason => this.cancelOrder(reason) } />
+          <div className="text-center text-danger">
+            <span>{ this.props.t('ADMIN_DASHBOARD_ORDERS_CANCEL_REASON') }</span>
           </div>
         </div>
       )
     }
 
-    if (order.state === 'accepted') {
+    if (mode === 'refuse') {
+
       return (
         <div>
-          <hr />
-          <div className="row">
-            <div className="col-sm-4">
-              <button onClick={ this.cancelOrder.bind(this) } className="btn btn-block btn-danger" { ...btnAttrs }>
-                { loading && (
-                  <span>
-                    <i className="fa fa-spinner fa-spin"></i>  </span>
-                )}
-                <i className="fa fa-ban" aria-hidden="true"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_CANCEL') }
-              </button>
-            </div>
-            <div className="col-sm-8">
-              <button onClick={ this.delayOrder.bind(this) } className="btn btn-block btn-primary" { ...btnAttrs }>
-                { loading && (
-                  <span>
-                    <i className="fa fa-spinner fa-spin"></i>  </span>
-                )}
-                <i className="fa fa-clock-o" aria-hidden="true"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_DELAY') }
-              </button>
-            </div>
+          <Reasons
+            order={ order }
+            loading={ loading }
+            onClick={ reason => this.refuseOrder(reason) } />
+          <div className="text-center text-danger">
+            <span>{ this.props.t('ADMIN_DASHBOARD_ORDERS_REFUSE_REASON') }</span>
           </div>
+        </div>
+      )
+    }
+
+    if (order.state === 'new') {
+
+      return (
+        <div className="d-flex flex-row justify-content-between py-4 border-top">
+          <Button onClick={ () => this.setState({ mode: 'refuse' }) } loading={ loading } icon="ban" danger>
+            { this.props.t('ADMIN_DASHBOARD_ORDERS_REFUSE') }
+          </Button>
+          <Button onClick={ this.acceptOrder.bind(this) } loading={ loading } icon="check" primary>
+            { this.props.t('ADMIN_DASHBOARD_ORDERS_ACCEPT') }
+          </Button>
+        </div>
+      )
+    }
+
+    if (order.state === 'accepted') {
+
+      return (
+        <div className="d-flex flex-row justify-content-between py-4 border-top">
+          <Button onClick={ () => this.setState({ mode: 'cancel' }) } loading={ loading } icon="ban" danger>
+            { this.props.t('ADMIN_DASHBOARD_ORDERS_CANCEL') }
+          </Button>
+          { !order.takeaway && (
+          <Button onClick={ this.delayOrder.bind(this) } loading={ loading } icon="clock-o" primary>
+            { this.props.t('ADMIN_DASHBOARD_ORDERS_DELAY') }
+          </Button>
+          )}
+          { order.takeaway && (
+          <Button onClick={ this.fulfillOrder.bind(this) } loading={ loading } icon="check" success>
+            { this.props.t('ADMIN_DASHBOARD_ORDERS_FULFILL') }
+          </Button>
+          )}
         </div>
       )
     }
@@ -231,7 +237,7 @@ class ModalContent extends React.Component {
     return (
       <div className="panel panel-default">
         <div className="panel-heading">
-          <span>{ this.props.t('RESTAURANT_DASHBOARD_ORDER_TITLE', { number: order.number, id: order.id }) }</span>
+          <OrderNumber order={ order } />
           <a className="pull-right" onClick={ () => this.props.setCurrentOrder(null) }>
             <i className="fa fa-close"></i>
           </a>
@@ -251,9 +257,9 @@ class ModalContent extends React.Component {
           </div>
           <div>
             <h4 className="text-center">
-              <i className="fa fa-cutlery"></i>  { order.restaurant.name }
+              <i className="fa fa-cutlery"></i>  { order.vendor.name }
             </h4>
-            { order.restaurant.telephone && (
+            { (order.restaurant && order.restaurant.telephone) && (
               <div className="text-center text-muted">
                 { this.renderPhoneNumber(order.restaurant.telephone) }
               </div>
@@ -263,8 +269,8 @@ class ModalContent extends React.Component {
           <OrderItems order={ order } />
           <OrderTotal order={ order } />
           { order.notes && this.renderNotes() }
-          <h5>Timeline</h5>
-          { this.renderTimeline() }
+          <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_TIMELINE') }</h5>
+          <Timeline order={ order } />
           { this.renderButtons() }
         </div>
       </div>
@@ -275,7 +281,7 @@ class ModalContent extends React.Component {
 function mapStateToProps(state) {
 
   return {
-    countryCode: (window.AppData.countryIso || 'fr').toUpperCase(),
+    countryCode: (getCountry() || 'fr').toUpperCase(),
     loading: state.isFetching
   }
 }
@@ -284,10 +290,11 @@ function mapDispatchToProps(dispatch) {
   return {
     setCurrentOrder: order => dispatch(setCurrentOrder(order)),
     acceptOrder: order => dispatch(acceptOrder(order)),
-    refuseOrder: order => dispatch(refuseOrder(order)),
+    refuseOrder: (order, reason) => dispatch(refuseOrder(order, reason)),
     delayOrder: order => dispatch(delayOrder(order)),
-    cancelOrder: order => dispatch(cancelOrder(order)),
+    cancelOrder: (order, reason) => dispatch(cancelOrder(order, reason)),
+    fulfillOrder: order => dispatch(fulfillOrder(order)),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(ModalContent))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(ModalContent))

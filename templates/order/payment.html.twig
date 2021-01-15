@@ -1,0 +1,165 @@
+{% extends "base.html.twig" %}
+
+{% set country = country_iso %}
+{% set gateway = payment_gateway_resolver.resolve() %}
+
+{% form_theme form 'form/order.html.twig' %}
+
+{% block banner %}
+{% endblock %}
+
+{% block body %}
+
+<div class="container container--full-height">
+
+  {% if not order.empty %}
+
+    {{ form_start(form, { attr: { style: 'padding-bottom: 66px;', class: (embed_context.enabled ? 'pt-4' : '') } }) }}
+    <div class="row">
+      <div class="col-xs-12">
+        {% include 'order/breadcrumb.html.twig' %}
+        <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h4>
+        <div>
+          <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
+          <div id="items">
+            {% include '_partials/order/items.html.twig' with { with_taxes: false, with_items: false } %}
+          </div>
+        </div>
+
+        {% if gateway == 'mercadopago' %}
+          <div class="form-group">
+            <h4 class="bg-light p-3 m-0">{{ 'order.payer.title'|trans }}</h4>
+            <div style="margin:10px">
+              <div>
+                <label for="email">{{ 'order.payer.email'|trans }}</label>
+                <input class="form-control" id="email" name="email" type="text" value="test@test.com" />
+              </div>
+              {#
+              In Mexico, we don't need identification documents
+              https://www.mercadopago.com.br/developers/en/guides/resources/localization/identification-types/
+              #}
+              {% if country != 'mx' %}
+                <div>
+                  <label for="docType">{{ 'order.payer.identificationType'|trans }}</label>
+                  <select class="form-control" id="docType" name="docType" data-checkout="docType" type="text"></select>
+                </div>
+                <div>
+                  <label for="docNumber">{{ 'order.payer.identificationNumber'|trans }}</label>
+                  <input class="form-control" id="docNumber" name="docNumber" data-checkout="docNumber" type="text"/>
+                </div>
+              {% endif %}
+
+            </div>
+          </div>
+        {% endif %}
+
+        <div>
+          <h4 class="bg-light p-3 m-0 mb-4">{% trans %}order.payment.title{% endtrans %}</h4>
+          <div>
+
+            {% if error is defined %}
+              <div class="alert alert-danger">
+                {{ error }}
+              </div>
+            {% endif %}
+
+            {{ form_errors(form) }}
+
+            {% if form.method is defined %}
+              {{ form_row(form.method) }}
+            {% endif %}
+
+            {{ form_widget(form.stripePayment.stripeToken) }}
+
+            {{ form_row(form.stripePayment.cardholderName, { attr: {  'data-checkout': 'cardholderName' } }) }}
+
+            <div class="form-group">
+              <label class="control-label hidden" for="card-element">
+                {% trans %}order.payment.title{% endtrans %}
+              </label>
+              <div id="card-element">
+                <!-- a Stripe Element will be inserted here. -->
+              </div>
+              {# <div id="payment-method-picker"></div> #}
+              <!-- Used to display form errors -->
+            </div>
+
+            <div id="card-errors" role="alert" class="text-danger"></div>
+
+            <div class="text-center hidden mt-3" id="payment-redirect-help">
+              <span class="help-block">{{ 'order.payment.redirect.help'|trans }}</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="checkout-nav border-top">
+      <div class="container">
+        <div class="d-flex flex-row justify-content-between align-items-center py-3">
+          <span class="text-success">
+            <i class="fa fa-clock-o fa-lg mr-2"></i>
+            <strong>{{ form.shippingTimeRange.vars.value|time_range_for_humans }}</strong>
+          </span>
+          <div>
+            <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
+              <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+    {{ form_end(form) }}
+
+  {% else %}
+    <div class="alert alert-warning">
+      {% trans from 'validators' %}cart.empty{% endtrans %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
+{% block scripts %}
+{% if not order.empty %}
+
+{% set gateway = payment_gateway_resolver.resolve() %}
+{% set gateway_configs = {} %}
+
+{% if gateway == 'stripe' %}
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+{% set gateway_configs = gateway_configs|merge({
+  stripe: {
+    publishableKey: coopcycle_setting('stripe_publishable_key'),
+    account: payment.stripeUserId ? payment.stripeUserId : null,
+    createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid }),
+    createGiropayPaymentIntentURL: path('stripe_create_giropay_payment_intent', { hashId: payment|hashid }),
+  }
+}) %}
+{% endif %}
+
+{% if gateway == 'mercadopago' %}
+<script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
+{% set gateway_configs = gateway_configs|merge({
+  mercadopago: {
+    publishableKey: coopcycle_setting('mercadopago_test_publishable_key'),
+    country: country
+  }
+}) %}
+{% endif %}
+
+<script type="text/javascript">
+  // FIXME
+  // 'StripePaymentForm' should be renamed to something more generic like GatewatPaymentForm - @sgobotta
+  new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
+    card: "{{ gateway }}",
+    amount: {{ order.total }},
+    gatewayConfigs: {{ gateway_configs|json_encode|raw }},
+    tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
+    cardholderNameElement: document.querySelector('#checkout_payment_stripePayment_cardholderName')
+  });
+</script>
+{% endif %}
+{% endblock %}

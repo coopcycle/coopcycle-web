@@ -1,7 +1,8 @@
 import { createAction } from 'redux-actions'
+import _ from 'lodash'
 
-import i18n from '../../i18n'
-import { placeToAddress } from '../../utils/GoogleMaps'
+import i18n, { getCountry } from '../../i18n'
+import { geocode } from '../../components/AddressAutosuggest'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const FETCH_SUCCESS = 'FETCH_SUCCESS'
@@ -12,7 +13,13 @@ export const CLEAR_LAST_ADD_ITEM_REQUEST = 'CLEAR_LAST_ADD_ITEM_REQUEST'
 
 export const SET_STREET_ADDRESS = 'SET_STREET_ADDRESS'
 export const TOGGLE_MOBILE_CART = 'TOGGLE_MOBILE_CART'
-export const ADD_ERROR = 'ADD_ERROR'
+export const REPLACE_ERRORS = 'REPLACE_ERRORS'
+export const SET_DATE_MODAL_OPEN = 'SET_DATE_MODAL_OPEN'
+export const CLOSE_ADDRESS_MODAL = 'CLOSE_ADDRESS_MODAL'
+export const GEOCODING_FAILURE = 'GEOCODING_FAILURE'
+
+export const ENABLE_TAKEAWAY = 'ENABLE_TAKEAWAY'
+export const DISABLE_TAKEAWAY = 'DISABLE_TAKEAWAY'
 
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const fetchSuccess = createAction(FETCH_SUCCESS)
@@ -20,15 +27,32 @@ export const fetchFailure = createAction(FETCH_FAILURE)
 
 export const setStreetAddress = createAction(SET_STREET_ADDRESS)
 export const toggleMobileCart = createAction(TOGGLE_MOBILE_CART)
-export const addError = createAction(ADD_ERROR, (key, messages) => ({ key, messages }))
+export const replaceErrors = createAction(REPLACE_ERRORS, (propertyPath, errors) => ({ propertyPath, errors }))
 
 export const setLastAddItemRequest = createAction(SET_LAST_ADD_ITEM_REQUEST, (url, data) => ({ url, data }))
 export const clearLastAddItemRequest = createAction(CLEAR_LAST_ADD_ITEM_REQUEST)
+export const setDateModalOpen = createAction(SET_DATE_MODAL_OPEN)
+export const closeAddressModal = createAction(CLOSE_ADDRESS_MODAL)
+
+export const geocodingFailure = createAction(GEOCODING_FAILURE)
 
 function postForm() {
 
   const $form = $('form[name="cart"]')
   const data = $form.serializeArray()
+
+  return $.post($form.attr('action'), data)
+}
+
+function postFormWithTime() {
+
+  const $form = $('form[name="cart"]')
+  const defaultData = $form.serializeArray()
+
+  const $timeForm = $('form[name="cart_time"]')
+  const timeData = $timeForm.serializeArray()
+
+  const data = defaultData.concat(timeData)
 
   return $.post($form.attr('action'), data)
 }
@@ -39,15 +63,21 @@ function notifyListeners(cart) {
   listeners.forEach(listener => listener.dispatchEvent(event))
 }
 
-function handleAjaxResponse(res, dispatch, success) {
-  if (success) {
+function handleAjaxResponse(res, dispatch, broadcast = true) {
+
+  const hasErrors = res.errors && _.size(res.errors) > 0
+
+  if (!hasErrors) {
     dispatch(fetchSuccess(res))
-    dispatch(clearLastAddItemRequest())
   } else {
     dispatch(fetchFailure(res))
   }
 
-  notifyListeners(res.cart)
+  $('#menu').LoadingOverlay('hide')
+
+  if (broadcast) {
+    notifyListeners(res.cart)
+  }
 }
 
 const QUEUE_CART_ITEMS = 'QUEUE_CART_ITEMS'
@@ -62,9 +92,9 @@ export function addItem(itemURL, quantity = 1) {
     return $.post(itemURL, { quantity })
       .then(res => {
         window._paq.push(['trackEvent', 'Checkout', 'addItem'])
-        handleAjaxResponse(res, dispatch, true)
+        handleAjaxResponse(res, dispatch)
       })
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
   }
 }
 
@@ -72,7 +102,7 @@ export function queueAddItem(itemURL, quantity = 1) {
 
   return {
     queue: QUEUE_CART_ITEMS,
-    callback: (next, dispatch, getState) => {
+    callback: (next, dispatch) => {
 
       dispatch(fetchRequest())
       dispatch(setLastAddItemRequest(itemURL, { quantity }))
@@ -80,11 +110,11 @@ export function queueAddItem(itemURL, quantity = 1) {
       $.post(itemURL, { quantity })
         .then(res => {
           window._paq.push(['trackEvent', 'Checkout', 'addItem'])
-          handleAjaxResponse(res, dispatch, true)
+          handleAjaxResponse(res, dispatch)
           next()
         })
         .fail(e => {
-          handleAjaxResponse(e.responseJSON, dispatch, false)
+          handleAjaxResponse(e.responseJSON, dispatch)
           next()
         })
     }
@@ -107,9 +137,9 @@ export function addItemWithOptions(itemURL, data, quantity = 1) {
     return $.post(itemURL, data)
       .then(res => {
         window._paq.push(['trackEvent', 'Checkout', 'addItemWithOptions'])
-        handleAjaxResponse(res, dispatch, true)
+        handleAjaxResponse(res, dispatch)
       })
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
   }
 }
 
@@ -125,8 +155,8 @@ export function updateItemQuantity(itemID, quantity) {
     dispatch(fetchRequest())
 
     $.post(url, { quantity })
-      .then(res => handleAjaxResponse(res, dispatch, true))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .then(res => handleAjaxResponse(res, dispatch))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
   }
 }
 
@@ -147,8 +177,41 @@ export function removeItem(itemID) {
     }
 
     return $.ajax(fetchParams)
-      .then(res => handleAjaxResponse(res, dispatch, true))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .then(res => handleAjaxResponse(res, dispatch))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+  }
+}
+
+function geocodeAndSync() {
+
+  return (dispatch, getState) => {
+
+    const { cart } = getState()
+
+    dispatch(fetchRequest())
+
+    if (getCountry() === 'gb' && cart.shippingAddress.geo) {
+      dispatch(changeAddress({
+        ...cart.shippingAddress,
+        isPrecise: true,
+      }))
+
+      return
+    }
+
+    geocode(cart.shippingAddress.streetAddress).then(address => {
+
+      $('#menu').LoadingOverlay('hide')
+
+      if (address) {
+        dispatch(changeAddress({
+          ...cart.shippingAddress,
+          ...address,
+        }))
+      } else {
+        dispatch(geocodingFailure())
+      }
+    })
   }
 }
 
@@ -156,48 +219,44 @@ export function sync() {
 
   return (dispatch, getState) => {
 
-    dispatch(fetchRequest())
+    const { cart } = getState()
 
-    postForm()
-      .then(res => handleAjaxResponse(res, dispatch, true))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+    if (cart.shippingAddress && !cart.shippingAddress.streetAddress) {
+      postForm()
+        .then(res => handleAjaxResponse(res, dispatch, false))
+        .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+    } else {
+      dispatch(geocodeAndSync())
+    }
   }
 }
 
-export function geocodeAndSync() {
+export function changeDate() {
 
-  const geocoder = new window.google.maps.Geocoder()
-  const geocoderOK = window.google.maps.GeocoderStatus.OK
-
-  return (dispatch, getState) => {
-
-    const streetAddress = getState().cart.shippingAddress.streetAddress
-
-    dispatch(fetchRequest())
-
-    geocoder.geocode({ address: streetAddress }, (results, status) => {
-      if (status === geocoderOK && results.length > 0) {
-        const place = results[0]
-        const address = placeToAddress(place, streetAddress)
-        dispatch(changeAddress(address))
-      } else {
-        // TODO Set loading to FALSE
-      }
-    })
-  }
-}
-
-export function changeDate(dateString) {
-
-  return (dispatch, getState) => {
+  return (dispatch) => {
 
     window._paq.push(['trackEvent', 'Checkout', 'changeDate'])
 
     dispatch(fetchRequest())
 
-    postForm()
-      .then(res => handleAjaxResponse(res, dispatch, true))
+    postFormWithTime()
+      .then(res => handleAjaxResponse(res, dispatch, false))
       .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+  }
+}
+
+export function mapAddressFields(address) {
+
+  return (dispatch, getState) => {
+
+    const { addressFormElements } = getState()
+
+    _.forEach(addressFormElements, (el, key) => {
+      const value = _.get(address, key)
+      if (value) {
+        el.value = value
+      }
+    })
   }
 }
 
@@ -208,7 +267,6 @@ export function changeAddress(address) {
     window._paq.push(['trackEvent', 'Checkout', 'changeAddress', address.streetAddress])
 
     const {
-      addressFormElements,
       isNewAddressFormElement,
       restaurant
     } = getState()
@@ -220,35 +278,32 @@ export function changeAddress(address) {
 
       dispatch(fetchRequest())
 
-      if (address.hasOwnProperty('id')) {
+      if (address['@id']) {
 
         isNewAddressFormElement.value = '0'
 
         const url =
           window.Routing.generate('restaurant_cart_address', { id: restaurant.id })
 
-        $.post(url, { address: address.id })
-          .then(res => handleAjaxResponse(res, dispatch, true))
+        $.post(url, { address: address['@id'] })
+          .then(res => handleAjaxResponse(res, dispatch, false))
           .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
 
       } else {
 
         isNewAddressFormElement.value = '1'
 
-        _.forEach(addressFormElements, (el, key) => {
-          if (address.hasOwnProperty(key)) {
-            el.value = address[key]
-          }
-        })
+        // This must be done *BEFORE* posting the form
+        dispatch(mapAddressFields(address))
 
         postForm()
-          .then(res => handleAjaxResponse(res, dispatch, true))
+          .then(res => handleAjaxResponse(res, dispatch, false))
           .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
       }
 
     } else {
-      dispatch(addError('shippingAddress', [
-        i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION')
+      dispatch(replaceErrors('shippingAddress', [
+        { message: i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION') }
       ]))
     }
 
@@ -267,13 +322,82 @@ export function goBackToRestaurant() {
   }
 }
 
+export function clearDate() {
+
+  return (dispatch, getState) => {
+
+    const { restaurant } = getState()
+
+    const url =
+      window.Routing.generate('restaurant_cart_clear_time', { id: restaurant.id })
+
+    dispatch(fetchRequest())
+
+    $.post(url)
+      .then(res => handleAjaxResponse(res, dispatch, false))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+
+  }
+}
+
+const _enableTakeaway = createAction(ENABLE_TAKEAWAY)
+const _disableTakeaway = createAction(DISABLE_TAKEAWAY)
+
+export function enableTakeaway() {
+
+  return (dispatch) => {
+
+    const $form = $('form[name="cart"]')
+    const $takeaway = $form.find('input[name="cart[takeaway]"]')
+
+    if ($takeaway.length === 1) {
+
+      $takeaway.prop('checked', true)
+
+      dispatch(_enableTakeaway())
+      dispatch(fetchRequest())
+
+      postForm()
+        .then(res => handleAjaxResponse(res, dispatch))
+        .fail(e   => handleAjaxResponse(e.responseJSON, dispatch))
+    }
+  }
+}
+
+export function disableTakeaway() {
+
+  return (dispatch) => {
+
+    const $form = $('form[name="cart"]')
+    const $takeaway = $form.find('input[name="cart[takeaway]"]')
+
+    if ($takeaway.length === 1) {
+
+      $takeaway.prop('checked', false)
+
+      dispatch(_disableTakeaway())
+      dispatch(fetchRequest())
+
+      postForm()
+        .then(res => handleAjaxResponse(res, dispatch))
+        .fail(e   => handleAjaxResponse(e.responseJSON, dispatch))
+    }
+  }
+}
+
+// FIXME
+// It is actually bad to name this action after what it really does
+// It should be named "startNewSession" or something like that
+// i.e something that represents what the user actually does
 export function retryLastAddItemRequest() {
 
   return (dispatch, getState) => {
 
     const lastAddItemRequest = getState().lastAddItemRequest
 
-    // TODO Check the request is not null
+    if (!lastAddItemRequest || !lastAddItemRequest.url) {
+      return
+    }
 
     dispatch(fetchRequest())
 
@@ -286,7 +410,10 @@ export function retryLastAddItemRequest() {
     }
 
     $.post(lastAddItemRequest.url, data)
-      .then(res => handleAjaxResponse(res, dispatch, true))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .then(res => {
+        dispatch(clearLastAddItemRequest())
+        handleAjaxResponse(res, dispatch)
+      })
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
   }
 }

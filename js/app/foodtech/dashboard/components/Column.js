@@ -1,23 +1,25 @@
 import React from 'react'
+import classNames from 'classnames'
 
 import OrderCard from './OrderCard'
 
-class Column extends React.Component {
+export default ({ title, orders, active, context, onCardClick }) => {
 
-  render() {
-
-    return (
-      <div className="panel panel-default FoodtechDashboard__Column">
-        <div className="panel-heading text-center">{ `${this.props.title} (${this.props.orders.length})` }</div>
+  return (
+    <div className={ classNames({
+      'FoodtechDashboard__Column': true,
+      'FoodtechDashboard__Column--active': active }) }>
+      <div className={ `panel panel-${context}` }>
+        <div className="panel-heading">
+          <span>{ title }</span>
+          <span className="pull-right">{ `(${orders.length})` }</span>
+        </div>
         <div className="panel-body">
-          { this.props.orders.map((order, key) => (
-            <OrderCard key={ key } order={ order } />
+          { orders.map((order, key) => (
+            <OrderCard key={ key } order={ order } onClick={ onCardClick } />
           )) }
         </div>
       </div>
-    )
-  }
-
+    </div>
+  )
 }
-
-export default Column

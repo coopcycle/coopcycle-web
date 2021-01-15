@@ -1,0 +1,40 @@
+<table class="table">
+  <thead>
+    <th>{{ 'form.payment.state.label'|trans }}</th>
+    <th class="text-right">{{ 'form.payment.amount.label'|trans }}</th>
+    <th class="text-right">{{ 'form.payment.refund_amount.label'|trans }}</th>
+    <th class="text-right">{{ 'form.payment.last_update.label'|trans }}</th>
+    {% if is_granted('ROLE_ADMIN') %}
+    <th></th>
+    {% endif %}
+  </thead>
+  <tbody>
+  {% for payment_form in form.payments %}
+    {% set payment = payment_form.vars.value %}
+    <tr>
+      <td>
+        {% include '_partials/payment/state.html.twig' with { payment: payment } %}
+      </td>
+      <td class="text-right">
+        {{ payment.amount|price_format }}
+      </td>
+      <td class="text-right">
+        {{ payment.refundTotal|price_format }}
+      </td>
+      <td class="text-right">
+        {{ payment.updatedAt|format_datetime('medium', 'short') }}
+      </td>
+      {% if is_granted('ROLE_ADMIN') %}
+      <td class="text-right">
+        {% if payment_form.refund is defined %}
+          <a href="#" class="btn btn-xs btn-danger"
+            data-toggle="modal" data-target="{{ '#refund-modal-' ~ payment.id }}">
+            {{ 'form.order.payment_refund.label'|trans }}
+          </a>
+        {% endif %}
+      </td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+  <tbody>
+</table>

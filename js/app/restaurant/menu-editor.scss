@@ -1,0 +1,49 @@
+.menuEditor {
+  display: flex;
+  &__left, &__right {
+    flex: 1;
+  }
+  &__left {
+    padding-right: 15px;
+  }
+  &__right {
+    padding-left: 15px;
+    display: flex;
+  }
+  &__productList {
+    flex: 1;
+  }
+  &__product {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: lighten(lightgrey, 10%);
+  }
+  &__product:last-child {
+    margin-bottom: 0;
+  }
+
+  &__panel {
+    // margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    &__title {
+      padding: 10px;
+      background-color: lightgrey;
+      color: #fff;
+      margin: 0;
+      > a {
+        color: #fff;
+        &:hover {
+          color: darken(#fff, 5%);
+        }
+      }
+    }
+    &__body {
+      flex: 1;
+      border: 2px dashed lightgrey;
+      border-top: none;
+      padding: 10px;
+      min-height: 50px;
+    }
+  }
+}

@@ -1,0 +1,46 @@
+AppBundle\Entity\Sylius\TaxRate:
+  tva_10:
+    name: "TVA 10%"
+    code: tva_10
+    amount: 0.1
+    includedInPrice: true
+    calculator: default
+  tva_20:
+    name: "TVA 20%"
+    code: tva_20
+    amount: 0.2
+    includedInPrice: true
+    calculator: default
+    country: fr
+  tva_standard:
+    name: "TVA 20%"
+    code: tax_rate.standard
+    amount: 0.2
+    includedInPrice: true
+    calculator: default
+    country: fr
+  tva_zero:
+    name: "TVA 0%"
+    code: tax_rate.zero
+    amount: 0.0
+    includedInPrice: true
+    calculator: default
+    country: fr
+
+AppBundle\Entity\Sylius\TaxCategory:
+  tva_conso_immediate:
+    code: tva_conso_immediate
+    name: "TVA consommation immédiate"
+    rates: [ "@tva_10" ]
+  tva_livraison:
+    code: tva_livraison
+    name: "TVA livraison"
+    rates: [ "@tva_20" ]
+  tax_category_service:
+    code: SERVICE
+    name: "tax_category.service"
+    rates: [ "@tva_standard" ]
+  tax_category_service_exempt:
+    code: SERVICE_TAX_EXEMPT
+    name: "tax_category.service_tax_exempt"
+    rates: [ "@tva_zero" ]

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Sylius\OrderEvent" table="sylius_order_event">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="type" type="string" column="type"/>
+    <field name="data" type="json_array" column="data"/>
+    <field name="metadata" type="json_array" column="metadata"/>
+    <field name="createdAt" type="datetime" column="created_at"/>
+    <many-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="events">
+      <join-columns>
+        <join-column name="aggregate_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

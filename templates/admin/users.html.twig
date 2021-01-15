@@ -1,0 +1,148 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.users.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-row mb-4">
+  <div class="w-50">
+    <div id="user-search"></div>
+  </div>
+  <div class="w-50 text-right">
+    <div class="dropdown pull-right ml-2">
+      <button class="btn btn-default dropdown-toggle" type="button" id="users-sort"
+        data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="true">
+        {% if customers.isSorted('u.username') and customers.direction == 'asc' %}
+          {{ 'users.sort.alphabetically'|trans }}
+        {% else %}
+          {{ 'users.sort.newest'|trans }}
+        {% endif %}
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="users-sort">
+        <li>{{ knp_pagination_sortable(customers, 'users.sort.newest'|trans, 'c.id', {}, { direction: 'desc' } )|raw }}</li>
+        <li>{{ knp_pagination_sortable(customers, 'users.sort.alphabetically'|trans, 'u.username', {}, { direction: 'asc' } )|raw }}</li>
+      </ul>
+    </div>
+    <a href="{{ path('admin_users_invite') }}" class="btn btn-info">
+      <i class="fa fa-plus"></i> {% trans %}adminDashboard.users.invite{% endtrans %}
+    </a>
+  </div>
+</div>
+
+{% set tab_items = [
+  {
+    title: 'users.all'|trans,
+    icon: 'user',
+    active: ((customers.params.filterField is not defined) or (customers.params.filterField == 'u.username')),
+    path: path('admin_users')
+  },
+  {
+    title: 'users.couriers'|trans,
+    icon: 'bicycle',
+    active: (customers.params.filterField is defined and customers.params.filterField == 'u.roles' and customers.params.filterValue == '*ROLE_COURIER*'),
+    path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_COURIER*' })
+  },
+  {
+    title: 'users.restaurant_owners'|trans,
+    icon: 'cutlery',
+    active: (customers.params.filterField is defined and customers.params.filterField == 'u.roles' and customers.params.filterValue == '*ROLE_RESTAURANT*'),
+    path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_RESTAURANT*' })
+  },
+  {
+    title: 'users.store_owners'|trans,
+    icon: 'shopping-cart',
+    active: (customers.params.filterField is defined and customers.params.filterField == 'u.roles' and customers.params.filterValue == '*ROLE_STORE*'),
+    path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_STORE*' })
+  },
+  {
+    title: 'users.administrators'|trans,
+    icon: 'lock',
+    active: (customers.params.filterField is defined and customers.params.filterField == 'u.roles' and customers.params.filterValue == '*ROLE_ADMIN*'),
+    path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_ADMIN*' })
+  }
+] %}
+
+<ul class="nav nav-tabs">
+  {% for tab_item in tab_items %}
+  <li role="presentation" class="{% if tab_item.active %}active{% endif %}">
+    <a href="{{ tab_item.path }}">
+      <i class="fa fa-{{ tab_item.icon }}"></i> {{ tab_item.title }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+
+<table class="table">
+<thead>
+  <th>{% trans %}profile.email{% endtrans  %}</th>
+  <th>{% trans %}profile.telephone{% endtrans  %}</th>
+  <th class="text-right">{% trans %}adminDashboard.users.orders_count{% endtrans  %}</th>
+  <th class="text-right">{% trans %}adminDashboard.users.registered_at{% endtrans  %}</th>
+  <th class="text-right">{% trans %}adminDashboard.users.last_order{% endtrans  %}</th>
+  <th class="text-right">{% trans %}adminDashboard.users.roles{% endtrans  %}</th>
+  <th>{% trans %}profile.username{% endtrans  %}</th>
+  <th></th>
+</thead>
+<tbody>
+{% for customer in customers %}
+  <tr>
+    <td>
+      <span class="text-monospace">{% if is_demo %}✴✴✴{% else %}{{ customer.emailCanonical }}{% endif %}</span>
+    </td>
+    <td>
+      {% if customer.phoneNumber is not empty %}{{ customer.phoneNumber }}{% endif %}
+    </td>
+    <td class="text-right">
+      {{ attributes[customer.emailCanonical]['orders_count'] }}
+    </td>
+    <td class="text-right">
+      {{ customer.createdAt|ago }}
+    </td>
+    <td class="text-right">
+      {% if attributes[customer.emailCanonical]['last_order'] is not empty %}
+        {{ attributes[customer.emailCanonical]['last_order'].updatedAt|ago }}
+      {% endif %}
+    </td>
+    <td class="text-right">
+      {% if customer.hasUser() %}
+        {% include "_partials/user/roles.html.twig" with { user: customer.user } %}
+      {% endif %}
+    </td>
+    <td>
+      {% if customer.hasUser() %}
+        <strong class="text-monospace">{{ customer.user.username }}</strong>
+      {% endif %}
+    </td>
+    <td class="text-right">
+      {% if customer.hasUser() %}
+      <a class="btn btn-xs btn-success"
+        href="{{ path('admin_user_edit', { username: customer.user.username }) }}">
+        <i class="fa fa-pencil" aria-hidden="true"></i>  {% trans from 'messages' %}Edit{%  endtrans %}
+      </a>
+      {% endif %}
+    </td>
+  </tr>
+{% endfor %}
+</table>
+</tbody>
+<nav class="text-center">
+  {{ knp_pagination_render(customers) }}
+</nav>
+{% endblock %}
+
+{% block scripts %}
+<script>
+new CoopCycle.Search(document.querySelector('#user-search'), {
+  url: "{{ path('admin_users_search', { format: 'json'  }) }}",
+  placeholder: "{{ 'search.users'|trans }}",
+  onSuggestionSelected: function(suggestion) {
+    window.location.href =
+      "{{ path('admin_users', { filterField: 'u.username', filterValue: '' })|raw }}".replace('filterValue=', 'filterValue=' + suggestion.username);
+  }
+});
+</script>
+{% endblock %}

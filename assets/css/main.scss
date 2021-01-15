@@ -1,23 +1,27 @@
-@import "~antd/dist/antd.min.css";
+@import "fonts.scss";
+
 @import "~font-awesome/css/font-awesome.min.css";
 @import "~beautifymarker/leaflet-beautify-marker-icon.css";
 @import "~leaflet/dist/leaflet.css";
-@import "~dropzone/dist/dropzone.css";
-@import "~croppie/croppie.css";
 
 @import "~font-awesome/scss/_variables.scss";
 @import "~font-awesome/scss/_mixins.scss";
 @import "~font-awesome/scss/_animated.scss";
 
+// Bootstrap 4.x
+// https://getbootstrap.com/docs/4.1/getting-started/webpack/
+// @see https://getbootstrap.com/docs/4.1/getting-started/theming/
+@import "bootstrap-utilities.css";
+
+// Bootstrap 3.x
 @import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 
-@import "circle.css";
 @import "vars.scss";
 @import "utils.scss";
-@import "dragula.scss";
 @import "stripe.scss";
+@import "mercadopago.scss";
 @import "ripple.scss";
 @import "speech-bubble.scss";
-@import "contextmenu.scss";
 @import "address-autosuggest.scss";
+@import "multistep-indicator.scss";
 @import "styles.scss";

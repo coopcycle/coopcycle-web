@@ -1,9 +1,9 @@
 imports:
     - { resource: config_dev.yml }
 
-# Use a parameter to completely overwrite framework.assets.base_urls
 parameters:
-  assets_base_urls: [ "%env(string:ASSETS_BASE_URL)%" ]
+    tile38_fleet_key: '%database_name%_test:fleet'
+    tile38_doorstep_chan_namespace: '%database_name%_test'
 
 framework:
     test: ~
@@ -11,8 +11,11 @@ framework:
         storage_id: session.storage.mock_file
     profiler:
         collect: false
-    assets:
-        base_urls: "%assets_base_urls%"
+    cache:
+        prefix_seed: "%database_name%_test"
+        app: cache.adapter.array
+    mailer:
+        dsn: 'null://null'
 
 doctrine:
     dbal:
@@ -28,12 +31,47 @@ swiftmailer:
 snc_redis:
     clients:
         default:
-            type: predis
+            type: phpredis
             alias: default
-            dsn: redis://%redis_host%:6379/1
+            dsn: "%env(COOPCYCLE_REDIS_DSN)%/1"
             options:
                 prefix: "%database_name%_test:"
 
-m6_statsd:
-    servers: {}
-    clients: {}
+oneup_flysystem:
+    adapters:
+        assets:
+            local:
+                directory: '/tmp'
+        product_images:
+            local:
+                directory: '/tmp'
+        restaurant_images:
+            local:
+                directory: '/tmp'
+        store_images:
+            local:
+                directory: '/tmp'
+        task_images:
+            local:
+                directory: '/tmp'
+        receipts:
+            local:
+                directory: '/tmp'
+        task_imports:
+            local:
+                directory: '/tmp'
+        product_imports:
+            local:
+                directory: '/tmp'
+
+services:
+    AppBundle\EventListener\CarbonListener:
+        arguments:
+            - '@snc_redis.default'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+    AppBundle\Fixtures\AliceDataFixtures\SettingsProcessor:
+        arguments:
+          - '@coopcycle.settings_manager'
+        tags:
+            - { name: fidry_alice_data_fixtures.processor }

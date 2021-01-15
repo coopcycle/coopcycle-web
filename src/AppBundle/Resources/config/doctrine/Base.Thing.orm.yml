@@ -1,5 +1,0 @@
-AppBundle\Entity\Base\Thing:
-    type: mappedSuperclass
-    table: thing
-    id: {  }
-    lifecycleCallbacks: {  }

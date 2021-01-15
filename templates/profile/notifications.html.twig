@@ -1,0 +1,20 @@
+{% extends "profile.html.twig" %}
+
+{% block content %}
+{% if notifications|length > 0 %}
+<table class="table">
+  <tbody>
+    {% for notification in notifications %}
+      <tr>
+        <td>{{ notification.message }}</td>
+        <td class="text-right">{{ notification.timestamp|ago }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <div class="alert alert-warning">
+    {{ 'notifications.empty'|trans }}
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,16 @@
+<h5>
+  <span>
+    {% include '_partials/task/type_icon.html.twig' %}  {{ ('task.type.' ~ task.type)|trans }}
+  </span>
+  <span class="pull-right">
+    <i class="fa fa-clock-o"></i>  {{ task.getTimeRange()|time_range_for_humans }}
+  </span>
+</h5>
+
+<p><strong>{{ task.address.streetAddress }}</strong></p>
+
+{% if task.address.description is not empty %}
+<div class="speech-bubble">
+  <i class="fa fa-quote-left"></i>  {{ task.address.description }}
+</div>
+{% endif %}

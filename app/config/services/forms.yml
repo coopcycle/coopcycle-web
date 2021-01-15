@@ -4,14 +4,15 @@ services:
     autowire: true
     autoconfigure: true
 
-  coopcycle.utils.task_spreadsheet_parser:
-    class: AppBundle\Utils\TaskSpreadsheetParser
+  AppBundle\Spreadsheet\TaskSpreadsheetParser:
     arguments:
-      - "@coopcycle.geocoder"
-      - "@coopcycle.tag_manager"
-      - "@slugify"
-      - "@libphonenumber.phone_number_util"
-      - "%country_iso%"
+      $countryCode: '%country_iso%'
+
+  AppBundle\Utils\DeliverySpreadsheetParser:
+    arguments:
+      $countryCode: "%country_iso%"
+
+  AppBundle\Spreadsheet\ProductSpreadsheetParser: ~
 
   AppBundle\Form\ApiRegistrationType:
     arguments: ['%country_iso%']
@@ -19,7 +20,8 @@ services:
       - { name: form.type, alias: app_user_api_registration }
 
   AppBundle\Form\RegistrationType:
-    arguments: ['%country_iso%', '%is_demo%']
+    arguments:
+      $isDemo: '%is_demo%'
     tags:
       - { name: form.type }
 
@@ -29,7 +31,8 @@ services:
       - { name: form.type, alias: app_update_profile }
 
   AppBundle\Form\AddressType:
-    arguments: [ '@translator', '@doctrine', '%country_iso%' ]
+    arguments:
+      $country: '%country_iso%'
     tags:
       - { name: form.type }
 
@@ -39,12 +42,24 @@ services:
       - { name: form.type }
 
   AppBundle\Form\DeliveryType:
-    arguments: [ '@routing_service', '@translator' ]
-    tags:
-      - { name: form.type }
+    arguments:
+      $routing: '@routing_service'
+      $translator: '@translator'
+      $authorizationChecker: '@security.authorization_checker'
+      $country: '%country_iso%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+    tags: [ form.type ]
 
   AppBundle\Form\DeliveryEmbedType:
-    arguments: [ '@routing_service', '@translator', '%country_iso%' ]
+    parent: AppBundle\Form\DeliveryType
+    autowire: false
+    autoconfigure: false
+    tags: [ form.type ]
+
+  AppBundle\Form\NewOrderType:
+    parent: AppBundle\Form\DeliveryType
+    autowire: false
+    autoconfigure: false
     tags: [ form.type ]
 
   AppBundle\Form\OrderType:
@@ -52,13 +67,6 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\TaskUploadType:
-    arguments: [ '@coopcycle.utils.task_spreadsheet_parser' ]
-    tags: [ form.type ]
-
-  AppBundle\Form\OrdersExportType:
-    arguments:
-      - '@sylius.repository.order'
-      - '@coopcycle.settings_manager'
     tags: [ form.type ]
 
   AppBundle\Form\AddUserType:
@@ -74,23 +82,28 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\SettingsType:
-    arguments: [ '@coopcycle.settings_manager', '@libphonenumber.phone_number_util', '%country_iso%' ]
+    arguments:
+      $country: '%country_iso%'
+      $isDemo: '%is_demo%'
+      $debug: '%kernel.debug%'
     tags: [ form.type ]
 
   AppBundle\Form\TaskType:
-    arguments: [ '@coopcycle.tag_manager' ]
+    arguments:
+      $country: '%country_iso%'
     tags: [ form.type ]
 
   AppBundle\Form\RestaurantType:
-    arguments: [ '@security.authorization_checker', '@security.token_storage', '%country_iso%' ]
+    arguments:
+      $country: '%country_iso%'
+      $loopeatEnabled: '%loopeat_enabled%'
+      $debug: '%kernel.debug%'
     tags: [ form.type ]
 
   AppBundle\Form\StoreType:
-    arguments: [ '@security.authorization_checker', '@security.token_storage', '%country_iso%' ]
-    tags: [ form.type ]
-
-  AppBundle\Form\ProductOptionType:
-    arguments: [ '@translator' ]
+    arguments:
+      $country: '%country_iso%'
+      $loopeatEnabled: '%loopeat_enabled%'
     tags: [ form.type ]
 
   AppBundle\Form\MenuEditor\TaxonProductType:
@@ -99,32 +112,115 @@ services:
 
   AppBundle\Form\ProductType:
     arguments:
-      - '@sylius.factory.product_variant'
-      - '@sylius.product_variant_resolver.default'
-      - '@sylius.repository.product_attribute'
-      - '@sylius.factory.product_attribute_value'
-      - '@sylius.locale_provider'
-      - '@translator'
+      $productAttributeRepository: '@sylius.repository.product_attribute'
+      $productAttributeValueFactory: '@sylius.factory.product_attribute_value'
+      $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
     tags: [ form.type ]
 
   AppBundle\Form\Checkout\CheckoutAddressType:
     arguments:
-      - '@validator'
-      - '@coopcycle.shipping_date_filter'
+      $loopeatOAuthFlow: '%env(LOOPEAT_OAUTH_FLOW)%'
     tags: [ form.type ]
 
-  AppBundle\Form\Checkout\CheckoutPaymentType:
+  AppBundle\Form\Checkout\CheckoutCustomerType:
     arguments:
-      - '@validator'
-      - '@coopcycle.shipping_date_filter'
-    tags: [ form.type ]
-
-  AppBundle\Form\Checkout\DateTimeType:
-    arguments:
-      - '@translator'
+      $customerRepository: '@sylius.repository.customer'
     tags: [ form.type ]
 
   AppBundle\Form\ApiAppType:
     arguments:
       - '@Trikoder\Bundle\OAuth2Bundle\Manager\ClientManagerInterface'
+    tags: [ form.type ]
+
+  AppBundle\Form\MaintenanceType:
+    arguments:
+      - '@snc_redis.default'
+    tags: [ form.type ]
+
+  AppBundle\Form\AddressBookType:
+    tags: [ form.type ]
+
+  sylius.form.extension.type.promotion_coupon:
+    class: AppBundle\Form\Extension\PromotionCouponTypeExtension
+    tags:
+      - { name: form.type_extension, extended_type: Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType }
+
+  sylius.form.type.promotion_rule.premium_customer_configuration:
+    class: AppBundle\Form\Sylius\Promotion\Rule\IsCustomerConfigurationType
+    tags:
+        - { name: form.type }
+
+  AppBundle\Form\Order\CartType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Type\TimeSlotChoiceType:
+    arguments:
+      $country: '%country_iso%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+    tags: [ form.type ]
+
+  AppBundle\Form\Type\MoneyType:
+    tags: [ form.type ]
+
+  AppBundle\Form\DeliveryImportType:
+    tags: [ form.type ]
+
+  AppBundle\Form\ProductOptionWithPositionType:
+    tags: [ form.type ]
+
+  AppBundle\Form\TimeSlotType:
+    tags: [ form.type ]
+
+  AppBundle\Form\OrderExportType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Type\LocalBusinessTypeChoiceType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Sylius\Promotion\OfferDeliveryType:
+    arguments:
+      $promotionRuleFactory: '@sylius.factory.promotion_rule'
+    tags: [ form.type ]
+
+  AppBundle\Form\Checkout\CheckoutPaymentType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Type\PriceWithTaxType:
+    tags: [ form.type ]
+    arguments:
+      $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
+
+  AppBundle\Form\CustomizeType:
+    arguments:
+      $assetsFilesystem: '@assets_filesystem'
+    tags: [ form.type ]
+
+  AppBundle\Form\Type\ProductTaxCategoryChoiceType:
+    arguments:
+      $taxCategoryRepository: '@sylius.repository.tax_category'
+      $country: '%region_iso%'
+      $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
+    tags: [ form.type ]
+
+  AppBundle\Form\Restaurant\FulfillmentMethodType:
+    tags: [ form.type ]
+
+  AppBundle\Form\TagsType:
+    tags: [ form.type ]
+
+  AppBundle\Form\AttachToOrganizationType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Type\PhoneNumberType:
+    arguments:
+      $country: '%region_iso%'
+    tags: [ form.type ]
+
+  AppBundle\Form\Type\LegalType:
+    tags: [ form.type ]
+
+  AppBundle\Form\HubType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Checkout\ChargeStripeSourceType:
     tags: [ form.type ]

@@ -26,26 +26,48 @@ web:
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
 
+# Override FOSUserBundle route
+fos_user_profile_show:
+    path:     /profile/
+    methods:  [ GET, POST ]
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::indexAction
+        layout: 'profile.html.twig'
+
 fos_js_routing:
-    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing-sf4.xml"
+
+hwi_oauth_redirect:
+    resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
+    prefix:   /connect
+
+hwi_oauth_connect:
+    resource: "@HWIOAuthBundle/Resources/config/routing/connect.xml"
+    prefix:   /connect
+
+hwi_oauth_login:
+    resource: "@HWIOAuthBundle/Resources/config/routing/login.xml"
+    prefix:   /login
+
+facebook_login:
+    path: /login/check-facebook
 
 coopcycle_admin:
     resource: '@AppBundle/Resources/config/routing/admin.yml'
 
+coopcycle_dashboard:
+    resource: '@AppBundle/Resources/config/routing/dashboard.yml'
+
 coopcycle_profile:
     resource: '@AppBundle/Resources/config/routing/profile.yml'
 
-oauth2_token:
-    path: /oauth2/token
-    defaults:
-        _controller: trikoder.oauth2.controller.token_controller:indexAction
+oauth2:
+    resource: '@TrikoderOAuth2Bundle/Resources/config/routes.xml'
+    prefix: /oauth2
 
 _liip_imagine:
     resource: "@LiipImagineBundle/Resources/config/routing.yaml"
 
-redirect_to_locale:
-    path: /
-    defaults:
-        _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
-        path: /%locale%
-        permanent: false
+foodtech_enabled_aware:
+    resource: .
+    type: foodtech_enabled_aware

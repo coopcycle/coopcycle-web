@@ -1,0 +1,47 @@
+{% extends "base.html.twig" %}
+
+{% block menu %}
+  {% include "admin/nav.html.twig" %}
+{% endblock %}
+
+{% block banner %}
+  {% include '_partials/maintenance.html.twig' %}
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid container--full-height">
+
+  {% if not settings_manager.fullyConfigured %}
+  <div class="alert alert-danger">
+  {% trans with { '%settings_url%': path('admin_settings') } %}
+  admin.settings.missing_mandatory_settings
+  {% endtrans %}
+  </div>
+  {% endif %}
+
+  <ol class="breadcrumb">
+    <li><a href="{{ path('admin_index') }}">{% trans %}adminDashboard.title{% endtrans %}</a></li>
+    {% block breadcrumb %}{% endblock %}
+  </ol>
+
+  {% block subnav %}{% endblock %}
+  <div class="mb-4">{% block content %}{% endblock %}</div>
+
+</div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
+{% block styles_common %}
+  {{ encore_entry_link_tags('widgets-admin') }}
+  {% block styles %}{% endblock %}
+{% endblock %}
+
+{% block scripts_common %}
+  {{ encore_entry_script_tags('widgets-admin') }}
+  <script>
+  new CoopCycle.Changelog(document.getElementById('changelog'));
+  </script>
+  {% block scripts %}{% endblock %}
+{% endblock %}

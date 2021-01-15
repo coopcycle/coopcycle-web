@@ -1,0 +1,395 @@
+profile_order_receipt:
+    path:     /profile/orders/{orderNumber}/receipt.pdf
+    defaults: { _controller: AppBundle\Controller\ProfileController::orderReceiptAction }
+    methods:  [ GET ]
+
+profile_order_receipt_generate:
+    path:     /profile/orders/{orderNumber}/generate-receipt
+    defaults: { _controller: AppBundle\Controller\ProfileController::generateOrderReceiptAction }
+    methods:  [ POST ]
+
+profile_order:
+    path:     /profile/orders/{id}
+    defaults: { _controller: AppBundle\Controller\ProfileController::orderAction }
+    methods:  [ GET, POST ]
+
+profile_orders:
+    path:     /profile/orders
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::orderListAction
+        layout: 'profile.html.twig'
+        template: 'profile/orders.html.twig'
+        routes:
+            restaurant: restaurant
+            order_receipt: profile_order_receipt
+            order_receipt_generate: profile_order_receipt_generate
+            order: profile_order
+    methods:  [ GET ]
+
+dashboard_restaurant:
+    path: /dashboard/restaurants/{id}
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/form.html.twig'
+        routes:
+            success: dashboard_restaurant
+            restaurants: dashboard_restaurants
+            menu_taxons: dashboard_restaurant_menu_taxons
+            menu_taxon: dashboard_restaurant_menu_taxon
+            products: dashboard_restaurant_products
+            product_options: dashboard_restaurant_product_options
+            dashboard: dashboard_restaurant_dashboard
+            planning: dashboard_restaurant_planning
+    methods: [ GET, POST ]
+
+dashboard_restaurants:
+    path: /dashboard/restaurants
+    defaults:
+        _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+        path: /dashboard
+        permanent: false
+    methods: [ GET ]
+
+dashboard_restaurant_dashboard:
+    path: /dashboard/restaurants/{restaurantId}/dashboard
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantDashboardAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/dashboard.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+            dashboard: dashboard_restaurant_dashboard
+            order_accept: dashboard_order_accept
+            order_refuse: dashboard_order_refuse
+            order_cancel: dashboard_order_cancel
+            order_delay: dashboard_order_delay
+            order_fulfill: dashboard_order_fulfill
+            user_details: user
+    methods: [ GET ]
+
+dashboard_restaurant_preparation_time:
+    path: /dashboard/restaurants/{id}/preparation-time
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::preparationTimeAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/preparation_time.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+            success: dashboard_restaurant_preparation_time
+    methods: [ GET ]
+
+dashboard_restaurant_stats:
+    path: /dashboard/restaurants/{id}/stats
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::statsAction
+        layout: 'dashboard.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+    methods: [ GET, POST ]
+
+dashboard_restaurant_new_reusable_packaging:
+    path: /dashboard/restaurants/{id}/deposit-refund/packagings/new
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::newRestaurantReusablePackagingAction
+        layout: 'dashboard.html.twig'
+    methods: [ GET, POST ]
+
+dashboard_restaurant_deposit_refund:
+    path: /dashboard/restaurants/{id}/deposit-refund
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantDepositRefundAction
+        layout: 'dashboard.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+    methods: [ GET, POST ]
+
+dashboard_order_accept:
+    path: /dashboard/orders/{id}/accept
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::acceptOrderAction
+    methods: [ POST ]
+
+dashboard_order_refuse:
+    path: /dashboard/orders/{id}/refuse
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::refuseOrderAction
+    methods: [ POST ]
+
+dashboard_order_delay:
+    path: /dashboard/orders/{id}/delay
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::delayOrderAction
+    methods: [ POST ]
+
+dashboard_order_cancel:
+    path: /dashboard/orders/{id}/cancel
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::cancelOrderAction
+    methods: [ POST ]
+
+dashboard_order_fulfill:
+    path: /dashboard/orders/{id}/fulfill
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::fulfillOrderAction
+    methods: [ POST ]
+
+dashboard_restaurant_menu_taxons:
+    path: /dashboard/restaurants/{id}/menus
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantMenuTaxonsAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/menu_taxons.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+            menu: dashboard_restaurant_menu_taxon
+            menu_activate: dashboard_restaurant_menu_taxon_activate
+            menu_taxon: dashboard_restaurant_menu_taxon
+    methods: [ GET, POST ]
+
+dashboard_restaurant_menu_taxon:
+    path: /dashboard/restaurants/{restaurantId}/menus/{menuId}
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantMenuTaxonAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/menu_taxon.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+            menu_taxons: dashboard_restaurant_menu_taxons
+            products: dashboard_restaurant_products
+            delete_section: dashboard_delete_restaurant_menu_taxon_child
+            success: dashboard_restaurant_menu_taxons
+    methods: [ GET, POST ]
+
+dashboard_restaurant_menu_taxon_activate:
+    path: /dashboard/restaurants/{restaurantId}/menus/{menuId}/activate
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::activateRestaurantMenuTaxonAction
+        layout: 'dashboard.html.twig'
+        routes:
+            menu_taxons: dashboard_restaurant_menu_taxons
+    methods: [ POST ]
+
+dashboard_delete_restaurant_menu_taxon_child:
+    path: /dashboard/restaurants/{restaurantId}/menus/{menuId}/sections/{sectionId}/delete
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::deleteRestaurantMenuTaxonChildAction
+        layout: 'dashboard.html.twig'
+        routes:
+            menu_taxon: dashboard_restaurant_menu_taxon
+    methods: [ POST ]
+
+dashboard_restaurant_products:
+    path: /dashboard/restaurants/{id}/products
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantProductsAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/products.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+            product: dashboard_restaurant_product
+            new_product: dashboard_restaurant_product_new
+    methods: [ GET ]
+
+dashboard_restaurant_product_new:
+    path: /dashboard/restaurants/{id}/products/new
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::newRestaurantProductAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/product.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+            products: dashboard_restaurant_products
+
+dashboard_delete_restaurant_product_image:
+    path: /dashboard/restaurants/{restaurantId}/products/{productId}/images/{imageName}
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::deleteProductImageAction
+    methods: [ DELETE ]
+
+dashboard_restaurant_product:
+    path: /dashboard/restaurants/{restaurantId}/products/{productId}
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantProductAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/product.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+            products: dashboard_restaurant_products
+
+dashboard_restaurant_planning:
+    path: /dashboard/restaurants/{id}/planning
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantPlanningAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/planning.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+            success: dashboard_restaurant_planning
+    methods: [ GET, POST ]
+
+dashboard_restaurant_product_options:
+    path: /dashboard/restaurants/{id}/product-options
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantProductOptionsAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/product_options.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+            product_option: dashboard_restaurant_product_option
+            new_product_option: dashboard_restaurant_product_option_new
+    methods: [ GET ]
+
+dashboard_restaurant_product_option_new:
+    path: /dashboard/restaurants/{id}/product-options/new
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::newRestaurantProductOptionAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/product_option.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+            product_options: dashboard_restaurant_product_options
+    methods: [ GET, POST ]
+
+dashboard_restaurant_product_option:
+    path: /dashboard/restaurants/{restaurantId}/product-options/{optionId}
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantProductOptionAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/product_option.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+            product_options: dashboard_restaurant_product_options
+    methods: [ GET, POST ]
+
+dashboard_restaurant_product_option_preview:
+    path: /dashboard/restaurants/product-options/preview
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantProductOptionPreviewAction
+    methods: [ POST ]
+
+dashboard_restaurant_stripe_oauth_redirect:
+    path: /dashboard/restaurants/{id}/stripe-oauth-redirect
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::stripeOAuthRedirectAction
+        redirect_after: dashboard_restaurant
+    methods: [ GET ]
+
+dashboard_restaurant_promotions:
+    path: /dashboard/restaurants/{id}/promotions
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantPromotionsAction
+        layout: 'dashboard.html.twig'
+    methods: [ GET ]
+
+dashboard_restaurant_new_promotion:
+    path: /dashboard/restaurants/{id}/promotions/new
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::newRestaurantPromotionAction
+        layout: 'dashboard.html.twig'
+        routes:
+            restaurant_promotions: dashboard_restaurant_promotions
+    methods: [ GET, POST ]
+
+dashboard_restaurant_promotion:
+    path: /dashboard/restaurants/{restaurantId}/promotions/{promotionId}
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantPromotionAction
+        layout: 'dashboard.html.twig'
+        routes:
+            restaurant_promotions: dashboard_restaurant_promotions
+    methods: [ GET, POST ]
+
+dashboard_delivery:
+  path: /dashboard/deliveries/{id}
+  defaults:
+      _controller: AppBundle\Controller\DashboardController::deliveryAction
+      layout: 'dashboard.html.twig'
+      routes:
+          success: dashboard
+  methods:  [ GET, POST ]
+
+dashboard_stores:
+    path: /dashboard/stores
+    defaults:
+        _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+        path: /dashboard
+        permanent: false
+    methods:  [ GET ]
+
+dashboard_store:
+    path: /dashboard/stores/{id}
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::storeAction
+        layout: 'dashboard.html.twig'
+        routes:
+            stores: dashboard_stores
+            store: dashboard_store
+            store_delivery_new: dashboard_store_delivery_new
+            store_deliveries: dashboard_store_deliveries
+            store_address_new: dashboard_store_address_new
+            store_address: dashboard_store_address
+    methods:  [ GET, POST ]
+
+dashboard_store_deliveries:
+    path: /dashboard/stores/{id}/deliveries
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::storeDeliveriesAction
+        layout: 'dashboard.html.twig'
+        routes:
+            stores: dashboard_stores
+            store: dashboard_store
+    methods:  [ GET, POST ]
+
+dashboard_store_delivery_new:
+    path: /dashboard/stores/{id}/deliveries/new
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::newStoreDeliveryAction
+        layout: 'dashboard.html.twig'
+        routes:
+            stores: dashboard_stores
+            store: dashboard_store
+            success: dashboard_store_deliveries
+        show_left_menu: false
+    methods:  [ GET, POST ]
+
+dashboard_store_address_new:
+    path: /dashboard/stores/{id}/addresses/new
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::newStoreAddressAction
+        layout: 'dashboard.html.twig'
+        routes:
+            stores: dashboard_stores
+            store: dashboard_store
+    methods:  [ GET, POST ]
+
+dashboard_store_address:
+    path: /dashboard/stores/{storeId}/addresses/{addressId}
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::storeAddressAction
+        layout: 'dashboard.html.twig'
+        routes:
+            stores: dashboard_stores
+            store: dashboard_store
+    methods:  [ GET, POST ]
+
+profile_redirect_to_dashboard:
+    path: /profile/{path}
+    requirements:
+      path: "^(deliveries|restaurants|stores)\/?.*"
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::redirectToDashboardAction
+    methods:  [ GET ]

@@ -1,0 +1,81 @@
+{% if stores|length > 0 %}
+  <table class="table">
+    <thead>
+      <th></th>
+      <th>{{ 'basics.name'|trans }}</th>
+      {% if is_granted('ROLE_ADMIN') %}
+      <th>{{ 'stores.pricing_rule_set'|trans }}</th>
+      {% endif %}
+      <th></th>
+    </thead>
+    <tbody>
+    {% for store in stores %}
+      <tr>
+        <td><a href="{{ path(store_route, { id: store.id }) }}">#{{ store.id }}</a></td>
+        <td>{{ store.name }}</td>
+        {% if is_granted('ROLE_ADMIN') %}
+        <td>
+          {% if store.pricingRuleSet is not null %}
+            <a href="{{ path('admin_deliveries_pricing_ruleset', { id: store.pricingRuleSet.id }) }}">
+              {{ store.pricingRuleSet.name }}
+            </a>
+            {% if store.prefillPickupAddress or store.createOrders or store.timeSlot is not empty or store.packageSet is not empty %}
+            <ul class="list-unstyled nomargin">
+              {% if store.prefillPickupAddress %}
+                <li>
+                  <small class="text-muted">{{ 'form.store_type.prefill_pickup_address.label'|trans }}</small>
+                </li>
+              {% endif %}
+              {% if store.createOrders %}
+                <li>
+                  <small class="text-muted">{{ 'form.store_type.create_orders.label'|trans }}</small>
+                </li>
+              {% endif %}
+              {% if store.timeSlot is not empty %}
+                <li>
+                  <small class="text-muted">{{ 'form.store_type.time_slot.label'|trans }} {{ store.timeSlot.name }}</small>
+                </li>
+              {% endif %}
+              {% if store.packageSet is not empty %}
+                <li>
+                  <small class="text-muted">{{ 'form.store_type.package_set.label'|trans }} {{ store.packageSet.name }}</small>
+                </li>
+              {% endif %}
+            </ul>
+            {% endif %}
+          {% endif %}
+        </td>
+        {% endif %}
+        <td class="text-right">
+          <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {% trans %}stores.manage{% endtrans %}   <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+              <li>
+                <a href="{{ path(store_route, { id: store.id }) }}">
+                  {% trans %}stores.settings{% endtrans %}
+                </a>
+              </li>
+              <li>
+                <a href="{{ path(store_deliveries_route, { id: store.id }) }}">
+                  {% trans %}stores.deliveries{% endtrans %}
+                </a>
+              </li>
+              <li>
+                <a href="{{ path(store_delivery_new_route, { id: store.id }) }}">
+                  {% trans %}stores.createNewDelivery{% endtrans %}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}stores.list.noStores{% endtrans %}
+  </div>
+{% endif %}

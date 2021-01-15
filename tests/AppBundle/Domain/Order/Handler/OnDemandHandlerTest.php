@@ -7,12 +7,15 @@ use AppBundle\Domain\Order\Event\OrderCreated;
 use AppBundle\Domain\Order\Handler\OnDemandHandler;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Prophecy\Argument;
 
 class OnDemandHandlerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $eventRecorder;
     private $orderNumberAssigner;
 

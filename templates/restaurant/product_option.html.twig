@@ -1,0 +1,76 @@
+{% extends 'restaurant/layout.html.twig' %}
+
+{% form_theme form 'form/product_option.html.twig' %}
+
+{% block breadcrumb %}
+  {% set product_option = form.vars.value %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li>
+    <a href="{{ path(product_options_route, { id: restaurant.id }) }}">
+      {% trans %}restaurant.list.product_options{% endtrans %}
+    </a>
+  </li>
+  <li>
+    {% if product_option.id is not null %}
+      {{ product_option.name }}
+    {% else %}
+      {{ 'basics.add'|trans }}
+    {% endif %}
+  </li>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-sm-flex flex-row">
+  <div class="w-75 mr-4">
+  {{ form_start(form) }}
+
+    {{ form_errors(form) }}
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.strategy) }}
+    {{ form_row(form.additional) }}
+    <hr>
+
+    <div>
+      <div class="row">
+        <div class="col-sm-9">
+          <h4>{{ 'form.product_option.values.title'|trans }}</h4>
+          <p class="help-block">{{ 'form.product_option.values.help'|trans }}</p>
+        </div>
+        <div class="col-sm-3">
+          {{ form_row(form.valuesRange, { label: false }) }}
+        </div>
+      </div>
+      {{ form_widget(form.values) }}
+    </div>
+    <hr>
+
+    <div class="row">
+      <div class="col-sm-3">
+        {{ form_widget(form.delete, { attr: { class: 'btn-block btn-danger' } }) }}
+      </div>
+      <div class="col-sm-9">
+        <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+      </div>
+    </div>
+
+  {{ form_end(form) }}
+  </div>
+  <div class="w-25 d-flex flex-column border">
+    <h4 class="bg-light p-3 m-0">
+      <span>{{ 'form.product_option.preview_title'|trans }}</span>
+      <span class="pull-right">
+        <i class="fa fa-spinner fa-pulse fa-fw hidden" id="preview-loader"></i>
+      </span>
+    </h4>
+    <div class="w-100 p-4" id="preview"
+      data-url="{{ path(product_option_preview_route) }}"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('product-option-form') }}
+{% endblock %}

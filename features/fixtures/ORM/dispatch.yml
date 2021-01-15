@@ -9,7 +9,7 @@ AppBundle\Entity\Base\GeoCoordinates:
   geo_3:
     __construct: [ "48.878658", "2.341055" ]
 
-AppBundle\Entity\ApiUser:
+AppBundle\Entity\User:
   bob:
     __factory:
       '@FOS\UserBundle\Util\UserManipulator::create':
@@ -30,17 +30,17 @@ AppBundle\Entity\ApiUser:
 AppBundle\Entity\Address:
   address_1:
     addressLocality: Paris
-    postalCode: 75010
+    postalCode: '75010'
     streetAddress: 272, rue Saint Honoré 75001 Paris 1er
     geo: "@geo_1"
   address_2:
     addressLocality: 'Paris'
-    postalCode: 75010
+    postalCode: '75010'
     streetAddress: 18, avenue Ledru-Rollin 75012 Paris 12ème
     geo: "@geo_2"
   address_3:
     addressLocality: Paris
-    postalCode: 75010
+    postalCode: '75010'
     streetAddress: 17, rue Milton 75009 Paris 9ème
     geo: "@geo_3"
 
@@ -50,32 +50,46 @@ AppBundle\Entity\Task:
     doneAfter: <identity(new \DateTime('2018-12-01 10:30:00'))>
     doneBefore: <identity(new \DateTime('2018-12-01 11:00:00'))>
     __calls:
-      - assignTo: [ "@sarah" ]
+      - assignTo: [ "@sarah", <identity(new \DateTime('2018-12-01'))> ]
   task_2:
     address: "@address_2"
-    doneAfter: <identity(new \DateTime('2018-12-01 11:30:00'))>
-    doneBefore: <identity(new \DateTime('2018-12-01 12:00:00'))>
+    doneAfter: <identity(new \DateTime('2018-11-30 11:30:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-02 12:00:00'))>
     __calls:
-      - assignTo: [ "@sarah" ]
+      - assignTo: [ "@sarah", <identity(new \DateTime('2018-12-02'))> ]
   task_3:
     address: "@address_1"
     doneAfter: <identity(new \DateTime('2018-12-02 12:00:00'))>
     doneBefore: <identity(new \DateTime('2018-12-02 12:30:00'))>
     __calls:
-      - assignTo: [ "@bob" ]
+      - assignTo: [ "@bob", <identity(new \DateTime('2018-12-02'))> ]
   task_4:
     address: "@address_2"
     doneAfter: <identity(new \DateTime('2018-12-02 12:00:00'))>
     doneBefore: <identity(new \DateTime('2018-12-02 12:30:00'))>
+    type: PICKUP
+    next: "@task_5"
     __calls:
-      - assignTo: [ "@bob" ]
+      - assignTo: [ "@bob", <identity(new \DateTime('2018-12-02'))> ]
   task_5:
     address: "@address_2"
-    doneAfter: <identity(new \DateTime('2018-12-01 13:00:00'))>
-    doneBefore: <identity(new \DateTime('2018-12-01 13:30:00'))>
+    doneAfter: <identity(new \DateTime('2018-12-02 13:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-02 13:30:00'))>
+    previous: "@task_4"
     __calls:
-      - assignTo: [ "@bob" ]
+      - assignTo: [ "@bob", <identity(new \DateTime('2018-12-02'))> ]
   task_6:
     address: "@address_3"
     doneAfter: <identity(new \DateTime('2018-12-01 12:00:00'))>
     doneBefore: <identity(new \DateTime('2018-12-01 12:30:00'))>
+  task_7:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-12-01 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-01 12:30:00'))>
+    __calls:
+      - assignTo: [ "@bob", <identity(new \DateTime('2018-12-01'))> ]
+
+AppBundle\Entity\Tag:
+  tag_important:
+    name: "Important"
+    color: "#000000"

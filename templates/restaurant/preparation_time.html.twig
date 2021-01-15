@@ -1,0 +1,40 @@
+{% extends 'restaurant/layout.html.twig' %}
+
+{% form_theme form 'form/preparation_time.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li>{% trans %}restaurant.list.preparationTime{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+{% if show_defaults_warning %}
+  <div class="alert alert-warning">
+    {% trans %}form.preparation_time.defaults_warning{% endtrans %}
+  </div>
+{% endif %}
+
+{{ form_start(form) }}
+  {{ form_row(form.preparationTimeRules) }}
+  <div class="text-right">
+    <button type="button" class="btn btn-success" id="add-rule">
+      <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
+    </button>
+  </div>
+  <hr>
+  <button type="submit" class="btn btn-block btn-primary">
+    {{ 'basics.save'|trans }}
+  </button>
+{{ form_end(form) }}
+
+{% endblock %}
+
+{% block styles %}
+{{ encore_entry_link_tags('restaurant-preparation-time') }}
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('restaurant-preparation-time') }}
+{% endblock %}

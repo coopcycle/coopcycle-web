@@ -1,13 +1,20 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { render } from 'react-dom'
 import moment from 'moment'
-import dragula from 'react-dragula'
-import { translate } from 'react-i18next'
+import { Draggable, Droppable } from "react-beautiful-dnd"
+import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
+
 import Task from './Task'
-import { removeTasks, modifyTaskList, togglePolyline, toggleTask, selectTask, drakeDrag, drakeDragEnd } from '../store/actions'
+import TaskListPopoverContent from './TaskListPopoverContent'
+import { removeTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
+import { selectFilteredTasks } from '../redux/selectors'
+import { selectSelectedDate, selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
 
 moment.locale($('html').attr('lang'))
+
+const TaskListPopoverContentWithTrans = withTranslation()(TaskListPopoverContent)
 
 class TaskList extends React.Component {
 
@@ -19,7 +26,6 @@ class TaskList extends React.Component {
   }
 
   componentDidMount() {
-    this.props.taskListDidMount(this)
 
     const { username, collapsed } = this.props
 
@@ -34,90 +40,41 @@ class TaskList extends React.Component {
     if (!collapsed) {
       $('#collapse-' + username).collapse('show')
     }
-
-    // handler to change the task order within a courier tasklist
-    dragula([ this.refs.taskList ], {
-      // You can set accepts to a method with the following signature: (el, target, source, sibling).
-      // It'll be called to make sure that an element el, that came from container source,
-      // can be dropped on container target before a sibling element.
-      // The sibling can be null, which would mean that the element would be placed as the last element in the container.
-      accepts: (el, target, source, sibling) => {
-
-        if (el === sibling) {
-          return true
-        }
-
-        const { tasks } = this.props
-
-        const draggedTask = _.find(tasks, task => task['@id'] === el.getAttribute('data-task-id'))
-
-        if (!draggedTask.previous && !draggedTask.next) {
-          return true
-        }
-
-        const taskOrder = _.map(tasks, task => task['@id'])
-
-        let siblingTaskIndex
-        if (sibling === null) {
-          siblingTaskIndex = tasks.length - 1
-        } else {
-          const siblingTask = _.find(tasks, task => task['@id'] === sibling.getAttribute('data-task-id'))
-          siblingTaskIndex  = taskOrder.indexOf(siblingTask['@id'])
-        }
-
-        if (draggedTask.previous) {
-          const previousTaskIndex = taskOrder.indexOf(draggedTask.previous)
-          if (siblingTaskIndex <= previousTaskIndex) {
-            return false
-          }
-        }
-
-        if (draggedTask.next) {
-          const nextTaskIndex = taskOrder.indexOf(draggedTask.next)
-          if (siblingTaskIndex >= nextTaskIndex) {
-            return false
-          }
-        }
-
-        return true
-      }
-    }).on('drop', (element, target) => {
-
-      const { tasks } = this.props
-
-      const elements = target.querySelectorAll('.list-group-item')
-      const tasksOrder = _.map(elements, element => element.getAttribute('data-task-id'))
-
-      let newTasks = tasks.slice()
-      newTasks.sort((a, b) => {
-        const keyA = tasksOrder.indexOf(a['@id'])
-        const keyB = tasksOrder.indexOf(b['@id'])
-
-        return keyA > keyB ? 1 : -1
-      })
-
-      this.props.modifyTaskList(this.props.username, newTasks)
-
-    }).on('drag', () => {
-      this.props.drakeDrag()
-    }).on('dragend', () => {
-      this.props.drakeDragEnd()
-    })
-
   }
 
-  remove(taskToRemove) {
+  remove(task) {
+    this.props.removeTasks(this.props.username, task)
+  }
 
-    // Check if we need to remove another linked task
-    // FIXME
-    // Make it work when more than 2 tasks are linked together
-    let tasksToRemove = [ taskToRemove ]
-    if (taskToRemove.previous || taskToRemove.next) {
-      const linkedTasks = _.filter(this.props.tasks, task => task['@id'] === (taskToRemove.previous || taskToRemove.next))
-      tasksToRemove = tasksToRemove.concat(linkedTasks)
+  onClickUnassign(e) {
+    e.preventDefault()
+
+    const $target = $(e.currentTarget)
+
+    if (!$target.data('bs.popover')) {
+
+      const el = document.createElement('div')
+
+      const cb = () => {
+        $target.popover({
+          trigger: 'manual',
+          html: true,
+          container: 'body',
+          placement: 'left',
+          content: el
+        })
+        $target.popover('toggle')
+      }
+
+      render(<TaskListPopoverContentWithTrans
+        onClickCancel={ () => $target.popover('hide') }
+        onClickConfirm={ () => {
+          $target.popover('hide')
+          this.props.removeTasks(this.props.username, this.props.uncompletedTasks)
+        }} />, el, cb)
+    } else {
+      $target.popover('toggle')
     }
-
-    this.props.removeTasks(this.props.username, tasksToRemove)
   }
 
   render() {
@@ -127,9 +84,8 @@ class TaskList extends React.Component {
       distance,
       username,
       polylineEnabled,
-      showFinishedTasks,
-      selectedTags,
-      showUntaggedTasks,
+      uncompletedTasks,
+      isEmpty,
     } = this.props
 
     let { tasks } = this.props
@@ -137,16 +93,6 @@ class TaskList extends React.Component {
     const { collapsed } = this.state
 
     tasks = _.orderBy(tasks, ['position', 'id'])
-
-    if (!showFinishedTasks) {
-      tasks = _.filter(tasks, (task) => { return task.status === 'TODO' })
-    }
-
-    // tag filtering - task should have at least one of the selected tags
-    tasks = _.filter(tasks, (task) =>
-      (task.tags.length > 0 &&_.intersectionBy(task.tags, selectedTags, 'name').length > 0) ||
-      (task.tags.length === 0 && showUntaggedTasks)
-    )
 
     const durationFormatted = moment.utc()
       .startOf('day')
@@ -163,26 +109,45 @@ class TaskList extends React.Component {
 
     const avatarURL = window.Routing.generate('user_avatar', { username })
 
+    const taskListClasslist = ['taskList__tasks', 'list-group', 'nomargin']
+    if (isEmpty) {
+      taskListClasslist.push('taskList__tasks--empty')
+    }
+
     return (
       <div className="panel panel-default nomargin noradius noborder">
-        <div className="panel-heading  dashboard__panel__heading">
-          <h3
-            className="panel-title"
-            role="button"
-            data-toggle="collapse"
-            data-target={ '#' + collabsableId }
-            aria-expanded={ collapsed ? 'false' : 'true' }
-          >
-            <img src={ avatarURL } width="20" height="20" /> 
+        <div className="panel-heading dashboard__panel__heading">
+          <h3 className="panel-title taskList__panel-title">
             <a
               className="dashboard__panel__heading__link"
+              role="button"
+              data-toggle="collapse"
+              data-target={ '#' + collabsableId }
+              aria-expanded={ collapsed ? 'false' : 'true' }
             >
-              { username }
+              <img src={ avatarURL } width="20" height="20" /> 
+              <span>{ username }</span>
               &nbsp;&nbsp;
               <span className="badge">{ tasks.length }</span>
               &nbsp;&nbsp;
               <i className={ collapsed ? 'fa fa-caret-down' : 'fa fa-caret-up' }></i>
             </a>
+            { tasks.length > 1 && (
+            <a href="#" onClick={ e => {
+              e.preventDefault()
+              this.props.optimizeTaskList({
+                '@id': this.props.uri,
+                username: this.props.username,
+              })
+            }} className="mr-2" style={{ color: '#f1c40f' }} label="Optimize">
+              <i className="fa fa-bolt"></i>
+            </a>
+            )}
+            { uncompletedTasks.length > 0 && (
+            <a onClick={ e => this.onClickUnassign(e) } className="taskList__panel-title__unassign">
+              <i className="fa fa-close"></i>
+            </a>
+            )}
           </h3>
         </div>
         <div role="tabpanel" id={ collabsableId } className="collapse">
@@ -194,24 +159,31 @@ class TaskList extends React.Component {
               </a>
             </div>
           )}
-          <div className="list-group dropzone" data-username={ username }>
-            <div className="list-group-item text-center dropzone-item">
-              { this.props.t('ADMIN_DASHBOARD_DROP_DELIVERIES') }
-            </div>
-          </div>
-          <div ref="taskList" className="taskList__tasks list-group nomargin">
-            { tasks.map(task => (
-              <Task
-                key={ task['@id'] }
-                task={ task }
-                assigned={ true }
-                onRemove={ task => this.remove(task) }
-                toggleTask={ this.props.toggleTask }
-                selectTask={ this.props.selectTask }
-                selected={ -1 !== this.props.selectedTasks.indexOf(task) }
-              />
-            ))}
-          </div>
+          <Droppable droppableId={ `assigned:${username}` }>
+            {(provided) => (
+              <div className={ taskListClasslist.join(' ') } ref={ provided.innerRef } { ...provided.droppableProps }>
+                { _.map(tasks, (task, index) => {
+                  return (
+                    <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ index }>
+                      {(provided) => (
+                        <div
+                          ref={ provided.innerRef }
+                          { ...provided.draggableProps }
+                          { ...provided.dragHandleProps }
+                        >
+                          <Task
+                            task={ task }
+                            assigned={ true }
+                            onRemove={ task => this.remove(task) } />
+                        </div>
+                      )}
+                    </Draggable>
+                  )
+                })}
+                { provided.placeholder }
+              </div>
+            )}
+          </Droppable>
         </div>
       </div>
     )
@@ -219,28 +191,33 @@ class TaskList extends React.Component {
 }
 
 function mapStateToProps(state, ownProps) {
+
+  const tasksFiltered = selectFilteredTasks({
+    tasks: ownProps.items,
+    filters: state.filters,
+    date: selectSelectedDate(state),
+  })
+
+  // console.log(`Showing ${tasksFiltered.length} of ${ownProps.items.length}`)
+
   return {
     polylineEnabled: state.polylineEnabled[ownProps.username],
+    allTasks: selectAllTasks(state),
     tasks: ownProps.items,
+    isEmpty: ownProps.items.length === 0 || tasksFiltered.length === 0,
     distance: ownProps.distance,
     duration: ownProps.duration,
-    showFinishedTasks: state.taskFinishedFilter,
-    selectedTags: state.tagsFilter.selectedTagsList,
-    showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
-    selectedTasks: state.selectedTasks
+    filters: state.filters,
+    uncompletedTasks: _.filter(ownProps.items, t => t.status === 'TODO'),
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    removeTasks: (username, tasks) => { dispatch(removeTasks(username, tasks)) },
-    modifyTaskList: (username, tasks) => { dispatch(modifyTaskList(username, tasks)) },
-    togglePolyline: (username) => { dispatch(togglePolyline(username)) },
-    toggleTask: (task, multiple) => { dispatch(toggleTask(task, multiple)) },
-    selectTask: (task) => { dispatch(selectTask(task)) },
-    drakeDrag: () => dispatch(drakeDrag()),
-    drakeDragEnd: () => dispatch(drakeDragEnd()),
+    removeTasks: (username, tasks) => dispatch(removeTasks(username, tasks)),
+    togglePolyline: (username) => dispatch(togglePolyline(username)),
+    optimizeTaskList: (taskList) => dispatch(optimizeTaskList(taskList)),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(TaskList))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(TaskList))

@@ -1,7 +1,11 @@
 const zoneRegexp = /(in_zone|out_zone)\(([^,]+), ['|"](.+)['|"]\)/
-const vehicleRegexp = /(vehicle) == "(cargo_bike|bike)"/
-const inRegexp = /([\w]+) in ([\d]+)\.\.([\d]+)/
-const comparatorRegexp = /([\w]+) (<|>) ([\d]+)/
+const diffDaysRegexp = /diff_days\(pickup\) (<|>|==) ([\d]+)/
+const diffHoursRegexp = /diff_hours\(pickup\) (<|>|==) ([\d]+)/
+const vehicleRegexp = /(vehicle)\s+== "(cargo_bike|bike)"/
+const inRegexp = /([\w.]+) in ([\d]+)\.\.([\d]+)/
+const comparatorRegexp = /([\w.]+) (<|>) ([\d]+)/
+const doorstepDropoffRegexp = /(dropoff.doorstep)\s+== (true|false)/
+const packagesContainsAtLeastOneRegexp = /packages\.containsAtLeastOne\(['|"](.+)['|"]\)/
 
 const parseToken = token => {
 
@@ -14,12 +18,48 @@ const parseToken = token => {
     }
   }
 
+  const packagesContainsAtLeastOneTest = packagesContainsAtLeastOneRegexp.exec(token)
+  if (packagesContainsAtLeastOneTest) {
+    return {
+      left: 'packages',
+      operator: 'containsAtLeastOne',
+      right: packagesContainsAtLeastOneTest[1],
+    }
+  }
+
+  const diffDaysTest = diffDaysRegexp.exec(token)
+  if (diffDaysTest) {
+    return {
+      left: 'diff_days(pickup)',
+      operator: diffDaysTest[1],
+      right: parseInt(diffDaysTest[2])
+    }
+  }
+
+  const diffHoursTest = diffHoursRegexp.exec(token)
+  if (diffHoursTest) {
+    return {
+      left: 'diff_hours(pickup)',
+      operator: diffHoursTest[1],
+      right: parseInt(diffHoursTest[2], 10)
+    }
+  }
+
   const vehicleTest = vehicleRegexp.exec(token)
   if (vehicleTest) {
     return {
       left: vehicleTest[1],
       operator: '==',
       right: vehicleTest[2]
+    }
+  }
+
+  const doorstepDropoffTest = doorstepDropoffRegexp.exec(token)
+  if (doorstepDropoffTest) {
+    return {
+      left: doorstepDropoffTest[1],
+      operator: '==',
+      right: doorstepDropoffTest[2]
     }
   }
 
@@ -45,5 +85,13 @@ const parseToken = token => {
   }
 }
 
-export default expression =>
-  expression.split('and').map(token => token.trim()).map(token => parseToken(token))
+export default expression => {
+
+  const lines = expression.split(' and ').map(token => token.trim())
+
+  if (lines.length === 1 && !lines[0]) {
+    return []
+  }
+
+  return lines.map(token => parseToken(token))
+}

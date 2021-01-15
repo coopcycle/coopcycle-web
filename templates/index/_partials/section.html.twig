@@ -1,0 +1,31 @@
+<section class="homepage-restaurants">
+  <div class="container">
+    <div class="d-flex flex-row justify-content-between align-items-center py-4">
+      <h3 class="m-0">{{ section_title }}</h3>
+      {% if show_more %}
+      <a class="restaurant-show-more" href="{{ view_all_path }}">{{ view_all }}<i class="fa fa-arrow-right ml-2"></i></a>
+      {% endif %}
+    </div>
+    <div class="row restaurant-list mb-4">
+      {% for restaurant in items %}
+        <div class="col-xs-12 col-md-4 display-flex">
+          {% include "_partials/restaurant/list_thumbnail.html.twig" %}
+        </div>
+      {% endfor %}
+      {% if items|length < max_results %}
+        {% set pad = (max_results - items|length) %}
+        {% for i in range(0, (pad - 1)) %}
+          <div class="col-xs-12 col-md-4 display-flex">
+            <div class="thumbnail restaurant-item">
+              <img class="restaurant-image restaurant-image--placeholder" src="{{ asset('img/restaurant/placeholder.png') }}">
+              <div class="caption">
+                <h4>{% trans %}restaurants.placeholder.title{% endtrans %}</h4>
+                <p class="text-muted">{% trans %}restaurants.placeholder.text{% endtrans %}</p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</section>

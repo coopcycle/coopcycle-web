@@ -1,43 +1,36 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
-import moment from 'moment'
+import { withTranslation } from 'react-i18next'
 
-import { setCurrentOrder } from '../redux/actions'
+import OrderNumber from './OrderNumber'
+import ShippingTimeRange from '../../../components/ShippingTimeRange'
+import Avatar from '../../../components/Avatar'
 
-class OrderCard extends React.Component {
+export default withTranslation()(({ order, onClick }) => {
 
-  render() {
-
-    const { order } = this.props
-
-    return (
-      <div className="panel panel-default FoodtechDashboard__OrderCard" onClick={ () => this.props.setCurrentOrder(order) }>
-        <div className="panel-heading">
-          <span>{ this.props.t('RESTAURANT_DASHBOARD_ORDER_TITLE', { number: order.number, id: order.id }) }</span>
-          <span className="pull-right"><i className="fa fa-clock-o"></i> { moment(order.shippedAt).format('LT') }</span>
-        </div>
-        <div className="panel-body">
-          <ul className="list-unstyled">
-            <li><i className="fa fa-cutlery"></i> { order.restaurant.name }</li>
-            <li><i className="fa fa-user"></i> { order.customer.username }</li>
-            <li><i className="fa fa-money"></i> { (order.total / 100).formatMoney(2, window.AppData.currencySymbol) }</li>
-          </ul>
-        </div>
+  return (
+    <div className="panel panel-default FoodtechDashboard__OrderCard" onClick={ () => onClick(order) }>
+      <div className="panel-heading">
+        <OrderNumber order={ order } />
+        <span className="pull-right">
+          <i className="fa fa-clock-o mr-2"></i>
+          <small>
+            <ShippingTimeRange value={ order.shippingTimeRange } short />
+          </small>
+        </span>
       </div>
-    )
-  }
-
-}
-
-function mapStateToProps() {
-  return {}
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    setCurrentOrder: order => dispatch(setCurrentOrder(order)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(OrderCard))
+      <div className="panel-body">
+        <ul className="list-unstyled">
+          <li><i className="fa fa-cutlery"></i> { order.vendor.name }</li>
+          <li><i className="fa fa-user"></i> { order.customer.username }</li>
+          <li><i className="fa fa-money"></i> { (order.total / 100).formatMoney() }</li>
+          { order.assignedTo && (
+            <li>
+              <Avatar username={ order.assignedTo } />
+              <span className="ml-2">{ order.assignedTo }</span>
+            </li>
+          ) }
+        </ul>
+      </div>
+    </div>
+  )
+})

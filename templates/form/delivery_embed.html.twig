@@ -1,0 +1,66 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block task_embed_row %}
+
+  {{ form_label(form) }}
+
+  {{ form_row(form.address) }}
+
+  {% if form.doneBefore is defined %}
+    {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
+  {% endif %}
+
+  {% if form.timeSlot is defined %}
+    {{ form_row(form.timeSlot) }}
+  {% endif %}
+
+  {% if form.vars.value.type == 'PICKUP' and form.parent.weight is defined %}
+    {{ form_row(form.parent.weight) }}
+  {% endif %}
+
+  {% if form.vars.value.type == 'PICKUP' and form.parent.packages is defined %}
+    {{ form_row(form.parent.packages) }}
+  {% endif %}
+
+  {{ form_row(form.address.newAddress.description) }}
+
+  {{ form_widget(form.type) }}
+
+{% endblock %}
+
+
+{% block _delivery_vehicle_widget %}
+<div class="alert alert-info">
+  {{ 'form.delivery_embed.vehicle.disclaimer'|trans }}
+</div>
+{{ block('vehicle_widget') }}
+{% endblock %}
+
+{# Pickup #}
+
+{% block _delivery_pickup_row %}
+  {{ block('task_embed_row') }}
+{% endblock %}
+
+{% block _delivery_pickup_label %}
+  <h3>{{ label|trans }}</h3>
+{% endblock %}
+
+{# Dropoff #}
+
+{% block _delivery_dropoff_row %}
+  {{ block('task_embed_row') }}
+{% endblock %}
+
+{% block _delivery_dropoff_label %}
+  <h3>{{ label|trans }}</h3>
+{% endblock %}
+
+{% block _delivery_billingAddress_widget %}
+
+{{ form_row(form.company) }}
+{{ form_row(form.streetAddress) }}
+
+{{ form_rest(form) }}
+
+{% endblock %}

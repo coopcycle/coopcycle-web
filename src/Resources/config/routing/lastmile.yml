@@ -1,0 +1,11 @@
+homepage:
+  path: /profile/
+  defaults:
+    _controller: FOS\UserBundle\Controller\ProfileController::showAction
+
+redirect_to_admin:
+  path: /
+  defaults:
+    _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::redirectAction
+    route: fos_user_profile_show
+    permanent: false

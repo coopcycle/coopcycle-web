@@ -1,6 +1,8 @@
-import { combineReducers } from 'redux'
-import moment from 'moment'
 import _ from 'lodash'
+import Moment from 'moment'
+import { extendMoment } from 'moment-range'
+
+const moment = extendMoment(Moment)
 
 import {
   SET_CURRENT_ORDER,
@@ -18,27 +20,40 @@ import {
   REFUSE_ORDER_REQUEST_FAILURE,
   DELAY_ORDER_REQUEST_SUCCESS,
   DELAY_ORDER_REQUEST_FAILURE,
+  FULFILL_ORDER_REQUEST_SUCCESS,
+  FULFILL_ORDER_REQUEST_FAILURE,
+  SEARCH_RESULTS,
+  ACTIVE_TAB,
+  INIT_HTTP_CLIENT,
+  REFRESH_TOKEN_SUCCESS,
 } from './actions'
 
-const initialState = {
+export const initialState = {
   orders: [],
   order: null,
   date: moment().format('YYYY-MM-DD'),
   jwt: '',
+  centrifugo: {
+    token: '',
+    namespace: '',
+    username: '',
+  },
   restaurant: null,
   isFetching: false,
-  acceptOrderRoute: 'admin_order_accept',
-  refuseOrderRoute: 'admin_order_refuse',
-  delayOrderRoute: 'admin_order_delay',
-  cancelOrderRoute: 'admin_order_cancel',
   currentRoute: 'admin_foodtech_dashboard',
   preparationDelay: 0,
   showSettings: true,
+  showSearch: false,
+  searchQuery: '',
+  searchResults: [],
+  activeTab: 'new',
+  httpClient: null,
+  initialOrder: null,
 }
 
 function replaceOrder(orders, order) {
 
-  const orderIndex = _.findIndex(orders, o => o.id === order.id)
+  const orderIndex = _.findIndex(orders, o => o['@id'] === order['@id'])
   if (-1 !== orderIndex) {
     const newOrders = orders.slice()
     newOrders.splice(orderIndex, 1, Object.assign({}, order))
@@ -49,118 +64,141 @@ function replaceOrder(orders, order) {
   return orders
 }
 
-const orders = (state = initialState.orders, action) => {
-  let newState
+export default (state = initialState, action = {}) => {
 
-  // TODO
-  // Make sure orders are for the current date
-  // We need to use a unique reducer to achieve this
-
-  switch (action.type) {
-  case ACCEPT_ORDER_REQUEST_SUCCESS:
-  case REFUSE_ORDER_REQUEST_SUCCESS:
-  case CANCEL_ORDER_REQUEST_SUCCESS:
-  case DELAY_ORDER_REQUEST_SUCCESS:
-
-    return replaceOrder(state, action.payload)
-
-  case ORDER_CREATED:
-
-    newState = state.slice()
-    newState.push(action.payload)
-
-    return newState
-
-  case ORDER_ACCEPTED:
-
-    return replaceOrder(state, Object.assign({}, action.payload, { state: 'accepted' }))
-
-  case ORDER_REFUSED:
-
-    return replaceOrder(state, Object.assign({}, action.payload, { state: 'refused' }))
-
-  case ORDER_CANCELLED:
-
-    return replaceOrder(state, Object.assign({}, action.payload, { state: 'cancelled' }))
-
-  case ORDER_FULFILLED:
-
-    return replaceOrder(state, Object.assign({}, action.payload, { state: 'fulfilled' }))
-
-  default:
-
-    return state
-  }
-}
-
-const order = (state = initialState.order, action) => {
-  switch (action.type) {
-  case ACCEPT_ORDER_REQUEST_SUCCESS:
-  case REFUSE_ORDER_REQUEST_SUCCESS:
-  case CANCEL_ORDER_REQUEST_SUCCESS:
-  case DELAY_ORDER_REQUEST_SUCCESS:
-
-    return null
-
-  case SET_CURRENT_ORDER:
-
-    return action.payload
-
-  default:
-
-    return state
-  }
-}
-
-const date = (state = initialState.date, action) => {
-  switch (action.type) {
-  default:
-
-    return state
-  }
-}
-
-const jwt = (state = initialState.jwt, action) => {
-  switch (action.type) {
-  default:
-
-    return state
-  }
-}
-
-const isFetching = (state = initialState.isFetching, action) => {
   switch (action.type) {
   case FETCH_REQUEST:
 
-    return true
-  case ACCEPT_ORDER_REQUEST_SUCCESS:
+    return {
+      ...state,
+      isFetching: true,
+    }
+
   case ACCEPT_ORDER_REQUEST_FAILURE:
-  case CANCEL_ORDER_REQUEST_SUCCESS:
   case CANCEL_ORDER_REQUEST_FAILURE:
-  case REFUSE_ORDER_REQUEST_SUCCESS:
   case REFUSE_ORDER_REQUEST_FAILURE:
-  case DELAY_ORDER_REQUEST_SUCCESS:
   case DELAY_ORDER_REQUEST_FAILURE:
+  case FULFILL_ORDER_REQUEST_FAILURE:
 
-    return false
-  default:
+    return {
+      ...state,
+      isFetching: false,
+    }
 
-    return state
+  case ACCEPT_ORDER_REQUEST_SUCCESS:
+  case REFUSE_ORDER_REQUEST_SUCCESS:
+  case CANCEL_ORDER_REQUEST_SUCCESS:
+  case DELAY_ORDER_REQUEST_SUCCESS:
+  case FULFILL_ORDER_REQUEST_SUCCESS:
+
+    return {
+      ...state,
+      isFetching: false,
+      orders: replaceOrder(state.orders, action.payload),
+      order: null,
+    }
+
+  case ORDER_CREATED:
+
+    const range = moment.range(
+      moment(state.date).set({ hour: 0, minute: 0, second: 0 }),
+      moment(state.date).set({ hour: 23, minute: 59, second: 59 })
+    )
+
+    const shippingTimeRange = moment.range(action.payload.shippingTimeRange)
+
+    // The order is not for the current date, skip
+    if (!shippingTimeRange.overlaps(range)) {
+
+      return state
+    }
+
+    const newOrders = state.orders.slice()
+
+    // Make sure to keep only needed data
+    newOrders.push(_.pick(action.payload, [
+      '@id',
+      'customer',
+      'vendor',
+      'shippingTimeRange',
+      'shippingAddress',
+      'number',
+      'total',
+      'state',
+      'assignedTo',
+      'takeaway',
+      'fulfillmentMethod',
+    ]))
+
+    return {
+      ...state,
+      orders: newOrders,
+    }
+
+  case ORDER_ACCEPTED:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload, { state: 'accepted' })),
+    }
+
+  case ORDER_REFUSED:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload, { state: 'refused' })),
+    }
+
+  case ORDER_CANCELLED:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload, { state: 'cancelled' })),
+    }
+
+  case ORDER_FULFILLED:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload, { state: 'fulfilled' })),
+    }
+
+  case SET_CURRENT_ORDER:
+
+    return {
+      ...state,
+      order: action.payload,
+    }
+
+  case SEARCH_RESULTS:
+
+    return {
+      ...state,
+      searchResults: action.payload.results,
+      searchQuery: action.payload.q,
+    }
+
+  case ACTIVE_TAB:
+
+    return {
+      ...state,
+      activeTab: action.payload,
+    }
+
+  case INIT_HTTP_CLIENT:
+
+    return {
+      ...state,
+      httpClient: action.payload
+    }
+
+  case REFRESH_TOKEN_SUCCESS:
+
+    return {
+      ...state,
+      jwt: action.payload
+    }
   }
-}
 
-export default combineReducers({
-  orders,
-  order,
-  date,
-  jwt,
-  isFetching,
-  acceptOrderRoute: (state = initialState.acceptOrderRoute, action) => state,
-  refuseOrderRoute: (state = initialState.refuseOrderRoute, action) => state,
-  delayOrderRoute: (state = initialState.delayOrderRoute, action) => state,
-  cancelOrderRoute: (state = initialState.cancelOrderRoute, action) => state,
-  currentRoute: (state = initialState.currentRoute, action) => state,
-  restaurant: (state = initialState.restaurant, action) => state,
-  preparationDelay: (state = initialState.preparationDelay, action) => state,
-  showSettings: (state = initialState.showSettings, action) => state,
-})
+  return state
+}

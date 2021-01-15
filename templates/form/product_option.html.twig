@@ -1,0 +1,48 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block _product_option_values_entry_row %}
+  {% set row_id = form.vars.id ~ '_row' %}
+  <div class="d-flex align-items-center mb-2" id="{{ row_id }}">
+    <div class="flex-fill mr-4">
+      {{ form_widget(form.translations, { label: false }) }}
+    </div>
+    <div class="flex-fill mr-4" data-shown="option_value">
+      {{ form_widget(form.price) }}
+    </div>
+    <div class="mr-2">
+      {{ form_widget(form.enabled) }}
+    </div>
+    <div>
+      <button data-delete-row data-target="{{ '#' ~ row_id }}" type="button" class="btn btn-transparent" tabindex="-1" disabled>
+        <i class="fa fa-lg fa-trash"></i>
+      </button>
+    </div>
+  </div>
+{% endblock %}
+
+{% block _product_option_values_entry_translations_entry_row %}
+  {{ form_widget(form, { label: false }) }}
+{% endblock %}
+
+{% block _product_option_values_entry_translations_entry_widget %}
+  {{ form_widget(form.value, { attr: { placeholder: 'form.option_value.value.placeholder' } }) }}
+{% endblock %}
+
+{% block _product_option_values_widget %}
+  {{ form_widget(form) }}
+  <button type="button" class="btn btn-success" id="add-option-value">
+    <i class="fa fa-plus"></i> {{ 'form.product_option.add_value.label'|trans }}
+  </button>
+{% endblock %}
+
+{% block _product_option_valuesRange_row %}
+  <div class="row" {{ block('widget_container_attributes') }}>
+    <div class="col-xs-6">
+      {{ form_row(form.lower, { attr: { class: 'input-sm' } }) }}
+    </div>
+    <div class="col-xs-6">
+      {{ form_row(form.upper, { attr: { class: 'input-sm' } }) }}
+      {{ form_widget(form.infinity) }}
+    </div>
+  </div>
+{% endblock %}

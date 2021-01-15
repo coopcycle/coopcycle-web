@@ -1,0 +1,7 @@
+{
+    "baseUrl": "http://localhost:9080",
+    "chromeWebSecurity": false,
+    "env": {
+        "COMMAND_PREFIX": "docker-compose exec -T php"
+    }
+}

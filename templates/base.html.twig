@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+  <head>
+    {{ sonata_seo_title() }}
+    {{ sonata_seo_link_canonical() }}
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon.png">
+    {{ sonata_seo_metadatas() }}
+    {{ encore_entry_link_tags('common') }}
+    {{ encore_entry_link_tags('widgets') }}
+    {% if app.user %}
+      {{ encore_entry_link_tags('notifications') }}
+    {% endif %}
+    {% block styles_common %}
+      {% block styles %}{% endblock %}
+    {% endblock %}
+    {% block structured_data %}{% endblock %}
+    {% if coopcycle_has_banner() %}
+    <style>
+    .homepage-search, .restaurant-list-header {
+      background-image: url({{ url('assets_banner_svg')  }});
+    }
+    </style>
+    {% endif %}
+    <link rel="preconnect" href="{{ cdn_root_url }}" />
+  </head>
+  <body data-country="{{ country_iso }}" data-currency-symbol="{{ currency_context.currencyCode|sylius_currency_symbol }}" data-timezone="{{ coopcycle_setting('timezone') }}">
+    {% block menu %}
+      {% if not embed_context.enabled %}
+      {% include "menu.html.twig" %}
+      {% endif %}
+    {% endblock %}
+    {% block banner %}
+      {% if is_demo %}
+        <section class="banner">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-8 col-md-offset-2 text-center">
+                <h3>{{ 'demo.disclaimer'|trans|raw }}</h3>
+                <h4 class="hidden-xs">{{ 'demo.disclaimer.subtitle'|trans|raw }}</h4>
+              </div>
+            </div>
+          </div>
+        </section>
+      {% endif %}
+      {% include '_partials/maintenance.html.twig' %}
+      {% include '_partials/banner.html.twig' %}
+    {% endblock %}
+    {% block flash_messages %}
+      {% include '_partials/flash_messages.html.twig' %}
+    {% endblock %}
+    <div class="content">
+    {% block body %}{% endblock %}
+    </div>
+    {% block footer %}
+      {% if not embed_context.enabled %}
+      {% include "footer.html.twig" %}
+      {% endif %}
+    {% endblock %}
+    {% if app.environment == "prod" %}
+      {% if sentry_apm_enabled %}
+      <script
+        src="https://browser.sentry-cdn.com/5.17.0/bundle.apm.min.js"
+        crossorigin="anonymous"></script>
+      <script>
+        Sentry.init({
+          dsn: '{{ sentry_public_dsn }}',
+          integrations: [
+            new Sentry.Integrations.Tracing()
+          ],
+          tracesSampleRate: 0.25
+        });
+      </script>
+      {% else %}
+      <script
+        src="https://browser.sentry-cdn.com/5.17.0/bundle.min.js"
+        integrity="sha384-lowBFC6YTkvMIWPORr7+TERnCkZdo5ab00oH5NkFLeQUAmBTLGwJpFjF6djuxJ/5"
+        crossorigin="anonymous"></script>
+      <script>
+        Sentry.init({ dsn: '{{ sentry_public_dsn }}' });
+      </script>
+      {% endif %}
+    {% endif %}
+
+    <div id="cpccl_settings"
+      data-latlng="{{ coopcycle_setting('latlng')|json_encode|e('html_attr') }}"></div>
+
+    <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+
+    {{ encore_entry_script_tags('common') }}
+    {{ encore_entry_script_tags('widgets') }}
+
+    {% if app.user %}
+      {{ encore_entry_script_tags('notifications') }}
+    {% endif %}
+
+    <div id="autocomplete-adapter" data-value="{{ autocomplete_adapter|default('algolia') }}"></div>
+    {% if autocomplete_adapter|default('algolia') == 'geocode-earth' %}
+    <div id="geocode-earth" data-api-key="{{ geocode_earth_api_key }}"
+      data-boundary-circle-latlon="{{ coopcycle_setting('latlng')|e('html_attr') }}"></div>
+    {% elseif autocomplete_adapter|default('algolia') == 'locationiq' %}
+    <div id="locationiq"
+      data-access-token="{{ locationiq_access_token }}"></div>
+    {% else %}
+    <div id="algolia-places"
+      data-app-id="{{ algolia_places_app_id }}"
+      data-api-key="{{ algolia_places_api_key }}"
+      data-around-lat-lng="{{ coopcycle_setting('latlng')|e('html_attr') }}"
+      data-address-template="{{ algolia_places_address_template }}"></div>
+    {% endif %}
+
+    {% block scripts_common %}
+      {% block scripts %}{% endblock %}
+    {% endblock %}
+
+    {% if app.environment == "test" %}
+    <script>
+    {% include '_partials/error_handler.js.twig' %}
+    </script>
+    {% endif %}
+
+    {% include "_partials/analytics.html.twig" %}
+  </body>
+</html>

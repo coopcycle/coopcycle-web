@@ -1,34 +1,52 @@
 import React from 'react'
+import { render } from 'react-dom'
 import _ from 'lodash'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
+import moment from 'moment'
+import { Draggable, Droppable } from "react-beautiful-dnd"
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
-import { setTaskListGroupMode, toggleTask, selectTask } from '../store/actions'
+import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
+import { setTaskListGroupMode, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
+import { selectUnassignedTasks } from '../../coopcycle-frontend-js/dispatch/redux'
+
+const UnassignedTasksPopoverContentWithTrans = withTranslation()(UnassignedTasksPopoverContent)
 
 class UnassignedTasks extends React.Component {
 
-  componentDidMount() {
+  toggleDisplay(e) {
+    e.preventDefault()
 
-    const $groupModeBtn = $('#task-list-group-mode')
+    const $target = $(e.currentTarget)
 
-    $(document).on('click', '#task-list-group-mode--group', () => {
-      this.props.setTaskListGroupMode('GROUP_MODE_FOLDERS')
-      $groupModeBtn.popover('hide')
-    })
+    if (!$target.data('bs.popover')) {
 
-    $(document).on('click', '#task-list-group-mode--none', () => {
-      this.props.setTaskListGroupMode('GROUP_MODE_NONE')
-      $groupModeBtn.popover('hide')
-    })
+      const el = document.createElement('div')
 
-    $groupModeBtn.popover({
-      container: 'body',
-      html: true,
-      placement: 'left',
-      content: document.querySelector('#task-list-group-mode-template').textContent
-    })
+      const cb = () => {
+        $target.popover({
+          trigger: 'manual',
+          html: true,
+          container: 'body',
+          placement: 'left',
+          content: el,
+          template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>'
+        })
+        $target.popover('toggle')
+      }
+
+      render(<UnassignedTasksPopoverContentWithTrans
+        defaultValue={ this.props.taskListGroupMode }
+        onChange={ mode => {
+          this.props.setTaskListGroupMode(mode)
+          $target.popover('hide')
+        }} />, el, cb)
+
+    } else {
+      $target.popover('toggle')
+    }
   }
 
   renderGroup(group, tasks) {
@@ -39,26 +57,15 @@ class UnassignedTasks extends React.Component {
 
   render() {
 
-    const { taskListGroupMode, selectedTags, showUntaggedTasks } = this.props
+    const { taskListGroupMode } = this.props
     let { unassignedTasks } = this.props
     const groupsMap = new Map()
     const groups = []
-    let standaloneTasks = []
-
-    // Do not show cancelled tasks
-    if (!this.props.showCancelledTasks) {
-      unassignedTasks = _.filter(unassignedTasks, (task) => { return task.status !== 'CANCELLED' })
-    }
-
-    // tag filtering - task should have at least one of the selected tags
-    unassignedTasks = _.filter(unassignedTasks, (task) =>
-      (task.tags.length > 0 &&_.intersectionBy(task.tags, selectedTags, 'name').length > 0) ||
-      (task.tags.length === 0 && showUntaggedTasks)
-    )
+    let standaloneTasks = unassignedTasks
 
     if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
 
-      const tasksWithGroup = _.filter(unassignedTasks, task => task.hasOwnProperty('group') && task.group)
+      const tasksWithGroup = _.filter(unassignedTasks, task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group)
 
       _.forEach(tasksWithGroup, task => {
         const keys = Array.from(groupsMap.keys())
@@ -70,47 +77,116 @@ class UnassignedTasks extends React.Component {
         }
       })
       groupsMap.forEach((tasks, group) => {
-        groups.push(this.renderGroup(group, tasks))
+        groups.push({
+          ...group,
+          tasks
+        })
       })
 
-      standaloneTasks = _.filter(unassignedTasks, task => !task.hasOwnProperty('group') || !task.group)
+      standaloneTasks = _.filter(unassignedTasks, task => !Object.prototype.hasOwnProperty.call(task, 'group') || !task.group)
+    }
 
+    // Order by dropoff desc, with pickup before
+    if (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC') {
+
+      const dropoffTasks = _.filter(standaloneTasks, t => t.type === 'DROPOFF')
+      dropoffTasks.sort((a, b) => {
+        return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
+      })
+      const grouped = _.reduce(dropoffTasks, (acc, task) => {
+        if (task.previous) {
+          const prev = _.find(standaloneTasks, t => t['@id'] === task.previous)
+          if (prev) {
+            acc.push(prev)
+          }
+        }
+        acc.push(task)
+
+        return acc
+      }, [])
+
+      standaloneTasks = grouped
     } else {
-      standaloneTasks = unassignedTasks
+      standaloneTasks.sort((a, b) => {
+        return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
+      })
+    }
+
+    const classNames = ['dashboard__panel']
+    if (this.props.hidden) {
+      classNames.push('hidden')
     }
 
     return (
-      <div className="dashboard__panel">
+      <div className={ classNames.join(' ') }>
         <h4>
           <span>{ this.props.t('DASHBOARD_UNASSIGNED') }</span>
           <span className="pull-right">
             <a href="#" onClick={ e => {
               e.preventDefault()
-              $('#task-modal').modal('show')
+              this.props.openNewTaskModal()
             }}>
               <i className="fa fa-plus"></i>
             </a>
-            &nbsp;
-            <a href="#" id="task-list-group-mode" title={ this.props.t('ADMIN_DASHBOARD_DISPLAY') }>
+            &nbsp;&nbsp;
+            <a href="#" onClick={ e => {
+              e.preventDefault()
+              this.props.toggleSearch()
+            }}>
+              <i className="fa fa-search"></i>
+            </a>
+            &nbsp;&nbsp;
+            <a href="#" onClick={ e => this.toggleDisplay(e) } title={ this.props.t('ADMIN_DASHBOARD_DISPLAY') }>
               <i className="fa fa-list"></i>
             </a>
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
-          <div className="list-group nomargin">
-            { groups }
-            { _.map(standaloneTasks, (task, key) => {
-              return (
-                <Task
-                  key={ key }
-                  task={ task }
-                  toggleTask={ this.props.toggleTask }
-                  selectTask={ this.props.selectTask }
-                  selected={ -1 !== this.props.selectedTasks.indexOf(task) }
-                />
-              )
-            })}
-          </div>
+          <Droppable droppableId="unassigned">
+            {(provided) => (
+              <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
+                { _.map(groups, (group, index) => {
+                  return (
+                    <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
+                      {(provided) => (
+                        <div
+                          ref={ provided.innerRef }
+                          { ...provided.draggableProps }
+                          { ...provided.dragHandleProps }
+                        >
+                          { this.renderGroup(group, group.tasks) }
+                        </div>
+                      )}
+                    </Draggable>
+                  )
+                })}
+                { _.map(standaloneTasks, (task, index) => {
+                  return (
+                    <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ (groups.length + index) }>
+                      {(provided, snapshot) => {
+
+                        return (
+                          <div
+                            ref={ provided.innerRef }
+                            { ...provided.draggableProps }
+                            { ...provided.dragHandleProps }
+                          >
+                            <Task task={ task } />
+                            { (snapshot.isDragging && this.props.selectedTasks.length > 1) && (
+                              <div style={{ position: 'absolute', top: '-10px', right: '-10px', backgroundColor: '#e67e22', color: 'white', height: '20px', width: '20px', borderRadius: '50%', textAlign: 'center' }}>
+                                <span style={{ lineHeight: '20px', fontWeight: '700' }}>{ this.props.selectedTasks.length }</span>
+                              </div>
+                            ) }
+                          </div>
+                        )
+                      }}
+                    </Draggable>
+                  )
+                })}
+                { provided.placeholder }
+              </div>
+            )}
+          </Droppable>
         </div>
       </div>
     )
@@ -118,22 +194,23 @@ class UnassignedTasks extends React.Component {
 }
 
 function mapStateToProps (state) {
+
   return {
-    unassignedTasks: state.unassignedTasks,
+    unassignedTasks: selectUnassignedTasks(state),
     taskListGroupMode: state.taskListGroupMode,
-    selectedTags: state.tagsFilter.selectedTagsList,
-    showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
+    showCancelledTasks: state.filters.showCancelledTasks,
+    taskModalIsOpen: state.taskModalIsOpen,
     selectedTasks: state.selectedTasks,
-    showCancelledTasks: state.taskCancelledFilter,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    setTaskListGroupMode: (mode) => { dispatch(setTaskListGroupMode(mode)) },
-    toggleTask: (task, multiple) => { dispatch(toggleTask(task, multiple)) },
-    selectTask: (task) => { dispatch(selectTask(task)) }
+    setTaskListGroupMode: (mode) => dispatch(setTaskListGroupMode(mode)),
+    openNewTaskModal: () => dispatch(openNewTaskModal()),
+    closeNewTaskModal: () => dispatch(closeNewTaskModal()),
+    toggleSearch: () => dispatch(toggleSearch())
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(UnassignedTasks))
+export default connect(mapStateToProps, mapDispatchToProps, null, { forwardRef: true })(withTranslation(['common'], { withRef: true })(UnassignedTasks))

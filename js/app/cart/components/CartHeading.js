@@ -1,8 +1,52 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
+import _ from 'lodash'
+import classNames from 'classnames'
 
 import { toggleMobileCart } from '../redux/actions'
+import { selectItems, selectErrorMessages, selectWarningMessages } from '../redux/selectors'
+
+const HeadingLeftIcon = ({ loading, warnings, errors }) => {
+
+  if (loading) {
+
+    return (
+      <i className="fa fa-spinner fa-spin"></i>
+    )
+  }
+
+  if (warnings.length > 0 || errors.length > 0) {
+
+    return (
+      <i className="fa fa-warning"></i>
+    )
+  }
+
+  return (
+    <i className="fa fa-check"></i>
+  )
+}
+
+const HeadingTitle = ({ total, warnings, errors }) => {
+
+  if (errors.length > 0) {
+
+    return (
+      <small>{ _.first(errors) }</small>
+    )
+  }
+  if (warnings.length > 0) {
+
+    return (
+      <small>{ _.first(warnings) }</small>
+    )
+  }
+
+  return (
+    <span>{ (total / 100).formatMoney() }</span>
+  )
+}
 
 class CartHeading extends React.Component {
 
@@ -16,62 +60,30 @@ class CartHeading extends React.Component {
     e.stopPropagation()
   }
 
-  renderHeadingLeft(warningAlerts, dangerAlerts) {
-    const { loading } = this.props
-
-    if (loading) {
-      return (
-        <i className="fa fa-spinner fa-spin"></i>
-      )
-    }
-
-    if (warningAlerts.length > 0 || dangerAlerts.length > 0) {
-      return (
-        <i className="fa fa-warning"></i>
-      )
-    }
-
-    return (
-      <i className="fa fa-check"></i>
-    )
-  }
-
-  headingTitle(warnings, errors) {
-    const { loading } = this.props
-
-    if (errors.length > 0) {
-      return _.first(errors)
-    }
-    if (warnings.length > 0) {
-      return _.first(warnings)
-    }
-
-    return !loading ? this.props.t('CART_WIDGET_BUTTON') : this.props.t('CART_TITLE')
-  }
-
   render() {
 
-    const { items, loading, warningAlerts, dangerAlerts } = this.props
-
-    const headingClasses = ['panel-heading', 'cart-heading']
-    if (warningAlerts.length > 0 || dangerAlerts.length > 0) {
-      headingClasses.push('cart-heading--warning')
-    }
-
-    if (!loading && items.length > 0 && warningAlerts.length === 0 && dangerAlerts.length === 0) {
-      headingClasses.push('cart-heading--success')
-    }
+    const { items, total, loading, warningAlerts, dangerAlerts } = this.props
 
     return (
-      <div className={ headingClasses.join(' ') } onClick={ () => this.props.toggleMobileCart() }>
+      <div className={ classNames({
+        'panel-heading': true,
+        'cart-heading': true,
+        'cart-heading--warning': (warningAlerts.length > 0 || dangerAlerts.length > 0),
+        'cart-heading--success': (!loading && items.length > 0 && warningAlerts.length === 0 && dangerAlerts.length === 0) }) }
+        onClick={ () => this.props.toggleMobileCart() }>
         <span className="cart-heading__left">
-          { this.renderHeadingLeft(warningAlerts, dangerAlerts) }
+          <HeadingLeftIcon
+            loading={ loading }
+            warnings={ warningAlerts }
+            errors={ dangerAlerts }  />
         </span>
-        <span className="cart-heading--title">{ this.props.t('CART_TITLE') }</span>
         <span className="cart-heading--title-or-errors">
-          { this.headingTitle(warningAlerts, dangerAlerts) }
+          <HeadingTitle
+            total={ total }
+            warnings={ warningAlerts }
+            errors={ dangerAlerts }  />
         </span>
-        <span className="cart-heading__right" ref="headingRight">
+        <span className="cart-heading__right">
           <i className={ this.props.isMobileCartVisible ? 'fa fa-chevron-up' : 'fa fa-chevron-down' }></i>
         </span>
         <button type="submit" className="cart-heading__button" onClick={ this.onCartHeadingSubmitClick.bind(this)  }>
@@ -85,41 +97,21 @@ class CartHeading extends React.Component {
 
 function mapStateToProps (state) {
 
-  const warningAlerts = []
-  const dangerAlerts = []
-
-  if (state.errors) {
-
-    // We don't display the error when restaurant has changed
-    const errors = _.pickBy(state.errors, (value, key) => key !== 'restaurant')
-
-    _.forEach(errors, (messages, key) => {
-      if (key === 'shippingAddress') {
-        messages.forEach((message) => dangerAlerts.push(message))
-      } else {
-        messages.forEach((message) => warningAlerts.push(message))
-      }
-    })
-  }
-
-  let items = state.cart.items
-  if (state.cart.restaurant.id !== state.restaurant.id) {
-    items = []
-  }
-
   return {
     isMobileCartVisible: state.isMobileCartVisible,
     loading: state.isFetching,
-    dangerAlerts,
-    warningAlerts,
-    items,
+    dangerAlerts: selectErrorMessages(state),
+    warningAlerts: selectWarningMessages(state),
+    items: selectItems(state),
+    total: state.cart.total,
   }
 }
 
 function mapDispatchToProps(dispatch) {
+
   return {
     toggleMobileCart: () => dispatch(toggleMobileCart()),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(CartHeading))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(CartHeading))

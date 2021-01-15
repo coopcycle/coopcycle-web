@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Sylius\Customer" table="sylius_customer">
+    <one-to-one field="user" target-entity="AppBundle\Entity\User" mapped-by="customer">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-one>
+    <one-to-one field="loopeatCredentials" target-entity="AppBundle\Entity\LoopEat\CustomerCredentials" mapped-by="customer" orphan-removal="true">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-one>
+    <one-to-many field="orders" target-entity="Sylius\Component\Order\Model\OrderInterface" mapped-by="customer">
+      <cascade>
+        <cascade-all />
+      </cascade>
+    </one-to-many>
+    <many-to-one field="defaultAddress" target-entity="AppBundle\Entity\Address">
+      <join-columns>
+        <join-column name="default_address_id" referenced-column-name="id" on-delete="SET NULL"/>
+      </join-columns>
+      <cascade>
+        <cascade-persist />
+      </cascade>
+    </many-to-one>
+    <many-to-many field="addresses" target-entity="AppBundle\Entity\Address">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-table name="sylius_customer_address">
+        <join-columns>
+          <join-column name="customer_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="address_id" referenced-column-name="id" nullable="true"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>

@@ -13,11 +13,14 @@ use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class OrderOptionsProcessorTest extends KernelTestCase
 {
+    use ProphecyTrait;
+
     private $adjustmentFactory;
     private $orderOptionsProcessor;
     private $orderItemQuantityModifier;
@@ -33,15 +36,12 @@ class OrderOptionsProcessorTest extends KernelTestCase
         $this->orderOptionsProcessor = new OrderOptionsProcessor($this->adjustmentFactory);
     }
 
-    private function createProductOption($strategy, $price = null)
+    private function createProductOption($strategy)
     {
         $option = $this->prophesize(ProductOptionInterface::class);
         $option
             ->getStrategy()
             ->willReturn($strategy);
-        $option
-            ->getPrice()
-            ->willReturn($price);
 
         return $option->reveal();
     }
@@ -68,6 +68,9 @@ class OrderOptionsProcessorTest extends KernelTestCase
         $productVariant
             ->getOptionValues()
             ->willReturn(new ArrayCollection($optionValues));
+        $productVariant
+            ->getQuantityForOptionValue(Argument::type(ProductOptionValueInterface::class))
+            ->willReturn(1);
 
         return $productVariant->reveal();
     }
@@ -113,43 +116,8 @@ class OrderOptionsProcessorTest extends KernelTestCase
 
         $this->assertCount(1, $adjustments);
         $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(0)->getType());
-        $this->assertEquals('Foo', $adjustments->get(0)->getLabel());
+        $this->assertEquals('1 × Foo', $adjustments->get(0)->getLabel());
         $this->assertEquals(0, $adjustments->get(0)->getAmount());
-        $this->assertFalse($adjustments->get(0)->isNeutral());
-    }
-
-    public function testOrderItemWithOptionStrategyOption()
-    {
-        $order = new Order();
-
-        $productOption = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION, 100);
-        $productOptionValue = $this->createProductOptionValue($productOption, 'Foo');
-
-        $productVariant = $this->createProductVariant([$productOptionValue]);
-        $order->addItem($this->createOrderItem(100, $productVariant));
-
-        $this->orderOptionsProcessor->process($order);
-
-        $adjustments = $order->getAdjustmentsRecursively(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT);
-
-        $this->assertCount(1, $adjustments);
-        $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(0)->getType());
-        $this->assertEquals('Foo', $adjustments->get(0)->getLabel());
-        $this->assertEquals(100, $adjustments->get(0)->getAmount());
-        $this->assertFalse($adjustments->get(0)->isNeutral());
-
-        $order->clearItems();
-
-        $order->addItem($this->createOrderItem(100, $productVariant, 2));
-
-        $this->orderOptionsProcessor->process($order);
-
-        $adjustments = $order->getAdjustmentsRecursively(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT);
-
-        $this->assertCount(1, $adjustments);
-        $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(0)->getType());
-        $this->assertEquals('Foo', $adjustments->get(0)->getLabel());
-        $this->assertEquals(200, $adjustments->get(0)->getAmount());
         $this->assertFalse($adjustments->get(0)->isNeutral());
     }
 
@@ -172,12 +140,12 @@ class OrderOptionsProcessorTest extends KernelTestCase
         $this->assertCount(2, $adjustments);
 
         $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(0)->getType());
-        $this->assertEquals('Foo', $adjustments->get(0)->getLabel());
+        $this->assertEquals('1 × Foo', $adjustments->get(0)->getLabel());
         $this->assertEquals(100, $adjustments->get(0)->getAmount());
         $this->assertFalse($adjustments->get(0)->isNeutral());
 
         $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(1)->getType());
-        $this->assertEquals('Bar', $adjustments->get(1)->getLabel());
+        $this->assertEquals('1 × Bar', $adjustments->get(1)->getLabel());
         $this->assertEquals(0, $adjustments->get(1)->getAmount());
         $this->assertFalse($adjustments->get(1)->isNeutral());
 
@@ -192,13 +160,55 @@ class OrderOptionsProcessorTest extends KernelTestCase
         $this->assertCount(2, $adjustments);
 
         $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(0)->getType());
-        $this->assertEquals('Foo', $adjustments->get(0)->getLabel());
+        $this->assertEquals('1 × Foo', $adjustments->get(0)->getLabel());
         $this->assertEquals(200, $adjustments->get(0)->getAmount());
         $this->assertFalse($adjustments->get(0)->isNeutral());
 
         $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(1)->getType());
-        $this->assertEquals('Bar', $adjustments->get(1)->getLabel());
+        $this->assertEquals('1 × Bar', $adjustments->get(1)->getLabel());
         $this->assertEquals(0, $adjustments->get(1)->getAmount());
+        $this->assertFalse($adjustments->get(1)->isNeutral());
+    }
+
+    public function testOrderItemWithOptionStrategyOptionValueWithQuantity()
+    {
+        $ingredients = $this->createProductOption(
+            ProductOptionInterface::STRATEGY_OPTION_VALUE
+        );
+
+        $avocado = $this->createProductOptionValue($ingredients, 'Avocado', 100);
+        $salad   = $this->createProductOptionValue($ingredients, 'Salad', 100);
+
+        $variant = $this->prophesize(ProductVariantInterface::class);
+        $variant
+            ->getOptionValues()
+            ->willReturn(new ArrayCollection([ $avocado, $salad ]));
+        $variant
+            ->getQuantityForOptionValue($avocado)
+            ->willReturn(3);
+        $variant
+            ->getQuantityForOptionValue($salad)
+            ->willReturn(2);
+
+        $order = new Order();
+        $order->addItem($this->createOrderItem(700, $variant->reveal()));
+
+        $this->orderOptionsProcessor->process($order);
+
+        $adjustments = $order->getAdjustmentsRecursively(
+            AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT
+        );
+
+        $this->assertCount(2, $adjustments);
+
+        $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(0)->getType());
+        $this->assertEquals('3 × Avocado', $adjustments->get(0)->getLabel());
+        $this->assertEquals(300, $adjustments->get(0)->getAmount());
+        $this->assertFalse($adjustments->get(0)->isNeutral());
+
+        $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(1)->getType());
+        $this->assertEquals('2 × Salad', $adjustments->get(1)->getLabel());
+        $this->assertEquals(200, $adjustments->get(1)->getAmount());
         $this->assertFalse($adjustments->get(1)->isNeutral());
     }
 }

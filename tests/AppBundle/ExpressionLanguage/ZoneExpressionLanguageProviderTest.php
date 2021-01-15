@@ -7,10 +7,13 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Zone;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ZoneExpressionLanguageProviderTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $language;
     private $zone;
 
@@ -140,6 +143,21 @@ class ZoneExpressionLanguageProviderTest extends TestCase
 
         $this->assertFalse($this->language->evaluate('in_zone(address, "no_go_zone")', [
             'address' => $address,
+        ]));
+    }
+
+    public function testNullAddress()
+    {
+        $this->language->registerProvider(new ZoneExpressionLanguageProvider($this->zoneRepository->reveal()));
+
+        $this->assertFalse($this->language->evaluate('in_zone(address, zone)', [
+            'address' => null,
+            'zone' => 'paris_south_area',
+        ]));
+
+        $this->assertFalse($this->language->evaluate('out_zone(address, zone)', [
+            'address' => null,
+            'zone' => 'paris_south_area',
         ]));
     }
 }

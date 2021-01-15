@@ -1,0 +1,18 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.restaurants.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="text-right margin-bottom-md">
+  <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {% trans %}adminDashboard.restaurants.createNew{% endtrans %}
+  </a>
+</div>
+{% include "admin/pagination.html.twig" %}
+{% include "_partials/restaurant/list.html.twig" %}
+{% include "admin/pagination.html.twig" %}
+
+{% endblock %}

@@ -1,15 +1,13 @@
 import React from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
+import { ConfigProvider, Form, Button, DatePicker, TimePicker } from 'antd'
 
-import Form from 'antd/lib/form'
+import 'antd/es/input/style/index.css'
+
+import { antdLocale } from '../i18n'
+
 const FormItem = Form.Item
-
-import Button from 'antd/lib/button'
-import DatePicker from 'antd/lib/date-picker'
-import TimePicker from 'antd/lib/time-picker'
-import LocaleProvider from 'antd/lib/locale-provider'
-import frBE from 'antd/lib/locale-provider/fr_BE'
 
 const today = moment().startOf('day')
 
@@ -32,11 +30,12 @@ class DateTimePicker extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this.props.onChange(this.state.value)
-  }
-
   onDateChange(date) {
+
+    // When the input has been cleared
+    if (!date) {
+      return
+    }
 
     let { value } = this.state
 
@@ -54,6 +53,11 @@ class DateTimePicker extends React.Component {
   }
 
   onTimeChange(date) {
+
+    // When the input has been cleared
+    if (!date) {
+      return
+    }
 
     let { value } = this.state
 
@@ -87,14 +91,14 @@ class DateTimePicker extends React.Component {
     } : {}
 
     let datePickerProps = {}
-    if (this.props.hasOwnProperty('getDatePickerContainer') && typeof this.props.getDatePickerContainer === 'function') {
+    if (Object.prototype.hasOwnProperty.call(this.props, 'getDatePickerContainer') && typeof this.props.getDatePickerContainer === 'function') {
       datePickerProps = {
         getCalendarContainer: this.props.getDatePickerContainer
       }
     }
 
     let timePickerProps = {}
-    if (this.props.hasOwnProperty('getTimePickerContainer') && typeof this.props.getTimePickerContainer === 'function') {
+    if (Object.prototype.hasOwnProperty.call(this.props, 'getTimePickerContainer') && typeof this.props.getTimePickerContainer === 'function') {
       timePickerProps = {
         getPopupContainer: this.props.getTimePickerContainer
       }
@@ -103,7 +107,7 @@ class DateTimePicker extends React.Component {
     return (
       <div>
         <FormItem {...formItemProps}>
-          <LocaleProvider locale={frBE}>
+          <ConfigProvider locale={ antdLocale }>
             <DatePicker
               disabledDate={this.disabledDate}
               onChange={this.onDateChange.bind(this)}
@@ -112,8 +116,8 @@ class DateTimePicker extends React.Component {
               defaultValue={this.props.defaultValue}
               { ...datePickerProps }
             />
-          </LocaleProvider>
-          <LocaleProvider locale={frBE}>
+          </ConfigProvider>
+          <ConfigProvider locale={ antdLocale }>
             <TimePicker
               disabledMinutes={this.disabledMinutes}
               onChange={this.onTimeChange.bind(this)}
@@ -126,7 +130,7 @@ class DateTimePicker extends React.Component {
               )}
               { ...timePickerProps }
             />
-          </LocaleProvider>
+          </ConfigProvider>
         </FormItem>
       </div>
     )

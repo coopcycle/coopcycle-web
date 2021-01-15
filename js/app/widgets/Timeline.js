@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import Timeline from 'antd/lib/timeline'
+import { Timeline } from 'antd'
 import moment from 'moment'
 
 const defaultOptions = {

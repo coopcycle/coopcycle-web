@@ -1,0 +1,133 @@
+registration.email.subject: |
+  Confirmation d'adresse
+registration.email.message: |
+  <h2>Bienvenue sur %brand_name%, %username%</h2>
+  Vous recevez ce message car vous avez récemment ouvert un compte sur %brand_name%.
+  <br>
+  Confirmez votre adresse email en cliquant sur le bouton ci-dessous.
+registration.email.confirm: Confirmer mon email
+registration.email.disclaimer: Ce lien ne peut être utilisé qu'une seule fois pour
+  valider votre compte
+registration.email.textMessage: |
+  Bienvenue sur %brand_name%, %username%,\n\n
+  Vous recevez ce message car vous avez récemment ouvert un compte sur %brand_name%.\n
+  Pour confirmer votre email, veuillez cliquer sur le lien suivant : <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
+resetting.email.message: <h2>Bonjour %username% !</h2> Pour réinitialiser votre mot
+  de passe, merci de cliquer sur le bouton ci-dessous.
+resetting.email.reset: Réinitialiser mon mot de passe
+order.view: Voir la commande
+order.public_url: |
+  Pour suivre l'état de votre commande, <a href="%order.public_url%">cliquez ici</a>.
+order.foodtech.accepted.delivery: "Elle vous sera livrée à l'horaire suivant :"
+order.foodtech.accepted.delivery.disclaimer: Nous vous recontacterons en cas de problème
+  pour trouver votre adresse.
+order.foodtech.accepted.collection: "Vous devrez venir la chercher à l'horaire suivant\
+  \ :"
+order.foodtech.accepted.collection.disclaimer: Si vous avez un empêchement, contactez
+  <strong>%name%</strong> au <strong>%phone_number%</strong> suffisamment à l'avance
+  pour annuler votre commande.
+order.foodtech.cancelled: |
+  Le restaurateur n'est pas en mesure de préparer votre commande %order.number%.
+  <br>
+  Votre compte n'a pas été débité.
+order.loopeat.accepted: |
+  <p>Vous avez choisi l’option zéro déchet, bravo !</p>
+  <p>Pensez à rendre la/les lunchbox et le sac en tissu au coursier lors de votre prochaine livraison de repas.</p>
+  <p>Grâce à vous, nous changeons le monde, un repas après l’autre.</p>
+  <p>Parlez-en autour de vous, chaque geste compte !</p>
+  <p>Bon appétit ! LoopEat</p>
+admin.order.created.subject: Nouvelle commande à confirmer
+admin.order.created.body: |
+  Bonjour,
+  <br>
+  Une nouvelle commande a été créée.
+admin.order_foodtech.created.body: |
+  Bonjour,
+  <br>
+  Une nouvelle commande a été créée pour <strong>%restaurant.name%</strong>.
+admin.send_invitation.subject: Invitation à CoopCycle !
+admin.send_invitation.body: |
+  Bonjour %username%,
+  <br>
+  Ceci est une invitation à l'espace CoopCycle, pour finaliser la création de votre compte veuillez cliquer sur lien suivant.
+admin.send_invitation.create_password: Créer mon mot de passe
+admin.pledge.subject: Une nouvelle suggestion a été envoyée !
+admin.pledge.body: |
+  Bonjour,
+  <br>
+  %username% souhaiterait que %pledge.name% soit sur CoopCycle !
+user.pledge.subject: Votre suggestion est désormais sur CoopCycle !
+user.pledge.body: |
+  Bonjour,
+  <br>
+  Grâce à vous, %pledge.name% est désormais sur CoopCycle !
+owner.order.created.subject: Nouvelle commande à confirmer
+owner.order.created.body: |
+  Bonjour,
+  <br>
+  Une nouvelle commande a été créée pour <strong>%restaurant.name%</strong>.
+order.created.subject: Confirmation de votre commande %order.number%
+order.created.body: |
+  Bonjour,
+  <br>
+  Nous avons bien enregistré votre commande.
+  <br>
+  Nous vérifions dans les plus brefs délais votre commande, et nous vous recontactons lorsque celle-ci est confirmée.
+order.accepted.subject: Votre commande %order.number% a été acceptée
+order.accepted.body.intro: "Bonjour,\n<br>\nVotre commande est confirmée."
+order.cancelled.subject: Votre commande %order.number% a été annulée
+order.cancelled.body.intro: |
+  Bonjour,
+  <br>
+  Nous sommes désolé, mais votre commande a été annulée.
+order.delayed.subject: Votre commande %order.number% a été retardée
+order.delayed.body: |
+  Bonjour,
+  <br>
+  Nous sommes désolé, mais votre commande aura un retard de %delay% minutes.
+  <br>
+  Veuillez nous excuser pour la gêne occasionnée.
+task.done.subject: 'La tâche #%task.id% a été terminée'
+task.done.body: |
+  Bonjour,
+  <br>
+  La tâche #%task.id% a été terminée avec succès.
+task.failed.subject: "La tâche #%task.id% n'a pas pu être réalisée"
+task.failed.body: |
+  Bonjour,
+  <br>
+  La tâche #%task.id% n'a pas pu être réalisée.
+order.payment.subject: Paiement de votre commande %order.number%
+order.payment.body: |
+  Bonjour,
+  <br>
+  Nous avons réalisé une livraison que vous avez commandée auprès de nos services.
+  <br>
+  Vous trouverez ci-dessous un lien vous permettant de payer par carte bleue.
+covid_19.subject: COVID-19 | Instructions importantes pour votre commande
+covid_19.body: "<h1>Consignes à suivre pour votre livraison</h1>\n<p>Face à l'épidémie\
+  \ de COVID-19 (Coronavirus) en cours, vous devez respecter <strong>impérativement</strong>\
+  \ les consignes suivantes : </p>\n<h2>1. Respectez la distanciation sociale</h2>\n\
+  <p>Nous déposerons votre commande sur le pas de votre porte, vous n'aurez pas à\
+  \ approcher de la personne qui vient vous livrer. Il est également inutile de laisser\
+  \ un pourboire.</p>\n<h2>2. Déballez votre commande après réception</h2>\n<p>Le\
+  \ virus peut subsister plusieurs jours sur les surfaces en carton et en plastique.\
+  \ Les emballages sont donc l'un des plus gros vecteurs de transmission du virus.\
+  \ Nous vous demandons donc impérativement de <strong>déballer votre commande, et\
+  \ de transvaser le contenu dans des assiettes</strong>.\n</p>\n<h2>3. Jetez les\
+  \ emballages</h2>\n<p>Une fois votre commande déballée, veillez à <strong>jeter\
+  \ les emballages dans une poubelle fermée</strong>, afin d'éviter de les toucher\
+  \ plus tard par inadvertance.</p>\n<h2>4. Lavez-vous les mains !</h2>\n<p>Une fois\
+  \ que vous avez déballé votre commande et jeté les emballages, <strong>lavez-vous\
+  \ impérativement les mains !</strong></p>\n"
+
+order.expiring_authorization.subject: Une pré-autorisation va bientôt expirer
+order.expiring_authorization.text:
+  Une pré-autorisation de paiement pour la commande <strong>%order.number%</strong> va bientôt expirer.
+  <br>
+  Vous devriez finaliser la commande avant l'expiration de la pré-autorisation pour éviter de perdre de l'argent.
+registration.company: Demande d'enregistrement d'entreprise
+registration.restaurant: Nouvelle demande d'ajout de restaurant
+
+order.receipt.subject: Reçu pour votre commande %order.number%
+order.receipt.body: "Bonjour,\n<br>\nVeuillez trouver ci-joint le reçu pour votre commande."

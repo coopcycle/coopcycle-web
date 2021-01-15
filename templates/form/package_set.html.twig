@@ -1,0 +1,22 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block _package_set_packages_widget %}
+  <div>
+    {{ form_widget(form) }}
+    <button type="button" class="btn btn-success" id="package_set_packages_add">
+      <i class="fa fa-plus"></i>  {{ 'basics.add'|trans }}
+    </button>
+  </div>
+{% endblock %}
+
+{% block _package_set_packages_entry_row %}
+  <div class="row">
+    <div class="col-sm-6">
+      {{ form_row(form.name) }}
+    </div>
+    <div class="col-sm-6">
+      {{ form_row(form.volumeUnits) }}
+    </div>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,136 @@
+{% set show_taxes = (not tax_incl) or (with_taxes is not defined) or (with_taxes is defined and with_taxes == true) %}
+{% set with_items = with_items is defined ? with_items : true %}
+
+<table class="table table-order-items">
+  <thead>
+    <th>{% trans with { '%count%': order.countItems } %}order.items.products_with_count{% endtrans %}</th>
+    <th class="text-right">{{ 'order.list.total'|trans }}</th>
+  </thead>
+  {% if with_items %}
+  <tbody>
+  {% if order.hasVendor() %}
+    {% set itemsGroups = order.getItemsGroupedByVendor() %}
+    {% if itemsGroups|length > 1 %}
+      {% for vendor in itemsGroups %}
+        <tr>
+          <th colspan="2">{{ vendor.name }}</th>
+        </tr>
+        {% for item in itemsGroups[vendor] %}
+          {% include '_partials/order/item.html.twig' with { item: item } %}
+        {% endfor %}
+      {% endfor %}
+    {% else %}
+      {% for item in order.items %}
+        {% include '_partials/order/item.html.twig' with { item: item } %}
+      {% endfor %}
+    {% endif %}
+  {% else %}
+    {% for item in order.items %}
+      {% include '_partials/order/item.html.twig' with { item: item } %}
+    {% endfor %}
+  {% endif %}
+  <tbody>
+  {% endif %}
+  {% set delivery_adjustments = order.getAdjustments('delivery') %}
+  {% set promotion_adjustments = [] %}
+  {% set packaging_adjustments = order.getAdjustments('reusable_packaging') %}
+  {% set tip_adjustments = order.getAdjustments('tip') %}
+  {% for adjustment in order.adjustments %}
+    {% if adjustment.type == 'delivery_promotion' or adjustment.type == 'order_promotion' %}
+      {% set promotion_adjustments = [ adjustment ]|merge(promotion_adjustments) %}
+    {% endif %}
+  {% endfor %}
+  <tfoot>
+    <tr>
+      <th>{% trans %}order.items_total{% endtrans %}</th>
+      <td class="text-right text-nowrap">
+        {{ tax_incl ? (order.itemsTotal|price_format) : (order.itemsTotalExcludingTax|price_format) }}
+      </td>
+    </tr>
+    {% if delivery_adjustments|length > 0 %}
+    {% set delivery_adjustment = order.getAdjustments('delivery')|first %}
+    <tr>
+      <th>{{ delivery_adjustment.label }}</th>
+      <td class="text-right text-nowrap">
+        {{ delivery_adjustment.amount|price_format }}
+      </td>
+    </tr>
+    {% endif %}
+    {% if show_taxes %}
+      {% for tax_rate in order|split_tax_rates %}
+      <tr>
+        <th>{% trans with { '%name%': tax_rate.name } %}order.total_tax_by_rate{% endtrans %}</th>
+        <td class="text-right text-nowrap">
+          {{ tax_rate.amount|price_format }}
+        </td>
+      </tr>
+      {% endfor %}
+    {% endif %}
+    {% if tip_adjustments|length > 0 %}
+      {% for adjustment in tip_adjustments %}
+      <tr class="text-info">
+        <th>{{ adjustment.label }}</th>
+        <td class="text-right text-nowrap">
+          {% if with_tip_form is defined %}
+          <a href="#" id="tip-incr">
+            <i class="fa fa-plus-square fa-lg"></i>
+          </a>
+          {% endif %}
+          <span class="ml-2" {% if with_tip_form is defined %}contenteditable="true" id="tip-input"{% endif %}>
+            {{ adjustment.amount|price_format }}
+          </span>
+        </td>
+      </tr>
+      {% endfor %}
+    {% else %}
+      {% if with_tip_form is defined %}
+      <tr class="text-info">
+        <th>{{ 'order.adjustment_type.tip'|trans }}</th>
+        <td class="text-right text-nowrap">
+          <a href="#" id="tip-incr">
+            <i class="fa fa-plus-square fa-lg"></i>
+          </a>
+          <span class="ml-2" contenteditable="true" id="tip-input">
+            {{ 0|price_format }}
+          </span>
+        </td>
+      </tr>
+      {% endif %}
+    {% endif %}
+
+    {% if promotion_adjustments|length > 0 %}
+      {% for adjustment in promotion_adjustments %}
+      <tr>
+        <th>{{ adjustment.label }}</th>
+        <td class="text-right text-nowrap">
+          {{ adjustment.amount|price_format }}
+        </td>
+      </tr>
+      {% endfor %}
+    {% endif %}
+    {% if packaging_adjustments|length > 0 %}
+      {% for adjustment in packaging_adjustments %}
+      <tr>
+        <th>{{ adjustment.label }}</th>
+        <td class="text-right text-nowrap">
+          {{ adjustment.amount|price_format }}
+        </td>
+      </tr>
+      {% endfor %}
+    {% endif %}
+    {% if with_total_excluding_tax is defined and with_total_excluding_tax %}
+      <tr>
+        <th>{% trans %}order.total_excluding_tax{% endtrans %}</th>
+        <td class="text-right text-nowrap">
+          {{ (order.itemsTotal - order.itemsTaxTotal)|price_format }}
+        </td>
+      </tr>
+    {% endif %}
+    <tr>
+      <th>{% trans %}order.total_including_tax{% endtrans %}</th>
+      <td class="text-right text-nowrap">
+        {{ order.total|price_format }}
+      </td>
+    </tr>
+  </tfoot>
+</table>

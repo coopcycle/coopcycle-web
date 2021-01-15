@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Sylius\ProductVariantOptionValue" table="sylius_product_variant_option_value">
+    <unique-constraints>
+      <unique-constraint name="sylius_product_variant_option_value_unique" columns="variant_id,option_value_id"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="quantity" type="integer" column="quantity"/>
+    <many-to-one field="variant" target-entity="AppBundle\Entity\Sylius\ProductVariant" inversed-by="optionValues">
+      <join-columns>
+        <join-column name="variant_id" referenced-column-name="id" nullable="false"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="optionValue" target-entity="AppBundle\Entity\Sylius\ProductOptionValue">
+      <join-columns>
+        <join-column name="option_value_id" referenced-column-name="id" nullable="false"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

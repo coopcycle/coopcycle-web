@@ -16,14 +16,14 @@ export default function(selector, options) {
   const map = MapHelper.init(selector)
 
   const pickup = MapHelper.createMarker(options.pickup, 'cube', 'marker', '#E74C3C')
-  const dropoff = MapHelper.createMarker(options.dropoff, 'flag', 'marker', '#2ECC71')
+  const dropoff = MapHelper.createMarker(options.dropoff, 'arrow-down', 'marker', '#2ECC71')
 
   pickup.addTo(map)
   dropoff.addTo(map)
 
   const layers = [ pickup, dropoff ]
 
-  if (options.hasOwnProperty('polyline')) {
+  if (Object.prototype.hasOwnProperty.call(options, 'polyline')) {
     const polyline = L.polyline(MapHelper.decodePolyline(options.polyline), polylineOptions)
     polyline.addTo(map)
     layers.push(polyline)

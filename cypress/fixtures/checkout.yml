@@ -1,0 +1,28 @@
+include:
+  - settings.yml
+  - sylius_channels.yml
+  - addresses.yml
+  - restaurants.yml
+
+AppBundle\Entity\User:
+  bob:
+    __factory:
+      '@FOS\UserBundle\Util\UserManipulator::create':
+        - 'bob'
+        - '12345678'
+        - 'bob@demo.coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+  jane:
+    __factory:
+      '@FOS\UserBundle\Util\UserManipulator::create':
+        - 'jane'
+        - '12345678'
+        - 'jane@demo.coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    addresses: [ "@address_4" ]

@@ -1,0 +1,123 @@
+name: Test
+on: push
+env:
+  APP_ENV: test
+  NODE_ENV: test
+jobs:
+  LINT:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: composer:v2, phpstan, redis
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest --no-scripts
+      - name: Install JS dependencies
+        run: npm ci
+      - name: Run PHPStan
+        run: phpstan analyse
+      - name: Run ESLint
+        run: node_modules/.bin/eslint --quiet js/app/
+      - name: Clear Symfony cache
+        run: bin/console cache:clear
+      - name: Warmup Symfony cache
+        run: bin/console cache:warmup
+  BASE:
+    name: Run base tests
+    runs-on: ubuntu-latest
+    env:
+      STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create .env file
+        run: cp .env.dist .env
+      - name: Pull Docker images
+        run: docker-compose pull --ignore-pull-failures
+      - name: Prepare OSRM data
+        run: |
+          docker-compose run -T --rm osrm wget --no-check-certificate https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf -O /data/data.osm.pbf
+          docker-compose run -T --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
+          docker-compose run -T --rm osrm osrm-partition /data/data.osrm
+          docker-compose run -T --rm osrm osrm-customize /data/data.osrm
+      - name: Start Docker containers
+        run: docker-compose up -d
+      - name: Wait for PHP-FPM
+        run: until docker inspect --format='{{ .State.Health.Status }}' $(docker-compose ps -q php) | grep -wq healthy; do sleep 5; done
+      - name: Create database
+        run: docker-compose exec -T php bin/console doctrine:schema:create --env=test
+      - name: Validate database schema
+        run: docker-compose exec -T php bin/console doctrine:schema:validate --env=test --skip-sync
+      - name: Run PHPUnit
+        run: |
+          cp phpunit.xml.dist phpunit.xml
+          docker-compose exec -T php vendor/bin/phpunit
+      - name: Run Behat
+        run: docker-compose exec -T php vendor/bin/behat -f progress
+      - name: Run Jest
+        run: docker-compose exec -T nodejs npm run jest
+      # - name: Run Mocha
+      #   run: docker-compose exec -T nodejs node node_modules/.bin/mocha --require @babel/register --exit js/tests/
+  E2E:
+    name: Run End to End tests
+    runs-on: ubuntu-latest
+    env:
+      STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      AWS_ENDPOINT: ${{ secrets.AWS_ENDPOINT }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ALGOLIA_PLACES_APP_ID: ${{ secrets.ALGOLIA_PLACES_APP_ID }}
+      ALGOLIA_PLACES_API_KEY: ${{ secrets.ALGOLIA_PLACES_API_KEY }}
+      ALGOLIA_PLACES_ADDRESS_TEMPLATE: county
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create .env file
+        run: cp .env.dist .env
+      # - name: Change APP_ENV
+      #   run: sed -i 's/APP_ENV=dev/APP_ENV=test/' .env
+      - name: Pull Docker images
+        run: docker-compose pull --ignore-pull-failures
+      - name: Prepare OSRM data
+        run: |
+          docker-compose run -T --rm osrm wget --no-check-certificate https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf -O /data/data.osm.pbf
+          docker-compose run -T --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
+          docker-compose run -T --rm osrm osrm-partition /data/data.osrm
+          docker-compose run -T --rm osrm osrm-customize /data/data.osrm
+      # Cypress GitHub Action uses npm ci, and it causes a "permission denied" error,
+      # because it tries to remove the node_modules/ folder, which is mounted with root:root
+      # We create the node_modules/ folder *BEFORE* starting the containers,
+      # so that it can be removed without problems.
+      - name: Create node_modules directory
+        run: mkdir node_modules
+      - name: Start Docker containers
+        run: docker-compose up -d
+      - name: Wait for PHP-FPM
+        run: until docker inspect --format='{{ .State.Health.Status }}' $(docker-compose ps -q php) | grep -wq healthy; do sleep 5; done
+      - name: Create database
+        run: docker-compose exec -T php bin/console doctrine:schema:create --env=test
+      - name: Setup CoopCycle
+        run: docker-compose exec -T php bin/console coopcycle:setup --env=test
+      - name: Compile assets
+        run: docker-compose exec -T webpack node_modules/.bin/encore dev
+      - name: Run Cypress
+        uses: cypress-io/github-action@v2
+      # - name: Print logs
+      #   if: always()
+      #   run: cat var/logs/*.log
+      # - name: Upload screenshots
+      #   if: always()
+      #   run: |
+      #     python -m pip install --upgrade pip
+      #     pip install python-swiftclient python-keystoneclient
+      #     pip install awscli
+      #     tar czvf $GITHUB_SHA.tgz -C cypress/screenshots .
+      #     aws --endpoint=$AWS_ENDPOINT s3 cp $GITHUB_SHA.tgz s3://cypress/$GITHUB_SHA.tgz --acl private

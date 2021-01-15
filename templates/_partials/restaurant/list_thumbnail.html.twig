@@ -1,0 +1,47 @@
+{% set restaurant_image = coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') %}
+{% if restaurant_image is empty %}
+  {% set restaurant_image = '//via.placeholder.com/512.jpg' %}
+{% endif %}
+
+{% set restaurant_path_params = {} %}
+{% if address is defined and address is not empty %}
+  {% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
+{% endif %}
+
+<a class="restaurant-item {% if not restaurant.enabled %}restaurant-item--disabled{% endif %}"
+  href="{{ local_business_path(restaurant, restaurant_path_params) }}">
+  <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
+  <div>
+    <h4 class="restaurant-item__title">{{ restaurant.name|u.truncate(48, '…', false) }}</h4>
+    {% cache restaurant_caption_cache_annotation restaurant %}
+    {% if restaurant.servesCuisine|length > 0 %}
+      <p class="text-muted">{{ restaurant.servesCuisine|map(c => ("#{c.name}"|trans({}, 'cuisines')))|join(' · ') }}</p>
+    {% elseif restaurant.description is not empty %}
+      <p class="text-muted">{{ restaurant.description|u.truncate(42, '…', false) }}</p>
+    {% else %}
+      <p class="text-muted">{{ restaurant.address.streetAddress }}</p>
+    {% endif %}
+    {% endcache %}
+    <div data-fulfillment="{{ path('restaurant_fulfillment_timing', { id: restaurant.id }) }}">
+      {# Managed with React #}
+      <span class="restaurant-item__time-range">
+        <i class="fa fa-clock-o"></i>
+      </span>
+    </div>
+  </div>
+
+  {% if not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) %}
+    <div class="restaurant-item__top-left">
+      <span class="btn btn-sm btn-warning">
+        <i class="fa fa-eye"></i>  {{ 'restaurants.visible_by_you_only'|trans }}
+      </span>
+    </div>
+  {% elseif restaurant.enabled and restaurant.exclusive %}
+    <div class="restaurant-item__top-left">
+      <span class="btn btn-sm btn-warning">
+        <i class="fa fa-star"></i>  {{ 'adminDashboard.restaurants.exclusive'|trans }}
+      </span>
+    </div>
+  {% endif %}
+
+</a>

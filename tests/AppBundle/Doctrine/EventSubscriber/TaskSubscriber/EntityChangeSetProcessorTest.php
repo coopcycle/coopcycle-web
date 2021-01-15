@@ -4,13 +4,16 @@ namespace Tests\AppBundle\Doctrine\EventSubscriber\TaskSubscriber;
 
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class EntityChangeSetProcessorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $taskListProvider;
 
     public function setUp(): void
@@ -20,7 +23,7 @@ class EntityChangeSetProcessorTest extends TestCase
 
     public function testTaskAssignmentHasNotChanged()
     {
-        $user = new ApiUser();
+        $user = new User();
 
         $task = new Task();
 
@@ -41,7 +44,7 @@ class EntityChangeSetProcessorTest extends TestCase
 
     public function testTaskWasAssigned()
     {
-        $user = new ApiUser();
+        $user = new User();
 
         $task = new Task();
 
@@ -66,10 +69,10 @@ class EntityChangeSetProcessorTest extends TestCase
 
     public function testTaskWasReassigned()
     {
-        $bob = new ApiUser();
+        $bob = new User();
         $bob->setUsername('bob');
 
-        $claire = new ApiUser();
+        $claire = new User();
         $claire->setUsername('claire');
 
         $task = new Task();
@@ -105,7 +108,7 @@ class EntityChangeSetProcessorTest extends TestCase
 
     public function testTaskWasUnassigned()
     {
-        $bob = new ApiUser();
+        $bob = new User();
         $bob->setUsername('bob');
 
         $task = new Task();

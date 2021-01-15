@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="//unpkg.com/gutenberg-css@0.6.0" media="print" charset="utf-8">
+    {# <link rel="stylesheet" href="//unpkg.com/gutenberg-css@0.5.0/dist/themes/modern.min.css" media="print" charset="utf-8"> #}
+    <style>
+    body > header,
+    body > footer {
+      display: flex;
+      justify-content: space-between;
+    }
+    body > header {
+      margin-bottom: 10mm;
+    }
+    body > header > *,
+    body > footer > * {
+      flex: 1;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    </style>
+    {% block styles %}{% endblock %}
+  </head>
+  <body>
+    {% block header %}
+    <header>
+      <div>
+        <img src="{{ coopcycle_company_logo() }}" style="width: 25mm; height: 25mm;">
+      </div>
+      <div>
+        {% block header_right %}
+        <ul style="text-align: right;">
+          <li><strong>{{ coopcycle_setting('brand_name') }}</strong></li>
+          <li>{{ 'now'|format_datetime('short', 'short') }}</li>
+        </ul>
+        {% endblock %}
+      </div>
+    </header>
+    {% endblock %}
+    {% block content %}{% endblock %}
+  </body>
+</html>

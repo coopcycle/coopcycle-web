@@ -20,7 +20,7 @@ winzou_state_machine:
                 from: [new, accepted]
                 to: cancelled
             fulfill:
-                from: [accepted, ready]
+                from: [new, accepted]
                 to: fulfilled
             accept:
                 from: [new]
@@ -28,11 +28,14 @@ winzou_state_machine:
             refuse:
                 from: [new]
                 to: refused
-            ready:
-                from: [accepted]
-                to: ready
+        callbacks:
+            guard:
+                guard_on_fulfill:
+                    on:   'fulfill'
+                    do:   ['@AppBundle\Domain\Order\Workflow\Guard', 'isFulfillable']
+                    args: ['object']
     sylius_payment:
-        class: AppBundle\Entity\StripePayment
+        class: "%sylius.model.payment.class%"
         property_path: state
         graph: sylius_payment
         state_machine_class: "%sylius.state_machine.class%"
@@ -61,7 +64,7 @@ winzou_state_machine:
                 from: [new, authorized, processing]
                 to: completed
             fail:
-                from: [cart, new, authorized]
+                from: [cart, new, authorized, processing]
                 to: failed
             cancel:
                 from: [cart, new, authorized]
@@ -75,23 +78,3 @@ winzou_state_machine:
             void:
                 from: [new, processing]
                 to: void
-    task:
-        class: AppBundle\Entity\Task
-        property_path: status
-        graph: task
-        state_machine_class: "%sylius.state_machine.class%"
-        states:
-            TODO: ~
-            DONE: ~
-            FAILED: ~
-            CANCELLED: ~
-        transitions:
-            markAsDone:
-                from: [TODO]
-                to: DONE
-            markAsFailed:
-                from: [TODO]
-                to: FAILED
-            cancel:
-                from: [TODO]
-                to: CANCELLED

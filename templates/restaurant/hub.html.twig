@@ -1,0 +1,54 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+<header class="restaurant-list-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div>
+          <h1 class="text-center my-4 text-white">{{ hub.name }}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="container">
+  {% if hub.restaurants|length == 0 %}
+    <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
+      {{ 'restaurants.no_results'|trans|raw }}
+    </div>
+  {% else %}
+    {% set business_types = hub.getBusinessTypes() %}
+    {% if business_types|length > 1 %}
+      <ul class="nav nav-pills mb-4">
+        <li role="presentation" {% if business_type_filter is empty %}class="active"{% endif %}>
+          <a href="{{ path('hub', { id: hub.id, slug: (hub.name|slugify) }) }}">
+            {{ 'index.view_all_merchants'|trans }}
+          </a>
+        </li>
+        {% for business_type in business_types %}
+        <li role="presentation" {% if business_type_filter == business_type %}class="active"{% endif %}>
+          <a href="{{ path('hub', { id: hub.id, slug: (hub.name|slugify), type: business_type }) }}">
+            {{ business_type|local_business_type }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <div class="row display-flex restaurant-list">
+      {% for restaurant in hub.restaurants %}
+        {% if business_type_filter is empty or business_type_filter == restaurant.type %}
+        <div class="col-sm-6 col-md-4 display-flex">
+          {% include "_partials/restaurant/list_thumbnail.html.twig" %}
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('restaurant-list') }}
+{% endblock %}

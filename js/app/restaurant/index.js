@@ -1,119 +1,138 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { render, unmountComponentAtNode } from 'react-dom'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
+import _ from 'lodash'
 
-import OpeningHoursParser from '../widgets/OpeningHoursParser'
-import i18n from '../i18n'
+import engine  from 'store/src/store-engine'
+import session from 'store/storages/sessionStorage'
+import cookie  from 'store/storages/cookieStorage'
+
+import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from '../cart/redux/store'
 import { addItem, addItemWithOptions, queueAddItem } from '../cart/redux/actions'
 import Cart from '../cart/components/Cart'
+import { validateForm } from '../utils/address'
+import ProductOptionsModal from './components/ProductOptionsModal'
+import ProductImagesCarousel from './components/ProductImagesCarousel'
 
 require('gasparesganga-jquery-loading-overlay')
 
-window._paq = window._paq || []
+import './index.scss'
 
-Modal.setAppElement(document.getElementById('cart'))
+const storage = engine.createStore([ session, cookie ])
+
+window._paq = window._paq || []
 
 let store
 
-window.initMap = function() {
+const init = function() {
 
-  $('[data-quantity-decrement]').on('click', function(e) {
-    e.preventDefault()
-    const $quantity = $(this).closest('.quantity-input-group').find('[data-quantity]')
-    const currentQuantity = parseInt($quantity.val(), 10)
-    if (currentQuantity > 1) {
-      $quantity.val(currentQuantity - 1)
-    }
-  })
+  const container = document.getElementById('cart')
 
-  $('[data-quantity-increment]').on('click', function(e) {
-    e.preventDefault()
-    const $quantity = $(this).closest('.quantity-input-group').find('[data-quantity]')
-    const currentQuantity = parseInt($quantity.val(), 10)
-    $quantity.val(currentQuantity + 1)
-  })
+  if (!container) {
+
+    return
+  }
 
   $('form[data-product-simple]').on('submit', function(e) {
     e.preventDefault()
+    $(e.currentTarget).closest('.modal').modal('hide')
     store.dispatch(queueAddItem($(this).attr('action'), 1))
   })
 
-  // Make sure all (non-additional) options have been checked
-  $('form[data-product-options] input[type="radio"]').on('change', function() {
+  // We update the base price on "show.bs.modal" to avoid flickering
+  $('#product-options').on('show.bs.modal', function(event) {
 
-    var $options = $(this).closest('form').find('[data-product-option]')
-    var checkedOptionsCount = 0
-    $options.each(function(index, el) {
-      checkedOptionsCount += $(el).find('input[type="radio"]:checked').length
-    })
+    const $modal = $(this)
+    $modal.find('.modal-title').text(event.relatedTarget.dataset.productName)
 
-    window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
+    const productOptions =
+      JSON.parse(event.relatedTarget.dataset.productOptions)
+    const productImages =
+      JSON.parse(event.relatedTarget.dataset.productImages)
 
-    if ($options.length === checkedOptionsCount) {
-      $(this).closest('form').find('button[type="submit"]').prop('disabled', false)
-      $(this).closest('form').find('button[type="submit"]').removeAttr('disabled')
-    }
+    render(
+      <ProductOptionsModal
+        price={ JSON.parse(event.relatedTarget.dataset.productPrice) }
+        code={ event.relatedTarget.dataset.productCode }
+        options={ productOptions }
+        formAction={ event.relatedTarget.dataset.formAction }
+        images={ productImages }
+        onSubmit={ (e) => {
+          e.preventDefault()
+
+          const $form = $modal.find('form')
+
+          const data = $form.serializeArray()
+          const quantity = $form.find('[data-product-quantity]').val() || 1
+
+          if (data.length > 0) {
+            store.dispatch(addItemWithOptions($form.attr('action'), data, quantity))
+          } else {
+            store.dispatch(addItem($form.attr('action'), quantity))
+          }
+
+          $modal.modal('hide')
+
+        } } />,
+      this.querySelector('.modal-body [data-options-container]')
+    )
   })
 
-  $('form[data-product-options] input[type="checkbox"]').on('click', function() {
-    window._paq.push(['trackEvent', 'Checkout', 'addExtra'])
-  })
-
-  $('form[data-product-options]').on('submit', function(e) {
-    e.preventDefault()
-    const data = $(this).serializeArray()
-    const $quantity = $(this).find('[data-quantity]')
-    const quantity = $quantity.val() || 1
-
-    if (data.length > 0) {
-      store.dispatch(addItemWithOptions($(this).attr('action'), data, quantity))
-    } else {
-      store.dispatch(addItem($(this).attr('action'), quantity))
-    }
-
-    $(this).closest('.modal').modal('hide')
-    // Uncheck all options
-    $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false)
-    $(this).closest('form').find('input[type="checkbox"]:checked').prop('checked', false)
-    // Reset quantity
-    $quantity.val(1)
-  })
-
-  $('.modal').on('shown.bs.modal', function() {
+  $('#product-options').on('shown.bs.modal', function() {
     window._paq.push(['trackEvent', 'Checkout', 'showOptions'])
-    var $form = $(this).find('form[data-product-options]')
-    if ($form.length === 1) {
-      var $options = $form.find('[data-product-option]')
-      var disabled = $options.length > 0
-      $form.find('button[type="submit"]').prop('disabled', disabled)
-    }
   })
 
-  $('.modal').on('hidden.bs.modal', function() {
+  $('#product-options').on('hidden.bs.modal', function() {
+    unmountComponentAtNode(this.querySelector('.modal-body [data-options-container]'))
     window._paq.push(['trackEvent', 'Checkout', 'hideOptions'])
+  })
+
+  // ---
+
+  $('#product-details').on('show.bs.modal', function(event) {
+
+    const images = JSON.parse(event.relatedTarget.dataset.productImages)
+    const productPrice = JSON.parse(event.relatedTarget.dataset.productPrice)
+
+    const $modal = $(this)
+    $modal.find('.modal-title').text(event.relatedTarget.dataset.productName)
+    $modal.find('form').attr('action', event.relatedTarget.dataset.formAction)
+    $modal.find('button[type="submit"]').text((productPrice / 100).formatMoney())
+
+    render(
+      <ProductImagesCarousel images={ images } />,
+      this.querySelector('.modal-body [data-carousel-container]')
+    )
+  })
+
+  $('#product-details').on('hidden.bs.modal', function() {
+    unmountComponentAtNode(this.querySelector('.modal-body [data-carousel-container]'))
   })
 
   const restaurantDataElement = document.querySelector('#js-restaurant-data')
   const addressesDataElement = document.querySelector('#js-addresses-data')
 
   const restaurant = JSON.parse(restaurantDataElement.dataset.restaurant)
-  let cart = JSON.parse(restaurantDataElement.dataset.cart)
-
+  const times = JSON.parse(restaurantDataElement.dataset.times)
   const addresses = JSON.parse(addressesDataElement.dataset.addresses)
 
-  // FIXME Check parse errors
-
-  new OpeningHoursParser(document.querySelector('#opening-hours'), {
-    openingHours: restaurant.openingHours,
-    locale: $('html').attr('lang')
-  })
+  let cart = JSON.parse(restaurantDataElement.dataset.cart)
 
   if (!cart.shippingAddress) {
-    const searchAddress = sessionStorage.getItem('search_address')
-    if (searchAddress) {
+
+    const searchAddress = storage.get('search_address')
+
+    if (_.isObject(searchAddress)) {
+      cart = {
+        ...cart,
+        shippingAddress: {
+          ...searchAddress
+        }
+      }
+    } else {
       cart = {
         ...cart,
         shippingAddress: {
@@ -123,24 +142,43 @@ window.initMap = function() {
     }
   }
 
+  $(container).closest('form').on('submit', function (e) {
+
+    const { cart } = store.getState()
+
+    // Don't try to validate address for collection
+    if (cart.takeaway) {
+      return
+    }
+
+    const searchInput = document.querySelector('#cart input[type="search"]')
+    const latInput = document.querySelector('#cart_shippingAddress_latitude')
+    const lngInput = document.querySelector('#cart_shippingAddress_longitude')
+    const streetAddrInput = document.querySelector('#cart_shippingAddress_streetAddress')
+
+    validateForm(e, searchInput, latInput, lngInput, streetAddrInput)
+  })
+
   const state = {
     cart,
     restaurant,
-    availabilities: restaurant.availabilities,
-    datePickerDateInputName: 'cart[date]',
-    datePickerTimeInputName: 'cart[time]',
+    datePickerTimeSlotInputName: 'cart[timeSlot]',
     addressFormElements: {
-      streetAddress: document.querySelector('#cart_shippingAddress_streetAddress'),
-      postalCode: document.querySelector('#cart_shippingAddress_postalCode'),
-      addressLocality: document.querySelector('#cart_shippingAddress_addressLocality'),
-      latitude: document.querySelector('#cart_shippingAddress_latitude'),
-      longitude: document.querySelector('#cart_shippingAddress_longitude')
+      'streetAddress': document.querySelector('#cart_shippingAddress_streetAddress'),
+      'postalCode': document.querySelector('#cart_shippingAddress_postalCode'),
+      'addressLocality': document.querySelector('#cart_shippingAddress_addressLocality'),
+      'geo.latitude': document.querySelector('#cart_shippingAddress_latitude'),
+      'geo.longitude': document.querySelector('#cart_shippingAddress_longitude')
     },
     isNewAddressFormElement: document.querySelector('#cart_isNewAddress'),
-    addresses
+    addresses,
+    times,
+    country: getCountry(),
   }
 
   store = createStoreFromPreloadedState(state)
+
+  Modal.setAppElement(container)
 
   render(
     <Provider store={ store }>
@@ -148,11 +186,7 @@ window.initMap = function() {
         <Cart />
       </I18nextProvider>
     </Provider>,
-    document.querySelector('#cart'),
-    () => {
-      document.querySelector('#cart').setAttribute('data-ready', 'true')
-      $('#menu').LoadingOverlay('hide')
-    }
+    container
   )
 
 }
@@ -160,3 +194,5 @@ window.initMap = function() {
 $('#menu').LoadingOverlay('show', {
   image: false,
 })
+
+init()

@@ -10,33 +10,30 @@
 !/var/logs
 /var/logs/*
 !var/logs/.gitkeep
-!/var/sessions
-/var/sessions/*
-!var/sessions/.gitkeep
 !var/SymfonyRequirements.php
 !var/sql
 /vendor/
+/vendor-shared/
+/.phpunit.result.cache
 
 # Build with webpack
+/web/build/
+
+# Symfony bundles
 /web/bundles/
-/web/css/
-/web/entrypoints.json
-/web/fonts/
+
+# Files stored on disk
 /web/images/*
 !web/images/.gitkeep
 /web/media/*
 !web/media/.gitkeep
 /web/media/cache/*
 !web/media/cache/.gitkeep
-/web/img/build/
-/web/js/
-/web/manifest.json
-/web/manifest.js
-/web/manifest.*.js
-/web/runtime.js
 
 /node_modules/
 .DS_Store
+
+/vroom-conf/access.log
 
 # Sublime text editor stuff
 *.sublime-workspace
@@ -49,3 +46,5 @@
 .docker-sync
 
 .env
+
+/js/app/shared-js-lib-local

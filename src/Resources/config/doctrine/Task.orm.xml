@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity repository-class="AppBundle\Entity\TaskRepository" name="AppBundle\Entity\Task" table="task">
+    <unique-constraints>
+      <unique-constraint columns="organization_id,ref"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="type" type="string" column="type" nullable="false"/>
+    <field name="status" type="string" column="status" nullable="false"/>
+    <field name="doneAfter" type="datetime" column="done_after" nullable="false"/>
+    <field name="doneBefore" type="datetime" column="done_before" nullable="false"/>
+    <field name="comments" type="text" column="comments" nullable="true"/>
+    <field name="doorstep" type="boolean" column="doorstep"/>
+    <field name="ref" type="string" column="ref" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <one-to-one field="previous" target-entity="AppBundle\Entity\Task">
+      <join-columns>
+        <join-column name="previous_task_id" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
+    <one-to-one field="next" target-entity="AppBundle\Entity\Task">
+      <join-columns>
+        <join-column name="next_task_id" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
+    <one-to-many field="events" target-entity="AppBundle\Entity\TaskEvent" mapped-by="task">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <one-to-many field="images" target-entity="AppBundle\Entity\TaskImage" mapped-by="task">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <many-to-one field="delivery" target-entity="AppBundle\Entity\Delivery">
+      <join-columns>
+        <join-column name="delivery_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="address" target-entity="AppBundle\Entity\Address">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="address_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="group" target-entity="AppBundle\Entity\Task\Group" inversed-by="tasks">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="group_id" referenced-column-name="id" on-delete="SET NULL"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="assignedTo" target-entity="AppBundle\Entity\User">
+      <join-columns>
+        <join-column name="assigned_to" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="organization" target-entity="AppBundle\Entity\Organization">
+      <join-columns>
+        <join-column name="organization_id" referenced-column-name="id" on-delete="SET NULL" />
+      </join-columns>
+    </many-to-one>
+    <entity-listeners>
+      <entity-listener class="AppBundle\Entity\Listener\TaskListener">
+        <lifecycle-callback type="prePersist" method="prePersist"/>
+      </entity-listener>
+    </entity-listeners>
+  </entity>
+</doctrine-mapping>

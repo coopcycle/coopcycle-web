@@ -1,0 +1,17 @@
+{% if form.enabled is defined %}
+  {{ form_row(form.enabled) }}
+{% endif %}
+
+{% set enabled = form.enabled.vars.data %}
+
+{% if enabled and loopeat_authorize_url is defined %}
+  {% if restaurant.hasLoopEatCredentials() %}
+    <p>
+      <a class="btn btn-default btn-sm"><i class="fa fa-check"></i> {% trans %}profile.loopeat.connected{% endtrans %}</a>
+      {{ form_widget(form.disconnect, { attr: { class: 'btn-sm btn-danger' } }) }}
+    </p>
+  {% else %}
+    <p><a href="{{ loopeat_authorize_url }}" class="btn btn-success btn-sm">{% trans %}profile.loopeat.connect{% endtrans %}</a></p>
+  {% endif %}
+{% endif %}
+

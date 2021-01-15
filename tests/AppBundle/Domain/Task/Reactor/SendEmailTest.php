@@ -5,7 +5,7 @@ namespace Tests\AppBundle\Domain\Task\Reactor;
 use AppBundle\Domain\Task\Event\TaskDone;
 use AppBundle\Domain\Task\Event\TaskFailed;
 use AppBundle\Domain\Task\Reactor\SendEmail;
-use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
@@ -14,9 +14,13 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Symfony\Component\Mime\Email;
 
 class SendEmailTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $sendEmail;
 
     public function setUp(): void
@@ -82,11 +86,11 @@ class SendEmailTest extends TestCase
     {
         $store = new Store();
 
-        $bob = $this->prophesize(ApiUser::class);
+        $bob = $this->prophesize(User::class);
         $bob->getFullName()->willReturn('Bob');
         $bob->getEmail()->willReturn('bob@acme.com');
 
-        $sarah = $this->prophesize(ApiUser::class);
+        $sarah = $this->prophesize(User::class);
         $sarah->getFullName()->willReturn('Sarah');
         $sarah->getEmail()->willReturn('sarah@acme.com');
 
@@ -99,16 +103,14 @@ class SendEmailTest extends TestCase
         $task = new Task();
         $task->setDelivery($delivery);
 
-        $message = new \Swift_Message();
+        $message = new Email();
 
         $this->emailManager
             ->createTaskCompletedMessage($task)
             ->willReturn($message);
 
         $this->emailManager
-            ->sendTo($message, Argument::that(function ($to) {
-                return array_key_exists('bob@acme.com', $to) && array_key_exists('sarah@acme.com', $to);
-            }))
+            ->sendTo($message, 'Bob <bob@acme.com>', 'Sarah <sarah@acme.com>')
             ->shouldBeCalled();
 
         call_user_func_array($this->sendEmail, [ new TaskDone($task, 'Lorem ipsum') ]);

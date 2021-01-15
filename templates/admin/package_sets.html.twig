@@ -1,0 +1,42 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+  <li>{% trans %}adminDashboard.package_sets.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<p class="text-right">
+  <a href="{{ path('admin_new_package') }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
+  </a>
+</p>
+
+<table class="table table-condensed">
+  <thead>
+    <th>#</th>
+    <th>{{ 'form.package_set.name.label'|trans }}</th>
+    <th>{{ 'form.package_set.packages.label'|trans }}</th>
+  </thead>
+  <tbody>
+  {% for package_set in package_sets %}
+    <tr>
+      <td>
+        <a href="{{ path('admin_package', { id: package_set.id }) }}">#{{ package_set.id }}</a>
+      </td>
+      <td>
+        {{ package_set.name }}
+      </td>
+      <td>
+        {% set packages = [] %}
+        {% for package in package_set.packages %}
+          {% set packages = packages|merge([ package.name ]) %}
+        {% endfor %}
+        {{ packages|join(', ') }}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

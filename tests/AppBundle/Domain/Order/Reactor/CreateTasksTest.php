@@ -2,25 +2,31 @@
 
 namespace Tests\AppBundle\Domain\Order\Reactor;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Order\Event\OrderAccepted;
 use AppBundle\Domain\Order\Reactor\CreateTasks;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Vendor;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTextEncoder;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
 
 class CreateTasksTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $createTasks;
 
     public function setUp(): void
     {
-        $this->routing = $this->prophesize(RoutingInterface::class);
+        $this->deliveryManager = $this->prophesize(DeliveryManager::class);
         $this->orderTextEncoder = $this->prophesize(OrderTextEncoder::class);
 
         $this->orderTextEncoder
@@ -28,12 +34,12 @@ class CreateTasksTest extends TestCase
             ->willReturn('Order XXX');
 
         $this->createTasks = new CreateTasks(
-            $this->routing->reveal(),
+            $this->deliveryManager->reveal(),
             $this->orderTextEncoder->reveal()
         );
     }
 
-    public function testDoesNothing()
+    public function testDoesNothingWhenDeliveryAlreadyExists()
     {
         $delivery = new Delivery();
 
@@ -41,6 +47,25 @@ class CreateTasksTest extends TestCase
         $order
             ->getDelivery()
             ->willReturn($delivery);
+
+        $order
+            ->setDelivery(Argument::type(Delivery::class))
+            ->shouldNotBeCalled();
+
+        call_user_func_array($this->createTasks, [ new OrderAccepted($order->reveal()) ]);
+    }
+
+    public function testDoesNothingWhenOrderIsTakeaway()
+    {
+        $delivery = new Delivery();
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getDelivery()
+            ->willReturn(null);
+        $order
+            ->isTakeaway()
+            ->willReturn(true);
 
         $order
             ->setDelivery(Argument::type(Delivery::class))
@@ -63,7 +88,12 @@ class CreateTasksTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setAddress($restaurantAddress);
 
-        $shippedAt = new \DateTime();
+        $shippingTimeRangeLower = new \DateTime('2020-04-08 20:00:00');
+        $shippingTimeRangeUpper = new \DateTime('2020-04-08 20:10:00');
+
+        $shippingTimeRange = new TsRange();
+        $shippingTimeRange->setLower($shippingTimeRangeLower);
+        $shippingTimeRange->setUpper($shippingTimeRangeUpper);
 
         $order = $this->prophesize(OrderInterface::class);
 
@@ -71,41 +101,34 @@ class CreateTasksTest extends TestCase
             ->getDelivery()
             ->willReturn(null);
         $order
-            ->getShippedAt()
-            ->willReturn($shippedAt);
+            ->isTakeaway()
+            ->willReturn(false);
+        $order
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
         $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
+        $order
             ->getShippingAddress()
             ->willReturn($shippingAddress);
 
-        $this->routing
-            ->getDuration($restaurantAddressCoords, $shippingAddressCoords)
-            ->willReturn(60 * 15); // 15 minutes
+        $delivery = new Delivery();
+
+        $this->deliveryManager
+            ->createFromOrder($order->reveal())
+            ->willReturn($delivery);
 
         $order
-            ->setDelivery(Argument::that(function (Delivery $delivery) use ($restaurantAddress, $shippingAddress, $shippedAt) {
-
-                $pickup = $delivery->getPickup();
-                $dropoff = $delivery->getDropoff();
-
-                $this->assertSame($restaurantAddress, $pickup->getAddress());
-                $this->assertSame($shippingAddress, $dropoff->getAddress());
-
-                $pickupDoneBefore = clone $shippedAt;
-                $pickupDoneBefore->modify('-15 minutes');
-
-                $this->assertEquals($pickupDoneBefore, $pickup->getDoneBefore());
-                $this->assertEquals($shippedAt, $dropoff->getDoneBefore());
-
-                $this->assertEquals('Order XXX', $pickup->getComments());
-                $this->assertEquals('Order XXX', $dropoff->getComments());
-
-                return true;
-            }))
+            ->setDelivery($delivery)
             ->shouldBeCalled();
 
         call_user_func_array($this->createTasks, [ new OrderAccepted($order->reveal()) ]);
+
+        $this->assertEquals('Order XXX', $delivery->getPickup()->getComments());
+        $this->assertEquals('Order XXX', $delivery->getDropoff()->getComments());
     }
 }

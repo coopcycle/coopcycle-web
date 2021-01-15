@@ -1,0 +1,4 @@
+name,description,tax_category,price_tax_incl,allergens,restricted_diets
+"Pizza Margherita","The most famous pizza",Food,900,,
+"Beer","",Drink,300,,
+"Pizza Reina","",Foobar,900,,

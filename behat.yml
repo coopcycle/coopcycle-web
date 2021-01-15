@@ -6,12 +6,18 @@ default:
       contexts:
         - FeatureContext:
             doctrine: "@doctrine"
-            phoneNumberUtil: "@libphonenumber.phone_number_util"
+            phoneNumberUtil: "@libphonenumber\\PhoneNumberUtil"
             fixturesLoader: "@fidry_alice_data_fixtures.loader.doctrine"
             settingsManager: "@coopcycle.settings_manager"
             orderTimelineCalculator: "@coopcycle.order_timeline_calculator"
             userManipulator: "@fos_user.util.user_manipulator"
             authorizationServer: "@league.oauth2.server.authorization_server"
+            redis: "@snc_redis.default"
+            iriConverter: "@api_platform.iri_converter"
+            httpMessageFactory: "@sensio_framework_extra.psr7.http_message_factory"
+            tile38: "@snc_redis.tile38"
+            faker: "@nelmio_alice.faker.generator"
+            orderProcessor: "@Sylius\\Component\\Order\\Processor\\OrderProcessorInterface"
         - Behat\MinkExtension\Context\MinkContext
         - Behatch\Context\RestContext
         - Behatch\Context\JsonContext
@@ -22,12 +28,7 @@ default:
         debug: "true"
     Behat\MinkExtension:
       default_session: "default"
-      javascript_session: "selenium2"
-      browser_name: "chrome"
       sessions:
         default:
           symfony2: ~
-        selenium2:
-          selenium2:
-            browser: "chrome"
     Behatch\Extension: ~

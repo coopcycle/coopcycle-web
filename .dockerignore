@@ -4,3 +4,4 @@ vendor
 var/cache/*
 var/sessions/*
 var/logs/*
+var/osrm/data.osrm.fileIndex

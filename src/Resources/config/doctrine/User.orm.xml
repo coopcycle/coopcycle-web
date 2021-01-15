@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity repository-class="AppBundle\Entity\UserRepository" name="AppBundle\Entity\User" table="api_user">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="facebookId" type="string" column="facebook_id" nullable="true"/>
+    <field name="facebookAccessToken" type="string" column="facebook_access_token" nullable="true"/>
+    <field name="quotesAllowed" type="boolean" column="quotes_allowed">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <one-to-one field="customer" target-entity="Sylius\Component\Customer\Model\CustomerInterface" inversed-by="user">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-column name="customer_id" referenced-column-name="id" nullable="false" />
+    </one-to-one>
+    <one-to-many field="remotePushTokens" target-entity="AppBundle\Entity\RemotePushToken" mapped-by="user">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-many>
+    <many-to-one field="channel" target-entity="Sylius\Component\Channel\Model\Channel">
+      <join-columns>
+        <join-column name="channel_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="restaurants" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="owners">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-table name="api_user_restaurant">
+        <join-columns>
+          <join-column name="api_user_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="restaurant_id" referenced-column-name="id" nullable="true"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="stores" target-entity="AppBundle\Entity\Store" inversed-by="owners">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-table name="api_user_store">
+        <join-columns>
+          <join-column name="api_user_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="store_id" referenced-column-name="id" nullable="true"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="stripeAccounts" target-entity="AppBundle\Entity\StripeAccount">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-table name="api_user_stripe_account">
+        <join-columns>
+          <join-column name="user_id" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="stripe_account_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="mercadopagoAccounts" target-entity="AppBundle\Entity\MercadopagoAccount">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-table name="api_user_mercadopago_account">
+        <join-columns>
+          <join-column name="user_id" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="mercadopago_account_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>

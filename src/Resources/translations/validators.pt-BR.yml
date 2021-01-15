@@ -1,0 +1,49 @@
+restaurant.openingHours.notBlank: Selecione ao menos um horário de abertura
+restaurant.telephone.notBlank: Preenche seu telefone
+restaurant.name.notBlank: Preenche o nome do seu restaurante
+restaurant.contract.notValid: Preencha termos de entrega (requer privilégios administrativos)
+restaurant.stripeAccount.notSet: Conecte o restaurante a uma conta Stripe
+restaurant.notActivable: Você ainda não pode ativar este restaurante
+restaurant.menu.notSet: Criar e ativar um menu
+
+address.tooFar: Este endereço é muito longe
+address.notSet: Por favor preencha endereço de entrega
+
+cart.address.empty: Por favor preencha um endereço
+cart.empty: Seu carrinho está vazio
+
+order.totalIncludingTax.tooLow: O pedido mínimo é %minimum_amount%
+
+order.shippedAt.expired: A data de entrega está expirada
+order.shippedAt.notAvailable: A data de entrega não está mais disponível
+order.shippedAt.notEmpty: A data de entrega não pode estar vazia
+order.items.containsDisabledProduct: O pedido contém um produto desativado
+order.fulfillment_methods.empty: O estabelecimento está atualmente indisponível
+
+delivery.price.error.priceCalculation: O valor de entrega não pôde ser calculado.
+
+delivery.tasks.unexpectedCount: A entrega deve consistir em duas tarefas.
+delivery.tasks.pickupAfterDropoff: Data de entrega deve ser após a data de coleta.
+
+delivery.check.notValid: Seu pedido não é factível
+delivery.check.noStore: Você deve fornecer uma loja
+
+time_range.empty: Você não selecionou algum valor
+time_range.no_weekday: Você não selecionou um dia da semana
+
+product.name.modified: Você alterou o nome do produto
+
+task.before.mustBeGreaterThanAfter: O prazo não é válido
+
+product_option.valuesRange.notAllowed: Você não pode definir um intervalo para uma opção obrigatória
+
+product.reusablePackagingUnit.mustBeGreaterThanZero: Você deve especificar uma quantidade maior que 0
+
+order.state.notModifiable: Pedido não pode mais ser alterado
+
+loopeat.insufficient_balance: Seu saldo no LoopEat (X) não é suficiente para embalar todo o pedido
+
+restaurant.contract.variableCustomerAmount.pickOne: Favor escolher ao menos um valor
+restaurant.contract.variableDeliveryPrice.pickOne: Favor escolher ao menos um valor
+
+pricing_rule.expression.syntax_error: Erro de sintaxe na expressão "%expression%"

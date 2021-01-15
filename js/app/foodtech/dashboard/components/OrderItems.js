@@ -1,14 +1,30 @@
 import React from 'react'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 
-const hasAdjustments = (item) => item.adjustments.hasOwnProperty('menu_item_modifier') && item.adjustments['menu_item_modifier'].length > 0
+const hasAdjustments = (item) => {
+  const hasOptions = Object.prototype.hasOwnProperty.call(item.adjustments, 'menu_item_modifier') && item.adjustments['menu_item_modifier'].length > 0
+  const hasPackaging = Object.prototype.hasOwnProperty.call(item.adjustments, 'reusable_packaging') && item.adjustments['reusable_packaging'].length > 0
+
+  return hasOptions || hasPackaging
+}
 
 class OrderItems extends React.Component {
 
   renderOrderItemAdjustments(item) {
+
+    let adjustments = []
+
+    if (Object.prototype.hasOwnProperty.call(item.adjustments, 'menu_item_modifier')) {
+      adjustments = adjustments.concat(item.adjustments['menu_item_modifier'])
+    }
+
+    if (Object.prototype.hasOwnProperty.call(item.adjustments, 'reusable_packaging')) {
+      adjustments = adjustments.concat(item.adjustments['reusable_packaging'])
+    }
+
     return (
       <ul className="list-unstyled">
-        { item.adjustments['menu_item_modifier'].map((adjustment) =>
+        { adjustments.map((adjustment) =>
           <li key={ adjustment.id }>
             <small className="text-muted">{ adjustment.label }</small>
           </li>
@@ -31,7 +47,7 @@ class OrderItems extends React.Component {
                 { hasAdjustments(item) && ( <br /> ) }
                 { hasAdjustments(item) && this.renderOrderItemAdjustments(item) }
               </td>
-              <td className="text-right">{ (item.total / 100).formatMoney(2, window.AppData.currencySymbol) }</td>
+              <td className="text-right">{ (item.total / 100).formatMoney() }</td>
             </tr>
           ) }
         </tbody>
@@ -41,4 +57,4 @@ class OrderItems extends React.Component {
 
 }
 
-export default translate()(OrderItems)
+export default withTranslation()(OrderItems)

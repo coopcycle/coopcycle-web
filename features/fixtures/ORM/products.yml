@@ -1,26 +1,29 @@
-Sylius\Component\Taxation\Model\TaxRate:
-  tva_10:
-    name: "TVA 10"
-    code: tva_10
-    amount: 0.10
-    includedInPrice: true
-    calculator: default
-  tva_20:
-    name: "TVA 20"
-    code: tva_20
-    amount: 0.20
-    includedInPrice: true
-    calculator: default
+include:
+  - sylius_taxation.yml
 
-Sylius\Component\Taxation\Model\TaxCategory:
-  tva_conso_immediate:
-    code: tva_conso_immediate
-    name: "TVA consommation immédiate"
-    rates: [ "@tva_10" ]
-  tva_livraison:
-    code: tva_livraison
-    name: "TVA livraison"
-    rates: [ "@tva_20" ]
+Sylius\Component\Product\Model\ProductAttribute:
+  attribute_restricted_diet:
+    code: RESTRICTED_DIETS
+    type: text
+    storageType: json
+  attribute_allergens:
+    code: ALLERGENS
+    type: text
+    storageType: json
+
+Sylius\Component\Product\Model\ProductAttributeValue:
+  attribute_value_halal:
+    attribute: '@attribute_restricted_diet'
+    localeCode: fr
+    __calls:
+      - setValue:
+        - [ 'HALAL_DIET' ]
+  attribute_value_nuts:
+    attribute: '@attribute_allergens'
+    localeCode: fr
+    __calls:
+      - setValue:
+        - [ 'NUTS' ]
 
 AppBundle\Entity\Sylius\ProductOptionValue:
   pizza_topping_pepperoni:
@@ -31,6 +34,10 @@ AppBundle\Entity\Sylius\ProductOptionValue:
     code: PIZZA_TOPPING_EXTRA_CHEESE
     currentLocale: fr
     value: Extra cheese
+  gluten_free:
+    code: GLUTEN_FREE
+    currentLocale: fr
+    value: Gluten free
 
 AppBundle\Entity\Sylius\ProductOption:
   pizza_topping:
@@ -39,6 +46,13 @@ AppBundle\Entity\Sylius\ProductOption:
     currentLocale: fr
     name: Pizza topping
     values: [ "@pizza_topping_pepperoni", "@pizza_topping_extra_cheese" ]
+  gluten_intolerance:
+    code: GLUTEN_INTOLERANCE
+    strategy: free
+    currentLocale: fr
+    name: Gluten intolerance
+    additional: true
+    values: [ "@gluten_free" ]
 
 AppBundle\Entity\Sylius\ProductVariant:
   pizza_pepperoni:
@@ -61,6 +75,25 @@ AppBundle\Entity\Sylius\ProductVariant:
     name: Hamburger
     code: HAMBURGER_DEFAULT
     price: 900
+  salad_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Salad
+    code: SALAD_DEFAULT
+    price: 499
+  cake_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Cake
+    code: CAKE_DEFAULT
+    price: 699
+  fish_and_chips_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Fish and Chips
+    code: FISH_AND_CHIPS_DEFAULT
+    price: 699
+    optionValues: [ "@gluten_free" ]
 
 AppBundle\Entity\Sylius\Product:
   pizza:
@@ -78,6 +111,30 @@ AppBundle\Entity\Sylius\Product:
     slug: hamburger
     enabled: true
     variants: [ "@hamburger_default" ]
+    __calls:
+      - addAttribute:
+        - '@attribute_value_halal'
+      - addAttribute:
+        - '@attribute_value_nuts'
   salad:
     code: SALAD
+    currentLocale: fr
+    name: Salad
+    slug: salad
+    enabled: false
+    variants: [ "@salad_default" ]
+  cake:
+    code: CAKE
+    currentLocale: fr
+    name: Cake
+    slug: cake
+    enabled: false
+    variants: [ "@cake_default" ]
+  fish_and_chips:
+    code: FISH_AND_CHIPS
+    currentLocale: fr
+    name: Fish and Chips
+    slug: fish-and-chips
     enabled: true
+    options: [ "@gluten_intolerance" ]
+    variants: [ "@fish_and_chips_default" ]
