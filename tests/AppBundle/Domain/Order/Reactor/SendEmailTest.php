@@ -38,6 +38,8 @@ class SendEmailTest extends TestCase
         $this->messageBus = $this->prophesize(MessageBusInterface::class);
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
+        $this->settingsManager->get('administrator_email')->willReturn('admin@acme.com');
+
         $this->messageBus
             ->dispatch(Argument::type(OrderReceiptEmail::class))
             ->will(function ($args) {
@@ -120,6 +122,22 @@ class SendEmailTest extends TestCase
             ->sendTo(Argument::type(Email::class), Argument::any(), Argument::any())
             ->shouldBeCalledTimes(4);
 
+        $this->eventBus
+            ->handle(Argument::that(function (Event\EmailSent $event) {
+
+                $payload = $event->toPayload();
+
+                $emails = [
+                    'john@example.com',
+                    'bob@example.com',
+                    'jane@example.com',
+                    'admin@acme.com',
+                ];
+
+                return isset($payload['recipient']) && in_array($payload['recipient'], $emails);
+            }))
+            ->shouldBeCalled(5);
+
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
     }
 
@@ -196,6 +214,22 @@ class SendEmailTest extends TestCase
         $this->emailManager
             ->sendTo(Argument::type(Email::class), Argument::any())
             ->shouldBeCalledTimes(5);
+
+        $this->eventBus
+            ->handle(Argument::that(function (Event\EmailSent $event) {
+
+                $payload = $event->toPayload();
+
+                $emails = [
+                    'john@example.com',
+                    'bob@example.com',
+                    'jane@example.com',
+                    'admin@acme.com',
+                ];
+
+                return isset($payload['recipient']) && in_array($payload['recipient'], $emails);
+            }))
+            ->shouldBeCalled(5);
 
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
     }

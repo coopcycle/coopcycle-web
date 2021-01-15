@@ -19,6 +19,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\Collection;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Mime\Address;
 
 class SendEmail
 {
@@ -144,8 +145,9 @@ class SendEmail
             $this->emailManager->createOrderCreatedMessageForOwner($order, $restaurant),
             ...$ownerMails
         );
-        foreach ($ownerMails as $email => $alias) {
-            $this->eventBus->handle(new EmailSent($order, $email));
+        foreach ($ownerMails as $ownerMail) {
+            $address = Address::fromString($ownerMail);
+            $this->eventBus->handle(new EmailSent($order, $address->getAddress()));
         }
     }
 
