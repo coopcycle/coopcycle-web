@@ -83,4 +83,9 @@ class GeoCoordinates
     {
         return $this->longitude;
     }
+
+    public function isEqualTo(GeoCoordinates $other)
+    {
+        return $this->getLatitude() === $other->getLatitude() && $this->getLongitude() === $other->getLongitude();
+    }
 }
