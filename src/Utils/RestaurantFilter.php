@@ -27,6 +27,13 @@ class RestaurantFilter
         $stopwatch = new Stopwatch();
         $stopwatch->start('RestaurantFilter::matchingLatLng');
 
+        if (count($restaurants) === 0) {
+
+            $event = $stopwatch->stop('RestaurantFilter::matchingLatLng');
+
+            return [];
+        }
+
         $hash = new \SplObjectStorage();
 
         $source = new GeoCoordinates($latitude, $longitude);
