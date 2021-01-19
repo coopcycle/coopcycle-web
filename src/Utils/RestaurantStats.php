@@ -290,7 +290,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
             case 'delivery_fee':
                 return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT), !$formatted);
             case 'packaging_fee':
-                return $this->formatNumber($order->getAdjustmentsTotalRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT), !$formatted);
+                return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT), !$formatted);
             case 'tip':
                 return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT), !$formatted);
             case 'total_incl_tax':

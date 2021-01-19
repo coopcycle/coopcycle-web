@@ -86,7 +86,7 @@ class OrderView
 
             $total = 0;
             foreach ($this->adjustments as $adjustment) {
-                if (null !== $adjustment['order_id'] && $adjustment['type'] === $type) {
+                if (null !== $adjustment['order_id'] && null === $adjustment['order_item_id'] && $adjustment['type'] === $type) {
                     $total += $adjustment['amount'];
                 }
             }
