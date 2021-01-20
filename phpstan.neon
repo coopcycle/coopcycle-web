@@ -37,3 +37,4 @@ parameters:
         - '#Property MercadoPago\\Payment::\$payer \(object\) does not accept array<string, mixed>#'
         - '#Access to protected property MercadoPago\\Payment::\$[a-zA-Z_]#'
         - '#Method AppBundle\\Entity\\Sylius\\(Product|Taxon)::compareTo\(\) should return int but returns bool#'
+        - '#Method [a-zA-Z\\:\(\)]+ should return Doctrine\\Common\\Collections\\Collection<\(int\|string\), [a-zA-Z\\]+> but returns Doctrine\\Common\\Collections\\ArrayCollection<mixed, [a-zA-Z\\\|]+>#'
