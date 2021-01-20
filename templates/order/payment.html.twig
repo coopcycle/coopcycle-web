@@ -80,6 +80,12 @@
               <div id="card-element">
                 <!-- a Stripe Element will be inserted here. -->
               </div>
+              {% if country_iso == 'fr' %}
+              <span class="help-block mt-3">
+                <i class="fa fa-info-circle mr-2"></i>
+                <span>Nous n'acceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique.</span>
+              </span>
+              {% endif %}
               {# <div id="payment-method-picker"></div> #}
               <!-- Used to display form errors -->
             </div>
