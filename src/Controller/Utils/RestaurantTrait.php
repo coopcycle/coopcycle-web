@@ -712,7 +712,7 @@ trait RestaurantTrait
             [
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.name',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
-                PaginatorInterface::SORT_FIELD_WHITELIST => ['t.name'],
+                PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['t.name'],
             ]
         );
 

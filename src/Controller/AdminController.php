@@ -384,8 +384,8 @@ class AdminController extends Controller
             [
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'c.id',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
-                PaginatorInterface::SORT_FIELD_WHITELIST => ['u.username', 'c.id'],
-                PaginatorInterface::FILTER_FIELD_WHITELIST => ['u.roles', 'u.username']
+                PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['u.username', 'c.id'],
+                PaginatorInterface::FILTER_FIELD_ALLOW_LIST => ['u.roles', 'u.username']
             ]
         );
 
@@ -645,9 +645,9 @@ class AdminController extends Controller
             [
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'd.createdAt',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
-                PaginatorInterface::SORT_FIELD_WHITELIST => ['d.createdAt'],
+                PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['d.createdAt'],
                 PaginatorInterface::DEFAULT_FILTER_FIELDS => ['s.id', 'r.id'],
-                PaginatorInterface::FILTER_FIELD_WHITELIST => ['s.id', 'r.id']
+                PaginatorInterface::FILTER_FIELD_ALLOW_LIST => ['s.id', 'r.id']
             ]
         );
 
@@ -708,9 +708,9 @@ class AdminController extends Controller
             [
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.doneBefore',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
-                PaginatorInterface::SORT_FIELD_WHITELIST => ['t.doneBefore'],
+                PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['t.doneBefore'],
                 PaginatorInterface::DEFAULT_FILTER_FIELDS => [],
-                PaginatorInterface::FILTER_FIELD_WHITELIST => []
+                PaginatorInterface::FILTER_FIELD_ALLOW_LIST => []
             ]
         );
 
