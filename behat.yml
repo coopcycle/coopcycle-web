@@ -4,31 +4,18 @@ default:
   suites:
     default:
       contexts:
-        - FeatureContext:
-            doctrine: "@doctrine"
-            phoneNumberUtil: "@libphonenumber\\PhoneNumberUtil"
-            fixturesLoader: "@fidry_alice_data_fixtures.loader.doctrine"
-            settingsManager: "@coopcycle.settings_manager"
-            orderTimelineCalculator: "@coopcycle.order_timeline_calculator"
-            userManipulator: "@fos_user.util.user_manipulator"
-            authorizationServer: "@league.oauth2.server.authorization_server"
-            redis: "@snc_redis.default"
-            iriConverter: "@api_platform.iri_converter"
-            httpMessageFactory: "@sensio_framework_extra.psr7.http_message_factory"
-            tile38: "@snc_redis.tile38"
-            faker: "@nelmio_alice.faker.generator"
-            orderProcessor: "@Sylius\\Component\\Order\\Processor\\OrderProcessorInterface"
+        - Tests\Behat\FeatureContext
         - Behat\MinkExtension\Context\MinkContext
         - Behatch\Context\RestContext
         - Behatch\Context\JsonContext
   extensions:
-    Behat\Symfony2Extension:
+    FriendsOfBehat\SymfonyExtension:
       kernel:
-        env: "test"
-        debug: "true"
+        class: AppKernel
+        environment: test
+        debug: true
     Behat\MinkExtension:
-      default_session: "default"
       sessions:
         default:
-          symfony2: ~
+          symfony: ~
     Behatch\Extension: ~

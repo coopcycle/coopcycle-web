@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Behat;
+
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\ApiApp;
@@ -27,7 +29,6 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Behat\Tester\Exception\PendingException;
 use Coduo\PHPMatcher\PHPMatcher;
@@ -39,6 +40,7 @@ use FOS\UserBundle\Util\UserManipulator;
 use Behatch\HttpCall\HttpCallResultPool;
 use PHPUnit\Framework\Assert;
 use Ramsey\Uuid\Uuid;
+use Redis;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
@@ -57,11 +59,12 @@ use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareContext
+class FeatureContext implements Context, SnippetAcceptingContext
 {
     /**
      * @var ManagerRegistry
@@ -104,7 +107,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function __construct(
         ManagerRegistry $doctrine,
-        HttpCallResultPool $httpCallResultPool,
+        // HttpCallResultPool $httpCallResultPool,
         PhoneNumberUtil $phoneNumberUtil,
         LoaderInterface $fixturesLoader,
         SettingsManager $settingsManager,
@@ -116,14 +119,16 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         HttpMessageFactoryInterface $httpMessageFactory,
         Redis $tile38,
         FakerGenerator $faker,
-        OrderProcessorInterface $orderProcessor)
+        OrderProcessorInterface $orderProcessor,
+        KernelInterface $kernel,
+        ContainerInterface $behatContainer)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
         $this->doctrine = $doctrine;
         $this->manager = $doctrine->getManager();
         $this->schemaTool = new SchemaTool($this->manager);
-        $this->httpCallResultPool = $httpCallResultPool;
+        // $this->httpCallResultPool = $httpCallResultPool;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->fixturesLoader = $fixturesLoader;
         $this->settingsManager = $settingsManager;
@@ -136,11 +141,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->tile38 = $tile38;
         $this->faker = $faker;
         $this->orderProcessor = $orderProcessor;
-    }
-
-    public function setKernel(KernelInterface $kernel)
-    {
         $this->kernel = $kernel;
+        $this->behatContainer = $behatContainer;
     }
 
     protected function getContainer()
@@ -157,6 +159,11 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $this->restContext = $environment->getContext('Behatch\Context\RestContext');
         $this->minkContext = $environment->getContext('Behat\MinkExtension\Context\MinkContext');
+
+        // @see https://github.com/FriendsOfBehat/SymfonyExtension/issues/56
+        // @see https://github.com/FriendsOfBehat/SymfonyExtension/issues/111
+        $container = $this->behatContainer->get('behat.service_container');
+        $this->httpCallResultPool = $container->get('behatch.http_call.result_pool');
     }
 
     /**
@@ -221,7 +228,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     public function theFixturesFileIsLoaded($filename)
     {
         $this->fixturesLoader->load([
-            __DIR__.'/../fixtures/ORM/'.$filename
+            __DIR__.'/../../features/fixtures/ORM/'.$filename
         ]);
     }
 
@@ -231,7 +238,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     public function theFixturesFilesAreLoaded(TableNode $table)
     {
         $filenames = array_map(function (array $row) {
-            return __DIR__.'/../fixtures/ORM/'.current($row);
+            return __DIR__.'/../../features/fixtures/ORM/'.current($row);
         }, $table->getRows());
 
         $this->fixturesLoader->load($filenames);
@@ -319,9 +326,9 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         }
 
         if (isset($data['passwordRequestAge'])) {
-            $ageInSeconds = new DateInterval('PT'.$data['passwordRequestAge']."S");
+            $ageInSeconds = new \DateInterval('PT'.$data['passwordRequestAge']."S");
 
-            $timestamp = new DateTime();
+            $timestamp = new \DateTime();
             $timestamp->sub($ageInSeconds);
 
             $user->setPasswordRequestedAt($timestamp);
@@ -746,39 +753,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
-     * @Then the last order from :username should be in state :state
-     */
-    public function theLastOrderFromShouldBeInState($username, $state)
-    {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-        $user = $userManager->findUserByUsername($username);
-
-        $orderRepository = $this->getContainer()->get('sylius.repository.order');
-
-        $order = $orderRepository->createQueryBuilder('o')
-            ->andWhere('o.customer = :customer')
-            ->setParameter('customer', $user)
-            ->orderBy('o.createdAt', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
-
-        Assert::assertNotNull($order);
-        Assert::assertEquals($state, $order->getState());
-    }
-
-    /**
-     * @Then the restaurant with id :id should have :count closing rule
-     * @Then the restaurant with id :id should have :count closing rules
-     */
-    public function theRestaurantWithIdShouldHaveClosingRules($id, $count)
-    {
-        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
-
-        Assert::assertEquals($count, count($restaurant->getClosingRules()));
-    }
-
-    /**
      * @Given the product with code :code is soft deleted
      */
     public function softDeleteProductWithCode($code)
@@ -1025,18 +999,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         Assert::assertArrayHasKey('type', $data);
         Assert::assertArrayHasKey('coordinates', $data);
         Assert::assertEquals([ $longitude, $latitude, $timestamp ], $data['coordinates']);
-    }
-
-    /**
-     * @Then the payment amount of order with IRI :iri should be :value
-     */
-    public function assertPaymentAmountOfOrderWithIriEquals($iri, $value)
-    {
-        $order = $this->iriConverter->getItemFromIri($iri);
-
-        $payment = $order->getLastPayment();
-
-        Assert::assertEquals($value, $payment->getAmount());
     }
 
     /**

@@ -137,7 +137,38 @@ Feature: Food Tech
       """
     Then the response status code should be 200
     And the response should be in JSON
-    And the last order from "sarah" should be in state "refused"
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":@string@,
+        "@type":"http://schema.org/Order",
+        "customer":{"@*@":"@*@"},
+        "vendor":{"@*@":"@*@"},
+        "shippingAddress":{"@*@":"@*@"},
+        "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn":0,
+        "shippingTimeRange":[
+          "2018-08-27T12:25:00+02:00",
+          "2018-08-27T12:35:00+02:00"
+        ],
+        "takeaway":false,
+        "id":@integer@,
+        "number":null,
+        "notes":null,
+        "items":@array@,
+        "itemsTotal":1800,
+        "total":2150,
+        "state":"refused",
+        "createdAt":"@string@.isDateTime()",
+        "taxTotal":222,
+        "restaurant":@...@,
+        "shippedAt":"2018-08-27T12:30:00+02:00",
+        "preparationExpectedAt":"2018-08-27T12:25:00+02:00",
+        "pickupExpectedAt":"2018-08-27T12:35:00+02:00",
+        "adjustments":@...@
+      }
+      """
 
   Scenario: Delay order
     Given the fixtures files are loaded:
@@ -421,6 +452,7 @@ Feature: Food Tech
     Then the response status code should be 403
 
   Scenario: Close restaurant
+    Given the current time is "2020-10-02 11:00:00"
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | products.yml        |
@@ -442,4 +474,34 @@ Feature: Food Tech
       {}
       """
     Then the response status code should be 200
-    And the restaurant with id "1" should have "1" closing rule
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Restaurant",
+        "@id":@string@,
+        "@type":"http://schema.org/Restaurant",
+        "id":@integer@,
+        "name":"Nodaiwa",
+        "description":null,
+        "enabled":true,
+        "depositRefundEnabled":false,
+        "depositRefundOptin":true,
+        "address":{"@*@":"@*@"},
+        "state":"normal",
+        "telephone":"+33612345678",
+        "fulfillmentMethods":@array@,
+        "openingHoursSpecification":@array@,
+        "specialOpeningHoursSpecification":[
+          {
+            "@id":@string@,
+            "@type":"OpeningHoursSpecification",
+            "id":@integer@,
+            "opens":"00:00",
+            "closes":"00:00",
+            "validFrom":"2020-10-02",
+            "validThrough":"2020-10-03"
+          }
+        ],
+        "image":@string@
+      }
+      """

@@ -74,6 +74,10 @@ class AppKernel extends Kernel
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
         }
 
+        if ('test' === $this->getEnvironment()) {
+            $bundles[] = new FriendsOfBehat\SymfonyExtension\Bundle\FriendsOfBehatSymfonyExtensionBundle();
+        }
+
         return $bundles;
     }
 
