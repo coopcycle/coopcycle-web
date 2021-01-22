@@ -41,16 +41,17 @@ class OAuthRuntime implements RuntimeExtensionInterface
         $redirectUri = $params['redirect_uri'];
         unset($params['redirect_uri']);
 
-        $time = time();
-
         $config = Configuration::forSymmetricSigner(
             new Sha256(),
             InMemory::plainText($this->key)
         );
 
+        $expiresAt = new \DateTimeImmutable();
+        $expiresAt->modify('+1 hour');
+
         $token = $config->builder()
                 ->issuedBy($redirectUri)
-                ->expiresAt($time + 3600)
+                ->expiresAt($expiresAt)
                 ->getToken($config->signer(), $config->signingKey())
                 ->toString();
 
