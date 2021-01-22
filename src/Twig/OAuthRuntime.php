@@ -46,12 +46,11 @@ class OAuthRuntime implements RuntimeExtensionInterface
             InMemory::plainText($this->key)
         );
 
-        $expiresAt = new \DateTimeImmutable();
-        $expiresAt->modify('+1 hour');
+        $now = new \DateTimeImmutable();
 
         $token = $config->builder()
                 ->issuedBy($redirectUri)
-                ->expiresAt($expiresAt)
+                ->expiresAt($now->modify('+1 hour'))
                 ->getToken($config->signer(), $config->signingKey())
                 ->toString();
 

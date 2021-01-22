@@ -131,7 +131,7 @@ class ProfileController extends Controller
         ));
     }
 
-    protected function getOrderList(Request $request)
+    protected function getOrderList(Request $request, $showCanceled = false)
     {
         $qb = $this->get('sylius.repository.order')
             ->createQueryBuilder('o')
