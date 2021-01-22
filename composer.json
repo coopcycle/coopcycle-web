@@ -112,7 +112,7 @@
         "geocoder-php/open-cage-provider": "^4.4",
         "spatie/guzzle-rate-limiter-middleware": "^2.0",
         "geocoder-php/photon-provider": "^0.3.0",
-        "ppshobi/psonic": "^1.2",
+        "ppshobi/psonic": "^2.0",
         "doctrine/cache": "^1.10",
         "spatie/opening-hours": "^2.10",
         "centrifugal/phpcent": "~3.0",
