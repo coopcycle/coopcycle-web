@@ -71,7 +71,7 @@ class DashboardController extends AbstractController
         return [ $this->getUser()->getStores(), 1, 1 ];
     }
 
-    protected function getOrderList(Request $request)
+    protected function getOrderList(Request $request, $showCanceled = false)
     {
         return [];
     }

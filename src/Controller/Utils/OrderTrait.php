@@ -22,7 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 trait OrderTrait
 {
-    abstract protected function getOrderList(Request $request);
+    abstract protected function getOrderList(Request $request, $showCanceled = false);
 
     private function orderAsJson(Order $order)
     {
@@ -50,7 +50,7 @@ trait OrderTrait
 
         $routes = $request->attributes->get('routes');
 
-        [ $orders, $pages, $page ] = $this->getOrderList($request);
+        [ $orders, $pages, $page ] = $this->getOrderList($request, $showCanceled);
 
         $parameters = [
             'orders' => $orders,
