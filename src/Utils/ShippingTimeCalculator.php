@@ -31,6 +31,10 @@ class ShippingTimeCalculator
             $dropoffAddress->getGeo()
         );
 
+        if (0 === $seconds) {
+            return $this->fallback;
+        }
+
         return CarbonInterval::seconds($seconds)->cascade()->forHumans();
     }
 }

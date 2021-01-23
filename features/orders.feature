@@ -345,7 +345,7 @@ Feature: Orders
       """
       {
         "preparation":"15 minutes",
-        "shipping":"1 minutes",
+        "shipping":"1 minute 35 seconds",
         "asap":"2017-09-02T11:45:00+02:00",
         "range":[
           "2017-09-02T11:40:00+02:00",
@@ -387,7 +387,7 @@ Feature: Orders
       """
       {
         "preparation":"@string@.matchRegex('/^[0-9]+ minutes$/')",
-        "shipping":"@string@.matchRegex('/^[0-9]+ minutes$/')",
+        "shipping":"10 minutes",
         "asap":"@string@.isDateTime()",
         "range": @array@,
         "today":@boolean@,
@@ -427,7 +427,7 @@ Feature: Orders
       """
       {
         "preparation":"@string@.matchRegex('/^[0-9]+ minutes$/')",
-        "shipping":"@string@.matchRegex('/^[0-9]+ minutes$/')",
+        "shipping":"10 minutes",
         "asap":"@string@.startsWith('2017-09-04T11:35:00')",
         "range": @array@,
         "today":@boolean@,
