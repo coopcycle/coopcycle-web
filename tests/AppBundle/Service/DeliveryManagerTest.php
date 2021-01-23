@@ -14,6 +14,7 @@ use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\OrderTimeHelper;
+use AppBundle\Utils\PickupTimeResolver;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Prophecy\Argument;
@@ -35,6 +36,7 @@ class DeliveryManagerTest extends KernelTestCase
 
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
         $this->routing = $this->prophesize(RoutingInterface::class);
+        $this->pickupTimeResolver = $this->prophesize(PickupTimeResolver::class);
     }
 
     public function testGetPrice()
@@ -61,7 +63,8 @@ class DeliveryManagerTest extends KernelTestCase
         $deliveryManager = new DeliveryManager(
             $this->expressionLanguage,
             $this->routing->reveal(),
-            $this->orderTimeHelper->reveal()
+            $this->orderTimeHelper->reveal(),
+            $this->pickupTimeResolver->reveal()
         );
 
         $delivery = new Delivery();
@@ -95,7 +98,8 @@ class DeliveryManagerTest extends KernelTestCase
         $deliveryManager = new DeliveryManager(
             $this->expressionLanguage,
             $this->routing->reveal(),
-            $this->orderTimeHelper->reveal()
+            $this->orderTimeHelper->reveal(),
+            $this->pickupTimeResolver->reveal()
         );
 
         $delivery = new Delivery();
@@ -141,10 +145,15 @@ class DeliveryManagerTest extends KernelTestCase
             ->getDuration($restaurantAddressCoords, $shippingAddressCoords)
             ->willReturn(900);
 
+        $this->pickupTimeResolver
+            ->resolve($order, $shippingTimeRange->getUpper())
+            ->willReturn(new \DateTime('2020-04-09 19:45:00'));
+
         $deliveryManager = new DeliveryManager(
             $this->expressionLanguage,
             $this->routing->reveal(),
-            $this->orderTimeHelper->reveal()
+            $this->orderTimeHelper->reveal(),
+            $this->pickupTimeResolver->reveal()
         );
 
         $delivery = $deliveryManager->createFromOrder($order);
@@ -182,7 +191,8 @@ class DeliveryManagerTest extends KernelTestCase
         $deliveryManager = new DeliveryManager(
             $this->expressionLanguage,
             $this->routing->reveal(),
-            $this->orderTimeHelper->reveal()
+            $this->orderTimeHelper->reveal(),
+            $this->pickupTimeResolver->reveal()
         );
 
         $delivery = $deliveryManager->createFromOrder($order);
