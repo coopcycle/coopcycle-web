@@ -689,7 +689,8 @@ Feature: Orders
         "pickupExpectedAt":null,
         "reusablePackagingEnabled": false,
         "reusablePackagingPledgeReturn": 0,
-        "takeaway":false
+        "takeaway":false,
+        "assignedTo":"@string@||@null@"
       }
       """
 

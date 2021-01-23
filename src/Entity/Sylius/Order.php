@@ -961,7 +961,7 @@ class Order extends BaseOrder implements OrderInterface
 
     /**
      * @SerializedName("assignedTo")
-     * @Groups({"dispatch"})
+     * @Groups({"order", "order_minimal"})
      */
     public function getAssignedTo()
     {

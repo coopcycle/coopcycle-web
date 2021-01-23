@@ -74,6 +74,7 @@ Feature: Food Tech
             "taxTotal":@integer@,
             "preparationExpectedAt":"@string@.isDateTime()",
             "pickupExpectedAt":"@string@.isDateTime()",
+            "assignedTo": "@string@||@null@",
             "adjustments":{
               "delivery":@array@,
               "delivery_promotion":[],
