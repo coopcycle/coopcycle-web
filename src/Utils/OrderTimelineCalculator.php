@@ -25,7 +25,7 @@ class OrderTimelineCalculator
         $this->pickupTimeResolver = $pickupTimeResolver;
     }
 
-    public function calculate(OrderInterface $order)
+    public function calculate(OrderInterface $order): OrderTimeline
     {
         $timeline = new OrderTimeline();
 

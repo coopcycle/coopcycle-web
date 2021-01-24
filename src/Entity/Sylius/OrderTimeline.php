@@ -3,16 +3,15 @@
 namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Sylius\Order\OrderInterface;
+use Gedmo\Timestampable\Traits\Timestampable;
 
 class OrderTimeline
 {
+    use Timestampable;
+
     protected $id;
 
     protected $order;
-
-    protected $createdAt;
-
-    protected $updatedAt;
 
     /**
      * The time the order is expected to be dropped.
@@ -28,12 +27,6 @@ class OrderTimeline
      * The time the order preparation should start.
      */
     protected $preparationExpectedAt;
-
-    protected $dropoffAt;
-
-    protected $pickupAt;
-
-    protected $readyAt;
 
     public function getId()
     {
@@ -82,30 +75,6 @@ class OrderTimeline
     public function setPreparationExpectedAt(\DateTime $preparationExpectedAt)
     {
         $this->preparationExpectedAt = $preparationExpectedAt;
-
-        return $this;
-    }
-
-    public function getPickupAt()
-    {
-        return $this->pickupAt;
-    }
-
-    public function setPickupAt(\DateTime $pickupAt)
-    {
-        $this->pickupAt = $pickupAt;
-
-        return $this;
-    }
-
-    public function getDropoffAt()
-    {
-        return $this->dropoffAt;
-    }
-
-    public function setDropoffAt(\DateTime $dropoffAt)
-    {
-        $this->dropoffAt = $dropoffAt;
 
         return $this;
     }
