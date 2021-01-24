@@ -10,52 +10,28 @@ use Carbon\Carbon;
 
 class OrderTimelineCalculator
 {
-    private $preparationTimeResolver;
-    private $pickupTimeResolver;
+    private $preparationTimeCalculator;
+    private $shippingTimeCalculator;
 
     /**
-     * @param PreparationTimeResolver $preparationTimeResolver
-     * @param PickupTimeResolver $pickupTimeResolver
      * @param PreparationTimeCalculator $preparationTimeCalculator
      * @param ShippingTimeCalculator $shippingTimeCalculator
      */
     public function __construct(
-        PreparationTimeResolver $preparationTimeResolver,
-        PickupTimeResolver $pickupTimeResolver,
         PreparationTimeCalculator $preparationTimeCalculator,
         ShippingTimeCalculator $shippingTimeCalculator)
     {
-        $this->preparationTimeResolver = $preparationTimeResolver;
-        $this->pickupTimeResolver = $pickupTimeResolver;
         $this->preparationTimeCalculator = $preparationTimeCalculator;
         $this->shippingTimeCalculator = $shippingTimeCalculator;
     }
 
     public function calculate(OrderInterface $order): OrderTimeline
     {
-        $timeline = new OrderTimeline();
-
-        $dropoff = $order->getShippingTimeRange()->getUpper();
-
-        if (!$order->isTakeaway()) {
-            $timeline->setDropoffExpectedAt($dropoff);
-        }
-
-        $pickup = $this->pickupTimeResolver->resolve($order, $dropoff);
-        $timeline->setPickupExpectedAt($pickup);
-
-        $preparation = $this->preparationTimeResolver->resolve($order, $dropoff);
-        $timeline->setPreparationExpectedAt($preparation);
-
         $preparationTime = $this->preparationTimeCalculator->calculate($order);
-        $timeline->setPreparationTime($preparationTime);
+        $shippingTime =
+            'delivery' === $order->getFulfillmentMethod() ? $this->shippingTimeCalculator->calculate($order) : null;
 
-        if ('delivery' === $order->getFulfillmentMethod()) {
-            $shippingTime = $this->shippingTimeCalculator->calculate($order);
-            $timeline->setShippingTime($shippingTime);
-        }
-
-        return $timeline;
+        return OrderTimeline::create($order, $order->getShippingTimeRange(), $preparationTime, $shippingTime);
     }
 
     public function delay(OrderInterface $order, $delay)

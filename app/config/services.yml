@@ -440,7 +440,9 @@ services:
   AppBundle\Utils\ShippingDateFilter:
     tags:
       - { name: monolog.logger, channel: timing }
+
   AppBundle\Utils\OrderTimelineCalculator: ~
+
   AppBundle\Utils\OrderTimeHelper:
     arguments:
       $country: "%country_iso%"
