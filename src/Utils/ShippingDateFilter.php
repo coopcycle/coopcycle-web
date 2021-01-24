@@ -3,6 +3,7 @@
 namespace AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
+use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Entity\Vendor;
 use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -14,12 +15,14 @@ use Spatie\OpeningHours\OpeningHours;
 
 class ShippingDateFilter
 {
-    private $preparationTimeResolver;
+    private $orderTimelineCalculator;
     private $openingHoursCache = [];
 
-    public function __construct(PreparationTimeResolver $preparationTimeResolver, LoggerInterface $logger = null)
+    public function __construct(
+        OrderTimelineCalculator $orderTimelineCalculator,
+        LoggerInterface $logger = null)
     {
-        $this->preparationTimeResolver = $preparationTimeResolver;
+        $this->orderTimelineCalculator = $orderTimelineCalculator;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -47,7 +50,8 @@ class ShippingDateFilter
             return false;
         }
 
-        $preparation = $this->preparationTimeResolver->resolve($order, $dropoff);
+        $timeline = $this->orderTimelineCalculator->calculate($order);
+        $preparation = $timeline->getPreparationExpectedAt();
 
         if ($preparation <= $now) {
 

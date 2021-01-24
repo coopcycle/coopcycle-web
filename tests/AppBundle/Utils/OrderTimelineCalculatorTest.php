@@ -42,7 +42,7 @@ class OrderTimelineCalculatorTest extends TestCase
             ->willReturn($shippingTimeRange);
         $order
             ->setTimeline(Argument::type(OrderTimeline::class))
-            ->shouldBeCalled();
+            ->shouldNotBeCalled();
 
         return $order->reveal();
     }
@@ -144,7 +144,7 @@ class OrderTimelineCalculatorTest extends TestCase
             ->willReturn($shippingTimeRange);
         $order
             ->setTimeline(Argument::type(OrderTimeline::class))
-            ->shouldBeCalled();
+            ->shouldNotBeCalled();
 
         $pickup = new \DateTime('2018-08-25 13:30:00');
         $preparation = new \DateTime('2018-08-25 13:10:00');
