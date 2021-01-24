@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Sylius\Order\OrderInterface;
 use Gedmo\Timestampable\Traits\Timestampable;
 
@@ -127,5 +128,38 @@ class OrderTimeline
         $this->shippingTime = $shippingTime;
 
         return $this;
+    }
+
+    public static function create(OrderInterface $order, TsRange $range, string $preparationTime, ?string $shippingTime = null)
+    {
+        $timeline = new self();
+
+        $timeline->setPreparationTime($preparationTime);
+        if (!empty($shippingTime)) {
+            $timeline->setShippingTime($shippingTime);
+        }
+
+        if ('collection' === $order->getFulfillmentMethod()) {
+
+            $preparation = clone $range->getUpper();
+            $preparation->sub(date_interval_create_from_date_string($preparationTime));
+
+            $timeline->setPickupExpectedAt($range->getUpper());
+            $timeline->setPreparationExpectedAt($preparation);
+
+        } else {
+
+            $pickup = clone $range->getUpper();
+            $pickup->sub(date_interval_create_from_date_string($shippingTime));
+
+            $preparation = clone $pickup;
+            $preparation->sub(date_interval_create_from_date_string($preparationTime));
+
+            $timeline->setDropoffExpectedAt($range->getUpper());
+            $timeline->setPickupExpectedAt($pickup);
+            $timeline->setPreparationExpectedAt($preparation);
+        }
+
+        return $timeline;
     }
 }
