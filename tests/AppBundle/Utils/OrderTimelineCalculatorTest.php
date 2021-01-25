@@ -57,8 +57,8 @@ class OrderTimelineCalculatorTest extends TestCase
                 ),
                 $preparationTime = '10 minutes',
                 $shippingTime = '20 minutes',
-                $pickup = new \DateTime('2018-08-25 13:15:00'),
-                $preparation = new \DateTime('2018-08-25 13:05:00'),
+                $pickup = new \DateTime('2018-08-25 13:00:00'), // 13:25 - 20 minutes - 5 minutes
+                $preparation = new \DateTime('2018-08-25 12:50:00'),
             ],
             [
                 TsRange::create(
@@ -67,8 +67,8 @@ class OrderTimelineCalculatorTest extends TestCase
                 ),
                 $preparationTime = '15 minutes',
                 $shippingTime = '20 minutes',
-                $pickup = new \DateTime('2018-08-25 13:15:00'),
-                $preparation = new \DateTime('2018-08-25 13:00:00'),
+                $pickup = new \DateTime('2018-08-25 13:00:00'), // 13:25 - 20 minutes - 5 minutes
+                $preparation = new \DateTime('2018-08-25 12:45:00'),
             ],
             [
                 TsRange::create(
@@ -76,9 +76,9 @@ class OrderTimelineCalculatorTest extends TestCase
                     new \DateTime('2018-08-25 13:35:00')
                 ),
                 $preparationTime = '30 minutes',
-                $shippingTime = '20 minutes',
-                $pickup = new \DateTime('2018-08-25 13:15:00'),
-                $preparation = new \DateTime('2018-08-25 12:45:00'),
+                $shippingTime = '15 minutes',
+                $pickup = new \DateTime('2018-08-25 13:05:00'), // 13:25 - 15 minutes - 5 minutes
+                $preparation = new \DateTime('2018-08-25 12:35:00'),
             ],
         ];
     }
@@ -118,7 +118,7 @@ class OrderTimelineCalculatorTest extends TestCase
 
         $timeline = $calculator->calculate($order);
 
-        $this->assertEquals($shippingTimeRange->getUpper(), $timeline->getDropoffExpectedAt());
+        $this->assertEquals($shippingTimeRange->getLower(), $timeline->getDropoffExpectedAt());
         $this->assertEquals($pickup, $timeline->getPickupExpectedAt());
         $this->assertEquals($preparation, $timeline->getPreparationExpectedAt());
         $this->assertEquals($preparationTime, $timeline->getPreparationTime());
@@ -146,12 +146,8 @@ class OrderTimelineCalculatorTest extends TestCase
             ->setTimeline(Argument::type(OrderTimeline::class))
             ->shouldNotBeCalled();
 
-        $pickup = new \DateTime('2018-08-25 13:30:00');
-        $preparation = new \DateTime('2018-08-25 13:10:00');
-
-        $this->preparationTimeCalculator
-            ->calculate($order->reveal())
-            ->willReturn('20 minutes');
+        $pickup = new \DateTime('2018-08-25 13:20:00');
+        $preparation = new \DateTime('2018-08-25 13:00:00');
 
         $this->preparationTimeCalculator
             ->calculate($order->reveal())
