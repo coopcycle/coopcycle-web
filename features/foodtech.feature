@@ -76,7 +76,7 @@ Feature: Food Tech
             "pickupExpectedAt":"@string@.isDateTime()",
             "assignedTo": "@string@||@null@",
             "preparationTime":"@string@||@null@",
-            "shippingTime":"@string@||@null@"
+            "shippingTime":"@string@||@null@",
             "adjustments":{
               "delivery":@array@,
               "delivery_promotion":[],
