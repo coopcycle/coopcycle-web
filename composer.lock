@@ -8257,16 +8257,16 @@
         },
         {
             "name": "martin-georgiev/postgresql-for-doctrine",
-            "version": "v1.5.1",
+            "version": "v1.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/martin-georgiev/postgresql-for-doctrine.git",
-                "reference": "78f0fa995223a1080ec2f61a9c7f76e66db1b463"
+                "reference": "57997a5b6637546d5a09542125acf36ccf5479d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/78f0fa995223a1080ec2f61a9c7f76e66db1b463",
-                "reference": "78f0fa995223a1080ec2f61a9c7f76e66db1b463",
+                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/57997a5b6637546d5a09542125acf36ccf5479d3",
+                "reference": "57997a5b6637546d5a09542125acf36ccf5479d3",
                 "shasum": ""
             },
             "require": {
@@ -8274,7 +8274,7 @@
                 "ext-ctype": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "php": "^7.2|^8.0"
+                "php": "^7.2||^8.0"
             },
             "require-dev": {
                 "doctrine/orm": "~2.5",
@@ -8282,9 +8282,8 @@
                 "php-coveralls/php-coveralls": "^2.2",
                 "phpstan/phpstan": "^0.12",
                 "phpstan/phpstan-phpunit": "^0.12",
-                "phpunit/phpunit": "^8.5",
-                "sensiolabs-de/deptrac-shim": "^0.10",
-                "sensiolabs/security-checker": "^6.0"
+                "phpunit/phpunit": "^8.5||^9.5",
+                "sensiolabs-de/deptrac-shim": "^0.10"
             },
             "suggest": {
                 "doctrine/orm": "~2.5"
@@ -8306,7 +8305,7 @@
                     "role": "author"
                 }
             ],
-            "description": "Adds PostgreSQL 9 and 10 enhancements to Doctrine. Provides support for JSON, JSONB and some array data types. Provides functions, operators and common expressions used when working with JSON data, arrays and features related to text search.",
+            "description": "Adds PostgreSQL enhancements to Doctrine. Provides support for JSON, JSONB and some array data types. Provides functions, operators and common expressions used when working with JSON data, arrays and features related to text search.",
             "keywords": [
                 "array data types",
                 "dbal",
@@ -8321,7 +8320,7 @@
             ],
             "support": {
                 "issues": "https://github.com/martin-georgiev/postgresql-for-doctrine/issues",
-                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v1.5.1"
+                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v1.5.2"
             },
             "funding": [
                 {
@@ -8329,7 +8328,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-12-04T08:23:49+00:00"
+            "time": "2021-01-24T13:21:48+00:00"
         },
         {
             "name": "mercadopago/dx-php",
