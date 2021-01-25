@@ -331,7 +331,7 @@ Feature: Carts
         "customer":"/api/customers/1",
         "restaurant":"/api/restaurants/1",
         "shippingAddress":null,
-        "shippedAt":"2020-04-09T20:00:00+02:00",
+        "shippedAt":"2020-04-09T20:05:00+02:00",
         "shippingTimeRange":[
           "2020-04-09T20:00:00+02:00",
           "2020-04-09T20:10:00+02:00"

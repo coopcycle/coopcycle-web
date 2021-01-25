@@ -39,7 +39,7 @@ class TsRangeNormalizer implements NormalizerInterface, DenormalizerInterface
             return $tsRange;
         }
 
-        return null;
+        return [];
     }
 
     public function supportsDenormalization($data, $type, $format = null)
