@@ -428,7 +428,7 @@ Feature: Orders
       {
         "preparation":"@string@.matchRegex('/^[0-9]+ minutes$/')",
         "shipping":"10 minutes",
-        "asap":"@string@.startsWith('2017-09-04T11:35:00')",
+        "asap":"@string@.startsWith('2017-09-04T11:45:00')",
         "range": @array@,
         "today":@boolean@,
         "fast":@boolean@,
@@ -690,7 +690,9 @@ Feature: Orders
         "reusablePackagingEnabled": false,
         "reusablePackagingPledgeReturn": 0,
         "takeaway":false,
-        "assignedTo":"@string@||@null@"
+        "assignedTo":"@string@||@null@",
+        "preparationTime":"@string@||@null@",
+        "shippingTime":"@string@||@null@"
       }
       """
 
