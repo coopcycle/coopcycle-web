@@ -13,6 +13,8 @@
     <field name="dropoffExpectedAt" type="datetime" column="dropoff_expected_at" nullable="true"/>
     <field name="pickupExpectedAt" type="datetime" column="pickup_expected_at" nullable="false"/>
     <field name="preparationExpectedAt" type="datetime" column="preparation_expected_at" nullable="false"/>
+    <field name="preparationTime" type="string" column="preparation_time" nullable="false"/>
+    <field name="shippingTime" type="string" column="shipping_time" nullable="true"/>
     <one-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="timeline">
       <join-columns>
         <join-column name="order_id" referenced-column-name="id"/>

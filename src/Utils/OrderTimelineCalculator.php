@@ -16,13 +16,19 @@ class OrderTimelineCalculator
     /**
      * @param PreparationTimeResolver $preparationTimeResolver
      * @param PickupTimeResolver $pickupTimeResolver
+     * @param PreparationTimeCalculator $preparationTimeCalculator
+     * @param ShippingTimeCalculator $shippingTimeCalculator
      */
     public function __construct(
         PreparationTimeResolver $preparationTimeResolver,
-        PickupTimeResolver $pickupTimeResolver)
+        PickupTimeResolver $pickupTimeResolver,
+        PreparationTimeCalculator $preparationTimeCalculator,
+        ShippingTimeCalculator $shippingTimeCalculator)
     {
         $this->preparationTimeResolver = $preparationTimeResolver;
         $this->pickupTimeResolver = $pickupTimeResolver;
+        $this->preparationTimeCalculator = $preparationTimeCalculator;
+        $this->shippingTimeCalculator = $shippingTimeCalculator;
     }
 
     public function calculate(OrderInterface $order): OrderTimeline
@@ -40,6 +46,14 @@ class OrderTimelineCalculator
 
         $preparation = $this->preparationTimeResolver->resolve($order, $dropoff);
         $timeline->setPreparationExpectedAt($preparation);
+
+        $preparationTime = $this->preparationTimeCalculator->calculate($order);
+        $timeline->setPreparationTime($preparationTime);
+
+        if ('delivery' === $order->getFulfillmentMethod()) {
+            $shippingTime = $this->shippingTimeCalculator->calculate($order);
+            $timeline->setShippingTime($shippingTime);
+        }
 
         return $timeline;
     }

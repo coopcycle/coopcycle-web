@@ -28,6 +28,16 @@ class OrderTimeline
      */
     protected $preparationExpectedAt;
 
+    /**
+     * @var string
+     */
+    protected $preparationTime;
+
+    /**
+     * @var string|null
+     */
+    protected $shippingTime;
+
     public function getId()
     {
         return $this->id;
@@ -75,6 +85,46 @@ class OrderTimeline
     public function setPreparationExpectedAt(\DateTime $preparationExpectedAt)
     {
         $this->preparationExpectedAt = $preparationExpectedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPreparationTime()
+    {
+        return $this->preparationTime;
+    }
+
+    /**
+     * @param string $preparationTime
+     *
+     * @return self
+     */
+    public function setPreparationTime($preparationTime)
+    {
+        $this->preparationTime = $preparationTime;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getShippingTime()
+    {
+        return $this->shippingTime;
+    }
+
+    /**
+     * @param string $shippingTime
+     *
+     * @return self
+     */
+    public function setShippingTime($shippingTime)
+    {
+        $this->shippingTime = $shippingTime;
 
         return $this;
     }
