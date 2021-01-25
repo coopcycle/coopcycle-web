@@ -11,6 +11,7 @@ use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\OrderTimeHelper;
+use AppBundle\Utils\OrderTimelineCalculator;
 use AppBundle\Utils\PickupTimeResolver;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
@@ -19,18 +20,18 @@ class DeliveryManager
     private $expressionLanguage;
     private $routing;
     private $orderTimeHelper;
-    private $pickupTimeResolver;
+    private $orderTimelineCalculator;
 
     public function __construct(
         ExpressionLanguage $expressionLanguage,
         RoutingInterface $routing,
         OrderTimeHelper $orderTimeHelper,
-        PickupTimeResolver $pickupTimeResolver)
+        OrderTimelineCalculator $orderTimelineCalculator)
     {
         $this->expressionLanguage = $expressionLanguage;
         $this->routing = $routing;
         $this->orderTimeHelper = $orderTimeHelper;
-        $this->pickupTimeResolver = $pickupTimeResolver;
+        $this->orderTimelineCalculator = $orderTimelineCalculator;
     }
 
     public function getPrice(Delivery $delivery, PricingRuleSet $ruleSet)
@@ -97,6 +98,8 @@ class DeliveryManager
             throw new NoAvailableTimeSlotException('No time slot is avaible');
         }
 
+        $order->setShippingTimeRange($dropoffTimeRange);
+
         $distance = $this->routing->getDistance(
             $pickupAddress->getGeo(),
             $dropoffAddress->getGeo()
@@ -106,7 +109,8 @@ class DeliveryManager
             $dropoffAddress->getGeo()
         );
 
-        $pickupTime = $this->pickupTimeResolver->resolve($order, $dropoffTimeRange->getUpper());
+        $timeline = $this->orderTimelineCalculator->calculate($order);
+        $pickupTime = $timeline->getPickupExpectedAt();
 
         $pickupTimeRange = DateUtils::dateTimeToTsRange($pickupTime, 5);
 
