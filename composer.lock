@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6d42e820083798b0902bfa22967f9ad8",
+    "content-hash": "432adc1f55ef7d7d35315dc2458eb27e",
     "packages": [
         {
             "name": "api-platform/core",
@@ -4023,16 +4023,16 @@
         },
         {
             "name": "gedmo/doctrine-extensions",
-            "version": "v2.4.42",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Atlantic18/DoctrineExtensions.git",
-                "reference": "b6c4442b4f32ce05673fbdf1fa4a2d5e315cc0a4"
+                "reference": "2cd7277ae49ec8c2640b247e5af4e36c58e78f22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Atlantic18/DoctrineExtensions/zipball/b6c4442b4f32ce05673fbdf1fa4a2d5e315cc0a4",
-                "reference": "b6c4442b4f32ce05673fbdf1fa4a2d5e315cc0a4",
+                "url": "https://api.github.com/repos/Atlantic18/DoctrineExtensions/zipball/2cd7277ae49ec8c2640b247e5af4e36c58e78f22",
+                "reference": "2cd7277ae49ec8c2640b247e5af4e36c58e78f22",
                 "shasum": ""
             },
             "require": {
@@ -4104,10 +4104,10 @@
             "support": {
                 "email": "gediminas.morkevicius@gmail.com",
                 "issues": "https://github.com/Atlantic18/DoctrineExtensions/issues",
-                "source": "https://github.com/Atlantic18/DoctrineExtensions/tree/v3.0.0-beta",
-                "wiki": "https://github.com/Atlantic18/DoctrineExtensions/tree/master/doc"
+                "source": "https://github.com/Atlantic18/DoctrineExtensions/tree/v3.0.1",
+                "wiki": "https://github.com/Atlantic18/DoctrineExtensions/tree/main/doc"
             },
-            "time": "2020-08-21T01:27:20+00:00"
+            "time": "2020-09-23T17:25:04+00:00"
         },
         {
             "name": "geo6/geocoder-php-addok-provider",
