@@ -636,6 +636,20 @@ class Order extends BaseOrder implements OrderInterface
         }
     }
 
+    public function getPreparationTime()
+    {
+        if (null !== $this->timeline) {
+            return $this->timeline->getPreparationTime();
+        }
+    }
+
+    public function getShippingTime()
+    {
+        if (null !== $this->timeline) {
+            return $this->timeline->getShippingTime();
+        }
+    }
+
     public function getEvents(): Collection
     {
         return $this->events;

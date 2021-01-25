@@ -79,6 +79,10 @@ Sylius\Component\Order\Model\Order:
       groups: ['order', 'order_minimal']
     fulfillmentMethod:
       groups: ['cart', 'order_update', 'order_minimal']
+    preparationTime:
+      groups: ['order']
+    shippingTime:
+      groups: ['order']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:

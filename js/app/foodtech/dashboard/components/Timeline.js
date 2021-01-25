@@ -16,6 +16,9 @@ export default withTranslation()(({ order, t }) => {
         { order.reusablePackagingEnabled && (
           <span className="text-warning">{ t('ADMIN_DASHBOARD_ORDERS_PACKAGING_ALERT') }</span>
         )}
+        { order.preparationTime && (
+          <span className="text-muted">{ order.preparationTime }</span>
+        ) }
       </Timeline.Item>
       <Timeline.Item dot={<i className="fa fa-cube"></i>}>
         <div>
@@ -30,6 +33,11 @@ export default withTranslation()(({ order, t }) => {
             <span className="text-warning">{ t('ADMIN_DASHBOARD_ORDERS_TAKEAWAY_ALERT') }</span>
           </li>
           )}
+          { (!order.takeaway && order.shippingTime) && (
+          <li>
+            <span className="text-muted">{ order.shippingTime }</span>
+          </li>
+          ) }
         </ul>
       </Timeline.Item>
       { !order.takeaway && (
