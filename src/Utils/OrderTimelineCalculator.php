@@ -25,13 +25,13 @@ class OrderTimelineCalculator
         $this->shippingTimeCalculator = $shippingTimeCalculator;
     }
 
-    public function calculate(OrderInterface $order): OrderTimeline
+    public function calculate(OrderInterface $order, ?TsRange $range = null): OrderTimeline
     {
         $preparationTime = $this->preparationTimeCalculator->calculate($order);
         $shippingTime =
             'delivery' === $order->getFulfillmentMethod() ? $this->shippingTimeCalculator->calculate($order) : null;
 
-        return OrderTimeline::create($order, $order->getShippingTimeRange(), $preparationTime, $shippingTime);
+        return OrderTimeline::create($order, $range ?? $order->getShippingTimeRange(), $preparationTime, $shippingTime);
     }
 
     public function delay(OrderInterface $order, $delay)

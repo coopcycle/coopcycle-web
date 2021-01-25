@@ -98,8 +98,6 @@ class DeliveryManager
             throw new NoAvailableTimeSlotException('No time slot is avaible');
         }
 
-        $order->setShippingTimeRange($dropoffTimeRange);
-
         $distance = $this->routing->getDistance(
             $pickupAddress->getGeo(),
             $dropoffAddress->getGeo()
@@ -109,7 +107,7 @@ class DeliveryManager
             $dropoffAddress->getGeo()
         );
 
-        $timeline = $this->orderTimelineCalculator->calculate($order);
+        $timeline = $this->orderTimelineCalculator->calculate($order, $dropoffTimeRange);
         $pickupTime = $timeline->getPickupExpectedAt();
 
         $pickupTimeRange = DateUtils::dateTimeToTsRange($pickupTime, 5);

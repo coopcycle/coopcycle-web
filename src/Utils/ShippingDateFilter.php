@@ -50,7 +50,7 @@ class ShippingDateFilter
             return false;
         }
 
-        $timeline = $this->orderTimelineCalculator->calculate($order);
+        $timeline = $this->orderTimelineCalculator->calculate($order, $range);
         $preparation = $timeline->getPreparationExpectedAt();
 
         if ($preparation <= $now) {

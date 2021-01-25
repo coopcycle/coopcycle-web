@@ -150,7 +150,7 @@ class DeliveryManagerTest extends KernelTestCase
         $timeline->setPickupExpectedAt(new \DateTime('2020-04-09 19:45:00'));
 
         $this->orderTimelineCalculator
-            ->calculate($order)
+            ->calculate($order, $shippingTimeRange)
             ->willReturn($timeline);
 
         $deliveryManager = new DeliveryManager(

@@ -171,7 +171,7 @@ class ShippingDateFilterTest extends TestCase
         $timeline->setPreparationExpectedAt($preparation);
 
         $this->orderTimelineCalculator
-            ->calculate($order->reveal())
+            ->calculate($order->reveal(), $tsRange)
             ->willReturn($timeline);
 
         $this->assertEquals($expected, $this->filter->accept($order->reveal(), $tsRange, $now));
