@@ -23,6 +23,9 @@
     {{ 'order.created.body' | trans({}, 'emails') | raw }}
     </mj-text>
     {% include 'emails/order/_partials/items.mjml.twig' %}
+    <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white" href="{{ url('order_confirm', { hashid: order|hashid(16) }) }}">
+      {{ 'order.view' | trans({}, 'emails') }}
+    </mj-button>
   {% endif %}
 </mj-column>
 {% endblock %}
