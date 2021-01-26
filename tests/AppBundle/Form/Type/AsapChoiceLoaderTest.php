@@ -25,20 +25,6 @@ class AsapChoiceLoaderTest extends TestCase
         return $range->getLower()->format('Y-m-d H:i').' - '.$range->getUpper()->format('Y-m-d H:i');
     }
 
-    private function toAvgStrings($choices)
-    {
-        return array_map(function (TsRangeChoice $choice) {
-
-            $tsRange = $choice->toTsRange();
-
-            // $avg = Carbon::instance($tsRange->getLower())->add(5, 'minutes');
-            $avg = Carbon::instance($tsRange->getLower())
-                ->average($tsRange->getUpper());
-
-            return $avg->format(\DateTime::ATOM);
-        }, $choices);
-    }
-
     private function toTimeRanges($choices)
     {
         return array_map(fn(TsRangeChoice $choice) => $choice->toTsRange(), $choices);
@@ -185,7 +171,6 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
         $this->assertContainsTimeRanges([
             [ '2017-10-04T17:30:00+02:00', '2017-10-04T17:40:00+02:00' ],
@@ -220,7 +205,6 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
         $this->assertContainsTimeRanges([
             ['2020-03-12T15:30:00+02:00', '2020-03-12T15:40:00+02:00'],
@@ -260,7 +244,6 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
         $this->assertContainsTimeRanges([
             [ '2020-03-13T13:20:00+02:00', '2020-03-13T13:30:00+02:00' ],
@@ -292,7 +275,6 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
         $this->assertContainsDays([
             '2019-08-06',
@@ -320,7 +302,6 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
         $this->assertNotContainsDay('2019-08-07', $choices);
 
@@ -343,7 +324,7 @@ class AsapChoiceLoaderTest extends TestCase
         $choices = $choiceList->getChoices();
 
         $this->assertContainsTimeRanges([
-            ['2017-10-06T17:30:00+02:00', '2017-10-06T17:40:00+02:00'],
+            [ '2017-10-06T17:30:00+02:00', '2017-10-06T17:40:00+02:00'],
             [ '2017-10-07T10:00:00+02:00', '2017-10-07T10:10:00+02:00' ],
             [ '2017-10-07T18:50:00+02:00', '2017-10-07T19:00:00+02:00' ],
         ], $choices);
@@ -427,7 +408,6 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
         $this->assertContainsTimeRanges([
             [ '2017-10-04T16:00:00+02:00', '2017-10-04T16:10:00+02:00' ]
@@ -453,9 +433,8 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
-        $this->assertEmpty($values);
+        $this->assertEmpty($choices);
 
         $this->assertNotContainsDates([
             '2017-10-04T14:30:00+02:00',
@@ -519,7 +498,6 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
         $this->assertContainsTimeRanges([
             [ '2020-12-24T09:30:00+02:00', '2020-12-24T09:40:00+02:00' ]
@@ -540,7 +518,6 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
         $this->assertContainsTimeRanges([
             [ '2019-12-20T22:00:00+02:00', '2019-12-20T22:10:00+02:00'],
@@ -561,7 +538,6 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
         $this->assertContainsTimeRanges([
             ['2020-12-23T11:30:00+02:00', '2020-12-23T11:40:00+02:00'],
@@ -582,7 +558,6 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
         $this->assertContainsTimeRanges([
             ['2020-12-28T11:00:00+02:00', '2020-12-28T11:10:00+02:00'],
@@ -594,7 +569,6 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
         $this->assertContainsTimeRanges([
             ['2020-12-28T11:00:00+02:00', '2020-12-28T11:30:00+02:00'],
@@ -606,12 +580,28 @@ class AsapChoiceLoaderTest extends TestCase
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
-        $values = $choiceList->getValues();
 
         $this->assertContainsTimeRanges([
             ['2020-12-28T11:00:00+02:00', '2020-12-28T12:00:00+02:00'],
             ['2020-12-28T12:00:00+02:00', '2020-12-28T13:00:00+02:00'],
             ['2020-12-28T13:00:00+02:00', '2020-12-28T14:00:00+02:00'],
+        ], $choices);
+    }
+
+    public function test30MinutesRange()
+    {
+        Carbon::setTestNow(Carbon::parse('2020-12-23T09:30:00+02:00'));
+
+        $choiceLoader = new AsapChoiceLoader(["Mo 11:15-13:30"], null, 0, 30);
+
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertContainsTimeRanges([
+            ['2020-12-28T11:30:00+02:00', '2020-12-28T12:00:00+02:00'],
+            ['2020-12-28T12:00:00+02:00', '2020-12-28T12:30:00+02:00'],
+            ['2020-12-28T12:30:00+02:00', '2020-12-28T13:00:00+02:00'],
+            ['2020-12-28T13:00:00+02:00', '2020-12-28T13:30:00+02:00'],
         ], $choices);
     }
 }
