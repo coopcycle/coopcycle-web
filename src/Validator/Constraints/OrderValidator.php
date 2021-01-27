@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\ValidatorBuilder;
 
 class OrderValidator extends ConstraintValidator
 {
@@ -29,13 +30,16 @@ class OrderValidator extends ConstraintValidator
         $this->priceFormatter = $priceFormatter;
     }
 
-    private function isAddressValid(Address $address)
+    private function isAddressValid(?Address $address)
     {
-        $validator = Validation::createValidator();
+        if (null === $address) {
+            return false;
+        }
 
-        $errors = $validator->validate($address, [
-            new Assert\Valid(),
-        ]);
+        $validatorBuilder = new ValidatorBuilder();
+        $validator = $validatorBuilder->enableAnnotationMapping()->getValidator();
+
+        $errors = $validator->validate($address);
 
         return count($errors) === 0;
     }
@@ -76,7 +80,7 @@ class OrderValidator extends ConstraintValidator
             return;
         }
 
-        if (null === $shippingAddress || !$this->isAddressValid($shippingAddress)) {
+        if (!$this->isAddressValid($shippingAddress)) {
             $this->context->buildViolation($constraint->addressNotSetMessage)
                 ->atPath('shippingAddress')
                 ->setCode(Order::ADDRESS_NOT_SET)

@@ -19,6 +19,7 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
+use AppBundle\Validator\Constraints\Order as OrderConstraint;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -82,6 +83,19 @@ class OrderController extends AbstractController
         if (null === $order || null === $order->getVendor()) {
 
             return $this->redirectToRoute('homepage');
+        }
+
+        $errors = $validator->validate($order);
+
+        // @see https://github.com/coopcycle/coopcycle-web/issues/2069
+        if (count($errors) > 0 && $errors->findByCodes(OrderConstraint::ADDRESS_NOT_SET)) {
+
+            $vendor = $order->getVendor();
+            if ($vendor->isHub()) {
+                return $this->redirectToRoute('hub', ['id' => $vendor->getHub()->getId()]);
+            }
+
+            return $this->redirectToRoute('restaurant', ['id' => $vendor->getRestaurant()->getId()]);
         }
 
         $user = $this->getUser();
