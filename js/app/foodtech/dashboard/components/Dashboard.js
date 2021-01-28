@@ -66,7 +66,7 @@ class Dashboard extends React.Component {
                 </Col>
                 <Col span={ 18 }>
                   <Slider
-                    max={ 90 }
+                    max={ 180 }
                     defaultValue={ this.props.preparationDelay }
                     marks={ this.sliderMarks }
                     step={ null }
