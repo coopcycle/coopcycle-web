@@ -24,6 +24,9 @@ class Dashboard extends React.Component {
       60: '1h',
       75: '1h15',
       90: '1h30',
+      120: '2h',
+      150: '2h30',
+      180: '3h',
     }
   }
 
