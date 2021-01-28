@@ -36,8 +36,12 @@ class OrderValidator extends ConstraintValidator
             return false;
         }
 
-        $validatorBuilder = new ValidatorBuilder();
-        $validator = $validatorBuilder->enableAnnotationMapping()->getValidator();
+        $context = $this->context;
+
+        $validator = $context->getValidator()
+            // ->inContext($context)
+            // ->atPath('shippingAddress')
+            ;
 
         $errors = $validator->validate($address);
 

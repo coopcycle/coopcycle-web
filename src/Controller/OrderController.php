@@ -88,7 +88,7 @@ class OrderController extends AbstractController
         $errors = $validator->validate($order);
 
         // @see https://github.com/coopcycle/coopcycle-web/issues/2069
-        if (count($errors) > 0 && $errors->findByCodes(OrderConstraint::ADDRESS_NOT_SET)) {
+        if (count($errors->findByCodes(OrderConstraint::ADDRESS_NOT_SET)) > 0) {
 
             $vendor = $order->getVendor();
             if ($vendor->isHub()) {
