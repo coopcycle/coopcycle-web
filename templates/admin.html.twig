@@ -19,6 +19,15 @@
   </div>
   {% endif %}
 
+  {% if coopcycle_has_ordering_delay() %}
+  <div class="alert alert-warning">
+    <span><i class="fa fa-lg fa-clock-o"></i> {{ 'ordering_delay.admin_reminder'|trans }}</span>
+    <a class="pull-right" href="{{ path('admin_foodtech_dashboard', { date: 'now'|date('Y-m-d') }) }}">
+      {{ 'basics.edit'|trans }}
+    </a>
+  </div>
+  {% endif %}
+
   <ol class="breadcrumb">
     <li><a href="{{ path('admin_index') }}">{% trans %}adminDashboard.title{% endtrans %}</a></li>
     {% block breadcrumb %}{% endblock %}
