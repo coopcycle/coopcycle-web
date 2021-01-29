@@ -19278,16 +19278,16 @@
         },
         {
             "name": "phpstan/phpstan-webmozart-assert",
-            "version": "0.12.9",
+            "version": "0.12.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-webmozart-assert.git",
-                "reference": "dcb38393a99d4562bd21137ecb179c43dff3fd70"
+                "reference": "7c19228cf2077b9bb6ac509476d02550eccaf1d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-webmozart-assert/zipball/dcb38393a99d4562bd21137ecb179c43dff3fd70",
-                "reference": "dcb38393a99d4562bd21137ecb179c43dff3fd70",
+                "url": "https://api.github.com/repos/phpstan/phpstan-webmozart-assert/zipball/7c19228cf2077b9bb6ac509476d02550eccaf1d2",
+                "reference": "7c19228cf2077b9bb6ac509476d02550eccaf1d2",
                 "shasum": ""
             },
             "require": {
@@ -19325,9 +19325,9 @@
             "description": "PHPStan webmozart/assert extension",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-webmozart-assert/issues",
-                "source": "https://github.com/phpstan/phpstan-webmozart-assert/tree/0.12.9"
+                "source": "https://github.com/phpstan/phpstan-webmozart-assert/tree/0.12.10"
             },
-            "time": "2021-01-24T16:10:12+00:00"
+            "time": "2021-01-28T10:37:16+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
