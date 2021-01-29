@@ -22,6 +22,7 @@ services:
 
   AppBundle\Twig\OrderRuntime:
     arguments:
+      $redis: '@snc_redis.default'
       $locale: '%env(COOPCYCLE_LOCALE)%'
 
   Twig\Extra\Intl\IntlExtension:

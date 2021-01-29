@@ -5,16 +5,19 @@ namespace AppBundle\Twig;
 use AppBundle\DataType\TsRange;
 use Carbon\Carbon;
 use Twig\Extension\RuntimeExtensionInterface;
+use Redis;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrderRuntime implements RuntimeExtensionInterface
 {
     private $translator;
+    private $redis;
     private $locale;
 
-    public function __construct(TranslatorInterface $translator, string $locale)
+    public function __construct(TranslatorInterface $translator, Redis $redis, string $locale)
     {
         $this->translator = $translator;
+        $this->redis = $redis;
         $this->locale = $locale;
     }
 
@@ -74,5 +77,14 @@ class OrderRuntime implements RuntimeExtensionInterface
             $lower->isoFormat('L'),
             $rangeAsText
         );
+    }
+
+    public function hasDelayConfigured(): bool
+    {
+        if ($value = $this->redis->get('foodtech:preparation_delay')) {
+            return intval($value) > 0;
+        }
+
+        return false;
     }
 }
