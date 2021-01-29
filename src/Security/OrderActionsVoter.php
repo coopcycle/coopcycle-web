@@ -68,6 +68,14 @@ class OrderActionsVoter extends Voter
 
         if (self::VIEW === $attribute) {
 
+            if ($subject->getVendor()->isHub()) {
+                foreach ($subject->getVendors() as $vendor) {
+                    if ($this->authorizationChecker->isGranted('edit', $vendor)) {
+                        return true;
+                    }
+                }
+            }
+
             return $ownsRestaurant || $isCustomer;
         }
 
