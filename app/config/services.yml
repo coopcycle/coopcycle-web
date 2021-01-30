@@ -370,6 +370,7 @@ services:
       - "@sylius.repository.tax_category"
       - "@coopcycle.settings_manager"
       - "@translator"
+      - "@serializer.normalizer.object"
     public: false
 
   AppBundle\Sylius\Order\OrderFactory:

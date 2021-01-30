@@ -158,5 +158,10 @@ class ProductVariant extends BaseProductVariant implements ProductVariantInterfa
         return false;
     }
 
-
+    public function configure(array $configuration)
+    {
+        $this->configuration = new ProductVariantConfiguration();
+        $this->configuration->setVariant($this);
+        $this->configuration->setConfiguration($configuration);
+    }
 }

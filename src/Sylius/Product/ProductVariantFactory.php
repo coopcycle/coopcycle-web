@@ -10,6 +10,8 @@ use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Product\Repository\ProductVariantRepositoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+// use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -30,13 +32,16 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
     private $translator;
 
+    private $serializer;
+
     public function __construct(
         ProductVariantFactoryInterface $factory,
         ProductRepositoryInterface $productRepository,
         ProductVariantRepositoryInterface $productVariantRepository,
         TaxCategoryRepositoryInterface $taxCategoryRepository,
         SettingsManager $settingsManager,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        ObjectNormalizer $serializer)
     {
         $this->factory = $factory;
         $this->productRepository = $productRepository;
@@ -44,6 +49,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->settingsManager = $settingsManager;
         $this->translator = $translator;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -91,12 +97,17 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
             (string) number_format($delivery->getDistance() / 1000, 2)
         );
 
+        $configuration = $this->serializer->normalize($delivery, 'jsonld', [
+            'groups' => ['product_variant'],
+        ]);
+
         $productVariant->setName($name);
         $productVariant->setPosition(1);
 
         $productVariant->setPrice($price);
         $productVariant->setTaxCategory($taxCategory);
         $productVariant->setCode($code);
+        $productVariant->configure($configuration);
 
         return $productVariant;
     }

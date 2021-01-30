@@ -90,10 +90,6 @@ class OrderFactory implements FactoryInterface
 
         $order = $this->factory->createNew();
 
-        if ($attach) {
-            $order->setDelivery($delivery);
-        }
-
         $order->setShippingAddress($delivery->getDropoff()->getAddress());
 
         $shippingTimeRange = new TsRange();
@@ -121,6 +117,10 @@ class OrderFactory implements FactoryInterface
         $this->orderItemQuantityModifier->modify($orderItem, 1);
 
         $this->orderModifier->addToOrder($order, $orderItem);
+
+        if ($attach) {
+            $order->setDelivery($delivery);
+        }
 
         return $order;
     }

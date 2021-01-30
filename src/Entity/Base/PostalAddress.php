@@ -71,7 +71,7 @@ abstract class PostalAddress
     /**
      * @var string The street address. For example, 1600 Amphitheatre Pkwy.
      *
-     * @Groups({"address", "address_create", "task_create", "task_edit", "order_update", "cart", "delivery_create"})
+     * @Groups({"address", "address_create", "task_create", "task_edit", "order_update", "cart", "delivery_create", "product_variant"})
      * @Assert\Type(type="string")
      * @Assert\NotBlank()
      * @ApiProperty(iri="https://schema.org/streetAddress")
@@ -81,7 +81,7 @@ abstract class PostalAddress
     /**
      * @var PhoneNumber|null
      *
-     * @Groups({"address", "address_create", "task_create", "task_edit", "order_update", "cart", "delivery_create"})
+     * @Groups({"address", "address_create", "task_create", "task_edit", "order_update", "cart", "delivery_create", "product_variant"})
      * @ApiProperty(iri="https://schema.org/telephone")
      * @AssertPhoneNumber(groups={"Default", "cart"})
      */

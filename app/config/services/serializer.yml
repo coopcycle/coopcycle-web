@@ -88,3 +88,13 @@ services:
     arguments:
       $normalizer: "@serializer.normalizer.object"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\NewTaskNormalizer:
+    arguments:
+      $normalizer: '@serializer.normalizer.object'
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\NewAddressNormalizer:
+    arguments:
+      $normalizer: '@serializer.normalizer.object'
+    tags: [ { name: serializer.normalizer, priority: 128 } ]

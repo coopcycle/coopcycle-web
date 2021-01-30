@@ -14,6 +14,9 @@
       </join-columns>
     </many-to-one>
     <many-to-one field="configuration" target-entity="AppBundle\Entity\Sylius\ProductVariantConfiguration">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
       <join-columns>
         <join-column name="configuration_id" referenced-column-name="id"/>
       </join-columns>
