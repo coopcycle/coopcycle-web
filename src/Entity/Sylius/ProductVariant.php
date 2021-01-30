@@ -22,6 +22,11 @@ class ProductVariant extends BaseProductVariant implements ProductVariantInterfa
     protected $taxCategory;
 
     /**
+     * @var ProductVariantConfiguration
+     */
+    protected ?ProductVariantConfiguration $configuration;
+
+    /**
      * {@inheritdoc}
      */
     public function getPrice(): ?int
@@ -152,4 +157,6 @@ class ProductVariant extends BaseProductVariant implements ProductVariantInterfa
 
         return false;
     }
+
+
 }
