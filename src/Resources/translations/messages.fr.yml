@@ -1129,3 +1129,4 @@ form.fulfillment_method.pre_ordering_allowed.help: Si vous décochez cette case,
 form.fulfillment_method.options.range_duration.label: Durée des créneaux
 ordering_delay.disclaimer: Nous recevons actuellement beaucoup de commandes, les délais s'allongent !
 ordering_delay.admin_reminder: Vous avez défini un retard global pour les commandes
+notifications.delivery_created: Une livraison avec enlèvement %date% a été créée

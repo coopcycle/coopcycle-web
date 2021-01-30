@@ -1,0 +1,13 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+<mj-column>
+  <mj-text align="left" line-height="20px">
+    {{ body }}
+  </mj-text>
+  <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white"
+    href="{{ url('admin_dashboard_fullscreen', { date: delivery.pickup.after|date('Y-m-d'), nav: 'on' }) }}">
+    {{ 'basics.view'|trans({}, 'messages') }}
+  </mj-button>
+</mj-column>
+{% endblock %}

@@ -918,6 +918,10 @@ services:
     arguments:
       $namespace: '%centrifugo_namespace%'
 
+  AppBundle\MessageHandler\DeliveryCreatedHandler:
+    arguments:
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+
   AppBundle\Service\MaintenanceManager: ~
 
   AppBundle\Service\SmsManager: ~
