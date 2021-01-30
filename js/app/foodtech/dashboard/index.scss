@@ -43,6 +43,44 @@
     }
   }
 
+  &__SlotViz {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    max-height: 5%;
+    height: 5%;
+
+    margin-bottom: 10px;
+    padding-bottom: 20px;
+
+    @media (max-width: $screen-xs-max) {
+      display: none;
+    }
+
+    &__Slot {
+
+      position: relative;
+      height: 10px;
+      border-right: 1px solid white;
+      width: 4.1666666667%;
+
+      &:last-child {
+        border-right: none;
+      }
+
+      &__Start {
+        position: absolute;
+        left: 0;
+        bottom: -15px;
+        font-size: 10px;
+        line-height: 10px;
+        transform: translateX(-50%);
+      }
+    }
+  }
+
   $columns-gutter: 15px;
 
   &__Columns {

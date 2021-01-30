@@ -9,6 +9,7 @@ import Column from './Column'
 import ModalContent from './ModalContent'
 import Tab from './Tab'
 import Search from './Search'
+import SlotViz from './SlotViz'
 import { setCurrentOrder, orderCreated, setPreparationDelay, changeStatus, setActiveTab } from '../redux/actions'
 import { selectNewOrders, selectAcceptedOrders, selectFulfilledOrders, selectCancelledOrders } from '../redux/selectors'
 
@@ -104,6 +105,9 @@ class Dashboard extends React.Component {
               defaultValue={ moment(this.props.date) }
               onChange={ (date) => this.props.onDateChange(date) } />
           </div>
+        </div>
+        <div className="FoodtechDashboard__SlotViz">
+          <SlotViz />
         </div>
         <div className="FoodtechDashboard__Columns">
           <Column
