@@ -11,16 +11,14 @@ import { selectHoursRanges, selectOrdersByHourRange } from '../redux/selectors'
 const moment = extendMoment(Moment)
 
 const chromaScale = chroma
-  .scale([ '#2ecc71', '#f1c40f', '#c0392b' ])
-  .domain([ 0, 0.1, 1 ])
+  .scale([ '#f1c40f', '#e67e22', '#e74c3c' ])
   .classes(10)
-
 
 const Slot = ({ range, count, percentage, index }) => {
 
   return (
     <Tooltip title={ count }>
-      <div className="FoodtechDashboard__SlotViz__Slot" style={{ backgroundColor: chromaScale(percentage).hex() }}>
+      <div className="FoodtechDashboard__SlotViz__Slot" style={{ backgroundColor: count === 0 ? '#2ecc71' : chromaScale(percentage).hex() }}>
         { index > 0 && (
           <span className="FoodtechDashboard__SlotViz__Slot__Start">{ range.start.format('HH:mm') }</span>
         ) }
