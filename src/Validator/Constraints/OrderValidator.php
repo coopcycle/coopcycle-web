@@ -16,36 +16,11 @@ use Symfony\Component\Validator\ValidatorBuilder;
 
 class OrderValidator extends ConstraintValidator
 {
-    private $routing;
-    private $expressionLanguage;
     private $priceFormatter;
 
-    public function __construct(
-        RoutingInterface $routing,
-        ExpressionLanguage $expressionLanguage,
-        PriceFormatter $priceFormatter)
+    public function __construct(PriceFormatter $priceFormatter)
     {
-        $this->routing = $routing;
-        $this->expressionLanguage = $expressionLanguage;
         $this->priceFormatter = $priceFormatter;
-    }
-
-    private function isAddressValid(?Address $address)
-    {
-        if (null === $address) {
-            return false;
-        }
-
-        $context = $this->context;
-
-        $validator = $context->getValidator()
-            // ->inContext($context)
-            // ->atPath('shippingAddress')
-            ;
-
-        $errors = $validator->validate($address);
-
-        return count($errors) === 0;
     }
 
     private function validateVendor($object, Constraint $constraint)
@@ -69,42 +44,6 @@ class OrderValidator extends ConstraintValidator
                 ->setParameter('%minimum_amount%', $this->priceFormatter->formatWithSymbol($minimumAmount))
                 ->atPath('total')
                 ->addViolation();
-
-            // Stop here when order is empty
-            // We don't want to show an error on shipping address until at least one item is added
-            if ($itemsTotal === 0) {
-                return;
-            }
-        }
-
-        $shippingAddress = $order->getShippingAddress();
-
-        if ($order->isTakeaway()) {
-
-            return;
-        }
-
-        if (!$this->isAddressValid($shippingAddress)) {
-            $this->context->buildViolation($constraint->addressNotSetMessage)
-                ->atPath('shippingAddress')
-                ->setCode(Order::ADDRESS_NOT_SET)
-                ->addViolation();
-
-            return;
-        }
-
-        $distance = $this->routing->getDistance(
-            $vendor->getAddress()->getGeo(),
-            $shippingAddress->getGeo()
-        );
-
-        if (!$vendor->canDeliverAddress($order->getShippingAddress(), $distance, $this->expressionLanguage)) {
-            $this->context->buildViolation($constraint->addressTooFarMessage)
-                ->atPath('shippingAddress')
-                ->setCode(Order::ADDRESS_TOO_FAR)
-                ->addViolation();
-
-            return;
         }
     }
 

@@ -15,9 +15,6 @@ services:
       - { name: validator.constraint_validator }
 
   AppBundle\Validator\Constraints\OrderValidator:
-    arguments:
-      - '@routing_service'
-      - '@coopcycle.expression_language'
     tags:
       - { name: validator.constraint_validator }
 
@@ -61,5 +58,11 @@ services:
       - { name: validator.constraint_validator }
 
   AppBundle\Validator\Constraints\ShippingTimeRangeJumpValidator:
+    tags:
+      - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\ShippingAddressValidator:
+    arguments:
+      $expressionLanguage: '@coopcycle.expression_language'
     tags:
       - { name: validator.constraint_validator }

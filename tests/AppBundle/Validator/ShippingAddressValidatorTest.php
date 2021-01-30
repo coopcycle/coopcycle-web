@@ -12,37 +12,43 @@ use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Utils\ValidationUtils;
-use AppBundle\Validator\Constraints\Order as OrderConstraint;
-use AppBundle\Validator\Constraints\OrderValidator;
+use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint;
+use AppBundle\Validator\Constraints\ShippingAddressValidator;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class OrderValidatorTest extends ConstraintValidatorTestCase
+class ShippingAddressValidatorTest extends ConstraintValidatorTestCase
 {
     use ProphecyTrait;
 
-    protected $priceFormatter;
+    protected $routing;
 
     public function setUp(): void
     {
-        $this->priceFormatter = $this->prophesize(PriceFormatter::class);
-
-        $this->priceFormatter
-            ->formatWithSymbol(Argument::type('int'))
-            ->will(function ($args) {
-                return sprintf('%s €', number_format($args[0] / 100, 2));
-            });
+        $this->routing = $this->prophesize(RoutingInterface::class);
 
         parent::setUp();
     }
 
     protected function createValidator()
     {
-        return new OrderValidator(
-            $this->priceFormatter->reveal()
+        return new ShippingAddressValidator(
+            $this->routing->reveal(),
+            new ExpressionLanguage()
         );
+    }
+
+    private function prophesizeGetRawResponse(GeoCoordinates $origin, GeoCoordinates $destination, $distance, $duration)
+    {
+        $this->routing
+            ->getDistance($origin, $destination)
+            ->willReturn($distance);
+
+        $this->routing
+            ->getDuration($origin, $destination)
+            ->willReturn($duration);
     }
 
     private function createAddressProphecy(GeoCoordinates $coords)
@@ -139,7 +145,138 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         return $order;
     }
 
-    public function testMinimumAmountValidation()
+    public function testDistanceValidation()
+    {
+        $shippingAddressCoords = new GeoCoordinates();
+        $restaurantAddressCoords = new GeoCoordinates();
+
+        $shippingAddress = $this->createAddress($shippingAddressCoords);
+        $restaurantAddress = $this->createAddressProphecy($restaurantAddressCoords);
+
+        $restaurant = $this->createRestaurantProphecy(
+            $restaurantAddress->reveal(),
+            $minimumCartAmount = 2000,
+            $maxDistanceExpression = 'distance < 3000',
+            $canDeliver = false
+        );
+
+        $order = $this->createOrderProphecy(
+            $restaurant->reveal(),
+            $shippingAddress
+        );
+
+        $shippingTimeRange =
+            DateUtils::dateTimeToTsRange(new \DateTime('+1 hour'), 5);
+
+        $order
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
+        $order
+            ->getItemsTotal()
+            ->willReturn(2500);
+        $order
+            ->containsDisabledProduct()
+            ->willReturn(false);
+
+        $this->prophesizeGetRawResponse(
+            $restaurantAddressCoords,
+            $shippingAddressCoords,
+            $distance = 3500,
+            $duration = 300
+        );
+
+        $this->setObject($order->reveal());
+
+        $constraint = new ShippingAddressConstraint();
+        $violations = $this->validator->validate($shippingAddress, $constraint);
+
+        $this->buildViolation($constraint->addressTooFarMessage)
+            ->atPath('property.path')
+            ->setCode(ShippingAddressConstraint::ADDRESS_TOO_FAR)
+            ->assertRaised();
+    }
+
+    public function testOrderWithMissingShippingAddress()
+    {
+        $restaurantAddressCoords = new GeoCoordinates();
+        $restaurantAddress = $this->createAddressProphecy($restaurantAddressCoords);
+
+        $restaurant = $this->createRestaurantProphecy(
+            $restaurantAddress->reveal(),
+            $minimumCartAmount = 2000,
+            $maxDistanceExpression = 'distance < 3000',
+            $canDeliver = true
+        );
+
+        $order = $this->createOrderProphecy(
+            $restaurant->reveal(),
+            null
+        );
+
+        $shippingTimeRange =
+            DateUtils::dateTimeToTsRange(new \DateTime('+1 hour'), 5);
+
+        $order
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
+        $order
+            ->getItemsTotal()
+            ->willReturn(2500);
+        $order
+            ->containsDisabledProduct()
+            ->willReturn(false);
+
+        $this->setObject($order->reveal());
+
+        $constraint = new ShippingAddressConstraint();
+        $violations = $this->validator->validate(null, $constraint);
+
+        $this->buildViolation($constraint->addressNotSetMessage)
+            ->atPath('property.path')
+            ->setCode(ShippingAddressConstraint::ADDRESS_NOT_SET)
+            ->assertRaised();
+    }
+
+    public function testTakeawayOrderWithMissingShippingAddressIsValid()
+    {
+        $restaurantAddressCoords = new GeoCoordinates();
+        $restaurantAddress = $this->createAddressProphecy($restaurantAddressCoords);
+
+        $restaurant = $this->createRestaurantProphecy(
+            $restaurantAddress->reveal(),
+            $minimumCartAmount = 2000,
+            $maxDistanceExpression = 'distance < 3000',
+            $canDeliver = true
+        );
+
+        $order = $this->createOrderProphecy(
+            $restaurant->reveal(),
+            null,
+            true
+        );
+
+        $shippingTimeRange =
+            DateUtils::dateTimeToTsRange(new \DateTime('+1 hour'), 5);
+
+        $order
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
+        $order
+            ->getItemsTotal()
+            ->willReturn(2500);
+        $order
+            ->containsDisabledProduct()
+            ->willReturn(false);
+
+        $this->setObject($order->reveal());
+
+        $constraint = new ShippingAddressConstraint();
+        $violations = $this->validator->validate(null, $constraint);
+
+        $this->assertNoViolation();
+    }
+
+    public function testOrderWithItemsTotalZeroIsValid()
     {
         $shippingAddressCoords = new GeoCoordinates();
         $restaurantAddressCoords = new GeoCoordinates();
@@ -167,105 +304,24 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->willReturn($shippingTimeRange);
         $order
             ->getItemsTotal()
-            ->willReturn(500);
+            ->willReturn(0);
         $order
             ->containsDisabledProduct()
             ->willReturn(false);
 
-        $constraint = new OrderConstraint();
-        $violations = $this->validator->validate($order->reveal(), $constraint);
-
-        $this->buildViolation($constraint->totalIncludingTaxTooLowMessage)
-            ->atPath('property.path.total')
-            ->setParameter('%minimum_amount%', '20.00 €')
-            ->assertRaised();
-    }
-
-    public function testOrderWithStateNewCantHaveNullShippingTime()
-    {
-        $shippingAddressCoords = new GeoCoordinates();
-        $restaurantAddressCoords = new GeoCoordinates();
-
-        $shippingAddress = $this->createAddressProphecy($shippingAddressCoords);
-        $restaurantAddress = $this->createAddressProphecy($restaurantAddressCoords);
-
-        $restaurant = $this->createRestaurantProphecy(
-            $restaurantAddress->reveal(),
-            $minimumCartAmount = 2000,
-            $maxDistanceExpression = 'distance < 3000',
-            $canDeliver = true
+        $this->prophesizeGetRawResponse(
+            $restaurantAddressCoords,
+            $shippingAddressCoords,
+            $maxDistanceExpression = 'distance < 1500',
+            $duration = 300
         );
 
-        $order = $this->createOrderProphecy(
-            $restaurant->reveal(),
-            $shippingAddress->reveal()
-        );
+        $this->setObject($order->reveal());
 
-        $order
-            ->getItemsTotal()
-            ->willReturn(2500);
-        $order
-            ->getId()
-            ->willReturn(1);
-        $order
-            ->getState()
-            ->willReturn(Order::STATE_NEW);
-        $order
-            ->getShippingTimeRange()
-            ->willReturn(null);
+        $constraint = new ShippingAddressConstraint();
+        $violations = $this->validator->validate(null, $constraint);
 
-        $constraint = new OrderConstraint();
-        $violations = $this->validator->validate($order->reveal(), $constraint);
-
-        $this->buildViolation($constraint->shippedAtNotEmptyMessage)
-            ->atPath('property.path.shippingTimeRange')
-            ->setCode(OrderConstraint::SHIPPED_AT_NOT_EMPTY)
-            ->assertRaised();
-    }
-
-    public function testOrderWithStateCartCantContainDisabledProducts()
-    {
-        $shippingAddressCoords = new GeoCoordinates();
-        $restaurantAddressCoords = new GeoCoordinates();
-
-        $shippingAddress = $this->createAddressProphecy($shippingAddressCoords);
-        $restaurantAddress = $this->createAddressProphecy($restaurantAddressCoords);
-
-        $restaurant = $this->createRestaurantProphecy(
-            $restaurantAddress->reveal(),
-            $minimumCartAmount = 2000,
-            $maxDistanceExpression = 'distance < 3000',
-            $canDeliver = true
-        );
-
-        $order = $this->createOrderProphecy(
-            $restaurant->reveal(),
-            $shippingAddress->reveal()
-        );
-
-        $order
-            ->getItemsTotal()
-            ->willReturn(2500);
-        $order
-            ->getId()
-            ->willReturn(1);
-        $order
-            ->getState()
-            ->willReturn(Order::STATE_CART);
-        $order
-            ->getShippingTimeRange()
-            ->willReturn(null);
-        $order
-            ->containsDisabledProduct()
-            ->willReturn(true);
-
-        $constraint = new OrderConstraint();
-        $violations = $this->validator->validate($order->reveal(), $constraint);
-
-        $this->buildViolation($constraint->containsDisabledProductMessage)
-            ->atPath('property.path.items')
-            ->setCode(OrderConstraint::CONTAINS_DISABLED_PRODUCT)
-            ->assertRaised();
+        $this->assertNoViolation();
     }
 
     public function testOrderIsValid()
@@ -301,8 +357,17 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->containsDisabledProduct()
             ->willReturn(false);
 
-        $constraint = new OrderConstraint();
-        $violations = $this->validator->validate($order->reveal(), $constraint);
+        $this->prophesizeGetRawResponse(
+            $restaurantAddressCoords,
+            $shippingAddressCoords,
+            $maxDistanceExpression = 'distance < 1500',
+            $duration = 300
+        );
+
+        $this->setObject($order->reveal());
+
+        $constraint = new ShippingAddressConstraint();
+        $violations = $this->validator->validate($shippingAddress, $constraint);
 
         $this->assertNoViolation();
     }

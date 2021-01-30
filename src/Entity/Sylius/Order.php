@@ -32,6 +32,7 @@ use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Validator\Constraints\IsOrderModifiable as AssertOrderIsModifiable;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
 use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
+use AppBundle\Validator\Constraints\ShippingAddress as AssertShippingAddress;
 use AppBundle\Validator\Constraints\ShippingTimeRange as AssertShippingTimeRange;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -247,7 +248,8 @@ class Order extends BaseOrder implements OrderInterface
     protected $vendor;
 
     /**
-     * @Assert\Valid(groups={"cart"})
+     * @Assert\Valid
+     * @AssertShippingAddress
      */
     protected $shippingAddress;
 

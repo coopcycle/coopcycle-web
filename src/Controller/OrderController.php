@@ -19,7 +19,7 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
-use AppBundle\Validator\Constraints\Order as OrderConstraint;
+use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -88,7 +88,7 @@ class OrderController extends AbstractController
         $errors = $validator->validate($order);
 
         // @see https://github.com/coopcycle/coopcycle-web/issues/2069
-        if (count($errors->findByCodes(OrderConstraint::ADDRESS_NOT_SET)) > 0) {
+        if (count($errors->findByCodes(ShippingAddressConstraint::ADDRESS_NOT_SET)) > 0) {
 
             $vendor = $order->getVendor();
             if ($vendor->isHub()) {

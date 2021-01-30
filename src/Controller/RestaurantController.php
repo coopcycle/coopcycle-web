@@ -323,16 +323,6 @@ class RestaurantController extends AbstractController
 
             $cart = $cartForm->getData();
 
-            // Make sure the shipping address is valid
-            // FIXME This is cumbersome, there should be a better way
-            $shippingAddress = $cart->getShippingAddress();
-            if (null !== $shippingAddress) {
-                $isShippingAddressValid = count($this->validator->validate($shippingAddress)) === 0;
-                if (!$isShippingAddressValid) {
-                    $cart->setShippingAddress(null);
-                }
-            }
-
             if ($request->isXmlHttpRequest()) {
 
                 $errors = [];
