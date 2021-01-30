@@ -38,27 +38,13 @@ class ShippingDateFilterTest extends TestCase
     {
         return [
             [
-                // wanted 11:20/11:30, but starts at 11:30
+                // $preparation = 11:15, restaurant is closed
                 $now = new \DateTime('2018-10-12 11:00:00'),
                 $dropoff = TsRange::create(
-                    new \DateTime('2018-10-12 11:20:00'),
-                    new \DateTime('2018-10-12 11:30:00')
+                    new \DateTime('2018-10-12 11:25:00'),
+                    new \DateTime('2018-10-12 11:35:00')
                 ),
                 $preparation = new \DateTime('2018-10-12 11:15:00'),
-                $preparationTime = '10 minutes',
-                $shippingTime = '10 minutes',
-                $openingHours = ['Mo-Su 11:30-14:30'],
-                $closingRules = [],
-                false,
-            ],
-            [
-                // wanted 14:30/14:40, but ends at 14:30
-                $now = new \DateTime('2018-10-12 11:00:00'),
-                $dropoff = TsRange::create(
-                    new \DateTime('2018-10-12 14:30:00'),
-                    new \DateTime('2018-10-12 14:40:00')
-                ),
-                $preparation = new \DateTime('2018-10-12 14:15:00'),
                 $preparationTime = '10 minutes',
                 $shippingTime = '10 minutes',
                 $openingHours = ['Mo-Su 11:30-14:30'],
@@ -108,7 +94,6 @@ class ShippingDateFilterTest extends TestCase
                     ['2018-10-12 12:00:00', '2018-10-12 13:00:00']
                 ],
                 false,
-                $hasClosingRule = true,
             ],
             [
                 // More than 7 days
@@ -138,20 +123,6 @@ class ShippingDateFilterTest extends TestCase
                 $closingRules = [],
                 true,
             ],
-            [
-                // No problem
-                $now = new \DateTime('2018-10-12 09:00:00'),
-                $dropoff = TsRange::create(
-                    new \DateTime('2018-10-12 11:30:00'),
-                    new \DateTime('2018-10-12 11:40:00')
-                ),
-                $preparation = new \DateTime('2018-10-12 11:15:00'),
-                $preparationTime = '10 minutes',
-                $shippingTime = '10 minutes',
-                $openingHours = ['Mo-Su 11:30-14:30'],
-                $closingRules = [],
-                true,
-            ],
         ];
     }
 
@@ -166,8 +137,7 @@ class ShippingDateFilterTest extends TestCase
         string $shippingTime,
         array $openingHours,
         array $closingRules,
-        $expected,
-        bool $hasClosingRule = false)
+        $expected)
     {
         $restaurantClosingRules = new ArrayCollection();
         foreach ($closingRules as $rule) {
@@ -180,10 +150,6 @@ class ShippingDateFilterTest extends TestCase
         $this->restaurant
             ->getClosingRules()
             ->willReturn($restaurantClosingRules);
-
-        $this->restaurant
-            ->hasClosingRuleFor($preparation, $now)
-            ->willReturn($hasClosingRule);
 
         $this->restaurant
             ->getOpeningHours('delivery')

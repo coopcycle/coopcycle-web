@@ -50,20 +50,6 @@ class ShippingDateFilter
             return false;
         }
 
-        $vendor = $order->getVendor();
-        $fulfillmentMethod = $order->getFulfillmentMethod();
-
-        $openingHours = $this->getOpeningHours($vendor->getOpeningHours($fulfillmentMethod));
-
-        if (!$openingHours->isOpenAt($range->getLower()) || !$openingHours->isOpenAt($range->getUpper())) {
-
-            $this->logger->info(sprintf('ShippingDateFilter::accept() - range "%s" does not match with opening hours',
-                sprintf('%s/%s', $range->getLower()->format(\DateTime::ATOM), $range->getUpper()->format(\DateTime::ATOM))
-            ));
-
-            return false;
-        }
-
         $timeline = $this->orderTimelineCalculator->calculate($order, $range);
         $preparation = $timeline->getPreparationExpectedAt();
 
@@ -76,7 +62,10 @@ class ShippingDateFilter
             return false;
         }
 
-        if ($vendor->hasClosingRuleFor($preparation, $now)) {
+        $vendor = $order->getVendor();
+        $fulfillmentMethod = $order->getFulfillmentMethod();
+
+        if (!$this->isOpen($vendor->getOpeningHours($fulfillmentMethod), $preparation, $vendor->getClosingRules())) {
 
             $this->logger->info(sprintf('ShippingDateFilter::accept() - closed at "%s"',
                 $preparation->format(\DateTime::ATOM))
@@ -97,14 +86,6 @@ class ShippingDateFilter
         }
 
         return true;
-    }
-
-    private function getOpeningHours(array $openingHours, Collection $closingRules = null)
-    {
-        return SpatieOpeningHoursRegistry::get(
-            $openingHours,
-            $closingRules
-        );
     }
 
     private function isOpen(array $openingHours, \DateTime $date, Collection $closingRules = null): bool
