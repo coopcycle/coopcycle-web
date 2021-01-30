@@ -55,11 +55,6 @@ class ShippingDateFilter
 
         $openingHours = $this->getOpeningHours($vendor->getOpeningHours($fulfillmentMethod));
 
-        //                 13:50      14:20
-        //                   |----------|
-        //   |---------------------|
-        // 12:00                 14:00
-        //
         if (!$openingHours->isOpenAt($range->getLower()) || !$openingHours->isOpenAt($range->getUpper())) {
 
             $this->logger->info(sprintf('ShippingDateFilter::accept() - range "%s" does not match with opening hours',
