@@ -12,6 +12,7 @@ use AppBundle\Form\AddUserType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\DeliveryImportType;
+use AppBundle\Message\DeliveryCreated;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderFactory;
@@ -27,6 +28,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
@@ -193,7 +195,8 @@ trait StoreTrait
         TaxRateResolverInterface $taxRateResolver,
         ProductVariantFactoryInterface $productVariantFactory,
         EntityManagerInterface $entityManager,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        MessageBusInterface $messageBus)
     {
         $routes = $request->attributes->get('routes');
 
@@ -245,6 +248,10 @@ trait StoreTrait
                 $this->getDoctrine()
                     ->getManagerForClass(Delivery::class)
                     ->flush();
+
+                $messageBus->dispatch(
+                    new DeliveryCreated($delivery)
+                );
 
                 // TODO Add flash message
 
