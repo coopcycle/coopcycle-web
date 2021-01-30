@@ -10,7 +10,11 @@ import { selectHoursRanges, selectOrdersByHourRange } from '../redux/selectors'
 
 const moment = extendMoment(Moment)
 
-const chromaScale = chroma.scale(['#2ecc71', '#f1c40f', '#c0392b']).classes(10)
+const chromaScale = chroma
+  .scale([ '#2ecc71', '#f1c40f', '#c0392b' ])
+  .domain([ 0, 0.1, 1 ])
+  .classes(10)
+
 
 const Slot = ({ range, count, percentage, index }) => {
 
