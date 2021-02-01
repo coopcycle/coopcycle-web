@@ -1,11 +1,11 @@
-import React, {
-  useState,
-  createRef,
-  useImperativeHandle,
-  forwardRef } from 'react'
+import React, { useState, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import ProductImagesCarousel from './ProductImagesCarousel'
+import {
+  ProductOptionsModalContext,
+  useProductOptions,
+  getValuesRange } from './ProductOptionsModalContext'
 
 const OptionValueLabel = ({ option, optionValue }) => (
   <span>
@@ -19,40 +19,32 @@ const OptionValueLabel = ({ option, optionValue }) => (
   </span>
 )
 
-const OptionValue = ({ index, option, optionValue, onClick }) => (
-  <div className="radio nomargin">
-    <label className="d-flex align-items-center">
-      <input
-        type="radio"
-        name={ `options[${index}][code]` }
-        value={ optionValue.code }
-        onClick={ () => {
-          window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
-          onClick()
-        }} />
-      <OptionValueLabel option={ option } optionValue={ optionValue } />
-    </label>
-  </div>
-)
+const OptionValue = ({ index, valueIndex, option, optionValue }) => {
 
-const defaultValuesRange = {
-  lower: '0',
-  upper: null,
-  isUpperInfinite: true,
+  const { setValueQuantity } = useProductOptions()
+
+  return (
+    <div className="radio nomargin">
+      <label className="d-flex align-items-center">
+        <input
+          type="radio"
+          name={ `options[${index}][code]` }
+          value={ optionValue.code }
+          onClick={ () => {
+            window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
+            setValueQuantity(index, valueIndex, 1)
+          }} />
+        <OptionValueLabel option={ option } optionValue={ optionValue } />
+      </label>
+    </div>
+  )
 }
 
-const getValuesRange = option => option.valuesRange || defaultValuesRange
+const AdditionalOptionValue = ({ index, valueIndex, option, optionValue }) => {
 
-const AdditionalOptionValue = forwardRef(({ index, valueIndex, option, optionValue, onChange }, ref) => {
-
+  const { setValueQuantity, getValueQuantity } = useProductOptions()
   const valuesRange = getValuesRange(option)
-
-  const [ quantity, setQuantity ] = useState(0)
-
-  useImperativeHandle(ref, () => ({
-    getQuantity: () => quantity,
-    getTotal: () => optionValue.price * quantity,
-  }))
+  const quantity = getValueQuantity(index, valueIndex)
 
   let inputProps = {}
   if (!valuesRange.isUpperInfinite) {
@@ -62,7 +54,7 @@ const AdditionalOptionValue = forwardRef(({ index, valueIndex, option, optionVal
   const realIndex = index + valueIndex
 
   return (
-    <div className="product-option-item-range" ref={ ref }>
+    <div className="product-option-item-range">
       <input type="hidden" name={ `options[${realIndex}][code]` } value={ optionValue.code } />
       <input
         name={ `options[${realIndex}][quantity]` }
@@ -71,33 +63,29 @@ const AdditionalOptionValue = forwardRef(({ index, valueIndex, option, optionVal
         min="0"
         value={ quantity }
         onChange={ e => {
-          setQuantity(parseInt(e.currentTarget.value, 10))
-          setTimeout(() => onChange(), 0)
+          setValueQuantity(index, valueIndex, parseInt(e.currentTarget.value, 10))
         }}
         { ...inputProps } />
       <label htmlFor={ '' } onClick={ () => {
-        setQuantity(quantity + 1)
-        setTimeout(() => onChange(), 0)
+        setValueQuantity(index, valueIndex, quantity + 1)
       }}>
         <OptionValueLabel option={ option } optionValue={ optionValue } />
       </label>
       <div className="product-option-item-range-buttons">
         <button className="button-icon--decrement" type="button" onClick={ () => {
-          quantity > 0 && setQuantity(quantity - 1)
-          setTimeout(() => onChange(), 0)
+          quantity > 0 && setValueQuantity(index, valueIndex, quantity - 1)
         }}>
           <i className="fa fa-lg fa-minus-circle"></i>
         </button>
         <button className="button-icon--increment" type="button" onClick={ () => {
-          setQuantity(quantity + 1)
-          setTimeout(() => onChange(), 0)
+          setValueQuantity(index, valueIndex, quantity + 1)
         }}>
           <i className="fa fa-lg fa-plus-circle"></i>
         </button>
       </div>
     </div>
   )
-})
+}
 
 const ValuesRange = ({ option }) => {
 
@@ -139,93 +127,35 @@ const ValuesRange = ({ option }) => {
   return null
 }
 
-function getInitialValidValue(option) {
-  if (!option.additional) {
-    return false
-  }
+export const OptionGroup = ({ index, option }) => (
+  <div>
+    <h4>
+      <span>{ option.name }</span>
+      <ValuesRange option={ option } />
+    </h4>
+    <div className="list-group">
+      { option.values.map((optionValue, optionValueIndex) => {
 
-  const valuesRange = getValuesRange(option)
-  const min = parseInt(valuesRange.lower, 10)
-
-  return min === 0
-}
-
-export const OptionGroup = forwardRef(({ index, option, onChange }, ref) => {
-
-  const [ valid, setValid ] = useState(getInitialValidValue(option))
-
-  const optionValueRefs = []
-
-  useImperativeHandle(ref, () => ({
-    isValid: () => valid,
-    getTotal: () => {
-      return optionValueRefs.reduce(
-        (acc, ref) => acc + (ref.current ? ref.current.getTotal() : 0),
-        0
-      )
-    }
-  }))
-
-  return (
-    <div ref={ ref }>
-      <h4>
-        <span>{ option.name }</span>
-        <ValuesRange option={ option } />
-      </h4>
-      <div className="list-group">
-        { option.values.map((optionValue, optionValueIndex) => {
-
-          const optionValueRef = createRef()
-          optionValueRefs.push(optionValueRef)
-
-          return (
-            <div className="list-group-item product-option-item" key={ `option-value-${optionValueIndex}` }>
-              { !option.additional && <OptionValue
-                option={ option }
-                optionValue={ optionValue }
-                index={ index }
-                onClick={ () => {
-                  setValid(true)
-                  setTimeout(() => onChange(), 0)
-                }} /> }
-              { option.additional && <AdditionalOptionValue
-                ref={ optionValueRef }
-                option={ option }
-                optionValue={ optionValue }
-                index={ index }
-                valueIndex={ optionValueIndex }
-                onChange={ () => {
-                  const totalQuantity = optionValueRefs.reduce(
-                    (acc, ref) => acc + ref.current.getQuantity(),
-                    0
-                  )
-
-                  let isValid = true
-                  const valuesRange = getValuesRange(option)
-                  const min = parseInt(valuesRange.lower, 10)
-
-                  if (totalQuantity < min) {
-                    isValid = false
-                  }
-                  if (!valuesRange.isUpperInfinite) {
-                    const max = parseInt(valuesRange.upper, 10)
-                    if (totalQuantity > max) {
-                      isValid = false
-                    }
-                  }
-
-                  setValid(isValid)
-                  setTimeout(() => onChange(), 0)
-                }} />
-              }
-            </div>
-          )
-
-        })}
-      </div>
+        return (
+          <div className="list-group-item product-option-item" key={ `option-value-${optionValueIndex}` }>
+            { !option.additional && <OptionValue
+              option={ option }
+              optionValue={ optionValue }
+              index={ index }
+              valueIndex={ optionValueIndex } />
+            }
+            { option.additional && <AdditionalOptionValue
+              option={ option }
+              optionValue={ optionValue }
+              index={ index }
+              valueIndex={ optionValueIndex } />
+            }
+          </div>
+        )
+      })}
     </div>
-  )
-})
+  </div>
+)
 
 const getOffset = (options, index) => {
 
@@ -242,19 +172,10 @@ const getOffset = (options, index) => {
 /* Exported to be able to test it */
 export const getOffsets = (options) => options.map((option, index) => getOffset(options, index))
 
-function getInitialDisabledValue(options) {
-  const validOptions = options.filter(option => getInitialValidValue(option))
-  return validOptions.length < options.length
-}
-
-export default ({ code, price, options, images, formAction, onSubmit }) => {
+export default ({ code, options, images, formAction, onSubmit }) => {
 
   const [ quantity, setQuantity ] = useState(1)
-  const [ total, setTotal ] = useState(price * quantity)
-  const [ disabled, setDisabled ] = useState(getInitialDisabledValue(options))
-
-  const optionGroups = []
-
+  const [ state ] = useContext(ProductOptionsModalContext)
   const offsets = getOffsets(options)
 
   return (
@@ -263,26 +184,12 @@ export default ({ code, price, options, images, formAction, onSubmit }) => {
         <ProductImagesCarousel images={ images } />
       ) }
       <form key={ `product-${code}` } data-product-options action={ formAction } onSubmit={ onSubmit }>
-        { options.map((option, index) => {
-
-          const ref = createRef()
-          optionGroups.push(ref)
-
-          return (
-            <OptionGroup ref={ ref }
-              key={ `option-${index}` }
-              index={ offsets[index] }
-              option={ option }
-              onChange={ () => {
-                const invalidGroups = optionGroups.filter(optionGroup => !optionGroup.current.isValid())
-                setDisabled(invalidGroups.length > 0)
-                setTotal(optionGroups.reduce(
-                  (acc, ref) => acc + (ref.current ? ref.current.getTotal() : 0),
-                  price
-                ))
-              } } />
-          )
-        }) }
+        { options.map((option, index) => (
+          <OptionGroup
+            key={ `option-${index}` }
+            index={ offsets[index] }
+            option={ option } />
+        )) }
         <div className="row">
           <div className="col-xs-12 col-sm-6 col-sm-offset-3">
             <div className="form-group">
@@ -306,8 +213,8 @@ export default ({ code, price, options, images, formAction, onSubmit }) => {
             </div>
           </div>
         </div>
-        <button type="submit" className="btn btn-lg btn-block btn-primary" disabled={ disabled }>
-          <span data-product-total>{ ((total * quantity) / 100).formatMoney() }</span>
+        <button type="submit" className="btn btn-lg btn-block btn-primary" disabled={ state.disabled }>
+          <span data-product-total>{ ((state.total * quantity) / 100).formatMoney() }</span>
         </button>
       </form>
     </div>
