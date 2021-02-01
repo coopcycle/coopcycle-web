@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Sylius;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\LoopEat\CustomerCredentials;
+use AppBundle\Entity\Edenred\CustomerCredentials as EdenredCustomerCredentials;
 use AppBundle\Entity\User;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -50,6 +51,8 @@ class Customer extends BaseCustomer implements CustomerInterface
     protected $addresses;
 
     protected ?CustomerCredentials $loopeatCredentials = null;
+
+    protected ?EdenredCustomerCredentials $edenredCredentials = null;
 
     public function __construct()
     {
@@ -255,5 +258,38 @@ class Customer extends BaseCustomer implements CustomerInterface
     {
         $this->setFirstName($fullName);
         $this->setLastName('');
+    }
+
+    public function getEdenredCredentials(): ?EdenredCustomerCredentials
+    {
+        return $this->edenredCredentials;
+    }
+
+    public function hasEdenredCredentials(): bool
+    {
+        return null !== $this->edenredCredentials &&
+            ($this->edenredCredentials->getAccessToken() !== null && $this->edenredCredentials->getRefreshToken());
+    }
+
+    public function setEdenredAccessToken($accessToken)
+    {
+        if (null === $this->edenredCredentials) {
+
+            $this->edenredCredentials = new EdenredCustomerCredentials();
+            $this->edenredCredentials->setCustomer($this);
+        }
+
+        $this->edenredCredentials->setAccessToken($accessToken);
+    }
+
+    public function setEdenredRefreshToken($refreshToken)
+    {
+        if (null === $this->edenredCredentials) {
+
+            $this->edenredCredentials = new EdenredCustomerCredentials();
+            $this->edenredCredentials->setCustomer($this);
+        }
+
+        $this->edenredCredentials->setRefreshToken($refreshToken);
     }
 }

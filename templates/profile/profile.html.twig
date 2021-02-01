@@ -17,3 +17,11 @@
     <p><a href="{{ loopeat_authorize_url }}" class="btn btn-success btn-sm">{% trans %}profile.loopeat.connect{% endtrans %}</a></p>
   {% endif %}
 {% endif %}
+
+{% if edenred_enabled %}
+  {% if customer.hasEdenredCredentials() %}
+    <p><a class="btn btn-default btn-sm"><i class="fa fa-check"></i> {% trans %}profile.edenred.connected{% endtrans %}</a></p>
+  {% else %}
+    <p><a href="{{ edenred_authorize_url }}" class="btn btn-success btn-sm">{% trans %}profile.edenred.connect{% endtrans %}</a></p>
+  {% endif %}
+{% endif %}

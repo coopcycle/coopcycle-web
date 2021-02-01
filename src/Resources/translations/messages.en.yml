@@ -1141,3 +1141,6 @@ ordering_delay.admin_reminder: You have configured a global ordering delay
 notifications.delivery_created: A delivery to be picked up %date% has been created
 notifications.tasks_changed_today: Your tasks for today have been updated
 notifications.tap_to_open: Tap to open
+profile.edenred.connected: Edenred account connected
+profile.edenred.connect: Connect my Edenred account
+edenred.oauth_connect.success: Edenred account connected successfully!

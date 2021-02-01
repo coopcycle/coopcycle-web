@@ -9,6 +9,7 @@ use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
+use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
@@ -57,7 +58,8 @@ class ProfileController extends Controller
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         PaginatorInterface $paginator,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        EdenredAuthentication $edenredAuthentication)
     {
         $user = $this->getUser();
 
@@ -99,10 +101,16 @@ class ProfileController extends Controller
             $loopeatAuthorizeUrl = sprintf('%s/oauth/authorize?%s', $this->getParameter('loopeat_base_url'), $queryString);
         }
 
+        $edenredAuthorizeUrl = '';
+        if ($this->getParameter('edenred_enabled') && !$customer->hasEdenredCredentials()) {
+            $edenredAuthorizeUrl = $edenredAuthentication->getAuthorizeUrl($customer);
+        }
+
         return $this->render('profile/index.html.twig', array(
             'user' => $user,
             'customer' => $customer,
             'loopeat_authorize_url' => $loopeatAuthorizeUrl,
+            'edenred_authorize_url' => $edenredAuthorizeUrl,
         ));
     }
 

@@ -170,6 +170,10 @@ services:
     tags:
       - { name: monolog.logger, channel: stripe }
 
+  AppBundle\Controller\EdenredController:
+    tags:
+      - { name: monolog.logger, channel: edenred }
+
   AppBundle\EventListener\LocaleListener:
     arguments: ['%env(COOPCYCLE_LOCALE)%']
     tags:
@@ -1065,3 +1069,20 @@ services:
       $namespace: '%centrifugo_namespace%'
 
   AppBundle\Spreadsheet\DeliveryDataExporter: ~
+
+  AppBundle\Edenred\Authentication:
+    arguments:
+      $config: { base_uri: "%env(EDENRED_AUTHENTICATION_BASE_URL)%" }
+      $clientId: "%env(EDENRED_AUTHENTICATION_CLIENT_ID)%"
+      $clientSecret: "%env(EDENRED_AUTHENTICATION_CLIENT_SECRET)%"
+    tags:
+      - { name: csa_guzzle.client }
+      - { name: monolog.logger, channel: edenred }
+
+  AppBundle\Edenred\RefreshTokenHandler:
+    arguments:
+      $baseUrl: "%env(EDENRED_AUTHENTICATION_BASE_URL)%"
+      $clientId: "%env(EDENRED_AUTHENTICATION_CLIENT_ID)%"
+      $clientSecret: "%env(EDENRED_AUTHENTICATION_CLIENT_SECRET)%"
+    tags:
+      - { name: monolog.logger, channel: edenred }

@@ -54,6 +54,7 @@ parameters:
     restaurant_caption_cache_annotation: 'restaurant_caption_v0.1'
     avatar_dir: '%env(APP_PUBLIC_DIR)%/images/avatars/'
     centrifugo_tracking_channel: '$%centrifugo_namespace%_tracking'
+    edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
 
 services:
     # It is important to set a namespace,
@@ -180,6 +181,7 @@ twig:
         restaurant_menu_cache_annotation: '%restaurant_menu_cache_annotation%'
         restaurant_caption_cache_annotation: '%restaurant_caption_cache_annotation%'
         cdn_root_url: '%env(CDN_ROOT_URL)%'
+        edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
     exception_controller: null
 
 # Doctrine Configuration

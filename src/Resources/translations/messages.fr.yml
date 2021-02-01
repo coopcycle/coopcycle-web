@@ -1129,3 +1129,6 @@ ordering_delay.admin_reminder: Vous avez défini un retard global pour les comma
 notifications.delivery_created: Une livraison avec enlèvement %date% a été créée
 notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises à jour
 notifications.tap_to_open: Appuyez pour ouvrir
+profile.edenred.connected: Compte Edenred connecté
+profile.edenred.connect: Connecter mon compte Edenred
+edenred.oauth_connect.success: Votre compte Edenred est connecté !
