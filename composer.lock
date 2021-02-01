@@ -9064,16 +9064,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.43.0",
+            "version": "2.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "d32c57d8389113742f4a88725a170236470012e2"
+                "reference": "e6ef33cb1f67a4bed831ed6d0f7e156739a5d8cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/d32c57d8389113742f4a88725a170236470012e2",
-                "reference": "d32c57d8389113742f4a88725a170236470012e2",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/e6ef33cb1f67a4bed831ed6d0f7e156739a5d8cd",
+                "reference": "e6ef33cb1f67a4bed831ed6d0f7e156739a5d8cd",
                 "shasum": ""
             },
             "require": {
@@ -9089,7 +9089,7 @@
                 "phpmd/phpmd": "^2.9",
                 "phpstan/extension-installer": "^1.0",
                 "phpstan/phpstan": "^0.12.54",
-                "phpunit/phpunit": "^7.5 || ^8.0",
+                "phpunit/phpunit": "^7.5.20 || ^8.5.14",
                 "squizlabs/php_codesniffer": "^3.4"
             },
             "bin": [
@@ -9153,7 +9153,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-12-17T20:55:32+00:00"
+            "time": "2021-01-26T20:46:41+00:00"
         },
         {
             "name": "nmure/crawler-detect-bundle",
@@ -12997,16 +12997,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.68.0",
+            "version": "v7.69.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "36b10e1f0e9d973f00f802bbd098bce85d0438e4"
+                "reference": "6716cbc4ebf8cba7d45374a059c7c6e5bf53277d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/36b10e1f0e9d973f00f802bbd098bce85d0438e4",
-                "reference": "36b10e1f0e9d973f00f802bbd098bce85d0438e4",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/6716cbc4ebf8cba7d45374a059c7c6e5bf53277d",
+                "reference": "6716cbc4ebf8cba7d45374a059c7c6e5bf53277d",
                 "shasum": ""
             },
             "require": {
@@ -13052,9 +13052,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v7.68.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v7.69.0"
             },
-            "time": "2021-01-15T00:38:28+00:00"
+            "time": "2021-01-22T03:21:13+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -17219,16 +17219,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.16.0",
+            "version": "6.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "2f1bb71f25c5ea141d75969ef0cdb895a63fdbaa"
+                "reference": "28c5dd21e95a5fe5221965ec89863a485c625d43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/2f1bb71f25c5ea141d75969ef0cdb895a63fdbaa",
-                "reference": "2f1bb71f25c5ea141d75969ef0cdb895a63fdbaa",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/28c5dd21e95a5fe5221965ec89863a485c625d43",
+                "reference": "28c5dd21e95a5fe5221965ec89863a485c625d43",
                 "shasum": ""
             },
             "require": {
@@ -17267,9 +17267,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twilio/twilio-php/issues",
-                "source": "https://github.com/twilio/twilio-php/tree/6.16.0"
+                "source": "https://github.com/twilio/twilio-php/tree/6.16.1"
             },
-            "time": "2021-01-13T22:45:35+00:00"
+            "time": "2021-01-27T20:57:17+00:00"
         },
         {
             "name": "vich/uploader-bundle",
@@ -19278,21 +19278,21 @@
         },
         {
             "name": "phpstan/phpstan-webmozart-assert",
-            "version": "0.12.9",
+            "version": "0.12.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-webmozart-assert.git",
-                "reference": "dcb38393a99d4562bd21137ecb179c43dff3fd70"
+                "reference": "2873b44bfb4788fbad3ba12339306ea16cfc05c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-webmozart-assert/zipball/dcb38393a99d4562bd21137ecb179c43dff3fd70",
-                "reference": "dcb38393a99d4562bd21137ecb179c43dff3fd70",
+                "url": "https://api.github.com/repos/phpstan/phpstan-webmozart-assert/zipball/2873b44bfb4788fbad3ba12339306ea16cfc05c8",
+                "reference": "2873b44bfb4788fbad3ba12339306ea16cfc05c8",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1 || ^8.0",
-                "phpstan/phpstan": "^0.12.40"
+                "phpstan/phpstan": "^0.12.49"
             },
             "require-dev": {
                 "phing/phing": "^2.16.3",
@@ -19325,9 +19325,9 @@
             "description": "PHPStan webmozart/assert extension",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-webmozart-assert/issues",
-                "source": "https://github.com/phpstan/phpstan-webmozart-assert/tree/0.12.9"
+                "source": "https://github.com/phpstan/phpstan-webmozart-assert/tree/0.12.11"
             },
-            "time": "2021-01-24T16:10:12+00:00"
+            "time": "2021-01-29T11:39:45+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
