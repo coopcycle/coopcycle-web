@@ -16,7 +16,7 @@ const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
 const MOVE_TO_NEXT_DAY_MULTI = 'MOVE_TO_NEXT_DAY_MULTI'
 const MOVE_TO_NEXT_WORKING_DAY_MULTI = 'MOVE_TO_NEXT_WORKING_DAY_MULTI'
 
-import { selectUnassignedTasks } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectUnassignedTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
 function _unassign(tasksToUnassign, removeTasks) {
   const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo)

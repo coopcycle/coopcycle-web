@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Modal from 'react-modal'
 
-import { selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 
 import {
   setCurrentTask,
