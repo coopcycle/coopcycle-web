@@ -297,8 +297,7 @@ describe('taskListEntityReducers', () => {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
               itemIds: [
-                '/api/tasks/1',
-                '/api/tasks/2',
+                '/api/tasks/3',
               ],
               distance: 6615,
               duration: 1948,
@@ -343,16 +342,11 @@ describe('taskListEntityReducers', () => {
           }
         )).toEqual({
           byId: {
-            '/api/task_lists/1': {
-              '@id': '/api/task_lists/1',
+            'temp_bot_1': {
+              '@id': 'temp_bot_1',
               'username': 'bot_1',
               itemIds: [
-                '/api/tasks/1',
-                '/api/tasks/2',
-              ],
-              distance: 6615,
-              duration: 1948,
-              polyline: 'polyline',
+              ]
             },
           },
         })
