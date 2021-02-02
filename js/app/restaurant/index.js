@@ -16,6 +16,7 @@ import Cart from '../cart/components/Cart'
 import { validateForm } from '../utils/address'
 import ProductOptionsModal from './components/ProductOptionsModal'
 import ProductImagesCarousel from './components/ProductImagesCarousel'
+import { ProductOptionsModalProvider } from './components/ProductOptionsModalContext'
 
 require('gasparesganga-jquery-loading-overlay')
 
@@ -54,29 +55,32 @@ const init = function() {
       JSON.parse(event.relatedTarget.dataset.productImages)
 
     render(
-      <ProductOptionsModal
-        price={ JSON.parse(event.relatedTarget.dataset.productPrice) }
-        code={ event.relatedTarget.dataset.productCode }
+      <ProductOptionsModalProvider
         options={ productOptions }
-        formAction={ event.relatedTarget.dataset.formAction }
-        images={ productImages }
-        onSubmit={ (e) => {
-          e.preventDefault()
+        price={ JSON.parse(event.relatedTarget.dataset.productPrice) }>
+        <ProductOptionsModal
+          code={ event.relatedTarget.dataset.productCode }
+          options={ productOptions }
+          formAction={ event.relatedTarget.dataset.formAction }
+          images={ productImages }
+          onSubmit={ (e) => {
+            e.preventDefault()
 
-          const $form = $modal.find('form')
+            const $form = $modal.find('form')
 
-          const data = $form.serializeArray()
-          const quantity = $form.find('[data-product-quantity]').val() || 1
+            const data = $form.serializeArray()
+            const quantity = $form.find('[data-product-quantity]').val() || 1
 
-          if (data.length > 0) {
-            store.dispatch(addItemWithOptions($form.attr('action'), data, quantity))
-          } else {
-            store.dispatch(addItem($form.attr('action'), quantity))
-          }
+            if (data.length > 0) {
+              store.dispatch(addItemWithOptions($form.attr('action'), data, quantity))
+            } else {
+              store.dispatch(addItem($form.attr('action'), quantity))
+            }
 
-          $modal.modal('hide')
+            $modal.modal('hide')
 
-        } } />,
+          } } />
+      </ProductOptionsModalProvider>,
       this.querySelector('.modal-body [data-options-container]')
     )
   })
