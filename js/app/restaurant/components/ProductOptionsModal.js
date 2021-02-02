@@ -32,7 +32,7 @@ const OptionValue = ({ index, valueIndex, option, optionValue }) => {
           value={ optionValue.code }
           onClick={ () => {
             window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
-            setValueQuantity(index, valueIndex, 1)
+            setValueQuantity(option, optionValue, 1)
           }} />
         <OptionValueLabel option={ option } optionValue={ optionValue } />
       </label>
@@ -44,7 +44,7 @@ const AdditionalOptionValue = ({ index, valueIndex, option, optionValue }) => {
 
   const { setValueQuantity, getValueQuantity } = useProductOptions()
   const valuesRange = getValuesRange(option)
-  const quantity = getValueQuantity(index, valueIndex)
+  const quantity = getValueQuantity(option, optionValue)
 
   let inputProps = {}
   if (!valuesRange.isUpperInfinite) {
@@ -63,22 +63,22 @@ const AdditionalOptionValue = ({ index, valueIndex, option, optionValue }) => {
         min="0"
         value={ quantity }
         onChange={ e => {
-          setValueQuantity(index, valueIndex, parseInt(e.currentTarget.value, 10))
+          setValueQuantity(option, optionValue, parseInt(e.currentTarget.value, 10))
         }}
         { ...inputProps } />
       <label htmlFor={ '' } onClick={ () => {
-        setValueQuantity(index, valueIndex, quantity + 1)
+        setValueQuantity(option, optionValue, quantity + 1)
       }}>
         <OptionValueLabel option={ option } optionValue={ optionValue } />
       </label>
       <div className="product-option-item-range-buttons">
         <button className="button-icon--decrement" type="button" onClick={ () => {
-          quantity > 0 && setValueQuantity(index, valueIndex, quantity - 1)
+          quantity > 0 && setValueQuantity(option, optionValue, quantity - 1)
         }}>
           <i className="fa fa-lg fa-minus-circle"></i>
         </button>
         <button className="button-icon--increment" type="button" onClick={ () => {
-          setValueQuantity(index, valueIndex, quantity + 1)
+          setValueQuantity(option, optionValue, quantity + 1)
         }}>
           <i className="fa fa-lg fa-plus-circle"></i>
         </button>

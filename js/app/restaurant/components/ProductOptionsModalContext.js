@@ -82,15 +82,15 @@ const useProductOptions = () => {
 
   const [ state, setState ] = useContext(ProductOptionsModalContext)
 
-  function setValueQuantity(optionIndex, valueIndex, quantity) {
+  function setValueQuantity(option, optionValue, quantity) {
 
-    const newOptions = state.options.map((opt, optIndex) => {
+    const newOptions = state.options.map(opt => {
 
-      if (optIndex === optionIndex) {
+      if (opt.code === option.code) {
 
-        const newValues = opt.values.map((val, valIndex) => {
+        const newValues = opt.values.map(val => {
 
-          if (valIndex === valueIndex) {
+          if (val.code === optionValue.code) {
             return {
               ...val,
               quantity,
@@ -121,11 +121,17 @@ const useProductOptions = () => {
     })
   }
 
-  function getValueQuantity(optionIndex, valueIndex) {
-    const option = state.options[optionIndex]
-    const optionValue = option.values[valueIndex]
+  function getValueQuantity(option, optionValue) {
 
-    return optionValue.quantity
+    const opt = _.find(state.options, opt => opt.code === option.code)
+    if (opt) {
+      const val = _.find(opt.values, val => val.code === optionValue.code)
+      if (val) {
+        return val.quantity
+      }
+    }
+
+    return 0
   }
 
   return {
