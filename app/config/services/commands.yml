@@ -132,3 +132,11 @@ services:
   AppBundle\Command\ResolveImagineCacheCommand:
     tags:
       - { name: 'console.command', command: 'coopcycle:imagine:cache:resolve' }
+
+  AppBundle\Command\CreateTasksCommand:
+    arguments:
+      $faker: '@nelmio_alice.faker.generator'
+      $country: "%country_iso%"
+      $defaultLocale: "%env(COOPCYCLE_LOCALE)%"
+    tags:
+      - { name: 'console.command', command: 'coopcycle:tasks:create' }
