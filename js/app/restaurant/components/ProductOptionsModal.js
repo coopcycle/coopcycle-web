@@ -19,7 +19,7 @@ const OptionValueLabel = ({ option, optionValue }) => (
   </span>
 )
 
-const OptionValue = ({ index, valueIndex, option, optionValue }) => {
+const OptionValue = ({ index, option, optionValue }) => {
 
   const { setValueQuantity } = useProductOptions()
 
