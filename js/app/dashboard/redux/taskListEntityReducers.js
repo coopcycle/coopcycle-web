@@ -1,7 +1,9 @@
+import _ from 'lodash'
 import {
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
   TASK_LIST_UPDATED,
+  TASK_LISTS_UPDATED,
   UPDATE_TASK
 } from "./actions";
 import {
@@ -48,42 +50,52 @@ export default (state = initialState, action) => {
       }
     }
     case TASK_LIST_UPDATED: {
-      let entityByUsername = taskListEntityUtils.findTaskListByUsername(state.byId, action.taskList['username'])
 
-      if (entityByUsername === undefined) {
+      if (!Object.prototype.hasOwnProperty.call(state.byId, action.taskList['@id'])) {
         return state
       }
 
-      // items: [
-      //   {
-      //     task: '/api/tasks/21',
-      //     position: 0
-      //   },
-      //   {
-      //     task: '/api/tasks/18',
-      //     position: 1
-      //   }
-      // ],
-      let taskCollectionItems = action.taskList.items
-      let itemIds = taskCollectionItems.map(item => item.task)
-
-      let newEntity = {
-        ...entityByUsername,
-        itemIds,
-        distance: action.taskList.distance,
-        duration: action.taskList.duration,
-        polyline: action.taskList.polyline,
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [ action.taskList['@id'] ]: {
+            ...state.byId[ action.taskList['@id'] ],
+            distance: action.taskList.distance,
+            duration: action.taskList.duration,
+            polyline: action.taskList.polyline,
+          }
+        },
       }
+    }
+    case TASK_LISTS_UPDATED: {
+      const matching = _.filter(
+        action.taskLists,
+        updated => Object.prototype.hasOwnProperty.call(state.byId, updated['@id'])
+      )
 
-      if (entityByUsername['@id'] != action.taskList['@id']) {
-        newEntity['@id'] = action.taskList['@id']
+      if (matching.length === 0) {
+
+        return state
       }
-
-      let newItems = taskListEntityUtils.addOrReplaceTaskList(state.byId, newEntity)
 
       return {
         ...state,
-        byId: newItems,
+        byId: _.map(state.byId, current => {
+          const newTaskList = _.find(matching, o => o['@id'] === current['@id'])
+
+          if (!newTaskList) {
+
+            return current
+          }
+
+          return {
+            ...current,
+            distance: newTaskList.distance,
+            duration: newTaskList.duration,
+            polyline: newTaskList.polyline,
+          }
+        }),
       }
     }
     case UPDATE_TASK: {
