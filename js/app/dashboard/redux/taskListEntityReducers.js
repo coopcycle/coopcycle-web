@@ -81,7 +81,7 @@ export default (state = initialState, action) => {
 
       return {
         ...state,
-        byId: _.map(state.byId, current => {
+        byId: _.mapValues(state.byId, current => {
           const newTaskList = _.find(matching, o => o['@id'] === current['@id'])
 
           if (!newTaskList) {

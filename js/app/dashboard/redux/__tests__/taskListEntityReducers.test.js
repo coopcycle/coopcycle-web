@@ -399,6 +399,58 @@ describe('taskListEntityReducers', () => {
     })
   })
 
+  describe('TASK_LISTS_UPDATED', () => {
+    describe('task list for this user exists (with @id)', () => {
+      it('should update a task list', () => {
+        expect(taskListEntityReducers(
+          {
+            byId: {
+              '/api/task_lists/1': {
+                '@id': '/api/task_lists/1',
+                'username': 'bot_1',
+                itemIds: [
+                  '/api/tasks/3',
+                ]
+              },
+            },
+          },
+          {
+            type: 'TASK_LISTS_UPDATED',
+            taskLists: [{
+              '@id': '/api/task_lists/1',
+              username: 'bot_1',
+              items: [
+                {
+                  task: '/api/tasks/1',
+                  position: 0,
+                }, {
+                  task: '/api/tasks/2',
+                  position: 1,
+                }
+              ],
+              distance: 6615,
+              duration: 1948,
+              polyline: 'polyline',
+            }],
+          }
+        )).toEqual({
+          byId: {
+            '/api/task_lists/1': {
+              '@id': '/api/task_lists/1',
+              'username': 'bot_1',
+              itemIds: [
+                '/api/tasks/3',
+              ],
+              distance: 6615,
+              duration: 1948,
+              polyline: 'polyline',
+            },
+          },
+        })
+      })
+    })
+  })
+
   describe('UPDATE_TASK', () => {
     it('should handle assigned task', () => {
       expect(taskListEntityReducers(
