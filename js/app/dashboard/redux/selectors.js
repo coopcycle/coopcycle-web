@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect'
+import Fuse from 'fuse.js'
 import { moment } from '../../coopcycle-frontend-js'
 import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
 import { filter, orderBy, forEach, find, reduce, map, differenceWith } from 'lodash'
@@ -129,4 +130,27 @@ export const selectHiddenTaskIds = createSelector(
     const taskIds = tasks.map(task => task['@id'])
     return differenceWith(taskIds, visibleTaskIds)
   }
+)
+
+const fuseOptions = {
+  shouldSort: true,
+  includeScore: true,
+  keys: [{
+    name: 'id',
+    weight: 0.7
+  }, {
+    name: 'tags.slug',
+    weight: 0.1
+  }, {
+    name: 'address.name',
+    weight: 0.1
+  }, {
+    name: 'address.streetAddress',
+    weight: 0.1
+  }]
+}
+
+export const selectFuseSearch = createSelector(
+  selectAllTasks,
+  (tasks) => new Fuse(tasks, fuseOptions)
 )
