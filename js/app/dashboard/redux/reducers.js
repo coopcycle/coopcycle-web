@@ -145,7 +145,13 @@ const selectedTasks = (state = [], action) => {
 
   case CLEAR_SELECTED_TASKS:
 
-    return []
+    // OPTIMIZATION
+    // Make sure the array if not already empty
+    // before returning a new reference
+    if (state.length > 0) {
+      return []
+    }
+    break
   }
 
   return state
