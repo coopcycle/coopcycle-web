@@ -4,8 +4,8 @@ import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
 import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction } from '../redux/actions'
-import { selectVisibleTaskIds } from '../redux/selectors'
-import { selectAllTasks, selectTaskLists } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectVisibleTaskIds, selectPolylines, selectAsTheCrowFlies } from '../redux/selectors'
+import { selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
 
 class LeafletMap extends Component {
 
@@ -158,21 +158,6 @@ class LeafletMap extends Component {
 
 function mapStateToProps(state) {
 
-  const { polylineEnabled } = state
-
-  const taskLists = selectTaskLists(state)
-
-  let polylines = {}
-  _.forEach(taskLists, taskList => {
-    polylines[taskList.username] = taskList.polyline
-  })
-
-  let asTheCrowFlies = {}
-  _.forEach(taskLists, taskList => {
-    asTheCrowFlies[taskList.username] =
-      _.map(taskList.items, item => ([ item.address.geo.latitude, item.address.geo.longitude ]))
-  })
-
   const tasks = selectAllTasks(state)
   const taskIds = tasks.map(task => task['@id'])
 
@@ -186,13 +171,13 @@ function mapStateToProps(state) {
     tasks,
     visibleTasks,
     hiddenTasks,
-    polylines,
-    polylineEnabled,
+    polylines: selectPolylines(state),
+    polylineEnabled: state.polylineEnabled,
     selectedTasks: state.selectedTasks,
     positions: state.positions,
     offline: state.offline,
     polylineStyle: state.polylineStyle,
-    asTheCrowFlies,
+    asTheCrowFlies: selectAsTheCrowFlies(state),
     clustersEnabled: state.clustersEnabled,
   }
 }
