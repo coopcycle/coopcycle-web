@@ -6,7 +6,7 @@ import { ContextMenuTrigger } from 'react-contextmenu'
 import _ from 'lodash'
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
-import { selectIsVisibleTask } from '../redux/selectors'
+import { selectVisibleTaskIds } from '../redux/selectors'
 import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-frontend-js/dispatch/redux'
 
 import { addressAsText } from '../utils'
@@ -200,15 +200,13 @@ function mapStateToProps(state, ownProps) {
   const color = Object.prototype.hasOwnProperty.call(tasksWithColor, ownProps.task['@id']) ?
     tasksWithColor[ownProps.task['@id']] : '#ffffff'
 
+  const visibleTaskIds = selectVisibleTaskIds(state)
+
   return {
     selected: -1 !== state.selectedTasks.indexOf(ownProps.task),
     color,
     date: selectSelectedDate(state),
-    isVisible: selectIsVisibleTask({
-      task: ownProps.task,
-      filters: state.filters,
-      date: selectSelectedDate(state),
-    }),
+    isVisible: _.includes(visibleTaskIds, ownProps.task['@id']),
   }
 }
 
