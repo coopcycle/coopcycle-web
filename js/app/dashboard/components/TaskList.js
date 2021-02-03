@@ -52,6 +52,9 @@ class TaskList extends React.Component {
 
     if (!$target.data('bs.popover')) {
 
+      const { tasks } = this.props
+      const uncompletedTasks = _.filter(tasks, t => t.status === 'TODO')
+
       const el = document.createElement('div')
 
       const cb = () => {
@@ -69,7 +72,7 @@ class TaskList extends React.Component {
         onClickCancel={ () => $target.popover('hide') }
         onClickConfirm={ () => {
           $target.popover('hide')
-          this.props.removeTasks(this.props.username, this.props.uncompletedTasks)
+          this.props.removeTasks(this.props.username, uncompletedTasks)
         }} />, el, cb)
     } else {
       $target.popover('toggle')
@@ -83,7 +86,6 @@ class TaskList extends React.Component {
       distance,
       username,
       polylineEnabled,
-      uncompletedTasks,
       isEmpty,
     } = this.props
 
@@ -92,6 +94,8 @@ class TaskList extends React.Component {
     const { collapsed } = this.state
 
     tasks = _.orderBy(tasks, ['position', 'id'])
+
+    const uncompletedTasks = _.filter(tasks, t => t.status === 'TODO')
 
     const durationFormatted = moment.utc()
       .startOf('day')
@@ -203,7 +207,6 @@ function mapStateToProps(state, ownProps) {
     distance: ownProps.distance,
     duration: ownProps.duration,
     filters: state.filters,
-    uncompletedTasks: _.filter(ownProps.items, t => t.status === 'TODO'),
   }
 }
 
