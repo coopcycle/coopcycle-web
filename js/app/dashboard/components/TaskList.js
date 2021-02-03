@@ -9,8 +9,7 @@ import _ from 'lodash'
 import Task from './Task'
 import TaskListPopoverContent from './TaskListPopoverContent'
 import { removeTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
-import { selectFilteredTasks } from '../redux/selectors'
-import { selectSelectedDate, selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectVisibleTaskIds } from '../redux/selectors'
 
 moment.locale($('html').attr('lang'))
 
@@ -192,19 +191,15 @@ class TaskList extends React.Component {
 
 function mapStateToProps(state, ownProps) {
 
-  const tasksFiltered = selectFilteredTasks({
-    tasks: ownProps.items,
-    filters: state.filters,
-    date: selectSelectedDate(state),
-  })
-
-  // console.log(`Showing ${tasksFiltered.length} of ${ownProps.items.length}`)
+  const visibleTaskIds = _.intersectionWith(
+    selectVisibleTaskIds(state),
+    ownProps.items.map(task => task['@id'])
+  )
 
   return {
     polylineEnabled: state.polylineEnabled[ownProps.username],
-    allTasks: selectAllTasks(state),
     tasks: ownProps.items,
-    isEmpty: ownProps.items.length === 0 || tasksFiltered.length === 0,
+    isEmpty: ownProps.items.length === 0 || visibleTaskIds.length === 0,
     distance: ownProps.distance,
     duration: ownProps.duration,
     filters: state.filters,
