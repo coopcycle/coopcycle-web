@@ -9,23 +9,6 @@ export const selectTaskLists = createSelector(
   taskLists => orderBy(taskLists, 'username')
 )
 
-export const selectFilteredTasks = createSelector(
-  state => state.tasks,
-  state => state.filters,
-  state => state.date,
-  (tasks, filters, date) => {
-
-    return filter(tasks.slice(0), task => {
-
-      return isTaskVisible(
-        task,
-        filters,
-        date,
-      )
-    })
-  }
-)
-
 export const selectBookedUsernames = createSelector(
   selectTaskLists,
   taskLists => taskLists.map(taskList => taskList.username)

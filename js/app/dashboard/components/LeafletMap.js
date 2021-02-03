@@ -4,8 +4,8 @@ import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
 import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction } from '../redux/actions'
-import { selectFilteredTasks } from '../redux/selectors'
-import { selectAllTasks, selectTaskLists, selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectVisibleTaskIds } from '../redux/selectors'
+import { selectAllTasks, selectTaskLists } from '../../coopcycle-frontend-js/dispatch/redux'
 
 class LeafletMap extends Component {
 
@@ -13,15 +13,13 @@ class LeafletMap extends Component {
     const {
       polylines,
       asTheCrowFlies,
-      tasks,
-      tasksFiltered,
+      visibleTasks,
+      hiddenTasks,
       clustersEnabled,
     } = this.props
 
-    const tasksHidden = _.differenceWith(tasks, tasksFiltered, (a, b) => a['@id'] === b['@id'])
-
-    tasksFiltered.forEach(task => this.proxy.addTask(task))
-    tasksHidden.forEach(task => this.proxy.hideTask(task))
+    visibleTasks.forEach(task => this.proxy.addTask(task))
+    hiddenTasks.forEach(task => this.proxy.hideTask(task))
 
     _.forEach(polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
     _.forEach(asTheCrowFlies, (polyline, username) => this.proxy.setPolylineAsTheCrowFlies(username, polyline))
@@ -176,14 +174,18 @@ function mapStateToProps(state) {
   })
 
   const tasks = selectAllTasks(state)
+  const taskIds = tasks.map(task => task['@id'])
+
+  const visibleTaskIds = selectVisibleTaskIds(state)
+  const hiddenTaskIds  = _.differenceWith(taskIds, visibleTaskIds)
+
+  const visibleTasks = _.intersectionWith(tasks, visibleTaskIds, (task, id) => task['@id'] === id)
+  const hiddenTasks  = _.intersectionWith(tasks, hiddenTaskIds,  (task, id) => task['@id'] === id)
 
   return {
     tasks,
-    tasksFiltered: selectFilteredTasks({
-      tasks,
-      filters: state.filters,
-      date: selectSelectedDate(state)
-    }),
+    visibleTasks,
+    hiddenTasks,
     polylines,
     polylineEnabled,
     selectedTasks: state.selectedTasks,
