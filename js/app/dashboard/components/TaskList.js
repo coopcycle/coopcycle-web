@@ -15,6 +15,41 @@ moment.locale($('html').attr('lang'))
 
 const TaskListPopoverContentWithTrans = withTranslation()(TaskListPopoverContent)
 
+// OPTIMIZATION
+// Avoid useless re-rendering when starting to drag
+// @see https://egghead.io/lessons/react-optimize-performance-in-react-beautiful-dnd-with-shouldcomponentupdate-and-purecomponent
+class InnerList extends React.Component {
+
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.tasks === this.props.tasks) {
+      return false
+    }
+
+    return true
+  }
+
+  render() {
+    return _.map(this.props.tasks, (task, index) => {
+      return (
+        <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ index }>
+          {(provided) => (
+            <div
+              ref={ provided.innerRef }
+              { ...provided.draggableProps }
+              { ...provided.dragHandleProps }
+            >
+              <Task
+                task={ task }
+                assigned={ true }
+                onRemove={ task => this.props.onRemove(task) } />
+            </div>
+          )}
+        </Draggable>
+      )
+    })
+  }
+}
+
 class TaskList extends React.Component {
 
   constructor (props) {
@@ -165,24 +200,9 @@ class TaskList extends React.Component {
           <Droppable droppableId={ `assigned:${username}` }>
             {(provided) => (
               <div className={ taskListClasslist.join(' ') } ref={ provided.innerRef } { ...provided.droppableProps }>
-                { _.map(tasks, (task, index) => {
-                  return (
-                    <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ index }>
-                      {(provided) => (
-                        <div
-                          ref={ provided.innerRef }
-                          { ...provided.draggableProps }
-                          { ...provided.dragHandleProps }
-                        >
-                          <Task
-                            task={ task }
-                            assigned={ true }
-                            onRemove={ task => this.remove(task) } />
-                        </div>
-                      )}
-                    </Draggable>
-                  )
-                })}
+                <InnerList
+                  tasks={ tasks }
+                  onRemove={ task => this.remove(task) } />
                 { provided.placeholder }
               </div>
             )}
