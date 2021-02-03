@@ -11,7 +11,7 @@ const removeListener = (cb) => {
 
 setInterval(() => {
   listeners.forEach(listener => listener())
-}, 1000)
+}, 1000 * 60)
 
 class NowCursor extends React.Component {
 
