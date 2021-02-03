@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect'
 import { moment } from '../../coopcycle-frontend-js'
 import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
-import { filter, orderBy, forEach, find, reduce, map } from 'lodash'
+import { filter, orderBy, forEach, find, reduce, map, differenceWith } from 'lodash'
 import { isTaskVisible } from './utils'
 
 export const selectTaskLists = createSelector(
@@ -119,5 +119,14 @@ export const selectAsTheCrowFlies = createSelector(
         map(taskList.items, item => ([ item.address.geo.latitude, item.address.geo.longitude ]))
     })
     return asTheCrowFlies
+  }
+)
+
+export const selectHiddenTaskIds = createSelector(
+  selectAllTasks,
+  selectVisibleTaskIds,
+  (tasks, visibleTaskIds) => {
+    const taskIds = tasks.map(task => task['@id'])
+    return differenceWith(taskIds, visibleTaskIds)
   }
 )

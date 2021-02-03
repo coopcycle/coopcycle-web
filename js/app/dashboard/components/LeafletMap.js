@@ -4,19 +4,23 @@ import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
 import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction } from '../redux/actions'
-import { selectVisibleTaskIds, selectPolylines, selectAsTheCrowFlies } from '../redux/selectors'
+import { selectVisibleTaskIds, selectHiddenTaskIds, selectPolylines, selectAsTheCrowFlies } from '../redux/selectors'
 import { selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
 
 class LeafletMap extends Component {
 
   _draw() {
     const {
+      tasks,
+      visibleTaskIds,
+      hiddenTaskIds,
       polylines,
       asTheCrowFlies,
-      visibleTasks,
-      hiddenTasks,
       clustersEnabled,
     } = this.props
+
+    const visibleTasks = _.intersectionWith(tasks, visibleTaskIds, (task, id) => task['@id'] === id)
+    const hiddenTasks  = _.intersectionWith(tasks, hiddenTaskIds,  (task, id) => task['@id'] === id)
 
     visibleTasks.forEach(task => this.proxy.addTask(task))
     hiddenTasks.forEach(task => this.proxy.hideTask(task))
@@ -158,19 +162,10 @@ class LeafletMap extends Component {
 
 function mapStateToProps(state) {
 
-  const tasks = selectAllTasks(state)
-  const taskIds = tasks.map(task => task['@id'])
-
-  const visibleTaskIds = selectVisibleTaskIds(state)
-  const hiddenTaskIds  = _.differenceWith(taskIds, visibleTaskIds)
-
-  const visibleTasks = _.intersectionWith(tasks, visibleTaskIds, (task, id) => task['@id'] === id)
-  const hiddenTasks  = _.intersectionWith(tasks, hiddenTaskIds,  (task, id) => task['@id'] === id)
-
   return {
-    tasks,
-    visibleTasks,
-    hiddenTasks,
+    tasks: selectAllTasks(state),
+    visibleTaskIds: selectVisibleTaskIds(state),
+    hiddenTaskIds: selectHiddenTaskIds(state),
     polylines: selectPolylines(state),
     polylineEnabled: state.polylineEnabled,
     selectedTasks: state.selectedTasks,
