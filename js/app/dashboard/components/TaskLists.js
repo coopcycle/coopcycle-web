@@ -8,7 +8,8 @@ import { createTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, 
 import CourierSelect from './CourierSelect'
 import TaskList from './TaskList'
 
-import { selectTaskLists, selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectTaskLists } from '../redux/selectors'
 
 class TaskLists extends React.Component {
 
@@ -36,9 +37,7 @@ class TaskLists extends React.Component {
   render() {
 
     const { addModalIsOpen, taskListsLoading } = this.props
-    let { taskLists } = this.props
-
-    taskLists = _.orderBy(taskLists, 'username')
+    const { taskLists } = this.props
 
     const classNames = ['dashboard__panel', 'dashboard__panel--assignees']
     if (this.props.hidden) {

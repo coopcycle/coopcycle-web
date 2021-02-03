@@ -1,7 +1,12 @@
 import { createSelector } from 'reselect'
 import { moment } from '../../coopcycle-frontend-js'
-import { selectTaskLists } from '../../coopcycle-frontend-js/dispatch/redux'
-import { filter, includes, intersectionWith, isEqual } from 'lodash'
+import { selectTaskLists as selectTaskListsBase } from '../../coopcycle-frontend-js/dispatch/redux'
+import { filter, includes, intersectionWith, isEqual, orderBy } from 'lodash'
+
+export const selectTaskLists = createSelector(
+  selectTaskListsBase,
+  taskLists => orderBy(taskLists, 'username')
+)
 
 export const selectFilteredTasks = createSelector(
   state => state.tasks,
