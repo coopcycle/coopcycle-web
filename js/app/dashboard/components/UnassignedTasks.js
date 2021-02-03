@@ -3,14 +3,13 @@ import { render } from 'react-dom'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import moment from 'moment'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
-import { selectUnassignedTasks } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectGroups, selectStandaloneTasks } from '../redux/selectors'
 
 const UnassignedTasksPopoverContentWithTrans = withTranslation()(UnassignedTasksPopoverContent)
 
@@ -57,61 +56,6 @@ class UnassignedTasks extends React.Component {
 
   render() {
 
-    const { taskListGroupMode } = this.props
-    let { unassignedTasks } = this.props
-    const groupsMap = new Map()
-    const groups = []
-    let standaloneTasks = unassignedTasks
-
-    if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
-
-      const tasksWithGroup = _.filter(unassignedTasks, task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group)
-
-      _.forEach(tasksWithGroup, task => {
-        const keys = Array.from(groupsMap.keys())
-        const group = _.find(keys, group => group.id === task.group.id)
-        if (!group) {
-          groupsMap.set(task.group, [ task ])
-        } else {
-          groupsMap.get(group).push(task)
-        }
-      })
-      groupsMap.forEach((tasks, group) => {
-        groups.push({
-          ...group,
-          tasks
-        })
-      })
-
-      standaloneTasks = _.filter(unassignedTasks, task => !Object.prototype.hasOwnProperty.call(task, 'group') || !task.group)
-    }
-
-    // Order by dropoff desc, with pickup before
-    if (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC') {
-
-      const dropoffTasks = _.filter(standaloneTasks, t => t.type === 'DROPOFF')
-      dropoffTasks.sort((a, b) => {
-        return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
-      })
-      const grouped = _.reduce(dropoffTasks, (acc, task) => {
-        if (task.previous) {
-          const prev = _.find(standaloneTasks, t => t['@id'] === task.previous)
-          if (prev) {
-            acc.push(prev)
-          }
-        }
-        acc.push(task)
-
-        return acc
-      }, [])
-
-      standaloneTasks = grouped
-    } else {
-      standaloneTasks.sort((a, b) => {
-        return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
-      })
-    }
-
     const classNames = ['dashboard__panel']
     if (this.props.hidden) {
       classNames.push('hidden')
@@ -145,7 +89,7 @@ class UnassignedTasks extends React.Component {
           <Droppable droppableId="unassigned">
             {(provided) => (
               <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
-                { _.map(groups, (group, index) => {
+                { _.map(this.props.groups, (group, index) => {
                   return (
                     <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
                       {(provided) => (
@@ -160,9 +104,9 @@ class UnassignedTasks extends React.Component {
                     </Draggable>
                   )
                 })}
-                { _.map(standaloneTasks, (task, index) => {
+                { _.map(this.props.standaloneTasks, (task, index) => {
                   return (
-                    <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ (groups.length + index) }>
+                    <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ (this.props.groups.length + index) }>
                       {(provided, snapshot) => {
 
                         return (
@@ -196,7 +140,8 @@ class UnassignedTasks extends React.Component {
 function mapStateToProps (state) {
 
   return {
-    unassignedTasks: selectUnassignedTasks(state),
+    groups: selectGroups(state),
+    standaloneTasks: selectStandaloneTasks(state),
     taskListGroupMode: state.taskListGroupMode,
     showCancelledTasks: state.filters.showCancelledTasks,
     taskModalIsOpen: state.taskModalIsOpen,
