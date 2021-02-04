@@ -165,8 +165,23 @@ export default class MapProxy {
 
     } else {
 
-      let icon = MapHelper.createMarkerIcon(iconName, 'marker', color)
-      marker.setIcon(icon)
+      // OPTIMIZATION
+      // Do *NOT* recreate an icon each time, it's expensive
+
+      const newOpts = {
+        icon: iconName,
+        textColor: color,
+        borderColor: color,
+      }
+      const currentOpts = _.pick(marker.options.icon.options, [
+        'icon',
+        'textColor',
+        'borderColor',
+      ])
+      if (!_.isEqual(currentOpts, newOpts)) {
+        L.Util.setOptions(marker.options.icon, newOpts)
+        marker.setIcon(marker.options.icon)
+      }
 
       if (!marker.getLatLng().equals(latLng)) {
         marker.setLatLng(latLng).update()
