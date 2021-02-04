@@ -143,8 +143,6 @@ function mapStateToProps (state) {
     groups: selectGroups(state),
     standaloneTasks: selectStandaloneTasks(state),
     taskListGroupMode: state.taskListGroupMode,
-    showCancelledTasks: state.filters.showCancelledTasks,
-    taskModalIsOpen: state.taskModalIsOpen,
     selectedTasks: state.selectedTasks,
   }
 }
