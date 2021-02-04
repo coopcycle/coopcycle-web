@@ -114,7 +114,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -139,7 +138,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -212,7 +210,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -237,7 +234,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -295,7 +291,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -320,7 +315,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -374,7 +368,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -399,7 +392,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -457,7 +449,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -482,7 +473,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -541,7 +531,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -566,7 +555,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":48.857127,
               "longitude":2.354766
             },
@@ -624,7 +612,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":@double@,
               "longitude":@double@
             },
@@ -649,7 +636,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":48.857127,
               "longitude":2.354766
             },
@@ -715,7 +701,6 @@ Feature: Deliveries
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":48.864577,
               "longitude":2.333338
             },

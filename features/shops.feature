@@ -27,7 +27,6 @@ Feature: Manage shops
           "@type":"http://schema.org/Place",
           "geo":{
             "@type":"GeoCoordinates",
-            "@id":@string@,
             "latitude":48.864577,
             "longitude":2.333338
           },

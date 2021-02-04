@@ -49,7 +49,6 @@ Feature: Manage restaurants
             "@type":"http://schema.org/Place",
             "geo":{
               "@type":"GeoCoordinates",
-              "@id":@string@,
               "latitude":48.846656,
               "longitude":2.369052
             },
@@ -120,7 +119,6 @@ Feature: Manage restaurants
         "@type":"http://schema.org/Place",
         "geo":{
           "@type":"GeoCoordinates",
-          "@id":@string@,
           "latitude":@double@,
           "longitude":@double@
         },
@@ -692,7 +690,6 @@ Feature: Manage restaurants
                 "description":null,
                 "geo":{
                   "@type":"GeoCoordinates",
-                  "@id":@string@,
                   "latitude":48.864577,
                   "longitude":2.333338
                 },
@@ -718,7 +715,6 @@ Feature: Manage restaurants
                 "description":null,
                 "geo":{
                   "@type":"GeoCoordinates",
-                  "@id":@string@,
                   "latitude":48.864577,
                   "longitude":2.333338
                 },

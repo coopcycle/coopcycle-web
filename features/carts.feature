@@ -134,7 +134,6 @@ Feature: Carts
           "@type":"http://schema.org/Place",
           "geo":{
             "@type":"GeoCoordinates",
-            "@id":@string@,
             "latitude":48.863814,
             "longitude":2.3329
           },
@@ -208,7 +207,6 @@ Feature: Carts
           "@type":"http://schema.org/Place",
           "geo":{
             "@type":"GeoCoordinates",
-            "@id":@string@,
             "latitude":48.863814,
             "longitude":2.3329
           },

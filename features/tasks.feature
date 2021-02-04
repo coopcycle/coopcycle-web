@@ -283,7 +283,6 @@ Feature: Tasks
           "description":null,
           "geo":{
             "@type":"GeoCoordinates",
-            "@id":@string@,
             "latitude":48.846656,
             "longitude":2.369052
           },
@@ -572,7 +571,6 @@ Feature: Tasks
           "description": "Sonner à l'interphone",
           "geo":{
             "@type":"GeoCoordinates",
-            "@id":@string@,
             "latitude":48.870473,
             "longitude":2.331933
           },
@@ -646,7 +644,6 @@ Feature: Tasks
           "description": "Sonner à l'interphone",
           "geo":{
             "@type":"GeoCoordinates",
-            "@id":@string@,
             "latitude":48.870473,
             "longitude":2.331933
           },
