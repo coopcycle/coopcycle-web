@@ -112,7 +112,6 @@ function mapStateToProps (state) {
     taskLists: selectTaskLists(state),
     date: selectSelectedDate(state),
     taskListsLoading: state.dispatch.taskListsLoading,
-    taskModalIsOpen: state.taskModalIsOpen,
   }
 }
 
