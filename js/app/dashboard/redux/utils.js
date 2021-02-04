@@ -174,3 +174,11 @@ export const isTaskVisible = (task, filters, date) => {
 
   return true
 }
+
+// If the user has not been seen for 5min, it is considered offline
+const OFFLINE_TIMEOUT = (5 * 60 * 1000)
+
+export const isOffline = (lastSeen) => {
+  const diff = moment().diff(lastSeen)
+  return diff > OFFLINE_TIMEOUT
+}

@@ -2,8 +2,8 @@ import { createSelector } from 'reselect'
 import Fuse from 'fuse.js'
 import { moment } from '../../coopcycle-frontend-js'
 import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
-import { filter, orderBy, forEach, find, reduce, map, differenceWith } from 'lodash'
-import { isTaskVisible } from './utils'
+import { filter, orderBy, forEach, find, reduce, map, differenceWith, includes } from 'lodash'
+import { isTaskVisible, isOffline } from './utils'
 
 export const selectTaskLists = createSelector(
   selectTaskListsBase,
@@ -153,4 +153,13 @@ const fuseOptions = {
 export const selectFuseSearch = createSelector(
   selectAllTasks,
   (tasks) => new Fuse(tasks, fuseOptions)
+)
+
+export const selectPositions = createSelector(
+  state => state.positions,
+  state => state.offline,
+  (positions, offline) => positions.map(position => ({
+    ...position,
+    offline: includes(offline, position.username) ? true : isOffline(position.lastSeen),
+  }))
 )

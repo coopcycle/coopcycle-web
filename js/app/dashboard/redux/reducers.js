@@ -10,7 +10,6 @@ import {
   SELECT_TASKS,
   SET_TASK_LIST_GROUP_MODE,
   SET_GEOLOCATION,
-  SET_OFFLINE,
   OPEN_NEW_TASK_MODAL,
   CLOSE_NEW_TASK_MODAL,
   SET_CURRENT_TASK,
@@ -40,7 +39,10 @@ import {
   CLOSE_IMPORT_MODAL,
   SET_CLUSTERS_ENABLED,
   CLEAR_SELECTED_TASKS,
+  SCAN_POSITIONS,
 } from './actions'
+
+import { isOffline } from './utils'
 
 const defaultFilters = {
   showFinishedTasks: true,
@@ -178,7 +180,8 @@ const jwt = (state = '', action) => {
   }
 }
 
-const positions = (state = [], action) => {
+const combinedPositions = (state = initialState, action) => {
+
   switch (action.type) {
   case SET_GEOLOCATION:
 
@@ -188,42 +191,35 @@ const positions = (state = [], action) => {
       lastSeen: moment(action.timestamp, 'X'),
     }
 
-    const newState = state.slice(0)
-    const index = _.findIndex(newState, position => position.username === action.username)
+    const newPositions = state.positions.slice(0)
+    const index = _.findIndex(newPositions, position => position.username === action.username)
     if (-1 !== index) {
-      newState.splice(index, 1, marker)
+      newPositions.splice(index, 1, marker)
     } else {
-      newState.push(marker)
+      newPositions.push(marker)
     }
 
-    return newState
-
-  default:
-
-    return state
-  }
-}
-
-const offline = (state = [], action) => {
-  let index
-
-  switch (action.type) {
-  case SET_GEOLOCATION:
-
-    index = _.findIndex(state, username => username === action.username)
-    if (-1 === index) {
-
-      return state
+    return {
+      ...state,
+      positions: newPositions,
     }
 
-    return _.filter(state, username => username !== action.username)
+  case SCAN_POSITIONS:
 
-  case SET_OFFLINE:
+    const offline = _.reduce(state.positions, (acc, position) => {
 
-    index = _.findIndex(state, username => username === action.username)
-    if (-1 === index) {
+      if (isOffline(position.lastSeen)) {
+        acc.push(position.username)
+      }
 
-      return state.concat([ action.username ])
+      return acc
+    }, [])
+
+    if (!_.isEqual(offline, state.offline)) {
+      return {
+        ...state,
+        offline,
+      }
     }
 
     break
@@ -469,6 +465,7 @@ const centrifugoEventsChannel = (state = initialState.centrifugoEventsChannel) =
 export default (state = initialState, action) => {
 
   const { filters, isDefaultFilters } = combinedFilters(state, action)
+  const { positions, offline } = combinedPositions(state, action)
 
   return {
     ...state,
@@ -480,8 +477,8 @@ export default (state = initialState, action) => {
     centrifugoToken: centrifugoToken(state.centrifugoToken, action),
     centrifugoTrackingChannel: centrifugoTrackingChannel(state.centrifugoTrackingChannel, action),
     centrifugoEventsChannel: centrifugoEventsChannel(state.centrifugoEventsChannel, action),
-    positions: positions(state.positions, action),
-    offline: offline(state.offline, action),
+    positions,
+    offline,
     taskModalIsOpen: taskModalIsOpen(state.taskModalIsOpen, action),
     currentTask: currentTask(state.currentTask, action),
     isTaskModalLoading: isTaskModalLoading(state.isTaskModalLoading, action),

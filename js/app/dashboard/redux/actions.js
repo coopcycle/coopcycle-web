@@ -98,7 +98,7 @@ export const CLEAR_SELECTED_TASKS = 'CLEAR_SELECTED_TASKS'
 export const SET_TASK_LIST_GROUP_MODE = 'SET_TASK_LIST_GROUP_MODE'
 
 export const SET_GEOLOCATION = 'SET_GEOLOCATION'
-export const SET_OFFLINE = 'SET_OFFLINE'
+export const SCAN_POSITIONS = 'SCAN_POSITIONS'
 export const OPEN_NEW_TASK_MODAL = 'OPEN_NEW_TASK_MODAL'
 export const CLOSE_NEW_TASK_MODAL = 'CLOSE_NEW_TASK_MODAL'
 export const SET_CURRENT_TASK = 'SET_CURRENT_TASK'
@@ -360,8 +360,8 @@ function setGeolocation(username, coords, timestamp) {
   return { type: SET_GEOLOCATION, username, coords, timestamp }
 }
 
-function setOffline(username) {
-  return { type: SET_OFFLINE, username }
+function scanPositions() {
+  return { type: SCAN_POSITIONS }
 }
 
 function openNewTaskModal() {
@@ -720,7 +720,6 @@ export {
   selectTask,
   selectTasks,
   setGeolocation,
-  setOffline,
   openNewTaskModal,
   closeNewTaskModal,
   setCurrentTask,
@@ -753,4 +752,5 @@ export {
   taskListUpdated,
   taskListsUpdated,
   clearSelectedTasks,
+  scanPositions,
 }

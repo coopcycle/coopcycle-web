@@ -1,36 +1,25 @@
 import {
   setGeolocation,
   updateTask,
-  setOffline,
   importSuccess,
   importError,
   taskListsUpdated,
   SET_FILTER_VALUE,
   RESET_FILTERS,
+  scanPositions,
 } from './actions'
-import moment from 'moment'
 import _ from 'lodash'
 import Centrifuge from 'centrifuge'
-
-// If the user has not been seen for 5min, it is considered offline
-const OFFLINE_TIMEOUT = (5 * 60 * 1000)
 
 // Check every 30s
 const OFFLINE_TIMEOUT_INTERVAL = (30 * 1000)
 
 let centrifuge
 
-function checkLastSeen(dispatch, getState) {
-
-  getState().positions.forEach(position => {
-    const diff = moment().diff(position.lastSeen)
-    if (diff > OFFLINE_TIMEOUT) {
-      dispatch(setOffline(position.username))
-    }
-  })
-
+function checkLastSeen(dispatch) {
+  dispatch(scanPositions())
   setTimeout(() => {
-    checkLastSeen(dispatch, getState)
+    checkLastSeen(dispatch)
   }, OFFLINE_TIMEOUT_INTERVAL)
 }
 
@@ -85,7 +74,7 @@ export const socketIO = ({ dispatch, getState }) => {
     centrifuge.connect()
 
     setTimeout(() => {
-      checkLastSeen(dispatch, getState)
+      checkLastSeen(dispatch)
     }, OFFLINE_TIMEOUT_INTERVAL)
 
   }

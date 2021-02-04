@@ -353,25 +353,7 @@ export default class MapProxy {
     this.getPolylineAsTheCrowFliesLayerGroup(username).removeFrom(this.map)
   }
 
-  setOnline(username) {
-    if (!this.courierMarkers.has(username)) {
-      return
-    }
-    const marker = this.courierMarkers.get(username)
-    marker.setIcon(createIcon(username))
-    marker.setOpacity(1)
-  }
-
-  setOffline(username) {
-    if (!this.courierMarkers.has(username)) {
-      return
-    }
-    const marker = this.courierMarkers.get(username)
-    marker.setIcon(createIcon(username))
-    marker.setOpacity(0.5)
-  }
-
-  setGeolocation(username, position, lastSeen) {
+  setGeolocation(username, position, lastSeen, offline) {
 
     let marker = this.courierMarkers.get(username)
     let popupComponent = this.courierPopups.get(username)
@@ -397,6 +379,8 @@ export default class MapProxy {
         minWidth: 150,
       })
 
+      marker.setOpacity(offline ? 0.5 : 1)
+
       this.courierLayerGroup.addLayer(marker)
       this.courierMarkers.set(username, marker)
 
@@ -408,6 +392,8 @@ export default class MapProxy {
       if (marker.options.lastSeen !== lastSeen) {
         popupComponent.current.updateLastSeen(lastSeen)
       }
+
+      marker.setOpacity(offline ? 0.5 : 1)
     }
   }
 

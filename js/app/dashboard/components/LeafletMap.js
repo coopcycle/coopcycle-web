@@ -4,7 +4,7 @@ import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
 import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction } from '../redux/actions'
-import { selectVisibleTaskIds, selectHiddenTaskIds, selectPolylines, selectAsTheCrowFlies } from '../redux/selectors'
+import { selectVisibleTaskIds, selectHiddenTaskIds, selectPolylines, selectAsTheCrowFlies, selectPositions } from '../redux/selectors'
 import { selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
 
 class LeafletMap extends Component {
@@ -102,8 +102,8 @@ class LeafletMap extends Component {
     this._draw()
 
     this.props.positions.forEach(position => {
-      const { username, coords, lastSeen } = position
-      this.proxy.setGeolocation(username, coords, lastSeen)
+      const { username, coords, lastSeen, offline } = position
+      this.proxy.setGeolocation(username, coords, lastSeen, offline)
     })
   }
 
@@ -114,7 +114,6 @@ class LeafletMap extends Component {
       polylines,
       selectedTasks,
       positions,
-      offline,
       polylineStyle,
     } = this.props
 
@@ -139,18 +138,10 @@ class LeafletMap extends Component {
 
     if (prevProps.positions !== positions) {
       positions.forEach(position => {
-        const { username, coords, lastSeen } = position
-        this.proxy.setGeolocation(username, coords, lastSeen)
-        this.proxy.setOnline(username)
+        const { username, coords, lastSeen, offline } = position
+        this.proxy.setGeolocation(username, coords, lastSeen, offline)
       })
     }
-
-    if (prevProps.offline !== offline) {
-      offline.forEach(username => {
-        this.proxy.setOffline(username)
-      })
-    }
-
   }
 
   render() {
@@ -169,8 +160,7 @@ function mapStateToProps(state) {
     polylines: selectPolylines(state),
     polylineEnabled: state.polylineEnabled,
     selectedTasks: state.selectedTasks,
-    positions: state.positions,
-    offline: state.offline,
+    positions: selectPositions(state),
     polylineStyle: state.polylineStyle,
     asTheCrowFlies: selectAsTheCrowFlies(state),
     clustersEnabled: state.clustersEnabled,
