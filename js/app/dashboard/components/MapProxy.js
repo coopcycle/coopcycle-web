@@ -81,6 +81,7 @@ export default class MapProxy {
     this.taskConnectCircles = new Map()
 
     this.courierMarkers = new Map()
+    this.courierPopups = new Map()
     this.courierLayerGroup = new L.LayerGroup()
     this.courierLayerGroup.addTo(this.map)
 
@@ -371,25 +372,42 @@ export default class MapProxy {
   }
 
   setGeolocation(username, position, lastSeen) {
-    let marker = this.courierMarkers.get(username)
 
-    const popupContent = document.createElement('div')
-    render(<CourierPopupContent
-      username={ username }
-      lastSeen={ lastSeen } />, popupContent)
+    let marker = this.courierMarkers.get(username)
+    let popupComponent = this.courierPopups.get(username)
 
     if (!marker) {
-      marker = L.marker(position, { icon: createIcon(username) })
+
+      marker = L.marker(position, { icon: createIcon(username), lastSeen })
       marker.setOpacity(1)
+
+      popupComponent = React.createRef()
+      const popupContent = document.createElement('div')
+      const cb = () => {
+        this.courierPopups.set(username, popupComponent)
+      }
+
+      render(<CourierPopupContent
+        ref={ popupComponent }
+        username={ username }
+        lastSeen={ lastSeen } />, popupContent, cb)
+
       marker.bindPopup(popupContent, {
-        offset: [3, 70],
+        offset: [ 3, 70 ],
         minWidth: 150,
       })
+
       this.courierLayerGroup.addLayer(marker)
       this.courierMarkers.set(username, marker)
+
     } else {
-      marker.setLatLng(position).update()
-      marker.setPopupContent(popupContent)
+
+      if (!marker.getLatLng().equals(position)) {
+        marker.setLatLng(position).update()
+      }
+      if (marker.options.lastSeen !== lastSeen) {
+        popupComponent.current.updateLastSeen(lastSeen)
+      }
     }
   }
 
