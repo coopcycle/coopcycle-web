@@ -7,7 +7,6 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskCollection;
-use AppBundle\Serializer\RoutingProblemNormalizer;
 use AppBundle\Service\RouteOptimizer;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -77,8 +76,7 @@ class RouteOptimizerTest extends KernelTestCase
         $taskCollection = $this->prophesize(TaskCollection::class);
         $taskCollection->getTasks()->willReturn($taskList);
 
-        $normalizer = new RoutingProblemNormalizer();
-        $optimizer = new RouteOptimizer($normalizer, $this->client);
+        $optimizer = new RouteOptimizer($this->client);
 
         $problem = $optimizer->createRoutingProblem($taskCollection->reveal());
 
@@ -127,8 +125,7 @@ class RouteOptimizerTest extends KernelTestCase
         $taskCollection = $this->prophesize(TaskCollection::class);
         $taskCollection->getTasks()->willReturn($taskList);
 
-        $normalizer = new RoutingProblemNormalizer();
-        $optimizer = new RouteOptimizer($normalizer, $this->client);
+        $optimizer = new RouteOptimizer($this->client);
 
         $result = $optimizer->optimize($taskCollection->reveal());
 

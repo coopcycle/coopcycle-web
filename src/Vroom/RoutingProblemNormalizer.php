@@ -1,9 +1,8 @@
 <?php
 
-namespace AppBundle\Serializer;
+namespace AppBundle\Vroom;
 
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use AppBundle\Vroom\RoutingProblem;
 
 /**
 * normalizes a given RoutingProblem into the Vroom api request format

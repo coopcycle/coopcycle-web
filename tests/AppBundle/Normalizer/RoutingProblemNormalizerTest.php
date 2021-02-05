@@ -5,8 +5,8 @@ namespace Tests\AppBundle\Normalizer;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
-use AppBundle\Serializer\RoutingProblemNormalizer;
 use AppBundle\Vroom\RoutingProblem;
+use AppBundle\Vroom\RoutingProblemNormalizer;
 use AppBundle\Vroom\Job;
 use AppBundle\Vroom\Vehicle;
 use PHPUnit\Framework\TestCase;
@@ -51,7 +51,7 @@ class RoutingProblemNormalizerTest extends TestCase
             $task_id += 1;
         }
 
-        $vehicle1 = new Vehicle(1, 'bike', $address1, $address1);
+        $vehicle1 = new Vehicle(1, 'bike', $address1->getGeo()->toGeocoderCoordinates(), $address1->getGeo()->toGeocoderCoordinates());
         $routingProblem = new RoutingProblem();
 
         foreach ($taskList as $task){

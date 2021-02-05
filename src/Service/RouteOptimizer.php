@@ -4,8 +4,8 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
-use AppBundle\Serializer\RoutingProblemNormalizer;
 use AppBundle\Vroom\RoutingProblem;
+use AppBundle\Vroom\RoutingProblemNormalizer;
 use AppBundle\Vroom\Job;
 use AppBundle\Vroom\Shipment;
 use AppBundle\Vroom\Vehicle;
@@ -18,11 +18,10 @@ use GuzzleHttp\Client;
 
 class RouteOptimizer
 {
-    private $normalizer;
+    private $client;
 
-    public function __construct(RoutingProblemNormalizer $normalizer, Client $client)
+    public function __construct(Client $client)
     {
-        $this->normalizer = $normalizer;
         $this->client = $client;
     }
 
@@ -36,10 +35,12 @@ class RouteOptimizer
     {
         $routingProblem = $this->createRoutingProblem($taskCollection);
 
+        $normalizer = new RoutingProblemNormalizer();
+
         // TODO Catch Exception
         $response = $this->client->request('POST', '', [
             'headers' => ['Content-Type'=> 'application/json'],
-            'body' => json_encode($this->normalizer->normalize($routingProblem)),
+            'body' => json_encode($normalizer->normalize($routingProblem)),
         ]);
 
         $tasks = $taskCollection->getTasks();
