@@ -2,8 +2,6 @@
 
 namespace AppBundle\Vroom;
 
-use AppBundle\Entity\Task;
-
 /**
  * @see https://github.com/VROOM-Project/vroom/blob/master/docs/API.md#jobs
  */
@@ -26,23 +24,4 @@ class Job
      * @var array
      */
     public $time_windows;
-
-    public static function fromTask(Task $task)
-    {
-        $job = new self();
-
-        $job->id = $task->getId();
-        $job->location = [
-            $task->getAddress()->getGeo()->getLongitude(),
-            $task->getAddress()->getGeo()->getLatitude()
-        ];
-        $job->time_windows = [
-            [
-                (int) $task->getAfter()->format('U'),
-                (int) $task->getBefore()->format('U')
-            ]
-        ];
-
-        return $job;
-    }
 }

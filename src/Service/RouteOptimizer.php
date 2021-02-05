@@ -2,6 +2,8 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Task;
 use AppBundle\Serializer\RoutingProblemNormalizer;
 use AppBundle\Vroom\RoutingProblem;
 use AppBundle\Vroom\Job;
@@ -79,12 +81,12 @@ class RouteOptimizer
                     $deliveries[] = $task->getDelivery();
                 }
             } else {
-                $routingProblem->addJob(Job::fromTask($task));
+                $routingProblem->addJob(Task::toVroomJob($task));
             }
         }
 
         foreach ($deliveries as $delivery) {
-            $routingProblem->addShipment(Shipment::fromDelivery($delivery));
+            $routingProblem->addShipment(Delivery::toVroomShipment($delivery));
         }
 
         $firstTask = current($taskCollection->getTasks());

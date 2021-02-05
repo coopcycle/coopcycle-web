@@ -20,14 +20,4 @@ class Shipment
      * @var Job
      */
     public $delivery;
-
-    public static function fromDelivery(Delivery $delivery)
-    {
-        $shipment = new self();
-
-        $shipment->pickup = Job::fromTask($delivery->getPickup());
-        $shipment->delivery = Job::fromTask($delivery->getDropoff());
-
-        return $shipment;
-    }
 }

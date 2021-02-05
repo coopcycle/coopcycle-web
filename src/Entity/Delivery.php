@@ -16,6 +16,7 @@ use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
+use AppBundle\Vroom\Shipment as VroomShipment;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -449,5 +450,15 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         if (null !== $order) {
             return $order->getRestaurant();
         }
+    }
+
+    public static function toVroomShipment(Delivery $delivery): VroomShipment
+    {
+        $shipment = new VroomShipment();
+
+        $shipment->pickup = Task::toVroomJob($delivery->getPickup());
+        $shipment->delivery = Task::toVroomJob($delivery->getDropoff());
+
+        return $shipment;
     }
 }

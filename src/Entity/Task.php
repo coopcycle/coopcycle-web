@@ -23,6 +23,7 @@ use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Validator\Constraints\Task as AssertTask;
+use AppBundle\Vroom\Job as VroomJob;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -703,5 +704,24 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     public function getRef(): ?string
     {
         return $this->ref;
+    }
+
+    public static function toVroomJob(Task $task): VroomJob
+    {
+        $job = new VroomJob();
+
+        $job->id = $task->getId();
+        $job->location = [
+            $task->getAddress()->getGeo()->getLongitude(),
+            $task->getAddress()->getGeo()->getLatitude()
+        ];
+        $job->time_windows = [
+            [
+                (int) $task->getAfter()->format('U'),
+                (int) $task->getBefore()->format('U')
+            ]
+        ];
+
+        return $job;
     }
 }
