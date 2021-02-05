@@ -103,7 +103,11 @@ class Dashboard extends React.Component {
             <DatePicker
               format={ 'll' }
               defaultValue={ moment(this.props.date) }
-              onChange={ (date) => this.props.onDateChange(date) } />
+              onChange={ (date) => {
+                if (date) {
+                  this.props.onDateChange(date)
+                }
+              }} />
           </div>
         </div>
         <div className="FoodtechDashboard__SlotViz">
