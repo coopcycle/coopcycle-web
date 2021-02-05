@@ -321,6 +321,16 @@ class SetupCommand extends Command
                 'name' => 'Giropay',
                 'countries' => ['de'],
             ],
+            [
+                'code' => 'EDENRED',
+                'name' => 'Edenred',
+                'countries' => ['fr'],
+            ],
+            [
+                'code' => 'EDENRED+CARD',
+                'name' => 'Edenred + Card',
+                'countries' => ['fr'],
+            ],
         ];
 
         foreach ($methods as $method) {
