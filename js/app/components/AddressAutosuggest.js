@@ -160,7 +160,6 @@ const generic = {
         (this.props.address.streetAddress || '') : (_.isString(this.props.address) ? this.props.address : ''),
       suggestions,
       multiSection,
-      lastValueWithResults: '',
       loading: false,
     }
   },
@@ -417,8 +416,6 @@ class AddressAutosuggest extends Component {
     let suggestions = []
     let multiSection = false
 
-    const { lastValueWithResults } = this.state
-
     if (this.props.restaurants.length > 0) {
 
       const restoResults = this.fuseForRestaurants.search(value, {
@@ -467,6 +464,37 @@ class AddressAutosuggest extends Component {
       }
     }
 
+    // Cache results
+    if (predictionsAsSuggestions.length > 0 && cache) {
+      storage.set(value, predictionsAsSuggestions, new Date().getTime() + (5 * 60 * 1000)) // Cache for 5 minutes
+    }
+
+    // UX optimization
+    // When there are no suggestions returned by the autocomplete service,
+    // we keep showing the previously returned suggestions.
+    // This is useful because some users think they have to type their apartment number
+    //
+    // Ex:
+    // The user types "4 av victoria paris 4" -> 2 suggestions
+    // The user types "4 av victoria paris 4 bâtiment B" -> 0 suggestions
+    if (predictionsAsSuggestions.length === 0 && this.useCache()) {
+      const candidates = []
+      storage.each(function(cachedValue, cacheKey) {
+        if (value.length > cacheKey.length && value.includes(cacheKey)) {
+          candidates.push(cacheKey)
+        }
+      })
+      candidates.sort((a, b) =>
+        a.length === b.length ? 0 : (a.length > b.length ? -1 : 1))
+      if (candidates.length > 0) {
+        const bestCandidate = candidates[0]
+        const cachedResults = storage.get(bestCandidate)
+        if (cachedResults) {
+          predictionsAsSuggestions = cachedResults
+        }
+      }
+    }
+
     if (multiSection) {
       if (predictionsAsSuggestions.length > 0) {
         suggestions.push({
@@ -478,30 +506,9 @@ class AddressAutosuggest extends Component {
       suggestions = predictionsAsSuggestions
     }
 
-    // UX optimization
-    // When there are no suggestions returned by the autocomplete service,
-    // we keep showing the previously returned suggestions.
-    // This is useful because some users think they have to type their apartment number
-    //
-    // Ex:
-    // The user types "4 av victoria paris 4" -> 2 suggestions
-    // The user types "4 av victoria paris 4 bâtiment B" -> 0 suggestions
-    if (predictionsAsSuggestions.length === 0 &&
-      lastValueWithResults.length > 0 &&
-      value.length > lastValueWithResults.length &&
-      value.includes(lastValueWithResults)) {
-      return
-    }
-
-    // Cache results
-    if (predictionsAsSuggestions.length > 0 && cache) {
-      storage.set(value, predictionsAsSuggestions, new Date().getTime() + (5 * 60 * 1000)) // Cache for 5 minutes
-    }
-
     this.setState({
       suggestions,
       multiSection,
-      lastValueWithResults: predictionsAsSuggestions.length > 0 ? value : ''
     })
   }
 
