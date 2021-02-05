@@ -7,6 +7,10 @@ import { filter, debounce, throttle } from 'lodash'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import axios from 'axios'
+import engine  from 'store/src/store-engine'
+import session from 'store/storages/sessionStorage'
+import cookie  from 'store/storages/cookieStorage'
+import expirePlugin from 'store/plugins/expire'
 
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
@@ -58,6 +62,8 @@ const theme = {
   sectionTitle:             'react-autosuggest__section-title address-autosuggest__section-title'
 }
 
+const storage = engine.createStore([ session, cookie ], [ expirePlugin ], 'AddressAutosuggest')
+
 const defaultFuseOptions = {
   shouldSort: true,
   includeScore: true,
@@ -93,6 +99,9 @@ const adapters = {
     poweredBy: poweredByAlgolia,
     transformSuggestion: transformSuggestionAlgolia,
     geocode: geocodeAlgolia,
+    useCache: function () {
+      return true
+    }
   },
   locationiq: {
     onSuggestionsFetchRequested: onSuggestionsFetchRequestedLocationIQ,
@@ -242,6 +251,9 @@ const generic = {
   },
   highlightFirstSuggestion: function() {
     return false
+  },
+  useCache: function() {
+    return false
   }
 }
 
@@ -296,13 +308,31 @@ class AddressAutosuggest extends Component {
     this.country = getCountry() || 'en'
     this.language = localeDetector()
 
+    const onSuggestionsFetchRequestedBase =
+      localize('onSuggestionsFetchRequested', adapter, this)
+
+    const onSuggestionsFetchRequestedCached = ({ value }) => {
+
+      if (!this.useCache()) {
+        onSuggestionsFetchRequestedBase({ value })
+        return
+      }
+
+      const cached = storage.get(value)
+      if (cached && Array.isArray(cached)) {
+        this._autocompleteCallback(cached, value)
+      } else {
+        onSuggestionsFetchRequestedBase({ value })
+      }
+    }
+
     // https://www.peterbe.com/plog/how-to-throttle-and-debounce-an-autocomplete-input-in-react
     this.onSuggestionsFetchRequestedThrottled = throttle(
-      localize('onSuggestionsFetchRequested', adapter, this),
+      onSuggestionsFetchRequestedCached,
       400
     )
     this.onSuggestionsFetchRequestedDebounced = debounce(
-      localize('onSuggestionsFetchRequested', adapter, this),
+      onSuggestionsFetchRequestedCached,
       400
     )
 
@@ -330,6 +360,7 @@ class AddressAutosuggest extends Component {
     this.poweredBy = localize('poweredBy', adapter, this)
     this.theme = localize('theme', adapter, this)
     this.highlightFirstSuggestion = localize('highlightFirstSuggestion', adapter, this)
+    this.useCache = localize('useCache', adapter, this)
 
     this.state = this.getInitialState()
   }
@@ -381,7 +412,7 @@ class AddressAutosuggest extends Component {
     }
   }
 
-  _autocompleteCallback(predictionsAsSuggestions, value) {
+  _autocompleteCallback(predictionsAsSuggestions, value, cache = false) {
 
     let suggestions = []
     let multiSection = false
@@ -460,6 +491,11 @@ class AddressAutosuggest extends Component {
       value.length > lastValueWithResults.length &&
       value.includes(lastValueWithResults)) {
       return
+    }
+
+    // Cache results
+    if (predictionsAsSuggestions.length > 0 && cache) {
+      storage.set(value, predictionsAsSuggestions, new Date().getTime() + (5 * 60 * 1000)) // Cache for 5 minutes
     }
 
     this.setState({
