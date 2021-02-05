@@ -2,15 +2,15 @@
 
 namespace Tests\AppBundle\Normalizer;
 
-use PHPUnit\Framework\TestCase;
-use AppBundle\Serializer\RoutingProblemNormalizer;
 use AppBundle\Entity\Task;
-use Prophecy\PhpUnit\ProphecyTrait;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
-use AppBundle\DataType\RoutingProblem;
-use AppBundle\DataType\RoutingProblem\Job;
-use AppBundle\DataType\RoutingProblem\Vehicle;
+use AppBundle\Serializer\RoutingProblemNormalizer;
+use AppBundle\Vroom\RoutingProblem;
+use AppBundle\Vroom\Job;
+use AppBundle\Vroom\Vehicle;
+use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class RoutingProblemNormalizerTest extends TestCase
 {
@@ -51,11 +51,11 @@ class RoutingProblemNormalizerTest extends TestCase
             $task_id += 1;
         }
 
-        $vehicle1 = new Vehicle(1, $address1, $address1);
+        $vehicle1 = new Vehicle(1, 'bike', $address1, $address1);
         $routingProblem = new RoutingProblem();
 
         foreach ($taskList as $task){
-            $routingProblem->addJob(Job::fromTask($task));
+            $routingProblem->addJob(Task::toVroomJob($task));
         }
         $routingProblem->addVehicle($vehicle1);
 
