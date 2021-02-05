@@ -69,6 +69,10 @@ class OpeningHours extends React.Component {
 
   onStartChange(key, date) {
 
+    if (!date) {
+      return
+    }
+
     const { rows } = this.state
     const row = rows[key]
 
@@ -81,6 +85,10 @@ class OpeningHours extends React.Component {
   }
 
   onEndChange(key, date) {
+
+    if (!date) {
+      return
+    }
 
     const { rows } = this.state
     const row = rows[key]
