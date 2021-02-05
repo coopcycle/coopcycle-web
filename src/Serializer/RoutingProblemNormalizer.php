@@ -58,17 +58,11 @@ class RoutingProblemNormalizer implements NormalizerInterface
             ];
 
             if (null !== $vehicle->getStart()) {
-                $vehiclePayload['start'] = [
-                    $vehicle->getStart()->getGeo()->getLongitude(),
-                    $vehicle->getStart()->getGeo()->getLatitude(),
-                ];
+                $vehiclePayload['start'] = $vehicle->getStart()->toArray();
             }
 
             if (null !== $vehicle->getEnd()) {
-                $vehiclePayload['end'] = [
-                    $vehicle->getEnd()->getGeo()->getLongitude(),
-                    $vehicle->getEnd()->getGeo()->getLatitude(),
-                ];
+                $vehiclePayload['end'] = $vehicle->getEnd()->toArray();;
             }
 
             $data["vehicles"][] = $vehiclePayload;

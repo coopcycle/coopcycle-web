@@ -2,7 +2,7 @@
 
 namespace AppBundle\Vroom;
 
-use AppBundle\Entity\Address;
+use Geocoder\Model\Coordinates;
 
 /**
  * a Vehicle represents a method of transportation with certain capacities for accomplishing tasks.
@@ -22,7 +22,7 @@ class Vehicle
 
     private $end; // an address that this vehicle needs to end at
 
-    public function __construct(int $id, string $profile, Address $start = null, Address $end = null)
+    public function __construct(int $id, string $profile, Coordinates $start = null, Coordinates $end = null)
     {
         $this->id = $id;
         $this->profile = $profile;
@@ -40,7 +40,7 @@ class Vehicle
         return $this->profile;
     }
 
-    public function setStart(Address $start)
+    public function setStart(Coordinates $start)
     {
         $this->start = $start;
     }
@@ -50,7 +50,7 @@ class Vehicle
         return $this->start;
     }
 
-    public function setEnd(Address $end)
+    public function setEnd(Coordinates $end)
     {
         $this->end = $end;
     }

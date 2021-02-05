@@ -92,7 +92,7 @@ class RouteOptimizer
         $firstTask = current($taskCollection->getTasks());
 
         $vehicle = new Vehicle(1, 'bike');
-        $vehicle->setStart($firstTask->getAddress());
+        $vehicle->setStart($firstTask->getAddress()->getGeo()->toGeocoderCoordinates());
 
         $routingProblem->addVehicle($vehicle);
 

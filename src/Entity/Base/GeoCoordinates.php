@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Base;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
+use Geocoder\Model\Coordinates as GeocoderCoordinates;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -86,5 +87,10 @@ class GeoCoordinates
     public function isEqualTo(GeoCoordinates $other)
     {
         return $this->getLatitude() === $other->getLatitude() && $this->getLongitude() === $other->getLongitude();
+    }
+
+    public function toGeocoderCoordinates(): GeocoderCoordinates
+    {
+        return new GeocoderCoordinates($this->getLatitude(), $this->getLongitude());
     }
 }

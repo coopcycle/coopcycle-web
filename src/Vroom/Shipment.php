@@ -2,8 +2,6 @@
 
 namespace AppBundle\Vroom;
 
-use AppBundle\Entity\Delivery;
-
 /**
  * @see https://github.com/VROOM-Project/vroom/blob/master/docs/API.md#shipments
  */
