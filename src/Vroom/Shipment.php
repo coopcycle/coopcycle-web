@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\DataType\RoutingProblem;
+namespace AppBundle\Vroom;
 
 use AppBundle\Entity\Delivery;
 

@@ -1,11 +1,6 @@
 <?php
 
-namespace AppBundle\DataType;
-
-use AppBundle\Entity\Task;
-use AppBundle\DataType\RoutingProblem\Job;
-use AppBundle\DataType\RoutingProblem\Shipment;
-use AppBundle\DataType\RoutingProblem\Vehicle;
+namespace AppBundle\Vroom;
 
 /**
  * a RoutingProblem represents a set of tasks and vehicles

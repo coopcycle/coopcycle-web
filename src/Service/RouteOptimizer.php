@@ -3,10 +3,10 @@
 namespace AppBundle\Service;
 
 use AppBundle\Serializer\RoutingProblemNormalizer;
-use AppBundle\DataType\RoutingProblem;
-use AppBundle\DataType\RoutingProblem\Job;
-use AppBundle\DataType\RoutingProblem\Shipment;
-use AppBundle\DataType\RoutingProblem\Vehicle;
+use AppBundle\Vroom\RoutingProblem;
+use AppBundle\Vroom\Job;
+use AppBundle\Vroom\Shipment;
+use AppBundle\Vroom\Vehicle;
 use AppBundle\Entity\TaskCollection;
 use GuzzleHttp\Client;
 

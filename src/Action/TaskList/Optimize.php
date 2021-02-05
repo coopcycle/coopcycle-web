@@ -2,9 +2,6 @@
 
 namespace AppBundle\Action\TaskList;
 
-use AppBundle\DataType\RoutingProblem;
-use AppBundle\DataType\RoutingProblem\Job;
-use AppBundle\DataType\RoutingProblem\Vehicle;
 use AppBundle\Entity\TaskList;
 use AppBundle\Service\RouteOptimizer;
 
