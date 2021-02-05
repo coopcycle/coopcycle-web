@@ -16,13 +16,16 @@ class Vehicle
 
     private $id; // an int representing a unique id for a vehicle
 
+    private $profile;
+
     private $start; // an address that this vehicle starts its route from
 
     private $end; // an address that this vehicle needs to end at
 
-    public function __construct(int $id, Address $start = null, Address $end = null)
+    public function __construct(int $id, string $profile, Address $start = null, Address $end = null)
     {
         $this->id = $id;
+        $this->profile = $profile;
         $this->start = $start;
         $this->end = $end;
     }
@@ -30,6 +33,11 @@ class Vehicle
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getProfile()
+    {
+        return $this->profile;
     }
 
     public function setStart(Address $start)

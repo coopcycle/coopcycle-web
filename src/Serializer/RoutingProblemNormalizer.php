@@ -54,7 +54,7 @@ class RoutingProblemNormalizer implements NormalizerInterface
 
             $vehiclePayload = [
                 "id" => $vehicle->getId(),
-                "profile" => "bike",
+                "profile" => $vehicle->getProfile(),
             ];
 
             if (null !== $vehicle->getStart()) {
