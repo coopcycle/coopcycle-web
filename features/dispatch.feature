@@ -51,7 +51,8 @@ Feature: Dispatch
             "polyline":"",
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
-            "username":"sarah"
+            "username":"sarah",
+            "date":"2018-12-01"
           },
           {
             "@id":"@string@.startsWith('/api/task_lists')",
@@ -62,7 +63,8 @@ Feature: Dispatch
             "polyline":"",
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
-            "username":"bob"
+            "username":"bob",
+            "date":"2018-12-01"
           }
         ],
         "hydra:totalItems":2,
@@ -277,7 +279,6 @@ Feature: Dispatch
     Then the response status code should be 403
     And the response should be in JSON
 
-  @debug
   Scenario: Get optimized task list
     Given the fixtures files are loaded:
       | dispatch.yml        |
