@@ -6,24 +6,26 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Entity\TaskCollection;
 use AppBundle\Entity\TaskCollectionItem;
-use AppBundle\Event\TaskCollectionChangeEvent;
+use AppBundle\Entity\TaskList;
+use AppBundle\Domain\Task\Event\TaskListUpdated;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use SimpleBus\Message\Bus\MessageBus;
 
 class TaskCollectionSubscriber implements EventSubscriber
 {
-    private $dispatcher;
     private $routing;
     private $logger;
+    private $taskLists = [];
 
-    public function __construct(EventDispatcherInterface $dispatcher, RoutingInterface $routing, LoggerInterface $logger)
+    public function __construct(MessageBus $eventBus, RoutingInterface $routing, LoggerInterface $logger)
     {
-        $this->dispatcher = $dispatcher;
+        $this->eventBus = $eventBus;
         $this->routing = $routing;
         $this->logger = $logger;
     }
@@ -32,7 +34,8 @@ class TaskCollectionSubscriber implements EventSubscriber
     {
         return array(
             Events::prePersist,
-            Events::onFlush
+            Events::onFlush,
+            Events::postFlush,
         );
     }
 
@@ -60,7 +63,6 @@ class TaskCollectionSubscriber implements EventSubscriber
 
         if ($entity instanceof TaskCollectionInterface) {
             $this->calculate($entity);
-            $this->dispatcher->dispatch(new TaskCollectionChangeEvent($entity), TaskCollectionChangeEvent::NAME);
         }
     }
 
@@ -69,6 +71,8 @@ class TaskCollectionSubscriber implements EventSubscriber
      */
     public function onFlush(OnFlushEventArgs $args)
     {
+        $this->taskLists = [];
+
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
 
@@ -104,9 +108,28 @@ class TaskCollectionSubscriber implements EventSubscriber
         }
 
         foreach ($taskCollections as $taskCollection) {
+
             $this->logger->debug('TaskCollection was modified, recalculating…');
             $this->calculate($taskCollection);
+
             $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(TaskCollection::class), $taskCollection);
+
+            if ($taskCollection instanceof TaskList) {
+                $this->taskLists[] = $taskCollection;
+            }
+        }
+    }
+
+    public function postFlush(PostFlushEventArgs $args)
+    {
+        $this->logger->debug(sprintf('TaskLists updated = %d', count($this->taskLists)));
+
+        if (count($this->taskLists) === 0) {
+            return;
+        }
+
+        foreach ($this->taskLists as $taskList) {
+            $this->eventBus->handle(new TaskListUpdated($taskList));
         }
     }
 }

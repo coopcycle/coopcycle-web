@@ -58,11 +58,6 @@ class TaskSubscriber implements EventSubscriber
         );
     }
 
-    private function debug($message)
-    {
-        $this->logger->debug(sprintf('TaskSubscriber :: %s', $message));
-    }
-
     public function onFlush(OnFlushEventArgs $args)
     {
         // Cleanup
@@ -81,8 +76,8 @@ class TaskSubscriber implements EventSubscriber
         $tasksToInsert = array_filter($uow->getScheduledEntityInsertions(), $isTask);
         $tasksToUpdate = array_filter($uow->getScheduledEntityUpdates(), $isTask);
 
-        $this->debug(sprintf('Found %d instances of Task scheduled for insert', count($tasksToInsert)));
-        $this->debug(sprintf('Found %d instances of Task scheduled for update', count($tasksToUpdate)));
+        $this->logger->debug(sprintf('Found %d instances of Task scheduled for insert', count($tasksToInsert)));
+        $this->logger->debug(sprintf('Found %d instances of Task scheduled for update', count($tasksToUpdate)));
 
         $this->createdTasks = [];
         foreach ($tasksToInsert as $task) {
@@ -135,14 +130,14 @@ class TaskSubscriber implements EventSubscriber
 
     public function postFlush(PostFlushEventArgs $args)
     {
-        $this->debug(sprintf('There are %d "task:created" events to handle', count($this->createdTasks)));
+        $this->logger->debug(sprintf('There are %d "task:created" events to handle', count($this->createdTasks)));
         foreach ($this->createdTasks as $task) {
             $this->eventBus->handle(new TaskCreated($task));
         }
 
-        $this->debug(sprintf('There are %d more events to handle', count($this->postFlushEvents)));
+        $this->logger->debug(sprintf('There are %d more events to handle', count($this->postFlushEvents)));
         foreach ($this->postFlushEvents as $postFlushEvent) {
-            $this->debug(sprintf('Handling event %s', $postFlushEvent::messageName()));
+            $this->logger->debug(sprintf('Handling event %s', $postFlushEvent::messageName()));
             $this->eventBus->handle($postFlushEvent);
         }
 
@@ -181,6 +176,9 @@ class TaskSubscriber implements EventSubscriber
                 ]);
 
                 if (RemotePushNotificationManager::isEnabled()) {
+
+                    $this->logger->debug(sprintf('Sending push notification to %s', implode(', ', $usernames)));
+
                     $this->messageBus->dispatch(
                         new PushNotification($message, $usernames, $data)
                     );

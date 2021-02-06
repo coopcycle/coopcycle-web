@@ -3,6 +3,7 @@
 namespace AppBundle\Domain\Task\Reactor;
 
 use AppBundle\Domain\Event;
+use AppBundle\Domain\Task\Event\TaskListUpdated;
 use AppBundle\Service\SocketIoManager;
 
 class PublishRedisMessage
@@ -16,10 +17,11 @@ class PublishRedisMessage
 
     public function __invoke(Event $event)
     {
-        try {
+        if ($event instanceof TaskListUpdated) {
+            $user = $event->getTaskList()->getCourier();
+            $this->socketIoManager->toUsers([ $user ], $event);
+        } else {
             $this->socketIoManager->toAdmins($event);
-        } catch (\Exception $e) {
-
         }
     }
 }

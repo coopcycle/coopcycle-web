@@ -56,6 +56,15 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
         return $this->date;
     }
 
+    /**
+     * @SerializedName("date")
+     * @Groups({"task_collection"})
+     */
+    public function getDateString()
+    {
+        return $this->date->format('Y-m-d');
+    }
+
     public function setDate(\DateTime $date)
     {
         $this->date = $date;

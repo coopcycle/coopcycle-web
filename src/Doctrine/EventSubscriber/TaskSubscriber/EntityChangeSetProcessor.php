@@ -23,11 +23,6 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
         $this->logger = $logger ? $logger : new NullLogger();
     }
 
-    private function debug($message)
-    {
-        $this->logger->debug(sprintf('EntityChangeSetProcessor :: %s', $message));
-    }
-
     public function process(Task $task, array $entityChangeSet)
     {
         if (!isset($entityChangeSet['assignedTo'])) {
@@ -43,11 +38,11 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
             $wasAssignedToSameUser = $wasAssigned && $oldValue === $newValue;
 
             if (!$wasAssigned) {
-                $this->debug(sprintf('Task#%d was not assigned previously', $task->getId()));
+                $this->logger->debug(sprintf('Task#%d was not assigned previously', $task->getId()));
             }
 
             if ($wasAssignedToSameUser) {
-                $this->debug(sprintf('Task#%d was already assigned to %s', $task->getId(), $oldValue->getUsername()));
+                $this->logger->debug(sprintf('Task#%d was already assigned to %s', $task->getId(), $oldValue->getUsername()));
             }
 
             if (!$wasAssigned || !$wasAssignedToSameUser) {
@@ -71,7 +66,7 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                 // $taskList->containsTask($task) will return true,
                 // Because $taskList->setTasks() has been used
                 if (!$taskList->containsTask($task)) {
-                    $this->debug(sprintf('Adding %d tasks to TaskList', count($tasksToAdd)));
+                    $this->logger->debug(sprintf('Adding %d tasks to TaskList', count($tasksToAdd)));
                     foreach ($tasksToAdd as $taskToAdd) {
                         $taskList->addTask($taskToAdd);
                     }
@@ -79,7 +74,7 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
                 if ($wasAssigned && !$wasAssignedToSameUser) {
 
-                    $this->debug(sprintf('Removing task #%d from previous TaskList', $task->getId()));
+                    $this->logger->debug(sprintf('Removing task #%d from previous TaskList', $task->getId()));
 
                     $oldTaskList = $this->taskListProvider->getTaskList($task, $oldValue);
                     $oldTaskList->removeTask($task, false);
@@ -118,7 +113,7 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
             if ($oldValue !== null) {
 
-                $this->debug(sprintf('Task#%d has been unassigned', $task->getId()));
+                $this->logger->debug(sprintf('Task#%d has been unassigned', $task->getId()));
 
                 $taskList = $this->taskListProvider->getTaskList($task, $oldValue);
 
@@ -150,6 +145,7 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                     if (!$exists) {
                         $taskToRemove->unassign();
                         $taskList->removeTask($taskToRemove);
+                        $this->logger->debug(sprintf('Recording event for task #%d', $task->getId()));
                         $this->record($event);
                     }
                 }

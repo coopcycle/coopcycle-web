@@ -571,11 +571,14 @@ services:
       $eventBus: '@event_bus'
       $eventStore: '@coopcycle.domain.event_store'
     tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
       - { name: doctrine.event_subscriber, connection: default, priority: 32 }
 
   AppBundle\Doctrine\EventSubscriber\TaskCollectionSubscriber:
-    arguments: [ '@event_dispatcher', '@routing_service', '@logger' ]
+    arguments:
+      $eventBus: '@event_bus'
     tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
       - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
   AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber:
@@ -906,7 +909,7 @@ services:
     arguments:
       $eventBus: '@simple_bus.event_bus'
     tags:
-      - { name: monolog.logger, channel: messenger }
+      - { name: monolog.logger, channel: coopcycle.logistics }
 
   AppBundle\MessageHandler\RetrieveStripeFeeHandler:
     arguments:

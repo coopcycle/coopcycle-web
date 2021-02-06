@@ -76,6 +76,8 @@ services:
         subscribes_to: task:cancelled
       - name: event_subscriber
         subscribes_to: task_collections:updated
+      - name: event_subscriber
+        subscribes_to: task_list:updated
 
   coopcycle.domain.task.reactor.send_email:
     class: AppBundle\Domain\Task\Reactor\SendEmail
