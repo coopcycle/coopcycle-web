@@ -122,7 +122,7 @@ class ImportStripeFeeCommand extends Command
 
             if (count($stripeFeeAdjustments) > 0 && !$force) {
                 $this->io->section(sprintf('Stripe fees for order #%d already imported, skipping…', $order->getId()));
-                break;
+                continue;
             }
 
             $this->io->section(sprintf('Importing Stripe fees for order #%d', $order->getId()));
