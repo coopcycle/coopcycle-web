@@ -61,6 +61,7 @@ Feature: Tasks
             "tags":@array@
           }
         ],
+        "hydra:totalItems":2,
         "items":[
           {
             "@id":"@string@.startsWith('/api/tasks')",
