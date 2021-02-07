@@ -31,8 +31,6 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *       "method"="GET",
  *       "path"="/me/tasks/{date}",
  *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
- *       "pagination_enabled"=false,
- *       "filters"={},
  *       "write"=false,
  *       "controller"=MyTasksController::class,
  *       "normalization_context"={"groups"={"task_collection", "task", "delivery", "address"}},
