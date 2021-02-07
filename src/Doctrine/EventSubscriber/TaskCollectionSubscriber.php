@@ -11,6 +11,7 @@ use AppBundle\Domain\Task\Event\TaskListUpdated;
 use AppBundle\Message\PushNotification;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\RoutingInterface;
+use Carbon\Carbon;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
@@ -160,6 +161,8 @@ class TaskCollectionSubscriber implements EventSubscriber
             return;
         }
 
+        $now = Carbon::now();
+
         foreach ($usersByDate as $date) {
 
             $users = $usersByDate[$date];
@@ -184,9 +187,13 @@ class TaskCollectionSubscriber implements EventSubscriber
                 ]
             ];
 
-            $message = $this->translator->trans('notifications.tasks_changed', [
-                '%date%' => $date->format('Y-m-d'),
-            ]);
+            if ($date->format('Y-m-d') === $now->format('Y-m-d')) {
+                $message = $this->translator->trans('notifications.tasks_changed_today');
+            } else {
+                $message = $this->translator->trans('notifications.tasks_changed', [
+                    '%date%' => $date->format('Y-m-d'),
+                ]);
+            }
 
             if (RemotePushNotificationManager::isEnabled()) {
 

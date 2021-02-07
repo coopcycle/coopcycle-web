@@ -15,6 +15,7 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Pushok;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RemotePushNotificationManagerTest extends TestCase
 {
@@ -51,10 +52,15 @@ class RemotePushNotificationManagerTest extends TestCase
 
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
+        $this->translator = $this->prophesize(TranslatorInterface::class);
+        $this->translator->trans('notifications.tap_to_open')
+            ->willReturn('Tap to open');
+
         $this->remotePushNotificationManager = new RemotePushNotificationManager(
             $this->firebaseFactory->reveal(),
             $this->pushOkClient->reveal(),
             $this->entityManager->reveal(),
+            $this->translator->reveal(),
             new NullLogger()
         );
     }
@@ -154,7 +160,7 @@ class RemotePushNotificationManagerTest extends TestCase
 
                 if (isset($data['notification'])) {
                     $this->assertEquals('Hello world!', $data['notification']['title']);
-                    $this->assertEquals('Hello world!', $data['notification']['body']);
+                    $this->assertEquals('Tap to open', $data['notification']['body']);
                 }
 
                 return true;
@@ -198,7 +204,7 @@ class RemotePushNotificationManagerTest extends TestCase
 
                 if (isset($data['notification'])) {
                     $this->assertEquals('Hello world!', $data['notification']['title']);
-                    $this->assertEquals('Hello world!', $data['notification']['body']);
+                    $this->assertEquals('Tap to open', $data['notification']['body']);
                 }
 
                 return true;
@@ -254,7 +260,7 @@ class RemotePushNotificationManagerTest extends TestCase
 
                 if (isset($data['notification'])) {
                     $this->assertEquals('Hello world!', $data['notification']['title']);
-                    $this->assertEquals('Hello world!', $data['notification']['body']);
+                    $this->assertEquals('Tap to open', $data['notification']['body']);
                 }
 
                 return true;
@@ -334,7 +340,7 @@ class RemotePushNotificationManagerTest extends TestCase
 
                 if (isset($data['notification'])) {
                     $this->assertEquals('Hello world!', $data['notification']['title']);
-                    $this->assertEquals('Hello world!', $data['notification']['body']);
+                    $this->assertEquals('Tap to open', $data['notification']['body']);
                 }
 
                 return true;
@@ -386,7 +392,7 @@ class RemotePushNotificationManagerTest extends TestCase
 
                 if (isset($data['notification'])) {
                     $this->assertEquals('Hello world!', $data['notification']['title']);
-                    $this->assertEquals('Hello world!', $data['notification']['body']);
+                    $this->assertEquals('Tap to open', $data['notification']['body']);
                 }
 
                 return true;
