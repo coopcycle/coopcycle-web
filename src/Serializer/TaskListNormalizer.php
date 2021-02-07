@@ -41,6 +41,11 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['items'] = $this->flattenItems($data['items']);
         }
 
+        // Legacy
+        if (isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'my_tasks') {
+            $data['hydra:member'] = $data['items'];
+        }
+
         return $data;
     }
 

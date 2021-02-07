@@ -48,23 +48,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "access_control"="is_granted('ROLE_ADMIN')",
  *       "denormalization_context"={"groups"={"task_create"}},
  *       "validation_groups"={"Default"}
- *     },
- *     "my_tasks"={
- *       "method"="GET",
- *       "path"="/me/tasks/{date}",
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
- *       "pagination_enabled"=false,
- *       "filters"={},
- *       "swagger_context"={
- *         "summary"="Retrieves the collection of Task resources assigned to the authenticated token.",
- *         "parameters"={{
- *           "in"="path",
- *           "name"="date",
- *           "required"=true,
- *           "type"="string",
- *           "format"="date"
- *         }}
- *       }
  *     }
  *   },
  *   itemOperations={

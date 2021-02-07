@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Action\MyTasks as MyTasksController;
 use AppBundle\Action\TaskList\Create as CreateTaskListController;
 use AppBundle\Action\TaskList\Optimize as OptimizeController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
@@ -25,6 +26,25 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *       "method"="POST",
  *       "controller"=CreateTaskListController::class,
  *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "my_tasks"={
+ *       "method"="GET",
+ *       "path"="/me/tasks/{date}",
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "pagination_enabled"=false,
+ *       "filters"={},
+ *       "controller"=MyTasksController::class,
+ *       "normalization_context"={"groups"={"task_collection", "task", "delivery", "address"}},
+ *       "swagger_context"={
+ *         "summary"="Retrieves the collection of Task resources assigned to the authenticated token.",
+ *         "parameters"={{
+ *           "in"="path",
+ *           "name"="date",
+ *           "required"=true,
+ *           "type"="string",
+ *           "format"="date"
+ *         }}
+ *       }
  *     }
  *   },
  *   itemOperations={
@@ -37,7 +57,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *        "path"="/task_lists/{id}/optimize",
  *        "controller"=OptimizeController::class,
  *        "access_control"="is_granted('ROLE_ADMIN')"
- *     },
+ *     }
  *   },
  *   attributes={
  *     "normalization_context"={"groups"={"task_collection", "task", "address"}}

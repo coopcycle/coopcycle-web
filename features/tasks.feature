@@ -18,9 +18,9 @@ Feature: Tasks
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
-        "@type":"hydra:Collection",
+        "@context":"/api/contexts/TaskList",
+        "@id":"/api/task_lists/1",
+        "@type":"TaskList",
         "hydra:member":[
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -61,7 +61,86 @@ Feature: Tasks
             "tags":@array@
           }
         ],
-        "hydra:totalItems":2
+        "items":[
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "after":"2018-03-02T11:30:00+00:00",
+            "before":"2018-03-02T12:00:00+00:00",
+            "doneAfter":"2018-03-02T11:30:00+00:00",
+            "doneBefore":"2018-03-02T12:00:00+00:00",
+            "comments":"#bob",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"bob",
+            "previous":null,
+            "group":null,
+            "tags":@array@
+          },
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"DONE",
+            "address":@...@,
+            "after":"2018-03-02T12:00:00+00:00",
+            "before":"2018-03-02T12:30:00+00:00",
+            "doneAfter":"2018-03-02T12:00:00+00:00",
+            "doneBefore":"2018-03-02T12:30:00+00:00",
+            "comments":"#bob",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"bob",
+            "previous":null,
+            "group":null,
+            "tags":@array@
+          }
+        ],
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "date":"2018-03-02",
+        "username":"bob",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()"
+      }
+      """
+
+  Scenario: Retrieve assigned tasks when not created yet
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/me/tasks/2020-03-02"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskList",
+        "@id":"/api/task_lists/4",
+        "@type":"TaskList",
+        "hydra:member":[],
+        "items":[],
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "date":"2020-03-02",
+        "username":"bob",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()"
       }
       """
 
