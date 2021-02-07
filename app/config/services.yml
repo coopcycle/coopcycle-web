@@ -671,15 +671,6 @@ services:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
 
-  AppBundle\Api\DataProvider\TaskCollectionDataProvider:
-    arguments:
-      $requestStack: '@request_stack'
-      $doctrine: '@doctrine'
-      $tokenStorage: '@security.token_storage'
-    tags:
-      - { name: 'api_platform.collection_data_provider', priority: 2 }
-    autoconfigure: false
-
   AppBundle\Api\DataProvider\StoreAddressesSubresourceDataProvider:
     arguments:
       $requestStack: '@request_stack'
