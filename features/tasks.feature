@@ -134,6 +134,7 @@ Feature: Tasks
         "@id":"/api/task_lists/4",
         "@type":"TaskList",
         "hydra:member":[],
+        "hydra:totalItems":0,
         "items":[],
         "distance":@integer@,
         "duration":@integer@,
