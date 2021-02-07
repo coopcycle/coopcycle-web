@@ -12,7 +12,6 @@ use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
-use AppBundle\Message\PushNotification;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
@@ -24,7 +23,6 @@ use Prophecy\Argument;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -59,14 +57,6 @@ class TaskSubscriberTest extends TestCase
 
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
-        $this->messageBus = $this->prophesize(MessageBusInterface::class);
-
-        $this->messageBus
-            ->dispatch(Argument::type(PushNotification::class))
-            ->will(function ($args) {
-                return new Envelope($args[0]);
-            });
-
         $this->entityManager
             ->getRepository(TaskList::class)
             ->willReturn($this->taskListRepository->reveal());
@@ -79,20 +69,10 @@ class TaskSubscriberTest extends TestCase
         $taskListProvider = new TaskListProvider($this->entityManager->reveal());
         $changeSetProcessor = new EntityChangeSetProcessor($taskListProvider);
 
-        $this->translator = $this->prophesize(TranslatorInterface::class);
-        $this->translator
-            ->trans('notifications.tasks_changed', Argument::type('array'))
-            ->will(function ($args) {
-
-                return sprintf('Tasks for %s changed!', $args[1]['%date%']);
-            });
-
         $this->subscriber = new TaskSubscriber(
             $this->eventBus->reveal(),
             $eventStore,
-            $this->messageBus->reveal(),
             $changeSetProcessor,
-            $this->translator->reveal(),
             new NullLogger()
         );
     }
@@ -362,20 +342,6 @@ class TaskSubscriberTest extends TestCase
             new PostFlushEventArgs($this->entityManager->reveal())
         );
 
-        $this
-            ->messageBus
-            ->dispatch(new PushNotification(
-                'Tasks for 2019-11-21 changed!',
-                [ 'bob' ],
-                [
-                    'event' => [
-                        'name' => 'tasks:changed',
-                        'data' => ['date' => '2019-11-21']
-                    ]
-                ]
-            ))
-            ->shouldHaveBeenCalled();
-
         $this->assertCount(0, $task->getEvents());
         $this->eventBus
             ->handle(Argument::type(TaskCreated::class))
@@ -460,20 +426,6 @@ class TaskSubscriberTest extends TestCase
             new PostFlushEventArgs($this->entityManager->reveal())
         );
 
-        $this
-            ->messageBus
-            ->dispatch(new PushNotification(
-                'Tasks for 2019-11-21 changed!',
-                [ 'bob' ],
-                [
-                    'event' => [
-                        'name' => 'tasks:changed',
-                        'data' => ['date' => '2019-11-21']
-                    ]
-                ]
-            ))
-            ->shouldHaveBeenCalledTimes(1);
-
         $this->assertCount(0, $task1->getEvents());
         $this->assertCount(0, $task2->getEvents());
 
@@ -529,11 +481,6 @@ class TaskSubscriberTest extends TestCase
         $this->subscriber->postFlush(
             new PostFlushEventArgs($this->entityManager->reveal())
         );
-
-        $this
-            ->messageBus
-            ->dispatch(Argument::type(PushNotification::class))
-            ->shouldNotHaveBeenCalled();
 
         $this->assertCount(0, $task->getEvents());
         $this->eventBus
@@ -602,20 +549,6 @@ class TaskSubscriberTest extends TestCase
         $this->subscriber->postFlush(
             new PostFlushEventArgs($this->entityManager->reveal())
         );
-
-        $this
-            ->messageBus
-            ->dispatch(new PushNotification(
-                sprintf('Tasks for %s changed!', $date->format('Y-m-d')),
-                [ 'bob' ],
-                [
-                    'event' => [
-                        'name' => 'tasks:changed',
-                        'data' => ['date' => $date->format('Y-m-d')]
-                    ]
-                ]
-            ))
-            ->shouldHaveBeenCalled();
 
         $this->eventBus
             ->handle(Argument::type(TaskUnassigned::class))
@@ -710,20 +643,6 @@ class TaskSubscriberTest extends TestCase
         $this->subscriber->postFlush(
             new PostFlushEventArgs($this->entityManager->reveal())
         );
-
-        $this
-            ->messageBus
-            ->dispatch(new PushNotification(
-                sprintf('Tasks for %s changed!', $date->format('Y-m-d')),
-                [ 'bob' ],
-                [
-                    'event' => [
-                        'name' => 'tasks:changed',
-                        'data' => ['date' => $date->format('Y-m-d')]
-                    ]
-                ]
-            ))
-            ->shouldHaveBeenCalled();
 
         $this->eventBus
             ->handle(Argument::type(TaskUnassigned::class))
@@ -824,20 +743,6 @@ class TaskSubscriberTest extends TestCase
         $this->subscriber->postFlush(
             new PostFlushEventArgs($this->entityManager->reveal())
         );
-
-        $this
-            ->messageBus
-            ->dispatch(new PushNotification(
-                sprintf('Tasks for %s changed!', $date->format('Y-m-d')),
-                [ 'bob' ],
-                [
-                    'event' => [
-                        'name' => 'tasks:changed',
-                        'data' => ['date' => $date->format('Y-m-d')]
-                    ]
-                ]
-            ))
-            ->shouldHaveBeenCalled();
 
         $this->eventBus
             ->handle(Argument::type(TaskAssigned::class))
