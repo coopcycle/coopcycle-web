@@ -26,13 +26,20 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *       "method"="POST",
  *       "controller"=CreateTaskListController::class,
  *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     }
+ *   },
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN')"
  *     },
  *     "my_tasks"={
  *       "method"="GET",
  *       "path"="/me/tasks/{date}",
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
- *       "write"=false,
  *       "controller"=MyTasksController::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "read"=false,
+ *       "write"=false,
  *       "normalization_context"={"groups"={"task_collection", "task", "delivery", "address"}},
  *       "swagger_context"={
  *         "summary"="Retrieves the collection of Task resources assigned to the authenticated token.",
@@ -44,12 +51,6 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *           "format"="date"
  *         }}
  *       }
- *     }
- *   },
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')"
  *     },
  *     "optimize"={
  *        "method"="GET",
