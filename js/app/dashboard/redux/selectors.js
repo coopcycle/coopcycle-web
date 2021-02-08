@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect'
 import Fuse from 'fuse.js'
 import { moment } from '../../coopcycle-frontend-js'
-import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks, selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
 import { filter, orderBy, forEach, find, reduce, map, differenceWith, includes } from 'lodash'
 import { isTaskVisible, isOffline } from './utils'
 
@@ -96,7 +96,7 @@ export const selectStandaloneTasks = createSelector(
 export const selectVisibleTaskIds = createSelector(
   selectAllTasks,
   state => state.filters,
-  state => state.date,
+  selectSelectedDate,
   (tasks, filters, date) => filter(tasks, task => isTaskVisible(task, filters, date)).map(task => task['@id'])
 )
 
