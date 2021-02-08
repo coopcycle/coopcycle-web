@@ -236,6 +236,10 @@ html, body {
   }
   .dashboard__panel__heading__link {
     flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 15px;
   }
 }
 

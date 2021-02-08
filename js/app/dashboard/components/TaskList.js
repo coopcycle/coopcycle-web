@@ -5,6 +5,7 @@ import moment from 'moment'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
+import { Progress } from 'antd'
 
 import Task from './Task'
 import TaskListPopoverContent from './TaskListPopoverContent'
@@ -49,6 +50,17 @@ class InnerList extends React.Component {
     })
   }
 }
+
+// OPTIMIZATION
+// Use React.memo to avoid re-renders when percentage hasn't changed
+const ProgressBar = React.memo(({ completedTasks, tasks }) => {
+
+  return (
+    <Progress percent={ (completedTasks * 100) / tasks } size="small"
+      format={ () => `${completedTasks} / ${tasks}` }
+      showInfo={ false } />
+  )
+})
 
 class TaskList extends React.Component {
 
@@ -131,6 +143,7 @@ class TaskList extends React.Component {
     tasks = _.orderBy(tasks, ['position', 'id'])
 
     const uncompletedTasks = _.filter(tasks, t => t.status === 'TODO')
+    const completedTasks = _.filter(tasks, t => t.status === 'DONE')
 
     const durationFormatted = moment.utc()
       .startOf('day')
@@ -155,7 +168,7 @@ class TaskList extends React.Component {
     return (
       <div className="panel panel-default nomargin noradius noborder">
         <div className="panel-heading dashboard__panel__heading">
-          <h3 className="panel-title taskList__panel-title">
+          <div className="panel-title taskList__panel-title">
             <a
               className="dashboard__panel__heading__link"
               role="button"
@@ -163,30 +176,37 @@ class TaskList extends React.Component {
               data-target={ '#' + collabsableId }
               aria-expanded={ collapsed ? 'false' : 'true' }
             >
-              <img src={ avatarURL } width="20" height="20" /> 
-              <span>{ username }</span>
-              &nbsp;&nbsp;
-              <span className="badge">{ tasks.length }</span>
-              &nbsp;&nbsp;
-              <i className={ collapsed ? 'fa fa-caret-down' : 'fa fa-caret-up' }></i>
+              <span>
+                <img src={ avatarURL } width="24" height="24" />
+                <span className="text-monospace ml-2" style={{ fontWeight: '700' }}>{ username }</span>
+              </span>
+              <div style={{ width: '25%' }}>
+                <ProgressBar completedTasks={ completedTasks.length } tasks={ tasks.length } />
+              </div>
             </a>
-            { tasks.length > 1 && (
-            <a href="#" onClick={ e => {
-              e.preventDefault()
-              this.props.optimizeTaskList({
-                '@id': this.props.uri,
-                username: this.props.username,
-              })
-            }} className="mr-2" style={{ color: '#f1c40f' }} label="Optimize">
+            <a href="#"
+              className="mr-2"
+              title="Optimize"
+              style={{
+                color: '#f1c40f',
+                visibility: tasks.length > 1 ? 'visible' : 'hidden'
+              }}
+              onClick={ e => {
+                e.preventDefault()
+                this.props.optimizeTaskList({
+                  '@id': this.props.uri,
+                  username: this.props.username,
+                })
+              }}>
               <i className="fa fa-bolt"></i>
             </a>
-            )}
-            { uncompletedTasks.length > 0 && (
-            <a onClick={ e => this.onClickUnassign(e) } className="taskList__panel-title__unassign">
+            <a href="#"
+              className="taskList__panel-title__unassign"
+              style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
+              onClick={ e => this.onClickUnassign(e) }>
               <i className="fa fa-close"></i>
             </a>
-            )}
-          </h3>
+          </div>
         </div>
         <div role="tabpanel" id={ collabsableId } className="collapse">
           { tasks.length > 0 && (
