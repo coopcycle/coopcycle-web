@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use AppBundle\Spreadsheet\ProductSpreadsheetParser;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,6 +41,23 @@ class SpreadsheetController extends AbstractController
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             'coopcycle-tasks-example.csv'
+        ));
+
+        return $response;
+    }
+
+    /**
+     * @Route("/spreadsheets/examples/coopcycle-deliveries-example.csv", name="spreadsheet_example_deliveries")
+     */
+    public function deliveriesExampleCsvAction(DeliverySpreadsheetParser $parser)
+    {
+        $csv = $this->get('serializer')->serialize($parser->getExampleData(), 'csv');
+
+        $response = new Response($csv);
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            'coopcycle-deliveries-example.csv'
         ));
 
         return $response;
