@@ -7,25 +7,20 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Tag;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
+use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Cocur\Slugify\Slugify;
 use FOS\UserBundle\Model\UserManagerInterface;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
-use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class TaskSpreadsheetParserTest extends TestCase
 {
-    use ProphecyTrait;
-
     private $geocoder;
     private $tagManager;
 
-    private $parser;
-
-    public function setUp(): void
+    protected function createParser(): AbstractSpreadsheetParser
     {
         $this->geocoder = $this->prophesize(Geocoder::class);
         $this->tagManager = $this->prophesize(TagManager::class);
@@ -41,7 +36,7 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->userManager->findUserByUsername('sarah')
             ->willReturn(null);
 
-        $this->parser = new TaskSpreadsheetParser(
+        return new TaskSpreadsheetParser(
             $this->geocoder->reveal(),
             $this->tagManager->reveal(),
             new Slugify(),
@@ -55,6 +50,10 @@ class TaskSpreadsheetParserTest extends TestCase
     {
         $this->geocoder
             ->geocode(Argument::type('string'))
+            ->willReturn(new Address());
+
+        $this->geocoder
+            ->reverse(Argument::type('float'), Argument::type('float'))
             ->willReturn(new Address());
 
         $this->tagManager
@@ -199,5 +198,12 @@ class TaskSpreadsheetParserTest extends TestCase
 
         $this->assertEquals($expectedAfter, $after);
         $this->assertEquals($expectedBefore, $before);
+    }
+
+    public function testCanParseExampleData()
+    {
+        $this->mockDependencies();
+
+        parent::testCanParseExampleData();
     }
 }

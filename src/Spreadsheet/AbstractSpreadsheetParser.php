@@ -104,7 +104,7 @@ abstract class AbstractSpreadsheetParser
      * @param array $options
      * @return array
      */
-    abstract protected function parseData(array $data, array $options = []): array;
+    abstract public function parseData(array $data, array $options = []): array;
 
     /**
      * @param File|string $file

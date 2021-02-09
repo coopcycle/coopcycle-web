@@ -3,7 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Store;
-use AppBundle\Utils\DeliverySpreadsheetParser;
+use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
