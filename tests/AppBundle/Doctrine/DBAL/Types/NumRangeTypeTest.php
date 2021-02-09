@@ -32,6 +32,10 @@ class NumRangeTypeTest extends TestCase
                 '[10,15]',
                 10, 15, false
             ],
+            [
+                '[10,)',
+                10, INF, true
+            ]
         ];
     }
 
