@@ -241,7 +241,7 @@ restaurant.menus.activated: Das Menü « %menu_name% » wurde aktiviert. Es wird
 restaurant.closingForm.title: Eine temporäre Schließzeit hinzufügen
 restaurant.closingForm.dates.label: Geschlossen von/bis
 restaurant.list.manage: Verwalten
-restaurant.list.orders: Rückerstattungen
+restaurant.list.orders: Bestellungen
 restaurant.list.product_options: Optionen
 restaurant.list.menus: Menüs
 restaurant.list.activeMenu: Aktives Menü
