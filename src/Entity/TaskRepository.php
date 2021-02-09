@@ -22,14 +22,14 @@ class TaskRepository extends EntityRepository
 
     public function findByDateRange(\DateTime $start, \DateTime $end)
     {
-        return $this->addRangeClause($this->createQueryBuilder('t'), $start, $end)
+        return self::addRangeClause($this->createQueryBuilder('t'), $start, $end)
             ->getQuery()
             ->getResult();
     }
 
     public function findByDateRangeOrderByPosition(\DateTime $start, \DateTime $end)
     {
-        $qb = $this->addRangeClause($this->createQueryBuilder('t'), $start, $end)
+        $qb = self::addRangeClause($this->createQueryBuilder('t'), $start, $end)
             ->leftJoin(TaskCollectionItem::class, 'i', Expr\Join::WITH, 'i.task = t.id')
             ->leftJoin(TaskList::class, 'tl', Expr\Join::WITH, 'i.parent = tl.id')
             ->leftJoin(User::class, 'u', Expr\Join::WITH, 'u.id = t.assignedTo')
@@ -40,7 +40,7 @@ class TaskRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    private function addRangeClause(QueryBuilder $qb, \DateTime $start, \DateTime $end): QueryBuilder
+    public static function addRangeClause(QueryBuilder $qb, \DateTime $start, \DateTime $end): QueryBuilder
     {
         // @see https://github.com/martin-georgiev/postgresql-for-doctrine
         // @see https://www.postgresql.org/docs/9.4/rangetypes.html

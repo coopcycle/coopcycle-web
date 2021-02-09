@@ -1062,3 +1062,5 @@ services:
   AppBundle\Service\SocketIoManager:
     arguments:
       $namespace: '%centrifugo_namespace%'
+
+  AppBundle\Spreadsheet\DeliveryDataExporter: ~
