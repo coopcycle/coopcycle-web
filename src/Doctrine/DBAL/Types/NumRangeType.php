@@ -37,7 +37,7 @@ class NumRangeType extends Type
     {
         if (null !== $value) {
 
-            preg_match('/^(\[|\()([0-9]+),([0-9]?)(\]|\))$/', $value, $matches);
+            preg_match('/^(\[|\()([0-9]+),([0-9]*)(\]|\))$/', $value, $matches);
 
             $lower = $matches[2];
             $upper = $matches[3];
