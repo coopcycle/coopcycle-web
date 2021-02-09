@@ -90,7 +90,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         return $deliveries;
     }
 
-    protected function validateHeader(array $header)
+    public function validateHeader(array $header)
     {
         $hasPickupAddress = in_array('pickup.address', $header);
         $hasDropoffAddress = in_array('dropoff.address', $header);

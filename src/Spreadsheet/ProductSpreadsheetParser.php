@@ -85,7 +85,7 @@ class ProductSpreadsheetParser extends AbstractSpreadsheetParser
         }, $data);
     }
 
-    protected function validateHeader(array $header)
+    public function validateHeader(array $header)
     {
         $expected = [
             'name',
