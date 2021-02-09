@@ -12998,16 +12998,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.70.0",
+            "version": "v7.72.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "5624b020d4541b8228ba47307811d880ed6bf4df"
+                "reference": "e502d1e97ec7857038d2131ded3134af964a55c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/5624b020d4541b8228ba47307811d880ed6bf4df",
-                "reference": "5624b020d4541b8228ba47307811d880ed6bf4df",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/e502d1e97ec7857038d2131ded3134af964a55c5",
+                "reference": "e502d1e97ec7857038d2131ded3134af964a55c5",
                 "shasum": ""
             },
             "require": {
@@ -13053,9 +13053,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v7.70.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v7.72.0"
             },
-            "time": "2021-02-03T20:48:18+00:00"
+            "time": "2021-02-09T03:22:51+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -18656,21 +18656,21 @@
         },
         {
             "name": "friends-of-behat/mink-browserkit-driver",
-            "version": "v1.4.0",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfBehat/MinkBrowserKitDriver.git",
-                "reference": "0b440bd2d25f7ae9f7027815afff60ad228ed9e9"
+                "reference": "8110b99ed1ac2b50ad287280bfc20e08f58b6cc6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfBehat/MinkBrowserKitDriver/zipball/0b440bd2d25f7ae9f7027815afff60ad228ed9e9",
-                "reference": "0b440bd2d25f7ae9f7027815afff60ad228ed9e9",
+                "url": "https://api.github.com/repos/FriendsOfBehat/MinkBrowserKitDriver/zipball/8110b99ed1ac2b50ad287280bfc20e08f58b6cc6",
+                "reference": "8110b99ed1ac2b50ad287280bfc20e08f58b6cc6",
                 "shasum": ""
             },
             "require": {
                 "behat/mink": "^1.7",
-                "php": "^7.2",
+                "php": "^7.2|^8.0",
                 "symfony/browser-kit": "^4.4|^5.0",
                 "symfony/dom-crawler": "^4.4|^5.0"
             },
@@ -18712,9 +18712,9 @@
                 "testing"
             ],
             "support": {
-                "source": "https://github.com/FriendsOfBehat/MinkBrowserKitDriver/tree/v1.4.0"
+                "source": "https://github.com/FriendsOfBehat/MinkBrowserKitDriver/tree/v1.5.0"
             },
-            "time": "2020-01-15T16:47:47+00:00"
+            "time": "2021-02-04T14:39:46+00:00"
         },
         {
             "name": "friends-of-behat/mink-extension",
@@ -19151,16 +19151,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.71",
+            "version": "0.12.74",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "d508fa3b0ecc5fc91ac70c6c7ac2862f968ba2b5"
+                "reference": "bc5f9483c8f461c86653dcbd040cf0d2778c91a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d508fa3b0ecc5fc91ac70c6c7ac2862f968ba2b5",
-                "reference": "d508fa3b0ecc5fc91ac70c6c7ac2862f968ba2b5",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/bc5f9483c8f461c86653dcbd040cf0d2778c91a2",
+                "reference": "bc5f9483c8f461c86653dcbd040cf0d2778c91a2",
                 "shasum": ""
             },
             "require": {
@@ -19191,7 +19191,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.71"
+                "source": "https://github.com/phpstan/phpstan/tree/0.12.74"
             },
             "funding": [
                 {
@@ -19207,7 +19207,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-02-01T18:24:00+00:00"
+            "time": "2021-02-08T15:00:25+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -19280,16 +19280,16 @@
         },
         {
             "name": "phpstan/phpstan-webmozart-assert",
-            "version": "0.12.11",
+            "version": "0.12.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-webmozart-assert.git",
-                "reference": "2873b44bfb4788fbad3ba12339306ea16cfc05c8"
+                "reference": "1657403194a43f83b5355bd400aa7fc63f0e6857"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-webmozart-assert/zipball/2873b44bfb4788fbad3ba12339306ea16cfc05c8",
-                "reference": "2873b44bfb4788fbad3ba12339306ea16cfc05c8",
+                "url": "https://api.github.com/repos/phpstan/phpstan-webmozart-assert/zipball/1657403194a43f83b5355bd400aa7fc63f0e6857",
+                "reference": "1657403194a43f83b5355bd400aa7fc63f0e6857",
                 "shasum": ""
             },
             "require": {
@@ -19327,9 +19327,9 @@
             "description": "PHPStan webmozart/assert extension",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-webmozart-assert/issues",
-                "source": "https://github.com/phpstan/phpstan-webmozart-assert/tree/0.12.11"
+                "source": "https://github.com/phpstan/phpstan-webmozart-assert/tree/0.12.12"
             },
-            "time": "2021-01-29T11:39:45+00:00"
+            "time": "2021-01-31T12:24:28+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
