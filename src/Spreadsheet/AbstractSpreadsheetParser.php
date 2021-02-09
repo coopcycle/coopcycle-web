@@ -95,7 +95,7 @@ abstract class AbstractSpreadsheetParser
         return array_search(max($delimiters), $delimiters);
     }
 
-    abstract protected function validateHeader(array $header);
+    abstract public function validateHeader(array $header);
 
     abstract public function getExampleData(): array;
 

@@ -178,7 +178,7 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         return $tasks;
     }
 
-    protected function validateHeader(array $header)
+    public function validateHeader(array $header)
     {
         $hasAddress = in_array('address', $header);
         $hasStreetAddress = in_array('address.streetAddress', $header);
@@ -195,10 +195,6 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
         if ($hasLatLong && $hasAddressLatLng) {
             throw new \Exception('You must provide an "latlong" or a "address.latlng" column, not both');
-        }
-
-        if (($hasAddress || $hasStreetAddress) && ($hasLatLong || $hasAddressLatLng)) {
-            throw new \Exception('You must provide an "address" (alternatively "address.streetAddress") or a "latlong" (alternatively "address.latlng") column, not both');
         }
     }
 
