@@ -37,6 +37,26 @@ class ProductSpreadsheetParserTest extends KernelTestCase
         $variantFactory = self::$container->get('sylius.factory.product_variant');
         $this->taxCategoryRepository = $this->prophesize(TaxCategoryRepositoryInterface::class);
 
+        $baseStandard = new TaxCategory();
+        $baseStandard->setCode('BASE_STANDARD');
+        $baseStandard->setName('tax_category.base_standard');
+
+        $baseIntermediary = new TaxCategory();
+        $baseIntermediary->setCode('BASE_INTERMEDIARY');
+        $baseIntermediary->setName('tax_category.base_intermediary');
+
+        $this->taxCategoryRepository->findAll()
+            ->willReturn([
+                $baseStandard,
+                $baseIntermediary,
+            ]);
+
+        $this->taxCategoryRepository->findOneBy(['name' => 'tax_category.base_standard'])
+            ->willReturn($baseStandard);
+
+        $this->taxCategoryRepository->findOneBy(['name' => 'tax_category.base_intermediary'])
+            ->willReturn($baseIntermediary);
+
         $this->parser = new ProductSpreadsheetParser(
             $serializer,
             $productFactory,
@@ -97,5 +117,26 @@ class ProductSpreadsheetParserTest extends KernelTestCase
 
         $file = $this->filesystem->get('products_unknown_tax_category.csv');
         $products = $this->parser->parse($file);
+    }
+
+    public function testExampleData()
+    {
+        $categories = $this->taxCategoryRepository->reveal()->findAll();
+        $names = array_map(fn($category) => $category->getName(), $categories);
+
+        $data = $this->parser->getExampleData();
+
+        $this->assertCount(2, $data);
+
+        foreach ($data as $row) {
+            $this->assertContains($row['tax_category'], $names);
+        }
+    }
+
+    public function testCanParseExampleData()
+    {
+        $results = $this->parser->parseData($this->parser->getExampleData());
+
+        $this->assertNotEmpty($results);
     }
 }
