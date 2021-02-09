@@ -93,7 +93,7 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
             $address = null;
 
-            //Using isset() in order to parse spreadsheet with both address and coordinates columns later
+            // Using isset() in order to parse spreadsheet with both address and coordinates columns later
             $addressHeader = 'address';
             if (isset($record['address.streetAddress'])) {
                 $addressHeader = 'address.streetAddress';
@@ -108,16 +108,15 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
             $latlngHeader = 'latlong';
             if (isset($record['address.latlng'])) {
-                $latlngHeader = 'address.latlng';}
-
+                $latlngHeader = 'address.latlng';
+            }
 
             if (isset($record[$latlngHeader]) && !empty($record[$latlngHeader])) {
                 [ $latitude, $longitude ] = array_map('floatval', explode(',', $record[$latlngHeader]));
-            //*
                 if (!$address = $this->geocoder->reverse($latitude, $longitude)) {
                     // TODO Translate
                     throw new \Exception(sprintf('Could not reverse geocode %s', $record[$latlngHeader]));
-                }/**/
+                }
             }
 
             if (isset($record['address.name']) && !empty($record['address.name'])) {
