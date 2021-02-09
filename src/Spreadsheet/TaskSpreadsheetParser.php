@@ -78,7 +78,7 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
     /**
      * @inheritdoc
      */
-    protected function parseData(array $data, array $options = []): array
+    public function parseData(array $data, array $options = []): array
     {
         $tasks = [];
 
@@ -93,14 +93,14 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
             $address = null;
 
-            if (isset($record['address'])) {
+            if (isset($record['address']) && !empty($record['address'])) {
                 if (!$address = $this->geocoder->geocode($record['address'])) {
                     // TODO Translate
                     throw new \Exception(sprintf('Could not geocode address %s', $record['address']));
                 }
             }
 
-            if (isset($record['latlong'])) {
+            if (isset($record['latlong']) && !empty($record['latlong'])) {
                 [ $latitude, $longitude ] = array_map('floatval', explode(',', $record['latlong']));
                 if (!$address = $this->geocoder->reverse($latitude, $longitude)) {
                     // TODO Translate
