@@ -63,6 +63,14 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 throw new \Exception(sprintf('Could not geocode %s', $record['dropoff.address']));
             }
 
+            if (isset($record['pickup.address.name']) && !empty($record['pickup.address.name'])) {
+                $pickupAddress->setName($record['pickup.address.name']);
+            }
+
+            if (isset($record['dropoff.address.name']) && !empty($record['dropoff.address.name'])) {
+                $dropoffAddress->setName($record['dropoff.address.name']);
+            }
+
             [ $pickupAfter, $pickupBefore ] = $this->parseTimeRange($record['pickup.timeslot']);
             [ $dropoffAfter, $dropoffBefore ] = $this->parseTimeRange($record['dropoff.timeslot']);
 
@@ -153,13 +161,17 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         return [
             [
                 'pickup.address' => '24 rue de rivoli paris',
+                'pickup.address.name' => 'Awesome business',
                 'dropoff.address' => '58 av parmentier paris',
+                'dropoff.address.name' => 'Awesome business',
                 'pickup.timeslot' => '2019-12-12 10:00 – 2019-12-12 11:00',
                 'dropoff.timeslot' => '2019-12-12 12:00 – 2019-12-12 13:00',
             ],
             [
                 'pickup.address' => '24 rue de rivoli paris',
+                'pickup.address.name' => 'Awesome business',
                 'dropoff.address' => '34 bd de magenta paris',
+                'dropoff.address.name' => 'Awesome business',
                 'pickup.timeslot' => '2019-12-12 10:00 – 2019-12-12 11:00',
                 'dropoff.timeslot' => '2019-12-12 12:00 – 2019-12-12 13:00',
             ],
