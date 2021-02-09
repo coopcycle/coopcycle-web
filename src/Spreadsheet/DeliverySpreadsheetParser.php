@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Utils;
+namespace AppBundle\Spreadsheet;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
@@ -16,24 +16,13 @@ use Box\Spout\Common\Type;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 
-class DeliverySpreadsheetParser
+class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 {
     const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
     const DATE_PATTERN_SLASH = '#(?<day>[0-9]{2})/(?<month>[0-9]{2})/?(?<year>[0-9]{4})?#';
     const TIME_PATTERN = '/(?<hour>[0-9]{1,2})[:hH]+(?<minute>[0-9]{1,2})?/';
 
     const TIME_RANGE_PATTERN = '[0-9]{2,4}[-/]?[0-9]{2,4}[-/]?[0-9]{2,4} [0-9]{1,2}[:hH]?[0-9]{2}';
-
-    const MIME_TYPE_ODS = [
-        'application/vnd.oasis.opendocument.spreadsheet'
-    ];
-    const MIME_TYPE_CSV = [
-        'text/plain'
-    ];
-    const MIME_TYPE_XLSX = [
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/octet-stream'
-    ];
 
     private $geocoder;
     private $tagManager;
@@ -56,46 +45,10 @@ class DeliverySpreadsheetParser
     }
 
     /**
-     * @throws IOException
-     * @throws NumberParseException
+     * @inheritdoc
      */
-    public function parse($filename)
+    public function parseData(array $data, array $options = []): array
     {
-        $reader = $this->createReader($filename);
-
-        $reader->open($filename);
-
-        $data = [];
-        $header = [];
-
-        foreach ($reader->getSheetIterator() as $sheet) {
-            foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-                if ($rowIndex === 1) {
-                    $header = $row->toArray();
-                    continue;
-                }
-
-                // Verify that the row is not completely empty
-                if (0 === count(array_filter($row->toArray()))) {
-                    continue;
-                }
-
-                $data[] = $row->toArray();
-            }
-        }
-
-        $this->validateHeader($header);
-
-        $data = array_map(function ($row) use ($header) {
-
-            // Fix the file structure if some columns are "merged"
-            if (count($row) < count($header)) {
-                $row = array_pad($row, count($header), '');
-            }
-
-            return array_combine($header, $row);
-        }, $data);
-
         $deliveries = [];
 
         foreach ($data as $record) {
@@ -129,54 +82,7 @@ class DeliverySpreadsheetParser
         return $deliveries;
     }
 
-    private function createReader($filename)
-    {
-        $mimeType = mime_content_type($filename);
-
-        if (in_array($mimeType, self::MIME_TYPE_CSV)) {
-            return $this->createCsvReader($filename);
-        }
-
-        if (in_array($mimeType, self::MIME_TYPE_ODS)) {
-            return ReaderEntityFactory::createODSReader();
-        }
-
-        if (in_array($mimeType, self::MIME_TYPE_XLSX)) {
-            return ReaderEntityFactory::createXLSXReader();
-        }
-
-        throw new \Exception('Unsupported file type');
-    }
-
-    private function createCsvReader($filename)
-    {
-        $csvReader = ReaderEntityFactory::createCSVReader();
-        $csvReader->setFieldDelimiter($this->getCsvDelimiter($filename));
-
-        return $csvReader;
-    }
-
-    private function getCsvDelimiter($filename)
-    {
-        $delimiters = array(
-            ';' => 0,
-            ',' => 0,
-            "\t" => 0,
-            '|' => 0,
-        );
-
-        $handle = fopen($filename, "r");
-        $firstLine = fgets($handle);
-        fclose($handle);
-
-        foreach ($delimiters as $delimiter => &$count) {
-            $count = count(str_getcsv($firstLine, $delimiter));
-        }
-
-        return array_search(max($delimiters), $delimiters);
-    }
-
-    private function validateHeader(array $header)
+    protected function validateHeader(array $header)
     {
         $hasPickupAddress = in_array('pickup.address', $header);
         $hasDropoffAddress = in_array('dropoff.address', $header);
@@ -240,5 +146,23 @@ class DeliverySpreadsheetParser
             $tags = $this->tagManager->fromSlugs($slugs);
             $task->setTags($tags);
         }
+    }
+
+    public function getExampleData(): array
+    {
+        return [
+            [
+                'pickup.address' => '24 rue de rivoli paris',
+                'dropoff.address' => '58 av parmentier paris',
+                'pickup.timeslot' => '2019-12-12 10:00 – 2019-12-12 11:00',
+                'dropoff.timeslot' => '2019-12-12 12:00 – 2019-12-12 13:00',
+            ],
+            [
+                'pickup.address' => '24 rue de rivoli paris',
+                'dropoff.address' => '34 bd de magenta paris',
+                'pickup.timeslot' => '2019-12-12 10:00 – 2019-12-12 11:00',
+                'dropoff.timeslot' => '2019-12-12 12:00 – 2019-12-12 13:00',
+            ],
+        ];
     }
 }
