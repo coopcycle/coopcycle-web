@@ -30,6 +30,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Testwork\Tester\Result\TestResult;
+use Behat\Testwork\Tester\Result\ExceptionResult;
 use Behat\Behat\Tester\Exception\PendingException;
 use Coduo\PHPMatcher\PHPMatcher;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -220,6 +221,22 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function disableMaintenance()
     {
         $this->redis->del('maintenance');
+    }
+
+    /**
+     * @see https://pscheit.medium.com/display-a-short-stacktrace-in-behat-for-php-when-test-as-thrown-an-exception-df65ab85ddb2
+     *
+     * @AfterStep
+     * @param AfterStepScope $scope
+     */
+    public function printSmallStacktraceAfterFailure(AfterStepScope $scope)
+    {
+        $testResult = $scope->getTestResult();
+        if ($testResult->getResultCode() === TestResult::FAILED) {
+            if ($testResult instanceof ExceptionResult && $testResult->hasException()) {
+                print mb_substr($testResult->getException()->getTraceAsString(), 0, 250);
+            }
+        }
     }
 
     /**
