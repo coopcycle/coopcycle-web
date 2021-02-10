@@ -178,7 +178,10 @@ class TaskList extends React.Component {
             >
               <span>
                 <img src={ avatarURL } width="24" height="24" />
-                <span className="text-monospace ml-2" style={{ fontWeight: '700' }}>{ username }</span>
+                <small className="text-monospace ml-2">
+                  <strong className="mr-2">{ username }</strong>
+                  <span className="text-muted">{ `(${tasks.length})` }</span>
+                </small>
               </span>
               <div style={{ width: '25%' }}>
                 <ProgressBar completedTasks={ completedTasks.length } tasks={ tasks.length } />
