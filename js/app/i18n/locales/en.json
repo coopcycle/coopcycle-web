@@ -220,6 +220,8 @@
         },
         "PLEASE_SELECT_ADDRESS": "Please select an address in the dropdown",
         "DOWNLOAD_EXAMPLE_SPREADSHEET": "Download an example spreadsheet",
-        "RESTAURANTS_AND_STORES": "Restaurants & stores"
+        "RESTAURANTS_AND_STORES": "Restaurants & stores",
+        "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Move {{count}} tasks to next day",
+        "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Move {{count}} tasks to next working day ({{nextWorkingDay}})"
     }
 }

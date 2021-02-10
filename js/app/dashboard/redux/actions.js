@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import axios from 'axios'
+import moment from 'moment'
 import { taskComparator, withoutTasks, withLinkedTasks } from './utils'
 import {
   selectSelectedDate,
@@ -9,6 +10,7 @@ import {
   createTaskListSuccess,
   createTaskListFailure,
 } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectNextWorkingDay } from './selectors'
 
 function createClient(dispatch) {
 
@@ -706,6 +708,94 @@ export function optimizeTaskList(taskList) {
   }
 }
 
+function moveTasksToNextDay(tasks) {
+
+  return function(dispatch, getState) {
+
+    if (tasks.length === 0) {
+      return
+    }
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const requests = tasks.map(task => {
+
+      return httpClient.request({
+        method: 'put',
+        url: task['@id'],
+        data: {
+          after: moment(task.after).add(1, 'day').format(),
+          before: moment(task.before).add(1, 'day').format(),
+        },
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    })
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+      })
+      .catch(error => dispatch(cancelTaskFailure(error)))
+  }
+}
+
+function moveTasksToNextWorkingDay(tasks) {
+
+  return function(dispatch, getState) {
+
+    if (tasks.length === 0) {
+      return
+    }
+
+    const nextWorkingDay = selectNextWorkingDay(getState())
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const nextWorkingDayProps = {
+      date:  moment(nextWorkingDay).get('date'),
+      month: moment(nextWorkingDay).get('month'),
+      year:  moment(nextWorkingDay).get('year'),
+    }
+
+    const requests = tasks.map(task => {
+
+      return httpClient.request({
+        method: 'put',
+        url: task['@id'],
+        data: {
+          after: moment(task.after).set(nextWorkingDayProps).format(),
+          before: moment(task.before).set(nextWorkingDayProps).format(),
+        },
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    })
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+      })
+      .catch(error => dispatch(cancelTaskFailure(error)))
+  }
+}
+
 export {
   assignAfter,
   updateTask,
@@ -753,4 +843,6 @@ export {
   taskListsUpdated,
   clearSelectedTasks,
   scanPositions,
+  moveTasksToNextDay,
+  moveTasksToNextWorkingDay,
 }

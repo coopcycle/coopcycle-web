@@ -1,5 +1,7 @@
 import { createSelector } from 'reselect'
 import Fuse from 'fuse.js'
+import Holidays from 'date-holidays'
+
 import { moment } from '../../coopcycle-frontend-js'
 import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks, selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
 import { filter, orderBy, forEach, find, reduce, map, differenceWith, includes } from 'lodash'
@@ -162,4 +164,25 @@ export const selectPositions = createSelector(
     ...position,
     offline: includes(offline, position.username) ? true : isOffline(position.lastSeen),
   }))
+)
+
+export const selectCountry = createSelector(
+  selectSelectedDate,
+  () => $('body').data('country')
+)
+
+export const selectNextWorkingDay = createSelector(
+  selectCountry,
+  selectSelectedDate,
+  (country, date) => {
+
+    const holidays = new Holidays(country.toUpperCase())
+
+    let cursor = moment(date).startOf('day')
+    do {
+      cursor = cursor.add(1, 'day')
+    } while (holidays.isHoliday(cursor.toDate()))
+
+    return cursor.format()
+  }
 )
