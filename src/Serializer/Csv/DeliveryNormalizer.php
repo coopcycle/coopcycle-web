@@ -51,7 +51,7 @@ class DeliveryNormalizer implements NormalizerInterface
             'pickup.after' => $data['pickup']['after'],
             'dropoff.address' => $data['dropoff']['address']['streetAddress'],
             'dropoff.before' => $data['dropoff']['before'],
-            'weight' => ($weight && $weight) > 0 ? $weight : '',
+            'weight' => $weight ?? '',
             'distance' => $object->getDistance(),
             'order.number' => $order ? $order->getNumber() : '',
             'order.total' => $amount ?? '',
