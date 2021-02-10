@@ -183,9 +183,11 @@ class TaskList extends React.Component {
                   <span className="text-muted">{ `(${tasks.length})` }</span>
                 </small>
               </span>
+              { tasks.length > 0 && (
               <div style={{ width: '33.3333%' }}>
                 <ProgressBar completedTasks={ completedTasks.length } tasks={ tasks.length } />
               </div>
+              ) }
             </a>
             <a href="#"
               className="mr-2"
