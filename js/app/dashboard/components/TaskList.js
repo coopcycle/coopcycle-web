@@ -57,7 +57,7 @@ const ProgressBar = React.memo(({ completedTasks, tasks }) => {
 
   return (
     <Tooltip title={ `${completedTasks} / ${tasks}` }>
-      <Progress percent={ (completedTasks * 100) / tasks } size="small" />
+      <Progress percent={ Math.round((completedTasks * 100) / tasks) } size="small" />
     </Tooltip>
   )
 })
