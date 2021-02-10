@@ -30,8 +30,8 @@ const removeTask = (tasks, task) => _.filter(tasks, t => t['@id'] !== task['@id'
 const acceptTask = (task, date) => {
 
   const dateAsRange = moment.range(
-    moment(date).set({ hour:  0, minute:  0, second:  0 }),
-    moment(date).set({ hour: 23, minute: 59, second: 59 })
+    moment(date).startOf('day'),
+    moment(date).endOf('day')
   )
 
   const range = moment.range(
@@ -88,7 +88,15 @@ export default (state = initialState, action) => {
     case UPDATE_TASK:
 
       if (!acceptTask(action.task, state.date)) {
-        return state
+
+        return {
+          ...state,
+          unassignedTasks: _.filter(state.unassignedTasks, task => task['@id'] !== action.task['@id']),
+          taskLists: _.map(state.taskLists, taskList => ({
+            ...taskList,
+            items: _.filter(taskList.items, task => task['@id'] !== action.task['@id'])
+          })),
+        }
       }
 
       let newUnassignedTasks = state.unassignedTasks.slice(0)

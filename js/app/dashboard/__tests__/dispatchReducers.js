@@ -259,6 +259,72 @@ describe('combinedTasks reducer', () => {
       taskLists: []
     })
 
+    expect(
+      reducers({
+        date,
+        unassignedTasks: [
+          {
+            '@id': 1,
+            status: 'TODO',
+            isAssigned: false,
+            doneAfter: '2019-11-20 00:00:00',
+            doneBefore: '2019-11-20 23:59:59',
+          }
+        ],
+        taskLists: []
+      }, {
+        type: 'UPDATE_TASK',
+        task: {
+          '@id': 1,
+          status: 'TODO',
+          isAssigned: false,
+          doneAfter: '2019-11-21 00:00:00',
+          doneBefore: '2019-11-21 23:59:59',
+        }
+      })
+    ).toMatchObject({
+      date,
+      unassignedTasks: [],
+      taskLists: []
+    })
+
+    expect(
+      reducers({
+        date,
+        unassignedTasks: [],
+        taskLists: [
+          {
+            items: [
+              {
+                '@id': 1,
+                status: 'TODO',
+                isAssigned: true,
+                doneAfter: '2019-11-20 00:00:00',
+                doneBefore: '2019-11-20 23:59:59',
+              }
+            ]
+          }
+        ]
+      }, {
+        type: 'UPDATE_TASK',
+        task: {
+          '@id': 1,
+          status: 'TODO',
+          isAssigned: false,
+          doneAfter: '2019-11-21 00:00:00',
+          doneBefore: '2019-11-21 23:59:59',
+        }
+      })
+    ).toMatchObject({
+      date,
+      unassignedTasks: [],
+      taskLists: [
+        {
+          items: []
+        }
+      ]
+    })
+
   })
 
   it('should handle task inside range', () => {
