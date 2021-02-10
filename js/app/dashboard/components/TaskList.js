@@ -5,7 +5,7 @@ import moment from 'moment'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
-import { Progress } from 'antd'
+import { Progress, Tooltip } from 'antd'
 
 import Task from './Task'
 import TaskListPopoverContent from './TaskListPopoverContent'
@@ -56,9 +56,9 @@ class InnerList extends React.Component {
 const ProgressBar = React.memo(({ completedTasks, tasks }) => {
 
   return (
-    <Progress percent={ (completedTasks * 100) / tasks } size="small"
-      format={ () => `${completedTasks} / ${tasks}` }
-      showInfo={ false } />
+    <Tooltip title={ `${completedTasks} / ${tasks}` }>
+      <Progress percent={ (completedTasks * 100) / tasks } size="small" />
+    </Tooltip>
   )
 })
 
@@ -183,7 +183,7 @@ class TaskList extends React.Component {
                   <span className="text-muted">{ `(${tasks.length})` }</span>
                 </small>
               </span>
-              <div style={{ width: '25%' }}>
+              <div style={{ width: '33.3333%' }}>
                 <ProgressBar completedTasks={ completedTasks.length } tasks={ tasks.length } />
               </div>
             </a>
