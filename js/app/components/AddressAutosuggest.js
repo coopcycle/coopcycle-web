@@ -41,6 +41,8 @@ import {
   geocode as geocodeGE,
   } from './AddressAutosuggest/geocode-earth'
 
+import { storage, getFromCache } from './AddressAutosuggest/cache'
+
 const theme = {
   container:                'react-autosuggest__container address-autosuggest__container',
   containerOpen:            'react-autosuggest__container--open',
@@ -93,6 +95,9 @@ const adapters = {
     poweredBy: poweredByAlgolia,
     transformSuggestion: transformSuggestionAlgolia,
     geocode: geocodeAlgolia,
+    useCache: function () {
+      return true
+    }
   },
   locationiq: {
     onSuggestionsFetchRequested: onSuggestionsFetchRequestedLocationIQ,
@@ -151,7 +156,6 @@ const generic = {
         (this.props.address.streetAddress || '') : (_.isString(this.props.address) ? this.props.address : ''),
       suggestions,
       multiSection,
-      lastValueWithResults: '',
       loading: false,
     }
   },
@@ -242,6 +246,9 @@ const generic = {
   },
   highlightFirstSuggestion: function() {
     return false
+  },
+  useCache: function() {
+    return false
   }
 }
 
@@ -296,13 +303,31 @@ class AddressAutosuggest extends Component {
     this.country = getCountry() || 'en'
     this.language = localeDetector()
 
+    const onSuggestionsFetchRequestedBase =
+      localize('onSuggestionsFetchRequested', adapter, this)
+
+    const onSuggestionsFetchRequestedCached = ({ value }) => {
+
+      if (!this.useCache()) {
+        onSuggestionsFetchRequestedBase({ value })
+        return
+      }
+
+      const cached = storage.get(value)
+      if (cached && Array.isArray(cached)) {
+        this._autocompleteCallback(cached, value)
+      } else {
+        onSuggestionsFetchRequestedBase({ value })
+      }
+    }
+
     // https://www.peterbe.com/plog/how-to-throttle-and-debounce-an-autocomplete-input-in-react
     this.onSuggestionsFetchRequestedThrottled = throttle(
-      localize('onSuggestionsFetchRequested', adapter, this),
+      onSuggestionsFetchRequestedCached,
       400
     )
     this.onSuggestionsFetchRequestedDebounced = debounce(
-      localize('onSuggestionsFetchRequested', adapter, this),
+      onSuggestionsFetchRequestedCached,
       400
     )
 
@@ -330,6 +355,7 @@ class AddressAutosuggest extends Component {
     this.poweredBy = localize('poweredBy', adapter, this)
     this.theme = localize('theme', adapter, this)
     this.highlightFirstSuggestion = localize('highlightFirstSuggestion', adapter, this)
+    this.useCache = localize('useCache', adapter, this)
 
     this.state = this.getInitialState()
   }
@@ -381,12 +407,10 @@ class AddressAutosuggest extends Component {
     }
   }
 
-  _autocompleteCallback(predictionsAsSuggestions, value) {
+  _autocompleteCallback(predictionsAsSuggestions, value, cache = false) {
 
     let suggestions = []
     let multiSection = false
-
-    const { lastValueWithResults } = this.state
 
     if (this.props.restaurants.length > 0) {
 
@@ -436,6 +460,26 @@ class AddressAutosuggest extends Component {
       }
     }
 
+    // Cache results
+    if (predictionsAsSuggestions.length > 0 && cache) {
+      storage.set(value, predictionsAsSuggestions, new Date().getTime() + (5 * 60 * 1000)) // Cache for 5 minutes
+    }
+
+    // UX optimization
+    // When there are no suggestions returned by the autocomplete service,
+    // we keep showing the previously returned suggestions.
+    // This is useful because some users think they have to type their apartment number
+    //
+    // Ex:
+    // The user types "4 av victoria paris 4" -> 2 suggestions
+    // The user types "4 av victoria paris 4 bâtiment B" -> 0 suggestions
+    if (predictionsAsSuggestions.length === 0 && this.useCache()) {
+      const cachedResults = getFromCache(value)
+      if (cachedResults.length > 0) {
+        predictionsAsSuggestions = cachedResults
+      }
+    }
+
     if (multiSection) {
       if (predictionsAsSuggestions.length > 0) {
         suggestions.push({
@@ -447,25 +491,9 @@ class AddressAutosuggest extends Component {
       suggestions = predictionsAsSuggestions
     }
 
-    // UX optimization
-    // When there are no suggestions returned by the autocomplete service,
-    // we keep showing the previously returned suggestions.
-    // This is useful because some users think they have to type their apartment number
-    //
-    // Ex:
-    // The user types "4 av victoria paris 4" -> 2 suggestions
-    // The user types "4 av victoria paris 4 bâtiment B" -> 0 suggestions
-    if (predictionsAsSuggestions.length === 0 &&
-      lastValueWithResults.length > 0 &&
-      value.length > lastValueWithResults.length &&
-      value.includes(lastValueWithResults)) {
-      return
-    }
-
     this.setState({
       suggestions,
       multiSection,
-      lastValueWithResults: predictionsAsSuggestions.length > 0 ? value : ''
     })
   }
 
