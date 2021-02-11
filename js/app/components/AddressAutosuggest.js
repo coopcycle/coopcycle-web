@@ -7,10 +7,6 @@ import { filter, debounce, throttle } from 'lodash'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import axios from 'axios'
-import engine  from 'store/src/store-engine'
-import session from 'store/storages/sessionStorage'
-import cookie  from 'store/storages/cookieStorage'
-import expirePlugin from 'store/plugins/expire'
 
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
@@ -45,6 +41,8 @@ import {
   geocode as geocodeGE,
   } from './AddressAutosuggest/geocode-earth'
 
+import { storage, getFromCache } from './AddressAutosuggest/cache'
+
 const theme = {
   container:                'react-autosuggest__container address-autosuggest__container',
   containerOpen:            'react-autosuggest__container--open',
@@ -61,8 +59,6 @@ const theme = {
   sectionContainerFirst:    'react-autosuggest__section-container--first',
   sectionTitle:             'react-autosuggest__section-title address-autosuggest__section-title'
 }
-
-const storage = engine.createStore([ session, cookie ], [ expirePlugin ], 'AddressAutosuggest')
 
 const defaultFuseOptions = {
   shouldSort: true,
@@ -478,22 +474,9 @@ class AddressAutosuggest extends Component {
     // The user types "4 av victoria paris 4" -> 2 suggestions
     // The user types "4 av victoria paris 4 bâtiment B" -> 0 suggestions
     if (predictionsAsSuggestions.length === 0 && this.useCache()) {
-
-      const cacheKeys = []
-      storage.each(function(cachedValue, cacheKey) {
-        if (value.length > cacheKey.length && value.startsWith(cacheKey)) {
-          cacheKeys.push(cacheKey)
-        }
-      })
-
-      if (cacheKeys.length > 0) {
-        cacheKeys.sort((a, b) =>
-          a.length === b.length ? 0 : (a.length > b.length ? -1 : 1))
-        const cacheKey = cacheKeys[0]
-        const cachedResults = storage.get(cacheKey)
-        if (cachedResults) {
-          predictionsAsSuggestions = cachedResults
-        }
+      const cachedResults = getFromCache(value)
+      if (cachedResults.length > 0) {
+        predictionsAsSuggestions = cachedResults
       }
     }
 
