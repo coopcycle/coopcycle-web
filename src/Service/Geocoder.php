@@ -27,6 +27,7 @@ class Geocoder
     private $country;
     private $locale;
     private $rateLimitPerSecond;
+    private $autoconfigure;
 
     private $geocoder;
     private $addressFormatter;
@@ -40,7 +41,8 @@ class Geocoder
         string $openCageApiKey,
         string $country,
         string $locale,
-        int $rateLimitPerSecond)
+        int $rateLimitPerSecond,
+        bool $autoconfigure = true)
     {
         $this->rateLimiterStore = $rateLimiterStore;
         $this->settingsManager = $settingsManager;
@@ -48,6 +50,7 @@ class Geocoder
         $this->country = $country;
         $this->locale = $locale;
         $this->rateLimitPerSecond = $rateLimitPerSecond;
+        $this->autoconfigure = $autoconfigure;
     }
 
     private function getGeocoder()
@@ -57,10 +60,12 @@ class Geocoder
 
             $providers = [];
 
-            // For France only, use https://adresse.data.gouv.fr/
-            if ('fr' === $this->country) {
-                // TODO Create own provider to get results with a high score
-                $providers[] = AddokProvider::withBANServer($httpClient);
+            if ($this->autoconfigure) {
+                // For France only, use https://adresse.data.gouv.fr/
+                if ('fr' === $this->country) {
+                    // TODO Create own provider to get results with a high score
+                    $providers[] = AddokProvider::withBANServer($httpClient);
+                }
             }
 
             // Add OpenCage provider only if api key is configured
