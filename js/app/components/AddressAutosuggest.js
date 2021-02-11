@@ -478,17 +478,19 @@ class AddressAutosuggest extends Component {
     // The user types "4 av victoria paris 4" -> 2 suggestions
     // The user types "4 av victoria paris 4 bâtiment B" -> 0 suggestions
     if (predictionsAsSuggestions.length === 0 && this.useCache()) {
-      const candidates = []
+
+      const cacheKeys = []
       storage.each(function(cachedValue, cacheKey) {
-        if (value.length > cacheKey.length && value.includes(cacheKey)) {
-          candidates.push(cacheKey)
+        if (value.length > cacheKey.length && value.startsWith(cacheKey)) {
+          cacheKeys.push(cacheKey)
         }
       })
-      candidates.sort((a, b) =>
-        a.length === b.length ? 0 : (a.length > b.length ? -1 : 1))
-      if (candidates.length > 0) {
-        const bestCandidate = candidates[0]
-        const cachedResults = storage.get(bestCandidate)
+
+      if (cacheKeys.length > 0) {
+        cacheKeys.sort((a, b) =>
+          a.length === b.length ? 0 : (a.length > b.length ? -1 : 1))
+        const cacheKey = cacheKeys[0]
+        const cachedResults = storage.get(cacheKey)
         if (cachedResults) {
           predictionsAsSuggestions = cachedResults
         }
