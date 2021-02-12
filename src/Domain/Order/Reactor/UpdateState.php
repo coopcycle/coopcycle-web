@@ -6,6 +6,7 @@ use AppBundle\Domain\Order\Command\AcceptOrder;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
+use AppBundle\Utils\OrderTimeHelper;
 use SimpleBus\Message\Bus\MessageBus;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -28,12 +29,14 @@ class UpdateState
         StateMachineFactoryInterface $stateMachineFactory,
         OrderProcessorInterface $orderProcessor,
         SerializerInterface $serializer,
-        MessageBus $eventBus)
+        MessageBus $eventBus,
+        OrderTimeHelper $orderTimeHelper)
     {
         $this->stateMachineFactory = $stateMachineFactory;
         $this->orderProcessor = $orderProcessor;
         $this->serializer = $serializer;
         $this->eventBus = $eventBus;
+        $this->orderTimeHelper = $orderTimeHelper;
 
         $this->eventNameToTransition = [
             Event\OrderCreated::messageName()   => OrderTransitions::TRANSITION_CREATE,
@@ -91,7 +94,20 @@ class UpdateState
     {
         if ($event instanceof Event\CheckoutSucceeded) {
 
+            $order = $event->getOrder();
             $payment = $event->getPayment();
+
+            // FIXME
+            // We shouldn't auto-assign a date when it is a quote
+            // Keeping this until it is possible to choose an arbitrary date
+            // https://github.com/coopcycle/coopcycle-web/issues/698
+
+            if (null === $order->getShippingTimeRange()) {
+                $order->setShippingTimeRange(
+                    $this->orderTimeHelper->getShippingTimeRange($order)
+                );
+            }
+
             $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
 
             if (null !== $payment) {
@@ -105,7 +121,7 @@ class UpdateState
             // Trigger an order:created event
             // The event will be handled by this very same class
 
-            $createdEvent = new Event\OrderCreated($event->getOrder());
+            $createdEvent = new Event\OrderCreated($order);
 
             $this->handleStateChange($createdEvent);
             $this->eventBus->handle($createdEvent);

@@ -7,7 +7,6 @@ use AppBundle\Domain\Order\Event;
 use AppBundle\Payment\Gateway;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Utils\OrderTimeHelper;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -22,22 +21,12 @@ class CheckoutHandler
         RecordsMessages $eventRecorder,
         OrderNumberAssignerInterface $orderNumberAssigner,
         StripeManager $stripeManager,
-        Gateway $gateway,
-        OrderTimeHelper $orderTimeHelper)
+        Gateway $gateway)
     {
         $this->eventRecorder = $eventRecorder;
         $this->orderNumberAssigner = $orderNumberAssigner;
         $this->stripeManager = $stripeManager;
         $this->gateway = $gateway;
-        $this->orderTimeHelper = $orderTimeHelper;
-    }
-
-    private function setShippingDate(OrderInterface $order)
-    {
-        if (null === $order->getShippingTimeRange()) {
-            $range = $this->orderTimeHelper->getShippingTimeRange($order);
-            $order->setShippingTimeRange($range);
-        }
     }
 
     private function getLastPayment(OrderInterface $order): ?PaymentInterface
@@ -66,7 +55,6 @@ class CheckoutHandler
 
         if ($isFreeOrder) {
             $this->orderNumberAssigner->assignNumber($order);
-            $this->setShippingDate($order);
             $this->eventRecorder->record(new Event\CheckoutSucceeded($order));
 
             return;
@@ -103,8 +91,6 @@ class CheckoutHandler
 
                 $this->gateway->authorize($payment);
             }
-
-            $this->setShippingDate($order);
 
             $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $payment));
 

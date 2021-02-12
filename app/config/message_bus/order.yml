@@ -31,7 +31,6 @@ services:
       - '@sylius.order_number_assigner'
       - '@coopcycle.stripe_manager'
       - '@AppBundle\Payment\Gateway'
-      - '@AppBundle\Utils\OrderTimeHelper'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\Checkout
@@ -41,7 +40,6 @@ services:
     arguments:
       - '@event_recorder'
       - '@sylius.order_number_assigner'
-      - '@AppBundle\Utils\OrderTimeHelper'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\Quote
@@ -290,6 +288,7 @@ services:
       - '@sylius.order_processing.order_payment_processor'
       - '@serializer'
       - '@event_bus'
+      - '@AppBundle\Utils\OrderTimeHelper'
     tags:
         - name: event_subscriber
           subscribes_to: order:created
