@@ -597,7 +597,7 @@ allergens.FISH: Pescado
 allergens.PEANUTS: Cacahuetes
 allergens.SOYBEANS: Soja
 allergens.MILK: Leche
-allergens.NUTS: Nueces
+allergens.NUTS: Frutos de cáscara
 allergens.CELERY: Apio
 allergens.MUSTARD: Mostaza
 allergens.SESAME_SEEDS: Semillas de sésamo
@@ -1123,3 +1123,28 @@ form.settings.sms_enabled.label: Habilitar el envio de SMS
 form.company.make_the_request.label: Enviar solicitud
 form.address.company.meal_estimate.label: Número de comidas estimados (por día)
 form.address.company.collaborator_number.label: Número de trabajadores
+basics.search: Buscar…
+form.hub.restaurants.label: Lista de comercios
+index.view_all_merchants: Ver todos los comercios
+order.list.summary.hub.text: Pedir en el local %name%
+form.fulfillment_method.options.round.label: Intervalo aproximado
+promotion_action.fixed_discount: '%amount% de descuento'
+promotion_action.delivery_percentage_discount: '%percentage% de descuento en los gastos
+  de envío'
+promotion_action.percentage_discount: '%percentage% de descuento'
+homepage.form.content: <strong>%brand_name%</strong> está operando a nivel local con
+  servicios ecologicos de entrega de bicicletas. Envíe un solo paquete, o realice
+  envíos recurrentes para su negocio.
+homepage.form.title: ¿Necesita que le entreguen algo?
+order.list.reorder: Reordenar
+form.settings.guest_checkout_enabled.label: Activar checkout de invitados
+restaurant.embed.greeting: Eso es todo! Ahora, cuando los visitantes hagan clic en
+  el botón, se abrirá una ventana directamente en su sitio web.
+restaurant.embed.step_2: Añade el <code>data-coopcycle-embed="%url%"</code> a un elemento
+  HTML clicable
+restaurant.embed.step_1: Añade el script <code>coopcycle.js</code> a tu página
+restaurant.embed.disclaimer: Puedes incorporar el checkout directamente en tu sitio
+  web. Siga las siguientes instrucciones para empezar.
+restaurant.form.section.embed: Incorporar
+loopeat.oauth_redirect.warning: Serás redirigido al sitio web de LoopEat para iniciar
+  sesión o crear tu cuenta
