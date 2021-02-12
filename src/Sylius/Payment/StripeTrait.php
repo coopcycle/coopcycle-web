@@ -78,12 +78,17 @@ trait StripeTrait
         ]);
     }
 
+    /**
+     * @return string|null
+     */
     public function getPaymentIntent()
     {
         if (isset($this->details['payment_intent'])) {
 
             return $this->details['payment_intent'];
         }
+
+        return null;
     }
 
     public function getPaymentIntentClientSecret()

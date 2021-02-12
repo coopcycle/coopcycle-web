@@ -44,9 +44,11 @@ class Gateway
             case 'stripe':
             default:
 
-                if ($payment->getPaymentIntent()) {
+                $paymentIntent = $payment->getPaymentIntent();
 
-                    if (!$payment->isGiropay() && $payment->getPaymentIntent() !== $context['token']) {
+                if (null !== $paymentIntent) {
+
+                    if (!$payment->isGiropay() && $paymentIntent !== $context['token']) {
                         throw new \Exception('Payment Intent mismatch');
                     }
 
