@@ -29,10 +29,13 @@ class Gateway
         $this->messageBus = $messageBus;
     }
 
-    public function authorize(PaymentInterface $payment): ResponseInterface
+    public function authorize(PaymentInterface $payment, array $context = []): ResponseInterface
     {
         switch ($this->resolver->resolve()) {
             case 'mercadopago':
+
+                $payment->setStripeToken($context['token']);
+
                 $p = $this->mercadopagoManager->authorize($payment);
 
                 $payment->setCharge($p->id);
@@ -41,8 +44,22 @@ class Gateway
             case 'stripe':
             default:
 
-                $charge = $this->stripeManager->authorize($payment);
+                if ($payment->getPaymentIntent()) {
 
+                    if (!$payment->isGiropay() && $payment->getPaymentIntent() !== $context['token']) {
+                        throw new \Exception('Payment Intent mismatch');
+                    }
+
+                    if ($payment->requiresUseStripeSDK()) {
+                        $this->stripeManager->confirmIntent($payment);
+                    }
+
+                    return new StripeResponse([]);
+                }
+
+                // Legacy
+
+                $charge = $this->stripeManager->authorize($payment);
                 $payment->setCharge($charge->id);
 
                 return new StripeResponse($charge);

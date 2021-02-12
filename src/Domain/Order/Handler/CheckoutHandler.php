@@ -5,7 +5,6 @@ namespace AppBundle\Domain\Order\Handler;
 use AppBundle\Domain\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Payment\Gateway;
-use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -15,17 +14,15 @@ class CheckoutHandler
 {
     private $eventRecorder;
     private $orderNumberAssigner;
-    private $stripeManager;
+    private $gateway;
 
     public function __construct(
         RecordsMessages $eventRecorder,
         OrderNumberAssignerInterface $orderNumberAssigner,
-        StripeManager $stripeManager,
         Gateway $gateway)
     {
         $this->eventRecorder = $eventRecorder;
         $this->orderNumberAssigner = $orderNumberAssigner;
-        $this->stripeManager = $stripeManager;
         $this->gateway = $gateway;
     }
 
@@ -62,38 +59,21 @@ class CheckoutHandler
 
         // TODO Check if $payment !== null
 
-        try {
+        $data = $command->getData();
 
-            if ($payment->getPaymentIntent()) {
-
-                if (!$payment->isGiropay() && $payment->getPaymentIntent() !== $stripeToken) {
-                    $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, 'Payment Intent mismatch'));
-                    return;
-                }
-
-                if ($payment->requiresUseStripeSDK()) {
-                    $this->stripeManager->confirmIntent($payment);
-                }
-            } else {
-                $this->orderNumberAssigner->assignNumber($order);
-                $payment->setStripeToken($stripeToken);
-
-                $data = $command->getData();
-
-                if (is_array($data)) {
-                    if (isset($data['mercadopagoPaymentMethod'])) {
-                        $payment->setMercadopagoPaymentMethod($data['mercadopagoPaymentMethod']);
-                    }
-                    if (isset($data['mercadopagoInstallments'])) {
-                        $payment->setMercadopagoInstallments($data['mercadopagoInstallments']);
-                    }
-                }
-
-                $this->gateway->authorize($payment);
+        if (is_array($data)) {
+            if (isset($data['mercadopagoPaymentMethod'])) {
+                $payment->setMercadopagoPaymentMethod($data['mercadopagoPaymentMethod']);
             }
+            if (isset($data['mercadopagoInstallments'])) {
+                $payment->setMercadopagoInstallments($data['mercadopagoInstallments']);
+            }
+        }
 
+        try {
+            $this->orderNumberAssigner->assignNumber($order);
+            $this->gateway->authorize($payment, ['token' => $stripeToken]);
             $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $payment));
-
         } catch (\Exception $e) {
             $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, $e->getMessage()));
         }

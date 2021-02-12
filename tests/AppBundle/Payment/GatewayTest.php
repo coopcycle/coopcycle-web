@@ -1,11 +1,7 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Handler;
+namespace Tests\AppBundle\Payment;
 
-use AppBundle\Domain\Order\Command\Checkout;
-use AppBundle\Domain\Order\Event\CheckoutFailed;
-use AppBundle\Domain\Order\Event\CheckoutSucceeded;
-use AppBundle\Domain\Order\Handler\CheckoutHandler;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
@@ -15,20 +11,17 @@ use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
-use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Prophecy\Argument;
 
-class CheckoutHandlerTest extends TestCase
+class GatewayTest extends TestCase
 {
     use ProphecyTrait;
 
     private $eventRecorder;
-    private $orderNumberAssigner;
     private $stripeManager;
 
     private $handler;
@@ -36,7 +29,6 @@ class CheckoutHandlerTest extends TestCase
     public function setUp(): void
     {
         $this->eventRecorder = $this->prophesize(RecordsMessages::class);
-        $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);
         $this->stripeManager = $this->prophesize(StripeManager::class);
         $this->mercadopagoManager = $this->prophesize(MercadopagoManager::class);
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
@@ -54,15 +46,9 @@ class CheckoutHandlerTest extends TestCase
             $this->mercadopagoManager->reveal(),
             $this->messageBus->reveal()
         );
-
-        $this->handler = new CheckoutHandler(
-            $this->eventRecorder->reveal(),
-            $this->orderNumberAssigner->reveal(),
-            $this->gateway
-        );
     }
 
-    public function testCheckoutLegacy()
+    public function testAuthorizeLegacy()
     {
         $payment = new Payment();
         $payment->setState(PaymentInterface::STATE_CART);
@@ -79,18 +65,12 @@ class CheckoutHandlerTest extends TestCase
             ->authorize($payment)
             ->willReturn($charge);
 
-        $this->eventRecorder
-            ->record(Argument::type(CheckoutSucceeded::class))
-            ->shouldBeCalled();
-
-        $command = new Checkout($order, 'tok_123456');
-
-        call_user_func_array($this->handler, [$command]);
+        $this->gateway->authorize($payment, ['token' => 'tok_12345678']);
 
         $this->assertEquals('ch_123456', $payment->getCharge());
     }
 
-    public function testCheckoutWithPaymentIntent()
+    public function testAuthorizeWithPaymentIntent()
     {
         $payment = new Payment();
         $payment->setState(PaymentInterface::STATE_CART);
@@ -110,19 +90,17 @@ class CheckoutHandlerTest extends TestCase
 
         $this->stripeManager
             ->confirmIntent($payment)
-            ->willReturn($paymentIntent);
-
-        $this->eventRecorder
-            ->record(Argument::type(CheckoutSucceeded::class))
+            ->willReturn($paymentIntent)
             ->shouldBeCalled();
 
-        $command = new Checkout($order, 'pi_12345678');
-
-        call_user_func_array($this->handler, [$command]);
+        $this->gateway->authorize($payment, ['token' => 'pi_12345678']);
     }
 
-    public function testCheckoutFailed()
+    public function testAuthorizeWithPaymentIntentMismatch()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Payment Intent mismatch');
+
         $payment = new Payment();
         $payment->setState(PaymentInterface::STATE_CART);
 
@@ -141,54 +119,8 @@ class CheckoutHandlerTest extends TestCase
 
         $this->stripeManager
             ->confirmIntent($payment)
-            ->willThrow(new \Exception('Lorem ipsum'));
-
-        $this->eventRecorder
-            ->record(Argument::type(CheckoutSucceeded::class))
             ->shouldNotBeCalled();
 
-        $this->eventRecorder
-            ->record(Argument::type(CheckoutFailed::class))
-            ->shouldBeCalled();
-
-        $command = new Checkout($order, 'tok_123456');
-
-        call_user_func_array($this->handler, [$command]);
-    }
-
-    public function testCheckoutWithFreeOrder()
-    {
-        $order = $this->prophesize(Order::class);
-
-        $order
-            ->getLastPayment(PaymentInterface::STATE_CART)
-            ->willReturn(null);
-        $order
-            ->getLastPayment(PaymentInterface::STATE_PROCESSING)
-            ->willReturn(null);
-        $order
-            ->isEmpty()
-            ->willReturn(false);
-        $order
-            ->getItemsTotal()
-            ->willReturn(1000);
-        $order
-            ->getTotal()
-            ->willReturn(0);
-
-        $this->stripeManager
-            ->confirmIntent(Argument::type(Payment::class))
-            ->shouldNotBeCalled();
-        $this->stripeManager
-            ->authorize(Argument::type(Payment::class))
-            ->shouldNotBeCalled();
-
-        $this->eventRecorder
-            ->record(Argument::type(CheckoutSucceeded::class))
-            ->shouldBeCalled();
-
-        $command = new Checkout($order->reveal());
-
-        call_user_func_array($this->handler, [$command]);
+        $this->gateway->authorize($payment, ['token' => 'pi_98765432']);
     }
 }
