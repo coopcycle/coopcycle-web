@@ -29,7 +29,6 @@ services:
     arguments:
       - '@event_recorder'
       - '@sylius.order_number_assigner'
-      - '@coopcycle.stripe_manager'
       - '@AppBundle\Payment\Gateway'
     tags:
       - name: command_handler
