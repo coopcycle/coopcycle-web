@@ -217,32 +217,7 @@ class StripeManager
             return $stripeToken;
         }
 
-        if ($source = $payment->getSource()) {
-
-            return $source;
-        }
-
         throw new \Exception(sprintf('No Stripe source found in payment #%d', $payment->getId()));
-    }
-
-    public function shouldCapture(PaymentInterface $payment): bool
-    {
-        if ($sourceId = $payment->getSource()) {
-
-            $source =
-                Stripe\Source::retrieve($sourceId, $this->getStripeOptions($payment));
-
-            // @see https://stripe.com/docs/api/sources/object#source_object-type
-
-            return in_array($source->type, [
-                'giropay',
-                // We need to add this for unit tests
-                // because stripe-mock always returns this type
-                'ach_credit_transfer',
-            ]);
-        }
-
-        return false;
     }
 
     /**
@@ -264,7 +239,7 @@ class StripeManager
             // When false, the charge issues an authorization (or pre-authorization),
             // and will need to be captured later.
             // Uncaptured charges expire in seven days.
-            'capture' => $this->shouldCapture($payment),
+            'capture' => false,
         ];
 
         $stripeOptions = [];

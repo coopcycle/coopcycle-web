@@ -177,6 +177,9 @@ trait StripeTrait
         }
     }
 
+    /**
+     * @deprecated
+     */
     public function getSource()
     {
         if (isset($this->details['source'])) {
@@ -185,6 +188,9 @@ trait StripeTrait
         }
     }
 
+    /**
+     * @deprecated
+     */
     public function getSourceType()
     {
         if (isset($this->details['source_type'])) {

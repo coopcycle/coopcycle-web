@@ -222,41 +222,11 @@ class StripeController extends AbstractController
         }
 
         switch ($event->type) {
-            case 'source.chargeable':
-                return $this->handleChargeableSource($event);
             case 'payment_intent.succeeded':
                 return $this->handlePaymentIntentSucceeded($event, $orderManager);
             case 'payment_intent.payment_failed':
                 return $this->handlePaymentIntentPaymentFailed($event, $eventBus, $emailManager);
         }
-
-        return new Response('', 200);
-    }
-
-    private function handleChargeableSource(Stripe\Event $event): Response
-    {
-        $source = $event->data->object;
-
-        // TODO
-        // Retrieve payment from source
-        // Complete order
-        // Send email to customer
-
-        $this->logger->info(sprintf('Chargeable source has id "%s"', $source->id));
-
-        $qb = $this->entityManager->getRepository(PaymentInterface::class)
-            ->createQueryBuilder('p')
-            ->andWhere('JSON_GET_FIELD_AS_TEXT(p.details, \'source_type\') = \'giropay\'')
-            ->andWhere('JSON_GET_FIELD_AS_TEXT(p.details, \'source\') = :source')
-            ->setParameter('source', $source->id);
-
-        $payment = $qb->getQuery()->getOneOrNullResult();
-
-        if (null === $payment) {
-            return new Response('', 200);
-        }
-
-        $this->logger->info(sprintf('Source "%s" refers to payment #%d', $source->id, $payment->getId()));
 
         return new Response('', 200);
     }

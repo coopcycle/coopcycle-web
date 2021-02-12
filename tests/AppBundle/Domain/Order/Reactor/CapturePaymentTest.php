@@ -57,19 +57,10 @@ class CapturePaymentTest extends TestCase
     {
         $restaurant = new Restaurant();
 
-        $source = Stripe\Source::constructFrom([
-            'id' => 'src_12345678',
-            'type' => 'giropay',
-            'client_secret' => '',
-            'redirect' => [
-                'url' => 'http://example.com'
-            ]
-        ]);
-
         $payment = new Payment();
         $payment->setAmount(3350);
         $payment->setCurrencyCode('EUR');
-        $payment->setSource($source);
+        $payment->setPaymentMethodTypes(['giropay']);
 
         $order = $this->prophesize(OrderInterface::class);
 
