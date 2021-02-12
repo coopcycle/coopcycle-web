@@ -78,7 +78,7 @@
         "ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_PLACEHOLDER": "Ejemplo: dirección no encontrada, no hay problema…",
         "ADMIN_DASHBOARD_TASK_FORM_SHOW_HISTORY": "Mostrar el historial",
         "ADMIN_DASHBOARD_SEARCH": "Buscar",
-        "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Visualización de rutas",
+        "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Interfaz de rutas",
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES": "A vuelo de pájaro",
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Formatos de archivo admitidos: csv, ods, xlsx",
         "USER_EDIT_ENABLED_LABEL": "Activado",
@@ -207,6 +207,19 @@
             }
         },
         "PLEASE_SELECT_ADDRESS": "Selecciona una dirección en el menú desplegable",
-        "RESTAURANTS_AND_STORES": "Restaurantes y tiendas locales"
+        "RESTAURANTS_AND_STORES": "Restaurantes y tiendas locales",
+        "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "Mostrar por hora descendiente de entrega.",
+        "DOWNLOAD_EXAMPLE_SPREADSHEET": "Descargar una hoja de cálculo de ejemplo",
+        "DROPZONE_REMOVE_FILE": "Eliminar el archivo",
+        "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Por favor eliga hasta {{count}} valor(es)",
+        "CART_PRODUCT_OPTIONS_VALUES_RANGE_AT_LEAST": "Por favor eliga al menos {{count}} valor(es)",
+        "CART_PRODUCT_OPTIONS_VALUES_RANGE": "Por favor eliga entre los valores {{min}} y {{max}}",
+        "RULE_PICKER_LINE_OPTGROUP_ORDER": "Pedido",
+        "RULE_PICKER_LINE_OPTGROUP_DELIVERY": "Entrega",
+        "RULE_PICKER_LINE_ORDER_ITEMS_TOTAL": "Total de articulos",
+        "RULE_PICKER_LINE_PACKAGES": "Paquetes",
+        "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Diferencia (horas)",
+        "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Mapa de clusters habilitado",
+        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Mostrar siempre sin asignar"
     }
 }
