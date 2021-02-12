@@ -57,8 +57,6 @@ class UpdateStateTest extends KernelTestCase
         $this->shippingTimeRange->setLower(new \DateTime('2020-04-09 19:55:00'));
         $this->shippingTimeRange->setUpper(new \DateTime('2020-04-09 20:05:00'));
 
-        $this->asap = new \DateTime('2020-04-09 20:00:00');
-
         $this->orderTimeHelper
             ->getShippingTimeRange(Argument::type(OrderInterface::class))
             ->willReturn($this->shippingTimeRange);
@@ -90,8 +88,6 @@ class UpdateStateTest extends KernelTestCase
 
         $this->assertNotNull($order->getShippingTimeRange());
         $this->assertEquals($this->shippingTimeRange, $order->getShippingTimeRange());
-        $this->assertNotNull($order->getShippedAt());
-        $this->assertEquals($this->asap, $order->getShippedAt());
     }
 
     public function testCheckoutFailed()
