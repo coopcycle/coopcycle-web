@@ -18,11 +18,14 @@ order.view: View order
 order.public_url: |
   To track the status of your order, <a href="%order.public_url%">click here</a>.
 order.foodtech.accepted.delivery: "It will be delivered to you at the following time:"
-order.foodtech.accepted.delivery.disclaimer: "We will contact you in case of a problem to find your address"
-order.foodtech.accepted.collection: "You will have to collect it at the following time:"
-order.foodtech.accepted.collection.disclaimer: "If you have a problem, contact <strong>%name%</strong> at <strong>%phone_number%</strong> in advance enough to cancel your order."
+order.foodtech.accepted.delivery.disclaimer: "We will contact you in case of a problem\
+  \ to find your address"
+order.foodtech.accepted.collection: "You will have to collect it at the following\
+  \ time:"
+order.foodtech.accepted.collection.disclaimer: "If you have a problem, contact <strong>%name%</strong>\
+  \ at <strong>%phone_number%</strong> in advance enough to cancel your order."
 order.foodtech.cancelled: "The restaurant is unable to prepare your order %order.number%.\n\
-  <br>\nYour account has not been charged.\n"
+  <br>\nYour money will be automatically transfered back within the next 5 days.\n"
 admin.order.created.subject: New order to be confirmed
 admin.order.created.body: |
   Hello,
@@ -99,14 +102,14 @@ covid_19.body: "<h1>Instructions to follow for your delivery</h1>\n<p>Given the 
   \ hands!</strong></p>\n"
 
 order.expiring_authorization.subject: A payment authorization will expire soon
-order.expiring_authorization.text:
-  The payment authorization for order <strong>%order.number%</strong> will expire soon.
-  <br>
-  You should complete the order before the authorization expires to avoid losing money.
+order.expiring_authorization.text: The payment authorization for order <strong>%order.number%</strong>
+  will expire soon. <br> You should complete the order before the authorization expires
+  to avoid losing money.
 
 order.receipt.subject: Receipt for your order %order.number%
 order.receipt.body: "Hello,\n<br>\nPlease find attached the receipt for your order."
 
 order.payment_failed.subject: There was an error processing your payment
-order.payment_failed.body: "Hello,\n<br>\nWe are sorry, there was an error processing your payment. Please try again with a different payment method."
+order.payment_failed.body: "Hello,\n<br>\nWe are sorry, there was an error processing\
+  \ your payment. Please try again with a different payment method."
 order.payment_failed.return_to_order: Return to order
