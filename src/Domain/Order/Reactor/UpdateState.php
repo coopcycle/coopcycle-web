@@ -95,9 +95,8 @@ class UpdateState
             $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
 
             if (null !== $payment) {
-                // TODO Create class constant for "authorize" transition
-                if ($stateMachine->can('authorize')) {
-                    $stateMachine->apply('authorize');
+                if ($stateMachine->can(PaymentTransitions::TRANSITION_AUTHORIZE)) {
+                    $stateMachine->apply(PaymentTransitions::TRANSITION_AUTHORIZE);
                 } elseif ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
                     $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
                 }
