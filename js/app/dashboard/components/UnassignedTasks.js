@@ -1,10 +1,10 @@
-import React from 'react'
-import { render } from 'react-dom'
+import React, { useState } from 'react'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 import { Popover } from 'antd'
+import { useTranslation } from 'react-i18next'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
@@ -12,16 +12,41 @@ import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
 import { selectGroups, selectStandaloneTasks } from '../redux/selectors'
 
-const UnassignedTasksPopoverContentWithTrans = withTranslation()(UnassignedTasksPopoverContent)
+const Buttons = connect(
+  (state) => ({
+    taskListGroupMode: state.taskListGroupMode,
+  }),
+  (dispatch) => ({
+    setTaskListGroupMode: (mode) => dispatch(setTaskListGroupMode(mode)),
+  })
+)(({ taskListGroupMode, setTaskListGroupMode }) => {
+
+  const [ visible, setVisible ] = useState(false)
+  const { t } = useTranslation()
+
+  return (
+    <Popover
+      placement="leftTop"
+      arrowPointAtCenter
+      trigger="click"
+      content={ <UnassignedTasksPopoverContent
+        defaultValue={ taskListGroupMode }
+        onChange={ mode => {
+          setTaskListGroupMode(mode)
+          setVisible(false)
+        }} />
+      }
+      visible={ visible }
+      onVisibleChange={ value => setVisible(value) }
+    >
+      <a href="#" onClick={ e => e.preventDefault() } title={ t('ADMIN_DASHBOARD_DISPLAY') }>
+        <i className="fa fa-list"></i>
+      </a>
+    </Popover>
+  )
+})
 
 class UnassignedTasks extends React.Component {
-
-  constructor (props) {
-    super(props)
-    this.state = {
-      popoverVisible: false
-    }
-  }
 
   renderGroup(group, tasks) {
     return (
@@ -38,42 +63,22 @@ class UnassignedTasks extends React.Component {
 
     return (
       <div className={ classNames.join(' ') }>
-        <h4>
+        <h4 className="d-flex justify-content-between">
           <span>{ this.props.t('DASHBOARD_UNASSIGNED') }</span>
-          <span className="pull-right">
-            <a href="#" onClick={ e => {
+          <span>
+            <a href="#" className="mr-2" onClick={ e => {
               e.preventDefault()
               this.props.openNewTaskModal()
             }}>
               <i className="fa fa-plus"></i>
             </a>
-            &nbsp;&nbsp;
-            <a href="#" onClick={ e => {
+            <a href="#" className="mr-2" onClick={ e => {
               e.preventDefault()
               this.props.toggleSearch()
             }}>
               <i className="fa fa-search"></i>
             </a>
-            &nbsp;&nbsp;
-            <Popover
-              placement="leftTop"
-              arrowPointAtCenter
-              title="Notifications"
-              trigger="click"
-              content={ <UnassignedTasksPopoverContentWithTrans
-                defaultValue={ this.props.taskListGroupMode }
-                onChange={ mode => {
-                  this.props.setTaskListGroupMode(mode)
-                  this.setState({ popoverVisible: false })
-                }} />
-              }
-              visible={ this.state.popoverVisible }
-              onVisibleChange={ value => this.setState({ popoverVisible: value }) }
-            >
-              <a href="#" onClick={ e => e.preventDefault() } title={ this.props.t('ADMIN_DASHBOARD_DISPLAY') }>
-                <i className="fa fa-list"></i>
-              </a>
-            </Popover>
+            <Buttons />
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
@@ -133,14 +138,12 @@ function mapStateToProps (state) {
   return {
     groups: selectGroups(state),
     standaloneTasks: selectStandaloneTasks(state),
-    taskListGroupMode: state.taskListGroupMode,
     selectedTasks: state.selectedTasks,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    setTaskListGroupMode: (mode) => dispatch(setTaskListGroupMode(mode)),
     openNewTaskModal: () => dispatch(openNewTaskModal()),
     closeNewTaskModal: () => dispatch(closeNewTaskModal()),
     toggleSearch: () => dispatch(toggleSearch())

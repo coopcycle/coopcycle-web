@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Radio } from 'antd'
 
@@ -8,9 +9,10 @@ const radioStyle = {
   lineHeight: '30px',
 }
 
-export default ({ t, onChange, defaultValue }) => {
+export default ({ onChange, defaultValue }) => {
 
   const [ value, setValue ] = useState(defaultValue);
+  const { t } = useTranslation()
 
   return (
     <Radio.Group onChange={ e => {
