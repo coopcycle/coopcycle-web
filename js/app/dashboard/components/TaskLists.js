@@ -39,13 +39,8 @@ class TaskLists extends React.Component {
     const { addModalIsOpen, taskListsLoading } = this.props
     const { taskLists } = this.props
 
-    const classNames = ['dashboard__panel', 'dashboard__panel--assignees']
-    if (this.props.hidden) {
-      classNames.push('hidden')
-    }
-
     return (
-      <div className={ classNames.join(' ') }>
+      <div className="dashboard__panel dashboard__panel--assignees">
         <h4>
           <span>{ this.props.t('DASHBOARD_ASSIGNED') }</span>
           { taskListsLoading ?

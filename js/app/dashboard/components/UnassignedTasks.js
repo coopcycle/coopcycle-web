@@ -118,13 +118,8 @@ class UnassignedTasks extends React.Component {
 
   render() {
 
-    const classNames = ['dashboard__panel']
-    if (this.props.hidden) {
-      classNames.push('hidden')
-    }
-
     return (
-      <div className={ classNames.join(' ') }>
+      <div className="dashboard__panel">
         <h4 className="d-flex justify-content-between">
           <span>{ this.props.t('DASHBOARD_UNASSIGNED') }</span>
           <span>
