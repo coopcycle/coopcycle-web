@@ -1,20 +1,17 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { render } from 'react-dom'
 import moment from 'moment'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import { Progress, Tooltip } from 'antd'
+import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
-import TaskListPopoverContent from './TaskListPopoverContent'
 import { removeTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
 
 moment.locale($('html').attr('lang'))
-
-const TaskListPopoverContentWithTrans = withTranslation()(TaskListPopoverContent)
 
 // OPTIMIZATION
 // Avoid useless re-rendering when starting to drag
@@ -90,40 +87,6 @@ class TaskList extends React.Component {
 
   remove(task) {
     this.props.removeTasks(this.props.username, task)
-  }
-
-  onClickUnassign(e) {
-    e.preventDefault()
-
-    const $target = $(e.currentTarget)
-
-    if (!$target.data('bs.popover')) {
-
-      const { tasks } = this.props
-      const uncompletedTasks = _.filter(tasks, t => t.status === 'TODO')
-
-      const el = document.createElement('div')
-
-      const cb = () => {
-        $target.popover({
-          trigger: 'manual',
-          html: true,
-          container: 'body',
-          placement: 'left',
-          content: el
-        })
-        $target.popover('toggle')
-      }
-
-      render(<TaskListPopoverContentWithTrans
-        onClickCancel={ () => $target.popover('hide') }
-        onClickConfirm={ () => {
-          $target.popover('hide')
-          this.props.removeTasks(this.props.username, uncompletedTasks)
-        }} />, el, cb)
-    } else {
-      $target.popover('toggle')
-    }
   }
 
   render() {
@@ -205,12 +168,19 @@ class TaskList extends React.Component {
               }}>
               <i className="fa fa-bolt"></i>
             </a>
-            <a href="#"
-              className="taskList__panel-title__unassign"
-              style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
-              onClick={ e => this.onClickUnassign(e) }>
-              <i className="fa fa-close"></i>
-            </a>
+            <Popconfirm
+              placement="left"
+              title={ this.props.t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
+              onConfirm={ () => this.props.removeTasks(this.props.username, uncompletedTasks) }
+              okText={ this.props.t('CROPPIE_CONFIRM') }
+              cancelText={ this.props.t('ADMIN_DASHBOARD_CANCEL') }>
+              <a href="#"
+                className="taskList__panel-title__unassign"
+                style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
+                onClick={ e => e.preventDefault() }>
+                <i className="fa fa-close"></i>
+              </a>
+            </Popconfirm>
           </div>
         </div>
         <div role="tabpanel" id={ collabsableId } className="collapse">
