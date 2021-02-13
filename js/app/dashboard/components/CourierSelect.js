@@ -49,7 +49,13 @@ class CourierSelect extends Component {
         menuPlacement={ Object.prototype.hasOwnProperty.call(this.props, 'menuPlacement') ? this.props.menuPlacement : 'auto' }
         isDisabled={ Object.prototype.hasOwnProperty.call(this.props, 'isDisabled') ? this.props.isDisabled : false }
         maxMenuHeight={ 160 }
-        isClearable={ Object.prototype.hasOwnProperty.call(this.props, 'isClearable') ? this.props.isClearable : false } />
+        isClearable={ Object.prototype.hasOwnProperty.call(this.props, 'isClearable') ? this.props.isClearable : false }
+        // https://github.com/coopcycle/coopcycle-web/issues/774
+        // https://github.com/JedWatson/react-select/issues/3030
+        menuPortalTarget={ document.body }
+        styles={{
+          menuPortal: base => ({ ...base, zIndex: 9 })
+        }} />
     )
   }
 }
