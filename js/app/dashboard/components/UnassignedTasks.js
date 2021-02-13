@@ -4,6 +4,7 @@ import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { Draggable, Droppable } from "react-beautiful-dnd"
+import { Popover } from 'antd'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
@@ -15,36 +16,10 @@ const UnassignedTasksPopoverContentWithTrans = withTranslation()(UnassignedTasks
 
 class UnassignedTasks extends React.Component {
 
-  toggleDisplay(e) {
-    e.preventDefault()
-
-    const $target = $(e.currentTarget)
-
-    if (!$target.data('bs.popover')) {
-
-      const el = document.createElement('div')
-
-      const cb = () => {
-        $target.popover({
-          trigger: 'manual',
-          html: true,
-          container: 'body',
-          placement: 'left',
-          content: el,
-          template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>'
-        })
-        $target.popover('toggle')
-      }
-
-      render(<UnassignedTasksPopoverContentWithTrans
-        defaultValue={ this.props.taskListGroupMode }
-        onChange={ mode => {
-          this.props.setTaskListGroupMode(mode)
-          $target.popover('hide')
-        }} />, el, cb)
-
-    } else {
-      $target.popover('toggle')
+  constructor (props) {
+    super(props)
+    this.state = {
+      popoverVisible: false
     }
   }
 
@@ -80,9 +55,25 @@ class UnassignedTasks extends React.Component {
               <i className="fa fa-search"></i>
             </a>
             &nbsp;&nbsp;
-            <a href="#" onClick={ e => this.toggleDisplay(e) } title={ this.props.t('ADMIN_DASHBOARD_DISPLAY') }>
-              <i className="fa fa-list"></i>
-            </a>
+            <Popover
+              placement="leftTop"
+              arrowPointAtCenter
+              title="Notifications"
+              trigger="click"
+              content={ <UnassignedTasksPopoverContentWithTrans
+                defaultValue={ this.props.taskListGroupMode }
+                onChange={ mode => {
+                  this.props.setTaskListGroupMode(mode)
+                  this.setState({ popoverVisible: false })
+                }} />
+              }
+              visible={ this.state.popoverVisible }
+              onVisibleChange={ value => this.setState({ popoverVisible: value }) }
+            >
+              <a href="#" onClick={ e => e.preventDefault() } title={ this.props.t('ADMIN_DASHBOARD_DISPLAY') }>
+                <i className="fa fa-list"></i>
+              </a>
+            </Popover>
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
