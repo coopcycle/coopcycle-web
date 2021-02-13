@@ -357,6 +357,7 @@ html, body {
 
 .ReactModal__Content--filters {
   padding: 15px;
+  max-height: calc(100vh - 30px);
   .dashboard {
     &__modal-filters {
       &__tabpane {
