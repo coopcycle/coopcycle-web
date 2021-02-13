@@ -12,6 +12,52 @@ import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, toggleSearch } from '../redux/actions'
 import { selectGroups, selectStandaloneTasks } from '../redux/selectors'
 
+class StandaloneTasks extends React.Component {
+
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.tasks === this.props.tasks
+      && nextProps.offset === this.props.offset
+      && nextProps.selectedTasksLength === this.props.selectedTasksLength) {
+      return false
+    }
+
+    return true
+  }
+
+  render() {
+    return _.map(this.props.tasks, (task, index) => {
+
+      return (
+        <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ (this.props.offset + index) }>
+          {(provided, snapshot) => {
+
+            return (
+              <div
+                ref={ provided.innerRef }
+                { ...provided.draggableProps }
+                { ...provided.dragHandleProps }
+              >
+                <Task task={ task } />
+                { (snapshot.isDragging && this.props.selectedTasksLength > 1) && (
+                  <div className="task-dragging-number">
+                    <span>{ this.props.selectedTasksLength }</span>
+                  </div>
+                ) }
+              </div>
+            )
+          }}
+        </Draggable>
+      )
+    })
+  }
+}
+
+const StandaloneTasksWithConnect = connect(
+  (state) => ({
+    selectedTasksLength: state.selectedTasks.length,
+  })
+)(StandaloneTasks)
+
 const Buttons = connect(
   (state) => ({
     taskListGroupMode: state.taskListGroupMode,
@@ -104,29 +150,9 @@ class UnassignedTasks extends React.Component {
                     </Draggable>
                   )
                 })}
-                { _.map(this.props.standaloneTasks, (task, index) => {
-                  return (
-                    <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ (this.props.groups.length + index) }>
-                      {(provided, snapshot) => {
-
-                        return (
-                          <div
-                            ref={ provided.innerRef }
-                            { ...provided.draggableProps }
-                            { ...provided.dragHandleProps }
-                          >
-                            <Task task={ task } />
-                            { (snapshot.isDragging && this.props.selectedTasks.length > 1) && (
-                              <div style={{ position: 'absolute', top: '-10px', right: '-10px', backgroundColor: '#e67e22', color: 'white', height: '20px', width: '20px', borderRadius: '50%', textAlign: 'center' }}>
-                                <span style={{ lineHeight: '20px', fontWeight: '700' }}>{ this.props.selectedTasks.length }</span>
-                              </div>
-                            ) }
-                          </div>
-                        )
-                      }}
-                    </Draggable>
-                  )
-                })}
+                <StandaloneTasksWithConnect
+                  tasks={ this.props.standaloneTasks }
+                  offset={ this.props.groups.length } />
                 { provided.placeholder }
               </div>
             )}
@@ -142,10 +168,9 @@ function mapStateToProps (state) {
   return {
     groups: selectGroups(state),
     standaloneTasks: selectStandaloneTasks(state),
-    selectedTasks: state.selectedTasks,
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({})
+const mapDispatchToProps = () => ({})
 
 export default connect(mapStateToProps, mapDispatchToProps, null, { forwardRef: true })(withTranslation(['common'], { withRef: true })(UnassignedTasks))

@@ -40,6 +40,7 @@ import {
   SET_CLUSTERS_ENABLED,
   CLEAR_SELECTED_TASKS,
   SCAN_POSITIONS,
+  MODIFY_TASK_LIST_REQUEST_SUCCESS,
 } from './actions'
 
 import { isOffline } from './utils'
@@ -146,6 +147,7 @@ const selectedTasks = (state = [], action) => {
     return action.tasks
 
   case CLEAR_SELECTED_TASKS:
+  case MODIFY_TASK_LIST_REQUEST_SUCCESS:
 
     // OPTIMIZATION
     // Make sure the array if not already empty

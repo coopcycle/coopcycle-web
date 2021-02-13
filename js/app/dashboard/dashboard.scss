@@ -490,3 +490,19 @@ $pulse-color: #2ECC40;
 .react-phone-number-input__input {
   border: 1px solid #ccc;
 }
+
+.task-dragging-number {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: #e67e22;
+  color: white;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  text-align: center;
+  & > span {
+    line-height: 20px;
+    font-weight: 700;
+  }
+}
