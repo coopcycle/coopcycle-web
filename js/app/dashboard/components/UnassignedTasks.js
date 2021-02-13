@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 import Task from './Task'
 import TaskGroup from './TaskGroup'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
-import { setTaskListGroupMode, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
+import { setTaskListGroupMode, openNewTaskModal, toggleSearch } from '../redux/actions'
 import { selectGroups, selectStandaloneTasks } from '../redux/selectors'
 
 const Buttons = connect(
@@ -18,31 +18,47 @@ const Buttons = connect(
   }),
   (dispatch) => ({
     setTaskListGroupMode: (mode) => dispatch(setTaskListGroupMode(mode)),
+    openNewTaskModal: () => dispatch(openNewTaskModal()),
+    toggleSearch: () => dispatch(toggleSearch()),
   })
-)(({ taskListGroupMode, setTaskListGroupMode }) => {
+)(({ taskListGroupMode, setTaskListGroupMode, openNewTaskModal, toggleSearch }) => {
 
   const [ visible, setVisible ] = useState(false)
   const { t } = useTranslation()
 
   return (
-    <Popover
-      placement="leftTop"
-      arrowPointAtCenter
-      trigger="click"
-      content={ <UnassignedTasksPopoverContent
-        defaultValue={ taskListGroupMode }
-        onChange={ mode => {
-          setTaskListGroupMode(mode)
-          setVisible(false)
-        }} />
-      }
-      visible={ visible }
-      onVisibleChange={ value => setVisible(value) }
-    >
-      <a href="#" onClick={ e => e.preventDefault() } title={ t('ADMIN_DASHBOARD_DISPLAY') }>
-        <i className="fa fa-list"></i>
+    <React.Fragment>
+      <a href="#" className="mr-3" onClick={ e => {
+        e.preventDefault()
+        openNewTaskModal()
+      }}>
+        <i className="fa fa-plus"></i>
       </a>
-    </Popover>
+      <a href="#" className="mr-3" onClick={ e => {
+        e.preventDefault()
+        toggleSearch()
+      }}>
+        <i className="fa fa-search"></i>
+      </a>
+      <Popover
+        placement="leftTop"
+        arrowPointAtCenter
+        trigger="click"
+        content={ <UnassignedTasksPopoverContent
+          defaultValue={ taskListGroupMode }
+          onChange={ mode => {
+            setTaskListGroupMode(mode)
+            setVisible(false)
+          }} />
+        }
+        visible={ visible }
+        onVisibleChange={ value => setVisible(value) }
+      >
+        <a href="#" onClick={ e => e.preventDefault() } title={ t('ADMIN_DASHBOARD_DISPLAY') }>
+          <i className="fa fa-list"></i>
+        </a>
+      </Popover>
+    </React.Fragment>
   )
 })
 
@@ -66,18 +82,6 @@ class UnassignedTasks extends React.Component {
         <h4 className="d-flex justify-content-between">
           <span>{ this.props.t('DASHBOARD_UNASSIGNED') }</span>
           <span>
-            <a href="#" className="mr-2" onClick={ e => {
-              e.preventDefault()
-              this.props.openNewTaskModal()
-            }}>
-              <i className="fa fa-plus"></i>
-            </a>
-            <a href="#" className="mr-2" onClick={ e => {
-              e.preventDefault()
-              this.props.toggleSearch()
-            }}>
-              <i className="fa fa-search"></i>
-            </a>
             <Buttons />
           </span>
         </h4>
@@ -142,12 +146,6 @@ function mapStateToProps (state) {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    openNewTaskModal: () => dispatch(openNewTaskModal()),
-    closeNewTaskModal: () => dispatch(closeNewTaskModal()),
-    toggleSearch: () => dispatch(toggleSearch())
-  }
-}
+const mapDispatchToProps = (dispatch) => ({})
 
 export default connect(mapStateToProps, mapDispatchToProps, null, { forwardRef: true })(withTranslation(['common'], { withRef: true })(UnassignedTasks))
