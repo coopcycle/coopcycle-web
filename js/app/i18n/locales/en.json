@@ -222,6 +222,7 @@
         "DOWNLOAD_EXAMPLE_SPREADSHEET": "Download an example spreadsheet",
         "RESTAURANTS_AND_STORES": "Restaurants & stores",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Move {{count}} tasks to next day",
-        "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Move {{count}} tasks to next working day ({{nextWorkingDay}})"
+        "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Move {{count}} tasks to next working day ({{nextWorkingDay}})",
+        "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Display by dropoff asc."
     }
 }

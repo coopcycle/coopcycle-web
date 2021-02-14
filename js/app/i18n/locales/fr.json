@@ -220,6 +220,7 @@
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Veuillez choisir jusqu'à {{count}} valeur(s)",
         "RESTAURANTS_AND_STORES": "Restaurants et magasins",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Déplacer {{count}} tâches au prochain jour",
-        "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Déplacer {{count}} tâches au prochain jour ouvré ({{nextWorkingDay}})"
+        "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Déplacer {{count}} tâches au prochain jour ouvré ({{nextWorkingDay}})",
+        "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Afficher par dépôt croissant"
     }
 }

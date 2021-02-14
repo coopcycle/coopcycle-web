@@ -64,12 +64,15 @@ export const selectStandaloneTasks = createSelector(
     }
 
     // Order by dropoff desc, with pickup before
-    if (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC') {
+    if (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' || taskListGroupMode === 'GROUP_MODE_DROPOFF_ASC') {
 
       const dropoffTasks = filter(standaloneTasks, t => t.type === 'DROPOFF')
 
       dropoffTasks.sort((a, b) => {
-        return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
+        return moment(a.before).isBefore(b.before) ?
+          (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' ? -1 : 1)
+          :
+          (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' ? 1 : -1)
       })
 
       const grouped = reduce(dropoffTasks, (acc, task) => {
@@ -87,7 +90,7 @@ export const selectStandaloneTasks = createSelector(
       standaloneTasks = grouped
     } else {
       standaloneTasks.sort((a, b) => {
-        return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
+        return moment(a.before).isBefore(b.before) ? -1 : 1
       })
     }
 

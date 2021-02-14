@@ -22,6 +22,9 @@ export default ({ onChange, defaultValue }) => {
       <Radio style={radioStyle} value="GROUP_MODE_FOLDERS">
         { t('ADMIN_DASHBOARD_VIEW_MODE_BY_GROUP') }
       </Radio>
+      <Radio style={radioStyle} value="GROUP_MODE_DROPOFF_ASC">
+        { t('ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC') }
+      </Radio>
       <Radio style={radioStyle} value="GROUP_MODE_DROPOFF_DESC">
         { t('ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC') }
       </Radio>
