@@ -168,4 +168,4 @@ function mapStateToProps (state) {
 
 const mapDispatchToProps = () => ({})
 
-export default connect(mapStateToProps, mapDispatchToProps, null, { forwardRef: true })(withTranslation(['common'], { withRef: true })(UnassignedTasks))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(UnassignedTasks))
