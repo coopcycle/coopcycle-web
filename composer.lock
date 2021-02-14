@@ -4513,16 +4513,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.16",
+            "version": "8.12.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "d3d4ed9466249747249f3032717c4aebaaa8363e"
+                "reference": "2d50e0aea1f70508b39a3d22c62d24d66d532ed2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/d3d4ed9466249747249f3032717c4aebaaa8363e",
-                "reference": "d3d4ed9466249747249f3032717c4aebaaa8363e",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/2d50e0aea1f70508b39a3d22c62d24d66d532ed2",
+                "reference": "2d50e0aea1f70508b39a3d22c62d24d66d532ed2",
                 "shasum": ""
             },
             "require": {
@@ -4582,7 +4582,7 @@
                 "issues": "https://github.com/giggsey/libphonenumber-for-php/issues",
                 "source": "https://github.com/giggsey/libphonenumber-for-php"
             },
-            "time": "2021-01-12T14:54:36+00:00"
+            "time": "2021-02-08T10:31:32+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -9343,16 +9343,16 @@
         },
         {
             "name": "odolbeau/phone-number-bundle",
-            "version": "v3.3.0",
+            "version": "v3.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/odolbeau/phone-number-bundle.git",
-                "reference": "6798fabc7a68ad4033523342fdd153c39b893831"
+                "reference": "34f9eabcec4f159decdf30f6f10eada4d9b27326"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/odolbeau/phone-number-bundle/zipball/6798fabc7a68ad4033523342fdd153c39b893831",
-                "reference": "6798fabc7a68ad4033523342fdd153c39b893831",
+                "url": "https://api.github.com/repos/odolbeau/phone-number-bundle/zipball/34f9eabcec4f159decdf30f6f10eada4d9b27326",
+                "reference": "34f9eabcec4f159decdf30f6f10eada4d9b27326",
                 "shasum": ""
             },
             "require": {
@@ -9367,6 +9367,7 @@
                 "doctrine/doctrine-bundle": "^1.12|^2.0",
                 "phpunit/phpunit": "^8.4",
                 "symfony/form": "^3.4|^4.3|^5.0",
+                "symfony/property-access": "^3.4|^4.3|^5.0",
                 "symfony/serializer": "^3.4|^4.3|^5.0",
                 "symfony/twig-bundle": "^3.4|^4.3|^5.0",
                 "symfony/validator": "^3.4|^4.3|^5.0"
@@ -9374,6 +9375,7 @@
             "suggest": {
                 "doctrine/doctrine-bundle": "Add a DBAL mapping type",
                 "symfony/form": "Add a data transformer",
+                "symfony/property-access": "Choose a path in the validation constraint",
                 "symfony/serializer": "Serialize/deserialize phone numbers using Symfony library",
                 "symfony/twig-bundle": "Format phone numbers in Twig templates",
                 "symfony/validator": "Add a validation constraint"
@@ -9404,9 +9406,9 @@
             ],
             "support": {
                 "issues": "https://github.com/odolbeau/phone-number-bundle/issues",
-                "source": "https://github.com/odolbeau/phone-number-bundle/tree/v3.3.0"
+                "source": "https://github.com/odolbeau/phone-number-bundle/tree/v3.3.3"
             },
-            "time": "2021-01-05T10:41:55+00:00"
+            "time": "2021-02-04T14:29:07+00:00"
         },
         {
             "name": "omnipay/common",
@@ -17220,16 +17222,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.16.1",
+            "version": "6.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "28c5dd21e95a5fe5221965ec89863a485c625d43"
+                "reference": "b77446cc36b813122ea888d455f015b2f3ff8ba1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/28c5dd21e95a5fe5221965ec89863a485c625d43",
-                "reference": "28c5dd21e95a5fe5221965ec89863a485c625d43",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/b77446cc36b813122ea888d455f015b2f3ff8ba1",
+                "reference": "b77446cc36b813122ea888d455f015b2f3ff8ba1",
                 "shasum": ""
             },
             "require": {
@@ -17268,9 +17270,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twilio/twilio-php/issues",
-                "source": "https://github.com/twilio/twilio-php/tree/6.16.1"
+                "source": "https://github.com/twilio/twilio-php/tree/6.17.0"
             },
-            "time": "2021-01-27T20:57:17+00:00"
+            "time": "2021-02-10T23:29:54+00:00"
         },
         {
             "name": "vich/uploader-bundle",
@@ -19151,16 +19153,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.74",
+            "version": "0.12.76",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "bc5f9483c8f461c86653dcbd040cf0d2778c91a2"
+                "reference": "7aaaf9a759a29795e8f46d48041af1c1f1b23d38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/bc5f9483c8f461c86653dcbd040cf0d2778c91a2",
-                "reference": "bc5f9483c8f461c86653dcbd040cf0d2778c91a2",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7aaaf9a759a29795e8f46d48041af1c1f1b23d38",
+                "reference": "7aaaf9a759a29795e8f46d48041af1c1f1b23d38",
                 "shasum": ""
             },
             "require": {
@@ -19191,7 +19193,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.74"
+                "source": "https://github.com/phpstan/phpstan/tree/0.12.76"
             },
             "funding": [
                 {
@@ -19207,20 +19209,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-02-08T15:00:25+00:00"
+            "time": "2021-02-13T11:47:44+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
-            "version": "0.12.16",
+            "version": "0.12.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-symfony.git",
-                "reference": "c50afb8f4e27d4ab3b47ac370838aefac3c15e9e"
+                "reference": "cc9d9ac264b8ac04961a03dc5b481b58ceaac248"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/c50afb8f4e27d4ab3b47ac370838aefac3c15e9e",
-                "reference": "c50afb8f4e27d4ab3b47ac370838aefac3c15e9e",
+                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/cc9d9ac264b8ac04961a03dc5b481b58ceaac248",
+                "reference": "cc9d9ac264b8ac04961a03dc5b481b58ceaac248",
                 "shasum": ""
             },
             "require": {
@@ -19237,6 +19239,7 @@
                 "phpstan/phpstan-phpunit": "^0.12.16",
                 "phpstan/phpstan-strict-rules": "^0.12.5",
                 "phpunit/phpunit": "^7.5.20",
+                "symfony/config": "^4.2",
                 "symfony/console": "^4.0",
                 "symfony/framework-bundle": "^4.0",
                 "symfony/http-foundation": "^4.0",
@@ -19274,9 +19277,9 @@
             "description": "Symfony Framework extensions and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-symfony/issues",
-                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.16"
+                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.18"
             },
-            "time": "2021-01-25T12:30:55+00:00"
+            "time": "2021-02-13T07:38:10+00:00"
         },
         {
             "name": "phpstan/phpstan-webmozart-assert",
