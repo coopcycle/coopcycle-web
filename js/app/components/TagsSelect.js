@@ -79,7 +79,13 @@ export default (props) => {
       defaultValue={ _.map(defaultValueAsTags, tagAsOption) }
       isMulti
       options={ _.map(tags, tagAsOption) }
-      styles={ styles }
+      // https://github.com/coopcycle/coopcycle-web/issues/774
+      // https://github.com/JedWatson/react-select/issues/3030
+      menuPortalTarget={ document.body }
+      styles={{
+        ...styles,
+        menuPortal: base => ({ ...base, zIndex: 9 })
+      }}
       placeholder={ i18n.t('TAGS_SELECT_PLACEHOLDER') }
       { ...rest } />
   )
