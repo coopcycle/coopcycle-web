@@ -45,7 +45,7 @@
         "doctrine/doctrine-migrations-bundle": "^2.0",
         "guzzlehttp/guzzle": "~6.0",
         "csa/guzzle-bundle": "^3.0",
-        "myclabs/php-enum": "^1.7",
+        "myclabs/php-enum": "^1.8",
         "beberlei/doctrineextensions": "^1.0",
         "sentry/sentry-symfony": "^3.0",
         "ramsey/uuid-doctrine": "^1.6",
