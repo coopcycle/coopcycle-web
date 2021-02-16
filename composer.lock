@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e40055caf38f7afc939df82c491e479b",
+    "content-hash": "b0e238c1463a5846c6f60bd2afdc0a6d",
     "packages": [
         {
             "name": "api-platform/core",
@@ -272,12 +272,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Aws\\": "src/"
-                },
                 "files": [
                     "src/functions.php"
-                ]
+                ],
+                "psr-4": {
+                    "Aws\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -4378,12 +4378,12 @@
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "Google\\Service\\": "src"
-                },
                 "files": [
                     "autoload.php"
-                ]
+                ],
+                "psr-4": {
+                    "Google\\Service\\": "src"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6429,6 +6429,7 @@
                 "issues": "https://github.com/KnpLabs/KnpMarkdownBundle/issues",
                 "source": "https://github.com/KnpLabs/KnpMarkdownBundle/tree/1.10.0"
             },
+            "abandoned": "twig/markdown-extra",
             "time": "2022-01-26T18:46:39+00:00"
         },
         {
@@ -12573,6 +12574,45 @@
             "time": "2022-01-10T08:56:54+00:00"
         },
         {
+            "name": "shahonseven/php-color-hash",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alexsegura/php-color-hash.git",
+                "reference": "ec790f780c07cc33c914d1dc57b64ecee20da7af"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alexsegura/php-color-hash/zipball/ec790f780c07cc33c914d1dc57b64ecee20da7af",
+                "reference": "ec790f780c07cc33c914d1dc57b64ecee20da7af",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Shahonseven": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shahril Abdullah",
+                    "email": "shahonseven@gmail.com"
+                }
+            ],
+            "description": "Generate color based on the given string. Backported from the Javascript library color-hash",
+            "support": {
+                "source": "https://github.com/alexsegura/php-color-hash/tree/master"
+            },
+            "time": "2022-02-07T12:03:26+00:00"
+        },
+        {
             "name": "simple-bus/message-bus",
             "version": "v6.2.2",
             "source": {
@@ -15546,8 +15586,8 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Sylius\\Bundle\\ResourceBundle\\": "src/Bundle/",
-                    "Sylius\\Component\\Resource\\": "src/Component/"
+                    "Sylius\\Component\\Resource\\": "src/Component/",
+                    "Sylius\\Bundle\\ResourceBundle\\": "src/Bundle/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -17569,17 +17609,17 @@
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "Symfony\\Bridge\\Doctrine\\": "src/Symfony/Bridge/Doctrine/",
-                    "Symfony\\Bridge\\Monolog\\": "src/Symfony/Bridge/Monolog/",
-                    "Symfony\\Bridge\\ProxyManager\\": "src/Symfony/Bridge/ProxyManager/",
-                    "Symfony\\Bridge\\Twig\\": "src/Symfony/Bridge/Twig/",
-                    "Symfony\\Bundle\\": "src/Symfony/Bundle/",
-                    "Symfony\\Component\\": "src/Symfony/Component/"
-                },
                 "files": [
                     "src/Symfony/Component/String/Resources/functions.php"
                 ],
+                "psr-4": {
+                    "Symfony\\Bundle\\": "src/Symfony/Bundle/",
+                    "Symfony\\Component\\": "src/Symfony/Component/",
+                    "Symfony\\Bridge\\Twig\\": "src/Symfony/Bridge/Twig/",
+                    "Symfony\\Bridge\\Monolog\\": "src/Symfony/Bridge/Monolog/",
+                    "Symfony\\Bridge\\Doctrine\\": "src/Symfony/Bridge/Doctrine/",
+                    "Symfony\\Bridge\\ProxyManager\\": "src/Symfony/Bridge/ProxyManager/"
+                },
                 "classmap": [
                     "src/Symfony/Component/Intl/Resources/stubs"
                 ],
@@ -21721,7 +21761,8 @@
         "league/geotools": 0,
         "drupal/core-vendor-hardening": 20,
         "nucleos/user-bundle": 20,
-        "nucleos/profile-bundle": 20
+        "nucleos/profile-bundle": 20,
+        "shahonseven/php-color-hash": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

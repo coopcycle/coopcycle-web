@@ -156,3 +156,9 @@ services:
   AppBundle\Command\AnonymizeCommand:
     tags:
       - { name: 'console.command', command: 'coopcycle:anonymize' }
+
+  AppBundle\Command\RegenerateAvatarsCommand:
+    arguments:
+      $avatarDir: '%avatar_dir%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:avatars:regenerate' }
