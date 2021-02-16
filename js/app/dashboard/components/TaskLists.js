@@ -38,7 +38,13 @@ class TaskLists extends React.Component {
           style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
           {
             _.map(taskLists, (taskList, index) => {
+
+              if (this.props.hiddenCouriers.includes(taskList.username)) {
+                return null
+              }
+
               let collapsed = !(index === 0)
+
               return (
                 <TaskList
                   key={ taskList['@id'] }
@@ -62,6 +68,7 @@ function mapStateToProps (state) {
   return {
     taskLists: selectTaskLists(state),
     taskListsLoading: state.dispatch.taskListsLoading,
+    hiddenCouriers: state.filters.hiddenCouriers,
   }
 }
 
