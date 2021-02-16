@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "575460f558d85abf955e95af7b65c621",
+    "content-hash": "b01d49511d837f8f2aa08e701f2eb307",
     "packages": [
         {
             "name": "api-platform/core",
@@ -12348,6 +12348,46 @@
                 }
             ],
             "time": "2020-10-13T07:37:17+00:00"
+        },
+        {
+            "name": "shahonseven/php-color-hash",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shahonseven/php-color-hash.git",
+                "reference": "01f42d4aacd8527a9d9266daf6c61b024b95be2c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shahonseven/php-color-hash/zipball/01f42d4aacd8527a9d9266daf6c61b024b95be2c",
+                "reference": "01f42d4aacd8527a9d9266daf6c61b024b95be2c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Shahonseven": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shahril Abdullah",
+                    "email": "shahonseven@gmail.com"
+                }
+            ],
+            "description": "Generate color based on the given string. Backported from the Javascript library color-hash",
+            "support": {
+                "issues": "https://github.com/shahonseven/php-color-hash/issues",
+                "source": "https://github.com/shahonseven/php-color-hash/tree/master"
+            },
+            "time": "2019-01-22T01:07:49+00:00"
         },
         {
             "name": "simple-bus/message-bus",

@@ -5,6 +5,8 @@ import 'leaflet.markercluster'
 import 'leaflet-area-select'
 import React from 'react'
 import { render } from 'react-dom'
+import ColorHash from 'color-hash'
+
 import MapHelper from '../../MapHelper'
 import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
@@ -22,11 +24,10 @@ const taskColor = task => {
   }
 
   if (task.tags.length > 0) {
-    const tag = _.first(task.tags)
-    return tag.color
+    return tagsColor(task.tags)
   }
 
-  return '#777'
+  return task.isAssigned ? colorHash.hex(task.assignedTo) : '#777'
 }
 
 const taskIcon = task => {
@@ -68,6 +69,8 @@ const createIcon = username => {
     popupAnchor: [-2, -72], // point from which the popup should open relative to the iconAnchor,
   })
 }
+
+const colorHash = new ColorHash()
 
 export default class MapProxy {
 
@@ -282,7 +285,12 @@ export default class MapProxy {
     const layerGroup = this.getPolylineAsTheCrowFliesLayerGroup(username)
     layerGroup.clearLayers()
 
-    const layer = L.polyline(polyline, polylineOptions)
+    const color = colorHash.hex(username)
+
+    const layer = L.polyline(polyline, {
+      ...polylineOptions,
+      color,
+    })
 
     // Add arrows to polyline
     const decorator = L.polylineDecorator(layer, {
@@ -295,7 +303,7 @@ export default class MapProxy {
             polygon: false,
             pathOptions: {
               stroke: true,
-              color: '#3498DB',
+              color,
               opacity: 0.7
             }
           })
@@ -312,7 +320,12 @@ export default class MapProxy {
     const layerGroup = this.getPolylineLayerGroup(username)
     layerGroup.clearLayers()
 
-    const layer = L.polyline(MapHelper.decodePolyline(polyline), polylineOptions)
+    const color = colorHash.hex(username)
+
+    const layer = L.polyline(MapHelper.decodePolyline(polyline), {
+      ...polylineOptions,
+      color,
+    })
 
     // Add arrows to polyline
     const decorator = L.polylineDecorator(layer, {
@@ -325,7 +338,7 @@ export default class MapProxy {
             polygon: false,
             pathOptions: {
               stroke: true,
-              color: '#3498DB',
+              color,
               opacity: 0.7
             }
           })

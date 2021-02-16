@@ -15,6 +15,7 @@ use FOS\UserBundle\Mailer\MailerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\UserManipulator;
 use Laravolt\Avatar\Avatar;
+use Shahonseven\ColorHash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,24 +29,6 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class UserController extends AbstractController
 {
-    private $avatarBackgrounds = [
-        '#f44336',
-        '#E91E63',
-        '#9C27B0',
-        '#673AB7',
-        '#3F51B5',
-        '#2196F3',
-        '#03A9F4',
-        '#00BCD4',
-        '#009688',
-        '#4CAF50',
-        '#8BC34A',
-        '#CDDC39',
-        '#FFC107',
-        '#FF9800',
-        '#FF5722',
-    ];
-
     private function createSuggestions(UserManagerInterface $userManager, SlugifyInterface $slugify, $email, $index = 0)
     {
         if (empty($email)) {
@@ -132,13 +115,16 @@ class UserController extends AbstractController
         if (!file_exists($dir)) {
             mkdir($dir, 0755);
         }
+
+        $colorHash = new ColorHash();
+
         $avatar = new Avatar([
             'uppercase' => true,
-            'backgrounds' => $this->avatarBackgrounds
         ]);
 
         $avatar
             ->create($username)
+            ->setBackground($colorHash->hex($username))
             ->save($dir . "${username}.png");
 
         list($type, $data) = explode(';', (string) $avatar->toBase64());

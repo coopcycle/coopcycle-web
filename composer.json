@@ -116,7 +116,8 @@
         "doctrine/cache": "^1.10",
         "spatie/opening-hours": "^2.10",
         "centrifugal/phpcent": "~3.0",
-        "twig/string-extra": "^3.1"
+        "twig/string-extra": "^3.1",
+        "shahonseven/php-color-hash": "^1.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
