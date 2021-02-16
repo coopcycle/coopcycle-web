@@ -5,33 +5,19 @@ import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
 
 import { createTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, closeNewTaskModal, setCurrentTask } from '../redux/actions'
-import CourierSelect from './CourierSelect'
 import TaskList from './TaskList'
+import AddUserModalContent from './AddUserModalContent'
 
 import { selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
 import { selectTaskLists } from '../redux/selectors'
 
 class TaskLists extends React.Component {
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      selectedCourier: '',
-    }
-
-    this.addUser = this.addUser.bind(this)
-  }
-
   componentDidMount() {
     // Hide other collapsibles when a collapsible is going to be shown
     $('#accordion').on('show.bs.collapse', '.collapse', () => {
       $('#accordion').find('.collapse.in').collapse('hide')
     })
-  }
-
-  addUser() {
-    this.props.createTaskList(this.props.date, this.state.selectedCourier)
-    this.props.closeAddUserModal()
   }
 
   render() {
@@ -54,26 +40,12 @@ class TaskLists extends React.Component {
           appElement={document.getElementById('dashboard')}
           isOpen={addModalIsOpen}
           className="ReactModal__Content--select-courier">
-          <div className="modal-header">
-            <button type="button" className="close" onClick={this.props.closeAddUserModal} aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 className="modal-title" id="user-modal-label">{this.props.t('ADMIN_DASHBOARD_ADDUSER_TO_PLANNING')}</h4>
-          </div>
-          <div className="modal-body">
-            <form method="post" >
-              <div className="form-group" data-action="dispatch">
-                <label htmlFor="courier" className="control-label">
-                  { this.props.t('ADMIN_DASHBOARD_COURIER') }
-                </label>
-                <CourierSelect
-                  onChange={ courier => this.setState({ selectedCourier: courier.username }) }
-                  exclude />
-              </div>
-            </form>
-          </div>
-          <div className="modal-footer">
-            <button type="button" className="btn btn-default" onClick={ this.props.closeAddUserModal }>{this.props.t('ADMIN_DASHBOARD_CANCEL')}</button>
-            <button type="submit" className="btn btn-primary" onClick={ (e) => this.addUser(e) }>{ this.props.t('ADMIN_DASHBOARD_ADD') }</button>
-          </div>
+          <AddUserModalContent
+            onClickClose={ this.props.closeAddUserModal }
+            onClickSubmit={ username => {
+              this.props.createTaskList(this.props.date, username)
+              this.props.closeAddUserModal()
+            }} />
         </Modal>
         <div
           id="accordion"
