@@ -125,7 +125,7 @@ class FiltersModalContent extends React.Component {
                   </div>
                 </div>
                 <div role="tabpanel" className="tab-pane" id="filters_couriers">
-                  <div className="dashboard__modal-filters__tabpane">
+                  <div className="dashboard__modal-filters__tabpane my-4">
                     { this.props.couriers.map(username => (
                       <div className="dashboard__modal-filters__courier" key={ username }>
                         <span>
@@ -149,7 +149,7 @@ class FiltersModalContent extends React.Component {
                   </div>
                 </div>
                 <div role="tabpanel" className="tab-pane" id="filters_timerange">
-                  <div className="dashboard__modal-filters__tabpane">
+                  <div className="dashboard__modal-filters__tabpane mx-4">
                     <Slider range
                       marks={ timeSteps }
                       defaultValue={ values.timeRange }
