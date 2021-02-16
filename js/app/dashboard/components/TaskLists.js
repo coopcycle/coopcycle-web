@@ -1,14 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import Modal from 'react-modal'
 import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
 
-import { createTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, closeNewTaskModal, setCurrentTask } from '../redux/actions'
+import { openAddUserModal } from '../redux/actions'
 import TaskList from './TaskList'
-import AddUserModalContent from './AddUserModalContent'
 
-import { selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
 import { selectTaskLists } from '../redux/selectors'
 
 class TaskLists extends React.Component {
@@ -22,8 +19,7 @@ class TaskLists extends React.Component {
 
   render() {
 
-    const { addModalIsOpen, taskListsLoading } = this.props
-    const { taskLists } = this.props
+    const { taskLists, taskListsLoading } = this.props
 
     return (
       <div className="dashboard__panel dashboard__panel--assignees">
@@ -36,17 +32,6 @@ class TaskLists extends React.Component {
             </a>)
           }
         </h4>
-        <Modal
-          appElement={document.getElementById('dashboard')}
-          isOpen={addModalIsOpen}
-          className="ReactModal__Content--select-courier">
-          <AddUserModalContent
-            onClickClose={ this.props.closeAddUserModal }
-            onClickSubmit={ username => {
-              this.props.createTaskList(this.props.date, username)
-              this.props.closeAddUserModal()
-            }} />
-        </Modal>
         <div
           id="accordion"
           className="dashboard__panel__scroll"
@@ -75,9 +60,7 @@ class TaskLists extends React.Component {
 function mapStateToProps (state) {
 
   return {
-    addModalIsOpen: state.addModalIsOpen,
     taskLists: selectTaskLists(state),
-    date: selectSelectedDate(state),
     taskListsLoading: state.dispatch.taskListsLoading,
   }
 }
@@ -85,12 +68,7 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
 
   return {
-    createTaskList: (date, username) => dispatch(createTaskList(date, username)),
-    openAddUserModal: () => { dispatch(openAddUserModal()) },
-    closeAddUserModal: () => { dispatch(closeAddUserModal()) },
-    openNewTaskModal: () => dispatch(openNewTaskModal()),
-    closeNewTaskModal: () => dispatch(closeNewTaskModal()),
-    setCurrentTask: (task) => dispatch(setCurrentTask(task)),
+    openAddUserModal: () => dispatch(openAddUserModal()),
   }
 }
 
