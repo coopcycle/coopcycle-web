@@ -131,7 +131,11 @@ class ImportStripeFeeCommand extends Command
 
             if (!$lastCompletedPayment) {
                 $lastPayment = $order->getLastPayment();
-                $this->io->text(sprintf('Last payment is in state %s, skipping…', $lastPayment->getState()));
+                if ($lastPayment) {
+                    $this->io->text(sprintf('Last payment is in state %s, skipping…', $lastPayment->getState()));
+                } else {
+                    $this->io->text('Order has no payment associated, skipping…');
+                }
                 continue;
             }
 
