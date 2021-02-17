@@ -52,11 +52,11 @@
     <th></th>
   </thead>
   <tbody>
-    {% for order in stats %}
+    {% for order in stats.getPaginator(app.request.query.get('page', 1)) %}
       <tr class="{{ ('#' ~ order.id) in refunded_orders_hash|keys ? 'text-danger' : '' }}">
         {% for column in stats.columns %}
         <td class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
-          {{ stats.getRowValue(column, loop.parent.loop.index0) }}
+          {{ stats.getRowValueForPage(column, loop.parent.loop.index0, app.request.query.get('page', 1)) }}
         </td>
         {% endfor %}
         <td class="text-right">
@@ -92,10 +92,11 @@
   </tfoot>
 </table>
 <nav class="text-center">
+  {% set pages = stats.getPages() %}
   {% if pages > 1 %}
   <ul class="pagination pagination-sm">
       {% for i in 1..pages %}
-      <li {{ page == i ? 'class="active"' }}>
+      <li {{ app.request.query.get('page', 1) == i ? 'class="active"' }}>
         <a href="{{ path(app.request.attributes.get('_route'), { id: restaurant.id }|merge(app.request.query.all|merge({ page: i }))) }}">{{ i }}</a>
       </li>
       {% endfor %}
