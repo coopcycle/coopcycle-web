@@ -1227,8 +1227,6 @@ trait RestaurantTrait
         $end->setDate($date->format('Y'), $date->format('m'), $date->format('t'));
         $end->setTime(23, 59, 59);
 
-        $maxResults = 50;
-
         $qb = $entityManager->getRepository(OrderView::class)
             ->createQueryBuilder('ov');
 
@@ -1236,9 +1234,6 @@ trait RestaurantTrait
         $qb->andWhere('ov.restaurant = :restaurant');
         $qb->setParameter('restaurant', $restaurant->getId());
         $qb->addOrderBy('ov.shippingTimeRange', 'DESC');
-        $qb
-            ->setFirstResult(($request->query->getInt('page', 1) - 1) * $maxResults)
-            ->setMaxResults($maxResults);
 
         $refundedOrders = $entityManager->getRepository(Order::class)
             ->findRefundedOrdersByRestaurantAndDateRange(
@@ -1279,8 +1274,6 @@ trait RestaurantTrait
             'start' => $start,
             'end' => $end,
             'tab' => $tab,
-            'page' => $request->query->getInt('page', 1),
-            'pages' => ceil(count($stats) / $maxResults),
         ]));
     }
 

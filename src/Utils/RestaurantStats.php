@@ -18,7 +18,7 @@ use League\Csv\Writer as CsvWriter;
 use Sylius\Component\Order\Model\Adjustment;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class RestaurantStats implements \IteratorAggregate, \Countable
+class RestaurantStats implements \Countable
 {
     private $qb;
     private $result;
@@ -36,6 +36,8 @@ class RestaurantStats implements \IteratorAggregate, \Countable
     private $orderTotalResult;
     private $adjustmentTotalResult;
 
+    const MAX_RESULTS = 50;
+
     public function __construct(
         string $locale,
         QueryBuilder $qb,
@@ -44,11 +46,12 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         bool $withVendorName = false,
         bool $withMessenger = false)
     {
+        if (null !== $qb->getFirstResult() || null !== $qb->getMaxResults()) {
+            throw new \Exception('The "$qb" parameter should not have setFirstResult / setMaxResults.');
+        }
+
         $this->qb = $qb;
         $this->result = $qb->getQuery()->getResult();
-
-        $this->orders = new Paginator($qb->getQuery());
-        $this->ordersIterator = $this->orders->getIterator();
 
         $this->translator = $translator;
         $this->withVendorName = $withVendorName;
@@ -68,6 +71,23 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         if ($withMessenger) {
             $this->loadMessengers();
         }
+    }
+
+    public function getPaginator(int $page = 1)
+    {
+        $firstResult = ($page - 1) * self::MAX_RESULTS;
+
+        $qbWithPagination = clone $this->qb;
+        $qbWithPagination
+            ->setFirstResult($firstResult)
+            ->setMaxResults(self::MAX_RESULTS);
+
+        return new Paginator($qbWithPagination->getQuery());
+    }
+
+    public function getPages(): int
+    {
+        return ceil(count($this->result) / self::MAX_RESULTS);
     }
 
     private function addAdjustments()
@@ -214,12 +234,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function count()
     {
-        return count($this->orders);
-    }
-
-    public function getIterator()
-    {
-        return $this->ordersIterator;
+        return count($this->result);
     }
 
     public function getColumns()
@@ -263,7 +278,7 @@ class RestaurantStats implements \IteratorAggregate, \Countable
 
     public function getRowValue($column, $index, $formatted = true)
     {
-        $order = $this->ordersIterator->offsetGet($index);
+        $order = $this->result[$index];
 
         if ($this->isTaxColumn($column)) {
 
@@ -304,6 +319,13 @@ class RestaurantStats implements \IteratorAggregate, \Countable
         }
 
         return '';
+    }
+
+    public function getRowValueForPage($column, $index, $page = 1, $formatted = true)
+    {
+        $offset = ($page - 1) * self::MAX_RESULTS;
+
+        return $this->getRowValue($column, ($offset + $index), $formatted);
     }
 
     public function getColumnTotal($column)
