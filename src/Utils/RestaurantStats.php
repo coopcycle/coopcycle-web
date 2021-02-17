@@ -87,7 +87,7 @@ class RestaurantStats implements \Countable
 
     public function getPages(): int
     {
-        return ceil(count($this->result) / self::MAX_RESULTS);
+        return intval(ceil(count($this->result) / self::MAX_RESULTS));
     }
 
     private function addAdjustments()
