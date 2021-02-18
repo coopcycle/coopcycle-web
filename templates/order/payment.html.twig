@@ -71,30 +71,11 @@
 
             {{ form_widget(form.stripePayment.stripeToken) }}
 
-            {{ form_row(form.stripePayment.cardholderName, { attr: {  'data-checkout': 'cardholderName' } }) }}
-
-            <div class="form-group">
-              <label class="control-label hidden" for="card-element">
-                {% trans %}order.payment.title{% endtrans %}
-              </label>
-              <div id="card-element">
-                <!-- a Stripe Element will be inserted here. -->
-              </div>
-              {% if country_iso == 'fr' %}
-              <span class="help-block mt-3">
-                <i class="fa fa-info-circle mr-2"></i>
-                <span>Nous n'acceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique.</span>
-              </span>
-              {% endif %}
-              {# <div id="payment-method-picker"></div> #}
-              <!-- Used to display form errors -->
+            <div id="card-element">
+              <!-- a React element will be inserted here. -->
             </div>
 
             <div id="card-errors" role="alert" class="text-danger"></div>
-
-            <div class="text-center hidden mt-3" id="payment-redirect-help">
-              <span class="help-block">{{ 'order.payment.redirect.help'|trans }}</span>
-            </div>
 
           </div>
         </div>
@@ -163,8 +144,7 @@
     card: "{{ gateway }}",
     amount: {{ order.total }},
     gatewayConfigs: {{ gateway_configs|json_encode|raw }},
-    tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
-    cardholderNameElement: document.querySelector('#checkout_payment_stripePayment_cardholderName')
+    tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken')
   });
 </script>
 {% endif %}

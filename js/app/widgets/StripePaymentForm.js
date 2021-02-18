@@ -95,7 +95,6 @@ export default function(form, options) {
         document.getElementById('card-errors').textContent = ''
       }
     },
-    cardholderNameElement: options.cardholderNameElement,
   })
 
   cc.init(form)
@@ -133,14 +132,15 @@ export default function(form, options) {
 
   const onSelect = value => {
     form.querySelector(`input[name="checkout_payment[method]"][value="${value}"]`).checked = true
-    if (value === 'card') {
-      cc.mount(document.getElementById('card-element')).then(() => enableBtn(submitButton))
-      document.getElementById('payment-redirect-help').classList.add('hidden')
-    } else {
-      cc.unmount()
-      document.getElementById('card-errors').textContent = ''
-      document.getElementById('payment-redirect-help').classList.remove('hidden')
-      enableBtn(submitButton)
+    switch (value) {
+      case 'card':
+      case 'giropay':
+        cc.mount(document.getElementById('card-element'), value).then(() => enableBtn(submitButton))
+        break
+      default:
+        cc.unmount()
+        document.getElementById('card-errors').textContent = ''
+        enableBtn(submitButton)
     }
   }
 

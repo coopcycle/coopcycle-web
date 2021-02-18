@@ -221,6 +221,9 @@
         "RESTAURANTS_AND_STORES": "Restaurants et magasins",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Déplacer {{count}} tâches au prochain jour",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Déplacer {{count}} tâches au prochain jour ouvré ({{nextWorkingDay}})",
-        "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Afficher par dépôt croissant"
+        "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Afficher par dépôt croissant",
+        "PAYMENT_FORM_REDIRECT_HELP": "Vous serez redirigé·e vers le site Internet de votre banque pour compléter la transaction",
+        "PAYMENT_FORM_CARDHOLDER_NAME": "Nom du titulaire de la carte",
+        "PAYMENT_FORM_TITLE": "Vos informations de paiement"
     }
 }

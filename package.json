@@ -49,6 +49,8 @@
     "@babel/preset-react": "^7.12.13",
     "@babel/register": "^7.12.13",
     "@release-notes/changelog-parser": "^0.1.2",
+    "@stripe/react-stripe-js": "^1.2.2",
+    "@stripe/stripe-js": "^1.12.1",
     "@symfony/webpack-encore": "^0.33.0",
     "algoliasearch": "^4.8.5",
     "antd": "^3.26.20",

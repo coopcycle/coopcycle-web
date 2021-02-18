@@ -27,7 +27,6 @@
     {# If the price can't be calculated, do not show payment field #}
     {% if form.stripePayment is defined %}
       <div class="hidden">
-        {{ form_widget(form.stripePayment.cardholderName, { required: false }) }}
         {{ form_widget(form.stripePayment.stripeToken) }}
       </div>
     {% endif %}

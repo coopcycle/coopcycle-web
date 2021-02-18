@@ -219,6 +219,9 @@
         "ADMIN_DASHBOARD_FILTERS_NONTAGGED_TASKS": "Tasques no etiquetades",
         "ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS": "Tasques cancel·lades",
         "ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS": "Tasques acabades",
-        "ADMIN_DASHBOARD_ORDERS_TAKEAWAY_ALERT": "Aquesta comanda serà recollida pel client"
+        "ADMIN_DASHBOARD_ORDERS_TAKEAWAY_ALERT": "Aquesta comanda serà recollida pel client",
+        "PAYMENT_FORM_REDIRECT_HELP": "Serà redirigit a l'entitat bancària per a completar el seu pagament",
+        "PAYMENT_FORM_CARDHOLDER_NAME": "Nom del titular de la targeta",
+        "PAYMENT_FORM_TITLE": "Informació del teu pagament"
     }
 }

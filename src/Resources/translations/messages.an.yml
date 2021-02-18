@@ -320,8 +320,6 @@ order.delivery_time: 'Entrega %time%'
 order.payment.card_number.help: 'Hemos introduciu un <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">numero de tarcheta de preba</a> . No s''efectuará
   garra cargo en cuenta.'
-order.payment.redirect.help: 'Será reendrezau a la entidat bancaria pa completar lo
-  suyo pago'
 order.payment.waiting_for_confirmation: 'Aguardando la confirmación d''o suyo banco…'
 order.payment.do_not_close: 'No zarre esta pachina'
 order.payment.waiting_success: 'Lo suyo banco ha confirmau lo pago'
@@ -735,7 +733,6 @@ form.package_set.name.label: 'Nombre'
 form.package_set.packages.label: 'Paquetz'
 form.package.name.label: 'Nombre'
 form.package.volume_units.label: 'Unidatz de volumen'
-form.stripe_payment.cardholder_name.label: 'Nombre d''o titular d''a tarcheta'
 form.reusable_packaging.name.label: 'Nombre'
 form.reusable_packaging.is_tracked.label: 'Seguimiento habilitau'
 form.reusable_packaging.price.label: 'Pre'

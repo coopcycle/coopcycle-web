@@ -17,10 +17,6 @@ class StripePaymentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('cardholderName', TextType::class, [
-                'mapped' => false,
-                'label' => 'form.stripe_payment.cardholder_name.label'
-            ])
             ->add('stripeToken', HiddenType::class, [
                 'mapped' => false,
             ]);

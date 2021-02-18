@@ -315,8 +315,6 @@ order.delivery_time: Delivery %time%
 order.payment.card_number.help: A stripe <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will
   be debited.
-order.payment.redirect.help: You will be redirected to the banking site to complete
-  your payment
 order.payment.waiting_for_confirmation: Waiting for the confirmation of your bank…
 order.payment.do_not_close: Do not close this page
 order.payment.waiting_success: Your bank has confirmed the payment
@@ -727,7 +725,6 @@ form.package_set.name.label: Name
 form.package_set.packages.label: Packages
 form.package.name.label: Name
 form.package.volume_units.label: Volume units
-form.stripe_payment.cardholder_name.label: Cardholder name
 form.reusable_packaging.name.label: Name
 form.reusable_packaging.is_tracked.label: Tracking enabled
 form.reusable_packaging.price.label: Price

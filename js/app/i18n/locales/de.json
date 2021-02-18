@@ -91,6 +91,9 @@
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_CONTACT_NAME_PLACEHOLDER": "John Doe",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_CONTACT_NAME_LABEL": "Kontaktperson",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_DESCRIPTION_PLACEHOLDER": "2. Tür links …",
-        "RESTAURANTS_AND_STORES": "Restaurants und Geschäfte"
+        "RESTAURANTS_AND_STORES": "Restaurants und Geschäfte",
+        "PAYMENT_FORM_REDIRECT_HELP": "Du wirst zur Seite deiner Bank weitergeleitet, um die Bezahlung zu vervollständigen",
+        "PAYMENT_FORM_CARDHOLDER_NAME": "Name des Karteninhabers",
+        "PAYMENT_FORM_TITLE": "Deine Zahlungsinformationen"
     }
 }

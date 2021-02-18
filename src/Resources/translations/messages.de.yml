@@ -483,7 +483,6 @@ form.new_order.variant_name.label: Name des Produkts
 form.reusable_packaging.price.label: Preis
 form.reusable_packaging.is_tracked.label: Tracking aktiviert
 form.reusable_packaging.name.label: Name
-form.stripe_payment.cardholder_name.label: Name des Karteninhabers
 form.package.volume_units.label: Volumeneinheiten
 form.package.name.label: Name
 form.package_set.packages.label: Verpackungen
@@ -661,8 +660,6 @@ order.payment.waiting_failure: Deine Bank hat die Überweisung abgelehnt
 order.payment.waiting_success: Deine Bank hat die Überweisung bestätigt
 order.payment.do_not_close: Bitte diese Seite nicht schließen
 order.payment.waiting_for_confirmation: Wir warten auf die Bestätigung deiner Bank…
-order.payment.redirect.help: Du wirst zur Seite deiner Bank weitergeleitet, um die
-  Bezahlung zu vervollständigen
 restaurant.list.promotions: Werbeaktionen
 form.min_max.upper.label: Anzahl Max
 task.receipt.greeting: Liebe*r Kund*in,

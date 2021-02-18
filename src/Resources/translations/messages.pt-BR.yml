@@ -301,8 +301,6 @@ order.delivery_time: Entrega %time%
 order.payment.card_number.help: Um <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">número de cartão teste</a> da Stripe é pré-preenchido.
   Nenhuma conta será cobrada.
-order.payment.redirect.help: Você será redirecionado ao site do banco para completar
-  seu pagamento
 order.payment.waiting_for_confirmation: Aguardando confirmação do banco…
 order.payment.do_not_close: Não fechar esta página
 order.payment.waiting_success: Seu banco confirmou o pagamento
@@ -648,7 +646,6 @@ form.package_set.name.label: Nome
 form.package_set.packages.label: Embalagens
 form.package.name.label: Nome
 form.package.volume_units.label: Unidades de volume
-form.stripe_payment.cardholder_name.label: Nome no cartão
 form.reusable_packaging.name.label: Nome
 form.reusable_packaging.is_tracked.label: Rastreio habilitado
 form.reusable_packaging.price.label: Preço

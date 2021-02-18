@@ -700,8 +700,6 @@ restaurant.contract.variableDeliveryPriceEnabled.label: Habilita la quantitat va
 restaurant.contract.variableDeliveryPriceEnabled.disclaimer: La quantitat es calcula
   dinàmicament
 order.total_excluding_tax: Total (sense IVA)
-order.payment.redirect.help: Serà redirigit a l'entitat bancària per a completar el
-  seu pagament
 order.payment.waiting_for_confirmation: Esperant la confirmació del seu banc…
 order.payment.do_not_close: No tanqui aquesta pàgina
 order.payment.waiting_success: El seu banc ha confirmat el pagament
@@ -732,7 +730,6 @@ form.checkout_address.takeaway.no_show_disclaimer: "Tingui en compte: si no recu
 form.checkout_address.reusable_packaging.loopeat.learn_more: Saber més sobre LoopEat
 form.embed_settings.with_weight.label: Consultar pes de béns
 form.time_slot.working_days_only.label: Permetre seleccionar només dies laborals
-form.stripe_payment.cardholder_name.label: Nom del titular de la targeta
 form.reusable_packaging.name.label: Nom
 form.reusable_packaging.is_tracked.label: Seguiment habilitat
 form.reusable_packaging.price.label: Preu

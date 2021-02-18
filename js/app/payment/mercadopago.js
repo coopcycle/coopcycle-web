@@ -3,6 +3,7 @@ import { render, unmountComponentAtNode } from 'react-dom'
 import { PaymentInputsWrapper, usePaymentInputs } from 'react-payment-inputs'
 import images from 'react-payment-inputs/images'
 import _ from 'lodash'
+import { useTranslation } from 'react-i18next'
 
 // @see https://www.mercadopago.com.mx/developers/es/guides/payments/api/receiving-payment-by-card/
 
@@ -39,6 +40,8 @@ const installmentsRef = React.createRef()
 
 const MercadoPagoForm = ({ amount, onChange }) => {
 
+  const { t } = useTranslation()
+
   const [ cardNumber, setCardNumber ] = useState('')
   const [ expiryDate, setExpiryDate ] = useState('')
   const [ paymentMethod, setPaymentMethod ] = useState('')
@@ -74,29 +77,42 @@ const MercadoPagoForm = ({ amount, onChange }) => {
   }, [formError])
 
   return (
-    <PaymentInputsWrapper { ...wrapperProps }>
-      <input type="hidden" data-checkout="cardNumber" value={ cardNumber } />
-      { /* Mercado Pago expects separate fields for month & year */ }
-      <input type="hidden" data-checkout="cardExpirationMonth" value={ expiryDateMonth || '' } />
-      <input type="hidden" data-checkout="cardExpirationYear" value={ expiryDateYear || '' } />
+    <React.Fragment>
+      <div className="form-group">
+        <label className="control-label required">
+          { t('PAYMENT_FORM_CARDHOLDER_NAME') }
+        </label>
+        <input type="text"
+          required="required"
+          data-checkout="cardholderName"
+          className="form-control" />
+      </div>
+      <div className="form-group">
+        <PaymentInputsWrapper { ...wrapperProps }>
+          <input type="hidden" data-checkout="cardNumber" value={ cardNumber } />
+          { /* Mercado Pago expects separate fields for month & year */ }
+          <input type="hidden" data-checkout="cardExpirationMonth" value={ expiryDateMonth || '' } />
+          <input type="hidden" data-checkout="cardExpirationYear" value={ expiryDateYear || '' } />
 
-      <svg { ...getCardImageProps({ images }) } />
-      { /* We need to remove the "name" attributes from the managed fields, for security */ }
-      { /* @see https://github.com/medipass/react-payment-inputs/issues/47 */ }
-      <input { ..._.omit(cardNumberProps, ['name']) } />
-      <input { ..._.omit(expiryDateProps, ['name']) } />
-      <input { ..._.omit(cvcProps, ['name']) } data-checkout="securityCode" />
-      { /* The value of the fields below will be copied to the "real" form fields before creating a token */ }
-      { installments.length > 0 && (
-        <select ref={ installmentsRef }>
-          { installments.map((installment, i) => (
-            <option key={ `installment-${i}` }
-              value={ installment.installments }>{ installment.recommended_message }</option>
-          )) }
-        </select>
-      ) }
-      <input type="hidden" ref={ paymentMethodRef } value={ paymentMethod || '' } />
-    </PaymentInputsWrapper>
+          <svg { ...getCardImageProps({ images }) } />
+          { /* We need to remove the "name" attributes from the managed fields, for security */ }
+          { /* @see https://github.com/medipass/react-payment-inputs/issues/47 */ }
+          <input { ..._.omit(cardNumberProps, ['name']) } />
+          <input { ..._.omit(expiryDateProps, ['name']) } />
+          <input { ..._.omit(cvcProps, ['name']) } data-checkout="securityCode" />
+          { /* The value of the fields below will be copied to the "real" form fields before creating a token */ }
+          { installments.length > 0 && (
+            <select ref={ installmentsRef }>
+              { installments.map((installment, i) => (
+                <option key={ `installment-${i}` }
+                  value={ installment.installments }>{ installment.recommended_message }</option>
+              )) }
+            </select>
+          ) }
+          <input type="hidden" ref={ paymentMethodRef } value={ paymentMethod || '' } />
+        </PaymentInputsWrapper>
+      </div>
+    </React.Fragment>
   );
 }
 

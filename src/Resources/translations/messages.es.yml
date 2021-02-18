@@ -498,7 +498,6 @@ form.delivery_embed.telephone.label: Número de teléfono
 form.delivery_embed.vehicle.disclaimer: Entregamos en bicicleta de carga artículos
   de más de 50x40x20 (cm) y/o cuyo peso exceda los 6 kg.
 form.resend_confirmation_email.submit.label: Reenviar correo electrónico
-form.stripe_payment.cardholder_name.label: Nombre del titular de la tarjeta
 promotion_coupon.used.label: Número de usos
 product_option.strategy.free: Gratis
 product_option.strategy.option_value: Cada opción tiene un precio diferente
@@ -883,8 +882,6 @@ restaurant.contract.calculation_info: Puede cobrar al restaurante una cantidad d
   una cantidad dinámica (por ejemplo, en función de la distancia).
 restaurant.list.depositRefund: Reembolso de depósito
 restaurant.list.promotions: Promociones
-order.payment.redirect.help: Será redirigido a la entidad bancaria para completar
-  su pago
 order.payment.waiting_for_confirmation: Esperando la confirmación de su banco…
 order.payment.do_not_close: No cierre esta página
 order.payment.waiting_success: Su banco a confirmado el pago

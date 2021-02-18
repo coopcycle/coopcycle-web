@@ -1,4 +1,10 @@
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { render, unmountComponentAtNode } from 'react-dom'
+import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js'
+import { useTranslation } from 'react-i18next'
+
+import { getCountry } from '../i18n'
 
 const style = {
   base: {
@@ -41,6 +47,69 @@ function handleServerResponse(response, stripe) {
   })
 }
 
+const CardholderNameInput = ({ onChange }) => {
+
+  const { t } = useTranslation()
+
+  const [ cardholderName, setCardholderName ] = useState('')
+
+  useEffect(() => onChange(cardholderName), [ cardholderName ])
+
+  return (
+    <React.Fragment>
+      <label className="control-label required">
+        { t('PAYMENT_FORM_CARDHOLDER_NAME') }
+      </label>
+      <input type="text"
+        required="required"
+        className="form-control"
+        value={ cardholderName }
+        onChange={ e => setCardholderName(e.target.value) } />
+    </React.Fragment>
+  )
+}
+
+const StripeForm = ({ country, onChange, onCardholderNameChange }) => {
+
+  const { t } = useTranslation()
+
+  return (
+    <React.Fragment>
+      <div className="form-group">
+        <CardholderNameInput onChange={ onCardholderNameChange } />
+      </div>
+      <div className="form-group">
+        <label className="control-label hidden">
+          { t('PAYMENT_FORM_TITLE') }
+        </label>
+        <CardElement options={{ style, hidePostalCode: true }} onChange={ onChange } />
+        { country === 'fr' && (
+          <span className="help-block mt-3">
+            <i className="fa fa-info-circle mr-2"></i>
+            <span>Nous nʼacceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique.</span>
+          </span>
+        )}
+      </div>
+    </React.Fragment>
+  )
+}
+
+const GiropayForm = ({ onCardholderNameChange }) => {
+
+  const { t } = useTranslation()
+
+  return (
+    <React.Fragment>
+      <div className="form-group">
+        <CardholderNameInput onChange={ onCardholderNameChange } />
+        <div className="text-center mt-3">
+          <span className="help-block">{ t('PAYMENT_FORM_REDIRECT_HELP') }</span>
+        </div>
+      </div>
+    </React.Fragment>
+  )
+}
+
 export default {
   init() {
 
@@ -55,31 +124,62 @@ export default {
 
     // @see https://stripe.com/docs/payments/payment-methods/connect#creating-paymentmethods-directly-on-the-connected-account
     this.stripe = Stripe(this.config.gatewayConfig.publishableKey, stripeOptions)
-
-    const elements = this.stripe.elements()
-
-    this.card = elements.create('card', { style, hidePostalCode: true })
-    this.card.addEventListener('change', this.config.onChange)
   },
-  mount(el) {
+  mount(el, method) {
+
+    this.cardholderName = ''
+    this.el = el
+
+    if (method === 'giropay') {
+
+      return new Promise((resolve) => {
+
+        render(
+          <GiropayForm
+            onCardholderNameChange={ cardholderName => {
+              this.cardholderName = cardholderName
+            }} />, el, resolve)
+      })
+    }
+
     return new Promise((resolve) => {
-      this.card.off('ready')
-      this.card.on('ready', resolve)
-      this.card.mount(el)
+
+      render(
+        <Elements stripe={ this.stripe }>
+          <ElementsConsumer>
+          {({ elements }) => {
+
+            // Keep a reference to Stripe elements
+            // FIXME There should be a better way
+            this.elements = elements
+
+            return (
+              <StripeForm
+                country={ getCountry() }
+                onChange={ this.config.onChange }
+                onCardholderNameChange={ cardholderName => {
+                  this.cardholderName = cardholderName
+                }} />
+            )
+          }}
+          </ElementsConsumer>
+        </Elements>, el, resolve)
     })
   },
   unmount() {
-    this.card.unmount()
+    if (this.el) {
+      unmountComponentAtNode(this.el)
+      this.el = null
+    }
   },
   createToken() {
-
     return new Promise((resolve, reject) => {
 
       this.stripe.createPaymentMethod({
         type: 'card',
-        card: this.card,
+        card: this.elements.getElement(CardElement),
         billing_details: {
-          name: this.config.cardholderNameElement.value
+          name: this.cardholderName,
         }
       }).then((createPaymentMethodResult) => {
         if (createPaymentMethodResult.error) {
@@ -120,7 +220,7 @@ export default {
             {
               payment_method: {
                 billing_details: {
-                  name: this.config.cardholderNameElement.value
+                  name: this.cardholderName
                 }
               },
               return_url: response.data.return_url,

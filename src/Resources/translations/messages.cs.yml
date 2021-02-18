@@ -297,7 +297,6 @@ order.delivery_time: Čas doručení %time%
 order.payment.card_number.help: Je předvyplněno <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1"> číslo testovací karty </a> služby Stripe. Žádný účet
   nebude dotčen.
-order.payment.redirect.help: K dokončení platby budete přesměrováni na stránku banky
 order.payment.waiting_for_confirmation: Čekáme na potvrzení od vaší banky…
 order.payment.do_not_close: Nezavírejte tuto stránku
 order.payment.waiting_success: Vaše banka potvrdila platbu
@@ -787,7 +786,6 @@ form.reusable_packaging.on_hand.label: Sklad
 form.reusable_packaging.price.label: Cena
 form.reusable_packaging.is_tracked.label: Sledování přepravy povoleno
 form.reusable_packaging.name.label: Název
-form.stripe_payment.cardholder_name.label: Jméno držitele karty
 form.package.volume_units.label: Objemové jednotky
 form.package.name.label: Název
 form.package_set.packages.label: Balení

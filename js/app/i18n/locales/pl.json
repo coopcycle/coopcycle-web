@@ -181,6 +181,9 @@
         "CART_DELIVERY_TIME_RANGE_NEXT_WEEK": "dddd [{{range}}]",
         "CART_DELIVERY_TIME_RANGE_LAST_DAY": "[Wczoraj] [{{range}}]",
         "CART_DELIVERY_TIME_RANGE_SAME_ELSE": "[Dnia] LL [{{range}}]",
-        "PLEASE_SELECT_ADDRESS": "Proszę wybierz adres w menu rozwijanym"
+        "PLEASE_SELECT_ADDRESS": "Proszę wybierz adres w menu rozwijanym",
+        "PAYMENT_FORM_REDIRECT_HELP": "You will be redirected to the banking site to complete your payment",
+        "PAYMENT_FORM_CARDHOLDER_NAME": "Imię i nazwisko posiadacza karty",
+        "PAYMENT_FORM_TITLE": "Twoje informacje o płatności"
     }
 }

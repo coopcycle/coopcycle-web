@@ -61,18 +61,11 @@
 
           {{ form_errors(payment_form) }}
           {{ form_widget(payment_form.stripeToken) }}
-          {{ form_row(payment_form.cardholderName) }}
-
-          <div class="form-group">
-            <label class="control-label hidden" for="card-element">
-              {% trans %}order.payment.title{% endtrans %}
-            </label>
-            <div id="card-element">
-              <!-- a Stripe Element will be inserted here. -->
-            </div>
-            <!-- Used to display form errors -->
-            <div id="card-errors" role="alert"></div>
+          <div id="card-element">
+            <!-- a React element will be inserted here. -->
           </div>
+          <!-- Used to display form errors -->
+          <div id="card-errors" role="alert"></div>
 
           <div class="text-center">
             <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
@@ -138,8 +131,7 @@ new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_paymen
   card: "{{ gateway }}",
   amount: {{ order.total }},
   gatewayConfigs: {{ gateway_configs|json_encode|raw }},
-  tokenElement: document.querySelector('#stripe_payment_stripeToken'),
-  cardholderNameElement: document.querySelector('#stripe_payment_cardholderName')
+  tokenElement: document.querySelector('#stripe_payment_stripeToken')
 });
 </script>
 {% endif %}

@@ -860,7 +860,6 @@ form.reusable_packaging.on_hand.label: Asortyment
 form.reusable_packaging.price.label: Cena
 form.reusable_packaging.is_tracked.label: Śledzenie aktywowane
 form.reusable_packaging.name.label: Nazwa
-form.stripe_payment.cardholder_name.label: Imię i nazwisko posiadacza karty
 form.package.volume_units.label: Jednostki objętości
 form.package.name.label: Nazwa
 form.task_export.end.label: Koniec
