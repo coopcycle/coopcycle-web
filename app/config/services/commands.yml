@@ -140,3 +140,10 @@ services:
       $defaultLocale: "%env(COOPCYCLE_LOCALE)%"
     tags:
       - { name: 'console.command', command: 'coopcycle:tasks:create' }
+
+  AppBundle\Command\CopyTranslationCommand:
+    arguments:
+      $jsTranslationsDir: "%kernel.project_dir%/js/app/i18n/locales"
+      $localeRegex: "%locale_regex%"
+    tags:
+      - { name: 'console.command', command: 'coopcycle:translations:copy' }
