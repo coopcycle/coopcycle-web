@@ -68,13 +68,13 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
 
         // FIXME
         // Do not hardcode this here
-        $stripe = $this->paymentMethodRepository->findOneByCode('STRIPE');
+        $card = $this->paymentMethodRepository->findOneByCode('CARD');
 
         $payment = $this->paymentFactory->createWithAmountAndCurrencyCode(
             $order->getTotal(),
             $this->currencyContext->getCurrencyCode()
         );
-        $payment->setMethod($stripe);
+        $payment->setMethod($card);
         $payment->setState($targetState);
 
         $order->addPayment($payment);
