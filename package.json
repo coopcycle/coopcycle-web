@@ -70,7 +70,7 @@
     "codemirror": "^5.59.2",
     "compare-versions": "^3.6.0",
     "coopcycle-frontend-js": "git+https://git@github.com/coopcycle/coopcycle-frontend-js.git#1.1.0-beta.1",
-    "core-js": "^3.8.3",
+    "core-js": "^3.9.0",
     "cropperjs": "^1.5.10",
     "croppie": "^2.6.5",
     "cypress": "^4.8.0",
