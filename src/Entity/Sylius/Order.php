@@ -35,6 +35,7 @@ use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
 use AppBundle\Validator\Constraints\ShippingAddress as AssertShippingAddress;
 use AppBundle\Validator\Constraints\ShippingTimeRange as AssertShippingTimeRange;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelInterface;
@@ -627,14 +628,20 @@ class Order extends BaseOrder implements OrderInterface
     public function getPreparationExpectedAt()
     {
         if (null !== $this->timeline) {
-            return $this->timeline->getPreparationExpectedAt();
+            $value = $this->timeline->getPreparationExpectedAt();
+
+            // @see https://github.com/coopcycle/coopcycle-web/issues/2134
+            return $value instanceof CarbonInterface ? $value->toDateTime() : $value;
         }
     }
 
     public function getPickupExpectedAt()
     {
         if (null !== $this->timeline) {
-            return $this->timeline->getPickupExpectedAt();
+            $value = $this->timeline->getPickupExpectedAt();
+
+            // @see https://github.com/coopcycle/coopcycle-web/issues/2134
+            return $value instanceof CarbonInterface ? $value->toDateTime() : $value;
         }
     }
 
