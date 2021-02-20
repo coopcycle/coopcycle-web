@@ -7,7 +7,6 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\OrderTextEncoder;
-use Carbon\Carbon;
 
 class CreateTasks
 {

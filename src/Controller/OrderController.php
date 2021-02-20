@@ -20,7 +20,6 @@ use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint;
-use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;

@@ -4,7 +4,6 @@ namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\ShippingDateFilter;
-use Carbon\Carbon;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;

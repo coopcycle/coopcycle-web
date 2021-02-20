@@ -6,7 +6,6 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
-use Carbon\Carbon;
 
 class OrderTimelineCalculator
 {

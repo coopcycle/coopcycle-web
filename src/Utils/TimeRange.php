@@ -4,7 +4,6 @@ namespace AppBundle\Utils;
 
 use AppBundle\Exception\TimeRange\EmptyRangeException;
 use AppBundle\Exception\TimeRange\NoWeekdayException;
-use Carbon\Carbon;
 
 class TimeRange
 {

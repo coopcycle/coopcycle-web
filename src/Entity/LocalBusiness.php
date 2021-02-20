@@ -31,7 +31,6 @@ use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Validator\Constraints\IsActivableRestaurant as AssertIsActivableRestaurant;
-use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;

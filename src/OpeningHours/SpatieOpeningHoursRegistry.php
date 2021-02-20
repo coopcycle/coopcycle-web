@@ -2,7 +2,6 @@
 
 namespace AppBundle\OpeningHours;
 
-use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Spatie\OpeningHours\OpeningHours;

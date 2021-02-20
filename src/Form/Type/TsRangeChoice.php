@@ -4,7 +4,6 @@ namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Task;
 use AppBundle\DataType\TsRange;
-use Carbon\Carbon;
 
 class TsRangeChoice
 {
