@@ -204,6 +204,7 @@ doctrine:
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
             numrange: AppBundle\Doctrine\DBAL\Types\NumRangeType
             tsrange: AppBundle\Doctrine\DBAL\Types\TsRangeType
+            rrule: AppBundle\Doctrine\DBAL\Types\RRuleType
         mapping_types:
             _text: string
             numrange: string
