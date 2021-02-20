@@ -75,6 +75,7 @@
         <option name="default">false</option>
       </options>
     </field>
+    <field name="edenredMerchantId" type="string" column="edenred_merchant_id" nullable="true"/>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
       <cascade>

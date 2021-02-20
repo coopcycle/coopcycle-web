@@ -243,6 +243,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $mercadopagoAccounts;
 
+    protected $edenredMerchantId;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -789,5 +791,15 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function asOriginCode(): string
     {
         return (string) $this->getId();
+    }
+
+    public function getEdenredMerchantId()
+    {
+        return $this->edenredMerchantId;
+    }
+
+    public function setEdenredMerchantId($edenredMerchantId)
+    {
+        $this->edenredMerchantId = $edenredMerchantId;
     }
 }

@@ -196,6 +196,11 @@ class Vendor implements ShippingOptionsInterface
         return $this->restaurant->getOwners();
     }
 
+    public function getEdenredMerchantId()
+    {
+        return $this->restaurant->getEdenredMerchantId();
+    }
+
     /* END Common interface between Restaurant & Hub */
 
     public static function withRestaurant(LocalBusiness $restaurant)
