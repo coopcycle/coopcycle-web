@@ -299,3 +299,14 @@ services:
           subscribes_to: order:checkout_succeeded
         - name: event_subscriber
           subscribes_to: order:checkout_failed
+
+  coopcycle.domain.order.reactor.cancel_edenred_transaction:
+    class: AppBundle\Domain\Order\Reactor\CancelEdenredTransaction
+    arguments:
+      - '@AppBundle\Edenred\Client'
+      - '@sm.factory'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:refused
+        - name: event_subscriber
+          subscribes_to: order:cancelled

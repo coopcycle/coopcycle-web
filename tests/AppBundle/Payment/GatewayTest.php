@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Payment;
 
+use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
@@ -32,6 +33,7 @@ class GatewayTest extends TestCase
         $this->stripeManager = $this->prophesize(StripeManager::class);
         $this->mercadopagoManager = $this->prophesize(MercadopagoManager::class);
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
+        $this->edenred = $this->prophesize(EdenredClient::class);
 
         $this->messageBus = $this->prophesize(MessageBusInterface::class);
         $this->messageBus
@@ -44,7 +46,8 @@ class GatewayTest extends TestCase
             $this->gatewayResolver->reveal(),
             $this->stripeManager->reveal(),
             $this->mercadopagoManager->reveal(),
-            $this->messageBus->reveal()
+            $this->messageBus->reveal(),
+            $this->edenred->reveal()
         );
     }
 

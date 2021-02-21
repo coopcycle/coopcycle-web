@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use AppBundle\Sylius\Payment\EdenredTrait;
 use AppBundle\Sylius\Payment\MercadopagoTrait;
 use AppBundle\Sylius\Payment\RefundTrait;
 use AppBundle\Sylius\Payment\StripeTrait;
@@ -15,6 +16,7 @@ class Payment extends BasePayment implements OrderAwareInterface
     use StripeTrait;
     use MercadopagoTrait;
     use RefundTrait;
+    use EdenredTrait;
 
     protected $order;
     protected $refunds;

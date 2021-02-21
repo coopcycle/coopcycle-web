@@ -2,6 +2,7 @@
 
 namespace AppBundle\Payment;
 
+use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Message\RetrieveStripeFee;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\StripeManager;
@@ -21,16 +22,28 @@ class Gateway
         GatewayResolver $resolver,
         StripeManager $stripeManager,
         MercadopagoManager $mercadopagoManager,
-        MessageBusInterface $messageBus)
+        MessageBusInterface $messageBus,
+        EdenredClient $edenred)
     {
         $this->resolver = $resolver;
         $this->stripeManager = $stripeManager;
         $this->mercadopagoManager = $mercadopagoManager;
         $this->messageBus = $messageBus;
+        $this->edenred = $edenred;
     }
 
     public function authorize(PaymentInterface $payment, array $context = []): ResponseInterface
     {
+        $method = $payment->getMethod();
+
+        // This means the whole amount will be paid with Edenred
+        if ($method && 'EDENRED' === $method->getCode()) {
+            $authorizationId = $this->edenred->authorizeTransaction($payment);
+            $payment->setEdenredAuthorizationId($authorizationId);
+
+            return new StripeResponse([]);
+        }
+
         switch ($this->resolver->resolve()) {
             case 'mercadopago':
 
@@ -56,6 +69,11 @@ class Gateway
                         $this->stripeManager->confirmIntent($payment);
                     }
 
+                    if ($payment->isEdenredWithCard()) {
+                        $authorizationId = $this->edenred->authorizeTransaction($payment);
+                        $payment->setEdenredAuthorizationId($authorizationId);
+                    }
+
                     return new StripeResponse([]);
                 }
 
@@ -70,6 +88,16 @@ class Gateway
 
     public function capture(PaymentInterface $payment): ResponseInterface
     {
+        $method = $payment->getMethod();
+
+        // This means the whole amount has been paid with Edenred
+        if ($method && 'EDENRED' === $method->getCode()) {
+            $captureId = $this->edenred->captureTransaction($payment);
+            $payment->setEdenredCaptureId($captureId);
+
+            return new StripeResponse([]);
+        }
+
         switch ($this->resolver->resolve()) {
             case 'mercadopago':
                 $this->mercadopagoManager->capture($payment);
@@ -79,6 +107,11 @@ class Gateway
             default:
 
                 $this->stripeManager->capture($payment);
+
+                if ($payment->isEdenredWithCard()) {
+                    $captureId = $this->edenred->captureTransaction($payment);
+                    $payment->setEdenredCaptureId($captureId);
+                }
 
                 $this->messageBus->dispatch(
                     new RetrieveStripeFee($payment->getOrder()),

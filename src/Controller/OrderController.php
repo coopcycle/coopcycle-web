@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\OrderConfirmTrait;
 use AppBundle\DataType\TsRange;
+use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Embed\Context as EmbedContext;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
@@ -295,7 +296,8 @@ class OrderController extends AbstractController
         OrderManager $orderManager,
         CartContextInterface $cartContext,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        EdenredClient $edenredClient)
     {
         $order = $cartContext->getCart();
 
@@ -355,9 +357,22 @@ class OrderController extends AbstractController
 
         $payment->setMethod($paymentMethod);
 
+        switch ($code) {
+            case 'EDENRED+CARD':
+            case 'EDENRED':
+                $breakdown = $edenredClient->splitAmounts($order);
+                $payment->setAmountBreakdown($breakdown['edenred'], $breakdown['card']);
+                break;
+            default:
+                $payment->clearAmountBreakdown();
+                break;
+        }
+
         $entityManager->flush();
 
-        return new JsonResponse([], 200);
+        return new JsonResponse([
+            'amount_breakdown' => $payment->getAmountBreakdown(),
+        ]);
     }
 
     /**
