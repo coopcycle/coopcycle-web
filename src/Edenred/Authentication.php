@@ -7,7 +7,6 @@ use AppBundle\Sylius\Customer\CustomerInterface;
 use GuzzleHttp\Client as BaseClient;
 use GuzzleHttp\HandlerStack;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -21,7 +20,8 @@ class Authentication extends BaseClient
         UrlGeneratorInterface $urlGenerator,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
-        LoggerInterface $logger)
+        LoggerInterface $logger
+    )
     {
         $stack = HandlerStack::create();
         $stack->push($refreshTokenHandler);
@@ -102,11 +102,13 @@ class Authentication extends BaseClient
         $httpCode = !curl_errno($ch) ? curl_getinfo($ch, CURLINFO_HTTP_CODE) : null;
 
         if ($httpCode !== 200) {
-
             $data = json_decode($res, true);
 
-            $this->logger->error(sprintf('There was an "%s" error when trying to fetch an access token from Edenred: "%s"',
-                $data['error'], $data['error_description'] ?? ''));
+            $this->logger->error(sprintf(
+                'There was an "%s" error when trying to fetch an access token from Edenred: "%s"',
+                $data['error'],
+                $data['error_description'] ?? ''
+            ));
 
             curl_close($ch);
 
