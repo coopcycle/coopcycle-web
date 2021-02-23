@@ -30,6 +30,14 @@
   </div>
 </div>
 
+{% if cube_token is defined %}
+<div id="cubejs"
+  data-api-url="{{ cubejs_api_url }}"
+  data-token="{{ cube_token|e('html_attr') }}"
+  class="mb-4"
+  style="min-height: 180px;"></div>
+{% endif %}
+
 {% include "admin/pagination.html.twig" %}
 {% include "_partials/order/list.html.twig" %}
 
@@ -60,6 +68,7 @@
 {% endblock %}
 
 {% block scripts %}
+{{ encore_entry_script_tags('admin-orders') }}
 <script>
 
 var $settingsForm = $('form[name="admin_orders_settings"]');

@@ -107,7 +107,23 @@ trait OrderTrait
                 return $response;
             }
 
+            // https://cube.dev/docs/security
+            $key = \Lcobucci\JWT\Signer\Key\InMemory::plainText($_SERVER['CUBEJS_API_SECRET']);
+            $config = \Lcobucci\JWT\Configuration::forSymmetricSigner(
+                new \Lcobucci\JWT\Signer\Hmac\Sha256(),
+                $key
+            );
+
+            // https://github.com/lcobucci/jwt/issues/229
+            $now = new \DateTimeImmutable('@' . time());
+
+            $token = $config->builder()
+                    ->expiresAt($now->modify('+1 hour'))
+                    ->withClaim('database', $this->getParameter('database_name'))
+                    ->getToken($config->signer(), $config->signingKey());
+
             $parameters['order_export_form'] = $orderExportForm->createView();
+            $parameters['cube_token'] = $token->toString();
         }
 
         return $this->render($request->attributes->get('template'), $parameters, $response);
