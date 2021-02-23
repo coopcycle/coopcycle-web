@@ -69,4 +69,79 @@ class EnhanceShippingAddressTest extends TestCase
         $this->assertNotNull($shippingAddress->getContactName());
         $this->assertEquals('John Doe', $shippingAddress->getContactName());
     }
+
+    public function testCopiesDataFromAddress()
+    {
+        $order = $this->prophesize(Order::class);
+        $order
+            ->getDelivery()
+            ->willReturn(null);
+
+        $order
+            ->isFoodtech()
+            ->willReturn(true);
+
+        $order
+            ->isTakeaway()
+            ->willReturn(false);
+
+        $shippingAddress = new Address();
+        $shippingAddress->setTelephone(
+            PhoneNumberUtil::getInstance()->parse('+33612345678')
+        );
+
+        $order
+            ->getShippingAddress()
+            ->willReturn($shippingAddress);
+
+        $customer = new Customer();
+        $customer->setFullName('John Doe');
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer);
+
+        call_user_func_array($this->reactor, [ new Event\OrderCreated($order->reveal()) ]);
+
+        $this->assertNotNull($customer->getPhoneNumber());
+        $this->assertEquals('+33612345678', $customer->getPhoneNumber());
+    }
+
+    public function testDoesNotUpdateCustomerPhoneNumber()
+    {
+        $order = $this->prophesize(Order::class);
+        $order
+            ->getDelivery()
+            ->willReturn(null);
+
+        $order
+            ->isFoodtech()
+            ->willReturn(true);
+
+        $order
+            ->isTakeaway()
+            ->willReturn(false);
+
+        $shippingAddress = new Address();
+        $shippingAddress->setTelephone(
+            PhoneNumberUtil::getInstance()->parse('+33687654321')
+        );
+
+        $order
+            ->getShippingAddress()
+            ->willReturn($shippingAddress);
+
+        $customer = new Customer();
+
+        $customer->setFullName('John Doe');
+        $customer->setPhoneNumber('+33612345678');
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer);
+
+        call_user_func_array($this->reactor, [ new Event\OrderCreated($order->reveal()) ]);
+
+        $this->assertEquals('+33612345678', $customer->getPhoneNumber());
+    }
 }

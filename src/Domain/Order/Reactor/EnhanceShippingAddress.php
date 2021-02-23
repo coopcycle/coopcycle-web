@@ -42,5 +42,9 @@ class EnhanceShippingAddress
                 );
             } catch (NumberParseException $e) {}
         }
+
+        if (empty($customer->getPhoneNumber()) && !empty($telephone)) {
+            $customer->setTelephone($telephone);
+        }
     }
 }
