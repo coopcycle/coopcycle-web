@@ -3,8 +3,10 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\OrderCreated;
+use AppBundle\Sylius\Customer\CustomerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
+use Webmozart\Assert\Assert;
 
 class EnhanceShippingAddress
 {
@@ -44,6 +46,9 @@ class EnhanceShippingAddress
         }
 
         if (empty($customer->getPhoneNumber()) && !empty($telephone)) {
+
+            Assert::isInstanceOf($customer, CustomerInterface::class);
+
             $customer->setTelephone($telephone);
         }
     }
