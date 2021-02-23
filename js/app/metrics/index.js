@@ -29,7 +29,7 @@ const renderChart = ({ resultSet, error }) => {
   }
 
   const data = {
-    labels: resultSet.categories().map((c) => moment(c.category).format('DD')),
+    labels: resultSet.categories().map((c) => moment(c.category).format('dddd D')),
     datasets: resultSet.series().map((s, index) => ({
       label: 'Orders', // s.title,
       data: s.series.map((r) => r.value),
