@@ -218,6 +218,27 @@ services:
       - CENTRIFUGO_ADMIN_PASSWORD=centrifugo
       - CENTRIFUGO_ADMIN_SECRET=centrifugo
 
+  # https://cube.dev/docs/getting-started-docker
+  cube:
+    image: cubejs/cube:latest
+    ports:
+      - 4000:4000
+    depends_on:
+      - postgres
+    environment:
+      - CUBEJS_DB_TYPE=postgres
+      - CUBEJS_DB_HOST=${COOPCYCLE_DB_HOST}
+      - CUBEJS_DB_PORT=${COOPCYCLE_DB_PORT}
+      # - CUBEJS_DB_NAME=${COOPCYCLE_DB_NAME}
+      - CUBEJS_DB_USER=${COOPCYCLE_DB_USER}
+      - CUBEJS_DB_PASS=${COOPCYCLE_DB_PASSWORD}
+      - CUBEJS_WEB_SOCKETS=true
+      - CUBEJS_DEV_MODE=true
+      - CUBEJS_API_SECRET
+    volumes:
+      - ./cube:/cube/conf/schema
+      - ./cube.js:/cube/conf/cube.js
+
 volumes:
   node_modules_node:
   node_modules_webpack:
