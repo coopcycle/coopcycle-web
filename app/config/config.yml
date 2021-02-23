@@ -182,6 +182,7 @@ twig:
         restaurant_caption_cache_annotation: '%restaurant_caption_cache_annotation%'
         cdn_root_url: '%env(CDN_ROOT_URL)%'
         edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
+        cubejs_api_url: '%env(CUBEJS_API_URL)%'
     exception_controller: null
 
 # Doctrine Configuration

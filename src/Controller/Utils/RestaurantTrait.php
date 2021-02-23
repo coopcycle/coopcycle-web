@@ -1266,6 +1266,25 @@ trait RestaurantTrait
             return $response;
         }
 
+        // https://cube.dev/docs/security
+        $key = \Lcobucci\JWT\Signer\Key\InMemory::plainText($_SERVER['CUBEJS_API_SECRET']);
+        $config = \Lcobucci\JWT\Configuration::forSymmetricSigner(
+            new \Lcobucci\JWT\Signer\Hmac\Sha256(),
+            $key
+        );
+
+        // https://github.com/lcobucci/jwt/issues/229
+        $now = new \DateTimeImmutable('@' . time());
+
+        $vendor = $entityManager->getRepository(Vendor::class)
+            ->findOneBy(['restaurant' => $restaurant]);
+
+        $token = $config->builder()
+                ->expiresAt($now->modify('+1 hour'))
+                ->withClaim('database', $this->getParameter('database_name'))
+                ->withClaim('vendor_id', $vendor->getId())
+                ->getToken($config->signer(), $config->signingKey());
+
         return $this->render('restaurant/stats.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
@@ -1274,6 +1293,7 @@ trait RestaurantTrait
             'start' => $start,
             'end' => $end,
             'tab' => $tab,
+            'cube_token' => $token->toString(),
         ]));
     }
 

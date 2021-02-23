@@ -19,6 +19,7 @@ Encore
   .addEntry('delivery-tracking', './js/app/delivery/tracking.js')
   .addEntry('notifications', './js/app/notifications/index.js')
   .addEntry('foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
+  .addEntry('metrics', './js/app/metrics/index.js')
   .addEntry('product-form', './js/app/product/form.js')
   .addEntry('product-list', './js/app/product/list.js')
   .addEntry('product-option-form', './js/app/forms/product-option.js')

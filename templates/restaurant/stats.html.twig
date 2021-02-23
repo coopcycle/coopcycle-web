@@ -23,6 +23,13 @@
   </div>
 </div>
 
+<div id="cubejs"
+  data-api-url="{{ cubejs_api_url }}"
+  data-token="{{ cube_token|e('html_attr') }}"
+  data-date-range="{{ [ start|date('Y-m-d'), end|date('Y-m-d') ]|json_encode|e('html_attr') }}"
+  class="mb-4"
+  style="min-height: 240px;"></div>
+
 <ul class="nav nav-tabs mb-4">
   <li role="presentation" {% if tab == 'orders' %}class="active"{% endif %}>
     <a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, tab: 'orders' })) }}">{{ 'restaurant.list.orders'|trans }} ({{ stats|length }})</a>
@@ -108,6 +115,7 @@
 {% endblock %}
 
 {% block scripts %}
+  {{ encore_entry_script_tags('metrics') }}
   <script>
     new CoopCycle.MonthPicker(document.querySelector('#month-picker'), {
       defaultValue: "{{ start|date('Y-m') }}",
