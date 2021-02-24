@@ -829,13 +829,6 @@ form[name="store"] #store_imageFile_file {
   margin-left: 10px;
 }
 
-// HACK : disable Antd input style so it fits with Bootstrap's design
-#closing-rules-range-picker .ant-calendar-picker-input.ant-input {
-  padding: 0;
-  width: 100%;
-  border: none;
-}
-
 // HACK : vertical-align submit button to bottom
 #closing_rule_submit {
   margin-top: 25px;

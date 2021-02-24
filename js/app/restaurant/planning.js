@@ -11,12 +11,7 @@ import { antdLocale, localeDetector } from '../i18n'
 
 const baseURL = location.protocol + '//' + location.hostname
 
-const { RangePicker } = DatePicker,
-  // HACK : disable default input style so it fits with Bootstrap's design
-  rangeInputStyle = {
-    'padding': '0',
-    'width': '100%'
-  }
+const { RangePicker } = DatePicker
 
 let locale = localeDetector(),
   selectedClosingStartDate,
@@ -62,9 +57,7 @@ class ClosingRuleRangePicker extends React.Component {
       <ConfigProvider locale={antdLocale}>
         <RangePicker
           format="DD/MM/YYYY à HH:mm"
-          showTime={{format: 'HH:mm'}}
-          className="form-control"
-          style={rangeInputStyle}
+          showTime={{ format: 'HH:mm' }}
           onChange={onChange}
         />
       </ConfigProvider>
