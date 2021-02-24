@@ -1,10 +1,12 @@
 import React from 'react'
 import moment from 'moment'
 import _ from 'lodash'
-import { Button, ConfigProvider, Radio, TimePicker } from 'antd'
+import { ConfigProvider, Radio, TimePicker } from 'antd'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import { withTranslation } from 'react-i18next'
+
+import 'antd/lib/button/style/index.css'
 
 import openingHourIntervalToReadable from '../restaurant/parseOpeningHours'
 import TimeRange from '../utils/TimeRange'
@@ -185,9 +187,6 @@ class OpeningHours extends React.Component {
               defaultValue={startValue}
               hideDisabledOptions
               placeholder="Heure"
-              addon={panel => (
-                <Button size="small" type="primary" onClick={() => panel.close()}>OK</Button>
-              )}
             />
             <TimePicker
               { ...timePickerProps }
@@ -197,9 +196,6 @@ class OpeningHours extends React.Component {
               defaultValue={endValue}
               hideDisabledOptions
               placeholder="Heure"
-              addon={panel => (
-                <Button size="small" type="primary" onClick={() => panel.close()}>OK</Button>
-              )}
             />
           </span>
           <small className="text-muted">{ openingHourIntervalToReadable(this.rowToString(row), this.props.locale, this.state.behavior) }</small>

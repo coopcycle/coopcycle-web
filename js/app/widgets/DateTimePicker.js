@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import moment from 'moment'
 import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { ConfigProvider, Button, DatePicker, TimePicker } from 'antd';
+import { ConfigProvider, DatePicker, TimePicker } from 'antd';
 
 import 'antd/es/input/style/index.css'
 
@@ -107,9 +107,9 @@ class DateTimePicker extends React.Component {
     }
 
     return (
-      <div>
-        <FormItem {...formItemProps}>
-          <ConfigProvider locale={ antdLocale }>
+      <ConfigProvider locale={ antdLocale }>
+        <div>
+          <FormItem {...formItemProps}>
             <DatePicker
               disabledDate={this.disabledDate}
               onChange={this.onDateChange.bind(this)}
@@ -118,8 +118,6 @@ class DateTimePicker extends React.Component {
               defaultValue={this.props.defaultValue}
               { ...datePickerProps }
             />
-          </ConfigProvider>
-          <ConfigProvider locale={ antdLocale }>
             <TimePicker
               disabledMinutes={this.disabledMinutes}
               onChange={this.onTimeChange.bind(this)}
@@ -127,14 +125,11 @@ class DateTimePicker extends React.Component {
               format={timeFormat}
               hideDisabledOptions
               placeholder="Heure"
-              addon={panel => (
-                <Button size="small" type="primary" onClick={() => panel.close()}>OK</Button>
-              )}
               { ...timePickerProps }
             />
-          </ConfigProvider>
-        </FormItem>
-      </div>
+          </FormItem>
+        </div>
+      </ConfigProvider>
     )
   }
 }
