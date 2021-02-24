@@ -1273,17 +1273,20 @@ trait RestaurantTrait
             $key
         );
 
-        // https://github.com/lcobucci/jwt/issues/229
-        $now = new \DateTimeImmutable('@' . time());
-
+        $token = null;
         $vendor = $entityManager->getRepository(Vendor::class)
             ->findOneBy(['restaurant' => $restaurant]);
 
-        $token = $config->builder()
+        if (null !== $vendor) {
+            // https://github.com/lcobucci/jwt/issues/229
+            $now = new \DateTimeImmutable('@' . time());
+
+            $token = $config->builder()
                 ->expiresAt($now->modify('+1 hour'))
                 ->withClaim('database', $this->getParameter('database_name'))
                 ->withClaim('vendor_id', $vendor->getId())
                 ->getToken($config->signer(), $config->signingKey());
+        }
 
         return $this->render('restaurant/stats.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
@@ -1293,7 +1296,7 @@ trait RestaurantTrait
             'start' => $start,
             'end' => $end,
             'tab' => $tab,
-            'cube_token' => $token->toString(),
+            'cube_token' => (null !== $vendor && null !== $token) ? $token->toString() : null,
         ]));
     }
 
