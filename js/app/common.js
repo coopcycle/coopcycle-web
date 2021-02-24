@@ -7,7 +7,6 @@ const $ = require('jquery')
 global.$ = global.jQuery = $
 
 import '../../assets/css/main.scss'
-import 'antd/dist/antd.css'
 
 require('bootstrap-sass')
 
