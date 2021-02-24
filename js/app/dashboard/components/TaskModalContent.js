@@ -3,12 +3,14 @@ import _ from 'lodash'
 import moment from 'moment'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import { ConfigProvider, DatePicker, Form, Radio, Timeline } from 'antd'
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { ConfigProvider, DatePicker, Radio, Timeline } from 'antd';
 import { Formik } from 'formik'
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import phoneNumberExamples from 'libphonenumber-js/examples.mobile.json'
 import { getExampleNumber } from 'libphonenumber-js'
-
+ 
 import { antdLocale, getCountry } from '../../i18n'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
