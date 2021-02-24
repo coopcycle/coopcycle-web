@@ -2,7 +2,9 @@ import React from 'react'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import { ConfigProvider, Form, Slider, Switch } from 'antd'
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { ConfigProvider, Slider, Switch } from 'antd';
 import { Formik } from 'formik'
 
 import { antdLocale } from '../../i18n'
