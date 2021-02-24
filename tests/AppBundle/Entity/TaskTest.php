@@ -194,10 +194,16 @@ class TaskTest extends TestCase
         $task->setDoneBefore(new \DateTime('2019-08-18 08:00'));
 
         $violations = $validator->validate($task);
-        $this->assertCount(1, $violations);
-        $this->assertSame('doneBefore', $violations->get(0)->getPropertyPath());
+        $this->assertCount(2, $violations);
+        $this->assertSame('address', $violations->get(0)->getPropertyPath());
+        $this->assertSame('doneBefore', $violations->get(1)->getPropertyPath());
+
+        $address = new Address();
+        $address->setStreetAddress('1, Rue de Rivoli Paris');
+        $address->setGeo(new GeoCoordinates(48.856613, 2.352222));
 
         $task = new Task();
+        $task->setAddress($address);
         $task->setDoneAfter(new \DateTime('2019-08-18 12:00'));
         $task->setDoneBefore(new \DateTime('2019-08-18 12:00'));
 
@@ -206,6 +212,7 @@ class TaskTest extends TestCase
         $this->assertSame('doneBefore', $violations->get(0)->getPropertyPath());
 
         $task = new Task();
+        $task->setAddress($address);
         $task->setDoneAfter(null);
         $task->setDoneBefore(new \DateTime('2019-08-18 08:00'));
 
@@ -213,6 +220,7 @@ class TaskTest extends TestCase
         $this->assertCount(0, $violations);
 
         $task = new Task();
+        $task->setAddress($address);
         $task->setDoneAfter(new \DateTime('2019-08-18 08:00'));
         $task->setDoneBefore(new \DateTime('2019-08-18 12:00'));
 
