@@ -14,9 +14,10 @@ export default function(el, options) {
 
   render(
     <ConfigProvider locale={ antdLocale }>
-      <DatePicker.MonthPicker
+      <DatePicker
         defaultValue={ moment(options.defaultValue) }
-        onChange={ options.onChange } />
+        onChange={ options.onChange }
+        picker="month" />
     </ConfigProvider>, el)
 
 }
