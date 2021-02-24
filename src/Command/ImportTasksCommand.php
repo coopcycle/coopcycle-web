@@ -116,7 +116,11 @@ class ImportTasksCommand extends Command
 
         try {
 
-            $tasks = $this->spreadsheetParser->parse($tempnam, $date);
+            $tasks = $this->spreadsheetParser->parse($tempnam, [
+                'date' => $date
+            ]);
+
+            $this->io->text(sprintf('Importing %d tasks…', count($tasks)));
 
             foreach ($tasks as $task) {
                 $violations = $this->validator->validate($task);
@@ -125,11 +129,13 @@ class ImportTasksCommand extends Command
                 }
             }
 
-            $this->io->text(sprintf('Importing %d tasks…', count($tasks)));
-
         } catch (\Exception $e) {
+
+            $this->io->error($e->getMessage());
+
             $this->socketIoManager->toAdmins('task_import:failure', [
-                ['message' => $e->getMessage()]
+                'token' => $token,
+                'message' => $e->getMessage()
             ]);
             unlink($tempnam);
             return 1;
