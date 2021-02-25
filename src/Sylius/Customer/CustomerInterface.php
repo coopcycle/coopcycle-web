@@ -80,4 +80,8 @@ interface CustomerInterface extends BaseCustomerInterface, OAuthCredentialsInter
      * @return EdenredCustomerCredentials|null
      */
     public function getEdenredCredentials(): ?EdenredCustomerCredentials;
+
+    public function setEdenredAccessToken($accessToken);
+
+    public function setEdenredRefreshToken($refreshToken);
 }

@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Edenred\Authentication;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Sylius\Customer\CustomerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Psr\Log\LoggerInterface;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Webmozart\Assert\Assert;
 
 class EdenredController extends AbstractController
 {
@@ -76,6 +78,8 @@ class EdenredController extends AbstractController
         }
 
         $customer = $subject instanceof Order ? $subject->getCustomer() : $subject;
+
+        Assert::isInstanceOf($customer, CustomerInterface::class);
 
         $customer->setEdenredAccessToken($data['access_token']);
         $customer->setEdenredRefreshToken($data['refresh_token']);
