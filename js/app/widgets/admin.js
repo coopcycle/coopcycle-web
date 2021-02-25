@@ -3,6 +3,7 @@ import ColorPicker from './ColorPicker'
 import ConfirmDelete from './ConfirmDelete'
 import Dropzone from './Dropzone'
 import MonthPicker from './MonthPicker'
+import OpeningHoursInput from './OpeningHoursInput'
 import Switch from './Switch'
 
 import 'prismjs'
@@ -20,4 +21,5 @@ window.CoopCycle.ColorPicker = ColorPicker
 window.CoopCycle.ConfirmDelete = ConfirmDelete
 window.CoopCycle.Dropzone = Dropzone
 window.CoopCycle.MonthPicker = MonthPicker
+window.CoopCycle.OpeningHoursInput = OpeningHoursInput
 window.CoopCycle.Switch = Switch
