@@ -3,8 +3,6 @@ import _ from 'lodash'
 import moment from 'moment'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
 import { DatePicker, Radio, Timeline } from 'antd';
 import { Formik } from 'formik'
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
@@ -447,20 +445,18 @@ class TaskModalContent extends React.Component {
               <div className="form-group form-group-sm">
                 <label className="control-label required">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_TIME_RANGE_LABEL') }</label>
                 <div className="form-group">
-                  <Form.Item>
-                    <DatePicker.RangePicker
-                      style={{ width: '100%' }}
-                      showTime={{
-                        ...timePickerProps,
-                        hideDisabledOptions: true,
-                      }}
-                      format="LLL"
-                      defaultValue={[ moment(values.after), moment(values.before) ]}
-                      onChange={(value) => {
-                        setFieldValue('after', value[0].format())
-                        setFieldValue('before', value[1].format())
-                      }} />
-                  </Form.Item>
+                  <DatePicker.RangePicker
+                    style={{ width: '100%' }}
+                    showTime={{
+                      ...timePickerProps,
+                      hideDisabledOptions: true,
+                    }}
+                    format="LLL"
+                    defaultValue={[ moment(values.after), moment(values.before) ]}
+                    onChange={(value) => {
+                      setFieldValue('after', value[0].format())
+                      setFieldValue('before', value[1].format())
+                    }} />
                 </div>
               </div>
               <div className="form-group form-group-sm">
