@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { render } from 'react-dom'
 import _ from 'lodash'
 import classNames from 'classnames'
@@ -37,16 +37,22 @@ const PaymentMethodPicker = ({ methods, onSelect }) => {
 
   const [ method, setMethod ] = useState('')
 
+  useEffect(() => {
+    if (method) {
+      onSelect(method)
+    }
+  }, [ method ])
+
   return (
     <div style={ methodPickerStyles }>
       <button type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'card' }) }
-        onClick={ () => { setMethod('card'); onSelect('card') } }>
+        onClick={ () => setMethod('card') }>
         <img src={ visa } height="45" className="mr-2" />
         <img src={ mastercard } height="45" />
       </button>
       { _.includes(methods, 'giropay') && (
         <button type="button"  className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
-          onClick={ () => { setMethod('giropay'); onSelect('giropay') } }>
+          onClick={ () => setMethod('giropay') }>
           <img src={ giropay } height="45" />
         </button>
       )}
