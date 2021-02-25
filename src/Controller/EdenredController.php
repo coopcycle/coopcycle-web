@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Edenred\Authentication;
 use AppBundle\Entity\Sylius\Customer;
+use AppBundle\Entity\Sylius\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Psr\Log\LoggerInterface;
@@ -53,8 +54,9 @@ class EdenredController extends AbstractController
 
         $subject = $this->authentication->getSubject($payload);
 
-        if (!$subject instanceof Customer) {
-            throw new BadRequestHttpException(sprintf('The "sub" claim should be an instance of "%s"', Customer::class));
+        if (!$subject instanceof Customer && !$subject instanceof Order) {
+            throw new BadRequestHttpException(sprintf('The "sub" claim should be an instance of "%s" or "%s',
+                Customer::class, Order::class));
         }
 
         if ($request->query->has('error')) {
@@ -73,14 +75,17 @@ class EdenredController extends AbstractController
             return $this->redirectToRoute('fos_user_profile_show');
         }
 
-        $subject->setEdenredAccessToken($data['access_token']);
-        $subject->setEdenredRefreshToken($data['refresh_token']);
+        $customer = $subject instanceof Order ? $subject->getCustomer() : $subject;
+
+        $customer->setEdenredAccessToken($data['access_token']);
+        $customer->setEdenredRefreshToken($data['refresh_token']);
 
         $entityManager->flush();
 
         $this->addFlash('notice', $translator->trans('edenred.oauth_connect.success'));
 
-        // TODO Redirect depending on context
-        return $this->redirectToRoute('fos_user_profile_show');
+        return $this->redirectToRoute(
+            $subject instanceof Order ? 'order_payment' : 'fos_user_profile_show'
+        );
     }
 }

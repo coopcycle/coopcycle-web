@@ -4,6 +4,7 @@ namespace AppBundle\Edenred;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Sylius\Customer\CustomerInterface;
+use AppBundle\Sylius\Order\OrderInterface;
 use GuzzleHttp\Client as BaseClient;
 use GuzzleHttp\HandlerStack;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
@@ -39,7 +40,10 @@ class Authentication extends BaseClient
         $this->logger = $logger;
     }
 
-    public function getAuthorizeUrl(CustomerInterface $customer)
+    /**
+     * @param CustomerInterface|OrderInterface $subject
+     */
+    public function getAuthorizeUrl($subject)
     {
         $redirectUri = $this->urlGenerator
             ->generate('edenred_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -47,8 +51,8 @@ class Authentication extends BaseClient
         // Use a JWT as the "state" parameter
         $state = $this->jwtEncoder->encode([
             'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-            // The "sub" (Subject) claim contains the IRI of a customer
-            'sub' => $this->iriConverter->getIriFromItem($customer),
+            // The "sub" (Subject) claim contains the IRI of a resource
+            'sub' => $this->iriConverter->getIriFromItem($subject),
         ]);
 
         $queryString = http_build_query([
