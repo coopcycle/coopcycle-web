@@ -319,6 +319,7 @@ class SetupCommand extends Command
             [
                 'code' => 'GIROPAY',
                 'name' => 'Giropay',
+                'countries' => ['de'],
             ],
         ];
 
