@@ -2,9 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Slider, Switch } from 'antd';
+import { Form, Slider, Switch } from 'antd';
 import { Formik } from 'formik'
 
 import TagsSelect from '../../components/TagsSelect'
@@ -13,6 +11,8 @@ import {
   closeFiltersModal,
   setFilterValue } from '../redux/actions'
 import { selectBookedUsernames } from '../redux/selectors'
+
+import 'antd/lib/grid/style/index.css'
 
 function isHidden(hiddenCouriers, username) {
   return !!_.find(hiddenCouriers, u => u === username)
@@ -91,30 +91,32 @@ class FiltersModalContent extends React.Component {
             <div className="tab-content">
               <div role="tabpanel" className="tab-pane active" id="filters_general">
                 <div className="dashboard__modal-filters__tabpane">
-                  <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS') }
-                    labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} colon={ false }>
-                    <Switch
-                      checkedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
-                      unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
-                      defaultChecked={ values.showFinishedTasks }
-                      onChange={ (checked) => setFieldValue('showFinishedTasks', checked) } />
-                  </Form.Item>
-                  <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS') }
-                    labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} colon={ false }>
-                    <Switch
-                      checkedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
-                      unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
-                      defaultChecked={ values.showCancelledTasks }
-                      onChange={ (checked) => setFieldValue('showCancelledTasks', checked) } />
-                  </Form.Item>
-                  <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED') }
-                    labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} colon={ false }>
-                    <Switch
-                      checkedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
-                      unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
-                      defaultChecked={ values.alwayShowUnassignedTasks }
-                      onChange={ (checked) => setFieldValue('alwayShowUnassignedTasks', checked) } />
-                  </Form.Item>
+                  <Form layout="horizontal" component="div"
+                    labelCol={{ span: 18 }}
+                    wrapperCol={{ span: 6 }}
+                    colon={ false }>
+                    <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS') }>
+                      <Switch
+                        checkedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
+                        unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
+                        defaultChecked={ values.showFinishedTasks }
+                        onChange={ (checked) => setFieldValue('showFinishedTasks', checked) } />
+                    </Form.Item>
+                    <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS') }>
+                      <Switch
+                        checkedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
+                        unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
+                        defaultChecked={ values.showCancelledTasks }
+                        onChange={ (checked) => setFieldValue('showCancelledTasks', checked) } />
+                    </Form.Item>
+                    <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED') }>
+                      <Switch
+                        checkedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
+                        unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
+                        defaultChecked={ values.alwayShowUnassignedTasks }
+                        onChange={ (checked) => setFieldValue('alwayShowUnassignedTasks', checked) } />
+                    </Form.Item>
+                  </Form>
                 </div>
               </div>
               <div role="tabpanel" className="tab-pane" id="filters_tags">
