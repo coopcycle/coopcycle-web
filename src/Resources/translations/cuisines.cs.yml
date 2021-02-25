@@ -31,7 +31,7 @@ cheesesteaks: Cheesesteak
 chicken: Kuřecí
 chilean: Chillská
 chinese: Čínská
-chowder: Chowder
+chowder: Polévka
 coffee: Káva
 colombian: Kolumbijská
 contemporary: Současná
@@ -41,7 +41,7 @@ creole: Kreolská
 crepes: Palačinky
 cuban: Kubánská
 czech: Česká
-deli: Deli
+deli: Lahůdky
 dim_sum: Dim Sum knedlíčky
 diner: Oběd
 dominican: Dominikánská
@@ -56,11 +56,11 @@ ecuadorean: Ekvádorská
 european: Evropská
 fast_food: Rychlé občerstvení
 filipino: Filipínská
-fish_and_chips: Fish and Chips
+fish_and_chips: Ryba a hranolky
 fondue: Fondue
 french: Francouzská
 frozen_yogurt: Jogurtová zmrzlina
-fusion: Fusion
+fusion: Fúze
 gastropub: Gastropub
 german: Německá
 greek: Řecká
@@ -112,9 +112,9 @@ polish: Polská
 polynesian: Polynézská
 portuguese: Portugalská
 provencal: Provensálská
-pub_food: Pub Food
+pub_food: Hospodské jídlo
 puerto_rican: Portorická
-raw: Raw
+raw: Syrové
 ribs: Žebírka
 russian: Ruská
 salad: Saláty
@@ -126,7 +126,7 @@ seafood: Mořské plody
 senegalese: Senegalská
 singaporean: Singapurská
 smoothies: Smoothie
-soul_food: Soul Food
+soul_food: Duchovní strava
 soup: Polévky
 south_american: Jihoamerická
 south_african: Jihoafrická
@@ -135,7 +135,7 @@ southern: Jižanská
 southwestern: Západní jižanská
 spanish: Španělská
 steak: Steaky
-steakhouse: Steakhouse
+steakhouse: Steaková restaurace
 subs: Obložené bagety
 sushi: Sushi
 taiwanese: Taiwanská
