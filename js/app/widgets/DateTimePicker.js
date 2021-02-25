@@ -1,15 +1,11 @@
 import React from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { ConfigProvider, DatePicker, TimePicker } from 'antd';
+import { ConfigProvider, DatePicker, Form, TimePicker } from 'antd';
 
 import 'antd/es/input/style/index.css'
 
 import { antdLocale } from '../i18n'
-
-const FormItem = Form.Item
 
 const today = moment().startOf('day')
 
@@ -89,6 +85,7 @@ class DateTimePicker extends React.Component {
   render() {
 
     const formItemProps = this.props.error ? {
+      hasFeedback: true,
       validateStatus: 'error',
     } : {}
 
@@ -107,29 +104,27 @@ class DateTimePicker extends React.Component {
     }
 
     return (
-      <ConfigProvider locale={ antdLocale }>
-        <div>
-          <FormItem {...formItemProps}>
-            <DatePicker
-              disabledDate={this.disabledDate}
-              onChange={this.onDateChange.bind(this)}
-              format={dateFormat}
-              placeholder="Date"
-              defaultValue={this.props.defaultValue}
-              { ...datePickerProps }
-            />
-            <TimePicker
-              disabledMinutes={this.disabledMinutes}
-              onChange={this.onTimeChange.bind(this)}
-              defaultValue={this.props.defaultValue}
-              format={timeFormat}
-              hideDisabledOptions
-              placeholder="Heure"
-              { ...timePickerProps }
-            />
-          </FormItem>
-        </div>
-      </ConfigProvider>
+      <div>
+        <Form.Item {...formItemProps}>
+          <DatePicker
+            disabledDate={this.disabledDate}
+            onChange={this.onDateChange.bind(this)}
+            format={dateFormat}
+            placeholder="Date"
+            defaultValue={this.props.defaultValue}
+            { ...datePickerProps }
+          />
+          <TimePicker
+            disabledMinutes={this.disabledMinutes}
+            onChange={this.onTimeChange.bind(this)}
+            defaultValue={this.props.defaultValue}
+            format={timeFormat}
+            hideDisabledOptions
+            placeholder="Heure"
+            { ...timePickerProps }
+          />
+        </Form.Item>
+      </div>
     )
   }
 }
@@ -150,5 +145,8 @@ export default function(el, options) {
 
   const props = { ...defaultProps, ...options }
 
-  render(<DateTimePicker { ...props } />, el)
+  render(
+    <ConfigProvider locale={ antdLocale }>
+      <DateTimePicker { ...props } />
+    </ConfigProvider>, el)
 }
