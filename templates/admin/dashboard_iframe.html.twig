@@ -27,11 +27,6 @@
     data-positions="{{ positions|json_encode|e('html_attr') }}"
     data-nav="{{ nav ? 'on' : 'off' }}"
     data-example-spreadsheet-url="{{ path('spreadsheet_example_tasks') }}">
-    <div class="dashboard__map">
-      <div class="dashboard__toolbar-container"></div>
-      <div class="dashboard__map-container"></div>
-    </div>
-    <aside class="dashboard__aside"></aside>
   </div>
   <div class="dashboard__loader">
     <div id="dashboard__loader" style="margin: 0 auto;"></div>

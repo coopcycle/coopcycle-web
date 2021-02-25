@@ -15,12 +15,6 @@ import Navbar from './components/Navbar'
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
-let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve
-
-const mapLoaded = new Promise((resolve) => mapLoadedResolve = resolve)
-const navbarLoaded = new Promise((resolve) => navbarLoadedResolve = resolve)
-const dashboardLoaded = new Promise((resolve) => dashboardLoadedResolve = resolve)
-
 function start() {
 
   const dashboardEl = document.getElementById('dashboard')
@@ -64,44 +58,29 @@ function start() {
 
   const store = createStoreFromPreloadedState(preloadedState)
 
-  Promise
-    .all([ mapLoaded, navbarLoaded, dashboardLoaded ])
-    .then(() => {
+  render(
+    <Provider store={ store }>
+      <I18nextProvider i18n={ i18n }>
+        <React.Fragment>
+          <div className="dashboard__map">
+            <div className="dashboard__toolbar-container">
+              <Navbar />
+            </div>
+            <div className="dashboard__map-container">
+              <LeafletMap onLoad={ () => { /* Do nothing */ } } />
+            </div>
+          </div>
+          <aside className="dashboard__aside">
+            <DashboardApp />
+          </aside>
+        </React.Fragment>
+      </I18nextProvider>
+    </Provider>,
+    document.getElementById('dashboard'),
+    () => {
       anim.stop()
       anim.destroy()
       document.querySelector('.dashboard__loader').remove()
-    })
-
-  render(
-    <Provider store={store}>
-      <I18nextProvider i18n={i18n}>
-        <LeafletMap onLoad={ () => mapLoadedResolve() } />
-      </I18nextProvider>
-    </Provider>,
-    document.querySelector('.dashboard__map-container')
-  )
-
-  render(
-    <Provider store={store}>
-      <I18nextProvider i18n={i18n}>
-        <Navbar />
-      </I18nextProvider>
-    </Provider>,
-    document.querySelector('.dashboard__toolbar-container'),
-    function () {
-      navbarLoadedResolve()
-    }
-  )
-
-  render(
-    <Provider store={store}>
-      <I18nextProvider i18n={i18n}>
-        <DashboardApp />
-      </I18nextProvider>
-    </Provider>,
-    document.querySelector('.dashboard__aside'),
-    function () {
-      dashboardLoadedResolve()
     }
   )
 
