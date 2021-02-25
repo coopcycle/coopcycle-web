@@ -2,10 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import moment from 'moment'
-import { ConfigProvider, DatePicker } from 'antd'
+import { DatePicker } from 'antd'
 import _ from 'lodash'
 
-import { antdLocale } from '../../i18n'
 import { openFiltersModal, resetFilters, openSettings, openImportModal } from '../redux/actions'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
 
@@ -103,19 +102,17 @@ class Navbar extends React.Component {
                     <i className="fa fa-caret-left"></i>
                   </a>
                   <div className="dashboard__date-picker">
-                    <ConfigProvider locale={antdLocale}>
-                      <DatePicker
-                        format={ 'll' }
-                        defaultValue={ this.props.date }
-                        onChange={(date) => {
-                          if (date) {
-                            window.location.href = window.Routing.generate('admin_dashboard_fullscreen', {
-                              date: date.format('YYYY-MM-DD'),
-                              nav: this.props.nav
-                            })
-                          }
-                        }} />
-                    </ConfigProvider>
+                    <DatePicker
+                      format={ 'll' }
+                      defaultValue={ this.props.date }
+                      onChange={(date) => {
+                        if (date) {
+                          window.location.href = window.Routing.generate('admin_dashboard_fullscreen', {
+                            date: date.format('YYYY-MM-DD'),
+                            nav: this.props.nav
+                          })
+                        }
+                      }} />
                   </div>
                   <a className="dashboard__date-link" href={ this.props.next }>
                     <i className="fa fa-caret-right"></i>

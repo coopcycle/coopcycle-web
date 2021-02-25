@@ -5,8 +5,9 @@ import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
 import moment from 'moment'
 import _ from 'lodash'
+import { ConfigProvider } from 'antd'
 
-import i18n from '../i18n'
+import i18n, { antdLocale } from '../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
 import DashboardApp from './app'
 import LeafletMap from './components/LeafletMap'
@@ -61,19 +62,21 @@ function start() {
   render(
     <Provider store={ store }>
       <I18nextProvider i18n={ i18n }>
-        <React.Fragment>
-          <div className="dashboard__map">
-            <div className="dashboard__toolbar-container">
-              <Navbar />
+        <ConfigProvider locale={antdLocale}>
+          <React.Fragment>
+            <div className="dashboard__map">
+              <div className="dashboard__toolbar-container">
+                <Navbar />
+              </div>
+              <div className="dashboard__map-container">
+                <LeafletMap onLoad={ () => { /* Do nothing */ } } />
+              </div>
             </div>
-            <div className="dashboard__map-container">
-              <LeafletMap onLoad={ () => { /* Do nothing */ } } />
-            </div>
-          </div>
-          <aside className="dashboard__aside">
-            <DashboardApp />
-          </aside>
-        </React.Fragment>
+            <aside className="dashboard__aside">
+              <DashboardApp />
+            </aside>
+          </React.Fragment>
+        </ConfigProvider>
       </I18nextProvider>
     </Provider>,
     document.getElementById('dashboard'),
