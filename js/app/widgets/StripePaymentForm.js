@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { render } from 'react-dom'
 import _ from 'lodash'
 import classNames from 'classnames'
+import axios from 'axios'
 
 import mastercard from 'payment-icons/min/flat/mastercard.svg'
 import visa from 'payment-icons/min/flat/visa.svg'
@@ -138,16 +139,20 @@ export default function(form, options) {
 
   const onSelect = value => {
     form.querySelector(`input[name="checkout_payment[method]"][value="${value}"]`).checked = true
-    switch (value) {
-      case 'card':
-      case 'giropay':
-        cc.mount(document.getElementById('card-element'), value).then(() => enableBtn(submitButton))
-        break
-      default:
-        cc.unmount()
-        document.getElementById('card-errors').textContent = ''
-        enableBtn(submitButton)
-    }
+    axios
+      .post(options.selectPaymentMethodURL, { method: value })
+      .then(response => {
+        switch (value) {
+          case 'card':
+          case 'giropay':
+            cc.mount(document.getElementById('card-element'), value, response.data).then(() => enableBtn(submitButton))
+            break
+          default:
+            cc.unmount()
+            document.getElementById('card-errors').textContent = ''
+            enableBtn(submitButton)
+        }
+      })
   }
 
   if (methods.length > 1) {

@@ -30,8 +30,10 @@ use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -287,6 +289,78 @@ class OrderController extends AbstractController
         $parameters['form'] = $form->createView();
 
         return $this->render('order/payment.html.twig', $parameters);
+    }
+
+    /**
+     * @Route("/order/payment/{hashId}/method", name="order_payment_select_method", methods={"POST"})
+     */
+    public function selectPaymentMethodAction($hashId, Request $request,
+        OrderManager $orderManager,
+        CartContextInterface $cartContext,
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
+        EntityManagerInterface $entityManager)
+    {
+        $order = $cartContext->getCart();
+
+        if (null === $order || null === $order->getVendor()) {
+
+            return new JsonResponse(['message' => 'No cart found in context'], 404);
+        }
+
+        $hashids = new Hashids($this->getParameter('secret'), 8);
+
+        $decoded = $hashids->decode($hashId);
+
+        if (count($decoded) !== 1) {
+
+            return new JsonResponse(['message' => 'Hashid could not be decoded'], 400);
+        }
+
+        $paymentId = current($decoded);
+        $payment = $entityManager->getRepository(PaymentInterface::class)->find($paymentId);
+
+        if (null === $payment) {
+
+            return new JsonResponse(['message' => 'Payment does not exist'], 404);
+        }
+
+        if (!$order->hasPayment($payment)) {
+
+            return new JsonResponse(['message' => 'Payment does not belong to current cart'], 400);
+        }
+
+        $content = $request->getContent();
+
+        $data = [];
+
+        if (!empty($content)) {
+            $data = json_decode($content, true);
+        }
+
+        if (!isset($data['method'])) {
+
+            return new JsonResponse(['message' => 'No payment method found in request'], 400);
+        }
+
+        $code = strtoupper($data['method']);
+
+        $paymentMethod = $paymentMethodRepository->findOneByCode($code);
+
+        if (null === $paymentMethod) {
+
+            return new JsonResponse(['message' => 'Payment method does not exist'], 404);
+        }
+
+        if (!$paymentMethod->isEnabled() && !$this->getParameter('kernel.debug')) {
+
+            return new JsonResponse(['message' => 'Payment method is not enabled'], 400);
+        }
+
+        $payment->setMethod($paymentMethod);
+
+        $entityManager->flush();
+
+        return new JsonResponse([], 200);
     }
 
     /**
