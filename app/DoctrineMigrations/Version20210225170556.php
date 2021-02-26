@@ -19,7 +19,7 @@ final class Version20210225170556 extends AbstractMigration
 
     public function up(Schema $schema) : void
     {
-        $this->addSql('UPDATE sylius_payment SET method_id = (SELECT id FROM sylius_payment_method WHERE code = \'GIROPAY\') WHERE details->>\'source_type\' = \'giropay\' OR (details->>\'payment_method_types\')::jsonb ? \'giropay\'');
+        $this->addSql('UPDATE sylius_payment SET method_id = (SELECT id FROM sylius_payment_method WHERE code = \'GIROPAY\') WHERE details->>\'source_type\' = \'giropay\' OR JSONB_EXISTS((details->>\'payment_method_types\')::jsonb, \'giropay\')');
     }
 
     public function down(Schema $schema) : void
