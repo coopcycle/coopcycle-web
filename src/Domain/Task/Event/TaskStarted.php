@@ -9,11 +9,6 @@ use AppBundle\Entity\Task;
 
 class TaskStarted extends Event implements DomainEvent, HasIconInterface
 {
-    public function __construct(Task $task)
-    {
-        parent::__construct($task);
-    }
-
     public static function messageName()
     {
         return 'task:started';

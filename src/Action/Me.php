@@ -36,10 +36,8 @@ class Me
             $accessToken = $this->accessTokenManager->find($token->getCredentials());
             $client = $accessToken->getClient();
 
-            $apiApp = $this->doctrine->getRepository(ApiApp::class)
+            return $this->doctrine->getRepository(ApiApp::class)
                 ->findOneByOauth2Client($client);
-
-            return $apiApp;
         }
 
         return $this->getUser();

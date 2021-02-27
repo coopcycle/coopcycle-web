@@ -88,7 +88,6 @@ class SettingsManagerTest extends TestCase
             $country,
             $foodtechEnable = true,
             $b2bEnabled = false,
-            new NullLogger(),
             new GatewayResolver('fr')
         );
 

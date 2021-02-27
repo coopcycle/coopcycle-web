@@ -201,9 +201,7 @@ class RestaurantController extends AbstractController
      * )
      */
     public function hubAction($id, $slug, Request $request,
-        SlugifyInterface $slugify,
-        CartContextInterface $cartContext,
-        IriConverterInterface $iriConverter)
+        SlugifyInterface $slugify)
     {
         $hub = $this->getDoctrine()->getRepository(Hub::class)->find($id);
 

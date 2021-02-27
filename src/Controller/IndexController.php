@@ -116,7 +116,7 @@ class IndexController extends AbstractController
     /**
      * @Route("/cart.json", name="cart_json")
      */
-    public function cartAsJsonAction(CartContextInterface $cartContext, Request $request)
+    public function cartAsJsonAction(CartContextInterface $cartContext)
     {
         $cart = $cartContext->getCart();
 
@@ -131,16 +131,14 @@ class IndexController extends AbstractController
     /**
      * @Route("/CHANGELOG.md", name="changelog")
      */
-    public function changelogAction(Request $request)
+    public function changelogAction()
     {
         $response = new Response(file_get_contents($this->getParameter('kernel.project_dir') . '/CHANGELOG.md'));
-
         $response->headers->add(['Content-Type' => 'text/markdown']);
-
         return $response;
     }
 
-    public function redirectToLocaleAction(Request $request)
+    public function redirectToLocaleAction()
     {
         return new RedirectResponse(sprintf('/%s/', $this->getParameter('locale')), 302);
     }

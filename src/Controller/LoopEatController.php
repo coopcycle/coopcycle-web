@@ -194,12 +194,11 @@ class LoopEatController extends AbstractController
     /**
      * @Route("/loopeat/failure", name="loopeat_failure")
      */
-    public function failureAction(Request $request)
+    public function failureAction()
     {
         if ('iframe' === $this->loopeatOAuthFlow) {
             return $this->render('loopeat/post_message.html.twig', ['loopeat_success' => false]);
         }
-
         return $this->redirectToRoute('order');
     }
 }

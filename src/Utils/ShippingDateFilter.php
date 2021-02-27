@@ -16,7 +16,6 @@ use Spatie\OpeningHours\OpeningHours;
 class ShippingDateFilter
 {
     private $orderTimelineCalculator;
-    private $openingHoursCache = [];
 
     public function __construct(
         OrderTimelineCalculator $orderTimelineCalculator,
