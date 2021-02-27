@@ -25,21 +25,15 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
 {
     private $itemDataProvider;
     private $doctrine;
-    private $tokenStorage;
-    private $accessTokenManager;
     private $denyAccessListener;
 
     public function __construct(
         ItemDataProviderInterface $itemDataProvider,
         ManagerRegistry $doctrine,
-        TokenStorageInterface $tokenStorage,
-        AccessTokenManagerInterface $accessTokenManager,
         DenyAccessListener $denyAccessListener)
     {
         $this->itemDataProvider = $itemDataProvider;
         $this->doctrine = $doctrine;
-        $this->tokenStorage = $tokenStorage;
-        $this->accessTokenManager = $accessTokenManager;
         $this->denyAccessListener = $denyAccessListener;
     }
 

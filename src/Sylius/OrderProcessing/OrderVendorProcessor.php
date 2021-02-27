@@ -16,16 +16,13 @@ final class OrderVendorProcessor implements OrderProcessorInterface
 {
     private $adjustmentFactory;
     private $translator;
-    private $logger;
 
     public function __construct(
         AdjustmentFactoryInterface $adjustmentFactory,
-        TranslatorInterface $translator,
-        LoggerInterface $logger)
+        TranslatorInterface $translator)
     {
         $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
-        $this->logger = $logger;
     }
 
     /**

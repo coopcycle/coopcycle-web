@@ -23,30 +23,24 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 final class OrderSubscriber implements EventSubscriberInterface
 {
-    private $doctrine;
     private $tokenStorage;
     private $orderTimeHelper;
     private $validator;
     private $dataPersister;
     private $orderProcessor;
-    private $logger;
 
     public function __construct(
-        ManagerRegistry $doctrine,
         TokenStorageInterface $tokenStorage,
         OrderTimeHelper $orderTimeHelper,
         ValidatorInterface $validator,
         DataPersisterInterface $dataPersister,
-        OrderProcessorInterface $orderProcessor,
-        LoggerInterface $logger
+        OrderProcessorInterface $orderProcessor
     ) {
-        $this->doctrine = $doctrine;
         $this->tokenStorage = $tokenStorage;
         $this->orderTimeHelper = $orderTimeHelper;
         $this->validator = $validator;
         $this->dataPersister = $dataPersister;
         $this->orderProcessor = $orderProcessor;
-        $this->logger = $logger;
     }
 
     public static function getSubscribedEvents()

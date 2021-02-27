@@ -22,7 +22,6 @@ class RestaurantStats implements \Countable
 {
     private $qb;
     private $result;
-    private $orders;
     private $translator;
     private $withVendorName;
     private $withMessenger;
@@ -32,9 +31,6 @@ class RestaurantStats implements \Countable
     private $taxColumns = [];
 
     private $numberFormatter;
-
-    private $orderTotalResult;
-    private $adjustmentTotalResult;
 
     const MAX_RESULTS = 50;
 

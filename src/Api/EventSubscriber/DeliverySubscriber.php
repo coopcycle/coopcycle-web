@@ -23,7 +23,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 final class DeliverySubscriber implements EventSubscriberInterface
 {
     private $doctrine;
-    private $tokenStorage;
     private $storeExtractor;
     private $routing;
     private $messageBus;
@@ -36,13 +35,11 @@ final class DeliverySubscriber implements EventSubscriberInterface
 
     public function __construct(
         ManagerRegistry $doctrine,
-        TokenStorageInterface $tokenStorage,
         TokenStoreExtractor $storeExtractor,
         RoutingInterface $routing,
         MessageBusInterface $messageBus)
     {
         $this->doctrine = $doctrine;
-        $this->tokenStorage = $tokenStorage;
         $this->storeExtractor = $storeExtractor;
         $this->routing = $routing;
         $this->messageBus = $messageBus;
