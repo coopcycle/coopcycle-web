@@ -99,6 +99,7 @@ export const SELECT_TASK = 'SELECT_TASK'
 export const SELECT_TASKS = 'SELECT_TASKS'
 export const CLEAR_SELECTED_TASKS = 'CLEAR_SELECTED_TASKS'
 export const SET_TASK_LIST_GROUP_MODE = 'SET_TASK_LIST_GROUP_MODE'
+export const REMOVE_TASK = 'REMOVE_TASK'
 
 export const SET_GEOLOCATION = 'SET_GEOLOCATION'
 export const SCAN_POSITIONS = 'SCAN_POSITIONS'
@@ -475,12 +476,18 @@ function closeImportModal() {
   return { type: CLOSE_IMPORT_MODAL }
 }
 
+function removeTask(task) {
+  return { type: REMOVE_TASK, task }
+}
+
 function updateTask(task) {
   return function(dispatch, getState) {
     let date = selectSelectedDate(getState())
 
     if (isInDateRange(task, date)) {
       dispatch(_updateTask(task))
+    } else {
+      dispatch(removeTask(task))
     }
   }
 }

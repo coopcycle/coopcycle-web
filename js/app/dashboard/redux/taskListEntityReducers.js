@@ -4,7 +4,8 @@ import {
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
   TASK_LIST_UPDATED,
   TASK_LISTS_UPDATED,
-  UPDATE_TASK
+  UPDATE_TASK,
+  REMOVE_TASK
 } from "./actions";
 import {
   taskUtils,
@@ -112,6 +113,12 @@ export default (state = initialState, action) => {
         byId: newItems,
       }
     }
+    case REMOVE_TASK:
+
+      return {
+        ...state,
+        byId: taskListEntityUtils.removeUnassignedTask(state.byId, action.task)
+      }
     default:
       return state
   }

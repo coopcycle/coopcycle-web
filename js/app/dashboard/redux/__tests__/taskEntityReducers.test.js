@@ -158,6 +158,32 @@ describe('taskEntityReducers', () => {
           },
         })
       })
+      it('should remove task', () => {
+        expect(taskEntityReducers(
+          {
+            byId: {
+              '/api/tasks/1': {
+                '@id': '/api/tasks/1',
+              },
+              '/api/tasks/2': {
+                '@id': '/api/tasks/2',
+              },
+            },
+          },
+          {
+            type: 'REMOVE_TASK',
+            task: {
+              '@id': '/api/tasks/1',
+            },
+          }
+        )).toEqual({
+          byId: {
+            '/api/tasks/2': {
+              '@id': '/api/tasks/2',
+            },
+          },
+        })
+      })
     })
 
     describe('task does not exist', () => {
