@@ -297,7 +297,7 @@ services:
       - name: sylius.promotion_action
         type: delivery_percentage_discount
         label: 'Delivery percentage discount'
-        form_type: AppBundle\Form\Sylius\Promotion\Action\PercentageDiscountConfigurationType
+        form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\PercentageDiscountConfigurationType
 
   sylius.promotion_action.fixed_discount:
     class: AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand
@@ -307,7 +307,7 @@ services:
       - name: sylius.promotion_action
         type: order_fixed_discount
         label: 'Fixed discount'
-        form_type: AppBundle\Form\Sylius\Promotion\Action\FixedDiscountConfigurationType
+        form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\FixedDiscountConfigurationType
 
   sylius.promotion_action.percentage_discount:
     class: AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand
@@ -317,7 +317,7 @@ services:
       - name: sylius.promotion_action
         type: order_percentage_discount
         label: 'Percentage discount'
-        form_type: AppBundle\Form\Sylius\Promotion\Action\AppBundle\Form\Sylius\Promotion\Action\PercentageDiscountConfigurationType
+        form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\PercentageDiscountConfigurationType
 
   sylius.promotion.eligibility_checker.promotion_coupon_per_customer_usage_limit:
     class: AppBundle\Sylius\Promotion\Checker\Eligibility\PromotionCouponPerCustomerUsageLimitEligibilityChecker

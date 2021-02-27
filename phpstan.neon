@@ -7,8 +7,6 @@ parameters:
     paths:
         - src
     excludes_analyse:
-        # Fatal error: Cannot declare class AppBundle\Form\Sylius\Promotion\Action\FixedDiscountConfigurationType because the name is already in use
-        - src/Form/Sylius/Promotion/Action/FixedDiscountConfigurationType.php
         # Class AppBundle\Api\DataProvider\RestaurantCollectionDataProvider extends final class ApiPlatform\Core\Bridge\Doctrine\Orm\CollectionDataProvider
         - src/Api/DataProvider/RestaurantCollectionDataProvider
     ignoreErrors:
