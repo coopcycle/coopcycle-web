@@ -233,14 +233,6 @@ class EmailManager
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
 
-    public function createCovid19Message()
-    {
-        $subject = $this->translator->trans('covid_19.subject', [], 'emails');
-        $body = $this->mjml->render($this->templating->render('emails/covid_19.mjml.twig'));
-
-        return $this->createHtmlMessageWithReplyTo($subject, $body);
-    }
-
     private function createExpiringAuthorizationReminderMessage(OrderInterface $order, $isAdmin = false)
     {
         $subject = $this->translator->trans('order.expiring_authorization.subject', ['%order.number%' => $order->getNumber()], 'emails');

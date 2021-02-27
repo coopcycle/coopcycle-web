@@ -1641,22 +1641,6 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/emails/covid-19", name="admin_email_covid_19_preview")
-     */
-    public function covid19EmailPreviewAction(Request $request, EmailManager $emailManager)
-    {
-        $message = $emailManager->createCovid19Message();
-
-        // An email must have a "To", "Cc", or "Bcc" header."
-        $message->to('dev@coopcycle.org');
-
-        $response = new Response();
-        $response->setContent((string) $message->getHtmlBody());
-
-        return $response;
-    }
-
-    /**
      * @Route("/admin/restaurants/pledges", name="admin_restaurants_pledges")
      */
     public function restaurantsPledgesListAction(Request $request, EntityManagerInterface $manager)

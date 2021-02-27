@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
@@ -103,6 +104,16 @@ class ContentController extends AbstractController
 
         return $this->render('content/markdown.html.twig', [
             'text' => $text
+        ]);
+    }
+
+    /**
+     * @Route("/covid-19", name="covid_19")
+     */
+    public function covid19Action(TranslatorInterface $translator)
+    {
+        return $this->render('content/raw.html.twig', [
+            'text' => $translator->trans('covid_19.body', [], 'emails')
         ]);
     }
 }
