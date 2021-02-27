@@ -179,7 +179,6 @@
             "namshi/jose": ["tests"],
             "nelmio/alice": ["tests"],
             "predicthq/address-formatter-templates": ["testcases"],
-            "swiftmailer/swiftmailer": ["doc", "tests"],
             "sylius/product-bundle": ["spec", "test"],
             "sylius/promotion-bundle": ["spec", "Tests", "test"],
             "sylius/resource-bundle": ["src/Bundle/spec", "src/Bundle/test", "src/Bundle/Tests"],
