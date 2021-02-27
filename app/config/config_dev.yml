@@ -63,11 +63,6 @@ monolog:
             level: info
             max_files: 3
             channels: [loopeat]
-        mailer:
-            level:    debug
-            type:     stream
-            path:     '%env(APP_LOG_DIR)%/mailer.%kernel.environment%.log'
-            channels: [mailer]
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
         #firephp:

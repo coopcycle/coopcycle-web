@@ -79,7 +79,7 @@ services:
   FOS\UserBundle\Util\UserManipulator:
     alias: 'fos_user.util.user_manipulator'
     public: true
-  FOS\UserBundle\Mailer\MailerInterface: '@fos_user.mailer.twig_swift'
+  FOS\UserBundle\Mailer\MailerInterface: '@AppBundle\Mailer\FOSUserBundleMailer'
   Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface: '@lexik_jwt_authentication.jwt_manager'
   Liip\ImagineBundle\Service\FilterService: '@liip_imagine.service.filter'
   League\Flysystem\MountManager: '@oneup_flysystem.mount_manager'
@@ -527,12 +527,6 @@ services:
     arguments:
       $properties: []
 
-  AppBundle\Service\MailLoggerService:
-    arguments: ["@logger"]
-    tags:
-      - { name: monolog.logger, channel: mailer }
-      - { name: "swiftmailer.default.plugin" }
-
   coopcycle.web_success_handler:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
     arguments: ['@security.http_utils', '@router']
@@ -771,16 +765,6 @@ services:
   AppBundle\Mjml\MjmlServerRenderer:
     arguments:
       $client: '@csa_guzzle.client.mjml_server'
-
-  AppBundle\Utils\MessageLoggingMailer: ~
-
-  AppBundle\Utils\MessageLoggingTwigSwiftMailer:
-    autowire: false
-    autoconfigure: false
-    public: true
-    parent: 'fos_user.mailer.twig_swift'
-    arguments:
-      $mailer: '@AppBundle\Utils\MessageLoggingMailer'
 
   AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
   AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
@@ -1086,3 +1070,13 @@ services:
       $clientSecret: "%env(EDENRED_AUTHENTICATION_CLIENT_SECRET)%"
     tags:
       - { name: monolog.logger, channel: edenred }
+
+  AppBundle\Mailer\FOSUserBundleMailer:
+    arguments:
+      $parameters:
+        template:
+          confirmation: '%fos_user.registration.confirmation.template%'
+          resetting: '%fos_user.resetting.email.template%'
+        from_email:
+          confirmation: '%fos_user.registration.confirmation.from_email%'
+          resetting: '%fos_user.resetting.email.from_email%'

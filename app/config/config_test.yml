@@ -25,9 +25,6 @@ web_profiler:
     toolbar: false
     intercept_redirects: false
 
-swiftmailer:
-    disable_delivery: true
-
 snc_redis:
     clients:
         default:

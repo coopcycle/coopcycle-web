@@ -56,6 +56,7 @@ use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\ZoneCollectionType;
+use AppBundle\Mailer\FOSUserBundleMailer;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\EmailManager;
@@ -69,7 +70,6 @@ use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
-use AppBundle\Utils\MessageLoggingTwigSwiftMailer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -1600,7 +1600,7 @@ class AdminController extends Controller
     /**
      * @Route("/admin/emails", name="admin_email_preview")
      */
-    public function emailsPreviewAction(Request $request, MessageLoggingTwigSwiftMailer $mailer)
+    public function emailsPreviewAction(Request $request, FOSUserBundleMailer $mailer)
     {
         $method = 'sendConfirmationEmailMessage';
         if ($request->query->has('method')) {
@@ -1609,13 +1609,18 @@ class AdminController extends Controller
 
         $this->getUser()->setConfirmationToken('123456');
 
+        $mailer->enableLogging();
+
         call_user_func_array([$mailer, $method], [$this->getUser()]);
 
         $messages = $mailer->getMessages();
         $message = current($messages);
 
+        // An email must have a "To", "Cc", or "Bcc" header."
+        $message->to('dev@coopcycle.org');
+
         $response = new Response();
-        $response->setContent($message->getBody());
+        $response->setContent((string) $message->getHtmlBody());
 
         return $response;
     }

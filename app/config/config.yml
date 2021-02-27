@@ -278,12 +278,6 @@ api_platform:
         csv: ['text/csv']
         html: ['text/html']
 
-# Swiftmailer Configuration
-swiftmailer:
-    url: "%env(COOPCYCLE_MAIL_URL)%"
-    transport: smtp
-    spool: { type: memory }
-
 # Nelmio CORS
 nelmio_cors:
     defaults:
@@ -301,7 +295,7 @@ fos_user:
     firewall_name: web
     user_class: AppBundle\Entity\User
     service:
-        mailer: fos_user.mailer.twig_swift
+        mailer: AppBundle\Mailer\FOSUserBundleMailer
         user_manager: coopcycle.user_manager
     from_email:
         address:        "%transactional_address%"

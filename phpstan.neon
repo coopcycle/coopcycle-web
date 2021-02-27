@@ -25,7 +25,6 @@ parameters:
         - '#Call to an undefined method Sylius\\Component\\Order\\Repository\\OrderRepositoryInterface::countByCustomerAndCoupon\(\)#'
         - '#Call to an undefined method Symfony\\Component\\HttpFoundation\\Session\\SessionInterface::getFlashBag\(\)#'
         - '#Call to an undefined method Symfony\\Component\\DependencyInjection\\Extension\\ExtensionInterface::addSecurityListenerFactory\(\)#'
-        - '#Call to an undefined method Swift_Mailer::getMessages\(\)#'
         - '#Method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) invoked with 2 parameters, 1 required#'
         - '#Strict comparison using === between null and Sylius\\Component\\Order\\Model\\OrderInterface will always evaluate to false#'
         - '#Call to an undefined method [a-zA-Z\\]+::accessControl\(\)#'
