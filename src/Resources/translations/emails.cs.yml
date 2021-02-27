@@ -35,7 +35,7 @@ covid_19.body: "<h1> Pokyny, které je třeba dodržovat při dodávce </h1>\n<p
   Proto vás žádáme, abyste <strong> rozbalili objednávku a přenesli obsah na talíře\
   \ </strong>. </p>\n<h2> 3. Zlikvidujte obal </h2>\n<p> Jakmile je objednávka rozbalena,\
   \ nezapomeňte <strong> zlikvidovat obal v uzavřeném koši </strong>, abyste se ho\
-  \ nechtěně nedotkli později.\n<h2> 4. Umyjte si ruce! </h2>\n<p> Jakmile rozbalíte\
+  \ nechtěně nedotkli později.</p>\n<h2> 4. Umyjte si ruce! </h2>\n<p> Jakmile rozbalíte\
   \ objednávku a zlikvidujete obal, <strong> umyjte si ruce! </strong> </p>\n"
 covid_19.subject: COVID-19 | Důležité pokyny pro vaši objednávku
 order.payment.body: "Dobrý den,\n<br>\nDokončili jsme dodávku, kterou jste si u nás\
