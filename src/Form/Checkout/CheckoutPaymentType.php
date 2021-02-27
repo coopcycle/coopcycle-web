@@ -4,7 +4,6 @@ namespace AppBundle\Form\Checkout;
 
 use AppBundle\Form\StripePaymentType;
 use AppBundle\Payment\GatewayResolver;
-use AppBundle\Service\StripeManager;
 use AppBundle\Utils\OrderTimeHelper;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -16,12 +15,10 @@ use Symfony\Component\Form\FormError;
 
 class CheckoutPaymentType extends AbstractType
 {
-    private $stripeManager;
     private $resolver;
 
-    public function __construct(StripeManager $stripeManager, GatewayResolver $resolver, OrderTimeHelper $orderTimeHelper)
+    public function __construct(GatewayResolver $resolver, OrderTimeHelper $orderTimeHelper)
     {
-        $this->stripeManager = $stripeManager;
         $this->resolver = $resolver;
 
         parent::__construct($orderTimeHelper);

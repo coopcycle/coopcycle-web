@@ -83,7 +83,6 @@ services:
     class: AppBundle\Domain\Task\Reactor\SendEmail
     arguments:
       - '@coopcycle.email_manager'
-      - '@coopcycle.settings_manager'
     tags:
       - name: event_subscriber
         subscribes_to: task:done

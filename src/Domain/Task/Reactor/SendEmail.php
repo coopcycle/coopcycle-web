@@ -4,19 +4,15 @@ namespace AppBundle\Domain\Task\Reactor;
 
 use AppBundle\Domain\Task\Event;
 use AppBundle\Service\EmailManager;
-use AppBundle\Service\SettingsManager;
 
 class SendEmail
 {
     private $emailManager;
-    private $settingsManager;
 
     public function __construct(
-        EmailManager $emailManager,
-        SettingsManager $settingsManager)
+        EmailManager $emailManager)
     {
         $this->emailManager = $emailManager;
-        $this->settingsManager = $settingsManager;
     }
 
     public function __invoke(Event $event)

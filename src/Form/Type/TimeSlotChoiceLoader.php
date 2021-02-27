@@ -17,7 +17,6 @@ use Yasumi\Yasumi;
 class TimeSlotChoiceLoader implements ChoiceLoaderInterface
 {
     private $timeSlot;
-    private $country;
     private $OHSToCarbon;
     private $openingHoursSpecifications = [];
     private $now;
@@ -26,7 +25,6 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
     public function __construct(TimeSlot $timeSlot, string $country, Collection $closingRules = null, \DateTime $maxDate = null)
     {
         $this->timeSlot = $timeSlot;
-        $this->country = $country;
         $this->closingRules = $closingRules ?? new ArrayCollection();
 
         $carbonToOHS = [

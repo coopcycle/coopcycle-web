@@ -90,7 +90,6 @@ services:
     arguments:
       - '@coopcycle.stripe_manager'
       - '@sm.factory'
-      - '@event_recorder'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\Refund

@@ -400,7 +400,6 @@ services:
         - '@AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider'
 
   AppBundle\EventListener\RegistrationListener:
-    arguments: ['@router']
     tags:
       - { name: kernel.event_subscriber }
 
