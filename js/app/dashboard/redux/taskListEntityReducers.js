@@ -22,9 +22,7 @@ export default (state = initialState, action) => {
     case MODIFY_TASK_LIST_REQUEST: {
       let entity = taskListEntityUtils.findTaskListByUsername(state.byId, action.username)
 
-      if (entity === undefined) {
-        // eslint-disable-next-line no-console
-        console.assert(false, `entity is undefined: username: ${action.username}`)
+      if (!entity) {
 
         return state
       }

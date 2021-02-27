@@ -7,7 +7,6 @@ import {
   REMOVE_TASK,
 } from "./actions";
 import { taskUtils as utils } from '../../coopcycle-frontend-js/logistics/redux'
-import _ from 'lodash'
 
 const initialState = {
   byId: {}
