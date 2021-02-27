@@ -6,26 +6,19 @@ use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class StripeManager
 {
     private $settingsManager;
-    private $urlGenerator;
-    private $secret;
     private $logger;
 
     const STRIPE_API_VERSION = '2019-09-09';
 
     public function __construct(
         SettingsManager $settingsManager,
-        UrlGeneratorInterface $urlGenerator,
-        string $secret,
         LoggerInterface $logger)
     {
         $this->settingsManager = $settingsManager;
-        $this->urlGenerator = $urlGenerator;
-        $this->secret = $secret;
         $this->logger = $logger;
     }
 
@@ -147,9 +140,7 @@ class StripeManager
             sprintf('Order #%d | StripeManager::createIntent | %s', $order->getId(), json_encode($payload))
         );
 
-        $intent = Stripe\PaymentIntent::create($payload, $stripeOptions);
-
-        return $intent;
+        return Stripe\PaymentIntent::create($payload, $stripeOptions);
     }
 
     /**
@@ -182,9 +173,7 @@ class StripeManager
             sprintf('Order #%d | StripeManager::createGiropayIntent | %s', $order->getId(), json_encode($payload))
         );
 
-        $intent = Stripe\PaymentIntent::create($payload, $stripeOptions);
-
-        return $intent;
+        return Stripe\PaymentIntent::create($payload, $stripeOptions);
     }
 
     /**

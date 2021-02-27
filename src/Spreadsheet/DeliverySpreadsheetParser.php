@@ -27,21 +27,15 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     private $geocoder;
     private $tagManager;
     private $slugify;
-    private $phoneNumberUtil;
-    private $countryCode;
 
     public function __construct(
         Geocoder $geocoder,
         TagManager $tagManager,
-        SlugifyInterface $slugify,
-        PhoneNumberUtil $phoneNumberUtil,
-        $countryCode)
+        SlugifyInterface $slugify)
     {
         $this->geocoder = $geocoder;
         $this->tagManager = $tagManager;
         $this->slugify = $slugify;
-        $this->phoneNumberUtil = $phoneNumberUtil;
-        $this->countryCode = $countryCode;
     }
 
     /**
@@ -141,18 +135,6 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     {
         if (1 === preg_match(self::TIME_PATTERN, $text, $matches)) {
             $date->setTime($matches['hour'], isset($matches['minute']) ? $matches['minute'] : 00);
-        }
-    }
-
-    private function applyTags(TaggableInterface $task, $tagsAsString)
-    {
-        $tagsAsString = trim($tagsAsString);
-
-        if (!empty($tagsAsString)) {
-            $slugs = explode(' ', $tagsAsString);
-            $slugs = array_map([$this->slugify, 'slugify'], $slugs);
-            $tags = $this->tagManager->fromSlugs($slugs);
-            $task->setTags($tags);
         }
     }
 

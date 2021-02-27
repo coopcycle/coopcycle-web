@@ -12,18 +12,15 @@ class CreateGeofencingChannel
     private $tile38;
     private $doorstepChanNamespace;
     private $fleetKey;
-    private $logger;
 
     public function __construct(
         Redis $tile38,
         string $doorstepChanNamespace,
-        string $fleetKey,
-        LoggerInterface $logger)
+        string $fleetKey)
     {
         $this->tile38 = $tile38;
         $this->doorstepChanNamespace = $doorstepChanNamespace;
         $this->fleetKey = $fleetKey;
-        $this->logger = $logger;
     }
 
     public function __invoke(OrderPicked $event)

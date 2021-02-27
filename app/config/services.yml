@@ -693,7 +693,6 @@ services:
   AppBundle\Utils\PriceFormatter:
     arguments:
       - '@sylius.context.currency'
-      - '@sylius.templating.helper.currency'
 
   AppBundle\Sylius\Channel\ChannelResolver:
     tags:
@@ -846,14 +845,10 @@ services:
       - { name: "liip_imagine.cache.resolver", resolver: "cached_s3_flysystem" }
 
   AppBundle\Service\StripeManager:
-    arguments:
-      $secret: '%secret%'
     tags:
       - { name: monolog.logger, channel: stripe }
 
-  AppBundle\Service\MercadopagoManager:
-    arguments:
-      $secret: '%secret%'
+  AppBundle\Service\MercadopagoManager: ~
 
   AppBundle\Sylius\Order\ReceiptGenerator:
     arguments:

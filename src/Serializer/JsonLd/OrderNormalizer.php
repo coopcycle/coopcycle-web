@@ -28,7 +28,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
     private $normalizer;
     private $channelContext;
     private $productRepository;
-    private $productOptionValueRepository;
     private $variantResolver;
     private $orderItemFactory;
     private $orderItemQuantityModifier;

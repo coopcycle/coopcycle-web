@@ -51,22 +51,6 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->locale = $locale;
     }
 
-    private function containsGroups(array $context = [], array $groups)
-    {
-        if (!isset($context['groups'])) {
-
-            return false;
-        }
-
-        foreach ($groups as $group) {
-            if (in_array($group, $context['groups'])) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public function normalize($object, $format = null, array $context = array())
     {
         $data = $this->normalizer->normalize($object, $format, $context);
@@ -191,9 +175,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        $restaurant = $this->normalizer->denormalize($data, $class, $format, $context);
-
-        return $restaurant;
+        return $this->normalizer->denormalize($data, $class, $format, $context);
     }
 
     public function supportsDenormalization($data, $type, $format = null)

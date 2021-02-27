@@ -11,7 +11,6 @@ use SimpleBus\Message\Bus\MessageBus;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\PaymentTransitions;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * This Reactor is responsible for updating the state of the aggregate.
@@ -20,7 +19,6 @@ class UpdateState
 {
     private $stateMachineFactory;
     private $orderProcessor;
-    private $serializer;
     private $eventBus;
 
     private $eventNameToTransition = [];
@@ -28,13 +26,11 @@ class UpdateState
     public function __construct(
         StateMachineFactoryInterface $stateMachineFactory,
         OrderProcessorInterface $orderProcessor,
-        SerializerInterface $serializer,
         MessageBus $eventBus,
         OrderTimeHelper $orderTimeHelper)
     {
         $this->stateMachineFactory = $stateMachineFactory;
         $this->orderProcessor = $orderProcessor;
-        $this->serializer = $serializer;
         $this->eventBus = $eventBus;
         $this->orderTimeHelper = $orderTimeHelper;
 

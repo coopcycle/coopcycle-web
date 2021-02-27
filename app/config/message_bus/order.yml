@@ -258,7 +258,6 @@ services:
       $tile38: '@snc_redis.tile38'
       $doorstepChanNamespace: '%tile38_doorstep_chan_namespace%'
       $fleetKey: '%tile38_fleet_key%'
-      $logger: '@logger'
     tags:
         - name: event_subscriber
           subscribes_to: order:picked
@@ -268,7 +267,6 @@ services:
     arguments:
       $tile38: '@snc_redis.tile38'
       $doorstepChanNamespace: '%tile38_doorstep_chan_namespace%'
-      $logger: '@logger'
     tags:
         - name: event_subscriber
           subscribes_to: order:dropped
@@ -285,7 +283,6 @@ services:
     arguments:
       - '@sm.factory'
       - '@sylius.order_processing.order_payment_processor'
-      - '@serializer'
       - '@event_bus'
       - '@AppBundle\Utils\OrderTimeHelper'
     tags:

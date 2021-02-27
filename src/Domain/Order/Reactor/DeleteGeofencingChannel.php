@@ -10,16 +10,13 @@ class DeleteGeofencingChannel
 {
     private $tile38;
     private $doorstepChanNamespace;
-    private $logger;
 
     public function __construct(
         Redis $tile38,
-        string $doorstepChanNamespace,
-        LoggerInterface $logger)
+        string $doorstepChanNamespace)
     {
         $this->tile38 = $tile38;
         $this->doorstepChanNamespace = $doorstepChanNamespace;
-        $this->logger = $logger;
     }
 
     public function __invoke(Event $event)

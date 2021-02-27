@@ -44,12 +44,7 @@ class UpdateStateTest extends KernelTestCase
         $this->stateMachineFactory = self::$container->get(FactoryInterface::class);
 
         $this->orderProcessor = $this->prophesize(OrderProcessorInterface::class);
-        $this->serializer = $this->prophesize(SerializerInterface::class);
         $this->eventBus = $this->prophesize(MessageBus::class);
-
-        $this->serializer
-            ->serialize(Argument::type(OrderInterface::class), 'json', Argument::type('array'))
-            ->willReturn(json_encode(['foo' => 'bar']));
 
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
 
@@ -64,7 +59,6 @@ class UpdateStateTest extends KernelTestCase
         $this->updateState = new UpdateState(
             $this->stateMachineFactory,
             $this->orderProcessor->reveal(),
-            $this->serializer->reveal(),
             $this->eventBus->reveal(),
             $this->orderTimeHelper->reveal()
         );

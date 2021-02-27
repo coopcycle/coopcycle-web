@@ -20,20 +20,17 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
     private $normalizer;
     private $geocoder;
     private $doctrine;
-    private $logger;
 
     public function __construct(
         ItemNormalizer $normalizer,
         Geocoder $geocoder,
         IriConverterInterface $iriConverter,
-        ManagerRegistry $doctrine,
-        LoggerInterface $logger)
+        ManagerRegistry $doctrine)
     {
         $this->normalizer = $normalizer;
         $this->geocoder = $geocoder;
         $this->iriConverter = $iriConverter;
         $this->doctrine = $doctrine;
-        $this->logger = $logger;
     }
 
     public function normalize($object, $format = null, array $context = array())

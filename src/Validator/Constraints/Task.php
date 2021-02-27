@@ -9,8 +9,6 @@ use Symfony\Component\Validator\Constraint;
  */
 class Task extends Constraint
 {
-    const TYPE_NOT_EDITABLE = 'Task::TYPE_NOT_EDITABLE';
-
     public $typeNotEditable = 'task.type.notEditable';
 
     public function validatedBy()

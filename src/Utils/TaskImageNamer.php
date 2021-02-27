@@ -25,14 +25,12 @@ class TaskImageNamer
         $address = $task->getAddress();
         $addressName = !empty($address->getName()) ? $this->slugify->slugify($address->getName()) : '';
 
-        $fileName = sprintf(
+        return sprintf(
             "%d_%s_%s.%s",
             $taskImage->getId(),
             $addressName,
             $task->getCreatedAt()->format('Y-m-d'),
             $fileExtension
         );
-
-        return $fileName;
     }
 }
