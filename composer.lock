@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a1c3956456fcc5575fa4483d71ccfd83",
+    "content-hash": "271657c34f5236d4d7cd645f1dd60067",
     "packages": [
         {
             "name": "api-platform/core",
@@ -5267,7 +5267,7 @@
         },
         {
             "name": "hwi/oauth-bundle",
-            "version": "dev-master",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hwi/HWIOAuthBundle.git",
@@ -5322,7 +5322,6 @@
                 "symfony/property-access": "to use FOSUB integration with this bundle",
                 "symfony/twig-bundle": "to use the Twig hwi_oauth_* functions"
             },
-            "default-branch": true,
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -20368,7 +20367,6 @@
     "stability-flags": {
         "friendsofsymfony/user-bundle": 20,
         "league/geotools": 0,
-        "hwi/oauth-bundle": 20,
         "drupal/core-vendor-hardening": 20
     },
     "prefer-stable": false,
