@@ -33,7 +33,7 @@
         "jsor/doctrine-postgis": "^1.1",
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "league/geotools": "@stable",
-        "gedmo/doctrine-extensions": "^2.4",
+        "gedmo/doctrine-extensions": "^3.0",
         "snc/redis-bundle": "^3.0",
         "knplabs/knp-time-bundle": "^1.7",
         "cocur/slugify": "^4.0",
