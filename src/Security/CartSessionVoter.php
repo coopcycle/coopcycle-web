@@ -6,7 +6,6 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Sylius\Order;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Webmozart\Assert\Assert;
 
@@ -17,13 +16,6 @@ class CartSessionVoter extends Voter
     private static $actions = [
         self::SESSION,
     ];
-
-    private $authorizationChecker;
-
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
-    {
-        $this->authorizationChecker = $authorizationChecker;
-    }
 
     protected function supports($attribute, $subject)
     {

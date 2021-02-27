@@ -17,7 +17,6 @@ class SettingsManager
     private $phoneNumberUtil;
     private $country;
     private $doctrine;
-    private $logger;
     private $gatewayResolver;
 
     private $mandatorySettings = [
@@ -60,7 +59,6 @@ class SettingsManager
         string $country,
         bool $foodtechEnabled,
         bool $b2bEnabled,
-        LoggerInterface $logger,
         GatewayResolver $gatewayResolver)
     {
         $this->craueConfig = $craueConfig;
@@ -70,7 +68,6 @@ class SettingsManager
         $this->country = $country;
         $this->foodtechEnabled = $foodtechEnabled;
         $this->b2bEnabled = $b2bEnabled;
-        $this->logger = $logger;
         $this->gatewayResolver = $gatewayResolver;
     }
 

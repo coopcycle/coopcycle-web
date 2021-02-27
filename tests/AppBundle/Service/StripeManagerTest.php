@@ -26,7 +26,6 @@ use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Tests\AppBundle\StripeTrait;
 
 class StripeManagerTest extends TestCase
@@ -52,12 +51,9 @@ class StripeManagerTest extends TestCase
             ->get('stripe_secret_key')
             ->willReturn(self::$stripeApiKey);
 
-        $this->urlGenerator = $this->prophesize(UrlGeneratorInterface::class);
 
         $this->stripeManager = new StripeManager(
             $this->settingsManager->reveal(),
-            $this->urlGenerator->reveal(),
-            'secret',
             new NullLogger()
         );
     }

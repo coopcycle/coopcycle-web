@@ -24,12 +24,10 @@ class DeliveriesVoter extends Voter
     ];
 
     private $authorizationChecker;
-    private $storeExtractor;
 
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker, TokenStoreExtractor $storeExtractor)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->authorizationChecker = $authorizationChecker;
-        $this->storeExtractor = $storeExtractor;
     }
 
     protected function supports($attribute, $subject)
