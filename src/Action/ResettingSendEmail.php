@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class ResettingSendEmail
 {
     private $userManager;
-    private $dispatcher;
     private $tokenGenerator;
     private $mailer;
 
@@ -25,13 +24,11 @@ class ResettingSendEmail
 
     public function __construct(
         UserManagerInterface $userManager,
-        EventDispatcherInterface $dispatcher,
         TokenGeneratorInterface $tokenGenerator,
         MailerInterface $mailer,
         int $retryTtl)
     {
         $this->userManager = $userManager;
-        $this->dispatcher = $dispatcher;
         $this->tokenGenerator = $tokenGenerator;
         $this->mailer = $mailer;
         $this->retryTtl = $retryTtl;

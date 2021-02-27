@@ -12,16 +12,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class Unassign extends Base
 {
-    private $userManager;
-
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        TaskManager $taskManager,
-        UserManagerInterface $userManager)
+        TaskManager $taskManager)
     {
         parent::__construct($tokenStorage, $taskManager);
-
-        $this->userManager = $userManager;
     }
 
     public function __invoke($data)

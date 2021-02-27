@@ -38,7 +38,7 @@ class RegisterConfirm
      *     methods={"GET"}
      * )
      */
-    public function registerConfirmAction($token, Request $request)
+    public function registerConfirmAction($token)
     {
         $user = $this->userManager->findUserByConfirmationToken($token);
 

@@ -26,7 +26,6 @@ class ResettingReset
     private $formFactory;
     private $jwtManager;
     private $dispatcher;
-    private $logger;
 
     /**
      * @var int
@@ -38,14 +37,12 @@ class ResettingReset
         FormFactoryInterface $formFactory,
         JWTTokenManagerInterface $jwtManager,
         EventDispatcherInterface $dispatcher,
-        LoggerInterface $logger,
         int $tokenTtl)
     {
         $this->userManager = $userManager;
         $this->formFactory = $formFactory;
         $this->jwtManager = $jwtManager;
         $this->dispatcher = $dispatcher;
-        $this->logger = $logger;
         $this->tokenTtl = $tokenTtl;
     }
 

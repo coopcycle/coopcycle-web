@@ -17,7 +17,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Pay
 {
-    private $dataManager;
     private $entityManager;
     private $stripeManager;
     private $orderNumberAssigner;
