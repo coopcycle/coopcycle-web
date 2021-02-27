@@ -47,18 +47,15 @@ class OrderController extends AbstractController
     use OrderConfirmTrait;
 
     private $objectManager;
-    private $logger;
 
     public function __construct(
         EntityManagerInterface $objectManager,
         FactoryInterface $orderFactory,
-        string $sessionKeyName,
-        LoggerInterface $logger)
+        string $sessionKeyName)
     {
         $this->objectManager = $objectManager;
         $this->orderFactory = $orderFactory;
         $this->sessionKeyName = $sessionKeyName;
-        $this->logger = $logger;
     }
 
     /**
@@ -373,8 +370,7 @@ class OrderController extends AbstractController
         IriConverterInterface $iriConverter,
         SessionInterface $session,
         Filesystem $assetsFilesystem,
-        CentrifugoClient $centrifugoClient,
-        Request $request)
+        CentrifugoClient $centrifugoClient)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
 
@@ -450,8 +446,7 @@ class OrderController extends AbstractController
         OrderRepository $orderRepository,
         SessionInterface $session,
         OrderProcessorInterface $orderProcessor,
-        OrderModifierInterface $orderModifier,
-        Request $request)
+        OrderModifierInterface $orderModifier)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
 
