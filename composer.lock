@@ -3154,16 +3154,16 @@
         },
         {
             "name": "drupal/core-vendor-hardening",
-            "version": "9.0.x-dev",
+            "version": "9.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-vendor-hardening.git",
-                "reference": "df7b4975c9a60e9dcfc9f46228e8e32ead16b745"
+                "reference": "71df53f24d54c464ac18762a530fc7c3bf131a7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/df7b4975c9a60e9dcfc9f46228e8e32ead16b745",
-                "reference": "df7b4975c9a60e9dcfc9f46228e8e32ead16b745",
+                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/71df53f24d54c464ac18762a530fc7c3bf131a7f",
+                "reference": "71df53f24d54c464ac18762a530fc7c3bf131a7f",
                 "shasum": ""
             },
             "require": {
@@ -3189,9 +3189,9 @@
                 "drupal"
             ],
             "support": {
-                "source": "https://github.com/drupal/core-vendor-hardening/tree/9.0.x"
+                "source": "https://github.com/drupal/core-vendor-hardening/tree/9.1.4"
             },
-            "time": "2020-08-02T22:04:44+00:00"
+            "time": "2020-09-14T13:40:36+00:00"
         },
         {
             "name": "edamov/pushok",
@@ -20366,8 +20366,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "friendsofsymfony/user-bundle": 20,
-        "league/geotools": 0,
-        "drupal/core-vendor-hardening": 20
+        "league/geotools": 0
     },
     "prefer-stable": false,
     "prefer-lowest": false,
