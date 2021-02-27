@@ -107,10 +107,6 @@ class SendEmailTest extends TestCase
             ->willReturn(new Email());
 
         $this->emailManager
-            ->createCovid19Message()
-            ->willReturn(new Email());
-
-        $this->emailManager
             ->createOrderCreatedMessageForAdmin($order->reveal())
             ->willReturn(new Email());
 
@@ -197,10 +193,6 @@ class SendEmailTest extends TestCase
 
         $this->emailManager
             ->createOrderCreatedMessageForCustomer($order->reveal())
-            ->willReturn(new Email());
-
-        $this->emailManager
-            ->createCovid19Message()
             ->willReturn(new Email());
 
         $this->emailManager
