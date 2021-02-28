@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8d6f7fdf856ad7a21dcc6451a98d8208",
+    "content-hash": "d422c46e75a6fd5a7183dc0964387c60",
     "packages": [
         {
             "name": "api-platform/core",
@@ -9102,61 +9102,6 @@
                 }
             ],
             "time": "2021-02-11T18:30:17+00:00"
-        },
-        {
-            "name": "nmure/crawler-detect-bundle",
-            "version": "v2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nicolasmure/CrawlerDetectBundle.git",
-                "reference": "b7fe6bae0bd8b04eb578de37b943e68d1e33e438"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nicolasmure/CrawlerDetectBundle/zipball/b7fe6bae0bd8b04eb578de37b943e68d1e33e438",
-                "reference": "b7fe6bae0bd8b04eb578de37b943e68d1e33e438",
-                "shasum": ""
-            },
-            "require": {
-                "jaybizzle/crawler-detect": "1.*",
-                "php": ">=7.1",
-                "symfony/framework-bundle": "~4.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^6.5",
-                "symfony/yaml": "^4.0"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-4": {
-                    "Nmure\\CrawlerDetectBundle\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas MURE",
-                    "email": "nm2107@hotmail.fr",
-                    "homepage": "https://github.com/nicolasmure"
-                }
-            ],
-            "description": "A Symfony bundle for the Crawler-Detect library (detects bots/crawlers/spiders via the user agent)",
-            "keywords": [
-                "bot",
-                "bundle",
-                "crawler",
-                "detect",
-                "symfony",
-                "user-agent"
-            ],
-            "support": {
-                "issues": "https://github.com/nicolasmure/CrawlerDetectBundle/issues",
-                "source": "https://github.com/nicolasmure/CrawlerDetectBundle/tree/master"
-            },
-            "time": "2017-12-02T20:49:04+00:00"
         },
         {
             "name": "notfloran/mjml-bundle",

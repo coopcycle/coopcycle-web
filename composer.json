@@ -73,7 +73,6 @@
         "simple-bus/symfony-bridge": "^5.3",
         "friendsofsymfony/jsrouting-bundle": "^2.2",
         "jmose/command-scheduler-bundle": "^3.0",
-        "nmure/crawler-detect-bundle": "^2.0",
         "symfony/webpack-encore-bundle": "^1.6",
         "sylius/channel-bundle": "^1.7.5",
         "liip/imagine-bundle": "^2.3",
@@ -115,7 +114,8 @@
         "spatie/opening-hours": "^2.10",
         "centrifugal/phpcent": "~3.0",
         "twig/string-extra": "^3.1",
-        "simshaun/recurr": "^4.0"
+        "simshaun/recurr": "^4.0",
+        "jaybizzle/crawler-detect": "^1.2"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

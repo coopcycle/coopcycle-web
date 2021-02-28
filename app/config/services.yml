@@ -192,7 +192,6 @@ services:
   AppBundle\EventListener\MaintenanceListener:
     arguments:
       $tokenStorage: '@security.token_storage'
-      $crawlerDetect: '@crawler_detect'
       $redis: '@snc_redis.default'
       $templating: '@twig'
     tags:
