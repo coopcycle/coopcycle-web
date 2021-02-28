@@ -4,7 +4,7 @@ admin.order.created.subject: Nová objednávka bude potvrzena
 order.foodtech.cancelled: "Restaurace nedokáže připravit vaši objednávku %order.number%.\n\
   <br>\nVaše peníze budou automaticky převedeny zpět během následujících 5 dnů.\n"
 order.foodtech.accepted.collection.disclaimer: Máte-li problém, kontaktujte předem
-  <strong>%name% </strong> na <strong>%phone_number% </strong>  a zrušte svou objednávku.
+  <strong>%name% </strong> na <strong>%phone_number% </strong> a zrušte svou objednávku.
 order.foodtech.accepted.collection: 'Budete jej muset vyzvednout v následujícím čase:'
 order.foodtech.accepted.delivery.disclaimer: V případě problému s nalezením adresy
   vás budeme kontaktovat
@@ -23,7 +23,7 @@ registration.email.disclaimer: Tento odkaz lze použít pouze jednou k ověřen�
   účtu
 registration.email.confirm: Potvrdit e-mail
 registration.email.message: "<h2> Vítejte v %brand_name%, %username%</h2>\nTuto zprávu\
-  \ jste obdrželi, protože jste se nedávno zaregistrovali k  %brand_name%.\n<br>\n\
+  \ jste obdrželi, protože jste se nedávno zaregistrovali k %brand_name%.\n<br>\n\
   Potvrďte svou e-mailovou adresu kliknutím na tlačítko níže.\n"
 covid_19.body: "<h1> Pokyny, které je třeba dodržovat při dodávce </h1>\n<p> Vzhledem\
   \ k současné pandemii COVID-19 (Coronavirus) musíte <strong> přísně </strong> dodržovat\
@@ -35,7 +35,7 @@ covid_19.body: "<h1> Pokyny, které je třeba dodržovat při dodávce </h1>\n<p
   Proto vás žádáme, abyste <strong> rozbalili objednávku a přenesli obsah na talíře\
   \ </strong>. </p>\n<h2> 3. Zlikvidujte obal </h2>\n<p> Jakmile je objednávka rozbalena,\
   \ nezapomeňte <strong> zlikvidovat obal v uzavřeném koši </strong>, abyste se ho\
-  \ nechtěně nedotkli později.\n<h2> 4. Umyjte si ruce! </h2>\n<p> Jakmile rozbalíte\
+  \ nechtěně nedotkli později.</p>\n<h2> 4. Umyjte si ruce! </h2>\n<p> Jakmile rozbalíte\
   \ objednávku a zlikvidujete obal, <strong> umyjte si ruce! </strong> </p>\n"
 covid_19.subject: COVID-19 | Důležité pokyny pro vaši objednávku
 order.payment.body: "Dobrý den,\n<br>\nDokončili jsme dodávku, kterou jste si u nás\
@@ -58,7 +58,7 @@ order.created.body: "Dobrý den,\n<br>\nObdrželi jsme vaši objednávku.\n<br>\
 order.created.subject: Objednávka %order.number% byla přijata
 owner.order.created.body: "Dobrý den,\n<br>\nByla zadána nová objednávka pro <strong>%restaurant.name%</strong>.\n"
 owner.order.created.subject: Nová objednávka k potvrzení
-user.pledge.body: "Dobrý den,\n<br>\ndíky vám je nyní  %pledge.name% na CoopCycle!\n"
+user.pledge.body: "Dobrý den,\n<br>\ndíky vám je nyní %pledge.name% na CoopCycle!\n"
 user.pledge.subject: Váš návrh je nyní na CoopCycle!
 admin.pledge.body: "Dobrý den,\n<br>\n%username% si přeje, aby %pledge.name% byl na\
   \ CoopCycle!\n"
