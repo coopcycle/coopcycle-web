@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9f9349e30947dbfdeffd4e8602e30a55",
+    "content-hash": "271657c34f5236d4d7cd645f1dd60067",
     "packages": [
         {
             "name": "api-platform/core",
@@ -164,16 +164,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.171.20",
+            "version": "3.173.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "02aaf7007c5678a6358ea924cd85531300aa1747"
+                "reference": "0ac9f1d2778034a2ef0a2bb8e098818d7b1a76e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/02aaf7007c5678a6358ea924cd85531300aa1747",
-                "reference": "02aaf7007c5678a6358ea924cd85531300aa1747",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0ac9f1d2778034a2ef0a2bb8e098818d7b1a76e8",
+                "reference": "0ac9f1d2778034a2ef0a2bb8e098818d7b1a76e8",
                 "shasum": ""
             },
             "require": {
@@ -248,9 +248,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.171.20"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.173.18"
             },
-            "time": "2021-01-19T19:13:08+00:00"
+            "time": "2021-02-26T19:12:35+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -7653,36 +7653,36 @@
         },
         {
             "name": "league/geotools",
-            "version": "0.8.1",
+            "version": "0.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/geotools.git",
-                "reference": "b62a49e9fc418d0deb3a41e529ccef0d666b06d0"
+                "reference": "070cfbb78af7710a2b935356b5147eb3367857bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/geotools/zipball/b62a49e9fc418d0deb3a41e529ccef0d666b06d0",
-                "reference": "b62a49e9fc418d0deb3a41e529ccef0d666b06d0",
+                "url": "https://api.github.com/repos/thephpleague/geotools/zipball/070cfbb78af7710a2b935356b5147eb3367857bf",
+                "reference": "070cfbb78af7710a2b935356b5147eb3367857bf",
                 "shasum": ""
             },
             "require": {
                 "cache/array-adapter": "^1.0",
                 "ext-bcmath": "*",
-                "php": "^7.0",
+                "php": "^7.3 || ^7.4 || ^8.0",
                 "php-http/discovery": "^1.0",
                 "psr/cache": "^1.0",
                 "react/event-loop": "0.4.*",
                 "react/promise": "^2.2",
-                "symfony/console": "^2.7 || ^3.0 || ^4.0 || ^5.0",
-                "symfony/property-access": "^2.7 || ^3.0 || ^4.0 || ^5.0",
-                "symfony/serializer": "^2.7 || ^3.0 || ^4.0 || ^5.0",
+                "symfony/console": "^3.4 || ^4.4 || ^5.0",
+                "symfony/property-access": "^3.4 || ^4.4 || ^5.0",
+                "symfony/serializer": "^3.4 || ^4.4 || ^5.0",
                 "willdurand/geocoder": "^4.2"
             },
             "replace": {
                 "toin0u/geotools": "*"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.5.5 || ^7.0"
+                "phpunit/phpunit": "^8.5"
             },
             "bin": [
                 "bin/geotools"
@@ -7711,7 +7711,7 @@
                     "role": "Developer"
                 }
             ],
-            "description": "Geo-related tools PHP 7.0+ library",
+            "description": "Geo-related tools PHP 7.3+ library",
             "keywords": [
                 "async",
                 "batch",
@@ -7732,7 +7732,7 @@
                 "issues": "https://github.com/thephpleague/geotools/issues",
                 "source": "https://github.com/thephpleague/geotools"
             },
-            "time": "2020-01-30T14:23:42+00:00"
+            "time": "2021-02-02T13:16:47+00:00"
         },
         {
             "name": "league/mime-type-detection",
@@ -8045,38 +8045,36 @@
         },
         {
             "name": "liip/imagine-bundle",
-            "version": "2.4.0",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/liip/LiipImagineBundle.git",
-                "reference": "4704b34fb1c416f88d670e7b0427dd96cc256eac"
+                "reference": "a04aa405272a9aff3c9e25dd015a1073f9f291a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/4704b34fb1c416f88d670e7b0427dd96cc256eac",
-                "reference": "4704b34fb1c416f88d670e7b0427dd96cc256eac",
+                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/a04aa405272a9aff3c9e25dd015a1073f9f291a6",
+                "reference": "a04aa405272a9aff3c9e25dd015a1073f9f291a6",
                 "shasum": ""
             },
             "require": {
-                "imagine/imagine": "^1.1",
-                "php": "^7.1",
+                "imagine/imagine": "^1.2.4",
+                "php": "^7.1|^8.0",
                 "symfony/filesystem": "^3.4|^4.3|^5.0",
                 "symfony/finder": "^3.4|^4.3|^5.0",
-                "symfony/framework-bundle": "^3.4|^4.3|^5.0",
+                "symfony/framework-bundle": "^3.4.23|^4.3|^5.0",
                 "symfony/mime": "^4.3|^5.0",
                 "symfony/options-resolver": "^3.4|^4.3|^5.0",
                 "symfony/process": "^3.4|^4.3|^5.0",
-                "symfony/templating": "^3.4|^4.3|^5.0",
-                "twig/twig": "^1.40|^2.9|^3.0"
+                "twig/twig": "^1.44|^2.9|^3.0"
             },
             "require-dev": {
                 "amazonwebservices/aws-sdk-for-php": "^1.0",
                 "aws/aws-sdk-php": "^2.4",
                 "doctrine/cache": "^1.1",
-                "doctrine/orm": "^2.3",
+                "doctrine/persistence": "^1.3|^2.0",
                 "enqueue/enqueue-bundle": "^0.9|^0.10",
                 "ext-gd": "*",
-                "friendsofphp/php-cs-fixer": "^2.10",
                 "league/flysystem": "^1.0",
                 "psr/log": "^1.0",
                 "symfony/browser-kit": "^3.4|^4.3|^5.0",
@@ -8084,11 +8082,12 @@
                 "symfony/dependency-injection": "^3.4|^4.3|^5.0",
                 "symfony/form": "^3.4|^4.3|^5.0",
                 "symfony/phpunit-bridge": "^5.2",
+                "symfony/templating": "^3.4|^4.3|^5.0",
                 "symfony/validator": "^3.4|^4.3|^5.0",
                 "symfony/yaml": "^3.4|^4.3|^5.0"
             },
             "suggest": {
-                "alcaeus/mongo-php-adapter": "required on PHP >= 7.0 to use mongo components with mongodb extension",
+                "alcaeus/mongo-php-adapter": "required for mongodb components",
                 "amazonwebservices/aws-sdk-for-php": "required to use AWS version 1 cache resolver",
                 "aws/aws-sdk-php": "required to use AWS version 2/3 cache resolver",
                 "doctrine/mongodb-odm": "required to use mongodb-backed doctrine components",
@@ -8097,18 +8096,12 @@
                 "ext-gd": "required to use gd driver",
                 "ext-gmagick": "required to use gmagick driver",
                 "ext-imagick": "required to use imagick driver",
-                "ext-mongo": "required for mongodb components on PHP <7.0",
-                "ext-mongodb": "required for mongodb components on PHP >=7.0",
+                "ext-mongodb": "required for mongodb components",
                 "league/flysystem": "required to use FlySystem data loader or cache resolver",
-                "monolog/monolog": "A psr/log compatible logger is required to enable logging"
+                "monolog/monolog": "A psr/log compatible logger is required to enable logging",
+                "symfony/templating": "required to use deprecated Templating component instead of Twig"
             },
             "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": {
-                    "dev-1.0": "1.7-dev",
-                    "dev-master": "2.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Liip\\ImagineBundle\\": ""
@@ -8142,9 +8135,9 @@
             ],
             "support": {
                 "issues": "https://github.com/liip/LiipImagineBundle/issues",
-                "source": "https://github.com/liip/LiipImagineBundle/tree/2.4.0"
+                "source": "https://github.com/liip/LiipImagineBundle/tree/2.5.0"
             },
-            "time": "2020-12-16T07:14:53+00:00"
+            "time": "2021-02-08T15:10:40+00:00"
         },
         {
             "name": "m6web/daemon-bundle",
@@ -8918,16 +8911,16 @@
         },
         {
             "name": "nelmio/alice",
-            "version": "v3.8.1",
+            "version": "v3.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nelmio/alice.git",
-                "reference": "183961dba8726fe5115238c15b177ab2c74a67a0"
+                "reference": "b57f4c6f039baa72e2bd5b75fd8de77e1b9228e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nelmio/alice/zipball/183961dba8726fe5115238c15b177ab2c74a67a0",
-                "reference": "183961dba8726fe5115238c15b177ab2c74a67a0",
+                "url": "https://api.github.com/repos/nelmio/alice/zipball/b57f4c6f039baa72e2bd5b75fd8de77e1b9228e3",
+                "reference": "b57f4c6f039baa72e2bd5b75fd8de77e1b9228e3",
                 "shasum": ""
             },
             "require": {
@@ -8996,7 +8989,7 @@
             ],
             "support": {
                 "issues": "https://github.com/nelmio/alice/issues",
-                "source": "https://github.com/nelmio/alice/tree/v3.8.1"
+                "source": "https://github.com/nelmio/alice/tree/v3.8.2"
             },
             "funding": [
                 {
@@ -9004,7 +8997,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-02-23T20:58:35+00:00"
+            "time": "2021-02-27T19:13:09+00:00"
         },
         {
             "name": "nelmio/cors-bundle",
@@ -9270,16 +9263,16 @@
         },
         {
             "name": "nyholm/psr7",
-            "version": "1.3.2",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nyholm/psr7.git",
-                "reference": "a272953743c454ac4af9626634daaf5ab3ce1173"
+                "reference": "23ae1f00fbc6a886cbe3062ca682391b9cc7c37b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/a272953743c454ac4af9626634daaf5ab3ce1173",
-                "reference": "a272953743c454ac4af9626634daaf5ab3ce1173",
+                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/23ae1f00fbc6a886cbe3062ca682391b9cc7c37b",
+                "reference": "23ae1f00fbc6a886cbe3062ca682391b9cc7c37b",
                 "shasum": ""
             },
             "require": {
@@ -9301,7 +9294,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev"
+                    "dev-master": "1.4-dev"
                 }
             },
             "autoload": {
@@ -9331,7 +9324,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Nyholm/psr7/issues",
-                "source": "https://github.com/Nyholm/psr7/tree/1.3.2"
+                "source": "https://github.com/Nyholm/psr7/tree/1.4.0"
             },
             "funding": [
                 {
@@ -9343,7 +9336,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-14T17:35:34+00:00"
+            "time": "2021-02-18T15:41:32+00:00"
         },
         {
             "name": "odolbeau/phone-number-bundle",
@@ -12635,20 +12628,20 @@
         },
         {
             "name": "sonata-project/exporter",
-            "version": "2.5.0",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/exporter.git",
-                "reference": "e5f56efe2b3d6e22b495a5c8cba3f8fe5c3293fd"
+                "reference": "71501806a1c39945ec6a61fc19370d345ed3b7fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/exporter/zipball/e5f56efe2b3d6e22b495a5c8cba3f8fe5c3293fd",
-                "reference": "e5f56efe2b3d6e22b495a5c8cba3f8fe5c3293fd",
+                "url": "https://api.github.com/repos/sonata-project/exporter/zipball/71501806a1c39945ec6a61fc19370d345ed3b7fa",
+                "reference": "71501806a1c39945ec6a61fc19370d345ed3b7fa",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.3"
+                "php": "^7.3 || ^8.0"
             },
             "conflict": {
                 "doctrine/mongodb-odm": "<2.0"
@@ -12709,7 +12702,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sonata-project/exporter/issues",
-                "source": "https://github.com/sonata-project/exporter/tree/2.5.0"
+                "source": "https://github.com/sonata-project/exporter/tree/2.5.1"
             },
             "funding": [
                 {
@@ -12729,24 +12722,24 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-01-04T21:36:57+00:00"
+            "time": "2021-02-15T19:22:33+00:00"
         },
         {
             "name": "sonata-project/seo-bundle",
-            "version": "2.12.0",
+            "version": "2.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataSeoBundle.git",
-                "reference": "ffbe1a4f1619d9ea4ee45e7576f1602df16a899f"
+                "reference": "20a34c9b5ed4fb68a402c0ba6e782d1995b1317f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/ffbe1a4f1619d9ea4ee45e7576f1602df16a899f",
-                "reference": "ffbe1a4f1619d9ea4ee45e7576f1602df16a899f",
+                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/20a34c9b5ed4fb68a402c0ba6e782d1995b1317f",
+                "reference": "20a34c9b5ed4fb68a402c0ba6e782d1995b1317f",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2",
+                "php": "^7.3 || ^8.0",
                 "psr/http-client": "^1.0",
                 "psr/http-message": "^1.0",
                 "sonata-project/exporter": "^2.0",
@@ -12768,13 +12761,13 @@
                 "nyholm/psr7": "^1.2",
                 "sonata-project/admin-bundle": "^3.31",
                 "sonata-project/block-bundle": "^3.17",
-                "sonata-project/doctrine-extensions": "^1.6",
+                "sonata-project/doctrine-extensions": "^1.10.1",
                 "sonata-project/form-extensions": "^0.1 || ^1.4",
                 "symfony/console": "^4.4 || ^5.0",
                 "symfony/filesystem": "^4.4 || ^5.0",
                 "symfony/finder": "^4.4 || ^5.0",
                 "symfony/http-client": "^4.4 || ^5.0",
-                "symfony/phpunit-bridge": "^4.4 || ^5.0",
+                "symfony/phpunit-bridge": "^5.1.8",
                 "symfony/yaml": "^4.4 || ^5.0"
             },
             "suggest": {
@@ -12815,9 +12808,27 @@
             ],
             "support": {
                 "issues": "https://github.com/sonata-project/SonataSeoBundle/issues",
-                "source": "https://github.com/sonata-project/SonataSeoBundle/tree/2.12.0"
+                "source": "https://github.com/sonata-project/SonataSeoBundle/tree/2.13.0"
             },
-            "time": "2020-09-07T19:38:01+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/OskarStark",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/VincentLanglet",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/core23",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/wbloszyk",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-02-22T21:21:54+00:00"
         },
         {
             "name": "spatie/guzzle-rate-limiter-middleware",
@@ -16910,7 +16921,7 @@
         },
         {
             "name": "twig/intl-extra",
-            "version": "v3.2.1",
+            "version": "v3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/intl-extra.git",
@@ -16963,7 +16974,7 @@
                 "twig"
             ],
             "support": {
-                "source": "https://github.com/twigphp/intl-extra/tree/v3.2.1"
+                "source": "https://github.com/twigphp/intl-extra/tree/v3.3.0"
             },
             "funding": [
                 {
@@ -16979,21 +16990,22 @@
         },
         {
             "name": "twig/string-extra",
-            "version": "v3.2.1",
+            "version": "v3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/string-extra.git",
-                "reference": "8aaf91255d3c524dc09d3e474e3172626ac05c2b"
+                "reference": "8a8bb5631e8e27573fae741211b9c752b9b0b428"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/string-extra/zipball/8aaf91255d3c524dc09d3e474e3172626ac05c2b",
-                "reference": "8aaf91255d3c524dc09d3e474e3172626ac05c2b",
+                "url": "https://api.github.com/repos/twigphp/string-extra/zipball/8a8bb5631e8e27573fae741211b9c752b9b0b428",
+                "reference": "8a8bb5631e8e27573fae741211b9c752b9b0b428",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.5",
                 "symfony/string": "^5.0",
+                "symfony/translation-contracts": "^1.1|^2",
                 "twig/twig": "^2.4|^3.0"
             },
             "require-dev": {
@@ -17034,7 +17046,7 @@
                 "unicode"
             ],
             "support": {
-                "source": "https://github.com/twigphp/string-extra/tree/v3.2.1"
+                "source": "https://github.com/twigphp/string-extra/tree/v3.3.0"
             },
             "funding": [
                 {
@@ -17046,7 +17058,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-01T14:58:18+00:00"
+            "time": "2021-01-29T14:39:43+00:00"
         },
         {
             "name": "twig/twig",
