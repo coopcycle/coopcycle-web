@@ -121,8 +121,6 @@ class Geocoder
 
             [ $longitude, $latitude ] = $result->getCoordinates()->toArray();
 
-            var_dump($this->formatAddress($result));
-
             $address = new Address();
             $address->setGeo(new GeoCoordinates($latitude, $longitude));
             $address->setStreetAddress($this->formatAddress($result));
