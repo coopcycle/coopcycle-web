@@ -6,7 +6,7 @@ use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

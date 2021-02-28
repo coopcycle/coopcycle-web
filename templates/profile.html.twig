@@ -24,8 +24,8 @@
     <div class="col-sm-3">
       <ul class="nav nav-pills nav-stacked">
         <li
-          class="{{ app.request.attributes.get('_route') in [ 'fos_user_profile_show', 'profile_edit' ] ? 'active' : '' }}">
-          <a href="{{ path('fos_user_profile_show') }}">
+          class="{{ app.request.attributes.get('_route') in [ 'nucleos_profile_profile_show', 'profile_edit' ] ? 'active' : '' }}">
+          <a href="{{ path('nucleos_profile_profile_show') }}">
             <i class="fa fa-list-ul mr-1"></i>
             <span>{% trans %}profile.myPersonalInfo{% endtrans %}</span>
           </a>

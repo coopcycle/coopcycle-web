@@ -9,11 +9,11 @@ use AppBundle\Form\SetPasswordInvitationType;
 use AppBundle\Sylius\Order\OrderFactory;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Event\FilterUserResponseEvent;
-use FOS\UserBundle\FOSUserEvents;
-use FOS\UserBundle\Mailer\MailerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
-use FOS\UserBundle\Util\UserManipulator;
+use Nucleos\ProfileBundle\NucleosProfileEvents;
+use Nucleos\ProfileBundle\Mailer\MailerInterface as ProfileMailerInterface;
+use Nucleos\UserBundle\Event\FilterUserResponseEvent;
+use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Util\UserManipulator;
 use Laravolt\Avatar\Avatar;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -156,7 +156,7 @@ class UserController extends AbstractController
     /**
      * @Route("/register/resend-email", name="register_resend_email", methods={"POST"})
      */
-    public function resendRegistrationEmailAction(Request $request, UserManagerInterface $userManager, MailerInterface $mailer, SessionInterface $session)
+    public function resendRegistrationEmailAction(Request $request, UserManagerInterface $userManager, ProfileMailerInterface $mailer, SessionInterface $session)
     {
         if ($request->request->has('email')) {
             $email = $request->request->get('email');
@@ -164,10 +164,10 @@ class UserController extends AbstractController
             if ($user !== null) {
                 $mailer->sendConfirmationEmailMessage($user);
                 $session->set('fos_user_send_confirmation_email/email', $email);
-                return $this->redirectToRoute('fos_user_registration_check_email');
+                return $this->redirectToRoute('nucleos_profile_registration_check_email');
             }
         }
-        return $this->redirectToRoute('fos_user_security_login');
+        return $this->redirectToRoute('nucleos_user_security_login');
     }
 
     /**
@@ -227,9 +227,9 @@ class UserController extends AbstractController
             $objectManager->remove($invitation);
             $objectManager->flush();
 
-            $response = new RedirectResponse($this->generateUrl('fos_user_registration_confirmed'));
+            $response = new RedirectResponse($this->generateUrl('nucleos_profile_registration_confirmed'));
 
-            $eventDispatcher->dispatch(FOSUserEvents::REGISTRATION_CONFIRMED, new FilterUserResponseEvent($user, $request, $response));
+            $eventDispatcher->dispatch(NucleosProfileEvents::REGISTRATION_CONFIRMED, new FilterUserResponseEvent($user, $request, $response));
 
             return $response;
         }

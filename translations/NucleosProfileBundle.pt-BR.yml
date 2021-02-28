@@ -1,0 +1,14 @@
+registration:
+    check_email: |
+      Um email foi enviado para %email%.
+      <br>
+      Ele contém um link de ativação que você deve clicar para ativar sua conta.
+    confirmed: |
+      Parabéns <strong>%username%</strong>, sua conta foi ativda.
+    before_confirmation_continue_order: |
+      Assim que você ativar sua conta, pode completar seu pedido.
+    after_confirmation_continue_order: Completar pedido
+
+form.registration.username.help: |
+  Seu nome de usuário não pode ser maior que 15 caracteres.
+  Um nome de usuário pode apenas conter caracteres alfanuméricos (letras A-Z, números 0-9) com a excessão de sublinhado (_).

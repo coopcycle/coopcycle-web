@@ -17,7 +17,7 @@ use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
-use FOS\UserBundle\Model\UserInterface;
+use Nucleos\UserBundle\Model\UserInterface;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\MessageBusInterface;

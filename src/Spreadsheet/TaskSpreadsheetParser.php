@@ -13,7 +13,7 @@ use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
 use Cocur\Slugify\SlugifyInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 

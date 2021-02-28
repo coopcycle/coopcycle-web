@@ -10,7 +10,7 @@ use AppBundle\Service\TagManager;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Cocur\Slugify\Slugify;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
 use Prophecy\Argument;

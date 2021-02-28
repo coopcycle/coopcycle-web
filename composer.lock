@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9330ed4b6d9653135d6f88a637265871",
+    "content-hash": "4b931fb6fd00a8873289214ced5b32a6",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3929,88 +3929,6 @@
                 "source": "https://github.com/FriendsOfSymfony/FOSRestBundle/tree/3.0.4"
             },
             "time": "2020-12-10T20:14:08+00:00"
-        },
-        {
-            "name": "friendsofsymfony/user-bundle",
-            "version": "2.x-dev",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "b2e6a4d17fe5d97c4aff42c58e9528cd20566054"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/b2e6a4d17fe5d97c4aff42c58e9528cd20566054",
-                "reference": "b2e6a4d17fe5d97c4aff42c58e9528cd20566054",
-                "shasum": ""
-            },
-            "require": {
-                "paragonie/random_compat": "^1 || ^2 || ^9",
-                "php": "^5.5.9 || ^7.0",
-                "symfony/form": "^2.8 || ^3.0 || ^4.0",
-                "symfony/framework-bundle": "^2.8 || ^3.0 || ^4.0",
-                "symfony/security-bundle": "^2.8 || ^3.0 || ^4.0",
-                "symfony/templating": "^2.8 || ^3.0 || ^4.0",
-                "symfony/translation": "^2.8 || ^3.0 || ^4.0",
-                "symfony/twig-bundle": "^2.8 || ^3.0 || ^4.0",
-                "symfony/validator": "^2.8 || ^3.0 || ^4.0",
-                "twig/twig": "^1.34 || ^2.4 || ^3.0"
-            },
-            "conflict": {
-                "doctrine/doctrine-bundle": "<1.3",
-                "symfony/doctrine-bridge": "<2.7"
-            },
-            "require-dev": {
-                "doctrine/doctrine-bundle": "^1.3",
-                "friendsofphp/php-cs-fixer": "^2.2",
-                "phpunit/phpunit": "^4.8.35 || ^5.7.11 || ^6.5",
-                "swiftmailer/swiftmailer": "^4.3 || ^5.0 || ^6.0",
-                "symfony/console": "^2.8 || ^3.0 || ^4.0",
-                "symfony/phpunit-bridge": "^2.8 || ^3.0 || ^4.0",
-                "symfony/yaml": "^2.8 || ^3.0 || ^4.0"
-            },
-            "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "FOS\\UserBundle\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Christophe Coevoet",
-                    "email": "stof@notk.org"
-                },
-                {
-                    "name": "Thibault Duplessis"
-                },
-                {
-                    "name": "FriendsOfSymfony Community",
-                    "homepage": "https://github.com/friendsofsymfony/FOSUserBundle/contributors"
-                }
-            ],
-            "description": "Symfony FOSUserBundle",
-            "homepage": "http://friendsofsymfony.github.com",
-            "keywords": [
-                "User management"
-            ],
-            "support": {
-                "docs": "https://symfony.com/doc/master/bundles/FOSUserBundle/index.html",
-                "issues": "https://github.com/FriendsOfSymfony/FOSUserBundle/issues",
-                "source": "https://github.com/FriendsOfSymfony/FOSUserBundle/tree/2.x"
-            },
-            "time": "2020-03-31T11:00:03+00:00"
         },
         {
             "name": "gedmo/doctrine-extensions",
@@ -9157,6 +9075,223 @@
                 "source": "https://github.com/notFloran/mjml-bundle/tree/v3.5.1"
             },
             "time": "2021-01-23T14:38:29+00:00"
+        },
+        {
+            "name": "nucleos/profile-bundle",
+            "version": "1.5.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nucleos/NucleosProfileBundle.git",
+                "reference": "1658242fbea629cf1971429f551066e5d3d8ece3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/1658242fbea629cf1971429f551066e5d3d8ece3",
+                "reference": "1658242fbea629cf1971429f551066e5d3d8ece3",
+                "shasum": ""
+            },
+            "require": {
+                "egulias/email-validator": "^2.1.10",
+                "nucleos/user-bundle": "^1.7",
+                "php": "^7.3 || ^8.0",
+                "symfony/config": "^4.4 || ^5.0",
+                "symfony/dependency-injection": "^4.4 || ^5.0",
+                "symfony/event-dispatcher": "^4.4 || ^5.0",
+                "symfony/event-dispatcher-contracts": "^1.0 || ^2.0",
+                "symfony/form": "^4.4 || ^5.0",
+                "symfony/framework-bundle": "^4.4 || ^5.0",
+                "symfony/http-foundation": "^4.4 || ^5.0",
+                "symfony/http-kernel": "^4.4 || ^5.0",
+                "symfony/mailer": "^4.4 || ^5.0",
+                "symfony/mime": "^4.4 || ^5.0",
+                "symfony/options-resolver": "^4.4 || ^5.0",
+                "symfony/routing": "^4.4 || ^5.0",
+                "symfony/security-core": "^4.4 || ^5.0",
+                "symfony/translation": "^4.4 || ^5.0",
+                "symfony/translation-contracts": "^1.0 || ^2.0",
+                "symfony/twig-bridge": "^4.4 || ^5.0",
+                "symfony/twig-bundle": "^4.4 || ^5.0",
+                "symfony/validator": "^4.4 || ^5.0",
+                "twig/twig": "^2.14 || ^3.1"
+            },
+            "conflict": {
+                "doctrine/doctrine-bundle": "<1.12",
+                "doctrine/orm": "<2.7",
+                "symfony/doctrine-bridge": "<4.4"
+            },
+            "require-dev": {
+                "alcaeus/mongo-php-adapter": "^1.1",
+                "bamarni/composer-bin-plugin": "^1.3",
+                "doctrine/doctrine-bundle": "^1.12 || ^2.0",
+                "doctrine/orm": "^2.7",
+                "ergebnis/composer-normalize": "^2.0.1",
+                "symfony/browser-kit": "^4.4 || ^5.0",
+                "symfony/doctrine-bridge": "^4.4 || ^5.0",
+                "symfony/yaml": "^4.4 || ^5.0"
+            },
+            "default-branch": true,
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Nucleos\\ProfileBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Gripp",
+                    "email": "mail@core23.de"
+                }
+            ],
+            "description": "Registration and profile management for symfony",
+            "homepage": "https://nucleos.rocks",
+            "keywords": [
+                "User management",
+                "profile",
+                "registration",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/nucleos/NucleosProfileBundle/issues",
+                "source": "https://github.com/nucleos/NucleosProfileBundle/tree/1.5.x"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/core23",
+                    "type": "github"
+                },
+                {
+                    "url": "https://ko-fi.com/core23",
+                    "type": "ko-fi"
+                },
+                {
+                    "url": "https://opencollective.com/core23",
+                    "type": "opencollective"
+                },
+                {
+                    "url": "https://donate.core23.de",
+                    "type": "other"
+                }
+            ],
+            "time": "2021-03-26T04:11:57+00:00"
+        },
+        {
+            "name": "nucleos/user-bundle",
+            "version": "1.9.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nucleos/NucleosUserBundle.git",
+                "reference": "a7450739fa006deee2bfd2ad27d746cd471a3609"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nucleos/NucleosUserBundle/zipball/a7450739fa006deee2bfd2ad27d746cd471a3609",
+                "reference": "a7450739fa006deee2bfd2ad27d746cd471a3609",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/collections": "^1.6",
+                "doctrine/common": "^2.11 || ^3.0",
+                "doctrine/event-manager": "^1.1",
+                "doctrine/persistence": "^1.3 || ^2.1",
+                "egulias/email-validator": "^2.1.10",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "paragonie/random_compat": "^1 || ^2 || ^9",
+                "php": "^7.3 || ^8.0",
+                "symfony/config": "^4.4 || ^5.0",
+                "symfony/console": "^4.4 || ^5.0",
+                "symfony/dependency-injection": "^4.4 || ^5.0",
+                "symfony/event-dispatcher": "^4.4 || ^5.0",
+                "symfony/event-dispatcher-contracts": "^1.0 || ^2.0",
+                "symfony/form": "^4.4 || ^5.0",
+                "symfony/framework-bundle": "^4.4 || ^5.0",
+                "symfony/http-foundation": "^4.4 || ^5.0",
+                "symfony/http-kernel": "^4.4 || ^5.0",
+                "symfony/mailer": "^4.4 || ^5.0",
+                "symfony/mime": "^4.4 || ^5.0",
+                "symfony/options-resolver": "^4.4 || ^5.0",
+                "symfony/polyfill-mbstring": "^1.13",
+                "symfony/routing": "^4.4 || ^5.0",
+                "symfony/security-bundle": "^4.4 || ^5.0",
+                "symfony/security-core": "^4.4 || ^5.0",
+                "symfony/security-csrf": "^4.4 || ^5.0",
+                "symfony/security-http": "^4.4 || ^5.0",
+                "symfony/translation": "^4.4 || ^5.0",
+                "symfony/translation-contracts": "^1.0 || ^2.0",
+                "symfony/twig-bridge": "^4.4 || ^5.0",
+                "symfony/twig-bundle": "^4.4 || ^5.0",
+                "symfony/validator": "^4.4 || ^5.0",
+                "twig/twig": "^2.14 || ^3.1"
+            },
+            "conflict": {
+                "doctrine/doctrine-bundle": "<1.12",
+                "doctrine/mongodb": "<1.6",
+                "doctrine/mongodb-odm": "<1.1",
+                "doctrine/mongodb-odm-bundle": "<4.1",
+                "doctrine/orm": "<2.7",
+                "symfony/doctrine-bridge": "<4.4"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.3",
+                "doctrine/doctrine-bundle": "^1.12 || ^2.0",
+                "doctrine/mongodb-odm": "^2.0",
+                "doctrine/mongodb-odm-bundle": "^4.1",
+                "doctrine/orm": "^2.7",
+                "ergebnis/composer-normalize": "^2.0.1",
+                "ext-mongodb": "*",
+                "symfony/browser-kit": "^4.4 || ^5.0",
+                "symfony/doctrine-bridge": "^4.4 || ^5.0",
+                "symfony/yaml": "^4.4 || ^5.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Nucleos\\UserBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Gripp",
+                    "email": "mail@core23.de"
+                }
+            ],
+            "description": "Lightweight user management for symfony",
+            "homepage": "https://nucleos.rocks",
+            "keywords": [
+                "User management",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/nucleos/NucleosUserBundle/issues",
+                "source": "https://github.com/nucleos/NucleosUserBundle/tree/1.9.x"
+            },
+            "funding": [
+                {
+                    "url": "https://donate.core23.de",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/core23",
+                    "type": "github"
+                },
+                {
+                    "url": "https://ko-fi.com/core23",
+                    "type": "ko_fi"
+                },
+                {
+                    "url": "https://opencollective.com/core23",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2021-03-16T07:00:23+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -20333,9 +20468,10 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "friendsofsymfony/user-bundle": 20,
         "league/geotools": 0,
-        "drupal/core-vendor-hardening": 20
+        "drupal/core-vendor-hardening": 20,
+        "nucleos/user-bundle": 20,
+        "nucleos/profile-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

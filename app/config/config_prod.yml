@@ -24,6 +24,7 @@ framework:
 
 parameters:
     router.request_context.scheme: 'https'
+    nucleos_profile.registration.confirmation.enabled: true
 
 # https://github.com/doctrine/DoctrineBundle/releases/tag/2.0.1
 # https://symfony.com/blog/new-in-doctrinebundle-1-11-0
@@ -106,7 +107,7 @@ monolog:
         console:
             type:  console
 
-fos_user:
+nucleos_profile:
     registration:
         confirmation:
             enabled: true

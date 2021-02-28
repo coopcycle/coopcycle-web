@@ -1,10 +1,8 @@
 <?php
 
-
 namespace AppBundle\Form;
 
-
-use AppBundle\Entity\User;
+use AppBundle\Form\Model\ApiRegistration;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
@@ -48,7 +46,7 @@ class ApiRegistrationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => User::class,
+            'data_class' => ApiRegistration::class,
             'csrf_protection' => false
         ]);
     }

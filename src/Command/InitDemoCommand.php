@@ -15,7 +15,7 @@ use Doctrine\DBAL\Exception\TableNotFoundException;
 use Faker;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
-use FOS\UserBundle\Util\UserManipulator;
+use Nucleos\UserBundle\Util\UserManipulator;
 use Geocoder\Provider\Addok\Addok as AddokProvider;
 use Geocoder\Provider\Chain\Chain as ChainProvider;
 use Geocoder\Provider\Photon\Photon as PhotonProvider;

@@ -9,6 +9,10 @@ framework:
     session:
         save_path:   "/tmp"
 
+# Uncomment to send emails in dev
+# parameters:
+#     nucleos_profile.registration.confirmation.enabled: true
+
 web_profiler:
     toolbar: true
     intercept_redirects: false
@@ -79,9 +83,3 @@ services:
             $cacheStrategy: '@twig.cache_extension.strategy.black_hole'
         tags:
             - { name: twig.extension }
-
-# Uncomment to send emails in dev
-# fos_user:
-#   registration:
-#       confirmation:
-#           enabled: true

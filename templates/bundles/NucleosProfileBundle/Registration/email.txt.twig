@@ -1,0 +1,21 @@
+{% mjml %}
+{% embed 'emails/layout.mjml.twig'%}
+  {% block content %}
+    <mj-column>
+      <mj-text align="left" line-height="20px">
+        {{ 'registration.email.message'|trans({'%brand_name%': coopcycle_setting('brand_name'), '%username%': user.username}, 'emails')|raw }}
+      </mj-text>
+      {# Use rel="notrack" to make sure Mailjet does not rewrite links. #}
+      {# This is needed for deep links to work. #}
+      <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white" href="{{ confirmationUrl }}" rel="notrack">
+        {{ 'registration.email.confirm'|trans({}, 'emails') }}
+      </mj-button>
+      <mj-divider border-width="1px" border-style="solid" border-color="#eeeeee" />
+      <mj-text align="left" line-height="20px">
+        {{ 'registration.email.disclaimer'|trans({}, 'emails') }}
+      </mj-text>
+    </mj-column>
+  {% endblock %}
+{% endembed %}
+{% endmjml %}
+

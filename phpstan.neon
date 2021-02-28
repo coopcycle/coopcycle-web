@@ -16,7 +16,7 @@ parameters:
         - '#Call to an undefined method Doctrine\\Persistence\\ObjectRepository::[a-zA-Z]+\(\)#'
         - '#Call to an undefined method Sylius\\Component\\(Order|Payment|Product)\\Model\\[a-zA-Z]+Interface::[a-zA-Z]+\(\)#'
         - '#Call to an undefined method Symfony\\Component\\Security\\Core\\User\\UserInterface::[a-zA-Z]+\(\)#'
-        - '#Call to an undefined method FOS\\UserBundle\\Model\\UserInterface::[a-zA-Z]+\(\)#'
+        - '#Call to an undefined method Nucleos\\UserBundle\\Model\\UserInterface::[a-zA-Z]+\(\)#'
         - '#Call to an undefined method AppBundle\\Sylius\\Order\\OrderInterface::[a-zA-Z]+\(\)#'
         - '#Call to an undefined method AppBundle\\Entity\\Model\\TaggableInterface::getId\(\)#'
         - '#Call to an undefined method League\\Geotools\\Geohash\\GeohashInterface::getCoordinate\(\)#'

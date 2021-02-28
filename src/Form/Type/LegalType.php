@@ -21,10 +21,10 @@ class LegalType extends AbstractType
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'mapped' => false,
             'required' => true,
             'label' => 'form.registration.legal.label',
             'help' => 'form.registration.legal.help',
+            'translation_domain' => 'messages',
             'help_translation_parameters' => [
                 '%terms_url%' => $this->urlGenerator->generate('terms', [], UrlGeneratorInterface::ABSOLUTE_URL),
                 '%privacy_url%' => $this->urlGenerator->generate('privacy', [], UrlGeneratorInterface::ABSOLUTE_URL),

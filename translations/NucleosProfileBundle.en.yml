@@ -1,0 +1,16 @@
+registration:
+    check_email: |
+      An email has been sent to %email%.
+      <br>
+      It contains an activation link you must click to activate your account.
+    confirmed: |
+      Congrats <strong>%username%</strong>, your account is now activated.
+    before_confirmation_continue_order: |
+      Once you have activated your account, you can complete your order.
+    after_confirmation_continue_order: Complete your order
+
+form.registration.username.help: |
+  Your username cannot be longer than 15 characters.
+  A username can only contain alphanumeric characters (letters A-Z, numbers 0-9) with the exception of underscores.
+
+form.email.help: To send you updates about your order

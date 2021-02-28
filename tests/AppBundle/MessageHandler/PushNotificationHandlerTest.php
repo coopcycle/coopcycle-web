@@ -6,7 +6,7 @@ use AppBundle\Entity\User;
 use AppBundle\Message\PushNotification;
 use AppBundle\MessageHandler\PushNotificationHandler;
 use AppBundle\Service\RemotePushNotificationManager;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 

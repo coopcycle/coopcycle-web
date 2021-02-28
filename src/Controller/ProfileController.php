@@ -25,7 +25,7 @@ use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
@@ -84,7 +84,7 @@ class ProfileController extends AbstractController
             $redirectUri = $this->generateUrl('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
             $redirectAfterUri = $this->generateUrl(
-                'fos_user_profile_show',
+                'nucleos_profile_profile_show',
                 [],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
@@ -138,7 +138,7 @@ class ProfileController extends AbstractController
 
             $userManager->updateUser($user);
 
-            return $this->redirectToRoute('fos_user_profile_show');
+            return $this->redirectToRoute('nucleos_profile_profile_show');
         }
 
         return $this->render('profile/edit_profile.html.twig', array(

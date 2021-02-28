@@ -10,7 +10,7 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
