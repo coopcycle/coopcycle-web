@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "271657c34f5236d4d7cd645f1dd60067",
+    "content-hash": "8d6f7fdf856ad7a21dcc6451a98d8208",
     "packages": [
         {
             "name": "api-platform/core",
@@ -8675,56 +8675,6 @@
             "time": "2020-07-31T21:01:56+00:00"
         },
         {
-            "name": "mustache/mustache",
-            "version": "v2.13.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/bobthecow/mustache.php.git",
-                "reference": "e95c5a008c23d3151d59ea72484d4f72049ab7f4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/mustache.php/zipball/e95c5a008c23d3151d59ea72484d4f72049ab7f4",
-                "reference": "e95c5a008c23d3151d59ea72484d4f72049ab7f4",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2.4"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "~1.11",
-                "phpunit/phpunit": "~3.7|~4.0|~5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Mustache": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Justin Hileman",
-                    "email": "justin@justinhileman.info",
-                    "homepage": "http://justinhileman.com"
-                }
-            ],
-            "description": "A Mustache implementation in PHP.",
-            "homepage": "https://github.com/bobthecow/mustache.php",
-            "keywords": [
-                "mustache",
-                "templating"
-            ],
-            "support": {
-                "issues": "https://github.com/bobthecow/mustache.php/issues",
-                "source": "https://github.com/bobthecow/mustache.php/tree/master"
-            },
-            "time": "2019-11-23T21:40:31+00:00"
-        },
-        {
             "name": "myclabs/deep-copy",
             "version": "1.10.2",
             "source": {
@@ -10773,108 +10723,6 @@
                 "source": "https://github.com/ppshobi/psonic/tree/v2.0.1"
             },
             "time": "2020-12-30T17:32:39+00:00"
-        },
-        {
-            "name": "predicthq/address-formatter",
-            "version": "v1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/predicthq/address-formatter-php.git",
-                "reference": "80f01eb7e4986ab32cc1ff37aa434cc2541ad6a4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/predicthq/address-formatter-php/zipball/80f01eb7e4986ab32cc1ff37aa434cc2541ad6a4",
-                "reference": "80f01eb7e4986ab32cc1ff37aa434cc2541ad6a4",
-                "shasum": ""
-            },
-            "require": {
-                "mustache/mustache": "~2.0",
-                "php": ">=5.6.0",
-                "predicthq/address-formatter-templates": "~1.0",
-                "symfony/yaml": "^3.0 || ^4.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^5.3",
-                "satooshi/php-coveralls": "^1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "PredictHQ\\AddressFormatter\\": "src"
-                },
-                "exclude-from-classmap": [
-                    "/tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PredictHQ",
-                    "homepage": "https://developer.predicthq.com"
-                },
-                {
-                    "name": "Robert Kern",
-                    "homepage": "http://www.robertkern.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Address formatter using country templates from https://github.com/OpenCageData/address-formatting",
-            "keywords": [
-                "address",
-                "predicthq"
-            ],
-            "support": {
-                "issues": "https://github.com/predicthq/address-formatter-php/issues",
-                "source": "https://github.com/predicthq/address-formatter-php/tree/master"
-            },
-            "abandoned": true,
-            "time": "2018-05-23T19:10:30+00:00"
-        },
-        {
-            "name": "predicthq/address-formatter-templates",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/predicthq/address-formatter-templates.git",
-                "reference": "91f683fe69fda63800424d716d3dcf94827e1d25"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/predicthq/address-formatter-templates/zipball/91f683fe69fda63800424d716d3dcf94827e1d25",
-                "reference": "91f683fe69fda63800424d716d3dcf94827e1d25",
-                "shasum": ""
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PredictHQ",
-                    "homepage": "https://developer.predicthq.com"
-                },
-                {
-                    "name": "Robert Kern",
-                    "homepage": "http://www.robertkern.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Address formatter templates from https://github.com/OpenCageData/address-formatting - used with the predicthq/address-formatter package.",
-            "keywords": [
-                "address",
-                "predicthq",
-                "templates"
-            ],
-            "support": {
-                "source": "https://github.com/predicthq/address-formatter-templates/tree/master"
-            },
-            "abandoned": true,
-            "time": "2016-04-28T21:46:01+00:00"
         },
         {
             "name": "psr/cache",
