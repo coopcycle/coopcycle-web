@@ -303,13 +303,16 @@ class AddressAutosuggest extends Component {
     super(props)
 
     let adapter
-    let adapterOptions = {}
+    let adapterOptions = {
+      algolia: {},
+      geocodeEarth: {}
+    }
     if (Object.prototype.hasOwnProperty.call(props, 'algolia')) {
       adapter = 'algolia'
-      adapterOptions = props.algolia
+      adapterOptions.algolia = props.algolia
     } else if (Object.prototype.hasOwnProperty.call(props, 'geocodeEarth')) {
       adapter = 'geocode-earth'
-      adapterOptions = props.geocodeEarth
+      adapterOptions.geocodeEarth = props.geocodeEarth
     } else {
 
       const adapterEl = document.getElementById('autocomplete-adapter')
@@ -317,12 +320,12 @@ class AddressAutosuggest extends Component {
       const geocodeEarthEl = document.getElementById('geocode-earth')
 
       adapter = (adapterEl && adapterEl.dataset.value) || 'algolia'
-      adapterOptions = (algoliaEl && algoliaEl.dataset) || {}
-      adapterOptions = (geocodeEarthEl && geocodeEarthEl.dataset) || {}
+      adapterOptions.algolia = (algoliaEl && { ...algoliaEl.dataset }) || {}
+      adapterOptions.geocodeEarth = (geocodeEarthEl && { ...geocodeEarthEl.dataset }) || {}
     }
 
     const configure = localize('configure', adapter, this)
-    configure(adapterOptions)
+    configure(adapterOptions[adapter])
 
     this.country = props.country || getCountry() || 'en'
     this.language = props.language || localeDetector()
