@@ -37,7 +37,7 @@ import frFR from 'numbro/dist/languages/fr-FR.min.js'
 import plPL from 'numbro/dist/languages/pl-PL.min.js'
 import ptBR from 'numbro/dist/languages/pt-BR.min.js'
 
-export const localeDetector = () => $('html').attr('lang')
+export const localeDetector = () => $('html').attr('lang') || 'en'
 
 // https://www.i18next.com/misc/creating-own-plugins.html#languagedetector
 const languageDetector = {
