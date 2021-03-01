@@ -25,6 +25,7 @@ import {
   poweredBy as poweredByAlgolia,
   transformSuggestion as transformSuggestionAlgolia,
   geocode as geocodeAlgolia,
+  configure as configureAlgolia
   } from './AddressAutosuggest/algolia'
 
 import {
@@ -39,6 +40,7 @@ import {
   poweredBy as poweredByGE,
   transformSuggestion as transformSuggestionGE,
   geocode as geocodeGE,
+  configure as configureGE
   } from './AddressAutosuggest/geocode-earth'
 
 import { storage, getFromCache } from './AddressAutosuggest/cache'
@@ -97,7 +99,8 @@ const adapters = {
     geocode: geocodeAlgolia,
     useCache: function () {
       return true
-    }
+    },
+    configure: configureAlgolia,
   },
   locationiq: {
     onSuggestionsFetchRequested: onSuggestionsFetchRequestedLocationIQ,
@@ -110,6 +113,7 @@ const adapters = {
     poweredBy: poweredByGE,
     transformSuggestion: transformSuggestionGE,
     geocode: geocodeGE,
+    configure: configureGE,
   },
 }
 
@@ -249,7 +253,8 @@ const generic = {
   },
   useCache: function() {
     return false
-  }
+  },
+  configure: function() {},
 }
 
 const localize = (func, adapter, thisArg) => {
@@ -297,11 +302,30 @@ class AddressAutosuggest extends Component {
   constructor(props) {
     super(props)
 
-    const el = document.getElementById('autocomplete-adapter')
-    const adapter = (el && el.dataset.value) || 'algolia'
+    let adapter
+    let adapterOptions = {}
+    if (Object.prototype.hasOwnProperty.call(props, 'algolia')) {
+      adapter = 'algolia'
+      adapterOptions = props.algolia
+    } else if (Object.prototype.hasOwnProperty.call(props, 'geocodeEarth')) {
+      adapter = 'geocode-earth'
+      adapterOptions = props.geocodeEarth
+    } else {
 
-    this.country = getCountry() || 'en'
-    this.language = localeDetector()
+      const adapterEl = document.getElementById('autocomplete-adapter')
+      const algoliaEl = document.getElementById('algolia-places')
+      const geocodeEarthEl = document.getElementById('geocode-earth')
+
+      adapter = (adapterEl && adapterEl.dataset.value) || 'algolia'
+      adapterOptions = (algoliaEl && algoliaEl.dataset) || {}
+      adapterOptions = (geocodeEarthEl && geocodeEarthEl.dataset) || {}
+    }
+
+    const configure = localize('configure', adapter, this)
+    configure(adapterOptions)
+
+    this.country = props.country || getCountry() || 'en'
+    this.language = props.language || localeDetector()
 
     const onSuggestionsFetchRequestedBase =
       localize('onSuggestionsFetchRequested', adapter, this)
@@ -609,13 +633,14 @@ AddressAutosuggest.defaultProps = {
   disabled: false,
   inputName: undefined,
   inputId: undefined,
+  geohash: '',
 }
 
 AddressAutosuggest.propTypes = {
   address: PropTypes.oneOfType([ PropTypes.object, PropTypes.string ]).isRequired,
   addresses: PropTypes.array.isRequired,
   restaurants: PropTypes.array,
-  geohash: PropTypes.string.isRequired,
+  geohash: PropTypes.string,
   onAddressSelected: PropTypes.func.isRequired,
   required: PropTypes.bool,
   reportValidity: PropTypes.bool,

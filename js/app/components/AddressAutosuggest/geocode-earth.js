@@ -11,12 +11,6 @@ const client = axios.create({
 
 let apiKey = null
 function getApiKey() {
-  if (null === apiKey) {
-    const el = document.getElementById('geocode-earth')
-    if (el) {
-      apiKey = el.dataset.apiKey
-    }
-  }
 
   return apiKey
 }
@@ -24,12 +18,6 @@ function getApiKey() {
 
 let boundaryCircleLatlon = null
 function getBoundaryCircleLatlon() {
-  if (null === boundaryCircleLatlon) {
-    const el = document.getElementById('geocode-earth')
-    if (el) {
-      boundaryCircleLatlon = el.dataset.boundaryCircleLatlon
-    }
-  }
 
   return boundaryCircleLatlon
 }
@@ -123,4 +111,9 @@ export const geocode = function (text) {
       })
       .catch(() => resolve(null))
   })
+}
+
+export const configure = function (options) {
+  apiKey = options.apiKey
+  boundaryCircleLatlon = options.boundaryCircleLatlon
 }

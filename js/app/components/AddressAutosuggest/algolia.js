@@ -6,6 +6,9 @@ import { shuffle } from '@algolia/client-common'
 
 import PoweredByAlgolia from './algolia.svg'
 
+let appId
+let apiKey
+
 let search = null
 const getSearch = function() {
   if (null === search) {
@@ -17,26 +20,12 @@ const getSearch = function() {
 
 let aroundLatLng = null
 function getAroundLatLng() {
-  if (null === aroundLatLng) {
-    const el = document.getElementById('algolia-places')
-    if (el) {
-      aroundLatLng = el.dataset.aroundLatLng
-    }
-  }
 
   return aroundLatLng
 }
 
 let addressTemplate = null
 function getAddressTemplate() {
-  if (null === addressTemplate) {
-    const el = document.getElementById('algolia-places')
-    if (el) {
-      addressTemplate = el.dataset.addressTemplate
-    } else {
-      addressTemplate = 'city'
-    }
-  }
 
   return addressTemplate
 }
@@ -66,10 +55,7 @@ export const places = (appId = '', apiKey = '', options) => {
 }
 
 const initSearch = () => {
-  const el = document.getElementById('algolia-places')
-  if (el) {
-    return places(el.dataset.appId, el.dataset.apiKey)
-  }
+  return places(appId, apiKey)
 }
 
 /* Exported to make it testable */
@@ -222,4 +208,11 @@ export const geocode = function (text, country = 'en', language = 'en') {
       }
     }).catch(() => resolve(null))
   })
+}
+
+export const configure = function (options) {
+  appId = options.appId
+  apiKey = options.apiKey
+  aroundLatLng = options.aroundLatLng
+  addressTemplate = options.addressTemplate
 }
