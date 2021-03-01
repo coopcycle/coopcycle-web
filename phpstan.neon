@@ -36,4 +36,3 @@ parameters:
         - '#Method AppBundle\\Entity\\Sylius\\(Product|Taxon)::compareTo\(\) should return int but returns bool#'
         - '#Method [a-zA-Z\\:\(\)]+ should return Doctrine\\Common\\Collections\\Collection<\(int\|string\), [a-zA-Z\\]+> but returns Doctrine\\Common\\Collections\\ArrayCollection<\(int\|string\), [a-zA-Z\\\|]+>#'
         - '#Call to an undefined method Symfony\\Component\\Validator\\ConstraintViolationListInterface::findByCodes\(\)#'
-        - '#Return type \(Doctrine\\Common\\Collections\\Collection<\(int\|string\), [a-zA-Z\\]+>\) of method [a-zA-Z\\:]+\(\) should be compatible with return type \(Doctrine\\Common\\Collections\\Collection<\(int\|string\), [a-zA-Z\\]+>\) of method [a-zA-Z\\:]+\(\)#'
