@@ -1120,3 +1120,25 @@ basics.search: Vyhledávání…
 form.hub.restaurants.label: Seznam obchodníků
 index.view_all_merchants: Zobrazit všechny obchodníky
 order.list.summary.hub.text: Objednávka na %name%
+edenred.oauth_connect.success: Účet Edenred byl úspěšně připojen!
+profile.edenred.connect: Připojit můj účet Edenred
+profile.edenred.connected: Účet Edenred připojen
+notifications.tap_to_open: Klepnutím otevřete
+notifications.tasks_changed_today: Vaše dnešní úkoly byly aktualizovány
+notifications.delivery_created: Byla vytvořena dodávka k vyzvednutí %date%
+ordering_delay.admin_reminder: Nakonfigurovali jste globální zpoždění objednávek
+ordering_delay.disclaimer: V současné době dostáváme spoustu objednávek, dodací lhůty
+  se prodlužují!
+form.fulfillment_method.options.range_duration.label: Rozsah dosahu
+form.fulfillment_method.pre_ordering_allowed.help: Pokud zrušíte zaškrtnutí tohoto
+  políčka, zákazníci budou moci zadávat objednávky pouze ve stejný den.
+form.fulfillment_method.pre_ordering_allowed.label: Povolit předobjednávku
+profile.dashboard_suggest: Chcete spravovat své objednávky a dodávky? <a href="%link%">
+  Objevte svůj nový ovládací panel </a> ✨
+order.hub.sub_total.disclaimer: Tato objednávka byla zadána několika obchodníkům.
+  Sloupec "%column%" zobrazuje částku, která odpovídá vašim produktům (%amount%).
+form.customize.order_confirm.label: Tato zpráva se zobrazí na stránce potvrzení objednávky
+form.customize.order_confirm_enabled.label: Zobrazit zprávu s potvrzením vlastní objednávky
+form.option_value.value.placeholder: např. hranolky, salát…
+basics.enabled: Povoleno
+order.export.empty: Nejsou k dispozici žádné objednávky k exportu
