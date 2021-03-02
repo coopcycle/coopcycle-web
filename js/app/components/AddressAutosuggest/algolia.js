@@ -5,6 +5,7 @@ import algoliasearch from 'algoliasearch/lite'
 import { shuffle } from '@algolia/client-common'
 
 import PoweredByAlgolia from './algolia.svg'
+import { includes } from 'lodash'
 
 let appId
 let apiKey
@@ -63,18 +64,22 @@ export const formatAddress = (hit, template) => {
 
   template = template || getAddressTemplate()
 
+  const options = template.split(',')
+  const useCounty = includes(options, 'county')
+  const usePostcode = !includes(options, 'no-postcode')
+
   const parts = [
     hit.locale_names[0]
   ]
 
   if (hit.postcode && hit.postcode[0]) {
-    if (template === 'county') {
-      parts.push(`${hit.postcode[0]} ${hit.county[0]}`)
+    if (useCounty) {
+      parts.push(usePostcode ? `${hit.postcode[0]} ${hit.county[0]}` : hit.county[0])
     } else {
-      parts.push(`${hit.postcode[0]} ${hit.city[0]}`)
+      parts.push(usePostcode ? `${hit.postcode[0]} ${hit.city[0]}` : hit.city[0])
     }
   } else {
-    if (template === 'county') {
+    if (useCounty) {
       parts.push(hit.county[0])
     } else {
       parts.push(hit.city[0])
