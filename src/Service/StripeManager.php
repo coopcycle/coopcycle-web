@@ -37,6 +37,10 @@ class StripeManager
             return;
         }
 
+        if ($payment->isEdenredWithCard()) {
+            return;
+        }
+
         $restaurant = $order->getRestaurant();
 
         $livemode = $this->settingsManager->isStripeLivemode();
@@ -63,6 +67,10 @@ class StripeManager
             return $options;
         }
 
+        if ($payment->isEdenredWithCard()) {
+            return $options;
+        }
+
         $restaurant = $order->getRestaurant();
 
         $livemode = $this->settingsManager->isStripeLivemode();
@@ -81,6 +89,11 @@ class StripeManager
 
         $restaurant = $order->getRestaurant();
         if (null === $restaurant) {
+
+            return $payload;
+        }
+
+        if ($payment->isEdenredWithCard()) {
 
             return $payload;
         }
@@ -119,7 +132,7 @@ class StripeManager
         $order = $payment->getOrder();
 
         $payload = [
-            'amount' => $payment->getAmount(),
+            'amount' => $payment->getAmountForMethod('CARD'),
             'currency' => strtolower($payment->getCurrencyCode()),
             'description' => sprintf('Order %s', $order->getNumber()),
             'payment_method' => $payment->getPaymentMethod(),

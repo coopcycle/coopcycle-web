@@ -24,6 +24,7 @@ use SM\StateMachine\StateMachineInterface;
 use Stripe;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Tests\AppBundle\StripeTrait;
@@ -689,5 +690,56 @@ class StripeManagerTest extends TestCase
         $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_intents/pi_12345678/confirm', 'acct_123456');
 
         $this->stripeManager->confirmIntent($payment);
+    }
+
+    public function testCreateIntentWithAmountBreakdownForEdenred()
+    {
+        $payment = new Payment();
+        $payment->setAmount(3000);
+        $payment->setCurrencyCode('EUR');
+        $payment->setCharge('ch_123456');
+        $payment->setPaymentMethod('pm_123456');
+
+        $edenredPlusCard = $this->prophesize(PaymentMethodInterface::class);
+        $edenredPlusCard->getCode()->willReturn('EDENRED+CARD');
+
+        $payment->setMethod($edenredPlusCard->reveal());
+        $payment->setAmountBreakdown(2650, 350);
+
+        $restaurant = $this->createRestaurant('acct_123456');
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getId()
+            ->willReturn(1);
+        $order
+            ->getNumber()
+            ->willReturn('ABC');
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
+        $order
+            ->getFeeTotal()
+            ->willReturn(750);
+
+        $payment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequest('POST', '/v1/payment_intents', [
+            "amount" => 350,
+            "currency" => "eur",
+            "description" => "Order ABC",
+            "payment_method" => "pm_123456",
+            "confirmation_method" => "manual",
+            "confirm" => "true",
+            "capture_method" => "manual",
+        ]);
+
+        $this->stripeManager->createIntent($payment);
     }
 }

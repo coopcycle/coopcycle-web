@@ -5,6 +5,7 @@ namespace Tests\AppBundle\Domain\Order\Reactor;
 use AppBundle\Domain\Order\Event\OrderCancelled;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Order\Reactor\CapturePayment;
+use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Message\RetrieveStripeFee;
@@ -31,6 +32,7 @@ class CapturePaymentTest extends TestCase
     {
         $this->stripeManager = $this->prophesize(StripeManager::class);
         $this->mercadopagoManager = $this->prophesize(MercadopagoManager::class);
+        $this->edenred = $this->prophesize(EdenredClient::class);
 
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
 
@@ -45,7 +47,8 @@ class CapturePaymentTest extends TestCase
             $this->gatewayResolver->reveal(),
             $this->stripeManager->reveal(),
             $this->mercadopagoManager->reveal(),
-            $this->messageBus->reveal()
+            $this->messageBus->reveal(),
+            $this->edenred->reveal()
         );
 
         $this->capturePayment = new CapturePayment(

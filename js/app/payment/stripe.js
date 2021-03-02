@@ -3,8 +3,7 @@ import axios from 'axios'
 import { render, unmountComponentAtNode } from 'react-dom'
 import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js'
 import { useTranslation } from 'react-i18next'
-
-import { getCountry } from '../i18n'
+import _ from 'lodash'
 
 const style = {
   base: {
@@ -68,9 +67,14 @@ const CardholderNameInput = ({ onChange }) => {
   )
 }
 
-const StripeForm = ({ country, onChange, onCardholderNameChange }) => {
+const StripeForm = ({ onChange, onCardholderNameChange, options }) => {
 
   const { t } = useTranslation()
+
+  const hasBreakdown = !!options
+    && Object.prototype.hasOwnProperty.call(options, 'amount_breakdown')
+    && Object.prototype.hasOwnProperty.call(options.amount_breakdown, 'edenred')
+    && Object.prototype.hasOwnProperty.call(options.amount_breakdown, 'card')
 
   return (
     <React.Fragment>
@@ -82,10 +86,10 @@ const StripeForm = ({ country, onChange, onCardholderNameChange }) => {
           { t('PAYMENT_FORM_TITLE') }
         </label>
         <CardElement options={{ style, hidePostalCode: true }} onChange={ onChange } />
-        { country === 'fr' && (
+        { hasBreakdown && (
           <span className="help-block mt-3">
             <i className="fa fa-info-circle mr-2"></i>
-            <span>Nous nʼacceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique.</span>
+            <span>{ t('EDENRED_SPLIT_AMOUNTS', _.mapValues(options.amount_breakdown, value => (value / 100).formatMoney())) }</span>
           </span>
         )}
       </div>
@@ -124,7 +128,7 @@ export default {
     // @see https://stripe.com/docs/payments/payment-methods/connect#creating-paymentmethods-directly-on-the-connected-account
     this.stripe = Stripe(this.config.gatewayConfig.publishableKey, stripeOptions)
   },
-  mount(el, method) {
+  mount(el, method, options) {
 
     this.cardholderName = ''
     this.el = el
@@ -154,11 +158,11 @@ export default {
 
             return (
               <StripeForm
-                country={ getCountry() }
                 onChange={ this.config.onChange }
                 onCardholderNameChange={ cardholderName => {
                   this.cardholderName = cardholderName
-                }} />
+                }}
+                options={ options } />
             )
           }}
           </ElementsConsumer>

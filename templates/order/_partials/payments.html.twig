@@ -1,6 +1,7 @@
 <table class="table">
   <thead>
     <th>{{ 'form.payment.state.label'|trans }}</th>
+    <th>{{ 'form.payment.method.name.label'|trans }}</th>
     <th class="text-right">{{ 'form.payment.amount.label'|trans }}</th>
     <th class="text-right">{{ 'form.payment.refund_amount.label'|trans }}</th>
     <th class="text-right">{{ 'form.payment.last_update.label'|trans }}</th>
@@ -14,6 +15,9 @@
     <tr>
       <td>
         {% include '_partials/payment/state.html.twig' with { payment: payment } %}
+      </td>
+      <td>
+        {{ payment.method.name }}
       </td>
       <td class="text-right">
         {{ payment.amount|price_format }}

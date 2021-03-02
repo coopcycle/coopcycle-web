@@ -1071,3 +1071,12 @@ services:
         from_email:
           confirmation: '%fos_user.registration.confirmation.from_email%'
           resetting: '%fos_user.resetting.email.from_email%'
+
+  AppBundle\Edenred\Client:
+    arguments:
+      $config: { base_uri: "%env(EDENRED_PAYMENT_BASE_URL)%" }
+      $paymentClientId: '%env(EDENRED_PAYMENT_CLIENT_ID)%'
+      $paymentClientSecret: '%env(EDENRED_PAYMENT_CLIENT_SECRET)%'
+    tags:
+      - { name: csa_guzzle.client }
+      - { name: monolog.logger, channel: edenred }

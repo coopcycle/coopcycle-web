@@ -6,6 +6,7 @@ use AppBundle\Domain\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event\CheckoutFailed;
 use AppBundle\Domain\Order\Event\CheckoutSucceeded;
 use AppBundle\Domain\Order\Handler\CheckoutHandler;
+use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
@@ -40,6 +41,7 @@ class CheckoutHandlerTest extends TestCase
         $this->stripeManager = $this->prophesize(StripeManager::class);
         $this->mercadopagoManager = $this->prophesize(MercadopagoManager::class);
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
+        $this->edenred = $this->prophesize(EdenredClient::class);
 
         $this->messageBus = $this->prophesize(MessageBusInterface::class);
         $this->messageBus
@@ -52,7 +54,8 @@ class CheckoutHandlerTest extends TestCase
             $this->gatewayResolver->reveal(),
             $this->stripeManager->reveal(),
             $this->mercadopagoManager->reveal(),
-            $this->messageBus->reveal()
+            $this->messageBus->reveal(),
+            $this->edenred->reveal()
         );
 
         $this->handler = new CheckoutHandler(
