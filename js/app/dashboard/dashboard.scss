@@ -51,6 +51,7 @@ html, body {
 
   &__map-container {
     flex: 1;
+    width: 100%;
   }
 
   &__toolbar-container {
@@ -79,8 +80,6 @@ html, body {
   &__panel {
     display: flex;
     flex-direction: column;
-    flex: 1;
-    max-height: 50%;
     > h4 {
       padding: 15px;
       margin: 0;
@@ -133,10 +132,6 @@ html, body {
 
   }
 
-  &__map {
-    flex: 7.5;
-  }
-
   &__date {
     padding-left: 15px;
     padding-right: 15px;
@@ -177,7 +172,6 @@ html, body {
   &__aside {
     overflow: scroll;
 
-    flex: 2.5;
     flex-direction: column;
 
     min-width: 275px;
@@ -188,7 +182,6 @@ html, body {
     &-container {
       display: flex;
       flex: 1;
-      flex-direction: column;
       max-height: 100%;
     }
   }
@@ -506,4 +499,22 @@ $pulse-color: #2ECC40;
     line-height: 20px;
     font-weight: 700;
   }
+}
+
+// https://github.com/nathancahill/split/tree/master/packages/splitjs#css
+.gutter {
+  background-color: #eee;
+
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+
+.gutter.gutter-horizontal {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+  cursor: col-resize;
+}
+
+.gutter.gutter-vertical {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+  cursor: row-resize;
 }

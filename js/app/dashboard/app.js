@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import Modal from 'react-modal'
 import { DragDropContext } from 'react-beautiful-dnd'
 import _ from 'lodash'
+import Split from 'react-split'
 
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -156,8 +157,13 @@ class DashboardApp extends React.Component {
             this.props.modifyTaskList(username, newTasks)
 
           }}>
-          <UnassignedTasks />
-          <TaskLists couriersList={ this.props.couriersList } />
+          <Split
+            sizes={ [ 50, 50 ] }
+            direction="vertical"
+            style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+            <UnassignedTasks />
+            <TaskLists couriersList={ this.props.couriersList } />
+          </Split>
         </DragDropContext>
         <SearchPanel />
         <ContextMenu />

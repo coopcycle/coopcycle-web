@@ -131,6 +131,7 @@
     "react-phone-number-input": "^2.5.3",
     "react-redux": "^7.2.2",
     "react-select": "^3.2.0",
+    "react-split": "^2.0.9",
     "react-stickynode": "^3.0.4",
     "react-timeago": "^5.2.0",
     "react-toastify": "^6.2.0",

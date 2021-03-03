@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { createRef } from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
@@ -6,6 +6,7 @@ import { I18nextProvider } from 'react-i18next'
 import moment from 'moment'
 import _ from 'lodash'
 import { ConfigProvider } from 'antd'
+import Split from 'react-split'
 
 import i18n, { antdLocale } from '../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
@@ -59,23 +60,32 @@ function start() {
 
   const store = createStoreFromPreloadedState(preloadedState)
 
+  const mapRef = createRef()
+
   render(
     <Provider store={ store }>
       <I18nextProvider i18n={ i18n }>
         <ConfigProvider locale={antdLocale}>
-          <React.Fragment>
+          <Split
+            sizes={[ 75, 25 ]}
+            style={{ display: 'flex', width: '100%' }}
+            onDragEnd={ () => mapRef.current.invalidateSize() }>
             <div className="dashboard__map">
               <div className="dashboard__toolbar-container">
                 <Navbar />
               </div>
               <div className="dashboard__map-container">
-                <LeafletMap onLoad={ () => { /* Do nothing */ } } />
+                <LeafletMap onLoad={ (e) => {
+                  // It seems like a bad way to get a ref to the map,
+                  // but we can't use the ref prop
+                  mapRef.current = e.target
+                }} />
               </div>
             </div>
             <aside className="dashboard__aside">
               <DashboardApp />
             </aside>
-          </React.Fragment>
+          </Split>
         </ConfigProvider>
       </I18nextProvider>
     </Provider>,
@@ -84,6 +94,9 @@ function start() {
       anim.stop()
       anim.destroy()
       document.querySelector('.dashboard__loader').remove()
+
+      // Make sure map is rendered correctly with Split.js
+      mapRef.current.invalidateSize()
     }
   )
 
