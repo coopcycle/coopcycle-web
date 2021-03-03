@@ -254,6 +254,7 @@ class RestaurantStats implements \Countable
         $headings[] = 'delivery_fee';
         $headings[] = 'packaging_fee';
         $headings[] = 'tip';
+        $headings[] = 'promotions';
         $headings[] = 'total_incl_tax';
         $headings[] = 'stripe_fee';
         $headings[] = 'platform_fee';
@@ -304,6 +305,12 @@ class RestaurantStats implements \Countable
                 return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT), !$formatted);
             case 'tip':
                 return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT), !$formatted);
+            case 'promotions':
+                $promotionsTotal =
+                    $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)
+                    +
+                    $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT);
+                return $this->formatNumber($promotionsTotal, !$formatted);
             case 'total_incl_tax':
                 return $this->formatNumber($order->getTotal(), !$formatted);
             case 'stripe_fee':
@@ -357,6 +364,7 @@ class RestaurantStats implements \Countable
             'delivery_fee',
             'packaging_fee',
             'tip',
+            'promotions',
             'total_incl_tax',
             'stripe_fee',
             'platform_fee',

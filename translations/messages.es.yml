@@ -1144,3 +1144,4 @@ restaurant.embed.disclaimer: Puedes incorporar el checkout directamente en tu si
 restaurant.form.section.embed: Incorporar
 loopeat.oauth_redirect.warning: Serás redirigido al sitio web de LoopEat para iniciar
   sesión o crear tu cuenta
+order.export.heading.promotions: Descuentos

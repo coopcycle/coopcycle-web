@@ -1145,3 +1145,4 @@ profile.edenred.connected: Edenred account connected
 profile.edenred.connect: Connect my Edenred account
 edenred.oauth_connect.success: Edenred account connected successfully!
 form.payment.method.name.label: Payment method
+order.export.heading.promotions: Promotions
