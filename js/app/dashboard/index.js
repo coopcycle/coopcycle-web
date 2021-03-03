@@ -10,7 +10,7 @@ import Split from 'react-split'
 
 import i18n, { antdLocale } from '../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
-import DashboardApp from './app'
+import RightPanel from './components/RightPanel'
 import LeafletMap from './components/LeafletMap'
 import Navbar from './components/Navbar'
 
@@ -83,7 +83,7 @@ function start() {
               </div>
             </div>
             <aside className="dashboard__aside">
-              <DashboardApp />
+              <RightPanel />
             </aside>
           </Split>
         </ConfigProvider>

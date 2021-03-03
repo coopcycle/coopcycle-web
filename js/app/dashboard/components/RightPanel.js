@@ -7,7 +7,7 @@ import Split from 'react-split'
 
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { selectAllTasks, selectTaskLists, selectSelectedDate } from '../coopcycle-frontend-js/dispatch/redux'
+import { selectAllTasks, selectTaskLists, selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
 
 import {
   setCurrentTask,
@@ -21,16 +21,16 @@ import {
   modifyTaskList,
   clearSelectedTasks,
   closeAddUserModal,
-  createTaskList } from './redux/actions'
-import UnassignedTasks from './components/UnassignedTasks'
-import TaskLists from './components/TaskLists'
-import ContextMenu from './components/ContextMenu'
-import TaskModalContent from './components/TaskModalContent'
-import FiltersModalContent from './components/FiltersModalContent'
-import SettingsModalContent from './components/SettingsModalContent'
-import ImportModalContent from './components/ImportModalContent'
-import SearchPanel from './components/SearchPanel'
-import AddUserModalContent from './components/AddUserModalContent'
+  createTaskList } from '../redux/actions'
+import UnassignedTasks from './UnassignedTasks'
+import TaskLists from './TaskLists'
+import ContextMenu from './ContextMenu'
+import TaskModalContent from './TaskModalContent'
+import FiltersModalContent from './FiltersModalContent'
+import SettingsModalContent from './SettingsModalContent'
+import ImportModalContent from './ImportModalContent'
+import SearchPanel from './SearchPanel'
+import AddUserModalContent from './AddUserModalContent'
 
 class DashboardApp extends React.Component {
 
