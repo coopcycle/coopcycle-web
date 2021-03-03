@@ -125,7 +125,7 @@
     "react-dom": "^16.14.0",
     "react-dropzone": "^11.3.1",
     "react-i18next": "^11.8.8",
-    "react-markdown": "^4.3.1",
+    "react-markdown": "^5.0.3",
     "react-modal": "^3.12.1",
     "react-payment-inputs": "^1.1.7",
     "react-phone-number-input": "^2.5.3",
