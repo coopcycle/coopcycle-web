@@ -14,6 +14,7 @@ import RightPanel from './components/RightPanel'
 import LeafletMap from './components/LeafletMap'
 import Navbar from './components/Navbar'
 import Modals from './components/Modals'
+import { updateRightPanelSize } from './redux/actions'
 
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
@@ -70,6 +71,7 @@ function start() {
           <Split
             sizes={[ 75, 25 ]}
             style={{ display: 'flex', width: '100%' }}
+            onDrag={ sizes => store.dispatch(updateRightPanelSize(sizes[1])) }
             onDragEnd={ () => mapRef.current.invalidateSize() }>
             <div className="dashboard__map">
               <div className="dashboard__toolbar-container">

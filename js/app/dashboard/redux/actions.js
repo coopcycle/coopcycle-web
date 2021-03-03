@@ -139,6 +139,9 @@ export const CLOSE_IMPORT_MODAL = 'CLOSE_IMPORT_MODAL'
 
 export const OPTIMIZE_TASK_LIST = 'OPTIMIZE_TASK_LIST'
 
+export const RIGHT_PANEL_MORE_THAN_HALF = 'RIGHT_PANEL_MORE_THAN_HALF'
+export const RIGHT_PANEL_LESS_THAN_HALF = 'RIGHT_PANEL_LESS_THAN_HALF'
+
 function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
 }
@@ -796,6 +799,10 @@ function moveTasksToNextWorkingDay(tasks) {
   }
 }
 
+function updateRightPanelSize(size) {
+  return { type: size > 50 ? RIGHT_PANEL_MORE_THAN_HALF : RIGHT_PANEL_LESS_THAN_HALF }
+}
+
 export {
   assignAfter,
   updateTask,
@@ -845,4 +852,5 @@ export {
   scanPositions,
   moveTasksToNextDay,
   moveTasksToNextWorkingDay,
+  updateRightPanelSize,
 }

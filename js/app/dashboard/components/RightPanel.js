@@ -146,8 +146,11 @@ class DashboardApp extends React.Component {
           }}>
           <Split
             sizes={ [ 50, 50 ] }
-            direction="vertical"
-            style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+            direction={ this.props.splitDirection }
+            style={{ display: 'flex', flexDirection: this.props.splitDirection === 'vertical' ? 'column' : 'row', width: '100%' }}
+            // We need to use a "key" prop,
+            // to force a re-render when the direction has changed
+            key={ this.props.splitDirection }>
             <UnassignedTasks />
             <TaskLists couriersList={ this.props.couriersList } />
           </Split>
@@ -169,6 +172,7 @@ function mapStateToProps(state) {
     taskLists: selectTaskLists(state),
     selectedTasks: state.selectedTasks,
     date: selectSelectedDate(state),
+    splitDirection: state.rightPanelSplitDirection,
   }
 }
 

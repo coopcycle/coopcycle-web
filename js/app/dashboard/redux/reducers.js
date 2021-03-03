@@ -41,6 +41,8 @@ import {
   CLEAR_SELECTED_TASKS,
   SCAN_POSITIONS,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
+  RIGHT_PANEL_MORE_THAN_HALF,
+  RIGHT_PANEL_LESS_THAN_HALF
 } from './actions'
 
 import { isOffline } from './utils'
@@ -86,6 +88,7 @@ const initialState = {
   uploaderEndpoint: '',
   exampleSpreadsheetUrl: '#',
   clustersEnabled: false,
+  rightPanelSplitDirection: 'vertical'
 }
 
 const addModalIsOpen = (state = false, action) => {
@@ -464,6 +467,19 @@ const centrifugoToken = (state = initialState.centrifugoToken) => state
 const centrifugoTrackingChannel = (state = initialState.centrifugoTrackingChannel) => state
 const centrifugoEventsChannel = (state = initialState.centrifugoEventsChannel) => state
 
+const rightPanelSplitDirection = (state = initialState.rightPanelSplitDirection, action) => {
+  switch (action.type) {
+  case RIGHT_PANEL_MORE_THAN_HALF:
+
+    return 'horizontal'
+  case RIGHT_PANEL_LESS_THAN_HALF:
+
+    return 'vertical'
+  }
+
+  return state
+}
+
 export default (state = initialState, action) => {
 
   const { filters, isDefaultFilters } = combinedFilters(state, action)
@@ -496,5 +512,6 @@ export default (state = initialState, action) => {
     imports: imports(state.imports, action),
     importModalIsOpen: importModalIsOpen(state.importModalIsOpen, action),
     clustersEnabled: clustersEnabled(state.clustersEnabled, action),
+    rightPanelSplitDirection: rightPanelSplitDirection(state.rightPanelSplitDirection, action),
   }
 }
