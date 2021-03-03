@@ -1,6 +1,5 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import Modal from 'react-modal'
 import { DragDropContext } from 'react-beautiful-dnd'
 import _ from 'lodash'
 import Split from 'react-split'
@@ -10,27 +9,15 @@ import 'react-toastify/dist/ReactToastify.css'
 import { selectAllTasks, selectTaskLists, selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
 
 import {
-  setCurrentTask,
-  closeNewTaskModal,
-  closeFiltersModal,
   toggleSearch,
   closeSearch,
-  openSettings,
-  closeSettings,
-  closeImportModal,
   modifyTaskList,
   clearSelectedTasks,
-  closeAddUserModal,
   createTaskList } from '../redux/actions'
 import UnassignedTasks from './UnassignedTasks'
 import TaskLists from './TaskLists'
 import ContextMenu from './ContextMenu'
-import TaskModalContent from './TaskModalContent'
-import FiltersModalContent from './FiltersModalContent'
-import SettingsModalContent from './SettingsModalContent'
-import ImportModalContent from './ImportModalContent'
 import SearchPanel from './SearchPanel'
-import AddUserModalContent from './AddUserModalContent'
 
 class DashboardApp extends React.Component {
 
@@ -167,53 +154,6 @@ class DashboardApp extends React.Component {
         </DragDropContext>
         <SearchPanel />
         <ContextMenu />
-        <Modal
-          appElement={ document.getElementById('dashboard') }
-          isOpen={ this.props.taskModalIsOpen }
-          onRequestClose={ () => {
-            this.props.setCurrentTask(null)
-          }}
-          className="ReactModal__Content--task-form"
-          shouldCloseOnOverlayClick={ true }>
-          <TaskModalContent />
-        </Modal>
-        <Modal
-          appElement={ document.getElementById('dashboard') }
-          isOpen={ this.props.filtersModalIsOpen }
-          onRequestClose={ () => this.props.closeFiltersModal() }
-          className="ReactModal__Content--filters"
-          shouldCloseOnOverlayClick={ true }>
-          <FiltersModalContent />
-        </Modal>
-        <Modal
-          appElement={ document.getElementById('dashboard') }
-          isOpen={ this.props.settingsModalIsOpen }
-          onRequestClose={ () => this.props.closeSettings() }
-          className="ReactModal__Content--settings"
-          shouldCloseOnOverlayClick={ true }>
-          <SettingsModalContent />
-        </Modal>
-        <Modal
-          appElement={ document.getElementById('dashboard') }
-          isOpen={ this.props.importModalIsOpen }
-          onRequestClose={ () => this.props.closeImportModal() }
-          className="ReactModal__Content--import"
-          shouldCloseOnOverlayClick={ true }>
-          <ImportModalContent />
-        </Modal>
-        <Modal
-          appElement={ document.getElementById('dashboard') }
-          isOpen={ this.props.addModalIsOpen }
-          onRequestClose={ () => this.props.closeAddUserModal() }
-          className="ReactModal__Content--select-courier"
-          shouldCloseOnOverlayClick={ true }>
-          <AddUserModalContent
-            onClickClose={ this.props.closeAddUserModal }
-            onClickSubmit={ username => {
-              this.props.createTaskList(this.props.date, username)
-              this.props.closeAddUserModal()
-            }} />
-        </Modal>
         <ToastContainer />
       </div>
     )
@@ -223,16 +163,11 @@ class DashboardApp extends React.Component {
 function mapStateToProps(state) {
 
   return {
-    taskModalIsOpen: state.taskModalIsOpen,
     couriersList: state.couriersList,
-    filtersModalIsOpen: state.filtersModalIsOpen,
-    settingsModalIsOpen: state.settingsModalIsOpen,
     searchIsOn: state.searchIsOn,
-    importModalIsOpen: state.importModalIsOpen,
     allTasks: selectAllTasks(state),
     taskLists: selectTaskLists(state),
     selectedTasks: state.selectedTasks,
-    addModalIsOpen: state.addModalIsOpen,
     date: selectSelectedDate(state),
   }
 }
@@ -240,17 +175,10 @@ function mapStateToProps(state) {
 function mapDispatchToProps (dispatch) {
 
   return {
-    setCurrentTask: (task) => dispatch(setCurrentTask(task)),
-    closeNewTaskModal: () => dispatch(closeNewTaskModal()),
-    closeFiltersModal: () => dispatch(closeFiltersModal()),
     toggleSearch: () => dispatch(toggleSearch()),
     closeSearch: () => dispatch(closeSearch()),
-    openSettings: () => dispatch(openSettings()),
-    closeSettings: () => dispatch(closeSettings()),
-    closeImportModal: () => dispatch(closeImportModal()),
     modifyTaskList: (username, tasks) => dispatch(modifyTaskList(username, tasks)),
     clearSelectedTasks: () => dispatch(clearSelectedTasks()),
-    closeAddUserModal: () => dispatch(closeAddUserModal()),
     createTaskList: (date, username) => dispatch(createTaskList(date, username)),
   }
 }

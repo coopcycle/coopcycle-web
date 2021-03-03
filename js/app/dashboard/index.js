@@ -13,6 +13,7 @@ import { createStoreFromPreloadedState } from './redux/store'
 import RightPanel from './components/RightPanel'
 import LeafletMap from './components/LeafletMap'
 import Navbar from './components/Navbar'
+import Modals from './components/Modals'
 
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
@@ -86,6 +87,7 @@ function start() {
               <RightPanel />
             </aside>
           </Split>
+          <Modals />
         </ConfigProvider>
       </I18nextProvider>
     </Provider>,
