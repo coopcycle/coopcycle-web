@@ -134,7 +134,7 @@
     "react-split": "^2.0.9",
     "react-stickynode": "^3.0.4",
     "react-timeago": "^5.2.0",
-    "react-toastify": "^6.2.0",
+    "react-toastify": "^7.0.3",
     "reduce-reducers": "^1.0.4",
     "redux-actions": "^2.6.5",
     "redux-async-queue": "^1.0.0",
