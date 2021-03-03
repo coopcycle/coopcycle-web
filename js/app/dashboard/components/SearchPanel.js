@@ -11,6 +11,8 @@ import Task from './Task'
 
 const { Search } = Input
 
+import 'antd/lib/button/style/index.css'
+
 class SearchPanel extends React.Component {
 
   constructor(props) {
