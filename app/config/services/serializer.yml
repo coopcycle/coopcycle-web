@@ -83,3 +83,8 @@ services:
     arguments:
       $normalizer: "@serializer.normalizer.object"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\RRuleNormalizer:
+    arguments:
+      $normalizer: "@serializer.normalizer.object"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]

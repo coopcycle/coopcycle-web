@@ -580,6 +580,10 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
+  AppBundle\Doctrine\EventSubscriber\TaskRecurrenceRuleSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
   AppBundle\Api\EventSubscriber\PricingSubscriber:
     arguments:
         - '@coopcycle.delivery.manager'
