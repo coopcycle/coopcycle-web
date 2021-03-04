@@ -223,6 +223,7 @@
         "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Mostrar siempre sin asignar",
         "PAYMENT_FORM_REDIRECT_HELP": "Será redirigido a la entidad bancaria para completar su pago",
         "PAYMENT_FORM_CARDHOLDER_NAME": "Nombre del titular de la tarjeta",
-        "PAYMENT_FORM_TITLE": "Información de tú pago"
+        "PAYMENT_FORM_TITLE": "Información de tú pago",
+        "PAYMENT_FORM_NOT_SUPPORTED": "No aceptamos (todavía) las tarjetas Ticket Restaurant, Sodexo, Cheque Gourmet, por favor utilice una tarjeta de crédito clásica."
     }
 }

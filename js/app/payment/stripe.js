@@ -5,6 +5,8 @@ import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 
+import { getCountry } from '../i18n'
+
 const style = {
   base: {
     color: '#32325d',
@@ -67,7 +69,7 @@ const CardholderNameInput = ({ onChange }) => {
   )
 }
 
-const StripeForm = ({ onChange, onCardholderNameChange, options }) => {
+const StripeForm = ({ onChange, onCardholderNameChange, options, country }) => {
 
   const { t } = useTranslation()
 
@@ -90,6 +92,12 @@ const StripeForm = ({ onChange, onCardholderNameChange, options }) => {
           <span className="help-block mt-3">
             <i className="fa fa-info-circle mr-2"></i>
             <span>{ t('EDENRED_SPLIT_AMOUNTS', _.mapValues(options.amount_breakdown, value => (value / 100).formatMoney())) }</span>
+          </span>
+        )}
+        { (!hasBreakdown && _.includes(['es', 'fr'], country)) && (
+          <span className="help-block mt-3">
+            <i className="fa fa-info-circle mr-2"></i>
+            <span>{ t('PAYMENT_FORM_NOT_SUPPORTED') }</span>
           </span>
         )}
       </div>
@@ -158,6 +166,7 @@ export default {
 
             return (
               <StripeForm
+                country={ getCountry() }
                 onChange={ this.config.onChange }
                 onCardholderNameChange={ cardholderName => {
                   this.cardholderName = cardholderName
