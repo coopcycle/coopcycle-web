@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@ant-design/compatible": "^1.0.8",
+    "@ant-design/icons": "^4.5.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.13.8",
     "@babel/preset-react": "^7.12.13",
     "@babel/register": "^7.13.8",
