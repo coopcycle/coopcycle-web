@@ -13,7 +13,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
-          tools: composer:v2, phpstan, redis
+          tools: composer:v2, phpstan
+          extensions: redis
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
