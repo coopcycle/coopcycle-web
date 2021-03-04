@@ -146,16 +146,16 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'pickup.address.name' => 'Awesome business',
                 'dropoff.address' => '58 av parmentier paris',
                 'dropoff.address.name' => 'Awesome business',
-                'pickup.timeslot' => '2019-12-12 10:00 – 2019-12-12 11:00',
-                'dropoff.timeslot' => '2019-12-12 12:00 – 2019-12-12 13:00',
+                'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
+                'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
             ],
             [
                 'pickup.address' => '24 rue de rivoli paris',
                 'pickup.address.name' => 'Awesome business',
                 'dropoff.address' => '34 bd de magenta paris',
                 'dropoff.address.name' => 'Awesome business',
-                'pickup.timeslot' => '2019-12-12 10:00 – 2019-12-12 11:00',
-                'dropoff.timeslot' => '2019-12-12 12:00 – 2019-12-12 13:00',
+                'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
+                'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
             ],
         ];
     }
