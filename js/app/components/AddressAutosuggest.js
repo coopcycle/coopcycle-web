@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { createPortal } from 'react-dom'
 import Autosuggest from 'react-autosuggest'
 import PropTypes from 'prop-types'
 import ngeohash from 'ngeohash'
@@ -562,6 +563,33 @@ class AddressAutosuggest extends Component {
 
   renderSuggestionsContainer({ containerProps , children }) {
 
+    // https://github.com/moroshko/react-autosuggest/issues/699#issuecomment-568798287
+    if (this.props.attachToBody && this.autosuggest) {
+
+      // this.input is the input ref as received from Autosuggest
+      const inputCoords = this.autosuggest.input.getBoundingClientRect()
+      const style = {
+        position: 'absolute',
+        left: inputCoords.left + window.scrollX, // adding scrollX and scrollY to get the coords wrt document instead of viewport
+        top: inputCoords.top + inputCoords.height + window.scrollY,
+        overflow: 'auto',
+        zIndex: 4,
+        backgroundColor: '#ffffff',
+        width: inputCoords.width,
+      }
+
+      return createPortal((
+        <div { ... containerProps } style={ style }>
+          { children }
+          <div className="address-autosuggest__suggestions-container__footer">
+            <div>
+              { this.poweredBy() }
+            </div>
+          </div>
+        </div>
+      ), document.body)
+    }
+
     return (
       <div { ...containerProps }>
         { children }
@@ -620,7 +648,8 @@ class AddressAutosuggest extends Component {
         highlightFirstSuggestion={ highlightFirstSuggestion }
         getSectionSuggestions={ getSectionSuggestions }
         multiSection={ multiSection }
-        inputProps={ inputProps } />
+        inputProps={ inputProps }
+        containerProps={ this.props.containerProps } />
     )
   }
 }
@@ -637,6 +666,8 @@ AddressAutosuggest.defaultProps = {
   inputName: undefined,
   inputId: undefined,
   geohash: '',
+  containerProps: {},
+  attachToBody: false,
 }
 
 AddressAutosuggest.propTypes = {
@@ -654,6 +685,8 @@ AddressAutosuggest.propTypes = {
   disabled: PropTypes.bool,
   inputName: PropTypes.string,
   inputId: PropTypes.string,
+  containerProps: PropTypes.object,
+  attachToBody: PropTypes.bool,
 }
 
 export default withTranslation()(AddressAutosuggest)
