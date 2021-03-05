@@ -6,7 +6,7 @@
   "scripts": {
     "jest": "jest --config jest.config.js",
     "sdk:watch": "webpack --config webpack.sdk.config.js --watch",
-    "sdk:build": "webpack --config webpack.sdk.config.js -p"
+    "sdk:build": "webpack --config webpack.sdk.config.js --mode production"
   },
   "browserslist": [
     "> 5%",
