@@ -388,7 +388,8 @@ Feature: Tasks
         "next":null,
         "doorstep":false,
         "orgName": "",
-        "ref":null
+        "ref":null,
+        "recurrenceRule": null
       }
       """
 
@@ -675,7 +676,8 @@ Feature: Tasks
         "images":@array@,
         "doorstep":false,
         "orgName": "",
-        "ref":null
+        "ref":null,
+        "recurrenceRule": null
       }
       """
 
@@ -750,7 +752,8 @@ Feature: Tasks
         "images":@array@,
         "doorstep":false,
         "orgName": "",
-        "ref":null
+        "ref":null,
+        "recurrenceRule": null
       }
       """
 
