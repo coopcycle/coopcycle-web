@@ -14,6 +14,7 @@ import DeliveryZonePicker from '../components/DeliveryZonePicker'
 
 import 'prismjs/themes/prism.css'
 import 'prismjs/plugins/toolbar/prism-toolbar.css'
+import './stripe-connect.scss'
 
 Dropzone.autoDiscover = false
 
