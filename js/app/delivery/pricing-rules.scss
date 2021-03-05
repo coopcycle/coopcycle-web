@@ -1,0 +1,27 @@
+.delivery-pricing-ruleset {
+  padding-left: 0;
+  &__rule {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    background-color: #fff;
+    &__handle {
+      flex: 1;
+      text-align: center;
+      cursor: grab;
+      padding: 20px 0;
+    }
+    &__expression {
+      flex: 8;
+      padding-right: 15px;
+      width: 0;
+    }
+    &__price {
+      flex: 4;
+    }
+    &__remove {
+      flex: 1;
+      text-align: right;
+    }
+  }
+}

@@ -2,6 +2,8 @@ import MapHelper from '../MapHelper'
 import L from 'leaflet'
 import Centrifuge from 'centrifuge'
 
+import './tracking.scss'
+
 const polylineOptions = {
   color: '#3498DB',
   opacity: 0.7

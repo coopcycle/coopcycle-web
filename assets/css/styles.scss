@@ -158,26 +158,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-// ------------------ Help ------------------
-
-.help-nav__item {
-
-  &:hover {
-    text-decoration: none;
-  }
-
-  .list-group-item {
-    font-size: 14px;
-    color: $main-blue;
-
-    &:hover {
-      color: white;
-      background-color: $main-blue-light;
-      text-decoration: none;
-    }
-  }
-}
-
 .label {
   font-weight: 400;
 }
@@ -324,147 +304,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-// ------------------ Cart ------------------
-
-.restaurant-menu-wrapper {
-  // On mobile, add a margin to allow scrolling
-  @media (max-width: $screen-xs-max) {
-    margin-bottom: $navbar-height;
-  }
-}
-
-.restaurant-menu-section {
-
-  display: grid;
-  grid-gap: 8px;
-  grid-template-columns: repeat(2, 1fr);
-
-  @media (max-width: $screen-xs-max) {
-    grid-template-columns: repeat(1, 1fr);
-  }
-
-
-  &-item {
-    border: 1px solid $list-group-border;
-    & > * {
-      width: 100%;
-      min-height: 100%;
-      height: 100%;
-    }
-    &:hover,
-    &:focus {
-      color: $list-group-link-hover-color;
-      background-color: $list-group-hover-bg;
-      button.menu-item {
-        color: $list-group-link-color;
-        background-color: $list-group-hover-bg;
-      }
-    }
-    button.menu-item {
-      width: 100%;
-      min-height: 100%;
-      height: 100%;
-
-      // Reset button styles
-      // @see https://gist.github.com/MoOx/9137295
-
-      border: none;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      overflow: visible;
-      background: transparent;
-      color: inherit;
-      font: inherit;
-      text-align: inherit;
-      line-height: normal;
-      -webkit-font-smoothing: inherit;
-      -moz-osx-font-smoothing: inherit;
-      -webkit-appearance: none;
-
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-    }
-    .menu-item-inner {
-      display: flex;
-      flex: 1;
-    }
-    .menu-item-content-wrapper {
-      padding: 15px;
-      flex: 3;
-      flex-direction: column;
-      display: flex;
-      justify-content: space-between;
-    }
-    .menu-item-image-wrapper {
-      flex: 1;
-      align-self: center;
-      padding: 15px 15px 15px 0;
-      > img {
-        width: 100%;
-      }
-    }
-  }
-}
-
-.restaurant-title {
-  display:inline-block;
-}
-
-.restaurant-header {
-
-  display: flex;
-  align-items: center;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eeeeee;
-  margin-bottom: 15px;
-
-  @media (max-width: $screen-xs-max) {
-    flex-direction: column;
-  }
-
-  img.restaurant-image {
-    width: 120px;
-    height: 120px;
-    margin-right: 15px;
-    @media (max-width: $screen-xs-max) {
-      display: none;
-    }
-  }
-
-  &-body {
-    flex: 1;
-  }
-  &-right {
-    flex: 1;
-    text-align: right;
-    @media (max-width: $screen-xs-max) {
-      display: none;
-    }
-  }
-
-  .table-opening-hours {
-    width: auto;
-    font-size: $font-size-small;
-    thead > tr > th {
-      text-align: right;
-    }
-    tbody > tr > td,
-    tbody > tr > th {
-      border-top: none;
-    }
-    tbody > tr:not(.active) {
-      @extend .text-muted;
-    }
-    tbody > tr.active > td,
-    tbody > tr.active > th {
-      background-color: transparent;
-    }
-  }
-
-}
-
 .restaurant-list {
   h1 {
     display: inline-block;
@@ -543,93 +382,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .restaurant-item:hover img {
   opacity: 0.8;
-}
-
-// TODO Add more precise selector
-button.menu-item:focus,
-button.menu-item:active {
-   outline: none !important;
-   box-shadow: none;
-}
-
-.menu-item.menu-item--unavailable {
-  display: block;
-  color: #ddd;
-  cursor: default;
-  &:hover {
-    text-decoration: none;
-  }
-  .menu-item-price {
-    text-decoration: line-through;
-  }
-}
-
-.menu-item .menu-item-description,
-.menu-item .menu-item-allergens,
-.menu-item-restricted-diets {
-  display: block;
-  font-weight: normal;
-}
-
-.menu-item .menu-item-content {
-  margin-bottom: 5px;
-}
-
-.menu-item .menu-item-name {
-  font-family: inherit;
-  font-weight: bold;
-  margin: 0 0 5px 0;
-}
-
-.menu-item .menu-item-price {
-  white-space: nowrap;
-}
-
-.product-option-item {
-  &:hover {
-    background-color: $main-blue-light;
-  }
-  .radio,
-  .checkbox {
-    width: 100%;
-    label {
-      width: 100%;
-    }
-  }
-}
-
-.product-option-item-range {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  input[type="number"] {
-    @extend .form-control;
-    min-width: 10%;
-    width: 10%;
-    @media (max-width: $screen-xs-max) {
-      min-width: 20%;
-      width: 20%;
-    }
-    padding: 3px 6px;
-    margin-right: 8px;
-  }
-  label {
-    flex-grow: 1;
-    margin: 0;
-    font-weight: 400;
-    padding: 6px 0;
-    hyphens: auto;
-    &:hover {
-      cursor: pointer;
-    }
-  }
-  &-buttons {
-    display: flex;
-    flex-direction: row;
-    @media (max-width: $screen-xs-max) {
-      flex-direction: column;
-    }
-  }
 }
 
 .btn-payment > .fa-spinner {
@@ -890,48 +642,6 @@ form[name="store"] #store_imageFile_file {
   }
 }
 
-.delivery-pricing-ruleset {
-  padding-left: 0;
-  &__rule {
-    display: flex;
-    align-items: center;
-    margin-bottom: 30px;
-    background-color: #fff;
-    &__handle {
-      flex: 1;
-      text-align: center;
-      cursor: grab;
-      padding: 20px 0;
-    }
-    &__expression {
-      flex: 8;
-      padding-right: 15px;
-      width: 0;
-    }
-    &__price {
-      flex: 4;
-    }
-    &__remove {
-      flex: 1;
-      text-align: right;
-    }
-  }
-}
-
-.rule-picker {
-  padding: 15px 15px 0 15px;
-  border: 1px solid black;
-  border-radius: 4px;
-  &-preview {
-    margin-top: 10px;
-    pre {
-      margin: 0;
-      font-size: 11px;
-      white-space: pre-wrap;
-    }
-  }
-}
-
 .react-autosuggest__suggestions-container--open {
   display: block;
   border: 1px solid #aaa;
@@ -968,26 +678,6 @@ form[name="store"] #store_imageFile_file {
   .panel-heading > a {
     display: block;
     text-decoration: none;
-  }
-}
-
-#help {
-  img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-  }
-  table {
-    width: 100%;
-    th[align="center"] {
-      text-align: center;
-    }
-    th[align="right"] {
-      text-align: right;
-    }
-    th, td {
-      padding: 5px 0;
-    }
   }
 }
 
@@ -1034,12 +724,6 @@ form[name="store"] #store_imageFile_file {
 
 .restaurant-opening-hours {
   font-size: 12px;
-}
-
-// Make sure Google Place Autocomplete is always on top
-// Fix for Bootstrap's modal
-div.pac-container {
-   z-index: 1050 !important;
 }
 
 .btn-confirm-delete {
@@ -1153,56 +837,6 @@ form[name="restaurant"] {
   max-width: 66.6666%;
 }
 
-.delivery__tracking {
-
-  display: flex;
-  flex-direction: column;
-
-  width: 100%;
-  height: 100vh;
-
-  padding: 0;
-  margin: 0;
-
-  &__topnav,
-  &__bottomnav {
-    padding: 10px 20px;
-  }
-
-  &__topnav {
-    text-align: center;
-    border-bottom: 1px solid #ccc;
-    h1 {
-      font-size: 24px;
-      margin: 0;
-    }
-  }
-  &__bottomnav {
-    border-top: 1px solid #ccc;
-  }
-
-  &__map-container {
-    flex: 1;
-    display: flex;
-    position: relative;
-
-    &--completed:after {
-      content: '';
-      position: absolute;
-      height: 100%;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 401;
-    }
-  }
-
-  &__map {
-    flex: 1;
-  }
-}
-
 .product__form__options {
   &--sortable {
     > * {
@@ -1215,29 +849,6 @@ form[name="restaurant"] {
 
 .restaurant-banner {
   margin-top: -20px;
-}
-
-#modal-loopeat {
-  @media (max-width: $screen-xs-max) {
-    .modal-dialog {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 10px;
-      .modal-content {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        .modal-body {
-          flex: 1;
-          .embed-responsive.embed-responsive-16by9 {
-            height: 100%;
-            padding-bottom: 0;
-          }
-        }
-      }
-    }
-  }
 }
 
 .button-icon {

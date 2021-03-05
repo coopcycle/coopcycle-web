@@ -5,6 +5,7 @@ import { withTranslation } from 'react-i18next'
 import numbro from 'numbro'
 
 import { numericTypes } from './RulePicker'
+import './RulePicker.scss'
 
 /*
 

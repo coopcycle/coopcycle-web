@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import Sortable from 'sortablejs'
 
 import RulePicker from '../components/RulePicker'
+import './pricing-rules.scss'
 
 const ruleSet = $('#rule-set'),
   warning = $('form[name="pricing_rule_set"] .alert-warning')
