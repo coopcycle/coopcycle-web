@@ -73,3 +73,9 @@ order.expiring_authorization.text: Autorizace platby pro objednávku <strong>%or
   </strong> brzy vyprší. <br> Měli byste dokončit objednávku před vypršením autorizace,
   abyste předešli ztrátě peněz.
 order.expiring_authorization.subject: Platnost autorizace platby brzy vyprší
+order.payment_failed.return_to_order: Zpět na objednávku
+order.payment_failed.body: "Ahoj,\n<br>\nJe nám líto, při zpracování vaší platby došlo\
+  \ k chybě. Zkuste to prosím znovu s jinou platební metodou."
+order.payment_failed.subject: Při zpracování platby došlo k chybě
+order.receipt.body: "Ahoj,\n<br>\nV příloze naleznete potvrzení o vaší objednávce."
+order.receipt.subject: Potvrzení za vaši objednávku %order.number%
