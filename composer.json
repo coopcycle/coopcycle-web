@@ -130,7 +130,8 @@
         "friends-of-behat/symfony-extension": "^2.0",
         "friends-of-behat/mink": "^1.8",
         "friends-of-behat/mink-extension": "^2.5",
-        "friends-of-behat/mink-browserkit-driver": "^1.4"
+        "friends-of-behat/mink-browserkit-driver": "^1.4",
+        "rector/rector-prefixed": "^0.9.31"
     },
     "scripts": {
         "post-install-cmd": [
