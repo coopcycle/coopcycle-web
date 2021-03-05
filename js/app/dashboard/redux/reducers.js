@@ -42,8 +42,17 @@ import {
   SCAN_POSITIONS,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
   RIGHT_PANEL_MORE_THAN_HALF,
-  RIGHT_PANEL_LESS_THAN_HALF
+  RIGHT_PANEL_LESS_THAN_HALF,
+  OPEN_RECURRENCE_RULE_MODAL,
+  CLOSE_RECURRENCE_RULE_MODAL,
+  SET_CURRENT_RECURRENCE_RULE,
+  UPDATE_RECURRENCE_RULE_SUCCESS,
+  UPDATE_RECURRENCE_RULE_REQUEST
 } from './actions'
+
+import {
+  recurrenceRulesAdapter,
+} from './selectors'
 
 import { isOffline } from './utils'
 
@@ -88,7 +97,12 @@ const initialState = {
   uploaderEndpoint: '',
   exampleSpreadsheetUrl: '#',
   clustersEnabled: false,
-  rightPanelSplitDirection: 'vertical'
+  rightPanelSplitDirection: 'vertical',
+  recurrenceRuleModalIsOpen: false,
+  currentRecurrenceRule: null,
+  rrules: recurrenceRulesAdapter.getInitialState(),
+  stores: [],
+  recurrenceRulesLoading: false,
 }
 
 const addModalIsOpen = (state = false, action) => {
@@ -480,6 +494,61 @@ const rightPanelSplitDirection = (state = initialState.rightPanelSplitDirection,
   return state
 }
 
+const recurrenceRuleModalIsOpen = (state = false, action) => {
+  switch(action.type) {
+  case OPEN_RECURRENCE_RULE_MODAL:
+    return true
+  case CLOSE_RECURRENCE_RULE_MODAL:
+    return false
+  case SET_CURRENT_RECURRENCE_RULE:
+
+    if (!!action.recurrenceRule) {
+      return true
+    }
+
+    return false
+  }
+
+  return state
+}
+
+const currentRecurrenceRule = (state = null, action) => {
+  switch(action.type) {
+  case SET_CURRENT_RECURRENCE_RULE:
+
+    return action.recurrenceRule
+  case CLOSE_RECURRENCE_RULE_MODAL:
+    return null
+  }
+
+  return state
+}
+
+const rrules = (state = initialState.rrules, action) => {
+  switch(action.type) {
+  case UPDATE_RECURRENCE_RULE_SUCCESS:
+
+    return recurrenceRulesAdapter.upsertOne(state, action.recurrenceRule)
+  }
+
+  return state
+}
+
+const stores = (state = initialState.stores) => state
+
+const recurrenceRulesLoading = (state = initialState.recurrenceRulesLoading, action) => {
+  switch(action.type) {
+  case UPDATE_RECURRENCE_RULE_REQUEST:
+
+    return true
+  case UPDATE_RECURRENCE_RULE_SUCCESS:
+
+    return false
+  }
+
+  return state
+}
+
 export default (state = initialState, action) => {
 
   const { filters, isDefaultFilters } = combinedFilters(state, action)
@@ -513,5 +582,10 @@ export default (state = initialState, action) => {
     importModalIsOpen: importModalIsOpen(state.importModalIsOpen, action),
     clustersEnabled: clustersEnabled(state.clustersEnabled, action),
     rightPanelSplitDirection: rightPanelSplitDirection(state.rightPanelSplitDirection, action),
+    recurrenceRuleModalIsOpen: recurrenceRuleModalIsOpen(state.recurrenceRuleModalIsOpen, action),
+    currentRecurrenceRule: currentRecurrenceRule(state.currentRecurrenceRule, action),
+    rrules: rrules(state.rrules, action),
+    stores: stores(state.stores, action),
+    recurrenceRulesLoading: recurrenceRulesLoading(state.recurrenceRulesLoading, action),
   }
 }

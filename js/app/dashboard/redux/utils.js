@@ -182,3 +182,6 @@ export const isOffline = (lastSeen) => {
   const diff = moment().diff(lastSeen)
   return diff > OFFLINE_TIMEOUT
 }
+
+export const recurrenceTemplateToArray =
+  template => template['@type'] === 'hydra:Collection' ? template['hydra:member'] : [ template ]

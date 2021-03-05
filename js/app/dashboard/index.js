@@ -15,6 +15,7 @@ import LeafletMap from './components/LeafletMap'
 import Navbar from './components/Navbar'
 import Modals from './components/Modals'
 import { updateRightPanelSize } from './redux/actions'
+import { recurrenceRulesAdapter } from './redux/selectors'
 
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
@@ -49,6 +50,11 @@ function start() {
     centrifugoEventsChannel: dashboardEl.dataset.centrifugoEventsChannel,
     nav: dashboardEl.dataset.nav,
     positions,
+    rrules: recurrenceRulesAdapter.upsertMany(
+      recurrenceRulesAdapter.getInitialState(),
+      JSON.parse(dashboardEl.dataset.rrules)
+    ),
+    stores: JSON.parse(dashboardEl.dataset.stores),
   }
 
   const key = date.format('YYYY-MM-DD')

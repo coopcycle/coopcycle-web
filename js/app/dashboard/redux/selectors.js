@@ -1,11 +1,20 @@
 import { createSelector } from 'reselect'
 import Fuse from 'fuse.js'
 import Holidays from 'date-holidays'
+import { rrulestr } from 'rrule'
+import {
+  createEntityAdapter,
+} from '@reduxjs/toolkit'
 
 import { moment } from '../../coopcycle-frontend-js'
 import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks, selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
 import { filter, orderBy, forEach, find, reduce, map, differenceWith, includes } from 'lodash'
-import { isTaskVisible, isOffline } from './utils'
+import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
+
+export const recurrenceRulesAdapter = createEntityAdapter({
+  selectId: (o) => o['@id'],
+  sortComparer: (a, b) => a.orgName.localeCompare(b.orgName),
+})
 
 export const selectTaskLists = createSelector(
   selectTaskListsBase,
@@ -187,5 +196,34 @@ export const selectNextWorkingDay = createSelector(
     } while (holidays.isHoliday(cursor.toDate()))
 
     return cursor.format()
+  }
+)
+
+const recurrenceRulesSelectors = recurrenceRulesAdapter.getSelectors(
+  (state) => state.rrules
+)
+
+export const selectRecurrenceRules = createSelector(
+  selectSelectedDate,
+  recurrenceRulesSelectors.selectAll,
+  (date, rrules) => {
+
+    const startOfDayUTC = moment.utc(`${moment(date).format('YYYY-MM-DD')} 00:00:00`).toDate()
+    const endOfDayUTC   = moment.utc(`${moment(date).format('YYYY-MM-DD')} 23:59:59`).toDate()
+
+    return filter(rrules, rrule => {
+
+      const tasks = recurrenceTemplateToArray(rrule.template)
+
+      const matchingTasks = filter(tasks, task => {
+        const ruleObj = rrulestr(rrule.rule, {
+          dtstart: moment.utc(`${moment(date).format('YYYY-MM-DD')} ${task.after}`).toDate()
+        })
+
+        return ruleObj.between(startOfDayUTC, endOfDayUTC, true).length > 0
+      })
+
+      return matchingTasks.length > 0
+    })
   }
 )

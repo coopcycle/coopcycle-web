@@ -12,12 +12,14 @@ import {
   closeSettings,
   closeImportModal,
   closeAddUserModal,
-  createTaskList } from '../redux/actions'
+  createTaskList,
+  closeRecurrenceRuleModal } from '../redux/actions'
 import TaskModalContent from './TaskModalContent'
 import FiltersModalContent from './FiltersModalContent'
 import SettingsModalContent from './SettingsModalContent'
 import ImportModalContent from './ImportModalContent'
 import AddUserModalContent from './AddUserModalContent'
+import RecurrenceRuleModalContent from './RecurrenceRuleModalContent'
 
 class Modals extends React.Component {
 
@@ -71,6 +73,14 @@ class Modals extends React.Component {
               this.props.closeAddUserModal()
             }} />
         </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.recurrenceRuleModalIsOpen }
+          onRequestClose={ () => this.props.closeRecurrenceRuleModal() }
+          className="ReactModal__Content--recurrence"
+          shouldCloseOnOverlayClick={ true }>
+          <RecurrenceRuleModalContent />
+        </Modal>
       </React.Fragment>
     )
   }
@@ -85,6 +95,7 @@ function mapStateToProps(state) {
     importModalIsOpen: state.importModalIsOpen,
     addModalIsOpen: state.addModalIsOpen,
     date: selectSelectedDate(state),
+    recurrenceRuleModalIsOpen: state.recurrenceRuleModalIsOpen,
   }
 }
 
@@ -99,6 +110,7 @@ function mapDispatchToProps (dispatch) {
     closeImportModal: () => dispatch(closeImportModal()),
     closeAddUserModal: () => dispatch(closeAddUserModal()),
     createTaskList: (date, username) => dispatch(createTaskList(date, username)),
+    closeRecurrenceRuleModal: () => dispatch(closeRecurrenceRuleModal()),
   }
 }
 

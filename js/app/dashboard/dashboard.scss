@@ -373,6 +373,12 @@ html, body {
   padding: 15px;
 }
 
+.ReactModal__Content--recurrence {
+  min-width: 50%;
+  max-height: calc(100vh - 30px);
+  padding: 0;
+}
+
 .ReactModal__Content--import {
   min-width: 33.3333%;
 }

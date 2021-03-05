@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
+
 import { taskComparator, withoutTasks, withLinkedTasks } from './utils'
 import {
   selectSelectedDate,
@@ -141,6 +142,12 @@ export const OPTIMIZE_TASK_LIST = 'OPTIMIZE_TASK_LIST'
 
 export const RIGHT_PANEL_MORE_THAN_HALF = 'RIGHT_PANEL_MORE_THAN_HALF'
 export const RIGHT_PANEL_LESS_THAN_HALF = 'RIGHT_PANEL_LESS_THAN_HALF'
+
+export const OPEN_RECURRENCE_RULE_MODAL = 'OPEN_RECURRENCE_RULE_MODAL'
+export const CLOSE_RECURRENCE_RULE_MODAL = 'CLOSE_RECURRENCE_RULE_MODAL'
+export const SET_CURRENT_RECURRENCE_RULE = 'SET_CURRENT_RECURRENCE_RULE'
+export const UPDATE_RECURRENCE_RULE_REQUEST = 'UPDATE_RECURRENCE_RULE_REQUEST'
+export const UPDATE_RECURRENCE_RULE_SUCCESS = 'UPDATE_RECURRENCE_RULE_SUCCESS'
 
 function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
@@ -803,6 +810,88 @@ function updateRightPanelSize(size) {
   return { type: size > 50 ? RIGHT_PANEL_MORE_THAN_HALF : RIGHT_PANEL_LESS_THAN_HALF }
 }
 
+function openNewRecurrenceRuleModal() {
+  return { type: OPEN_RECURRENCE_RULE_MODAL }
+}
+
+function closeRecurrenceRuleModal() {
+  return { type: CLOSE_RECURRENCE_RULE_MODAL }
+}
+
+function setCurrentRecurrenceRule(recurrenceRule) {
+  return { type: SET_CURRENT_RECURRENCE_RULE, recurrenceRule }
+}
+
+function updateRecurrenceRuleRequest() {
+  return { type: UPDATE_RECURRENCE_RULE_REQUEST }
+}
+
+function updateRecurrenceRuleSuccess(recurrenceRule) {
+  return { type: UPDATE_RECURRENCE_RULE_SUCCESS, recurrenceRule }
+}
+
+function saveRecurrenceRule(recurrenceRule) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    const url = Object.prototype.hasOwnProperty.call(recurrenceRule, '@id') ? recurrenceRule['@id'] : '/api/recurrence_rules'
+    const method = Object.prototype.hasOwnProperty.call(recurrenceRule, '@id') ? 'put' : 'post'
+
+    const payload = _.pick(recurrenceRule, [
+      'store',
+      'rule',
+      'template',
+    ])
+
+    dispatch(updateRecurrenceRuleRequest())
+
+    createClient(dispatch).request({
+      method,
+      url,
+      data: payload,
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        dispatch(updateRecurrenceRuleSuccess(response.data))
+        dispatch(closeRecurrenceRuleModal())
+      })
+      // eslint-disable-next-line no-console
+      .catch(error => console.log(error))
+  }
+}
+
+function createTasksFromRecurrenceRule(recurrenceRule) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+    const date = selectSelectedDate(getState())
+
+    createClient(dispatch).request({
+      method: 'post',
+      url: `${recurrenceRule['@id']}/between`,
+      data: {
+        after: moment(date).startOf('day').format(),
+        before: moment(date).endOf('day').format(),
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(() => dispatch(closeRecurrenceRuleModal()))
+      // eslint-disable-next-line no-console
+      .catch(error => console.log(error))
+  }
+}
+
 export {
   assignAfter,
   updateTask,
@@ -853,4 +942,9 @@ export {
   moveTasksToNextDay,
   moveTasksToNextWorkingDay,
   updateRightPanelSize,
+  closeRecurrenceRuleModal,
+  setCurrentRecurrenceRule,
+  saveRecurrenceRule,
+  createTasksFromRecurrenceRule,
+  openNewRecurrenceRuleModal,
 }
