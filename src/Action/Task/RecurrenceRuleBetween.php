@@ -38,7 +38,8 @@ class RecurrenceRuleBetween
         $transformer = new ArrayTransformer();
         $constraint = new BetweenConstraint(
             new \DateTime($body['after']),
-            new \DateTime($body['before'])
+            new \DateTime($body['before']),
+            $inc = true
         );
 
         $startDate = new \DateTime($body['after']);
@@ -68,6 +69,7 @@ class RecurrenceRuleBetween
         foreach ($payloads as $payload) {
             $task = $this->denormalizer->denormalize($payload, Task::class, 'jsonld');
             $task->setOrganization($data->getStore()->getOrganization());
+            $task->setRecurrenceRule($data);
             $this->entityManager->persist($task);
             $tasks[] = $task;
         }

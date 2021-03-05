@@ -71,6 +71,11 @@
         <join-column name="organization_id" referenced-column-name="id" on-delete="SET NULL" />
       </join-columns>
     </many-to-one>
+    <many-to-one field="recurrenceRule" target-entity="AppBundle\Entity\Task\RecurrenceRule">
+      <join-columns>
+        <join-column name="rrule_id" referenced-column-name="id" nullable="true" on-delete="SET NULL" />
+      </join-columns>
+    </many-to-one>
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\TaskListener">
         <lifecycle-callback type="prePersist" method="prePersist"/>

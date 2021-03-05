@@ -18,6 +18,7 @@ use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Task\Group as TaskGroup;
+use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
@@ -268,6 +269,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface
      * @Groups({"task", "task_create"})
      */
     private $ref;
+
+    /**
+     * @var RecurrenceRule|null
+     * @Groups({"task"})
+     */
+    private $recurrenceRule;
 
     public function __construct()
     {
@@ -707,5 +714,17 @@ class Task implements TaggableInterface, OrganizationAwareInterface
         ];
 
         return $job;
+    }
+
+    public function setRecurrenceRule(RecurrenceRule $recurrenceRule)
+    {
+        $this->recurrenceRule = $recurrenceRule;
+
+        return $this;
+    }
+
+    public function getRecurrenceRule(): ?RecurrenceRule
+    {
+        return $this->recurrenceRule;
     }
 }

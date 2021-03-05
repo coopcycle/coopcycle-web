@@ -41,12 +41,48 @@ class RecurrenceRuleBetweenTest extends TestCase
         $this->assertEmpty($response);
     }
 
-    public function testCreateTasks()
+    public function createTasksProvider()
     {
-        $content = json_encode([
-            "after" => "2021-02-12 00:00:00",
-            "before" => "2021-02-12 23:59:59"
-        ]);
+        return [
+            [
+                [
+                    "after" => "2021-02-12T00:00:00+01:00",
+                    "before" => "2021-02-12T23:59:59+01:00"
+                ],
+                "00:00",
+                "23:59",
+                [
+                    '@type' => 'Task',
+                    'type' => 'PICKUP',
+                    'address' => '/api/addresses/875',
+                    'after' => '2021-02-12T00:00:00+01:00',
+                    'before' => '2021-02-12T23:59:00+01:00'
+                ]
+            ],
+            [
+                [
+                    "after" => "2021-02-12T00:00:00+01:00",
+                    "before" => "2021-02-12T23:59:59+01:00"
+                ],
+                "10:00",
+                "11:00",
+                [
+                    '@type' => 'Task',
+                    'type' => 'PICKUP',
+                    'address' => '/api/addresses/875',
+                    'after' => '2021-02-12T10:00:00+01:00',
+                    'before' => '2021-02-12T11:00:00+01:00'
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider createTasksProvider
+     */
+    public function testCreateTasks($requestBody, $after, $before, $expectedPayload)
+    {
+        $content = json_encode($requestBody);
         $request = Request::create('/api/recurrence_rules/1/between', 'POST', [], [], [], [], $content);
 
         $organization = new Organization();
@@ -69,19 +105,11 @@ class RecurrenceRuleBetweenTest extends TestCase
                         "@id" => "/api/addresses/875",
                         "streetAddress" => "78 Avenue Victoria, 75001 Paris, France"
                     ],
-                    "after" => "10:00",
-                    "before" => "11:00"
+                    "after" => $after,
+                    "before" => $before
                 ]
             ]
         ]);
-
-        $expectedPayload = [
-            '@type' => 'Task',
-            'type' => 'PICKUP',
-            'address' => '/api/addresses/875',
-            'after' => '2021-02-12T10:00:00+01:00',
-            'before' => '2021-02-12T11:00:00+01:00'
-        ];
 
         $expectedTask = new Task();
 
