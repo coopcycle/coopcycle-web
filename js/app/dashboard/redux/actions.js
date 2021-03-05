@@ -807,7 +807,7 @@ function moveTasksToNextWorkingDay(tasks) {
 }
 
 function updateRightPanelSize(size) {
-  return { type: size > 50 ? RIGHT_PANEL_MORE_THAN_HALF : RIGHT_PANEL_LESS_THAN_HALF }
+  return { type: size > 40 ? RIGHT_PANEL_MORE_THAN_HALF : RIGHT_PANEL_LESS_THAN_HALF }
 }
 
 function openNewRecurrenceRuleModal() {
