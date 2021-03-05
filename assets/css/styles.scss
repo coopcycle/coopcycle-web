@@ -144,10 +144,6 @@ h1, h2, h3, h4, h5, h6 {
 
 // ------------------ Admin ------------------
 
-.store-opening-hours {
-  width: 35%;
-}
-
 .navbar--admin {
   .navbar-nav.navbar-right {
     @media (max-width: 1480px) {
@@ -285,10 +281,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-#search small {
-  color: #fff;
-}
-
 .dashboard-subnav {
   background-color: #ECFFFD;
   border-bottom: 1px solid #BDFFF6;
@@ -390,10 +382,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-payment__loading > .fa-spinner {
   display:inline-block;
-}
-
-.order-map__image {
-  margin-bottom: 20px;
 }
 
 .ant-calendar-picker {
@@ -664,13 +652,6 @@ form[name="store"] #store_imageFile_file {
   font-family: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
 }
 
-.panel--delivery {
-  .panel-heading > a {
-    display: block;
-    text-decoration: none;
-  }
-}
-
 .bike-icon {
 
   $icon-size: 48px;
@@ -710,10 +691,6 @@ form[name="store"] #store_imageFile_file {
   &__map {
     flex: 1;
   }
-}
-
-.restaurant-opening-hours {
-  font-size: 12px;
 }
 
 .btn-confirm-delete {
