@@ -92,17 +92,19 @@ if (!Encore.isProduction()) {
   })
 }
 
-let webpackConfig = Encore.getWebpackConfig()
-
-webpackConfig.devServer = {
-  headers: { 'Access-Control-Allow-Origin': '*' },
-  stats: 'minimal',
-  compress: true,
-  watchOptions: {
+Encore.configureDevServerOptions(options => {
+  options.contentBase = 'web/'
+  options.disableHostCheck = true
+  options.headers = { 'Access-Control-Allow-Origin': '*' }
+  options.stats = 'minimal'
+  options.compress = true
+  options.watchOptions = {
     ignored: /node_modules/,
     poll: 1000
   }
-}
+})
+
+let webpackConfig = Encore.getWebpackConfig()
 
 webpackConfig.stats = {
   source: false,
