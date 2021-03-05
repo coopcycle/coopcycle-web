@@ -8,9 +8,10 @@ import { useTranslation } from 'react-i18next'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
+import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
-import { setTaskListGroupMode, openNewTaskModal, toggleSearch } from '../redux/actions'
-import { selectGroups, selectStandaloneTasks } from '../redux/selectors'
+import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal } from '../redux/actions'
+import { selectGroups, selectStandaloneTasks, selectRecurrenceRules } from '../redux/selectors'
 
 class StandaloneTasks extends React.Component {
 
@@ -66,14 +67,21 @@ const Buttons = connect(
     setTaskListGroupMode: (mode) => dispatch(setTaskListGroupMode(mode)),
     openNewTaskModal: () => dispatch(openNewTaskModal()),
     toggleSearch: () => dispatch(toggleSearch()),
+    openNewRecurrenceRuleModal: () => dispatch(openNewRecurrenceRuleModal()),
   })
-)(({ taskListGroupMode, setTaskListGroupMode, openNewTaskModal, toggleSearch }) => {
+)(({ taskListGroupMode, setTaskListGroupMode, openNewTaskModal, toggleSearch, openNewRecurrenceRuleModal }) => {
 
   const [ visible, setVisible ] = useState(false)
   const { t } = useTranslation()
 
   return (
     <React.Fragment>
+      <a href="#" className="mr-3" onClick={ e => {
+        e.preventDefault()
+        openNewRecurrenceRuleModal()
+      }}>
+        <i className="fa fa-clock-o"></i>
+      </a>
       <a href="#" className="mr-3" onClick={ e => {
         e.preventDefault()
         openNewTaskModal()
@@ -127,6 +135,12 @@ class UnassignedTasks extends React.Component {
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
+          { this.props.recurrenceRules.map((rrule, index) =>
+            <RecurrenceRule
+              key={ `rrule-${index}` }
+              rrule={ rrule }
+              onClick={ () => this.props.setCurrentRecurrenceRule(rrule) } />
+          ) }
           <Droppable droppableId="unassigned">
             {(provided) => (
               <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
@@ -163,9 +177,14 @@ function mapStateToProps (state) {
   return {
     groups: selectGroups(state),
     standaloneTasks: selectStandaloneTasks(state),
+    recurrenceRules: selectRecurrenceRules(state),
   }
 }
 
-const mapDispatchToProps = () => ({})
+function mapDispatchToProps(dispatch) {
+  return {
+    setCurrentRecurrenceRule: (recurrenceRule) => dispatch(setCurrentRecurrenceRule(recurrenceRule)),
+  }
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(UnassignedTasks))
