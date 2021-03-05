@@ -577,10 +577,6 @@ form[name="store"] #store_imageFile_file {
   transform: translate(-50%, -50%);
 }
 
-.ant-time-picker + .ant-time-picker {
-  margin-left: 10px;
-}
-
 // HACK : vertical-align submit button to bottom
 #closing_rule_submit {
   margin-top: 25px;
@@ -666,12 +662,6 @@ form[name="store"] #store_imageFile_file {
 
 .text-monospace {
   font-family: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
-}
-
-#cart-top {
-  a {
-    margin-right: 0;
-  }
 }
 
 .panel--delivery {
@@ -774,30 +764,6 @@ form[name="store"] #store_imageFile_file {
   }
 }
 
-.quantity-input-group {
-  display: flex;
-  justify-content: space-between;
-  input[type="number"] {
-    text-align: center;
-    border: none;
-  }
-  &__decrement,
-  &__increment {
-    border: none;
-    background-color: transparent;
-  }
-}
-
-.button-icon--decrement,
-.button-icon--increment {
-  border: none;
-  background-color: transparent;
-  &[disabled] {
-    cursor: $cursor-disabled;
-    @include opacity(.65);
-  }
-}
-
 form[name="restaurant"] {
   .help-block.collapsed .fa-minus {
     display: none;
@@ -847,10 +813,6 @@ form[name="restaurant"] {
   }
 }
 
-.restaurant-banner {
-  margin-top: -20px;
-}
-
 .button-icon {
   padding: 0;
   cursor: pointer;
@@ -887,59 +849,4 @@ form[name="restaurant"] {
       font-family: "Roboto Mono", monospace;
     }
   }
-}
-
-#delivery_pickup,
-#delivery_dropoff {
-  position: relative;
-  @media (max-width: $screen-sm-max) {
-    padding-top: 24px;
-  }
-  &:before {
-    @include fa-icon();
-    font-size: 24px;
-    display: block;
-    position: absolute;
-    top: 0;
-    color: #9980FA;
-    line-height: $line-height-base;
-    padding-left: 15px;
-    @media (max-width: $screen-sm-max) {
-      right: 0;
-    }
-  }
-  .form-group:first-child {
-    label {
-      font-size: $font-size-large;
-    }
-  }
-}
-
-#delivery_pickup {
-  &:before {
-    content: $fa-var-cube;
-  }
-}
-
-#delivery_dropoff {
-  &:before {
-    content: $fa-var-arrow-down;
-  }
-}
-
-#delivery_pickup_address,
-#delivery_dropoff_address {
-  .address-autosuggest__container {
-    margin: 0;
-  }
-}
-
-.map-distance-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 401;
-  padding: 5px;
-  background-color: #0984e3;
-  color: #ffffff;
 }

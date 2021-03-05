@@ -232,6 +232,34 @@ button.menu-item:active {
   }
 }
 
+.quantity-input-group {
+  display: flex;
+  justify-content: space-between;
+  input[type="number"] {
+    text-align: center;
+    border: none;
+  }
+  &__decrement,
+  &__increment {
+    border: none;
+    background-color: transparent;
+  }
+}
+
+.button-icon--decrement,
+.button-icon--increment {
+  border: none;
+  background-color: transparent;
+  &[disabled] {
+    cursor: $cursor-disabled;
+    @include opacity(.65);
+  }
+}
+
+.restaurant-banner {
+  margin-top: -20px;
+}
+
 #cart {
   margin-top: ($base-margin + 20px);
 }

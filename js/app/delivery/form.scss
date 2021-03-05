@@ -5,6 +5,61 @@
 @import "~font-awesome/scss/_mixins.scss";
 @import "~font-awesome/scss/_animated.scss";
 
+#delivery_pickup,
+#delivery_dropoff {
+  position: relative;
+  @media (max-width: $screen-sm-max) {
+    padding-top: 24px;
+  }
+  &:before {
+    @include fa-icon();
+    font-size: 24px;
+    display: block;
+    position: absolute;
+    top: 0;
+    color: #9980FA;
+    line-height: $line-height-base;
+    padding-left: 15px;
+    @media (max-width: $screen-sm-max) {
+      right: 0;
+    }
+  }
+  .form-group:first-child {
+    label {
+      font-size: $font-size-large;
+    }
+  }
+}
+
+#delivery_pickup {
+  &:before {
+    content: $fa-var-cube;
+  }
+}
+
+#delivery_dropoff {
+  &:before {
+    content: $fa-var-arrow-down;
+  }
+}
+
+#delivery_pickup_address,
+#delivery_dropoff_address {
+  .address-autosuggest__container {
+    margin: 0;
+  }
+}
+
+.map-distance-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 401;
+  padding: 5px;
+  background-color: #0984e3;
+  color: #ffffff;
+}
+
 .delivery-price {
 
   border: 4px solid #0984e3;
