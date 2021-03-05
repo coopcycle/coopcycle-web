@@ -31,6 +31,8 @@ Feature: Task recurrence rules
         "@context":"/api/contexts/RecurrenceRule",
         "@id":@string@,
         "@type":"RecurrenceRule",
+        "store":"/api/stores/1",
+        "orgName":"Acme",
         "rule":"FREQ=WEEKLY",
         "template":{
           "@type":"Task",
@@ -76,6 +78,8 @@ Feature: Task recurrence rules
         "@context":"/api/contexts/RecurrenceRule",
         "@id":"/api/recurrence_rules/1",
         "@type":"RecurrenceRule",
+        "store":"/api/stores/1",
+        "orgName":"Acme",
         "rule":"FREQ=WEEKLY",
         "template":{
           "@type":"Task",
@@ -131,6 +135,8 @@ Feature: Task recurrence rules
         "@context":"/api/contexts/RecurrenceRule",
         "@id":"/api/recurrence_rules/1",
         "@type":"RecurrenceRule",
+        "store":"/api/stores/1",
+        "orgName":"Acme",
         "rule":"FREQ=WEEKLY",
         "template": {
           "@type":"hydra:Collection",
@@ -204,6 +210,8 @@ Feature: Task recurrence rules
         "@id":"/api/recurrence_rules/1",
         "@type":"RecurrenceRule",
         "rule":"FREQ=WEEKLY",
+        "store":"/api/stores/1",
+        "orgName":"Acme",
         "template": {
           "@type":"hydra:Collection",
           "hydra:member": [
@@ -260,6 +268,8 @@ Feature: Task recurrence rules
         "@id":"/api/recurrence_rules/1",
         "@type":"RecurrenceRule",
         "rule":"FREQ=WEEKLY",
+        "store":"/api/stores/1",
+        "orgName":"Acme",
         "template":{
           "@type":"Task",
           "address": {
@@ -272,7 +282,6 @@ Feature: Task recurrence rules
       }
       """
 
-  @debug
   Scenario: Update recurrence rule (single task, new address)
     Given the fixtures files are loaded:
       | sylius_channels.yml  |
@@ -304,6 +313,8 @@ Feature: Task recurrence rules
         "@context":"/api/contexts/RecurrenceRule",
         "@id":"/api/recurrence_rules/1",
         "@type":"RecurrenceRule",
+        "store":"/api/stores/1",
+        "orgName":"Acme",
         "rule":"FREQ=WEEKLY",
         "template":{
           "@type":"Task",
@@ -330,8 +341,8 @@ Feature: Task recurrence rules
     And the user "bob" sends a "POST" request to "/api/recurrence_rules/2/between" with body:
       """
       {
-        "after": "2021-02-12 00:00:00",
-        "before": "2021-02-12 23:59:59"
+        "after": "2021-02-12T00:00:00+01:00",
+        "before": "2021-02-12T23:59:59+01:00"
       }
       """
     Then the response status code should be 201
