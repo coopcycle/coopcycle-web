@@ -1,5 +1,6 @@
 var Encore = require('@symfony/webpack-encore')
 var webpack = require('webpack')
+var path = require('path')
 
 Encore
 
@@ -92,22 +93,23 @@ if (!Encore.isProduction()) {
   })
 }
 
+// https://github.com/webpack/webpack-dev-server/blob/master/CHANGELOG.md#400-beta0-2020-11-27
 Encore.configureDevServerOptions(options => {
-  options.contentBase = 'web/'
-  options.disableHostCheck = true
+  options.firewall = false
+  options.static = [
+    {
+      directory: 'web/',
+      watch: {
+        usePolling: true,
+      }
+    }
+  ]
   options.headers = { 'Access-Control-Allow-Origin': '*' }
-  options.stats = 'minimal'
   options.compress = true
-  options.watchOptions = {
-    ignored: /node_modules/,
-    poll: 1000
-  }
 })
 
 let webpackConfig = Encore.getWebpackConfig()
 
-webpackConfig.stats = {
-  source: false,
-}
+webpackConfig.stats = 'minimal'
 
 module.exports = webpackConfig
