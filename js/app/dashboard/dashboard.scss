@@ -203,6 +203,9 @@ html, body {
   &--cancelled {
     opacity: 0.5;
   }
+  &.text-info:hover {
+    color: lighten($state-info-text, 10%);
+  }
   &:hover {
     color: $gray-light;
   }
