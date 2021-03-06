@@ -1,15 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { RRule, rrulestr } from 'rrule'
 import _ from 'lodash'
 import Select from 'react-select'
-import { Button, Checkbox, Radio, TimePicker } from 'antd'
-import { PlusOutlined, ThunderboltOutlined } from '@ant-design/icons'
+import { Button, Checkbox, Radio, TimePicker, Input, Popover } from 'antd'
+import { PlusOutlined, ThunderboltOutlined, UserOutlined, PhoneOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import hash from 'object-hash'
 import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
+import { parsePhoneNumberFromString, AsYouType, isValidPhoneNumber } from 'libphonenumber-js'
 
+import { getCountry } from '../../i18n'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TimeRange from '../../utils/TimeRange'
 import { timePickerProps } from '../../utils/antd'
@@ -17,6 +19,7 @@ import { recurrenceTemplateToArray } from '../redux/utils'
 import { saveRecurrenceRule, createTasksFromRecurrenceRule } from '../redux/actions'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
 import { toTextArgs } from '../utils/rrule'
+import { phoneNumberExample } from '../utils'
 
 const freqOptions = [
   { value: RRule.DAILY, label: 'Every day' },
@@ -33,53 +36,162 @@ const byDayOptions = weekdays.map(weekday => ({
 
 const storesAsOptions = stores => stores.map(s => ({ label: s.name, value: s['@id'] }))
 
-const TemplateItem = ({ item, setFieldValue, setFieldValues, onClickRemove, errors }) => {
+const country = getCountry().toUpperCase()
+const asYouTypeFormatter = new AsYouType(country)
+
+const MoreOptions = ({ item, onChange }) => {
+
+  const { t } = useTranslation()
+
+  const phoneNumber = parsePhoneNumberFromString((item.address && item.address.telephone) || '', country)
+  const [ telephoneValue, setTelephoneValue ] = useState(phoneNumber ? phoneNumber.formatNational() : '')
+
+  const [ contactName, setContactName ] = useState(item.address && item.address.contactName)
+  const [ taskComments, setTaskComments ] = useState(item.comments)
 
   return (
-    <li className="d-flex justify-content-between align-items-center mb-4">
-      <span className="mr-2">
-        <Radio.Group
-          defaultValue={ item.type }
-          size="medium"
-          onChange={ (e) => setFieldValue(item, 'type', e.target.value) }>
-          <Radio.Button value="PICKUP">
-            <i className="fa fa-cube"></i>
-          </Radio.Button>
-          <Radio.Button value="DROPOFF">
-            <i className="fa fa-arrow-down"></i>
-          </Radio.Button>
-        </Radio.Group>
-      </span>
-      <span
-        className={ errors.address ? 'has-error' : '' }
-        style={{ flex: 1 }}>
-        <AddressAutosuggest
-          address={ item.address }
-          onAddressSelected={ (value, address) => {
-            const cleanAddress = _.pick(address, ['@id', 'streetAddress'])
-            setFieldValue(item, 'address', cleanAddress)
-          }}
-          containerProps={{ style: { marginBottom: 0, marginRight: '0.5rem' } }}
-          attachToBody />
-      </span>
-      <span>
-        <TimePicker.RangePicker
-          { ...timePickerProps }
-          defaultValue={ [ moment(item.after, 'HH:mm'), moment(item.before, 'HH:mm') ] }
-          onChange={ (value, text) => {
-            setFieldValues(item, {
-              after: text[0],
-              before: text[1]
-            })
-          }}
-        />
-      </span>
-      <a href="#" className="ml-2" onClick={ e => {
-        e.preventDefault()
-        onClickRemove(item)
-        }}>
-        <i className="fa fa-lg fa-times"></i>
+    <Popover
+      placement="rightTop"
+      style={{ width: '50%' }}
+      content={(
+        <React.Fragment>
+          <div className="mb-3">
+            <Input
+              placeholder={ t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_CONTACT_NAME_LABEL') }
+              prefix={ <UserOutlined /> }
+              value={ contactName }
+              onChange={ (e) => setContactName(e.target.value) } />
+          </div>
+          <div className="mb-3">
+            <Input
+              type="tel"
+              placeholder={ phoneNumberExample }
+              prefix={ <PhoneOutlined /> }
+              value={ telephoneValue }
+              onChange={ (e) => setTelephoneValue(
+                asYouTypeFormatter.reset().input(e.target.value)
+              )} />
+          </div>
+          <div>
+            <Input.TextArea
+              placeholder={ t('ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER') }
+              autoSize={{ minRows: 3 }}
+              value={ taskComments }
+              onChange={ e => setTaskComments(e.target.value) } />
+          </div>
+        </React.Fragment>
+      )}
+      title={ t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_MORE_OPTIONS') }
+      trigger="click"
+      onVisibleChange={ visible => {
+        if (!visible) {
+
+          let values = {
+            contactName,
+          }
+
+          const phoneNumber = isValidPhoneNumber(telephoneValue, country) &&
+            parsePhoneNumberFromString(telephoneValue, country)
+
+          if (phoneNumber) {
+            values = {
+              ...values,
+              telephone: phoneNumber.format('E.164')
+            }
+          }
+
+          if (!_.isEmpty(taskComments)) {
+            values = {
+              ...values,
+              comments: taskComments
+            }
+          }
+
+          onChange(values)
+        }
+      }}
+    >
+      <a className="text-muted" href="#">
+        <small>
+          <i className="fa fa-plus mr-2"></i>
+          <span>{ t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_MORE_OPTIONS') }</span>
+        </small>
       </a>
+    </Popover>
+  )
+}
+
+const TemplateItem = ({ item, setFieldValues, onClickRemove, errors }) => {
+
+  return (
+    <li className="mb-4">
+      <span className="d-flex justify-content-between align-items-center mb-2">
+        <span className="mr-2">
+          <Radio.Group
+            defaultValue={ item.type }
+            size="medium"
+            onChange={ (e) => setFieldValues(item, { type: e.target.value }) }>
+            <Radio.Button value="PICKUP">
+              <i className="fa fa-cube"></i>
+            </Radio.Button>
+            <Radio.Button value="DROPOFF">
+              <i className="fa fa-arrow-down"></i>
+            </Radio.Button>
+          </Radio.Group>
+        </span>
+        <span
+          className={ errors.address ? 'has-error' : '' }
+          style={{ flex: 1 }}>
+          <AddressAutosuggest
+            address={ item.address }
+            onAddressSelected={ (value, address) => {
+              const cleanAddress = _.pick(address, ['@id', 'streetAddress'])
+              setFieldValues(item, { address: cleanAddress })
+            }}
+            containerProps={{ style: { marginBottom: 0, marginRight: '0.5rem' } }}
+            attachToBody />
+        </span>
+        <span>
+          <TimePicker.RangePicker
+            { ...timePickerProps }
+            defaultValue={ [ moment(item.after, 'HH:mm'), moment(item.before, 'HH:mm') ] }
+            onChange={ (value, text) => {
+              setFieldValues(item, {
+                after: text[0],
+                before: text[1]
+              })
+            }}
+          />
+        </span>
+        <a href="#" className="ml-2" onClick={ e => {
+          e.preventDefault()
+          onClickRemove(item)
+        }}>
+          <i className="fa fa-lg fa-times"></i>
+        </a>
+      </span>
+      <MoreOptions
+        item={ item }
+        onChange={ (values) => {
+          const newAddress = {
+            ...item.address,
+            contactName: values.contactName,
+            telephone: values.telephone,
+          }
+
+          let newValues = {
+            address: newAddress
+          }
+
+          if (values.comments) {
+            newValues = {
+              ...newValues,
+              comments: values.comments
+            }
+          }
+
+          setFieldValues(item, newValues)
+        }} />
     </li>
   )
 }
@@ -235,14 +347,6 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
               <TemplateItem
                 key={ `${index}-${hash(item)}` }
                 item={ item }
-                setFieldValue={ (item, name, value) => {
-                  const index = values.items.indexOf(item)
-                  if (-1 !== index) {
-                    const newItems = values.items.slice(0)
-                    newItems.splice(index, 1, { ...item, [name]: value })
-                    setFieldValue('items', newItems)
-                  }
-                }}
                 setFieldValues={ (item, fieldValues) => {
                   const index = values.items.indexOf(item)
                   if (-1 !== index) {
