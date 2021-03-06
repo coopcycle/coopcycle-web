@@ -1,6 +1,9 @@
 var Encore = require('@symfony/webpack-encore')
 var webpack = require('webpack')
 var path = require('path')
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+
+Encore.configureRuntimeEnvironment('dev')
 
 Encore
 
@@ -80,6 +83,10 @@ Encore
   .autoProvidejQuery()
 
   .enableVersioning(Encore.isProduction())
+
+  .addPlugin(new BundleAnalyzerPlugin({
+    analyzerMode: 'static',
+  }))
 
 if (!Encore.isProduction()) {
   Encore.enableEslintLoader((options) => {

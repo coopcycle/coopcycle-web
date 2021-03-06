@@ -148,6 +148,7 @@
     "store": "^2.0.12",
     "styled-components": "^5.2.1",
     "to-string-loader": "^1.1.6",
+    "webpack-bundle-analyzer": "^4.4.0",
     "x-data-spreadsheet": "^1.1.8"
   }
 }
