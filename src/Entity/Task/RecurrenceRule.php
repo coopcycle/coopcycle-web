@@ -7,6 +7,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Validator\Constraints\RecurrenceRuleTemplate as AssertRecurrenceRuleTemplate;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Recurr\Rule;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -41,12 +42,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "path"="/recurrence_rules/{id}/between",
  *       "security"="is_granted('ROLE_ADMIN')",
  *       "controller"=BetweenController::class
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')"
  *     }
  *   }
  * )
  */
 class RecurrenceRule
 {
+    use SoftDeleteable;
     use Timestampable;
 
     /**

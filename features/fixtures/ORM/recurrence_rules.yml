@@ -29,3 +29,10 @@ AppBundle\Entity\Task\RecurrenceRule:
             'streetAddress': '18, avenue Ledru-Rollin 75012 Paris 12ème'
           'after': '12:30'
           'before': '13:00'
+  recurrence_rule_3:
+    store: '@store_1'
+    rule: '@rrule_2'
+    template:
+      '@type': 'hydra:Collection'
+      'hydra:member': []
+    deletedAt: <identity(new \DateTime('yesterday'))>

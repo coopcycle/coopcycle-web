@@ -6,6 +6,7 @@
     </id>
     <field name="rule" type="rrule" column="rule" nullable="false"/>
     <field name="template" type="json_array" column="template" nullable="false"/>
+    <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <many-to-one field="store" target-entity="AppBundle\Entity\Store">
       <join-columns>
         <join-column name="store_id" referenced-column-name="id" nullable="false"/>
@@ -17,5 +18,6 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
+    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
   </entity>
 </doctrine-mapping>

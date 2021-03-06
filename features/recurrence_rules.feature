@@ -328,6 +328,57 @@ Feature: Task recurrence rules
       }
       """
 
+  Scenario: List recurrence rules
+    Given the fixtures files are loaded:
+      | sylius_channels.yml  |
+      | users.yml            |
+      | addresses.yml        |
+      | recurrence_rules.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RecurrenceRule",
+        "@id":"/api/recurrence_rules",
+        "@type":"hydra:Collection",
+        "hydra:member": @array@,
+        "hydra:totalItems":2
+      }
+      """
+
+  Scenario: Get soft deleted recurrence rules
+    Given the fixtures files are loaded:
+      | sylius_channels.yml  |
+      | users.yml            |
+      | addresses.yml        |
+      | recurrence_rules.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/3"
+    Then the response status code should be 404
+
+  @debug
+  Scenario: Delete recurrence rules
+    Given the fixtures files are loaded:
+      | sylius_channels.yml  |
+      | users.yml            |
+      | addresses.yml        |
+      | recurrence_rules.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "DELETE" request to "/api/recurrence_rules/2"
+    Then the response status code should be 204
+
   Scenario: Apply recurrence rule
     Given the fixtures files are loaded:
       | sylius_channels.yml  |
