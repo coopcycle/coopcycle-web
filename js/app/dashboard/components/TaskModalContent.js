@@ -5,13 +5,14 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { DatePicker, Radio, Timeline } from 'antd';
 import { Formik } from 'formik'
-import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
+import { isValidPhoneNumber } from 'react-phone-number-input'
 
 import { getCountry } from '../../i18n'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
 import CourierSelect from './CourierSelect'
 import PhoneNumberExample from './PhoneNumberExample'
+import PhoneNumberInput from './PhoneNumberInput'
 import { timePickerProps } from '../../utils/antd'
 
 import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
@@ -412,13 +413,8 @@ class TaskModalContent extends React.Component {
                 </div>
                 <div className={ errors.address && touched.address && errors.address.telephone && touched.address.telephone ? 'form-group form-group-sm has-error' : 'form-group form-group-sm' }>
                   <label className="control-label" htmlFor="address_telephone">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_LABEL') }</label>
-                  <PhoneInput
+                  <PhoneNumberInput
                     value={ values.address.telephone ? values.address.telephone : '' }
-                    country={ this.props.country }
-                    showCountrySelect={ false }
-                    displayInitialValueAsLocalNumber={ true }
-                    inputClassName="form-control"
-                    autoComplete="off"
                     onChange={ value => {
                       setFieldValue('address.telephone', value)
                       setFieldTouched('address.telephone')
@@ -528,8 +524,6 @@ class TaskModalContent extends React.Component {
 
 function mapStateToProps (state) {
 
-  const country = (getCountry() || 'fr').toUpperCase()
-
   const events = state.currentTask &&
     Object.prototype.hasOwnProperty.call(state.taskEvents, state.currentTask['@id']) ? state.taskEvents[state.currentTask['@id']] : []
 
@@ -539,7 +533,6 @@ function mapStateToProps (state) {
     loading: state.isTaskModalLoading,
     tags: state.tags,
     completeTaskErrorMessage: state.completeTaskErrorMessage,
-    country,
     date: selectSelectedDate(state),
     isTaskTypeEditable: isTaskTypeEditable(state.currentTask),
     isLoadingEvents: state.isLoadingTaskEvents,
