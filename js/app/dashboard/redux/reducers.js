@@ -47,7 +47,8 @@ import {
   CLOSE_RECURRENCE_RULE_MODAL,
   SET_CURRENT_RECURRENCE_RULE,
   UPDATE_RECURRENCE_RULE_SUCCESS,
-  UPDATE_RECURRENCE_RULE_REQUEST
+  UPDATE_RECURRENCE_RULE_REQUEST,
+  DELETE_RECURRENCE_RULE_SUCCESS,
 } from './actions'
 
 import {
@@ -529,6 +530,9 @@ const rrules = (state = initialState.rrules, action) => {
   case UPDATE_RECURRENCE_RULE_SUCCESS:
 
     return recurrenceRulesAdapter.upsertOne(state, action.recurrenceRule)
+  case DELETE_RECURRENCE_RULE_SUCCESS:
+
+    return recurrenceRulesAdapter.removeOne(state, action.recurrenceRule)
   }
 
   return state
@@ -542,6 +546,7 @@ const recurrenceRulesLoading = (state = initialState.recurrenceRulesLoading, act
 
     return true
   case UPDATE_RECURRENCE_RULE_SUCCESS:
+  case DELETE_RECURRENCE_RULE_SUCCESS:
 
     return false
   }

@@ -148,6 +148,7 @@ export const CLOSE_RECURRENCE_RULE_MODAL = 'CLOSE_RECURRENCE_RULE_MODAL'
 export const SET_CURRENT_RECURRENCE_RULE = 'SET_CURRENT_RECURRENCE_RULE'
 export const UPDATE_RECURRENCE_RULE_REQUEST = 'UPDATE_RECURRENCE_RULE_REQUEST'
 export const UPDATE_RECURRENCE_RULE_SUCCESS = 'UPDATE_RECURRENCE_RULE_SUCCESS'
+export const DELETE_RECURRENCE_RULE_SUCCESS = 'DELETE_RECURRENCE_RULE_SUCCESS'
 
 function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
@@ -830,6 +831,10 @@ function updateRecurrenceRuleSuccess(recurrenceRule) {
   return { type: UPDATE_RECURRENCE_RULE_SUCCESS, recurrenceRule }
 }
 
+function deleteRecurrenceRuleSuccess(recurrenceRule) {
+  return { type: DELETE_RECURRENCE_RULE_SUCCESS, recurrenceRule }
+}
+
 function saveRecurrenceRule(recurrenceRule) {
 
   return function(dispatch, getState) {
@@ -892,6 +897,34 @@ function createTasksFromRecurrenceRule(recurrenceRule) {
   }
 }
 
+function deleteRecurrenceRule(recurrenceRule) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(updateRecurrenceRuleRequest())
+
+    const resourceId = recurrenceRule['@id']
+
+    createClient(dispatch).request({
+      method: 'delete',
+      url: resourceId,
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(() => {
+        dispatch(deleteRecurrenceRuleSuccess(resourceId))
+        dispatch(closeRecurrenceRuleModal())
+      })
+      // eslint-disable-next-line no-console
+      .catch(error => console.log(error))
+  }
+}
+
 export {
   assignAfter,
   updateTask,
@@ -947,4 +980,5 @@ export {
   saveRecurrenceRule,
   createTasksFromRecurrenceRule,
   openNewRecurrenceRuleModal,
+  deleteRecurrenceRule,
 }

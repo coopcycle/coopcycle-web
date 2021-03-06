@@ -178,6 +178,8 @@ trait AdminDashboardTrait
 
         $positions = $this->loadPositions($tile38);
 
+        $this->getDoctrine()->getManager()->getFilters()->enable('soft_deleteable');
+
         $recurrenceRules =
             $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findAll();
 
@@ -188,6 +190,8 @@ trait AdminDashboardTrait
                 'item_operation_name' => 'get',
             ]);
         }, $recurrenceRules);
+
+        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
 
         $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
 

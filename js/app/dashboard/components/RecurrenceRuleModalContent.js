@@ -4,19 +4,20 @@ import { RRule, rrulestr } from 'rrule'
 import _ from 'lodash'
 import Select from 'react-select'
 import { Button, Checkbox, Radio, TimePicker, Input, Popover } from 'antd'
-import { PlusOutlined, ThunderboltOutlined, UserOutlined, PhoneOutlined } from '@ant-design/icons'
+import { PlusOutlined, ThunderboltOutlined, UserOutlined, PhoneOutlined, DeleteOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import hash from 'object-hash'
 import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { parsePhoneNumberFromString, AsYouType, isValidPhoneNumber } from 'libphonenumber-js'
+import classNames from 'classnames'
 
 import { getCountry } from '../../i18n'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TimeRange from '../../utils/TimeRange'
 import { timePickerProps } from '../../utils/antd'
 import { recurrenceTemplateToArray } from '../redux/utils'
-import { saveRecurrenceRule, createTasksFromRecurrenceRule } from '../redux/actions'
+import { saveRecurrenceRule, createTasksFromRecurrenceRule, deleteRecurrenceRule } from '../redux/actions'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
 import { toTextArgs } from '../utils/rrule'
 import { phoneNumberExample } from '../utils'
@@ -275,7 +276,7 @@ const validateForm = values => {
   return errors
 }
 
-const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecurrenceRule, stores, loading, date }) => {
+const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecurrenceRule, stores, loading, date, deleteRecurrenceRule }) => {
 
   const { t } = useTranslation()
 
@@ -290,6 +291,8 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
     items: recurrenceRule ?
       recurrenceTemplateToArray(recurrenceRule.template) : [ { ...defaultTask } ],
   }
+
+  const isSaved = recurrenceRule && Object.prototype.hasOwnProperty.call(recurrenceRule, '@id')
 
   return (
     <Formik
@@ -374,17 +377,32 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
               setFieldValue('items', newItems)
             }}>{ t('ADMIN_DASHBOARD_ADD') }</Button>
           </div>
-          <div className="d-flex justify-content-end p-4">
-            { (recurrenceRule && Object.prototype.hasOwnProperty.call(recurrenceRule, '@id')) &&
-              <span className="mr-4">
-                <Button size="large" icon={ <ThunderboltOutlined /> } onClick={ () => {
-                  createTasksFromRecurrenceRule(recurrenceRule)
-                }}>Create tasks</Button>
-              </span>
+          <div className={ classNames({
+            'd-flex': true,
+            'p-4': true,
+            'justify-content-end': !isSaved,
+            'justify-content-between': isSaved
+          })}>
+            { isSaved &&
+              <Button type="danger" size="large" icon={ <DeleteOutlined /> }
+                onClick={ () => deleteRecurrenceRule(recurrenceRule) }
+                disabled={ loading }>
+                { t('ADMIN_DASHBOARD_CANCEL') }
+              </Button>
             }
-            <Button type="primary" size="large" onClick={ handleSubmit } loading={ loading }>
-              { t('ADMIN_DASHBOARD_TASK_FORM_SAVE') }
-            </Button>
+            <span>
+              { isSaved &&
+                <span className="mr-4">
+                  <Button size="large" icon={ <ThunderboltOutlined /> }
+                    onClick={ () => {
+                      createTasksFromRecurrenceRule(recurrenceRule)
+                    }}>Create tasks</Button>
+                </span>
+              }
+              <Button type="primary" size="large" onClick={ handleSubmit } loading={ loading }>
+                { t('ADMIN_DASHBOARD_TASK_FORM_SAVE') }
+              </Button>
+            </span>
           </div>
         </div>
       )}
@@ -406,7 +424,8 @@ function mapDispatchToProps(dispatch) {
 
   return {
     saveRecurrenceRule: (recurrenceRule) => dispatch(saveRecurrenceRule(recurrenceRule)),
-    createTasksFromRecurrenceRule: (recurrenceRule) => dispatch(createTasksFromRecurrenceRule(recurrenceRule))
+    createTasksFromRecurrenceRule: (recurrenceRule) => dispatch(createTasksFromRecurrenceRule(recurrenceRule)),
+    deleteRecurrenceRule: (recurrenceRule) => dispatch(deleteRecurrenceRule(recurrenceRule)),
   }
 }
 
