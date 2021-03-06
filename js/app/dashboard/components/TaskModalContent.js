@@ -7,16 +7,15 @@ import { DatePicker, Radio, Timeline } from 'antd';
 import { Formik } from 'formik'
 import { isValidPhoneNumber } from 'react-phone-number-input'
 
-import { getCountry } from '../../i18n'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
 import CourierSelect from './CourierSelect'
-import PhoneNumberExample from './PhoneNumberExample'
 import PhoneNumberInput from './PhoneNumberInput'
 import { timePickerProps } from '../../utils/antd'
 
 import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
+import { phoneNumberExample } from '../utils'
 
 const itemColor = event => {
   switch (event.name) {
@@ -423,7 +422,7 @@ class TaskModalContent extends React.Component {
                     <small className="help-block">{ errors.address.telephone }</small>
                   ) }
                   <small className="help-block">
-                    <PhoneNumberExample />
+                    { phoneNumberExample }
                   </small>
                 </div>
                 <div className="form-group form-group-sm">

@@ -1,5 +1,5 @@
 import React from 'react'
-import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
+import PhoneInput from 'react-phone-number-input'
 
 import { getCountry } from '../../i18n'
 
