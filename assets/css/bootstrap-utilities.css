@@ -1017,6 +1017,7 @@
   text-align: justify !important;
 }
 
+/*
 .text-primary {
   color: #0d6efd !important;
 }
@@ -1040,6 +1041,7 @@
 .text-danger {
   color: #dc3545 !important;
 }
+*/
 
 .text-light {
   color: #f8f9fa !important;
@@ -1057,9 +1059,11 @@
   color: #212529 !important;
 }
 
+/*
 .text-muted {
   color: #6c757d !important;
 }
+*/
 
 .text-black-50 {
   color: rgba(0, 0, 0, 0.5) !important;
