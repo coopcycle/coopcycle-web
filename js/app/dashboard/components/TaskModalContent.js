@@ -6,13 +6,12 @@ import { withTranslation } from 'react-i18next'
 import { DatePicker, Radio, Timeline } from 'antd';
 import { Formik } from 'formik'
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
-import phoneNumberExamples from 'libphonenumber-js/examples.mobile.json'
-import { getExampleNumber } from 'libphonenumber-js'
 
 import { getCountry } from '../../i18n'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
 import CourierSelect from './CourierSelect'
+import PhoneNumberExample from './PhoneNumberExample'
 import { timePickerProps } from '../../utils/antd'
 
 import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
@@ -428,7 +427,7 @@ class TaskModalContent extends React.Component {
                     <small className="help-block">{ errors.address.telephone }</small>
                   ) }
                   <small className="help-block">
-                    { this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP', { example: this.props.phoneNumberExample }) }
+                    <PhoneNumberExample />
                   </small>
                 </div>
                 <div className="form-group form-group-sm">
@@ -530,9 +529,9 @@ class TaskModalContent extends React.Component {
 function mapStateToProps (state) {
 
   const country = (getCountry() || 'fr').toUpperCase()
-  const phoneNumber = getExampleNumber(country, phoneNumberExamples)
 
-  const events = state.currentTask && Object.prototype.hasOwnProperty.call(state.taskEvents, state.currentTask['@id']) ? state.taskEvents[state.currentTask['@id']] : []
+  const events = state.currentTask &&
+    Object.prototype.hasOwnProperty.call(state.taskEvents, state.currentTask['@id']) ? state.taskEvents[state.currentTask['@id']] : []
 
   return {
     task: state.currentTask,
@@ -541,7 +540,6 @@ function mapStateToProps (state) {
     tags: state.tags,
     completeTaskErrorMessage: state.completeTaskErrorMessage,
     country,
-    phoneNumberExample: phoneNumber.formatNational(),
     date: selectSelectedDate(state),
     isTaskTypeEditable: isTaskTypeEditable(state.currentTask),
     isLoadingEvents: state.isLoadingTaskEvents,
