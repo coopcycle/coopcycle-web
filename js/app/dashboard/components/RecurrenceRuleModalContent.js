@@ -156,10 +156,10 @@ const TemplateItem = ({ item, setFieldValues, onClickRemove, errors }) => {
           <TimePicker.RangePicker
             { ...timePickerProps }
             value={ [ moment(item.after, 'HH:mm'), moment(item.before, 'HH:mm') ] }
-            onChange={ (value, text) => {
+            onChange={ (value) => {
               setFieldValues(item, {
-                after: text[0],
-                before: text[1]
+                after: value[0].format('HH:mm'),
+                before: value[1].format('HH:mm')
               })
             }}
           />
