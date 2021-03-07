@@ -1,7 +1,19 @@
-import React from 'react'
-import PhoneInput from 'react-phone-number-input'
+import React, { forwardRef } from 'react'
+import PhoneInput from 'react-phone-number-input/input'
 
 import { getCountry } from '../../i18n'
+
+const InputComponent = forwardRef((props, ref) => {
+
+  const propsWithClassName = {
+    ...props,
+    className: 'form-control'
+  }
+
+  return (
+    <input ref={ ref } { ...propsWithClassName } />
+  )
+})
 
 export default (props) => {
 
@@ -10,9 +22,7 @@ export default (props) => {
   return (
     <PhoneInput
       country={ country }
-      showCountrySelect={ false }
-      displayInitialValueAsLocalNumber={ true }
-      inputClassName="form-control"
+      inputComponent={ InputComponent }
       autoComplete="off"
       { ...props } />
   )
