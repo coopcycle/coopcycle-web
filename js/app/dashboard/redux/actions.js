@@ -149,6 +149,7 @@ export const SET_CURRENT_RECURRENCE_RULE = 'SET_CURRENT_RECURRENCE_RULE'
 export const UPDATE_RECURRENCE_RULE_REQUEST = 'UPDATE_RECURRENCE_RULE_REQUEST'
 export const UPDATE_RECURRENCE_RULE_SUCCESS = 'UPDATE_RECURRENCE_RULE_SUCCESS'
 export const DELETE_RECURRENCE_RULE_SUCCESS = 'DELETE_RECURRENCE_RULE_SUCCESS'
+export const UPDATE_RECURRENCE_RULE_ERROR = 'UPDATE_RECURRENCE_RULE_ERROR'
 
 function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
@@ -831,6 +832,10 @@ function updateRecurrenceRuleSuccess(recurrenceRule) {
   return { type: UPDATE_RECURRENCE_RULE_SUCCESS, recurrenceRule }
 }
 
+function updateRecurrenceRuleError(message) {
+  return { type: UPDATE_RECURRENCE_RULE_ERROR, message }
+}
+
 function deleteRecurrenceRuleSuccess(recurrenceRule) {
   return { type: DELETE_RECURRENCE_RULE_SUCCESS, recurrenceRule }
 }
@@ -866,8 +871,15 @@ function saveRecurrenceRule(recurrenceRule) {
         dispatch(updateRecurrenceRuleSuccess(response.data))
         dispatch(closeRecurrenceRuleModal())
       })
-      // eslint-disable-next-line no-console
-      .catch(error => console.log(error))
+      .catch(error => {
+        if (error.response &&
+          Object.prototype.hasOwnProperty.call(error.response.data, '@type') &&
+          error.response.data['@type'] === 'ConstraintViolationList') {
+          dispatch(updateRecurrenceRuleError(`${error.response.data['hydra:description']}`))
+        } else {
+          dispatch(updateRecurrenceRuleError('An error occurred'))
+        }
+      })
   }
 }
 

@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { RRule, rrulestr } from 'rrule'
 import _ from 'lodash'
 import Select from 'react-select'
-import { Button, Checkbox, Radio, TimePicker, Input, Popover } from 'antd'
+import { Button, Checkbox, Radio, TimePicker, Input, Popover, Alert } from 'antd'
 import { PlusOutlined, ThunderboltOutlined, UserOutlined, PhoneOutlined, DeleteOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import hash from 'object-hash'
@@ -276,7 +276,7 @@ const validateForm = values => {
   return errors
 }
 
-const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecurrenceRule, stores, loading, date, deleteRecurrenceRule }) => {
+const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecurrenceRule, stores, loading, date, deleteRecurrenceRule, error }) => {
 
   const { t } = useTranslation()
 
@@ -319,6 +319,7 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
         setFieldValue,
       }) => (
         <div>
+
           <div className="p-4 border-bottom">
             <Select
               defaultValue={ _.find(storesOptions, o => o.value === values.store) }
@@ -377,6 +378,9 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
               setFieldValue('items', newItems)
             }}>{ t('ADMIN_DASHBOARD_ADD') }</Button>
           </div>
+          { !_.isEmpty(error) &&
+            <Alert message={ error } type="error" showIcon />
+          }
           <div className={ classNames({
             'd-flex': true,
             'p-4': true,
@@ -417,6 +421,7 @@ function mapStateToProps(state) {
     recurrenceRule: state.currentRecurrenceRule,
     stores: state.stores,
     loading: state.recurrenceRulesLoading,
+    error: state.recurrenceRulesErrorMessage,
   }
 }
 

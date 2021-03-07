@@ -49,6 +49,7 @@ import {
   UPDATE_RECURRENCE_RULE_SUCCESS,
   UPDATE_RECURRENCE_RULE_REQUEST,
   DELETE_RECURRENCE_RULE_SUCCESS,
+  UPDATE_RECURRENCE_RULE_ERROR,
 } from './actions'
 
 import {
@@ -104,6 +105,7 @@ const initialState = {
   rrules: recurrenceRulesAdapter.getInitialState(),
   stores: [],
   recurrenceRulesLoading: false,
+  recurrenceRulesErrorMessage: '',
 }
 
 const addModalIsOpen = (state = false, action) => {
@@ -547,8 +549,24 @@ const recurrenceRulesLoading = (state = initialState.recurrenceRulesLoading, act
     return true
   case UPDATE_RECURRENCE_RULE_SUCCESS:
   case DELETE_RECURRENCE_RULE_SUCCESS:
+  case UPDATE_RECURRENCE_RULE_ERROR:
 
     return false
+  }
+
+  return state
+}
+
+const recurrenceRulesErrorMessage = (state = initialState.recurrenceRulesErrorMessage, action) => {
+  switch(action.type) {
+  case UPDATE_RECURRENCE_RULE_REQUEST:
+  case UPDATE_RECURRENCE_RULE_SUCCESS:
+  case DELETE_RECURRENCE_RULE_SUCCESS:
+
+    return ''
+  case UPDATE_RECURRENCE_RULE_ERROR:
+
+    return action.message
   }
 
   return state
@@ -592,5 +610,6 @@ export default (state = initialState, action) => {
     rrules: rrules(state.rrules, action),
     stores: stores(state.stores, action),
     recurrenceRulesLoading: recurrenceRulesLoading(state.recurrenceRulesLoading, action),
+    recurrenceRulesErrorMessage: recurrenceRulesErrorMessage(state.recurrenceRulesErrorMessage, action),
   }
 }
