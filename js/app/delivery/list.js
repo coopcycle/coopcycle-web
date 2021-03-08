@@ -1,17 +1,17 @@
 /* */
 
-new CoopCycle.DatePicker(document.querySelector('#data_export_start_widget'), {
-  onChange: function(date) {
-    if (date) {
-      document.querySelector('#data_export_start').value = date.format('YYYY-MM-DD');
-    }
-  }
-});
+import DatePicker from '../widgets/DatePicker'
 
-new CoopCycle.DatePicker(document.querySelector('#data_export_end_widget'), {
-  onChange: function(date) {
-    if (date) {
-      document.querySelector('#data_export_end').value = date.format('YYYY-MM-DD');
-    }
+['start', 'end'].forEach(name => {
+  const inputEl = document.querySelector(`#data_export_${name}`)
+  const widgetEl = document.querySelector(`#data_export_${name}_widget`)
+  if (inputEl && widgetEl) {
+    new DatePicker(widgetEl, {
+      onChange: function(date) {
+        if (date) {
+          inputEl.value = date.format('YYYY-MM-DD');
+        }
+      }
+    })
   }
-});
+})
