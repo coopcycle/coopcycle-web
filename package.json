@@ -133,7 +133,7 @@
     "react-payment-inputs": "^1.1.7",
     "react-phone-number-input": "^3.1.16",
     "react-redux": "^7.2.2",
-    "react-select": "^3.2.0",
+    "react-select": "^4.2.1",
     "react-split": "^2.0.9",
     "react-stickynode": "^3.0.4",
     "react-timeago": "^5.2.0",
