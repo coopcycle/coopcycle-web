@@ -20,11 +20,15 @@ class DataExportType extends AbstractType
                 'label' => 'form.task_export.start.label',
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
+                'html5' => false,
+                'data' => new \DateTime('now'),
             ])
             ->add('end', DateType::class, [
                 'label' => 'form.task_export.end.label',
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
+                'html5' => false,
+                'data' => new \DateTime('now'),
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
