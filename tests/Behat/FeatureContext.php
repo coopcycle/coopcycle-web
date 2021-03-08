@@ -37,6 +37,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
 use Faker\Generator as FakerGenerator;
+use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\UserManipulator;
 use Behatch\HttpCall\HttpCallResultPool;
 use PHPUnit\Framework\Assert;
@@ -122,7 +123,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         FakerGenerator $faker,
         OrderProcessorInterface $orderProcessor,
         KernelInterface $kernel,
-        ContainerInterface $behatContainer)
+        ContainerInterface $behatContainer,
+        UserManagerInterface $userManager)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -144,6 +146,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->orderProcessor = $orderProcessor;
         $this->kernel = $kernel;
         $this->behatContainer = $behatContainer;
+        $this->userManager = $userManager;
     }
 
     protected function getContainer()
@@ -312,9 +315,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     private function createUser($username, $email, $password, array $data = [])
     {
-        $manager = $this->getContainer()->get('fos_user.user_manager');
-
-        if (!$user = $manager->findUserByUsername($username)) {
+        if (!$user = $this->userManager->findUserByUsername($username)) {
             $enabled = isset($data['enabled']) ? filter_var($data['enabled'], FILTER_VALIDATE_BOOLEAN) : true;
             $user = $this->userManipulator->create($username, $password, $email, $enabled, false);
         }
@@ -353,7 +354,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         if ($needsUpdate) {
-            $manager->updateUser($user);
+            $this->userManager->updateUser($user);
         }
     }
 
@@ -382,16 +383,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theCourierIsLoaded(TableNode $table)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-
         $data = $table->getRowsHash();
 
         $this->theUserIsLoaded($table);
 
-        $user = $userManager->findUserByUsername($data['username']);
+        $user = $this->userManager->findUserByUsername($data['username']);
         $user->addRole('ROLE_COURIER');
 
-        $userManager->updateUser($user);
+        $this->userManager->updateUser($user);
     }
 
     /**
@@ -399,12 +398,10 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theUserHasRole($username, $role)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
         $user->addRole($role);
 
-        $userManager->updateUser($user);
+        $this->userManager->updateUser($user);
     }
 
     /**
@@ -412,16 +409,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theCourierWithUsernameIsLoaded($username, TableNode $table)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-
         $data = $table->getRowsHash();
 
         $this->theUserWithUsernameIsLoaded($username, $table);
 
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
         $user->addRole('ROLE_COURIER');
 
-        $userManager->updateUser($user);
+        $this->userManager->updateUser($user);
     }
 
     /**
@@ -431,10 +426,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $data = $table->getRowsHash();
 
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
         $em = $this->doctrine->getManagerForClass(Address::class);
 
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
 
         list($lat, $lng) = explode(',', $data['geo']);
 
@@ -454,10 +448,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theUserIsAuthenticated($username)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
         $jwtManager = $this->getContainer()->get('lexik_jwt_authentication.jwt_manager');
 
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
         $token = $jwtManager->create($user);
 
         $this->tokens[$username] = $token;
@@ -538,9 +531,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theLastDeliveryFromUserHasStatus($username, $status)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
 
         $order = $this->doctrine->getRepository(Order::class)
             ->findOneBy(['customer' => $user], ['createdAt' => 'DESC']);
@@ -555,10 +546,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theLastDeliveryFromUserIsDispatchedToCourier($customerUsername, $courierUsername)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-
-        $customer = $userManager->findUserByUsername($customerUsername);
-        $courier = $userManager->findUserByUsername($courierUsername);
+        $customer = $this->userManager->findUserByUsername($customerUsername);
+        $courier = $this->userManager->findUserByUsername($courierUsername);
 
         $order = $this->doctrine->getRepository(Order::class)
             ->findOneBy(['customer' => $customer], ['createdAt' => 'DESC']);
@@ -574,9 +563,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theTaskWithCommentsMatchingAreAssignedTo($comments, $username)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
         $qb = $this->doctrine
             ->getRepository(Task::class)
             ->createQueryBuilder('t')
@@ -662,13 +649,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theStoreWithNameBelongsToUser($name, $username)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
 
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($name);
 
         $user->addStore($store);
-        $userManager->updateUser($user);
+        $this->userManager->updateUser($user);
     }
 
     /**
@@ -676,13 +662,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theRestaurantWithIdBelongsToUser($id, $username)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
 
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $user->addRestaurant($restaurant);
-        $userManager->updateUser($user);
+        $this->userManager->updateUser($user);
     }
 
     /**
@@ -740,8 +725,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theUserHasOrderedSomethingAtTheRestaurantWithId($username, $id)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
 
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
@@ -757,8 +741,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theUserHasOrderedSomethingForAtRestaurantWithId($username, $date, $id)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
 
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
@@ -861,8 +844,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theUserHasCreatedACartAtRestaurantWithId($username, $id)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
 
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
@@ -1023,8 +1005,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function userHasRemotePushTokenWithValueForPlatform($username, $value, $platform)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
 
         $token = new RemotePushToken();
         $token->setToken($value);
@@ -1032,7 +1013,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $user->addRemotePushToken($token);
 
-        $userManager->updateUser($user);
+        $this->userManager->updateUser($user);
     }
 
     /**
