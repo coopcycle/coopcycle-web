@@ -35,7 +35,8 @@ use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use phpcent\Client as CentrifugoClient;
 use Sylius\Component\Order\Model\OrderInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sylius\Component\Order\Repository\OrderRepositoryInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,14 +44,20 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingException;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ProfileController extends Controller
+class ProfileController extends AbstractController
 {
     const ITEMS_PER_PAGE = 20;
 
     use OrderTrait;
     use UserTrait;
+
+    public function __construct(OrderRepositoryInterface $orderRepository)
+    {
+        $this->orderRepository = $orderRepository;
+    }
 
     public function indexAction(Request $request,
         SlugifyInterface $slugify,
@@ -141,7 +148,7 @@ class ProfileController extends Controller
 
     protected function getOrderList(Request $request, $showCanceled = false)
     {
-        $qb = $this->get('sylius.repository.order')
+        $qb = $this->orderRepository
             ->createQueryBuilder('o')
             ->andWhere('o.customer = :customer')
             ->andWhere('o.state != :state')
@@ -172,9 +179,11 @@ class ProfileController extends Controller
         DeliveryManager $deliveryManager,
         JWTManagerInterface $jwtManager,
         JWSProviderInterface $jwsProvider,
-        IriConverterInterface $iriConverter)
+        IriConverterInterface $iriConverter,
+        SerializerInterface $serializer,
+        CentrifugoClient $centrifugoClient)
     {
-        $order = $this->container->get('sylius.repository.order')->find($id);
+        $order = $this->orderRepository->find($id);
 
         if ($order->getCustomer()->hasUser() && $order->getCustomer()->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
@@ -182,29 +191,24 @@ class ProfileController extends Controller
 
         if ($order->isFoodtech()) {
 
-            $exp = clone $order->getShippingTimeRange()->getUpper();
-            $exp->modify('+3 hours');
-
             // FIXME We may generate expired tokens
 
-            $jwt = $jwsProvider->create([
-                // We add a custom "ord" claim to the token,
-                // that will allow watching order events
-                'ord' => $iriConverter->getIriFromItem($order),
-                // Token expires 3 hours after expected completion
-                'exp' => $exp->getTimestamp(),
-            ])->getToken();
+            $exp = clone $order->getShippingTimeRange()->getUpper();
+            $exp->modify('+3 hours');
 
             return $this->render('profile/order.html.twig', [
                 'order' => $order,
                 'events' => (new OrderEventCollection($order))->toArray(),
-                'order_normalized' => $this->get('serializer')->normalize($order, 'jsonld', [
+                'order_normalized' => $serializer->normalize($order, 'jsonld', [
                     'groups' => ['order'],
                     'is_web' => true
                 ]),
                 'reset' => false,
                 'track_goal' => false,
-                'jwt' => $jwt,
+                'centrifugo' => [
+                    'token'   => $centrifugoClient->generateConnectionToken($order->getId(), $exp->getTimestamp()),
+                    'channel' => sprintf('%s_order_events#%d', $this->getParameter('centrifugo_namespace'), $order->getId())
+                ]
             ]);
         }
 
@@ -307,7 +311,7 @@ class ProfileController extends Controller
     /**
      * @Route("/profile/tasks/{id}/complete", name="profile_task_complete")
      */
-    public function completeTaskAction($id, Request $request, TaskManager $taskManager)
+    public function completeTaskAction($id, Request $request, TaskManager $taskManager, TranslatorInterface $translator)
     {
         $task = $this->getDoctrine()
             ->getRepository(Task::class)
@@ -339,7 +343,7 @@ class ProfileController extends Controller
                 } catch (\Exception $e) {
                     $this->addFlash(
                         'error',
-                        $this->get('translator')->trans($e->getMessage())
+                        $translator->trans($e->getMessage())
                     );
                 }
             }
@@ -389,14 +393,14 @@ class ProfileController extends Controller
     /**
      * @Route("/profile/notifications", name="profile_notifications")
      */
-    public function notificationsAction(Request $request, SocketIoManager $socketIoManager)
+    public function notificationsAction(Request $request, SocketIoManager $socketIoManager, SerializerInterface $serializer)
     {
         $notifications = $socketIoManager->getLastNotifications($this->getUser());
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
 
             return new JsonResponse([
-                'notifications' => $this->get('serializer')->normalize($notifications, 'json'),
+                'notifications' => $serializer->normalize($notifications, 'json'),
                 'unread' => (int) $socketIoManager->countNotifications($this->getUser())
             ]);
         }

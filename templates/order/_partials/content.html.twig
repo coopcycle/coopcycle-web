@@ -27,7 +27,7 @@
         </div>
       </div>
     {% endif %}
-    {% if order.state == 'new' and custom_message is not empty %}
+    {% if order.state == 'new' and custom_message is defined and custom_message is not empty %}
       <div class="border mb-3">
         <h4 class="bg-light p-3 m-0">
           <i class="fa fa-info-circle mr-2"></i>

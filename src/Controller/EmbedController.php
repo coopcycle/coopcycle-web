@@ -22,7 +22,9 @@ use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sylius\Component\Resource\Factory\FactoryInterface;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,13 +34,21 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
  */
-class EmbedController extends Controller
+class EmbedController extends AbstractController
 {
     use DeliveryTrait;
+
+    public function __construct(RepositoryInterface $customerRepository, FactoryInterface $customerFactory, TranslatorInterface $translator)
+    {
+        $this->customerRepository = $customerRepository;
+        $this->customerFactory = $customerFactory;
+        $this->translator = $translator;
+    }
 
     protected function getDeliveryRoutes()
     {
@@ -54,13 +64,13 @@ class EmbedController extends Controller
 
     private function findOrCreateCustomer($email, PhoneNumber $telephone, CanonicalizerInterface $canonicalizer)
     {
-        $customer = $this->get('sylius.repository.customer')
+        $customer = $this->customerRepository
             ->findOneBy([
                 'emailCanonical' => $canonicalizer->canonicalize($email)
             ]);
 
         if (!$customer) {
-            $customer = $this->get('sylius.factory.customer')->createNew();
+            $customer = $this->customerFactory->createNew();
 
             $customer->setEmail($email);
             $customer->setEmailCanonical($canonicalizer->canonicalize($email));
@@ -212,7 +222,7 @@ class EmbedController extends Controller
                 ]);
 
             } catch (NoRuleMatchedException $e) {
-                $message = $this->get('translator')->trans('delivery.price.error.priceCalculation', [], 'validators');
+                $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                 $form->addError(new FormError($message));
             }
 
@@ -277,7 +287,7 @@ class EmbedController extends Controller
 
             $this->addFlash(
                 'embed_delivery',
-                $this->get('translator')->trans('embed.delivery.confirm_message')
+                $this->translator->trans('embed.delivery.confirm_message')
             );
 
             return $this->redirectToRoute('public_order', ['number' => $order->getNumber()]);
