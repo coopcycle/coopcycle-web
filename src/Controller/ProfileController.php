@@ -44,7 +44,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingException;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProfileController extends AbstractController
@@ -180,7 +180,7 @@ class ProfileController extends AbstractController
         JWTManagerInterface $jwtManager,
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
-        SerializerInterface $serializer,
+        NormalizerInterface $normalizer,
         CentrifugoClient $centrifugoClient)
     {
         $order = $this->orderRepository->find($id);
@@ -199,7 +199,7 @@ class ProfileController extends AbstractController
             return $this->render('profile/order.html.twig', [
                 'order' => $order,
                 'events' => (new OrderEventCollection($order))->toArray(),
-                'order_normalized' => $serializer->normalize($order, 'jsonld', [
+                'order_normalized' => $normalizer->normalize($order, 'jsonld', [
                     'groups' => ['order'],
                     'is_web' => true
                 ]),
@@ -393,14 +393,14 @@ class ProfileController extends AbstractController
     /**
      * @Route("/profile/notifications", name="profile_notifications")
      */
-    public function notificationsAction(Request $request, SocketIoManager $socketIoManager, SerializerInterface $serializer)
+    public function notificationsAction(Request $request, SocketIoManager $socketIoManager, NormalizerInterface $normalizer)
     {
         $notifications = $socketIoManager->getLastNotifications($this->getUser());
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
 
             return new JsonResponse([
-                'notifications' => $serializer->normalize($notifications, 'json'),
+                'notifications' => $normalizer->normalize($notifications, 'json'),
                 'unread' => (int) $socketIoManager->countNotifications($this->getUser())
             ]);
         }
