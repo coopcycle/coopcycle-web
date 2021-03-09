@@ -6,14 +6,14 @@ use AppBundle\Utils\GeoUtils;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-Class DeduplicateCustomerAddressesCommand extends ContainerAwareCommand
+Class DeduplicateCustomerAddressesCommand extends Command
 {
     private $connection;
     private $entityManager;

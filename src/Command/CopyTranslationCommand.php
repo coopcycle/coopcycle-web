@@ -4,7 +4,7 @@ namespace AppBundle\Command;
 
 use Craue\ConfigBundle\Util\Config;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,7 +12,7 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-Class CopyTranslationCommand extends ContainerAwareCommand
+Class CopyTranslationCommand extends Command
 {
     private $translator;
     private $jsTranslationsDir;
