@@ -7,8 +7,6 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Service\Geocoder;
-use AppBundle\Service\TagManager;
-use Cocur\Slugify\SlugifyInterface;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Common\Exception\IOException;
@@ -25,17 +23,10 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     const TIME_RANGE_PATTERN = '[0-9]{2,4}[-/]?[0-9]{2,4}[-/]?[0-9]{2,4} [0-9]{1,2}[:hH]?[0-9]{2}';
 
     private $geocoder;
-    private $tagManager;
-    private $slugify;
 
-    public function __construct(
-        Geocoder $geocoder,
-        TagManager $tagManager,
-        SlugifyInterface $slugify)
+    public function __construct(Geocoder $geocoder)
     {
         $this->geocoder = $geocoder;
-        $this->tagManager = $tagManager;
-        $this->slugify = $slugify;
     }
 
     /**
