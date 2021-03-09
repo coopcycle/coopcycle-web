@@ -62,12 +62,14 @@ class TaskType extends AbstractType
             ->add('doneAfter', DateType::class, [
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm:ss',
-                'required' => false
+                'required' => false,
+                'html5' => false,
             ])
             ->add('doneBefore', DateType::class, [
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm:ss',
-                'required' => true
+                'required' => true,
+                'html5' => false,
             ]);
 
         if ($options['with_tags']) {

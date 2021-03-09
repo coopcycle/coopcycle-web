@@ -25,12 +25,14 @@ class OrderExportType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
                 'data' => new \DateTime('now'),
+                'html5' => false,
             ])
             ->add('end', DateType::class, [
                 'label' => 'form.task_export.end.label',
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
                 'data' => new \DateTime('now'),
+                'html5' => false,
             ]);
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
