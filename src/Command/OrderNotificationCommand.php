@@ -10,7 +10,6 @@ use AppBundle\Service\SocketIoManager;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -25,14 +24,12 @@ class OrderNotificationCommand extends Command
         RepositoryInterface $orderRepository,
         RemotePushNotificationManager $remotePushNotificationManager,
         SocketIoManager $socketIoManager,
-        UserManagerInterface $userManager,
         PublishToRedis $websocket,
         SendRemotePushNotification $push)
     {
         $this->orderRepository = $orderRepository;
         $this->remotePushNotificationManager = $remotePushNotificationManager;
         $this->socketIoManager = $socketIoManager;
-        $this->userManager = $userManager;
 
         $this->websocket = $websocket;
         $this->push = $push;

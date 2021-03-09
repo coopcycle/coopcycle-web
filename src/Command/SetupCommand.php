@@ -14,7 +14,6 @@ use AppBundle\Taxonomy\CuisineProvider;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserInterface;
 use Psr\Log\LogLevel;
 use Stripe;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
