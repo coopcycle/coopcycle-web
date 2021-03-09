@@ -921,3 +921,8 @@ sensio_framework_extra:
     request:
         converters: true
         disable: ['doctrine.orm']
+
+# https://github.com/doctrine/DoctrineMigrationsBundle/issues/305
+doctrine_migrations:
+    migrations_paths:
+        'DoctrineMigrations': '%kernel.project_dir%/app/DoctrineMigrations'
