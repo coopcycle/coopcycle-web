@@ -886,11 +886,17 @@ trikoder_oauth2:
         encryption_key: "%env(COOPCYCLE_OAUTH_ENCRYPTION_KEY)%"
         access_token_ttl: PT1H
         refresh_token_ttl: P1M
-        enable_client_credentials_grant: true
-        enable_password_grant: false
-        enable_refresh_token_grant: false
-        enable_auth_code_grant: false
-        enable_implicit_grant: false
+        grant_types:
+            client_credentials:
+                enable: true
+            password:
+                enable: false
+            refresh_token:
+                enable: false
+            authorization_code:
+                enable: false
+            implicit:
+                enable: false
     resource_server:
         public_key: "%jwt_public_key_path%"
     scopes:
