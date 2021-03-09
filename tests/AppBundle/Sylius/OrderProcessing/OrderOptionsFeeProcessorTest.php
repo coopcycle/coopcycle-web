@@ -24,7 +24,7 @@ use Sylius\Component\Order\Model\OrderItemInterface;
 use Sylius\Component\Order\Processor\CompositeOrderProcessor;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrderOptionsFeeProcessorTest extends KernelTestCase
 {

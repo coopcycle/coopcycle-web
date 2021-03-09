@@ -3,7 +3,7 @@
 namespace AppBundle\Domain;
 
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 interface HumanReadableEventInterface
 {

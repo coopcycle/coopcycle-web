@@ -9,7 +9,7 @@ use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Task;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Sylius\Component\Order\Model\OrderInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;

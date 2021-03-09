@@ -12,7 +12,7 @@ use Sylius\Component\Order\Model\AdjustableInterface;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
 class ReceiptGenerator

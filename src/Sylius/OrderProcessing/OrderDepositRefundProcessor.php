@@ -8,7 +8,7 @@ use Sylius\Component\Order\Model\Adjustment;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class OrderDepositRefundProcessor implements OrderProcessorInterface
 {

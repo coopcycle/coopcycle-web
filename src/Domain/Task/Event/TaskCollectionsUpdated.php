@@ -8,7 +8,7 @@ use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Entity\TaskList;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaskCollectionsUpdated extends BaseEvent implements SerializableEventInterface
 {

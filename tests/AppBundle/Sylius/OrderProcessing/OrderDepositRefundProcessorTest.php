@@ -15,7 +15,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Order\Model\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Doctrine\Common\Collections\ArrayCollection;

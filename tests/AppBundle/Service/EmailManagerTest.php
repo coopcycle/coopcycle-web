@@ -8,7 +8,7 @@ use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
 class EmailManagerTest extends TestCase

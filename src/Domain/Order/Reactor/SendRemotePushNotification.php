@@ -7,7 +7,7 @@ use AppBundle\Domain\Order\Event\OrderCreated;
 use AppBundle\Message\PushNotification;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SendRemotePushNotification
 {

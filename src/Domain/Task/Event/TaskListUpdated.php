@@ -7,7 +7,7 @@ use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Entity\TaskList;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaskListUpdated extends BaseEvent implements SerializableEventInterface
 {
