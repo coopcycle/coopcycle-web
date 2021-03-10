@@ -162,7 +162,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin", name="admin_index")
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
         return $this->redirectToRoute('admin_dashboard');
     }
@@ -843,12 +843,11 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/deliveries/pricing", name="admin_deliveries_pricing")
      */
-    public function pricingRuleSetsAction(Request $request)
+    public function pricingRuleSetsAction()
     {
         $ruleSets = $this->getDoctrine()
             ->getRepository(Delivery\PricingRuleSet::class)
             ->findAll();
-
         return $this->render('admin/pricing.html.twig', [
             'ruleSets' => $ruleSets
         ]);
@@ -935,7 +934,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/zones/{id}/delete", methods={"POST"}, name="admin_zone_delete")
      */
-    public function deleteZoneAction($id, Request $request)
+    public function deleteZoneAction($id)
     {
         $zone = $this->getDoctrine()->getRepository(Zone::class)->find($id);
 
@@ -990,10 +989,9 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function getStoreList(Request $request)
+    public function getStoreList()
     {
         $stores = $this->getDoctrine()->getRepository(Store::class)->findAll();
-
         return [ $stores, 1, 1 ];
     }
 
@@ -1228,7 +1226,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/embed", name="admin_embed")
      */
-    public function embedAction(Request $request, SettingsManager $settingsManager)
+    public function embedAction()
     {
         return $this->redirectToRoute('admin_forms', [], 301);
     }
@@ -1284,10 +1282,9 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/forms", name="admin_forms")
      */
-    public function formsAction(Request $request)
+    public function formsAction()
     {
         $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
-
         return $this->render('admin/forms.html.twig', [
             'forms' => $forms,
         ]);
@@ -1314,12 +1311,11 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/api/apps", name="admin_api_apps")
      */
-    public function apiAppsAction(Request $request)
+    public function apiAppsAction()
     {
         $apiApps = $this->getDoctrine()
             ->getRepository(ApiApp::class)
             ->findAll();
-
         return $this->render('admin/api_apps.html.twig', [
             'api_apps' => $apiApps
         ]);
@@ -1389,14 +1385,12 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/promotions", name="admin_promotions")
      */
-    public function promotionsAction(Request $request)
+    public function promotionsAction()
     {
         $qb = $this->promotionCouponRepository->createQueryBuilder('c');
         $qb->andWhere('c.expiresAt IS NULL OR c.expiresAt > :date');
         $qb->setParameter('date', new \DateTime());
-
         $promotionCoupons = $qb->getQuery()->getResult();
-
         return $this->render('admin/promotions.html.twig', [
             'promotion_coupons' => $promotionCoupons,
         ]);
@@ -1483,11 +1477,6 @@ class AdminController extends AbstractController
         }
 
         return $this->createNotFoundException();
-    }
-
-    private function isUsedCouponCode(string $code): bool
-    {
-        return null !== $this->promotionCouponRepository->findOneBy(['code' => $code]);
     }
 
     /**
@@ -1670,10 +1659,9 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/settings/time-slots", name="admin_time_slots")
      */
-    public function timeSlotsAction(Request $request)
+    public function timeSlotsAction()
     {
         $timeSlots = $this->getDoctrine()->getRepository(TimeSlot::class)->findAll();
-
         return $this->render('admin/time_slots.html.twig', [
             'time_slots' => $timeSlots,
         ]);
@@ -1730,10 +1718,9 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/settings/packages", name="admin_packages")
      */
-    public function packageSetsAction(Request $request)
+    public function packageSetsAction()
     {
         $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
-
         return $this->render('admin/package_sets.html.twig', [
             'package_sets' => $packageSets,
         ]);
@@ -1821,7 +1808,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function taskReceiptAction($id, Request $request, EmailManager $emailManager, MessageBusInterface $bus)
+    public function taskReceiptAction($id)
     {
         $task = $this->getDoctrine()->getRepository(Task::class)->find($id);
 
