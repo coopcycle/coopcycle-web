@@ -21,6 +21,7 @@ class Promotion
     public $percentage;
     public $username;
     public $restaurant;
+    public $couponCode;
 
     public function toPromotion(
         FactoryInterface $promotionFactory,
@@ -72,10 +73,16 @@ class Promotion
             $promotion->addRule($isRestaurantRule);
         }
 
-        do {
-            $hash = bin2hex(random_bytes(20));
-            $code = strtoupper(substr($hash, 0, 6));
-        } while (null !== $promotionCouponRepository->findOneBy(['code' => $code]));
+        if (empty($this->couponCode)) {
+
+            do {
+                $hash = bin2hex(random_bytes(20));
+                $code = strtoupper(substr($hash, 0, 6));
+            } while (null !== $promotionCouponRepository->findOneBy(['code' => $code]));
+
+        } else {
+            $code = $this->couponCode;
+        }
 
         $promotionCoupon = $promotionCouponFactory->createNew();
         $promotionCoupon->setCode($code);

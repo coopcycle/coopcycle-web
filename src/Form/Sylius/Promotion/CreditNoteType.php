@@ -62,6 +62,10 @@ class CreditNoteType extends AbstractType
                 'choice_label' => 'name',
                 'help' => 'form.credit_note.restaurant.help',
                 'required' => false,
+            ])
+            ->add('couponCode', TextType::class, [
+                'label' => 'sylius.ui.code',
+                'help' => 'form.offer_delivery.coupon_code.help',
             ]);
     }
 
