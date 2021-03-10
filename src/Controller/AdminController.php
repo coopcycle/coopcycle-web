@@ -77,14 +77,21 @@ use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
 use FOS\UserBundle\Util\CanonicalizerInterface;
+use GuzzleHttp\Client as HttpClient;
 use Knp\Component\Pager\PaginatorInterface;
 use Ramsey\Uuid\Uuid;
 use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
+use Sylius\Component\Order\Repository\OrderRepositoryInterface;
+use Sylius\Component\Promotion\Factory\PromotionCouponFactoryInterface;
 use Sylius\Component\Promotion\Model\PromotionAction;
+use Sylius\Component\Promotion\Repository\PromotionCouponRepositoryInterface;
+use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
+use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -92,10 +99,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AdminController extends Controller
+class AdminController extends AbstractController
 {
     const ITEMS_PER_PAGE = 20;
 
@@ -132,6 +140,24 @@ class AdminController extends Controller
         ];
     }
 
+    public function __construct(
+        OrderRepositoryInterface $orderRepository,
+        TranslatorInterface $translator,
+        EntityManagerInterface $entityManager,
+        PromotionCouponRepositoryInterface $promotionCouponRepository,
+        FactoryInterface $promotionRuleFactory,
+        FactoryInterface $promotionFactory,
+        HttpClient $browserlessClient)
+    {
+        $this->orderRepository = $orderRepository;
+        $this->translator = $translator;
+        $this->entityManager = $entityManager;
+        $this->promotionCouponRepository = $promotionCouponRepository;
+        $this->promotionRuleFactory = $promotionRuleFactory;
+        $this->promotionFactory = $promotionFactory;
+        $this->browserlessClient = $browserlessClient;
+    }
+
     /**
      * @Route("/admin", name="admin_index")
      */
@@ -142,7 +168,7 @@ class AdminController extends Controller
 
     protected function getOrderList(Request $request, $showCanceled = false)
     {
-        $qb = $this->get('sylius.repository.order')
+        $qb = $this->orderRepository
             ->createQueryBuilder('o');
         $qb
             ->andWhere('o.state != :state')
@@ -221,7 +247,7 @@ class AdminController extends Controller
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('orders.payment_link.sent')
+                $this->translator->trans('orders.payment_link.sent')
             );
 
             return $this->redirectToRoute('admin_order', ['id' => $id]);
@@ -248,11 +274,11 @@ class AdminController extends Controller
 
                     $orderManager->refundPayment($payment, $amount, $liableParty, $comments);
 
-                    $this->get('sylius.manager.order')->flush();
+                    $this->entityManager->flush();
 
                     $this->addFlash(
                         'notice',
-                        $this->get('translator')->trans('orders.payment_refunded')
+                        $this->translator->trans('orders.payment_refunded')
                     );
 
                     return $this->redirectToRoute('admin_order', ['id' => $id]);
@@ -283,7 +309,7 @@ class AdminController extends Controller
                     $orderManager->cancel($order);
                 }
 
-                $this->get('sylius.manager.order')->flush();
+                $this->entityManager->flush();
 
                 return $this->redirectToRoute('admin_orders');
             }
@@ -319,7 +345,7 @@ class AdminController extends Controller
 
         $date = new \DateTime($date);
 
-        $orders = $this->get('sylius.repository.order')->findByDate($date);
+        $orders = $this->orderRepository->findByDate($date);
 
         $ordersNormalized = $this->get('serializer')->normalize($orders, 'jsonld', [
             'resource_class' => Order::class,
@@ -360,7 +386,7 @@ class AdminController extends Controller
     /**
      * @Route("/admin/users", name="admin_users")
      */
-    public function usersAction(Request $request)
+    public function usersAction(Request $request, PaginatorInterface $paginator)
     {
         $qb = $this->getDoctrine()
             ->getRepository(Customer::class)
@@ -368,7 +394,7 @@ class AdminController extends Controller
 
         $qb->leftJoin(User::class, 'u', Expr\Join::WITH, 'c.id = u.customer');
 
-        $customers = $this->get('knp_paginator')->paginate(
+        $customers = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
             self::ITEMS_PER_PAGE,
@@ -386,7 +412,7 @@ class AdminController extends Controller
 
             $key = $customer->getEmailCanonical();
 
-            $qb = $this->get('sylius.repository.order')->createQueryBuilder('o');
+            $qb = $this->orderRepository->createQueryBuilder('o');
             $qb->andWhere('o.customer = :customer');
             $qb->andWhere('o.state != :state');
             $qb->setParameter('customer', $customer);
@@ -396,7 +422,7 @@ class AdminController extends Controller
 
             $attributes[$key]['orders_count'] = count($res);
 
-            $qb = $this->get('sylius.repository.order')->createQueryBuilder('o');
+            $qb = $this->orderRepository->createQueryBuilder('o');
             $qb->andWhere('o.customer = :customer');
             $qb->andWhere('o.state != :state');
             $qb->setParameter('customer', $customer);
@@ -468,7 +494,7 @@ class AdminController extends Controller
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('basics.send_invitation.confirm')
+                $this->translator->trans('basics.send_invitation.confirm')
             );
 
             return $this->redirectToRoute('admin_users');
@@ -543,7 +569,7 @@ class AdminController extends Controller
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $this->translator->trans('global.changesSaved')
             );
 
             return $this->redirectToRoute('admin_user_edit', ['username' => $user->getUsername()]);
@@ -593,7 +619,7 @@ class AdminController extends Controller
     /**
      * @Route("/admin/deliveries", name="admin_deliveries")
      */
-    public function deliveriesAction(Request $request, TranslatorInterface $translator, DeliveryDataExporter $dataExporter)
+    public function deliveriesAction(Request $request, DeliveryDataExporter $dataExporter, PaginatorInterface $paginator)
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
             'with_store' => true
@@ -613,7 +639,7 @@ class AdminController extends Controller
 
             $this->addFlash(
                 'notice',
-                $translator->trans('delivery.import.success_message', ['%count%' => count($deliveries)])
+                $this->translator->trans('delivery.import.success_message', ['%count%' => count($deliveries)])
             );
 
             return $this->redirectToRoute('admin_deliveries');
@@ -654,7 +680,7 @@ class AdminController extends Controller
         $qb->leftJoin(Vendor::class, 'v', Expr\Join::WITH, 'o.vendor = v.id');
         $qb->leftJoin(LocalBusiness::class, 'r', Expr\Join::WITH, 'v.restaurant = r.id');
 
-        $deliveries = $this->get('knp_paginator')->paginate(
+        $deliveries = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
             self::ITEMS_PER_PAGE,
@@ -690,7 +716,7 @@ class AdminController extends Controller
     /**
      * @Route("/admin/tasks", name="admin_tasks")
      */
-    public function tasksAction(Request $request, TranslatorInterface $translator)
+    public function tasksAction(Request $request, PaginatorInterface $paginator)
     {
         $form = $this->createForm(AttachToOrganizationType::class);
 
@@ -718,7 +744,7 @@ class AdminController extends Controller
             ->getRepository(Task::class)
             ->createQueryBuilder('t');
 
-        $tasks = $this->get('knp_paginator')->paginate(
+        $tasks = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
             self::ITEMS_PER_PAGE,
@@ -742,10 +768,8 @@ class AdminController extends Controller
      */
     public function taxationSettingsAction(Request $request,
         TaxRateResolverInterface $taxRateResolver,
-        TranslatorInterface $translator)
+        TaxCategoryRepositoryInterface $taxCategoryRepository)
     {
-        $taxCategoryRepository = $this->get('sylius.repository.tax_category');
-
         $categories = [];
         $countries = [];
 
@@ -769,7 +793,7 @@ class AdminController extends Controller
             }
 
             $categories[] = [
-                'name' => $translator->trans($c->getName(), [], 'taxation'),
+                'name' => $this->translator->trans($c->getName(), [], 'taxation'),
                 'rates' => $rates,
             ];
         }
@@ -975,11 +999,11 @@ class AdminController extends Controller
         return [ $stores, 1, 1 ];
     }
 
-    public function newStoreAction(Request $request, TranslatorInterface $translator)
+    public function newStoreAction(Request $request)
     {
         $store = new Store();
 
-        return $this->renderStoreForm($store, $request, $translator);
+        return $this->renderStoreForm($store, $request, $this->translator);
     }
 
     /**
@@ -1190,7 +1214,7 @@ class AdminController extends Controller
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $this->translator->trans('global.changesSaved')
             );
 
             return $this->redirectToRoute('admin_settings');
@@ -1338,7 +1362,7 @@ class AdminController extends Controller
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('api_apps.created.message')
+                $this->translator->trans('api_apps.created.message')
             );
 
             return $this->redirectToRoute('admin_api_app', [ 'id' => $apiApp->getId() ]);
@@ -1382,7 +1406,7 @@ class AdminController extends Controller
      */
     public function promotionsAction(Request $request)
     {
-        $qb = $this->get('sylius.repository.promotion_coupon')->createQueryBuilder('c');
+        $qb = $this->promotionCouponRepository->createQueryBuilder('c');
         $qb->andWhere('c.expiresAt IS NULL OR c.expiresAt > :date');
         $qb->setParameter('date', new \DateTime());
 
@@ -1396,11 +1420,13 @@ class AdminController extends Controller
     /**
      * @Route("/admin/promotions/{id}/coupons/new", name="admin_new_promotion_coupon")
      */
-    public function newPromotionCouponAction($id, Request $request)
+    public function newPromotionCouponAction($id, Request $request,
+        PromotionRepositoryInterface $promotionRepository,
+        PromotionCouponFactoryInterface $promotionCouponFactory)
     {
-        $promotion = $this->get('sylius.repository.promotion')->find($id);
+        $promotion = $promotionRepository->find($id);
 
-        $promotionCoupon = $this->get('sylius.factory.promotion_coupon')->createForPromotion($promotion);
+        $promotionCoupon = $promotionCouponFactory->createForPromotion($promotion);
 
         $form = $this->createForm(PromotionCouponType::class, $promotionCoupon);
 
@@ -1410,7 +1436,7 @@ class AdminController extends Controller
             $promotionCoupon = $form->getData();
             $promotion->addCoupon($promotionCoupon);
 
-            $this->get('sylius.manager.promotion')->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_promotions');
         }
@@ -1423,7 +1449,7 @@ class AdminController extends Controller
     /**
      * @Route("/admin/promotions/credit-notes/new", name="admin_new_credit_note")
      */
-    public function newCreditNoteAction(Request $request)
+    public function newCreditNoteAction(Request $request, PromotionCouponFactoryInterface $promotionCouponFactory)
     {
         $form = $this->createForm(CreditNoteType::class, [
             'type' => FixedDiscountPromotionActionCommand::TYPE
@@ -1434,7 +1460,7 @@ class AdminController extends Controller
 
             $data = $form->getData();
 
-            $promotion = $this->get('sylius.factory.promotion')->createNew();
+            $promotion = $this->promotionFactory->createNew();
             $promotion->setName($data['name']);
             $promotion->setCouponBased(true);
             $promotion->setCode(Uuid::uuid4()->toString());
@@ -1457,7 +1483,7 @@ class AdminController extends Controller
             $promotion->addAction($promotionAction);
 
             // TODO Make this optional
-            $promotionRule = $this->get('sylius.factory.promotion_rule')->createNew();
+            $promotionRule = $this->promotionRuleFactory->createNew();
             $promotionRule->setType(IsCustomerRuleChecker::TYPE);
             $promotionRule->setConfiguration([
                 'username' => $data['username']
@@ -1467,7 +1493,7 @@ class AdminController extends Controller
 
             if (isset($data['restaurant']) && $data['restaurant'] instanceof LocalBusiness) {
 
-                $isRestaurantRule = $this->get('sylius.factory.promotion_rule')->createNew();
+                $isRestaurantRule = $this->promotionRuleFactory->createNew();
                 $isRestaurantRule->setType(IsRestaurantRuleChecker::TYPE);
                 $isRestaurantRule->setConfiguration([
                     'restaurant_id' => $data['restaurant']->getId()
@@ -1481,13 +1507,14 @@ class AdminController extends Controller
                 $code = strtoupper(substr($hash, 0, 6));
             } while ($this->isUsedCouponCode($code));
 
-            $promotionCoupon = $this->get('sylius.factory.promotion_coupon')->createNew();
+            $promotionCoupon = $promotionCouponFactory->createNew();
             $promotionCoupon->setCode($code);
             $promotionCoupon->setPerCustomerUsageLimit(1);
 
             $promotion->addCoupon($promotionCoupon);
 
-            $this->get('sylius.repository.promotion')->add($promotion);
+            $this->entityManager->persist($promotion);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_promotions');
         }
@@ -1500,7 +1527,7 @@ class AdminController extends Controller
     /**
      * @Route("/admin/promotions/coupons/new", name="admin_new_promotion_coupon_from_template")
      */
-    public function newPromotionCouponFromTemplateAction(Request $request)
+    public function newPromotionCouponFromTemplateAction(Request $request, PromotionRepositoryInterface $promotionRepository)
     {
         $template = $request->query->get('template');
 
@@ -1508,7 +1535,7 @@ class AdminController extends Controller
             case 'credit_note':
                 return $this->newCreditNoteAction($request);
             case 'free_delivery':
-                $promotion = $this->get('sylius.repository.promotion')->findOneByCode('FREE_DELIVERY');
+                $promotion = $promotionRepository->findOneByCode('FREE_DELIVERY');
 
                 return $this->redirectToRoute('admin_new_promotion_coupon', ['id' => $promotion->getId()]);
         }
@@ -1518,23 +1545,23 @@ class AdminController extends Controller
 
     private function isUsedCouponCode(string $code): bool
     {
-        return null !== $this->get('sylius.repository.promotion_coupon')->findOneBy(['code' => $code]);
+        return null !== $this->promotionCouponRepository->findOneBy(['code' => $code]);
     }
 
     /**
      * @Route("/admin/promotions/{id}/coupons/{code}", name="admin_promotion_coupon")
      */
-    public function promotionCouponAction($id, $code, Request $request)
+    public function promotionCouponAction($id, $code, Request $request, PromotionRepositoryInterface $promotionRepository)
     {
-        $promotionCoupon = $this->get('sylius.repository.promotion_coupon')->findOneByCode($code);
-        $promotion = $this->get('sylius.repository.promotion')->find($id);
+        $promotionCoupon = $this->promotionCouponRepository->findOneByCode($code);
+        $promotion = $promotionRepository->find($id);
 
         $form = $this->createForm(PromotionCouponType::class, $promotionCoupon);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->get('sylius.manager.promotion_coupon')->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_promotions');
         }
@@ -1854,7 +1881,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function taskReceiptAction($id, Request $request, EmailManager $emailManager, \Symfony\Component\Messenger\MessageBusInterface $bus)
+    public function taskReceiptAction($id, Request $request, EmailManager $emailManager, MessageBusInterface $bus)
     {
         $task = $this->getDoctrine()->getRepository(Task::class)->find($id);
 
@@ -1862,9 +1889,7 @@ class AdminController extends Controller
             'task' => $task,
         ]);
 
-        $client = $this->get('csa_guzzle.client.browserless');
-
-        $pdf = $client->request('POST', '/pdf', [
+        $pdf = $this->browserlessClient->request('POST', '/pdf', [
             'json' => ['html' => $html]
         ]);
 
@@ -1896,7 +1921,7 @@ class AdminController extends Controller
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $this->translator->trans('global.changesSaved')
             );
 
             return $this->redirectToRoute('admin_customize');
@@ -1994,7 +2019,7 @@ class AdminController extends Controller
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $this->translator->trans('global.changesSaved')
             );
 
             return $this->redirectToRoute('admin_hub', ['id' => $id]);

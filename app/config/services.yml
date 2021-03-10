@@ -179,6 +179,12 @@ services:
       $customerRepository: '@sylius.repository.customer'
       $customerFactory: '@sylius.factory.customer'
 
+  AppBundle\Controller\AdminController:
+    arguments:
+      $promotionRuleFactory: '@sylius.factory.promotion_rule'
+      $promotionFactory: '@sylius.factory.promotion'
+      $browserlessClient: '@csa_guzzle.client.browserless'
+
   AppBundle\EventListener\LocaleListener:
     arguments: ['%env(COOPCYCLE_LOCALE)%']
     tags:
