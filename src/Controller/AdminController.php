@@ -232,7 +232,7 @@ class AdminController extends AbstractController
         EmailManager $emailManager
     )
     {
-        $order = $this->container->get('sylius.repository.order')->find($id);
+        $order = $this->orderRepository->find($id);
 
         if (!$order) {
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
@@ -1506,7 +1506,7 @@ class AdminController extends AbstractController
      */
     public function orderEmailPreviewAction($id, Request $request, EmailManager $emailManager)
     {
-        $order = $this->container->get('sylius.repository.order')->find($id);
+        $order = $this->orderRepository->find($id);
 
         if (!$order) {
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
