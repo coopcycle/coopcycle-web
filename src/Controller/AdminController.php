@@ -1527,13 +1527,15 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/promotions/coupons/new", name="admin_new_promotion_coupon_from_template")
      */
-    public function newPromotionCouponFromTemplateAction(Request $request, PromotionRepositoryInterface $promotionRepository)
+    public function newPromotionCouponFromTemplateAction(Request $request,
+        PromotionRepositoryInterface $promotionRepository,
+        PromotionCouponFactoryInterface $promotionCouponFactory)
     {
         $template = $request->query->get('template');
 
         switch ($template) {
             case 'credit_note':
-                return $this->newCreditNoteAction($request);
+                return $this->newCreditNoteAction($request, $promotionCouponFactory);
             case 'free_delivery':
                 $promotion = $promotionRepository->findOneByCode('FREE_DELIVERY');
 
