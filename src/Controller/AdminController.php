@@ -147,7 +147,8 @@ class AdminController extends AbstractController
         PromotionCouponRepositoryInterface $promotionCouponRepository,
         FactoryInterface $promotionRuleFactory,
         FactoryInterface $promotionFactory,
-        HttpClient $browserlessClient)
+        HttpClient $browserlessClient
+    )
     {
         $this->orderRepository = $orderRepository;
         $this->translator = $translator;
@@ -197,8 +198,10 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/orders/search", name="admin_orders_search")
      */
-    public function searchOrdersAction(Request $request,
-        OrderRepository $orderRepository)
+    public function searchOrdersAction(
+        Request $request,
+        OrderRepository $orderRepository
+    )
     {
         $results = $orderRepository->search($request->query->get('q'));
 
@@ -206,7 +209,8 @@ class AdminController extends AbstractController
         foreach ($results as $order) {
             $data[] = [
                 'id' => $order->getId(),
-                'name' => sprintf('%s (%s)',
+                'name' => sprintf(
+                    '%s (%s)',
                     $order->getNumber(),
                     $order->getCustomer()->getEmailCanonical()
                 ),
@@ -220,10 +224,13 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/orders/{id}", name="admin_order")
      */
-    public function orderAction($id, Request $request,
+    public function orderAction(
+        $id,
+        Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
-        EmailManager $emailManager)
+        EmailManager $emailManager
+    )
     {
         $order = $this->container->get('sylius.repository.order')->find($id);
 
@@ -238,7 +245,6 @@ class AdminController extends AbstractController
         $emailForm->handleRequest($request);
 
         if ($emailForm->isSubmitted() && $emailForm->isValid()) {
-
             $email = $emailForm->get('email')->getData();
 
             $message = $emailManager->createOrderPaymentMessage($order);
@@ -259,14 +265,12 @@ class AdminController extends AbstractController
 
         foreach ($form->get('payments') as $paymentForm) {
             if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
-
                 $hasClickedRefund =
                     $paymentForm->getClickedButton() && 'refund' === $paymentForm->getClickedButton()->getName();
 
                 $hasExpectedFields = $paymentForm->has('amount');
 
                 if ($hasClickedRefund && $hasExpectedFields) {
-
                     $payment = $paymentForm->getData();
                     $amount = $paymentForm->get('amount')->getData();
                     $liableParty = $paymentForm->get('liable')->getData();
@@ -288,7 +292,6 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->getClickedButton()) {
-
                 if ('accept' === $form->getClickedButton()->getName()) {
                     $orderManager->accept($order);
                 }
@@ -335,7 +338,6 @@ class AdminController extends AbstractController
         if ($request->query->has('order')) {
             $order = $request->query->get('order');
             if (is_numeric($order)) {
-
                 return $this->redirectToRoute($request->attributes->get('_route'), [
                     'date' => $date,
                     'order' => $iriConverter->getItemIriFromResourceClass(Order::class, [$order])
@@ -409,7 +411,6 @@ class AdminController extends AbstractController
         $attributes = [];
 
         foreach ($customers as $customer) {
-
             $key = $customer->getEmailCanonical();
 
             $qb = $this->orderRepository->createQueryBuilder('o');
@@ -444,17 +445,18 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/users/invite", name="admin_users_invite")
      */
-    public function inviteUserAction(Request $request,
+    public function inviteUserAction(
+        Request $request,
         EmailManager $emailManager,
         TokenGeneratorInterface $tokenGenerator,
         EntityManagerInterface $objectManager,
-        CanonicalizerInterface $canonicalizer)
+        CanonicalizerInterface $canonicalizer
+    )
     {
         $form = $this->createForm(InviteUserType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $invitation = $form->getData();
 
             $roles = $form->get('roles')->getData();
@@ -535,7 +537,7 @@ class AdminController extends AbstractController
         // Roles that can be edited by admin
         $editableRoles = ['ROLE_ADMIN', 'ROLE_COURIER', 'ROLE_RESTAURANT', 'ROLE_STORE'];
 
-        $originalRoles = array_filter($user->getRoles(), function($role) use ($editableRoles) {
+        $originalRoles = array_filter($user->getRoles(), function ($role) use ($editableRoles) {
             return in_array($role, $editableRoles);
         });
 
@@ -548,7 +550,6 @@ class AdminController extends AbstractController
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-
             $user = $editForm->getData();
 
             $roles = $editForm->get('roles')->getData();
@@ -627,7 +628,6 @@ class AdminController extends AbstractController
 
         $deliveryImportForm->handleRequest($request);
         if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
-
             $store = $deliveryImportForm->get('store')->getData();
 
             $deliveries = $deliveryImportForm->getData();
@@ -651,7 +651,6 @@ class AdminController extends AbstractController
 
         $dataExportForm->handleRequest($request);
         if ($dataExportForm->isSubmitted() && $dataExportForm->isValid()) {
-
             $data = $dataExportForm->getData();
 
             $start = $dataExportForm->get('start')->getData();
@@ -723,7 +722,6 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $tasks = $form->get('tasks')->getData();
             $store = $form->get('store')->getData();
 
@@ -766,16 +764,17 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/settings/taxation", name="admin_taxation_settings")
      */
-    public function taxationSettingsAction(Request $request,
+    public function taxationSettingsAction(
+        Request $request,
         TaxRateResolverInterface $taxRateResolver,
-        TaxCategoryRepositoryInterface $taxCategoryRepository)
+        TaxCategoryRepositoryInterface $taxCategoryRepository
+    )
     {
         $categories = [];
         $countries = [];
 
         $taxCategories = $taxCategoryRepository->findBy([], ['name' => 'ASC']);
         foreach ($taxCategories as $c) {
-
             $isLegacy = count($c->getRates()) === 1 && null === $c->getRates()->first()->getCountry();
             if (!$isLegacy) {
                 foreach ($c->getRates() as $r) {
@@ -809,7 +808,7 @@ class AdminController extends AbstractController
      */
     public function tagsAction(Request $request, TagManager $tagManager)
     {
-        if ($request->isMethod('POST') && $request->request->has('delete')){
+        if ($request->isMethod('POST') && $request->request->has('delete')) {
             $id = $request->request->get('tag');
             $tag = $this->getDoctrine()->getRepository(Tag::class)->find($id);
             $tagManager->untagAll($tag);
@@ -959,7 +958,6 @@ class AdminController extends AbstractController
 
         $zoneCollectionForm->handleRequest($request);
         if ($zoneCollectionForm->isSubmitted() && $zoneCollectionForm->isValid()) {
-
             $zoneCollection = $zoneCollectionForm->getData();
 
             foreach ($zoneCollection->zones as $zone) {
@@ -1016,7 +1014,6 @@ class AdminController extends AbstractController
         $results = $repository->search($request->query->get('q'));
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
-
             $data = array_map(function (LocalBusiness $restaurant) {
                 return [
                     'id' => $restaurant->getId(),
@@ -1043,7 +1040,6 @@ class AdminController extends AbstractController
         $results = $qb->getQuery()->getResult();
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
-
             $data = array_map(function (Store $store) {
                 return [
                     'id' => $store->getId(),
@@ -1074,9 +1070,7 @@ class AdminController extends AbstractController
         $results = $repository->search($request->query->get('q'));
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
-
             $data = array_map(function (User $user) {
-
                 $text = sprintf('%s (%s)', $user->getEmail(), $user->getUsername());
 
                 return [
@@ -1106,7 +1100,6 @@ class AdminController extends AbstractController
 
         $stripeLivemodeForm->handleRequest($request);
         if ($stripeLivemodeForm->isSubmitted() && $stripeLivemodeForm->isValid()) {
-
             if ($stripeLivemodeForm->getClickedButton()) {
                 if ('enable' === $stripeLivemodeForm->getClickedButton()->getName()) {
                     $settingsManager->set('stripe_livemode', 'yes');
@@ -1132,7 +1125,6 @@ class AdminController extends AbstractController
 
         $mercadopagoLivemodeForm->handleRequest($request);
         if ($mercadopagoLivemodeForm->isSubmitted() && $mercadopagoLivemodeForm->isValid()) {
-
             if ($mercadopagoLivemodeForm->getClickedButton()) {
                 if ('enable' === $mercadopagoLivemodeForm->getClickedButton()->getName()) {
                     $settingsManager->set('mercadopago_livemode', 'yes');
@@ -1156,7 +1148,6 @@ class AdminController extends AbstractController
 
         $maintenanceForm->handleRequest($request);
         if ($maintenanceForm->isSubmitted() && $maintenanceForm->isValid()) {
-
             if ($maintenanceForm->getClickedButton()) {
                 if ('enable' === $maintenanceForm->getClickedButton()->getName()) {
                     $maintenanceMessage = $maintenanceForm->get('message')->getData();
@@ -1179,7 +1170,6 @@ class AdminController extends AbstractController
 
         $bannerForm->handleRequest($request);
         if ($bannerForm->isSubmitted() && $bannerForm->isValid()) {
-
             if ($bannerForm->getClickedButton()) {
                 if ('enable' === $bannerForm->getClickedButton()->getName()) {
                     $bannerMessage = $bannerForm->get('message')->getData();
@@ -1203,7 +1193,6 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $data = $form->getData();
 
             foreach ($data as $name => $value) {
@@ -1254,7 +1243,6 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $this->getDoctrine()
                 ->getManagerForClass(DeliveryForm::class)
                 ->persist($deliveryForm);
@@ -1281,7 +1269,6 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $this->getDoctrine()
                 ->getManagerForClass(DeliveryForm::class)
                 ->flush();
@@ -1349,7 +1336,6 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $apiApp = $form->getData();
 
             $this->getDoctrine()
@@ -1386,7 +1372,6 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $apiApp = $form->getData();
 
             $this->getDoctrine()
@@ -1420,9 +1405,12 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/promotions/{id}/coupons/new", name="admin_new_promotion_coupon")
      */
-    public function newPromotionCouponAction($id, Request $request,
+    public function newPromotionCouponAction(
+        $id,
+        Request $request,
         PromotionRepositoryInterface $promotionRepository,
-        PromotionCouponFactoryInterface $promotionCouponFactory)
+        PromotionCouponFactoryInterface $promotionCouponFactory
+    )
     {
         $promotion = $promotionRepository->find($id);
 
@@ -1432,7 +1420,6 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $promotionCoupon = $form->getData();
             $promotion->addCoupon($promotionCoupon);
 
@@ -1451,67 +1438,18 @@ class AdminController extends AbstractController
      */
     public function newCreditNoteAction(Request $request, PromotionCouponFactoryInterface $promotionCouponFactory)
     {
-        $form = $this->createForm(CreditNoteType::class, [
-            'type' => FixedDiscountPromotionActionCommand::TYPE
-        ]);
+        $form = $this->createForm(CreditNoteType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $data = $form->getData();
 
-            $promotion = $this->promotionFactory->createNew();
-            $promotion->setName($data['name']);
-            $promotion->setCouponBased(true);
-            $promotion->setCode(Uuid::uuid4()->toString());
-            $promotion->setPriority(1);
-
-            $promotionAction = new PromotionAction();
-            $promotionAction->setType($data['type']);
-
-            $promotionActionConfiguration = [];
-            switch ($data['type']) {
-                case FixedDiscountPromotionActionCommand::TYPE:
-                    $promotionActionConfiguration = ['amount' => $data['amount']];
-                    break;
-                case PercentageDiscountPromotionActionCommand::TYPE:
-                    $promotionActionConfiguration = ['percentage' => $data['percentage']];
-                    break;
-            }
-            $promotionAction->setConfiguration($promotionActionConfiguration);
-
-            $promotion->addAction($promotionAction);
-
-            // TODO Make this optional
-            $promotionRule = $this->promotionRuleFactory->createNew();
-            $promotionRule->setType(IsCustomerRuleChecker::TYPE);
-            $promotionRule->setConfiguration([
-                'username' => $data['username']
-            ]);
-
-            $promotion->addRule($promotionRule);
-
-            if (isset($data['restaurant']) && $data['restaurant'] instanceof LocalBusiness) {
-
-                $isRestaurantRule = $this->promotionRuleFactory->createNew();
-                $isRestaurantRule->setType(IsRestaurantRuleChecker::TYPE);
-                $isRestaurantRule->setConfiguration([
-                    'restaurant_id' => $data['restaurant']->getId()
-                ]);
-
-                $promotion->addRule($isRestaurantRule);
-            }
-
-            do {
-                $hash = bin2hex(random_bytes(20));
-                $code = strtoupper(substr($hash, 0, 6));
-            } while ($this->isUsedCouponCode($code));
-
-            $promotionCoupon = $promotionCouponFactory->createNew();
-            $promotionCoupon->setCode($code);
-            $promotionCoupon->setPerCustomerUsageLimit(1);
-
-            $promotion->addCoupon($promotionCoupon);
+            $promotion = $data->toPromotion(
+                $this->promotionFactory,
+                $this->promotionRuleFactory,
+                $this->promotionCouponRepository,
+                $promotionCouponFactory
+            );
 
             $this->entityManager->persist($promotion);
             $this->entityManager->flush();
@@ -1527,9 +1465,11 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/promotions/coupons/new", name="admin_new_promotion_coupon_from_template")
      */
-    public function newPromotionCouponFromTemplateAction(Request $request,
+    public function newPromotionCouponFromTemplateAction(
+        Request $request,
         PromotionRepositoryInterface $promotionRepository,
-        PromotionCouponFactoryInterface $promotionCouponFactory)
+        PromotionCouponFactoryInterface $promotionCouponFactory
+    )
     {
         $template = $request->query->get('template');
 
@@ -1562,7 +1502,6 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_promotions');
@@ -1746,7 +1685,6 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             if ($timeSlot->hasOpeningHours()) {
                 foreach ($timeSlot->getChoices() as $choice) {
                     $timeSlot->removeChoice($choice);
@@ -1807,7 +1745,6 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $objectManager->persist($packageSet);
             $objectManager->flush();
 
@@ -1843,17 +1780,18 @@ class AdminController extends AbstractController
         return $this->renderPackageSetForm($request, $packageSet, $objectManager);
     }
 
-    public function newOrderAction(Request $request,
+    public function newOrderAction(
+        Request $request,
         EntityManagerInterface $objectManager,
         OrderFactory $orderFactory,
-        OrderNumberAssignerInterface $orderNumberAssigner)
+        OrderNumberAssignerInterface $orderNumberAssigner
+    )
     {
         $delivery = new Delivery();
         $form = $this->createForm(NewOrderType::class, $delivery);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $delivery = $form->getData();
 
             $variantName = $form->get('variantName')->getData();
@@ -1920,7 +1858,6 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $this->addFlash(
                 'notice',
                 $this->translator->trans('global.changesSaved')
@@ -1954,7 +1891,6 @@ class AdminController extends AbstractController
         $form = $this->createForm(OrganizationType::class);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-
             $organization = $form->getData();
             $em = $this->getDoctrine()->getManager();
             $em->persist($organization);
@@ -1988,7 +1924,6 @@ class AdminController extends AbstractController
 
         $form = $this->createForm(AddOrganizationType::class, $organizationConfig);
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-
             $organization = $form->getData();
             $em = $this->getDoctrine()->getManager();
             $em->persist($organization);
@@ -1997,7 +1932,8 @@ class AdminController extends AbstractController
             return new RedirectResponse($this->generateUrl('admin_organizations'));
         }
 
-        return $this->render('admin/add_organization.html.twig',
+        return $this->render(
+            'admin/add_organization.html.twig',
             [
                 'form' => $form->createView(),
                 'organization' => $organization,
@@ -2015,7 +1951,6 @@ class AdminController extends AbstractController
 
         $form = $this->createForm(HubType::class, $hub);
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-
             $this->getDoctrine()->getManager()->persist($hub);
             $this->getDoctrine()->getManager()->flush();
 

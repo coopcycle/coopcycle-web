@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Sylius\Promotion;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Form\Model\Promotion as PromotionData;
 use AppBundle\Form\Type\MoneyType;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
@@ -62,5 +63,12 @@ class CreditNoteType extends AbstractType
                 'help' => 'form.credit_note.restaurant.help',
                 'required' => false,
             ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => PromotionData::class,
+        ));
     }
 }
