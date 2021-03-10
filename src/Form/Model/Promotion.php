@@ -50,14 +50,16 @@ class Promotion
 
         $promotion->addAction($promotionAction);
 
-        // TODO Make this optional
-        $promotionRule = $promotionRuleFactory->createNew();
-        $promotionRule->setType(IsCustomerRuleChecker::TYPE);
-        $promotionRule->setConfiguration([
-            'username' => $this->username
-        ]);
+        if (!empty($this->username)) {
 
-        $promotion->addRule($promotionRule);
+            $promotionRule = $promotionRuleFactory->createNew();
+            $promotionRule->setType(IsCustomerRuleChecker::TYPE);
+            $promotionRule->setConfiguration([
+                'username' => $this->username
+            ]);
+
+            $promotion->addRule($promotionRule);
+        }
 
         if ($this->restaurant instanceof LocalBusiness) {
 
