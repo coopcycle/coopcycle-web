@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import qs from 'qs'
 
 import LocationIQ from './locationiq.png'
 
@@ -19,9 +20,37 @@ function getAccessToken() {
   return accessToken
 }
 
+let viewbox = null
+function getViewbox() {
+  if (null === viewbox) {
+    const el = document.getElementById('locationiq')
+    if (el) {
+      viewbox = el.dataset.viewbox
+    }
+  }
+
+  return viewbox
+}
+
 export const onSuggestionsFetchRequested = function({ value }) {
 
-  client.get(`/v1/autocomplete.php?key=${getAccessToken()}&q=${encodeURIComponent(value.substring(0, 200))}&countrycodes=${this.country}&accept-language=${this.language}&dedupe=1&tag=place:house`)
+  const params = {
+    key: getAccessToken(),
+    q: value.substring(0, 200),
+    countrycodes: this.country,
+    'accept-language': this.language,
+    dedupe: '1',
+    // FIXME
+    // This can be useful to have addresses formatted for country,
+    // but it doesn't work when entering only the street name
+    postaladdress: '1',
+    viewbox: getViewbox(),
+    bounded: '1',
+    tag: 'highway:*,place:*',
+  }
+
+  // @see https://github.com/osm-search/Nominatim/blob/80df4d3b560f5b1fd550dcf8cdc09a992b69fee0/settings/partitionedtags.def
+  client.get(`/v1/autocomplete.php?${qs.stringify(params)}`)
     .then(response => {
 
       const predictionsAsSuggestions = response.data.map((result, idx) => ({

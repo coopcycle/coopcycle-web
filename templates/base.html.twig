@@ -101,7 +101,8 @@
       data-boundary-circle-latlon="{{ coopcycle_setting('latlng')|e('html_attr') }}"></div>
     {% elseif autocomplete_adapter|default('algolia') == 'locationiq' %}
     <div id="locationiq"
-      data-access-token="{{ locationiq_access_token }}"></div>
+      data-access-token="{{ locationiq_access_token }}"
+      data-viewbox="{{ coopcycle_bounding_rect() }}"></div>
     {% else %}
     <div id="algolia-places"
       data-app-id="{{ algolia_places_app_id }}"

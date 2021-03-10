@@ -118,6 +118,7 @@
     "postcss-loader": "^5.1.0",
     "prismjs": "^1.23.0",
     "prop-types": "^15.7.2",
+    "qs": "^6.9.6",
     "react": "^16.14.0",
     "react-autosuggest": "^10.1.0",
     "react-beautiful-dnd": "^13.0.0",
