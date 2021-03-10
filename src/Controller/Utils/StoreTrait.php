@@ -34,11 +34,11 @@ use Webmozart\Assert\Assert;
 
 trait StoreTrait
 {
-    abstract protected function getStoreList(Request $request);
+    abstract protected function getStoreList();
 
     public function storeListAction(Request $request)
     {
-        [ $stores, $pages, $page ] = $this->getStoreList($request);
+        [ $stores, $pages, $page ] = $this->getStoreList();
 
         $routes = $request->attributes->get('routes');
 

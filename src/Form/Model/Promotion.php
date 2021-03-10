@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\Model;
 
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
