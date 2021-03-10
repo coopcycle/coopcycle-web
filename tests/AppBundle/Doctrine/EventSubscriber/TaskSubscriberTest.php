@@ -12,7 +12,7 @@ use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;

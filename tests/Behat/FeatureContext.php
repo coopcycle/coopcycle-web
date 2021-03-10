@@ -33,7 +33,7 @@ use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\ExceptionResult;
 use Behat\Behat\Tester\Exception\PendingException;
 use Coduo\PHPMatcher\PHPMatcher;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
 use Faker\Generator as FakerGenerator;

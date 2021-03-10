@@ -8,7 +8,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Security\TokenStoreExtractor;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 
 class OrganizationSubscriber implements EventSubscriber
