@@ -550,47 +550,6 @@ form[name="store"] #store_imageFile_file {
   }
 }
 
-.restaurant-dashboard {
-  display: flex;
-  height: 500px;
-  &__list {
-    flex: 3;
-    padding-right: 15px;
-    overflow-y: scroll;
-    h4 {
-      margin-top: 0;
-    }
-  }
-  &__details {
-    display: flex;
-    flex: 2;
-    padding-left: 15px;
-    &__container {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 15px;
-      &--empty {
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-      }
-      & > h3 {
-        margin-top: 0;
-      }
-    }
-    &__dishes {
-      max-height: 60%;
-      overflow-y: scroll;
-    }
-    &__buttons {
-      margin-top: auto;
-    }
-  }
-}
-
 .text-monospace {
   font-family: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
 }
