@@ -4,6 +4,8 @@ import moment from 'moment'
 
 import { asText } from '../components/ShippingTimeRange'
 
+import './list.scss'
+
 const FulfillmentBadge = ({ range }) => {
 
   return (
