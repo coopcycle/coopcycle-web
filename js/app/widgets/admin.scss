@@ -1,1 +1,118 @@
-/* */
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+@import "../../../assets/css/vars.scss";
+
+form[name="restaurant"] #restaurant_imageFile_file,
+form[name="store"] #store_imageFile_file {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+// ------------------ Image uploader ------------------
+
+.image-uploader {
+  position: relative;
+  width: 230px;
+  height: 230px;
+  border: 1px dashed black;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+
+.image-uploader > label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// HACK : vertical-align submit button to bottom
+#closing_rule_submit {
+  margin-top: 25px;
+}
+
+.calendar-close {
+  color: $white;
+  background-color: $light-red;
+  border-top: 1px solid $red;
+  border-bottom: 1px solid $red;
+  list-style: none;
+  padding: $base-margin-xs $base-margin-xs;
+}
+
+.role-icons {
+  .fa {
+    margin-left: 5px;
+  }
+}
+
+.btn-confirm-delete {
+  display: flex;
+  margin: 0 auto;
+  transition: all 0.4s;
+  .message {
+    // @see https://stackoverflow.com/questions/3508605/how-can-i-transition-height-0-to-height-auto-using-css
+    max-width: 0;
+    height: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.4s;
+  }
+  &.confirm {
+    .fa {
+      margin-right: 4px;
+    }
+    .message {
+      max-width: 500px;
+      height: auto;
+    }
+  }
+}
+
+/* Dropzone */
+
+.dz-image {
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.dropzone {
+  &.dropzone--blue {
+
+    border: 3px dashed #0074d9;
+    text-align: center;
+    transition: border-color 0.4s;
+
+    &.dz-drag-hover,
+    &:hover {
+      border-style: dashed;
+      border-color: lighten(#0074d9, 40%);
+    }
+
+  }
+}
+
+form[name="restaurant"] {
+  .help-block.collapsed .fa-minus {
+    display: none;
+  }
+  .help-block:not(.collapsed) .fa-plus {
+    display: none;
+  }
+}
+
+.product__form__options {
+  &--sortable {
+    > * {
+      border: 1px solid #ebebeb;
+      padding: 10px;
+      background-color: #fff;
+    }
+  }
+}
