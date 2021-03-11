@@ -87,8 +87,12 @@
 
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('delivery-homepage') }}
+{% endblock %}
+
 {% block scripts %}
-{{ encore_entry_script_tags('search-address') }}
-{{ encore_entry_script_tags('restaurant-list') }}
-{{ encore_entry_script_tags('delivery-homepage') }}
+  {{ encore_entry_script_tags('search-address') }}
+  {{ encore_entry_script_tags('restaurant-list') }}
+  {{ encore_entry_script_tags('delivery-homepage') }}
 {% endblock %}

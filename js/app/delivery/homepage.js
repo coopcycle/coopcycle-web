@@ -1,5 +1,7 @@
 import AddressBook from './AddressBook'
 
+import './homepage.scss'
+
 const el = document.querySelector(`#delivery_dropoff_address`)
 
 if (el) {

@@ -1,0 +1,26 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+
+.homepage-delivery {
+  // https://stackoverflow.com/questions/8541081/css-set-a-background-color-which-is-50-of-the-width-of-the-window
+  background: #212121;
+  padding: 60px 60px 0;
+  @media (min-width: $screen-sm-min) {
+    background: linear-gradient(0deg, #FFF 20%, #212121 0%);
+  }
+  @media (max-width: $screen-xs-max) {
+    padding-bottom: 60px;
+  }
+  margin-bottom: 40px;
+  form {
+    background: #FFFFFF;
+    box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 50px 40px;
+    button[type="submit"] {
+      background-color: #0076FF;
+    }
+  }
+  &-text {
+    color: #e5e5e5;
+  }
+}
