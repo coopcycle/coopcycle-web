@@ -89,6 +89,7 @@
     "eslint-loader": "^4.0.2",
     "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-react": "^7.22.0",
+    "eslint-webpack-plugin": "^2.5.2",
     "font-awesome": "^4.7.0",
     "fontawesome-markers": "^4.6.1",
     "formik": "^2.2.6",

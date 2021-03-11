@@ -1,6 +1,7 @@
 var Encore = require('@symfony/webpack-encore')
 var webpack = require('webpack')
 var path = require('path')
+var ESLintPlugin = require('eslint-webpack-plugin')
 
 Encore
 
@@ -82,15 +83,8 @@ Encore
   .enableVersioning(Encore.isProduction())
 
 if (!Encore.isProduction()) {
-  Encore.enableEslintLoader((options) => {
-    options.rules = {
-      'no-console': 'warn',
-      'no-case-declarations': 'off',
-      'no-extra-boolean-cast': 'off',
-      'react/prop-types': 'off',
-      'react/display-name': 'off',
-    }
-  })
+  // https://github.com/symfony/webpack-encore/issues/847
+  Encore.addPlugin(new ESLintPlugin())
 }
 
 // https://github.com/webpack/webpack-dev-server/blob/master/CHANGELOG.md#400-beta0-2020-11-27
