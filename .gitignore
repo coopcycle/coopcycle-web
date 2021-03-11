@@ -18,6 +18,7 @@
 
 # Build with webpack
 /web/build/
+/web/build-cypress/
 
 # Symfony bundles
 /web/bundles/

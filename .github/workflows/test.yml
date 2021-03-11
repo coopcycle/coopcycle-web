@@ -113,6 +113,9 @@ jobs:
         run: until docker-compose exec -T webpack node_modules/.bin/encore dev; do sleep 5; done
       - name: Run Cypress
         uses: cypress-io/github-action@v2
+        with:
+          spec: |
+            cypress/integration/*.spec.js
       # - name: Print logs
       #   if: always()
       #   run: cat var/logs/*.log
@@ -124,3 +127,21 @@ jobs:
       #     pip install awscli
       #     tar czvf $GITHUB_SHA.tgz -C cypress/screenshots .
       #     aws --endpoint=$AWS_ENDPOINT s3 cp $GITHUB_SHA.tgz s3://cypress/$GITHUB_SHA.tgz --acl private
+  COMPONENT:
+    name: Run Component tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        country: [es]
+    env:
+      COOPCYCLE_COUNTRY: ${{ matrix.country }}
+      COOPCYCLE_LOCALE: ${{ matrix.country }}
+      ALGOLIA_PLACES_APP_ID: ${{ secrets.ALGOLIA_PLACES_APP_ID }}
+      ALGOLIA_PLACES_API_KEY: ${{ secrets.ALGOLIA_PLACES_API_KEY }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Cypress
+        uses: cypress-io/github-action@v2
+        with:
+          spec: cypress/component/address-autosuggest.spec.js
+          config: baseUrl=https://demo.coopcycle.org

@@ -21,6 +21,7 @@
   "dependencies": {
     "@mapbox/polyline": "^1.1.0",
     "co": "^4.6.0",
+    "cypress-webpack-preprocessor-v5": "^5.0.0-alpha.1",
     "date-holidays": "^1.9.1",
     "dotenv": "^8.2.0",
     "form-data": "^2.3.3",
@@ -53,6 +54,7 @@
     "@babel/register": "^7.13.8",
     "@cubejs-client/core": "^0.26.45",
     "@cubejs-client/react": "^0.26.49",
+    "@cypress/react": "^4.16.4",
     "@reduxjs/toolkit": "^1.5.0",
     "@release-notes/changelog-parser": "^0.1.2",
     "@stripe/react-stripe-js": "^1.4.0",
@@ -98,6 +100,7 @@
     "jest": "^26.6.3",
     "jquery": "^3.6.0",
     "js-cookie": "^2.2.1",
+    "js-yaml": "^4.0.0",
     "json-loader": "^0.5.7",
     "leaflet": "^1.7.1",
     "leaflet-area-select": "^1.0.5",
@@ -149,6 +152,7 @@
     "store": "^2.0.12",
     "styled-components": "^5.2.1",
     "to-string-loader": "^1.1.6",
+    "url-loader": "^4.1.1",
     "x-data-spreadsheet": "^1.1.8"
   }
 }
