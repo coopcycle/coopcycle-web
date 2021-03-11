@@ -706,7 +706,12 @@ export const geocode = (text) => {
   const adapter = (el && el.dataset.value) || 'algolia'
 
   return new Promise((resolve) => {
-    localize('geocode', adapter, null)(text, (getCountry() || 'en'), localeDetector())
+
+    const fakeThis = {
+      country: getCountry() || 'en'
+    }
+
+    localize('geocode', adapter, fakeThis)(text, (getCountry() || 'en'), localeDetector())
       .then(address => {
 
         if (!address || (address.isPrecise && !address.needsGeocoding)) {
