@@ -28,9 +28,9 @@ fi
 composer self-update --2
 
 if [ "$APP_ENV" = 'prod' ]; then
-    composer install --prefer-dist --no-plugins --no-progress --no-suggest --no-dev --optimize-autoloader --classmap-authoritative
+    composer install --prefer-dist --no-plugins --no-progress --no-dev --optimize-autoloader --classmap-authoritative
 else
-    composer install --prefer-dist --no-plugins --no-progress --no-suggest
+    composer install --prefer-dist --no-plugins --no-progress
 fi
 
 php bin/console doctrine:database:create --if-not-exists --env=$APP_ENV
