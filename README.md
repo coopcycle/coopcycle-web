@@ -63,6 +63,15 @@ To configure geocoding, create an account on [OpenCage](https://opencagedata.com
 
 ### Run the application
 
+#### Pull the Docker containers (optional)
+
+We have prebuilt some images and uploaded them to [Docker Hub](https://hub.docker.com/u/coopcycle).
+To avoid building those images locally, you can pull them first.
+
+```
+docker-compose up
+```
+
 #### Start the Docker containers
 
 ```
