@@ -34,6 +34,7 @@ import {
   poweredBy as poweredByLocationIQ,
   transformSuggestion as transformSuggestionLocationIQ,
   geocode as geocodeLocationIQ,
+  configure as configureLocationIQ,
   } from './AddressAutosuggest/locationiq'
 
 import {
@@ -108,6 +109,7 @@ const adapters = {
     poweredBy: poweredByLocationIQ,
     transformSuggestion: transformSuggestionLocationIQ,
     geocode: geocodeLocationIQ,
+    configure: configureLocationIQ,
   },
   'geocode-earth': {
     onSuggestionsFetchRequested: onSuggestionsFetchRequestedGE,
@@ -306,7 +308,8 @@ class AddressAutosuggest extends Component {
     let adapter
     let adapterOptions = {
       algolia: {},
-      'geocode-earth': {}
+      'geocode-earth': {},
+      locationiq: {},
     }
     if (Object.prototype.hasOwnProperty.call(props, 'algolia')) {
       adapter = 'algolia'
@@ -314,15 +317,20 @@ class AddressAutosuggest extends Component {
     } else if (Object.prototype.hasOwnProperty.call(props, 'geocodeEarth')) {
       adapter = 'geocode-earth'
       adapterOptions['geocode-earth'] = props.geocodeEarth
+    } else if (Object.prototype.hasOwnProperty.call(props, 'locationIQ')) {
+      adapter = 'locationiq'
+      adapterOptions.locationiq = props.locationIQ
     } else {
 
       const adapterEl = document.getElementById('autocomplete-adapter')
       const algoliaEl = document.getElementById('algolia-places')
       const geocodeEarthEl = document.getElementById('geocode-earth')
+      const locationIQEl = document.getElementById('locationiq')
 
       adapter = (adapterEl && adapterEl.dataset.value) || 'algolia'
       adapterOptions.algolia = (algoliaEl && { ...algoliaEl.dataset }) || {}
       adapterOptions['geocode-earth'] = (geocodeEarthEl && { ...geocodeEarthEl.dataset }) || {}
+      adapterOptions.locationiq = (locationIQEl && { ...locationIQEl.dataset }) || {}
     }
 
     const configure = localize('configure', adapter, this)

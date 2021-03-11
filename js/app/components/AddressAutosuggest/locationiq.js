@@ -10,24 +10,12 @@ const client = axios.create({
 
 let accessToken = null
 function getAccessToken() {
-  if (null === accessToken) {
-    const el = document.getElementById('locationiq')
-    if (el) {
-      accessToken = el.dataset.accessToken
-    }
-  }
 
   return accessToken
 }
 
 let viewbox = null
 function getViewbox() {
-  if (null === viewbox) {
-    const el = document.getElementById('locationiq')
-    if (el) {
-      viewbox = el.dataset.viewbox
-    }
-  }
 
   return viewbox
 }
@@ -114,4 +102,9 @@ export const geocode = function (text, country = 'en', language = 'en') {
         resolve(null)
       })
   })
+}
+
+export const configure = function (options) {
+  accessToken = options.accessToken
+  viewbox = options.viewbox
 }
