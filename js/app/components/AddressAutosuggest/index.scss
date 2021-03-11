@@ -1,0 +1,116 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+@import "../../../../assets/css/vars.scss";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
+
+@import "../../../../assets/css/react-autosuggest.scss";
+
+.address-autosuggest {
+
+  &__container {
+    margin-bottom: $form-group-margin-bottom;
+  }
+
+  &__input-container {
+    display: flex;
+  }
+
+  &__input-wrapper {
+    flex: 1;
+    position: relative;
+
+    &:before {
+      font-family: 'FontAwesome';
+      content: '\F041';
+      color: white;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+
+      font-size: 22px;
+      text-align: center;
+      width: $input-height-base;
+      line-height: $input-height-base;
+      background-color: $main-blue;
+
+      border-top-left-radius: $input-border-radius;
+      border-bottom-left-radius: $input-border-radius;
+    }
+  }
+
+  &__input {
+    @extend .form-control;
+    text-indent: $input-height-base;
+    padding-right: $input-height-base;
+    &--addon {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+
+  &__clear {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  &__close-button {
+    border: none;
+    background-color: transparent;
+    font-size: $font-size-large;
+    cursor: pointer;
+    height: 100%;
+    width: $input-height-base;
+  }
+
+  &__section-title {
+    padding: 5px 10px;
+  }
+
+  &__suggestions-container {
+
+    $suggestions-container: &;
+
+    &__footer {
+      display: none;
+      justify-content: flex-end;
+      padding: 4px;
+      img {
+        display: inline-block;
+      }
+    }
+
+    &--open {
+      #{$suggestions-container}__footer {
+        display: flex;
+      }
+    }
+  }
+
+  &__addon {
+    background-color: $main-blue;
+    display: flex;
+    align-items: center;
+    padding-left: 12px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    > span {
+      white-space: nowrap;
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+    }
+  }
+
+}
+
+.has-error {
+  .address-autosuggest {
+    &__container {
+      &:before {
+        background-color: $state-danger-text;
+      }
+    }
+  }
+}

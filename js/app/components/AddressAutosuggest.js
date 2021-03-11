@@ -11,6 +11,7 @@ import axios from 'axios'
 
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
+import './AddressAutosuggest/index.scss'
 
 import {
   placeholder as placeholderGB,
