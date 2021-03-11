@@ -69,7 +69,7 @@ We have prebuilt some images and uploaded them to [Docker Hub](https://hub.docke
 To avoid building those images locally, you can pull them first.
 
 ```
-docker-compose up
+docker-compose pull
 ```
 
 #### Start the Docker containers
