@@ -261,9 +261,9 @@ const generic = {
 }
 
 const localize = (func, adapter, thisArg) => {
-  if (Object.prototype.hasOwnProperty.call(localized, getCountry())
-  &&  Object.prototype.hasOwnProperty.call(localized[getCountry()], func)) {
-    return localized[getCountry()][func].bind(thisArg)
+  if (Object.prototype.hasOwnProperty.call(localized, thisArg.country)
+  &&  Object.prototype.hasOwnProperty.call(localized[thisArg.country], func)) {
+    return localized[thisArg.country][func].bind(thisArg)
   }
 
   if (Object.prototype.hasOwnProperty.call(adapters, adapter)
@@ -305,6 +305,9 @@ class AddressAutosuggest extends Component {
   constructor(props) {
     super(props)
 
+    this.country = props.country || getCountry() || 'en'
+    this.language = props.language || localeDetector()
+
     let adapter
     let adapterOptions = {
       algolia: {},
@@ -335,9 +338,6 @@ class AddressAutosuggest extends Component {
 
     const configure = localize('configure', adapter, this)
     configure(adapterOptions[adapter])
-
-    this.country = props.country || getCountry() || 'en'
-    this.language = props.language || localeDetector()
 
     const onSuggestionsFetchRequestedBase =
       localize('onSuggestionsFetchRequested', adapter, this)
