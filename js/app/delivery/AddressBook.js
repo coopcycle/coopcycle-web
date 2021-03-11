@@ -108,7 +108,6 @@ export default function(el, options) {
     <AddressAutosuggest
       addresses={ addresses }
       address={ address }
-      geohash={ '' }
       required={ true }
       reportValidity={ true }
       preciseOnly={ true }

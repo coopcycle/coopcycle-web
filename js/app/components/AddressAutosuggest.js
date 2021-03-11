@@ -676,6 +676,7 @@ AddressAutosuggest.defaultProps = {
   geohash: '',
   containerProps: {},
   attachToBody: false,
+  onAddressSelected: () => {},
 }
 
 AddressAutosuggest.propTypes = {

@@ -37,8 +37,7 @@ describe('Address Autosuggest', () => {
         apiKey: Cypress.env('ALGOLIA_PLACES_API_KEY'),
         aroundLatLng: '40.416775,-3.703790',
         addressTemplate: 'city'
-      }}
-      onAddressSelected={() => console.log('Selected')} />)
+      }} />)
 
     this.expectations.es.forEach(expectation => {
 
@@ -63,8 +62,7 @@ describe('Address Autosuggest', () => {
 
     mount(<AddressAutosuggest
       country="gb"
-      language="en"
-      onAddressSelected={() => console.log('Selected')} />)
+      language="en" />)
 
     cy.get('#cypress-root input[type="search"]')
       .clear()
@@ -111,8 +109,7 @@ describe('Address Autosuggest', () => {
         geocodeEarth={{
           apiKey: Cypress.env('GEOCODE_EARTH_API_KEY'),
           boundaryCircleLatlon: '48.856613,2.352222'
-        }}
-        onAddressSelected={() => console.log('Selected')} />, $el[0])
+        }} />, $el[0])
 
       this.expectationsFr.forEach(expectation => {
 

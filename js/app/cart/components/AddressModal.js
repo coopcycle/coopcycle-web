@@ -42,7 +42,6 @@ class AddressModal extends Component {
           fuseSearchOptions={{ limit: 3 }}
           autofocus
           address={ '' }
-          geohash={ '' }
           onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
         { this.props.isAddressTooFar && (
           <div className="text-center">

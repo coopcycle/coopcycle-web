@@ -373,8 +373,6 @@ class TaskModalContent extends React.Component {
                 <AddressAutosuggest
                   autofocus={ !Object.prototype.hasOwnProperty.call(values, '@id') }
                   address={ values.address }
-                  addresses={ [] }
-                  geohash={ '' }
                   onAddressSelected={ (value, address) => {
                     const cleanAddress =
                       _.omit(address, ['isPrecise', 'latitude', 'longitude', 'addressRegion', 'geohash', 'needsGeocoding'])

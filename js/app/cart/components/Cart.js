@@ -42,7 +42,6 @@ class Cart extends Component {
                 <AddressAutosuggest
                   addresses={ this.props.addresses }
                   address={ this.props.shippingAddress }
-                  geohash={ '' }
                   key={ this.props.streetAddress }
                   onAddressSelected={ (value, address) => this.props.changeAddress(address) }
                   disabled={ this.props.isCollectionOnly || this.props.takeaway }
