@@ -147,7 +147,8 @@ const TemplateItem = ({ item, setFieldValues, onClickRemove, errors }) => {
             address={ item.address }
             onAddressSelected={ (value, address) => {
               const cleanAddress = _.pick(address, ['@id', 'streetAddress'])
-              setFieldValues(item, { address: cleanAddress })
+              const mergedAddress = { ...item.address, ...cleanAddress }
+              setFieldValues(item, { address: mergedAddress })
             }}
             containerProps={{ style: { marginBottom: 0, marginRight: '0.5rem' } }}
             attachToBody />
