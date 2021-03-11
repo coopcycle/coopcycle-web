@@ -59,6 +59,45 @@ describe('Address Autosuggest', () => {
 
   })
 
+  it('search address (gb)', function () {
+
+    mount(<AddressAutosuggest
+      country="gb"
+      language="en"
+      onAddressSelected={() => console.log('Selected')} />)
+
+    cy.get('#cypress-root input[type="search"]')
+      .clear()
+      .type('yo24', { timeout: 5000, delay: 30 })
+
+    cy.get('#cypress-root')
+      .find('ul[role="listbox"] li', { timeout: 5000 })
+      .invoke('text')
+      .should((suggestions) => {
+        expect(suggestions).to.include('YO24 1AA')
+      })
+
+    cy.get('#cypress-root input[type="search"]')
+      .type('4n', { timeout: 5000, delay: 30 })
+
+    cy.get('#cypress-root')
+      .find('ul[role="listbox"] li', { timeout: 5000 })
+      .invoke('text')
+      .should((suggestions) => {
+        expect(suggestions).to.include('YO24 4ND')
+      })
+
+    cy.get('#cypress-root')
+      .find('ul[role="listbox"] li', { timeout: 5000 })
+      .contains('YO24 4ND')
+      .click()
+
+    cy.get('#cypress-root')
+      .find('.address-autosuggest__addon')
+      .should('have.text', 'YO24 4ND')
+
+  })
+
   it.skip('search address (Geocode.Earth, fr)', function () {
 
     cy.intercept('/address-autosuggest.html', { fixture: 'components/address-autosuggest.html' })
