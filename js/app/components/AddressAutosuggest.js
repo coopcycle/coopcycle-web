@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { createPortal } from 'react-dom'
 import Autosuggest from 'react-autosuggest'
+import { defaultTheme } from 'react-autosuggest/dist/theme'
 import PropTypes from 'prop-types'
 import ngeohash from 'ngeohash'
 import Fuse from 'fuse.js'
@@ -48,20 +49,12 @@ import {
 import { storage, getFromCache } from './AddressAutosuggest/cache'
 
 const theme = {
-  container:                'react-autosuggest__container address-autosuggest__container',
-  containerOpen:            'react-autosuggest__container--open',
-  input:                    'react-autosuggest__input address-autosuggest__input',
-  inputOpen:                'react-autosuggest__input--open',
-  inputFocused:             'react-autosuggest__input--focused',
-  suggestionsContainer:     'react-autosuggest__suggestions-container address-autosuggest__suggestions-container',
-  suggestionsContainerOpen: 'react-autosuggest__suggestions-container--open address-autosuggest__suggestions-container--open',
-  suggestionsList:          'react-autosuggest__suggestions-list',
-  suggestion:               'react-autosuggest__suggestion',
-  suggestionFirst:          'react-autosuggest__suggestion--first',
-  suggestionHighlighted:    'react-autosuggest__suggestion--highlighted',
-  sectionContainer:         'react-autosuggest__section-container',
-  sectionContainerFirst:    'react-autosuggest__section-container--first',
-  sectionTitle:             'react-autosuggest__section-title address-autosuggest__section-title'
+  ...defaultTheme,
+  container:                `${defaultTheme.container} address-autosuggest__container`,
+  input:                    `${defaultTheme.input} address-autosuggest__input`,
+  suggestionsContainer:     `${defaultTheme.suggestionsContainer} address-autosuggest__suggestions-container`,
+  suggestionsContainerOpen: `${defaultTheme.suggestionsContainerOpen} address-autosuggest__suggestions-container--open`,
+  sectionTitle:             `${defaultTheme.sectionTitle} address-autosuggest__section-title`
 }
 
 const defaultFuseOptions = {
