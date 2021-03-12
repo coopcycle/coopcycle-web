@@ -35,6 +35,7 @@ const getSearchParams = (q, country, language) => ({
   countrycodes: country,
   'accept-language': language,
   dedupe: '1',
+  limit: '5',
   // FIXME
   // This can be useful to have addresses formatted for country,
   // but it doesn't work when entering only the street name
