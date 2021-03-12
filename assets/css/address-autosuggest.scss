@@ -107,3 +107,13 @@
     }
   }
 }
+
+.form-group-sm {
+  .address-autosuggest {
+    &__input-wrapper {
+      &:before {
+        font-size: 18px;
+      }
+    }
+  }
+}
