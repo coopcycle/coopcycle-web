@@ -26,7 +26,16 @@ const getFormattedAddress = (result) => {
     return result.postal_address
   }
 
-  return result.display_name
+  // When the house number is missing,
+  // LocationIQ returns results with too much useless details
+  // For ex, when you type "calle de toledo", it returns
+  //
+  // Calle de Toledo, Embajadores, Madrid, Comunidad de Madrid, 28001, España
+  return [
+    result.address.name,
+    `${result.address.postcode} ${result.address.city}`,
+    result.address.country
+  ].join(', ')
 }
 
 const getSearchParams = (q, country, language) => ({
