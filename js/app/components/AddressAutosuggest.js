@@ -8,6 +8,7 @@ import { filter, debounce, throttle } from 'lodash'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import axios from 'axios'
+import { /*Form, */Input, /*Button, */Popover } from 'antd'
 
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
@@ -46,6 +47,8 @@ import {
   } from './AddressAutosuggest/geocode-earth'
 
 import { storage, getFromCache } from './AddressAutosuggest/cache'
+
+import 'antd/lib/button/style/index.css'
 
 const theme = {
   container:                'react-autosuggest__container address-autosuggest__container',
@@ -120,6 +123,61 @@ const adapters = {
   },
 }
 
+{/*
+    <div className="d-flex justify-content-between align-items-center">
+      <Input placeholder="Número de portal" />
+      <Button type="primary">OK</Button>
+    </div>
+    */}
+
+const HouseNumberForm = React.forwardRef((props, ref) => {
+
+  // const propsWithClassName = {
+  //   ...props,
+  //   className: 'form-control'
+  // }
+
+  return (
+    <Input.Search
+      placeholder="input search text"
+      allowClear
+      enterButton="OK"
+      ref={ ref }
+      // onPressEnter={  }
+      onChange={ props.onChange }
+      onSearch={ props.onPressEnter }
+      // ref={ inputRef }
+      // size="large"
+      // onSearch={onSearch}
+    />
+  )
+})
+
+/*
+const HouseNumberForm = () => {
+
+  // const inputRef = React.useRef(null)
+
+  // React.useEffect(() => {
+
+  //   console.log('EFFECT')
+
+  // }, [])
+
+  return (
+
+    <Input.Search
+      placeholder="input search text"
+      allowClear
+      enterButton="OK"
+      // ref={ inputRef }
+      // size="large"
+      // onSearch={onSearch}
+    />
+  )
+}
+*/
+
 // WARNING
 // Do *NOT* use arrow functions, to allow binding
 const generic = {
@@ -164,6 +222,8 @@ const generic = {
       suggestions,
       multiSection,
       loading: false,
+      isPopoverVisible: false,
+      currentPopoverAddress: null
     }
   },
   onSuggestionsFetchRequested: function() {
@@ -177,6 +237,24 @@ const generic = {
 
       let address = this.transformSuggestion(suggestion)
 
+      console.log(address)
+
+      if (!address.isPrecise) {
+
+        // this.autosuggest.input.setCustomValidity(this.props.t('CART_ADDRESS_MODAL_HELP_TEXT'))
+        // if (HTMLInputElement.prototype.reportValidity) {
+        //   this.autosuggest.input.reportValidity()
+        // }
+
+        // setTimeout(() => document.querySelector('input[type="search"]').setSelectionRange(17, 17), 0)
+
+        this.setState({
+          isPopoverVisible: true,
+          currentPopoverSuggestion: suggestion,
+        })
+      }
+
+      /*
       // If the component was configured for,
       // report validity if the address is not precise enough
       if (this.props.reportValidity && this.props.preciseOnly && (!address.isPrecise && !address.needsGeocoding)) {
@@ -216,6 +294,7 @@ const generic = {
         }
         this.props.onAddressSelected(this.state.value, address, suggestion.type)
       }
+      */
     }
 
     if (suggestion.type === 'address') {
@@ -394,6 +473,8 @@ class AddressAutosuggest extends Component {
     this.useCache = localize('useCache', adapter, this)
 
     this.state = this.getInitialState()
+
+    this.houseNumberInputRef = React.createRef()
   }
 
   componentDidMount() {
@@ -425,8 +506,17 @@ class AddressAutosuggest extends Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+
+    if (!prevState.isPopoverVisible && this.state.isPopoverVisible) {
+      console.log('FOCUS ON INPUT')
+      this.houseNumberInputRef.current.focus()
+    }
+
+  }
+
   onClear() {
-    this.setState({ value: '' })
+    this.setState({ value: '', isPopoverVisible: false })
 
     if (this.props.reportValidity) {
       this.autosuggest.input.setCustomValidity('')
@@ -549,14 +639,42 @@ class AddressAutosuggest extends Component {
 
     return (
       <div className="address-autosuggest__input-container">
-        <div className="address-autosuggest__input-wrapper">
-          <input { ...inputProps } />
-          { this.state.value && (
-            <button className="address-autosuggest__close-button address-autosuggest__clear" onClick={ () => this.onClear() }>
-              <i className="fa fa-times-circle"></i>
-            </button>
+        <Popover content={ (<HouseNumberForm
+            ref={ this.houseNumberInputRef }
+            onPressEnter={ () => console.log('ENTER') }
+            onChange={ e => {
+              // console.log(e.target.value)
+              // console.log(this.state.currentPopoverSuggestion)
+
+              const { locationiq } = this.state.currentPopoverSuggestion
+
+              const newValue = [
+                locationiq.address.name,
+                e.target.value,
+                `${locationiq.address.postcode} ${locationiq.address.city}`,
+                locationiq.address.country
+              ].join(', ')
+
+              // console.log(newValue)
+
+              this.setState({ value: newValue })
+            }} />
           )}
-        </div>
+          title={ this.props.t('CART_ADDRESS_MODAL_HELP_TEXT') }
+          trigger="focus"
+          placement="bottom"
+          color="red"
+          visible={ this.state.isPopoverVisible }
+          onVisibleChange={ visible => console.log('VISIBLE', visible) }>
+          <div className="address-autosuggest__input-wrapper">
+            <input { ...inputProps } />
+            { this.state.value && (
+              <button className="address-autosuggest__close-button address-autosuggest__clear" onClick={ () => this.onClear() }>
+                <i className="fa fa-times-circle"></i>
+              </button>
+            )}
+          </div>
+        </Popover>
         { this.state.postcode && (
           <div className="address-autosuggest__addon">
             <span>{ this.state.postcode.postcode }</span>
