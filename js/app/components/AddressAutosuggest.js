@@ -510,7 +510,7 @@ class AddressAutosuggest extends Component {
 
     if (!prevState.isPopoverVisible && this.state.isPopoverVisible) {
       console.log('FOCUS ON INPUT')
-      this.houseNumberInputRef.current.focus()
+      setTimeout(() => this.houseNumberInputRef.current.focus(), 0)
     }
 
   }
