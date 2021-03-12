@@ -666,6 +666,7 @@ AddressAutosuggest.defaultProps = {
   attachToBody: false,
   onAddressSelected: () => {},
   inputProps: {},
+  autofocus: false,
 }
 
 AddressAutosuggest.propTypes = {
@@ -684,6 +685,7 @@ AddressAutosuggest.propTypes = {
   containerProps: PropTypes.object,
   attachToBody: PropTypes.bool,
   inputProps: PropTypes.object,
+  autofocus: PropTypes.bool,
 }
 
 export default withTranslation()(AddressAutosuggest)
