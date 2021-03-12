@@ -75,7 +75,31 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         if (null === $object->getId() && !in_array('cart', $context['groups'])) {
             $data = $this->objectNormalizer->normalize($object, $format, $context);
         } else {
+
+            // FIXME
+            //
+            // This is here to avoid errors like
+            // > Unable to generate an IRI for "AppBundle\Entity\Address"
+            //
+            // 1/ The customer has a cart at restaurant A, with shippingAddress = null
+            // 2/ The customer goes to restaurant B, and changes the address
+            // 3/ The cart is not persisted, and shippingAddress.id = NULL
+
+            $fixShippingAddress = false;
+
+            $shippingAddress = $object->getShippingAddress();
+            if (null !== $shippingAddress && null === $shippingAddress->getId()) {
+                $object->setShippingAddress(null);
+                $shippingAddressData = $this->objectNormalizer->normalize($shippingAddress, $format, $context);
+                $fixShippingAddress = true;
+            }
+
             $data = $this->normalizer->normalize($object, $format, $context);
+
+            if ($fixShippingAddress) {
+                $object->setShippingAddress($shippingAddress);
+                $data['shippingAddress'] = $shippingAddressData;
+            }
         }
 
         $restaurant = $object->getRestaurant();
