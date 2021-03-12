@@ -106,8 +106,10 @@ document.addEventListener('DOMContentLoaded', function() {
         {
           required: el.required,
           address,
-          inputId: el.getAttribute('id'),
-          inputName: el.getAttribute('name'),
+          inputProps: {
+            id: el.getAttribute('id'),
+            name: el.getAttribute('name'),
+          },
           onAddressSelected: (text, address) => {
             for (const addressProp in addressElements) {
               const addressEl = document.getElementById(

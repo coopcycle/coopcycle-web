@@ -614,27 +614,17 @@ class AddressAutosuggest extends Component {
 
     const { value, suggestions, multiSection } = this.state
 
-    let inputProps = {
+    const inputProps = {
       placeholder: this.placeholder(),
       value,
       onChange: this.onChange.bind(this),
       type: "search",
       required: this.props.required,
       disabled: this.props.disabled || this.state.loading,
-    }
-
-    if (this.props.inputName) {
-      inputProps = {
-        ...inputProps,
-        name: this.props.inputName,
-      }
-    }
-
-    if (this.props.inputId) {
-      inputProps = {
-        ...inputProps,
-        id: this.props.inputId,
-      }
+      // FIXME
+      // We may override important props such as value, onChange
+      // We need to omit some props
+      ...this.props.inputProps,
     }
 
     const highlightFirstSuggestion = this.highlightFirstSuggestion()
@@ -671,12 +661,11 @@ AddressAutosuggest.defaultProps = {
   preciseOnly: false,
   fuseSearchOptions: {},
   disabled: false,
-  inputName: undefined,
-  inputId: undefined,
   geohash: '',
   containerProps: {},
   attachToBody: false,
   onAddressSelected: () => {},
+  inputProps: {},
 }
 
 AddressAutosuggest.propTypes = {
@@ -692,10 +681,9 @@ AddressAutosuggest.propTypes = {
   fuseOptions: PropTypes.object,
   fuseSearchOptions: PropTypes.object,
   disabled: PropTypes.bool,
-  inputName: PropTypes.string,
-  inputId: PropTypes.string,
   containerProps: PropTypes.object,
   attachToBody: PropTypes.bool,
+  inputProps: PropTypes.object,
 }
 
 export default withTranslation()(AddressAutosuggest)
