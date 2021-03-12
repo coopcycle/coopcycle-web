@@ -414,7 +414,7 @@ class AddressAutosuggest extends Component {
     })
 
     if (this.props.autofocus) {
-      this.autosuggest.input.focus()
+      setTimeout(() => this.autosuggest.input.focus(), 0)
     }
   }
 
@@ -622,6 +622,13 @@ class AddressAutosuggest extends Component {
 
     const highlightFirstSuggestion = this.highlightFirstSuggestion()
 
+    let otherProps = {}
+    if (Object.prototype.hasOwnProperty.call(this.props, 'id')) {
+      otherProps = {
+        id: this.props.id
+      }
+    }
+
     return (
       <Autosuggest
         ref={ autosuggest => this.autosuggest = autosuggest }
@@ -640,7 +647,8 @@ class AddressAutosuggest extends Component {
         getSectionSuggestions={ getSectionSuggestions }
         multiSection={ multiSection }
         inputProps={ inputProps }
-        containerProps={ this.props.containerProps } />
+        containerProps={ this.props.containerProps }
+        { ...otherProps } />
     )
   }
 }

@@ -40,6 +40,7 @@ class Cart extends Component {
             <div className="cart">
               <div>
                 <AddressAutosuggest
+                  id="main"
                   addresses={ this.props.addresses }
                   address={ this.props.shippingAddress }
                   key={ this.props.streetAddress }
