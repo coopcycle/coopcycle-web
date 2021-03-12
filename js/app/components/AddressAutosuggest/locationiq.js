@@ -97,7 +97,7 @@ const locationiqToAddress = (locationiq) => ({
   addressRegion: (locationiq.address && locationiq.address.state) || '',
   postalCode: (locationiq.address && locationiq.address.postcode) || '',
   streetAddress: getFormattedAddress(locationiq),
-  isPrecise: true,
+  isPrecise: locationiq.type === 'house' || Object.prototype.hasOwnProperty.call(locationiq.address, 'house_number'),
   needsGeocoding: false,
 })
 
