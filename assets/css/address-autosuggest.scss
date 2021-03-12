@@ -100,7 +100,7 @@
 
 .has-error {
   .address-autosuggest {
-    &__container {
+    &__input-wrapper {
       &:before {
         background-color: $state-danger-text;
       }
