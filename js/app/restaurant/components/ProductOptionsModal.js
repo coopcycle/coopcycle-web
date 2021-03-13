@@ -24,7 +24,7 @@ const OptionValue = ({ index, option, optionValue }) => {
   const { setValueQuantity } = useProductOptions()
 
   return (
-    <div className="radio nomargin">
+    <div className="radio m-0">
       <label className="d-flex align-items-center">
         <input
           type="radio"
