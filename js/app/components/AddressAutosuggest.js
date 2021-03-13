@@ -9,6 +9,7 @@ import { filter, debounce, throttle } from 'lodash'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import axios from 'axios'
+import classNames from 'classnames'
 
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
@@ -552,23 +553,29 @@ class AddressAutosuggest extends Component {
   renderInputComponent(inputProps) {
 
     return (
-      <div className="address-autosuggest__input-container">
+      <div className={ classNames({
+        'address-autosuggest__input-container': true,
+        'has-error': this.props.error
+        })}>
         <div className="address-autosuggest__input-wrapper">
           <input { ...inputProps } />
+          { this.state.postcode && (
+            <div className="address-autosuggest__addon">
+              <span>{ this.state.postcode.postcode }</span>
+              <button className="address-autosuggest__close-button" onClick={ () => this.setState({ value: '', postcode: null }) }>
+                <i className="fa fa-times-circle"></i>
+              </button>
+            </div>
+          ) }
           { this.state.value && (
             <button className="address-autosuggest__close-button address-autosuggest__clear" onClick={ () => this.onClear() }>
               <i className="fa fa-times-circle"></i>
             </button>
           )}
         </div>
-        { this.state.postcode && (
-          <div className="address-autosuggest__addon">
-            <span>{ this.state.postcode.postcode }</span>
-            <button className="address-autosuggest__close-button" onClick={ () => this.setState({ value: '', postcode: null }) }>
-              <i className="fa fa-times-circle"></i>
-            </button>
-          </div>
-        ) }
+        { this.props.helpText.length > 0 && (
+          <span className="help-block">{ this.props.helpText }</span>
+        )}
       </div>
     )
   }
@@ -676,6 +683,8 @@ AddressAutosuggest.defaultProps = {
   onAddressSelected: () => {},
   inputProps: {},
   autofocus: false,
+  error: false,
+  helpText: '',
 }
 
 AddressAutosuggest.propTypes = {
@@ -695,6 +704,8 @@ AddressAutosuggest.propTypes = {
   attachToBody: PropTypes.bool,
   inputProps: PropTypes.object,
   autofocus: PropTypes.bool,
+  error: PropTypes.bool,
+  helpText: PropTypes.string,
 }
 
 export default withTranslation()(AddressAutosuggest)

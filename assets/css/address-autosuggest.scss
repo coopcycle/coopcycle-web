@@ -4,12 +4,8 @@
     margin-bottom: $form-group-margin-bottom;
   }
 
-  &__input-container {
-    display: flex;
-  }
-
   &__input-wrapper {
-    flex: 1;
+    display: flex;
     position: relative;
 
     &:before {
