@@ -573,9 +573,6 @@ class AddressAutosuggest extends Component {
             </button>
           )}
         </div>
-        { this.props.helpText.length > 0 && (
-          <span className="help-block">{ this.props.helpText }</span>
-        )}
       </div>
     )
   }
@@ -684,7 +681,6 @@ AddressAutosuggest.defaultProps = {
   inputProps: {},
   autofocus: false,
   error: false,
-  helpText: '',
 }
 
 AddressAutosuggest.propTypes = {
@@ -705,7 +701,6 @@ AddressAutosuggest.propTypes = {
   inputProps: PropTypes.object,
   autofocus: PropTypes.bool,
   error: PropTypes.bool,
-  helpText: PropTypes.string,
 }
 
 export default withTranslation()(AddressAutosuggest)
