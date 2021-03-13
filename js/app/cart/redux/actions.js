@@ -17,6 +17,7 @@ export const REPLACE_ERRORS = 'REPLACE_ERRORS'
 export const SET_DATE_MODAL_OPEN = 'SET_DATE_MODAL_OPEN'
 export const CLOSE_ADDRESS_MODAL = 'CLOSE_ADDRESS_MODAL'
 export const GEOCODING_FAILURE = 'GEOCODING_FAILURE'
+export const OPEN_ADDRESS_MODAL = 'OPEN_ADDRESS_MODAL'
 
 export const ENABLE_TAKEAWAY = 'ENABLE_TAKEAWAY'
 export const DISABLE_TAKEAWAY = 'DISABLE_TAKEAWAY'
@@ -33,6 +34,7 @@ export const setLastAddItemRequest = createAction(SET_LAST_ADD_ITEM_REQUEST, (ur
 export const clearLastAddItemRequest = createAction(CLEAR_LAST_ADD_ITEM_REQUEST)
 export const setDateModalOpen = createAction(SET_DATE_MODAL_OPEN)
 export const closeAddressModal = createAction(CLOSE_ADDRESS_MODAL)
+export const openAddressModal = createAction(OPEN_ADDRESS_MODAL)
 
 export const geocodingFailure = createAction(GEOCODING_FAILURE)
 
@@ -221,6 +223,11 @@ export function sync() {
 
     const { cart } = getState()
 
+    if (cart.takeaway) {
+      $('#menu').LoadingOverlay('hide')
+      return
+    }
+
     if (cart.shippingAddress && !cart.shippingAddress.streetAddress) {
       postForm()
         .then(res => handleAjaxResponse(res, dispatch, false))
@@ -282,6 +289,9 @@ export function changeAddress(address) {
 
         isNewAddressFormElement.value = '0'
 
+         // This must be done *BEFORE* posting the form
+        dispatch(disableTakeaway(false))
+
         const url =
           window.Routing.generate('restaurant_cart_address', { id: restaurant.id })
 
@@ -295,6 +305,7 @@ export function changeAddress(address) {
 
         // This must be done *BEFORE* posting the form
         dispatch(mapAddressFields(address))
+        dispatch(disableTakeaway(false))
 
         postForm()
           .then(res => handleAjaxResponse(res, dispatch, false))
@@ -346,7 +357,7 @@ export function clearDate() {
 const _enableTakeaway = createAction(ENABLE_TAKEAWAY)
 const _disableTakeaway = createAction(DISABLE_TAKEAWAY)
 
-export function enableTakeaway() {
+export function enableTakeaway(post = true) {
 
   return (dispatch) => {
 
@@ -358,16 +369,18 @@ export function enableTakeaway() {
       $takeaway.prop('checked', true)
 
       dispatch(_enableTakeaway())
-      dispatch(fetchRequest())
 
-      postForm()
-        .then(res => handleAjaxResponse(res, dispatch))
-        .fail(e   => handleAjaxResponse(e.responseJSON, dispatch))
+      if (post) {
+        dispatch(fetchRequest())
+        postForm()
+          .then(res => handleAjaxResponse(res, dispatch))
+          .fail(e   => handleAjaxResponse(e.responseJSON, dispatch))
+      }
     }
   }
 }
 
-export function disableTakeaway() {
+export function disableTakeaway(post = true) {
 
   return (dispatch) => {
 
@@ -379,11 +392,13 @@ export function disableTakeaway() {
       $takeaway.prop('checked', false)
 
       dispatch(_disableTakeaway())
-      dispatch(fetchRequest())
 
-      postForm()
-        .then(res => handleAjaxResponse(res, dispatch))
-        .fail(e   => handleAjaxResponse(e.responseJSON, dispatch))
+      if (post) {
+        dispatch(fetchRequest())
+        postForm()
+          .then(res => handleAjaxResponse(res, dispatch))
+          .fail(e   => handleAjaxResponse(e.responseJSON, dispatch))
+      }
     }
   }
 }

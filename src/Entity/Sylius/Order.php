@@ -921,6 +921,10 @@ class Order extends BaseOrder implements OrderInterface
     public function setTakeaway(bool $takeaway): void
     {
         $this->takeaway = $takeaway;
+
+        if ($takeaway) {
+            $this->setShippingAddress(null);
+        }
     }
 
     /**

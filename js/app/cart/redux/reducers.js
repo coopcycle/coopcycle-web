@@ -14,6 +14,7 @@ import {
   GEOCODING_FAILURE,
   ENABLE_TAKEAWAY,
   DISABLE_TAKEAWAY,
+  OPEN_ADDRESS_MODAL,
 } from './actions'
 
 const initialState = {
@@ -197,6 +198,9 @@ const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}
     const { propertyPath } = action.payload
 
     return propertyPath === 'shippingAddress'
+  case OPEN_ADDRESS_MODAL:
+
+    return true
   default:
 
     return state

@@ -7,15 +7,14 @@ import classNames from 'classnames'
 import AddressModal from './AddressModal'
 import DateModal from './DateModal'
 import RestaurantModal from './RestaurantModal'
-import AddressAutosuggest from '../../components/AddressAutosuggest'
 import CartItems from './CartItems'
 import CartHeading from './CartHeading'
 import CartTotal from './CartTotal'
 import CartButton from './CartButton'
 import Time from './Time'
-import Takeaway from './Takeaway'
+import FulfillmentMethod from './FulfillmentMethod'
 
-import { changeAddress, sync, disableTakeaway, enableTakeaway } from '../redux/actions'
+import { changeAddress, sync, disableTakeaway, enableTakeaway, openAddressModal } from '../redux/actions'
 import { selectIsDeliveryEnabled, selectIsCollectionEnabled, selectIsOrderingAvailable } from '../redux/selectors'
 
 class Cart extends Component {
@@ -27,6 +26,7 @@ class Cart extends Component {
   render() {
 
     const { isMobileCartVisible } = this.props
+    const fulfillmentMethod = (this.props.takeaway || this.props.isCollectionOnly) ? 'collection' : 'delivery'
 
     return (
       <Sticky>
@@ -39,23 +39,10 @@ class Cart extends Component {
           <div className="panel-body">
             <div className="cart">
               <div>
-                <AddressAutosuggest
-                  id="main"
-                  addresses={ this.props.addresses }
-                  address={ this.props.shippingAddress }
-                  key={ this.props.streetAddress }
-                  onAddressSelected={ (value, address) => this.props.changeAddress(address) }
-                  disabled={ this.props.isCollectionOnly || this.props.takeaway }
-                  required />
-                { this.props.isCollectionEnabled && (
-                <div className="text-center mb-4">
-                  <Takeaway
-                    defaultChecked={ this.props.isCollectionOnly }
-                    checked={ this.props.takeaway || this.props.isCollectionOnly }
-                    onChange={ enabled => enabled ? this.props.enableTakeaway() : this.props.disableTakeaway() }
-                    disabled={ this.props.loading || this.props.isCollectionOnly } />
-                </div>
-                )}
+                <FulfillmentMethod
+                  value={ fulfillmentMethod }
+                  shippingAddress={ this.props.shippingAddress }
+                  onClick={ this.props.openAddressModal } />
                 { this.props.isOrderingAvailable && <Time /> }
               </div>
               <CartItems />
@@ -98,6 +85,7 @@ function mapDispatchToProps(dispatch) {
     sync: () => dispatch(sync()),
     enableTakeaway: () => dispatch(enableTakeaway()),
     disableTakeaway: () => dispatch(disableTakeaway()),
+    openAddressModal: () => dispatch(openAddressModal()),
   }
 }
 
