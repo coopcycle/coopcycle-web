@@ -3,12 +3,14 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import Modal from 'react-modal'
+import classNames from 'classnames'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import { changeAddress, closeAddressModal, enableTakeaway } from '../redux/actions'
 import { selectIsCollectionEnabled } from '../redux/selectors'
 
 const ADDRESS_TOO_FAR = 'Order::ADDRESS_TOO_FAR'
+const ADDRESS_NOT_PRECISE = 'Order::ADDRESS_NOT_PRECISE'
 
 class AddressModal extends Component {
 
@@ -42,7 +44,14 @@ class AddressModal extends Component {
           </button>
         </header>
         <div>
-          <h4 className="text-center">{ this.props.titleText }</h4>
+          <span className={ classNames({
+            'text-center': true,
+            'd-block': true,
+            'mb-3': true,
+            'text-danger': this.props.isError })
+          }>
+            { this.props.helpText }
+          </span>
           <AddressAutosuggest
             id="modal"
             addresses={ this.props.addresses }
@@ -68,22 +77,25 @@ function mapStateToProps(state) {
 
   const hasError = Object.prototype.hasOwnProperty.call(state.errors, 'shippingAddress')
 
-  let titleText = ''
-  let isAddressTooFar = false
+  let helpText = ''
+  let isError = false
+
   if (hasError) {
 
-    const addressTooFarError = _.find(state.errors.shippingAddress, error => error.code === ADDRESS_TOO_FAR)
-    if (addressTooFarError) {
-      isAddressTooFar = true
-    }
+    const errorCodes =
+      state.errors.shippingAddress.map(error => error.code)
 
-    titleText = _.first(state.errors.shippingAddress).message
+    isError =
+      _.includes(errorCodes, ADDRESS_TOO_FAR) || _.includes(errorCodes, ADDRESS_NOT_PRECISE)
+
+    helpText = _.first(state.errors.shippingAddress).message
+
   }
 
   return {
     isOpen: state.isAddressModalOpen,
-    titleText,
-    isAddressTooFar,
+    helpText,
+    isError,
     addresses: state.addresses,
     isCollectionEnabled: selectIsCollectionEnabled(state),
   }

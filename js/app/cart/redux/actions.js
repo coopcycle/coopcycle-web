@@ -303,7 +303,10 @@ export function changeAddress(address) {
 
     } else {
       setTimeout(() => dispatch(replaceErrors('shippingAddress', [
-        { message: i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION') }
+        {
+          message: i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION'),
+          code: 'Order::ADDRESS_NOT_PRECISE',
+        }
       ])), 250)
     }
 
