@@ -13,7 +13,6 @@ import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from '../cart/redux/store'
 import { addItem, addItemWithOptions, queueAddItem } from '../cart/redux/actions'
 import Cart from '../cart/components/Cart'
-import { validateForm } from '../utils/address'
 import ProductOptionsModal from './components/ProductOptionsModal'
 import ProductImagesCarousel from './components/ProductImagesCarousel'
 import { ProductOptionsModalProvider } from './components/ProductOptionsModalContext'
@@ -145,23 +144,6 @@ const init = function() {
       }
     }
   }
-
-  $(container).closest('form').on('submit', function (e) {
-
-    const { cart } = store.getState()
-
-    // Don't try to validate address for collection
-    if (cart.takeaway) {
-      return
-    }
-
-    const searchInput = document.querySelector('#cart input[type="search"]')
-    const latInput = document.querySelector('#cart_shippingAddress_latitude')
-    const lngInput = document.querySelector('#cart_shippingAddress_longitude')
-    const streetAddrInput = document.querySelector('#cart_shippingAddress_streetAddress')
-
-    validateForm(e, searchInput, latInput, lngInput, streetAddrInput)
-  })
 
   const state = {
     cart,

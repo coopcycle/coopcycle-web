@@ -37,7 +37,7 @@ const FulfillmentMethod = ({ value, shippingAddress, onClick }) => {
               <strong>{ t('RULE_PICKER_LINE_OPTGROUP_DELIVERY') }</strong>
             </span>
             <br />
-            <small className="text-muted">{ shippingAddress?.streetAddress }</small>
+            <small className="text-muted" data-testid="cart.shippingAddress">{ shippingAddress?.streetAddress }</small>
           </React.Fragment>
         ) }
       </span>

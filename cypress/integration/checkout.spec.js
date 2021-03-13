@@ -53,8 +53,8 @@ context('Checkout', () => {
 
     cy.wait('@postRestaurant')
 
-    cy.get('.cart .address-autosuggest__container input[type="search"]')
-      .should('have.value', '91 Rue de Rivoli, 75004 Paris, France')
+    cy.get('.cart [data-testid="cart.shippingAddress"]')
+      .should('have.text', '91 Rue de Rivoli, 75004 Paris, France')
 
     cy.contains('Cheese Cake').click()
 
@@ -130,8 +130,8 @@ context('Checkout', () => {
 
     cy.contains('Crazy Hamburger').click()
 
-    cy.get('.cart .address-autosuggest__container input[type="search"]')
-      .should('have.value', '1, Rue de Rivoli, Paris, France')
+    cy.get('.cart [data-testid="cart.shippingAddress"]')
+      .should('have.text', '1, Rue de Rivoli, Paris, France')
   })
 
   it.skip('homepage search with vague address', () => {
@@ -155,8 +155,8 @@ context('Checkout', () => {
 
     cy.location('pathname').should('match', /\/fr\/restaurant\/[0-9]+-crazy-hamburger/)
 
-    cy.get('.cart .address-autosuggest__container input[type="search"]')
-      .should('have.value', 'Rue de Rivoli, 75004 Paris, France')
+    cy.get('.cart [data-testid="cart.shippingAddress"]')
+      .should('have.text', 'Rue de Rivoli, 75004 Paris, France')
 
     cy.get('.ReactModal__Content--enter-address')
       .should('be.visible')
@@ -175,8 +175,8 @@ context('Checkout', () => {
 
     cy.wait('@postRestaurant')
 
-    cy.get('.cart .address-autosuggest__container input[type="search"]')
-      .should('have.value', '91 Rue de Rivoli, 75004 Paris, France')
+    cy.get('.cart [data-testid="cart.shippingAddress"]')
+      .should('have.text', '91 Rue de Rivoli, 75004 Paris, France')
   })
 
   it.skip('order something at restaurant with existing address (via modal)', () => {
@@ -296,8 +296,8 @@ context('Checkout', () => {
 
     cy.wait('@postRestaurant')
 
-    cy.get('.cart .address-autosuggest__container input[type="search"]')
-      .should('have.value', '91 Rue de la Roquette, 75011 Paris, France')
+    cy.get('.cart [data-testid="cart.shippingAddress"]')
+      .should('have.text', '91 Rue de la Roquette, 75011 Paris, France')
 
     cy.contains('Salade au poulet').click()
     cy.wait('@postProduct')
@@ -385,8 +385,8 @@ context('Checkout', () => {
 
     cy.wait('@postRestaurant')
 
-    cy.get('.cart .address-autosuggest__container input[type="search"]')
-      .should('have.value', '91 Rue de Rivoli, 75004 Paris, France')
+    cy.get('.cart [data-testid="cart.shippingAddress"]')
+      .should('have.text', '91 Rue de Rivoli, 75004 Paris, France')
 
     cy.contains('Cheese Cake').click()
 
@@ -460,8 +460,8 @@ context('Checkout', () => {
 
     cy.wait('@postRestaurant')
 
-    cy.get('.cart .address-autosuggest__container input[type="search"]')
-      .should('have.value', '91 Rue de Rivoli, 75004 Paris, France')
+    cy.get('.cart [data-testid="cart.shippingAddress"]')
+      .should('have.text', '91 Rue de Rivoli, 75004 Paris, France')
 
     cy.contains('Cheese Cake').click()
 
