@@ -302,9 +302,9 @@ export function changeAddress(address) {
       }
 
     } else {
-      dispatch(replaceErrors('shippingAddress', [
+      setTimeout(() => dispatch(replaceErrors('shippingAddress', [
         { message: i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION') }
-      ]))
+      ])), 250)
     }
 
   }
