@@ -48,6 +48,7 @@ import {
   } from './AddressAutosuggest/geocode-earth'
 
 import { storage, getFromCache } from './AddressAutosuggest/cache'
+import { getAdapter, getAdapterOptions } from './AddressAutosuggest/config'
 
 const theme = {
   ...defaultTheme,
@@ -313,33 +314,8 @@ class AddressAutosuggest extends Component {
     this.country = props.country || getCountry() || 'en'
     this.language = props.language || localeDetector()
 
-    let adapter
-    let adapterOptions = {
-      algolia: {},
-      'geocode-earth': {},
-      locationiq: {},
-    }
-    if (Object.prototype.hasOwnProperty.call(props, 'algolia')) {
-      adapter = 'algolia'
-      adapterOptions.algolia = props.algolia
-    } else if (Object.prototype.hasOwnProperty.call(props, 'geocodeEarth')) {
-      adapter = 'geocode-earth'
-      adapterOptions['geocode-earth'] = props.geocodeEarth
-    } else if (Object.prototype.hasOwnProperty.call(props, 'locationIQ')) {
-      adapter = 'locationiq'
-      adapterOptions.locationiq = props.locationIQ
-    } else {
-
-      const adapterEl = document.getElementById('autocomplete-adapter')
-      const algoliaEl = document.getElementById('algolia-places')
-      const geocodeEarthEl = document.getElementById('geocode-earth')
-      const locationIQEl = document.getElementById('locationiq')
-
-      adapter = (adapterEl && adapterEl.dataset.value) || 'algolia'
-      adapterOptions.algolia = (algoliaEl && { ...algoliaEl.dataset }) || {}
-      adapterOptions['geocode-earth'] = (geocodeEarthEl && { ...geocodeEarthEl.dataset }) || {}
-      adapterOptions.locationiq = (locationIQEl && { ...locationIQEl.dataset }) || {}
-    }
+    const adapter = getAdapter(props, document)
+    const adapterOptions = getAdapterOptions(props, document)
 
     const configure = localize('configure', adapter, this)
     configure(adapterOptions[adapter])
@@ -707,14 +683,17 @@ export default withTranslation()(AddressAutosuggest)
 
 export const geocode = (text) => {
 
-  const el = document.getElementById('autocomplete-adapter')
-  const adapter = (el && el.dataset.value) || 'algolia'
+  const adapter = getAdapter({}, document)
+  const adapterOptions = getAdapterOptions({}, document)
+
+  const fakeThis = {
+    country: getCountry() || 'en'
+  }
+
+  const configure = localize('configure', adapter, fakeThis)
+  configure(adapterOptions[adapter])
 
   return new Promise((resolve) => {
-
-    const fakeThis = {
-      country: getCountry() || 'en'
-    }
 
     localize('geocode', adapter, fakeThis)(text, (getCountry() || 'en'), localeDetector())
       .then(address => {
