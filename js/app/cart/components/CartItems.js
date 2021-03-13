@@ -34,9 +34,9 @@ class CartItems extends React.Component {
 
     return (
       <div>
-        { items.map((item, key) => (
+        { items.map((item) => (
           <CartItem
-            key={ key }
+            key={ `cart-item-${item.id}` }
             id={ item.id }
             name={ item.name }
             total={ item.total }
