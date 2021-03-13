@@ -293,6 +293,17 @@ const renderSectionTitle = section => (
 
 const getSectionSuggestions = section => section.suggestions
 
+const SuggestionsContainer = ({ containerProps, children, poweredBy }) => (
+  <div { ...containerProps }>
+    { children }
+    <div className="address-autosuggest__suggestions-container__footer">
+      <div>
+        { poweredBy }
+      </div>
+    </div>
+  </div>
+)
+
 class AddressAutosuggest extends Component {
 
   constructor(props) {
@@ -580,26 +591,23 @@ class AddressAutosuggest extends Component {
       }
 
       return createPortal((
-        <div { ... containerProps } style={ style }>
+        <SuggestionsContainer
+          containerProps={{
+            ...containerProps,
+            style
+          }}
+          poweredBy={ this.poweredBy() }>
           { children }
-          <div className="address-autosuggest__suggestions-container__footer">
-            <div>
-              { this.poweredBy() }
-            </div>
-          </div>
-        </div>
+        </SuggestionsContainer>
       ), document.body)
     }
 
     return (
-      <div { ...containerProps }>
+      <SuggestionsContainer
+        containerProps={ containerProps }
+        poweredBy={ this.poweredBy() }>
         { children }
-        <div className="address-autosuggest__suggestions-container__footer">
-          <div>
-            { this.poweredBy() }
-          </div>
-        </div>
-      </div>
+      </SuggestionsContainer>
     )
   }
 
