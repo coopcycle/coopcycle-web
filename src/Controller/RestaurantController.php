@@ -390,6 +390,7 @@ class RestaurantController extends AbstractController
 
                 if ($user->getAddresses()->contains($shippingAddress)) {
                     $cart->setShippingAddress($shippingAddress);
+                    $cart->setTakeaway(false);
 
                     if ($restaurantResolver->accept($cart)) {
                         $this->orderManager->persist($cart);
