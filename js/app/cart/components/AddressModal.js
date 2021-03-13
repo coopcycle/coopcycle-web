@@ -4,6 +4,7 @@ import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import Modal from 'react-modal'
 import classNames from 'classnames'
+import ngeohash from 'ngeohash'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import { changeAddress, closeAddressModal, enableTakeaway } from '../redux/actions'
@@ -23,6 +24,16 @@ class AddressModal extends Component {
 
   render() {
 
+    let params = {}
+    if (this.props.isAddressTooFar && this.props.shippingAddress?.geo) {
+      const { latitude, longitude } = this.props.shippingAddress.geo
+      const geohash = ngeohash.encode(latitude, longitude, 11)
+      params = {
+        ...params,
+        geohash
+      }
+    }
+
     return (
       <Modal
         isOpen={ this.props.isOpen }
@@ -35,7 +46,7 @@ class AddressModal extends Component {
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
         <header className="d-flex align-items-center justify-content-between mb-5">
-          <a className="text-muted" href={ window.Routing.generate('restaurants') }>
+          <a className="text-muted" href={ window.Routing.generate('restaurants', params) }>
             <i className="fa fa-arrow-left mr-2"></i>
             <span>{ this.props.t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS') }</span>
           </a>
@@ -80,14 +91,18 @@ function mapStateToProps(state) {
 
   let helpText = ''
   let isError = false
+  let isAddressTooFar = false
 
   if (hasError) {
 
     const errorCodes =
       state.errors.shippingAddress.map(error => error.code)
 
+    isAddressTooFar =
+      _.includes(errorCodes, ADDRESS_TOO_FAR)
+
     isError =
-      _.includes(errorCodes, ADDRESS_TOO_FAR) || _.includes(errorCodes, ADDRESS_NOT_PRECISE)
+      isAddressTooFar || _.includes(errorCodes, ADDRESS_NOT_PRECISE)
 
     helpText = _.first(state.errors.shippingAddress).message
 
@@ -97,8 +112,10 @@ function mapStateToProps(state) {
     isOpen: state.isAddressModalOpen,
     helpText,
     isError,
+    isAddressTooFar,
     addresses: state.addresses,
     isCollectionEnabled: selectIsCollectionEnabled(state),
+    shippingAddress: state.cart.shippingAddress,
   }
 }
 
