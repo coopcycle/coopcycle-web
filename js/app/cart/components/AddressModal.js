@@ -32,25 +32,26 @@ class AddressModal extends Component {
         className="ReactModal__Content--enter-address"
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
-        <button type="button" className="close" onClick={ this.props.closeAddressModal }>
-          <i className="fa fa-close"></i>
-        </button>
-        <h4 className="text-center">{ this.props.titleText }</h4>
-        <AddressAutosuggest
-          id="modal"
-          addresses={ this.props.addresses }
-          fuseOptions={{ threshold: 0.7, minMatchCharLength: 2 }}
-          fuseSearchOptions={{ limit: 3 }}
-          autofocus
-          address={ '' }
-          onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
-        { this.props.isAddressTooFar && (
-          <div className="text-center">
-            <a className="text-success" href={ window.Routing.generate('restaurants') }>
-              { this.props.t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS') }
-            </a>
-          </div>
-        ) }
+        <header className="d-flex align-items-center justify-content-between mb-5">
+          <a className="text-muted" href={ window.Routing.generate('restaurants') }>
+            <i className="fa fa-arrow-left mr-2"></i>
+            <span>{ this.props.t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS') }</span>
+          </a>
+          <button type="button" className="close pl-4" onClick={ this.props.closeAddressModal }>
+            <i className="fa fa-close"></i>
+          </button>
+        </header>
+        <div>
+          <h4 className="text-center">{ this.props.titleText }</h4>
+          <AddressAutosuggest
+            id="modal"
+            addresses={ this.props.addresses }
+            fuseOptions={{ threshold: 0.7, minMatchCharLength: 2 }}
+            fuseSearchOptions={{ limit: 3 }}
+            autofocus
+            address={ '' }
+            onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
+        </div>
         { this.props.isCollectionEnabled && (
           <button type="button" className="btn btn-default" onClick={ () => this.props.enableTakeaway() }>
             { this.props.t('CART_ADDRESS_MODAL_NO_THANKS_TAKEAWAY') }

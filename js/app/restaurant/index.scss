@@ -540,7 +540,7 @@ button.menu-item:active {
   overflow: inherit;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   @media (min-width: $screen-lg-min) {
     width: 33%;
   }
@@ -549,18 +549,7 @@ button.menu-item:active {
   }
   @media (max-width: $screen-xs-max) {
     width: calc(100% - 30px);
-    height: 80%;
-  }
-  .close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 10px 12px;
-    @media (max-width: $screen-xs-max) {
-      font-size: 32px;
-      padding: 12px 18px;
-    }
-
+    height: calc(100vh - 30px);
   }
 }
 
