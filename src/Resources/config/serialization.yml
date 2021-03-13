@@ -94,6 +94,21 @@ Sylius\Component\Order\Model\OrderItem:
       groups: ['order', 'cart']
     unitPrice:
       groups: ['order', 'cart']
+    adjustments:
+      groups: ['order', 'cart']
+
+Sylius\Component\Order\Model\Adjustment:
+  attributes:
+    # FIXME
+    # For an unknow reason, the id is NULL when normalized
+    # id:
+    #   groups: ['order', 'cart']
+    label:
+      groups: ['order', 'cart']
+    amount:
+      groups: ['order', 'cart']
+    type:
+      groups: ['order', 'cart']
 
 AppBundle\Entity\Sylius\OrderTimeline:
   attributes:
