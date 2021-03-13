@@ -61,7 +61,8 @@ class AddressModal extends Component {
             // to avoid having the suggestions list opened automatically
             autofocus={ this.props.addresses.length === 0 }
             address={ '' }
-            onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
+            onAddressSelected={ (value, address) => this.props.changeAddress(address) }
+            error={ this.props.isError } />
         </div>
         { this.props.isCollectionEnabled && (
           <button type="button" className="btn btn-default" onClick={ () => this.props.enableTakeaway() }>
