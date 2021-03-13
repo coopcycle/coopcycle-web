@@ -48,7 +48,9 @@ class AddressModal extends Component {
             addresses={ this.props.addresses }
             fuseOptions={{ threshold: 0.7, minMatchCharLength: 2 }}
             fuseSearchOptions={{ limit: 3 }}
-            autofocus
+            // We use autofocus only when the are no saved addresses,
+            // to avoid having the suggestions list opened automatically
+            autofocus={ this.props.addresses.length === 0 }
             address={ '' }
             onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
         </div>
