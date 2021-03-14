@@ -75,11 +75,17 @@ class AddressModal extends Component {
             onAddressSelected={ (value, address) => this.props.changeAddress(address) }
             error={ this.props.isError } />
         </div>
-        { this.props.isCollectionEnabled && (
-          <button type="button" className="btn btn-default" onClick={ () => this.props.enableTakeaway() }>
-            { this.props.t('CART_ADDRESS_MODAL_NO_THANKS_TAKEAWAY') }
-          </button>
-        ) }
+        <button
+          type="button"
+          className={ classNames({
+            'btn': true,
+            'btn-default': true,
+            'visible': this.props.isCollectionEnabled,
+            'invisible': !this.props.isCollectionEnabled,
+          }) }
+          onClick={ this.props.enableTakeaway }>
+          { this.props.t('CART_ADDRESS_MODAL_NO_THANKS_TAKEAWAY') }
+        </button>
       </Modal>
     )
   }
