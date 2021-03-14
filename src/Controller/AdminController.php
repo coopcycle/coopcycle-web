@@ -1953,4 +1953,13 @@ class AdminController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    public function hubsAction(Request $request)
+    {
+        $hubs = $this->getDoctrine()->getRepository(Hub::class)->findAll();
+
+        return $this->render('admin/hubs.html.twig', [
+            'hubs' => $hubs,
+        ]);
+    }
 }

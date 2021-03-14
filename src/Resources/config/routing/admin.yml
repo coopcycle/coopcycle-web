@@ -72,6 +72,12 @@ admin_hub:
         _controller: AppBundle\Controller\AdminController::hubAction
     methods: [ GET, POST ]
 
+admin_hubs:
+    path: /admin/restaurants/hubs
+    defaults:
+        _controller: AppBundle\Controller\AdminController::hubsAction
+    methods: [ GET, POST ]
+
 admin_restaurant_new:
     path: /admin/restaurants/new
     defaults:
