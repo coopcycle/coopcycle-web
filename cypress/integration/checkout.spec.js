@@ -10,9 +10,8 @@ context('Checkout', () => {
 
   it('order something at restaurant', () => {
 
-    cy.server()
-    cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
-    cy.route('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
+    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+    cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
 
     cy.visit('/fr/')
 
@@ -136,9 +135,8 @@ context('Checkout', () => {
 
   it('homepage search with vague address', () => {
 
-    cy.server()
-    cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
-    cy.route('GET', '/search/geocode?address=**').as('geocodeAddress')
+    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+    cy.intercept('GET', '/search/geocode?address=**').as('geocodeAddress')
 
     cy.visit('/fr/')
 
@@ -184,10 +182,9 @@ context('Checkout', () => {
 
   it.skip('order something at restaurant with existing address (via modal)', () => {
 
-    cy.server()
-    cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
-    cy.route('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
-    cy.route('POST', '/fr/restaurant/*/cart/address').as('postCartAddress')
+    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+    cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
+    cy.intercept('POST', '/fr/restaurant/*/cart/address').as('postCartAddress')
 
     cy.visit('/login')
 
@@ -269,9 +266,8 @@ context('Checkout', () => {
 
     cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 
-    cy.server()
-    cy.route('POST', '/fr/restaurant/*-zero-waste-inc').as('postRestaurant')
-    cy.route('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
+    cy.intercept('POST', '/fr/restaurant/*-zero-waste-inc').as('postRestaurant')
+    cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
 
     cy.visit('/fr/restaurants')
 
@@ -340,10 +336,9 @@ context('Checkout', () => {
 
     cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 
-    cy.server()
-    cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
-    cy.route('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
-    cy.route('POST', '/order/').as('postOrder')
+    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+    cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
+    cy.intercept('POST', '/order/').as('postOrder')
 
     cy.visit('/fr/')
 
@@ -420,9 +415,8 @@ context('Checkout', () => {
 
     cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 
-    cy.server()
-    cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
-    cy.route('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
+    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+    cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
 
     cy.visit('/fr/')
 
@@ -498,10 +492,9 @@ context('Checkout', () => {
 
   it('start ordering in one restaurant, then navigate to another restaurant', () => {
 
-    cy.server()
-    cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postCrazyHamburger')
-    cy.route('POST', '/fr/restaurant/*-pizza-express').as('postPizzaExpress')
-    cy.route('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
+    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postCrazyHamburger')
+    cy.intercept('POST', '/fr/restaurant/*-pizza-express').as('postPizzaExpress')
+    cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
 
     cy.visit('/fr/')
 

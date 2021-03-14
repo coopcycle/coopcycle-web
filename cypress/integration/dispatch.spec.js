@@ -17,9 +17,8 @@ context('Checkout', () => {
 
   it.skip('make basic dispatch operations', () => {
 
-    cy.server()
-    cy.route('POST', '/api/tasks').as('postTask')
-    cy.route('POST', '/admin/task-lists/**/jane').as('postTaskList')
+    cy.intercept('POST', '/api/tasks').as('postTask')
+    cy.intercept('POST', '/admin/task-lists/**/jane').as('postTaskList')
 
     cy.visit('/login')
 

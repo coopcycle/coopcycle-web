@@ -10,10 +10,9 @@ context('Checkout (hubs)', () => {
 
   it('order something at hub', () => {
 
-    cy.server()
-    cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postCrazyHamburger')
-    cy.route('POST', '/fr/restaurant/*-pizza-express').as('postPizzaExpress')
-    cy.route('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
+    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postCrazyHamburger')
+    cy.intercept('POST', '/fr/restaurant/*-pizza-express').as('postPizzaExpress')
+    cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
 
     cy.visit('/fr/')
 

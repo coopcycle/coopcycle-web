@@ -13,8 +13,7 @@ context('Delivery', () => {
 
   it('create delivery', () => {
 
-    cy.server()
-    cy.route('/api/routing/route/*').as('apiRoutingRoute')
+    cy.intercept('/api/routing/route/*').as('apiRoutingRoute')
 
     cy.visit('/login')
 
