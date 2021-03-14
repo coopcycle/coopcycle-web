@@ -93,6 +93,7 @@ use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -1928,15 +1929,10 @@ class AdminController extends AbstractController
         );
     }
 
-    public function hubAction($id, Request $request)
+    private function handleHubForm(Hub $hub, Request $request)
     {
-        $hub = $this->getDoctrine()->getRepository(Hub::class)->find($id);
-
-        if (!$hub) {
-            throw $this->createNotFoundException(sprintf('Hub #%d does not exist', $id));
-        }
-
         $form = $this->createForm(HubType::class, $hub);
+
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
             $this->getDoctrine()->getManager()->persist($hub);
             $this->getDoctrine()->getManager()->flush();
@@ -1952,6 +1948,24 @@ class AdminController extends AbstractController
         return $this->render('admin/hub.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    public function newHubAction(Request $request)
+    {
+        $hub = new Hub();
+
+        return $this->handleHubForm($hub, $request);
+    }
+
+    public function hubAction($id, Request $request)
+    {
+        $hub = $this->getDoctrine()->getRepository(Hub::class)->find($id);
+
+        if (!$hub) {
+            throw $this->createNotFoundException(sprintf('Hub #%d does not exist', $id));
+        }
+
+        return $this->handleHubForm($hub, $request);
     }
 
     public function hubsAction(Request $request)
