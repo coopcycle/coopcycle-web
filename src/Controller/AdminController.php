@@ -1942,7 +1942,7 @@ class AdminController extends AbstractController
                 $this->translator->trans('global.changesSaved')
             );
 
-            return $this->redirectToRoute('admin_hub', ['id' => $id]);
+            return $this->redirectToRoute('admin_hub', ['id' => $hub->getId()]);
         }
 
         return $this->render('admin/hub.html.twig', [
