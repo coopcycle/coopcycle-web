@@ -6,10 +6,12 @@ import PropTypes from 'prop-types'
 import ngeohash from 'ngeohash'
 import Fuse from 'fuse.js'
 import { filter, debounce, throttle } from 'lodash'
-import { withTranslation } from 'react-i18next'
+import { withTranslation, useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import axios from 'axios'
 import classNames from 'classnames'
+import { Input, Popover } from 'antd'
+import addressFormatter  from '@fragaria/address-formatter'
 
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
@@ -49,6 +51,8 @@ import {
 
 import { storage, getFromCache } from './AddressAutosuggest/cache'
 import { getAdapter, getAdapterOptions } from './AddressAutosuggest/config'
+
+import 'antd/lib/button/style/index.css'
 
 const theme = {
   ...defaultTheme,
@@ -115,6 +119,33 @@ const adapters = {
   },
 }
 
+const HouseNumberForm = React.forwardRef((props, ref) => {
+
+  const { t } = useTranslation()
+  // const [ value, setValue ] = React.useState('')
+
+  // const propsWithClassName = {
+  //   ...props,
+  //   className: 'form-control'
+  // }
+
+  return (
+    <Input.Search
+      allowClear
+      enterButton="OK"
+      ref={ ref }
+      // onPressEnter={  }
+      onChange={ props.onChange }
+      onSearch={ props.onPressEnter }
+      placeholder={ t('ADDRESS_AUTOSUGGEST_HOUSE_NUMBER_PLACEHOLDER') }
+      // ref={ inputRef }
+      // size="large"
+      // onSearch={onSearch}
+      onBlur={ props.onBlur }
+    />
+  )
+})
+
 // WARNING
 // Do *NOT* use arrow functions, to allow binding
 const generic = {
@@ -159,6 +190,8 @@ const generic = {
       suggestions,
       multiSection,
       loading: false,
+      isPopoverVisible: false,
+      currentPopoverSuggestion: null
     }
   },
   onSuggestionsFetchRequested: function() {
@@ -172,6 +205,46 @@ const generic = {
 
       let address = this.transformSuggestion(suggestion)
 
+      // console.log(address)
+      console.log('onSuggestionSelected', suggestion)
+
+      if (!address.isPrecise) {
+        this.setState({
+          isPopoverVisible: true,
+          currentPopoverSuggestion: suggestion,
+        })
+        address = {
+          ...address,
+          geohash: ngeohash.encode(address.geo.latitude, address.geo.longitude, 11),
+        }
+        this.props.onAddressSelected(this.state.value, address, suggestion.type)
+      } else {
+        console.log('----- IS NOW PRECISE')
+
+        this.setState({ loading: true })
+
+        axios
+          .get(`/search/geocode?address=${encodeURIComponent(address.streetAddress)}`)
+          .then(geocoded => {
+            this.setState({ loading: false })
+            address = {
+              ...address,
+              ...geocoded.data,
+              geo: geocoded.data,
+              geohash: ngeohash.encode(geocoded.data.latitude, geocoded.data.longitude, 11),
+              isPrecise: true,
+              needsGeocoding: false,
+            }
+            this.props.onAddressSelected(this.state.value, address, suggestion.type)
+          })
+          .catch(() => {
+            this.setState({ loading: false })
+            this.props.onAddressSelected(this.state.value, address, suggestion.type)
+          })
+
+      }
+
+      /*
       // If the component was configured for,
       // report validity if the address is not precise enough
       if (this.props.reportValidity && this.props.preciseOnly && (!address.isPrecise && !address.needsGeocoding)) {
@@ -211,6 +284,7 @@ const generic = {
         }
         this.props.onAddressSelected(this.state.value, address, suggestion.type)
       }
+      */
     }
 
     if (suggestion.type === 'address') {
@@ -279,6 +353,10 @@ const renderSuggestion = suggestion => (
 
 // https://github.com/moroshko/react-autosuggest#should-render-suggestions-prop
 function shouldRenderSuggestions(value) {
+
+  if (this.state.isPopoverVisible) {
+    return false
+  }
 
   // This allows rendering suggestions for saved adresses
   // when the user just focuses the input without typing anything
@@ -350,6 +428,8 @@ class AddressAutosuggest extends Component {
 
     this.onSuggestionsFetchRequested = ({ value }) => {
 
+      console.log('onSuggestionsFetchRequested')
+
       // We still need to check if text is not empty here,
       // because shouldRenderSuggestions() may return true even when nothing was typed
       // This happens when there are saved adresses
@@ -375,6 +455,8 @@ class AddressAutosuggest extends Component {
     this.useCache = localize('useCache', adapter, this)
 
     this.state = this.getInitialState()
+
+    this.houseNumberInputRef = React.createRef()
   }
 
   componentDidMount() {
@@ -405,6 +487,14 @@ class AddressAutosuggest extends Component {
       setTimeout(() => this.autosuggest.input.focus(), 0)
     }
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!prevState.isPopoverVisible && this.state.isPopoverVisible) {
+      console.log('FOCUS ON INPUT')
+      setTimeout(() => this.houseNumberInputRef.current.focus(), 0)
+    }
+  }
+
 
   onClear() {
     this.setState({ value: '' })
@@ -533,6 +623,71 @@ class AddressAutosuggest extends Component {
         'address-autosuggest__input-container': true,
         'has-error': this.props.error
         })}>
+        <Popover content={ (<HouseNumberForm
+            ref={ this.houseNumberInputRef }
+            onPressEnter={ (value) => {
+
+              const { locationiq } = this.state.currentPopoverSuggestion
+
+              // const newValue = [
+              //   value.trim(),
+              //   locationiq.address.name,
+              //   `${locationiq.address.postcode} ${locationiq.address.city}`,
+              //   locationiq.address.country
+              // ].join(', ')
+
+              const formatted = addressFormatter.format({
+                // ...locationiq.address,
+                houseNumber: value.trim(),
+                road: locationiq.address.name,
+                city: locationiq.address.city,
+                countryCode: locationiq.address.country_code,
+                postcode: locationiq.address.postcode,
+                // "houseNumber": 301,
+                // "road": "Hamilton Avenue",
+                // "neighbourhood": "Crescent Park",
+                // "city": "Palo Alto",
+                // "postcode": 94303,
+                // "county": "Santa Clara County",
+                // "state": "California",
+                country: locationiq.address.country,
+                // "countryCode": "US",
+              })
+
+              const oneLine = formatted.trim().replace(/(\r\n|\n|\r)/gm, ', ')
+
+              console.log('FORMATTED', oneLine)
+
+              this.setState({
+                isPopoverVisible: false,
+                currentPopoverSuggestion: null,
+                value: formatted,
+              })
+
+              this.onSuggestionSelected({}, {
+                suggestion: {
+                  ...this.state.currentPopoverSuggestion,
+                  locationiq: {
+                    ...this.state.currentPopoverSuggestion.locationiq,
+                    address: {
+                      ...this.state.currentPopoverSuggestion.locationiq.address,
+                      house_number: value.trim(),
+                      name: `${value.trim()}, ${this.state.currentPopoverSuggestion.locationiq.address.name}`,
+                    }
+                  }
+                }
+              })
+
+            }}
+            onBlur={ () => this.setState({ isPopoverVisible: false }) } />
+          )}
+          title={ this.props.t('CART_ADDRESS_MODAL_HELP_TEXT') }
+          trigger="focus"
+          placement="bottom"
+          color="red"
+          visible={ this.state.isPopoverVisible }
+          onVisibleChange={ visible => console.log('VISIBLE', visible)
+        }>
         <div className="address-autosuggest__input-wrapper">
           <input { ...inputProps } />
           { this.state.postcode && (
@@ -549,11 +704,12 @@ class AddressAutosuggest extends Component {
             </button>
           )}
         </div>
+        </Popover>
       </div>
     )
   }
 
-  renderSuggestionsContainer({ containerProps , children }) {
+  renderSuggestionsContainer({ containerProps, children }) {
 
     // https://github.com/moroshko/react-autosuggest/issues/699#issuecomment-568798287
     if (this.props.attachToBody && this.autosuggest) {

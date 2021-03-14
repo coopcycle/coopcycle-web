@@ -148,7 +148,7 @@
         "CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_2": "Souhaitez-vous commencer une nouvelle commande dans ce restaurant ?",
         "CART_CHANGE_RESTAURANT_MODAL_BTN_YES": "Nouvelle commande",
         "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Retourner à ma commande",
-        "CART_ADDRESS_MODAL_HELP_TEXT": "Veuillez entrer votre adresse avec précision, en précisant le numéro et le nom de la rue",
+        "CART_ADDRESS_MODAL_HELP_TEXT": "Veuillez entrer votre numéro de rue",
         "CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS": "Retourner à la liste des restaurants",
         "CART_DELIVERY_TIME_DIFF": "Dans {{diff}} minutes",
         "CART_DELIVERY_TIME_EDIT": "Modifier",
@@ -226,6 +226,7 @@
         "PAYMENT_FORM_CARDHOLDER_NAME": "Nom du titulaire de la carte",
         "PAYMENT_FORM_TITLE": "Vos informations de paiement",
         "EDENRED_SPLIT_AMOUNTS": "Vous pouvez payer {{edenred}} avec votre carte Edenred, mais vous devez payer {{card}} avec votre carte bancaire",
-        "PAYMENT_FORM_NOT_SUPPORTED": "Nous nʼacceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique."
+        "PAYMENT_FORM_NOT_SUPPORTED": "Nous nʼacceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique.",
+        "ADDRESS_AUTOSUGGEST_HOUSE_NUMBER_PLACEHOLDER": "Votre numero de rue"
     }
 }
