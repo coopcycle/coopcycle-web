@@ -710,7 +710,6 @@ export const geocode = (text) => {
               ...geocoded.data,
               geo: geocoded.data,
               geohash: ngeohash.encode(geocoded.data.latitude, geocoded.data.longitude, 11),
-              isPrecise: true,
               needsGeocoding: false,
             })
           })

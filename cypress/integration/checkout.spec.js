@@ -134,10 +134,11 @@ context('Checkout', () => {
       .should('have.text', '1, Rue de Rivoli, Paris, France')
   })
 
-  it.skip('homepage search with vague address', () => {
+  it('homepage search with vague address', () => {
 
     cy.server()
     cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+    cy.route('GET', '/search/geocode?address=**').as('geocodeAddress')
 
     cy.visit('/fr/')
 
@@ -157,6 +158,8 @@ context('Checkout', () => {
 
     cy.get('.cart [data-testid="cart.shippingAddress"]')
       .should('have.text', 'Rue de Rivoli, 75004 Paris, France')
+
+    cy.wait('@geocodeAddress')
 
     cy.get('.ReactModal__Content--enter-address')
       .should('be.visible')
