@@ -309,7 +309,7 @@ context('Checkout', () => {
 
     cy.location('pathname').should('eq', '/order/')
 
-    cy.get('.table-order-items tfoot tr:last-child td ')
+    cy.get('.table-order-items tfoot tr:last-child td')
       .invoke('text')
       .invoke('trim')
       .should('match', /^18,00/)
@@ -326,7 +326,7 @@ context('Checkout', () => {
 
     cy.location('pathname').should('eq', '/order/')
 
-    cy.get('.table-order-items tfoot tr:last-child td ')
+    cy.get('.table-order-items tfoot tr:last-child td')
       .invoke('text')
       .invoke('trim')
       .should('match', /^21,00/)
@@ -339,6 +339,7 @@ context('Checkout', () => {
     cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
     cy.intercept('POST', '/order/').as('postOrder')
+    cy.intercept('GET', '/search/geocode?address=**').as('geocodeAddress')
 
     cy.visit('/fr/')
 
@@ -381,6 +382,7 @@ context('Checkout', () => {
       .contains('91 Rue de Rivoli, 75004 Paris, France')
       .click()
 
+    cy.wait('@geocodeAddress')
     cy.wait('@postRestaurant')
 
     cy.get('.cart [data-testid="cart.shippingAddress"]')
@@ -397,7 +399,7 @@ context('Checkout', () => {
 
     cy.location('pathname').should('eq', '/order/')
 
-    cy.get('.table-order-items tfoot tr:last-child td ')
+    cy.get('.table-order-items tfoot tr:last-child td')
       .invoke('text')
       .invoke('trim')
       .should('match', /^20,00/)
@@ -405,7 +407,9 @@ context('Checkout', () => {
     cy.get('#tip-incr').click()
     cy.wait('@postOrder')
 
-    cy.get('.table-order-items tfoot tr:last-child td ')
+    cy.get('.loadingoverlay', { timeout: 15000 }).should('not.exist')
+
+    cy.get('.table-order-items tfoot tr:last-child td')
       .invoke('text')
       .invoke('trim')
       .should('match', /^21,00/)
