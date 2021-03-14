@@ -55,6 +55,7 @@
     "@cubejs-client/core": "^0.26.53",
     "@cubejs-client/react": "^0.26.53",
     "@cypress/react": "^4.16.4",
+    "@fragaria/address-formatter": "^2.4.0",
     "@reduxjs/toolkit": "^1.5.0",
     "@release-notes/changelog-parser": "^0.1.2",
     "@stripe/react-stripe-js": "^1.4.0",
