@@ -66,6 +66,10 @@ services:
             provider: snc_redis.default
             namespace: messenger
     cache.messenger.restart_workers_signal: '@restart_workers_signal.cache'
+    doctrine.second_level_cache.provider:
+        class: Symfony\Component\Cache\DoctrineProvider
+        arguments:
+            - '@doctrine.second_level_cache_pool'
 
 framework:
     #esi:             ~
@@ -101,6 +105,8 @@ framework:
             project.cache:
                 adapter: cache.app
             tag_manager.cache:
+                adapter: cache.app
+            doctrine.second_level_cache_pool:
                 adapter: cache.app
     messenger:
         buses:
@@ -253,6 +259,13 @@ doctrine:
                 enabled: true
         resolve_target_entities:
             Sylius\Component\Order\Model\OrderInterface: AppBundle\Sylius\Order\OrderInterface
+        second_level_cache:
+            enabled: true
+            log_enabled: true
+            region_lifetime: 60
+            region_cache_driver:
+                type: service
+                id: doctrine.second_level_cache.provider
 
 api_platform:
     version: 1.0.0
