@@ -137,7 +137,6 @@ services:
 
   browserless:
     image: browserless/chrome
-    restart: always
     environment:
       - DEBUG=browserless/chrome*
 
