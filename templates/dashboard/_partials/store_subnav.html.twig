@@ -1,6 +1,8 @@
-<div>
-  <a href="{{ path('dashboard_store_addresses', { id: store.id }) }}" class="btn btn-default">
-    <i class="fa fa-address-book-o mr-2"></i>
-    <span>{{ 'store.address_book'|trans }}</span>
-  </a>
-</div>
+{% if layout == 'dashboard.html.twig' and is_granted('ROLE_STORE') %}
+  <div>
+    <a href="{{ path('dashboard_store_addresses', { id: store.id }) }}" class="btn btn-default">
+      <i class="fa fa-address-book-o mr-2"></i>
+      <span>{{ 'store.address_book'|trans }}</span>
+    </a>
+  </div>
+{% endif %}

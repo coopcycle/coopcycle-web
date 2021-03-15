@@ -709,7 +709,8 @@ class AdminController extends AbstractController
             'pick'      => 'admin_delivery_pick',
             'deliver'   => 'admin_delivery_deliver',
             'view'      => 'admin_delivery',
-            'store_new' => 'admin_store_delivery_new'
+            'store_new' => 'admin_store_delivery_new',
+            'store_addresses' => 'admin_store_addresses'
         ];
     }
 

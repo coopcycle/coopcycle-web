@@ -1,9 +1,7 @@
 {% extends layout %}
 
 {% block subnav %}
-  {% if layout == 'dashboard.html.twig' and is_granted('ROLE_STORE') %}
-    {% include "dashboard/_partials/store_subnav.html.twig" %}
-  {% endif %}
+  {% include "dashboard/_partials/store_subnav.html.twig" %}
 {% endblock %}
 
 {% block content %}

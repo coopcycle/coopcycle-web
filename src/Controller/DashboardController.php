@@ -57,7 +57,8 @@ class DashboardController extends AbstractController
             'pick'      => 'profile_delivery_pick',
             'deliver'   => 'profile_delivery_deliver',
             'view'      => 'dashboard_delivery',
-            'store_new' => 'dashboard_store_delivery_new'
+            'store_new' => 'dashboard_store_delivery_new',
+            'store_addresses' => 'dashboard_store_addresses'
         ];
     }
 
