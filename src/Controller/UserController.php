@@ -57,7 +57,9 @@ class UserController extends AbstractController
             $email = $parts[0];
         }
 
+        // username must match /^[a-zA-Z0-9_]{3,15}$/
         $username = $slugify->slugify($email, ['separator' => '_']);
+        $username = substr($username, 0, 15);
 
         if ($index > 0) {
             $username = sprintf('%s_%d', $username, $index);
