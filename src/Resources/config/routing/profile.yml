@@ -386,6 +386,19 @@ dashboard_store_address:
             store: dashboard_store
     methods:  [ GET, POST ]
 
+dashboard_store_addresses:
+    path: /dashboard/stores/{id}/addresses
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::storeAddressesAction
+        layout: 'dashboard.html.twig'
+        routes:
+            stores: dashboard_stores
+            store: dashboard_store
+            store_address_new: dashboard_store_address_new
+            store_address: dashboard_store_address
+            store_addresses: dashboard_store_addresses
+    methods:  [ GET, POST ]
+
 profile_redirect_to_dashboard:
     path: /profile/{path}
     requirements:

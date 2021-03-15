@@ -9,6 +9,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
+use AppBundle\Form\StoreAddressesType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\DeliveryImportType;
@@ -378,6 +379,40 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'delivery_import_form' => $deliveryImportForm->createView(),
+        ]);
+    }
+
+    public function storeAddressesAction($id, Request $request, TranslatorInterface $translator)
+    {
+        $store = $this->getDoctrine()
+            ->getRepository(Store::class)
+            ->find($id);
+
+        $this->accessControl($store);
+
+        $routes = $request->attributes->get('routes');
+
+        $form = $this->createForm(StoreAddressesType::class, $store);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute($routes['store_addresses'], [ 'id' => $store->getId() ]);
+        }
+
+        return $this->render('store/addresses.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'form' => $form->createView(),
+            'store_address_new_route' => $routes['store_address_new'],
+            'store_address_route' => $routes['store_address'],
         ]);
     }
 }

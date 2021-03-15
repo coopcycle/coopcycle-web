@@ -13,38 +13,42 @@
 
 {{ form_start(form) }}
 
-  <div class="row">
-    <div class="col-sm-4">
-      {% if form.imageFile is defined %}
-        {{ form_row(form.imageFile) }}
-      {% endif %}
-    </div>
-    <div class="col-sm-8">
-      {{ form_row(form.name) }}
-      <div class="hidden">
-        {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: { class: 'checkbox switch' }}) }}&nbsp;
-        <a data-toggle="tooltip" data-placement="top" data-html="true" title="{{ "restaurant.form.enabled.tooltip" | trans | raw }}">
-          <i class="fa fa-info-circle"></i>
-        </a>
+  <section class="border-bottom mb-4">
+    <div class="row">
+      <div class="col-sm-4">
+        {% if form.imageFile is defined %}
+          {{ form_row(form.imageFile) }}
+        {% endif %}
       </div>
-      {{ form_row(form.legalName) }}
-      {{ form_row(form.website) }}
-      {{ form_row(form.telephone) }}
-      {% if form.siret is defined %}
-        {{ form_row(form.siret) }}
-      {% endif %}
-      {% if form.vat_number is defined %}
-        {{ form_row(form.vat_number) }}
-      {% endif %}
-      {% if form.rcs_number is defined %}
-        {{ form_row(form.rcs_number) }}
-      {% endif %}
-      {% if form.cuit is defined %}
-        {{ form_row(form.cuit) }}
-      {% endif %}
+      <div class="col-sm-8">
+        {{ form_row(form.name) }}
+        <div class="hidden">
+          {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: { class: 'checkbox switch' }}) }}&nbsp;
+          <a data-toggle="tooltip" data-placement="top" data-html="true" title="{{ "restaurant.form.enabled.tooltip" | trans | raw }}">
+            <i class="fa fa-info-circle"></i>
+          </a>
+        </div>
+        {{ form_row(form.legalName) }}
+        {% if form.address is defined %}
+          {{ form_row(form.address) }}
+        {% endif %}
+        {{ form_row(form.website) }}
+        {{ form_row(form.telephone) }}
+        {% if form.siret is defined %}
+          {{ form_row(form.siret) }}
+        {% endif %}
+        {% if form.vat_number is defined %}
+          {{ form_row(form.vat_number) }}
+        {% endif %}
+        {% if form.rcs_number is defined %}
+          {{ form_row(form.rcs_number) }}
+        {% endif %}
+        {% if form.cuit is defined %}
+          {{ form_row(form.cuit) }}
+        {% endif %}
+      </div>
     </div>
-  </div>
-  <hr>
+  </section>
 
   {% if form.pricingRuleSet is defined or form.prefillPickupAddress is defined or form.createOrders is defined %}
     {% if form.pricingRuleSet is defined and form.pricingRuleSet.vars.choices|length == 0 %}
@@ -91,60 +95,6 @@
   {% if form.tags is defined %}
     {{ form_row(form.tags) }}
   {% endif %}
-
-  {% if form.address is defined %}
-    {{ form_row(form.address) }}
-  {% endif %}
-
-  {% if store.id is not empty %}
-
-    <label class="control-label">{{ 'stores.addresses'|trans }}</label>
-
-    {% if store.addresses|length > 0 %}
-      <table class="table">
-        <thead>
-          <th>{{ 'form.address.name.label'|trans }}</th>
-          <th>{{ 'form.address.streetAddress.label'|trans }}</th>
-          <th></th>
-          <th></th>
-        </thead>
-        <tbody>
-        {% for address in store.addresses %}
-          <tr>
-            <td>{{ address.name }}</td>
-            <td>{{ address.streetAddress }}</td>
-            <td class="text-right">
-              {% if address != store.address %}
-                {% set form_name = 'setAsDefault_' ~ address.id %}
-                {% if form[form_name] is defined %}
-                  {{ form_widget(form[form_name], { attr: { class: 'btn btn-xs btn-default' } }) }}
-                {% endif %}
-              {% else %}
-                <small class="text-muted">{{ 'form.store_type.defaultAddress.label'|trans }}</small>
-              {% endif %}
-            </td>
-            <td class="text-right">
-              <a href="{{ path(store_address_route, { storeId: store.id, addressId: address.id }) }}">{{ 'basics.edit'|trans }}</a>
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <div class="alert alert-info">
-      {% trans %}basics.no_entries{% endtrans %}
-      </div>
-    {% endif %}
-
-    <p class="text-right">
-      <a href="{{ path(store_address_new_route, { id: store.id }) }}" class="btn btn-success">
-        <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
-      </a>
-    </p>
-
-  {% endif %}
-
-  <hr>
 
   <button type="submit" class="btn btn-lg btn-block btn-primary">{% trans %}basics.save{% endtrans %}</button>
 

@@ -1,0 +1,50 @@
+{% extends layout %}
+
+{% block content %}
+{% if store.addresses|length > 0 %}
+
+  {{ form_start(form) }}
+
+  <table class="table">
+    <thead>
+      <th>{{ 'form.address.name.label'|trans }}</th>
+      <th>{{ 'form.address.streetAddress.label'|trans }}</th>
+      <th></th>
+      <th></th>
+    </thead>
+    <tbody>
+    {% for address in store.addresses %}
+      <tr>
+        <td>{{ address.name }}</td>
+        <td>{{ address.streetAddress }}</td>
+        <td class="text-right">
+          {% if address != store.address %}
+            {% set form_name = 'setAsDefault_' ~ address.id %}
+            {% if form[form_name] is defined %}
+              {{ form_widget(form[form_name], { attr: { class: 'btn btn-xs btn-default' } }) }}
+            {% endif %}
+          {% else %}
+            <small class="text-muted">{{ 'form.store_type.defaultAddress.label'|trans }}</small>
+          {% endif %}
+        </td>
+        <td class="text-right">
+          <a href="{{ path(store_address_route, { storeId: store.id, addressId: address.id }) }}">{{ 'basics.edit'|trans }}</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {{ form_end(form) }}
+
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}basics.no_entries{% endtrans %}
+  </div>
+{% endif %}
+<p class="text-right">
+  <a href="{{ path(store_address_new_route, { id: store.id }) }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
+  </a>
+</p>
+{% endblock %}
