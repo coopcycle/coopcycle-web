@@ -116,4 +116,8 @@
   }
 }
 
+.ant-picker + .ant-picker {
+  margin-left: 0.5em;
+}
+
 @import "./packages.scss";
