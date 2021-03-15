@@ -170,11 +170,14 @@ trait OrderTrait
         ]);
     }
 
-    public function generateOrderReceiptAction($orderNumber, Request $request, ReceiptGenerator $generator, EntityManagerInterface $entityManager)
+    public function generateOrderReceiptAction($orderNumber, Request $request,
+        ReceiptGenerator $generator,
+        EntityManagerInterface $entityManager,
+        OrderRepository $orderRepository)
     {
         $billingAddress = $request->request->get('billingAddress');
 
-        $order = $this->get('sylius.repository.order')->findOneBy([
+        $order = $orderRepository->findOneBy([
             'number'=> $orderNumber
         ]);
 

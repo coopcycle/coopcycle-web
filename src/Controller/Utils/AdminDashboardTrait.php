@@ -375,7 +375,10 @@ trait AdminDashboardTrait
     /**
      * @Route("/admin/tasks/{taskId}/images/{imageId}/download", name="admin_task_image_download")
      */
-    public function downloadTaskImage($taskId, $imageId, StorageInterface $storage, SlugifyInterface $slugify)
+    public function downloadTaskImageAction($taskId, $imageId,
+        StorageInterface $storage,
+        SlugifyInterface $slugify,
+        Filesystem $taskImagesFilesystem)
     {
         $image = $this->getDoctrine()->getRepository(TaskImage::class)->find($imageId);
 
@@ -388,12 +391,10 @@ trait AdminDashboardTrait
         // FIXME
         // It's not clean to use resolveUri()
         // but the problem is that resolvePath() returns the path with prefix,
-        // while $fs is alreay aware of the prefix
+        // while $taskImagesFilesystem is alreay aware of the prefix
         $imagePath = ltrim($storage->resolveUri($image, 'file'), '/');
 
-        $fs = $this->get('task_images_filesystem');
-
-        if (!$fs->has($imagePath)) {
+        if (!$taskImagesFilesystem->has($imagePath)) {
             throw new NotFoundHttpException(sprintf('Image at path "%s" not found', $imagePath));
         }
 
@@ -403,7 +404,7 @@ trait AdminDashboardTrait
             stream_copy_to_stream($fileStream, $outputStream);
         });
 
-        $response->headers->set('Content-Type', $fs->getMimetype($imagePath));
+        $response->headers->set('Content-Type', $taskImagesFilesystem->getMimetype($imagePath));
 
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
