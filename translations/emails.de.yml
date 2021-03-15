@@ -2,7 +2,7 @@ registration.email.subject: "E-Mail bestätigen\n"
 registration.email.message: "<h2>Wilkommen bei %brand_name%, %username%</h2>\nSie\
   \ erhalten diese Nachricht, da Sie sich für ein %brand_name% -Konto angemeldet haben.\n\
   <br>\nBestätigen Sie ihre E-Mail-Adresse durch einen Klick auf den Button.\n"
-registration.email.confirm: E-Mail wiederholen
+registration.email.confirm: E-Mail-Adresse bestätigen
 registration.email.disclaimer: Dieser Link ist nur zur einmaligen Validierung des
   Kontos gültig
 registration.email.textMessage: "Herzlich willkommen bei %brand_name%, %username%,\\\

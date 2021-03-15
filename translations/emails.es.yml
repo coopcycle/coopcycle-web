@@ -76,3 +76,9 @@ order.expiring_authorization.text: El autorización de pago para el pedido <stro
   va a caducar pronto. <br> Debería terminar de hacer el pedido antes de que el autorización
   caduca para evitar perder el dinero.
 order.expiring_authorization.subject: Un autorización de pago caducará pronto
+order.payment_failed.return_to_order: Volver al pedido
+order.payment_failed.body: "Hola,\n<br>\nLo sentimos, hubo un error al procesar su\
+  \ pago. Vuelve a intentarlo con otro método de pago."
+order.payment_failed.subject: Hubo un error al procesar su pago
+order.receipt.body: "Hola,\n<br>\nEl recibo de su pedido se encuentra adjunto."
+order.receipt.subject: Recibo de su pedido %order.number%

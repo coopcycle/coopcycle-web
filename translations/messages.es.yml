@@ -389,10 +389,10 @@ form.local_business.stripe_account.connect_button.text: Conéctate con Stripe
 form.local_business.stripe_account.not_configured: No puedes conectar una cuenta todavía
 form.local_business.stripe_account.success: Cuenta Stripe conectada con éxito
 form.local_business.stripe_account.need_stripe_account: "Aún no has creado una cuenta\
-  \ Stripe para éste restaurante. Stripe és una plataforma de pagos que nos permite\
+  \ Stripe para éste restaurante. Stripe es una plataforma de pagos que nos permite\
   \ gestionar de forma segura los pagos con tarjeta de crédito y las transferencia\
-  \ a tu cuenta bancaria. Para crear una cuenta Stripe para éste restaurante por favor\
-  \ haz <a href=\"%stripeAuthorizeURL%\">clic aquí</a>.\n"
+  \ a tu cuenta bancaria.<br>\nPara crear una cuenta Stripe para este restaurante\
+  \ por favor haz <a href=\"%stripeAuthorizeURL%\">clic aquí</a>.\n"
 form.local_business.stripe_account.link_ok: "Éste restaurante ha sido enlazado a una\
   \ cuenta Stripe y puede recibir pagos de la plataforma.<br>\nPara gestionar tu cuenta\
   \ Stripe por favor usa el <a href=\"https://dashboard.stripe.com/\" target=\"_blank\"\
@@ -445,7 +445,7 @@ form.menu_editor.help: "Use el editor a continuación para componer los elemento
   \ a la derecha\n<br>\nNo olvides hacer clic en el botón « Guardar cambios » a continuación\n"
 form.menu_editor.products.help: Para añadir productos en la lista de la derecha, agregalos
   al <a href="%products_url%">catálogo</a>primero
-form.menu_editor.taxon_modal.title: Modificar una seccion
+form.menu_editor.taxon_modal.title: Modificar una sección
 form.product.name.label: Nombre
 form.product.description.label: Descripción
 form.product.price.label: Precio
@@ -1145,3 +1145,14 @@ restaurant.form.section.embed: Incorporar
 loopeat.oauth_redirect.warning: Serás redirigido al sitio web de LoopEat para iniciar
   sesión o crear tu cuenta
 order.export.heading.promotions: Descuentos
+notifications.tap_to_open: Toque para abrir
+notifications.tasks_changed_today: Sus tareas de hoy se han actualizado
+form.fulfillment_method.pre_ordering_allowed.help: Si desmarca esta casilla, los clientes
+  solo podrán realizar pedidos el mismo día.
+form.customize.order_confirm.label: Este mensaje aparecerá en la página de confirmación
+  del pedido
+form.customize.order_confirm_enabled.label: Mostrar un mensaje de confirmación de
+  pedido personalizado
+form.option_value.value.placeholder: ej. patatas fritas, ensaladas…
+basics.enabled: Activado
+order.export.empty: No hay pedidos para exportar
