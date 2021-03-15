@@ -11,7 +11,13 @@ const zeroStyle = {
   boxShadow: '0 0 0 1px #d9d9d9 inset'
 }
 
-const Notifications = ({ initialNotifications, initialCount, onOpen, centrifuge, namespace, username }) => {
+const zeroStyleDark = {
+  backgroundColor: '#9d9d9d',
+  color: 'white',
+  boxShadow: '0 0 0 1px #d9d9d9 inset'
+}
+
+const Notifications = ({ initialNotifications, initialCount, onOpen, centrifuge, namespace, username, theme }) => {
 
   const [ visible, setVisible ] = useState(false)
   const [ notifications, setNotifications ] = useState(initialNotifications)
@@ -44,7 +50,7 @@ const Notifications = ({ initialNotifications, initialCount, onOpen, centrifuge,
   }, [ visible ])
 
   const badgeProps = count === 0 ?
-    { style: zeroStyle } : { style: { backgroundColor: '#52c41a' } }
+    { style: theme === 'dark' ? zeroStyleDark : zeroStyle } : { style: { backgroundColor: '#52c41a' } }
 
   return (
     <Popover
@@ -72,6 +78,8 @@ function bootstrap(el, options) {
   const centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
   centrifuge.setToken(options.token)
 
+  const theme = el.dataset.theme || 'light'
+
   $.getJSON(options.notificationsURL, { format: 'json' })
   .then(result => {
 
@@ -90,7 +98,8 @@ function bootstrap(el, options) {
       }}
       centrifuge={ centrifuge }
       namespace={ options.namespace }
-      username={ options.username } />, el)
+      username={ options.username }
+      theme={ theme } />, el)
   })
   .catch(() => { /* Fail silently */ })
 }
