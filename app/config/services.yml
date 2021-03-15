@@ -102,6 +102,7 @@ services:
   Sylius\Component\Resource\Factory\FactoryInterface $productOptionFactory: '@sylius.factory.product_option'
   League\Flysystem\Filesystem $assetsFilesystem: '@assets_filesystem'
   Redis $tile38: '@snc_redis.tile38'
+  Sylius\Component\Resource\Repository\RepositoryInterface $taxRateRepository: '@sylius.repository.tax_rate'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
