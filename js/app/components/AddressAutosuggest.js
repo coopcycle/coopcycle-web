@@ -402,7 +402,7 @@ class AddressAutosuggest extends Component {
     })
 
     if (this.props.autofocus) {
-      setTimeout(() => this.autosuggest.input.focus(), 0)
+      setTimeout(() => this.autosuggest?.input.focus(), 150)
     }
   }
 
