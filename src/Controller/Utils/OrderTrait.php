@@ -129,9 +129,9 @@ trait OrderTrait
         return $this->render($request->attributes->get('template'), $parameters, $response);
     }
 
-    public function orderReceiptPreviewAction($id, Request $request, ReceiptGenerator $generator)
+    public function orderReceiptPreviewAction($id, Request $request, ReceiptGenerator $generator, OrderRepository $orderRepository)
     {
-        $order = $this->get('sylius.repository.order')->find($id);
+        $order = $orderRepository->find($id);
 
         $this->denyAccessUnlessGranted('view', $order);
 
@@ -142,9 +142,9 @@ trait OrderTrait
         ]);
     }
 
-    public function orderReceiptAction($orderNumber, Request $request, Filesystem $receiptsFilesystem)
+    public function orderReceiptAction($orderNumber, Request $request, Filesystem $receiptsFilesystem, OrderRepository $orderRepository)
     {
-        $order = $this->get('sylius.repository.order')->findOneBy([
+        $order = $orderRepository->findOneBy([
             'number'=> $orderNumber
         ]);
 
