@@ -11,36 +11,6 @@
 
 {% block content %}
 
-{% if store.id is not empty %}
-<nav class="navbar">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#store-navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        {{ store.name }}
-      </span>
-    </div>
-    <div class="collapse navbar-collapse" id="store-navbar">
-      <div class="nav navbar-nav navbar-right">
-        {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('admin_store_users', { id: store.id }) }}" class="btn btn-default navbar-btn">
-          <i class="fa fa-user"></i>  {% trans %}stores.users{% endtrans %}
-        </a>
-        {% endif %}
-        <a href="{{ path(store_delivery_new_route, { id: store.id }) }}" class="btn btn-success navbar-btn">
-          <i class="fa fa-plus"></i>  {% trans %}delivery.createNew{% endtrans %}
-        </a>
-      </div>
-    </div>
-  </div>
-</nav>
-{% endif %}
-
 {{ form_start(form) }}
 
   <div class="row">
