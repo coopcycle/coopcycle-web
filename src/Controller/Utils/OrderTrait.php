@@ -13,6 +13,7 @@ use AppBundle\Utils\RestaurantStats;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use Sylius\Component\Payment\PaymentTransitions;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +37,11 @@ trait OrderTrait
         return new JsonResponse($orderNormalized, 200);
     }
 
-    public function orderListAction(Request $request, TranslatorInterface $translator, EntityManagerInterface $entityManager)
+    public function orderListAction(Request $request,
+        TranslatorInterface $translator,
+        EntityManagerInterface $entityManager,
+        RepositoryInterface $taxRateRepository
+    )
     {
         $response = new Response();
 
@@ -84,14 +89,14 @@ trait OrderTrait
                 $stats = new RestaurantStats(
                     $this->getParameter('kernel.default_locale'),
                     $qb,
-                    $this->get('sylius.repository.tax_rate'),
+                    $taxRateRepository,
                     $translator,
                     $withVendorName = true,
                     $withMessenger
                 );
 
                 if (count($stats) === 0) {
-                    $this->addFlash('error', $this->get('translator')->trans('order.export.empty'));
+                    $this->addFlash('error', $translator->trans('order.export.empty'));
 
                     return $this->redirectToRoute($request->attributes->get('_route'));
                 }
