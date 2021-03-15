@@ -4,9 +4,21 @@
 <li>
   <a href="{{ path('admin_restaurants') }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a>
 </li>
+<li>{% trans %}adminDashboard.hubs.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
+
+<div class="alert alert-info">
+  {{ 'adminDashboard.hubs.help'|trans }}
+</div>
+
+<div class="text-right mb-4">
+  <a href="{{ path('admin_hub_new') }}" class="btn btn-success">
+    <i class="fa fa-plus mr-2"></i>
+    <span>{% trans %}adminDashboard.hubs.createNew{% endtrans %}</span>
+  </a>
+</div>
 
 {% if hubs|length > 0 %}
   <table class="table">

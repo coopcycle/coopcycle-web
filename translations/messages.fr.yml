@@ -1145,3 +1145,6 @@ deliveries.section.upcoming: À venir
 deliveries.section.past: Passées
 stores.address_book: Carnet d'adresses
 store.form.section.settings: Paramètres
+adminDashboard.hubs.title: Hubs
+adminDashboard.hubs.createNew: Créer un nouveau hub
+adminDashboard.hubs.help: Les hubs permettent de regrouper des boutiques partageant le même point de retrait, comme un marché par exemple.

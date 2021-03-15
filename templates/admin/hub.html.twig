@@ -3,23 +3,61 @@
 {% form_theme form 'form/restaurant.html.twig' %}
 
 {% block breadcrumb %}
-<li>{% trans %}adminDashboard.restaurants.title{% endtrans %}</li>
+<li>
+  <a href="{{ path('admin_restaurants') }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a>
+</li>
+<li>
+  <a href="{{ path('admin_hubs') }}">{% trans %}adminDashboard.hubs.title{% endtrans %}</a>
+</li>
+<li>
+  {{ 'basics.add'|trans }}
+</li>
 {% endblock %}
 
 {% block content %}
 {{ form_start(form) }}
 
-  {{ form_row(form.name) }}
+  <div class="row">
+    <div class="col-sm-3">
+      <ul class="nav nav-pills nav-stacked">
+        <li role="presentation" class="active">
+          <a role="tab" data-toggle="tab" href="#general" aria-controls="general">
+            {{ 'restaurant.form.section.general'|trans }}
+          </a>
+        </li>
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#fulfillment" aria-controls="fulfillment">
+            {{ 'restaurant.form.section.fulfillment'|trans }}
+          </a>
+        </li>
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#settlement" aria-controls="settlement">
+            {{ 'restaurant.form.section.settlement'|trans }}
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-9">
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="general">
+          {{ form_row(form.name) }}
+          {{ form_row(form.address) }}
+          {{ form_row(form.restaurants) }}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="fulfillment">
+          {{ form_row(form.fulfillmentMethods, { label: false }) }}
+          {{ form_row(form.shippingOptionsDays) }}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="settlement">
+          {{ form_widget(form) }}
+        </div>
+      </div>
+    </div>
+  </div>
 
-  {{ form_row(form.restaurants) }}
+  <hr>
 
-  <hr />
-
-  {{ form_row(form.fulfillmentMethods, { label: false }) }}
-
-  {{ form_widget(form) }}
-
-  <button type="submit" class="btn btn-block btn-primary">
+  <button type="submit" class="btn btn-block btn-lg btn-primary">
     {{ 'basics.save'|trans }}
   </button>
 {{ form_end(form) }}

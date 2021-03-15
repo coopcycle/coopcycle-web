@@ -40,6 +40,11 @@ class HubType extends AbstractType
 
         $builder
             ->add('name', TextType::class, ['label' => 'basics.name'])
+            ->add('address', AddressType::class, [
+                'with_widget' => true,
+                'with_description' => false,
+                'label' => false,
+            ])
             ->add('contract', ContractType::class, [
                 'with_advanced_options' => false,
             ])
