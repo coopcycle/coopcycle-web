@@ -309,7 +309,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         if ($match !== true) {
             throw new \RuntimeException(sprintf("Expected JSON doesn't match response JSON.\n%s",
-                (string) $matcher->backtrace()));
+                (string) $matcher->error()));
         }
     }
 

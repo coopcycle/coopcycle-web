@@ -122,7 +122,7 @@
         "phpunit/phpunit": "^9.0",
         "behat/behat": "^3.7",
         "behatch/contexts": "^3.3",
-        "coduo/php-matcher": "^5.0",
+        "coduo/php-matcher": "^6.0",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-symfony": "^0.12",
         "phpspec/prophecy-phpunit": "^2.0",

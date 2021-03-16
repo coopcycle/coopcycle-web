@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eecb12b11ed74acba59c8ef146e9eb4e",
+    "content-hash": "8fb18d4f4cb6243b0a73f6737e63c85b",
     "packages": [
         {
             "name": "api-platform/core",
@@ -18038,6 +18038,61 @@
     ],
     "packages-dev": [
         {
+            "name": "aeon-php/calendar",
+            "version": "0.16.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aeon-php/calendar.git",
+                "reference": "9509656c6b01024aad6158628fc8c950f9cf1199"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aeon-php/calendar/zipball/9509656c6b01024aad6158628fc8c950f9cf1199",
+                "reference": "9509656c6b01024aad6158628fc8c950f9cf1199",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4.2"
+            },
+            "require-dev": {
+                "ext-bcmath": "*"
+            },
+            "suggest": {
+                "ext-bcmath": "Compare time units with high precision"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Aeon\\": [
+                        "src/Aeon"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP type safe, immutable calendar library",
+            "keywords": [
+                "calendar",
+                "date",
+                "datetime",
+                "immutable",
+                "time"
+            ],
+            "support": {
+                "issues": "https://github.com/aeon-php/calendar/issues",
+                "source": "https://github.com/aeon-php/calendar/tree/0.16.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/norberttech",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-02-23T08:58:57+00:00"
+        },
+        {
             "name": "behat/behat",
             "version": "v3.8.1",
             "source": {
@@ -18248,29 +18303,30 @@
         },
         {
             "name": "coduo/php-matcher",
-            "version": "5.0.1",
+            "version": "6.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coduo/php-matcher.git",
-                "reference": "2e8ed688f70140dfcaa4ffc7c6ded8c2d6df0ae7"
+                "reference": "b8f52e736165966c4e467e292349ecd88aa401cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coduo/php-matcher/zipball/2e8ed688f70140dfcaa4ffc7c6ded8c2d6df0ae7",
-                "reference": "2e8ed688f70140dfcaa4ffc7c6ded8c2d6df0ae7",
+                "url": "https://api.github.com/repos/coduo/php-matcher/zipball/b8f52e736165966c4e467e292349ecd88aa401cc",
+                "reference": "b8f52e736165966c4e467e292349ecd88aa401cc",
                 "shasum": ""
             },
             "require": {
+                "aeon-php/calendar": "^0.14.0 || ^0.15.0 || ^0.16.0",
                 "coduo/php-to-string": "^3",
                 "doctrine/lexer": "^1.0",
                 "ext-filter": "*",
                 "ext-json": "*",
                 "ext-simplexml": "*",
-                "php": ">=7.2"
+                "php": ">=7.4"
             },
             "require-dev": {
                 "openlss/lib-array2xml": "^1.0",
-                "phpunit/phpunit": "^8.5",
+                "phpunit/phpunit": "^9.4",
                 "symfony/expression-language": "^2.3|^3.0|^4.0|^5.0"
             },
             "suggest": {
@@ -18306,37 +18362,34 @@
             ],
             "support": {
                 "issues": "https://github.com/coduo/php-matcher/issues",
-                "source": "https://github.com/coduo/php-matcher/tree/5.0.1"
+                "source": "https://github.com/coduo/php-matcher/tree/6.0.4"
             },
-            "time": "2020-10-09T13:30:26+00:00"
+            "time": "2021-03-01T14:44:45+00:00"
         },
         {
             "name": "coduo/php-to-string",
-            "version": "3.1.0",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coduo/php-to-string.git",
-                "reference": "5eab40b901e89484f3ea586c08099162e89f81ce"
+                "reference": "a1c8fb40d28252181cdad00b9fdc58ac71c154b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coduo/php-to-string/zipball/5eab40b901e89484f3ea586c08099162e89f81ce",
-                "reference": "5eab40b901e89484f3ea586c08099162e89f81ce",
+                "url": "https://api.github.com/repos/coduo/php-to-string/zipball/a1c8fb40d28252181cdad00b9fdc58ac71c154b1",
+                "reference": "a1c8fb40d28252181cdad00b9fdc58ac71c154b1",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2",
-                "symfony/intl": "^3.4|^4.0|^5.0"
+                "php": ">=7.2"
             },
             "require-dev": {
-                "phpspec/phpspec": "^6"
+                "phpunit/phpunit": "^8.5|^9.5"
+            },
+            "suggest": {
+                "ext-intl": "Required if you are going to use humanizer with locales different than en_EN"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "4.0-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Coduo\\ToString\\": "src/Coduo/ToString"
@@ -18365,9 +18418,15 @@
             ],
             "support": {
                 "issues": "https://github.com/coduo/php-to-string/issues",
-                "source": "https://github.com/coduo/php-to-string/tree/3.1.0"
+                "source": "https://github.com/coduo/php-to-string/tree/3.2.0"
             },
-            "time": "2020-09-27T10:31:58+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/norberttech",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-02-23T21:32:39+00:00"
         },
         {
             "name": "friends-of-behat/mink",
