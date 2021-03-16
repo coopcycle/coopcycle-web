@@ -1144,3 +1144,4 @@ form.payment.method.name.label: Méthode de paiement
 deliveries.section.upcoming: À venir
 deliveries.section.past: Passées
 stores.address_book: Carnet d'adresses
+store.form.section.settings: Paramètres

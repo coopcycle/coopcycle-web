@@ -1147,3 +1147,4 @@ edenred.oauth_connect.success: Edenred account connected successfully!
 form.payment.method.name.label: Payment method
 order.export.heading.promotions: Promotions
 stores.address_book: Address book
+store.form.section.settings: Settings

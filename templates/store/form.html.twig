@@ -16,88 +16,37 @@
 
 {{ form_start(form) }}
 
-  <section class="border-bottom mb-4">
-    <div class="row">
-      <div class="col-sm-4">
-        {% if form.imageFile is defined %}
-          {{ form_row(form.imageFile) }}
-        {% endif %}
-      </div>
-      <div class="col-sm-8">
-        {{ form_row(form.name) }}
-        <div class="hidden">
-          {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: { class: 'checkbox switch' }}) }}&nbsp;
-          <a data-toggle="tooltip" data-placement="top" data-html="true" title="{{ "restaurant.form.enabled.tooltip" | trans | raw }}">
-            <i class="fa fa-info-circle"></i>
+  <div class="row">
+    <div class="col-sm-3">
+      {% if form.imageFile is defined %}
+        {{ form_row(form.imageFile) }}
+      {% endif %}
+      <ul class="nav nav-pills nav-stacked">
+        <li role="presentation" class="active">
+          <a role="tab" data-toggle="tab" href="#general" aria-controls="general">
+            {{ 'restaurant.form.section.general'|trans }}
           </a>
+        </li>
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#settings" aria-controls="settings">
+            {{ 'store.form.section.settings'|trans }}
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-9">
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="general">
+          {% include "store/form/_partials/general.html.twig" %}
         </div>
-        {{ form_row(form.legalName) }}
-        {% if form.address is defined %}
-          {{ form_row(form.address) }}
-        {% endif %}
-        {{ form_row(form.website) }}
-        {{ form_row(form.telephone) }}
-        {% if form.siret is defined %}
-          {{ form_row(form.siret) }}
-        {% endif %}
-        {% if form.vat_number is defined %}
-          {{ form_row(form.vat_number) }}
-        {% endif %}
-        {% if form.rcs_number is defined %}
-          {{ form_row(form.rcs_number) }}
-        {% endif %}
-        {% if form.cuit is defined %}
-          {{ form_row(form.cuit) }}
-        {% endif %}
+        <div role="tabpanel" class="tab-pane" id="settings">
+          {% include "store/form/_partials/settings.html.twig" %}
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  {% if form.pricingRuleSet is defined or form.prefillPickupAddress is defined or form.createOrders is defined %}
-    {% if form.pricingRuleSet is defined and form.pricingRuleSet.vars.choices|length == 0 %}
-      <div class="alert alert-warning">{% trans with {'%editPricingRule%':admin_deliveries_pricing} %}restaurant.form.noPricingRule{% endtrans %}</div>
-      <div class="hidden">
-        {{ form_row(form.pricingRuleSet) }}
-        {% if form.prefillPickupAddress is defined %}
-          {{ form_row(form.prefillPickupAddress) }}
-        {% endif %}
-        {% if form.createOrders is defined %}
-          {{ form_row(form.createOrders) }}
-        {% endif %}
-      </div>
-    {% else %}
-      {% if form.pricingRuleSet is defined %}
-        {{ form_row(form.pricingRuleSet) }}
-      {% endif %}
-      {% if form.prefillPickupAddress is defined %}
-        {{ form_row(form.prefillPickupAddress) }}
-      {% endif %}
-      {% if form.createOrders is defined %}
-        {{ form_row(form.createOrders) }}
-      {% endif %}
-      {% if form.weightRequired is defined %}
-        {{ form_row(form.weightRequired) }}
-      {% endif %}
-      {% if form.packagesRequired is defined %}
-        {{ form_row(form.packagesRequired) }}
-      {% endif %}
-    {% endif %}
-    <hr>
-  {% endif %}
-
-  {% if form.timeSlot is defined or form.packageSet is defined %}
-    {% if form.timeSlot is defined %}
-      {{ form_row(form.timeSlot) }}
-    {% endif %}
-    {% if form.packageSet is defined %}
-      {{ form_row(form.packageSet) }}
-    {% endif %}
-    <hr>
-  {% endif %}
-
-  {% if form.tags is defined %}
-    {{ form_row(form.tags) }}
-  {% endif %}
+  <hr>
 
   <button type="submit" class="btn btn-lg btn-block btn-primary">{% trans %}basics.save{% endtrans %}</button>
 
