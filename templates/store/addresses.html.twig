@@ -3,6 +3,12 @@
 {% block subnav %}
 {% endblock %}
 
+{% block breadcrumb %}
+<li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+<li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+<li>{% trans %}stores.address_book{% endtrans %}</li>
+{% endblock %}
+
 {% block content %}
 {% if store.addresses|length > 0 %}
 

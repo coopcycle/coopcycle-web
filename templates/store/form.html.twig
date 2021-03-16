@@ -32,6 +32,20 @@
             {{ 'store.form.section.settings'|trans }}
           </a>
         </li>
+        {% if store.id is not empty %}
+        <li role="presentation">
+          <a href="{{ path(store_addresses_route, { id: store.id }) }}">
+            {{ 'stores.address_book'|trans }}
+          </a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+        <li role="presentation">
+          <a href="{{ path('admin_store_users', { id: store.id }) }}">
+            {{ 'stores.users'|trans }}
+          </a>
+        </li>
+        {% endif %}
+        {% endif %}
       </ul>
     </div>
     <div class="col-sm-9">

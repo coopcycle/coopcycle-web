@@ -342,6 +342,7 @@ dashboard_store:
             store_deliveries: dashboard_store_deliveries
             store_address_new: dashboard_store_address_new
             store_address: dashboard_store_address
+            store_addresses: dashboard_store_addresses
     methods:  [ GET, POST ]
 
 dashboard_store_deliveries:

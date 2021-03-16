@@ -142,8 +142,7 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_delivery_new_route' => $routes['store_delivery_new'],
             'store_deliveries_route' => $routes['store_deliveries'],
-            'store_address_new_route' => $routes['store_address_new'],
-            'store_address_route' => $routes['store_address'],
+            'store_addresses_route' => $routes['store_addresses'],
         ]);
     }
 
@@ -413,6 +412,8 @@ trait StoreTrait
             'form' => $form->createView(),
             'store_address_new_route' => $routes['store_address_new'],
             'store_address_route' => $routes['store_address'],
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
         ]);
     }
 }
