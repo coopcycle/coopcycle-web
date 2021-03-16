@@ -1,9 +1,6 @@
 {{ form_row(form.name) }}
 <div class="hidden">
-  {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: { class: 'checkbox switch' }}) }}&nbsp;
-  <a data-toggle="tooltip" data-placement="top" data-html="true" title="{{ "restaurant.form.enabled.tooltip" | trans | raw }}">
-    <i class="fa fa-info-circle"></i>
-  </a>
+ {{ form_widget(form.enabled) }}
 </div>
 {{ form_row(form.legalName) }}
 {% if form.address is defined %}
