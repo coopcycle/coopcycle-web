@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8fb18d4f4cb6243b0a73f6737e63c85b",
+    "content-hash": "3d47abd0858dab5f6aa9927eb111d466",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3195,16 +3195,16 @@
         },
         {
             "name": "edamov/pushok",
-            "version": "0.11.4",
+            "version": "0.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/edamov/pushok.git",
-                "reference": "34e7f3c6bc91f317a0191e0450a885d4f86a9886"
+                "reference": "9078598d9b57ee9fcde4d139b987a3b9670a33b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/edamov/pushok/zipball/34e7f3c6bc91f317a0191e0450a885d4f86a9886",
-                "reference": "34e7f3c6bc91f317a0191e0450a885d4f86a9886",
+                "url": "https://api.github.com/repos/edamov/pushok/zipball/9078598d9b57ee9fcde4d139b987a3b9670a33b8",
+                "reference": "9078598d9b57ee9fcde4d139b987a3b9670a33b8",
                 "shasum": ""
             },
             "require": {
@@ -3215,7 +3215,7 @@
                 "ext-xml": "*",
                 "lib-curl": ">=7.46.0",
                 "lib-openssl": ">=1.0.2.5",
-                "php": "^7.2",
+                "php": "^7.2|^8.0",
                 "web-token/jwt-key-mgmt": "^2.0",
                 "web-token/jwt-signature-algorithm-ecdsa": "^2.0"
             },
@@ -3258,9 +3258,9 @@
             ],
             "support": {
                 "issues": "https://github.com/edamov/pushok/issues",
-                "source": "https://github.com/edamov/pushok/tree/0.11.4"
+                "source": "https://github.com/edamov/pushok/tree/0.12.1"
             },
-            "time": "2020-10-28T13:40:30+00:00"
+            "time": "2021-01-19T16:52:36+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -17225,16 +17225,16 @@
         },
         {
             "name": "web-token/jwt-core",
-            "version": "v2.2.7",
+            "version": "v2.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/web-token/jwt-core.git",
-                "reference": "e68c4940da62682426e78eafb1e3a3ba4c7cbabe"
+                "reference": "1365422ff1f147d2d4c5cb4473c28c9996fca84b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/web-token/jwt-core/zipball/e68c4940da62682426e78eafb1e3a3ba4c7cbabe",
-                "reference": "e68c4940da62682426e78eafb1e3a3ba4c7cbabe",
+                "url": "https://api.github.com/repos/web-token/jwt-core/zipball/1365422ff1f147d2d4c5cb4473c28c9996fca84b",
+                "reference": "1365422ff1f147d2d4c5cb4473c28c9996fca84b",
                 "shasum": ""
             },
             "require": {
@@ -17289,7 +17289,7 @@
                 "symfony"
             ],
             "support": {
-                "source": "https://github.com/web-token/jwt-core/tree/v2.2.7"
+                "source": "https://github.com/web-token/jwt-core/tree/v2.2.8"
             },
             "funding": [
                 {
@@ -17297,20 +17297,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-12-13T16:35:27+00:00"
+            "time": "2021-01-21T19:18:03+00:00"
         },
         {
             "name": "web-token/jwt-key-mgmt",
-            "version": "v2.2.7",
+            "version": "v2.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/web-token/jwt-key-mgmt.git",
-                "reference": "2f9758c7972cca3894fa28f17ceaf9c6db825b31"
+                "reference": "5e9cddfd11230f1d631bc29b6ce9677ddae101e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/web-token/jwt-key-mgmt/zipball/2f9758c7972cca3894fa28f17ceaf9c6db825b31",
-                "reference": "2f9758c7972cca3894fa28f17ceaf9c6db825b31",
+                "url": "https://api.github.com/repos/web-token/jwt-key-mgmt/zipball/5e9cddfd11230f1d631bc29b6ce9677ddae101e8",
+                "reference": "5e9cddfd11230f1d631bc29b6ce9677ddae101e8",
                 "shasum": ""
             },
             "require": {
@@ -17366,7 +17366,7 @@
                 "symfony"
             ],
             "support": {
-                "source": "https://github.com/web-token/jwt-key-mgmt/tree/v2.2.7"
+                "source": "https://github.com/web-token/jwt-key-mgmt/tree/v2.2.8"
             },
             "funding": [
                 {
@@ -17374,20 +17374,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-12-13T21:05:39+00:00"
+            "time": "2021-01-21T19:18:03+00:00"
         },
         {
             "name": "web-token/jwt-signature",
-            "version": "v2.2.7",
+            "version": "v2.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/web-token/jwt-signature.git",
-                "reference": "cad4f3c51d9e3537c5f45f26ae2c61d08fd5ffd2"
+                "reference": "de624b8384b6c1bcbd699de95656181ce255fe39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/web-token/jwt-signature/zipball/cad4f3c51d9e3537c5f45f26ae2c61d08fd5ffd2",
-                "reference": "cad4f3c51d9e3537c5f45f26ae2c61d08fd5ffd2",
+                "url": "https://api.github.com/repos/web-token/jwt-signature/zipball/de624b8384b6c1bcbd699de95656181ce255fe39",
+                "reference": "de624b8384b6c1bcbd699de95656181ce255fe39",
                 "shasum": ""
             },
             "require": {
@@ -17442,7 +17442,7 @@
                 "symfony"
             ],
             "support": {
-                "source": "https://github.com/web-token/jwt-signature/tree/v2.2.7"
+                "source": "https://github.com/web-token/jwt-signature/tree/v2.2.8"
             },
             "funding": [
                 {
@@ -17450,20 +17450,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-12-13T16:35:27+00:00"
+            "time": "2021-01-21T19:18:03+00:00"
         },
         {
             "name": "web-token/jwt-signature-algorithm-ecdsa",
-            "version": "v2.2.7",
+            "version": "v2.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/web-token/jwt-signature-algorithm-ecdsa.git",
-                "reference": "92f9f19ed9a9428d9835e564a2b9fdd7f8a4bd89"
+                "reference": "44cbbb4374c51f1cf48b82ae761efbf24e1a8591"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/web-token/jwt-signature-algorithm-ecdsa/zipball/92f9f19ed9a9428d9835e564a2b9fdd7f8a4bd89",
-                "reference": "92f9f19ed9a9428d9835e564a2b9fdd7f8a4bd89",
+                "url": "https://api.github.com/repos/web-token/jwt-signature-algorithm-ecdsa/zipball/44cbbb4374c51f1cf48b82ae761efbf24e1a8591",
+                "reference": "44cbbb4374c51f1cf48b82ae761efbf24e1a8591",
                 "shasum": ""
             },
             "require": {
@@ -17511,7 +17511,7 @@
                 "symfony"
             ],
             "support": {
-                "source": "https://github.com/web-token/jwt-signature-algorithm-ecdsa/tree/v2.2.7"
+                "source": "https://github.com/web-token/jwt-signature-algorithm-ecdsa/tree/v2.2.8"
             },
             "funding": [
                 {
@@ -17519,7 +17519,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-12-13T16:35:27+00:00"
+            "time": "2021-01-21T19:18:03+00:00"
         },
         {
             "name": "webmozart/assert",
