@@ -1,3 +1,22 @@
+{% set choices = [] %}
+
+{% if is_granted('ROLE_STORE') and app.user.stores|length > 0 %}
+  {% for s in app.user.stores %}
+    {% set choices = choices|merge([ s ]) %}
+  {% endfor %}
+{% endif %}
+{% if is_granted('ROLE_RESTAURANT') and app.user.restaurants|length > 0 %}
+  {% for r in app.user.restaurants %}
+    {% set choices = choices|merge([ r ]) %}
+  {% endfor %}
+{% endif %}
+
+{% set store      = app.request.attributes.get('_store') %}
+{% set restaurant = app.request.attributes.get('_restaurant') %}
+
+{% set possible_choices = [ store, restaurant ]|filter(c => c is not empty) %}
+{% set selected_choice  = possible_choices|first %}
+
 <nav class="navbar navbar-inverse rounded-0">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -15,27 +34,7 @@
       </a>
     </div>
     <div class="collapse navbar-collapse" id="dashboard-navbar">
-      <ul class="nav navbar-nav navbar-right">
-
-        {% set choices = [] %}
-
-        {% if is_granted('ROLE_STORE') and app.user.stores|length > 0 %}
-          {% for s in app.user.stores %}
-            {% set choices = choices|merge([ s ]) %}
-          {% endfor %}
-        {% endif %}
-        {% if is_granted('ROLE_RESTAURANT') and app.user.restaurants|length > 0 %}
-          {% for r in app.user.restaurants %}
-            {% set choices = choices|merge([ r ]) %}
-          {% endfor %}
-        {% endif %}
-
-        {% set store      = app.request.attributes.get('_store') %}
-        {% set restaurant = app.request.attributes.get('_restaurant') %}
-
-        {% set possible_choices = [ store, restaurant ]|filter(c => c is not empty) %}
-        {% set selected_choice  = possible_choices|first %}
-
+      <ul class="nav navbar-nav">
         {% if choices|length > 0 %}
           {% if choices|length > 1 %}
             <li class="dropdown">
@@ -64,6 +63,18 @@
           <li>
             <a href="{{ path((selected_choice is instanceof('AppBundle\\Entity\\Store') ? 'dashboard_store' : 'dashboard_restaurant'), { id: selected_choice.id }) }}">{{ 'basics.edit'|trans }}</a>
           </li>
+        {% endif %}
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        {% if choices|length > 0 %}
+          {% if selected_choice is instanceof('AppBundle\\Entity\\Store') %}
+          <li>
+            <a href="{{ path('dashboard_store_addresses', { id: selected_choice.id }) }}">
+              <i class="fa fa-address-book-o mr-2"></i>
+              <span>{{ 'stores.address_book'|trans }}</span>
+            </a>
+          </li>
+          {% endif %}
         {% endif %}
         <li id="notifications" data-theme="dark">
           <a href="#">

@@ -1,0 +1,17 @@
+{% if store is defined %}
+  {% if layout == 'dashboard.html.twig' and is_granted('ROLE_STORE') %}
+    <div class="d-flex align-items-center justify-content-between">
+      <div>
+        <h3 class="m-0 mb-2 font-weight-bold">{{ 'stores.deliveries'|trans }}</h3>
+        <small class="text-muted">{{ 'now'|format_datetime('full', 'none') }}</small>
+      </div>
+      <div>
+        {% include "store/_partials/buttons.html.twig" %}
+      </div>
+    </div>
+  {% else %}
+    <div class="d-flex align-items-center justify-content-end">
+      {% include "store/_partials/buttons.html.twig" %}
+    </div>
+  {% endif %}
+{% endif %}

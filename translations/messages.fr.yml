@@ -1143,4 +1143,4 @@ order.export.empty: Il n'y a pas de commandes à exporter
 form.payment.method.name.label: Méthode de paiement
 deliveries.section.upcoming: À venir
 deliveries.section.past: Passées
-store.address_book: Carnet d'adresses
+stores.address_book: Carnet d'adresses
