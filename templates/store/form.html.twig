@@ -21,7 +21,7 @@
       {% if form.imageFile is defined %}
         {{ form_row(form.imageFile) }}
       {% endif %}
-      <ul class="nav nav-pills nav-stacked">
+      <ul class="nav nav-pills nav-stacked mb-4">
         <li role="presentation" class="active">
           <a role="tab" data-toggle="tab" href="#general" aria-controls="general">
             {{ 'restaurant.form.section.general'|trans }}
@@ -42,6 +42,11 @@
         <li role="presentation">
           <a href="{{ path('admin_store_users', { id: store.id }) }}">
             {{ 'stores.users'|trans }}
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="{{ path('admin_store_deliveries', { id: store.id }) }}">
+            {{ 'stores.deliveries'|trans }}
           </a>
         </li>
         {% endif %}
