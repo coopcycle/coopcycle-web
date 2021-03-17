@@ -90,22 +90,34 @@ const sound = new Howl({
   src: ['/sounds/383624__newagesoup__bicycle-bell-13.wav']
 })
 
+let sw
+
 function notify(title, payload) {
-  var n = new Notification(title, payload)
-  n.onshow = function () {
-    sound.play()
+
+  if (sw) {
+    sw.showNotification(title, payload)
+      .then(() => {
+        sound.play()
+      })
   }
-  n.onclick = function () {
-    window.focus()
-  }
+
+  // FIXME
+  // Needs to be managed in service worker
+  // n.onclick = function () {
+  //   window.focus()
+  // }
 }
 
 export const notification = ({ getState }) => {
 
-  if (window.Notification && Notification.permission !== 'granted') {
+  if (window.Notification && 'serviceWorker' in navigator && Notification.permission !== 'granted') {
     Notification.requestPermission((status) => {
       if (status === 'granted') {
-        notify(i18n.t('NOTIFICATIONS_ENABLED'), { body: '🔔🔔🔔' })
+        navigator.serviceWorker.register('/foodtech-dashboard-sw.js')
+          .then((registration) => {
+            sw = registration
+            notify(i18n.t('NOTIFICATIONS_ENABLED'), { body: '🔔🔔🔔' })
+          });
       }
     })
   }
