@@ -110,13 +110,18 @@ function notify(title, payload) {
 
 export const notification = ({ getState }) => {
 
-  if (window.Notification && 'serviceWorker' in navigator && Notification.permission !== 'granted') {
+  if (window.Notification && 'serviceWorker' in navigator) {
+
+    const prevPermission = Notification.permission
+
     Notification.requestPermission((status) => {
       if (status === 'granted') {
         navigator.serviceWorker.register('/foodtech-dashboard-sw.js')
           .then((registration) => {
             sw = registration
-            notify(i18n.t('NOTIFICATIONS_ENABLED'), { body: '🔔🔔🔔' })
+            if (prevPermission !== 'granted') {
+              notify(i18n.t('NOTIFICATIONS_ENABLED'), { body: '🔔🔔🔔' })
+            }
           });
       }
     })
