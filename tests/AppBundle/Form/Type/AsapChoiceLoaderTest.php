@@ -649,4 +649,27 @@ class AsapChoiceLoaderTest extends TestCase
         $this->assertEquals(new \DateTime('2021-01-29T11:30:00+02:00'), $range->getLower());
         $this->assertEquals(new \DateTime('2021-01-29T12:00:00+02:00'), $range->getUpper());
     }
+
+    public function testPreorderingDisabledWith60MinutesDuration()
+    {
+        Carbon::setTestNow(Carbon::parse('2021-03-17T12:05:00+02:00'));
+
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 09:00-21:00"], null, 0, 60, false);
+
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $firstChoice = $choices[0];
+        $range = $firstChoice->toTsRange();
+
+        $this->assertEquals(new \DateTime('2021-03-17T13:00:00+02:00'), $range->getLower());
+        $this->assertEquals(new \DateTime('2021-03-17T14:00:00+02:00'), $range->getUpper());
+
+        Carbon::setTestNow(Carbon::parse('2021-03-17T20:30:00+02:00'));
+
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertCount(0, $choices);
+    }
 }

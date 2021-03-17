@@ -71,10 +71,6 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
             $max = Carbon::instance($now)->setTime(23, 59);
         }
 
-        if ($nextOpeningDate > $max) {
-            return new ArrayChoiceList([], $value);
-        }
-
         $choices = [];
 
         $range = $openingHours->currentOpenRange($now);
@@ -99,6 +95,10 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
             }
 
             $nextClosingDate = $openingHours->nextClose($now);
+        } else {
+            if ($nextOpeningDate > $max) {
+                return new ArrayChoiceList([], $value);
+            }
         }
 
         $cursor = Carbon::instance($now);
