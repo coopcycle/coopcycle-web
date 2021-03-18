@@ -4,6 +4,7 @@ import { render, unmountComponentAtNode } from 'react-dom'
 import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js'
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
+import { Checkbox } from 'antd'
 
 import { getCountry } from '../i18n'
 
@@ -69,7 +70,7 @@ const CardholderNameInput = ({ onChange }) => {
   )
 }
 
-const StripeForm = ({ onChange, onCardholderNameChange, options, country }) => {
+const StripeForm = ({ onChange, onCardholderNameChange, options, country, onSaveCardChange }) => {
 
   const { t } = useTranslation()
 
@@ -88,6 +89,11 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country }) => {
           { t('PAYMENT_FORM_TITLE') }
         </label>
         <CardElement options={{ style, hidePostalCode: true }} onChange={ onChange } />
+        <div className="my-3">
+          <Checkbox onChange={ e => onSaveCardChange(e.target.checked) }>
+            { t('PAYMENT_FORM_SAVE_CARD') }
+          </Checkbox>
+        </div>
         { hasBreakdown && (
           <span className="help-block mt-3">
             <i className="fa fa-info-circle mr-2"></i>
@@ -140,6 +146,7 @@ export default {
 
     this.cardholderName = ''
     this.el = el
+    this.isSavingCard = false
 
     if (method === 'giropay') {
 
@@ -170,6 +177,9 @@ export default {
                 onChange={ this.config.onChange }
                 onCardholderNameChange={ cardholderName => {
                   this.cardholderName = cardholderName
+                }}
+                onSaveCardChange={ checked => {
+                  this.isSavingCard = checked
                 }}
                 options={ options } />
             )
