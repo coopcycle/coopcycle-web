@@ -70,7 +70,7 @@ const CardholderNameInput = ({ onChange }) => {
   )
 }
 
-const StripeForm = ({ onChange, onCardholderNameChange, options, country, onSaveCardChange }) => {
+const StripeForm = ({ onChange, onCardholderNameChange, options, country, onSaveCardChange, saveCardCheckbox }) => {
 
   const { t } = useTranslation()
 
@@ -89,11 +89,13 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, onSave
           { t('PAYMENT_FORM_TITLE') }
         </label>
         <CardElement options={{ style, hidePostalCode: true }} onChange={ onChange } />
+        { saveCardCheckbox && (
         <div className="my-3">
           <Checkbox onChange={ e => onSaveCardChange(e.target.checked) }>
             { t('PAYMENT_FORM_SAVE_CARD') }
           </Checkbox>
         </div>
+        )}
         { hasBreakdown && (
           <span className="help-block mt-3">
             <i className="fa fa-info-circle mr-2"></i>
@@ -146,7 +148,7 @@ export default {
 
     this.cardholderName = ''
     this.el = el
-    this.isSavingCard = false
+    this.saveCard = false
 
     if (method === 'giropay') {
 
@@ -175,11 +177,12 @@ export default {
               <StripeForm
                 country={ getCountry() }
                 onChange={ this.config.onChange }
+                saveCardCheckbox={ this.config.saveCardCheckbox }
                 onCardholderNameChange={ cardholderName => {
                   this.cardholderName = cardholderName
                 }}
                 onSaveCardChange={ checked => {
-                  this.isSavingCard = checked
+                  this.saveCard = checked
                 }}
                 options={ options } />
             )
@@ -208,7 +211,8 @@ export default {
           reject(new Error(createPaymentMethodResult.error.message))
         } else {
           axios.post(this.config.gatewayConfig.createPaymentIntentURL, {
-            payment_method_id: createPaymentMethodResult.paymentMethod.id
+            payment_method_id: createPaymentMethodResult.paymentMethod.id,
+            save_card: this.saveCard,
           }).then((response) => {
             if (response.data.error) {
               reject(new Error(response.data.error.message))

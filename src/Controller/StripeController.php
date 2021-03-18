@@ -362,7 +362,7 @@ class StripeController extends AbstractController
 
             $payment->setPaymentMethod($data['payment_method_id']);
 
-            $intent = $stripeManager->createIntent($payment);
+            $intent = $stripeManager->createIntent($payment, $data['save_card'] ?? false);
             $payment->setPaymentIntent($intent);
 
             $this->entityManager->flush();

@@ -145,7 +145,8 @@
     amount: {{ order.total }},
     gatewayConfigs: {{ gateway_configs|json_encode|raw }},
     tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
-    selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}"
+    selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}",
+    saveCardCheckbox: {{ (app.user is not empty)|json_encode|raw }}
   });
 </script>
 {% endif %}

@@ -131,6 +131,7 @@ export default function(form, options) {
         document.getElementById('card-errors').textContent = ''
       }
     },
+    saveCardCheckbox: options.saveCardCheckbox,
   })
 
   cc.init(form)

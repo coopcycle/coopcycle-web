@@ -119,7 +119,7 @@ class StripeManager
     /**
      * @return Stripe\PaymentIntent
      */
-    public function createIntent(PaymentInterface $payment): Stripe\PaymentIntent
+    public function createIntent(PaymentInterface $payment, bool $saveCard = false): Stripe\PaymentIntent
     {
         $this->configure();
 
