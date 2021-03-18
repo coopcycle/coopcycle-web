@@ -37,10 +37,6 @@ class StripeManager
             return;
         }
 
-        if ($payment->isEdenredWithCard()) {
-            return;
-        }
-
         $restaurant = $order->getRestaurant();
 
         $livemode = $this->settingsManager->isStripeLivemode();
@@ -67,10 +63,6 @@ class StripeManager
             return $options;
         }
 
-        if ($payment->isEdenredWithCard()) {
-            return $options;
-        }
-
         $restaurant = $order->getRestaurant();
 
         $livemode = $this->settingsManager->isStripeLivemode();
@@ -89,11 +81,6 @@ class StripeManager
 
         $restaurant = $order->getRestaurant();
         if (null === $restaurant) {
-
-            return $payload;
-        }
-
-        if ($payment->isEdenredWithCard()) {
 
             return $payload;
         }
