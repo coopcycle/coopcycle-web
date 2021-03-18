@@ -158,8 +158,11 @@ class StripeManager
             'confirm' => true,
             // @see https://stripe.com/docs/payments/payment-intents/use-cases#separate-auth-capture
             // @see https://stripe.com/docs/payments/payment-intents/creating-payment-intents#separate-authorization-and-capture
-            'capture_method' => 'manual'
+            'capture_method' => 'manual',
             // 'statement_descriptor' => '...',
+            // @see https://stripe.com/docs/payments/payment-intents#future-usage
+            // @see https://stripe.com/docs/api/payment_intents/object#payment_intent_object-setup_future_usage
+            'setup_future_usage' => 'on_session',
         ];
 
         $this->configurePayment($payment);
