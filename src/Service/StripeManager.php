@@ -85,6 +85,13 @@ class StripeManager
             return $payload;
         }
 
+        // If it is a complementary payment,
+        // we do not take application fee
+        if ($payment->isEdenredWithCard()) {
+
+            return $payload;
+        }
+
         $attrs = [];
 
         $livemode = $this->settingsManager->isStripeLivemode();

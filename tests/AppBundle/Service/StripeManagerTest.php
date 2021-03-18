@@ -730,7 +730,7 @@ class StripeManagerTest extends TestCase
 
         $payment->setOrder($order->reveal());
 
-        $this->shouldSendStripeRequest('POST', '/v1/payment_intents', [
+        $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_intents', 'acct_123456', [
             "amount" => 350,
             "currency" => "eur",
             "description" => "Order ABC",
