@@ -51,19 +51,33 @@ class Client extends BaseClient
 
         $credentials = $customer->getEdenredCredentials();
 
-        // https://documenter.getpostman.com/view/10405248/TVewaQQX#82e953fc-9110-4246-8a78-aba888b70b31
-        $response = $this->request('GET', sprintf('/v1/users/%s', $userInfo['username']), [
-            'headers' => [
-                'Authorization' => sprintf('Bearer %s', $credentials->getAccessToken()),
-                'X-Client-Id' => $this->paymentClientId,
-                'X-Client-Secret' => $this->paymentClientSecret,
-            ],
-            'oauth_credentials' => $credentials,
-        ]);
+        try {
+            // https://documenter.getpostman.com/view/10405248/TVewaQQX#82e953fc-9110-4246-8a78-aba888b70b31
+            $response = $this->request('GET', sprintf('/v1/users/%s', $userInfo['username']), [
+                'headers' => [
+                    'Authorization' => sprintf('Bearer %s', $credentials->getAccessToken()),
+                    'X-Client-Id' => $this->paymentClientId,
+                    'X-Client-Secret' => $this->paymentClientSecret,
+                ],
+                'oauth_credentials' => $credentials,
+            ]);
 
-        $data = json_decode((string) $response->getBody(), true);
+            $data = json_decode((string) $response->getBody(), true);
 
-        return $data['data']['available_amount'] ?? 0;
+            return $data['data']['available_amount'] ?? 0;
+        } catch (RequestException $e) {
+            $this->logger->error(sprintf(
+                'Could not get customer balance: "%s"',
+                (string) $e->getResponse()->getBody()
+            ));
+
+            // We do *NOT* rethrow the exception,
+            // we just return a balance of zero.
+            // This way, if the Edenred server has problems,
+            // it doesn't break the checkout.
+        }
+
+        return 0;
     }
 
     /**
