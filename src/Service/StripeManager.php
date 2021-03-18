@@ -125,6 +125,30 @@ class StripeManager
 
         $order = $payment->getOrder();
 
+        // https://stripe.com/docs/payments/save-during-payment#web-create-a-customer
+        // https://stripe.com/docs/api/customers/create?lang=php
+        $customer = $order->getCustomer();
+        if ($customer->hasUser()) {
+            $user = $customer->getUser();
+            $stripeCustomerId = $user->getStripeCustomerId();
+            if (null === $stripeCustomerId) {
+                $stripeCustomer = Stripe\Customer::create([
+                    'email' => $user->getEmailCanonical(),
+                    'name' => $user->getFullName(),
+                    'description' => sprintf('%s - %s - %s',
+                        $user->getEmailCanonical(),
+                        $user->getUsernameCanonical(),
+                        $user->getFullName()
+                    ),
+                    'metadata' => [
+                        'username' => $user->getUsernameCanonical(),
+                    ]
+                ]);
+
+                $user->setStripeCustomerId($stripeCustomer->id);
+            }
+        }
+
         $payload = [
             'amount' => $payment->getAmountForMethod('CARD'),
             'currency' => strtolower($payment->getCurrencyCode()),

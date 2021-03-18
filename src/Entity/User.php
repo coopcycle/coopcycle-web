@@ -96,6 +96,8 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     private $mercadopagoAccounts;
 
+    private $stripeCustomerId;
+
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
@@ -395,6 +397,18 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
     public function addMercadopagoAccount(MercadopagoAccount $account)
     {
         $this->mercadopagoAccounts->add($account);
+
+        return $this;
+    }
+
+    public function getStripeCustomerId()
+    {
+        return $this->stripeCustomerId;
+    }
+
+    public function setStripeCustomerId(string $stripeCustomerId)
+    {
+        $this->stripeCustomerId = $stripeCustomerId;
 
         return $this;
     }
