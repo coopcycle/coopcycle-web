@@ -119,20 +119,26 @@ class StripeManager
     /**
      * @return Stripe\PaymentIntent
      */
-    public function createIntent(PaymentInterface $payment, bool $saveCard = false): Stripe\PaymentIntent
+    public function createIntent(PaymentInterface $payment, bool $withCustomer = false): Stripe\PaymentIntent
     {
         $this->configure();
 
         $order = $payment->getOrder();
 
-        // https://stripe.com/docs/payments/save-during-payment#web-create-a-customer
-        // https://stripe.com/docs/api/customers/create?lang=php
+        $stripeOptions = $this->getStripeOptions($payment);
+
         $customer = $order->getCustomer();
         if ($customer->hasUser()) {
+
             $user = $customer->getUser();
             $stripeCustomerId = $user->getStripeCustomerId();
+
             if (null === $stripeCustomerId) {
-                $stripeCustomer = Stripe\Customer::create([
+
+                // WARNING
+                // We may create the Stripe Customer on the *connected* account
+
+                $customerPayload = [
                     'email' => $user->getEmailCanonical(),
                     'name' => $user->getFullName(),
                     'description' => sprintf('%s - %s - %s',
@@ -142,18 +148,38 @@ class StripeManager
                     ),
                     'metadata' => [
                         'username' => $user->getUsernameCanonical(),
-                    ]
-                ]);
+                    ],
+                    // 'payment_method' => $payment->getPaymentMethod(),
+                ];
 
-                $user->setStripeCustomerId($stripeCustomer->id);
+                $platformCustomer = Stripe\Customer::create($customerPayload);
+
+                $paymentMethod = Stripe\PaymentMethod::retrieve($payment->getPaymentMethod());
+                $paymentMethod->attach(['customer' => $platformCustomer->id]);
+
+                $connectCustomer = Stripe\Customer::create($customerPayload, $stripeOptions);
+
+                $user->setStripeCustomerId($platformCustomer->id);
             }
         }
+
+        // WARNING
+        // The PaymentMethod is created on the *PLATFORM* account
+        // We need to clone the PaymentMethod on the *CONNECTED* account first
+        // @see https://stripe.com/docs/payments/payment-methods/connect#cloning-payment-methods
+
+        $connectPaymentMethod = Stripe\PaymentMethod::create([
+            'customer' => $platformCustomer->id,
+            'payment_method' => $payment->getPaymentMethod(),
+        ], $stripeOptions);
+
+        $connectPaymentMethod->attach(['customer' => $connectCustomer->id]);
 
         $payload = [
             'amount' => $payment->getAmountForMethod('CARD'),
             'currency' => strtolower($payment->getCurrencyCode()),
             'description' => sprintf('Order %s', $order->getNumber()),
-            'payment_method' => $payment->getPaymentMethod(),
+            'payment_method' => $connectPaymentMethod->id,
             'confirmation_method' => 'manual',
             'confirm' => true,
             // @see https://stripe.com/docs/payments/payment-intents/use-cases#separate-auth-capture
@@ -165,10 +191,53 @@ class StripeManager
             'setup_future_usage' => 'on_session',
         ];
 
+        // https://stripe.com/docs/payments/save-during-payment#web-create-a-customer
+        // https://stripe.com/docs/api/customers/create?lang=php
+        // https://github.com/stripe-samples/saving-card-after-payment
+        // https://github.com/stripe-samples/saving-card-after-payment/blob/master/without-webhooks/server/php/index.php
+
+        // if ($customer->)
+
+        $payload['customer'] = $connectCustomer->id;
+
+        /*
+        $customer = $order->getCustomer();
+
+        if ($withCustomer && $customer->hasUser()) {
+
+            $user = $customer->getUser();
+            $stripeCustomerId = $user->getStripeCustomerId();
+
+            if (null === $stripeCustomerId) {
+
+                // WARNING
+                // We may create the Stripe Customer on the *CONNECTED* account
+                //
+
+                $stripeCustomer = Stripe\Customer::create([
+                    'email' => $user->getEmailCanonical(),
+                    'name' => $user->getFullName(),
+                    'description' => sprintf('%s - %s - %s',
+                        $user->getEmailCanonical(),
+                        $user->getUsernameCanonical(),
+                        $user->getFullName()
+                    ),
+                    'metadata' => [
+                        'username' => $user->getUsernameCanonical(),
+                    ],
+                    // 'payment_method' => $payment->getPaymentMethod(),
+                ], $stripeOptions);
+
+                $payload['customer'] = $stripeCustomer->id;
+
+                // $user->setStripeCustomerId($stripeCustomer->id);
+            }
+        }
+        */
+
         $this->configurePayment($payment);
 
         $payload = $this->configureCreateIntentPayload($payment, $payload);
-        $stripeOptions = $this->getStripeOptions($payment);
 
         $this->logger->info(
             sprintf('Order #%d | StripeManager::createIntent | %s', $order->getId(), json_encode($payload))

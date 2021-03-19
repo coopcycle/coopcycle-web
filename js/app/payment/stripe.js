@@ -143,6 +143,7 @@ export default {
 
     // @see https://stripe.com/docs/payments/payment-methods/connect#creating-paymentmethods-directly-on-the-connected-account
     this.stripe = Stripe(this.config.gatewayConfig.publishableKey, stripeOptions)
+    this.stripeForPlatform = Stripe(this.config.gatewayConfig.publishableKey)
   },
   mount(el, method, options) {
 
@@ -165,7 +166,7 @@ export default {
     return new Promise((resolve) => {
 
       render(
-        <Elements stripe={ this.stripe }>
+        <Elements stripe={ this.stripeForPlatform }>
           <ElementsConsumer>
           {({ elements }) => {
 
@@ -200,7 +201,7 @@ export default {
   createToken() {
     return new Promise((resolve, reject) => {
 
-      this.stripe.createPaymentMethod({
+      this.stripeForPlatform.createPaymentMethod({
         type: 'card',
         card: this.elements.getElement(CardElement),
         billing_details: {
