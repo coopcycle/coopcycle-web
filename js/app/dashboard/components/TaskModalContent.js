@@ -14,7 +14,7 @@ import PhoneNumberInput from './PhoneNumberInput'
 import { timePickerProps } from '../../utils/antd'
 
 import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
-import { selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import { phoneNumberExample } from '../utils'
 
 const itemColor = event => {

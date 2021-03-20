@@ -6,7 +6,7 @@ import _ from 'lodash'
 
 import Avatar from '../../components/Avatar'
 
-import { selectTaskLists } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectTaskLists } from '../../coopcycle-frontend-js/logistics/redux'
 
 const courierAsOption = courier => ({
   ...courier,

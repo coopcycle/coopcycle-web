@@ -18,7 +18,7 @@ import TimeRange from '../../utils/TimeRange'
 import { timePickerProps } from '../../utils/antd'
 import { recurrenceTemplateToArray } from '../redux/utils'
 import { saveRecurrenceRule, createTasksFromRecurrenceRule, deleteRecurrenceRule } from '../redux/actions'
-import { selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import { toTextArgs } from '../utils/rrule'
 import { phoneNumberExample } from '../utils'
 

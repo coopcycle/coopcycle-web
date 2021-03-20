@@ -1,21 +1,5 @@
 import _ from 'lodash'
-import moment from 'moment'
-
-export function createTaskList(username, items = []) {
-
-  return {
-    '@context': '/api/contexts/TaskList',
-    '@id': null,
-    '@type': 'TaskList',
-    distance: 0,
-    duration: 0,
-    polyline: '',
-    createdAt: moment().format(),
-    updatedAt: moment().format(),
-    username,
-    items,
-  }
-}
+import { moment } from '../../coopcycle-frontend-js';
 
 export function taskComparator(a, b) {
   return a['@id'] === b['@id']
@@ -26,15 +10,6 @@ export function withoutTasks(state, tasks) {
   return _.differenceWith(
     state,
     _.intersectionWith(state, tasks, taskComparator),
-    taskComparator
-  )
-}
-
-export function removedTasks(state, tasks) {
-
-  return _.differenceWith(
-    state,
-    tasks,
     taskComparator
   )
 }
@@ -185,3 +160,18 @@ export const isOffline = (lastSeen) => {
 
 export const recurrenceTemplateToArray =
   template => template['@type'] === 'hydra:Collection' ? template['hydra:member'] : [ template ]
+
+export const isInDateRange = (task, date) => {
+
+  const dateAsRange = moment.range(
+    moment(date).set({ hour:  0, minute:  0, second:  0 }),
+    moment(date).set({ hour: 23, minute: 59, second: 59 })
+  )
+
+  const range = moment.range(
+    moment(task.doneAfter),
+    moment(task.doneBefore)
+  )
+
+  return range.overlaps(dateAsRange)
+}

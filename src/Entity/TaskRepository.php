@@ -12,6 +12,17 @@ use Doctrine\ORM\Query\Expr;
 
 class TaskRepository extends EntityRepository
 {
+    public function findUnassignedByDate(\DateTime $date)
+    {
+        $start = clone $date;
+        $end = clone $date;
+
+        return self::addRangeClause($this->createQueryBuilder('t'), $start, $end)
+            ->andWhere(sprintf('t.%s IS NULL', 'assignedTo'))
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findByDate(\DateTime $date)
     {
         $start = clone $date;

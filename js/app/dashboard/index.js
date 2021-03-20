@@ -4,11 +4,11 @@ import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
 import moment from 'moment'
-import _ from 'lodash'
 import { ConfigProvider } from 'antd'
 import Split from 'react-split'
 
 import i18n, { antdLocale } from '../i18n'
+
 import { createStoreFromPreloadedState } from './redux/store'
 import RightPanel from './components/RightPanel'
 import LeafletMap from './components/LeafletMap'
@@ -20,12 +20,23 @@ import { recurrenceRulesAdapter } from './redux/selectors'
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
+import { taskUtils, taskListUtils, taskListEntityUtils } from '../coopcycle-frontend-js/logistics/redux'
+
 function start() {
 
   const dashboardEl = document.getElementById('dashboard')
 
-  const date = moment(dashboardEl.dataset.date)
-  const tasks = JSON.parse(dashboardEl.dataset.tasks)
+  let date = moment(dashboardEl.dataset.date)
+  let unassignedTasks = JSON.parse(dashboardEl.dataset.unassignedTasks)
+  let taskLists = JSON.parse(dashboardEl.dataset.taskLists)
+
+  let assignedTasks = taskListUtils.assignedTasks(taskLists)
+
+  let taskEntities = taskUtils.addOrReplaceTasks({}, unassignedTasks.concat(assignedTasks))
+
+  // normalize data, keep only task ids, instead of the whole objects
+  taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
+  let taskListEntities = taskListEntityUtils.addOrReplaceTaskLists({}, taskLists)
 
   const preloadedPositions = JSON.parse(dashboardEl.dataset.positions)
   const positions = preloadedPositions.map(pos => ({
@@ -35,10 +46,16 @@ function start() {
   }))
 
   let preloadedState = {
-    dispatch: {
-      unassignedTasks: _.filter(tasks, task => !task.isAssigned),
-      taskLists: JSON.parse(dashboardEl.dataset.taskLists),
+    logistics : {
       date,
+      entities: {
+        tasks: {
+          byId: taskEntities
+        },
+        taskLists: {
+          byId: taskListEntities
+        }
+      }
     },
     tags: JSON.parse(dashboardEl.dataset.tags),
     couriersList: JSON.parse(dashboardEl.dataset.couriersList),
