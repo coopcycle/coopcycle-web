@@ -187,7 +187,7 @@ describe('taskEntityReducers', () => {
               '/api/tasks/1',
               '/api/tasks/2'
             ],
-            byId: {
+            entities: {
               '/api/tasks/1': {
                 '@id': '/api/tasks/1',
               },
