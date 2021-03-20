@@ -68,12 +68,12 @@ export default (state = initialState, action) => {
       }
     }
     case TASK_LISTS_UPDATED: {
-      const matching = _.filter(
+      const matchingLists = _.filter(
         action.taskLists,
         updated => Object.prototype.hasOwnProperty.call(state.byId, updated['@id'])
       )
 
-      if (matching.length === 0) {
+      if (matchingLists.length === 0) {
 
         return state
       }
@@ -81,18 +81,18 @@ export default (state = initialState, action) => {
       return {
         ...state,
         byId: _.mapValues(state.byId, current => {
-          const newTaskList = _.find(matching, o => o['@id'] === current['@id'])
+          const matchingList = _.find(matchingLists, o => o['@id'] === current['@id'])
 
-          if (!newTaskList) {
+          if (!matchingList) {
 
             return current
           }
 
           return {
             ...current,
-            distance: newTaskList.distance,
-            duration: newTaskList.duration,
-            polyline: newTaskList.polyline,
+            distance: matchingList.distance,
+            duration: matchingList.duration,
+            polyline: matchingList.polyline,
           }
         }),
       }
