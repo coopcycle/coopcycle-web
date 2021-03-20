@@ -65,34 +65,6 @@ class CheckoutHandlerTest extends TestCase
         );
     }
 
-    public function testCheckoutLegacy()
-    {
-        $payment = new Payment();
-        $payment->setState(PaymentInterface::STATE_CART);
-
-        $charge = Stripe\Charge::constructFrom([
-            'id' => 'ch_123456',
-            'captured' => true,
-        ]);
-
-        $order = new Order();
-        $order->addPayment($payment);
-
-        $this->stripeManager
-            ->authorize($payment)
-            ->willReturn($charge);
-
-        $this->eventRecorder
-            ->record(Argument::type(CheckoutSucceeded::class))
-            ->shouldBeCalled();
-
-        $command = new Checkout($order, 'tok_123456');
-
-        call_user_func_array($this->handler, [$command]);
-
-        $this->assertEquals('ch_123456', $payment->getCharge());
-    }
-
     public function testCheckoutWithPaymentIntent()
     {
         $payment = new Payment();
@@ -181,9 +153,6 @@ class CheckoutHandlerTest extends TestCase
 
         $this->stripeManager
             ->confirmIntent(Argument::type(Payment::class))
-            ->shouldNotBeCalled();
-        $this->stripeManager
-            ->authorize(Argument::type(Payment::class))
             ->shouldNotBeCalled();
 
         $this->eventRecorder
