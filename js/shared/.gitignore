@@ -1,0 +1,46 @@
+/app/config/parameters.yml
+/build/
+/phpunit.xml
+
+# Dev temp files
+/var/*
+!/var/cache
+/var/cache/*
+!var/cache/.gitkeep
+!/var/logs
+/var/logs/*
+!var/logs/.gitkeep
+!var/SymfonyRequirements.php
+!var/sql
+/vendor/
+/vendor-shared/
+/.phpunit.result.cache
+
+# Build with webpack
+/web/build/
+
+# Symfony bundles
+/web/bundles/
+
+# Files stored on disk
+/web/images/*
+!web/images/.gitkeep
+/web/media/*
+!web/media/.gitkeep
+/web/media/cache/*
+!web/media/cache/.gitkeep
+
+/node_modules/
+.DS_Store
+
+# Sublime text editor stuff
+*.sublime-workspace
+*.sublime-project
+
+# PHPStorm stuff
+.idea
+
+# docker-sync stuff
+.docker-sync
+
+.env
