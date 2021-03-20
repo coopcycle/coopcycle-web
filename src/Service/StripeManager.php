@@ -217,63 +217,6 @@ class StripeManager
     }
 
     /**
-     * @return Stripe\Charge
-     */
-    public function authorize(PaymentInterface $payment)
-    {
-        $this->configure();
-
-        $order = $payment->getOrder();
-
-        $stripeParams = [
-            'amount' => $payment->getAmount(),
-            'currency' => strtolower($payment->getCurrencyCode()),
-            'source' => $this->resolveSource($payment),
-            'description' => sprintf('Order %s', $order->getNumber()),
-            // @see https://stripe.com/docs/api/charges/create#create_charge-capture
-            // Whether to immediately capture the charge. Defaults to true.
-            // When false, the charge issues an authorization (or pre-authorization),
-            // and will need to be captured later.
-            // Uncaptured charges expire in seven days.
-            'capture' => false,
-        ];
-
-        $stripeOptions = [];
-
-        // If the vendor is a hub, we don't use Stripe connect when authorizing transaction
-        // Instead, we use Transfers when capturing transaction
-        $vendor = $order->getVendor();
-        if (null !== $vendor && !$vendor->isHub()) {
-
-            $livemode = $this->settingsManager->isStripeLivemode();
-            $stripeAccount = $order->getRestaurant()->getStripeAccount($livemode);
-
-            if (!is_null($stripeAccount)) {
-
-                $restaurantPaysStripeFee = $order->getRestaurant()->getContract()->isRestaurantPaysStripeFee();
-                $applicationFee = $order->getFeeTotal();
-
-                if ($restaurantPaysStripeFee) {
-                    // needed only when using direct charges (the charge is linked to the restaurant's Stripe account)
-                    $payment->setStripeUserId($stripeAccount->getStripeUserId());
-                    $stripeOptions['stripe_account'] = $stripeAccount->getStripeUserId();
-                    $stripeParams['application_fee'] = $applicationFee;
-                } else {
-                    $stripeParams['destination'] = array(
-                        'account' => $stripeAccount->getStripeUserId(),
-                        'amount' => $order->getTotal() - $applicationFee
-                    );
-                }
-            }
-        }
-
-        return Stripe\Charge::create(
-            $stripeParams,
-            $stripeOptions
-        );
-    }
-
-    /**
      * @return Stripe\Charge|Stripe\PaymentIntent
      */
     public function capture(PaymentInterface $payment)

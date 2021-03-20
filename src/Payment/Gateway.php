@@ -59,30 +59,20 @@ class Gateway
 
                 $paymentIntent = $payment->getPaymentIntent();
 
-                if (null !== $paymentIntent) {
-
-                    if (!$payment->isGiropay() && $paymentIntent !== $context['token']) {
-                        throw new \Exception('Payment Intent mismatch');
-                    }
-
-                    if ($payment->requiresUseStripeSDK()) {
-                        $this->stripeManager->confirmIntent($payment);
-                    }
-
-                    if ($payment->isEdenredWithCard()) {
-                        $authorizationId = $this->edenred->authorizeTransaction($payment);
-                        $payment->setEdenredAuthorizationId($authorizationId);
-                    }
-
-                    return new StripeResponse([]);
+                if (!$payment->isGiropay() && $paymentIntent !== $context['token']) {
+                    throw new \Exception('Payment Intent mismatch');
                 }
 
-                // Legacy
+                if ($payment->requiresUseStripeSDK()) {
+                    $this->stripeManager->confirmIntent($payment);
+                }
 
-                $charge = $this->stripeManager->authorize($payment);
-                $payment->setCharge($charge->id);
+                if ($payment->isEdenredWithCard()) {
+                    $authorizationId = $this->edenred->authorizeTransaction($payment);
+                    $payment->setEdenredAuthorizationId($authorizationId);
+                }
 
-                return new StripeResponse($charge);
+                return new StripeResponse([]);
         }
     }
 

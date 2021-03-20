@@ -51,28 +51,6 @@ class GatewayTest extends TestCase
         );
     }
 
-    public function testAuthorizeLegacy()
-    {
-        $payment = new Payment();
-        $payment->setState(PaymentInterface::STATE_CART);
-
-        $charge = Stripe\Charge::constructFrom([
-            'id' => 'ch_123456',
-            'captured' => true,
-        ]);
-
-        $order = new Order();
-        $order->addPayment($payment);
-
-        $this->stripeManager
-            ->authorize($payment)
-            ->willReturn($charge);
-
-        $this->gateway->authorize($payment, ['token' => 'tok_12345678']);
-
-        $this->assertEquals('ch_123456', $payment->getCharge());
-    }
-
     public function testAuthorizeWithPaymentIntent()
     {
         $payment = new Payment();
