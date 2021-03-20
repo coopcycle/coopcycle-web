@@ -53,7 +53,7 @@ describe('Selectors', () => {
   describe('selectRecurrenceRules', () => {
     it('returns empty list', () => {
       expect(selectRecurrenceRules({
-        dispatch: {
+        logistics: {
           date: "2021-03-04T23:00:00.000Z",
         },
         rrules: recurrenceRulesAdapter.getInitialState(),
@@ -62,7 +62,7 @@ describe('Selectors', () => {
 
     it('returns matching rules', () => {
       expect(selectRecurrenceRules({
-        dispatch: {
+        logistics: {
           date: "2021-03-04T23:00:00.000Z",
         },
         rrules: recurrenceRulesAdapter.upsertMany(
@@ -76,7 +76,7 @@ describe('Selectors', () => {
 
     it('returns matching rules (bounds included)', () => {
       expect(selectRecurrenceRules({
-        dispatch: {
+        logistics: {
           date: "2021-03-04T23:00:00.000Z",
         },
         rrules: recurrenceRulesAdapter.upsertMany(
