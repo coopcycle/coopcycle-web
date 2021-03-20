@@ -138,6 +138,9 @@ export const IMPORT_ERROR = 'IMPORT_ERROR'
 export const OPEN_IMPORT_MODAL = 'OPEN_IMPORT_MODAL'
 export const CLOSE_IMPORT_MODAL = 'CLOSE_IMPORT_MODAL'
 
+export const OPEN_EXPORT_MODAL = 'OPEN_EXPORT_MODAL'
+export const CLOSE_EXPORT_MODAL = 'CLOSE_EXPORT_MODAL'
+
 export const OPTIMIZE_TASK_LIST = 'OPTIMIZE_TASK_LIST'
 
 export const RIGHT_PANEL_MORE_THAN_HALF = 'RIGHT_PANEL_MORE_THAN_HALF'
@@ -966,6 +969,26 @@ function deleteGroup(group) {
   }
 }
 
+function openExportModal() {
+  return { type: OPEN_EXPORT_MODAL }
+}
+
+function closeExportModal() {
+  return { type: CLOSE_EXPORT_MODAL }
+}
+
+function exportTasks(start, end) {
+
+  return function(dispatch) {
+
+    dispatch(closeExportModal())
+
+    document.getElementById('task_export_start').value = start
+    document.getElementById('task_export_end').value = end
+    document.querySelector('form[name="task_export"]').submit()
+  }
+}
+
 export {
   assignAfter,
   updateTask,
@@ -1023,4 +1046,7 @@ export {
   openNewRecurrenceRuleModal,
   deleteRecurrenceRule,
   deleteGroup,
+  openExportModal,
+  closeExportModal,
+  exportTasks,
 }

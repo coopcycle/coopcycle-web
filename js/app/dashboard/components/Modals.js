@@ -13,13 +13,16 @@ import {
   closeImportModal,
   closeAddUserModal,
   createTaskList,
-  closeRecurrenceRuleModal } from '../redux/actions'
+  closeRecurrenceRuleModal,
+  closeExportModal,
+  exportTasks } from '../redux/actions'
 import TaskModalContent from './TaskModalContent'
 import FiltersModalContent from './FiltersModalContent'
 import SettingsModalContent from './SettingsModalContent'
 import ImportModalContent from './ImportModalContent'
 import AddUserModalContent from './AddUserModalContent'
 import RecurrenceRuleModalContent from './RecurrenceRuleModalContent'
+import ExportModalContent from './ExportModalContent'
 
 class Modals extends React.Component {
 
@@ -81,6 +84,16 @@ class Modals extends React.Component {
           shouldCloseOnOverlayClick={ true }>
           <RecurrenceRuleModalContent />
         </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.exportModalIsOpen }
+          onRequestClose={ this.props.closeExportModal }
+          className="ReactModal__Content--select-courier"
+          shouldCloseOnOverlayClick={ true }>
+          <ExportModalContent
+            onClickClose={ this.props.closeExportModal }
+            onClickSubmit={ (start, end) => this.props.exportTasks(start, end) } />
+        </Modal>
       </React.Fragment>
     )
   }
@@ -96,6 +109,7 @@ function mapStateToProps(state) {
     addModalIsOpen: state.addModalIsOpen,
     date: selectSelectedDate(state),
     recurrenceRuleModalIsOpen: state.recurrenceRuleModalIsOpen,
+    exportModalIsOpen: state.exportModalIsOpen,
   }
 }
 
@@ -111,6 +125,8 @@ function mapDispatchToProps (dispatch) {
     closeAddUserModal: () => dispatch(closeAddUserModal()),
     createTaskList: (date, username) => dispatch(createTaskList(date, username)),
     closeRecurrenceRuleModal: () => dispatch(closeRecurrenceRuleModal()),
+    closeExportModal: () => dispatch(closeExportModal()),
+    exportTasks: (start, end) => dispatch(exportTasks(start, end)),
   }
 }
 

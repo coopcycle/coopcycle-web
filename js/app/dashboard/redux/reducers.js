@@ -50,6 +50,8 @@ import {
   UPDATE_RECURRENCE_RULE_REQUEST,
   DELETE_RECURRENCE_RULE_SUCCESS,
   UPDATE_RECURRENCE_RULE_ERROR,
+  OPEN_EXPORT_MODAL,
+  CLOSE_EXPORT_MODAL,
 } from './actions'
 
 import {
@@ -106,6 +108,7 @@ const initialState = {
   stores: [],
   recurrenceRulesLoading: false,
   recurrenceRulesErrorMessage: '',
+  exportModalIsOpen: false,
 }
 
 const addModalIsOpen = (state = false, action) => {
@@ -572,6 +575,17 @@ const recurrenceRulesErrorMessage = (state = initialState.recurrenceRulesErrorMe
   return state
 }
 
+const exportModalIsOpen = (state = false, action) => {
+  switch(action.type) {
+  case OPEN_EXPORT_MODAL:
+    return true
+  case CLOSE_EXPORT_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
 export default (state = initialState, action) => {
 
   const { filters, isDefaultFilters } = combinedFilters(state, action)
@@ -611,5 +625,6 @@ export default (state = initialState, action) => {
     stores: stores(state.stores, action),
     recurrenceRulesLoading: recurrenceRulesLoading(state.recurrenceRulesLoading, action),
     recurrenceRulesErrorMessage: recurrenceRulesErrorMessage(state.recurrenceRulesErrorMessage, action),
+    exportModalIsOpen: exportModalIsOpen(state.exportModalIsOpen, action),
   }
 }
