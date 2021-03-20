@@ -1,9 +1,3 @@
-{% if reset %}
-<script>
-sessionStorage.removeItem('search_address');
-sessionStorage.removeItem('search_geohash');
-</script>
-{% endif %}
 {% if not analytics_disabled and matomo_hostname is not empty and track_goal and matomo_checkout_completed_goal_id is not empty %}
 <script>
 setTimeout(function() {

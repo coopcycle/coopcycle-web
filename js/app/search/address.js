@@ -2,12 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import _ from 'lodash'
 
-import engine  from 'store/src/store-engine'
-import session from 'store/storages/sessionStorage'
-import cookie  from 'store/storages/cookieStorage'
-
-const store = engine.createStore([ session, cookie ])
-
+import store from './address-storage'
 import AddressAutosuggest from '../components/AddressAutosuggest'
 
 // We used to store a string in "search_address", but now, we want objects

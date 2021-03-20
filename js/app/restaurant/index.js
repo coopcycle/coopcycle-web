@@ -5,10 +5,6 @@ import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
 import _ from 'lodash'
 
-import engine  from 'store/src/store-engine'
-import session from 'store/storages/sessionStorage'
-import cookie  from 'store/storages/cookieStorage'
-
 import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from '../cart/redux/store'
 import { addItem, addItemWithOptions, queueAddItem } from '../cart/redux/actions'
@@ -16,12 +12,11 @@ import Cart from '../cart/components/Cart'
 import ProductOptionsModal from './components/ProductOptionsModal'
 import ProductImagesCarousel from './components/ProductImagesCarousel'
 import { ProductOptionsModalProvider } from './components/ProductOptionsModalContext'
+import storage from '../search/address-storage'
 
 require('gasparesganga-jquery-loading-overlay')
 
 import './index.scss'
-
-const storage = engine.createStore([ session, cookie ])
 
 window._paq = window._paq || []
 

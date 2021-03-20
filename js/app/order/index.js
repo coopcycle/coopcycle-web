@@ -1,20 +1,27 @@
 import OrderTimeline from '../widgets/OrderTimeline'
-
-const el = document.getElementById('order-timeline')
+import storage from '../search/address-storage'
 
 import './index.scss'
 
-if (el) {
+const timelineEl = document.getElementById('order-timeline')
+const checkoutResetEl = document.getElementById('checkout-reset')
 
-  const order = JSON.parse(el.dataset.order)
-  const events = JSON.parse(el.dataset.events)
+if (timelineEl) {
 
-  new OrderTimeline(el, {
+  const order = JSON.parse(timelineEl.dataset.order)
+  const events = JSON.parse(timelineEl.dataset.events)
+
+  new OrderTimeline(timelineEl, {
     order,
     events,
     centrifugo: {
-      channel: el.dataset.centrifugoChannel,
-      token: el.dataset.centrifugoToken
+      channel: timelineEl.dataset.centrifugoChannel,
+      token: timelineEl.dataset.centrifugoToken
     }
   })
+}
+
+if (checkoutResetEl) {
+  storage.remove('search_address')
+  storage.remove('search_geohash')
 }
