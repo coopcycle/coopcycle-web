@@ -151,6 +151,8 @@ export const UPDATE_RECURRENCE_RULE_SUCCESS = 'UPDATE_RECURRENCE_RULE_SUCCESS'
 export const DELETE_RECURRENCE_RULE_SUCCESS = 'DELETE_RECURRENCE_RULE_SUCCESS'
 export const UPDATE_RECURRENCE_RULE_ERROR = 'UPDATE_RECURRENCE_RULE_ERROR'
 
+export const DELETE_GROUP_SUCCESS = 'DELETE_GROUP_SUCCESS'
+
 function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
 }
@@ -937,6 +939,33 @@ function deleteRecurrenceRule(recurrenceRule) {
   }
 }
 
+function deleteGroupSuccess(group) {
+  return { type: DELETE_GROUP_SUCCESS, group }
+}
+
+function deleteGroup(group) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    const resourceId = group['@id']
+
+    createClient(dispatch).request({
+      method: 'delete',
+      url: resourceId,
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(() => dispatch(deleteGroupSuccess(resourceId)))
+      // eslint-disable-next-line no-console
+      .catch(error => console.log(error))
+  }
+}
+
 export {
   assignAfter,
   updateTask,
@@ -993,4 +1022,5 @@ export {
   createTasksFromRecurrenceRule,
   openNewRecurrenceRuleModal,
   deleteRecurrenceRule,
+  deleteGroup,
 }

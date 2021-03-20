@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Task;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Task\Bulk as TaskBulk;
+use AppBundle\Action\Task\DeleteGroup as DeleteGroupController;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Store;
@@ -33,6 +34,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="GET",
  *       "normalizationContext"={"groups"={"task_group"}},
  *       "security"="is_granted('view', object)"
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "controller"=DeleteGroupController::class,
+ *       "security"="is_granted('edit', object)"
  *     }
  *   }
  * )

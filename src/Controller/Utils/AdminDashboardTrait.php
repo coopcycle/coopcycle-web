@@ -91,7 +91,6 @@ trait AdminDashboardTrait
         $taskExport->end = new \DateTime();
 
         $taskExportForm = $this->createForm(TaskExportType::class, $taskExport);
-        $taskGroupForm = $this->createForm(TaskGroupType::class);
 
         $taskExportForm->handleRequest($request);
         if ($taskExportForm->isSubmitted() && $taskExportForm->isValid()) {
@@ -106,25 +105,6 @@ trait AdminDashboardTrait
             ));
 
             return $response;
-        }
-
-        $taskGroupForm->handleRequest($request);
-        if ($taskGroupForm->isSubmitted() && $taskGroupForm->isValid()) {
-
-            if ($taskGroupForm->getClickedButton() && 'delete' === $taskGroupForm->getClickedButton()->getName()) {
-
-                $taskGroup = $this->getDoctrine()
-                    ->getRepository(TaskGroup::class)
-                    ->find($taskGroupForm->get('id')->getData());
-
-                $taskManager->deleteGroup($taskGroup);
-
-                $this->getDoctrine()
-                    ->getManagerForClass(TaskGroup::class)
-                    ->flush();
-            }
-
-            return $this->redirectToDashboard($request);
         }
 
         $allTasks = $this->getDoctrine()
@@ -210,7 +190,6 @@ trait AdminDashboardTrait
             'tasks' => $allTasksNormalized,
             'task_lists' => $taskListsNormalized,
             'task_export_form' => $taskExportForm->createView(),
-            'task_group_form' => $taskGroupForm->createView(),
             'tags' => $normalizedTags,
             'jwt' => $jwtManager->create($this->getUser()),
             'centrifugo_token' => $centrifugoClient->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600)),

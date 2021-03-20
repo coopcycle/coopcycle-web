@@ -229,6 +229,7 @@
         "PAYMENT_FORM_TITLE": "Your payment information",
         "EDENRED_SPLIT_AMOUNTS": "You can pay {{edenred}} with your Edenred card, but you still need to pay {{card}} by credit card",
         "PAYMENT_FORM_NOT_SUPPORTED": "We do not (yet!) accept Ticket Restaurant cards, please use a classic credit card.",
-        "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Show recurrence rules"
+        "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Show recurrence rules",
+        "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "Are you sure you want to delete all the tasks in this group?"
     }
 }

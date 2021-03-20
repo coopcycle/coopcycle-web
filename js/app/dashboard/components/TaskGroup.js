@@ -1,7 +1,10 @@
 import React from 'react'
+import { withTranslation } from 'react-i18next'
+import Popconfirm from 'antd/lib/popconfirm'
+
 import Task from './Task'
 
-export default class extends React.Component {
+class TaskGroup extends React.Component {
 
   renderTags() {
     const { group } = this.props
@@ -29,10 +32,18 @@ export default class extends React.Component {
             <i className="fa fa-folder"></i> <a role="button" data-toggle="collapse" href={ `#task-group-panel-${group.id}` }>
               { group.name } <span className="badge">{ tasks.length }</span>
             </a>
-            <a role="button" href="#" className="pull-right"
-              data-toggle="modal" data-target="#task-group-modal" data-group={ group.id }>
-              <i className="fa fa-trash"></i>
-            </a>
+            <Popconfirm
+              placement="left"
+              title={ this.props.t('ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM') }
+              onConfirm={ this.props.onConfirmDelete }
+              okText={ this.props.t('CROPPIE_CONFIRM') }
+              cancelText={ this.props.t('ADMIN_DASHBOARD_CANCEL') }
+              >
+              <a role="button" href="#" className="pull-right"
+                onClick={ e => e.preventDefault() }>
+                <i className="fa fa-trash"></i>
+              </a>
+            </Popconfirm>
             { this.renderTags() }
           </h4>
         </div>
@@ -53,3 +64,5 @@ export default class extends React.Component {
     )
   }
 }
+
+export default withTranslation()(TaskGroup)

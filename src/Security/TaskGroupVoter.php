@@ -11,9 +11,11 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class TaskGroupVoter extends Voter
 {
     const VIEW = 'view';
+    const EDIT = 'edit';
 
     private static $actions = [
         self::VIEW,
+        self::EDIT,
     ];
 
     private $authorizationChecker;
@@ -42,6 +44,10 @@ class TaskGroupVoter extends Voter
     {
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             return true;
+        }
+
+        if (self::EDIT === $attribute) {
+            return false;
         }
 
         if (!$this->authorizationChecker->isGranted('ROLE_OAUTH2_TASKS')) {

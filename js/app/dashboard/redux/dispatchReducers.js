@@ -8,6 +8,7 @@ import {
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
   TASK_LIST_UPDATED,
   TASK_LISTS_UPDATED,
+  DELETE_GROUP_SUCCESS,
 } from './actions'
 
 const replaceOrAddTask = (tasks, task) => {
@@ -206,6 +207,23 @@ export default (state = initialState, action) => {
             polyline: newTaskList.polyline,
           }
         }),
+      }
+
+    case DELETE_GROUP_SUCCESS:
+
+      const tasksMatchingGroup = _.filter(state.unassignedTasks, t => t.group && t.group['@id'] === action.group)
+
+      if (tasksMatchingGroup.length === 0) {
+
+        return state
+      }
+
+      return {
+        ...state,
+        unassignedTasks: withoutTasks(
+          state.unassignedTasks,
+          tasksMatchingGroup
+        ),
       }
   }
 
