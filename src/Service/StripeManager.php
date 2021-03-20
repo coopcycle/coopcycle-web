@@ -196,44 +196,7 @@ class StripeManager
         // https://github.com/stripe-samples/saving-card-after-payment
         // https://github.com/stripe-samples/saving-card-after-payment/blob/master/without-webhooks/server/php/index.php
 
-        // if ($customer->)
-
         $payload['customer'] = $connectCustomer->id;
-
-        /*
-        $customer = $order->getCustomer();
-
-        if ($withCustomer && $customer->hasUser()) {
-
-            $user = $customer->getUser();
-            $stripeCustomerId = $user->getStripeCustomerId();
-
-            if (null === $stripeCustomerId) {
-
-                // WARNING
-                // We may create the Stripe Customer on the *CONNECTED* account
-                //
-
-                $stripeCustomer = Stripe\Customer::create([
-                    'email' => $user->getEmailCanonical(),
-                    'name' => $user->getFullName(),
-                    'description' => sprintf('%s - %s - %s',
-                        $user->getEmailCanonical(),
-                        $user->getUsernameCanonical(),
-                        $user->getFullName()
-                    ),
-                    'metadata' => [
-                        'username' => $user->getUsernameCanonical(),
-                    ],
-                    // 'payment_method' => $payment->getPaymentMethod(),
-                ], $stripeOptions);
-
-                $payload['customer'] = $stripeCustomer->id;
-
-                // $user->setStripeCustomerId($stripeCustomer->id);
-            }
-        }
-        */
 
         $this->configurePayment($payment);
 
