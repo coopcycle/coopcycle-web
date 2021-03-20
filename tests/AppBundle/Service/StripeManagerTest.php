@@ -89,62 +89,6 @@ class StripeManagerTest extends TestCase
         return $restaurant->reveal();
     }
 
-    public function testCaptureWithOwnAccount()
-    {
-        $payment = new Payment();
-        $payment->setStripeToken('tok_123456');
-        $payment->setCurrencyCode('EUR');
-        $payment->setCharge('ch_123456');
-
-        $restaurant = $this->createRestaurant('acct_123456', $paysStripeFee = false);
-
-        $order = $this->prophesize(OrderInterface::class);
-        $order
-            ->hasVendor()
-            ->willReturn(true);
-        $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
-        $order
-            ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
-
-        $payment->setOrder($order->reveal());
-
-        $this->shouldSendStripeRequest('GET', '/v1/charges/ch_123456');
-        $this->shouldSendStripeRequest('POST', '/v1/charges/ch_123456/capture');
-
-        $this->stripeManager->capture($payment);
-    }
-
-    public function testCaptureWithConnectAccount()
-    {
-        $payment = new Payment();
-        $payment->setStripeUserId('acct_123456');
-        $payment->setCurrencyCode('EUR');
-        $payment->setCharge('ch_123456');
-
-        $restaurant = $this->createRestaurant('acct_123456', $paysStripeFee = true);
-
-        $order = $this->prophesize(OrderInterface::class);
-        $order
-            ->hasVendor()
-            ->willReturn(true);
-        $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
-        $order
-            ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
-
-        $payment->setOrder($order->reveal());
-
-        $this->shouldSendStripeRequestForAccount('GET', '/v1/charges/ch_123456', 'acct_123456');
-        $this->shouldSendStripeRequestForAccount('POST', '/v1/charges/ch_123456/capture', 'acct_123456');
-
-        $this->stripeManager->capture($payment);
-    }
-
     public function testCaptureWithPaymentIntent()
     {
         // FIXME
@@ -190,13 +134,11 @@ class StripeManagerTest extends TestCase
         $this->stripeManager->capture($payment);
     }
 
-    public function testCaptureWithHubs()
+    public function testCreateTransfersForHub()
     {
         $payment = new Payment();
         $payment->setAmount(3000);
-        $payment->setStripeToken('tok_123456');
         $payment->setCurrencyCode('EUR');
-        $payment->setCharge('ch_123456');
 
         $stripeAccount = $this->prophesize(StripeAccount::class);
         $order = $this->prophesize(OrderInterface::class);
@@ -248,8 +190,6 @@ class StripeManagerTest extends TestCase
 
         $payment->setOrder($order->reveal());
 
-        $this->shouldSendStripeRequest('GET', '/v1/charges/ch_123456');
-        $this->shouldSendStripeRequest('POST', '/v1/charges/ch_123456/capture');
         $this->shouldSendStripeRequest('POST', '/v1/transfers', [
             'amount' => 1130, // = 1700 - (750 * 0.76),
             'currency' => 'eur',
@@ -263,16 +203,18 @@ class StripeManagerTest extends TestCase
             'source_transaction' => 'ch_123456',
         ]);
 
-        $this->stripeManager->capture($payment);
+        $charge = Stripe\Charge::constructFrom([
+            'id' => 'ch_123456',
+        ]);
+
+        $this->stripeManager->createTransfersForHub($payment, $charge);
     }
 
-    public function testCaptureWithHubsAndOneRestaurant()
+    public function testCreateTransfersForHubWithOneRestaurant()
     {
         $payment = new Payment();
         $payment->setAmount(3000);
-        $payment->setStripeToken('tok_123456');
         $payment->setCurrencyCode('EUR');
-        $payment->setCharge('ch_123456');
 
         $stripeAccount = $this->prophesize(StripeAccount::class);
         $order = $this->prophesize(OrderInterface::class);
@@ -321,8 +263,6 @@ class StripeManagerTest extends TestCase
 
         $payment->setOrder($order->reveal());
 
-        $this->shouldSendStripeRequest('GET', '/v1/charges/ch_123456');
-        $this->shouldSendStripeRequest('POST', '/v1/charges/ch_123456/capture');
         $this->shouldSendStripeRequest('POST', '/v1/transfers', [
             'amount' => 1130, // = 1700 - (750 * 0.76),
             'currency' => 'eur',
@@ -330,7 +270,11 @@ class StripeManagerTest extends TestCase
             'source_transaction' => 'ch_123456',
         ]);
 
-        $this->stripeManager->capture($payment);
+        $charge = Stripe\Charge::constructFrom([
+            'id' => 'ch_123456',
+        ]);
+
+        $this->stripeManager->createTransfersForHub($payment, $charge);
     }
 
     public function testCreateIntent()
