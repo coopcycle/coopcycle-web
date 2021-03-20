@@ -43,24 +43,11 @@ class Pay
             $body = json_decode($content, true);
         }
 
-        if (!isset($body['stripeToken']) && !isset($body['paymentMethodId']) && !isset($body['paymentIntentId'])) {
-            throw new BadRequestHttpException('Stripe token is missing');
+        if (!isset($body['paymentMethodId']) && !isset($body['paymentIntentId'])) {
+            throw new BadRequestHttpException('Mandatory parameters are missing');
         }
 
         $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
-
-        // Legacy
-        if (isset($body['stripeToken'])) {
-
-            $this->orderManager->checkout($data, $body['stripeToken']);
-            $this->entityManager->flush();
-
-            if (PaymentInterface::STATE_FAILED === $payment->getState()) {
-                throw new BadRequestHttpException($payment->getLastError());
-            }
-
-            return $data;
-        }
 
         if (isset($body['paymentIntentId'])) {
 
