@@ -17,7 +17,13 @@ describe('Selectors', () => {
       date,
       entities: {
         tasks: {
-          byId: {
+          ids: [
+            '/api/tasks/1',
+            '/api/tasks/2',
+            '/api/tasks/3',
+            '/api/tasks/4'
+          ],
+          entities: {
             '/api/tasks/1': {
               '@id': '/api/tasks/1',
               id : 1,
@@ -108,7 +114,10 @@ describe('Selectors', () => {
           date,
           entities: {
             tasks: {
-              byId: {
+              ids: [
+                '/api/tasks/1'
+              ],
+              entities: {
                 '/api/tasks/1': {
                   '@id': '/api/tasks/1',
                   id : 1,
