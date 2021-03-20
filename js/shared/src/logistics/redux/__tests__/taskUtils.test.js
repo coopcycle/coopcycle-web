@@ -1,7 +1,6 @@
 import {
   groupLinkedTasks,
   tasksToIds,
-  addOrReplaceTasks,
 } from '../taskUtils.js'
 
 describe('taskUtils', () => {
@@ -142,95 +141,6 @@ describe('taskUtils', () => {
         '/api/tasks/1',
         '/api/tasks/2',
       ])
-    })
-  })
-
-  describe('addOrReplaceTasks', () => {
-    it('should update an existing task', () => {
-
-      let items = {
-        '/api/tasks/1': {
-          '@id': '/api/tasks/1',
-          id : 1,
-          next: '/api/tasks/2',
-        },
-        '/api/tasks/2': {
-          '@id': '/api/tasks/2',
-          id : 2,
-          previous: '/api/tasks/1',
-        }
-      }
-
-      let task = {
-        '@id': '/api/tasks/2',
-        id : 2,
-        previous: '/api/tasks/1',
-        next: '/api/tasks/4',
-      }
-
-      let expectedResult = {
-        '/api/tasks/1': {
-          '@id': '/api/tasks/1',
-          id : 1,
-          next: '/api/tasks/2',
-        },
-        '/api/tasks/2': {
-          '@id': '/api/tasks/2',
-          id : 2,
-          previous: '/api/tasks/1',
-          next: '/api/tasks/4',
-        }
-      }
-
-      let result = addOrReplaceTasks(items, [task])
-
-      expect(result).toEqual(expectedResult)
-      expect(result).not.toBe(items)
-    })
-
-    it('should insert a new task', () => {
-
-      let items = {
-        '/api/tasks/1': {
-          '@id': '/api/tasks/1',
-          id : 1,
-          next: '/api/tasks/2',
-        },
-        '/api/tasks/2': {
-          '@id': '/api/tasks/2',
-          id : 2,
-          next: '/api/tasks/3',
-        }
-      }
-
-      let task = {
-        '@id': '/api/tasks/3',
-        id : 3,
-        next: '/api/tasks/4',
-      }
-
-      let expectedResult = {
-        '/api/tasks/1': {
-          '@id': '/api/tasks/1',
-          id : 1,
-          next: '/api/tasks/2',
-        },
-        '/api/tasks/2': {
-          '@id': '/api/tasks/2',
-          id : 2,
-          next: '/api/tasks/3',
-        },
-        '/api/tasks/3': {
-          '@id': '/api/tasks/3',
-          id : 3,
-          next: '/api/tasks/4',
-        }
-      }
-
-      let result = addOrReplaceTasks(items, [task])
-
-      expect(result).toEqual(expectedResult)
-      expect(result).not.toBe(items)
     })
   })
 

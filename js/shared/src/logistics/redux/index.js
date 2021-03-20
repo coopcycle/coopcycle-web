@@ -18,13 +18,11 @@ export * from './actions'
 import {
   mapToColor,
   tasksToIds,
-  addOrReplaceTasks,
 } from './taskUtils'
 
 export const taskUtils = {
   mapToColor,
   tasksToIds,
-  addOrReplaceTasks,
 }
 
 import {

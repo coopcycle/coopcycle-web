@@ -62,13 +62,3 @@ export function mapToColor(tasks) {
 export function tasksToIds(tasks) {
   return tasks.map((item) => item['@id'])
 }
-
-export function addOrReplaceTasks(tasksById, tasks) {
-  let newItems = Object.assign({}, tasksById)
-
-  for (let task of tasks) {
-    newItems[task['@id']] = task
-  }
-
-  return newItems
-}
