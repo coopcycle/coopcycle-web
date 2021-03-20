@@ -25,13 +25,13 @@ class PaymentController extends AbstractController
     use OrderConfirmTrait;
 
     public function __construct(
-        EntityManagerInterface $objectManager,
+        EntityManagerInterface $entityManager,
         OrderManager $orderManager,
         StripeManager $stripeManager,
         OrderTimeHelper $orderTimeHelper,
         string $secret)
     {
-        $this->objectManager = $objectManager;
+        $this->entityManager = $entityManager;
         $this->orderManager = $orderManager;
         $this->stripeManager = $stripeManager;
         $this->orderTimeHelper = $orderTimeHelper;
@@ -96,6 +96,14 @@ class PaymentController extends AbstractController
             );
 
             if ('succeeded' === $intent->status) {
+
+                // If the "payment_intent.succeeded" webhook has not been called yet,
+                // we complete the checkout here
+                if (PaymentInterface::STATE_PROCESSING === $payment->getState()) {
+                    $this->orderManager->checkout($order);
+                    $this->entityManager->flush();
+                }
+
                 return $this->redirectToOrderConfirm($order);
             }
         }
