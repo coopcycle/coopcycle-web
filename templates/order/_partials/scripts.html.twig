@@ -1,13 +1,3 @@
-<script>
-new CoopCycle.OrderTimeline(document.querySelector('#order-timeline'), {
-  order: {{ order_normalized|json_encode()|raw }},
-  events: {{ events|json_encode()|raw }},
-  centrifugo: {
-    channel: "{{ centrifugo.channel }}",
-    token: "{{ centrifugo.token }}"
-  }
-});
-</script>
 {% if reset %}
 <script>
 sessionStorage.removeItem('search_address');

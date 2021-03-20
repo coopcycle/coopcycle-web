@@ -12,7 +12,11 @@
     </div>
   </div>
   <div class="col-xs-12 col-md-6">
-    <div id="order-timeline"></div>
+    <div id="order-timeline"
+      data-order="{{ order_normalized|json_encode|e('html_attr') }}"
+      data-events="{{ events|json_encode|e('html_attr') }}"
+      data-centrifugo-channel="{{ centrifugo.channel|e('html_attr') }}"
+      data-centrifugo-token="{{ centrifugo.token|e('html_attr') }}"></div>
     {% if not order.customer.hasUser() %}
       <div class="border mb-3">
         <h4 class="bg-light p-3 m-0">{{ 'authentication.not_registered_yet'|trans }}</h4>

@@ -9,6 +9,11 @@
   {% include 'order/_partials/content.html.twig' %}
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('order') }}
+{% endblock %}
+
 {% block scripts %}
-{% include 'order/_partials/scripts.html.twig' %}
+  {{ encore_entry_script_tags('order') }}
+  {% include 'order/_partials/scripts.html.twig' %}
 {% endblock %}
