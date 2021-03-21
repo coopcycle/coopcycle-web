@@ -157,11 +157,11 @@ export const UPDATE_RECURRENCE_RULE_ERROR = 'UPDATE_RECURRENCE_RULE_ERROR'
 
 export const DELETE_GROUP_SUCCESS = 'DELETE_GROUP_SUCCESS'
 
-function setTaskListsLoading(loading = true) {
+export function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
 }
 
-function assignAfter(username, task, after) {
+export function assignAfter(username, task, after) {
 
   return function(dispatch, getState) {
 
@@ -182,7 +182,7 @@ function assignAfter(username, task, after) {
   }
 }
 
-function removeTasks(username, tasks) {
+export function removeTasks(username, tasks) {
 
   if (!Array.isArray(tasks)) {
     tasks = [ tasks ]
@@ -204,47 +204,47 @@ function removeTasks(username, tasks) {
   }
 }
 
-function _updateTask(task) {
+export function _updateTask(task) {
   return {type: UPDATE_TASK, task}
 }
 
-function openAddUserModal() {
+export function openAddUserModal() {
   return {type: OPEN_ADD_USER}
 }
 
-function closeAddUserModal() {
+export function closeAddUserModal() {
   return {type: CLOSE_ADD_USER}
 }
 
-function modifyTaskListRequest(username, tasks) {
+export function modifyTaskListRequest(username, tasks) {
   return { type: MODIFY_TASK_LIST_REQUEST, username, tasks }
 }
 
-function modifyTaskListRequestSuccess(taskList) {
+export function modifyTaskListRequestSuccess(taskList) {
   return { type: MODIFY_TASK_LIST_REQUEST_SUCCESS, taskList }
 }
 
-function setFilterValue(key, value) {
+export function setFilterValue(key, value) {
   return { type: SET_FILTER_VALUE, key, value }
 }
 
-function resetFilters() {
+export function resetFilters() {
   return { type: RESET_FILTERS }
 }
 
-function addImport(token) {
+export function addImport(token) {
   return { type: ADD_IMPORT, token }
 }
 
-function importSuccess(token) {
+export function importSuccess(token) {
   return { type: IMPORT_SUCCESS, token }
 }
 
-function importError(token, message) {
+export function importError(token, message) {
   return { type: IMPORT_ERROR, token, message }
 }
 
-function modifyTaskList(username, tasks) {
+export function modifyTaskList(username, tasks) {
 
   const data = tasks.map((task, index) => ({
     task: task['@id'],
@@ -288,39 +288,39 @@ function modifyTaskList(username, tasks) {
   }
 }
 
-function togglePolyline(username) {
+export function togglePolyline(username) {
   return { type: TOGGLE_POLYLINE, username }
 }
 
-function taskListUpdated(taskList) {
+export function taskListUpdated(taskList) {
   return { type: TASK_LIST_UPDATED, taskList }
 }
 
-function taskListsUpdated(taskLists) {
+export function taskListsUpdated(taskLists) {
   return { type: TASK_LISTS_UPDATED, taskLists }
 }
 
-function toggleTask(task, multiple = false) {
+export function toggleTask(task, multiple = false) {
   return { type: TOGGLE_TASK, task, multiple }
 }
 
-function selectTask(task) {
+export function selectTask(task) {
   return { type: SELECT_TASK, task }
 }
 
-function selectTasks(tasks) {
+export function selectTasks(tasks) {
   return { type: SELECT_TASKS, tasks }
 }
 
-function clearSelectedTasks() {
+export function clearSelectedTasks() {
   return { type: CLEAR_SELECTED_TASKS }
 }
 
-function setTaskListGroupMode(mode) {
+export function setTaskListGroupMode(mode) {
   return { type: SET_TASK_LIST_GROUP_MODE, mode }
 }
 
-function createTaskList(date, username) {
+export function createTaskList(date, username) {
 
   return function(dispatch) {
 
@@ -342,7 +342,7 @@ function createTaskList(date, username) {
   }
 }
 
-function moveToTop(task) {
+export function moveToTop(task) {
 
   return function(dispatch, getState) {
 
@@ -359,7 +359,7 @@ function moveToTop(task) {
   }
 }
 
-function moveToBottom(task) {
+export function moveToBottom(task) {
 
   return function(dispatch, getState) {
 
@@ -376,111 +376,111 @@ function moveToBottom(task) {
   }
 }
 
-function setGeolocation(username, coords, timestamp) {
+export function setGeolocation(username, coords, timestamp) {
   return { type: SET_GEOLOCATION, username, coords, timestamp }
 }
 
-function scanPositions() {
+export function scanPositions() {
   return { type: SCAN_POSITIONS }
 }
 
-function openNewTaskModal() {
+export function openNewTaskModal() {
   return { type: OPEN_NEW_TASK_MODAL }
 }
 
-function closeNewTaskModal() {
+export function closeNewTaskModal() {
   return { type: CLOSE_NEW_TASK_MODAL }
 }
 
-function setCurrentTask(task) {
+export function setCurrentTask(task) {
   return { type: SET_CURRENT_TASK, task }
 }
 
-function createTaskRequest() {
+export function createTaskRequest() {
   return { type: CREATE_TASK_REQUEST }
 }
 
-function createTaskSuccess(task) {
+export function createTaskSuccess(task) {
   return { type: CREATE_TASK_SUCCESS, task }
 }
 
-function createTaskFailure(error) {
+export function createTaskFailure(error) {
   return { type: CREATE_TASK_FAILURE, error }
 }
 
-function completeTaskFailure(error) {
+export function completeTaskFailure(error) {
   return { type: COMPLETE_TASK_FAILURE, error }
 }
 
-function cancelTaskFailure(error) {
+export function cancelTaskFailure(error) {
   return { type: CANCEL_TASK_FAILURE, error }
 }
 
-function tokenRefreshSuccess(token) {
+export function tokenRefreshSuccess(token) {
   return { type: TOKEN_REFRESH_SUCCESS, token }
 }
 
-function openFiltersModal() {
+export function openFiltersModal() {
   return { type: OPEN_FILTERS_MODAL }
 }
 
-function closeFiltersModal() {
+export function closeFiltersModal() {
   return { type: CLOSE_FILTERS_MODAL }
 }
 
-function toggleSearch() {
+export function toggleSearch() {
   return { type: TOGGLE_SEARCH }
 }
 
-function openSearch() {
+export function openSearch() {
   return { type: OPEN_SEARCH }
 }
 
-function closeSearch() {
+export function closeSearch() {
   return { type: CLOSE_SEARCH }
 }
 
-function openSettings() {
+export function openSettings() {
   return { type: OPEN_SETTINGS }
 }
 
-function closeSettings() {
+export function closeSettings() {
   return { type: CLOSE_SETTINGS }
 }
 
-function setPolylineStyle(style) {
+export function setPolylineStyle(style) {
   return {type: SET_POLYLINE_STYLE, style}
 }
 
-function setClustersEnabled(enabled) {
+export function setClustersEnabled(enabled) {
   return {type: SET_CLUSTERS_ENABLED, enabled}
 }
 
-function loadTaskEventsRequest() {
+export function loadTaskEventsRequest() {
   return { type: LOAD_TASK_EVENTS_REQUEST }
 }
 
-function loadTaskEventsSuccess(task, events) {
+export function loadTaskEventsSuccess(task, events) {
   return { type: LOAD_TASK_EVENTS_SUCCESS, task, events }
 }
 
-function loadTaskEventsFailure(error) {
+export function loadTaskEventsFailure(error) {
   return { type: LOAD_TASK_EVENTS_FAILURE, error }
 }
 
-function openImportModal() {
+export function openImportModal() {
   return { type: OPEN_IMPORT_MODAL }
 }
 
-function closeImportModal() {
+export function closeImportModal() {
   return { type: CLOSE_IMPORT_MODAL }
 }
 
-function removeTask(task) {
+export function removeTask(task) {
   return { type: REMOVE_TASK, task }
 }
 
-function updateTask(task) {
+export function updateTask(task) {
   return function(dispatch, getState) {
     let date = selectSelectedDate(getState())
 
@@ -492,7 +492,7 @@ function updateTask(task) {
   }
 }
 
-function createTask(task) {
+export function createTask(task) {
 
   return function(dispatch, getState) {
 
@@ -541,7 +541,7 @@ function createTask(task) {
   }
 }
 
-function startTask(task) {
+export function startTask(task) {
 
   return function(dispatch, getState) {
 
@@ -570,7 +570,7 @@ function startTask(task) {
   }
 }
 
-function completeTask(task, notes = '', success = true) {
+export function completeTask(task, notes = '', success = true) {
 
   return function(dispatch, getState) {
 
@@ -599,7 +599,7 @@ function completeTask(task, notes = '', success = true) {
   }
 }
 
-function cancelTask(task) {
+export function cancelTask(task) {
 
   return function(dispatch, getState) {
 
@@ -628,7 +628,7 @@ function cancelTask(task) {
   }
 }
 
-function cancelTasks(tasks) {
+export function cancelTasks(tasks) {
 
   return function(dispatch, getState) {
 
@@ -661,7 +661,7 @@ function cancelTasks(tasks) {
   }
 }
 
-function duplicateTask(task) {
+export function duplicateTask(task) {
 
   return function(dispatch, getState) {
 
@@ -690,7 +690,7 @@ function duplicateTask(task) {
   }
 }
 
-function loadTaskEvents(task) {
+export function loadTaskEvents(task) {
 
   return function(dispatch, getState) {
 
@@ -742,7 +742,7 @@ export function optimizeTaskList(taskList) {
   }
 }
 
-function moveTasksToNextDay(tasks) {
+export function moveTasksToNextDay(tasks) {
 
   return function(dispatch, getState) {
 
@@ -782,7 +782,7 @@ function moveTasksToNextDay(tasks) {
   }
 }
 
-function moveTasksToNextWorkingDay(tasks) {
+export function moveTasksToNextWorkingDay(tasks) {
 
   return function(dispatch, getState) {
 
@@ -830,39 +830,39 @@ function moveTasksToNextWorkingDay(tasks) {
   }
 }
 
-function updateRightPanelSize(size) {
+export function updateRightPanelSize(size) {
   return { type: size > 40 ? RIGHT_PANEL_MORE_THAN_HALF : RIGHT_PANEL_LESS_THAN_HALF }
 }
 
-function openNewRecurrenceRuleModal() {
+export function openNewRecurrenceRuleModal() {
   return { type: OPEN_RECURRENCE_RULE_MODAL }
 }
 
-function closeRecurrenceRuleModal() {
+export function closeRecurrenceRuleModal() {
   return { type: CLOSE_RECURRENCE_RULE_MODAL }
 }
 
-function setCurrentRecurrenceRule(recurrenceRule) {
+export function setCurrentRecurrenceRule(recurrenceRule) {
   return { type: SET_CURRENT_RECURRENCE_RULE, recurrenceRule }
 }
 
-function updateRecurrenceRuleRequest() {
+export function updateRecurrenceRuleRequest() {
   return { type: UPDATE_RECURRENCE_RULE_REQUEST }
 }
 
-function updateRecurrenceRuleSuccess(recurrenceRule) {
+export function updateRecurrenceRuleSuccess(recurrenceRule) {
   return { type: UPDATE_RECURRENCE_RULE_SUCCESS, recurrenceRule }
 }
 
-function updateRecurrenceRuleError(message) {
+export function updateRecurrenceRuleError(message) {
   return { type: UPDATE_RECURRENCE_RULE_ERROR, message }
 }
 
-function deleteRecurrenceRuleSuccess(recurrenceRule) {
+export function deleteRecurrenceRuleSuccess(recurrenceRule) {
   return { type: DELETE_RECURRENCE_RULE_SUCCESS, recurrenceRule }
 }
 
-function saveRecurrenceRule(recurrenceRule) {
+export function saveRecurrenceRule(recurrenceRule) {
 
   return function(dispatch, getState) {
 
@@ -905,7 +905,7 @@ function saveRecurrenceRule(recurrenceRule) {
   }
 }
 
-function createTasksFromRecurrenceRule(recurrenceRule) {
+export function createTasksFromRecurrenceRule(recurrenceRule) {
 
   return function(dispatch, getState) {
 
@@ -931,7 +931,7 @@ function createTasksFromRecurrenceRule(recurrenceRule) {
   }
 }
 
-function deleteRecurrenceRule(recurrenceRule) {
+export function deleteRecurrenceRule(recurrenceRule) {
 
   return function(dispatch, getState) {
 
@@ -959,11 +959,11 @@ function deleteRecurrenceRule(recurrenceRule) {
   }
 }
 
-function deleteGroupSuccess(group) {
+export function deleteGroupSuccess(group) {
   return { type: DELETE_GROUP_SUCCESS, group }
 }
 
-function deleteGroup(group) {
+export function deleteGroup(group) {
 
   return function(dispatch, getState) {
 
@@ -986,15 +986,15 @@ function deleteGroup(group) {
   }
 }
 
-function openExportModal() {
+export function openExportModal() {
   return { type: OPEN_EXPORT_MODAL }
 }
 
-function closeExportModal() {
+export function closeExportModal() {
   return { type: CLOSE_EXPORT_MODAL }
 }
 
-function exportTasks(start, end) {
+export function exportTasks(start, end) {
 
   return function(dispatch) {
 
@@ -1004,66 +1004,4 @@ function exportTasks(start, end) {
     document.getElementById('task_export_end').value = end
     document.querySelector('form[name="task_export"]').submit()
   }
-}
-
-export {
-  assignAfter,
-  updateTask,
-  createTaskList,
-  modifyTaskList,
-  removeTasks,
-  openAddUserModal,
-  closeAddUserModal,
-  togglePolyline,
-  setTaskListGroupMode,
-  toggleTask,
-  selectTask,
-  selectTasks,
-  setGeolocation,
-  openNewTaskModal,
-  closeNewTaskModal,
-  setCurrentTask,
-  createTask,
-  completeTask,
-  cancelTask,
-  duplicateTask,
-  openFiltersModal,
-  closeFiltersModal,
-  setFilterValue,
-  resetFilters,
-  toggleSearch,
-  openSearch,
-  closeSearch,
-  openSettings,
-  closeSettings,
-  setPolylineStyle,
-  cancelTasks,
-  loadTaskEvents,
-  setTaskListsLoading,
-  moveToTop,
-  moveToBottom,
-  openImportModal,
-  closeImportModal,
-  addImport,
-  importSuccess,
-  importError,
-  startTask,
-  setClustersEnabled,
-  taskListUpdated,
-  taskListsUpdated,
-  clearSelectedTasks,
-  scanPositions,
-  moveTasksToNextDay,
-  moveTasksToNextWorkingDay,
-  updateRightPanelSize,
-  closeRecurrenceRuleModal,
-  setCurrentRecurrenceRule,
-  saveRecurrenceRule,
-  createTasksFromRecurrenceRule,
-  openNewRecurrenceRuleModal,
-  deleteRecurrenceRule,
-  deleteGroup,
-  openExportModal,
-  closeExportModal,
-  exportTasks,
 }
