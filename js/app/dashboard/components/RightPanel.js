@@ -166,7 +166,7 @@ class DashboardApp extends React.Component {
 function mapStateToProps(state) {
 
   return {
-    couriersList: state.couriersList,
+    couriersList: state.config.couriersList,
     searchIsOn: state.searchIsOn,
     allTasks: selectAllTasks(state),
     taskLists: selectTaskLists(state),

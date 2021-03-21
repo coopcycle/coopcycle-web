@@ -165,14 +165,14 @@ function mapStateToProps(state) {
     date: selectedDate,
     prev: window.Routing.generate('admin_dashboard_fullscreen', {
       date: moment(selectedDate).subtract(1, 'days').format('YYYY-MM-DD'),
-      nav: state.nav
+      nav: state.config.nav
     }),
     next: window.Routing.generate('admin_dashboard_fullscreen', {
       date: moment(selectedDate).add(1, 'days').format('YYYY-MM-DD'),
-      nav: state.nav
+      nav: state.config.nav
     }),
     imports: state.imports,
-    nav: state.nav,
+    nav: state.config.nav,
     isDefaultFilters: state.settings.isDefaultFilters,
     taskImportToken: state.taskImportToken,
   }

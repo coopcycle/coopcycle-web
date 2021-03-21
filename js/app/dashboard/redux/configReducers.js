@@ -6,6 +6,8 @@ const initialState = {
   tags: [],
   uploaderEndpoint: '',
   exampleSpreadsheetUrl: '#',
+  couriersList: [],
+  nav: ''
 }
 
 export default (state = initialState) => state

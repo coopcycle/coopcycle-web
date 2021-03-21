@@ -63,7 +63,6 @@ const initialState = {
   offline: [],
   taskModalIsOpen: false,
   isTaskModalLoading: false,
-  couriersList: [],
   completeTaskErrorMessage: null,
   filtersModalIsOpen: false,
   settingsModalIsOpen: false,

@@ -62,7 +62,7 @@ class CourierSelect extends Component {
 
 function mapStateToProps(state, ownProps) {
 
-  let couriers = state.couriersList
+  let couriers = state.config.couriersList
 
   if (Object.prototype.hasOwnProperty.call(ownProps, 'exclude') && ownProps.exclude) {
     const usernames = _.map(selectTaskLists(state), taskList => taskList.username)
