@@ -6,21 +6,22 @@ import {
   TASK_LISTS_UPDATED,
   UPDATE_TASK,
   REMOVE_TASK
-} from "./actions";
+} from './actions'
 import {
   taskUtils,
   taskListUtils,
   taskListEntityUtils,
+  taskListAdapter,
 } from '../../coopcycle-frontend-js/logistics/redux'
 
-const initialState = {
-  byId: {}
-}
+const initialState = taskListAdapter.getInitialState()
+const selectors = taskListAdapter.getSelectors((state) => state)
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case MODIFY_TASK_LIST_REQUEST: {
-      let entity = taskListEntityUtils.findTaskListByUsername(state.byId, action.username)
+    case MODIFY_TASK_LIST_REQUEST:
+
+      let entity = taskListEntityUtils.findTaskListByUsername(selectors.selectEntities(state), action.username)
 
       if (!entity) {
 
@@ -32,45 +33,39 @@ export default (state = initialState, action) => {
         itemIds: taskUtils.tasksToIds(action.tasks),
       }
 
-      let newItems = taskListEntityUtils.addOrReplaceTaskList(state.byId, newEntity)
+      return taskListAdapter.upsertOne(state, newEntity)
 
-      return {
-        ...state,
-        byId: newItems,
-      }
-    }
-    case MODIFY_TASK_LIST_REQUEST_SUCCESS: {
-      let newEntity = taskListUtils.replaceTasksWithIds(action.taskList)
-      let newItems = taskListEntityUtils.addOrReplaceTaskList(state.byId, newEntity)
+    case MODIFY_TASK_LIST_REQUEST_SUCCESS:
 
-      return {
-        ...state,
-        byId: newItems,
-      }
-    }
+      const entityByUsername = taskListEntityUtils.findTaskListByUsername(selectors.selectEntities(state), action.taskList.username)
+      const hasNewId = entityByUsername && entityByUsername['@id'] !== action.taskList['@id']
+
+      return taskListAdapter.upsertOne(
+        hasNewId ? taskListAdapter.removeOne(state, entityByUsername['@id']) : state,
+        taskListUtils.replaceTasksWithIds(action.taskList)
+      )
+
     case TASK_LIST_UPDATED: {
 
-      if (!Object.prototype.hasOwnProperty.call(state.byId, action.taskList['@id'])) {
+      let matchingList = selectors.selectById(state, action.taskList['@id'])
+
+      if (!matchingList) {
         return state
       }
 
-      return {
-        ...state,
-        byId: {
-          ...state.byId,
-          [ action.taskList['@id'] ]: {
-            ...state.byId[ action.taskList['@id'] ],
-            distance: action.taskList.distance,
-            duration: action.taskList.duration,
-            polyline: action.taskList.polyline,
-          }
-        },
+      let newEntity = {
+        ...matchingList,
+        distance: action.taskList.distance,
+        duration: action.taskList.duration,
+        polyline: action.taskList.polyline,
       }
+
+      return taskListAdapter.upsertOne(state, newEntity)
     }
     case TASK_LISTS_UPDATED: {
       const matchingLists = _.filter(
         action.taskLists,
-        updated => Object.prototype.hasOwnProperty.call(state.byId, updated['@id'])
+        updated => Object.prototype.hasOwnProperty.call(selectors.selectEntities(state), updated['@id'])
       )
 
       if (matchingLists.length === 0) {
@@ -78,46 +73,37 @@ export default (state = initialState, action) => {
         return state
       }
 
-      return {
-        ...state,
-        byId: _.mapValues(state.byId, current => {
-          const matchingList = _.find(matchingLists, o => o['@id'] === current['@id'])
+      return taskListAdapter.upsertMany(state, _.mapValues(selectors.selectEntities(state), current => {
+        const matchingList = _.find(matchingLists, o => o['@id'] === current['@id'])
 
-          if (!matchingList) {
+        if (!matchingList) {
 
-            return current
-          }
+          return current
+        }
 
-          return {
-            ...current,
-            distance: matchingList.distance,
-            duration: matchingList.duration,
-            polyline: matchingList.polyline,
-          }
-        }),
-      }
+        return {
+          ...current,
+          distance: matchingList.distance,
+          duration: matchingList.duration,
+          polyline: matchingList.polyline,
+        }
+      }))
     }
     case UPDATE_TASK: {
       let newItems
 
       if (action.task.isAssigned) {
-        newItems = taskListEntityUtils.addAssignedTask(state.byId, action.task)
+        newItems = taskListEntityUtils.addAssignedTask(selectors.selectEntities(state), action.task)
       } else {
-        newItems = taskListEntityUtils.removeUnassignedTask(state.byId, action.task)
+        newItems = taskListEntityUtils.removeUnassignedTask(selectors.selectEntities(state), action.task)
       }
 
-      return {
-        ...state,
-        byId: newItems,
-      }
+      return taskListAdapter.upsertMany(state, newItems)
     }
     case REMOVE_TASK:
-
-      return {
-        ...state,
-        byId: taskListEntityUtils.removeUnassignedTask(state.byId, action.task)
-      }
-    default:
-      return state
+      return taskListAdapter.upsertMany(state,
+        taskListEntityUtils.removeUnassignedTask(selectors.selectEntities(state), action.task))
   }
+
+  return state
 }

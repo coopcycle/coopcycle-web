@@ -76,23 +76,15 @@ export function removeUnassignedTask(taskListsById, task) {
 }
 
 function addOrReplace(sourceById, taskList, destinationById) {
-  let entityByUsername = findTaskListByUsername(sourceById, taskList['username'])
+  let entityByUsername = findTaskListByUsername(sourceById, taskList.username)
 
   // there is already a temporary task list for the same user
   // see createTempTaskList(..) above
-  if (entityByUsername !== undefined && entityByUsername['@id'] != taskList['@id']) {
+  if (entityByUsername && entityByUsername['@id'] !== taskList['@id']) {
     delete destinationById[entityByUsername['@id']]
   }
 
   destinationById[taskList['@id']] = taskList
-}
-
-export function addOrReplaceTaskList(taskListsById, taskList) {
-  let newItems = Object.assign({}, taskListsById)
-
-  addOrReplace(taskListsById, taskList, newItems)
-
-  return newItems
 }
 
 export function addOrReplaceTaskLists(taskListsById, taskLists) {

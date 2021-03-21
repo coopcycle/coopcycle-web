@@ -1,26 +1,18 @@
 import {
   CREATE_TASK_LIST_SUCCESS
-} from './actions';
+} from './actions'
+import {
+  taskListAdapter
+} from './adapters'
 import { replaceTasksWithIds } from './taskListUtils'
-import { addOrReplaceTaskList } from './taskListEntityUtils'
 
-const initialState = {
-  byId: {}
-}
+const initialState = taskListAdapter.getInitialState()
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case CREATE_TASK_LIST_SUCCESS: {
-      let entity = replaceTasksWithIds(action.payload)
-
-      let newItems = addOrReplaceTaskList(state.byId, entity)
-
-      return {
-        ...state,
-        byId: newItems,
-      }
-    }
-    default:
-      return state
+    case CREATE_TASK_LIST_SUCCESS:
+      return taskListAdapter.upsertOne(state, replaceTasksWithIds(action.payload))
   }
+
+  return state
 }

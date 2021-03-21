@@ -20,7 +20,7 @@ import { recurrenceRulesAdapter } from './redux/selectors'
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
-import { taskListUtils, taskListEntityUtils, taskAdapter } from '../coopcycle-frontend-js/logistics/redux'
+import { taskListUtils, taskAdapter, taskListAdapter } from '../coopcycle-frontend-js/logistics/redux'
 
 function start() {
 
@@ -34,7 +34,6 @@ function start() {
 
   // normalize data, keep only task ids, instead of the whole objects
   taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
-  let taskListEntities = taskListEntityUtils.addOrReplaceTaskLists({}, taskLists)
 
   const preloadedPositions = JSON.parse(dashboardEl.dataset.positions)
   const positions = preloadedPositions.map(pos => ({
@@ -51,9 +50,10 @@ function start() {
           taskAdapter.getInitialState(),
           unassignedTasks.concat(assignedTasks)
         ),
-        taskLists: {
-          byId: taskListEntities
-        }
+        taskLists: taskListAdapter.upsertMany(
+          taskListAdapter.getInitialState(),
+          taskLists
+        )
       }
     },
     tags: JSON.parse(dashboardEl.dataset.tags),

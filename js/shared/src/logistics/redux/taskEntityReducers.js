@@ -1,7 +1,7 @@
 import {
   CREATE_TASK_LIST_SUCCESS
 } from './actions';
-import taskAdapter from './taskAdapter'
+import { taskAdapter } from './adapters'
 
 const initialState = taskAdapter.getInitialState()
 

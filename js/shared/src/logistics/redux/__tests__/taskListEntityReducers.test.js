@@ -6,7 +6,8 @@ describe('taskListEntityReducers', () => {
     it('should add a task list', () => {
       expect(taskListEntityReducers(
           {
-            byId: {},
+            ids: [],
+            entities: {},
           },
           {
             type: 'CREATE_TASK_LIST_SUCCESS',
@@ -27,7 +28,10 @@ describe('taskListEntityReducers', () => {
             }
           }
       )).toEqual({
-        byId: {
+        ids: [
+          '/api/task_lists/1'
+        ],
+        entities: {
           '/api/task_lists/1': {
             '@id': '/api/task_lists/1',
             'username': 'bot_1',

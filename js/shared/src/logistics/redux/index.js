@@ -2,7 +2,7 @@ export { default as dateReducer } from './dateReducer'
 export { default as taskEntityReducers } from './taskEntityReducers'
 export { default as taskListEntityReducers } from './taskListEntityReducers'
 export { default as uiReducers } from './uiReducers'
-export { default as taskAdapter } from './taskAdapter'
+export * from './adapters'
 
 export {
   selectSelectedDate,

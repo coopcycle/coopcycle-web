@@ -7,7 +7,10 @@ describe('taskListEntityReducers', () => {
       it('should add tasks into a task list', () => {
         expect(taskListEntityReducers(
           {
-            byId: {
+            ids: [
+              '/api/task_lists/1'
+            ],
+            entities: {
               '/api/task_lists/1': {
                 '@id': '/api/task_lists/1',
                 'username': 'bot_1',
@@ -37,7 +40,10 @@ describe('taskListEntityReducers', () => {
             ]
           }
         )).toEqual({
-          byId: {
+          ids: [
+            '/api/task_lists/1'
+          ],
+          entities: {
             '/api/task_lists/1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
@@ -55,7 +61,10 @@ describe('taskListEntityReducers', () => {
       it('should ignore action', () => {
         expect(taskListEntityReducers(
           {
-            byId: {
+            ids: [
+              '/api/task_lists/10'
+            ],
+            entities: {
               '/api/task_lists/10': {
                 '@id': '/api/task_lists/10',
                 'username': 'bot_10',
@@ -84,7 +93,10 @@ describe('taskListEntityReducers', () => {
             ]
           }
         )).toEqual({
-          byId: {
+          ids: [
+            '/api/task_lists/10'
+          ],
+          entities: {
             '/api/task_lists/10': {
               '@id': '/api/task_lists/10',
               'username': 'bot_10',
@@ -102,7 +114,10 @@ describe('taskListEntityReducers', () => {
       it('should replace existing task list', () => {
         expect(taskListEntityReducers(
           {
-            byId: {
+            ids: [
+              '/api/task_lists/1'
+            ],
+            entities: {
               '/api/task_lists/1': {
                 '@id': '/api/task_lists/1',
                 'username': 'bot_1',
@@ -135,7 +150,10 @@ describe('taskListEntityReducers', () => {
             },
           }
         )).toEqual({
-          byId: {
+          ids: [
+            '/api/task_lists/1'
+          ],
+          entities: {
             '/api/task_lists/1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
@@ -153,7 +171,10 @@ describe('taskListEntityReducers', () => {
       it('should replace existing task list', () => {
         expect(taskListEntityReducers(
           {
-            byId: {
+            ids: [
+              'temp_bot_1'
+            ],
+            entities: {
               'temp_bot_1': {
                 '@id': 'temp_bot_1',
                 'username': 'bot_1',
@@ -186,7 +207,10 @@ describe('taskListEntityReducers', () => {
             },
           }
         )).toEqual({
-          byId: {
+          ids: [
+            '/api/task_lists/1'
+          ],
+          entities: {
             '/api/task_lists/1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
@@ -204,7 +228,10 @@ describe('taskListEntityReducers', () => {
       it('should create a task list', () => {
         expect(taskListEntityReducers(
           {
-            byId: {
+            ids: [
+              '/api/task_lists/10'
+            ],
+            entities: {
               '/api/task_lists/10': {
                 '@id': '/api/task_lists/10',
                 'username': 'bot_10',
@@ -236,7 +263,11 @@ describe('taskListEntityReducers', () => {
             },
           }
         )).toEqual({
-          byId: {
+          ids: [
+            '/api/task_lists/10',
+            '/api/task_lists/1',
+          ],
+          entities: {
             '/api/task_lists/1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
@@ -262,7 +293,10 @@ describe('taskListEntityReducers', () => {
       it('should update a task list', () => {
         expect(taskListEntityReducers(
           {
-            byId: {
+            ids: [
+              '/api/task_lists/1',
+            ],
+            entities: {
               '/api/task_lists/1': {
                 '@id': '/api/task_lists/1',
                 'username': 'bot_1',
@@ -292,7 +326,10 @@ describe('taskListEntityReducers', () => {
             },
           }
         )).toEqual({
-          byId: {
+          ids: [
+            '/api/task_lists/1',
+          ],
+          entities: {
             '/api/task_lists/1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
@@ -312,7 +349,10 @@ describe('taskListEntityReducers', () => {
       it('should update a task list', () => {
         expect(taskListEntityReducers(
           {
-            byId: {
+            ids: [
+              'temp_bot_1',
+            ],
+            entities: {
               'temp_bot_1': {
                 '@id': 'temp_bot_1',
                 'username': 'bot_1',
@@ -341,7 +381,10 @@ describe('taskListEntityReducers', () => {
             },
           }
         )).toEqual({
-          byId: {
+          ids: [
+            'temp_bot_1',
+          ],
+          entities: {
             'temp_bot_1': {
               '@id': 'temp_bot_1',
               'username': 'bot_1',
@@ -357,7 +400,10 @@ describe('taskListEntityReducers', () => {
       it('should ignore action', () => {
         expect(taskListEntityReducers(
           {
-            byId: {
+            ids: [
+              '/api/task_lists/10',
+            ],
+            entities: {
               '/api/task_lists/10': {
                 '@id': '/api/task_lists/10',
                 'username': 'bot_10',
@@ -386,7 +432,10 @@ describe('taskListEntityReducers', () => {
             },
           }
         )).toEqual({
-          byId: {
+          ids: [
+            '/api/task_lists/10',
+          ],
+          entities: {
             '/api/task_lists/10': {
               '@id': '/api/task_lists/10',
               'username': 'bot_10',
@@ -404,7 +453,10 @@ describe('taskListEntityReducers', () => {
       it('should update a task list', () => {
         expect(taskListEntityReducers(
           {
-            byId: {
+            ids: [
+              '/api/task_lists/1',
+            ],
+            entities: {
               '/api/task_lists/1': {
                 '@id': '/api/task_lists/1',
                 'username': 'bot_1',
@@ -434,7 +486,10 @@ describe('taskListEntityReducers', () => {
             }],
           }
         )).toEqual({
-          byId: {
+          ids: [
+            '/api/task_lists/1',
+          ],
+          entities: {
             '/api/task_lists/1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
@@ -455,7 +510,10 @@ describe('taskListEntityReducers', () => {
     it('should handle assigned task', () => {
       expect(taskListEntityReducers(
         {
-          byId: {
+          ids: [
+            '/api/task_lists/1',
+          ],
+          entities: {
             '/api/task_lists/1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
@@ -474,7 +532,10 @@ describe('taskListEntityReducers', () => {
           },
         }
       )).toEqual({
-        byId: {
+        ids: [
+          '/api/task_lists/1',
+        ],
+        entities: {
           '/api/task_lists/1': {
             '@id': '/api/task_lists/1',
             'username': 'bot_1',
@@ -489,7 +550,10 @@ describe('taskListEntityReducers', () => {
     it('should handle new task already assigned', () => {
       expect(taskListEntityReducers(
         {
-          byId: {
+          ids: [
+            '/api/task_lists/1',
+          ],
+          entities: {
             '/api/task_lists/1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
@@ -510,7 +574,10 @@ describe('taskListEntityReducers', () => {
           },
         }
       )).toEqual({
-        byId: {
+        ids: [
+          '/api/task_lists/1',
+        ],
+        entities: {
           '/api/task_lists/1': {
             '@id': '/api/task_lists/1',
             'username': 'bot_1',
@@ -526,7 +593,10 @@ describe('taskListEntityReducers', () => {
     it('should handle unassigned task', () => {
       expect(taskListEntityReducers(
         {
-          byId: {
+          ids: [
+            '/api/task_lists/1',
+          ],
+          entities: {
             '/api/task_lists/1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
@@ -546,7 +616,10 @@ describe('taskListEntityReducers', () => {
           },
         }
       )).toEqual({
-        byId: {
+        ids: [
+          '/api/task_lists/1',
+        ],
+        entities: {
           '/api/task_lists/1': {
             '@id': '/api/task_lists/1',
             'username': 'bot_1',
@@ -560,7 +633,10 @@ describe('taskListEntityReducers', () => {
     it('should handle unassigned task (not existing)', () => {
       expect(taskListEntityReducers(
         {
-          byId: {
+          ids: [
+            '/api/task_lists/1',
+          ],
+          entities: {
             '/api/task_lists/1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
@@ -579,7 +655,10 @@ describe('taskListEntityReducers', () => {
           },
         }
       )).toEqual({
-        byId: {
+        ids: [
+          '/api/task_lists/1',
+        ],
+        entities: {
           '/api/task_lists/1': {
             '@id': '/api/task_lists/1',
             'username': 'bot_1',
@@ -593,7 +672,10 @@ describe('taskListEntityReducers', () => {
     it('should handle reassigned task', () => {
       expect(taskListEntityReducers(
         {
-          byId: {
+          ids: [
+            '/api/task_lists/1',
+          ],
+          entities: {
             '/api/task_lists/1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
@@ -619,7 +701,10 @@ describe('taskListEntityReducers', () => {
           },
         }
       )).toEqual({
-        byId: {
+        ids: [
+          '/api/task_lists/1',
+        ],
+        entities: {
           '/api/task_lists/1': {
             '@id': '/api/task_lists/1',
             'username': 'bot_1',

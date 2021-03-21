@@ -45,7 +45,11 @@ describe('Selectors', () => {
           },
         },
         taskLists: {
-          byId: {
+          ids: [
+            '/api/task_lists/1',
+            '/api/task_lists/2'
+          ],
+          entities: {
             '/api/task_lists/1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
@@ -125,7 +129,10 @@ describe('Selectors', () => {
               },
             },
             taskLists: {
-              byId: {
+              ids: [
+                '/api/task_lists/1'
+              ],
+              entities: {
                 '/api/task_lists/1': {
                   '@id': '/api/task_lists/1',
                   'username': 'bot_1',
