@@ -172,8 +172,8 @@ export const selectFuseSearch = createSelector(
 )
 
 export const selectPositions = createSelector(
-  state => state.positions,
-  state => state.offline,
+  state => state.tracking.positions,
+  state => state.tracking.offline,
   (positions, offline) => positions.map(position => ({
     ...position,
     offline: includes(offline, position.username) ? true : isOffline(position.lastSeen),

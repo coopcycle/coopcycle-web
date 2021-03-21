@@ -59,7 +59,6 @@ function start() {
     couriersList: JSON.parse(dashboardEl.dataset.couriersList),
     jwt: dashboardEl.dataset.jwt,
     nav: dashboardEl.dataset.nav,
-    positions,
     rrules: recurrenceRulesAdapter.upsertMany(
       recurrenceRulesAdapter.getInitialState(),
       JSON.parse(dashboardEl.dataset.rrules)
@@ -72,6 +71,9 @@ function start() {
       tags: JSON.parse(dashboardEl.dataset.tags),
       uploaderEndpoint: dashboardEl.dataset.uploaderEndpoint,
       exampleSpreadsheetUrl: dashboardEl.dataset.exampleSpreadsheetUrl,
+    },
+    tracking: {
+      positions,
     }
   }
 

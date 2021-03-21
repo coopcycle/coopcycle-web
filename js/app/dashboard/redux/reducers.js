@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { moment } from '../../coopcycle-frontend-js'
 
 import {
   OPEN_ADD_USER,
@@ -9,7 +8,6 @@ import {
   SELECT_TASK,
   SELECT_TASKS,
   SET_TASK_LIST_GROUP_MODE,
-  SET_GEOLOCATION,
   OPEN_NEW_TASK_MODAL,
   CLOSE_NEW_TASK_MODAL,
   SET_CURRENT_TASK,
@@ -37,7 +35,6 @@ import {
   CLOSE_IMPORT_MODAL,
   SET_CLUSTERS_ENABLED,
   CLEAR_SELECTED_TASKS,
-  SCAN_POSITIONS,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
   RIGHT_PANEL_MORE_THAN_HALF,
   RIGHT_PANEL_LESS_THAN_HALF,
@@ -55,8 +52,6 @@ import {
 import {
   recurrenceRulesAdapter,
 } from './selectors'
-
-import { isOffline } from './utils'
 
 const initialState = {
   addModalIsOpen: false,
@@ -180,54 +175,6 @@ const jwt = (state = '', action) => {
 
     return state
   }
-}
-
-const combinedPositions = (state = initialState, action) => {
-
-  switch (action.type) {
-  case SET_GEOLOCATION:
-
-    const marker = {
-      username: action.username,
-      coords: action.coords,
-      lastSeen: moment(action.timestamp, 'X'),
-    }
-
-    const newPositions = state.positions.slice(0)
-    const index = _.findIndex(newPositions, position => position.username === action.username)
-    if (-1 !== index) {
-      newPositions.splice(index, 1, marker)
-    } else {
-      newPositions.push(marker)
-    }
-
-    return {
-      ...state,
-      positions: newPositions,
-    }
-
-  case SCAN_POSITIONS:
-
-    const offline = _.reduce(state.positions, (acc, position) => {
-
-      if (isOffline(position.lastSeen)) {
-        acc.push(position.username)
-      }
-
-      return acc
-    }, [])
-
-    if (!_.isEqual(offline, state.offline)) {
-      return {
-        ...state,
-        offline,
-      }
-    }
-
-    break
-  }
-
-  return state
 }
 
 const taskModalIsOpen = (state = false, action) => {
@@ -510,8 +457,6 @@ const exportModalIsOpen = (state = false, action) => {
 
 export default (state = initialState, action) => {
 
-  const { positions, offline } = combinedPositions(state, action)
-
   return {
     ...state,
     addModalIsOpen: addModalIsOpen(state.addModalIsOpen, action),
@@ -519,8 +464,6 @@ export default (state = initialState, action) => {
     taskListGroupMode: taskListGroupMode(state.taskListGroupMode, action),
     selectedTasks: selectedTasks(state.selectedTasks, action),
     jwt: jwt(state.jwt, action),
-    positions,
-    offline,
     taskModalIsOpen: taskModalIsOpen(state.taskModalIsOpen, action),
     isTaskModalLoading: isTaskModalLoading(state.isTaskModalLoading, action),
     completeTaskErrorMessage: completeTaskErrorMessage(state.completeTaskErrorMessage, action),
