@@ -342,37 +342,41 @@ export function createTaskList(date, username) {
   }
 }
 
-export function moveToTop(task) {
+function moveTo(task, direction) {
 
   return function(dispatch, getState) {
 
-    let state = getState()
-    let taskLists = selectTaskLists(state)
-
+    const taskLists = selectTaskLists(getState())
     const taskList = _.find(taskLists, taskList => taskList.username === task.assignedTo)
 
     if (taskList) {
       const newTasks = taskList.items.filter(item => item['@id'] !== task['@id'])
-      newTasks.unshift(task)
+      switch (direction) {
+        case 'top':
+          newTasks.unshift(task)
+          break
+        case 'bottom':
+          newTasks.push(task)
+          break
+      }
       dispatch(modifyTaskList(taskList.username, newTasks))
     }
   }
 }
 
+export function moveToTop(task) {
+
+  return function(dispatch) {
+
+    dispatch(moveTo(task, 'top'))
+  }
+}
+
 export function moveToBottom(task) {
 
-  return function(dispatch, getState) {
+  return function(dispatch) {
 
-    let state = getState()
-    let taskLists = selectTaskLists(state)
-
-    const taskList = _.find(taskLists, taskList => taskList.username === task.assignedTo)
-
-    if (taskList) {
-      const newTasks = taskList.items.filter(item => item['@id'] !== task['@id'])
-      newTasks.push(task)
-      dispatch(modifyTaskList(taskList.username, newTasks))
-    }
+    dispatch(moveTo(task, 'bottom'))
   }
 }
 
