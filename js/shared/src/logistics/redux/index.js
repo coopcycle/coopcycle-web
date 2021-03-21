@@ -40,8 +40,6 @@ import {
   findTaskListByUsername,
   addAssignedTask,
   removeUnassignedTask,
-  addOrReplaceTaskList,
-  addOrReplaceTaskLists,
 } from './taskListEntityUtils'
 
 export const taskListEntityUtils = {
@@ -49,6 +47,4 @@ export const taskListEntityUtils = {
   findTaskListByUsername,
   addAssignedTask,
   removeUnassignedTask,
-  addOrReplaceTaskList,
-  addOrReplaceTaskLists,
 }
