@@ -7,9 +7,11 @@ import {
 } from '@reduxjs/toolkit'
 
 import { moment } from '../../coopcycle-frontend-js'
-import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks, selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
+import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter } from '../../coopcycle-frontend-js/logistics/redux'
 import { filter, orderBy, forEach, find, reduce, map, differenceWith, includes } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
+
+const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
 
 export const recurrenceRulesAdapter = createEntityAdapter({
   selectId: (o) => o['@id'],
@@ -227,5 +229,23 @@ export const selectRecurrenceRules = createSelector(
 
       return matchingTasks.length > 0
     })
+  }
+)
+
+const selectCouriers = state => state.config.couriersList
+
+export const selectCouriersWithExclude = createSelector(
+  selectCouriers,
+  taskListSelectors.selectAll,
+  (state, exclude) => exclude,
+  (couriers, taskLists, exclude) => {
+
+    if (exclude) {
+      const usernames = taskLists.map(taskList => taskList.username)
+
+      return filter(couriers, courier => !includes(usernames, courier.username))
+    }
+
+    return couriers
   }
 )

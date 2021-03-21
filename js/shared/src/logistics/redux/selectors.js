@@ -9,6 +9,12 @@ const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistic
 
 export const selectSelectedDate = state => state.logistics.date
 
+// FIXME
+// This is not optimized
+// Each time any task is updated, the tasks lists are looped over
+// Also, it generates copies all the time
+// Replace this with a selectTaskListItemsByUsername selector, used by the <TaskList> component
+// https://redux.js.org/tutorials/essentials/part-6-performance-normalization#memoizing-selector-functions
 export const selectTaskLists = createSelector(
   taskListSelectors.selectEntities,
   taskSelectors.selectEntities,

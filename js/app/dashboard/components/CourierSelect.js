@@ -5,8 +5,7 @@ import Select, { components } from 'react-select'
 import _ from 'lodash'
 
 import Avatar from '../../components/Avatar'
-
-import { selectTaskLists } from '../../coopcycle-frontend-js/logistics/redux'
+import { selectCouriersWithExclude } from '../redux/selectors'
 
 const courierAsOption = courier => ({
   ...courier,
@@ -39,10 +38,13 @@ const SingleValue = ({ children, ...props }) => {
 class CourierSelect extends Component {
 
   render() {
+
+    const options = this.props.couriers.map(courierAsOption)
+
     return (
       <Select
-        defaultValue={ lookupCourier(this.props.couriers, this.props.username) }
-        options={ this.props.couriers }
+        defaultValue={ lookupCourier(options, this.props.username) }
+        options={ options }
         onChange={ this.props.onChange }
         placeholder={ this.props.t('ADMIN_DASHBOARD_COURIER_SELECT_PLACEHOLDER') }
         components={{ Option, SingleValue }}
@@ -62,15 +64,8 @@ class CourierSelect extends Component {
 
 function mapStateToProps(state, ownProps) {
 
-  let couriers = state.config.couriersList
-
-  if (Object.prototype.hasOwnProperty.call(ownProps, 'exclude') && ownProps.exclude) {
-    const usernames = _.map(selectTaskLists(state), taskList => taskList.username)
-    couriers = _.filter(couriers, courier => !_.includes(usernames, courier.username))
-  }
-
   return {
-    couriers: _.map(couriers, courierAsOption),
+    couriers: selectCouriersWithExclude(state, ownProps.exclude),
   }
 }
 
