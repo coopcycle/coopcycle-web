@@ -6,7 +6,7 @@
 [subrepo]
 	remote = git@github.com:coopcycle/coopcycle-frontend-js.git
 	branch = master
-	commit = 5b5a879b869b7a46505a51c09069361213d1e848
-	parent = 7789235b960c102d2ff4c8b12744676dde513f59
+	commit = 6f0e5ea61a5601ee8a4466249ebb5a3a8d24dcb9
+	parent = 7abefd78a6d9211e07e855aafcf928c7aa1279eb
 	method = merge
 	cmdver = 0.4.3
