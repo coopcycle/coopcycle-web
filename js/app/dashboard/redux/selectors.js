@@ -111,7 +111,7 @@ export const selectStandaloneTasks = createSelector(
 
 export const selectVisibleTaskIds = createSelector(
   selectAllTasks,
-  state => state.filters,
+  state => state.settings.filters,
   selectSelectedDate,
   (tasks, filters, date) => filter(tasks, task => isTaskVisible(task, filters, date)).map(task => task['@id'])
 )

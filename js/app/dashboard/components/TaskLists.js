@@ -68,7 +68,7 @@ function mapStateToProps (state) {
   return {
     taskLists: selectTaskLists(state),
     taskListsLoading: state.logistics.ui.taskListsLoading,
-    hiddenCouriers: state.filters.hiddenCouriers,
+    hiddenCouriers: state.settings.filters.hiddenCouriers,
   }
 }
 

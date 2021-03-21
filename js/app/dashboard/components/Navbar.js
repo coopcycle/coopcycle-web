@@ -173,7 +173,7 @@ function mapStateToProps(state) {
     }),
     imports: state.imports,
     nav: state.nav,
-    isDefaultFilters: state.isDefaultFilters,
+    isDefaultFilters: state.settings.isDefaultFilters,
     taskImportToken: state.taskImportToken,
   }
 }

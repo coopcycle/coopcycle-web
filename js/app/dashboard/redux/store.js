@@ -13,6 +13,7 @@ import webTaskEntityReducers from './taskEntityReducers'
 import webTaskListEntityReducers from './taskListEntityReducers'
 import webUiReducers from './uiReducers'
 import configReducers from './configReducers'
+import filtersReducers from './filtersReducers'
 
 const middlewares = [ thunk, socketIO, persistFilters ]
 
@@ -38,7 +39,8 @@ const reducer = (state, action) => {
   return {
     ...rootState,
     logistics: logisticsState,
-    config: configReducers(state.config, action)
+    config: configReducers(state.config, action),
+    settings: filtersReducers(state.settings, action),
   }
 }
 

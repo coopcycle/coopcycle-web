@@ -21,8 +21,6 @@ import {
   TOKEN_REFRESH_SUCCESS,
   OPEN_FILTERS_MODAL,
   CLOSE_FILTERS_MODAL,
-  SET_FILTER_VALUE,
-  RESET_FILTERS,
   TOGGLE_SEARCH,
   OPEN_SEARCH,
   CLOSE_SEARCH,
@@ -60,23 +58,10 @@ import {
 
 import { isOffline } from './utils'
 
-const defaultFilters = {
-  showFinishedTasks: true,
-  showCancelledTasks: false,
-  alwayShowUnassignedTasks: true,
-  tags: [],
-  hiddenCouriers: [],
-  timeRange: [0, 24],
-}
-
 const initialState = {
   addModalIsOpen: false,
   polylineEnabled: {},
   taskListGroupMode: 'GROUP_MODE_FOLDERS',
-
-  filters: defaultFilters,
-  isDefaultFilters: true,
-
   selectedTasks: [],
   jwt: '',
   positions: [],
@@ -359,44 +344,6 @@ const importModalIsOpen = (state = false, action) => {
   }
 }
 
-const combinedFilters = (state = initialState, action) => {
-
-  switch (action.type) {
-
-  case SET_FILTER_VALUE:
-
-    const newFilters = {
-      ...state.filters,
-      [action.key]: action.value
-    }
-
-    return {
-      ...state,
-      filters: newFilters,
-      isDefaultFilters: _.isEqual(newFilters, defaultFilters)
-    }
-
-  case RESET_FILTERS:
-
-    return {
-      ...state,
-      filters: defaultFilters,
-      isDefaultFilters: true
-    }
-  }
-
-  let isDefaultFilters = initialState.isDefaultFilters
-  if (Object.prototype.hasOwnProperty.call(state, 'filters') && !Object.prototype.hasOwnProperty.call(state, 'isDefaultFilters')) {
-    isDefaultFilters = _.isEqual(state.filters, defaultFilters)
-  }
-
-  return {
-    ...state,
-    filters: Object.prototype.hasOwnProperty.call(state, 'filters') ? state.filters : initialState.filters,
-    isDefaultFilters: Object.prototype.hasOwnProperty.call(state, 'isDefaultFilters') ? state.isDefaultFilters : isDefaultFilters,
-  }
-}
-
 const polylineStyle = (state = initialState.polylineStyle, action) => {
   switch (action.type) {
   case SET_POLYLINE_STYLE:
@@ -563,7 +510,6 @@ const exportModalIsOpen = (state = false, action) => {
 
 export default (state = initialState, action) => {
 
-  const { filters, isDefaultFilters } = combinedFilters(state, action)
   const { positions, offline } = combinedPositions(state, action)
 
   return {
@@ -579,8 +525,6 @@ export default (state = initialState, action) => {
     isTaskModalLoading: isTaskModalLoading(state.isTaskModalLoading, action),
     completeTaskErrorMessage: completeTaskErrorMessage(state.completeTaskErrorMessage, action),
     filtersModalIsOpen: filtersModalIsOpen(state.filtersModalIsOpen, action),
-    filters,
-    isDefaultFilters,
     searchIsOn: searchIsOn(state.searchIsOn, action),
     settingsModalIsOpen: settingsModalIsOpen(state.settingsModalIsOpen, action),
     polylineStyle: polylineStyle(state.polylineStyle, action),

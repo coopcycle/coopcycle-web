@@ -221,7 +221,7 @@ function mapStateToProps(state, ownProps) {
     isEmpty: ownProps.items.length === 0 || visibleTaskIds.length === 0,
     distance: ownProps.distance,
     duration: ownProps.duration,
-    filters: state.filters,
+    filters: state.settings.filters,
   }
 }
 

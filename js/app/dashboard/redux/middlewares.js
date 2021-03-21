@@ -96,7 +96,7 @@ export const persistFilters = ({ getState }) => (next) => (action) => {
   let state
   if (action.type === SET_FILTER_VALUE) {
     state = getState()
-    window.sessionStorage.setItem(`cpccl__dshbd__fltrs__${getKey(state)}`, JSON.stringify(state.filters))
+    window.sessionStorage.setItem(`cpccl__dshbd__fltrs__${getKey(state)}`, JSON.stringify(state.settings.filters))
   }
 
   if (action.type === RESET_FILTERS) {
