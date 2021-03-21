@@ -73,16 +73,12 @@ const initialState = {
   addModalIsOpen: false,
   polylineEnabled: {},
   taskListGroupMode: 'GROUP_MODE_FOLDERS',
-  tags: [],
 
   filters: defaultFilters,
   isDefaultFilters: true,
 
   selectedTasks: [],
   jwt: '',
-  centrifugoToken: '',
-  centrifugoTrackingChannel: '$coopcycle_tracking',
-  centrifugoEventsChannel: 'coopcycle_events',
   positions: [],
   offline: [],
   taskModalIsOpen: false,
@@ -97,14 +93,11 @@ const initialState = {
   taskEvents: {},
   imports: {},
   importModalIsOpen: false,
-  uploaderEndpoint: '',
-  exampleSpreadsheetUrl: '#',
   clustersEnabled: false,
   rightPanelSplitDirection: 'vertical',
   recurrenceRuleModalIsOpen: false,
   currentRecurrenceRule: null,
   rrules: recurrenceRulesAdapter.getInitialState(),
-  stores: [],
   recurrenceRulesLoading: false,
   recurrenceRulesErrorMessage: '',
   exportModalIsOpen: false,
@@ -471,10 +464,6 @@ const clustersEnabled = (state = initialState.clustersEnabled, action) => {
   return state
 }
 
-const centrifugoToken = (state = initialState.centrifugoToken) => state
-const centrifugoTrackingChannel = (state = initialState.centrifugoTrackingChannel) => state
-const centrifugoEventsChannel = (state = initialState.centrifugoEventsChannel) => state
-
 const rightPanelSplitDirection = (state = initialState.rightPanelSplitDirection, action) => {
   switch (action.type) {
   case RIGHT_PANEL_MORE_THAN_HALF:
@@ -531,8 +520,6 @@ const rrules = (state = initialState.rrules, action) => {
   return state
 }
 
-const stores = (state = initialState.stores) => state
-
 const recurrenceRulesLoading = (state = initialState.recurrenceRulesLoading, action) => {
   switch(action.type) {
   case UPDATE_RECURRENCE_RULE_REQUEST:
@@ -586,9 +573,6 @@ export default (state = initialState, action) => {
     taskListGroupMode: taskListGroupMode(state.taskListGroupMode, action),
     selectedTasks: selectedTasks(state.selectedTasks, action),
     jwt: jwt(state.jwt, action),
-    centrifugoToken: centrifugoToken(state.centrifugoToken, action),
-    centrifugoTrackingChannel: centrifugoTrackingChannel(state.centrifugoTrackingChannel, action),
-    centrifugoEventsChannel: centrifugoEventsChannel(state.centrifugoEventsChannel, action),
     positions,
     offline,
     taskModalIsOpen: taskModalIsOpen(state.taskModalIsOpen, action),
@@ -609,7 +593,6 @@ export default (state = initialState, action) => {
     recurrenceRuleModalIsOpen: recurrenceRuleModalIsOpen(state.recurrenceRuleModalIsOpen, action),
     currentRecurrenceRule: currentRecurrenceRule(state.currentRecurrenceRule, action),
     rrules: rrules(state.rrules, action),
-    stores: stores(state.stores, action),
     recurrenceRulesLoading: recurrenceRulesLoading(state.recurrenceRulesLoading, action),
     recurrenceRulesErrorMessage: recurrenceRulesErrorMessage(state.recurrenceRulesErrorMessage, action),
     exportModalIsOpen: exportModalIsOpen(state.exportModalIsOpen, action),

@@ -56,21 +56,23 @@ function start() {
         )
       }
     },
-    tags: JSON.parse(dashboardEl.dataset.tags),
     couriersList: JSON.parse(dashboardEl.dataset.couriersList),
-    uploaderEndpoint: dashboardEl.dataset.uploaderEndpoint,
-    exampleSpreadsheetUrl: dashboardEl.dataset.exampleSpreadsheetUrl,
     jwt: dashboardEl.dataset.jwt,
-    centrifugoToken: dashboardEl.dataset.centrifugoToken,
-    centrifugoTrackingChannel: dashboardEl.dataset.centrifugoTrackingChannel,
-    centrifugoEventsChannel: dashboardEl.dataset.centrifugoEventsChannel,
     nav: dashboardEl.dataset.nav,
     positions,
     rrules: recurrenceRulesAdapter.upsertMany(
       recurrenceRulesAdapter.getInitialState(),
       JSON.parse(dashboardEl.dataset.rrules)
     ),
-    stores: JSON.parse(dashboardEl.dataset.stores),
+    config: {
+      centrifugoToken: dashboardEl.dataset.centrifugoToken,
+      centrifugoTrackingChannel: dashboardEl.dataset.centrifugoTrackingChannel,
+      centrifugoEventsChannel: dashboardEl.dataset.centrifugoEventsChannel,
+      stores: JSON.parse(dashboardEl.dataset.stores),
+      tags: JSON.parse(dashboardEl.dataset.tags),
+      uploaderEndpoint: dashboardEl.dataset.uploaderEndpoint,
+      exampleSpreadsheetUrl: dashboardEl.dataset.exampleSpreadsheetUrl,
+    }
   }
 
   const key = date.format('YYYY-MM-DD')

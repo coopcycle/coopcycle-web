@@ -174,7 +174,7 @@ class FiltersModalContent extends React.Component {
 function mapStateToProps(state) {
 
   return {
-    tags: state.tags,
+    tags: state.config.tags,
     showFinishedTasks: state.filters.showFinishedTasks,
     showCancelledTasks: state.filters.showCancelledTasks,
     alwayShowUnassignedTasks: state.filters.alwayShowUnassignedTasks,

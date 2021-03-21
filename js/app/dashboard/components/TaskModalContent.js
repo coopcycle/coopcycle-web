@@ -529,7 +529,7 @@ function mapStateToProps (state) {
     task: selectCurrentTask(state),
     token: state.jwt,
     loading: state.isTaskModalLoading,
-    tags: state.tags,
+    tags: state.config.tags,
     completeTaskErrorMessage: state.completeTaskErrorMessage,
     date: selectSelectedDate(state),
     isTaskTypeEditable: isTaskTypeEditable(state.currentTask),

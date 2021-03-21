@@ -92,8 +92,8 @@ function mapStateToProps(state) {
 
   return {
     date: selectSelectedDate(state),
-    url: state.uploaderEndpoint,
-    exampleUrl: state.exampleSpreadsheetUrl,
+    url: state.config.uploaderEndpoint,
+    exampleUrl: state.config.exampleSpreadsheetUrl,
   }
 }
 

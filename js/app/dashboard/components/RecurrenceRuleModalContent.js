@@ -420,7 +420,7 @@ function mapStateToProps(state) {
   return {
     date: selectSelectedDate(state),
     recurrenceRule: state.currentRecurrenceRule,
-    stores: state.stores,
+    stores: state.config.stores,
     loading: state.recurrenceRulesLoading,
     error: state.recurrenceRulesErrorMessage,
   }
