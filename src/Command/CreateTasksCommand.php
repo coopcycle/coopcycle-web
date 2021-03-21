@@ -25,6 +25,8 @@ use Symfony\Component\Console\Question\Question;
 
 Class CreateTasksCommand extends Command
 {
+    private $batchSize = 10;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         Faker\Generator $faker,
@@ -99,6 +101,8 @@ Class CreateTasksCommand extends Command
         $date = $input->getOption('date');
         $count = intval($input->getOption('count'));
 
+        $output->writeln(sprintf('Generating %d tasks', $count));
+
         $date = new \DateTime($date);
 
         $after  = clone $date;
@@ -115,6 +119,14 @@ Class CreateTasksCommand extends Command
             $task->setBefore($before);
 
             $this->entityManager->persist($task);
+
+            if (($i % $this->batchSize) === 0) {
+
+                $output->writeln('Flushing data…');
+
+                $this->entityManager->flush();
+                $this->entityManager->clear();
+            }
         }
 
         $this->entityManager->flush();
