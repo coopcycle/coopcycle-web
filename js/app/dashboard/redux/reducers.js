@@ -82,7 +82,7 @@ const initialState = {
   exportModalIsOpen: false,
 }
 
-const addModalIsOpen = (state = false, action) => {
+export const addModalIsOpen = (state = false, action) => {
   switch(action.type) {
   case OPEN_ADD_USER:
     return true
@@ -93,7 +93,7 @@ const addModalIsOpen = (state = false, action) => {
   }
 }
 
-const polylineEnabled = (state = {}, action) => {
+export const polylineEnabled = (state = {}, action) => {
   switch (action.type) {
   case TOGGLE_POLYLINE:
     let newState = { ...state }
@@ -106,7 +106,7 @@ const polylineEnabled = (state = {}, action) => {
   }
 }
 
-const selectedTasks = (state = [], action) => {
+export const selectedTasks = (state = [], action) => {
 
   let newState = state.slice(0)
 
@@ -155,7 +155,7 @@ const selectedTasks = (state = [], action) => {
   return state
 }
 
-const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
+export const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
   switch (action.type) {
   case SET_TASK_LIST_GROUP_MODE:
     return action.mode
@@ -164,7 +164,7 @@ const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
   }
 }
 
-const jwt = (state = '', action) => {
+export const jwt = (state = '', action) => {
   switch (action.type) {
   case TOKEN_REFRESH_SUCCESS:
 
@@ -176,7 +176,7 @@ const jwt = (state = '', action) => {
   }
 }
 
-const taskModalIsOpen = (state = false, action) => {
+export const taskModalIsOpen = (state = false, action) => {
   switch(action.type) {
   case OPEN_NEW_TASK_MODAL:
     return true
@@ -194,7 +194,7 @@ const taskModalIsOpen = (state = false, action) => {
   }
 }
 
-const isTaskModalLoading = (state = false, action) => {
+export const isTaskModalLoading = (state = false, action) => {
   switch(action.type) {
   case CREATE_TASK_REQUEST:
     return true
@@ -208,7 +208,7 @@ const isTaskModalLoading = (state = false, action) => {
   }
 }
 
-const completeTaskErrorMessage = (state = null, action) => {
+export const completeTaskErrorMessage = (state = null, action) => {
   switch(action.type) {
   case CREATE_TASK_REQUEST:
   case CREATE_TASK_SUCCESS:
@@ -239,7 +239,7 @@ const completeTaskErrorMessage = (state = null, action) => {
   return state
 }
 
-const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, action) => {
+export const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, action) => {
   switch (action.type) {
   case OPEN_FILTERS_MODAL:
     return true
@@ -250,7 +250,7 @@ const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, action) => 
   }
 }
 
-const searchIsOn = (state = initialState.searchIsOn, action) => {
+export const searchIsOn = (state = initialState.searchIsOn, action) => {
   switch (action.type) {
   case TOGGLE_SEARCH:
 
@@ -266,7 +266,7 @@ const searchIsOn = (state = initialState.searchIsOn, action) => {
   }
 }
 
-const settingsModalIsOpen = (state = initialState.settingsModalIsOpen, action) => {
+export const settingsModalIsOpen = (state = initialState.settingsModalIsOpen, action) => {
   switch (action.type) {
   case OPEN_SETTINGS:
 
@@ -279,7 +279,7 @@ const settingsModalIsOpen = (state = initialState.settingsModalIsOpen, action) =
   }
 }
 
-const importModalIsOpen = (state = false, action) => {
+export const importModalIsOpen = (state = false, action) => {
   switch(action.type) {
   case OPEN_IMPORT_MODAL:
     return true
@@ -290,7 +290,7 @@ const importModalIsOpen = (state = false, action) => {
   }
 }
 
-const polylineStyle = (state = initialState.polylineStyle, action) => {
+export const polylineStyle = (state = initialState.polylineStyle, action) => {
   switch (action.type) {
   case SET_POLYLINE_STYLE:
 
@@ -300,7 +300,7 @@ const polylineStyle = (state = initialState.polylineStyle, action) => {
   }
 }
 
-const isLoadingTaskEvents = (state = initialState.isLoadingTaskEvents, action) => {
+export const isLoadingTaskEvents = (state = initialState.isLoadingTaskEvents, action) => {
   switch (action.type) {
   case LOAD_TASK_EVENTS_REQUEST:
 
@@ -314,7 +314,7 @@ const isLoadingTaskEvents = (state = initialState.isLoadingTaskEvents, action) =
   return state
 }
 
-const taskEvents = (state = initialState.taskEvents, action) => {
+export const taskEvents = (state = initialState.taskEvents, action) => {
   switch (action.type) {
   case LOAD_TASK_EVENTS_SUCCESS:
     return {
@@ -326,7 +326,7 @@ const taskEvents = (state = initialState.taskEvents, action) => {
   return state
 }
 
-const imports = (state = initialState.imports, action) => {
+export const imports = (state = initialState.imports, action) => {
   switch (action.type) {
   case ADD_IMPORT:
     return {
@@ -347,7 +347,7 @@ const imports = (state = initialState.imports, action) => {
   return state
 }
 
-const clustersEnabled = (state = initialState.clustersEnabled, action) => {
+export const clustersEnabled = (state = initialState.clustersEnabled, action) => {
   switch (action.type) {
   case SET_CLUSTERS_ENABLED:
 
@@ -357,7 +357,7 @@ const clustersEnabled = (state = initialState.clustersEnabled, action) => {
   return state
 }
 
-const rightPanelSplitDirection = (state = initialState.rightPanelSplitDirection, action) => {
+export const rightPanelSplitDirection = (state = initialState.rightPanelSplitDirection, action) => {
   switch (action.type) {
   case RIGHT_PANEL_MORE_THAN_HALF:
 
@@ -370,7 +370,7 @@ const rightPanelSplitDirection = (state = initialState.rightPanelSplitDirection,
   return state
 }
 
-const recurrenceRuleModalIsOpen = (state = false, action) => {
+export const recurrenceRuleModalIsOpen = (state = false, action) => {
   switch(action.type) {
   case OPEN_RECURRENCE_RULE_MODAL:
     return true
@@ -388,7 +388,7 @@ const recurrenceRuleModalIsOpen = (state = false, action) => {
   return state
 }
 
-const currentRecurrenceRule = (state = null, action) => {
+export const currentRecurrenceRule = (state = null, action) => {
   switch(action.type) {
   case SET_CURRENT_RECURRENCE_RULE:
 
@@ -400,7 +400,7 @@ const currentRecurrenceRule = (state = null, action) => {
   return state
 }
 
-const rrules = (state = initialState.rrules, action) => {
+export const rrules = (state = initialState.rrules, action) => {
   switch(action.type) {
   case UPDATE_RECURRENCE_RULE_SUCCESS:
 
@@ -413,7 +413,7 @@ const rrules = (state = initialState.rrules, action) => {
   return state
 }
 
-const recurrenceRulesLoading = (state = initialState.recurrenceRulesLoading, action) => {
+export const recurrenceRulesLoading = (state = initialState.recurrenceRulesLoading, action) => {
   switch(action.type) {
   case UPDATE_RECURRENCE_RULE_REQUEST:
 
@@ -428,7 +428,7 @@ const recurrenceRulesLoading = (state = initialState.recurrenceRulesLoading, act
   return state
 }
 
-const recurrenceRulesErrorMessage = (state = initialState.recurrenceRulesErrorMessage, action) => {
+export const recurrenceRulesErrorMessage = (state = initialState.recurrenceRulesErrorMessage, action) => {
   switch(action.type) {
   case UPDATE_RECURRENCE_RULE_REQUEST:
   case UPDATE_RECURRENCE_RULE_SUCCESS:
@@ -443,7 +443,7 @@ const recurrenceRulesErrorMessage = (state = initialState.recurrenceRulesErrorMe
   return state
 }
 
-const exportModalIsOpen = (state = false, action) => {
+export const exportModalIsOpen = (state = false, action) => {
   switch(action.type) {
   case OPEN_EXPORT_MODAL:
     return true
@@ -451,36 +451,5 @@ const exportModalIsOpen = (state = false, action) => {
     return false
   default:
     return state
-  }
-}
-
-export default (state = initialState, action) => {
-
-  return {
-    ...state,
-    addModalIsOpen: addModalIsOpen(state.addModalIsOpen, action),
-    polylineEnabled: polylineEnabled(state.polylineEnabled, action),
-    taskListGroupMode: taskListGroupMode(state.taskListGroupMode, action),
-    selectedTasks: selectedTasks(state.selectedTasks, action),
-    jwt: jwt(state.jwt, action),
-    taskModalIsOpen: taskModalIsOpen(state.taskModalIsOpen, action),
-    isTaskModalLoading: isTaskModalLoading(state.isTaskModalLoading, action),
-    completeTaskErrorMessage: completeTaskErrorMessage(state.completeTaskErrorMessage, action),
-    filtersModalIsOpen: filtersModalIsOpen(state.filtersModalIsOpen, action),
-    searchIsOn: searchIsOn(state.searchIsOn, action),
-    settingsModalIsOpen: settingsModalIsOpen(state.settingsModalIsOpen, action),
-    polylineStyle: polylineStyle(state.polylineStyle, action),
-    isLoadingTaskEvents: isLoadingTaskEvents(state.isLoadingTaskEvents, action),
-    taskEvents: taskEvents(state.taskEvents, action),
-    imports: imports(state.imports, action),
-    importModalIsOpen: importModalIsOpen(state.importModalIsOpen, action),
-    clustersEnabled: clustersEnabled(state.clustersEnabled, action),
-    rightPanelSplitDirection: rightPanelSplitDirection(state.rightPanelSplitDirection, action),
-    recurrenceRuleModalIsOpen: recurrenceRuleModalIsOpen(state.recurrenceRuleModalIsOpen, action),
-    currentRecurrenceRule: currentRecurrenceRule(state.currentRecurrenceRule, action),
-    rrules: rrules(state.rrules, action),
-    recurrenceRulesLoading: recurrenceRulesLoading(state.recurrenceRulesLoading, action),
-    recurrenceRulesErrorMessage: recurrenceRulesErrorMessage(state.recurrenceRulesErrorMessage, action),
-    exportModalIsOpen: exportModalIsOpen(state.exportModalIsOpen, action),
   }
 }

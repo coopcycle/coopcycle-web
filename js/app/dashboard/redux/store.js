@@ -8,7 +8,7 @@ import {
   taskListEntityReducers as coreTaskListEntityReducers,
   uiReducers as coreUiReducers,
 } from '../../coopcycle-frontend-js/logistics/redux'
-import webReducers from './reducers'
+import * as webReducers from './reducers'
 import webTaskEntityReducers from './taskEntityReducers'
 import webTaskListEntityReducers from './taskListEntityReducers'
 import webUiReducers from './uiReducers'
@@ -24,27 +24,20 @@ const middlewares = [ thunk, socketIO, persistFilters ]
 const composeEnhancers = (typeof window !== 'undefined' &&
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 
-const reducer = (state, action) => {
-  //todo move more properties from webReducers inside `logistics` state
-  let rootState = webReducers(state, action)
-
-  let logisticsState = combineReducers({
+const reducer = combineReducers({
+  ...webReducers,
+  logistics: combineReducers({
     date: dateReducer,
     entities: combineReducers({
       tasks: reduceReducers(coreTaskEntityReducers, webTaskEntityReducers),
       taskLists: reduceReducers(coreTaskListEntityReducers, webTaskListEntityReducers),
     }),
     ui: reduceReducers(coreUiReducers, webUiReducers)
-  })(state.logistics, action)
-
-  return {
-    ...rootState,
-    logistics: logisticsState,
-    config: configReducers(state.config, action),
-    settings: filtersReducers(state.settings, action),
-    tracking: trackingReducers(state.tracking, action),
-  }
-}
+  }),
+  config: configReducers,
+  settings: filtersReducers,
+  tracking: trackingReducers,
+})
 
 export const createStoreFromPreloadedState = preloadedState => {
   return createStore(
