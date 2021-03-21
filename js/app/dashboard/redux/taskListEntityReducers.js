@@ -63,9 +63,12 @@ export default (state = initialState, action) => {
       return taskListAdapter.upsertOne(state, newEntity)
     }
     case TASK_LISTS_UPDATED: {
+
+      const taskLists = selectors.selectEntities(state)
+
       const matchingLists = _.filter(
         action.taskLists,
-        updated => Object.prototype.hasOwnProperty.call(selectors.selectEntities(state), updated['@id'])
+        updated => Object.prototype.hasOwnProperty.call(taskLists, updated['@id'])
       )
 
       if (matchingLists.length === 0) {
