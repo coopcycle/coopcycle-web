@@ -86,7 +86,6 @@ const initialState = {
   positions: [],
   offline: [],
   taskModalIsOpen: false,
-  currentTask: null,
   isTaskModalLoading: false,
   couriersList: [],
   completeTaskErrorMessage: null,
@@ -266,17 +265,6 @@ const taskModalIsOpen = (state = false, action) => {
     }
 
     return false
-  default:
-    return state
-  }
-}
-
-const currentTask = (state = null, action) => {
-  switch(action.type) {
-  case OPEN_NEW_TASK_MODAL:
-    return null
-  case SET_CURRENT_TASK:
-    return action.task
   default:
     return state
   }
@@ -604,7 +592,6 @@ export default (state = initialState, action) => {
     positions,
     offline,
     taskModalIsOpen: taskModalIsOpen(state.taskModalIsOpen, action),
-    currentTask: currentTask(state.currentTask, action),
     isTaskModalLoading: isTaskModalLoading(state.isTaskModalLoading, action),
     completeTaskErrorMessage: completeTaskErrorMessage(state.completeTaskErrorMessage, action),
     filtersModalIsOpen: filtersModalIsOpen(state.filtersModalIsOpen, action),

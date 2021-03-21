@@ -16,7 +16,7 @@ export const recurrenceRulesAdapter = createEntityAdapter({
   sortComparer: (a, b) => a.orgName.localeCompare(b.orgName),
 })
 
-export const selectCurrentTask = state => state.currentTask
+export const selectCurrentTask = state => state.logistics.ui.currentTask
 
 export const selectTaskLists = createSelector(
   selectTaskListsBase,
