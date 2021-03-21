@@ -14,6 +14,7 @@ import PhoneNumberInput from './PhoneNumberInput'
 import { timePickerProps } from '../../utils/antd'
 
 import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
+import { selectCurrentTask } from '../redux/selectors'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import { phoneNumberExample } from '../utils'
 
@@ -525,7 +526,7 @@ function mapStateToProps (state) {
     Object.prototype.hasOwnProperty.call(state.taskEvents, state.currentTask['@id']) ? state.taskEvents[state.currentTask['@id']] : []
 
   return {
-    task: state.currentTask,
+    task: selectCurrentTask(state),
     token: state.jwt,
     loading: state.isTaskModalLoading,
     tags: state.tags,
