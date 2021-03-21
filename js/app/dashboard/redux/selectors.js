@@ -8,7 +8,7 @@ import {
 
 import { moment } from '../../coopcycle-frontend-js'
 import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks, selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
-import { filter, forEach, find, reduce, map, differenceWith, includes } from 'lodash'
+import { filter, orderBy, forEach, find, reduce, map, differenceWith, includes } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
 
 export const recurrenceRulesAdapter = createEntityAdapter({
@@ -18,7 +18,10 @@ export const recurrenceRulesAdapter = createEntityAdapter({
 
 export const selectCurrentTask = state => state.logistics.ui.currentTask
 
-export const selectTaskLists = selectTaskListsBase
+export const selectTaskLists = createSelector(
+  selectTaskListsBase,
+  taskLists => orderBy(taskLists, 'username')
+)
 
 export const selectBookedUsernames = createSelector(
   selectTaskLists,
