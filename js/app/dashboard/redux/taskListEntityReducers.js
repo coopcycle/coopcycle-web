@@ -50,7 +50,7 @@ export default (state = initialState, action) => {
 
       const matchingLists = _.filter(
         action.taskLists,
-        updated => Object.prototype.hasOwnProperty.call(taskLists, updated['@id'])
+        updated => !!_.find(taskLists, taskList => taskList.username === updated.username && taskList.date === updated.date)
       )
 
       if (matchingLists.length === 0) {
@@ -58,7 +58,7 @@ export default (state = initialState, action) => {
         return state
       }
 
-      return taskListAdapter.upsertMany(state, _.mapValues(selectors.selectEntities(state), current => {
+      return taskListAdapter.upsertMany(state, _.mapValues(taskLists, current => {
         const matchingList = _.find(matchingLists, o => o['@id'] === current['@id'])
 
         if (!matchingList) {
