@@ -182,7 +182,7 @@ export function assignAfter(username, task, after) {
   }
 }
 
-export function removeTasks(username, tasks) {
+export function unassignTasks(username, tasks) {
 
   if (!Array.isArray(tasks)) {
     tasks = [ tasks ]

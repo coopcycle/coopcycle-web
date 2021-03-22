@@ -5,7 +5,7 @@ import { withTranslation } from 'react-i18next'
 import { ContextMenu, MenuItem, connectMenu } from 'react-contextmenu'
 import moment from 'moment'
 
-import { removeTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay } from '../redux/actions'
+import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay } from '../redux/actions'
 import { selectNextWorkingDay } from '../redux/selectors'
 
 const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
@@ -18,9 +18,9 @@ const MOVE_TO_NEXT_WORKING_DAY_MULTI = 'MOVE_TO_NEXT_WORKING_DAY_MULTI'
 
 import { selectUnassignedTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
-function _unassign(tasksToUnassign, removeTasks) {
+function _unassign(tasksToUnassign, unassignTasks) {
   const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo)
-  _.forEach(tasksByUsername, (tasks, username) => removeTasks(username, tasks))
+  _.forEach(tasksByUsername, (tasks, username) => unassignTasks(username, tasks))
 }
 
 /**
@@ -29,7 +29,7 @@ function _unassign(tasksToUnassign, removeTasks) {
 const DynamicMenu = ({
   id, trigger,
   unassignedTasks, selectedTasks, nextWorkingDay,
-  removeTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
+  unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
   t }) => {
 
   const tasksToUnassign =
@@ -72,7 +72,7 @@ const DynamicMenu = ({
   return (
     <ContextMenu id={ id }>
       { actions.includes(UNASSIGN_SINGLE) && (
-        <MenuItem onClick={ () => _unassign([ trigger.task ], removeTasks) }>
+        <MenuItem onClick={ () => _unassign([ trigger.task ], unassignTasks) }>
           { t('ADMIN_DASHBOARD_UNASSIGN_TASK', { id: trigger.task.id }) }
         </MenuItem>
       )}
@@ -90,7 +90,7 @@ const DynamicMenu = ({
         <MenuItem divider />
       )}
       { actions.includes(UNASSIGN_MULTI) && (
-        <MenuItem onClick={ () => _unassign(tasksToUnassign, removeTasks) }>
+        <MenuItem onClick={ () => _unassign(tasksToUnassign, unassignTasks) }>
           { t('ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI', { count: tasksToUnassign.length }) }
         </MenuItem>
       )}
@@ -131,7 +131,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    removeTasks: (username, tasks) => dispatch(removeTasks(username, tasks)),
+    unassignTasks: (username, tasks) => dispatch(unassignTasks(username, tasks)),
     cancelTasks: tasks => dispatch(cancelTasks(tasks)),
     moveToTop: task => dispatch(moveToTop(task)),
     moveToBottom: task => dispatch(moveToBottom(task)),

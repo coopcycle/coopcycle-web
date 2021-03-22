@@ -8,7 +8,7 @@ import { Progress, Tooltip } from 'antd'
 import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
-import { removeTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
+import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
 
 moment.locale($('html').attr('lang'))
@@ -86,11 +86,10 @@ class TaskList extends React.Component {
   }
 
   remove(task) {
-    this.props.removeTasks(this.props.username, task)
+    this.props.unassignTasks(this.props.username, task)
   }
 
   render() {
-
     const {
       duration,
       distance,
@@ -171,7 +170,7 @@ class TaskList extends React.Component {
             <Popconfirm
               placement="left"
               title={ this.props.t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
-              onConfirm={ () => this.props.removeTasks(this.props.username, uncompletedTasks) }
+              onConfirm={ () => this.props.unassignTasks(this.props.username, uncompletedTasks) }
               okText={ this.props.t('CROPPIE_CONFIRM') }
               cancelText={ this.props.t('ADMIN_DASHBOARD_CANCEL') }>
               <a href="#"
@@ -227,7 +226,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    removeTasks: (username, tasks) => dispatch(removeTasks(username, tasks)),
+    unassignTasks: (username, tasks) => dispatch(unassignTasks(username, tasks)),
     togglePolyline: (username) => dispatch(togglePolyline(username)),
     optimizeTaskList: (taskList) => dispatch(optimizeTaskList(taskList)),
   }
