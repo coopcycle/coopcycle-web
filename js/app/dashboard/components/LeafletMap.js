@@ -161,9 +161,9 @@ function mapStateToProps(state) {
     polylineEnabled: state.polylineEnabled,
     selectedTasks: state.selectedTasks,
     positions: selectPositions(state),
-    polylineStyle: state.polylineStyle,
+    polylineStyle: state.settings.polylineStyle,
     asTheCrowFlies: selectAsTheCrowFlies(state),
-    clustersEnabled: state.clustersEnabled,
+    clustersEnabled: state.settings.clustersEnabled,
   }
 }
 

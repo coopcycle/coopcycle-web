@@ -24,7 +24,6 @@ import {
   CLOSE_SEARCH,
   OPEN_SETTINGS,
   CLOSE_SETTINGS,
-  SET_POLYLINE_STYLE,
   LOAD_TASK_EVENTS_REQUEST,
   LOAD_TASK_EVENTS_SUCCESS,
   LOAD_TASK_EVENTS_FAILURE,
@@ -33,7 +32,6 @@ import {
   IMPORT_ERROR,
   OPEN_IMPORT_MODAL,
   CLOSE_IMPORT_MODAL,
-  SET_CLUSTERS_ENABLED,
   CLEAR_SELECTED_TASKS,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
   RIGHT_PANEL_MORE_THAN_HALF,
@@ -64,13 +62,11 @@ const initialState = {
   completeTaskErrorMessage: null,
   filtersModalIsOpen: false,
   settingsModalIsOpen: false,
-  polylineStyle: 'normal',
   searchIsOn: false,
   isLoadingTaskEvents: false,
   taskEvents: {},
   imports: {},
   importModalIsOpen: false,
-  clustersEnabled: false,
   rightPanelSplitDirection: 'vertical',
   recurrenceRuleModalIsOpen: false,
   currentRecurrenceRule: null,
@@ -288,16 +284,6 @@ export const importModalIsOpen = (state = false, action) => {
   }
 }
 
-export const polylineStyle = (state = initialState.polylineStyle, action) => {
-  switch (action.type) {
-  case SET_POLYLINE_STYLE:
-
-    return action.style
-  default:
-    return state
-  }
-}
-
 export const isLoadingTaskEvents = (state = initialState.isLoadingTaskEvents, action) => {
   switch (action.type) {
   case LOAD_TASK_EVENTS_REQUEST:
@@ -340,16 +326,6 @@ export const imports = (state = initialState.imports, action) => {
     }
   case OPEN_IMPORT_MODAL:
     return {}
-  }
-
-  return state
-}
-
-export const clustersEnabled = (state = initialState.clustersEnabled, action) => {
-  switch (action.type) {
-  case SET_CLUSTERS_ENABLED:
-
-    return action.enabled
   }
 
   return state

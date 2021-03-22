@@ -65,8 +65,8 @@ class SettingsModalContent extends React.Component {
 function mapStateToProps(state) {
 
   return {
-    polylineStyle: state.polylineStyle,
-    clustersEnabled: state.clustersEnabled,
+    polylineStyle: state.settings.polylineStyle,
+    clustersEnabled: state.settings.clustersEnabled,
   }
 }
 

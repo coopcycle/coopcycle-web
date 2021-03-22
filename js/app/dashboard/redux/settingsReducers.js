@@ -3,6 +3,8 @@ import _ from 'lodash'
 import {
   SET_FILTER_VALUE,
   RESET_FILTERS,
+  SET_CLUSTERS_ENABLED,
+  SET_POLYLINE_STYLE,
 } from './actions'
 
 const defaultFilters = {
@@ -17,6 +19,8 @@ const defaultFilters = {
 const initialState = {
   filters: defaultFilters,
   isDefaultFilters: true,
+  clustersEnabled: false,
+  polylineStyle: 'normal',
 }
 
 export default (state = initialState, action) => {
@@ -41,6 +45,20 @@ export default (state = initialState, action) => {
       ...state,
       filters: defaultFilters,
       isDefaultFilters: true
+    }
+
+  case SET_CLUSTERS_ENABLED:
+
+    return {
+      ...state,
+      clustersEnabled: action.enabled
+    }
+
+  case SET_POLYLINE_STYLE:
+
+    return {
+      ...state,
+      polylineStyle: action.style
     }
   }
 
