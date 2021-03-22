@@ -20,7 +20,7 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case MODIFY_TASK_LIST_REQUEST:
 
-      let entity = selectors.selectById(action.username)
+      let entity = selectors.selectById(state, action.username)
 
       if (!entity) {
 
