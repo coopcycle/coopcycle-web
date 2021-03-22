@@ -59,8 +59,6 @@ const initialState = {
   taskListGroupMode: 'GROUP_MODE_FOLDERS',
   selectedTasks: [],
   jwt: '',
-  positions: [],
-  offline: [],
   taskModalIsOpen: false,
   isTaskModalLoading: false,
   completeTaskErrorMessage: null,

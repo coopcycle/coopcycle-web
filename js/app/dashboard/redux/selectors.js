@@ -19,6 +19,7 @@ export const recurrenceRulesAdapter = createEntityAdapter({
 })
 
 export const selectCurrentTask = state => state.logistics.ui.currentTask
+export const selectCouriers = state => state.config.couriersList
 
 export const selectTaskLists = createSelector(
   selectTaskListsBase,
@@ -231,8 +232,6 @@ export const selectRecurrenceRules = createSelector(
     })
   }
 )
-
-const selectCouriers = state => state.config.couriersList
 
 export const selectCouriersWithExclude = createSelector(
   selectCouriers,

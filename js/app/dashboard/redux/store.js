@@ -13,7 +13,7 @@ import webTaskEntityReducers from './taskEntityReducers'
 import webTaskListEntityReducers from './taskListEntityReducers'
 import webUiReducers from './uiReducers'
 import configReducers from './configReducers'
-import filtersReducers from './filtersReducers'
+import settingsReducers from './settingsReducers'
 import trackingReducers from './trackingReducers'
 
 const middlewares = [ thunk, socketIO, persistFilters ]
@@ -35,7 +35,7 @@ const reducer = combineReducers({
     ui: reduceReducers(coreUiReducers, webUiReducers)
   }),
   config: configReducers,
-  settings: filtersReducers,
+  settings: settingsReducers,
   tracking: trackingReducers,
 })
 
