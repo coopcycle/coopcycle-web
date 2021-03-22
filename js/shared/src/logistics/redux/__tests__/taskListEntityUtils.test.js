@@ -141,7 +141,7 @@ describe('taskListEntityUtils', () => {
     it('should add assigned task into existing task list', () => {
 
       let taskListsById = {
-        '/api/task_lists/1': {
+        'bot_1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
           itemIds: [
@@ -149,7 +149,7 @@ describe('taskListEntityUtils', () => {
             '/api/tasks/2',
           ]
         },
-        '/api/task_lists/2': {
+        'bot_2': {
           '@id': '/api/task_lists/2',
           'username': 'bot_2',
           itemIds: [
@@ -168,8 +168,8 @@ describe('taskListEntityUtils', () => {
 
       let result = addAssignedTask(taskListsById, task)
 
-      let expectedItems = {
-        '/api/task_lists/1': {
+      let expectedItems = [
+        {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
           itemIds: [
@@ -177,24 +177,15 @@ describe('taskListEntityUtils', () => {
             '/api/tasks/2',
             '/api/tasks/5',
           ]
-        },
-        '/api/task_lists/2': {
-          '@id': '/api/task_lists/2',
-          'username': 'bot_2',
-          itemIds: [
-            '/api/tasks/3',
-            '/api/tasks/4',
-          ]
         }
-      }
+      ]
 
       expect(result).toEqual(expectedItems)
-      expect(result).not.toBe(taskListsById)
     })
 
     it('should create a new task list when it does not exist', () => {
       let taskListsById = {
-        '/api/task_lists/1': {
+        'bot_1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
           itemIds: [
@@ -213,19 +204,14 @@ describe('taskListEntityUtils', () => {
 
       let result = addAssignedTask(taskListsById, task)
 
-      expect(result['/api/task_lists/1'].itemIds).toEqual([
-        '/api/tasks/1',
-        '/api/tasks/2',
-      ])
-      expect(result['temp_bot_2'].itemIds).toEqual([
+      expect(result[0].itemIds).toEqual([
         '/api/tasks/3',
       ])
-      expect(result).not.toBe(taskListsById)
     })
 
     it('should unassign task if it was assigned to another courier', () => {
       let taskListsById = {
-        '/api/task_lists/1': {
+        'bot_1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
           itemIds: [
@@ -233,7 +219,7 @@ describe('taskListEntityUtils', () => {
             '/api/tasks/2',
           ]
         },
-        '/api/task_lists/2': {
+        'bot_2': {
           '@id': '/api/task_lists/2',
           'username': 'bot_2',
           itemIds: [
@@ -252,8 +238,15 @@ describe('taskListEntityUtils', () => {
 
       let result = addAssignedTask(taskListsById, task)
 
-      let expectedItems = {
-        '/api/task_lists/1': {
+      let expectedItems = [
+        {
+          '@id': '/api/task_lists/2',
+          'username': 'bot_2',
+          itemIds: [
+            '/api/tasks/4',
+          ]
+        },
+        {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
           itemIds: [
@@ -262,22 +255,14 @@ describe('taskListEntityUtils', () => {
             '/api/tasks/3',
           ]
         },
-        '/api/task_lists/2': {
-          '@id': '/api/task_lists/2',
-          'username': 'bot_2',
-          itemIds: [
-            '/api/tasks/4',
-          ]
-        }
-      }
+      ]
 
       expect(result).toEqual(expectedItems)
-      expect(result).not.toBe(taskListsById)
     })
 
     it('should not modify a task list if the task is already there', () => {
       let taskListsById = {
-        '/api/task_lists/1': {
+        'bot_1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
           itemIds: [
@@ -285,7 +270,7 @@ describe('taskListEntityUtils', () => {
             '/api/tasks/2',
           ]
         },
-        '/api/task_lists/2': {
+        'bot_2': {
           '@id': '/api/task_lists/2',
           'username': 'bot_2',
           itemIds: [
@@ -304,34 +289,16 @@ describe('taskListEntityUtils', () => {
 
       let result = addAssignedTask(taskListsById, task)
 
-      let expectedItems = {
-        '/api/task_lists/1': {
-          '@id': '/api/task_lists/1',
-          'username': 'bot_1',
-          itemIds: [
-            '/api/tasks/1',
-            '/api/tasks/2',
-          ]
-        },
-        '/api/task_lists/2': {
-          '@id': '/api/task_lists/2',
-          'username': 'bot_2',
-          itemIds: [
-            '/api/tasks/3',
-            '/api/tasks/4',
-          ]
-        }
-      }
+      let expectedItems = []
 
       expect(result).toEqual(expectedItems)
-      expect(result['/api/task_lists/1'].itemIds).toBe(taskListsById['/api/task_lists/1'].itemIds)
     })
   })
 
   describe('removeUnassignedTask', () => {
     it('should remove unassigned task', () => {
       let taskListsById = {
-        '/api/task_lists/1': {
+        'bot_1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
           itemIds: [
@@ -339,7 +306,7 @@ describe('taskListEntityUtils', () => {
             '/api/tasks/2',
           ]
         },
-        '/api/task_lists/2': {
+        'bot_2': {
           '@id': '/api/task_lists/2',
           'username': 'bot_2',
           itemIds: [
@@ -358,26 +325,17 @@ describe('taskListEntityUtils', () => {
 
       let result = removeUnassignedTask(taskListsById, task)
 
-      let expectedItems = {
-        '/api/task_lists/1': {
+      let expectedItems = [
+        {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
           itemIds: [
             '/api/tasks/2',
           ]
         },
-        '/api/task_lists/2': {
-          '@id': '/api/task_lists/2',
-          'username': 'bot_2',
-          itemIds: [
-            '/api/tasks/3',
-            '/api/tasks/4',
-          ]
-        }
-      }
+      ]
 
       expect(result).toEqual(expectedItems)
-      expect(result).not.toBe(taskListsById)
     })
   })
 })

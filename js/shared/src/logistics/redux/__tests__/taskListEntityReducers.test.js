@@ -29,10 +29,10 @@ describe('taskListEntityReducers', () => {
           }
       )).toEqual({
         ids: [
-          '/api/task_lists/1'
+          'bot_1'
         ],
         entities: {
-          '/api/task_lists/1': {
+          'bot_1': {
             '@id': '/api/task_lists/1',
             'username': 'bot_1',
             itemIds: [

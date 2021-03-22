@@ -49,3 +49,18 @@ export const selectTasksWithColor = createSelector(
   selectAllTasks,
   allTasks => mapToColor(allTasks)
 )
+
+export const selectTaskListItemsByUsername = createSelector(
+  taskSelectors.selectEntities, // FIXME This is recalculated all the time
+  (state, username) => taskListSelectors.selectById(state, username),
+  (tasks, taskList) => {
+
+    if (!taskList) {
+      return []
+    }
+
+    return taskList.itemIds
+      .filter(id => Object.prototype.hasOwnProperty.call(tasks, id)) // a task with this id may be not loaded yet
+      .map(id => tasks[id])
+  }
+)

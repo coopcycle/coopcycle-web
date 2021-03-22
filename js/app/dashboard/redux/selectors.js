@@ -7,8 +7,8 @@ import {
 } from '@reduxjs/toolkit'
 
 import { moment } from '../../coopcycle-frontend-js'
-import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter } from '../../coopcycle-frontend-js/logistics/redux'
-import { filter, orderBy, forEach, find, reduce, map, differenceWith, includes } from 'lodash'
+import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter } from '../../coopcycle-frontend-js/logistics/redux'
+import { filter, forEach, find, reduce, map, differenceWith, includes } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
 
 const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
@@ -21,15 +21,9 @@ export const recurrenceRulesAdapter = createEntityAdapter({
 export const selectCurrentTask = state => state.logistics.ui.currentTask
 export const selectCouriers = state => state.config.couriersList
 
-export const selectTaskLists = createSelector(
-  selectTaskListsBase,
-  taskLists => orderBy(taskLists, 'username')
-)
+export const selectTaskLists = taskListSelectors.selectAll
 
-export const selectBookedUsernames = createSelector(
-  selectTaskLists,
-  taskLists => taskLists.map(taskList => taskList.username)
-)
+export const selectBookedUsernames = taskListSelectors.selectIds
 
 export const selectGroups = createSelector(
   selectUnassignedTasks,

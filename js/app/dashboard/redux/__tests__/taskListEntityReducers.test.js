@@ -8,10 +8,10 @@ describe('taskListEntityReducers', () => {
         expect(taskListEntityReducers(
           {
             ids: [
-              '/api/task_lists/1'
+              'bot_1'
             ],
             entities: {
-              '/api/task_lists/1': {
+              'bot_1': {
                 '@id': '/api/task_lists/1',
                 'username': 'bot_1',
                 itemIds: [
@@ -41,10 +41,10 @@ describe('taskListEntityReducers', () => {
           }
         )).toEqual({
           ids: [
-            '/api/task_lists/1'
+            'bot_1'
           ],
           entities: {
-            '/api/task_lists/1': {
+            'bot_1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
               itemIds: [
@@ -115,10 +115,10 @@ describe('taskListEntityReducers', () => {
         expect(taskListEntityReducers(
           {
             ids: [
-              '/api/task_lists/1'
+              'bot_1'
             ],
             entities: {
-              '/api/task_lists/1': {
+              'bot_1': {
                 '@id': '/api/task_lists/1',
                 'username': 'bot_1',
                 itemIds: [
@@ -151,10 +151,10 @@ describe('taskListEntityReducers', () => {
           }
         )).toEqual({
           ids: [
-            '/api/task_lists/1'
+            'bot_1'
           ],
           entities: {
-            '/api/task_lists/1': {
+            'bot_1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
               itemIds: [
@@ -208,10 +208,10 @@ describe('taskListEntityReducers', () => {
           }
         )).toEqual({
           ids: [
-            '/api/task_lists/1'
+            'bot_1'
           ],
           entities: {
-            '/api/task_lists/1': {
+            'bot_1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
               itemIds: [
@@ -229,10 +229,10 @@ describe('taskListEntityReducers', () => {
         expect(taskListEntityReducers(
           {
             ids: [
-              '/api/task_lists/10'
+              'bot_10'
             ],
             entities: {
-              '/api/task_lists/10': {
+              'bot_10': {
                 '@id': '/api/task_lists/10',
                 'username': 'bot_10',
                 itemIds: [
@@ -264,11 +264,11 @@ describe('taskListEntityReducers', () => {
           }
         )).toEqual({
           ids: [
-            '/api/task_lists/10',
-            '/api/task_lists/1',
+            'bot_1',
+            'bot_10',
           ],
           entities: {
-            '/api/task_lists/1': {
+            'bot_1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
               itemIds: [
@@ -276,7 +276,7 @@ describe('taskListEntityReducers', () => {
                 '/api/tasks/2',
               ]
             },
-            '/api/task_lists/10': {
+            'bot_10': {
               '@id': '/api/task_lists/10',
               'username': 'bot_10',
               itemIds: [
@@ -294,10 +294,10 @@ describe('taskListEntityReducers', () => {
         expect(taskListEntityReducers(
           {
             ids: [
-              '/api/task_lists/1',
+              'bot_1',
             ],
             entities: {
-              '/api/task_lists/1': {
+              'bot_1': {
                 '@id': '/api/task_lists/1',
                 username: 'bot_1',
                 date: '2021-03-22',
@@ -329,10 +329,10 @@ describe('taskListEntityReducers', () => {
           }
         )).toEqual({
           ids: [
-            '/api/task_lists/1',
+            'bot_1',
           ],
           entities: {
-            '/api/task_lists/1': {
+            'bot_1': {
               '@id': '/api/task_lists/1',
               username: 'bot_1',
               date: '2021-03-22',
@@ -414,10 +414,10 @@ describe('taskListEntityReducers', () => {
       expect(taskListEntityReducers(
         {
           ids: [
-            '/api/task_lists/1',
+            'bot_1',
           ],
           entities: {
-            '/api/task_lists/1': {
+            'bot_1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
               itemIds: [
@@ -436,10 +436,10 @@ describe('taskListEntityReducers', () => {
         }
       )).toEqual({
         ids: [
-          '/api/task_lists/1',
+          'bot_1',
         ],
         entities: {
-          '/api/task_lists/1': {
+          'bot_1': {
             '@id': '/api/task_lists/1',
             'username': 'bot_1',
             itemIds: [
@@ -454,10 +454,10 @@ describe('taskListEntityReducers', () => {
       expect(taskListEntityReducers(
         {
           ids: [
-            '/api/task_lists/1',
+            'bot_1',
           ],
           entities: {
-            '/api/task_lists/1': {
+            'bot_1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
               itemIds: [
@@ -478,10 +478,10 @@ describe('taskListEntityReducers', () => {
         }
       )).toEqual({
         ids: [
-          '/api/task_lists/1',
+          'bot_1',
         ],
         entities: {
-          '/api/task_lists/1': {
+          'bot_1': {
             '@id': '/api/task_lists/1',
             'username': 'bot_1',
             itemIds: [
@@ -497,10 +497,10 @@ describe('taskListEntityReducers', () => {
       expect(taskListEntityReducers(
         {
           ids: [
-            '/api/task_lists/1',
+            'bot_1',
           ],
           entities: {
-            '/api/task_lists/1': {
+            'bot_1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
               itemIds: [
@@ -520,10 +520,10 @@ describe('taskListEntityReducers', () => {
         }
       )).toEqual({
         ids: [
-          '/api/task_lists/1',
+          'bot_1',
         ],
         entities: {
-          '/api/task_lists/1': {
+          'bot_1': {
             '@id': '/api/task_lists/1',
             'username': 'bot_1',
             itemIds: [
@@ -537,10 +537,10 @@ describe('taskListEntityReducers', () => {
       expect(taskListEntityReducers(
         {
           ids: [
-            '/api/task_lists/1',
+            'bot_1',
           ],
           entities: {
-            '/api/task_lists/1': {
+            'bot_1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
               itemIds: [
@@ -559,10 +559,10 @@ describe('taskListEntityReducers', () => {
         }
       )).toEqual({
         ids: [
-          '/api/task_lists/1',
+          'bot_1',
         ],
         entities: {
-          '/api/task_lists/1': {
+          'bot_1': {
             '@id': '/api/task_lists/1',
             'username': 'bot_1',
             itemIds: [
@@ -576,16 +576,17 @@ describe('taskListEntityReducers', () => {
       expect(taskListEntityReducers(
         {
           ids: [
-            '/api/task_lists/1',
+            'bot_1',
+            'bot_2',
           ],
           entities: {
-            '/api/task_lists/1': {
+            'bot_1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
               itemIds: [
               ]
             },
-            '/api/task_lists/2': {
+            'bot_2': {
               '@id': '/api/task_lists/2',
               'username': 'bot_2',
               itemIds: [
@@ -605,17 +606,18 @@ describe('taskListEntityReducers', () => {
         }
       )).toEqual({
         ids: [
-          '/api/task_lists/1',
+          'bot_1',
+          'bot_2'
         ],
         entities: {
-          '/api/task_lists/1': {
+          'bot_1': {
             '@id': '/api/task_lists/1',
             'username': 'bot_1',
             itemIds: [
               '/api/tasks/1',
             ]
           },
-          '/api/task_lists/2': {
+          'bot_2': {
             '@id': '/api/task_lists/2',
             'username': 'bot_2',
             itemIds: [

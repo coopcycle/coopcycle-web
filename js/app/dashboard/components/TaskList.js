@@ -10,6 +10,7 @@ import Popconfirm from 'antd/lib/popconfirm'
 import Task from './Task'
 import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
+import { selectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
 
 moment.locale($('html').attr('lang'))
 
@@ -209,15 +210,17 @@ class TaskList extends React.Component {
 
 function mapStateToProps(state, ownProps) {
 
+  const items = selectTaskListItemsByUsername(state, ownProps.username)
+
   const visibleTaskIds = _.intersectionWith(
     selectVisibleTaskIds(state),
-    ownProps.items.map(task => task['@id'])
+    items.map(task => task['@id'])
   )
 
   return {
     polylineEnabled: state.polylineEnabled[ownProps.username],
-    tasks: ownProps.items,
-    isEmpty: ownProps.items.length === 0 || visibleTaskIds.length === 0,
+    tasks: items,
+    isEmpty: items.length === 0 || visibleTaskIds.length === 0,
     distance: ownProps.distance,
     duration: ownProps.duration,
     filters: state.settings.filters,

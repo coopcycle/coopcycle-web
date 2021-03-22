@@ -52,7 +52,6 @@ class TaskLists extends React.Component {
                   username={ taskList.username }
                   distance={ taskList.distance }
                   duration={ taskList.duration }
-                  items={ taskList.items }
                   uri={ taskList['@id'] } />
               )
             })

@@ -27,50 +27,51 @@ export function findTaskListByTask(taskListsById, task) {
 }
 
 export function addAssignedTask(taskListsById, task) {
-  let newItems = Object.assign({}, taskListsById)
+  const taskListsToUpdate = []
 
   let currentTaskList = findTaskListByTask(taskListsById, task)
   let targetTaskList = findTaskListByUsername(taskListsById, task.assignedTo)
 
-  if (currentTaskList != null) {
+  if (currentTaskList) {
     if (targetTaskList.username !== currentTaskList.username) {
       //unassign
-      newItems[currentTaskList['@id']] = {
+      taskListsToUpdate.push({
         ...currentTaskList,
         itemIds: removeTaskId(currentTaskList.itemIds, task['@id'])
-      }
+      })
+    } else {
+      return []
     }
   }
 
   //assign
-  if (targetTaskList != null) {
-    newItems[targetTaskList['@id']] = {
+  if (targetTaskList) {
+    taskListsToUpdate.push({
       ...targetTaskList,
       itemIds: addTaskIdIfMissing(targetTaskList.itemIds, task['@id'])
-    }
-
+    })
   } else {
     let newTaskList = createTempTaskList(task.assignedTo, [task])
     newTaskList = replaceTasksWithIds(newTaskList)
 
-    newItems[newTaskList['@id']] = newTaskList
+    taskListsToUpdate.push(newTaskList)
   }
 
-  return newItems
+  return taskListsToUpdate
 }
 
 export function removeUnassignedTask(taskListsById, task) {
-  let newItems = Object.assign({}, taskListsById)
+  const taskListsToUpdate = []
 
   let taskList = findTaskListByTask(taskListsById, task)
 
-  if (taskList != null) {
+  if (taskList) {
     //unassign
-    newItems[taskList['@id']] = {
+    taskListsToUpdate.push({
       ...taskList,
       itemIds: removeTaskId(taskList.itemIds, task['@id'])
-    }
+    })
   }
 
-  return newItems
+  return taskListsToUpdate
 }
