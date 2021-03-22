@@ -78,7 +78,7 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
 
     /**
      * @SerializedName("date")
-     * @Groups({"task_collection"})
+     * @Groups({"task_collection", "task_collections"})
      */
     public function getDateString()
     {
@@ -128,7 +128,7 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
 
     /**
      * @SerializedName("username")
-     * @Groups({"task_collection"})
+     * @Groups({"task_collection", "task_collections"})
      */
     public function getUsername()
     {
