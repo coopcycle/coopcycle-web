@@ -20,7 +20,7 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case MODIFY_TASK_LIST_REQUEST:
 
-      let entity = taskListEntityUtils.findTaskListByUsername(selectors.selectEntities(state), action.username)
+      let entity = taskListAdapter.findById(action.username)
 
       if (!entity) {
 
@@ -36,13 +36,7 @@ export default (state = initialState, action) => {
 
     case MODIFY_TASK_LIST_REQUEST_SUCCESS:
 
-      const entityByUsername = taskListEntityUtils.findTaskListByUsername(selectors.selectEntities(state), action.taskList.username)
-      const hasNewId = entityByUsername && entityByUsername['@id'] !== action.taskList['@id']
-
-      return taskListAdapter.upsertOne(
-        hasNewId ? taskListAdapter.removeOne(state, entityByUsername['@id']) : state,
-        taskListUtils.replaceTasksWithIds(action.taskList)
-      )
+      return taskListAdapter.upsertOne(state, taskListUtils.replaceTasksWithIds(action.taskList))
 
     case TASK_LISTS_UPDATED: {
 
