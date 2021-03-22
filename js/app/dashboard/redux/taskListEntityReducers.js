@@ -2,7 +2,6 @@ import _ from 'lodash'
 import {
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
-  TASK_LIST_UPDATED,
   TASK_LISTS_UPDATED,
   UPDATE_TASK,
   REMOVE_TASK
@@ -45,23 +44,6 @@ export default (state = initialState, action) => {
         taskListUtils.replaceTasksWithIds(action.taskList)
       )
 
-    case TASK_LIST_UPDATED: {
-
-      let matchingList = selectors.selectById(state, action.taskList['@id'])
-
-      if (!matchingList) {
-        return state
-      }
-
-      let newEntity = {
-        ...matchingList,
-        distance: action.taskList.distance,
-        duration: action.taskList.duration,
-        polyline: action.taskList.polyline,
-      }
-
-      return taskListAdapter.upsertOne(state, newEntity)
-    }
     case TASK_LISTS_UPDATED: {
 
       const taskLists = selectors.selectEntities(state)

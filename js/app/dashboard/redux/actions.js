@@ -91,7 +91,6 @@ export const OPEN_ADD_USER = 'OPEN_ADD_USER'
 export const CLOSE_ADD_USER = 'CLOSE_ADD_USER'
 export const MODIFY_TASK_LIST_REQUEST = 'MODIFY_TASK_LIST_REQUEST'
 export const MODIFY_TASK_LIST_REQUEST_SUCCESS = 'MODIFY_TASK_LIST_REQUEST_SUCCESS'
-export const TASK_LIST_UPDATED = 'TASK_LIST_UPDATED'
 export const TASK_LISTS_UPDATED = 'TASK_LISTS_UPDATED'
 export const TOGGLE_POLYLINE = 'TOGGLE_POLYLINE'
 export const TOGGLE_TASK = 'TOGGLE_TASK'
@@ -290,10 +289,6 @@ export function modifyTaskList(username, tasks) {
 
 export function togglePolyline(username) {
   return { type: TOGGLE_POLYLINE, username }
-}
-
-export function taskListUpdated(taskList) {
-  return { type: TASK_LIST_UPDATED, taskList }
 }
 
 export function taskListsUpdated(taskLists) {
