@@ -172,10 +172,10 @@ describe('taskListEntityReducers', () => {
         expect(taskListEntityReducers(
           {
             ids: [
-              'temp_bot_1'
+              'bot_1'
             ],
             entities: {
-              'temp_bot_1': {
+              'bot_1': {
                 '@id': 'temp_bot_1',
                 'username': 'bot_1',
                 itemIds: [
