@@ -48,20 +48,9 @@
       </div>
       <div class="modal-body">
         {{ form_row(delivery_import_form.file) }}
-        <div class="form-group">
-          <div class="col-sm-10 col-sm-offset-2">
-            <p class="form-control-static">
-              <a role="button" data-toggle="collapse" href="#spreadsheet-container" aria-expanded="false" aria-controls="collapseExample">
-                {{ 'basics.view_example'|trans }}
-              </a>
-            </p>
-          </div>
-        </div>
-        <div class="collapse" id="spreadsheet-container">
-          <div id="spreadsheet" style="max-width: 100%; overflow: scroll; border: 1px solid;"></div>
-        </div>
       </div>
       <div class="modal-footer">
+        <a class="mr-4" href="{{ path('spreadsheet_example_deliveries') }}">{{ 'spreadsheet.download_example'|trans }}</a>
         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
         <button type="submit" class="btn btn-primary">{% trans %}basics.import{% endtrans %}</button>
       </div>
