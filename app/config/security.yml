@@ -115,28 +115,28 @@ security:
             pattern:   ^/api/orders/[0-9]+$
             methods: [ PUT ]
             stateless: true
-            anonymous: ~
+            # anonymous: ~
             cart_session: true
 
         api_cart_items:
             pattern:   ^/api/orders/[0-9]+/items$
             methods: [ POST ]
             stateless: true
-            anonymous: ~
+            # anonymous: ~
             cart_session: true
 
         api_cart_item:
             pattern:   ^/api/orders/[0-9]+/items/[0-9]+$
             methods: [ PUT, DELETE ]
             stateless: true
-            anonymous: ~
+            # anonymous: ~
             cart_session: true
 
         api_cart_operations:
             pattern:   ^/api/orders/[0-9]+/(assign|timing|validate)$
             methods: [ GET, PUT ]
             stateless: true
-            anonymous: ~
+            # anonymous: ~
             cart_session: true
 
         api_me:
