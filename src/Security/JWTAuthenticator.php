@@ -59,12 +59,9 @@ class JWTAuthenticator extends JWTTokenAuthenticator
         try {
             $credentials = $this->decorated->getCredentials($request);
         } catch (ExpiredTokenException $e) {
-
             if ($this->firewallMap->getFirewallConfig($request)->allowsAnonymous()) {
                 return false;
             }
-
-            // throw $e;
         }
 
         return true;
