@@ -19,6 +19,31 @@ Feature: Manage restaurants
     }
     """
 
+  Scenario: Retrieve the restaurants list with an expired token
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | restaurants.yml     |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    Given the user "bob" is authenticated with an expired token
+    When I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/restaurants"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/Restaurant",
+      "@id":"/api/restaurants",
+      "@type":"hydra:Collection",
+      "hydra:member":@array@,
+      "hydra:totalItems":3
+    }
+    """
+
   Scenario: Search restaurants
     Given the fixtures files are loaded:
       | sylius_channels.yml |

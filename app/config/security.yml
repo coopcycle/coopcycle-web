@@ -165,7 +165,7 @@ security:
             anonymous: ~
             guard:
                 authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+                    - AppBundle\Security\JWTAuthenticator
 
         # Disable session to improve performance
         # TraceableFirewallListener will be skipped

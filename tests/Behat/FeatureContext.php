@@ -457,6 +457,21 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given the user :username is authenticated with an expired token
+     */
+    public function theUserIsAuthenticatedWithAnExpiredToken($username)
+    {
+        $jwtManager = $this->getContainer()->get('lexik_jwt_authentication.jwt_manager');
+
+        $user = $this->userManager->findUserByUsername($username);
+        $token = $jwtManager->createFromPayload($user, [
+            'exp' => strtotime('yesterday')
+        ]);
+
+        $this->tokens[$username] = $token;
+    }
+
+    /**
      * @When I send an authenticated :method request to :url
      */
     public function iSendAnAuthenticatedRequestTo($method, $url, PyStringNode $body = null)
