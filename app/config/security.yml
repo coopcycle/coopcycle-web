@@ -146,6 +146,11 @@ security:
             anonymous: ~
             bearer_token: true
 
+        api_webhooks:
+            pattern:   ^/api/webhooks
+            stateless: true
+            bearer_token: true
+
         token_refresh:
             pattern:  ^/api/token/refresh
             stateless: true
