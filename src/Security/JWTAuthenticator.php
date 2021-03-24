@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Security;
 
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\ExpiredTokenException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Guard\JWTTokenAuthenticator;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
@@ -51,14 +52,20 @@ class JWTAuthenticator extends JWTTokenAuthenticator
      */
     public function supports(Request $request): bool
     {
+        if (!$this->decorated->supports($request)) {
+            return false;
+        }
+
         try {
-            return $this->decorated->supports($request) && $this->decorated->getCredentials($request);
-        } catch (AuthenticationException $e) {
+            $credentials = $this->decorated->getCredentials($request);
+        } catch (ExpiredTokenException $e) {
             if ($this->firewallMap->getFirewallConfig($request)->allowsAnonymous()) {
                 return false;
             }
 
             throw $e;
         }
+
+        return true;
     }
 }
