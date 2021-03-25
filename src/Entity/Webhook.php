@@ -16,7 +16,8 @@ use Trikoder\Bundle\OAuth2Bundle\Model\Client;
  *       "method"="POST",
  *       "controller"=CreateController::class,
  *       "security_post_denormalize"="is_granted('create', object)",
- *       "normalization_context"={"groups"={"webhook", "webhook_create"}}
+ *       "denormalization_context"={"groups"={"webhook_create"}},
+ *       "normalization_context"={"groups"={"webhook", "webhook_with_secret"}}
  *     }
  *   },
  *   itemOperations={
@@ -38,14 +39,14 @@ class Webhook
 
     /**
      * @var string
-     * @Groups({"webhook"})
+     * @Groups({"webhook", "webhook_create"})
      */
     private $url;
 
     /**
      * @var string
      * @Assert\Choice(callback="getEvents")
-     * @Groups({"webhook"})
+     * @Groups({"webhook", "webhook_create"})
      */
     private $event;
 
@@ -56,7 +57,7 @@ class Webhook
 
     /**
      * @var string
-     * @Groups({"webhook_create"})
+     * @Groups({"webhook_with_secret"})
      */
     private $secret;
 
