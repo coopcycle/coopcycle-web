@@ -6,6 +6,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
@@ -23,10 +24,14 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     const TIME_RANGE_PATTERN = '[0-9]{2,4}[-/]?[0-9]{2,4}[-/]?[0-9]{2,4} [0-9]{1,2}[:hH]?[0-9]{2}';
 
     private $geocoder;
+    private $phoneNumberUtil;
+    private $countryCode;
 
-    public function __construct(Geocoder $geocoder)
+    public function __construct(Geocoder $geocoder, PhoneNumberUtil $phoneNumberUtil, string $countryCode)
     {
         $this->geocoder = $geocoder;
+        $this->phoneNumberUtil = $phoneNumberUtil;
+        $this->countryCode = $countryCode;
     }
 
     /**
@@ -48,14 +53,6 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 throw new \Exception(sprintf('Could not geocode %s', $record['dropoff.address']));
             }
 
-            if (isset($record['pickup.address.name']) && !empty($record['pickup.address.name'])) {
-                $pickupAddress->setName($record['pickup.address.name']);
-            }
-
-            if (isset($record['dropoff.address.name']) && !empty($record['dropoff.address.name'])) {
-                $dropoffAddress->setName($record['dropoff.address.name']);
-            }
-
             [ $pickupAfter, $pickupBefore ] = $this->parseTimeRange($record['pickup.timeslot']);
             [ $dropoffAfter, $dropoffBefore ] = $this->parseTimeRange($record['dropoff.timeslot']);
 
@@ -68,6 +65,9 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             $delivery->getDropoff()->setAddress($dropoffAddress);
             $delivery->getDropoff()->setDoneAfter($dropoffAfter);
             $delivery->getDropoff()->setDoneBefore($dropoffBefore);
+
+            $this->enhanceTask($delivery->getPickup(), 'pickup', $record);
+            $this->enhanceTask($delivery->getDropoff(), 'dropoff', $record);
 
             $deliveries[] = $delivery;
         }
@@ -129,23 +129,67 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         }
     }
 
+    private function getColumn(string $prefix, $name)
+    {
+        return sprintf('%s.%s', $prefix, $name);
+    }
+
+    private function enhanceTask(Task $task, string $prefix, array $record)
+    {
+        $addressNameColumn      = $this->getColumn($prefix, 'address.name');
+        $addressCommentsColumn  = $this->getColumn($prefix, 'address.comments');
+        $addressTelephoneColumn = $this->getColumn($prefix, 'address.telephone');
+
+        $commentsColumn         = $this->getColumn($prefix, 'comments');
+
+        if (isset($record[$addressNameColumn]) && !empty($record[$addressNameColumn])) {
+            $task->getAddress()->setName($record[$addressNameColumn]);
+        }
+
+        if (isset($record[$addressCommentsColumn]) && !empty($record[$addressCommentsColumn])) {
+            $task->getAddress()->setComments($record[$addressCommentsColumn]);
+        }
+
+        if (isset($record[$addressTelephoneColumn]) && !empty($record[$addressTelephoneColumn])) {
+            /* @throws NumberParseException */
+            $phoneNumber = $this->phoneNumberUtil->parse($record[$addressTelephoneColumn], strtoupper($this->countryCode));
+            $task->getAddress()->setTelephone($phoneNumber);
+        }
+
+        if (isset($record[$commentsColumn]) && !empty($record[$commentsColumn])) {
+            $task->setComments($record[$commentsColumn]);
+        }
+    }
+
     public function getExampleData(): array
     {
         return [
             [
                 'pickup.address' => '24 rue de rivoli paris',
                 'pickup.address.name' => 'Awesome business',
+                'pickup.address.comments' => '',
+                'pickup.address.telephone' => '+33612345678',
+                'pickup.comments' => 'Fragile',
+                'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
                 'dropoff.address' => '58 av parmentier paris',
                 'dropoff.address.name' => 'Awesome business',
-                'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
+                'dropoff.address.comments' => 'Buzzer AB12',
+                'dropoff.address.telephone' => '+33612345678',
+                'dropoff.comments' => '',
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
             ],
             [
                 'pickup.address' => '24 rue de rivoli paris',
                 'pickup.address.name' => 'Awesome business',
+                'pickup.address.comments' => '',
+                'pickup.address.telephone' => '+33612345678',
+                'pickup.comments' => 'Fragile',
+                'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
                 'dropoff.address' => '34 bd de magenta paris',
                 'dropoff.address.name' => 'Awesome business',
-                'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
+                'dropoff.address.comments' => 'Buzzer AB12',
+                'dropoff.address.telephone' => '+33612345678',
+                'dropoff.comments' => '',
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
             ],
         ];
