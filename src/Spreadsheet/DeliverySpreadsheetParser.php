@@ -147,7 +147,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         }
 
         if (isset($record[$addressCommentsColumn]) && !empty($record[$addressCommentsColumn])) {
-            $task->getAddress()->setComments($record[$addressCommentsColumn]);
+            $task->getAddress()->setDescription($record[$addressCommentsColumn]);
         }
 
         if (isset($record[$addressTelephoneColumn]) && !empty($record[$addressTelephoneColumn])) {
@@ -167,13 +167,13 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             [
                 'pickup.address' => '24 rue de rivoli paris',
                 'pickup.address.name' => 'Awesome business',
-                'pickup.address.comments' => '',
+                'pickup.address.description' => '',
                 'pickup.address.telephone' => '+33612345678',
                 'pickup.comments' => 'Fragile',
                 'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
                 'dropoff.address' => '58 av parmentier paris',
                 'dropoff.address.name' => 'Awesome business',
-                'dropoff.address.comments' => 'Buzzer AB12',
+                'dropoff.address.description' => 'Buzzer AB12',
                 'dropoff.address.telephone' => '+33612345678',
                 'dropoff.comments' => '',
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
@@ -181,13 +181,13 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             [
                 'pickup.address' => '24 rue de rivoli paris',
                 'pickup.address.name' => 'Awesome business',
-                'pickup.address.comments' => '',
+                'pickup.address.description' => '',
                 'pickup.address.telephone' => '+33612345678',
                 'pickup.comments' => 'Fragile',
                 'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
                 'dropoff.address' => '34 bd de magenta paris',
                 'dropoff.address.name' => 'Awesome business',
-                'dropoff.address.comments' => 'Buzzer AB12',
+                'dropoff.address.description' => 'Buzzer AB12',
                 'dropoff.address.telephone' => '+33612345678',
                 'dropoff.comments' => '',
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
