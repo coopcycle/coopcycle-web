@@ -7,6 +7,11 @@ jobs:
   LINT:
     name: Lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php_version:
+          - '7.4'
+          - '8.0'
     env:
       CYPRESS_INSTALL_BINARY: '0'
     steps:
@@ -14,7 +19,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: ${{ matrix.php_version }}
           tools: composer:v2, phpstan
           extensions: redis
       - name: Setup Node
