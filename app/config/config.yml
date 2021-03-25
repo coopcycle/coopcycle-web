@@ -135,6 +135,7 @@ framework:
             'AppBundle\Message\Sms': async
             'AppBundle\Message\UpdateLocation': async
             'AppBundle\Message\TopBarNotification': async
+            'AppBundle\Message\Webhook': async
     workflows:
         enabled: true
     mailer:
