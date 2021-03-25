@@ -5436,7 +5436,7 @@
         },
         {
             "name": "illuminate/cache",
-            "version": "v8.32.1",
+            "version": "v8.34.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/cache.git",
@@ -5493,16 +5493,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v8.32.1",
+            "version": "v8.34.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "d7cc717a00064b40fa63a8ad522042005e1de1ed"
+                "reference": "e18d6e4cf03dd597bc3ecd86fefc2023d0c7a5e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/d7cc717a00064b40fa63a8ad522042005e1de1ed",
-                "reference": "d7cc717a00064b40fa63a8ad522042005e1de1ed",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/e18d6e4cf03dd597bc3ecd86fefc2023d0c7a5e8",
+                "reference": "e18d6e4cf03dd597bc3ecd86fefc2023d0c7a5e8",
                 "shasum": ""
             },
             "require": {
@@ -5543,20 +5543,20 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-03-08T17:22:22+00:00"
+            "time": "2021-03-19T00:05:33+00:00"
         },
         {
             "name": "illuminate/contracts",
-            "version": "v8.32.1",
+            "version": "v8.34.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "9c7a9868d7485a82663d67109429094c8e4ed56d"
+                "reference": "121cea1d8b8772bc7fee99c71ecf0f57c1d77b3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/9c7a9868d7485a82663d67109429094c8e4ed56d",
-                "reference": "9c7a9868d7485a82663d67109429094c8e4ed56d",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/121cea1d8b8772bc7fee99c71ecf0f57c1d77b3b",
+                "reference": "121cea1d8b8772bc7fee99c71ecf0f57c1d77b3b",
                 "shasum": ""
             },
             "require": {
@@ -5591,11 +5591,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-02-26T13:17:03+00:00"
+            "time": "2021-03-12T14:45:30+00:00"
         },
         {
             "name": "illuminate/macroable",
-            "version": "v8.32.1",
+            "version": "v8.34.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -5641,16 +5641,16 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v8.32.1",
+            "version": "v8.34.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "2ef7ff288366a1ebe32f633196a1b90bd443acc3"
+                "reference": "b7b27e758b68aad44558c62e7374328835895386"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/2ef7ff288366a1ebe32f633196a1b90bd443acc3",
-                "reference": "2ef7ff288366a1ebe32f633196a1b90bd443acc3",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/b7b27e758b68aad44558c62e7374328835895386",
+                "reference": "b7b27e758b68aad44558c62e7374328835895386",
                 "shasum": ""
             },
             "require": {
@@ -5705,7 +5705,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-03-05T15:22:14+00:00"
+            "time": "2021-03-21T13:37:37+00:00"
         },
         {
             "name": "imagine/imagine",
@@ -6391,16 +6391,16 @@
         },
         {
             "name": "knplabs/knp-components",
-            "version": "v3.0.1",
+            "version": "v3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/knp-components.git",
-                "reference": "b235cf756c6a72d1d378453c58ebd7fc2e8d911d"
+                "reference": "7db2eb032591ded5809455af8a4dfdfda079041c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/knp-components/zipball/b235cf756c6a72d1d378453c58ebd7fc2e8d911d",
-                "reference": "b235cf756c6a72d1d378453c58ebd7fc2e8d911d",
+                "url": "https://api.github.com/repos/KnpLabs/knp-components/zipball/7db2eb032591ded5809455af8a4dfdfda079041c",
+                "reference": "7db2eb032591ded5809455af8a4dfdfda079041c",
                 "shasum": ""
             },
             "require": {
@@ -6465,9 +6465,9 @@
             ],
             "support": {
                 "issues": "https://github.com/KnpLabs/knp-components/issues",
-                "source": "https://github.com/KnpLabs/knp-components/tree/v3.0.1"
+                "source": "https://github.com/KnpLabs/knp-components/tree/v3.0.2"
             },
-            "time": "2021-03-05T08:30:55+00:00"
+            "time": "2021-03-16T13:52:01+00:00"
         },
         {
             "name": "knplabs/knp-markdown-bundle",
@@ -7166,16 +7166,16 @@
         },
         {
             "name": "laravolt/avatar",
-            "version": "4.1.1",
+            "version": "4.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravolt/avatar.git",
-                "reference": "90b143401145c010ed81fb9c3f8f70090828fc21"
+                "reference": "3ab66e32c1f7c84e7095adfa1de3cb20964e6a1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravolt/avatar/zipball/90b143401145c010ed81fb9c3f8f70090828fc21",
-                "reference": "90b143401145c010ed81fb9c3f8f70090828fc21",
+                "url": "https://api.github.com/repos/laravolt/avatar/zipball/3ab66e32c1f7c84e7095adfa1de3cb20964e6a1e",
+                "reference": "3ab66e32c1f7c84e7095adfa1de3cb20964e6a1e",
                 "shasum": ""
             },
             "require": {
@@ -7230,9 +7230,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laravolt/avatar/issues",
-                "source": "https://github.com/laravolt/avatar/tree/4.1.1"
+                "source": "https://github.com/laravolt/avatar/tree/4.1.3"
             },
-            "time": "2021-02-15T06:03:55+00:00"
+            "time": "2021-03-25T01:43:03+00:00"
         },
         {
             "name": "lcobucci/clock",
