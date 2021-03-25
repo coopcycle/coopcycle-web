@@ -136,18 +136,17 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 
     private function enhanceTask(Task $task, string $prefix, array $record)
     {
-        $addressNameColumn      = $this->getColumn($prefix, 'address.name');
-        $addressCommentsColumn  = $this->getColumn($prefix, 'address.comments');
-        $addressTelephoneColumn = $this->getColumn($prefix, 'address.telephone');
-
-        $commentsColumn         = $this->getColumn($prefix, 'comments');
+        $addressNameColumn         = $this->getColumn($prefix, 'address.name');
+        $addressDescriptionColumn  = $this->getColumn($prefix, 'address.description');
+        $addressTelephoneColumn    = $this->getColumn($prefix, 'address.telephone');
+        $commentsColumn            = $this->getColumn($prefix, 'comments');
 
         if (isset($record[$addressNameColumn]) && !empty($record[$addressNameColumn])) {
             $task->getAddress()->setName($record[$addressNameColumn]);
         }
 
-        if (isset($record[$addressCommentsColumn]) && !empty($record[$addressCommentsColumn])) {
-            $task->getAddress()->setDescription($record[$addressCommentsColumn]);
+        if (isset($record[$addressDescriptionColumn]) && !empty($record[$addressDescriptionColumn])) {
+            $task->getAddress()->setDescription($record[$addressDescriptionColumn]);
         }
 
         if (isset($record[$addressTelephoneColumn]) && !empty($record[$addressTelephoneColumn])) {

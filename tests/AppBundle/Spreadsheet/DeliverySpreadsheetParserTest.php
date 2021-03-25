@@ -20,11 +20,9 @@ class DeliverySpreadsheetParserTest extends TestCase
             ->geocode(Argument::type('string'))
             ->willReturn(new Address());
 
-        $this->phoneNumberUtil = $this->prophesize(PhoneNumberUtil::class);
-
         return new DeliverySpreadsheetParser(
             $this->geocoder->reveal(),
-            $this->phoneNumberUtil->reveal(),
+            PhoneNumberUtil::getInstance(),
             'fr'
         );
     }
