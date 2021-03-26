@@ -37,3 +37,7 @@
 {% if form.enableGiropay is defined and not form.enableGiropay.rendered %}
   {% do form.enableGiropay.setRendered %}
 {% endif %}
+
+{% if form.edenredMerchantId is defined %}
+  {{ form_row(form.edenredMerchantId) }}
+{% endif %}

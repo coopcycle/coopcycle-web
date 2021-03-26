@@ -128,6 +128,7 @@ trait RestaurantTrait
     {
         $form = $this->createForm(RestaurantType::class, $restaurant, [
             'loopeat_enabled' => $this->getParameter('loopeat_enabled'),
+            'edenred_enabled' => $this->getParameter('edenred_enabled'),
         ]);
 
         // Associate Stripe account with restaurant

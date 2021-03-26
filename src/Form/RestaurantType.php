@@ -20,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -102,7 +103,7 @@ class RestaurantType extends LocalBusinessType
             ]);
         }
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $restaurant = $event->getData();
             $form = $event->getForm();
@@ -128,13 +129,7 @@ class RestaurantType extends LocalBusinessType
                         ]);
                 }
 
-                $isFoodEstablishment = false;
-                foreach (FoodEstablishment::values() as $value) {
-                    if ($value->getValue() === $restaurant->getType()) {
-                        $isFoodEstablishment = true;
-                        break;
-                    }
-                }
+                $isFoodEstablishment = FoodEstablishment::isValid($restaurant->getType());
 
                 if ($isFoodEstablishment) {
                     $form
@@ -143,6 +138,16 @@ class RestaurantType extends LocalBusinessType
                             'required' => false,
                             'data' => $this->serializer->serialize($restaurant->getServesCuisine(), 'jsonld')
                         ]);
+
+                    if ($options['edenred_enabled']) {
+                        $form
+                            ->add('edenredMerchantId', TextType::class, [
+                                'label' => 'restaurant.form.edenred_merchant_id.label',
+                                'help' => 'restaurant.form.edenred_merchant_id.help',
+                                'required' => false,
+                                'disable' => !$this->authorizationChecker->isGranted('ROLE_ADMIN')
+                            ]);
+                    }
                 }
             }
 
@@ -224,6 +229,7 @@ class RestaurantType extends LocalBusinessType
         $resolver->setDefaults(array(
             'data_class' => LocalBusiness::class,
             'loopeat_enabled' => false,
+            'edenred_enabled' => false,
         ));
     }
 }
