@@ -149,7 +149,8 @@ class RestaurantController extends AbstractController
 
         $restaurants = $cuisine->getRestaurants();
 
-        return $this->render('restaurant/list.html.twig', array(
+        return $this->render('restaurant/list_by_cuisine.html.twig', array(
+            'cuisine' => $cuisine,
             'count' => count($restaurants),
             'restaurants' => $restaurants,
             'page' => 1,

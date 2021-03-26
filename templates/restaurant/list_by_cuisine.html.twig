@@ -1,0 +1,40 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+{% include "restaurant/_partials/list_header.html.twig" %}
+<div class="container">
+  {% if count == 0 %}
+    <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
+      {{ 'restaurants.no_results'|trans|raw }}
+    </div>
+  {% else %}
+    {% include 'restaurant/_partials/list_nav.html.twig' with {
+      title: cuisine.name|trans({}, 'cuisines'),
+      direction: 'left',
+      link_text: 'index.view_all_restaurants'|trans,
+      link_path: path('restaurants'),
+    } %}
+    <div class="row display-flex restaurant-list">
+      {% for restaurant in restaurants %}
+      <div class="col-sm-6 col-md-4 display-flex">
+        {% include "_partials/restaurant/list_thumbnail.html.twig" %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        {% include "restaurant/pagination.html.twig" %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('restaurant-list') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('search-address') }}
+  {{ encore_entry_script_tags('restaurant-list') }}
+{% endblock %}
