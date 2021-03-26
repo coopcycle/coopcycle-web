@@ -9,6 +9,7 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
+use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Hub;
@@ -130,6 +131,34 @@ class RestaurantController extends AbstractController
     private function getContextSlug(LocalBusiness $business)
     {
         return $business->getContext() === Store::class ? 'store' : 'restaurant';
+    }
+
+     /**
+     * @Route("/restaurants/cuisines/{cuisineName}", name="restaurants_by_cuisine")
+     */
+    public function listByCuisineAction($cuisineName, Request $request,
+        LocalBusinessRepository $repository,
+        CacheInterface $projectCache)
+    {
+        $cuisineRepo = $this->getDoctrine()->getRepository(Cuisine::class);
+        $cuisine = $cuisineRepo->findOneByName($cuisineName);
+
+        if (!$cuisine) {
+            throw new NotFoundHttpException();
+        }
+
+        $restaurants = $cuisine->getRestaurants();
+
+        return $this->render('restaurant/list.html.twig', array(
+            'count' => count($restaurants),
+            'restaurants' => $restaurants,
+            'page' => 1,
+            'pages' => 1,
+            'geohash' => '',
+            'addresses_normalized' => $this->getUserAddresses(),
+            'address' => null,
+            'local_business_context' => $repository->getContext(),
+        ));
     }
 
     /**
