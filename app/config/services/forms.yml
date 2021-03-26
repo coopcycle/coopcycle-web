@@ -96,14 +96,12 @@ services:
   AppBundle\Form\RestaurantType:
     arguments:
       $country: '%country_iso%'
-      $loopeatEnabled: '%loopeat_enabled%'
       $debug: '%kernel.debug%'
     tags: [ form.type ]
 
   AppBundle\Form\StoreType:
     arguments:
       $country: '%country_iso%'
-      $loopeatEnabled: '%loopeat_enabled%'
     tags: [ form.type ]
 
   AppBundle\Form\MenuEditor\TaxonProductType:

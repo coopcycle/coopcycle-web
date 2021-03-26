@@ -126,7 +126,9 @@ trait RestaurantTrait
         IriConverterInterface $iriConverter,
         TranslatorInterface $translator)
     {
-        $form = $this->createForm(RestaurantType::class, $restaurant);
+        $form = $this->createForm(RestaurantType::class, $restaurant, [
+            'loopeat_enabled' => $this->getParameter('loopeat_enabled'),
+        ]);
 
         // Associate Stripe account with restaurant
         if ($request->getSession()->getFlashBag()->has('stripe_account')) {

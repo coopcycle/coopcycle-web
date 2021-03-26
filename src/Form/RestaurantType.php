@@ -223,7 +223,7 @@ class RestaurantType extends LocalBusinessType
 
         $resolver->setDefaults(array(
             'data_class' => LocalBusiness::class,
-            'loopeat_enabled' => $this->loopeatEnabled,
+            'loopeat_enabled' => false,
         ));
     }
 }
