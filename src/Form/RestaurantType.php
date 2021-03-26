@@ -145,7 +145,7 @@ class RestaurantType extends LocalBusinessType
                                 'label' => 'restaurant.form.edenred_merchant_id.label',
                                 'help' => 'restaurant.form.edenred_merchant_id.help',
                                 'required' => false,
-                                'disable' => !$this->authorizationChecker->isGranted('ROLE_ADMIN')
+                                'disabled' => !$this->authorizationChecker->isGranted('ROLE_ADMIN')
                             ]);
                     }
                 }
