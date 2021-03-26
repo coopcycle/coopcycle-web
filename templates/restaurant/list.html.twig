@@ -1,27 +1,8 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-
-<header class="restaurant-list-header" data-search="address"
-  data-addresses="{{ addresses_normalized|json_encode()|e('html') }}"
-  data-tracking-category="RestaurantList">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3">
-        <div data-element>
-          <!-- This will be replaced by React -->
-          <div class="form-group">
-            <input class="form-control" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Do NOT put the search component inside the form -->
-  <form method="GET" action="{{ path('restaurants') }}" data-form>
-    <input type="hidden" name="geohash" value="{{ geohash }}">
-  </form>
-</header>
+{% include "restaurant/_partials/list_header.html.twig" %}
+{% include "restaurant/_partials/list_buttons.html.twig" with { to_mode: 'map' } %}
 <div class="container">
   {% if count == 0 %}
     <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
@@ -40,14 +21,6 @@
         {% include "restaurant/pagination.html.twig" %}
       </div>
     </div>
-    {% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
-    {% if 'yes' == restaurant_pledges_enabled %}
-    <div class="text-center p-4 mb-4 border">
-      <a href="{{ path('restaurants_suggest') }}">
-        {% trans %}base.footer.suggest{% endtrans %}
-      </a>
-    </div>
-    {% endif %}
   {% endif %}
 </div>
 {% endblock %}

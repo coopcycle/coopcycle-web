@@ -139,6 +139,20 @@ class RestaurantController extends AbstractController
         LocalBusinessRepository $repository,
         CacheInterface $projectCache)
     {
+        $mode = $request->query->get('mode', 'list');
+
+        if (!in_array($mode, ['list', 'map'])) {
+            $mode = 'list';
+        }
+
+        if ('map' === $mode) {
+
+            return $this->render('restaurant/list_map.html.twig', [
+                'geohash' => $request->query->get('geohash'),
+                'addresses_normalized' => $this->getUserAddresses(),
+            ]);
+        }
+
         $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * self::ITEMS_PER_PAGE;
 

@@ -1153,3 +1153,5 @@ adminDashboard.hubs.createNew: Create a new hub
 adminDashboard.hubs.help: Hubs allow to group together shops sharing the same pickup address, like a market for example.
 restaurant.form.edenred_merchant_id.label: Edenred Merchant ID
 restaurant.form.edenred_merchant_id.help: Leave empty to disable Edenred
+restaurants.mode.list: View as list
+restaurants.mode.map: View as map

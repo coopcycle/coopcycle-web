@@ -1150,3 +1150,5 @@ adminDashboard.hubs.createNew: Créer un nouveau hub
 adminDashboard.hubs.help: Les hubs permettent de regrouper des boutiques partageant le même point de retrait, comme un marché par exemple.
 restaurant.form.edenred_merchant_id.label: Identifiant marchand Edenred
 restaurant.form.edenred_merchant_id.help: Laissez vide pour désactiver Edenred
+restaurants.mode.list: Afficher la liste
+restaurants.mode.map: Afficher la carte

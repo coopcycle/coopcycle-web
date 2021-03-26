@@ -1,0 +1,20 @@
+<header class="restaurant-list-header" data-search="address"
+  data-addresses="{{ addresses_normalized|json_encode()|e('html') }}"
+  data-tracking-category="RestaurantList">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div data-element>
+          <!-- This will be replaced by React -->
+          <div class="form-group">
+            <input class="form-control" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Do NOT put the search component inside the form -->
+  <form method="GET" action="{{ path('restaurants') }}" data-form>
+    <input type="hidden" name="geohash" value="{{ geohash }}">
+  </form>
+</header>
