@@ -29,36 +29,31 @@ class PublicController extends AbstractController
     }
 
     /**
-     * @Route("/o/{number}", name="public_order")
+     * @Route("/o/{hashid}", name="public_order")
      */
-    public function orderAction($number, Request $request,
+    public function orderAction($hashid, Request $request,
         EntityManagerInterface $objectManager,
         StripeManager $stripeManager)
     {
-        $order = $this->orderRepository->findOneBy([
-            'number' => $number
-        ]);
+        $hashids = new Hashids($this->getParameter('secret'), 8);
+        $decoded = $hashids->decode($hashid);
 
-        if (null === $order) {
-
-            $hashids = new Hashids($this->getParameter('secret'), 8);
-            $decoded = $hashids->decode($number);
-
-            if (count($decoded) !== 1) {
-                throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $number));
-            }
-
-            $id = current($decoded);
-            $order = $this->orderRepository->find($id);
+        if (count($decoded) !== 1) {
+            throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
         }
 
+        $id = current($decoded);
+        $order = $this->orderRepository->find($id);
+
         if (null === $order) {
-            throw new NotFoundHttpException(sprintf('Order %s does not exist', $number));
+            throw new NotFoundHttpException(sprintf('Order #%d does not exist', $id));
         }
 
         if (null !== $order->getRestaurant()) {
             throw $this->createAccessDeniedException();
         }
+
+        $this->denyAccessUnlessGranted('view_public', $order);
 
         $lastPayment = $order->getLastPayment();
 
@@ -103,7 +98,7 @@ class PublicController extends AbstractController
                 }
 
                 return $this->redirectToRoute('public_order', [
-                    'number' => $number
+                    'hashid' => $hashid
                 ]);
             }
 
