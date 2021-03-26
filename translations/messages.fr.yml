@@ -1152,3 +1152,4 @@ restaurant.form.edenred_merchant_id.label: Identifiant marchand Edenred
 restaurant.form.edenred_merchant_id.help: Laissez vide pour désactiver Edenred
 restaurants.mode.list: Afficher la liste
 restaurants.mode.map: Afficher la carte
+order.number: 'Votre commande porte le numéro <strong><span class="text-monospace">%number%</span></strong>'
