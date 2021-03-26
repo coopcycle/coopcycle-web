@@ -27,7 +27,7 @@ class IndexController extends AbstractController
 {
     use UserTrait;
 
-    const MAX_RESULTS = 3;
+    const MAX_RESULTS = 6;
     const EXPIRES_AFTER = 300;
 
     private function getItems(LocalBusinessRepository $repository, string $type, CacheInterface $cache, string $cacheKey)
