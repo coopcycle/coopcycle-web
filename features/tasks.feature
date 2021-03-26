@@ -171,14 +171,14 @@ Feature: Tasks
           {
             "@id":"@string@.startsWith('/api/task_events')",
             "@type":"TaskEvent",
-            "name":"task:created",
+            "name":"@string@.matchRegex('/^task:(created|assigned)$/')",
             "data":[],
             "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/task_events')",
             "@type":"TaskEvent",
-            "name":"task:assigned",
+            "name":"@string@.matchRegex('/^task:(created|assigned)$/')",
             "data":{
               "username":"bob"
             },
