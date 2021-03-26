@@ -402,6 +402,8 @@ class OrderController extends AbstractController
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
         }
 
+        $this->denyAccessUnlessGranted('view_public', $order);
+
         // TODO Check if order is in expected state (new or superior)
 
         $loopeatAccessTokenKey =

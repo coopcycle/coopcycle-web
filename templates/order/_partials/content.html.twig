@@ -12,6 +12,11 @@
     </div>
   </div>
   <div class="col-xs-12 col-md-6">
+    {% if order.number is not empty %}
+    <div class="alert alert-info">
+      {% trans with { '%number%': order.number } %}order.number{% endtrans %}
+    </div>
+    {% endif %}
     <div id="order-timeline"
       data-order="{{ order_normalized|json_encode|e('html_attr') }}"
       data-events="{{ events|json_encode|e('html_attr') }}"

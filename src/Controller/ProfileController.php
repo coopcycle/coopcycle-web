@@ -185,7 +185,9 @@ class ProfileController extends AbstractController
     {
         $order = $this->orderRepository->find($id);
 
-        if ($order->getCustomer()->hasUser() && $order->getCustomer()->getUser() !== $this->getUser()) {
+        $customer = $order->getCustomer();
+
+        if ($customer->hasUser() && $customer->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
 
