@@ -5,12 +5,12 @@
       {% if 'yes' == restaurant_pledges_enabled %}
       <a href="{{ path('restaurants_suggest') }}" class="btn btn-lg btn-default">
         <i class="fa fa-heart-o mr-2"></i>
-        <span>{{ 'base.footer.suggest'|trans }}</span>
+        <span class="d-none d-sm-block">{{ 'base.footer.suggest'|trans }}</span>
       </a>
       {% endif %}
       <a href="{{ path('restaurants', { mode: to_mode|default('map') }) }}" class="btn btn-lg btn-default">
         <i class="fa fa-{{ to_mode|default('map') }} mr-2"></i>
-        <span>{{ ('restaurants.mode.' ~ to_mode|default('map'))|trans }}</span>
+        <span class="d-none d-sm-block">{{ ('restaurants.mode.' ~ to_mode|default('map'))|trans }}</span>
       </a>
     </div>
   </div>
