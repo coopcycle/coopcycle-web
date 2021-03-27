@@ -7,7 +7,7 @@ include:
 AppBundle\Entity\User:
   bob:
     __factory:
-      '@FOS\UserBundle\Util\UserManipulator::create':
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
         - 'bob'
         - '12345678'
         - 'bob@demo.coopcycle.org'
@@ -17,7 +17,7 @@ AppBundle\Entity\User:
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
   jane:
     __factory:
-      '@FOS\UserBundle\Util\UserManipulator::create':
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
         - 'jane'
         - '12345678'
         - 'jane@demo.coopcycle.org'

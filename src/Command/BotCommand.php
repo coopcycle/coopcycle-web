@@ -8,7 +8,7 @@ use AppBundle\Entity\TaskList;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use GuzzleHttp\Client as HttpClient;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;

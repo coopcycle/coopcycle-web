@@ -5,7 +5,7 @@ namespace AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Restaurant\PledgeVote;
 use AppBundle\Entity\LocalBusiness;
 use Doctrine\Common\Collections\ArrayCollection;
-use FOS\UserBundle\Model\UserInterface;
+use Nucleos\UserBundle\Model\UserInterface;
 
 class Pledge {
 

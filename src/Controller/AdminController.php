@@ -56,7 +56,6 @@ use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\ZoneCollectionType;
-use AppBundle\Mailer\FOSUserBundleMailer;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\EmailManager;
@@ -74,9 +73,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\Query\Expr;
-use FOS\UserBundle\Model\UserManagerInterface;
-use FOS\UserBundle\Util\TokenGeneratorInterface;
-use FOS\UserBundle\Util\CanonicalizerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Util\TokenGeneratorInterface;
+use Nucleos\UserBundle\Util\CanonicalizerInterface;
+use Nucleos\ProfileBundle\Mailer\Mail\RegistrationMail;
 use GuzzleHttp\Client as HttpClient;
 use Knp\Component\Pager\PaginatorInterface;
 use Ramsey\Uuid\Uuid;
@@ -92,6 +92,7 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -103,6 +104,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment as TwigEnvironment;
 
 class AdminController extends AbstractController
 {
@@ -1559,24 +1561,24 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/emails", name="admin_email_preview")
      */
-    public function emailsPreviewAction(Request $request, FOSUserBundleMailer $mailer)
+    public function emailsPreviewAction(Request $request, TwigEnvironment $twig)
     {
-        $method = 'sendConfirmationEmailMessage';
-        if ($request->query->has('method')) {
-            $method = $request->query->get('method');
-        }
+        $bodyRenderer = new BodyRenderer($twig);
 
-        $this->getUser()->setConfirmationToken('123456');
+        $message = new RegistrationMail();
 
-        $mailer->enableLogging();
+        $url  = $this->generateUrl(
+            'nucleos_profile_registration_confirm',
+            ['token' => '123456'],
+        );
 
-        call_user_func_array([$mailer, $method], [$this->getUser()]);
-
-        $messages = $mailer->getMessages();
-        $message = current($messages);
+        $message->setUser($this->getUser());
+        $message->setConfirmationUrl($url);
 
         // An email must have a "To", "Cc", or "Bcc" header."
         $message->to('dev@coopcycle.org');
+
+        $bodyRenderer->render($message);
 
         $response = new Response();
         $response->setContent((string) $message->getHtmlBody());

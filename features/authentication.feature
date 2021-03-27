@@ -180,7 +180,19 @@ Feature: Authenticate
       "detail":@string@,
       "violations":[
         {
-          "propertyPath":"data.username",
+          "propertyPath":"username",
+          "message":@string@
+        },
+        {
+          "propertyPath":"username",
+          "message":@string@
+        },
+        {
+          "propertyPath":"username",
+          "message":@string@
+        },
+        {
+          "propertyPath":"username",
           "message":@string@
         }
       ]
@@ -206,12 +218,16 @@ Feature: Authenticate
     And the JSON should match:
     """
     {
-      "type":"https:\/\/tools.ietf.org\/html\/rfc2616#section-10",
+      "type":"https://tools.ietf.org/html/rfc2616#section-10",
       "title":@string@,
       "detail":@string@,
       "violations":[
         {
-          "propertyPath":"data.username",
+          "propertyPath":"username",
+          "message":@string@
+        },
+        {
+          "propertyPath":"username",
           "message":@string@
         }
       ]
@@ -237,12 +253,16 @@ Feature: Authenticate
     And the JSON should match:
     """
     {
-      "type":"https:\/\/tools.ietf.org\/html\/rfc2616#section-10",
+      "type":"https://tools.ietf.org/html/rfc2616#section-10",
       "title":@string@,
       "detail":@string@,
       "violations":[
         {
-          "propertyPath":"data.email",
+          "propertyPath":"email",
+          "message":@string@
+        },
+        {
+          "propertyPath":"email",
           "message":@string@
         }
       ]

@@ -2,9 +2,9 @@
 
 namespace AppBundle\Action;
 
-use FOS\UserBundle\Mailer\MailerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
-use FOS\UserBundle\Util\TokenGeneratorInterface;
+use Nucleos\UserBundle\Mailer\MailerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Util\TokenGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

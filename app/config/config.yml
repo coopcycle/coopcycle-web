@@ -55,6 +55,7 @@ parameters:
     avatar_dir: '%env(APP_PUBLIC_DIR)%/images/avatars/'
     centrifugo_tracking_channel: '$%centrifugo_namespace%_tracking'
     edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
+    nucleos_profile.registration.confirmation.enabled: false
 
 services:
     # It is important to set a namespace,
@@ -291,19 +292,21 @@ nelmio_cors:
         '^/api/':
             allow_origin: ['*']
 
-fos_user:
+nucleos_user:
     db_driver: orm
     firewall_name: web
     user_class: AppBundle\Entity\User
     service:
-        mailer: AppBundle\Mailer\FOSUserBundleMailer
         user_manager: coopcycle.user_manager
-    from_email:
-        address:        "%transactional_address%"
-        sender_name:    "%transactional_sender_name%"
+    from_email: "%transactional_sender_name% <%transactional_address%>"
+
+nucleos_profile:
     registration:
+        confirmation:
+            from_email: "%transactional_sender_name% <%transactional_address%>"
+            enabled: "%nucleos_profile.registration.confirmation.enabled%"
         form:
-            type: AppBundle\Form\RegistrationType
+            model: AppBundle\Form\Model\Registration
 
 lexik_jwt_authentication:
     secret_key:  "%jwt_private_key_path%"
@@ -320,7 +323,7 @@ lexik_jwt_authentication:
             name:    token
 
 gesdinet_jwt_refresh_token:
-    user_provider: fos_user.user_provider.username_email
+    user_provider: nucleos_user.user_provider.username_email
     ttl_update: true
 
 snc_redis:

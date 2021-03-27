@@ -76,10 +76,9 @@ services:
     alias: 'snc_redis.default'
     public: true
   Sylius\Bundle\CurrencyBundle\Templating\Helper\CurrencyHelperInterface: '@sylius.templating.helper.currency'
-  FOS\UserBundle\Util\UserManipulator:
-    alias: 'fos_user.util.user_manipulator'
+  Nucleos\UserBundle\Util\UserManipulator:
+    alias: 'nucleos_user.util.user_manipulator'
     public: true
-  FOS\UserBundle\Mailer\MailerInterface: '@AppBundle\Mailer\FOSUserBundleMailer'
   Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface: '@lexik_jwt_authentication.jwt_manager'
   Liip\ImagineBundle\Service\FilterService: '@liip_imagine.service.filter'
   League\Flysystem\MountManager: '@oneup_flysystem.mount_manager'
@@ -87,7 +86,7 @@ services:
 
   League\Flysystem\Filesystem $taskImportsFilesystem: '@task_imports_filesystem'
   League\Flysystem\Filesystem $receiptsFilesystem: '@receipts_filesystem'
-  FOS\UserBundle\Util\CanonicalizerInterface: '@fos_user.util.canonicalizer.default'
+  Nucleos\UserBundle\Util\CanonicalizerInterface: '@nucleos_user.util.canonicalizer.default'
 
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
   Twig\CacheExtension\Extension: '@twig.cache_extension'
@@ -199,8 +198,8 @@ services:
       - { name: kernel.event_listener, event: kernel.request }
 
   coopcycle.user_provider:
-    class: AppBundle\Security\FOSUBUserProvider
-    arguments: ['@fos_user.user_manager', { facebook: facebookId }]
+    class: AppBundle\Security\NucleosUserBundleUserProvider
+    arguments: ['@nucleos_user.user_manager', { facebook: facebookId }]
 
   AppBundle\EventListener\MaintenanceListener:
     arguments:
@@ -541,10 +540,10 @@ services:
     arguments: ['@security.http_utils', '@router']
 
   coopcycle.user_manager:
-    parent: fos_user.user_manager.default
-    autowire: false
-    autoconfigure: false
-    public: true
+    decorates: nucleos_user.user_manager.default
+    arguments:
+      - '@coopcycle.user_manager.inner'
+      - '@nucleos_user.object_manager'
     class: AppBundle\Security\UserManager
 
   AppBundle\Service\SettingsManager:
@@ -640,17 +639,17 @@ services:
   AppBundle\Action\Register:
     public: true
     arguments:
-      $confirmationEnabled: '%fos_user.registration.confirmation.enabled%'
+      $confirmationEnabled: '%nucleos_profile.registration.confirmation.enabled%'
 
   AppBundle\Action\ResettingSendEmail:
     public: true
     arguments:
-      $retryTtl: '%fos_user.resetting.retry_ttl%'
+      $retryTtl: '%nucleos_user.resetting.retry_ttl%'
 
   AppBundle\Action\ResettingReset:
     public: true
     arguments:
-      $tokenTtl: '%fos_user.resetting.token_ttl%'
+      $tokenTtl: '%nucleos_user.resetting.token_ttl%'
 
   AppBundle\Action\UpdateLocation:
     public: true
@@ -1081,16 +1080,6 @@ services:
       $clientSecret: "%env(EDENRED_AUTHENTICATION_CLIENT_SECRET)%"
     tags:
       - { name: monolog.logger, channel: edenred }
-
-  AppBundle\Mailer\FOSUserBundleMailer:
-    arguments:
-      $parameters:
-        template:
-          confirmation: '%fos_user.registration.confirmation.template%'
-          resetting: '%fos_user.resetting.email.template%'
-        from_email:
-          confirmation: '%fos_user.registration.confirmation.from_email%'
-          resetting: '%fos_user.resetting.email.from_email%'
 
   AppBundle\Edenred\Client:
     arguments:

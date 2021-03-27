@@ -1,10 +1,10 @@
 import _ from 'lodash'
 
 const emailInput =
-  document.querySelector('[name="fos_user_registration_form[email]"]')
+  document.querySelector('[name="registration_form[email]"]')
 
 const usernameInput =
-  document.querySelector('[name="fos_user_registration_form[username]"]')
+  document.querySelector('[name="registration_form[username]"]')
 
 const formGroup = usernameInput.closest('.form-group')
 
@@ -13,10 +13,10 @@ const formGroup = usernameInput.closest('.form-group')
 const checkUsername = _.debounce(function() {
 
   const email =
-    document.querySelector('[name="fos_user_registration_form[email]"]').value
+    document.querySelector('[name="registration_form[email]"]').value
 
   const username =
-    document.querySelector('[name="fos_user_registration_form[username]"]').value
+    document.querySelector('[name="registration_form[username]"]').value
 
   formGroup.classList.remove('has-success', 'has-error')
   formGroup.classList.add('has-feedback')

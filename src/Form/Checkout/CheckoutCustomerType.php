@@ -8,7 +8,7 @@ use AppBundle\Form\Type\LegalType;
 use AppBundle\Form\Type\PhoneNumberType;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as AssertUserWithSameEmailNotExists;
-use FOS\UserBundle\Util\CanonicalizerInterface;
+use Nucleos\UserBundle\Util\CanonicalizerInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -84,7 +84,9 @@ class CheckoutCustomerType extends AbstractType
             }
 
             if (null === $customer || !$customer->hasUser()) {
-                $form->add('legal', LegalType::class);
+                $form->add('legal', LegalType::class, [
+                    'mapped' => false,
+                ]);
             }
         });
 

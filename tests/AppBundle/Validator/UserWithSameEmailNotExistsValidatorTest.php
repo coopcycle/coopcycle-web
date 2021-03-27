@@ -4,9 +4,9 @@ namespace AppBundle\Validator;
 
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as UserWithSameEmailNotExistsConstraint;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExistsValidator;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Component\Validator\ValidatorBuilder;
 

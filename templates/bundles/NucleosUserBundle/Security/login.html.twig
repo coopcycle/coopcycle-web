@@ -1,0 +1,9 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+  {% block nucleos_user_content %}
+  <div class="login-container">
+  {{ include('@NucleosUser/Security/login_content.html.twig') }}
+  </div>
+  {% endblock nucleos_user_content %}
+{% endblock %}

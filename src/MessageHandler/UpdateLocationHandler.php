@@ -6,7 +6,7 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\TrackingPosition;
 use AppBundle\Message\UpdateLocation;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class UpdateLocationHandler implements MessageHandlerInterface

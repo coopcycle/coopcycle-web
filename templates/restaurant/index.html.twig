@@ -85,7 +85,7 @@
   {% if restaurant.quotesAllowed %}
     {% set trans_params = {
       '%contact_us%': ('mailto:' ~ coopcycle_setting('administrator_email')),
-      '%login%': path('fos_user_security_login')
+      '%login%': path('nucleos_user_security_login')
     } %}
     {% if app.user %}
       {% if not app.user.quotesAllowed %}

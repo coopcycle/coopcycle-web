@@ -12,7 +12,7 @@ use AppBundle\Action\Me as MeController;
 use AppBundle\Api\Filter\UserRoleFilter;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Product\ProductInterface;
-use FOS\UserBundle\Model\User as BaseUser;
+use Nucleos\UserBundle\Model\User as BaseUser;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
@@ -376,15 +376,13 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function setEmail($email)
+    public function setEmail(string $email): void
     {
-        $value = parent::setEmail($email);
+        parent::setEmail($email);
 
         if (null !== $this->customer) {
             $this->customer->setEmail($email);
         }
-
-        return $value;
     }
 
     public function getMercadopagoAccounts()

@@ -4,7 +4,7 @@ security:
 
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext
-        FOS\UserBundle\Model\UserInterface: sha512
+        Nucleos\UserBundle\Model\UserInterface: sha512
 
     role_hierarchy:
         ROLE_CUSTOMER: ROLE_USER
@@ -16,7 +16,7 @@ security:
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
         fos_userbundle:
-            id: fos_user.user_provider.username_email
+            id: nucleos_user.user_provider.username_email
         # jwt:
         #     lexik_jwt:
         #         class: AppBundle\Entity\User

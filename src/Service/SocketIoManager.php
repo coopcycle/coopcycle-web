@@ -10,7 +10,7 @@ use AppBundle\Domain\Task\Event as TaskEvent;
 use AppBundle\Entity\User;
 use AppBundle\Message\TopBarNotification;
 use AppBundle\Sylius\Order\OrderInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use phpcent\Client as CentrifugoClient;
 use Redis;
 use Ramsey\Uuid\Uuid;

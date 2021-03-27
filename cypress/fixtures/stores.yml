@@ -57,7 +57,7 @@ AppBundle\Entity\Store:
 AppBundle\Entity\User:
   default_user:
     __factory:
-      '@FOS\UserBundle\Util\UserManipulator::create':
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
         - 'store_1'
         - 'store_1'
         - 'dev@coopcycle.org'
