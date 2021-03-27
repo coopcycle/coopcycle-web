@@ -4,7 +4,7 @@ namespace AppBundle\Entity\Listener;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Service\TagManager;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 class DeliveryListener
 {

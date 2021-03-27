@@ -10,7 +10,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\TaskEvent;
 use AppBundle\Validator\Constraints\Task as TaskConstraint;
 use AppBundle\Validator\Constraints\TaskValidator;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
 use PHPUnit\Framework\TestCase;

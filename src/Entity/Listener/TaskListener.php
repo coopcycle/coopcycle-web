@@ -3,7 +3,7 @@
 namespace AppBundle\Entity\Listener;
 
 use AppBundle\Entity\Task;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 class TaskListener
 {

@@ -142,7 +142,8 @@
     We cache the following block for performance
     Iterating through all products, options… is a lot of database requests
     #}
-    {% cache restaurant_menu_cache_annotation restaurant %}
+    {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation) %}
+    {% cache cache_key ttl(300) %}
     <div class="col-xs-12 col-sm-8" id="menu">
       <div class="restaurant-menu-wrapper">
       {% for child in restaurant.menuTaxon.children %}

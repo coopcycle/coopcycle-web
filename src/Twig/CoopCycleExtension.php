@@ -6,6 +6,7 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use AppBundle\Sylius\Product\ProductOptionInterface;
+use AppBundle\Twig\CacheExtension\KeyGenerator;
 use Carbon\Carbon;
 use Carbon\Translator as CarbonTranslator;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -62,6 +63,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('opening_hours', array($this, 'openingHours')),
             new TwigFilter('day_localized', array($this, 'dayLocalized')),
             new TwigFilter('opening_hours_for_day_matches', array($this, 'openingHoursForDayMatches')),
+            new TwigFilter('cache_key', array(KeyGenerator::class, 'generateKey')),
         );
     }
 

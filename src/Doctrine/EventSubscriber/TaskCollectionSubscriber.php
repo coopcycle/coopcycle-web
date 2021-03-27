@@ -13,7 +13,7 @@ use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;

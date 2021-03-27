@@ -39,7 +39,7 @@ class TaskCollectionsUpdated extends BaseEvent implements SerializableEventInter
         ];
     }
 
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'task_collections:updated';
     }

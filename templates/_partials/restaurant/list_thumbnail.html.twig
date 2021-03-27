@@ -14,7 +14,8 @@
     <h4 class="restaurant-item__title">{{ restaurant.name|u.truncate(48, '…', false) }}</h4>
   </a>
   <div>
-    {% cache restaurant_caption_cache_annotation restaurant %}
+    {% set cache_key = restaurant|cache_key(restaurant_caption_cache_annotation) %}
+    {% cache cache_key ttl(300) %}
     {% if restaurant.servesCuisine|length > 0 %}
       <div class="restaurant-item__cuisines mb-3">
         {% for cuisine in restaurant.servesCuisine %}

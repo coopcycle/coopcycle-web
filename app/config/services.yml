@@ -89,7 +89,6 @@ services:
   Nucleos\UserBundle\Util\CanonicalizerInterface: '@nucleos_user.util.canonicalizer.default'
 
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
-  Twig\CacheExtension\Extension: '@twig.cache_extension'
 
   # Autowiring variables in controllers
 
@@ -597,13 +596,6 @@ services:
       - { name: doctrine.event_subscriber }
 
   AppBundle\Api\EventSubscriber\PricingSubscriber:
-    arguments:
-        - '@coopcycle.delivery.manager'
-        - '@routing_service'
-        - '@coopcycle.geocoder'
-        - '@security.token_storage'
-        - '@doctrine'
-        - '@trikoder.oauth2.manager.doctrine.access_token_manager'
     tags: [ 'kernel.event_subscriber' ]
 
   AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:

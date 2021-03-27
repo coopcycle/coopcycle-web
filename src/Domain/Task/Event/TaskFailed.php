@@ -30,7 +30,7 @@ class TaskFailed extends Event implements DomainEvent, HasIconInterface
         return $this->notes;
     }
 
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'task:failed';
     }

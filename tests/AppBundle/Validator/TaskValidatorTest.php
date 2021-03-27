@@ -5,7 +5,7 @@ namespace AppBundle\Validator;
 use AppBundle\Entity\Task;
 use AppBundle\Validator\Constraints\Task as TaskConstraint;
 use AppBundle\Validator\Constraints\TaskValidator;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
 use Prophecy\PhpUnit\ProphecyTrait;

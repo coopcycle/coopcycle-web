@@ -5,7 +5,7 @@ namespace AppBundle\EventListener;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Service\TagManager;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 
 class TaggableSubscriber implements EventSubscriber

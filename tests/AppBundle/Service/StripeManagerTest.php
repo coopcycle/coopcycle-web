@@ -13,7 +13,7 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;

@@ -33,7 +33,7 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
      *
      * @param string $providerKey
      */
-    public function setProviderKey($providerKey)
+    public function setFirewallName($providerKey)
     {
         $this->providerKey = $providerKey;
     }
