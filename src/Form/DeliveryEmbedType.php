@@ -36,7 +36,7 @@ class DeliveryEmbedType extends DeliveryType
             ->add('email', EmailType::class, [
                 'mapped' => false,
                 'label' => 'form.email',
-                'translation_domain' => 'FOSUserBundle'
+                'translation_domain' => 'NucleosProfileBundle'
             ])
             ->add('telephone', PhoneNumberType::class, [
                 'mapped' => false,

@@ -48,7 +48,7 @@ class CheckoutCustomerType extends AbstractType
             if (null === $customer || !$customer->hasUser()) {
                 $form->add('email', EmailType::class, [
                     'label' => 'form.email',
-                    'translation_domain' => 'FOSUserBundle',
+                    'translation_domain' => 'NucleosProfileBundle',
                     'constraints' => [
                         new Assert\NotBlank(),
                         new Assert\Email([
