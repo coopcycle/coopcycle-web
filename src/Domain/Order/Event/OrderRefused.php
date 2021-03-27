@@ -11,7 +11,7 @@ class OrderRefused extends Event implements DomainEvent, HasIconInterface
 {
     private $reason;
 
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'order:refused';
     }

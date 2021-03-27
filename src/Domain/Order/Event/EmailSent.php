@@ -10,7 +10,7 @@ class EmailSent extends Event implements DomainEvent
 {
     private $recipient;
 
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'order:email_sent';
     }

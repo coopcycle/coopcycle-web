@@ -10,7 +10,7 @@ class OrderDelayed extends Event implements DomainEvent
 {
     private $delay;
 
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'order:delayed';
     }

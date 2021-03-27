@@ -29,7 +29,7 @@ class OrderCancelled extends Event implements DomainEvent
         ];
     }
 
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'order:cancelled';
     }

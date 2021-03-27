@@ -37,7 +37,7 @@ class TaskListUpdated extends BaseEvent implements SerializableEventInterface
         ];
     }
 
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'task_list:updated';
     }

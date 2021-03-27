@@ -11,7 +11,7 @@ class CheckoutSucceeded extends Event implements DomainEvent
 {
     private $payment;
 
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'order:checkout_succeeded';
     }
