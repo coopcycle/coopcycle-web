@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9180edb834ac799b7299fc47bfd9337",
+    "content-hash": "43c2cc52dea6c4a4279f37c6bb2a2543",
     "packages": [
         {
             "name": "api-platform/core",
@@ -2975,16 +2975,16 @@
         },
         {
             "name": "drupal/core-vendor-hardening",
-            "version": "9.0.x-dev",
+            "version": "9.2.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-vendor-hardening.git",
-                "reference": "df7b4975c9a60e9dcfc9f46228e8e32ead16b745"
+                "reference": "dba981e37ef02edaecbb6da7db60be856f922f4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/df7b4975c9a60e9dcfc9f46228e8e32ead16b745",
-                "reference": "df7b4975c9a60e9dcfc9f46228e8e32ead16b745",
+                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/dba981e37ef02edaecbb6da7db60be856f922f4e",
+                "reference": "dba981e37ef02edaecbb6da7db60be856f922f4e",
                 "shasum": ""
             },
             "require": {
@@ -3010,9 +3010,9 @@
                 "drupal"
             ],
             "support": {
-                "source": "https://github.com/drupal/core-vendor-hardening/tree/9.0.x"
+                "source": "https://github.com/drupal/core-vendor-hardening/tree/9.2.x"
             },
-            "time": "2020-08-02T22:04:44+00:00"
+            "time": "2021-02-01T09:34:08+00:00"
         },
         {
             "name": "edamov/pushok",
