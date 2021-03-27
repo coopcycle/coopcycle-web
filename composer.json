@@ -92,7 +92,6 @@
         "drupal/core-vendor-hardening": "9.2.x-dev",
         "league/flysystem-aws-s3-v3": "^1.0",
         "sylius/resource-bundle": "^1.7.1",
-        "twig/cache-extension": "^1.4",
         "kreait/firebase-bundle": "^2.2",
         "phpdocumentor/reflection-docblock": "^4.0",
         "sylius/customer-bundle": "^1.6",
@@ -116,7 +115,8 @@
         "simshaun/recurr": "^4.0",
         "jaybizzle/crawler-detect": "^1.2",
         "nucleos/user-bundle": "1.9.x-dev",
-        "nucleos/profile-bundle": "1.5.x-dev"
+        "nucleos/profile-bundle": "1.5.x-dev",
+        "twig/cache-extra": "^3.3"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

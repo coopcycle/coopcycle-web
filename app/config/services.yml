@@ -89,7 +89,6 @@ services:
   Nucleos\UserBundle\Util\CanonicalizerInterface: '@nucleos_user.util.canonicalizer.default'
 
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
-  Twig\CacheExtension\Extension: '@twig.cache_extension'
 
   # Autowiring variables in controllers
 

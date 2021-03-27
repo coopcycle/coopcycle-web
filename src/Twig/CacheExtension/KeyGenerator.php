@@ -3,9 +3,9 @@
 namespace AppBundle\Twig\CacheExtension;
 
 use Cocur\Slugify\SlugifyInterface;
-use Twig\CacheExtension\CacheStrategy\KeyGeneratorInterface;
+use Twig\Extension\RuntimeExtensionInterface;
 
-final class KeyGenerator implements KeyGeneratorInterface
+final class KeyGenerator implements RuntimeExtensionInterface
 {
     private $slugify;
 
@@ -14,8 +14,11 @@ final class KeyGenerator implements KeyGeneratorInterface
         $this->slugify = $slugify;
     }
 
-    public function generateKey($value)
+    public function generateKey($value, $annotation)
     {
-        return $this->slugify->slugify(get_class($value)) . '_' . $value->getId() . '_' . $value->getUpdatedAt()->format('U');
+        $key =
+            $this->slugify->slugify(get_class($value)) . '_' . $value->getId() . '_' . $value->getUpdatedAt()->format('U');
+
+        return $annotation . '__GCS__' . $key;
     }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "43c2cc52dea6c4a4279f37c6bb2a2543",
+    "content-hash": "f8e50e290cba51da2b799d6f7dc51864",
     "packages": [
         {
             "name": "api-platform/core",
@@ -16556,42 +16556,40 @@
             "time": "2020-10-26T15:54:32+00:00"
         },
         {
-            "name": "twig/cache-extension",
-            "version": "v1.5.0",
+            "name": "twig/cache-extra",
+            "version": "v3.3.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/twigphp/twig-cache-extension.git",
-                "reference": "2c243643f59132194458bd03c745b079bbb12e78"
+                "url": "https://github.com/twigphp/cache-extra.git",
+                "reference": "202791f7e24f376946205e8e6b538a763d69c354"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/twig-cache-extension/zipball/2c243643f59132194458bd03c745b079bbb12e78",
-                "reference": "2c243643f59132194458bd03c745b079bbb12e78",
+                "url": "https://api.github.com/repos/twigphp/cache-extra/zipball/202791f7e24f376946205e8e6b538a763d69c354",
+                "reference": "202791f7e24f376946205e8e6b538a763d69c354",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2",
-                "twig/twig": "^1.38|^2.4|^3.0"
+                "php": ">=7.2.5",
+                "symfony/cache": "^5.0",
+                "twig/twig": "^2.4|^3.0"
             },
             "require-dev": {
-                "doctrine/cache": "~1.0",
-                "phpunit/phpunit": "^5.0 || ^4.8.36",
-                "psr/cache": "^1.0",
-                "sebastian/comparator": "^1.2.4|^2.0"
-            },
-            "suggest": {
-                "psr/cache-implementation": "To make use of PSR-6 cache implementation via PsrCacheAdapter."
+                "symfony/phpunit-bridge": "^4.4.9|^5.0.9"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "": "lib/"
-                }
+                    "Twig\\Extra\\Cache\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -16599,20 +16597,21 @@
             ],
             "authors": [
                 {
-                    "name": "Alexander",
-                    "email": "iam.asm89@gmail.com"
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
                 }
             ],
-            "description": "Cache fragments of templates directly within Twig.",
-            "homepage": "https://github.com/twigphp/twig-cache-extension",
+            "description": "A Twig extension for Symfony Cache",
+            "homepage": "https://twig.symfony.com",
             "keywords": [
                 "cache",
-                "extension",
+                "html",
                 "twig"
             ],
             "support": {
-                "issues": "https://github.com/twigphp/twig-cache-extension/issues",
-                "source": "https://github.com/twigphp/twig-cache-extension/tree/v1.5.0"
+                "source": "https://github.com/twigphp/cache-extra/tree/v3.3.0"
             },
             "funding": [
                 {
@@ -16624,8 +16623,7 @@
                     "type": "tidelift"
                 }
             ],
-            "abandoned": "twig/cache-extra",
-            "time": "2020-10-04T09:56:48+00:00"
+            "time": "2021-01-11T17:30:42+00:00"
         },
         {
             "name": "twig/intl-extra",

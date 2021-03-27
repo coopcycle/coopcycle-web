@@ -75,11 +75,3 @@ monolog:
         #chromephp:
         #    type:   chromephp
         #    level:  info
-
-services:
-    twig.cache_extension:
-        class: Twig\CacheExtension\Extension
-        arguments:
-            $cacheStrategy: '@twig.cache_extension.strategy.black_hole'
-        tags:
-            - { name: twig.extension }
