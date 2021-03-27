@@ -5,7 +5,7 @@
     <div class="row">
       <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
         {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        <div class="alert alert-danger">{{ error }}</div>
         {% endif %}
 
         <div class="text-center">
