@@ -22,8 +22,9 @@ cube(`Order`, {
     },
 
     total: {
-      sql: `total`,
-      type: `sum`
+      sql: `ROUND(total / 100::numeric, 2)`,
+      type: `sum`,
+      format: `currency`
     }
   },
 
