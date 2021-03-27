@@ -161,7 +161,7 @@ class ProfileController extends AbstractController
             ->getSingleScalarResult();
 
         $pages  = ceil($count / self::ITEMS_PER_PAGE);
-        $page   = $request->query->get('p', 1);
+        $page   = $request->query->getInt('p', 1);
         $offset = self::ITEMS_PER_PAGE * ($page - 1);
 
         $orders = (clone $qb)

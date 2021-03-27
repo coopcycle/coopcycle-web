@@ -176,7 +176,7 @@ class AdminController extends AbstractController
             ->andWhere('o.state != :state')
             ->setParameter('state', OrderInterface::STATE_CART)
             ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
-            ->setFirstResult(($request->query->get('p', 1) - 1) * self::ITEMS_PER_PAGE)
+            ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE)
             ->setMaxResults(self::ITEMS_PER_PAGE)
             ;
 
@@ -606,7 +606,7 @@ class AdminController extends AbstractController
             ->getQuery()->getSingleScalarResult();
 
         $pages = ceil($countAll / self::ITEMS_PER_PAGE);
-        $page = $request->query->get('p', 1);
+        $page = $request->query->getInt('p', 1);
 
         $offset = self::ITEMS_PER_PAGE * ($page - 1);
 
