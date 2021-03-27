@@ -25,7 +25,7 @@
         "symfony/symfony": "^5.2",
         "api-platform/core": "~2.5.10",
         "doctrine/orm": "^2.7",
-        "doctrine/doctrine-bundle": "^2.0",
+        "doctrine/doctrine-bundle": "2.2.*",
         "symfony/monolog-bundle": "^3.5",
         "sensio/framework-extra-bundle": "^5.4",
         "nelmio/cors-bundle": "~2.0",
