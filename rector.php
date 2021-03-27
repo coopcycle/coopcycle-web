@@ -44,7 +44,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $parameters->set(
         Option::SYMFONY_CONTAINER_XML_PATH_PARAMETER,
-        __DIR__ . '/var/cache/dev/appAppKernelDevDebugContainer.xml'
+        __DIR__ . '/var/cache/dev/AppKernelDevDebugContainer.xml'
     );
 
     // get services (needed for register a single rule)
