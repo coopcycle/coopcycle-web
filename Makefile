@@ -4,6 +4,7 @@ install:
 	@printf "\e[0;32mPopulating schema..\e[0m\n"
 	@docker-compose exec php php bin/console doctrine:schema:create --env=dev
 	@docker-compose exec php bin/demo --env=dev
+	@docker-compose exec php php bin/console sync-metadata-storage
 	@docker-compose exec php php bin/console doctrine:migrations:version --no-interaction --quiet --add --all
 
 osrm:
