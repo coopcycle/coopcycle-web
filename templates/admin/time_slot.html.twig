@@ -1,12 +1,13 @@
-{% extends "admin.html.twig" %}
+{% extends "deliveries.html.twig" %}
 
 {% form_theme form 'form/time_slot.html.twig' %}
 
 {% block breadcrumb %}
+  {{ parent() }}
   {% set time_slot = form.vars.value %}
   <li><a href="{{ path('admin_time_slots') }}">{% trans %}adminDashboard.time_slots.title{% endtrans %}</a></li>
   {% if time_slot.id is not null %}
-  <li>#{{ time_slot.id }}</li>
+  <li>{{ time_slot.name }}</li>
   {% else %}
   <li>{{ 'basics.add'|trans }}</li>
   {% endif %}

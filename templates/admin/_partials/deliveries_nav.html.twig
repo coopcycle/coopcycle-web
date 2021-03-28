@@ -15,7 +15,7 @@
     <small class="deliveries-nav-item-text">{% trans %}adminDashboard.stores.help{% endtrans %}</small>
   </a>
   <a href="{{ path('admin_deliveries_pricing') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') == 'admin_deliveries_pricing' ? 'active' : '' }}">
+    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_deliveries_pricing', 'admin_deliveries_pricing_ruleset' ] ? 'active' : '' }}">
     <h4 class="deliveries-nav-item-heading">
       <i class="fa fa-percent mr-2"></i>
       <span>{% trans %}adminDashboard.pricing.title{% endtrans %}</span>
@@ -23,7 +23,7 @@
     <small class="deliveries-nav-item-text">{% trans %}adminDashboard.pricing.help{% endtrans %}</small>
   </a>
   <a href="{{ path('admin_embed') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_embed', 'admin_forms' ] ? 'active' : '' }}">
+    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_embed', 'admin_forms', 'admin_form' ] ? 'active' : '' }}">
     <h4 class="deliveries-nav-item-heading">
       <i class="fa fa-check-square-o mr-2"></i>
       <span>{% trans %}adminDashboard.embed.title{% endtrans %}</span>
@@ -31,7 +31,7 @@
     <small class="deliveries-nav-item-text">{% trans %}adminDashboard.embed.help{% endtrans %}</small>
   </a>
   <a href="{{ path('admin_time_slots') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') == 'admin_time_slots' ? 'active' : '' }}">
+    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_time_slots', 'admin_time_slot' ] ? 'active' : '' }}">
     <h4 class="deliveries-nav-item-heading">
       <i class="fa fa-clock-o mr-2"></i>
       <span>{% trans %}adminDashboard.time_slots.title{% endtrans %}</span>
@@ -39,7 +39,7 @@
     <small class="deliveries-nav-item-text">{% trans %}adminDashboard.time_slots.help{% endtrans %}</small>
   </a>
   <a href="{{ path('admin_packages') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') == 'admin_packages' ? 'active' : '' }}">
+    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_packages', 'admin_package', 'admin_new_package' ] ? 'active' : '' }}">
     <h4 class="deliveries-nav-item-heading">
       <i class="fa fa-cube mr-2"></i>
       <span>{% trans %}adminDashboard.package_sets.title{% endtrans %}</span>

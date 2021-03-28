@@ -1,6 +1,7 @@
 {% extends "deliveries.html.twig" %}
 
 {% block breadcrumb %}
+  {{ parent() }}
   <li>{% trans %}adminDashboard.package_sets.title{% endtrans %}</li>
 {% endblock %}
 

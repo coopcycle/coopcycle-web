@@ -1,6 +1,7 @@
 {% extends "deliveries.html.twig" %}
 
 {% block breadcrumb %}
+  {{ parent() }}
   <li>{% trans %}adminDashboard.time_slots.title{% endtrans %}</li>
 {% endblock %}
 
