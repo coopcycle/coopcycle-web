@@ -5,7 +5,7 @@
   <ol class="breadcrumb">
     <li><a href="{{ path('admin_index') }}">{% trans %}adminDashboard.title{% endtrans %}</a></li>
     {% block breadcrumb %}
-    <li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
+    <li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
     {% endblock %}
   </ol>
   <div class="mb-4">

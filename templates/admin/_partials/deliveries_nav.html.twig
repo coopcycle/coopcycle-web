@@ -1,3 +1,11 @@
+<a href="{{ path('admin_deliveries') }}"
+  class="list-group-item {{ app.request.attributes.get('_route') == 'admin_deliveries' ? 'active' : '' }}">
+  <h4 class="list-group-item-heading">
+    <i class="fa fa-bicycle mr-2"></i>
+    <span>{% trans %}adminDashboard.deliveries.title{% endtrans %}</span>
+  </h4>
+</a>
+<hr>
 <div class="list-group">
   <a href="{{ path('admin_stores') }}"
     class="list-group-item {{ app.request.attributes.get('_route') == 'admin_stores' ? 'active' : '' }}">
@@ -47,7 +55,8 @@
     </h4>
     <small class="list-group-item-text text-muted">{% trans %}adminDashboard.zones.help{% endtrans %}</small>
   </a>
-  <a href="{{ path('admin_tags') }}" class="list-group-item">
+  <a href="{{ path('admin_tags') }}"
+    class="list-group-item {{ app.request.attributes.get('_route') == 'admin_tags' ? 'active' : '' }}">
     <h4 class="list-group-item-heading">
       <i class="fa fa-tags mr-2"></i>
       <span>{% trans %}adminDashboard.tags.title{% endtrans %}</span>

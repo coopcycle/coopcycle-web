@@ -34,6 +34,13 @@
     </div>
   </div>
 
+  <div class="alert alert-warning">
+    <i class="fa fa-paint-brush"></i> {% trans %}adminDashboard.customize.title{% endtrans %}
+    <div class="pull-right">
+      <a href="{{ path('admin_customize') }}">{{ 'basics.edit'|trans }}</a>
+    </div>
+  </div>
+
   {{ form_row(form.subject_to_vat) }}
   {{ form_row(form.guest_checkout_enabled) }}
 
