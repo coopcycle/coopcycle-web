@@ -4,7 +4,7 @@ import isScalar from 'locutus/php/var/is_scalar'
 import { withTranslation } from 'react-i18next'
 import numbro from 'numbro'
 
-import { numericTypes } from './RulePicker'
+import { numericTypes, isNum } from './RulePicker'
 import './RulePicker.scss'
 
 /*
@@ -126,20 +126,19 @@ class RulePickerLine extends React.Component {
     let state = { operator }
 
     if ('in' === operator) {
-      state = {
+      this.setState({
         ...state,
-        value: ['', '']
-      }
+        value: ['0', isK(this.state.type) ? '1000' : '1']
+      })
+      return
     }
 
-    if (_.includes(['==', '<', '>'], operator) && Array.isArray(this.state.value)) {
-      state = {
+    if (_.includes(['==', '<', '>'], operator)) {
+      this.setState({
         ...state,
-        value: ''
-      }
+        value: isNum(this.state.type) ? '0' : ''
+      })
     }
-
-    this.setState(state)
   }
 
   delete (evt) {

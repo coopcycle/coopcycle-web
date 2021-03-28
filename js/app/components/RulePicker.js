@@ -14,6 +14,8 @@ export const numericTypes = [
   'order.itemsTotal',
 ]
 
+export const isNum = (type) => _.includes(numericTypes, type)
+
 const lineToString = state => {
   /*
   Build the expression line from the user's input stored in state.
