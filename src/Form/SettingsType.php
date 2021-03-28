@@ -80,12 +80,6 @@ class SettingsType extends AbstractType
                 'help' => 'form.settings.phone_number.help',
                 'disabled' => $this->isDemo
             ])
-            ->add('google_api_key', TextType::class, [
-                'label' => 'form.settings.google_api_key.label',
-                'help' => 'form.settings.google_api_key.help',
-                'help_html' => true,
-                'disabled' => $this->isDemo || $this->debug
-            ])
             ->add('latlng', TextType::class, [
                 'label' => 'form.settings.latlng.label',
                 'help' => 'form.settings.latlng.help',
