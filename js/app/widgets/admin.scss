@@ -115,3 +115,29 @@ form[name="restaurant"] {
     }
   }
 }
+
+.deliveries-nav {
+  &-item {
+    display: block;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #ededed;
+    text-decoration: none;
+    &-heading {
+      color: #212121;
+    }
+    &-text {
+      color: lighten(#212121, 25%);
+    }
+    &:hover {
+      text-decoration: none;
+      opacity: 0.7;
+    }
+    &.active {
+      background-color: #0076FF;
+      .deliveries-nav-item-heading,
+      .deliveries-nav-item-text {
+        color: #fff;
+      }
+    }
+  }
+}
