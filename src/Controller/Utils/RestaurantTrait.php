@@ -75,8 +75,6 @@ use Vich\UploaderBundle\Handler\UploadHandler;
 
 trait RestaurantTrait
 {
-    abstract protected function getRestaurantList(Request $request);
-
     abstract protected function getRestaurantRoutes();
 
     protected function getRestaurantRoute($name)
@@ -84,28 +82,6 @@ trait RestaurantTrait
         $routes = $this->getRestaurantRoutes();
 
         return $routes[$name];
-    }
-
-    /**
-     * @HideSoftDeleted
-     */
-    public function restaurantListAction(Request $request)
-    {
-        $routes = $request->attributes->get('routes');
-
-        [ $restaurants, $pages, $page ] = $this->getRestaurantList($request);
-
-        return $this->render($request->attributes->get('template'), [
-            'layout' => $request->attributes->get('layout'),
-            'restaurants' => $restaurants,
-            'pages' => $pages,
-            'page' => $page,
-            'dashboard_route' => $routes['dashboard'],
-            'menu_taxon_route' => $routes['menu_taxon'],
-            'menu_taxons_route' => $routes['menu_taxons'],
-            'restaurant_route' => $routes['restaurant'],
-            'products_route' => $routes['products']
-        ]);
     }
 
     protected function withRoutes($params, array $routes = [])

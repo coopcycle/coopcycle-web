@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
@@ -1977,6 +1978,39 @@ class AdminController extends AbstractController
 
         return $this->render('admin/hubs.html.twig', [
             'hubs' => $hubs,
+        ]);
+    }
+
+    /**
+     * @HideSoftDeleted
+     */
+    public function restaurantListAction(Request $request)
+    {
+        $routes = $request->attributes->get('routes');
+
+        $pledgeCount = $this->getDoctrine()
+            ->getRepository(Pledge::class)
+            ->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->where('p.state = :state_new')
+            ->setParameter('state_new', 'new')
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+
+        [ $restaurants, $pages, $page ] = $this->getRestaurantList($request);
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'restaurants' => $restaurants,
+            'pages' => $pages,
+            'page' => $page,
+            'dashboard_route' => $routes['dashboard'],
+            'menu_taxon_route' => $routes['menu_taxon'],
+            'menu_taxons_route' => $routes['menu_taxons'],
+            'restaurant_route' => $routes['restaurant'],
+            'products_route' => $routes['products'],
+            'pledge_count' => $pledgeCount
         ]);
     }
 }

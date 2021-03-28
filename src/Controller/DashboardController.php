@@ -62,11 +62,6 @@ class DashboardController extends AbstractController
         ];
     }
 
-    protected function getRestaurantList(Request $request)
-    {
-        return [ $this->getUser()->getRestaurants(), 1, 1 ];
-    }
-
     protected function getStoreList()
     {
         return [ $this->getUser()->getStores(), 1, 1 ];

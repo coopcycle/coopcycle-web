@@ -12,7 +12,9 @@
       {{ 'adminDashboard.hubs.title'|trans }}
     </a>
     <a href="{{ path('admin_promotions') }}" class="btn btn-default">{% trans %}adminDashboard.promotions.title{% endtrans %}</a>
-    <a href="{{ path('admin_restaurants_pledges') }}" class="btn btn-default">{% trans %}adminDashboard.pledges.title{% endtrans %}</a>
+    <a href="{{ path('admin_restaurants_pledges') }}" class="btn btn-default">
+      {% trans %}adminDashboard.pledges.title{% endtrans %} <span class="badge">{{ pledge_count }}</span>
+    </a>
   </div>
   <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success">
     <i class="fa fa-plus"></i> {% trans %}adminDashboard.restaurants.createNew{% endtrans %}
