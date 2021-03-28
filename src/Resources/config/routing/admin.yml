@@ -483,7 +483,7 @@ admin_store_new_address:
         routes:
             stores: admin_stores
             store: admin_store
-            store_addresses: admin_store_address
+            store_addresses: admin_store_addresses
     methods:  [ GET, POST ]
 
 admin_store_address:
@@ -494,7 +494,7 @@ admin_store_address:
         routes:
             stores: admin_stores
             store: admin_store
-            store_addresses: admin_store_address
+            store_addresses: admin_store_addresses
     methods:  [ GET, POST ]
 
 admin_store_addresses:
