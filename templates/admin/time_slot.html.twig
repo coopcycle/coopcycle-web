@@ -16,10 +16,12 @@
 {% block content %}
 
 <div class="bg-light d-flex align-items-center justify-content-between p-4 mb-4">
-  <label>{{ 'form.time_slot.preview_title'|trans }}</label>
+  <label class="m-0">
+    {{ 'form.time_slot.preview_title'|trans }}
+    <i class="fa fa-refresh fa-spin fa fa-fw invisible" id="preview-loader"></i>
+  </label>
   <div id="preview"
     data-url="{{ path('admin_time_slot_preview') }}"></div>
-  <i class="fa fa-spinner fa-pulse fa-2x fa-fw d-done" id="preview-loader"></i>
 </div>
 
 {{ form_start(form) }}
