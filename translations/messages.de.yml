@@ -406,10 +406,6 @@ form.settings.administrator_email.label: Administrator E-Mail-Adresse
 form.settings.latlng.help: "Bestimme die standardmäßigen Längen- und Breitengrade.\
   \ Du erhältst sie auf <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
 form.settings.latlng.label: Geo-Koordinaten
-form.settings.google_api_key.help: "Erstelle ein Google-Konto um Deinen <a href=\"\
-  https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
-  >API Schlüssel</a> anzufordern\n"
-form.settings.google_api_key.label: Google API Schlüssel
 form.settings.stripe_connect_client_id.help: "Den Identifier erhältst Du auf der <a\
   \ href=\"https://dashboard.stripe.com/account/applications/settings\">Einstellungen-Seite</a>\
   \ von Stripe Connect\n"

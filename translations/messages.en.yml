@@ -506,10 +506,6 @@ form.settings.stripe_secret_key.help: "Create a Stripe account to obtain your <a
 form.settings.stripe_connect_client_id.label: Stripe Connect identifier
 form.settings.stripe_connect_client_id.help: "Get the identifier on the <a href=\"\
   https://dashboard.stripe.com/account/applications/settings\">parameters page</a>\n"
-form.settings.google_api_key.label: Google API key
-form.settings.google_api_key.help: "Create a Google account to obtain your <a href=\"\
-  https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
-  >API key</a>\n"
 form.settings.latlng.label: Geographical coordinates
 form.settings.latlng.help: "Specify the default latitude and longitude. You can get\
   \ it on <a href=\"https://www.latlong.net/\">latlong.net</a>\n"

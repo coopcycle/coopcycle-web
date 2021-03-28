@@ -325,9 +325,6 @@ form.settings.stripe_enable_livemode.help: Per abilitare la modalità « live »
 task.receipt.reference: 'Riferimento: <strong>%ref%</strong>'
 basics.hours: '%count% ora|%count% ore'
 basics.days: '%count% giorno|%count% giorni'
-form.settings.google_api_key.help: "Crea un Account Google per ottenere il tuo <a\
-  \ href=\"https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
-  >chiave API</a>\n"
 basics.weeks: '%count% settimana|%count% settimane'
 basics.none: Nessuno
 form.api_app.name.label: Nome dell'app
@@ -561,7 +558,6 @@ form.settings.stripe_secret_key.help: "Crea un Account stripe per ottenere la tu
   \ href=\"https://stripe.com/docs/dashboard#api-keys\">chiave pubblicabile</a>\n"
 form.settings.stripe_connect_client_id.help: "Ottieni l'identificativo nella <a href=\"\
   https://dashboard.stripe.com/account/applications/settings\">pagina dei parametri</a>\n"
-form.settings.google_api_key.label: Chiavi API Google
 form.settings.latlng.label: Coordinate geografiche
 form.settings.latlng.help: "Specifica la latitudine e longitudine predefinita. La\
   \ puoi ottenere su <a href=\"https://www.latlong.net/\">latlong.net</a>\n"

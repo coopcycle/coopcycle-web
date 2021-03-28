@@ -347,10 +347,6 @@ form.settings.stripe_connect_client_id.label: Identificador de Stripe Connect
 form.settings.stripe_connect_client_id.help: "Puedes encontrar tu identificador en\
   \ <a href=\"https://dashboard.stripe.com/account/applications/settings\">la página\
   \ de parámetros</a>\n"
-form.settings.google_api_key.label: Clave API de google
-form.settings.google_api_key.help: "Crea una cuenta Google para obtener tu <a href=\"\
-  https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
-  >clave API</a>\n"
 form.settings.latlng.label: Coordinadas geográficas
 form.settings.latlng.help: "Especifica la latitud y longitud por defecto del mapa.\
   \ Puedes obtenerla en <a href=\"https://www.latlong.net/\">latlong.net</a>\n"

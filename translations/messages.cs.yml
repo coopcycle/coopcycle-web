@@ -459,10 +459,6 @@ form.settings.stripe_connect_client_id.label: identifikátor Stripe Connect
 form.settings.stripe_connect_client_id.help: "Identifikátor získáte na stránce <a\
   \ href=\"https://dashboard.stripe.com/account/applications/settings\"> parametry\
   \ </a>\n"
-form.settings.google_api_key.label: Google API klíč
-form.settings.google_api_key.help: "Vytvořte si účet Google a získejte <a href=\"\
-  https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
-  > klíč API </a>\n"
 form.settings.latlng.label: Zeměpisné souřadnice
 form.settings.latlng.help: "Určete výchozí zeměpisnou šířku a délku. Můžete ji získat\
   \ na <a href=\"https://www.latlong.net/\">latlong.net </a>\n"

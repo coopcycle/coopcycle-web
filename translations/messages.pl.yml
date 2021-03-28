@@ -638,10 +638,6 @@ form.menu_item_modifier.price.label: Cena
 form.menu_item_modifier.name.label: Nazwa
 form.menu_item.price.label: Cena
 form.menu_item.name.label: Nazwa
-form.settings.google_api_key.help: "Stwórz konto Google, aby uzyskać swój <a href=\"\
-  https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
-  >klucz API</a>\n"
-form.settings.google_api_key.label: Klucz API Google
 form.settings.stripe_connect_client_id.help: "Uzyskaj identyfikator na <a href=\"\
   https://dashboard.stripe.com/account/applications/settings\">stronie parametrów</a>\n"
 form.settings.stripe_connect_client_id.label: Identyfikator Połączenia Stripe

@@ -512,10 +512,6 @@ form.settings.stripe_connect_client_id.label: 'Identificador de Stripe Connect'
 form.settings.stripe_connect_client_id.help: "Puetz trobar lo tuyo identificador en\
   \ a <a href=\"https://dashboard.stripe.com/account/applications/settings\">pachina\
   \ de parametros</a>\n"
-form.settings.google_api_key.label: 'Clau de l''API de Google'
-form.settings.google_api_key.help: "Creya una cuenta Google pa obtener la tuya <a\
-  \ href=\"https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
-  >clau API</a>\n"
 form.settings.latlng.label: 'Coordinadas cheograficas'
 form.settings.latlng.help: "Especifica la latitut y lonchitut per defecto d'o mapa.\
   \ Puetz obtener-la en <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
