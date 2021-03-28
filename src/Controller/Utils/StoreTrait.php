@@ -310,6 +310,7 @@ trait StoreTrait
             'debug_pricing' => $request->query->getBoolean('debug', false),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
+            'back_route' => $routes['back'],
             'tax_rate' => $rate,
             'show_left_menu' => $request->attributes->get('show_left_menu', true),
         ]);

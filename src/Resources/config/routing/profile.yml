@@ -365,6 +365,7 @@ dashboard_store_delivery_new:
             stores: dashboard_stores
             store: dashboard_store
             success: dashboard_store_deliveries
+            back: dashboard
         show_left_menu: false
     methods:  [ GET, POST ]
 

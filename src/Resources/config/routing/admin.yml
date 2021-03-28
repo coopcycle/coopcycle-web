@@ -464,6 +464,7 @@ admin_store_delivery_new:
             stores: admin_stores
             store: admin_store
             success: admin_store_deliveries
+            back: admin_deliveries
     methods:  [ GET, POST ]
 
 admin_store_users:
