@@ -192,9 +192,8 @@ html, body {
   position: relative;
   cursor: pointer;
   border-radius: 0 !important;
-  padding: 8px;
+  padding: 8px 8px 8px 14px;
   border-right: none;
-  border-left: 6px solid #ffffff;
 
   a {
     color: $text-color;
@@ -208,6 +207,15 @@ html, body {
   }
   &:hover {
     color: $gray-light;
+  }
+
+  &-color {
+    width: 6px;
+    background-color: rgb(33, 178, 82);
+    height: calc(100% - 4px);
+    position: absolute;
+    left: 0;
+    top: 0;
   }
 }
 

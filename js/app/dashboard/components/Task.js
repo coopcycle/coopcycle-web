@@ -163,7 +163,6 @@ class Task extends React.Component {
       ...taskAttributes,
       style: {
         display: isVisible ? 'block' : 'none',
-        borderLeft: `6px solid ${color}`
       },
       key: task['@id'],
       className: classNames.join(' '),
@@ -181,12 +180,15 @@ class Task extends React.Component {
         task={ task }
         collect={ collect }
         attributes={ contextMenuTriggerAttrs }>
-        <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
-        <TaskCaption task={ task } t={ this.props.t } />
-        { this.renderAttrs() }
-        { this.renderTags() }
-        { this.renderIconRight() }
-        { this.renderEtaProgress() }
+        <span className="list-group-item-color" style={{ backgroundColor: color }}></span>
+        <span>
+          <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
+          <TaskCaption task={ task } t={ this.props.t } />
+          { this.renderAttrs() }
+          { this.renderTags() }
+          { this.renderIconRight() }
+          { this.renderEtaProgress() }
+        </span>
       </ContextMenuTrigger>
     )
 
