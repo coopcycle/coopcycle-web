@@ -1,35 +1,26 @@
 <?php
 
-namespace AppBundle\Command;
+namespace AppBundle\MessageHandler;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Store;
+use AppBundle\Message\IndexDeliveries;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psonic\Client;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Twig\Environment as TwigEnvironment;
 
-Class BuildIndexCommand extends Command
+class IndexDeliveriesHandler implements MessageHandlerInterface
 {
-    private $entityManager;
-    private $ingestClient;
-    private $controlClient;
-    private $sonicSecretPassword;
-    private $namespace;
-
     public function __construct(
         EntityManagerInterface $entityManager,
         Client $ingestClient,
         Client $controlClient,
         TwigEnvironment $twig,
         string $sonicSecretPassword,
-        string $namespace)
+        string $namespace,
+        LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
         $this->ingestClient = $ingestClient;
@@ -37,23 +28,10 @@ Class BuildIndexCommand extends Command
         $this->twig = $twig;
         $this->sonicSecretPassword = $sonicSecretPassword;
         $this->namespace = $namespace;
-
-        parent::__construct();
+        $this->logger = $logger;
     }
 
-    protected function configure()
-    {
-        $this
-            ->setName('coopcycle:index:build')
-            ->setDescription('Build Sonic index.');
-    }
-
-    protected function initialize(InputInterface $input, OutputInterface $output)
-    {
-        $this->io = new SymfonyStyle($input, $output);
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function __invoke(IndexDeliveries $message)
     {
         $ingest  = new \Psonic\Ingest($this->ingestClient);
         $control = new \Psonic\Control($this->controlClient);
@@ -62,9 +40,16 @@ Class BuildIndexCommand extends Command
         $control->connect($this->sonicSecretPassword);
 
         $allCollectionName = 'store:*:deliveries';
-        $deliveryRepo = $this->entityManager->getRepository(Delivery::class);
 
-        $q = $deliveryRepo->createQueryBuilder('d')->getQuery();
+        $qb = $this->entityManager->getRepository(Delivery::class)
+            ->createQueryBuilder('d');
+
+        $q = $qb
+            ->andWhere(
+                $qb->expr()->in('d.id', $message->getIds())
+            )
+            ->getQuery();
+
         foreach ($q->toIterable() as $delivery) {
 
             $html = $this->twig->render('sonic/delivery.html.twig', [
@@ -74,7 +59,7 @@ Class BuildIndexCommand extends Command
             $response = $ingest->push($allCollectionName, $this->namespace, $delivery->getId(), $html);
             $status = $response->getStatus(); // Should be "OK"
 
-            $this->io->text(sprintf('[%s] %s: %s', $allCollectionName, $delivery->getId(), $status));
+            $this->logger->info(sprintf('[%s] %s: %s', $allCollectionName, $delivery->getId(), $status));
 
             $store = $delivery->getStore();
 
@@ -84,13 +69,11 @@ Class BuildIndexCommand extends Command
                 $response = $ingest->push($collectionName, $this->namespace, $delivery->getId(), $html);
                 $status = $response->getStatus(); // Should be "OK"
 
-                $this->io->text(sprintf('[%s] %s: %s', $collectionName, $delivery->getId(), $status));
+                $this->logger->info(sprintf('[%s] %s: %s', $collectionName, $delivery->getId(), $status));
             }
         }
 
         $ingest->disconnect();
         $control->disconnect();
-
-        return 0;
     }
 }

@@ -1,0 +1,6 @@
+<h3>Delivery #{{ delivery.id }}</h3>
+{% if delivery.store is not empty %}
+<h4>{{ delivery.store.name }}</h4>
+{% endif %}
+<p>{{ delivery.pickup.address.streetAddress }}</p>
+<p>{{ delivery.dropoff.address.streetAddress }}</p>

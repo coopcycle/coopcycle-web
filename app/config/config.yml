@@ -138,6 +138,7 @@ framework:
             'AppBundle\Message\UpdateLocation': async
             'AppBundle\Message\TopBarNotification': async
             'AppBundle\Message\Webhook': async
+            'AppBundle\Message\IndexDeliveries': async
     workflows:
         enabled: true
     mailer:
@@ -632,6 +633,7 @@ fos_js_routing:
         - restaurant_cart_address
         - restaurant_cart_clear_time
         - restaurant_modify_cart_item_quantity
+        - admin_delivery
         - admin_dashboard_fullscreen
         - admin_foodtech_dashboard
         - admin_foodtech_settings

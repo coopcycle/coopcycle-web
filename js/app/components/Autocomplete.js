@@ -46,7 +46,7 @@ export default class extends Component {
     this.setState({ isFetching: true })
     $.getJSON(this.props.baseURL, { q: value }, data => {
       this.setState({
-        suggestions: data,
+        suggestions: this.props.responseProp ? data[this.props.responseProp] : data,
         isFetching: false,
       })
     })
@@ -88,7 +88,7 @@ export default class extends Component {
         onSuggestionsClearRequested={this.onSuggestionsClearRequested.bind(this)}
         onSuggestionSelected={this.onSuggestionSelected.bind(this)}
         getSuggestionValue={getSuggestionValue}
-        renderSuggestion={renderSuggestion}
+        renderSuggestion={ this.props.renderSuggestion || renderSuggestion }
         shouldRenderSuggestions={this.shouldRenderSuggestions.bind(this)}
         inputProps={inputProps}
       />

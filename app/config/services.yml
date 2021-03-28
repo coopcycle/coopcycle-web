@@ -595,6 +595,11 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
+  AppBundle\Doctrine\EventSubscriber\SearchDeliveriesSubscriber:
+    tags:
+      - { name: monolog.logger, channel: coopcycle.search }
+      - { name: doctrine.event_subscriber }
+
   AppBundle\Api\EventSubscriber\PricingSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
@@ -903,6 +908,15 @@ services:
   AppBundle\MessageHandler\DeliveryCreatedHandler:
     arguments:
       $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  AppBundle\MessageHandler\IndexDeliveriesHandler:
+    arguments:
+      $ingestClient: '@sonic.ingest.client'
+      $controlClient: '@sonic.control.client'
+      $sonicSecretPassword: '%env(SONIC_SECRET_PASSWORD)%'
+      $namespace: '%sonic_namespace%'
+    tags:
+      - { name: monolog.logger, channel: coopcycle.search }
 
   AppBundle\Service\MaintenanceManager: ~
 
