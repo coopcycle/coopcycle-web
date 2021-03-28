@@ -473,6 +473,8 @@ admin_store_users:
         routes:
             stores: admin_stores
             store: admin_store
+            store_addresses: admin_store_addresses
+            store_users: admin_store_users
     methods:  [ GET, POST ]
 
 admin_store_new_address:

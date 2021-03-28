@@ -1,4 +1,4 @@
-{% extends layout %}
+{% extends 'store/layout.html.twig' %}
 
 {% block breadcrumb %}
 <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
@@ -6,7 +6,14 @@
 <li>{% trans %}stores.users{% endtrans %}</li>
 {% endblock %}
 
-{% block content %}
+{% block store_content %}
+
+<p class="text-right">
+  <a href="#" class="btn btn-success"
+    data-toggle="modal" data-target="#invite-user-modal">
+    <i class="fa fa-plus"></i> {% trans %}adminDashboard.users.invite{% endtrans %}
+  </a>
+</p>
 
 {% if users|length > 0 %}
   <table class="table">
@@ -35,6 +42,26 @@
 {{ form_start(add_user_form) }}
   {{ form_widget(add_user_form) }}
 {{ form_end(add_user_form) }}
+
+<div class="modal fade" tabindex="-1" role="dialog" id="invite-user-modal">
+  <div class="modal-dialog" role="document">
+    {{ form_start(invite_form, { attr: { class: 'modal-content' } }) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">{{ 'adminDashboard.users.invite'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        {{ form_widget(invite_form) }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+        <button type="submit" class="btn btn-primary">{{ 'basics.save'|trans }}</button>
+      </div>
+    {{ form_end(invite_form) }}
+  </div>
+</div>
 
 {% endblock %}
 

@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskCollectionItem;
@@ -16,6 +17,7 @@ use AppBundle\Form\DeliveryImportType;
 use AppBundle\Message\DeliveryCreated;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
+use AppBundle\Service\InvitationManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
@@ -26,6 +28,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -54,7 +57,9 @@ trait StoreTrait
         ]);
     }
 
-    public function storeUsersAction($id, Request $request, UserManagerInterface $userManager)
+    public function storeUsersAction($id, Request $request,
+        UserManagerInterface $userManager,
+        InvitationManager $invitationManager)
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
 
@@ -77,6 +82,33 @@ trait StoreTrait
             return $this->redirectToRoute('admin_store_users', ['id' => $id]);
         }
 
+        $inviteForm = $this->createFormBuilder([])
+            ->add('email', EmailType::class)
+            ->getForm();
+
+        $inviteForm->handleRequest($request);
+
+        if ($inviteForm->isSubmitted() && $inviteForm->isValid()) {
+
+            $email = $inviteForm->get('email')->getData();
+
+            $invitation = new Invitation();
+            $invitation->setUser($this->getUser());
+            $invitation->setEmail($email);
+
+            $invitation->addStore($store);
+            $invitation->addRole('ROLE_STORE');
+
+            $invitationManager->send($invitation);
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('basics.send_invitation.confirm')
+            );
+
+            return $this->redirectToRoute($routes['store_users'], ['id' => $id]);
+        }
+
         return $this->render('store/users.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
@@ -84,6 +116,8 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'add_user_form' => $addUserForm->createView(),
+            'invite_form' => $inviteForm->createView(),
+            'store_addresses_route' => $routes['store_addresses']
         ]);
     }
 

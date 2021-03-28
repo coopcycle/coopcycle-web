@@ -15,7 +15,7 @@
     <small class="deliveries-nav-item-text">{% trans %}adminDashboard.stores.help{% endtrans %}</small>
   </a>
   <a href="{{ path('admin_deliveries_pricing') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_deliveries_pricing', 'admin_deliveries_pricing_ruleset' ] ? 'active' : '' }}">
+    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_deliveries_pricing', 'admin_deliveries_pricing_ruleset', 'admin_deliveries_pricing_ruleset_new' ] ? 'active' : '' }}">
     <h4 class="deliveries-nav-item-heading">
       <i class="fa fa-percent mr-2"></i>
       <span>{% trans %}adminDashboard.pricing.title{% endtrans %}</span>
@@ -23,7 +23,7 @@
     <small class="deliveries-nav-item-text">{% trans %}adminDashboard.pricing.help{% endtrans %}</small>
   </a>
   <a href="{{ path('admin_embed') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_embed', 'admin_forms', 'admin_form' ] ? 'active' : '' }}">
+    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_embed', 'admin_forms', 'admin_form', 'admin_form_new' ] ? 'active' : '' }}">
     <h4 class="deliveries-nav-item-heading">
       <i class="fa fa-check-square-o mr-2"></i>
       <span>{% trans %}adminDashboard.embed.title{% endtrans %}</span>

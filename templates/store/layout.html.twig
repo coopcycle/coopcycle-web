@@ -41,7 +41,7 @@
           </a>
         </li>
         {% if is_granted('ROLE_ADMIN') %}
-        <li role="presentation">
+        <li role="presentation" {% if app.request.attributes.get('_route') == 'admin_store_users' %}class="active"{% endif %}>
           <a href="{{ path('admin_store_users', { id: store.id }) }}">
             {{ 'stores.users'|trans }}
           </a>
