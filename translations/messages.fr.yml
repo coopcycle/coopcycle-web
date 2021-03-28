@@ -1153,3 +1153,10 @@ restaurant.form.edenred_merchant_id.help: Laissez vide pour désactiver Edenred
 restaurants.mode.list: Afficher la liste
 restaurants.mode.map: Afficher la carte
 order.number: 'Votre commande porte le numéro <strong><span class="text-monospace">%number%</span></strong>'
+adminDashboard.stores.help: Créez des comptes client
+adminDashboard.pricing.help: Définissez des règles pour calculer le prix d'une livraison
+adminDashboard.embed.help: Créez des formulaires pour commander des livraisons
+adminDashboard.time_slots.help: Configurez des tranches horaires
+adminDashboard.package_sets.help: Configurez les types de marchandise à transporter
+adminDashboard.zones.help: Définissez des zones géographiques
+adminDashboard.tags.help: Associez des tags et des couleurs aux tâches

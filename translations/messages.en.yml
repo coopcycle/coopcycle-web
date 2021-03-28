@@ -1156,3 +1156,10 @@ restaurant.form.edenred_merchant_id.help: Leave empty to disable Edenred
 restaurants.mode.list: View as list
 restaurants.mode.map: View as map
 order.number: 'Your order has number <strong><span class="text-monospace">%number%</span></strong>'
+adminDashboard.stores.help: Create customer accounts
+adminDashboard.pricing.help: Define rules to calculate the price of a delivery
+adminDashboard.embed.help: Create forms to order deliveries
+adminDashboard.time_slots.help: Set up time slots
+adminDashboard.package_sets.help: Configure the types of goods to transport
+adminDashboard.zones.help: Define geographical areas
+adminDashboard.tags.help: Assign tags and colors to tasks

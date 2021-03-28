@@ -1,11 +1,7 @@
-{% extends "admin.html.twig" %}
+{% extends "deliveries.html.twig" %}
 
 {% form_theme delivery_import_form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% form_theme delivery_export_form 'form/deliveries_export.html.twig' %}
-
-{% block breadcrumb %}
-<li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
-{% endblock %}
 
 {% block content %}
 

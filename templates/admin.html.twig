@@ -6,11 +6,6 @@
 
 {% block banner %}
   {% include '_partials/maintenance.html.twig' %}
-{% endblock %}
-
-{% block body %}
-<div class="container-fluid container--full-height">
-
   {% if not settings_manager.fullyConfigured %}
   <div class="alert alert-danger">
   {% trans with { '%settings_url%': path('admin_settings') } %}
@@ -18,7 +13,6 @@
   {% endtrans %}
   </div>
   {% endif %}
-
   {% if coopcycle_has_ordering_delay() %}
   <div class="alert alert-warning">
     <span><i class="fa fa-lg fa-clock-o"></i> {{ 'ordering_delay.admin_reminder'|trans }}</span>
@@ -27,15 +21,16 @@
     </a>
   </div>
   {% endif %}
+{% endblock %}
 
+{% block body %}
+<div class="container-fluid container--full-height">
   <ol class="breadcrumb">
     <li><a href="{{ path('admin_index') }}">{% trans %}adminDashboard.title{% endtrans %}</a></li>
     {% block breadcrumb %}{% endblock %}
   </ol>
-
   {% block subnav %}{% endblock %}
   <div class="mb-4">{% block content %}{% endblock %}</div>
-
 </div>
 {% endblock %}
 
