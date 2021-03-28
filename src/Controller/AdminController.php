@@ -53,6 +53,7 @@ use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
+use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
@@ -1705,6 +1706,35 @@ class AdminController extends AbstractController
         $timeSlot = new TimeSlot();
 
         return $this->renderTimeSlotForm($request, $timeSlot, $objectManager);
+    }
+
+    /**
+     * @Route("/admin/settings/time-slots/preview", name="admin_time_slot_preview")
+     */
+    public function timeSlotPreviewAction(Request $request, EntityManagerInterface $objectManager)
+    {
+        $timeSlot = new TimeSlot();
+
+        $form = $this->createForm(TimeSlotType::class, $timeSlot);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+
+            $timeSlot = $form->getData();
+
+            $form = $this->createFormBuilder()
+                ->add('example', TimeSlotChoiceType::class, [
+                    'time_slot' => $timeSlot,
+                ])
+                ->getForm();
+
+            return $this->render('admin/time_slot_preview.html.twig', [
+                'form' => $form->createView(),
+            ]);
+        }
+
+        return new Response('', 200);
     }
 
     /**

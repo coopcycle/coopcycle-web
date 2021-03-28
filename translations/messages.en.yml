@@ -1159,3 +1159,4 @@ adminDashboard.time_slots.help: Set up time slots
 adminDashboard.package_sets.help: Configure the types of goods to transport
 adminDashboard.zones.help: Define geographical areas
 adminDashboard.tags.help: Assign tags and colors to tasks
+form.time_slot.preview_title: Time slot preview

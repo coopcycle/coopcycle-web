@@ -14,6 +14,14 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="bg-light d-flex align-items-center justify-content-between p-4 mb-4">
+  <label>{{ 'form.time_slot.preview_title'|trans }}</label>
+  <div id="preview"
+    data-url="{{ path('admin_time_slot_preview') }}"></div>
+  <i class="fa fa-spinner fa-pulse fa-2x fa-fw d-done" id="preview-loader"></i>
+</div>
+
 {{ form_start(form) }}
   {{ form_row(form.name) }}
   {{ form_row(form.interval) }}
@@ -43,7 +51,7 @@
     {{ form_row(form.openingHours) }}
   </div>
   <hr>
-  <button type="submit" class="btn btn-block btn-primary">
+  <button type="submit" class="btn btn-lg btn-block btn-primary">
     {{ 'basics.save'|trans }}
   </button>
 {{ form_end(form) }}
