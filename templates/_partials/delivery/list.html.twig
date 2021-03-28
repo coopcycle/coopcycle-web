@@ -21,13 +21,17 @@
         <a href="{{ path(routes.view, { id: delivery.id }) }}">#{{ delivery.id }}</a>
       </td>
       {% if with_store is defined and with_store %}
-      <td>
+      <td width="20%">
         {% if delivery.owner is not empty %}
-          <a href="{{ path(deliveries.route, deliveries.params|merge({
-            (deliveries.paginatorOptions.filterFieldParameterName): delivery.owner is instanceof('AppBundle\\Entity\\LocalBusiness') ? 'r.id' : 's.id',
-            (deliveries.paginatorOptions.filterValueParameterName): delivery.owner.id })) }}">
-            {{ delivery.owner.name }}
-          </a>
+          {% if deliveries.route is defined %}
+            <a href="{{ path(deliveries.route, deliveries.params|merge({
+              (deliveries.paginatorOptions.filterFieldParameterName): delivery.owner is instanceof('AppBundle\\Entity\\LocalBusiness') ? 'r.id' : 's.id',
+              (deliveries.paginatorOptions.filterValueParameterName): delivery.owner.id })) }}">
+              {{ delivery.owner.name }}
+            </a>
+          {% else %}
+            <span>{{ delivery.owner.name }}</span>
+          {% endif %}
         {% endif %}
       </td>
       {% endif %}
@@ -42,7 +46,7 @@
         <br>
         <small>{{ details|join(' - ') }}</small>
       </td>
-      <td>
+      <td width="10%">
         <small>
           {% if delivery.dropoff.before|date('Ymd') == 'now'|date('Ymd') %}
             {{ delivery.dropoff.before|ago }}

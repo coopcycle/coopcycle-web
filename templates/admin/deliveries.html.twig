@@ -42,6 +42,22 @@
     </div>
   {% endif %}
 
+  {# {% include '_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %} #}
+
+  <h3>{{ 'basics.today'|trans }}</h3>
+  {% include '_partials/delivery/list.html.twig' with { deliveries: today, with_store: true, with_order: true } %}
+
+  <h3>{{ 'deliveries.section.upcoming'|trans }}</h3>
+  {% include '_partials/delivery/list.html.twig' with { deliveries: upcoming, with_store: true, with_order: true } %}
+
+  <hr>
+
+  <div class="d-flex align-items-center justify-content-between">
+    <h3>{{ 'deliveries.section.past'|trans }}</h3>
+    <div class="text-monospace">
+    {{ knp_pagination_render(deliveries, '@KnpPaginator/Pagination/sliding.html.twig') }}
+    </div>
+  </div>
   {% include '_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %}
 
   <nav class="text-center">

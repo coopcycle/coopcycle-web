@@ -675,9 +675,11 @@ class AdminController extends AbstractController
             return $response;
         }
 
-        $qb = $this->getDoctrine()
+        $sections = $this->getDoctrine()
             ->getRepository(Delivery::class)
-            ->createQueryBuilder('d');
+            ->getSections();
+
+        $qb = $sections['past'];
 
         // Allow filtering by store & restaurant with KnpPaginator
         $qb->leftJoin(Store::class, 's', Expr\Join::WITH, 's.id = d.store');
@@ -699,6 +701,8 @@ class AdminController extends AbstractController
         );
 
         return $this->render('admin/deliveries.html.twig', [
+            'today' => $sections['today']->getQuery()->getResult(),
+            'upcoming' => $sections['upcoming']->getQuery()->getResult(),
             'deliveries' => $deliveries,
             'routes' => $this->getDeliveryRoutes(),
             'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']),

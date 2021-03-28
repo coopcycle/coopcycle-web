@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity name="AppBundle\Entity\Delivery" table="delivery">
+  <entity name="AppBundle\Entity\Delivery" table="delivery" repository-class="AppBundle\Entity\DeliveryRepository">
     <field name="weight" type="integer" column="weight" nullable="true"/>
     <field name="vehicle" type="string" column="vehicle" nullable="true"/>
     <one-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="delivery">
