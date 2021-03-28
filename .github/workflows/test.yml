@@ -25,7 +25,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '15.x'
       - name: Install PHP dependencies
         run: composer install --prefer-dist --no-progress --no-suggest --no-scripts
       - name: Install JS dependencies
