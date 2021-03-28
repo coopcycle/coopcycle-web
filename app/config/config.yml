@@ -642,6 +642,7 @@ fos_js_routing:
         - admin_order_cancel
         - admin_order_delay
         - admin_order_fulfill
+        - admin_restaurant
         - admin_restaurant_dashboard
         - admin_restaurant_stats
         - admin_tags

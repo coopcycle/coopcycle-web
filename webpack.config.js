@@ -9,6 +9,7 @@ Encore
   .setPublicPath('/build')
 
   .addEntry('admin-orders', './js/app/admin/orders.js')
+  .addEntry('admin-restaurants', './js/app/admin/restaurants.js')
   .addEntry('common', './js/app/common.js')
   .addEntry('customize-form', './js/app/customize/form.js')
   .addEntry('checkout-summary', './js/app/checkout/summary.js')

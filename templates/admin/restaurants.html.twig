@@ -9,7 +9,10 @@
 {% block content %}
 
 <div class="d-flex align-items-center justify-content-between">
-  <div>
+  <div class="d-flex align-items-center flex-fill">
+    <div id="search-restaurants" class="w-25 mr-4">
+      <input type="text" class="form-control">
+    </div>
     <a href="{{ path('admin_hubs') }}" class="btn btn-default mr-4">
       {{ 'adminDashboard.hubs.title'|trans }}
     </a>
@@ -34,9 +37,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-$('#form_enable_restaurant_pledges').on('change', function(e) {
-  $(e.target).closest('form').submit();
-});
-</script>
+{{ encore_entry_script_tags('admin-restaurants') }}
 {% endblock %}
