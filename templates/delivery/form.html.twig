@@ -3,19 +3,21 @@
 {% form_theme form 'form/delivery.html.twig' %}
 
 {% block breadcrumb %}
-
-{% set delivery = form.vars.value %}
-
-<li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
-{% if delivery.id is not null %}
-<li>#{{ delivery.id }}</li>
-{% else %}
-<li>{% trans %}delivery.createNew{% endtrans %}</li>
-{% endif %}
-
-{% block subnav %}
+  {% set delivery = form.vars.value %}
+  <li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
+  {% if delivery.id is not null %}
+  <li>#{{ delivery.id }}</li>
+  {% else %}
+  <li>{% trans %}delivery.createNew{% endtrans %}</li>
+  {% endif %}
 {% endblock %}
 
+{% block dashboard_subnav %}
+  <div>
+    <a href="{{ path(back_route) }}">
+      <i class="fa fa-arrow-left mr-2"></i>{{ 'stores.deliveries'|trans }}
+    </a>
+  </div>
 {% endblock %}
 
 {% block content %}
@@ -86,7 +88,7 @@
 
   <div class="d-md-flex d-lg-flex d-xl-flex flex-row mb-4">
     <div class="col-md-7">
-      {% if delivery.store is not empty and delivery.store.createOrders %}
+      {% if delivery.id is empty and delivery.store is not empty and delivery.store.createOrders %}
         <div id="delivery-price" class="delivery-price-preview mb-4 mb-md-0"
           data-tax-rate-amount="{{ tax_rate.amount|e('html_attr') }}"
           data-tax-rate-is-included-in-price="{{ tax_rate.isIncludedInPrice()|json_encode|e('html_attr') }}">

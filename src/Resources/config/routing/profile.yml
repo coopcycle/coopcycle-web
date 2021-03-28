@@ -320,6 +320,7 @@ dashboard_delivery:
       layout: 'dashboard.html.twig'
       routes:
           success: dashboard
+          back: dashboard
   methods:  [ GET, POST ]
 
 dashboard_stores:

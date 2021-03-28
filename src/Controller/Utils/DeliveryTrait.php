@@ -79,6 +79,7 @@ trait DeliveryTrait
             'delivery' => $delivery,
             'form' => $form->createView(),
             'debug_pricing' => $request->query->getBoolean('debug', false),
+            'back_route' => $routes['back'],
         ]);
     }
 

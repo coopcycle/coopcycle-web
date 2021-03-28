@@ -5,6 +5,7 @@ admin_delivery:
       layout: 'admin.html.twig'
       routes:
           success: admin_deliveries
+          back: admin_deliveries
   methods:  [ GET, POST ]
 
 admin_order_receipt:
