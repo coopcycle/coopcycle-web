@@ -12,6 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
       - uses: actions/setup-python@v1
         with:
           python-version: 3.7
