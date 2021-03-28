@@ -1,4 +1,4 @@
-{% extends layout %}
+{% extends 'store/layout.html.twig' %}
 
 {% form_theme form 'form/store.html.twig' %}
 
@@ -12,56 +12,16 @@
 {% block subnav %}
 {% endblock %}
 
-{% block content %}
+{% block store_content %}
 
 {{ form_start(form) }}
 
-  <div class="row">
-    <div class="col-sm-3">
-      {% if form.imageFile is defined %}
-        {{ form_row(form.imageFile) }}
-      {% endif %}
-      <ul class="nav nav-pills nav-stacked mb-4">
-        <li role="presentation" class="active">
-          <a role="tab" data-toggle="tab" href="#general" aria-controls="general">
-            {{ 'restaurant.form.section.general'|trans }}
-          </a>
-        </li>
-        <li role="presentation">
-          <a role="tab" data-toggle="tab" href="#settings" aria-controls="settings">
-            {{ 'store.form.section.settings'|trans }}
-          </a>
-        </li>
-        {% if store.id is not empty %}
-        <li role="presentation">
-          <a href="{{ path(store_addresses_route, { id: store.id }) }}">
-            {{ 'stores.address_book'|trans }}
-          </a>
-        </li>
-        {% if is_granted('ROLE_ADMIN') %}
-        <li role="presentation">
-          <a href="{{ path('admin_store_users', { id: store.id }) }}">
-            {{ 'stores.users'|trans }}
-          </a>
-        </li>
-        <li role="presentation">
-          <a href="{{ path('admin_store_deliveries', { id: store.id }) }}">
-            {{ 'stores.deliveries'|trans }}
-          </a>
-        </li>
-        {% endif %}
-        {% endif %}
-      </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="general">
+      {% include "store/form/_partials/general.html.twig" %}
     </div>
-    <div class="col-sm-9">
-      <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="general">
-          {% include "store/form/_partials/general.html.twig" %}
-        </div>
-        <div role="tabpanel" class="tab-pane" id="settings">
-          {% include "store/form/_partials/settings.html.twig" %}
-        </div>
-      </div>
+    <div role="tabpanel" class="tab-pane" id="settings">
+      {% include "store/form/_partials/settings.html.twig" %}
     </div>
   </div>
 

@@ -375,6 +375,7 @@ dashboard_store_address_new:
         routes:
             stores: dashboard_stores
             store: dashboard_store
+            store_addresses: dashboard_store_addresses
     methods:  [ GET, POST ]
 
 dashboard_store_address:
@@ -385,6 +386,7 @@ dashboard_store_address:
         routes:
             stores: dashboard_stores
             store: dashboard_store
+            store_addresses: dashboard_store_addresses
     methods:  [ GET, POST ]
 
 dashboard_store_addresses:

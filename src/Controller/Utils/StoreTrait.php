@@ -139,6 +139,7 @@ trait StoreTrait
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
+            'store_route' => $routes['store'],
             'stores_route' => $routes['stores'],
             'store_delivery_new_route' => $routes['store_delivery_new'],
             'store_deliveries_route' => $routes['store_deliveries'],
@@ -176,7 +177,7 @@ trait StoreTrait
                 $translator->trans('global.changesSaved')
             );
 
-            return $this->redirectToRoute($routes['store'], ['id' => $store->getId()]);
+            return $this->redirectToRoute($routes['store_addresses'], ['id' => $store->getId()]);
         }
 
         return $this->render('store/address_form.html.twig', [
@@ -406,14 +407,23 @@ trait StoreTrait
             return $this->redirectToRoute($routes['store_addresses'], [ 'id' => $store->getId() ]);
         }
 
+        $address = new Address();
+
+        $addressForm = $this->createForm(AddressType::class, $address, [
+            'with_name' => true,
+            'with_widget' => true,
+        ]);
+
         return $this->render('store/addresses.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
+            'address_form' => $addressForm->createView(),
             'store_address_new_route' => $routes['store_address_new'],
             'store_address_route' => $routes['store_address'],
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
+            'store_addresses_route' => $routes['store_addresses'],
         ]);
     }
 }
