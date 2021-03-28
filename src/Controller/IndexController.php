@@ -6,6 +6,7 @@ use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
+use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Enum\FoodEstablishment;
@@ -78,6 +79,7 @@ class IndexController extends AbstractController
         [ $stores, $storesCount ] =
             $this->getItems($repository, Store::class, $projectCache, sprintf('homepage.stores.%s', $cacheKeySuffix));
 
+        $hubs = $this->getDoctrine()->getRepository(Hub::class)->findAll();
 
         $qb = $this->getDoctrine()
             ->getRepository(DeliveryForm::class)
@@ -104,6 +106,7 @@ class IndexController extends AbstractController
         return $this->render('index/index.html.twig', array(
             'restaurants' => $restaurants,
             'stores' => $stores,
+            'hubs' => $hubs,
             'show_more_restaurants' => $restaurantsCount > self::MAX_RESULTS,
             'show_more_stores' => $storesCount > self::MAX_RESULTS,
             'max_results' => self::MAX_RESULTS,

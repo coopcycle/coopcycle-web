@@ -50,6 +50,21 @@
   } %}
 {% endif %}
 
+{% if hubs|length > 0 %}
+  {% for hub in hubs %}
+    {% if hub.restaurants|length >= 3 %}
+      {% include 'index/_partials/section.html.twig' with {
+        items: hub.restaurants|slice(0, 3),
+        section_title: hub.name,
+        view_all: 'index.view_all_shops'|trans,
+        view_all_path: path('stores'),
+        show_more: hub.restaurants|length > 3,
+        pad_items: false
+      } %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
 {% endblock %}
 
 {% block styles %}
