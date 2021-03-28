@@ -94,6 +94,7 @@ use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -1984,7 +1985,7 @@ class AdminController extends AbstractController
     /**
      * @HideSoftDeleted
      */
-    public function restaurantListAction(Request $request)
+    public function restaurantListAction(Request $request, SettingsManager $settingsManager)
     {
         $routes = $request->attributes->get('routes');
 
@@ -1998,6 +1999,37 @@ class AdminController extends AbstractController
             ->getSingleScalarResult()
             ;
 
+        $pledgesEnabled = filter_var(
+            $settingsManager->get('enable_restaurant_pledges'),
+            FILTER_VALIDATE_BOOLEAN
+        );
+
+        $pledgeForm = $this->createFormBuilder([
+            'enable_restaurant_pledges' => $pledgesEnabled,
+        ])
+        ->add('enable_restaurant_pledges', CheckboxType::class, [
+            'label' => 'form.settings.enable_restaurant_pledges.label',
+            'required' => false,
+        ])
+        ->getForm();
+
+        $pledgeForm->handleRequest($request);
+
+        if ($pledgeForm->isSubmitted() && $pledgeForm->isValid()) {
+
+            $enabled = $pledgeForm->get('enable_restaurant_pledges')->getData();
+
+            $settingsManager->set('enable_restaurant_pledges', $enabled ? 'yes' : 'no');
+            $settingsManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_restaurants');
+        }
+
         [ $restaurants, $pages, $page ] = $this->getRestaurantList($request);
 
         return $this->render($request->attributes->get('template'), [
@@ -2010,7 +2042,8 @@ class AdminController extends AbstractController
             'menu_taxons_route' => $routes['menu_taxons'],
             'restaurant_route' => $routes['restaurant'],
             'products_route' => $routes['products'],
-            'pledge_count' => $pledgeCount
+            'pledge_count' => $pledgeCount,
+            'pledge_form' => $pledgeForm->createView(),
         ]);
     }
 }

@@ -130,7 +130,7 @@ admin_restaurants:
             menu_taxons: admin_restaurant_menu_taxons
             products: admin_restaurant_products
             restaurant: admin_restaurant
-    methods: [ GET ]
+    methods: [ GET, POST ]
 
 admin_restaurant_menu_taxons:
     path: /admin/restaurants/{id}/menus
