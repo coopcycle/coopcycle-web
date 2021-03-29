@@ -9,6 +9,7 @@ use AppBundle\Form\Restaurant\FulfillmentMethodType;
 use AppBundle\Form\Restaurant\FulfillmentMethodsTrait;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -40,6 +41,10 @@ class HubType extends AbstractType
 
         $builder
             ->add('name', TextType::class, ['label' => 'basics.name'])
+            ->add('enabled', CheckboxType::class, [
+                'label' => 'basics.enabled',
+                'required' => false,
+            ])
             ->add('address', AddressType::class, [
                 'with_widget' => true,
                 'with_description' => false,

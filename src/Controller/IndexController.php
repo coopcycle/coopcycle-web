@@ -79,7 +79,9 @@ class IndexController extends AbstractController
         [ $stores, $storesCount ] =
             $this->getItems($repository, Store::class, $projectCache, sprintf('homepage.stores.%s', $cacheKeySuffix));
 
-        $hubs = $this->getDoctrine()->getRepository(Hub::class)->findAll();
+        $hubs = $this->getDoctrine()->getRepository(Hub::class)->findBy([
+            'enabled' => true
+        ]);
 
         $qb = $this->getDoctrine()
             ->getRepository(DeliveryForm::class)
