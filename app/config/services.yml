@@ -400,12 +400,15 @@ services:
 
   AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider: ~
 
+  AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider: ~
+
   AppBundle\ExpressionLanguage\ExpressionLanguage:
     arguments:
       $cache: null
       $providers:
         - '@coopcycle.expression_language.zone.provider'
         - '@AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider'
+        - '@AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider'
 
   AppBundle\EventListener\RegistrationListener:
     tags:
