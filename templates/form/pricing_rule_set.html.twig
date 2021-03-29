@@ -1,12 +1,19 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
 {% block _pricing_rule_set_rules_entry_widget %}
+
+  {% set pricing_rule = form.vars.data %}
+
   <div class="delivery-pricing-ruleset__rule__handle">
     <i class="fa fa-2x fa-arrows"></i>
     {{ form_widget(form.position, { attr: { class: 'delivery-pricing-ruleset__rule__position' } }) }}
   </div>
   <div class="w-75">
-    <div class="delivery-pricing-ruleset__rule__expression">
+    <div class="delivery-pricing-ruleset__rule__expression"
+      {% if pricing_rule is not empty %}
+      data-expression="{{ pricing_rule.expression|parse_expression|coopcycle_normalize(null, [], 'json')|json_encode|e('html_attr') }}"
+      {% endif %}
+      >
       <div class="rule-expression-container"></div>
       {{ form_widget(form.expression, { attr: { 'data-expression': '' } }) }}
     </div>
