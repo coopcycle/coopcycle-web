@@ -1,10 +1,12 @@
 .delivery-pricing-ruleset {
   padding-left: 0;
+  margin-bottom: 30px;
   &__rule {
     display: flex;
     align-items: center;
-    margin-bottom: 30px;
     background-color: #fff;
+    padding: 15px 0;
+    border-bottom: 1px solid #e7e7e7;
     &__handle {
       flex: 1;
       text-align: center;

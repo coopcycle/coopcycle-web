@@ -2,7 +2,7 @@
 
 {% block _pricing_rule_set_rules_entry_widget %}
   <div class="delivery-pricing-ruleset__rule__handle">
-    <i class="fa fa-arrows"></i>
+    <i class="fa fa-2x fa-arrows"></i>
     {{ form_widget(form.position, { attr: { class: 'delivery-pricing-ruleset__rule__position' } }) }}
   </div>
   <div class="delivery-pricing-ruleset__rule__expression">
@@ -13,7 +13,7 @@
     {{ form_row(form.price) }}
   </div>
   <div class="delivery-pricing-ruleset__rule__remove">
-    <a href="#"><i class="fa fa-trash"></i></a>
+    <a href="#" class="p-4"><i class="fa fa-2x fa-times"></i></a>
   </div>
 {% endblock %}
 
