@@ -64,6 +64,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('day_localized', array($this, 'dayLocalized')),
             new TwigFilter('opening_hours_for_day_matches', array($this, 'openingHoursForDayMatches')),
             new TwigFilter('cache_key', array(KeyGenerator::class, 'generateKey')),
+            new TwigFilter('parse_expression', array(ExpressionLanguageRuntime::class, 'parseExpression')),
         );
     }
 
@@ -124,9 +125,11 @@ class CoopCycleExtension extends AbstractExtension
             $groups = ['address'];
         }
 
-        $context = [
-            'groups' => $groups,
-        ];
+        $context = [];
+
+        if (!empty($groups)) {
+           $context['groups'] = $groups;
+        }
 
         if ('jsonld' === $format) {
             $context = array_merge($context, [
