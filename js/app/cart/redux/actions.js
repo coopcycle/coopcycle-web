@@ -43,7 +43,7 @@ function postForm() {
   const $form = $('form[name="cart"]')
   const data = $form.serializeArray()
 
-  return $.post($form.attr('action'), data)
+  return $.post($form.attr('action') || window.location.pathname, data)
 }
 
 function postFormWithTime() {
@@ -56,7 +56,7 @@ function postFormWithTime() {
 
   const data = defaultData.concat(timeData)
 
-  return $.post($form.attr('action'), data)
+  return $.post($form.attr('action') || window.location.pathname, data)
 }
 
 function notifyListeners(cart) {
