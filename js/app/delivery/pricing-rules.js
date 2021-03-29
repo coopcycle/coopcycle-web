@@ -40,7 +40,7 @@ $('#add-pricing-rule').on('click', function(e) {
 
   let newLi = $('<li></li>').addClass('delivery-pricing-ruleset__rule').html(newRule),
     $ruleExpression = newLi.find('.delivery-pricing-ruleset__rule__expression'),
-    $input = $ruleExpression.find('input')
+    $input = $ruleExpression.find('input[data-expression]')
 
   function onExpressionChange(newExpression) {
     $input.val(newExpression)

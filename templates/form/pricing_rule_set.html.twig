@@ -5,9 +5,11 @@
     <i class="fa fa-2x fa-arrows"></i>
     {{ form_widget(form.position, { attr: { class: 'delivery-pricing-ruleset__rule__position' } }) }}
   </div>
-  <div class="delivery-pricing-ruleset__rule__expression">
-    <div class="rule-expression-container"></div>
-    {{ form_widget(form.expression) }}
+  <div class="w-75">
+    <div class="delivery-pricing-ruleset__rule__expression">
+      <div class="rule-expression-container"></div>
+      {{ form_widget(form.expression, { attr: { 'data-expression': '' } }) }}
+    </div>
     <div class="delivery-pricing-ruleset__rule__price form-horizontal">
       <div class="form-group">
         {{ form_label(form.price, null, { label_attr: { class: 'col-sm-2' } }) }}

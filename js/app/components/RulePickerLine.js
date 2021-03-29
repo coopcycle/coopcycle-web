@@ -253,7 +253,7 @@ class RulePickerLine extends React.Component {
             </optgroup>
           </select>
         </td>
-        <td>
+        <td width="20%">
           {
             this.state.type && (
               <select value={this.state.operator} onChange={this.onOperatorSelect} className="form-control input-sm">
