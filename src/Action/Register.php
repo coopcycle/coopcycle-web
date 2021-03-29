@@ -5,7 +5,7 @@ namespace AppBundle\Action;
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\User;
 use AppBundle\Form\ApiRegistrationType;
-use Nucleos\UserBundle\Mailer\MailerInterface;
+use Nucleos\ProfileBundle\Mailer\MailerInterface;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use Nucleos\UserBundle\Util\TokenGeneratorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
