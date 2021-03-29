@@ -95,3 +95,52 @@ export default expression => {
 
   return lines.map(token => parseToken(token))
 }
+
+const traverseNode = (node, accumulator) => {
+  if (node.attributes.operator === 'and') {
+    traverseNode(node.nodes.left, accumulator)
+    traverseNode(node.nodes.right, accumulator)
+  } else {
+
+    if (node.attributes.type === 2) {
+      accumulator.push({
+        left:     node.nodes.node.attributes.name,
+        operator: node.nodes.attribute.attributes.value,
+        right:    node.nodes.arguments.nodes[1].attributes.value,
+      })
+    } else if (node.attributes.name === 'in_zone' || node.attributes.name === 'out_zone') {
+      accumulator.push({
+        left:     node.nodes.arguments.nodes[0].nodes.node.attributes.name + '.' + node.nodes.arguments.nodes[0].nodes.attribute.attributes.value,
+        operator: node.attributes.name,
+        right:    node.nodes.arguments.nodes[1].attributes.value,
+      })
+    } else {
+
+      if ('in' === node.attributes.operator) {
+        accumulator.push({
+          left:     node.nodes.left.attributes.name,
+          operator: node.attributes.operator,
+          right:    [
+            node.nodes.right.nodes.left.attributes.value,
+            node.nodes.right.nodes.right.attributes.value
+          ],
+        })
+      } else {
+        accumulator.push({
+          left:     node.nodes.left.attributes.name,
+          operator: node.attributes.operator,
+          right:    node.nodes.right.attributes.value,
+        })
+      }
+    }
+  }
+}
+
+export const parseAST = ast => {
+
+  const acc = []
+
+  traverseNode(ast.nodes, acc)
+
+  return acc
+}
