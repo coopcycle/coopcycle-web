@@ -126,19 +126,14 @@ class RulePickerLine extends React.Component {
     let state = { operator }
 
     if ('in' === operator) {
-      this.setState({
-        ...state,
-        value: ['0', isK(this.state.type) ? '1000' : '1']
-      })
-      return
+      state.value = ['0', isK(this.state.type) ? '1000' : '1']
     }
 
     if (_.includes(['==', '<', '>'], operator)) {
-      this.setState({
-        ...state,
-        value: isNum(this.state.type) ? '0' : ''
-      })
+      state.value = isNum(this.state.type) ? '0' : ''
     }
+
+    this.setState(state)
   }
 
   delete (evt) {
