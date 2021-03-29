@@ -105,7 +105,7 @@ class RulePicker extends React.Component {
 
     return (
       <div className="rule-picker">
-        <table className="table">
+        <table className="table mb-2">
           <tbody>
           { this.state.lines.map((line, index) => (
             <RulePickerLine
@@ -121,14 +121,16 @@ class RulePicker extends React.Component {
           )) }
           </tbody>
         </table>
-        <div className="text-right mr-3">
-          <button className="btn btn-xs btn-primary" onClick={this.addLine}>
+        <div className="text-right">
+          <button className="btn btn-xs btn-default" onClick={this.addLine}>
             <i className="fa fa-plus"></i> { this.props.t('RULE_PICKER_ADD_CONDITION') }
           </button>
         </div>
+        {/*
         <div className="rule-picker-preview">
           <pre>{ linesToString(this.state.lines) }</pre>
         </div>
+        */}
       </div>
     )
   }

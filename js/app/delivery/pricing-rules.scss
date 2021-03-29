@@ -1,20 +1,42 @@
 .delivery-pricing-ruleset {
+
+  $bgcolor: #FFEFCF;
+
   padding-left: 0;
   margin-bottom: 30px;
+
   &__rule {
+
+    margin-bottom: 15px;
+    font-family: 'Roboto Mono', monospace;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #fff;
+    background-color: $bgcolor;
+    color: darken($bgcolor, 50%);
     padding: 15px 0;
-    border-bottom: 1px solid #e7e7e7;
+
     &__handle {
       text-align: center;
       cursor: grab;
-      padding: 20px 0;
+      padding: 20px;
     }
     &__remove {
       text-align: right;
+    }
+    &__price {
+      .form-control {
+        background-color: darken($bgcolor, 5%);
+        border: 2px dashed darken($bgcolor, 50%);
+        box-shadow: none;
+        color: darken($bgcolor, 50%);
+      }
+    }
+    .btn {
+      background-color: darken($bgcolor, 5%);
+      border-color: darken($bgcolor, 50%);
+      color: darken($bgcolor, 50%);
     }
   }
 }

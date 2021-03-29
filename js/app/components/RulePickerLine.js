@@ -265,12 +265,12 @@ class RulePickerLine extends React.Component {
             )
           }
         </td>
-        <td>
+        <td width="25%">
           {
             this.state.operator && this.renderBoundPicker()
           }
         </td>
-        <td onClick={this.delete}>
+        <td className="text-right" onClick={this.delete}>
           <a href="#"><i className="fa fa-trash"></i></a>
         </td>
       </tr>
