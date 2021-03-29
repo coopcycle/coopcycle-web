@@ -110,13 +110,19 @@ const traverseNode = (node, accumulator) => {
       })
     } else if (node.attributes.name === 'in_zone' || node.attributes.name === 'out_zone') {
       accumulator.push({
-        left:     node.nodes.arguments.nodes[0].nodes.node.attributes.name + '.' + node.nodes.arguments.nodes[0].nodes.attribute.attributes.value,
+        left:     `${node.nodes.arguments.nodes[0].nodes.node.attributes.name}.${node.nodes.arguments.nodes[0].nodes.attribute.attributes.value}`,
         operator: node.attributes.name,
         right:    node.nodes.arguments.nodes[1].attributes.value,
       })
     } else {
 
-      if ('in' === node.attributes.operator) {
+      if (node.nodes.left.attributes.name === 'diff_hours' || node.nodes.left.attributes.name === 'diff_days') {
+        accumulator.push({
+          left:     `${node.nodes.left.attributes.name}(${node.nodes.left.nodes.arguments.nodes[0].attributes.name})`,
+          operator: node.attributes.operator,
+          right:    node.nodes.right.attributes.value,
+        })
+      } else if ('in' === node.attributes.operator) {
         accumulator.push({
           left:     node.nodes.left.attributes.name,
           operator: node.attributes.operator,

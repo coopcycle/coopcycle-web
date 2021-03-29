@@ -297,6 +297,8 @@ const ast = {
 
 const astWithPackages = {"nodes":{"nodes":{"left":{"nodes":{"left":{"nodes":[],"attributes":{"name":"distance"}},"right":{"nodes":{"left":{"nodes":[],"attributes":{"value":12000}},"right":{"nodes":[],"attributes":{"value":16000}}},"attributes":{"operator":".."}}},"attributes":{"operator":"in"}},"right":{"nodes":{"node":{"nodes":[],"attributes":{"name":"packages"}},"attribute":{"nodes":[],"attributes":{"value":"containsAtLeastOne"}},"arguments":{"nodes":[{"nodes":[],"attributes":{"value":0}},{"nodes":[],"attributes":{"value":"Grand"}}],"attributes":[]}},"attributes":{"type":2}}},"attributes":{"operator":"and"}}}
 
+const astWithDiffHours = {"nodes":{"nodes":{"left":{"nodes":{"left":{"nodes":[],"attributes":{"name":"distance"}},"right":{"nodes":{"left":{"nodes":[],"attributes":{"value":16000}},"right":{"nodes":[],"attributes":{"value":17000}}},"attributes":{"operator":".."}}},"attributes":{"operator":"in"}},"right":{"nodes":{"left":{"nodes":{"arguments":{"nodes":[{"nodes":[],"attributes":{"name":"pickup"}}],"attributes":[]}},"attributes":{"name":"diff_hours"}},"right":{"nodes":[],"attributes":{"value":3}}},"attributes":{"operator":"<"}}},"attributes":{"operator":"and"}}}
+
 describe('Pricing rule parser (AST)', function() {
 
   it('should parse AST', function() {
@@ -325,6 +327,19 @@ describe('Pricing rule parser (AST)', function() {
       [
         { left: 'distance', operator: 'in', right: [ 12000, 16000 ] },
         { left: 'packages', operator: 'containsAtLeastOne', right: 'Grand' }
+      ]
+    )
+
+  })
+
+  it('should parse AST with diff hours', function() {
+
+    const result = parseAST(astWithDiffHours)
+
+    expect(result).toEqual(
+      [
+        { left: 'distance', operator: 'in', right: [ 16000, 17000 ] },
+        { left: 'diff_hours(pickup)', operator: '<', right: 3 }
       ]
     )
 
