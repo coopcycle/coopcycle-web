@@ -15,6 +15,7 @@
         <option name="default">distance &lt; 3000</option>
       </options>
     </field>
+    <field name="enabled" column="enabled" type="boolean" />
     <many-to-one field="address" target-entity="AppBundle\Entity\Address">
       <cascade>
         <cascade-persist/>

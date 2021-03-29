@@ -10,13 +10,17 @@ use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Sylius\Component\Resource\Model\ToggleableInterface;
+use Sylius\Component\Resource\Model\ToggleableTrait;
 
-class Hub implements OpenCloseInterface
+class Hub implements OpenCloseInterface, ToggleableInterface
 {
     use ClosingRulesTrait;
     use FulfillmentMethodsTrait;
     use ShippingOptionsTrait;
     use OpenCloseTrait;
+
+    use ToggleableTrait;
 
     private $id;
     private $name;
