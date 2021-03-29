@@ -206,11 +206,11 @@ class RulePickerLine extends React.Component {
     // weight, distance, diff_days(pickup)
     case 'in':
       return (
-        <div className="row">
-          <div className="col-md-6">
+        <div className="d-flex justify-content-between">
+          <div className="mr-2">
             <input className="form-control input-sm" value={ (this.state.value[0] / (isK(this.state.type) ? 1000 : 1))  } onChange={this.handleFirstBoundChange} type="number" min="0" required></input>
           </div>
-          <div className="col-md-6">
+          <div>
             <input className="form-control input-sm" value={ (this.state.value[1] / (isK(this.state.type) ? 1000 : 1)) } onChange={this.handleSecondBoundChange} type="number" min="0" required></input>
           </div>
         </div>
@@ -233,8 +233,8 @@ class RulePickerLine extends React.Component {
   render () {
 
     return (
-      <div className="row">
-        <div className="col-md-3 form-group">
+      <tr>
+        <td>
           <select value={this.state.type} onChange={this.onTypeSelect} className="form-control input-sm">
             <option value="">-</option>
             <optgroup label={ this.props.t('RULE_PICKER_LINE_OPTGROUP_DELIVERY') }>
@@ -252,8 +252,8 @@ class RulePickerLine extends React.Component {
               <option value="order.itemsTotal">{ this.props.t('RULE_PICKER_LINE_ORDER_ITEMS_TOTAL') }</option>
             </optgroup>
           </select>
-        </div>
-        <div className="col-md-3">
+        </td>
+        <td>
           {
             this.state.type && (
               <select value={this.state.operator} onChange={this.onOperatorSelect} className="form-control input-sm">
@@ -264,16 +264,16 @@ class RulePickerLine extends React.Component {
               </select>
             )
           }
-        </div>
-        <div className="col-md-5">
+        </td>
+        <td>
           {
             this.state.operator && this.renderBoundPicker()
           }
-        </div>
-        <div className="col-md-1" onClick={this.delete}>
+        </td>
+        <td onClick={this.delete}>
           <a href="#"><i className="fa fa-trash"></i></a>
-        </div>
-      </div>
+        </td>
+      </tr>
     )
   }
 }
