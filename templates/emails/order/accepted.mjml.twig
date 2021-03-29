@@ -33,7 +33,7 @@
   {% else %}
   <mj-text align="left" line-height="20px">
   {{ 'order.public_url' | trans({
-    '%order.public_url%': url('public_order', { number: order.number }),
+    '%order.public_url%': url('public_order', { hashid: order|hashid }),
   }, 'emails') | raw }}
   </mj-text>
   {% endif %}

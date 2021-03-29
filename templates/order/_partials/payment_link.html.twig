@@ -1,4 +1,4 @@
-{% set order_public_link = url('public_order', { number: order|hashid }) %}
+{% set order_public_link = url('public_order', { hashid: order|hashid }) %}
 
 <div class="row mb-4">
   <div class="col-xs-6">
