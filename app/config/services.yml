@@ -637,7 +637,7 @@ services:
     public: true
     arguments:
       $confirmationEnabled: '%nucleos_profile.registration.confirmation.enabled%'
-      $mailer: '@Nucleos\UserBundle\Mailer\MailerInterface'
+      $mailer: '@nucleos_profile.mailer.default'
 
   AppBundle\Action\ResettingSendEmail:
     public: true
