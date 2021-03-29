@@ -1156,3 +1156,4 @@ adminDashboard.time_slots.help: Configurez des tranches horaires
 adminDashboard.package_sets.help: Configurez les types de marchandise à transporter
 adminDashboard.zones.help: Définissez des zones géographiques
 adminDashboard.tags.help: Associez des tags et des couleurs aux tâches
+adminDashboard.api.help: Créez des livraisons de facon automatisée

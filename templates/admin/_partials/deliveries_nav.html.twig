@@ -62,4 +62,12 @@
     </h4>
     <small class="deliveries-nav-item-text">{% trans %}adminDashboard.tags.help{% endtrans %}</small>
   </a>
+  <a href="{{ path('admin_api_apps') }}"
+    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_api_apps', 'admin_api_app' ] ? 'active' : '' }}">
+    <h4 class="deliveries-nav-item-heading">
+      <i class="fa fa-database mr-2"></i>
+      <span>{% trans %}adminDashboard.api.title{% endtrans %}</span>
+    </h4>
+    <small class="deliveries-nav-item-text">{% trans %}adminDashboard.api.help{% endtrans %}</small>
+  </a>
 </div>

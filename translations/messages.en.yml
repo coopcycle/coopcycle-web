@@ -1160,3 +1160,5 @@ adminDashboard.package_sets.help: Configure the types of goods to transport
 adminDashboard.zones.help: Define geographical areas
 adminDashboard.tags.help: Assign tags and colors to tasks
 form.time_slot.preview_title: Time slot preview
+adminDashboard.api.title: API
+adminDashboard.api.help: Allow to create deliveries programmatically
