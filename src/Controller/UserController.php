@@ -5,15 +5,15 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
-use AppBundle\Form\SetPasswordInvitationType;
 use AppBundle\Sylius\Order\OrderFactory;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\ProfileBundle\NucleosProfileEvents;
+use AppBundle\Form\Model\Registration;
 use Nucleos\ProfileBundle\Mailer\MailerInterface as ProfileMailerInterface;
 use Nucleos\UserBundle\Event\FilterUserResponseEvent;
 use Nucleos\UserBundle\Model\UserManagerInterface;
-use Nucleos\UserBundle\Util\UserManipulator;
+use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Laravolt\Avatar\Avatar;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -176,7 +176,6 @@ class UserController extends AbstractController
     public function confirmInvitationAction(Request $request, string $code,
         EntityManagerInterface $objectManager,
         UserManagerInterface $userManager,
-        UserManipulator $userManipulator,
         EventDispatcherInterface $eventDispatcher)
     {
         $repository = $this->getDoctrine()->getRepository(Invitation::class);
@@ -185,51 +184,49 @@ class UserController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $user = $userManager->createUser();
-        $user->setEmail($invitation->getEmail());
+        $registration = new Registration();
+        $registration->setEmail($invitation->getEmail());
 
-        if ($grants = $invitation->getGrants()) {
-            if (isset($grants['roles'])) {
-                foreach ($grants['roles'] as $role) {
-                    $user->addRole($role);
-                }
-            }
-            if (isset($grants['restaurants'])) {
-                foreach ($grants['restaurants'] as $restaurantId) {
-                    if ($restaurant = $objectManager->getRepository(LocalBusiness::class)->find($restaurantId)) {
-                        $user->addRestaurant($restaurant);
-                        $user->addRole('ROLE_RESTAURANT');
-                    }
-
-                }
-            }
-            if (isset($grants['stores'])) {
-                foreach ($grants['stores'] as $storeId) {
-                    if ($store = $objectManager->getRepository(Store::class)->find($storeId)) {
-                        $user->addStore($store);
-                        $user->addRole('ROLE_STORE');
-                    }
-                }
-            }
-        }
-
-        $form = $this->createForm(SetPasswordInvitationType::class, $user);
+        $form = $this->createForm(RegistrationFormType::class, $registration);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $user->setEnabled(true);
+            $user = $registration->toUser($userManager);
+
+            if ($grants = $invitation->getGrants()) {
+                if (isset($grants['roles'])) {
+                    foreach ($grants['roles'] as $role) {
+                        $user->addRole($role);
+                    }
+                }
+                if (isset($grants['restaurants'])) {
+                    foreach ($grants['restaurants'] as $restaurantId) {
+                        if ($restaurant = $objectManager->getRepository(LocalBusiness::class)->find($restaurantId)) {
+                            $user->addRestaurant($restaurant);
+                            $user->addRole('ROLE_RESTAURANT');
+                        }
+
+                    }
+                }
+                if (isset($grants['stores'])) {
+                    foreach ($grants['stores'] as $storeId) {
+                        if ($store = $objectManager->getRepository(Store::class)->find($storeId)) {
+                            $user->addStore($store);
+                            $user->addRole('ROLE_STORE');
+                        }
+                    }
+                }
+            }
 
             $userManager->updateUser($user);
-
-            $userManipulator->changePassword($user->getUsername(), $form->get('plainPassword')->getData());
 
             $objectManager->remove($invitation);
             $objectManager->flush();
 
             $response = new RedirectResponse($this->generateUrl('nucleos_profile_registration_confirmed'));
 
-            $eventDispatcher->dispatch(NucleosProfileEvents::REGISTRATION_CONFIRMED, new FilterUserResponseEvent($user, $request, $response));
+            $eventDispatcher->dispatch(new FilterUserResponseEvent($user, $request, $response), NucleosProfileEvents::REGISTRATION_CONFIRMED);
 
             return $response;
         }
