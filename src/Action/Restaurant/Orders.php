@@ -25,6 +25,10 @@ class Orders
         $start->setTime(0, 0, 0);
         $end->setTime(23, 59, 59);
 
+        // We need to change the "_api_resource_class" attributes,
+        // so that @context equals "/api/contexts/Order"
+        $request->attributes->set('_api_resource_class', Order::class);
+
         return $this->objectManager->getRepository(Order::class)
             ->findOrdersByRestaurantAndDateRange($data, $start, $end,
                 // We do *NOT* include the hub orders
