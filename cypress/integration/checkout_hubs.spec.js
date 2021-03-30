@@ -10,8 +10,7 @@ context('Checkout (hubs)', () => {
 
   it('order something at hub', () => {
 
-    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postCrazyHamburger')
-    cy.intercept('POST', '/fr/restaurant/*-pizza-express').as('postPizzaExpress')
+    cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
 
     cy.visit('/fr/')
@@ -20,7 +19,7 @@ context('Checkout (hubs)', () => {
       'Crazy Hamburger',
       /\/fr\/restaurant\/[0-9]+-crazy-hamburger/
     )
-    cy.wait('@postCrazyHamburger')
+    cy.wait('@postRestaurantCart')
 
     cy.contains('Cheese Cake').click()
     cy.wait('@postProduct')
@@ -36,7 +35,7 @@ context('Checkout (hubs)', () => {
       'Pizza Express',
       /\/fr\/restaurant\/[0-9]+-pizza-express/
     )
-    cy.wait('@postPizzaExpress')
+    cy.wait('@postRestaurantCart')
 
     // The cart should *NOT* be empty,
     // because both restaurants are in the same hub
@@ -49,7 +48,7 @@ context('Checkout (hubs)', () => {
       '91 Rue de Rivoli, 75004 Paris, France'
     )
 
-    cy.wait('@postPizzaExpress')
+    cy.wait('@postRestaurantCart')
 
     cy.contains('Pizza Margherita').click()
     cy.wait('@postProduct')
