@@ -46,8 +46,8 @@ class EmailManagerTest extends TestCase
 
         $this->assertIsArray($from);
 
-        $this->assertEquals('Acme <transactional@coopcycle.org>', $from[0]->toString());
-        $this->assertEquals('Acme <transactional@coopcycle.org>', $sender->toString());
+        $this->assertEquals('"Acme" <transactional@coopcycle.org>', $from[0]->toString());
+        $this->assertEquals('"Acme" <transactional@coopcycle.org>', $sender->toString());
         $this->assertEmpty($message->getReplyTo());
     }
 
@@ -70,9 +70,9 @@ class EmailManagerTest extends TestCase
         $this->assertIsArray($from);
         $this->assertIsArray($replyTo);
 
-        $this->assertEquals('Acme <transactional@coopcycle.org>', $from[0]->toString());
-        $this->assertEquals('Acme <transactional@coopcycle.org>', $sender->toString());
-        $this->assertEquals('Acme <admin@acme.com>', $replyTo[0]->toString());
+        $this->assertEquals('"Acme" <transactional@coopcycle.org>', $from[0]->toString());
+        $this->assertEquals('"Acme" <transactional@coopcycle.org>', $sender->toString());
+        $this->assertEquals('"Acme" <admin@acme.com>', $replyTo[0]->toString());
     }
 
     public function testMessageIsNotSentToDemoUser()
@@ -122,7 +122,7 @@ class EmailManagerTest extends TestCase
         $to = $message->getTo();
 
         $this->assertIsArray($to);
-        $this->assertEquals('Joe <joe@example.com>', $to[0]->toString());
+        $this->assertEquals('"Joe" <joe@example.com>', $to[0]->toString());
     }
 
     public function testSendToWithArray()
@@ -140,7 +140,7 @@ class EmailManagerTest extends TestCase
         $to = $message->getTo();
 
         $this->assertIsArray($to);
-        $this->assertEquals('Joe <joe@example.com>', $to[0]->toString());
+        $this->assertEquals('"Joe" <joe@example.com>', $to[0]->toString());
         $this->assertEquals('jane@example.com', $to[1]->toString());
     }
 }
