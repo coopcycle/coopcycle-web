@@ -229,6 +229,7 @@ export function sync() {
     }
 
     if (cart.shippingAddress && !cart.shippingAddress.streetAddress) {
+      dispatch(fetchRequest())
       postForm()
         .then(res => handleAjaxResponse(res, dispatch, false))
         .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
