@@ -31,18 +31,15 @@ class OrderRepository extends BaseOrderRepository
         ;
     }
 
-    public function findByDate(\DateTime $date)
+    public function findOrdersByDate(\DateTime $date)
     {
-        $qb = $this->createQueryBuilder('o');
-        $qb
-            ->andWhere('o.vendor IS NOT NULL')
-            ->andWhere('o.state != :state')
-            ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
-            ->setParameter('state', OrderInterface::STATE_CART)
-            ->setParameter('range', sprintf('[%s, %s]', $date->format('Y-m-d 00:00:00'), $date->format('Y-m-d 23:59:59')))
-            ;
+        $start = clone $date;
+        $end   = clone $date;
 
-        return $qb->getQuery()->getResult();
+        $start->setTime(0, 0, 0);
+        $end->setTime(23, 59, 59);
+
+        return $this->findOrdersByDateRange($start, $end);
     }
 
     public function findOrdersByRestaurantAndDateRange(LocalBusiness $restaurant, \DateTime $start, \DateTime $end, $state)

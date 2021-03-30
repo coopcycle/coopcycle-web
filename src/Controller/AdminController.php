@@ -353,7 +353,7 @@ class AdminController extends AbstractController
 
         $date = new \DateTime($date);
 
-        $orders = $this->orderRepository->findByDate($date);
+        $orders = $this->orderRepository->findOrdersByDate($date);
 
         $ordersNormalized = $this->get('serializer')->normalize($orders, 'jsonld', [
             'resource_class' => Order::class,
