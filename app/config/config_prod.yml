@@ -124,5 +124,7 @@ services:
 sentry:
     dsn: '%sentry_public_dsn%'
     options:
+        tags:
+            coopcycle_app_name: '%env(COOPCYCLE_APP_NAME)%'
         integrations:
             - 'Sentry\Integration\IgnoreErrorsIntegration'
