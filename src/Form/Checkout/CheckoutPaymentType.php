@@ -75,7 +75,7 @@ class CheckoutPaymentType extends AbstractType
                 $choices['Giropay'] = 'giropay';
             }
 
-            if (null !== $vendor->getEdenredMerchantId()) {
+            if (!$vendor->isHub() && null !== $vendor->getEdenredMerchantId()) {
                 if ($order->getCustomer()->hasEdenredCredentials()) {
                     $amounts = $this->edenredPayment->splitAmounts($order);
                     if ($amounts['edenred'] > 0) {
