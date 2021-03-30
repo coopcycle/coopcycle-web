@@ -14,9 +14,9 @@
 
 {% endfor %}
 {% else %}
-  {% for item in order.items %}
-{% include 'order/summary_item.txt.twig' with { item: item } %}
-  {% endfor %}
+{% for item in order.items %}
+  {% include 'order/summary_item.txt.twig' with { item: item } %}
+{% endfor %}
 {% endif %}
 
 {% if order.reusablePackagingPledgeReturn > 0 %}
