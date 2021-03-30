@@ -198,6 +198,10 @@ class Vendor implements ShippingOptionsInterface
 
     public function getEdenredMerchantId()
     {
+        if (null === $this->restaurant) {
+            return null;
+        }
+
         return $this->restaurant->getEdenredMerchantId();
     }
 
