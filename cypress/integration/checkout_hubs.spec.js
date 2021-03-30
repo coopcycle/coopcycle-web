@@ -12,6 +12,7 @@ context('Checkout (hubs)', () => {
 
     cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
+    cy.intercept('POST', '/fr/restaurant/*/cart/address').as('postCartAddress')
 
     cy.visit('/fr/')
 
@@ -48,7 +49,7 @@ context('Checkout (hubs)', () => {
       '91 Rue de Rivoli, 75004 Paris, France'
     )
 
-    cy.wait('@postRestaurantCart')
+    cy.wait('@postCartAddress')
 
     cy.contains('Pizza Margherita').click()
     cy.wait('@postProduct')
