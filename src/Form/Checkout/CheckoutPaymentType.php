@@ -66,13 +66,12 @@ class CheckoutPaymentType extends AbstractType
             }
 
             $vendor = $order->getVendor();
-            $restaurant = $order->getRestaurant();
 
             $choices = [
                 'Credit card' => 'card',
             ];
 
-            if ($restaurant->isStripePaymentMethodEnabled('giropay')) {
+            if ($vendor->isStripePaymentMethodEnabled('giropay')) {
                 $choices['Giropay'] = 'giropay';
             }
 

@@ -201,6 +201,15 @@ class Vendor implements ShippingOptionsInterface
         return $this->restaurant->getEdenredMerchantId();
     }
 
+    public function isStripePaymentMethodEnabled($paymentMethod)
+    {
+        if (null === $this->restaurant) {
+            return false;
+        }
+
+        return $this->restaurant->isStripePaymentMethodEnabled($paymentMethod);
+    }
+
     /* END Common interface between Restaurant & Hub */
 
     public static function withRestaurant(LocalBusiness $restaurant)
