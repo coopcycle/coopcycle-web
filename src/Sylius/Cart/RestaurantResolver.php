@@ -29,6 +29,7 @@ class RestaurantResolver
         'restaurant_cart_clear_time',
         'restaurant_modify_cart_item_quantity',
         'restaurant_remove_from_cart',
+        'restaurant_cart',
     ];
 
     /**

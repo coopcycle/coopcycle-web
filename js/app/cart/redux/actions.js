@@ -1,5 +1,6 @@
 import { createAction } from 'redux-actions'
 import _ from 'lodash'
+import axios from 'axios'
 
 import i18n, { getCountry } from '../../i18n'
 import { geocode } from '../../components/AddressAutosuggest'
@@ -38,25 +39,48 @@ export const openAddressModal = createAction(OPEN_ADDRESS_MODAL)
 
 export const geocodingFailure = createAction(GEOCODING_FAILURE)
 
+const httpClient = axios.create()
+
+httpClient.defaults.headers.common['Content-Type']     = 'application/x-www-form-urlencoded'
+httpClient.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+
+function serializeForm(withTime = false) {
+
+  const params = new URLSearchParams()
+
+  $('form[name="cart"]').serializeArray().forEach(field => {
+    params.append(field.name, field.value)
+  })
+
+  if (withTime) {
+    $('form[name="cart_time"]').serializeArray().forEach(field => {
+      params.append(field.name, field.value)
+    })
+  }
+
+  return params
+}
+
 function postForm() {
 
   const $form = $('form[name="cart"]')
-  const data = $form.serializeArray()
 
-  return $.post($form.attr('action') || window.location.pathname, data)
+  return httpClient.request({
+    method: 'POST',
+    url: $form.data('cartUrl'),
+    data: serializeForm().toString(),
+  }).then(res => res.data)
 }
 
 function postFormWithTime() {
 
   const $form = $('form[name="cart"]')
-  const defaultData = $form.serializeArray()
 
-  const $timeForm = $('form[name="cart_time"]')
-  const timeData = $timeForm.serializeArray()
-
-  const data = defaultData.concat(timeData)
-
-  return $.post($form.attr('action') || window.location.pathname, data)
+  return httpClient.request({
+    method: 'POST',
+    url: $form.data('cartUrl'),
+    data: serializeForm(true).toString(),
+  }).then(res => res.data)
 }
 
 function notifyListeners(cart) {
@@ -66,20 +90,15 @@ function notifyListeners(cart) {
 }
 
 function handleAjaxResponse(res, dispatch, broadcast = true) {
-
-  const hasErrors = res.errors && _.size(res.errors) > 0
-
-  if (!hasErrors) {
-    dispatch(fetchSuccess(res))
-  } else {
-    dispatch(fetchFailure(res))
-  }
-
+  dispatch(fetchSuccess(res))
   $('#menu').LoadingOverlay('hide')
-
   if (broadcast) {
     notifyListeners(res.cart)
   }
+}
+
+function handleAjaxError(e, dispatch) {
+  dispatch(fetchFailure())
 }
 
 const QUEUE_CART_ITEMS = 'QUEUE_CART_ITEMS'
@@ -158,7 +177,7 @@ export function updateItemQuantity(itemID, quantity) {
 
     $.post(url, { quantity })
       .then(res => handleAjaxResponse(res, dispatch))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+      .fail(e   => handleAjaxError(e, dispatch))
   }
 }
 
@@ -180,7 +199,7 @@ export function removeItem(itemID) {
 
     return $.ajax(fetchParams)
       .then(res => handleAjaxResponse(res, dispatch))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+      .fail(e   => handleAjaxError(e, dispatch))
   }
 }
 
@@ -232,7 +251,7 @@ export function sync() {
       dispatch(fetchRequest())
       postForm()
         .then(res => handleAjaxResponse(res, dispatch, false))
-        .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+        .catch(e  => handleAjaxError(e, dispatch))
     } else {
       dispatch(geocodeAndSync())
     }
@@ -249,7 +268,7 @@ export function changeDate() {
 
     postFormWithTime()
       .then(res => handleAjaxResponse(res, dispatch, false))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .catch(e  => handleAjaxError(e, dispatch))
   }
 }
 
@@ -298,7 +317,7 @@ export function changeAddress(address) {
 
         $.post(url, { address: address['@id'] })
           .then(res => handleAjaxResponse(res, dispatch, false))
-          .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+          .fail(e   => handleAjaxError(e, dispatch))
 
       } else {
 
@@ -310,7 +329,7 @@ export function changeAddress(address) {
 
         postForm()
           .then(res => handleAjaxResponse(res, dispatch, false))
-          .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+          .catch(e  => handleAjaxError(e, dispatch))
       }
 
     } else {
@@ -350,7 +369,7 @@ export function clearDate() {
 
     $.post(url)
       .then(res => handleAjaxResponse(res, dispatch, false))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .fail(e   => handleAjaxError(e, dispatch))
 
   }
 }
@@ -375,7 +394,7 @@ export function enableTakeaway(post = true) {
         dispatch(fetchRequest())
         postForm()
           .then(res => handleAjaxResponse(res, dispatch))
-          .fail(e   => handleAjaxResponse(e.responseJSON, dispatch))
+          .catch(e  => handleAjaxError(e, dispatch))
       }
     }
   }
@@ -398,7 +417,7 @@ export function disableTakeaway(post = true) {
         dispatch(fetchRequest())
         postForm()
           .then(res => handleAjaxResponse(res, dispatch))
-          .fail(e   => handleAjaxResponse(e.responseJSON, dispatch))
+          .catch(e  => handleAjaxError(e, dispatch))
       }
     }
   }
@@ -433,6 +452,6 @@ export function retryLastAddItemRequest() {
         dispatch(clearLastAddItemRequest())
         handleAjaxResponse(res, dispatch)
       })
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+      .fail(e => handleAjaxError(e, dispatch))
   }
 }

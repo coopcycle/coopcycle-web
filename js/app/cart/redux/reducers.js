@@ -70,7 +70,6 @@ const errors = (state = initialState.errors, action = {}) => {
 
     return []
   case FETCH_SUCCESS:
-  case FETCH_FAILURE:
     const { errors } = action.payload
 
     return errors || []
@@ -90,7 +89,6 @@ const errors = (state = initialState.errors, action = {}) => {
 const cart = (state = initialState.cart, action = {}) => {
   switch (action.type) {
   case FETCH_SUCCESS:
-  case FETCH_FAILURE:
 
     return action.payload.cart
   case SET_STREET_ADDRESS:
@@ -173,7 +171,6 @@ const isDateModalOpen = (state = initialState.isDateModalOpen, action = {}) => {
 const times = (state = initialState.times, action = {}) => {
   switch (action.type) {
   case FETCH_SUCCESS:
-  case FETCH_FAILURE:
 
     return action.payload.times
   default:
@@ -190,7 +187,6 @@ const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}
     return false
 
   case FETCH_SUCCESS:
-  case FETCH_FAILURE:
     const { errors } = action.payload
 
     return Object.prototype.hasOwnProperty.call(errors, 'shippingAddress')

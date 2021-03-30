@@ -363,38 +363,12 @@ class RestaurantController extends AbstractController
 
             $cartForm->handleRequest($request);
 
-            $cart = $cartForm->getData();
+            // The cart is valid, and the user clicked on the submit button
+            if ($cartForm->isValid()) {
 
-            if ($request->isXmlHttpRequest()) {
+                $this->orderManager->flush();
 
-                $errors = [];
-
-                if (!$cartForm->isValid()) {
-                    foreach ($cartForm->getErrors() as $formError) {
-                        $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
-                        $errors[$propertyPath] = [ ValidationUtils::serializeFormError($formError) ];
-                    }
-                }
-
-                // Customer may be browsing the available restaurants
-                // Make sure the request targets the same restaurant
-                // If not, we don't persist the cart
-                if ($restaurantResolver->accept($cart)) {
-                    $this->orderManager->persist($cart);
-                    $this->orderManager->flush();
-                }
-
-                return $this->jsonResponse($cart, $errors);
-
-            } else {
-
-                // The cart is valid, and the user clicked on the submit button
-                if ($cartForm->isValid()) {
-
-                    $this->orderManager->flush();
-
-                    return $this->redirectToRoute('order');
-                }
+                return $this->redirectToRoute('order');
             }
         }
 
@@ -449,6 +423,64 @@ class RestaurantController extends AbstractController
 
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
+
+        return $this->jsonResponse($cart, $errors);
+    }
+
+    /**
+     * @Route("/restaurant/{id}/cart", name="restaurant_cart", methods={"POST"})
+     */
+    public function cartAction($id, Request $request,
+        CartContextInterface $cartContext,
+        RestaurantResolver $restaurantResolver)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)->find($id);
+
+        if (!$restaurant) {
+            throw new NotFoundHttpException();
+        }
+
+        $this->denyAccessUnlessGranted('view', $restaurant);
+
+        $cart = $cartContext->getCart();
+
+        // This is useful to "cleanup" a cart that was stored
+        // with a time range that is now expired
+        // FIXME Maybe this should be moved to a Doctrine postLoad listener?
+        $violations = $this->validator->validate($cart, null, ['ShippingTime']);
+        if (count($violations) > 0) {
+
+            $cart->setShippingTimeRange(null);
+
+            if ($restaurantResolver->accept($cart)) {
+                $this->orderManager->persist($cart);
+                $this->orderManager->flush();
+            }
+        }
+
+        $cartForm = $this->createForm(CartType::class, $cart);
+
+        $cartForm->handleRequest($request);
+
+        $cart = $cartForm->getData();
+
+        $errors = [];
+
+        if (!$cartForm->isValid()) {
+            foreach ($cartForm->getErrors() as $formError) {
+                $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
+                $errors[$propertyPath] = [ ValidationUtils::serializeFormError($formError) ];
+            }
+        }
+
+        // Customer may be browsing the available restaurants
+        // Make sure the request targets the same restaurant
+        // If not, we don't persist the cart
+        if ($restaurantResolver->accept($cart)) {
+            $this->orderManager->persist($cart);
+            $this->orderManager->flush();
+        }
 
         return $this->jsonResponse($cart, $errors);
     }

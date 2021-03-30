@@ -10,7 +10,7 @@ context('Checkout', () => {
 
   it('order something at restaurant', () => {
 
-    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+    cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
 
     cy.visit('/fr/')
@@ -20,7 +20,7 @@ context('Checkout', () => {
       /\/fr\/restaurant\/[0-9]+-crazy-hamburger/
     )
 
-    cy.wait('@postRestaurant')
+    cy.wait('@postRestaurantCart')
 
     cy.contains('Cheeseburger').click()
 
@@ -50,7 +50,7 @@ context('Checkout', () => {
       '91 Rue de Rivoli, 75004 Paris, France'
     )
 
-    cy.wait('@postRestaurant')
+    cy.wait('@postRestaurantCart')
 
     cy.get('.cart [data-testid="cart.shippingAddress"]')
       .should('have.text', '91 Rue de Rivoli, 75004 Paris, France')
@@ -135,7 +135,7 @@ context('Checkout', () => {
 
   it('homepage search with vague address', () => {
 
-    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+    cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('GET', '/search/geocode?address=**').as('geocodeAddress')
 
     cy.visit('/fr/')
@@ -174,7 +174,7 @@ context('Checkout', () => {
       .contains('91 Rue de Rivoli, 75004 Paris, France')
       .click()
 
-    cy.wait('@postRestaurant')
+    cy.wait('@postRestaurantCart')
 
     cy.get('.cart [data-testid="cart.shippingAddress"]')
       .should('have.text', '91 Rue de Rivoli, 75004 Paris, France')
@@ -182,7 +182,7 @@ context('Checkout', () => {
 
   it.skip('order something at restaurant with existing address (via modal)', () => {
 
-    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+    cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
     cy.intercept('POST', '/fr/restaurant/*/cart/address').as('postCartAddress')
 
@@ -196,7 +196,7 @@ context('Checkout', () => {
 
     cy.location('pathname').should('match', /\/fr\/restaurant\/[0-9]+-crazy-hamburger/)
 
-    cy.wait('@postRestaurant')
+    cy.wait('@postRestaurantCart')
 
     cy.contains('Cheeseburger').click()
 
@@ -266,7 +266,7 @@ context('Checkout', () => {
 
     cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 
-    cy.intercept('POST', '/fr/restaurant/*-zero-waste-inc').as('postRestaurant')
+    cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
 
     cy.visit('/fr/restaurants')
@@ -275,7 +275,7 @@ context('Checkout', () => {
 
     cy.location('pathname').should('match', /\/fr\/restaurant\/[0-9]+-zero-waste/)
 
-    cy.wait('@postRestaurant')
+    cy.wait('@postRestaurantCart')
 
     cy.contains('Salade au poulet').click()
     cy.wait('@postProduct')
@@ -293,7 +293,7 @@ context('Checkout', () => {
       .contains('91 Rue de la Roquette, 75011 Paris, France')
       .click()
 
-    cy.wait('@postRestaurant')
+    cy.wait('@postRestaurantCart')
 
     cy.get('.cart [data-testid="cart.shippingAddress"]')
       .should('have.text', '91 Rue de la Roquette, 75011 Paris, France')
@@ -336,7 +336,7 @@ context('Checkout', () => {
 
     cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 
-    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+    cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
     cy.intercept('POST', '/order/').as('postOrder')
     cy.intercept('GET', '/search/geocode?address=**').as('geocodeAddress')
@@ -347,7 +347,7 @@ context('Checkout', () => {
 
     cy.location('pathname').should('match', /\/fr\/restaurant\/[0-9]+-crazy-hamburger/)
 
-    cy.wait('@postRestaurant')
+    cy.wait('@postRestaurantCart')
 
     cy.contains('Cheeseburger').click()
 
@@ -383,7 +383,7 @@ context('Checkout', () => {
       .click()
 
     cy.wait('@geocodeAddress')
-    cy.wait('@postRestaurant')
+    cy.wait('@postRestaurantCart')
 
     cy.get('.cart [data-testid="cart.shippingAddress"]')
       .should('have.text', '91 Rue de Rivoli, 75004 Paris, France')
@@ -419,7 +419,7 @@ context('Checkout', () => {
 
     cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 
-    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+    cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
 
     cy.visit('/fr/')
@@ -429,7 +429,7 @@ context('Checkout', () => {
       /\/fr\/restaurant\/[0-9]+-crazy-hamburger/
     )
 
-    cy.wait('@postRestaurant')
+    cy.wait('@postRestaurantCart')
 
     cy.contains('Cheeseburger').click()
 
@@ -459,7 +459,7 @@ context('Checkout', () => {
       '91 Rue de Rivoli, 75004 Paris, France'
     )
 
-    cy.wait('@postRestaurant')
+    cy.wait('@postRestaurantCart')
 
     cy.get('.cart [data-testid="cart.shippingAddress"]')
       .should('have.text', '91 Rue de Rivoli, 75004 Paris, France')
@@ -496,8 +496,7 @@ context('Checkout', () => {
 
   it('start ordering in one restaurant, then navigate to another restaurant', () => {
 
-    cy.intercept('POST', '/fr/restaurant/*-crazy-hamburger').as('postCrazyHamburger')
-    cy.intercept('POST', '/fr/restaurant/*-pizza-express').as('postPizzaExpress')
+    cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
 
     cy.visit('/fr/')
@@ -507,7 +506,7 @@ context('Checkout', () => {
       /\/fr\/restaurant\/[0-9]+-crazy-hamburger/
     )
 
-    cy.wait('@postCrazyHamburger')
+    cy.wait('@postRestaurantCart')
 
     cy.contains('Cheese Cake').click()
 
@@ -525,7 +524,7 @@ context('Checkout', () => {
       /\/fr\/restaurant\/[0-9]+-pizza-express/
     )
 
-    cy.wait('@postPizzaExpress')
+    cy.wait('@postRestaurantCart')
 
     cy.get('#cart .panel-body .cart .alert-warning').should('have.text', 'Votre panier est vide')
 
