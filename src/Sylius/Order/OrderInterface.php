@@ -179,4 +179,14 @@ interface OrderInterface extends
      * @return int
      */
     public function getTransferAmount(LocalBusiness $subVendor): int;
+
+    /**
+     * @return \SplObjectStorage
+     */
+    public function getItemsGroupedByVendor(): \SplObjectStorage;
+
+    /**
+     * @return int
+     */
+    public function getReusablePackagingPledgeReturn();
 }

@@ -1,0 +1,7 @@
+{{ item.variant.name }} × {{ item.quantity }}
+{% for adjustment in item.getAdjustments('menu_item_modifier') %}
+  - {{ adjustment.label }}
+{% endfor %}
+{% for adjustment in item.getAdjustments('reusable_packaging') %}
+  - {{ adjustment.label }}
+{% endfor %}
