@@ -112,12 +112,17 @@ nucleos_profile:
         confirmation:
             enabled: true
 
+services:
+    Sentry\Integration\IgnoreErrorsIntegration:
+        arguments:
+            $options:
+                ignore_exceptions:
+                    - Symfony\Component\Security\Core\Exception\AccessDeniedException
+                    - Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+                    - ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException
+
 sentry:
     dsn: '%sentry_public_dsn%'
     options:
-        # https://github.com/getsentry/sentry-symfony#step-3-configure-the-sdk
-        # https://docs.sentry.io/platforms/php/#php-specific-options
-        excluded_exceptions:
-            - Symfony\Component\Security\Core\Exception\AccessDeniedException
-            - Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-            - ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException
+        integrations:
+            - 'Sentry\Integration\IgnoreErrorsIntegration'
