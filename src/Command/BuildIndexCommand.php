@@ -64,7 +64,11 @@ Class BuildIndexCommand extends Command
         $allCollectionName = 'store:*:deliveries';
         $deliveryRepo = $this->entityManager->getRepository(Delivery::class);
 
-        $q = $deliveryRepo->createQueryBuilder('d')->getQuery();
+        $q = $deliveryRepo->createQueryBuilder('d')
+            ->addOrderBy('d.id', 'DESC')
+            ->setMaxResults(10000)
+            ->getQuery();
+
         foreach ($q->toIterable() as $delivery) {
 
             $html = $this->twig->render('sonic/delivery.html.twig', [
