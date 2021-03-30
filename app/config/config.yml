@@ -120,12 +120,20 @@ framework:
                     - doctrine_close_connection
         transports:
             # https://symfony.com/doc/current/messenger.html#redis-transport
-            async:
-                dsn: "%env(COOPCYCLE_REDIS_DSN)%"
-                options:
-                    stream: "%database_name%:messages"
-                    group: "%database_name%"
-                    consumer: "%database_name%:consumer"
+            #
+            # When running multiple multiple Redis consumers, you may have error:
+            # "Could not acknowledge redis message"
+            #
+            # This is because each Redis consumer must be unique.
+            # Make sure to pass a DSN with a unique consumer name for each process.
+            #
+            # redis://localhost:6379/<stream>/<group>/<name>
+            #
+            # https://github.com/symfony/symfony/issues/35358
+            # https://github.com/symfony/symfony-docs/pull/11869
+            # https://github.com/symfony/symfony-docs/pull/14888
+            #
+            async: "%env(MESSENGER_TRANSPORT_DSN)%"
         routing:
             'AppBundle\Message\CalculateRoute': async
             'AppBundle\Message\DeliveryCreated': async
