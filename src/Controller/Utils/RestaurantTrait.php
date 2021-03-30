@@ -314,47 +314,10 @@ trait RestaurantTrait
         $start->setTime(0, 0, 0);
         $end->setTime(23, 59, 59);
 
-        $qb = $entityManager->getRepository(Order::class)
-            ->createQueryBuilder('o')
-            ->join(Vendor::class, 'v', Expr\Join::WITH, 'o.vendor = v.id')
-            ->andWhere('v.restaurant = :restaurant')
-            ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
-            ->andWhere('o.state != :state')
-            ->setParameter('restaurant', $restaurant)
-            ->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')))
-            ->setParameter('state', OrderInterface::STATE_CART);
-            ;
-
-        $orders = $qb->getQuery()->getResult();
-
-        //
-        // Add hub orders
-        //
-
-        $orderIds = array_map(fn(OrderInterface $r) => $r->getId(), $orders);
-
-        $qb = $entityManager->getRepository(OrderView::class)
-            ->createQueryBuilder('ov');
-
-        $qb = OrderRepository::addShippingTimeRangeClause($qb, 'ov', $start, $end);
-        $qb->select('ov.id');
-        $qb->andWhere('ov.restaurant = :restaurant');
-        if (count($orderIds) > 0) {
-            $qb->andWhere($qb->expr()->notIn('ov.id', $orderIds));
-        }
-        $qb->setParameter('restaurant', $restaurant->getId());
-
-        $hubOrderIds = array_map(fn(array $o) => $o['id'], $qb->getQuery()->getArrayResult());
-
-        if (count($hubOrderIds) > 0) {
-            $qb = $entityManager->getRepository(Order::class)
-                ->createQueryBuilder('o')
-                ->andWhere($qb->expr()->in('o.id', $hubOrderIds));
-
-            $hubOrders = $qb->getQuery()->getResult();
-
-            $orders = array_merge($orders, $hubOrders);
-        }
+        $orders = $entityManager->getRepository(Order::class)
+            ->findOrdersByRestaurantAndDateRange($restaurant, $start, $end,
+                // We include the hub orders
+                $includeHubOrders = true);
 
         $routes = $request->attributes->get('routes');
 

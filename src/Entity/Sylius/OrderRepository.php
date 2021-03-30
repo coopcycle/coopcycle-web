@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Sylius;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Refund;
+use AppBundle\Entity\Sylius\OrderView;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -42,21 +43,56 @@ class OrderRepository extends BaseOrderRepository
         return $this->findOrdersByDateRange($start, $end);
     }
 
-    public function findOrdersByRestaurantAndDateRange(LocalBusiness $restaurant, \DateTime $start, \DateTime $end, $state)
+    public function findOrdersByRestaurantAndDateRange(LocalBusiness $restaurant, \DateTime $start, \DateTime $end, bool $includeHubOrders = false)
     {
-        $qb = $this->createQueryBuilder('o');
-        $qb
+        $qb = $this
+            ->createQueryBuilder('o')
             ->join(Vendor::class, 'v', Join::WITH, 'o.vendor = v.id')
             ->andWhere('v.restaurant = :restaurant')
-            ->andWhere('o.state = :state')
             ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
+            ->andWhere('o.state != :state')
             ->setParameter('restaurant', $restaurant)
-            ->setParameter('state', $state)
             ->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')))
-            ->addOrderBy('o.shippingTimeRange', 'DESC')
+            ->setParameter('state', OrderInterface::STATE_CART)
             ;
 
-        return $qb;
+        $orders = $qb->getQuery()->getResult();
+
+        if (!$includeHubOrders) {
+
+            return $orders;
+        }
+
+        //
+        // Add hub orders
+        //
+
+        $orderIds = array_map(fn(OrderInterface $r) => $r->getId(), $orders);
+
+        $qb = $this->getEntityManager()->getRepository(OrderView::class)
+            ->createQueryBuilder('ov');
+
+        $qb = self::addShippingTimeRangeClause($qb, 'ov', $start, $end);
+        $qb->select('ov.id');
+        $qb->andWhere('ov.restaurant = :restaurant');
+        if (count($orderIds) > 0) {
+            $qb->andWhere($qb->expr()->notIn('ov.id', $orderIds));
+        }
+        $qb->setParameter('restaurant', $restaurant);
+
+        $hubOrderIds = array_map(fn(array $o) => $o['id'], $qb->getQuery()->getArrayResult());
+
+        if (count($hubOrderIds) > 0) {
+            $qb = $this
+                ->createQueryBuilder('o')
+                ->andWhere($qb->expr()->in('o.id', $hubOrderIds));
+
+            $hubOrders = $qb->getQuery()->getResult();
+
+            $orders = array_merge($orders, $hubOrders);
+        }
+
+        return $orders;
     }
 
     public function findOrdersByDateRange(\DateTime $start, \DateTime $end)
