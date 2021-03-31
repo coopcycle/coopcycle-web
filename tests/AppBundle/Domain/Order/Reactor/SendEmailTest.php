@@ -93,7 +93,7 @@ class SendEmailTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->isFoodtech()
+            ->hasVendor()
             ->willReturn(true);
         $order
             ->getCustomer()
@@ -137,7 +137,7 @@ class SendEmailTest extends TestCase
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
     }
 
-    public function testOrderCreatedWithHub()
+    private function createHubOrder()
     {
         $customer = $this->prophesize(Customer::class);
 
@@ -168,7 +168,7 @@ class SendEmailTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->isFoodtech()
+            ->hasVendor()
             ->willReturn(true);
         $order
             ->getCustomer()
@@ -191,6 +191,13 @@ class SendEmailTest extends TestCase
             ->findOneByProduct($product2->reveal())
             ->willReturn($restaurant2->reveal());
 
+        return $order;
+    }
+
+    public function testOrderCreatedWithHub()
+    {
+        $order = $this->createHubOrder();
+
         $this->emailManager
             ->createOrderCreatedMessageForCustomer($order->reveal())
             ->willReturn(new Email());
@@ -205,7 +212,43 @@ class SendEmailTest extends TestCase
 
         $this->emailManager
             ->sendTo(Argument::type(Email::class), Argument::any())
-            ->shouldBeCalledTimes(4);
+            ->shouldBeCalledTimes(2);
+
+        $this->eventBus
+            ->handle(Argument::that(function (Event\EmailSent $event) {
+
+                $payload = $event->toPayload();
+
+                $emails = [
+                    'bob@example.com',
+                    'jane@example.com',
+                ];
+
+                // Make sure the email is *NOT* sent to vendors
+                // when it is a multi vendor order
+                return isset($payload['recipient']) && !in_array($payload['recipient'], $emails);
+            }))
+            ->shouldBeCalled(4);
+
+        call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
+    }
+
+    public function testOrderAcceptedWithHub()
+    {
+        $order = $this->createHubOrder();
+
+        $this->emailManager
+            ->createOrderAcceptedMessage($order->reveal())
+            ->willReturn(new Email());
+
+        $this->emailManager
+            ->createOrderCreatedMessageForOwner($order->reveal(), Argument::type(LocalBusiness::class))
+            ->willReturn(new Email())
+            ->shouldBeCalledTimes(2);
+
+        $this->emailManager
+            ->sendTo(Argument::type(Email::class), Argument::any())
+            ->shouldBeCalledTimes(3);
 
         $this->eventBus
             ->handle(Argument::that(function (Event\EmailSent $event) {
@@ -223,7 +266,7 @@ class SendEmailTest extends TestCase
             }))
             ->shouldBeCalled(4);
 
-        call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
+        call_user_func_array($this->sendEmail, [ new Event\OrderAccepted($order->reveal()) ]);
     }
 
     public function testOrderFulfilled()

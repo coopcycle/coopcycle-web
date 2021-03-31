@@ -31,7 +31,14 @@ class PublishLiveUpdate
             $this->liveUpdates->toAdmins($event);
         }
 
-        if (!$order->hasVendor() || $order->getVendor()->isHub()) {
+        // No need to continue if the order has no vendor
+        if (!$order->hasVendor()) {
+            return;
+        }
+
+        // When this is a multi vendor order,
+        // we do *NOT* send a live update when the order is created
+        if ($event instanceof Event\OrderCreated && $order->getVendor()->isHub()) {
             return;
         }
 

@@ -47,9 +47,16 @@ class SendEmail
         $order = $event->getOrder();
 
         if ($event instanceof OrderAccepted) {
+
             $message = $this->emailManager->createOrderAcceptedMessage($order);
             $this->emailManager->sendTo($message, $order->getCustomer()->getEmail());
             $this->eventBus->handle(new EmailSent($order, $order->getCustomer()->getEmail()));
+
+            // When this is a multi-vendor order,
+            // we notify owners when the order has been *ACCEPTED*
+            if ($order->hasVendor() && $order->getVendor()->isHub()) {
+                $this->notifyOwners($order);
+            }
         }
 
         if ($event instanceof OrderRefused || $event instanceof OrderCancelled) {
@@ -65,10 +72,10 @@ class SendEmail
         }
 
         if ($event instanceof OrderCreated) {
-            if ($order->isFoodtech()) {
-                $this->handleFoodtechOrderCreated($event);
+            if ($order->hasVendor()) {
+                $this->handleOrderCreatedWithVendor($event);
             } else {
-                $this->handleOnDemandOrderCreated($event);
+                $this->handleOrderCreated($event);
             }
         }
 
@@ -80,7 +87,7 @@ class SendEmail
         }
     }
 
-    private function handleFoodtechOrderCreated(Event $event)
+    private function handleOrderCreatedWithVendor(Event $event)
     {
         $order = $event->getOrder();
 
@@ -98,7 +105,18 @@ class SendEmail
         );
         $this->eventBus->handle(new EmailSent($order, $this->settingsManager->get('administrator_email')));
 
-        // Send email to restaurant owners
+        // Send email to shop owners
+        // When this is a multi vendor order,
+        // we will send the email when the order is *ACCEPTED*
+        if ($order->getVendor()->isHub()) {
+            return;
+        }
+
+        $this->notifyOwners($order);
+    }
+
+    private function notifyOwners(OrderInterface $order)
+    {
         $vendor = $order->getVendor();
 
         if ($vendor->isHub()) {
@@ -144,7 +162,7 @@ class SendEmail
         }
     }
 
-    private function handleOnDemandOrderCreated(Event $event)
+    private function handleOrderCreated(Event $event)
     {
         $order = $event->getOrder();
 
