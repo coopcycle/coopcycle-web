@@ -19,7 +19,7 @@ use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
 use AppBundle\Service\DeliveryManager;
-use AppBundle\Service\SocketIoManager;
+use AppBundle\Service\TopBarNotifications;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
@@ -395,15 +395,15 @@ class ProfileController extends AbstractController
     /**
      * @Route("/profile/notifications", name="profile_notifications")
      */
-    public function notificationsAction(Request $request, SocketIoManager $socketIoManager, NormalizerInterface $normalizer)
+    public function notificationsAction(Request $request, TopBarNotifications $topBarNotifications, NormalizerInterface $normalizer)
     {
-        $notifications = $socketIoManager->getLastNotifications($this->getUser());
+        $notifications = $topBarNotifications->getLastNotifications($this->getUser());
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
 
             return new JsonResponse([
                 'notifications' => $normalizer->normalize($notifications, 'json'),
-                'unread' => (int) $socketIoManager->countNotifications($this->getUser())
+                'unread' => (int) $topBarNotifications->countNotifications($this->getUser())
             ]);
         }
 
@@ -415,7 +415,7 @@ class ProfileController extends AbstractController
     /**
      * @Route("/profile/notifications/read", methods={"POST"}, name="profile_notifications_mark_as_read")
      */
-    public function markNotificationsAsReadAction(Request $request, SocketIoManager $socketIoManager)
+    public function markNotificationsAsReadAction(Request $request, TopBarNotifications $topBarNotifications)
     {
         $ids = [];
         $content = $request->getContent();
@@ -423,7 +423,7 @@ class ProfileController extends AbstractController
             $ids = json_decode($content, true);
         }
 
-        $socketIoManager->markAsRead($this->getUser(), $ids);
+        $topBarNotifications->markAsRead($this->getUser(), $ids);
 
         return new Response('', 204);
     }

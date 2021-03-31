@@ -3,25 +3,21 @@
 namespace AppBundle\MessageHandler;
 
 use AppBundle\Message\TopBarNotification;
-use phpcent\Client as CentrifugoClient;
-use Ramsey\Uuid\Uuid;
+use AppBundle\Service\SocketIoManager;
 use Redis;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class TopBarNotificationHandler implements MessageHandlerInterface
 {
     private $redis;
-    private $centrifugoClient;
-    private $namespace;
+    private $socketIoManager;
 
     public function __construct(
         Redis $redis,
-        CentrifugoClient $centrifugoClient,
-        string $namespace)
+        SocketIoManager $socketIoManager)
     {
         $this->redis = $redis;
-        $this->centrifugoClient = $centrifugoClient;
-        $this->namespace = $namespace;
+        $this->socketIoManager = $socketIoManager;
     }
 
     public function __invoke(TopBarNotification $message)
@@ -51,19 +47,8 @@ class TopBarNotificationHandler implements MessageHandlerInterface
                 'data' => $this->redis->llen($listKey),
             ];
 
-            $this->centrifugoClient->publish(
-                $this->getEventsChannelName($username),
-                ['event' => $notificationsPayload]
-            );
-            $this->centrifugoClient->publish(
-                $this->getEventsChannelName($username),
-                ['event' => $notificationsCountPayload]
-            );
+            $this->socketIoManager->publishEvent($username, $notificationsPayload);
+            $this->socketIoManager->publishEvent($username, $notificationsCountPayload);
         }
-    }
-
-    private function getEventsChannelName(string $username)
-    {
-        return sprintf('%s_events#%s', $this->namespace, $username);
     }
 }

@@ -161,59 +161,31 @@ class SocketIoManager
         }
     }
 
-    public function getLastNotifications(UserInterface $user)
+    /**
+     * @param UserInterface|string $user
+     *
+     * @return string
+     */
+    private function getEventsChannelName($user)
     {
-        $listKey = sprintf('user:%s:notifications', $user->getUsername());
-        $hashKey = sprintf('user:%s:notifications_data', $user->getUsername());
+        $username = $user instanceof UserInterface ? $user->getUsername() : $user;
 
-        $uuids = $this->redis->lrange($listKey, 0, 5);
-
-        $notifications = [];
-        foreach ($uuids as $uuid) {
-            $data = $this->redis->hget($hashKey, $uuid);
-            if ($data) {
-                $notifications[] = json_decode($data, true);
-            }
-        }
-
-        return $notifications;
-    }
-
-    public function countNotifications(UserInterface $user)
-    {
-        $listKey = sprintf('user:%s:notifications', $user->getUsername());
-
-        return $this->redis->llen($listKey);
-    }
-
-    public function markAsRead(UserInterface $user, array $uuids = [])
-    {
-        $listKey = sprintf('user:%s:notifications', $user->getUsername());
-        $hashKey = sprintf('user:%s:notifications_data', $user->getUsername());
-
-        foreach ($uuids as $uuid) {
-            $this->redis->lrem($listKey, $uuid, 0);
-            $this->redis->hdel($hashKey, $uuid);
-        }
-
-        $notificationsCountPayload = [
-            'name' => 'notifications:count',
-            'data' => $this->redis->llen($listKey),
-        ];
-
-        $this->centrifugoClient->publish(
-            $this->getEventsChannelName($user),
-            ['event' => $notificationsCountPayload]
-        );
-    }
-
-    private function getEventsChannelName(UserInterface $user)
-    {
         return sprintf('%s_events#%s', $this->namespace, $user->getUsername());
     }
 
     private function getOrderChannelName(OrderInterface $order)
     {
         return sprintf('%s_order_events#%d', $this->namespace, $order->getId());
+    }
+
+    /**
+     * @param UserInterface|string $user
+     * @param array $payload
+     */
+    public function publishEvent($user, array $payload)
+    {
+        $channel = $this->getEventsChannelName($user);
+
+        $this->centrifugoClient->publish($channel, ['event' => $payload]);
     }
 }
