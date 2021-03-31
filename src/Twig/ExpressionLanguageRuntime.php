@@ -16,6 +16,14 @@ class ExpressionLanguageRuntime implements RuntimeExtensionInterface
 
     public function parseExpression($expression)
     {
-        return $this->expressionLanguage->parse($expression, ['distance', 'weight', 'pickup', 'dropoff', 'packages']);
+        return $this->expressionLanguage->parse($expression, [
+            'distance',
+            'weight',
+            'vehicle',
+            'pickup',
+            'dropoff',
+            'packages',
+            'order',
+        ]);
     }
 }
