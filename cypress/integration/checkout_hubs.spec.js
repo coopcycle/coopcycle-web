@@ -8,7 +8,7 @@ context('Checkout (hubs)', () => {
     })
   })
 
-  it('order something at hub', () => {
+  it.skip('order something at hub', () => {
 
     cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
