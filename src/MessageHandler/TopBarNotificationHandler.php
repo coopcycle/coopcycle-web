@@ -6,6 +6,7 @@ use AppBundle\Message\TopBarNotification;
 use AppBundle\Service\SocketIoManager;
 use Redis;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Ramsey\Uuid\Uuid;
 
 class TopBarNotificationHandler implements MessageHandlerInterface
 {
