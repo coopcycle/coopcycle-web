@@ -7,7 +7,7 @@ use AppBundle\Service\LiveUpdates;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use Webmozart\Assert\Assert;
 
-class PublishToRedis
+class PublishLiveUpdate
 {
     private $liveUpdates;
 
