@@ -58,28 +58,14 @@
       {% endif %}
     {% endblock %}
     {% if app.environment == "prod" %}
-      {% if sentry_apm_enabled %}
       <script
-        src="https://browser.sentry-cdn.com/5.17.0/bundle.apm.min.js"
-        crossorigin="anonymous"></script>
-      <script>
-        Sentry.init({
-          dsn: '{{ sentry_public_dsn }}',
-          integrations: [
-            new Sentry.Integrations.Tracing()
-          ],
-          tracesSampleRate: 0.25
-        });
-      </script>
-      {% else %}
-      <script
-        src="https://browser.sentry-cdn.com/5.17.0/bundle.min.js"
-        integrity="sha384-lowBFC6YTkvMIWPORr7+TERnCkZdo5ab00oH5NkFLeQUAmBTLGwJpFjF6djuxJ/5"
-        crossorigin="anonymous"></script>
+        src="https://browser.sentry-cdn.com/6.2.4/bundle.min.js"
+        integrity="sha384-b3mYy/x0ZxlqU5OjYvVD7RczftJVOXmpHSmrcqpL4c+kBSXWEnRL2Puv9eMjYmDq"
+        crossorigin="anonymous"
+      ></script>
       <script>
         Sentry.init({ dsn: '{{ sentry_public_dsn }}' });
       </script>
-      {% endif %}
     {% endif %}
 
     <div id="cpccl_settings"
