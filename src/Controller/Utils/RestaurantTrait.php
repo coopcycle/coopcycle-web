@@ -70,6 +70,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
 
@@ -283,12 +284,15 @@ trait RestaurantTrait
         return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator);
     }
 
-    protected function renderRestaurantDashboard(
-        LocalBusiness $restaurant,
-        Request $request,
+    public function restaurantDashboardAction($restaurantId, Request $request,
         EntityManagerInterface $entityManager,
-        IriConverterInterface $iriConverter)
+        IriConverterInterface $iriConverter,
+        AuthorizationCheckerInterface $authorizationChecker)
     {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
         $this->accessControl($restaurant);
 
         $date = new \DateTime('now');
@@ -314,10 +318,11 @@ trait RestaurantTrait
         $start->setTime(0, 0, 0);
         $end->setTime(23, 59, 59);
 
+        // FIXME
+        // Ideally, $authorizationChecker should be injected
+        // into OrderRepository directly, but it seems impossible with Sylius dependency injection
         $orders = $entityManager->getRepository(Order::class)
-            ->findOrdersByRestaurantAndDateRange($restaurant, $start, $end,
-                // We include the hub orders
-                $includeHubOrders = true);
+            ->findOrdersByRestaurantAndDateRange($restaurant, $start, $end, $authorizationChecker->isGranted('ROLE_ADMIN'));
 
         $routes = $request->attributes->get('routes');
 
@@ -340,17 +345,6 @@ trait RestaurantTrait
             'routes' => $routes,
             'date' => $date,
         ], $routes));
-    }
-
-    public function restaurantDashboardAction($restaurantId, Request $request,
-        EntityManagerInterface $entityManager,
-        IriConverterInterface $iriConverter)
-    {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(LocalBusiness::class)
-            ->find($restaurantId);
-
-        return $this->renderRestaurantDashboard($restaurant, $request, $entityManager, $iriConverter);
     }
 
     public function restaurantMenuTaxonsAction($id, Request $request, FactoryInterface $taxonFactory)

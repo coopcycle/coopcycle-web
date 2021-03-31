@@ -3,16 +3,19 @@
 namespace AppBundle\Action\Restaurant;
 
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Vendor;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class Orders
 {
-    public function __construct(EntityManagerInterface $objectManager)
+    public function __construct(EntityManagerInterface $objectManager, AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->objectManager = $objectManager;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function __invoke($data, Request $request)
@@ -29,9 +32,11 @@ class Orders
         // so that @context equals "/api/contexts/Order"
         $request->attributes->set('_api_resource_class', Order::class);
 
+        // FIXME
+        // Ideally, $authorizationChecker should be injected
+        // into OrderRepository directly, but it seems impossible with Sylius dependency injection
         return $this->objectManager->getRepository(Order::class)
             ->findOrdersByRestaurantAndDateRange($data, $start, $end,
-                // We do *NOT* include the hub orders
-                $includeHubOrders = false);
+                $this->authorizationChecker->isGranted('ROLE_ADMIN'));
     }
 }

@@ -43,7 +43,10 @@ class OrderRepository extends BaseOrderRepository
         return $this->findOrdersByDateRange($start, $end, $withVendor = true);
     }
 
-    public function findOrdersByRestaurantAndDateRange(LocalBusiness $restaurant, \DateTime $start, \DateTime $end, bool $includeHubOrders = false)
+    public function findOrdersByRestaurantAndDateRange(LocalBusiness $restaurant,
+        \DateTime $start,
+        \DateTime $end,
+        bool $includeNewMultiVendorOrders)
     {
         $qb = $this
             ->createQueryBuilder('o')
@@ -58,11 +61,6 @@ class OrderRepository extends BaseOrderRepository
 
         $orders = $qb->getQuery()->getResult();
 
-        if (!$includeHubOrders) {
-
-            return $orders;
-        }
-
         //
         // Add hub orders
         //
@@ -75,6 +73,14 @@ class OrderRepository extends BaseOrderRepository
         $qb = self::addShippingTimeRangeClause($qb, 'ov', $start, $end);
         $qb->select('ov.id');
         $qb->andWhere('ov.restaurant = :restaurant');
+
+        // When the user is *NOT* an administrator,
+        // we only show orders once they are accepted
+        if (!$includeNewMultiVendorOrders) {
+            $qb->andWhere('ov.state != :state_new');
+            $qb->setParameter('state_new', OrderInterface::STATE_NEW);
+        }
+
         if (count($orderIds) > 0) {
             $qb->andWhere($qb->expr()->notIn('ov.id', $orderIds));
         }
