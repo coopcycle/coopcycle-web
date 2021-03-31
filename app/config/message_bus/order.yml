@@ -155,6 +155,8 @@ services:
     tags:
         - name: event_subscriber
           subscribes_to: order:created
+        - name: event_subscriber
+          subscribes_to: order:accepted
 
   coopcycle.domain.order.reactor.clear_session:
     class: AppBundle\Domain\Order\Reactor\ClearSession

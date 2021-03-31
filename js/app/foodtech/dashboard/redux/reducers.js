@@ -51,9 +51,17 @@ export const initialState = {
   initialOrder: null,
 }
 
-function replaceOrder(orders, order) {
+// The "force" parameter is useful for multi vendor orders,
+// to add the order even if it's not already there
+function replaceOrder(orders, order, force = false) {
 
   const orderIndex = _.findIndex(orders, o => o['@id'] === order['@id'])
+
+  if (-1 === orderIndex && force) {
+
+    return orders.concat([ order ])
+  }
+
   if (-1 !== orderIndex) {
     const newOrders = orders.slice()
     newOrders.splice(orderIndex, 1, Object.assign({}, order))
@@ -139,7 +147,7 @@ export default (state = initialState, action = {}) => {
 
     return {
       ...state,
-      orders: replaceOrder(state.orders, Object.assign({}, action.payload, { state: 'accepted' })),
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload, { state: 'accepted' }), true),
     }
 
   case ORDER_REFUSED:
