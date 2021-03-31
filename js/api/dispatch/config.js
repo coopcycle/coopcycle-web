@@ -22,6 +22,19 @@ module.exports = function() {
     port = parseInt(process.env.COOPCYCLE_DB_PORT, 10)
   }
 
+  let otherOptions = {}
+  if (process.env.COOPCYCLE_POSTGRES_SSLMODE === 'require') {
+    otherOptions = {
+      ...otherOptions,
+      dialectOptions: {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        }
+      }
+    }
+  }
+
   var sequelize = new Sequelize(
     process.env.COOPCYCLE_DB_NAME,
     process.env.COOPCYCLE_DB_USER,
@@ -31,12 +44,7 @@ module.exports = function() {
       port: port,
       dialect: 'postgres',
       logging: false,
-      dialectOptions: {
-        ssl: {
-          require: process.env.COOPCYCLE_POSTGRES_SSLMODE === 'require',
-          rejectUnauthorized: false,
-        }
-      }
+      ...otherOptions,
     }
   );
 
