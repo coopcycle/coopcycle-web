@@ -13,6 +13,8 @@
     <field name="vendorName" type="string" column="vendor_name"/>
     <field name="restaurant" type="integer" column="restaurant_id"/>
 
+    <field name="state" type="string" column="state"/>
+
     <!--
     <field name="adjustments" type="json_array" column="adjustments"/>
     -->

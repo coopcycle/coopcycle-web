@@ -31,6 +31,8 @@ class OrderView
     private $adjustmentsTotalCache = [];
     private $adjustmentsTotalRecursivelyCache = [];
 
+    public $state;
+
     public function getId()
     {
         return $this->id;
