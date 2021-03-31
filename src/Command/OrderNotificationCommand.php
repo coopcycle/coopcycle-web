@@ -3,7 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Domain\Order\Event\OrderCreated;
-use AppBundle\Domain\Order\Reactor\PublishToRedis;
+use AppBundle\Domain\Order\Reactor\PublishLiveUpdate;
 use AppBundle\Domain\Order\Reactor\SendRemotePushNotification;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
@@ -22,7 +22,7 @@ class OrderNotificationCommand extends Command
     public function __construct(
         RepositoryInterface $orderRepository,
         RemotePushNotificationManager $remotePushNotificationManager,
-        PublishToRedis $websocket,
+        PublishLiveUpdate $websocket,
         SendRemotePushNotification $push)
     {
         $this->orderRepository = $orderRepository;
