@@ -31,7 +31,12 @@ module.exports = function() {
       port: port,
       dialect: 'postgres',
       logging: false,
-      dialectOptions: { ssl: process.env.COOPCYCLE_POSTGRES_SSLMODE === 'require' }
+      dialectOptions: {
+        ssl: {
+          require: process.env.COOPCYCLE_POSTGRES_SSLMODE === 'require',
+          rejectUnauthorized: false,
+        }
+      }
     }
   );
 
