@@ -12,6 +12,7 @@ use AppBundle\Sylius\Order\ReceiptGenerator;
 use AppBundle\Utils\RestaurantStats;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
+use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -82,6 +83,9 @@ trait OrderTrait
 
                 $qb = $entityManager->getRepository(OrderView::class)
                     ->createQueryBuilder('ov');
+
+                $qb->andWhere('ov.state = :state');
+                $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
 
                 $qb = OrderRepository::addShippingTimeRangeClause($qb, 'ov', $start, $end);
                 $qb->addOrderBy('ov.shippingTimeRange', 'DESC');

@@ -1174,7 +1174,9 @@ trait RestaurantTrait
 
         $qb = OrderRepository::addShippingTimeRangeClause($qb, 'ov', $start, $end);
         $qb->andWhere('ov.restaurant = :restaurant');
+        $qb->andWhere('ov.state = :state');
         $qb->setParameter('restaurant', $restaurant->getId());
+        $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
         $qb->addOrderBy('ov.shippingTimeRange', 'DESC');
 
         $refundedOrders = $entityManager->getRepository(Order::class)

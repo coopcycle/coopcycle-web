@@ -158,6 +158,7 @@ class OrderView
 
         $selects = [];
         $selects[] = 'o.id';
+        $selects[] = 'o.state';
         $selects[] = 'o.number';
         $selects[] = 'CASE WHEN o.takeaway THEN \'collection\' ELSE \'delivery\' END AS fulfillment_method';
         $selects[] = 'v.id AS vendor_id';
@@ -184,7 +185,7 @@ class OrderView
         $parts[] = 'LEFT JOIN restaurant r ON (v.restaurant_id = r.id)';
         $parts[] = 'LEFT JOIN restaurant_product rp ON (rp.product_id = p.id AND rp.restaurant_id = COALESCE(v.restaurant_id, hr.restaurant_id))';
         // $parts[] = 'INNER JOIN sylius_adjustment a ON (a.order_id = o.id OR a.order_item_id = i.id)';
-        $parts[] = 'WHERE o.state = \'fulfilled\'';
+        $parts[] = 'WHERE o.state != \'cart\'';
         // This allows to
         // - retrieve orders without vendors
         // - filter out restaurants without items for hub orders
