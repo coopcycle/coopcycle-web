@@ -62,6 +62,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 
 /**
  * Defines application features from the specific context.
@@ -1121,5 +1122,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->doctrine->getManagerForClass(Task::class)->persist($task);
         $this->doctrine->getManagerForClass(Task::class)->flush();
+    }
+
+    /**
+     * @Given the user :username has a refresh token :refreshToken
+     */
+    public function theUserHasARefreshToken($username, $refreshToken)
+    {
+        $tok = new RefreshToken();
+        $tok->setRefreshToken($refreshToken);
+        $tok->setValid(new \DateTime('+1 hour'));
+        $tok->setUsername($username);
+
+        $this->doctrine->getManagerForClass(RefreshToken::class)->persist($tok);
+        $this->doctrine->getManagerForClass(RefreshToken::class)->flush();
     }
 }
