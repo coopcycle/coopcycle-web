@@ -54,7 +54,6 @@ services:
     alias: AppBundle\ExpressionLanguage\ExpressionLanguage
     public: true
   coopcycle.tag_manager: '@AppBundle\Service\TagManager'
-  coopcycle.socket_io_manager: '@AppBundle\Service\SocketIoManager'
   coopcycle.geocoder: '@AppBundle\Service\Geocoder'
   coopcycle.task_manager: '@AppBundle\Service\TaskManager'
   coopcycle.order_manager: '@AppBundle\Service\OrderManager'
