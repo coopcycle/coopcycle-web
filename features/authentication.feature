@@ -25,6 +25,30 @@ Feature: Authenticate
       }
       """
 
+  Scenario: Refresh token
+    Given the user is loaded:
+      | email    | bob@coopcycle.org |
+      | username | bob               |
+      | password | 123456            |
+    And the user "bob" has a refresh token "123456"
+    And I send a "POST" request to "/api/token/refresh" with parameters:
+      | key           | value  |
+      | refresh_token | 123456 |
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "token": @string@,
+        "roles": @array@,
+        "username": "bob",
+        "email": "bob@coopcycle.org",
+        "id": @integer@,
+        "refresh_token": "123456",
+        "enabled": true
+      }
+      """
+
   Scenario: Login by email success
     And the user is loaded:
       | email    | bob@coopcycle.org |
