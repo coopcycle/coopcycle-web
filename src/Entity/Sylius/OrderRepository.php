@@ -40,7 +40,7 @@ class OrderRepository extends BaseOrderRepository
         $start->setTime(0, 0, 0);
         $end->setTime(23, 59, 59);
 
-        return $this->findOrdersByDateRange($start, $end);
+        return $this->findOrdersByDateRange($start, $end, $withVendor = true);
     }
 
     public function findOrdersByRestaurantAndDateRange(LocalBusiness $restaurant, \DateTime $start, \DateTime $end, bool $includeHubOrders = false)
@@ -95,11 +95,15 @@ class OrderRepository extends BaseOrderRepository
         return $orders;
     }
 
-    public function findOrdersByDateRange(\DateTime $start, \DateTime $end)
+    public function findOrdersByDateRange(\DateTime $start, \DateTime $end, bool $withVendor = false)
     {
         $qb = $this->createQueryBuilder('o');
 
         $this->addDateRangeClause($qb, $start, $end);
+
+        if ($withVendor) {
+            $qb->andWhere('o.vendor IS NOT NULL');
+        }
 
         $qb
             ->andWhere('o.state != :state_cart')
