@@ -170,7 +170,7 @@ class SocketIoManager
     {
         $username = $user instanceof UserInterface ? $user->getUsername() : $user;
 
-        return sprintf('%s_events#%s', $this->namespace, $user->getUsername());
+        return sprintf('%s_events#%s', $this->namespace, $username);
     }
 
     private function getOrderChannelName(OrderInterface $order)
