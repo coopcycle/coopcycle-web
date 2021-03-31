@@ -18,35 +18,29 @@ class PublishLiveUpdate
 
     public function __invoke(Event $event)
     {
-        try {
+        $order = $event->getOrder();
+        $customer = $order->getCustomer();
 
-            $order = $event->getOrder();
-            $customer = $order->getCustomer();
+        Assert::isInstanceOf($customer, CustomerInterface::class);
 
-            Assert::isInstanceOf($customer, CustomerInterface::class);
+        $this->liveUpdates->toOrderWatchers($order, $event);
 
-            $this->liveUpdates->toOrderWatchers($order, $event);
-
-            if (null !== $customer && $customer->hasUser()) {
-                $this->liveUpdates->toUserAndAdmins($customer->getUser(), $event);
-            } else {
-                $this->liveUpdates->toAdmins($event);
-            }
-
-            if (!$order->hasVendor() || $order->getVendor()->isHub()) {
-                return;
-            }
-
-            $owners = $order->getVendor()->getOwners();
-
-            if (count($owners) === 0) {
-                return;
-            }
-
-            $this->liveUpdates->toUsers($owners->toArray(), $event);
-
-        } catch (\Exception $e) {
-
+        if (null !== $customer && $customer->hasUser()) {
+            $this->liveUpdates->toUserAndAdmins($customer->getUser(), $event);
+        } else {
+            $this->liveUpdates->toAdmins($event);
         }
+
+        if (!$order->hasVendor() || $order->getVendor()->isHub()) {
+            return;
+        }
+
+        $owners = $order->getVendor()->getOwners();
+
+        if (count($owners) === 0) {
+            return;
+        }
+
+        $this->liveUpdates->toUsers($owners->toArray(), $event);
     }
 }
