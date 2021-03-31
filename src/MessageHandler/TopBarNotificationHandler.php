@@ -3,7 +3,7 @@
 namespace AppBundle\MessageHandler;
 
 use AppBundle\Message\TopBarNotification;
-use AppBundle\Service\SocketIoManager;
+use AppBundle\Service\LiveUpdates;
 use Redis;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Ramsey\Uuid\Uuid;
@@ -11,14 +11,14 @@ use Ramsey\Uuid\Uuid;
 class TopBarNotificationHandler implements MessageHandlerInterface
 {
     private $redis;
-    private $socketIoManager;
+    private $liveUpdates;
 
     public function __construct(
         Redis $redis,
-        SocketIoManager $socketIoManager)
+        LiveUpdates $liveUpdates)
     {
         $this->redis = $redis;
-        $this->socketIoManager = $socketIoManager;
+        $this->liveUpdates = $liveUpdates;
     }
 
     public function __invoke(TopBarNotification $message)
@@ -48,8 +48,8 @@ class TopBarNotificationHandler implements MessageHandlerInterface
                 'data' => $this->redis->llen($listKey),
             ];
 
-            $this->socketIoManager->publishEvent($username, $notificationsPayload);
-            $this->socketIoManager->publishEvent($username, $notificationsCountPayload);
+            $this->liveUpdates->publishEvent($username, $notificationsPayload);
+            $this->liveUpdates->publishEvent($username, $notificationsCountPayload);
         }
     }
 }

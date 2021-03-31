@@ -6,7 +6,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Message\ImportTasks;
 use AppBundle\Service\RemotePushNotificationManager;
-use AppBundle\Service\SocketIoManager;
+use AppBundle\Service\LiveUpdates;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\DBAL\Exception\DriverException;
@@ -23,7 +23,7 @@ class ImportTasksHandler implements MessageHandlerInterface
     private $taskImportsFilesystem;
     private $spreadsheetParser;
     private $validator;
-    private $socketIoManager;
+    private $liveUpdates;
     private $hashids;
     private $logger;
 
@@ -32,7 +32,7 @@ class ImportTasksHandler implements MessageHandlerInterface
         Filesystem $taskImportsFilesystem,
         TaskSpreadsheetParser $spreadsheetParser,
         ValidatorInterface $validator,
-        SocketIoManager $socketIoManager,
+        LiveUpdates $liveUpdates,
         string $secret,
         LoggerInterface $logger)
     {
@@ -40,7 +40,7 @@ class ImportTasksHandler implements MessageHandlerInterface
         $this->taskImportsFilesystem = $taskImportsFilesystem;
         $this->spreadsheetParser = $spreadsheetParser;
         $this->validator = $validator;
-        $this->socketIoManager = $socketIoManager;
+        $this->liveUpdates = $liveUpdates;
         $this->logger = $logger;
         $this->hashids = new Hashids($secret, 8);
     }
@@ -91,7 +91,7 @@ class ImportTasksHandler implements MessageHandlerInterface
             $this->logger->info(sprintf('Importing %d tasks…', count($tasks)));
 
         } catch (\Exception $e) {
-            $this->socketIoManager->toAdmins('task_import:failure', [
+            $this->liveUpdates->toAdmins('task_import:failure', [
                 'token' => $message->getToken(),
                 'message' => $e->getMessage(),
             ]);
@@ -108,7 +108,7 @@ class ImportTasksHandler implements MessageHandlerInterface
             $this->objectManager->flush();
 
         } catch (DriverException $e) {
-            $this->socketIoManager->toAdmins('task_import:failure', [
+            $this->liveUpdates->toAdmins('task_import:failure', [
                 'token' => $message->getToken(),
                 'message' => $e->getMessage(),
             ]);
@@ -117,7 +117,7 @@ class ImportTasksHandler implements MessageHandlerInterface
         }
 
         $this->logger->info(sprintf('Finished importing file %s', $message->getFilename()));
-        $this->socketIoManager->toAdmins('task_import:success', [
+        $this->liveUpdates->toAdmins('task_import:success', [
             'token' => $message->getToken()
         ]);
 

@@ -3,17 +3,17 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event;
-use AppBundle\Service\SocketIoManager;
+use AppBundle\Service\LiveUpdates;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use Webmozart\Assert\Assert;
 
 class PublishToRedis
 {
-    private $socketIoManager;
+    private $liveUpdates;
 
-    public function __construct(SocketIoManager $socketIoManager)
+    public function __construct(LiveUpdates $liveUpdates)
     {
-        $this->socketIoManager = $socketIoManager;
+        $this->liveUpdates = $liveUpdates;
     }
 
     public function __invoke(Event $event)
@@ -25,12 +25,12 @@ class PublishToRedis
 
             Assert::isInstanceOf($customer, CustomerInterface::class);
 
-            $this->socketIoManager->toOrderWatchers($order, $event);
+            $this->liveUpdates->toOrderWatchers($order, $event);
 
             if (null !== $customer && $customer->hasUser()) {
-                $this->socketIoManager->toUserAndAdmins($customer->getUser(), $event);
+                $this->liveUpdates->toUserAndAdmins($customer->getUser(), $event);
             } else {
-                $this->socketIoManager->toAdmins($event);
+                $this->liveUpdates->toAdmins($event);
             }
 
             if (!$order->hasVendor() || $order->getVendor()->isHub()) {
@@ -43,7 +43,7 @@ class PublishToRedis
                 return;
             }
 
-            $this->socketIoManager->toUsers($owners->toArray(), $event);
+            $this->liveUpdates->toUsers($owners->toArray(), $event);
 
         } catch (\Exception $e) {
 

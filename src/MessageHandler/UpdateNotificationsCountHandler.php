@@ -4,16 +4,16 @@ namespace AppBundle\MessageHandler;
 
 use AppBundle\Message\UpdateNotificationsCount;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
-use AppBundle\Service\SocketIoManager;
+use AppBundle\Service\LiveUpdates;
 
 class UpdateNotificationsCountHandler implements MessageHandlerInterface
 {
-    private $socketIoManager;
+    private $liveUpdates;
 
     public function __construct(
-        SocketIoManager $socketIoManager)
+        LiveUpdates $liveUpdates)
     {
-        $this->socketIoManager = $socketIoManager;
+        $this->liveUpdates = $liveUpdates;
     }
 
     public function __invoke(UpdateNotificationsCount $message)
@@ -23,6 +23,6 @@ class UpdateNotificationsCountHandler implements MessageHandlerInterface
             'data' => $message->getCount(),
         ];
 
-        $this->socketIoManager->publishEvent($message->getUsername(), $payload);
+        $this->liveUpdates->publishEvent($message->getUsername(), $payload);
     }
 }

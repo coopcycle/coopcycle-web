@@ -4,24 +4,24 @@ namespace AppBundle\Domain\Task\Reactor;
 
 use AppBundle\Domain\Event;
 use AppBundle\Domain\Task\Event\TaskListUpdated;
-use AppBundle\Service\SocketIoManager;
+use AppBundle\Service\LiveUpdates;
 
 class PublishRedisMessage
 {
-    private $socketIoManager;
+    private $liveUpdates;
 
-    public function __construct(SocketIoManager $socketIoManager)
+    public function __construct(LiveUpdates $liveUpdates)
     {
-        $this->socketIoManager = $socketIoManager;
+        $this->liveUpdates = $liveUpdates;
     }
 
     public function __invoke(Event $event)
     {
         if ($event instanceof TaskListUpdated) {
             $user = $event->getTaskList()->getCourier();
-            $this->socketIoManager->toUsers([ $user ], $event);
+            $this->liveUpdates->toUsers([ $user ], $event);
         } else {
-            $this->socketIoManager->toAdmins($event);
+            $this->liveUpdates->toAdmins($event);
         }
     }
 }

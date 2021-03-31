@@ -6,7 +6,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Message\ImportTasks;
 use AppBundle\Service\RemotePushNotificationManager;
-use AppBundle\Service\SocketIoManager;
+use AppBundle\Service\LiveUpdates;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -27,7 +27,7 @@ class ImportTasksCommand extends Command
     private $taskImportsFilesystem;
     private $spreadsheetParser;
     private $validator;
-    private $socketIoManager;
+    private $liveUpdates;
     private $hashids;
     private $logger;
 
@@ -36,7 +36,7 @@ class ImportTasksCommand extends Command
         Filesystem $taskImportsFilesystem,
         TaskSpreadsheetParser $spreadsheetParser,
         ValidatorInterface $validator,
-        SocketIoManager $socketIoManager,
+        LiveUpdates $liveUpdates,
         string $secret,
         LoggerInterface $logger)
     {
@@ -44,7 +44,7 @@ class ImportTasksCommand extends Command
         $this->taskImportsFilesystem = $taskImportsFilesystem;
         $this->spreadsheetParser = $spreadsheetParser;
         $this->validator = $validator;
-        $this->socketIoManager = $socketIoManager;
+        $this->liveUpdates = $liveUpdates;
         $this->logger = $logger;
         $this->hashids = new Hashids($secret, 8);
 
@@ -133,7 +133,7 @@ class ImportTasksCommand extends Command
 
             $this->io->error($e->getMessage());
 
-            $this->socketIoManager->toAdmins('task_import:failure', [
+            $this->liveUpdates->toAdmins('task_import:failure', [
                 'token' => $token,
                 'message' => $e->getMessage()
             ]);
@@ -150,7 +150,7 @@ class ImportTasksCommand extends Command
 
         $this->io->success(sprintf('Finished importing file %s', $filename));
 
-        $this->socketIoManager->toAdmins('task_import:success', ['token' => $token]);
+        $this->liveUpdates->toAdmins('task_import:success', ['token' => $token]);
 
         unlink($tempnam);
 

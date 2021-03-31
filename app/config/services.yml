@@ -1065,7 +1065,7 @@ services:
       - '%env(CENTRIFUGO_API_KEY)%'
       - '%env(CENTRIFUGO_TOKEN_HMAC_SECRET_KEY)%'
 
-  AppBundle\Service\SocketIoManager:
+  AppBundle\Service\LiveUpdates:
     arguments:
       $namespace: '%centrifugo_namespace%'
 

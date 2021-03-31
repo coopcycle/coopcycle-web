@@ -214,7 +214,7 @@ services:
   coopcycle.domain.order.reactor.publish_to_redis:
     class: AppBundle\Domain\Order\Reactor\PublishToRedis
     arguments:
-      - '@AppBundle\Service\SocketIoManager'
+      - '@AppBundle\Service\LiveUpdates'
     tags:
         - name: event_subscriber
           subscribes_to: order:created
@@ -236,7 +236,7 @@ services:
   coopcycle.domain.order.reactor.modify_promotions_usage:
     class: AppBundle\Domain\Order\Reactor\ModifyPromotionsUsage
     arguments:
-      - '@AppBundle\Service\SocketIoManager'
+      - '@AppBundle\Service\LiveUpdates'
     tags:
         - name: event_subscriber
           subscribes_to: order:created

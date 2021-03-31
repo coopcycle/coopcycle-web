@@ -21,7 +21,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class SocketIoManager
+class LiveUpdates
 {
     use TokenStorageTrait;
 
