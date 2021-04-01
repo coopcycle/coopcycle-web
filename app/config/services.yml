@@ -662,6 +662,11 @@ services:
     tags:
       - { name: monolog.logger, channel: stripe }
 
+  AppBundle\Action\Delivery\Pricing:
+    public: true
+    arguments:
+      $state: "%region_iso%"
+
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }

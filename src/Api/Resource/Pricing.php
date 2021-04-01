@@ -7,10 +7,16 @@ use AppBundle\Action\Delivery\Pricing as PricingController;
 use AppBundle\Api\Dto\DeliveryInput;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Validator\Constraints as Assert;
+use Ramsey\Uuid\Uuid;
+use Sylius\Component\Taxation\Model\TaxRateInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * @ApiResource(
+ *   attributes={
+ *     "normalization_context"={"groups"={"pricing_deliveries"}}
+ *   },
  *   collectionOperations={
  *     "calc_price"={
  *       "method"="POST",
@@ -47,11 +53,45 @@ final class Pricing
 
     /**
      * @var int
+     *
+     * @Groups({"pricing_deliveries"})
      */
-    public $price;
+    public $amount;
 
     /**
      * @var string
+     *
+     * @Groups({"pricing_deliveries"})
      */
-    public $currencyCode;
+    public $currency;
+
+    /**
+     * @var int
+     */
+    public $taxAmount;
+
+    /**
+     * @var TaxRateInterface
+     */
+    public $taxRate;
+
+    public function __construct(int $amount, string $currency, int $taxAmount)
+    {
+        $this->id = Uuid::uuid4()->toString();
+        $this->amount = $amount;
+        $this->currency = $currency;
+        $this->taxAmount = $taxAmount;
+    }
+
+    /**
+     * @Groups({"pricing_deliveries"})
+     * @SerializedName("tax")
+     */
+    public function getTax(): array
+    {
+        return [
+            // 'rate'   => $this->taxRate->getAmount(),
+            'amount' => $this->taxAmount,
+        ];
+    }
 }

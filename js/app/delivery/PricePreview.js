@@ -2,15 +2,6 @@ import axios from 'axios'
 
 const baseURL = location.protocol + '//' + location.hostname
 
-const calculate = (base, amount, isIncludedInPrice) => {
-
-    if (isIncludedInPrice) {
-      return Math.round(base - (base / (1 + amount)))
-    }
-
-    return Math.round(base * amount)
-}
-
 // @see https://gist.github.com/anvk/5602ec398e4fdc521e2bf9940fd90f84
 
 function asyncFunc(item, payload, token) {
@@ -64,10 +55,6 @@ class PricePreview {
   update(delivery) {
 
     const $container = $('#delivery_price').closest('.delivery-price')
-    const $wrapper = $container.closest('.delivery-price-preview')
-
-    const amount = $wrapper.data('taxRateAmount')
-    const isIncludedInPrice = $wrapper.data('taxRateIsIncludedInPrice')
 
     $container.removeClass('delivery-price--error')
     $container.addClass('delivery-price--loading')
@@ -115,17 +102,12 @@ class PricePreview {
 
         if (priceResult.success) {
 
-          const { price } = priceResult.data
-
-          const taxAmount =
-            calculate(price, amount, isIncludedInPrice)
-
-          const taxIncluded = isIncludedInPrice ? price : (price + taxAmount)
-          const taxExcluded = isIncludedInPrice ? (price - taxAmount) : price
+          const { data } = priceResult
+          const taxExcluded = data.amount - data.tax.amount
 
           $('#delivery_price')
             .find('[data-tax="included"]')
-            .text((taxIncluded / 100).formatMoney())
+            .text((data.amount / 100).formatMoney())
           $('#delivery_price')
             .find('[data-tax="excluded"]')
             .text((taxExcluded / 100).formatMoney())

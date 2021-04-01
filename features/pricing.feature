@@ -3,7 +3,9 @@ Feature: Pricing
   Scenario: Get delivery price with JWT
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
       | password   | 123456            |
@@ -33,16 +35,20 @@ Feature: Pricing
         "@context":"/api/contexts/Pricing",
         "@id":@string@,
         "@type":"Pricing",
-        "id":@string@,
-        "price":499,
-        "currencyCode":"EUR"
+        "amount":499,
+        "currency":"EUR",
+        "tax":{
+          "amount":83
+        }
       }
       """
 
   Scenario: Get delivery price with packages (JWT)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
       | password   | 123456            |
@@ -75,16 +81,20 @@ Feature: Pricing
         "@context":"/api/contexts/Pricing",
         "@id":@string@,
         "@type":"Pricing",
-        "id":@string@,
-        "price":1299,
-        "currencyCode":"EUR"
+        "amount":1299,
+        "currency":"EUR",
+        "tax":{
+          "amount":217
+        }
       }
       """
 
   Scenario: Get delivery price with latlLng (JWT)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
       | password   | 123456            |
@@ -124,9 +134,11 @@ Feature: Pricing
         "@context":"/api/contexts/Pricing",
         "@id":@string@,
         "@type":"Pricing",
-        "id":@string@,
-        "price":499,
-        "currencyCode":"EUR"
+        "amount":499,
+        "currency":"EUR",
+        "tax":{
+          "amount":83
+        }
       }
       """
 

@@ -25,8 +25,6 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
-use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,7 +32,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Webmozart\Assert\Assert;
 
 trait StoreTrait
 {
@@ -227,8 +224,6 @@ trait StoreTrait
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
         OrderFactory $orderFactory,
-        TaxRateResolverInterface $taxRateResolver,
-        ProductVariantFactoryInterface $productVariantFactory,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator,
         MessageBusInterface $messageBus)
@@ -294,15 +289,6 @@ trait StoreTrait
             }
         }
 
-        Assert::isInstanceOf($productVariantFactory, ProductVariantFactory::class);
-
-        $variant = $productVariantFactory
-            ->createForDelivery($delivery, 0);
-
-        $rate = $taxRateResolver->resolve($variant, [
-            'country' => strtolower($this->getParameter('region_iso')),
-        ]);
-
         return $this->render('store/delivery_form.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
@@ -311,7 +297,6 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'back_route' => $routes['back'],
-            'tax_rate' => $rate,
             'show_left_menu' => $request->attributes->get('show_left_menu', true),
         ]);
     }
