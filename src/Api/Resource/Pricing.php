@@ -44,5 +44,14 @@ final class Pricing
      * @ApiProperty(identifier=true)
      */
     public $id;
+
+    /**
+     * @var int
+     */
     public $price;
+
+    /**
+     * @var string
+     */
+    public $currencyCode;
 }

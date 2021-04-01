@@ -34,7 +34,8 @@ Feature: Pricing
         "@id":@string@,
         "@type":"Pricing",
         "id":@string@,
-        "price":499
+        "price":499,
+        "currencyCode":"EUR"
       }
       """
 
@@ -75,7 +76,8 @@ Feature: Pricing
         "@id":@string@,
         "@type":"Pricing",
         "id":@string@,
-        "price":1299
+        "price":1299,
+        "currencyCode":"EUR"
       }
       """
 
@@ -123,7 +125,8 @@ Feature: Pricing
         "@id":@string@,
         "@type":"Pricing",
         "id":@string@,
-        "price":499
+        "price":499,
+        "currencyCode":"EUR"
       }
       """
 
