@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ItemQuantityChangedEvent extends Event
 {
-    public const NAME = 'checkout.item_removed';
+    public const NAME = 'checkout.item_quantity_changed';
 
     protected $order;
 
