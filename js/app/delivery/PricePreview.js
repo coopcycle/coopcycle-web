@@ -91,7 +91,7 @@ class PricePreview {
           Authorization: `Bearer ${this.token}`
         }
       })
-        .then(response => resolve({ success: true, price: response.data }))
+        .then(response => resolve({ success: true, data: response.data }))
         .catch(e => {
           let message = ''
 
@@ -116,7 +116,7 @@ class PricePreview {
         if (priceResult.success) {
 
           const taxAmount =
-            calculate(priceResult.price, amount, isIncludedInPrice)
+            calculate(priceResult.data.price, amount, isIncludedInPrice)
 
           const taxIncluded = isIncludedInPrice ? priceResult.price : (priceResult.price + taxAmount)
           const taxExcluded = isIncludedInPrice ? (priceResult.price - taxAmount) : priceResult.price

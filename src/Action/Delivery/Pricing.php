@@ -5,6 +5,7 @@ namespace AppBundle\Action\Delivery;
 use AppBundle\Api\Resource\Pricing as PricingResource;
 use AppBundle\Entity\Delivery;
 use AppBundle\Service\DeliveryManager;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -24,6 +25,7 @@ class Pricing
         }
 
         $resource = new PricingResource();
+        $resource->id = Uuid::uuid4()->toString();
         $resource->price = $price;
 
         return $resource;

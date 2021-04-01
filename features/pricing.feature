@@ -29,7 +29,13 @@ Feature: Pricing
     And the response should be in JSON
     And the JSON should match:
       """
-      499
+      {
+        "@context":"/api/contexts/Pricing",
+        "@id":@string@,
+        "@type":"Pricing",
+        "id":@string@,
+        "price":499
+      }
       """
 
   Scenario: Get delivery price with packages (JWT)
@@ -64,7 +70,13 @@ Feature: Pricing
     And the response should be in JSON
     And the JSON should match:
       """
-      1299
+      {
+        "@context":"/api/contexts/Pricing",
+        "@id":@string@,
+        "@type":"Pricing",
+        "id":@string@,
+        "price":1299
+      }
       """
 
   Scenario: Get delivery price with latlLng (JWT)
@@ -106,7 +118,13 @@ Feature: Pricing
     And the response should be in JSON
     And the JSON should match:
       """
-      499
+      {
+        "@context":"/api/contexts/Pricing",
+        "@id":@string@,
+        "@type":"Pricing",
+        "id":@string@,
+        "price":499
+      }
       """
 
   Scenario: Evaluate pricing rule (JWT)
