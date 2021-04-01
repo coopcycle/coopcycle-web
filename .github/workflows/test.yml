@@ -62,6 +62,8 @@ jobs:
         run: until docker inspect --format='{{ .State.Health.Status }}' $(docker-compose ps -q php) | grep -wq healthy; do sleep 5; done
       - name: Create database
         run: docker-compose exec -T php bin/console doctrine:schema:create --env=test
+      - name: Create views
+        run: docker-compose exec -T php bin/console coopcycle:sql:create-views --env=test
       - name: Validate database schema
         run: docker-compose exec -T php bin/console doctrine:schema:validate --env=test --skip-sync
       - name: Run PHPUnit

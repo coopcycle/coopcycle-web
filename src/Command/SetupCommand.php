@@ -31,6 +31,7 @@ use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
@@ -591,6 +592,7 @@ class SetupCommand extends Command
 
     private function createOrderStatsView(OutputInterface $output)
     {
-        OrderView::create($this->doctrine->getConnection());
+        $command = $this->getApplication()->find('coopcycle:sql:create-views');
+        $command->run(new ArrayInput([]), $output);
     }
 }
