@@ -251,46 +251,4 @@ class RestaurantResolverTest extends TestCase
 
         $this->assertTrue($resolver->accept($cart->reveal()));
     }
-
-    public function testChangeVendorWithHub()
-    {
-        $restaurant = $this->prophesize(LocalBusiness::class);
-        $otherRestaurant = $this->prophesize(LocalBusiness::class);
-
-        $request = new Request(
-            $query = [],
-            $request = [],
-            $attributes = [
-                '_route' => 'restaurant',
-                'id' => 1,
-            ]
-        );
-
-        $this->requestStack->getMasterRequest()->willReturn($request);
-        $this->repository->find(1)->willReturn($restaurant->reveal());
-
-        $vendor = new Vendor();
-        $vendor->setRestaurant($otherRestaurant->reveal());
-
-        $cart = $this->prophesize(Order::class);
-        $cart->getVendor()->willReturn($vendor);
-
-        $hub = new Hub();
-        $this->hubRepository
-            ->findOneByRestaurant($restaurant->reveal())
-            ->willReturn($hub);
-
-        $resolver = new RestaurantResolver(
-            $this->requestStack->reveal(),
-            $this->repository->reveal(),
-            $this->entityManager->reveal(),
-            $this->hubRepository->reveal()
-        );
-
-        $resolver->changeVendor($cart->reveal());
-
-        $cart->setVendor(Argument::that(function (Vendor $vendor) use ($hub) {
-            return $vendor->getHub() === $hub;
-        }))->shouldHaveBeenCalled();
-    }
 }

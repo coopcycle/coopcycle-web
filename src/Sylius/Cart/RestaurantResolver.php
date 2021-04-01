@@ -120,21 +120,4 @@ class RestaurantResolver
 
         return $vendor->getRestaurant() === $restaurant;
     }
-
-    public function changeVendor(OrderInterface $cart)
-    {
-        $isSingle = $cart->getVendor()->getRestaurant() !== null;
-
-        $restaurant = $this->resolve();
-
-        if ($isSingle && $cart->getVendor()->getRestaurant() !== $restaurant) {
-            $hub = $this->hubRepository->findOneByRestaurant($restaurant);
-            if ($hub) {
-                $vendor = new Vendor();
-                $vendor->setHub($hub);
-
-                $cart->setVendor($vendor);
-            }
-        }
-    }
 }

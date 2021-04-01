@@ -40,6 +40,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -76,6 +77,7 @@ class RestaurantControllerTest extends WebTestCase
         $this->orderModifier = $this->prophesize(OrderModifierInterface::class);
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
         $this->restaurantResolver = $this->prophesize(RestaurantResolver::class);
+        $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
 
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
@@ -86,6 +88,13 @@ class RestaurantControllerTest extends WebTestCase
 
         // Use the "real" serializer
         $this->serializer = static::$kernel->getContainer()->get('serializer');
+
+        $this->eventDispatcher
+            ->dispatch(Argument::type('object'), Argument::type('string'))
+            ->will(function ($args) {
+
+                return $args[0];
+            });
 
         $container = $this->prophesize(ContainerInterface::class);
         $container
@@ -219,7 +228,8 @@ class RestaurantControllerTest extends WebTestCase
             $cartContext->reveal(),
             $translator->reveal(),
             $this->restaurantResolver->reveal(),
-            $this->optionsPayloadConverter->reveal()
+            $this->optionsPayloadConverter->reveal(),
+            $this->eventDispatcher->reveal()
         );
 
         $this->assertInstanceOf(JsonResponse::class, $response);
@@ -318,7 +328,9 @@ class RestaurantControllerTest extends WebTestCase
             $cartContext->reveal(),
             $translator->reveal(),
             $this->restaurantResolver->reveal(),
-            $this->optionsPayloadConverter->reveal());
+            $this->optionsPayloadConverter->reveal(),
+            $this->eventDispatcher->reveal()
+        );
 
         $this->assertInstanceOf(JsonResponse::class, $response);
 

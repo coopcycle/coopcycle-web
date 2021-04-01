@@ -1097,3 +1097,8 @@ services:
     tags:
       - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: edenred }
+
+  AppBundle\EventListener\CheckoutListener:
+    tags:
+      - { name: kernel.event_listener, event: checkout.item_added,   method: onItemAdded }
+      - { name: kernel.event_listener, event: checkout.item_removed, method: onItemRemoved }
