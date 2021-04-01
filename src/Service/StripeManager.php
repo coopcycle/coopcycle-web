@@ -233,7 +233,7 @@ class StripeManager
         // When using Giropay, it's not needed
         if ($intent->capture_method === 'manual' && $intent->amount_capturable > 0) {
             $intent->capture([
-                'amount_to_capture' => $payment->getAmount()
+                'amount_to_capture' => $payment->getAmountForMethod('CARD')
             ]);
         }
 
