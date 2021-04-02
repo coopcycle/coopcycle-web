@@ -49,7 +49,7 @@ class CalculateRetailPrice implements TaxableInterface
         return $this->taxCategory;
     }
 
-    public function __invoke(Delivery $data)
+    public function __invoke(Delivery $data, Request $request)
     {
         $store = $data->getStore();
         if (null === $store) {
@@ -76,7 +76,8 @@ class CalculateRetailPrice implements TaxableInterface
         $retailPrice = new RetailPrice(
             $amount,
             $this->currencyContext->getCurrencyCode(),
-            $taxAmount
+            $taxAmount,
+            'included' === $request->query->get('tax', 'included')
         );
 
         return $retailPrice;

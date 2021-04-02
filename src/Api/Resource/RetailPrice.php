@@ -8,7 +8,6 @@ use AppBundle\Api\Dto\DeliveryInput;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Ramsey\Uuid\Uuid;
-use Sylius\Component\Taxation\Model\TaxRateInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
@@ -70,17 +69,13 @@ final class RetailPrice
      */
     public $taxAmount;
 
-    /**
-     * @var TaxRateInterface
-     */
-    public $taxRate;
-
-    public function __construct(int $amount, string $currency, int $taxAmount)
+    public function __construct(int $taxIncludedAmount, string $currency, int $taxAmount, bool $taxIncluded = true)
     {
         $this->id = Uuid::uuid4()->toString();
-        $this->amount = $amount;
+        $this->amount = $taxIncluded ? $taxIncludedAmount : ($taxIncludedAmount - $taxAmount);
         $this->currency = $currency;
         $this->taxAmount = $taxAmount;
+        $this->taxIncluded = $taxIncluded;
     }
 
     /**
@@ -90,8 +85,8 @@ final class RetailPrice
     public function getTax(): array
     {
         return [
-            // 'rate'   => $this->taxRate->getAmount(),
             'amount' => $this->taxAmount,
+            'included' => $this->taxIncluded,
         ];
     }
 }
