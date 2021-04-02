@@ -856,7 +856,8 @@ Feature: Orders
       "violations":[
         {
           "propertyPath":"shippingTimeRange",
-          "message":@string@
+          "message":@string@,
+          "code":@string@
         }
       ]
     }
@@ -909,7 +910,8 @@ Feature: Orders
       "violations":[
         {
           "propertyPath":"shippingAddress",
-          "message":@string@
+          "message":@string@,
+          "code":@string@
         }
       ]
     }
@@ -1053,7 +1055,8 @@ Feature: Orders
       "violations":[
         {
           "propertyPath":"shippingTimeRange",
-          "message":@string@
+          "message":@string@,
+          "code":@string@
         }
       ]
     }
@@ -1102,7 +1105,8 @@ Feature: Orders
       "violations":[
         {
           "propertyPath":"total",
-          "message":@string@
+          "message":@string@,
+          "code":null
         }
       ]
     }
@@ -1141,7 +1145,8 @@ Feature: Orders
         "violations":[
           {
             "propertyPath":"total",
-            "message":@string@
+            "message":@string@,
+            "code":null
           }
         ]
       }

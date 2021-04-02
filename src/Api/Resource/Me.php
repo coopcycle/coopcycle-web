@@ -3,6 +3,7 @@
 namespace AppBundle\Api\Resource;
 
 use AppBundle\Action\Me as MeController;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
@@ -41,5 +42,10 @@ final class Me
     // FIXME
     // Needed to avoid error
     // There is no PropertyInfo extractor supporting the class "AppBundle\Api\Resource\Me"
+    // You should add #[\ApiPlatform\Core\Annotation\ApiProperty(identifier: true)]" on the property identifying the resource
+
+    /**
+     * @ApiProperty(identifier=true)
+     */
     public $foo;
 }

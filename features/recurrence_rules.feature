@@ -365,7 +365,6 @@ Feature: Task recurrence rules
     And the user "bob" sends a "GET" request to "/api/recurrence_rules/3"
     Then the response status code should be 404
 
-  @debug
   Scenario: Delete recurrence rules
     Given the fixtures files are loaded:
       | sylius_channels.yml  |

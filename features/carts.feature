@@ -31,7 +31,8 @@ Feature: Carts
         "violations":[
           {
             "propertyPath":"state",
-            "message":@string@
+            "message":@string@,
+            "code":null
           }
         ]
       }
@@ -1530,16 +1531,17 @@ Feature: Carts
     And the JSON should match:
       """
       {
-         "@context":"/api/contexts/ConstraintViolationList",
-         "@type":"ConstraintViolationList",
-         "hydra:title":"An error occurred",
-         "hydra:description":@string@,
-         "violations":[
-            {
-               "propertyPath":"shippingAddress.telephone",
-               "message":@string@
-            }
-         ]
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[
+          {
+             "propertyPath":"shippingAddress.telephone",
+             "message":@string@,
+             "code":@string@
+          }
+        ]
       }
       """
 
@@ -1623,7 +1625,8 @@ Feature: Carts
         "violations":[
           {
             "propertyPath":"takeaway",
-            "message":@string@
+            "message":@string@,
+            "code":@string@
           }
         ]
       }
@@ -1703,7 +1706,8 @@ Feature: Carts
         "violations":[
           {
             "propertyPath":"total",
-            "message":@string@
+            "message":@string@,
+            "code":null
           }
         ]
       }

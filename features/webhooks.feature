@@ -56,7 +56,8 @@ Feature: Webhooks
         "violations":[
           {
             "propertyPath":"event",
-            "message":@string@
+            "message":@string@,
+            "code":@string@
           }
         ]
       }

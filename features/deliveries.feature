@@ -64,11 +64,13 @@ Feature: Deliveries
         "violations":[
           {
             "propertyPath":"items[0].task.doneBefore",
-            "message":@string@
+            "message":@string@,
+            "code":@string@
           },
           {
             "propertyPath":"items[1].task.doneBefore",
-            "message":@string@
+            "message":@string@,
+            "code":@string@
           }
         ]
       }
@@ -831,7 +833,8 @@ Feature: Deliveries
         "violations":[
           {
             "propertyPath":"items",
-            "message":@string@
+            "message":@string@,
+            "code":null
           }
         ]
       }
@@ -872,7 +875,8 @@ Feature: Deliveries
         "violations":[
           {
             "propertyPath":"items",
-            "message":@string@
+            "message":@string@,
+            "code":null
           }
         ]
       }

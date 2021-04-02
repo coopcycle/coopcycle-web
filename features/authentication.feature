@@ -205,19 +205,23 @@ Feature: Authenticate
       "violations":[
         {
           "propertyPath":"username",
-          "message":@string@
+          "message":@string@,
+          "code":@string@
         },
         {
           "propertyPath":"username",
-          "message":@string@
+          "message":@string@,
+          "code":@string@
         },
         {
           "propertyPath":"username",
-          "message":@string@
+          "message":@string@,
+          "code":@string@
         },
         {
           "propertyPath":"username",
-          "message":@string@
+          "message":@string@,
+          "code":@string@
         }
       ]
     }
@@ -248,11 +252,13 @@ Feature: Authenticate
       "violations":[
         {
           "propertyPath":"username",
-          "message":@string@
+          "message":@string@,
+          "code":@string@
         },
         {
           "propertyPath":"username",
-          "message":@string@
+          "message":@string@,
+          "code":@string@
         }
       ]
     }
@@ -283,11 +289,13 @@ Feature: Authenticate
       "violations":[
         {
           "propertyPath":"email",
-          "message":@string@
+          "message":@string@,
+          "code":@string@
         },
         {
           "propertyPath":"email",
-          "message":@string@
+          "message":@string@,
+          "code":@string@
         }
       ]
     }

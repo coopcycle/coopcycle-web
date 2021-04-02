@@ -1121,7 +1121,8 @@ Feature: Tasks
         "violations":[
           {
             "propertyPath":"type",
-            "message":@string@
+            "message":@string@,
+            "code":null
           }
         ]
       }
@@ -1385,7 +1386,8 @@ Feature: Tasks
         "violations":[
           {
             "propertyPath":"tasks[1]",
-            "message":@string@
+            "message":@string@,
+            "code":null
           }
         ]
       }
@@ -1418,7 +1420,8 @@ Feature: Tasks
         "violations":[
           {
             "propertyPath":"tasks[1].ref",
-            "message":@string@
+            "message":@string@,
+            "code":@string@
           }
         ]
       }
@@ -1494,12 +1497,14 @@ Feature: Tasks
          "hydra:description":@string@,
          "violations":[
             {
-               "propertyPath":"address.geo",
-               "message":@string@
+              "propertyPath":"address.geo",
+              "message":@string@,
+              "code":@string@
             },
             {
-               "propertyPath":"address.streetAddress",
-               "message":@string@
+              "propertyPath":"address.streetAddress",
+              "message":@string@,
+              "code":@string@
             }
          ]
       }
