@@ -6,6 +6,7 @@ use AppBundle\Api\Resource\Pricing as PricingResource;
 use AppBundle\Entity\Delivery;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Security\TokenStoreExtractor;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
@@ -21,6 +22,7 @@ class Pricing implements TaxableInterface
         DeliveryManager $deliveryManager,
         CurrencyContextInterface $currencyContext,
         SettingsManager $settingsManager,
+        TokenStoreExtractor $storeExtractor,
         TaxCategoryRepositoryInterface $taxCategoryRepository,
         TaxRateResolverInterface $taxRateResolver,
         CalculatorInterface $calculator,
@@ -29,6 +31,7 @@ class Pricing implements TaxableInterface
         $this->deliveryManager = $deliveryManager;
         $this->currencyContext = $currencyContext;
         $this->settingsManager = $settingsManager;
+        $this->storeExtractor = $storeExtractor;
 
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->taxRateResolver = $taxRateResolver;
@@ -48,7 +51,12 @@ class Pricing implements TaxableInterface
 
     public function __invoke(Delivery $data)
     {
-        $amount = $this->deliveryManager->getPrice($data, $data->getStore()->getPricingRuleSet());
+        $store = $data->getStore();
+        if (null === $store) {
+            $store = $this->storeExtractor->extractStore();
+        }
+
+        $amount = $this->deliveryManager->getPrice($data, $store->getPricingRuleSet());
 
         if (null === $amount) {
             throw new BadRequestHttpException('Price could not be calculated');

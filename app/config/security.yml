@@ -96,9 +96,8 @@ security:
             anonymous: ~
             bearer_token: true
 
-        api_pricing_calculate_price:
-            pattern:   ^/api/pricing/calculate-price
-            methods: [ GET ]
+        api_pricing:
+            pattern:   ^/api/pricing
             stateless: true
             anonymous: ~
             bearer_token: true

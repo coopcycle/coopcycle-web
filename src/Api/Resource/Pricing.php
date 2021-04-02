@@ -26,7 +26,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *       "status"=200,
  *       "write"=false,
  *       "denormalization_context"={"groups"={"delivery_create", "pricing_deliveries"}},
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_STORE')",
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_STORE') or is_granted('ROLE_OAUTH2_DELIVERIES')",
  *       "swagger_context"={
  *         "summary"="Calculates price of a Delivery",
  *       }
