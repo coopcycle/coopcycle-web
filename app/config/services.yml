@@ -667,6 +667,11 @@ services:
     arguments:
       $state: "%region_iso%"
 
+  AppBundle\Action\TimeSlot\Choices:
+    public: true
+    arguments:
+      $country: "%country_iso%"
+
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }

@@ -91,8 +91,7 @@ security:
             bearer_token: true
 
         api_time_slots:
-            pattern:   ^/api/time_slots/[0-9]+$
-            methods: [ GET ]
+            pattern:   ^/api/time_slots
             stateless: true
             anonymous: ~
             bearer_token: true
