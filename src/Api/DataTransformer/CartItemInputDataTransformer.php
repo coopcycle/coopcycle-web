@@ -2,12 +2,9 @@
 
 namespace AppBundle\Api\DataTransformer;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Api\Resource\Pricing;
-use AppBundle\Serializer\DeliveryNormalizer;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\OptionsPayloadConverter;

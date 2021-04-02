@@ -3,7 +3,7 @@
 namespace AppBundle\Api\Resource;
 
 use ApiPlatform\Core\Action\NotFoundAction;
-use AppBundle\Action\Delivery\Pricing as PricingController;
+use AppBundle\Action\Delivery\CalculateRetailPrice as CalculateController;
 use AppBundle\Api\Dto\DeliveryInput;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -20,9 +20,9 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *   collectionOperations={
  *     "calc_price"={
  *       "method"="POST",
- *       "path"="/pricing/deliveries",
+ *       "path"="/retail_prices/calculate",
  *       "input"=DeliveryInput::class,
- *       "controller"=PricingController::class,
+ *       "controller"=CalculateController::class,
  *       "status"=200,
  *       "write"=false,
  *       "denormalization_context"={"groups"={"delivery_create", "pricing_deliveries"}},
@@ -42,7 +42,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *   }
  * )
  */
-final class Pricing
+final class RetailPrice
 {
     /**
      * @var string

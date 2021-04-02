@@ -25,6 +25,8 @@ final class SwaggerDecorator implements NormalizerInterface
         unset($docs['paths']['/api/me/remote_push_tokens']);
         unset($docs['paths']['/api/me/remote_push_tokens/{token}']);
 
+        unset($docs['paths']['/api/retail_prices/{id}']);
+
         return $docs;
     }
 

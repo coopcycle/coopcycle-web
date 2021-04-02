@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Delivery;
 
-use AppBundle\Api\Resource\Pricing as PricingResource;
+use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Entity\Delivery;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\SettingsManager;
@@ -16,7 +16,7 @@ use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class Pricing implements TaxableInterface
+class CalculateRetailPrice implements TaxableInterface
 {
 	public function __construct(
         DeliveryManager $deliveryManager,
@@ -73,12 +73,12 @@ class Pricing implements TaxableInterface
         $taxRate   = $this->taxRateResolver->resolve($this, ['country' => strtolower($this->state)]);
         $taxAmount = (int) $this->calculator->calculate($amount, $taxRate);
 
-        $resource = new PricingResource(
+        $retailPrice = new RetailPrice(
             $amount,
             $this->currencyContext->getCurrencyCode(),
             $taxAmount
         );
 
-        return $resource;
+        return $retailPrice;
     }
 }

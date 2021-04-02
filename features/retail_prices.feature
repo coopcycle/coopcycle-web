@@ -1,4 +1,4 @@
-Feature: Pricing
+Feature: Retail prices
 
   Scenario: Get delivery price with JWT
     Given the fixtures files are loaded:
@@ -13,7 +13,7 @@ Feature: Pricing
     And the user "admin" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "admin" sends a "POST" request to "/api/pricing/deliveries" with body:
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
       """
       {
         "store":"/api/stores/1",
@@ -32,9 +32,9 @@ Feature: Pricing
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Pricing",
+        "@context":"/api/contexts/RetailPrice",
         "@id":@string@,
-        "@type":"Pricing",
+        "@type":"RetailPrice",
         "amount":499,
         "currency":"EUR",
         "tax":{
@@ -56,7 +56,7 @@ Feature: Pricing
     And the user "admin" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "admin" sends a "POST" request to "/api/pricing/deliveries" with body:
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
       """
       {
         "store":"/api/stores/3",
@@ -78,9 +78,9 @@ Feature: Pricing
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Pricing",
+        "@context":"/api/contexts/RetailPrice",
         "@id":@string@,
-        "@type":"Pricing",
+        "@type":"RetailPrice",
         "amount":1299,
         "currency":"EUR",
         "tax":{
@@ -102,7 +102,7 @@ Feature: Pricing
     And the user "admin" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "admin" sends a "POST" request to "/api/pricing/deliveries" with body:
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
       """
       {
         "store":"/api/stores/1",
@@ -131,9 +131,9 @@ Feature: Pricing
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Pricing",
+        "@context":"/api/contexts/RetailPrice",
         "@id":@string@,
-        "@type":"Pricing",
+        "@type":"RetailPrice",
         "amount":499,
         "currency":"EUR",
         "tax":{
@@ -152,7 +152,7 @@ Feature: Pricing
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the OAuth client "Acme" sends a "POST" request to "/api/pricing/deliveries" with body:
+    And the OAuth client "Acme" sends a "POST" request to "/api/retail_prices/calculate" with body:
       """
       {
         "pickup": {
@@ -170,9 +170,9 @@ Feature: Pricing
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Pricing",
+        "@context":"/api/contexts/RetailPrice",
         "@id":@string@,
-        "@type":"Pricing",
+        "@type":"RetailPrice",
         "amount":499,
         "currency":"EUR",
         "tax":{

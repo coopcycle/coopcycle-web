@@ -7,7 +7,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
-use AppBundle\Api\Resource\Pricing;
+use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Service\RoutingInterface;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -61,10 +61,10 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
      */
     public function supportsTransformation($data, string $to, array $context = []): bool
     {
-        if ($data instanceof Pricing) {
+        if ($data instanceof RetailPrice) {
           return false;
         }
 
-        return Pricing::class === $to && null !== ($context['input']['class'] ?? null);
+        return RetailPrice::class === $to && null !== ($context['input']['class'] ?? null);
     }
 }

@@ -70,7 +70,7 @@ class PricePreview {
     const pricingPromise = new Promise((resolve) => {
       axios({
         method: 'post',
-        url: baseURL + '/api/pricing/deliveries',
+        url: baseURL + '/api/retail_prices/calculate',
         data: delivery,
         headers: {
           'Accept': 'application/ld+json',

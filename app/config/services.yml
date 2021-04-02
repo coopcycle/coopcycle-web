@@ -662,7 +662,7 @@ services:
     tags:
       - { name: monolog.logger, channel: stripe }
 
-  AppBundle\Action\Delivery\Pricing:
+  AppBundle\Action\Delivery\CalculateRetailPrice:
     public: true
     arguments:
       $state: "%region_iso%"
