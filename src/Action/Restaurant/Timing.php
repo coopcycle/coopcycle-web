@@ -8,7 +8,6 @@ use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\Timing as TimingObj;
 use AppBundle\Utils\TimeInfo;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class Timing
@@ -27,23 +26,30 @@ class Timing
     {
         $timeInfo = new TimeInfo();
 
+        // FIXME
+        // Refactor this crap
+        // https://github.com/coopcycle/coopcycle-web/issues/2213
+
+        $rangeAsArray = isset($data['range']) && is_array($data['range']) ?
+            $data['range'] : [ null, null ];
+
         $range = new TsRange();
         $range->setLower(
-            new \DateTime($data['range'][0])
+            new \DateTime($rangeAsArray[0])
         );
         $range->setUpper(
-            new \DateTime($data['range'][1])
+            new \DateTime($rangeAsArray[1])
         );
         $timeInfo->range = $range;
 
-        $timeInfo->today = $data['today'];
-        $timeInfo->fast  = $data['fast'];
+        $timeInfo->today = $data['today'] ?? false;
+        $timeInfo->fast  = $data['fast'] ?? false;
         $timeInfo->diff  = $data['diff'];
 
         return $timeInfo;
     }
 
-    public function __invoke($data, Request $request)
+    public function __invoke($data)
     {
         $restaurant = $data;
 
