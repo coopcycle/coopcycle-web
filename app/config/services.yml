@@ -671,6 +671,7 @@ services:
     public: true
     arguments:
       $country: "%country_iso%"
+      $locale: '%env(COOPCYCLE_LOCALE)%'
 
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:

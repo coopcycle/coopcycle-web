@@ -15,31 +15,38 @@ Feature: Time slots
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/TimeSlot",
-        "@id":"/api/time_slots/choices",
-        "@type":"hydra:Collection",
-        "hydra:member":[
+        "@context":@...@,
+        "@type":"TimeSlotChoices",
+        "@id":@string@,
+        "choices":[
           {
-            "@type":"TimeSlotChoice",
+            "@context":"/api/contexts/TimeSlotChoice",
             "@id":@string@,
-            "value":"2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+            "@type":"TimeSlotChoice",
+            "value":"2020-04-02T10:00:00Z/2020-04-02T12:00:00Z",
+            "label":"Aujourd\u0027hui entre 12:00 et 14:00"
           },
           {
-            "@type":"TimeSlotChoice",
+            "@context":"/api/contexts/TimeSlotChoice",
             "@id":@string@,
-            "value":"2020-04-02T12:00:00Z/2020-04-02T15:00:00Z"
+            "@type":"TimeSlotChoice",
+            "value":"2020-04-02T12:00:00Z/2020-04-02T15:00:00Z",
+            "label":"Aujourd\u0027hui entre 14:00 et 17:00"
           },
           {
-            "@type":"TimeSlotChoice",
+            "@context":"/api/contexts/TimeSlotChoice",
             "@id":@string@,
-            "value":"2020-04-03T10:00:00Z/2020-04-03T12:00:00Z"
+            "@type":"TimeSlotChoice",
+            "value":"2020-04-03T10:00:00Z/2020-04-03T12:00:00Z",
+            "label":"Demain entre 12:00 et 14:00"
           },
           {
-            "@type":"TimeSlotChoice",
+            "@context":"/api/contexts/TimeSlotChoice",
             "@id":@string@,
-            "value":"2020-04-03T12:00:00Z/2020-04-03T15:00:00Z"
+            "@type":"TimeSlotChoice",
+            "value":"2020-04-03T12:00:00Z/2020-04-03T15:00:00Z",
+            "label":"Demain entre 14:00 et 17:00"
           }
-        ],
-        "hydra:totalItems":4
+        ]
       }
       """

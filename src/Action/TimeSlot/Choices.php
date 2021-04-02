@@ -3,22 +3,31 @@
 namespace AppBundle\Action\TimeSlot;
 
 use AppBundle\Api\Resource\TimeSlotChoice;
+use AppBundle\Api\Resource\TimeSlotChoices;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Security\TokenStoreExtractor;
 use Carbon\Carbon;
+use Ramsey\Uuid\Uuid;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Choices
 {
     private $storeExtractor;
+    private $translator;
     private $country;
+    private $locale;
 
     public function __construct(
         TokenStoreExtractor $storeExtractor,
-        string $country)
+        TranslatorInterface $translator,
+        string $country,
+        string $locale)
     {
         $this->storeExtractor = $storeExtractor;
+        $this->translator = $translator;
         $this->country = $country;
+        $this->locale = $locale;
     }
 
     public function __invoke()
@@ -30,21 +39,14 @@ class Choices
 
         $choices = [];
         foreach ($choiceList->getChoices() as $choice) {
-
             $period = $choice->toDatePeriod();
-
-            $value = implode('/', [
-                Carbon::instance($period->start)->tz('UTC')->toIso8601ZuluString(),
-                Carbon::instance($period->end)->tz('UTC')->toIso8601ZuluString()
-            ]);
-
-            $choice = new TimeSlotChoice();
-            $choice->value = $value;
-            $choice->label = '';
-
-            $choices[] = $choice;
+            $choices[] = new TimeSlotChoice($period, $this->translator, $this->locale);
         }
 
-        return $choices;
+        $response = new TimeSlotChoices();
+        $response->id = Uuid::uuid4()->toString();
+        $response->choices = $choices;
+
+        return $response;
     }
 }
