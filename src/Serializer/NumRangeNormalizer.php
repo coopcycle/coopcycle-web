@@ -20,7 +20,7 @@ class NumRangeNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        if ($data['upper'] === INF) {
+        if ($data['upper'] === 'INF') {
             $data['upper'] = null;
         }
 

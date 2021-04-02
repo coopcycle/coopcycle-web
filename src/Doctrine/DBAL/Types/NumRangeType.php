@@ -30,7 +30,7 @@ class NumRangeType extends Type
             return $value;
         }
 
-        return sprintf('[%s,%s]', $value->getLower(), $value->getUpper() === INF ? '' : $value->getUpper());
+        return sprintf('[%s,%s]', $value->getLower(), $value->getUpper() === 'INF' ? '' : $value->getUpper());
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -44,7 +44,7 @@ class NumRangeType extends Type
 
             $value = new NumRange();
             $value->setLower($lower);
-            $value->setUpper(empty($upper) ? INF : $upper);
+            $value->setUpper(empty($upper) ? 'INF' : $upper);
         }
 
         return $value;
