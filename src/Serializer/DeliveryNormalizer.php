@@ -10,6 +10,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
+use Carbon\CarbonPeriod;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -49,24 +50,35 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
             // TODO Validate time slot
 
-            preg_match('/^([0-9]{4}-[0-9]{2}-[0-9]{2}) ([0-9:]+-[0-9:]+)$/', $data['timeSlot'], $matches);
+            if (1 === preg_match('/^([0-9]{4}-[0-9]{2}-[0-9]{2}) ([0-9:]+-[0-9:]+)$/', $data['timeSlot'], $matches)) {
 
-            $date = $matches[1];
-            $timeRange = $matches[2];
+                $date = $matches[1];
+                $timeRange = $matches[2];
 
-            [ $start, $end ] = explode('-', $timeRange);
+                [ $start, $end ] = explode('-', $timeRange);
 
-            [ $startHour, $startMinute ] = explode(':', $start);
-            [ $endHour, $endMinute ] = explode(':', $end);
+                [ $startHour, $startMinute ] = explode(':', $start);
+                [ $endHour, $endMinute ] = explode(':', $end);
 
-            $after = new \DateTime($date);
-            $after->setTime($startHour, $startMinute);
+                $after = new \DateTime($date);
+                $after->setTime($startHour, $startMinute);
 
-            $before = new \DateTime($date);
-            $before->setTime($endHour, $endMinute);
+                $before = new \DateTime($date);
+                $before->setTime($endHour, $endMinute);
 
-            $task->setDoneAfter($after);
-            $task->setDoneBefore($before);
+                $task->setAfter($after);
+                $task->setBefore($before);
+
+            } else {
+
+                $tz = date_default_timezone_get();
+
+                // FIXME Catch Exception
+                $period = CarbonPeriod::createFromIso($data['timeSlot']);
+
+                $task->setAfter($period->getStartDate()->tz($tz)->toDateTime());
+                $task->setBefore($period->getEndDate()->tz($tz)->toDateTime());
+            }
 
         } elseif (isset($data['before'])) {
 
