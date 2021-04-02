@@ -71,7 +71,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "status"=200,
  *       "denormalization_context"={"groups"={"order_create", "address_create"}},
  *       "normalization_context"={"groups"={"cart_timing"}},
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Retrieves timing information about a Order resource.",
  *         "responses"={
  *           "200"={
@@ -97,7 +97,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/{id}/payment",
  *       "controller"=PaymentDetailsController::class,
  *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Get payment details for a Order resource."
  *       }
  *     },
@@ -106,7 +106,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/{id}/pay",
  *       "controller"=OrderPay::class,
  *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Pays a Order resource."
  *       }
  *     },
@@ -116,7 +116,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "controller"=OrderAccept::class,
  *       "security"="is_granted('accept', object)",
  *       "deserialize"=false,
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Accepts a Order resource."
  *       }
  *     },
@@ -125,7 +125,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/{id}/refuse",
  *       "controller"=OrderRefuse::class,
  *       "security"="is_granted('refuse', object)",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Refuses a Order resource."
  *       }
  *     },
@@ -134,7 +134,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/{id}/delay",
  *       "controller"=OrderDelay::class,
  *       "security"="is_granted('delay', object)",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Delays a Order resource."
  *       }
  *     },
@@ -143,7 +143,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/{id}/fulfill",
  *       "controller"=OrderFulfill::class,
  *       "security"="is_granted('fulfill', object)",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Fulfills a Order resource."
  *       }
  *     },
@@ -152,7 +152,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/{id}/cancel",
  *       "controller"=OrderCancel::class,
  *       "security"="is_granted('cancel', object)",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Cancels a Order resource."
  *       }
  *     },
@@ -162,7 +162,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "controller"=OrderAssign::class,
  *       "validation_groups"={"cart"},
  *       "normalization_context"={"groups"={"cart"}},
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Assigns a Order resource to a User."
  *       }
  *     },
@@ -170,12 +170,11 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="GET",
  *       "path"="/orders/{id}/timing",
  *       "security"="is_granted('session', object)",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Retrieves timing information about a Order resource.",
  *         "responses"={
  *           "200"={
  *             "description"="Order timing information",
- *             "schema"=Order::SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA
  *           }
  *         }
  *       }
@@ -203,7 +202,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "denormalization_context"={"groups"={"cart"}},
  *       "normalization_context"={"groups"={"cart"}},
  *       "security"="is_granted('session', object)",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Adds items to a Order resource."
  *       }
  *     },
@@ -226,7 +225,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "write"=false,
  *       "status"=200,
  *       "security"="is_granted('session', object)",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Deletes items from a Order resource."
  *       }
  *     }

@@ -269,8 +269,8 @@ api_platform:
     version: 1.0.0
     title: CoopCycle
     show_webby: false
-    enable_swagger_ui: false
-    enable_re_doc: true
+    enable_swagger_ui: true
+    enable_re_doc: false
     mapping:
         paths:
             - '%kernel.project_dir%/src/Api/Dto'

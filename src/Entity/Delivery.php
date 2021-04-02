@@ -30,8 +30,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "post"={
  *       "method"="POST",
  *       "denormalization_context"={"groups"={"delivery_create"}},
- *       "swagger_context"={
- *         "parameters"=Delivery::SWAGGER_CONTEXT_POST_PARAMETERS
+ *       "openapi_context"={
+ *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
  *       },
  *       "security_post_denormalize"="is_granted('create', object)"
  *     },
@@ -43,9 +43,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "validation_groups"={"Default", "delivery_check"},
  *       "denormalization_context"={"groups"={"delivery_create"}},
  *       "security_post_denormalize"="is_granted('create', object)",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Asserts a Delivery is feasible",
- *         "parameters"=Delivery::SWAGGER_CONTEXT_POST_PARAMETERS
+ *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
  *       }
  *     }
  *   },
@@ -63,7 +63,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *        "path"="/deliveries/{id}/pick",
  *        "controller"=PickDelivery::class,
  *        "security"="is_granted('edit', object)",
- *        "swagger_context"={
+ *        "openapi_context"={
  *          "summary"="Marks a Delivery as picked"
  *        }
  *     },
@@ -72,7 +72,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *        "path"="/deliveries/{id}/drop",
  *        "controller"=DropDelivery::class,
  *        "security"="is_granted('edit', object)",
- *        "swagger_context"={
+ *        "openapi_context"={
  *          "summary"="Marks a Delivery as dropped"
  *        }
  *     }
@@ -112,20 +112,19 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     private $packages;
 
-    const SWAGGER_CONTEXT_POST_PARAMETERS = [
-        [
-            "name" => "delivery",
-            "in"=>"body",
-            "schema" => [
-                "type" => "object",
-                "required" => ["dropoff"],
-                "properties" => [
-                    "dropoff" => ['$ref' => '#/definitions/Task-task_create'],
-                    "pickup" => ['$ref' => '#/definitions/Task-task_create'],
-                ]
+    const OPENAPI_CONTEXT_POST_PARAMETERS = [[
+        "name" => "delivery",
+        "in"=>"body",
+        "schema" => [
+            "type" => "object",
+            "required" => ["dropoff"],
+            "properties" => [
+                "dropoff" => ['$ref' => '#/definitions/Task-task_create'],
+                "pickup" => ['$ref' => '#/definitions/Task-task_create'],
             ]
-        ]
-    ];
+        ],
+        "style" => "form"
+    ]];
 
     public function __construct()
     {

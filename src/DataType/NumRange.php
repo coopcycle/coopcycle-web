@@ -5,7 +5,9 @@ namespace AppBundle\DataType;
 class NumRange
 {
     private $lower = 0;
-    private $upper = INF;
+
+    // Inf and NaN cannot be JSON encoded
+    private $upper = 'Inf';
 
     /**
      * @return mixed

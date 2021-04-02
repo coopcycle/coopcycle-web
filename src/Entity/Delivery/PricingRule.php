@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "output"=YesNoOutput::class,
  *       "denormalization_context"={"groups"={"delivery_create", "pricing_deliveries"}},
  *       "write"=false,
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Evaluates a PricingRule",
  *       }
  *     }

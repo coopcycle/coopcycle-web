@@ -16,7 +16,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *       "controller"=MeController::class,
  *       "read"=false,
  *       "normalization_context"={"groups"={"user", "address", "api_app"}},
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Retrieves information about the authenticated token",
  *         "responses"={
  *           "200"={

@@ -2,21 +2,24 @@
 
 namespace AppBundle\Api\Swagger;
 
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use ApiPlatform\Core\OpenApi\Factory\OpenApiFactoryInterface;
+use ApiPlatform\Core\OpenApi\OpenApi;
+use ApiPlatform\Core\OpenApi\Model;
 
-final class SwaggerDecorator implements NormalizerInterface
+class SwaggerDecorator implements OpenApiFactoryInterface
 {
     private $decorated;
 
-    public function __construct(NormalizerInterface $decorated)
+    public function __construct(OpenApiFactoryInterface $decorated)
     {
         $this->decorated = $decorated;
     }
 
-    public function normalize($object, $format = null, array $context = [])
+    public function __invoke(array $context = []): OpenApi
     {
-        $docs = $this->decorated->normalize($object, $format, $context);
+        $openApi = $this->decorated->__invoke($context);
 
+        /*
         unset($docs['paths']['/api/api_apps/{id}']);
         unset($docs['paths']['/api/opening_hours_specifications/{id}']);
         unset($docs['paths']['/api/task_events/{id}']);
@@ -26,12 +29,8 @@ final class SwaggerDecorator implements NormalizerInterface
         unset($docs['paths']['/api/me/remote_push_tokens/{token}']);
 
         unset($docs['paths']['/api/retail_prices/{id}']);
+        */
 
-        return $docs;
-    }
-
-    public function supportsNormalization($data, $format = null)
-    {
-        return $this->decorated->supportsNormalization($data, $format);
+        return $openApi;
     }
 }

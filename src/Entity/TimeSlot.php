@@ -27,7 +27,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "write"=false,
  *       "normalization_context"={"groups"={"time_slot_choices"}, "api_sub_level"=true},
  *       "security"="is_granted('ROLE_OAUTH2_DELIVERIES')",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Retrieves choices for time slot"
  *       }
  *     }

@@ -41,7 +41,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *       "read"=false,
  *       "write"=false,
  *       "normalization_context"={"groups"={"task_collection", "task", "delivery", "address"}},
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Retrieves the collection of Task resources assigned to the authenticated token.",
  *         "parameters"={{
  *           "in"="path",

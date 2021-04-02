@@ -893,7 +893,7 @@ services:
   AppBundle\MessageHandler\EmailHandler: ~
 
   AppBundle\Api\Swagger\SwaggerDecorator:
-      decorates: 'api_platform.swagger.normalizer.api_gateway'
+      decorates: 'api_platform.openapi.factory'
       arguments: [ '@AppBundle\Api\Swagger\SwaggerDecorator.inner' ]
       autoconfigure: false
 
