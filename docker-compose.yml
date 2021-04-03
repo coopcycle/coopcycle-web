@@ -240,9 +240,20 @@ services:
       - ./cube:/cube/conf/schema
       - ./cube.js:/cube/conf/cube.js
 
+  typesense:
+    image: typesense/typesense:0.19.0
+    ports:
+      - 8108:8108
+    environment:
+      - TYPESENSE_API_KEY
+      - TYPESENSE_DATA_DIR=/data
+    volumes:
+      - typesense_data:/data
+
 volumes:
   node_modules_node:
   node_modules_webpack:
   pg_data:
   php_cache:
   minio_data:
+  typesense_data:
