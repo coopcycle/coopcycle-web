@@ -8,10 +8,6 @@
     "sdk:watch": "webpack --config webpack.sdk.config.js --watch",
     "sdk:build": "webpack --config webpack.sdk.config.js --mode production"
   },
-  "browserslist": [
-    "> 5%",
-    "ie >= 11"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/coopcycle/coopcycle-web.git"
