@@ -49,7 +49,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -496,8 +495,7 @@ class RestaurantController extends AbstractController
         CartContextInterface $cartContext,
         TranslatorInterface $translator,
         RestaurantResolver $restaurantResolver,
-        OptionsPayloadConverter $optionsPayloadConverter,
-        EventDispatcherInterface $dispatcher)
+        OptionsPayloadConverter $optionsPayloadConverter)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
@@ -545,8 +543,6 @@ class RestaurantController extends AbstractController
         $this->orderItemQuantityModifier->modify($cartItem, $request->request->getInt('quantity', 1));
         $this->orderModifier->addToOrder($cart, $cartItem);
 
-        $dispatcher->dispatch(new ItemAddedEvent($cart), ItemAddedEvent::NAME);
-
         $this->orderManager->persist($cart);
         $this->orderManager->flush();
 
@@ -586,8 +582,7 @@ class RestaurantController extends AbstractController
      */
     public function updateCartItemQuantityAction($id, $itemId, Request $request,
         CartContextInterface $cartContext,
-        OrderProcessorInterface $orderProcessor,
-        EventDispatcherInterface $dispatcher)
+        OrderProcessorInterface $orderProcessor)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
@@ -608,8 +603,6 @@ class RestaurantController extends AbstractController
 
         $orderProcessor->process($cart);
 
-        $dispatcher->dispatch(new ItemQuantityChangedEvent($cart), ItemQuantityChangedEvent::NAME);
-
         $this->orderManager->persist($cart);
         $this->orderManager->flush();
 
@@ -623,8 +616,7 @@ class RestaurantController extends AbstractController
      * @Route("/restaurant/{id}/cart/{cartItemId}", methods={"DELETE"}, name="restaurant_remove_from_cart")
      */
     public function removeFromCartAction($id, $cartItemId, Request $request,
-        CartContextInterface $cartContext,
-        EventDispatcherInterface $dispatcher)
+        CartContextInterface $cartContext)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
@@ -634,8 +626,6 @@ class RestaurantController extends AbstractController
 
         if ($cartItem) {
             $this->orderModifier->removeFromOrder($cart, $cartItem);
-
-            $dispatcher->dispatch(new ItemRemovedEvent($cart), ItemRemovedEvent::NAME);
 
             $this->orderManager->persist($cart);
             $this->orderManager->flush();

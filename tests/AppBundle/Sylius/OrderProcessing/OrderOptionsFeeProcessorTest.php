@@ -60,7 +60,6 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
 
         $this->promotionRepository = $this->prophesize(PromotionRepositoryInterface::class);
 
-
         $this->orderFeeProcessor = new OrderFeeProcessor(
             $this->adjustmentFactory,
             $this->translator->reveal(),
@@ -70,18 +69,15 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         );
         $this->orderOptionsProcessor = new OrderOptionsProcessor($this->adjustmentFactory);
 
-        $this->orderVendorProcessor = new OrderVendorProcessor(
-            $this->adjustmentFactory,
-            $this->translator->reveal(),
-            new NullLogger()
-        );
+        $this->orderVendorProcessor = $this->prophesize(OrderVendorProcessor::class);
+        // $this->orderVendorProcessor->process(Argument::type(OrderInterface::class))->shouldBeCalled();
 
         $this->compositeProcessor = new CompositeOrderProcessor();
 
         $this->optionsFeeProcessor = new OrderOptionsFeeProcessor(
             $this->orderOptionsProcessor,
             $this->orderFeeProcessor,
-            $this->orderVendorProcessor
+            $this->orderVendorProcessor->reveal()
         );
     }
 

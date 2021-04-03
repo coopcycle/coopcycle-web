@@ -258,6 +258,8 @@ services:
     class: AppBundle\Sylius\OrderProcessing\OrderVendorProcessor
     arguments:
       $adjustmentFactory: "@sylius.factory.adjustment"
+    tags:
+      - { name: monolog.logger, channel: coopcycle.order_processing }
 
   AppBundle\Sylius\OrderProcessing\OrderDisabledProductProcessor:
     tags:
@@ -1105,8 +1107,3 @@ services:
     tags:
       - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: edenred }
-
-  AppBundle\EventListener\CheckoutListener:
-    tags:
-      - { name: kernel.event_listener, event: checkout.item_added,   method: onItemAdded }
-      - { name: kernel.event_listener, event: checkout.item_removed, method: onItemRemoved }

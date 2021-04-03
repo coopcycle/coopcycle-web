@@ -2,6 +2,9 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
+use AppBundle\Entity\HubRepository;
+use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Psr\Log\LoggerInterface;
@@ -12,17 +15,26 @@ use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
-final class OrderVendorProcessor implements OrderProcessorInterface
+class OrderVendorProcessor implements OrderProcessorInterface
 {
+    private $hubRepository;
+    private $localBusinessRepository;
     private $adjustmentFactory;
     private $translator;
+    private $logger;
 
     public function __construct(
+        HubRepository $hubRepository,
+        LocalBusinessRepository $localBusinessRepository,
         AdjustmentFactoryInterface $adjustmentFactory,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        LoggerInterface $logger)
     {
+        $this->hubRepository = $hubRepository;
+        $this->localBusinessRepository = $localBusinessRepository;
         $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
+        $this->logger = $logger;
     }
 
     /**
@@ -42,12 +54,96 @@ final class OrderVendorProcessor implements OrderProcessorInterface
 
         $order->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT);
 
-        $vendor = $order->getVendor();
+        $vendor = $this->processUpgradeOrDowngrade($order);
+        $order->setVendor($vendor);
 
-        if (!$vendor->isHub()) {
-            return;
+        if ($vendor->isHub()) {
+            $this->processTransferAmountAdjustments($order);
+        }
+    }
+
+    private function processUpgradeOrDowngrade(BaseOrderInterface $order): Vendor
+    {
+        $this->logger->debug(sprintf('Checking if order #%d needs vendor upgrade/downgrade', $order->getId()));
+
+        $vendor = $order->getVendor();
+        $restaurants = $this->getRestaurants($order);
+
+        $this->logger->debug(sprintf('There are %d vendors in order #%d', count($restaurants), $order->getId()));
+
+        if (count($restaurants) === 0) {
+
+            return $vendor;
         }
 
+        if (count($restaurants) === 1) {
+
+            // Make sure the vendor matches
+
+            $restaurant = $restaurants->current();
+
+            if ($vendor->getRestaurant() === $restaurant) {
+                $this->logger->debug(sprintf('The vendor for order %d is OK, skipping', $order->getId()));
+
+                return $vendor;
+            }
+
+            $this->logger->debug(sprintf('The vendor for order %d is KO, fixing', $order->getId()));
+
+            return Vendor::withRestaurant($restaurant);
+        }
+
+        //
+        // Upgrade if needed
+        //
+
+        $hubs = new \SplObjectStorage();
+
+        foreach ($restaurants as $restaurant) {
+            $hub = $this->hubRepository->findOneByRestaurant($restaurant);
+            if (!$hubs->contains($hub)) {
+                $hubs->attach($hub);
+            }
+        }
+
+        if (count($hubs) === 1) {
+
+            $hub = $hubs->current();
+
+            if ($vendor->getHub() === $hub) {
+                $this->logger->debug(sprintf('The vendor for order %d is OK, skipping', $order->getId()));
+
+                return $vendor;
+            }
+
+            $this->logger->debug(sprintf('The vendor for order %d is KO, fixing', $order->getId()));
+
+            return Vendor::withHub($hub);
+        }
+
+        return $vendor;
+    }
+
+    private function getRestaurants(BaseOrderInterface $order): \SplObjectStorage
+    {
+        $restaurants = new \SplObjectStorage();
+
+        foreach ($order->getItems() as $item) {
+            $restaurant = $this->localBusinessRepository->findOneByProduct(
+                $item->getVariant()->getProduct()
+            );
+
+            if ($restaurant && !$restaurants->contains($restaurant)) {
+                $restaurants->attach($restaurant);
+            }
+        }
+
+        return $restaurants;
+    }
+
+    private function processTransferAmountAdjustments(BaseOrderInterface $order)
+    {
+        $vendor = $order->getVendor();
         $subVendors = $order->getVendors();
 
         if (count($subVendors) === 1) {
