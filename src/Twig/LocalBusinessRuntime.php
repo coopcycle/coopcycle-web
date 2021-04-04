@@ -7,6 +7,7 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\HubRepository;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
+use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -106,5 +107,42 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
     public function resolveHub(LocalBusiness $restaurant)
     {
         return $this->hubRepository->findOneByRestaurant($restaurant);
+    }
+
+    private function getRestaurants(OrderInterface $order): \SplObjectStorage
+    {
+        $restaurants = new \SplObjectStorage();
+
+        foreach ($order->getItems() as $item) {
+            $restaurant = $this->repository->findOneByProduct(
+                $item->getVariant()->getProduct()
+            );
+
+            if ($restaurant && !$restaurants->contains($restaurant)) {
+                $restaurants->attach($restaurant);
+            }
+        }
+
+        return $restaurants;
+    }
+
+    public function getCheckoutSuggestions(OrderInterface $order)
+    {
+        $restaurants = $this->getRestaurants($order);
+
+        $suggestions = [];
+
+        if (count($restaurants) === 1) {
+            $hub = $this->hubRepository
+                ->findOneByRestaurant($restaurants->current());
+            if (null !== $hub) {
+                $suggestions[] = [
+                    'type' => 'CONTINUE_SHOPPING_HUB',
+                    'hub'  => $hub,
+                ];
+            }
+        }
+
+        return $suggestions;
     }
 }

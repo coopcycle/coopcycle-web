@@ -1157,3 +1157,4 @@ adminDashboard.package_sets.help: Configurez les types de marchandise à transpo
 adminDashboard.zones.help: Définissez des zones géographiques
 adminDashboard.tags.help: Associez des tags et des couleurs aux tâches
 adminDashboard.api.help: Créez des livraisons de facon automatisée
+checkout.suggestions.continue_shopping_hub: Vous pouvez continuer votre commande dans les autres boutiques <strong>%name%</strong>

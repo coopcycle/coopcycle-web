@@ -52,7 +52,27 @@
 
     <div class="row">
       <div class="col-xs-12">
+
         {% include 'order/breadcrumb.html.twig' %}
+
+        {% for suggestion in coopcycle_checkout_suggestions(order) %}
+          {% if suggestion.type == 'CONTINUE_SHOPPING_HUB' %}
+            <div class="alert alert-info p-3 d-flex justify-content-between align-items-center">
+              <div>
+                <i class="fa fa-lg fa-info-circle mr-2"></i>
+                <span>
+                  {% trans with { '%name%': suggestion.hub.name } %}checkout.suggestions.continue_shopping_hub{% endtrans %}
+                </span>
+              </div>
+              <div class="ml-2">
+                <a class="btn btn-sm btn-info h-100 d-flex align-items-center"
+                  href="{{ path('hub', { id: suggestion.hub.id, slug: suggestion.hub.name|slugify }) }}">
+                  {{ 'index.view_all_merchants'|trans }}
+                </a>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
 
         {{ form_errors(form) }}
 

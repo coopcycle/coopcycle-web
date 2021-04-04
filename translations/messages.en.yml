@@ -1162,3 +1162,4 @@ adminDashboard.tags.help: Assign tags and colors to tasks
 form.time_slot.preview_title: Time slot preview
 adminDashboard.api.title: API
 adminDashboard.api.help: Allow to create deliveries programmatically
+checkout.suggestions.continue_shopping_hub: You can continue shopping in other shops of <strong>%name%</strong>
