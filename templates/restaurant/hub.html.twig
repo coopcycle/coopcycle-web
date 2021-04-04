@@ -7,12 +7,19 @@
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
         <div>
-          <h1 class="text-center my-4 text-white">{{ hub.name }}</h1>
+          <h1 class="text-center mt-0 mb-4 text-white">{{ hub.name }}</h1>
         </div>
       </div>
     </div>
   </div>
 </header>
+
+<div class="container">
+  <div class="about-us mb-4">
+    <p>{{ 'hub.disclaimer'|trans }}</p>
+  </div>
+</div>
+
 <div class="container">
   {% if hub.restaurants|length == 0 %}
     <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
