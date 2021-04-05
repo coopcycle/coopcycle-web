@@ -32,8 +32,7 @@ class StripeManager
     {
         $order = $payment->getOrder();
 
-        $vendor = $order->getVendor();
-        if (null === $vendor || $vendor->isHub()) {
+        if (!$order->hasVendor() || $order->getVendor()->isHub()) {
             return;
         }
 

@@ -79,7 +79,7 @@ class OrderController extends AbstractController
 
         $order = $cartContext->getCart();
 
-        if (null === $order || null === $order->getVendor()) {
+        if (null === $order || !$order->hasVendor()) {
 
             return $this->redirectToRoute('homepage');
         }
@@ -235,7 +235,7 @@ class OrderController extends AbstractController
 
         $order = $cartContext->getCart();
 
-        if (null === $order || null === $order->getVendor()) {
+        if (null === $order || !$order->hasVendor()) {
 
             return $this->redirectToRoute('homepage');
         }
@@ -301,7 +301,7 @@ class OrderController extends AbstractController
     {
         $order = $cartContext->getCart();
 
-        if (null === $order || null === $order->getVendor()) {
+        if (null === $order || !$order->hasVendor()) {
 
             return new JsonResponse(['message' => 'No cart found in context'], 404);
         }
