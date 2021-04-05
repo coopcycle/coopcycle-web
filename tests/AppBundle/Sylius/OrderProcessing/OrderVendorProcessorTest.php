@@ -357,19 +357,16 @@ class OrderVendorProcessorTest extends KernelTestCase
         // Vendor 2 = 3960 * 0.1750 =  693
         // Vendor 3 = 3960 * 0.1500 =  594
 
-        $hub
-            ->getPercentageForRestaurant(
-                $order->reveal(),
-                Argument::type(LocalBusiness::class)
-            )
+        $order
+            ->getPercentageForRestaurant(Argument::type(LocalBusiness::class))
             ->will(function ($args) use ($restaurant1, $restaurant2, $restaurant3) {
-                if ($args[1] === $restaurant1) {
+                if ($args[0] === $restaurant1) {
                     return 0.6750;
                 }
-                if ($args[1] === $restaurant2) {
+                if ($args[0] === $restaurant2) {
                     return 0.1750;
                 }
-                if ($args[1] === $restaurant3) {
+                if ($args[0] === $restaurant3) {
                     return 0.1500;
                 }
             });

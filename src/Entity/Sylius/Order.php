@@ -1119,4 +1119,31 @@ class Order extends BaseOrder implements OrderInterface
             AdjustmentInterface::TAX_ADJUSTMENT => array_values($taxAdjustments),
         ];
     }
+
+    /**
+     * @return int
+     */
+    public function getItemsTotalForRestaurant(LocalBusiness $restaurant): int
+    {
+        $total = 0;
+        foreach ($this->getItems() as $item) {
+            if ($restaurant->hasProduct($item->getVariant()->getProduct())) {
+                $total += $item->getTotal();
+            }
+        }
+
+        return $total;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPercentageForRestaurant(LocalBusiness $restaurant): float
+    {
+        $total = $this->getItemsTotal();
+        $itemsTotal = $this->getItemsTotalForRestaurant($restaurant);
+
+        return round($itemsTotal / $total, 4);
+    }
+
 }

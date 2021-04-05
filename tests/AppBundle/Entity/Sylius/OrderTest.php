@@ -1,9 +1,10 @@
 <?php
 
-namespace Tests\AppBundle\Entity;
+namespace Tests\AppBundle\Entity\Sylius;
 
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -13,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 
-class HubTest extends TestCase
+class OrderTest extends TestCase
 {
     use ProphecyTrait;
 
@@ -52,6 +53,8 @@ class HubTest extends TestCase
         $item->getVariant()->willReturn($variant);
         $item->getTotal()->willReturn($total);
 
+        $item->setOrder(Argument::type(OrderInterface::class))->shouldBeCalled();
+
         return $item->reveal();
     }
 
@@ -73,25 +76,15 @@ class HubTest extends TestCase
         $bread1Variant = $this->createProductVariant($bread1);
         $bread2Variant = $this->createProductVariant($bread2);
 
-        //
+        $order = new Order();
 
-        $order = $this->prophesize(OrderInterface::class);
+        $order->addItem($this->createOrderItem($flower1Variant, 500));
+        $order->addItem($this->createOrderItem($flower2Variant, 700));
+        $order->addItem($this->createOrderItem($bread1Variant,  600));
+        $order->addItem($this->createOrderItem($bread2Variant,  300));
 
-        $order
-            ->getItems()
-            ->willReturn(new ArrayCollection([
-                $this->createOrderItem($flower1Variant, 500),
-                $this->createOrderItem($flower2Variant, 700),
-                $this->createOrderItem($bread1Variant, 600),
-                $this->createOrderItem($bread2Variant, 300),
-            ]));
-
-        $hub = new Hub();
-        $hub->addRestaurant($flowerShop);
-        $hub->addRestaurant($bakery);
-
-        $this->assertEquals(1200, $hub->getItemsTotalForRestaurant($order->reveal(), $flowerShop));
-        $this->assertEquals(900, $hub->getItemsTotalForRestaurant($order->reveal(), $bakery));
+        $this->assertEquals(1200, $order->getItemsTotalForRestaurant($flowerShop));
+        $this->assertEquals(900, $order->getItemsTotalForRestaurant($bakery));
     }
 
     public function testGetPercentageForRestaurant()
@@ -120,29 +113,17 @@ class HubTest extends TestCase
         $beer1Variant = $this->createProductVariant($beer1);
         $beer2Variant = $this->createProductVariant($beer2);
 
-        //
+        $order = new Order();
 
-        $order = $this->prophesize(OrderInterface::class);
+        $order->addItem($this->createOrderItem($flower1Variant, 2000));
+        $order->addItem($this->createOrderItem($flower2Variant,  700));
+        $order->addItem($this->createOrderItem($bread1Variant,   300));
+        $order->addItem($this->createOrderItem($bread2Variant,   300));
+        $order->addItem($this->createOrderItem($beer1Variant,    300));
+        $order->addItem($this->createOrderItem($beer2Variant,    400));
 
-        $order
-            ->getItems()
-            ->willReturn(new ArrayCollection([
-                $this->createOrderItem($flower1Variant, 2000),
-                $this->createOrderItem($flower2Variant,  700),
-                $this->createOrderItem($bread1Variant,   300),
-                $this->createOrderItem($bread2Variant,   300),
-                $this->createOrderItem($beer1Variant,    300),
-                $this->createOrderItem($beer2Variant,    400),
-            ]));
-
-        $order->getItemsTotal()->willReturn(4000);
-
-        $hub = new Hub();
-        $hub->addRestaurant($flowerShop);
-        $hub->addRestaurant($bakery);
-
-        $this->assertEquals(0.6750, $hub->getPercentageForRestaurant($order->reveal(), $flowerShop));
-        $this->assertEquals(0.1500, $hub->getPercentageForRestaurant($order->reveal(), $bakery));
-        $this->assertEquals(0.1750, $hub->getPercentageForRestaurant($order->reveal(), $brewery));
+        $this->assertEquals(0.6750, $order->getPercentageForRestaurant($flowerShop));
+        $this->assertEquals(0.1500, $order->getPercentageForRestaurant($bakery));
+        $this->assertEquals(0.1750, $order->getPercentageForRestaurant($brewery));
     }
 }

@@ -62,7 +62,7 @@ class OrderVendorProcessor implements OrderProcessorInterface
         }
     }
 
-    private function processUpgradeOrDowngrade(BaseOrderInterface $order): Vendor
+    private function processUpgradeOrDowngrade(OrderInterface $order): Vendor
     {
         $this->logger->debug(sprintf('Checking if order #%d needs vendor upgrade/downgrade', $order->getId()));
 
@@ -124,7 +124,7 @@ class OrderVendorProcessor implements OrderProcessorInterface
         return $vendor;
     }
 
-    private function getRestaurants(BaseOrderInterface $order): \SplObjectStorage
+    private function getRestaurants(OrderInterface $order): \SplObjectStorage
     {
         $restaurants = new \SplObjectStorage();
 
@@ -141,7 +141,7 @@ class OrderVendorProcessor implements OrderProcessorInterface
         return $restaurants;
     }
 
-    private function processTransferAmountAdjustments(BaseOrderInterface $order)
+    private function processTransferAmountAdjustments(OrderInterface $order)
     {
         $vendor = $order->getVendor();
         $subVendors = $order->getVendors();
@@ -156,7 +156,7 @@ class OrderVendorProcessor implements OrderProcessorInterface
 
         foreach ($subVendors as $subVendor) {
 
-            $percentageForVendor = $hub->getPercentageForRestaurant($order, $subVendor);
+            $percentageForVendor = $order->getPercentageForRestaurant($subVendor);
             $transferAmount = ($rest * $percentageForVendor);
 
             $transferAmountAdjustment = $this->adjustmentFactory->createWithData(

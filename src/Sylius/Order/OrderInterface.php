@@ -194,4 +194,10 @@ interface OrderInterface extends
      * @return int
      */
     public function getReusablePackagingPledgeReturn();
+
+    /**
+     * @param LocalBusiness $restaurant
+     * @return float
+     */
+    public function getPercentageForRestaurant(LocalBusiness $restaurant): float;
 }
