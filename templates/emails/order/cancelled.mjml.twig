@@ -4,7 +4,7 @@
 <mj-column>
   <mj-text align="left" line-height="20px">
   {{ 'order.cancelled.body.intro' | trans({}, 'emails') | raw }}
-  {% if order.foodtech %}
+  {% if order.hasVendor() %}
   <br>
   <br>
   {{ 'order.foodtech.cancelled' | trans({ '%order.number%': order.number }, 'emails') | raw }}
