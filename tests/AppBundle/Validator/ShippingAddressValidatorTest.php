@@ -127,6 +127,10 @@ class ShippingAddressValidatorTest extends ConstraintValidatorTestCase
             ->willReturn(Vendor::withRestaurant($restaurant));
 
         $order
+            ->getPickupAddress()
+            ->willReturn($restaurant->getAddress());
+
+        $order
             ->hasVendor()
             ->willReturn(true);
 

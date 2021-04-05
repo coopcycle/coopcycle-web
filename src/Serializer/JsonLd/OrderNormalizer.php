@@ -160,10 +160,11 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 ];
             }
 
-            $vendor = $object->getVendor();
-            if (null === $vendor) {
+            if (!$object->hasVendor()) {
                 $data['vendor'] = null;
             } else {
+
+                $vendor = $object->getVendor();
 
                 $fulfillmentMethods = [];
                 foreach ($vendor->getFulfillmentMethods() as $fulfillmentMethod) {

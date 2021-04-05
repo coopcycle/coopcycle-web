@@ -19,7 +19,7 @@ class ShippingTimeCalculator
 
     public function calculate(OrderInterface $order): string
     {
-        $pickupAddress = $order->getVendor()->getAddress();
+        $pickupAddress = $order->getPickupAddress();
         $dropoffAddress = $order->getShippingAddress();
 
         if (null === $dropoffAddress || null === $dropoffAddress->getGeo()) {

@@ -65,7 +65,7 @@ class ShippingAddressValidator extends ConstraintValidator
         $vendor = $object->getVendor();
 
         $distance = $this->routing->getDistance(
-            $vendor->getAddress()->getGeo(),
+            $object->getPickupAddress()->getGeo(),
             $value->getGeo()
         );
 

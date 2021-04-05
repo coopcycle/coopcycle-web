@@ -201,4 +201,9 @@ interface OrderInterface extends
     public function getRestaurants(): Collection;
 
     public function isMultiVendor(): bool;
+
+    /**
+     * @return Address|null
+     */
+    public function getPickupAddress(): ?Address;
 }

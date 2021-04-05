@@ -1162,4 +1162,13 @@ class Order extends BaseOrder implements OrderInterface
     {
         return $this->hasVendor() && $this->getVendor()->isHub();
     }
+
+    public function getPickupAddress(): ?Address
+    {
+        if ($this->hasVendor()) {
+            return $this->getVendor()->getAddress();
+        }
+
+        return null;
+    }
 }

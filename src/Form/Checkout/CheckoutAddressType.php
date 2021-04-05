@@ -100,7 +100,6 @@ class CheckoutAddressType extends AbstractType
             }
 
             $restaurant = $order->getRestaurant();
-            $vendor = $order->getVendor();
             $customer = $order->getCustomer();
             $packagingQuantity = $order->getReusablePackagingQuantity();
 
