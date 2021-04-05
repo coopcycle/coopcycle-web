@@ -103,9 +103,10 @@ class PreparationTimeCalculatorTest extends TestCase
     public function calculateProvider()
     {
         return [
+            // default value when empty
             [
                 $this->createEmptyOrder(),
-                '0 minutes',
+                '10 minutes',
             ],
             // state = normal
             [
