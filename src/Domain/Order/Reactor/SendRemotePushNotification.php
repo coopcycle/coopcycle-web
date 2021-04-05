@@ -36,7 +36,7 @@ class SendRemotePushNotification
             return;
         }
 
-        $shouldSendNotification = $order->getVendor()->isHub() ?
+        $shouldSendNotification = $order->isMultiVendor() ?
             $event instanceof Event\OrderAccepted : $event instanceof Event\OrderCreated;
 
         if (!$shouldSendNotification) {

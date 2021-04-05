@@ -125,6 +125,9 @@ class RestaurantCartContextTest extends TestCase
                 $restaurant->reveal()
             )
         );
+        $expectedCart
+            ->isMultiVendor()
+            ->willReturn(false);
         $expectedCart->getChannel()->willReturn($this->webChannel->reveal());
 
         $this->restaurantResolver
@@ -171,6 +174,9 @@ class RestaurantCartContextTest extends TestCase
                 $restaurant->reveal()
             )
         );
+        $expectedCart
+            ->isMultiVendor()
+            ->willReturn(false);
 
         $this->restaurantResolver
             ->accept($expectedCart->reveal())
@@ -251,6 +257,7 @@ class RestaurantCartContextTest extends TestCase
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
         $cartProphecy->getVendor()->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+        $cartProphecy->isMultiVendor()->willReturn(false);
         $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
 
         $expectedCart = $cartProphecy->reveal();
@@ -286,6 +293,7 @@ class RestaurantCartContextTest extends TestCase
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
         $cartProphecy->getVendor()->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+        $cartProphecy->isMultiVendor()->willReturn(false);
         $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
 
         $expectedCart = $cartProphecy->reveal();
@@ -324,6 +332,7 @@ class RestaurantCartContextTest extends TestCase
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
         $cartProphecy->getVendor()->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+        $cartProphecy->isMultiVendor()->willReturn(false);
         $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
 
         $expectedCart = $cartProphecy->reveal();

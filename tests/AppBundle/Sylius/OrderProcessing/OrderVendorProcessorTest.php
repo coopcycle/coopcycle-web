@@ -163,6 +163,9 @@ class OrderVendorProcessorTest extends KernelTestCase
             ->hasVendor()
             ->willReturn(true);
         $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
             ->getVendor()
             ->willReturn($vendor);
         $order
@@ -226,6 +229,9 @@ class OrderVendorProcessorTest extends KernelTestCase
         $order
             ->hasVendor()
             ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
         $order
             ->getVendor()
             ->willReturn(
@@ -293,6 +299,9 @@ class OrderVendorProcessorTest extends KernelTestCase
         $order
             ->hasVendor()
             ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
         $order
             ->getVendor()
             ->willReturn(
@@ -378,6 +387,9 @@ class OrderVendorProcessorTest extends KernelTestCase
             ->willReturn(740);
         $order
             ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
             ->willReturn(true);
         $order
             ->getVendor()

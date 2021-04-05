@@ -66,7 +66,7 @@ class OrderVendorProcessor implements OrderProcessorInterface
         $vendor = $this->processVendor($order, $restaurants);
         $order->setVendor($vendor);
 
-        if ($vendor->isHub()) {
+        if ($order->isMultiVendor()) {
             $this->processTransferAmountAdjustments($order);
         }
     }

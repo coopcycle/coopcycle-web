@@ -298,6 +298,9 @@ class StripeManagerTest extends TestCase
             ->hasVendor()
             ->willReturn(true);
         $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
             ->getRestaurant()
             ->willReturn($restaurant);
         $order
@@ -343,6 +346,9 @@ class StripeManagerTest extends TestCase
         $order
             ->hasVendor()
             ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
@@ -392,6 +398,9 @@ class StripeManagerTest extends TestCase
         $order
             ->getVendor()
             ->willReturn(Vendor::withRestaurant($restaurant));
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
 
         $payment = new Payment();
         $payment->setStripeUserId('acct_123456');
@@ -444,6 +453,9 @@ class StripeManagerTest extends TestCase
         $order
             ->getVendor()
             ->willReturn(Vendor::withRestaurant($restaurant));
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
         $order
             ->getFeeTotal()
             ->willReturn(750);

@@ -109,7 +109,7 @@ class CheckoutAddressType extends AbstractType
                 // FIXME
                 // We need to check if $packagingQuantity > 0
 
-                if (!$vendor->isHub() && $restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials()) {
+                if (!$order->isMultiVendor() && $restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials()) {
 
                     $this->loopeatContext->initialize();
 
@@ -168,7 +168,7 @@ class CheckoutAddressType extends AbstractType
 
             // When the restaurant accepts quotes and the customer is allowed,
             // we add another submit button
-            if (!$vendor->isHub() &&
+            if (!$order->isMultiVendor() &&
                 $restaurant->isQuotesAllowed() && null !== $customer && $customer->hasUser() && $customer->getUser()->isQuotesAllowed()) {
                 $form->add('quote', SubmitType::class, [
                     'label' => 'form.checkout_address.quote.label'

@@ -117,7 +117,7 @@ class EmailManager
     {
         if (null === $restaurant) {
             $vendor = $order->getVendor();
-            if ($vendor->isHub()) {
+            if ($order->isMultiVendor()) {
                 // To stay retro-compatible
                 // FIXME
                 // This doesn't mean that the order contains a product from the merchant

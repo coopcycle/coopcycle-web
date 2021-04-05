@@ -38,7 +38,7 @@ class PublishLiveUpdate
 
         // When this is a multi vendor order,
         // we do *NOT* send a live update when the order is created
-        if ($event instanceof Event\OrderCreated && $order->getVendor()->isHub()) {
+        if ($event instanceof Event\OrderCreated && $order->isMultiVendor()) {
             return;
         }
 

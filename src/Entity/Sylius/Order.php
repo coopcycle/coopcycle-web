@@ -1157,4 +1157,9 @@ class Order extends BaseOrder implements OrderInterface
         $vendor->setItemsTotal($itemsTotal);
         $vendor->setTransferAmount($transferAmount);
     }
+
+    public function isMultiVendor(): bool
+    {
+        return $this->hasVendor() && $this->getVendor()->isHub();
+    }
 }

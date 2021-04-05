@@ -54,7 +54,7 @@ class SendEmail
 
             // When this is a multi-vendor order,
             // we notify owners when the order has been *ACCEPTED*
-            if ($order->hasVendor() && $order->getVendor()->isHub()) {
+            if ($order->isMultiVendor()) {
                 $this->notifyOwners($order);
             }
         }
@@ -108,7 +108,7 @@ class SendEmail
         // Send email to shop owners
         // When this is a multi vendor order,
         // we will send the email when the order is *ACCEPTED*
-        if ($order->getVendor()->isHub()) {
+        if ($order->isMultiVendor()) {
             return;
         }
 
@@ -117,9 +117,7 @@ class SendEmail
 
     private function notifyOwners(OrderInterface $order)
     {
-        $vendor = $order->getVendor();
-
-        if ($vendor->isHub()) {
+        if ($order->isMultiVendor()) {
 
             $restaurants = [];
             foreach ($order->getItems() as $orderItem) {
@@ -135,7 +133,7 @@ class SendEmail
             }
 
         } else {
-            $this->sendEmailToOwners($order, $vendor->getRestaurant());
+            $this->sendEmailToOwners($order, $order->getVendor()->getRestaurant());
         }
     }
 

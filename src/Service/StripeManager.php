@@ -32,7 +32,7 @@ class StripeManager
     {
         $order = $payment->getOrder();
 
-        if (!$order->hasVendor() || $order->getVendor()->isHub()) {
+        if (!$order->hasVendor() || $order->isMultiVendor()) {
             return;
         }
 
@@ -52,7 +52,7 @@ class StripeManager
 
         $order = $payment->getOrder();
 
-        if (!$order->hasVendor() || $order->getVendor()->isHub()) {
+        if (!$order->hasVendor() || $order->isMultiVendor()) {
             return $options;
         }
 

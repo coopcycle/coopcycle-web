@@ -96,6 +96,9 @@ class SendEmailTest extends TestCase
             ->hasVendor()
             ->willReturn(true);
         $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
             ->getCustomer()
             ->willReturn($customer->reveal());
         $order
@@ -169,6 +172,9 @@ class SendEmailTest extends TestCase
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
             ->willReturn(true);
         $order
             ->getCustomer()

@@ -199,4 +199,6 @@ interface OrderInterface extends
     public function addRestaurant(LocalBusiness $restaurant, int $itemsTotal, int $transferAmount);
 
     public function getRestaurants(): Collection;
+
+    public function isMultiVendor(): bool;
 }

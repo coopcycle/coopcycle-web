@@ -78,7 +78,7 @@ final class RestaurantCartContext implements CartContextInterface
                 $this->session->remove($this->sessionKeyName);
             } else {
                 try {
-                    if (!$cart->getVendor()->isHub() && !$cart->getVendor()->getRestaurant()->isEnabled()
+                    if (!$cart->isMultiVendor() && !$cart->getVendor()->getRestaurant()->isEnabled()
                         && !$this->authorizationChecker->isGranted('edit', $cart->getVendor()->getRestaurant())) {
                         $cart = null;
                         $this->session->remove($this->sessionKeyName);

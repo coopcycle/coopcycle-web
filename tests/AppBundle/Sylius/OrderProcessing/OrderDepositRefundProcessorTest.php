@@ -144,6 +144,9 @@ class OrderDepositRefundProcessorTest extends TestCase
             ->hasVendor()
             ->willReturn(true);
         $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
             ->getVendor()
             ->willReturn(Vendor::withRestaurant($restaurant));
         $order
