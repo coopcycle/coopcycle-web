@@ -28,10 +28,25 @@ class PreparationTimeCalculatorTest extends TestCase
         ];
     }
 
+    private function createEmptyOrder()
+    {
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection([]));
+
+        $order
+            ->getItemsTotal()
+            ->willReturn(0);
+
+        return $order->reveal();
+    }
+
     private function createOrder($total, $state = 'normal', array $customConfig = [])
     {
         $restaurant = new LocalBusiness();
         $restaurant->setState($state);
+
         foreach ($customConfig as $expr => $time) {
             $rule = new PreparationTimeRule();
             $rule->setExpression($expr);
@@ -88,6 +103,10 @@ class PreparationTimeCalculatorTest extends TestCase
     public function calculateProvider()
     {
         return [
+            [
+                $this->createEmptyOrder(),
+                '0 minutes',
+            ],
             // state = normal
             [
                 $this->createOrder(1500),

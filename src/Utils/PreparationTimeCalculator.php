@@ -47,7 +47,13 @@ class PreparationTimeCalculator
     {
         $times = [];
 
-        foreach ($order->getRestaurants() as $restaurant) {
+        $restaurants = $order->getRestaurants();
+
+        if (count($restaurants) === 0) {
+            return '0 minutes';
+        }
+
+        foreach ($restaurants as $restaurant) {
 
             $preparation = '0 minutes';
             foreach ($this->getConfig($restaurant) as $expression => $value) {
