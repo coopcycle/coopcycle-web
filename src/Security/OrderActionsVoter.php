@@ -79,7 +79,7 @@ class OrderActionsVoter extends Voter
 
         Assert::isInstanceOf($user, User::class);
 
-        $ownsRestaurant = $this->authorizationChecker->isGranted('edit', $subject->getRestaurant());
+        $ownsRestaurant = $this->isGrantedRestaurant($subject);
 
         $isCustomer = null !== $subject->getCustomer()
             && $subject->getCustomer()->hasUser()
@@ -87,18 +87,21 @@ class OrderActionsVoter extends Voter
 
         if (self::VIEW === $attribute) {
 
-            if ($subject->getVendor()->isHub()) {
-                foreach ($subject->getVendors() as $vendor) {
-                    if ($this->authorizationChecker->isGranted('edit', $vendor)) {
-                        return true;
-                    }
-                }
-            }
-
             return $ownsRestaurant || $isCustomer;
         }
 
         // For actions like "accept", "refuse", etc...
         return $ownsRestaurant;
+    }
+
+    private function isGrantedRestaurant($subject)
+    {
+        foreach ($subject->getRestaurants() as $restaurant) {
+            if ($this->authorizationChecker->isGranted('edit', $restaurant)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

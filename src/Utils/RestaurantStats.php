@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -60,6 +61,7 @@ class RestaurantStats implements \Countable
 
         $this->ids = $this->loadIds();
 
+        $this->addVendors();
         $this->addAdjustments();
         $this->computeTaxes();
         $this->computeColumnTotals();
@@ -216,6 +218,46 @@ class RestaurantStats implements \Countable
             return $messengers;
 
         }, []);
+    }
+
+    private function addVendors()
+    {
+        if (count($this->ids) === 0) {
+            return;
+        }
+
+        $qb = $this->qb->getEntityManager()
+            ->getRepository(OrderVendor::class)
+            ->createQueryBuilder('v');
+
+        $qb
+            ->select('IDENTITY(v.order) AS order_id')
+            ->addSelect('IDENTITY(v.restaurant) AS restaurant')
+            ->addSelect('v.transferAmount')
+            ->andWhere(
+                $qb->expr()->in('v.order', $this->ids)
+            )
+            ;
+
+        $result = $qb->getQuery()->getArrayResult();
+
+        $byOrderId = array_reduce($result, function ($accumulator, $vendor) {
+
+            if (!isset($accumulator[$vendor['order_id']])) {
+                $accumulator[$vendor['order_id']] = [];
+            }
+
+            $accumulator[$vendor['order_id']][] = $vendor;
+
+            return $accumulator;
+
+        }, []);
+
+        $this->result = array_map(function ($order) use ($byOrderId) {
+            $order->vendors = $byOrderId[$order->id];
+
+            return $order;
+        }, $this->result);
     }
 
     private function isTaxColumn($column)

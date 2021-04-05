@@ -3,6 +3,7 @@ Feature: Manage restaurants
   Scenario: Retrieve the restaurants list
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants"
@@ -22,6 +23,7 @@ Feature: Manage restaurants
   Scenario: Search restaurants
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants?coordinate=48.853286,2.369116"
@@ -240,10 +242,6 @@ Feature: Manage restaurants
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
-    And the restaurant with id "6" has products:
-      | code      |
-      | PIZZA     |
-      | HAMBURGER |
     And the restaurant with id "6" has menu:
       | section | product   |
       | Pizzas  | PIZZA     |
@@ -404,6 +402,7 @@ Feature: Manage restaurants
   Scenario: Restaurant is deliverable
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants/1/can-deliver/48.855799,2.359207"
@@ -413,6 +412,7 @@ Feature: Manage restaurants
   Scenario: Restaurant is not deliverable
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants/1/can-deliver/48.882305,2.365448"
@@ -477,6 +477,7 @@ Feature: Manage restaurants
   Scenario: User has not sufficient access rights
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -495,6 +496,7 @@ Feature: Manage restaurants
   Scenario: User is not authorized to modify restaurant
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -515,6 +517,7 @@ Feature: Manage restaurants
   Scenario: Change restaurant state
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -738,6 +741,7 @@ Feature: Manage restaurants
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_locales.yml  |
+      | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" is closed between "2018-08-27 12:00:00" and "2018-08-28 10:00:00"
     Given the user "bob" is loaded:

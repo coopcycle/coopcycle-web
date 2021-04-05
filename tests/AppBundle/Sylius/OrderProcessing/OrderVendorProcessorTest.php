@@ -8,6 +8,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -17,6 +18,7 @@ use AppBundle\Sylius\OrderProcessing\OrderVendorProcessor;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
@@ -50,7 +52,10 @@ class OrderVendorProcessorTest extends KernelTestCase
         $this->hubRepository = $this->prophesize(HubRepository::class);
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+
         $this->orderProcessor = new OrderVendorProcessor(
+            $this->entityManager->reveal(),
             $this->hubRepository->reveal(),
             $this->localBusinessRepository->reveal(),
             $this->adjustmentFactory,
@@ -82,7 +87,7 @@ class OrderVendorProcessorTest extends KernelTestCase
         return $restaurant->reveal();
     }
 
-    private function createOrderItem(ProductInterface $product)
+    private function createOrderItem(ProductInterface $product, int $total = 0)
     {
         $item = $this->prophesize(OrderItemInterface::class);
         $variant = $this->prophesize(ProductVariantInterface::class);
@@ -93,6 +98,9 @@ class OrderVendorProcessorTest extends KernelTestCase
         $item
             ->getVariant()
             ->willReturn($variant);
+        $item
+            ->getTotal()
+            ->willReturn($total);
 
         return $item->reveal();
     }
@@ -106,6 +114,9 @@ class OrderVendorProcessorTest extends KernelTestCase
         $order
             ->hasVendor()
             ->willReturn(false);
+        $order
+            ->getVendors()
+            ->willReturn(new ArrayCollection());
 
         $order
             ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
@@ -154,6 +165,20 @@ class OrderVendorProcessorTest extends KernelTestCase
         $order
             ->getVendor()
             ->willReturn($vendor);
+        $order
+            ->getVendors()
+            ->willReturn(new ArrayCollection([
+                new OrderVendor($order->reveal(), $restaurant, 2000, 0)
+            ]));
+        $order
+            ->getTotal()
+            ->willReturn(2000);
+        $order
+            ->getFeeTotal()
+            ->willReturn(300);
+        $order
+            ->getPercentageForRestaurant($restaurant)
+            ->willReturn(1.0);
 
         $order
             ->getItems()
@@ -170,6 +195,10 @@ class OrderVendorProcessorTest extends KernelTestCase
 
         $order
             ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
+            ->shouldBeCalled();
+
+        $order
+            ->addRestaurant($restaurant, 0, 1700)
             ->shouldBeCalled();
 
         $order->setVendor(Argument::that(function (Vendor $vnd) use ($vendor) {
@@ -202,7 +231,20 @@ class OrderVendorProcessorTest extends KernelTestCase
             ->willReturn(
                 Vendor::withRestaurant($otherRestaurant)
             );
-
+        $order
+            ->getVendors()
+            ->willReturn(new ArrayCollection([
+                new OrderVendor($order->reveal(), $otherRestaurant, 2000, 0)
+            ]));
+        $order
+            ->getTotal()
+            ->willReturn(2000);
+        $order
+            ->getFeeTotal()
+            ->willReturn(300);
+        $order
+            ->getPercentageForRestaurant($restaurant)
+            ->willReturn(1.0);
         $order
             ->getItems()
             ->willReturn(new ArrayCollection([
@@ -218,6 +260,10 @@ class OrderVendorProcessorTest extends KernelTestCase
 
         $order
             ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
+            ->shouldBeCalled();
+
+        $order
+            ->addRestaurant($restaurant, 0, 1700)
             ->shouldBeCalled();
 
         $order->setVendor(Argument::that(function (Vendor $vendor) use ($restaurant) {
@@ -252,6 +298,21 @@ class OrderVendorProcessorTest extends KernelTestCase
             ->willReturn(
                 Vendor::withHub($hub)
             );
+        $order
+            ->getVendors()
+            ->willReturn(new ArrayCollection([
+                new OrderVendor($order->reveal(), $restaurant, 1000, 0),
+                new OrderVendor($order->reveal(), $otherRestaurant, 1000, 0)
+            ]));
+        $order
+            ->getTotal()
+            ->willReturn(2000);
+        $order
+            ->getFeeTotal()
+            ->willReturn(300);
+        $order
+            ->getPercentageForRestaurant(Argument::type(LocalBusiness::class))
+            ->willReturn(0.5);
 
         $order
             ->getItems()
@@ -268,6 +329,10 @@ class OrderVendorProcessorTest extends KernelTestCase
 
         $order
             ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
+            ->shouldBeCalled();
+
+        $order
+            ->addRestaurant($restaurant, 0, 850)
             ->shouldBeCalled();
 
         $order->setVendor(Argument::that(function (Vendor $vendor) use ($restaurant) {
@@ -318,8 +383,19 @@ class OrderVendorProcessorTest extends KernelTestCase
             ->getVendor()
             ->willReturn($vendor);
         $order
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection([
+                $restaurant1,
+                $restaurant2,
+                $restaurant3
+            ]));
+        $order
             ->getVendors()
-            ->willReturn([ $restaurant1, $restaurant2, $restaurant3 ]);
+            ->willReturn(new ArrayCollection([
+                new OrderVendor($order->reveal(), $restaurant1, 1000, 0),
+                new OrderVendor($order->reveal(), $restaurant2, 1000, 0),
+                new OrderVendor($order->reveal(), $restaurant3, 1000, 0),
+            ]));
         $order
             ->getItems()
             ->willReturn(new ArrayCollection([
@@ -398,6 +474,23 @@ class OrderVendorProcessorTest extends KernelTestCase
                 return false;
             }))
             ->shouldBeCalledTimes(3);
+
+        $order
+            ->addRestaurant(
+                Argument::type(LocalBusiness::class),
+                Argument::type('int'),
+                Argument::type('int')
+            )
+            ->should(function ($calls) use ($expectations) {
+                foreach ($calls as $call) {
+                    [ $restaurant, $itemsTotal, $transferAmount ] = $call->getArguments();
+                    if ($expectations[$restaurant->asOriginCode()] !== $transferAmount) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
 
         $order->setVendor(Argument::that(function (Vendor $vnd) use ($vendor) {
             return $vendor === $vnd;

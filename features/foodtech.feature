@@ -3,6 +3,7 @@ Feature: Food Tech
   Scenario: Restaurant does not belong to user
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -446,7 +447,7 @@ Feature: Food Tech
     And the user "bob" is authenticated
     And I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "PUT" request to "/api/products/1" with body:
+    When the user "bob" sends a "PUT" request to "/api/products/3" with body:
       """
       {
         "enabled": false

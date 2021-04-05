@@ -294,6 +294,8 @@ class Order extends BaseOrder implements OrderInterface
      */
     protected $takeaway = false;
 
+    protected $vendors;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -314,6 +316,7 @@ class Order extends BaseOrder implements OrderInterface
         $this->payments = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->promotions = new ArrayCollection();
+        $this->vendors = new ArrayCollection();
     }
 
     /**
@@ -436,12 +439,13 @@ class Order extends BaseOrder implements OrderInterface
         return $this->getTotal() - $this->getFeeTotal() - $this->getStripeFeeTotal();
     }
 
-    public function getTransferAmount(LocalBusiness $subVendor): int
+    public function getTransferAmount(LocalBusiness $restaurant): int
     {
-        foreach ($this->getAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT) as $adjustment) {
-            if ($adjustment->getOriginCode() === $subVendor->asOriginCode()) {
-                return $adjustment->getAmount();
-            }
+        $vendor = $this->getVendorByRestaurant($restaurant);
+
+        if ($vendor) {
+
+            return $vendor->getTransferAmount();
         }
 
         return 0;
@@ -1056,35 +1060,6 @@ class Order extends BaseOrder implements OrderInterface
         return $hash;
     }
 
-    public function getVendors(): array
-    {
-        $vendors = [];
-
-        foreach ($this->getItems() as $item) {
-
-            $product = $item->getVariant()->getProduct();
-
-            if ($this->getVendor()->isHub()) {
-                $hub = $this->getVendor()->getHub();
-                $vendor = null;
-                foreach ($hub->getRestaurants() as $restaurant) {
-                    if ($restaurant->hasProduct($product)) {
-                        $vendor = $restaurant;
-                        break;
-                    }
-                }
-            } else {
-                $vendor = $this->getVendor()->getRestaurant();
-            }
-
-            if ($vendor && !in_array($vendor, $vendors, true)) {
-                $vendors[] = $vendor;
-            }
-        }
-
-        return $vendors;
-    }
-
     /**
      * @SerializedName("adjustments")
      * @Groups({"order", "cart"})
@@ -1146,4 +1121,48 @@ class Order extends BaseOrder implements OrderInterface
         return round($itemsTotal / $total, 4);
     }
 
+    public function getRestaurants(): Collection
+    {
+        return $this->vendors->map(fn(OrderVendor $vendor) => $vendor->getRestaurant());
+    }
+
+    public function getVendors(): Collection
+    {
+        return $this->vendors;
+    }
+
+    public function getVendorByRestaurant(LocalBusiness $restaurant): ?OrderVendor
+    {
+        foreach ($this->vendors as $vendor) {
+            if ($vendor->getRestaurant() === $restaurant) {
+                return $vendor;
+            }
+        }
+
+        return null;
+    }
+
+    public function containsRestaurant(LocalBusiness $restaurant): bool
+    {
+        foreach ($this->vendors as $vendor) {
+            if ($vendor->getRestaurant() === $restaurant) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function addRestaurant(LocalBusiness $restaurant, int $itemsTotal, int $transferAmount)
+    {
+        $vendor = $this->getVendorByRestaurant($restaurant);
+
+        if (null === $vendor) {
+            $vendor = new OrderVendor($this, $restaurant);
+            $this->vendors->add($vendor);
+        }
+
+        $vendor->setItemsTotal($itemsTotal);
+        $vendor->setTransferAmount($transferAmount);
+    }
 }

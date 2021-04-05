@@ -129,11 +129,11 @@ class OrderView
 
     public function getRevenue(): int
     {
-        if ('hub' === $this->vendorType) {
+        if (count($this->vendors) > 1) {
 
-            foreach ($this->adjustments as $adjustment) {
-                if ($adjustment['type'] === AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT && ((int) $adjustment['origin_code']) === $this->restaurant) {
-                    return $adjustment['amount'];
+            foreach ($this->vendors as $vendor) {
+                if ($vendor['restaurant'] === $this->restaurant) {
+                    return $vendor['transferAmount'];
                 }
             }
 

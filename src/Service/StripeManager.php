@@ -298,31 +298,26 @@ class StripeManager
             return;
         }
 
-        $vendor = $order->getVendor();
+        $restaurants = $order->getRestaurants();
 
-        if ($vendor->isHub()) {
+        if (count($restaurants) > 0) {
 
-            $subVendors = $order->getVendors();
+            $livemode = $this->settingsManager->isStripeLivemode();
 
-            if (count($subVendors) > 0) {
+            foreach ($restaurants as $restaurant) {
 
-                $livemode = $this->settingsManager->isStripeLivemode();
+                $stripeAccount  = $restaurant->getStripeAccount($livemode);
+                $transferAmount = $order->getTransferAmount($restaurant);
 
-                foreach ($subVendors as $restaurant) {
-
-                    $stripeAccount = $restaurant->getStripeAccount($livemode);
-                    $transferAmount = $order->getTransferAmount($restaurant);
-
-                    if ($transferAmount > 0) {
-                        // @see https://stripe.com/docs/connect/charges-transfers
-                        Stripe\Transfer::create([
-                            'amount' => $transferAmount,
-                            'currency' => strtolower($payment->getCurrencyCode()),
-                            'destination' => $stripeAccount->getStripeUserId(),
-                            // @see https://stripe.com/docs/connect/charges-transfers#transfer-availability
-                            'source_transaction' => $charge->id,
-                        ]);
-                    }
+                if ($transferAmount > 0) {
+                    // @see https://stripe.com/docs/connect/charges-transfers
+                    Stripe\Transfer::create([
+                        'amount' => $transferAmount,
+                        'currency' => strtolower($payment->getCurrencyCode()),
+                        'destination' => $stripeAccount->getStripeUserId(),
+                        // @see https://stripe.com/docs/connect/charges-transfers#transfer-availability
+                        'source_transaction' => $charge->id,
+                    ]);
                 }
             }
         }

@@ -176,9 +176,9 @@ interface OrderInterface extends
     public function hasVendor(): bool;
 
     /**
-     * @return array
+     * @return Collection
      */
-    public function getVendors(): array;
+    public function getVendors(): Collection;
 
     /**
      * @return int
@@ -200,4 +200,8 @@ interface OrderInterface extends
      * @return float
      */
     public function getPercentageForRestaurant(LocalBusiness $restaurant): float;
+
+    public function addRestaurant(LocalBusiness $restaurant, int $itemsTotal, int $transferAmount);
+
+    public function getRestaurants(): Collection;
 }

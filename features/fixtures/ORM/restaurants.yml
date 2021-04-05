@@ -48,6 +48,9 @@ AppBundle\Entity\LocalBusiness:
     __calls:
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]
+    products:
+      - '@pizza'
+      - '@hamburger'
   restaurant_2:
     name: 'Café Barjot'
     address: "@address_2"

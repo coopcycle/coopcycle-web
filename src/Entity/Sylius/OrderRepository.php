@@ -48,57 +48,37 @@ class OrderRepository extends BaseOrderRepository
         \DateTime $end,
         bool $includeNewMultiVendorOrders)
     {
-        $qb = $this
-            ->createQueryBuilder('o')
-            ->join(Vendor::class, 'v', Join::WITH, 'o.vendor = v.id')
-            ->andWhere('v.restaurant = :restaurant')
-            ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
-            ->andWhere('o.state != :state')
-            ->setParameter('restaurant', $restaurant)
-            ->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')))
-            ->setParameter('state', OrderInterface::STATE_CART)
-            ;
+        $qb = $this->createQueryBuilder('o');
+        $qb = self::addVendorClause($qb, 'o', $restaurant);
+        $qb = self::addShippingTimeRangeClause($qb, 'o', $start, $end);
 
-        $orders = $qb->getQuery()->getResult();
+        // We always remove the carts
+        $qb->andWhere($qb->expr()->neq('o.state', ':state_cart'));
+        $qb->setParameter('state_cart', OrderInterface::STATE_CART);
 
-        //
-        // Add hub orders
-        //
-
-        $orderIds = array_map(fn(OrderInterface $r) => $r->getId(), $orders);
-
-        $qb = $this->getEntityManager()->getRepository(OrderView::class)
-            ->createQueryBuilder('ov');
-
-        $qb = self::addShippingTimeRangeClause($qb, 'ov', $start, $end);
-        $qb->select('ov.id');
-        $qb->andWhere('ov.restaurant = :restaurant');
-
-        // When the user is *NOT* an administrator,
-        // we only show orders once they are accepted
+        // When there are multiple vendors,
+        // we filter out the orders with state = new
         if (!$includeNewMultiVendorOrders) {
-            $qb->andWhere('ov.state != :state_new');
+
+            // We build a subquery to find
+            // the new orders with multiple vendors
+            // https://stackoverflow.com/questions/6637506/doing-a-where-in-subquery-in-doctrine-2
+
+            $newOrdersWithMoreThanOneVendor = $this->createQueryBuilder('o2');
+            $newOrdersWithMoreThanOneVendor = self::addVendorClause($newOrdersWithMoreThanOneVendor, 'o2', $restaurant, 'o2v');
+            $newOrdersWithMoreThanOneVendor->select('o2.id');
+            $newOrdersWithMoreThanOneVendor->andWhere('o2.state = :state_new');
+            $newOrdersWithMoreThanOneVendor->groupBy('o2.id');
+            $newOrdersWithMoreThanOneVendor->having('COUNT(o2v.restaurant) > 1');
+            $newOrdersWithMoreThanOneVendor->setParameter('state_new', OrderInterface::STATE_NEW);
+
+            $qb->andWhere(
+                $qb->expr()->notIn('o.id', $newOrdersWithMoreThanOneVendor->getQuery()->getDQL())
+            );
             $qb->setParameter('state_new', OrderInterface::STATE_NEW);
         }
 
-        if (count($orderIds) > 0) {
-            $qb->andWhere($qb->expr()->notIn('ov.id', $orderIds));
-        }
-        $qb->setParameter('restaurant', $restaurant);
-
-        $hubOrderIds = array_map(fn(array $o) => $o['id'], $qb->getQuery()->getArrayResult());
-
-        if (count($hubOrderIds) > 0) {
-            $qb = $this
-                ->createQueryBuilder('o')
-                ->andWhere($qb->expr()->in('o.id', $hubOrderIds));
-
-            $hubOrders = $qb->getQuery()->getResult();
-
-            $orders = array_merge($orders, $hubOrders);
-        }
-
-        return $orders;
+        return $qb->getQuery()->getResult();
     }
 
     public function findOrdersByDateRange(\DateTime $start, \DateTime $end, bool $withVendor = false)
@@ -256,5 +236,27 @@ class OrderRepository extends BaseOrderRepository
             ;
 
         return $qb->getQuery()->getResult();
+    }
+
+    public static function addVendorClause(QueryBuilder $qb, $alias, LocalBusiness $restaurant, $vendorAlias = 'v')
+    {
+        return $qb
+            ->join(OrderVendor::class, $vendorAlias, Join::WITH, sprintf('%s.id = %s.order', $alias, $vendorAlias))
+            ->andWhere(sprintf('%s.restaurant = :restaurant', $vendorAlias))
+            ->setParameter('restaurant', $restaurant);
+    }
+
+    public function createFulfilledOrdersByRestaurantQueryBuilder(LocalBusiness $restaurant, \DateTime $start, \DateTime $end): QueryBuilder
+    {
+        $qb = $this->getEntityManager()->getRepository(OrderView::class)
+            ->createQueryBuilder('ov');
+
+        $qb = self::addVendorClause($qb, 'ov', $restaurant);
+        $qb = self::addShippingTimeRangeClause($qb, 'ov', $start, $end);
+
+        $qb->andWhere('ov.state = :state');
+        $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
+
+        return $qb;
     }
 }

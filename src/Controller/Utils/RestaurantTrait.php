@@ -13,7 +13,6 @@ use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
-use AppBundle\Entity\Sylius\OrderView;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
@@ -1163,14 +1162,12 @@ trait RestaurantTrait
         $end->setDate($date->format('Y'), $date->format('m'), $date->format('t'));
         $end->setTime(23, 59, 59);
 
-        $qb = $entityManager->getRepository(OrderView::class)
-            ->createQueryBuilder('ov');
-
-        $qb = OrderRepository::addShippingTimeRangeClause($qb, 'ov', $start, $end);
-        $qb->andWhere('ov.restaurant = :restaurant');
-        $qb->andWhere('ov.state = :state');
-        $qb->setParameter('restaurant', $restaurant->getId());
-        $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
+        $qb = $entityManager->getRepository(Order::class)
+            ->createFulfilledOrdersByRestaurantQueryBuilder(
+                $restaurant,
+                $start,
+                $end
+            );
         $qb->addOrderBy('ov.shippingTimeRange', 'DESC');
 
         $refundedOrders = $entityManager->getRepository(Order::class)

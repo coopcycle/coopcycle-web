@@ -168,8 +168,8 @@ class StripeManagerTest extends TestCase
             ->hasVendor()
             ->willReturn(true);
         $order
-            ->getVendors()
-            ->willReturn([ $restaurant1, $restaurant2 ]);
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection([ $restaurant1, $restaurant2 ]));
         $order
             ->getVendor()
             ->willReturn($vendor);
@@ -244,8 +244,8 @@ class StripeManagerTest extends TestCase
             ->hasVendor()
             ->willReturn(true);
         $order
-            ->getVendors()
-            ->willReturn([ $restaurant1 ]);
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection([ $restaurant1 ]));
         $order
             ->getVendor()
             ->willReturn($vendor);

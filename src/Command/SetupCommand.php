@@ -3,7 +3,6 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Cuisine;
-use AppBundle\Entity\Sylius\OrderView;
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;

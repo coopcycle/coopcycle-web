@@ -7,6 +7,8 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
@@ -17,6 +19,7 @@ use Webmozart\Assert\Assert;
 
 class OrderVendorProcessor implements OrderProcessorInterface
 {
+    private $entityManager;
     private $hubRepository;
     private $localBusinessRepository;
     private $adjustmentFactory;
@@ -24,12 +27,14 @@ class OrderVendorProcessor implements OrderProcessorInterface
     private $logger;
 
     public function __construct(
+        EntityManagerInterface $entityManager,
         HubRepository $hubRepository,
         LocalBusinessRepository $localBusinessRepository,
         AdjustmentFactoryInterface $adjustmentFactory,
         TranslatorInterface $translator,
         LoggerInterface $logger)
     {
+        $this->entityManager = $entityManager;
         $this->hubRepository = $hubRepository;
         $this->localBusinessRepository = $localBusinessRepository;
         $this->adjustmentFactory = $adjustmentFactory;
@@ -54,7 +59,11 @@ class OrderVendorProcessor implements OrderProcessorInterface
 
         $order->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT);
 
-        $vendor = $this->processUpgradeOrDowngrade($order);
+        $restaurants = $this->getRestaurants($order);
+
+        $this->processVendors($order, $restaurants);
+
+        $vendor = $this->processVendor($order, $restaurants);
         $order->setVendor($vendor);
 
         if ($vendor->isHub()) {
@@ -62,12 +71,38 @@ class OrderVendorProcessor implements OrderProcessorInterface
         }
     }
 
-    private function processUpgradeOrDowngrade(OrderInterface $order): Vendor
+    private function processVendors(OrderInterface $order, \SplObjectStorage $restaurants)
+    {
+        $this->logger->debug(sprintf('Adding %d vendors to order #%d', count($restaurants), $order->getId()));
+
+        $originalVendors = new ArrayCollection();
+        foreach ($order->getVendors() as $vendor) {
+            $originalVendors->add($vendor);
+        }
+
+        $rest = ($order->getTotal() - $order->getFeeTotal());
+
+        foreach ($restaurants as $restaurant) {
+
+            $itemsTotal = $restaurants[$restaurant];
+            $transferAmount = ($rest * $order->getPercentageForRestaurant($restaurant));
+
+            $order->addRestaurant($restaurant, $itemsTotal, $transferAmount);
+        }
+
+        foreach ($originalVendors as $vendor) {
+            if (!$restaurants->contains($vendor->getRestaurant())) {
+                $order->getVendors()->removeElement($vendor);
+                $this->entityManager->remove($vendor);
+            }
+        }
+    }
+
+    private function processVendor(OrderInterface $order, \SplObjectStorage $restaurants): Vendor
     {
         $this->logger->debug(sprintf('Checking if order #%d needs vendor upgrade/downgrade', $order->getId()));
 
         $vendor = $order->getVendor();
-        $restaurants = $this->getRestaurants($order);
 
         $this->logger->debug(sprintf('There are %d vendors in order #%d', count($restaurants), $order->getId()));
 
@@ -80,17 +115,21 @@ class OrderVendorProcessor implements OrderProcessorInterface
 
             // Make sure the vendor matches
 
-            $restaurant = $restaurants->current();
+            // Do not use $restaurants->current()
+            // It does not work
 
-            if ($vendor->getRestaurant() === $restaurant) {
-                $this->logger->debug(sprintf('The vendor for order %d is OK, skipping', $order->getId()));
+            foreach ($restaurants as $restaurant) {
 
-                return $vendor;
+                if ($vendor->getRestaurant() === $restaurant) {
+                    $this->logger->debug(sprintf('The vendor for order %d is OK, skipping', $order->getId()));
+
+                    return $vendor;
+                }
+
+                $this->logger->debug(sprintf('The vendor for order %d is KO, fixing', $order->getId()));
+
+                return Vendor::withRestaurant($restaurant);
             }
-
-            $this->logger->debug(sprintf('The vendor for order %d is KO, fixing', $order->getId()));
-
-            return Vendor::withRestaurant($restaurant);
         }
 
         //
@@ -133,8 +172,14 @@ class OrderVendorProcessor implements OrderProcessorInterface
                 $item->getVariant()->getProduct()
             );
 
-            if ($restaurant && !$restaurants->contains($restaurant)) {
-                $restaurants->attach($restaurant);
+            if (null === $restaurant) {
+                continue;
+            }
+
+            if ($restaurants->contains($restaurant)) {
+                $restaurants[$restaurant] += $item->getTotal();
+            } else {
+                $restaurants->attach($restaurant, $item->getTotal());
             }
         }
 
@@ -143,21 +188,17 @@ class OrderVendorProcessor implements OrderProcessorInterface
 
     private function processTransferAmountAdjustments(OrderInterface $order)
     {
-        $vendor = $order->getVendor();
-        $subVendors = $order->getVendors();
+        $restaurants = $order->getRestaurants();
 
-        if (count($subVendors) === 1) {
+        if (count($restaurants) === 1) {
             return;
         }
 
-        $hub = $vendor->getHub();
-
         $rest = ($order->getTotal() - $order->getFeeTotal());
 
-        foreach ($subVendors as $subVendor) {
+        foreach ($restaurants as $restaurant) {
 
-            $percentageForVendor = $order->getPercentageForRestaurant($subVendor);
-            $transferAmount = ($rest * $percentageForVendor);
+            $transferAmount = ($rest * $order->getPercentageForRestaurant($restaurant));
 
             $transferAmountAdjustment = $this->adjustmentFactory->createWithData(
                 AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT,
@@ -166,7 +207,7 @@ class OrderVendorProcessor implements OrderProcessorInterface
                 $neutral = true
             );
             $transferAmountAdjustment->setOriginCode(
-                $subVendor->asOriginCode()
+                $restaurant->asOriginCode()
             );
 
             $order->addAdjustment($transferAmountAdjustment);
