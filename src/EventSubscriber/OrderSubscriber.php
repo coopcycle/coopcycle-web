@@ -94,7 +94,7 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         if ($request->attributes->get('_route') === 'api_orders_post_collection'
-            && $order->isFoodtech() && null === $order->getId() && null === $order->getShippingTimeRange()) {
+            && $order->hasVendor() && null === $order->getId() && null === $order->getShippingTimeRange()) {
             $shippingTimeRange = $this->orderTimeHelper->getShippingTimeRange($order);
             $order->setShippingTimeRange($shippingTimeRange);
         }

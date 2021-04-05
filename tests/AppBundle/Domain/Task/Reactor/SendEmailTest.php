@@ -53,7 +53,7 @@ class SendEmailTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->isFoodtech()
+            ->hasVendor()
             ->willReturn(true);
 
         $delivery->setOrder($order->reveal());

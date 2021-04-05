@@ -191,7 +191,7 @@ class ProfileController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if ($order->isFoodtech()) {
+        if ($order->hasVendor()) {
 
             // FIXME We may generate expired tokens
 

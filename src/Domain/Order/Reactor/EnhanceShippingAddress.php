@@ -19,7 +19,7 @@ class EnhanceShippingAddress
     {
         $order = $event->getOrder();
 
-        if (!$order->isFoodtech()) {
+        if (!$order->hasVendor()) {
             return;
         }
 

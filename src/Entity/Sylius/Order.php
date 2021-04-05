@@ -475,14 +475,6 @@ class Order extends BaseOrder implements OrderInterface
         $this->vendor = $vendor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isFoodtech(): bool
-    {
-        return $this->hasVendor();
-    }
-
     public function hasVendor(): bool
     {
         return null !== $this->getVendor();

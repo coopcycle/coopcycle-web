@@ -28,7 +28,7 @@ class SendEmail
         $order = $delivery->getOrder();
 
         // Skip if this is related to foodtech
-        if (null !== $order && $order->isFoodtech()) {
+        if (null !== $order && $order->hasVendor()) {
             return;
         }
 

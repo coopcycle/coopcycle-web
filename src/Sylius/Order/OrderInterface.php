@@ -109,11 +109,6 @@ interface OrderInterface extends
     public function getShippingTimeRange(): ?TsRange;
 
     /**
-     * @return boolean
-     */
-    public function isFoodtech(): bool;
-
-    /**
      * @param string|null $state
      *
      * @return PaymentInterface|null

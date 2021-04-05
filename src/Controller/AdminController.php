@@ -303,7 +303,7 @@ class AdminController extends AbstractController
                 }
 
                 if ('fulfill' === $form->getClickedButton()->getName()) {
-                    if ($order->isFoodtech()) {
+                    if ($order->hasVendor()) {
                         throw new BadRequestHttpException(sprintf('Order #%d should not be fulfilled directly', $order->getId()));
                     }
 

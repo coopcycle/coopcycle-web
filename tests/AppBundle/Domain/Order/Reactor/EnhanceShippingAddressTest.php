@@ -35,7 +35,7 @@ class EnhanceShippingAddressTest extends TestCase
             ->willReturn(null);
 
         $order
-            ->isFoodtech()
+            ->hasVendor()
             ->willReturn(true);
 
         $order
@@ -78,7 +78,7 @@ class EnhanceShippingAddressTest extends TestCase
             ->willReturn(null);
 
         $order
-            ->isFoodtech()
+            ->hasVendor()
             ->willReturn(true);
 
         $order
@@ -115,7 +115,7 @@ class EnhanceShippingAddressTest extends TestCase
             ->willReturn(null);
 
         $order
-            ->isFoodtech()
+            ->hasVendor()
             ->willReturn(true);
 
         $order

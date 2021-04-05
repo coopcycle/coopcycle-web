@@ -75,7 +75,7 @@ class SendSmsTest extends TestCase
         $pickup->setType(Task::TYPE_PICKUP);
 
         $order = $this->prophesize(OrderInterface::class);
-        $order->isFoodtech()->willReturn(true);
+        $order->hasVendor()->willReturn(true);
 
         $this->orderRepository
             ->findOneByTask($pickup)

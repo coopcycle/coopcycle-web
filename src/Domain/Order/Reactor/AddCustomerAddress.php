@@ -12,7 +12,7 @@ class AddCustomerAddress
     {
         $order = $event->getOrder();
 
-        if (!$order->isFoodtech()) {
+        if (!$order->hasVendor()) {
             return;
         }
 
