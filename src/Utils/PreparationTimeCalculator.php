@@ -50,7 +50,7 @@ class PreparationTimeCalculator
         $restaurants = $order->getRestaurants();
 
         if (count($restaurants) === 0) {
-            return '0 minutes';
+            return '10 minutes';
         }
 
         foreach ($restaurants as $restaurant) {
