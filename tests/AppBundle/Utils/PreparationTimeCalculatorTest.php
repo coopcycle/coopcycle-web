@@ -2,12 +2,11 @@
 
 namespace Tests\AppBundle\Utils;
 
-use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant\PreparationTimeRule;
-use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\PreparationTimeCalculator;
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 
@@ -43,10 +42,8 @@ class PreparationTimeCalculatorTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getVendor()
-            ->willReturn(
-                Vendor::withRestaurant($restaurant)
-            );
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection([ $restaurant ]));
 
         $order
             ->getItemsTotal()
@@ -57,8 +54,7 @@ class PreparationTimeCalculatorTest extends TestCase
 
     private function createOrderWithHub($total, $config = [])
     {
-        $hub = new Hub();
-
+        $restaurants = [];
         foreach ($config as $c) {
 
             [ $state, $rules ] = $c;
@@ -74,18 +70,13 @@ class PreparationTimeCalculatorTest extends TestCase
                 $restaurant->addPreparationTimeRule($rule);
             }
 
-            $hub->addRestaurant($restaurant);
+            $restaurants[] = $restaurant;
         }
-
-        $vendor = new Vendor();
-        $vendor->setHub($hub);
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getVendor()
-            ->willReturn(
-                $vendor
-            );
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection($restaurants));
 
         $order
             ->getItemsTotal()

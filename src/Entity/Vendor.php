@@ -231,13 +231,4 @@ class Vendor implements ShippingOptionsInterface
 
         return $vendor;
     }
-
-    public function toArray()
-    {
-        if (null !== $this->hub) {
-            return $this->hub->getRestaurants();
-        }
-
-        return [ $this->restaurant ];
-    }
 }
