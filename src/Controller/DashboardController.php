@@ -99,7 +99,7 @@ class DashboardController extends AbstractController
 
             $restaurant = $request->attributes->get('_restaurant');
 
-            return $this->statsAction($restaurant->getId(), $request, $slugify, $translator, $entityManager);
+            return $this->statsAction($restaurant->getId(), $request, $slugify, $translator, $entityManager, $paginator);
         }
 
         return $this->redirectToRoute('nucleos_profile_profile_show');

@@ -56,11 +56,6 @@ services:
         tags:
             - { name: doctrine.event_subscriber, connection: default }
 
-    ignore_tables.event_subscriber:
-        class: AppBundle\Doctrine\EventSubscriber\IgnoreTablesSubscriber
-        tags:
-            - { name: doctrine.event_subscriber, connection: default }
-
     gedmo.listener.sluggable:
         class: Gedmo\Sluggable\SluggableListener
         tags:

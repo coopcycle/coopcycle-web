@@ -251,9 +251,6 @@ class SetupCommand extends Command
         $output->writeln('<info>Configuring Stripe webhook endpoint…</info>');
         $this->configureStripeWebhooks($output);
 
-        $output->writeln('<info>Creating view for order stats…</info>');
-        $this->createOrderStatsView($output);
-
         return 0;
     }
 
@@ -587,11 +584,5 @@ class SetupCommand extends Command
 
             $output->writeln('Stripe webhook endpoint created');
         }
-    }
-
-    private function createOrderStatsView(OutputInterface $output)
-    {
-        $command = $this->getApplication()->find('coopcycle:sql:create-views');
-        $command->run(new ArrayInput([]), $output);
     }
 }

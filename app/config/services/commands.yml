@@ -148,7 +148,3 @@ services:
       $localeRegex: "%locale_regex%"
     tags:
       - { name: 'console.command', command: 'coopcycle:translations:copy' }
-
-  AppBundle\Command\CreateOrderViewCommand:
-    tags:
-      - { name: 'console.command', command: 'coopcycle:sql:create-views' }

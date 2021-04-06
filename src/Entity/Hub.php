@@ -112,6 +112,7 @@ class Hub implements OpenCloseInterface, ToggleableInterface
     public function addRestaurant(LocalBusiness $restaurant)
     {
         if (!$this->restaurants->contains($restaurant)) {
+            $restaurant->setHub($this);
             $this->restaurants->add($restaurant);
         }
     }
@@ -122,6 +123,7 @@ class Hub implements OpenCloseInterface, ToggleableInterface
     public function removeRestaurant(LocalBusiness $restaurant): void
     {
         $this->restaurants->removeElement($restaurant);
+        $restaurant->setHub(null);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
-use AppBundle\Entity\HubRepository;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -20,7 +19,6 @@ use Webmozart\Assert\Assert;
 class OrderVendorProcessor implements OrderProcessorInterface
 {
     private $entityManager;
-    private $hubRepository;
     private $localBusinessRepository;
     private $adjustmentFactory;
     private $translator;
@@ -28,14 +26,12 @@ class OrderVendorProcessor implements OrderProcessorInterface
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        HubRepository $hubRepository,
         LocalBusinessRepository $localBusinessRepository,
         AdjustmentFactoryInterface $adjustmentFactory,
         TranslatorInterface $translator,
         LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
-        $this->hubRepository = $hubRepository;
         $this->localBusinessRepository = $localBusinessRepository;
         $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
@@ -139,9 +135,8 @@ class OrderVendorProcessor implements OrderProcessorInterface
         $hubs = new \SplObjectStorage();
 
         foreach ($restaurants as $restaurant) {
-            $hub = $this->hubRepository->findOneByRestaurant($restaurant);
-            if (!$hubs->contains($hub)) {
-                $hubs->attach($hub);
+            if ($restaurant->belongsToHub()) {
+                $hubs->attach($restaurant->getHub());
             }
         }
 

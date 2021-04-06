@@ -5,12 +5,14 @@ namespace AppBundle\Entity\Sylius;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Refund;
-use AppBundle\Entity\Sylius\OrderView;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Sylius\Bundle\OrderBundle\Doctrine\ORM\OrderRepository as BaseOrderRepository;
 use Sylius\Component\Customer\Model\CustomerInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
@@ -244,22 +246,5 @@ class OrderRepository extends BaseOrderRepository
             ->join(OrderVendor::class, $vendorAlias, Join::WITH, sprintf('%s.id = %s.order', $alias, $vendorAlias))
             ->andWhere(sprintf('%s.restaurant = :restaurant', $vendorAlias))
             ->setParameter('restaurant', $restaurant);
-    }
-
-    public function createFulfilledOrdersByRestaurantQueryBuilder(LocalBusiness $restaurant, \DateTime $start, \DateTime $end): QueryBuilder
-    {
-        $qb = $this->getEntityManager()->getRepository(OrderView::class)
-            ->createQueryBuilder('ov');
-
-        $qb = self::addVendorClause($qb, 'ov', $restaurant);
-        $qb = self::addShippingTimeRangeClause($qb, 'ov', $start, $end);
-
-        $qb->andWhere('ov.state = :state');
-        $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
-
-        $qb->andWhere('ov.restaurant = :restaurant');
-        $qb->setParameter('restaurant', $restaurant);
-
-        return $qb;
     }
 }

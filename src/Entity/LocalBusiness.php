@@ -245,6 +245,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $edenredMerchantId;
 
+    protected $hub;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -801,5 +803,20 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setEdenredMerchantId($edenredMerchantId)
     {
         $this->edenredMerchantId = $edenredMerchantId;
+    }
+
+    public function getHub(): ?Hub
+    {
+        return $this->hub;
+    }
+
+    public function setHub(?Hub $hub)
+    {
+        $this->hub = $hub;
+    }
+
+    public function belongsToHub(): bool
+    {
+        return null !== $this->hub;
     }
 }

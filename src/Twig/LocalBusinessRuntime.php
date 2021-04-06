@@ -4,7 +4,6 @@ namespace AppBundle\Twig;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
-use AppBundle\Entity\HubRepository;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -22,13 +21,11 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         TranslatorInterface $translator,
         SerializerInterface $serializer,
         LocalBusinessRepository $repository,
-        HubRepository $hubRepository,
         CacheInterface $projectCache)
     {
         $this->translator = $translator;
         $this->serializer = $serializer;
         $this->repository = $repository;
-        $this->hubRepository = $hubRepository;
         $this->projectCache = $projectCache;
     }
 
@@ -104,11 +101,6 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         });
     }
 
-    public function resolveHub(LocalBusiness $restaurant)
-    {
-        return $this->hubRepository->findOneByRestaurant($restaurant);
-    }
-
     private function getRestaurants(OrderInterface $order): \SplObjectStorage
     {
         $restaurants = new \SplObjectStorage();
@@ -133,12 +125,11 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         $suggestions = [];
 
         if (count($restaurants) === 1) {
-            $hub = $this->hubRepository
-                ->findOneByRestaurant($restaurants->current());
-            if (null !== $hub) {
+            $restaurant = $restaurants->current();
+            if ($restaurant->belongsToHub()) {
                 $suggestions[] = [
                     'type' => 'CONTINUE_SHOPPING_HUB',
-                    'hub'  => $hub,
+                    'hub'  => $restaurant->getHub(),
                 ];
             }
         }

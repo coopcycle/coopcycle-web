@@ -61,7 +61,7 @@
     <th></th>
   </thead>
   <tbody>
-    {% for order in stats.getPaginator(app.request.query.get('page', 1)) %}
+    {% for order in stats.getPagination(app.request.query.get('page', 1)) %}
       <tr class="{{ ('#' ~ order.id) in refunded_orders_hash|keys ? 'text-danger' : '' }}">
         {% for column in stats.columns %}
         <td class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
@@ -76,7 +76,7 @@
               <i class="fa fa-exclamation-circle"></i>
             </button>
           {% endif %}
-          {% if order.vendorType == 'hub' %}
+          {% if order.isMultiVendor %}
             <button class="button-icon" data-toggle="tooltip" data-placement="left"
               title="{{ 'order.hub.sub_total.disclaimer'|trans({
                 '%column%': ('order.export.heading.net_revenue'|trans),

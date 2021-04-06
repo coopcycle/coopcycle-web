@@ -3,7 +3,6 @@
 namespace Tests\AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\Hub;
-use AppBundle\Entity\HubRepository;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\StripeAccount;
@@ -49,14 +48,12 @@ class OrderVendorProcessorTest extends KernelTestCase
 
         $this->adjustmentFactory = static::$kernel->getContainer()->get('sylius.factory.adjustment');
 
-        $this->hubRepository = $this->prophesize(HubRepository::class);
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
         $this->orderProcessor = new OrderVendorProcessor(
             $this->entityManager->reveal(),
-            $this->hubRepository->reveal(),
             $this->localBusinessRepository->reveal(),
             $this->adjustmentFactory,
             $this->translator->reveal(),
@@ -64,7 +61,7 @@ class OrderVendorProcessorTest extends KernelTestCase
         );
     }
 
-    private function createRestaurant($originCode, $stripeUserId = null, $paysStripeFee = true)
+    private function createRestaurant($originCode, $stripeUserId = null, $paysStripeFee = true, ?Hub $hub = null)
     {
         $restaurant = $this->prophesize(LocalBusiness::class);
 
@@ -82,6 +79,13 @@ class OrderVendorProcessorTest extends KernelTestCase
             $restaurant
                 ->getStripeAccount(false)
                 ->willReturn(null);
+        }
+
+        if (null !== $hub) {
+            $restaurant->belongsToHub()->willReturn(true);
+            $restaurant->getHub()->willReturn($hub);
+        } else {
+            $restaurant->belongsToHub()->willReturn(false);
         }
 
         return $restaurant->reveal();
@@ -353,15 +357,21 @@ class OrderVendorProcessorTest extends KernelTestCase
 
     public function testProcessUpgradesVendorAndAddsAdjustments()
     {
-        $restaurant1 = $this->createRestaurant('1', 'acct_123', $paysStripeFee = true);
-        $restaurant2 = $this->createRestaurant('2', 'acct_456', $paysStripeFee = true);
-        $restaurant3 = $this->createRestaurant('3', 'acct_789', $paysStripeFee = true);
-        $restaurant4 = $this->createRestaurant('4', 'acct_987', $paysStripeFee = true);
-
         $hub = $this->prophesize(Hub::class);
+
+        $restaurant1 = $this->createRestaurant('1', 'acct_123', $paysStripeFee = true, $hub->reveal());
+        $restaurant2 = $this->createRestaurant('2', 'acct_456', $paysStripeFee = true, $hub->reveal());
+        $restaurant3 = $this->createRestaurant('3', 'acct_789', $paysStripeFee = true, $hub->reveal());
+        $restaurant4 = $this->createRestaurant('4', 'acct_987', $paysStripeFee = true, $hub->reveal());
+
         $hub
             ->getRestaurants()
-            ->willReturn([ $restaurant1, $restaurant2, $restaurant3, $restaurant4 ]);
+            ->willReturn([
+                $restaurant1,
+                $restaurant2,
+                $restaurant3,
+                $restaurant4
+            ]);
 
         $vendor = Vendor::withHub($hub->reveal());
 
@@ -431,10 +441,6 @@ class OrderVendorProcessorTest extends KernelTestCase
                     return $restaurant3;
                 }
             });
-
-        $this->hubRepository
-            ->findOneByRestaurant(Argument::type(LocalBusiness::class))
-            ->willReturn($hub);
 
         // Total = 47.00
         // Items = 40.00

@@ -163,8 +163,6 @@ class SendEmailTest extends TestCase
         $restaurant2->getOwners()->willReturn(new ArrayCollection([ $jane->reveal() ]));
 
         $hub = new Hub();
-        $hub->addRestaurant($restaurant1->reveal());
-        $hub->addRestaurant($restaurant2->reveal());
 
         $product1 = $this->prophesize(ProductInterface::class);
         $product2 = $this->prophesize(ProductInterface::class);
@@ -176,6 +174,12 @@ class SendEmailTest extends TestCase
         $order
             ->isMultiVendor()
             ->willReturn(true);
+        $order
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection([
+                $restaurant1->reveal(),
+                $restaurant2->reveal()
+            ]));
         $order
             ->getCustomer()
             ->willReturn($customer->reveal());

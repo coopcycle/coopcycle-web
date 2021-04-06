@@ -231,5 +231,8 @@
         <join-column name="organization_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
+    <many-to-one field="hub" target-entity="AppBundle\Entity\Hub" inversed-by="restaurants">
+      <join-column name="hub_id" referenced-column-name="id" />
+    </many-to-one>
   </entity>
 </doctrine-mapping>

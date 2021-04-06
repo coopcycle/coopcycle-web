@@ -1130,7 +1130,8 @@ trait RestaurantTrait
     public function statsAction($id, Request $request,
         SlugifyInterface $slugify,
         TranslatorInterface $translator,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        PaginatorInterface $paginator)
     {
         $tab = $request->query->get('tab', 'orders');
 
@@ -1162,14 +1163,6 @@ trait RestaurantTrait
         $end->setDate($date->format('Y'), $date->format('m'), $date->format('t'));
         $end->setTime(23, 59, 59);
 
-        $qb = $entityManager->getRepository(Order::class)
-            ->createFulfilledOrdersByRestaurantQueryBuilder(
-                $restaurant,
-                $start,
-                $end
-            );
-        $qb->addOrderBy('ov.shippingTimeRange', 'DESC');
-
         $refundedOrders = $entityManager->getRepository(Order::class)
             ->findRefundedOrdersByRestaurantAndDateRange(
                 $restaurant,
@@ -1178,9 +1171,12 @@ trait RestaurantTrait
             );
 
         $stats = new RestaurantStats(
+            $entityManager,
+            $start,
+            $end,
+            $restaurant,
+            $paginator,
             $this->getParameter('kernel.default_locale'),
-            $qb,
-            $entityManager->getRepository(TaxRate::class),
             $translator
         );
 

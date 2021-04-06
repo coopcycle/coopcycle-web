@@ -3,18 +3,26 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Hub;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderVendor;
+use AppBundle\Entity\Sylius\OrderView;
 use AppBundle\Entity\Sylius\OrderItem;
+use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Sylius\Order\AdjustmentInterface;
+use AppBundle\Sylius\Order\OrderInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
-use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ObjectRepository;
 use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Knp\Component\Pager\Paginator;
 use League\Csv\Writer as CsvWriter;
 use Sylius\Component\Order\Model\Adjustment;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,32 +44,31 @@ class RestaurantStats implements \Countable
     const MAX_RESULTS = 50;
 
     public function __construct(
+        EntityManagerInterface $entityManager,
+        \DateTime $start,
+        \DateTime $end,
+        ?LocalBusiness $restaurant,
+        PaginatorInterface $paginator,
         string $locale,
-        QueryBuilder $qb,
-        ObjectRepository $taxRateRepository,
         TranslatorInterface $translator,
         bool $withVendorName = false,
         bool $withMessenger = false)
     {
-        if (null !== $qb->getFirstResult() || null !== $qb->getMaxResults()) {
-            throw new \Exception('The "$qb" parameter should not have setFirstResult / setMaxResults.');
-        }
+        $this->entityManager = $entityManager;
 
-        $this->qb = $qb;
-        $this->result = $qb->getQuery()->getResult();
-
+        $this->paginator = $paginator;
         $this->translator = $translator;
         $this->withVendorName = $withVendorName;
         $this->withMessenger = $withMessenger;
-        $this->taxesHelper = new TaxesHelper($taxRateRepository, $translator);
+        $this->taxesHelper = new TaxesHelper($entityManager->getRepository(TaxRate::class), $translator);
 
         $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
         $this->numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
         $this->numberFormatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
 
-        $this->ids = $this->loadIds();
+        $this->result = $this->getArrayResult($start, $end, $restaurant);
+        $this->ids = array_map(fn ($o) => $o->id, $this->result);
 
-        $this->addVendors();
         $this->addAdjustments();
         $this->computeTaxes();
         $this->computeColumnTotals();
@@ -71,21 +78,16 @@ class RestaurantStats implements \Countable
         }
     }
 
-    public function getPaginator(int $page = 1)
+    public function getPagination(int $page = 1): PaginationInterface
     {
-        $firstResult = ($page - 1) * self::MAX_RESULTS;
-
-        $qbWithPagination = clone $this->qb;
-        $qbWithPagination
-            ->setFirstResult($firstResult)
-            ->setMaxResults(self::MAX_RESULTS);
-
-        return new Paginator($qbWithPagination->getQuery());
+        return $this->paginator->paginate($this->result, $page, self::MAX_RESULTS);
     }
 
     public function getPages(): int
     {
-        return intval(ceil(count($this->result) / self::MAX_RESULTS));
+        $pagination = $this->getPagination();
+
+        return intval(ceil($pagination->getTotalItemCount() / self::MAX_RESULTS));
     }
 
     private function addAdjustments()
@@ -94,7 +96,7 @@ class RestaurantStats implements \Countable
             return;
         }
 
-        $qb = $this->qb->getEntityManager()
+        $qb = $this->entityManager
             ->getRepository(Adjustment::class)
             ->createQueryBuilder('a');
 
@@ -192,7 +194,7 @@ class RestaurantStats implements \Countable
             return;
         }
 
-        $qb = $this->qb->getEntityManager()
+        $qb = $this->entityManager
             ->getRepository(User::class)
             ->createQueryBuilder('u');
 
@@ -218,46 +220,6 @@ class RestaurantStats implements \Countable
             return $messengers;
 
         }, []);
-    }
-
-    private function addVendors()
-    {
-        if (count($this->ids) === 0) {
-            return;
-        }
-
-        $qb = $this->qb->getEntityManager()
-            ->getRepository(OrderVendor::class)
-            ->createQueryBuilder('v');
-
-        $qb
-            ->select('IDENTITY(v.order) AS order_id')
-            ->addSelect('IDENTITY(v.restaurant) AS restaurant')
-            ->addSelect('v.transferAmount')
-            ->andWhere(
-                $qb->expr()->in('v.order', $this->ids)
-            )
-            ;
-
-        $result = $qb->getQuery()->getArrayResult();
-
-        $byOrderId = array_reduce($result, function ($accumulator, $vendor) {
-
-            if (!isset($accumulator[$vendor['order_id']])) {
-                $accumulator[$vendor['order_id']] = [];
-            }
-
-            $accumulator[$vendor['order_id']][] = $vendor;
-
-            return $accumulator;
-
-        }, []);
-
-        $this->result = array_map(function ($order) use ($byOrderId) {
-            $order->vendors = $byOrderId[$order->id];
-
-            return $order;
-        }, $this->result);
     }
 
     private function isTaxColumn($column)
@@ -328,7 +290,7 @@ class RestaurantStats implements \Countable
 
         switch ($column) {
             case 'restaurant_name';
-                return $order->hasVendor() ? $order->vendorName : '';
+                return $order->hasVendor() ? $order->getVendorName() : '';
             case 'order_number';
                 return $order->getNumber();
             case 'fulfillment_method';
@@ -438,5 +400,51 @@ class RestaurantStats implements \Countable
         $csv->insertAll($records);
 
         return $csv->getContent();
+    }
+
+    /**
+     * This will load the orders as an *ARRAY* (not as object).
+     * We do this to avoid using too much memory (loading nested objects, etc...)
+     */
+    private function getArrayResult(\DateTime $start, \DateTime $end, ?LocalBusiness $restaurant = null): array
+    {
+        $rsm = new ResultSetMappingBuilder($this->entityManager, ResultSetMappingBuilder::COLUMN_RENAMING_INCREMENT);
+
+        $rsm->addRootEntityFromClassMetadata(Order::class, 'o');
+        $rsm->addJoinedEntityFromClassMetadata(OrderVendor::class, 'v', 'o', 'vendors');
+
+        $rsm->addJoinedEntityResult(LocalBusiness::class, 'r', 'v', 'restaurant');
+        $rsm->addFieldResult('r', 'restaurant_id', 'id');
+        $rsm->addFieldResult('r', 'restaurant_name', 'name');
+
+        $rsm->addJoinedEntityResult(Hub::class, 'h', 'r', 'hub');
+        $rsm->addFieldResult('h', 'hub_id', 'id');
+        $rsm->addFieldResult('h', 'hub_name', 'name');
+
+        $sql = 'SELECT ' . $rsm->generateSelectClause() . ' '
+            . 'FROM sylius_order o '
+            . 'LEFT JOIN sylius_order_vendor v ON (o.id = v.order_id) '
+            . 'LEFT JOIN restaurant r ON (v.restaurant_id = r.id) '
+            . 'LEFT JOIN hub h ON (r.hub_id = h.id) '
+            . 'WHERE '
+            . '(o.shipping_time_range && CAST(:range AS tsrange)) = true '
+            . 'AND o.state = :state'
+            ;
+
+        if (null !== $restaurant) {
+            $sql .= ' AND v.restaurant_id = :restaurant';
+        }
+
+        $query = $this->entityManager->createNativeQuery($sql, $rsm);
+        $query->setParameter('state', OrderInterface::STATE_FULFILLED);
+        $query->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')));
+        if (null !== $restaurant) {
+            $query->setParameter('restaurant', $restaurant);
+        }
+
+        $result = $query->getArrayResult();
+        $orders = array_map(fn ($data) => OrderView::create($data), $result);
+
+        return $orders;
     }
 }

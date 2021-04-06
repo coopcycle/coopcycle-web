@@ -12,16 +12,14 @@ class OrderView
 {
     public $id;
     public $number;
-    public $fulfillmentMethod;
+    public $takeaway;
     public $adjustments = [];
     public $shippingTimeRange;
 
-    public $vendor;
     public $vendorType;
     public $vendorName;
 
     public $restaurant;
-    public $restaurantObj;
 
     public $total;
     public $itemsTotal;
@@ -31,7 +29,7 @@ class OrderView
     private $adjustmentsTotalCache = [];
     private $adjustmentsTotalRecursivelyCache = [];
 
-    public $state;
+    public $vendors;
 
     public function getId()
     {
@@ -45,7 +43,7 @@ class OrderView
 
     public function getFulfillmentMethod()
     {
-        return $this->fulfillmentMethod;
+        return $this->takeaway ? 'collection' : 'delivery';
     }
 
     public function getShippedAt(): ?\DateTime
@@ -129,15 +127,12 @@ class OrderView
 
     public function getRevenue(): int
     {
-        if (count($this->vendors) > 1) {
+        if (count($this->vendors) === 1) {
 
-            foreach ($this->vendors as $vendor) {
-                if ($vendor['restaurant'] === $this->restaurant) {
-                    return $vendor['transferAmount'];
-                }
+            if ($this->vendors[0]['itemsTotal'] !== $this->itemsTotal) {
+
+                return $this->vendors[0]['transferAmount'];
             }
-
-            return 0;
         }
 
         return $this->getTotal() - $this->getFeeTotal() - $this->getStripeFeeTotal();
@@ -145,59 +140,45 @@ class OrderView
 
     public function hasVendor(): bool
     {
-        return null !== $this->vendor;
+        return count($this->vendors) > 0;
     }
 
-    public static function create(Connection $conn)
+    public function isMultiVendor(): bool
     {
-        $parts = [];
+        if (!$this->hasVendor()) {
 
-        // Can be useful to build a view of vendors
-        // SELECT v.id, COALESCE(h.name, r.name)
-        // FROM vendor v
-        // LEFT JOIN hub h ON v.hub_id = h.id
-        // LEFT JOIN restaurant r ON v.restaurant_id = r.id
+            return false;
+        }
 
-        $selects = [];
-        $selects[] = 'o.id';
-        $selects[] = 'o.state';
-        $selects[] = 'o.number';
-        $selects[] = 'CASE WHEN o.takeaway THEN \'collection\' ELSE \'delivery\' END AS fulfillment_method';
-        $selects[] = 'v.id AS vendor_id';
-        $selects[] = 'CASE WHEN v.hub_id IS NOT NULL THEN \'hub\' WHEN v.restaurant_id IS NOT NULL THEN \'restaurant\' ELSE \'none\' END AS vendor_type';
-        $selects[] = 'COALESCE(h.name, r.name) AS vendor_name';
-        $selects[] = 'COALESCE(v.restaurant_id, hr.restaurant_id) AS restaurant_id';
-        $selects[] = 'o.items_total';
-        $selects[] = 'o.total';
-        $selects[] = 'o.shipping_time_range';
+        if (count($this->vendors) > 1) {
+            return true;
+        }
 
-        // This will load all the adjustments as a JSON array
-        // FIXME Adjustments are duplicated when there are multiple rows
-        // $selects[] = 'JSON_AGG(ROW_TO_JSON(a)) AS adjustments';
+        return $this->vendors[0]['itemsTotal'] !== $this->itemsTotal;
+    }
 
-        $parts[] = sprintf('SELECT %s', implode(', ', $selects));
+    public function getVendorName(): string
+    {
+        if (!$this->hasVendor()) {
 
-        $parts[] = 'FROM sylius_order o';
-        $parts[] = 'INNER JOIN sylius_order_item i ON (o.id = i.order_id)';
-        $parts[] = 'INNER JOIN sylius_product_variant va ON (va.id = i.variant_id)';
-        $parts[] = 'INNER JOIN sylius_product p ON (p.id = va.product_id)';
-        $parts[] = 'LEFT JOIN vendor v ON (o.vendor_id = v.id)';
-        $parts[] = 'LEFT JOIN hub h ON (v.hub_id = h.id)';
-        $parts[] = 'LEFT JOIN hub_restaurant hr ON (hr.hub_id = h.id)';
-        $parts[] = 'LEFT JOIN restaurant r ON (v.restaurant_id = r.id)';
-        $parts[] = 'LEFT JOIN restaurant_product rp ON (rp.product_id = p.id AND rp.restaurant_id = COALESCE(v.restaurant_id, hr.restaurant_id))';
-        // $parts[] = 'INNER JOIN sylius_adjustment a ON (a.order_id = o.id OR a.order_item_id = i.id)';
-        $parts[] = 'WHERE o.state != \'cart\'';
-        // This allows to
-        // - retrieve orders without vendors
-        // - filter out restaurants without items for hub orders
-        $parts[] = 'AND (o.vendor_id IS NULL OR rp.product_id IS NOT NULL)';
-        $parts[] = 'GROUP BY o.id, o.number, v.id, h.id, COALESCE(v.restaurant_id, hr.restaurant_id), h.name, r.name';
-        // $parts[] = 'HAVING (v.hub_id is null OR (v.hub_id IS not null AND a1.amount is not null))';
+            return '';
+        }
 
-        $sql = implode(' ', $parts);
+        return $this->isMultiVendor() ? $this->vendors[0]['restaurant']['hub']['name'] : $this->vendors[0]['restaurant']['name'];
+    }
 
-        $conn->executeQuery('DROP VIEW IF EXISTS view_restaurant_order');
-        $conn->executeQuery(sprintf('CREATE VIEW view_restaurant_order AS %s', $sql));
+    public static function create(array $data): self
+    {
+        $order = new self();
+
+        $order->id                = $data['id'];
+        $order->number            = $data['number'];
+        $order->shippingTimeRange = $data['shippingTimeRange'];
+        $order->takeaway          = $data['takeaway'];
+        $order->itemsTotal        = $data['itemsTotal'];
+        $order->total             = $data['total'];
+        $order->vendors           = $data['vendors'];
+
+        return $order;
     }
 }
