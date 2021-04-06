@@ -257,6 +257,9 @@ class OrderRepository extends BaseOrderRepository
         $qb->andWhere('ov.state = :state');
         $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
 
+        $qb->andWhere('ov.restaurant = :restaurant');
+        $qb->setParameter('restaurant', $restaurant);
+
         return $qb;
     }
 }
