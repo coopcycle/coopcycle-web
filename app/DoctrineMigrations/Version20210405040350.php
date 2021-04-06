@@ -26,7 +26,7 @@ final class Version20210405040350 extends AbstractMigration
         $this->addSql('ALTER TABLE sylius_order_vendor ADD CONSTRAINT FK_F26B2BE28D9F6D38 FOREIGN KEY (order_id) REFERENCES sylius_order (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE sylius_order_vendor ADD CONSTRAINT FK_F26B2BE2B1E7706E FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
 
-        $this->addSql('INSERT INTO sylius_order_vendor SELECT o.id AS order_id, rp.restaurant_id, SUM(i.total), COALESCE(SUM(a.amount), 0) FROM sylius_order o JOIN sylius_order_item i ON o.id = i.order_id JOIN sylius_product_variant v ON i.variant_id = v.id JOIN sylius_product p ON v.product_id = p.id JOIN restaurant_product rp ON p.id = rp.product_id LEFT JOIN sylius_adjustment a ON a.order_id = o.id AND a.type = \'transfer_amount\' AND a.origin_code::int = rp.restaurant_id GROUP BY o.id, rp.restaurant_id ORDER by o.id');
+        $this->addSql('INSERT INTO sylius_order_vendor SELECT o.id AS order_id, rp.restaurant_id, SUM(i.total), COALESCE(a.amount, 0) FROM sylius_order o JOIN sylius_order_item i ON o.id = i.order_id JOIN sylius_product_variant v ON i.variant_id = v.id JOIN sylius_product p ON v.product_id = p.id JOIN restaurant_product rp ON p.id = rp.product_id LEFT JOIN sylius_adjustment a ON a.order_id = o.id AND a.type = \'transfer_amount\' AND a.origin_code::int = rp.restaurant_id  GROUP BY o.id, rp.restaurant_id, a.amount ORDER by o.id');
     }
 
     public function down(Schema $schema) : void
