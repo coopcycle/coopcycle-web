@@ -126,4 +126,13 @@ class OrderTest extends TestCase
         $this->assertEquals(0.1500, $order->getPercentageForRestaurant($bakery));
         $this->assertEquals(0.1750, $order->getPercentageForRestaurant($brewery));
     }
+
+    public function testGetPercentageForRestaurantDoesNotDivideByZero()
+    {
+        $bakery = $this->createRestaurant([]);
+
+        $order = new Order();
+
+        $this->assertEquals(0.0, $order->getPercentageForRestaurant($bakery));
+    }
 }

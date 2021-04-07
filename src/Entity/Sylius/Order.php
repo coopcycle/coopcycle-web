@@ -1108,6 +1108,11 @@ class Order extends BaseOrder implements OrderInterface
     public function getPercentageForRestaurant(LocalBusiness $restaurant): float
     {
         $total = $this->getItemsTotal();
+
+        if (0 === $total) {
+            return 0.0;
+        }
+
         $itemsTotal = $this->getItemsTotalForRestaurant($restaurant);
 
         return round($itemsTotal / $total, 4);
