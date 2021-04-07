@@ -35,7 +35,7 @@ class CapturePayment
         $payment = $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED);
 
         // This happens when a B2B customer has placed an order
-        if (null === $payment && null === $order->getRestaurant()) {
+        if (null === $payment && !$order->hasVendor()) {
             return;
         }
 

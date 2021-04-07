@@ -240,16 +240,13 @@ class RestaurantControllerTest extends WebTestCase
         $this->assertArrayHasKey('times', $data);
         $this->assertArrayHasKey('errors', $data);
 
-        $expectedRestaurant = [
-            'id' => 1,
-            'variableCustomerAmountEnabled' => false,
-            'address' => [
-                'latlng' => [48.856613, 2.352222]
-            ],
-            'fulfillmentMethods' => ['delivery']
-        ];
+        $this->assertArrayHasKey('vendor', $data['cart']);
 
-        $this->assertEquals($expectedRestaurant, $data['cart']['restaurant']);
+        $vendor = $data['cart']['vendor'];
+
+        $this->assertEquals(['latlng' => [48.856613, 2.352222]], $vendor['address']);
+        $this->assertEquals(['delivery'], $vendor['fulfillmentMethods']);
+        $this->assertFalse($vendor['variableCustomerAmountEnabled']);
     }
 
     public function testAddProductToCartActionWithRestaurantMismatch(): void

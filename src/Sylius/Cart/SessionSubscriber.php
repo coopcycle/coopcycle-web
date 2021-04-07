@@ -87,8 +87,8 @@ final class SessionSubscriber implements EventSubscriberInterface
         /** @var OrderInterface $cart */
         Assert::isInstanceOf($cart, OrderInterface::class);
 
-        if (null === $cart->getRestaurant()) {
-            $this->logger->debug('SessionSubscriber | No restaurant associated to cart');
+        if (!$cart->hasVendor()) {
+            $this->logger->debug('SessionSubscriber | No vendor(s) associated to cart');
             return;
         }
 

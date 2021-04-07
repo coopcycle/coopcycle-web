@@ -49,7 +49,7 @@ class PublicController extends AbstractController
             throw new NotFoundHttpException(sprintf('Order #%d does not exist', $id));
         }
 
-        if (null !== $order->getRestaurant()) {
+        if ($order->hasVendor()) {
             throw $this->createAccessDeniedException();
         }
 

@@ -7,7 +7,6 @@ use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Order\Reactor\CapturePayment;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Payment;
-use AppBundle\Entity\Restaurant;
 use AppBundle\Message\RetrieveStripeFee;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
@@ -58,8 +57,6 @@ class CapturePaymentTest extends TestCase
 
     public function testDoesNothingWhenChargeIsAlreadyCaptured()
     {
-        $restaurant = new Restaurant();
-
         $payment = new Payment();
         $payment->setAmount(3350);
         $payment->setCurrencyCode('EUR');
@@ -68,8 +65,8 @@ class CapturePaymentTest extends TestCase
         $order = $this->prophesize(OrderInterface::class);
 
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->hasVendor()
+            ->willReturn(true);
         $order
             ->isEmpty()
             ->willReturn(false);
@@ -100,8 +97,6 @@ class CapturePaymentTest extends TestCase
 
     public function testCapturesPaymentForFulfilledOrders()
     {
-        $restaurant = new Restaurant();
-
         $payment = new Payment();
         $payment->setAmount(3350);
         $payment->setCurrencyCode('EUR');
@@ -109,8 +104,8 @@ class CapturePaymentTest extends TestCase
         $order = $this->prophesize(OrderInterface::class);
 
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->hasVendor()
+            ->willReturn(true);
         $order
             ->isEmpty()
             ->willReturn(false);
@@ -149,8 +144,6 @@ class CapturePaymentTest extends TestCase
 
     public function testDoesNothingForCancelledOrders()
     {
-        $restaurant = new Restaurant();
-
         $payment = new Payment();
         $payment->setAmount(3350);
         $payment->setCurrencyCode('EUR');
@@ -158,8 +151,8 @@ class CapturePaymentTest extends TestCase
         $order = $this->prophesize(OrderInterface::class);
 
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->hasVendor()
+            ->willReturn(true);
         $order
             ->isEmpty()
             ->willReturn(false);
@@ -190,8 +183,6 @@ class CapturePaymentTest extends TestCase
 
     public function testCapturesPaymentForCancelledOrdersWithNoShowReason()
     {
-        $restaurant = new Restaurant();
-
         $payment = new Payment();
         $payment->setAmount(3350);
         $payment->setCurrencyCode('EUR');
@@ -199,8 +190,8 @@ class CapturePaymentTest extends TestCase
         $order = $this->prophesize(OrderInterface::class);
 
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->hasVendor()
+            ->willReturn(true);
         $order
             ->isEmpty()
             ->willReturn(false);

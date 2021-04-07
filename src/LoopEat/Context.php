@@ -35,7 +35,7 @@ class Context
     {
         $order = $this->cartContext->getCart();
 
-        if (null === $order || null === $order->getRestaurant()) {
+        if (null === $order || !$order->hasVendor() || $order->isMultiVendor()) {
 
             return;
         }

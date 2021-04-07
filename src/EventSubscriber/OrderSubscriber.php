@@ -118,9 +118,7 @@ final class OrderSubscriber implements EventSubscriberInterface
 
         $order = $event->getControllerResult();
 
-        $restaurant = $order->getRestaurant();
-
-        if (null == $restaurant) {
+        if (!$order->hasVendor()) {
             return;
         }
 
