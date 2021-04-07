@@ -668,11 +668,9 @@ trait RestaurantTrait
         $qb = $this->getDoctrine()
             ->getRepository(Product::class)
             ->createQueryBuilder('p');
+
         $qb->innerJoin(ProductTranslation::class, 't', Expr\Join::WITH, 't.translatable = p.id');
-        $qb->innerJoin(LocalBusiness::class, 'r', Expr\Join::WITH, '1 = 1');
-        $qb->innerJoin('r.products', 'rp');
-        $qb->andWhere('r.id = :restaurant');
-        $qb->andWhere('p.id = rp.id');
+        $qb->andWhere('p.restaurant = :restaurant');
         $qb->setParameter('restaurant', $restaurant);
 
         $products = $paginator->paginate(

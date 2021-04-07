@@ -174,19 +174,11 @@
       </order-by>
     </many-to-many>
     <many-to-many field="owners" target-entity="AppBundle\Entity\User" mapped-by="restaurants"/>
-    <many-to-many field="products" target-entity="AppBundle\Entity\Sylius\Product">
+    <one-to-many field="products" target-entity="AppBundle\Entity\Sylius\Product" mapped-by="restaurant">
       <cascade>
         <cascade-persist/>
       </cascade>
-      <join-table name="restaurant_product">
-        <join-columns>
-          <join-column name="restaurant_id" referenced-column-name="id"/>
-        </join-columns>
-        <inverse-join-columns>
-          <join-column name="product_id" referenced-column-name="id" unique="true"/>
-        </inverse-join-columns>
-      </join-table>
-    </many-to-many>
+    </one-to-many>
     <many-to-many field="productOptions" target-entity="AppBundle\Entity\Sylius\ProductOption">
       <cascade>
         <cascade-persist/>

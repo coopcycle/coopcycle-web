@@ -2,7 +2,6 @@
 
 namespace AppBundle\Serializer\Json;
 
-use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
@@ -15,16 +14,13 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private $normalizer;
-    private $localBusinessRepository;
     private $iriConverter;
 
     public function __construct(
         ObjectNormalizer $normalizer,
-        LocalBusinessRepository $localBusinessRepository,
         IriConverterInterface $iriConverter)
     {
         $this->normalizer = $normalizer;
-        $this->localBusinessRepository = $localBusinessRepository;
         $this->iriConverter = $iriConverter;
     }
 
@@ -67,9 +63,7 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
 
         $data['name'] = $object->getVariant()->getProduct()->getName();
 
-        $restaurant = $this->localBusinessRepository->findOneByProduct(
-            $object->getVariant()->getProduct()
-        );
+        $restaurant = $object->getVariant()->getProduct()->getRestaurant();
 
         if ($restaurant) {
             $data['vendor'] = [

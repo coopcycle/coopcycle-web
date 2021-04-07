@@ -4,7 +4,6 @@ namespace Tests\AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderVendor;
@@ -48,13 +47,10 @@ class OrderVendorProcessorTest extends KernelTestCase
 
         $this->adjustmentFactory = static::$kernel->getContainer()->get('sylius.factory.adjustment');
 
-        $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
-
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
         $this->orderProcessor = new OrderVendorProcessor(
             $this->entityManager->reveal(),
-            $this->localBusinessRepository->reveal(),
             $this->adjustmentFactory,
             $this->translator->reveal(),
             new NullLogger()
@@ -152,7 +148,10 @@ class OrderVendorProcessorTest extends KernelTestCase
         $otherRestaurant = $this->createRestaurant('2', 'acct_456', $paysStripeFee = true);
 
         $product1 = $this->prophesize(ProductInterface::class);
+        $product1->getRestaurant()->willReturn($restaurant);
+
         $product2 = $this->prophesize(ProductInterface::class);
+        $product2->getRestaurant()->willReturn($restaurant);
 
         $vendor = Vendor::withRestaurant($restaurant);
 
@@ -194,12 +193,6 @@ class OrderVendorProcessorTest extends KernelTestCase
                 $this->createOrderItem($product2->reveal()),
             ]));
 
-        $this->localBusinessRepository
-            ->findOneByProduct(
-                Argument::type(ProductInterface::class)
-            )
-            ->willReturn($restaurant);
-
         $order
             ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
             ->shouldBeCalled();
@@ -221,7 +214,10 @@ class OrderVendorProcessorTest extends KernelTestCase
         $otherRestaurant = $this->createRestaurant('2', 'acct_456', $paysStripeFee = true);
 
         $product1 = $this->prophesize(ProductInterface::class);
+        $product1->getRestaurant()->willReturn($restaurant);
+
         $product2 = $this->prophesize(ProductInterface::class);
+        $product2->getRestaurant()->willReturn($restaurant);
 
         $order = $this->prophesize(OrderInterface::class);
         $order
@@ -262,12 +258,6 @@ class OrderVendorProcessorTest extends KernelTestCase
                 $this->createOrderItem($product2->reveal()),
             ]));
 
-        $this->localBusinessRepository
-            ->findOneByProduct(
-                Argument::type(ProductInterface::class)
-            )
-            ->willReturn($restaurant);
-
         $order
             ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
             ->shouldBeCalled();
@@ -289,7 +279,10 @@ class OrderVendorProcessorTest extends KernelTestCase
         $otherRestaurant = $this->createRestaurant('2', 'acct_456', $paysStripeFee = true);
 
         $product1 = $this->prophesize(ProductInterface::class);
+        $product1->getRestaurant()->willReturn($restaurant);
+
         $product2 = $this->prophesize(ProductInterface::class);
+        $product2->getRestaurant()->willReturn($restaurant);
 
         $hub = new Hub();
 
@@ -334,12 +327,6 @@ class OrderVendorProcessorTest extends KernelTestCase
                 $this->createOrderItem($product2->reveal()),
             ]));
 
-        $this->localBusinessRepository
-            ->findOneByProduct(
-                Argument::type(ProductInterface::class)
-            )
-            ->willReturn($restaurant);
-
         $order
             ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
             ->shouldBeCalled();
@@ -375,9 +362,14 @@ class OrderVendorProcessorTest extends KernelTestCase
 
         $vendor = Vendor::withHub($hub->reveal());
 
-        $product1 = $this->prophesize(ProductInterface::class)->reveal();
-        $product2 = $this->prophesize(ProductInterface::class)->reveal();
-        $product3 = $this->prophesize(ProductInterface::class)->reveal();
+        $product1 = $this->prophesize(ProductInterface::class);
+        $product1->getRestaurant()->willReturn($restaurant1);
+
+        $product2 = $this->prophesize(ProductInterface::class);
+        $product2->getRestaurant()->willReturn($restaurant2);
+
+        $product3 = $this->prophesize(ProductInterface::class);
+        $product3->getRestaurant()->willReturn($restaurant3);
 
         $order = $this->prophesize(OrderInterface::class);
         $order
@@ -421,26 +413,10 @@ class OrderVendorProcessorTest extends KernelTestCase
         $order
             ->getItems()
             ->willReturn(new ArrayCollection([
-                $this->createOrderItem($product1),
-                $this->createOrderItem($product2),
-                $this->createOrderItem($product3),
+                $this->createOrderItem($product1->reveal()),
+                $this->createOrderItem($product2->reveal()),
+                $this->createOrderItem($product3->reveal()),
             ]));
-
-        $this->localBusinessRepository
-            ->findOneByProduct(
-                Argument::type(ProductInterface::class)
-            )
-            ->will(function ($args) use ($product1, $product2, $product3, $restaurant1, $restaurant2, $restaurant3) {
-                if ($args[0] === $product1) {
-                    return $restaurant1;
-                }
-                if ($args[0] === $product2) {
-                    return $restaurant2;
-                }
-                if ($args[0] === $product3) {
-                    return $restaurant3;
-                }
-            });
 
         // Total = 47.00
         // Items = 40.00

@@ -223,14 +223,4 @@ class LocalBusinessRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
-
-    public function findOneByProduct($product)
-    {
-        $qb = $this->createQueryBuilder('r');
-        $qb->innerJoin('r.products', 'rp');
-        $qb->andWhere('rp.id = :product');
-        $qb->setParameter('product', $product);
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
 }

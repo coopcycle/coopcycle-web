@@ -174,7 +174,7 @@ class RestaurantControllerTest extends WebTestCase
         $product->isEnabled()->willReturn(true);
         $product->hasOptions()->willReturn(true);
 
-        $restaurant->addProduct($product->reveal());
+        $restaurant->getProducts()->add($product->reveal());
 
         $this->localBusinessRepository->find(1)->willReturn($restaurant);
 
@@ -289,7 +289,7 @@ class RestaurantControllerTest extends WebTestCase
         $product->isEnabled()->willReturn(true);
         $product->hasOptions()->willReturn(true);
 
-        $restaurant->addProduct($product->reveal());
+        $restaurant->getProducts()->add($product->reveal());
 
         $this->localBusinessRepository->find(1)->willReturn($restaurant);
 

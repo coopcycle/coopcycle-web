@@ -39,6 +39,7 @@ trait CatalogTrait
     public function addProduct(ProductInterface $product)
     {
         if (!$this->hasProduct($product)) {
+            $product->setRestaurant($this);
             $this->products->add($product);
         }
     }
@@ -47,6 +48,7 @@ trait CatalogTrait
     {
         if ($this->hasProduct($product)) {
             $this->products->removeElement($product);
+            $product->setRestaurant(null);
         }
     }
 

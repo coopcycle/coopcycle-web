@@ -2,7 +2,6 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
-use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -19,20 +18,17 @@ use Webmozart\Assert\Assert;
 class OrderVendorProcessor implements OrderProcessorInterface
 {
     private $entityManager;
-    private $localBusinessRepository;
     private $adjustmentFactory;
     private $translator;
     private $logger;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        LocalBusinessRepository $localBusinessRepository,
         AdjustmentFactoryInterface $adjustmentFactory,
         TranslatorInterface $translator,
         LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
-        $this->localBusinessRepository = $localBusinessRepository;
         $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
         $this->logger = $logger;
@@ -163,9 +159,7 @@ class OrderVendorProcessor implements OrderProcessorInterface
         $restaurants = new \SplObjectStorage();
 
         foreach ($order->getItems() as $item) {
-            $restaurant = $this->localBusinessRepository->findOneByProduct(
-                $item->getVariant()->getProduct()
-            );
+            $restaurant = $item->getVariant()->getProduct()->getRestaurant();
 
             if (null === $restaurant) {
                 continue;
