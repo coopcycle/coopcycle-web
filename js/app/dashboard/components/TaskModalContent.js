@@ -11,6 +11,8 @@ import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
 import CourierSelect from './CourierSelect'
 import PhoneNumberInput from './PhoneNumberInput'
+import TaskModalHeader from './TaskModalHeader'
+import TaskCompleteForm from './TaskCompleteForm'
 import { timePickerProps } from '../../utils/antd'
 
 import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
@@ -45,87 +47,19 @@ class TaskModalContent extends React.Component {
     this.state = {
       complete: false
     }
-    this.success = true
-  }
-
-  renderHeaderText(task) {
-    if (!!task && Object.prototype.hasOwnProperty.call(task, '@id')) {
-
-      return (
-        <span>
-          { (task.orgName && !_.isEmpty(task.orgName)) && (
-          <span>
-            <span>{ task.orgName }</span>
-            <span className="mx-2">›</span>
-          </span>
-          ) }
-          <span>{ this.props.t('ADMIN_DASHBOARD_TASK_TITLE', { id: task.id }) }</span>
-        </span>
-      )
-    }
-
-    return (
-      <span>{ this.props.t('ADMIN_DASHBOARD_TASK_TITLE_NEW') }</span>
-    )
   }
 
   renderCompleteForm() {
-    let initialValues = {
-      notes: '',
-    }
 
     return (
-      <Formik
-        ref={ ref => this.completeForm = ref }
-        initialValues={ initialValues }
-        onSubmit={(values) => {
+      <TaskCompleteForm
+        loaging={ this.props.loading }
+        completeTaskErrorMessage={ this.props.completeTaskErrorMessage }
+        onCloseClick={ this.onCloseClick.bind(this) }
+        onSubmit={ (values) => {
           // TODO Use setSubmitting
-          this.props.completeTask(this.props.task, values.notes, this.success)
-        }}
-      >
-        {({
-          values,
-          handleChange,
-          handleBlur,
-          handleSubmit,
-        }) => (
-          <form name="task_complete" onSubmit={ handleSubmit }>
-            { this.renderHeader(values) }
-            <div className="modal-body">
-              <div className={ this.props.completeTaskErrorMessage ? 'form-group form-group-sm has-error' : 'form-group form-group-sm' }>
-                <label className="control-label required">{ this.props.t('ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_LABEL') }</label>
-                <textarea name="notes" rows="2"
-                  placeholder={ this.props.t('ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_PLACEHOLDER') }
-                  className="form-control"
-                  onChange={ handleChange }
-                  onBlur={ handleBlur }
-                  value={ values.notes }></textarea>
-                { this.props.completeTaskErrorMessage && (
-                  <span className="help-block">{ this.props.completeTaskErrorMessage }</span>
-                )}
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-transparent pull-left" disabled={ this.props.loading } onClick={ e => {
-                this.success = false
-                e.persist()
-                handleSubmit(e)
-              } }>
-                { this.props.loading && (
-                  <span><i className="fa fa-spinner fa-spin"></i> </span>
-                )}
-                <span className="text-danger">{ this.props.t('ADMIN_DASHBOARD_COMPLETE_FORM_FAILURE') }</span>
-              </button>
-              <button type="submit" className="btn btn-success" disabled={ this.props.loading }>
-                { this.props.loading && (
-                  <span><i className="fa fa-spinner fa-spin"></i> </span>
-                )}
-                <span>{ this.props.t('ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS') }</span>
-              </button>
-            </div>
-          </form>
-        )}
-      </Formik>
+          this.props.completeTask(this.props.task, values.notes, values.success)
+        }} />
     )
   }
 
@@ -192,20 +126,6 @@ class TaskModalContent extends React.Component {
 
     // FIXME The name is bad. It creates or updates a task
     this.props.createTask(values)
-  }
-
-  renderHeader(task) {
-
-    return (
-      <div className="modal-header">
-        <h4 className="modal-title">
-          <span>{ this.renderHeaderText(task) }</span>
-          <a href="#" className="pull-right" onClick={ this.onCloseClick.bind(this) }>
-            <i className="fa fa-times" aria-hidden="true"></i>
-          </a>
-        </h4>
-      </div>
-    )
   }
 
   renderFooter(task) {
@@ -359,7 +279,8 @@ class TaskModalContent extends React.Component {
           /* and other goodies */
         }) => (
           <form name="task" onSubmit={ handleSubmit } autoComplete="off">
-            { this.renderHeader(values) }
+            <TaskModalHeader task={ values }
+              onCloseClick={ this.onCloseClick.bind(this) } />
             <div className="modal-body">
               <div className="form-group text-center">
                 <Radio.Group name="type" defaultValue={ values.type } onChange={ (e) => setFieldValue('type', e.target.value) } size="large"
