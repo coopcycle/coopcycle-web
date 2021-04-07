@@ -20,6 +20,7 @@ export const recurrenceRulesAdapter = createEntityAdapter({
 
 export const selectCurrentTask = state => state.logistics.ui.currentTask
 export const selectCouriers = state => state.config.couriersList
+export const selectTaskEvents = state => state.taskEvents
 
 export const selectTaskLists = taskListSelectors.selectAll
 
@@ -240,5 +241,18 @@ export const selectCouriersWithExclude = createSelector(
     }
 
     return couriers
+  }
+)
+
+export const selectCurrentTaskEvents = createSelector(
+  selectCurrentTask,
+  selectTaskEvents,
+  (currentTask, taskEvents) => {
+
+    if (!currentTask) {
+      return []
+    }
+
+    return Object.prototype.hasOwnProperty.call(taskEvents, currentTask['@id']) ? taskEvents[currentTask['@id']] : []
   }
 )
