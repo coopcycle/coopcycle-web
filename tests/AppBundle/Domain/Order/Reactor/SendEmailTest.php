@@ -6,7 +6,6 @@ use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Reactor\SendEmail;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Sylius\Customer;
@@ -36,7 +35,6 @@ class SendEmailTest extends TestCase
         $this->settingsManager = $this->prophesize(SettingsManager::class);
         $this->eventBus = $this->prophesize(MessageBus::class);
         $this->messageBus = $this->prophesize(MessageBusInterface::class);
-        $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
         $this->settingsManager->get('administrator_email')->willReturn('admin@acme.com');
 
@@ -50,8 +48,7 @@ class SendEmailTest extends TestCase
             $this->emailManager->reveal(),
             $this->settingsManager->reveal(),
             $this->eventBus->reveal(),
-            $this->messageBus->reveal(),
-            $this->localBusinessRepository->reveal()
+            $this->messageBus->reveal()
         );
     }
 
@@ -98,6 +95,11 @@ class SendEmailTest extends TestCase
         $order
             ->isMultiVendor()
             ->willReturn(false);
+        $order
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection([
+                $restaurant->reveal()
+            ]));
         $order
             ->getCustomer()
             ->willReturn($customer->reveal());
@@ -192,14 +194,6 @@ class SendEmailTest extends TestCase
                 $this->createOrderItem($product1->reveal()),
                 $this->createOrderItem($product2->reveal()),
             ]));
-
-        $this->localBusinessRepository
-            ->findOneByProduct($product1->reveal())
-            ->willReturn($restaurant1->reveal());
-
-        $this->localBusinessRepository
-            ->findOneByProduct($product2->reveal())
-            ->willReturn($restaurant2->reveal());
 
         return $order;
     }

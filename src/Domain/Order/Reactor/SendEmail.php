@@ -26,20 +26,17 @@ class SendEmail
     private $emailManager;
     private $settingsManager;
     private $eventBus;
-    private $restaurantRepository;
 
     public function __construct(
         EmailManager $emailManager,
         SettingsManager $settingsManager,
         MessageBus $eventBus,
-        MessageBusInterface $messageBus,
-        LocalBusinessRepository $restaurantRepository)
+        MessageBusInterface $messageBus)
     {
         $this->emailManager = $emailManager;
         $this->settingsManager = $settingsManager;
         $this->eventBus = $eventBus;
         $this->messageBus = $messageBus;
-        $this->restaurantRepository = $restaurantRepository;
     }
 
     public function __invoke(Event $event)
@@ -117,23 +114,8 @@ class SendEmail
 
     private function notifyOwners(OrderInterface $order)
     {
-        if ($order->isMultiVendor()) {
-
-            $restaurants = [];
-            foreach ($order->getItems() as $orderItem) {
-                $product = $orderItem->getVariant()->getProduct();
-                $restaurant = $this->restaurantRepository->findOneByProduct($product);
-                if (!in_array($restaurant, $restaurants, true)) {
-                    $restaurants[] = $restaurant;
-                }
-            }
-
-            foreach ($restaurants as $restaurant) {
-                $this->sendEmailToOwners($order, $restaurant);
-            }
-
-        } else {
-            $this->sendEmailToOwners($order, $order->getVendor()->getRestaurant());
+        foreach ($order->getRestaurants() as $restaurant) {
+            $this->sendEmailToOwners($order, $restaurant);
         }
     }
 
