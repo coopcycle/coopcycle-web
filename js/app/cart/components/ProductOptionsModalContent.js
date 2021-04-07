@@ -1,5 +1,6 @@
-import React, { useState, useContext, forwardRef } from 'react'
+import React, { useState, useContext, forwardRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import _ from 'lodash'
 
 import ProductImagesCarousel from './ProductImagesCarousel'
 import ProductModalHeader from './ProductModalHeader'
@@ -129,7 +130,7 @@ const ValuesRange = ({ option }) => {
 }
 
 export const OptionGroup = ({ index, option }) => (
-  <div>
+  <div id={ `product-option-group-${option.code}` }>
     <h4>
       <span>{ option.name }</span>
       <ValuesRange option={ option } />
@@ -178,6 +179,16 @@ export default forwardRef(({ name, code, options, images, formAction, onSubmit, 
   const [ quantity, setQuantity ] = useState(1)
   const [ state ] = useContext(ProductOptionsModalContext)
   const offsets = getOffsets(options)
+
+  // Scroll to the next option
+  useEffect(() => {
+    const first = _.first(state.options)
+    const firstInvalid = _.find(state.options, opt => !opt.valid)
+    if (firstInvalid && firstInvalid !== first) {
+      document.getElementById(`product-option-group-${firstInvalid.code}`)
+        .scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [ state ]);
 
   return (
     // FIXME
