@@ -15,6 +15,10 @@ import {
   ENABLE_TAKEAWAY,
   DISABLE_TAKEAWAY,
   OPEN_ADDRESS_MODAL,
+  CLOSE_PRODUCT_OPTIONS_MODAL,
+  OPEN_PRODUCT_OPTIONS_MODAL,
+  CLOSE_PRODUCT_DETAILS_MODAL,
+  OPEN_PRODUCT_DETAILS_MODAL,
 } from './actions'
 
 const initialState = {
@@ -48,6 +52,10 @@ const initialState = {
   isDateModalOpen: false,
   isAddressModalOpen: false,
   country: 'fr',
+  isProductOptionsModalOpen: false,
+  productOptionsModalContext: {},
+  isProductDetailsModalOpen: false,
+  productDetailsModalContext: {},
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -202,6 +210,62 @@ const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}
   }
 }
 
+const isProductOptionsModalOpen = (state = initialState.isProductOptionsModalOpen, action = {}) => {
+  switch (action.type) {
+  case CLOSE_PRODUCT_OPTIONS_MODAL:
+
+    return false
+
+  case OPEN_PRODUCT_OPTIONS_MODAL:
+
+    return true
+  }
+
+  return state
+}
+
+const productOptionsModalContext = (state = initialState.productOptionsModalContext, action = {}) => {
+  switch (action.type) {
+  case CLOSE_PRODUCT_OPTIONS_MODAL:
+
+    return {}
+
+  case OPEN_PRODUCT_OPTIONS_MODAL:
+
+    return action.payload
+  }
+
+  return state
+}
+
+const isProductDetailsModalOpen = (state = initialState.isProductDetailsModalOpen, action = {}) => {
+  switch (action.type) {
+  case CLOSE_PRODUCT_DETAILS_MODAL:
+
+    return false
+
+  case OPEN_PRODUCT_DETAILS_MODAL:
+
+    return true
+  }
+
+  return state
+}
+
+const productDetailsModalContext = (state = initialState.productDetailsModalContext, action = {}) => {
+  switch (action.type) {
+  case CLOSE_PRODUCT_DETAILS_MODAL:
+
+    return {}
+
+  case OPEN_PRODUCT_DETAILS_MODAL:
+
+    return action.payload
+  }
+
+  return state
+}
+
 export default combineReducers({
   isFetching,
   cart,
@@ -217,4 +281,8 @@ export default combineReducers({
   isDateModalOpen,
   isAddressModalOpen,
   country,
+  isProductOptionsModalOpen,
+  productOptionsModalContext,
+  isProductDetailsModalOpen,
+  productDetailsModalContext,
 })

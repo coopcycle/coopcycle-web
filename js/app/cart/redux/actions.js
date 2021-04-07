@@ -23,6 +23,11 @@ export const OPEN_ADDRESS_MODAL = 'OPEN_ADDRESS_MODAL'
 export const ENABLE_TAKEAWAY = 'ENABLE_TAKEAWAY'
 export const DISABLE_TAKEAWAY = 'DISABLE_TAKEAWAY'
 
+export const OPEN_PRODUCT_OPTIONS_MODAL = 'OPEN_PRODUCT_OPTIONS_MODAL'
+export const CLOSE_PRODUCT_OPTIONS_MODAL = 'CLOSE_PRODUCT_OPTIONS_MODAL'
+export const OPEN_PRODUCT_DETAILS_MODAL = 'OPEN_PRODUCT_DETAILS_MODAL'
+export const CLOSE_PRODUCT_DETAILS_MODAL = 'CLOSE_PRODUCT_DETAILS_MODAL'
+
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const fetchSuccess = createAction(FETCH_SUCCESS)
 export const fetchFailure = createAction(FETCH_FAILURE)
@@ -38,6 +43,14 @@ export const closeAddressModal = createAction(CLOSE_ADDRESS_MODAL)
 export const openAddressModal = createAction(OPEN_ADDRESS_MODAL)
 
 export const geocodingFailure = createAction(GEOCODING_FAILURE)
+
+export const closeProductOptionsModal = createAction(CLOSE_PRODUCT_OPTIONS_MODAL)
+export const openProductOptionsModal =
+  createAction(OPEN_PRODUCT_OPTIONS_MODAL, (name, options, images, price, code, formAction) => ({ name, options, images, price, code, formAction }))
+
+export const closeProductDetailsModal = createAction(CLOSE_PRODUCT_DETAILS_MODAL)
+export const openProductDetailsModal =
+  createAction(OPEN_PRODUCT_DETAILS_MODAL, (name, images, price, formAction) => ({ name, images, price, formAction }))
 
 const httpClient = axios.create()
 

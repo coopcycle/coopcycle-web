@@ -13,6 +13,8 @@ import CartTotal from './CartTotal'
 import CartButton from './CartButton'
 import Time from './Time'
 import FulfillmentMethod from './FulfillmentMethod'
+import ProductOptionsModal from './ProductOptionsModal'
+import ProductDetailsModal from './ProductDetailsModal'
 
 import { changeAddress, sync, disableTakeaway, enableTakeaway, openAddressModal } from '../redux/actions'
 import { selectIsDeliveryEnabled, selectIsCollectionEnabled, selectIsOrderingAvailable } from '../redux/selectors'
@@ -57,6 +59,8 @@ class Cart extends Component {
         <AddressModal />
         <RestaurantModal />
         <DateModal />
+        <ProductOptionsModal />
+        <ProductDetailsModal />
       </Sticky>
     )
   }

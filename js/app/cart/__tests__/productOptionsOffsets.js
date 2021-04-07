@@ -1,4 +1,4 @@
-import { getOffsets } from '../components/ProductOptionsModal'
+import { getOffsets } from '../components/ProductOptionsModalContent'
 
 describe('getOffsets', () => {
 

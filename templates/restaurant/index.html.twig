@@ -187,8 +187,7 @@
               <div class="restaurant-menu-section-item">
                 {% if product_images|length > 1 %}
                   <button class="menu-item" type="button"
-                    data-toggle="modal"
-                    data-target="#product-details"
+                    data-modal="details"
                     data-product-name="{{ product.name|e('html_attr') }}"
                     data-product-images="{{ product_images|json_encode|e('html_attr') }}"
                     data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
@@ -209,8 +208,7 @@
               <div class="restaurant-menu-section-item">
                 <button
                   class="menu-item"
-                  data-toggle="modal"
-                  data-target="#product-options"
+                  data-modal="options"
                   data-form-action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code })|e('html_attr') }}"
                   data-product-code="{{ product.code|e('html_attr') }}"
                   data-product-name="{{ product.name|e('html_attr') }}"
@@ -252,44 +250,6 @@
     </div>
   {% endif %}
 
-</div>
-
-{# Modals for product options #}
-
-<div id="product-options" class="modal fade">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title"></h4>
-      </div>
-      <div class="modal-body">
-        <div data-options-container></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="product-details" class="modal fade">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title"></h4>
-      </div>
-      <div class="modal-body">
-        <form method="post" action="" data-product-simple>
-          <div data-carousel-container></div>
-          <hr />
-          <button class="btn btn-lg btn-block btn-primary" type="submit"></button>
-        </form>
-      </div>
-    </div>
-  </div>
 </div>
 
 {% set restaurant_json = { id: restaurant.id } %}

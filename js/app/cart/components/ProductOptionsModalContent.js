@@ -1,7 +1,8 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import ProductImagesCarousel from './ProductImagesCarousel'
+import ProductModalHeader from './ProductModalHeader'
 import {
   ProductOptionsModalContext,
   useProductOptions,
@@ -172,24 +173,37 @@ const getOffset = (options, index) => {
 /* Exported to be able to test it */
 export const getOffsets = (options) => options.map((option, index) => getOffset(options, index))
 
-export default ({ code, options, images, formAction, onSubmit }) => {
+export default forwardRef(({ name, code, options, images, formAction, onSubmit, onClickClose }, ref) => {
 
   const [ quantity, setQuantity ] = useState(1)
   const [ state ] = useContext(ProductOptionsModalContext)
   const offsets = getOffsets(options)
 
   return (
-    <div id={ `${code}-options` }>
-      { images.length > 1 && (
-        <ProductImagesCarousel images={ images } />
-      ) }
-      <form key={ `product-${code}` } data-product-options action={ formAction } onSubmit={ onSubmit }>
+    // FIXME
+    // The id is used in Cypress tests
+    // It would be better to use data attributes
+    <form id={ `${code}-options` }
+      action={ formAction }
+      onSubmit={ onSubmit }
+      ref={ ref }
+      className="product-modal-container">
+      <ProductModalHeader name={ name }
+        onClickClose={ onClickClose } />
+      <main>
+        { images.length > 1 && (
+          <ProductImagesCarousel images={ images } />
+        ) }
+        <div className="px-4">
         { options.map((option, index) => (
           <OptionGroup
             key={ `option-${index}` }
             index={ offsets[index] }
             option={ option } />
         )) }
+        </div>
+      </main>
+      <footer className="p-4 border-top">
         <div className="row">
           <div className="col-xs-12 col-sm-6 col-sm-offset-3">
             <div className="form-group">
@@ -216,7 +230,7 @@ export default ({ code, options, images, formAction, onSubmit }) => {
         <button type="submit" className="btn btn-lg btn-block btn-primary" disabled={ state.disabled }>
           <span data-product-total>{ ((state.total * quantity) / 100).formatMoney() }</span>
         </button>
-      </form>
-    </div>
+      </footer>
+    </form>
   )
-}
+})

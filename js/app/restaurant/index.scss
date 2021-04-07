@@ -601,3 +601,37 @@ button.menu-item:active {
     margin: 15px 0;
   }
 }
+
+.ReactModal__Content--product-options {
+
+  overflow: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 0;
+
+  @media (min-width: $screen-lg-min) {
+    width: 40%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 50%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+    height: calc(100vh - 30px);
+  }
+
+  .product-modal-container {
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+
+    main {
+      flex: 1;
+      overflow: auto;
+    }
+  }
+}

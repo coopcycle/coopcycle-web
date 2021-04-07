@@ -2,7 +2,7 @@ import { debounce } from 'lodash'
 import React from 'react'
 import { render } from 'react-dom'
 
-import { OptionGroup } from '../restaurant/components/ProductOptionsModal'
+import { OptionGroup } from '../cart/components/ProductOptionsModalContent'
 
 var $previewLoader = $('#preview-loader')
 var $form = $('form[name="product_option"]')
