@@ -256,8 +256,6 @@ services:
 
   sylius.order_processing.order_vendor_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderVendorProcessor
-    arguments:
-      $adjustmentFactory: "@sylius.factory.adjustment"
     tags:
       - { name: monolog.logger, channel: coopcycle.order_processing }
 

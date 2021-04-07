@@ -17,6 +17,7 @@ use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
@@ -26,7 +27,7 @@ use Sylius\Component\Promotion\Model\PromotionAction;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class OrderVendorProcessorTest extends KernelTestCase
+class OrderVendorProcessorTest extends TestCase
 {
     use ProphecyTrait;
 
@@ -35,23 +36,16 @@ class OrderVendorProcessorTest extends KernelTestCase
 
     public function setUp(): void
     {
-        parent::setUp();
-
-        self::bootKernel();
-
         $this->translator = $this->prophesize(TranslatorInterface::class);
 
         $this->translator
             ->trans(Argument::type('string'))
             ->willReturn('Foo');
 
-        $this->adjustmentFactory = static::$kernel->getContainer()->get('sylius.factory.adjustment');
-
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
         $this->orderProcessor = new OrderVendorProcessor(
             $this->entityManager->reveal(),
-            $this->adjustmentFactory,
             $this->translator->reveal(),
             new NullLogger()
         );
@@ -119,7 +113,7 @@ class OrderVendorProcessorTest extends KernelTestCase
             ->willReturn(new ArrayCollection());
 
         $order
-            ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
+            ->addRestaurant(Argument::type(LocalBusiness::class))
             ->shouldNotBeCalled();
 
         $this->orderProcessor->process($order->reveal());
@@ -136,7 +130,7 @@ class OrderVendorProcessorTest extends KernelTestCase
             ->willReturn(true);
 
         $order
-            ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
+            ->addRestaurant(Argument::type(LocalBusiness::class))
             ->shouldNotBeCalled();
 
         $this->orderProcessor->process($order->reveal());
@@ -192,10 +186,6 @@ class OrderVendorProcessorTest extends KernelTestCase
                 $this->createOrderItem($product1->reveal()),
                 $this->createOrderItem($product2->reveal()),
             ]));
-
-        $order
-            ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
-            ->shouldBeCalled();
 
         $order
             ->addRestaurant($restaurant, 0, 1700)
@@ -257,10 +247,6 @@ class OrderVendorProcessorTest extends KernelTestCase
                 $this->createOrderItem($product1->reveal()),
                 $this->createOrderItem($product2->reveal()),
             ]));
-
-        $order
-            ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
-            ->shouldBeCalled();
 
         $order
             ->addRestaurant($restaurant, 0, 1700)
@@ -326,10 +312,6 @@ class OrderVendorProcessorTest extends KernelTestCase
                 $this->createOrderItem($product1->reveal()),
                 $this->createOrderItem($product2->reveal()),
             ]));
-
-        $order
-            ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
-            ->shouldBeCalled();
 
         $order
             ->addRestaurant($restaurant, 0, 850)
@@ -448,26 +430,10 @@ class OrderVendorProcessorTest extends KernelTestCase
         $payment->setCharge('ch_123456');
         $payment->setOrder($order->reveal());
 
-        $order
-            ->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT)
-            ->shouldBeCalled();
-
-        $expectations = [
-            '1' => 2673,
-            '2' =>  693,
-            '3' =>  594,
-        ];
-
-        $order
-            ->addAdjustment(Argument::that(function (Adjustment $adjustment) use ($expectations) {
-                if (AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT === $adjustment->getType()) {
-                    return isset($expectations[$adjustment->getOriginCode()]) &&
-                        $expectations[$adjustment->getOriginCode()] === $adjustment->getAmount();
-                }
-
-                return false;
-            }))
-            ->shouldBeCalledTimes(3);
+        $expectations = new \SplObjectStorage();
+        $expectations[$restaurant1] = 2673;
+        $expectations[$restaurant2] = 2673;
+        $expectations[$restaurant3] = 2673;
 
         $order
             ->addRestaurant(
@@ -478,7 +444,10 @@ class OrderVendorProcessorTest extends KernelTestCase
             ->should(function ($calls) use ($expectations) {
                 foreach ($calls as $call) {
                     [ $restaurant, $itemsTotal, $transferAmount ] = $call->getArguments();
-                    if ($expectations[$restaurant->asOriginCode()] !== $transferAmount) {
+
+                    $expectedTransferAmount = $expectations[$restaurant];
+
+                    if ($expectedTransferAmount !== $transferAmount) {
                         return false;
                     }
                 }

@@ -8,7 +8,6 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -18,18 +17,15 @@ use Webmozart\Assert\Assert;
 class OrderVendorProcessor implements OrderProcessorInterface
 {
     private $entityManager;
-    private $adjustmentFactory;
     private $translator;
     private $logger;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        AdjustmentFactoryInterface $adjustmentFactory,
         TranslatorInterface $translator,
         LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
-        $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
         $this->logger = $logger;
     }
@@ -49,18 +45,12 @@ class OrderVendorProcessor implements OrderProcessorInterface
             return;
         }
 
-        $order->removeAdjustments(AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT);
-
         $restaurants = $this->getRestaurants($order);
 
         $this->processVendors($order, $restaurants);
 
         $vendor = $this->processVendor($order, $restaurants);
         $order->setVendor($vendor);
-
-        if ($order->isMultiVendor()) {
-            $this->processTransferAmountAdjustments($order);
-        }
     }
 
     private function processVendors(OrderInterface $order, \SplObjectStorage $restaurants)
@@ -173,33 +163,5 @@ class OrderVendorProcessor implements OrderProcessorInterface
         }
 
         return $restaurants;
-    }
-
-    private function processTransferAmountAdjustments(OrderInterface $order)
-    {
-        $restaurants = $order->getRestaurants();
-
-        if (count($restaurants) === 1) {
-            return;
-        }
-
-        $rest = ($order->getTotal() - $order->getFeeTotal());
-
-        foreach ($restaurants as $restaurant) {
-
-            $transferAmount = ($rest * $order->getPercentageForRestaurant($restaurant));
-
-            $transferAmountAdjustment = $this->adjustmentFactory->createWithData(
-                AdjustmentInterface::TRANSFER_AMOUNT_ADJUSTMENT,
-                $this->translator->trans('order.adjustment_type.transfer_amount'),
-                $transferAmount,
-                $neutral = true
-            );
-            $transferAmountAdjustment->setOriginCode(
-                $restaurant->asOriginCode()
-            );
-
-            $order->addAdjustment($transferAmountAdjustment);
-        }
     }
 }
