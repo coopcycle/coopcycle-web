@@ -130,8 +130,8 @@ const ValuesRange = ({ option }) => {
 }
 
 export const OptionGroup = ({ index, option }) => (
-  <div id={ `product-option-group-${option.code}` }>
-    <h4>
+  <div id={ `product-option-group-${option.code}` } className="pt-4">
+    <h4 className="m-0 mb-4">
       <span>{ option.name }</span>
       <ValuesRange option={ option } />
     </h4>
