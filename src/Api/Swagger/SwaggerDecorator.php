@@ -10,6 +10,16 @@ class SwaggerDecorator implements OpenApiFactoryInterface
 {
     private $decorated;
 
+    private static $excluded = [
+        '/api/api_apps/{id}',
+        '/api/opening_hours_specifications/{id}',
+        '/api/task_events/{id}',
+        '/api/remote_push_tokens/{id}',
+        '/api/me/remote_push_tokens',
+        '/api/me/remote_push_tokens/{token}',
+        '/api/retail_prices/{id}',
+    ];
+
     public function __construct(OpenApiFactoryInterface $decorated)
     {
         $this->decorated = $decorated;
@@ -19,18 +29,16 @@ class SwaggerDecorator implements OpenApiFactoryInterface
     {
         $openApi = $this->decorated->__invoke($context);
 
-        /*
-        unset($docs['paths']['/api/api_apps/{id}']);
-        unset($docs['paths']['/api/opening_hours_specifications/{id}']);
-        unset($docs['paths']['/api/task_events/{id}']);
+        $paths = $openApi->getPaths()->getPaths();
 
-        unset($docs['paths']['/api/remote_push_tokens/{id}']);
-        unset($docs['paths']['/api/me/remote_push_tokens']);
-        unset($docs['paths']['/api/me/remote_push_tokens/{token}']);
+        $filteredPaths = new Model\Paths();
+        foreach ($paths as $path => $pathItem) {
+            if (in_array($path, self::$excluded)) {
+                continue;
+            }
+            $filteredPaths->addPath($path, $pathItem);
+        }
 
-        unset($docs['paths']['/api/retail_prices/{id}']);
-        */
-
-        return $openApi;
+        return $openApi->withPaths($filteredPaths);
     }
 }
