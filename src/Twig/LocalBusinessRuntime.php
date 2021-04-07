@@ -101,26 +101,9 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         });
     }
 
-    private function getRestaurants(OrderInterface $order): \SplObjectStorage
-    {
-        $restaurants = new \SplObjectStorage();
-
-        foreach ($order->getItems() as $item) {
-            $restaurant = $this->repository->findOneByProduct(
-                $item->getVariant()->getProduct()
-            );
-
-            if ($restaurant && !$restaurants->contains($restaurant)) {
-                $restaurants->attach($restaurant);
-            }
-        }
-
-        return $restaurants;
-    }
-
     public function getCheckoutSuggestions(OrderInterface $order)
     {
-        $restaurants = $this->getRestaurants($order);
+        $restaurants = $order->getRestaurants();
 
         $suggestions = [];
 
