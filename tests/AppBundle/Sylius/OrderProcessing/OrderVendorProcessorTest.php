@@ -25,7 +25,6 @@ use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Promotion\Model\PromotionAction;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrderVendorProcessorTest extends TestCase
 {
@@ -36,17 +35,10 @@ class OrderVendorProcessorTest extends TestCase
 
     public function setUp(): void
     {
-        $this->translator = $this->prophesize(TranslatorInterface::class);
-
-        $this->translator
-            ->trans(Argument::type('string'))
-            ->willReturn('Foo');
-
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
         $this->orderProcessor = new OrderVendorProcessor(
             $this->entityManager->reveal(),
-            $this->translator->reveal(),
             new NullLogger()
         );
     }

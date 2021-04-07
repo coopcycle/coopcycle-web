@@ -11,22 +11,18 @@ use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
 class OrderVendorProcessor implements OrderProcessorInterface
 {
     private $entityManager;
-    private $translator;
     private $logger;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        TranslatorInterface $translator,
         LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
-        $this->translator = $translator;
         $this->logger = $logger;
     }
 
