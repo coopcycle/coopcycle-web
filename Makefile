@@ -24,7 +24,7 @@ mocha:
 	@docker-compose exec -e SYMFONY_ENV=test -e NODE_ENV=test nodejs /run-tests.sh
 
 migrations-diff:
-	@docker-compose exec php php bin/console doctrine:migrations:diff
+	@docker-compose exec php php bin/console doctrine:migrations:diff --no-interaction
 
 migrations-migrate:
 	@docker-compose exec php php bin/console doctrine:migrations:migrate
