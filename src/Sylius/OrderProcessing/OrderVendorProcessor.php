@@ -77,7 +77,7 @@ class OrderVendorProcessor implements OrderProcessorInterface
         foreach ($restaurants as $restaurant) {
 
             $itemsTotal = $restaurants[$restaurant];
-            $transferAmount = ($rest * $order->getPercentageForRestaurant($restaurant));
+            $transferAmount = intval(ceil($rest * $order->getPercentageForRestaurant($restaurant)));
 
             $order->addRestaurant($restaurant, $itemsTotal, $transferAmount);
         }
