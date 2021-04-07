@@ -134,32 +134,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             // Make sure the array is zero-indexed
             $data['items'] = array_values($data['items']);
 
-            $restaurant = $object->getRestaurant();
-            if (null === $restaurant) {
-                $data['restaurant'] = null;
-            } else {
-
-                $fulfillmentMethods = [];
-                foreach ($restaurant->getFulfillmentMethods() as $fulfillmentMethod) {
-                    if ($fulfillmentMethod->isEnabled()) {
-                        $fulfillmentMethods[] = $fulfillmentMethod->getType();
-                    }
-                }
-
-                $data['restaurant'] = [
-                    'id' => $restaurant->getId(),
-                    'variableCustomerAmountEnabled' =>
-                        $restaurant->getContract() !== null ? $restaurant->getContract()->isVariableCustomerAmountEnabled() : false,
-                    'address' => [
-                        'latlng' => [
-                            $restaurant->getAddress()->getGeo()->getLatitude(),
-                            $restaurant->getAddress()->getGeo()->getLongitude(),
-                        ]
-                    ],
-                    'fulfillmentMethods' => $fulfillmentMethods,
-                ];
-            }
-
             if (!$object->hasVendor()) {
                 $data['vendor'] = null;
             } else {

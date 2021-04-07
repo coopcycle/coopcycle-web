@@ -344,18 +344,6 @@ export function changeAddress(address) {
   }
 }
 
-export function goBackToRestaurant() {
-
-  return (dispatch, getState) => {
-
-    const restaurant = getState().cart.restaurant
-
-    window.location.href = window.Routing.generate('restaurant', {
-      id: restaurant.id
-    })
-  }
-}
-
 export function clearDate() {
 
   return (dispatch, getState) => {

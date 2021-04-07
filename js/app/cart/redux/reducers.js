@@ -19,7 +19,6 @@ import {
 
 const initialState = {
   cart: {
-    restaurant: null,
     items: [],
     itemsTotal: 0,
     total: 0,

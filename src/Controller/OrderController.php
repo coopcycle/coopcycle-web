@@ -498,4 +498,27 @@ class OrderController extends AbstractController
 
         return $this->redirectToRoute('order');
     }
+
+    /**
+     * @Route("/order/continue", name="order_continue")
+     */
+    public function continueAction(Request $request,
+        CartContextInterface $cartContext)
+    {
+        $order = $cartContext->getCart();
+
+        if (null === $order || !$order->hasVendor()) {
+
+            return $this->redirectToRoute('homepage');
+        }
+
+        $restaurants = $order->getRestaurants();
+
+        if (count($restaurants) === 0) {
+
+            return $this->redirectToRoute('homepage');
+        }
+
+        return $this->redirectToRoute('restaurant', ['id' => $restaurants->first()->getId()]);
+    }
 }
