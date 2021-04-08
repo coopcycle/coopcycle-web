@@ -62,6 +62,7 @@ trait CatalogTrait
     public function addProductOption(ProductOptionInterface $productOption)
     {
         if (!$this->productOptions->contains($productOption)) {
+            $productOption->setRestaurant($this);
             $this->productOptions->add($productOption);
         }
     }
@@ -70,6 +71,7 @@ trait CatalogTrait
     {
         if ($this->productOptions->contains($productOption)) {
             $this->productOptions->removeElement($productOption);
+            $productOption->setRestaurant(null);
         }
     }
 

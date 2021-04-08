@@ -915,8 +915,6 @@ trait RestaurantTrait
         $productOption = $productOptionFactory
             ->createNew();
 
-        $productOption->setRestaurant($restaurant);
-
         $routes = $request->attributes->get('routes');
 
         $form = $this->createForm(ProductOptionType::class, $productOption);
@@ -930,6 +928,8 @@ trait RestaurantTrait
             foreach ($productOption->getValues() as $optionValue) {
                 $optionValue->setCode(Uuid::uuid4()->toString());
             }
+
+            $restaurant->addProductOption($productOption);
 
             $entityManager->flush();
 

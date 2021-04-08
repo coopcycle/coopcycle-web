@@ -179,19 +179,11 @@
         <cascade-persist/>
       </cascade>
     </one-to-many>
-    <many-to-many field="productOptions" target-entity="AppBundle\Entity\Sylius\ProductOption">
+    <one-to-many field="productOptions" target-entity="AppBundle\Entity\Sylius\ProductOption" mapped-by="restaurant">
       <cascade>
         <cascade-persist/>
       </cascade>
-      <join-table name="restaurant_product_option">
-        <join-columns>
-          <join-column name="restaurant_id" referenced-column-name="id"/>
-        </join-columns>
-        <inverse-join-columns>
-          <join-column name="option_id" referenced-column-name="id"/>
-        </inverse-join-columns>
-      </join-table>
-    </many-to-many>
+    </one-to-many>
     <many-to-many field="taxons" target-entity="AppBundle\Entity\Sylius\Taxon">
       <cascade>
         <cascade-persist/>

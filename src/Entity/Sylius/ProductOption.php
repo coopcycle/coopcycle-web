@@ -27,6 +27,8 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
 
     protected $deletedAt;
 
+    protected $restaurant;
+
     /**
      * {@inheritdoc}
      */
@@ -59,9 +61,14 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
         return $this->additional;
     }
 
+    public function getRestaurant(): LocalBusiness
+    {
+        return $this->restaurant;
+    }
+
     public function setRestaurant(LocalBusiness $restaurant)
     {
-        $restaurant->addProductOption($this);
+        $this->restaurant = $restaurant;
     }
 
     /**
