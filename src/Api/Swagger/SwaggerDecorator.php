@@ -18,6 +18,8 @@ class SwaggerDecorator implements OpenApiFactoryInterface
         '/api/me/remote_push_tokens',
         '/api/me/remote_push_tokens/{token}',
         '/api/retail_prices/{id}',
+        '/api/time_slot_choices/{id}',
+        '/api/customers/{id}',
     ];
 
     public function __construct(OpenApiFactoryInterface $decorated)
