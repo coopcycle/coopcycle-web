@@ -12,6 +12,13 @@ final class ProductOptionSubscriber implements EventSubscriberInterface
 {
     private $entityManager;
 
+    private static $routes = [
+        // A restaurant can retrieve disabled option values
+        'api_restaurants_product_options_get_subresource',
+        // A restaurant can re-enable a disabled option
+        'api_product_option_values_put_item',
+    ];
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -28,7 +35,7 @@ final class ProductOptionSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if ($request->attributes->get('_route') !== 'api_restaurants_product_options_get_subresource') {
+        if (!in_array($request->attributes->get('_route'), self::$routes)) {
 
             return;
         }
