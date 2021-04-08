@@ -453,6 +453,7 @@ admin_store_deliveries:
         routes:
             stores: admin_stores
             store: admin_store
+            import_success: admin_deliveries
     methods:  [ GET, POST ]
 
 admin_store_delivery_new:
