@@ -29,7 +29,7 @@ class OrderView
     private $adjustmentsTotalCache = [];
     private $adjustmentsTotalRecursivelyCache = [];
 
-    public $vendors;
+    public $vendors = [];
 
     public function getId()
     {
@@ -150,8 +150,8 @@ class OrderView
             return false;
         }
 
-        if (count($this->vendors) > 1) {
-            return true;
+        if (count($this->vendors) === 1) {
+            return false;
         }
 
         return $this->vendors[0]['itemsTotal'] !== $this->itemsTotal;
@@ -164,7 +164,20 @@ class OrderView
             return '';
         }
 
-        return $this->isMultiVendor() ? $this->vendors[0]['restaurant']['hub']['name'] : $this->vendors[0]['restaurant']['name'];
+        foreach ($this->vendors as $vendor) {
+
+            if ($this->isMultiVendor()) {
+
+                if (isset($vendor['restaurant']['hub']) && is_array($vendor['restaurant']['hub'])) {
+
+                    return $vendor['restaurant']['hub']['name'];
+                }
+            }
+
+            return $vendor['restaurant']['name'];
+        }
+
+        return '';
     }
 
     public static function create(array $data): self
