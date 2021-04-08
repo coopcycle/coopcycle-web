@@ -632,7 +632,7 @@ Feature: Manage restaurants
             "code":"PIZZA_TOPPING",
             "values":[
               {
-                "@id":"/api/product_option_values/1",
+                "@id":"@string@.startsWith('/api/product_option_values')",
                 "@type":"ProductOptionValue",
                 "price":0,
                 "code":"PIZZA_TOPPING_PEPPERONI",
@@ -640,12 +640,20 @@ Feature: Manage restaurants
                 "enabled":true
               },
               {
-                "@id":"/api/product_option_values/2",
+                "@id":"@string@.startsWith('/api/product_option_values')",
                 "@type":"ProductOptionValue",
                 "price":0,
                 "code":"PIZZA_TOPPING_EXTRA_CHEESE",
                 "value":"Extra cheese",
                 "enabled":true
+              },
+              {
+                "@id":"@string@.startsWith('/api/product_option_values')",
+                "@type":"ProductOptionValue",
+                "price":0,
+                "code":"NOT_ENABLED_OPTION",
+                "enabled":false,
+                "value":"Not enabled"
               }
             ],
             "name":"Pizza topping"
@@ -659,7 +667,7 @@ Feature: Manage restaurants
             "code":"GLUTEN_INTOLERANCE",
             "values":[
               {
-                "@id":"/api/product_option_values/3",
+                "@id":"@string@.startsWith('/api/product_option_values')",
                 "@type":"ProductOptionValue",
                 "price":0,
                 "code":"GLUTEN_FREE",
