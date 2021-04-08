@@ -51,6 +51,9 @@ AppBundle\Entity\LocalBusiness:
     products:
       - '@pizza'
       - '@hamburger'
+    productOptions:
+      - '@pizza_topping'
+      - '@gluten_intolerance'
   restaurant_2:
     name: 'Café Barjot'
     address: "@address_2"

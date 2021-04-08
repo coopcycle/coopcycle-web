@@ -15,6 +15,9 @@ trait CatalogTrait
      */
     protected $products;
 
+    /**
+     * @ApiSubresource
+     */
     protected $productOptions;
 
     protected $taxons;

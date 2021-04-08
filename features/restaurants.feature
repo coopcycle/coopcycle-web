@@ -601,6 +601,76 @@ Feature: Manage restaurants
       }
       """
 
+  Scenario: Retrieve restaurant product options
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When I send a "GET" request to "/api/restaurants/1/product_options"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ProductOption",
+        "@id":"/api/restaurants/1/product_options",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/product_options/1",
+            "@type":"ProductOption",
+            "strategy":"free",
+            "additional":false,
+            "valuesRange":null,
+            "code":"PIZZA_TOPPING",
+            "values":[
+              {
+                "@id":"/api/product_option_values/1",
+                "@type":"ProductOptionValue",
+                "price":0,
+                "code":"PIZZA_TOPPING_PEPPERONI",
+                "value":"Pepperoni"
+              },
+              {
+                "@id":"/api/product_option_values/2",
+                "@type":"ProductOptionValue",
+                "price":0,
+                "code":"PIZZA_TOPPING_EXTRA_CHEESE",
+                "value":"Extra cheese"
+              }
+            ],
+            "name":"Pizza topping"
+          },
+          {
+            "@id":"/api/product_options/2",
+            "@type":"ProductOption",
+            "strategy":"free",
+            "additional":true,
+            "valuesRange":null,
+            "code":"GLUTEN_INTOLERANCE",
+            "values":[
+              {
+                "@id":"/api/product_option_values/3",
+                "@type":"ProductOptionValue",
+                "price":0,
+                "code":"GLUTEN_FREE",
+                "value":"Gluten free"
+              }
+            ],
+            "name":"Gluten intolerance"
+          }
+        ],
+        "hydra:totalItems":2
+      }
+      """
+
   Scenario: Deleted products are not retrieved
     Given the fixtures files are loaded:
       | sylius_channels.yml |
