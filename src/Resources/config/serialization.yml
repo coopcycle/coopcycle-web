@@ -155,6 +155,8 @@ Sylius\Component\Product\Model\ProductOptionValue:
       groups: ['product_option']
     price:
       groups: ['product_option']
+    enabled:
+      groups: ['product_option', 'product_option_value_update']
 
 AppBundle\DataType\NumRange:
   attributes:
