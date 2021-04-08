@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity\LocalBusiness;
 
-use AppBundle\Validator\Constraints\TimeRange as AssertTimeRange;
 use AppBundle\Validator\Constraints\NotOverlappingOpeningHours as AssertNotOverlappingOpeningHours;
 use Sylius\Component\Resource\Model\ToggleableInterface;
 use Sylius\Component\Resource\Model\ToggleableTrait;

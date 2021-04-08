@@ -69,9 +69,11 @@ $addTagButton.on('click', function() {
     addChoiceForm($collectionHolder, $newLinkLi);
 });
 
-new OpeningHoursInput(document.querySelector('#time_slot_openingHours'), {
+const ohEl = document.querySelector('#time_slot_openingHours')
+
+new OpeningHoursInput(ohEl, {
   locale: $('html').attr('lang'),
-  rowsWithErrors: [],
+  rowsWithErrors: JSON.parse(ohEl.dataset.errors),
   behavior: 'time_slot'
 });
 

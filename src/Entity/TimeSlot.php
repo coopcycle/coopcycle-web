@@ -6,6 +6,7 @@ use AppBundle\Action\TimeSlot\Choices as ChoicesController;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
+use AppBundle\Validator\Constraints\NotOverlappingOpeningHours as AssertNotOverlappingOpeningHours;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
@@ -76,6 +77,8 @@ class TimeSlot
 
     /**
      * @var array
+     *
+     * @AssertNotOverlappingOpeningHours
      */
     private $openingHours = [];
 
