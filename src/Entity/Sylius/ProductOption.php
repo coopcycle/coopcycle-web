@@ -71,12 +71,12 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
         return $this->additional;
     }
 
-    public function getRestaurant(): LocalBusiness
+    public function getRestaurant(): ?LocalBusiness
     {
         return $this->restaurant;
     }
 
-    public function setRestaurant(LocalBusiness $restaurant)
+    public function setRestaurant(?LocalBusiness $restaurant)
     {
         $this->restaurant = $restaurant;
     }
