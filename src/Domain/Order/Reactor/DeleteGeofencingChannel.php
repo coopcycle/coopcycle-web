@@ -3,20 +3,15 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event;
-use Redis;
-use Psr\Log\LoggerInterface;
+use AppBundle\Service\Geofencing;
 
 class DeleteGeofencingChannel
 {
-    private $tile38;
-    private $doorstepChanNamespace;
+    private $geofencing;
 
-    public function __construct(
-        Redis $tile38,
-        string $doorstepChanNamespace)
+    public function __construct(Geofencing $geofencing)
     {
-        $this->tile38 = $tile38;
-        $this->doorstepChanNamespace = $doorstepChanNamespace;
+        $this->geofencing = $geofencing;
     }
 
     public function __invoke(Event $event)
@@ -31,9 +26,6 @@ class DeleteGeofencingChannel
 
         $dropoff = $delivery->getDropoff();
 
-        $this->tile38->rawCommand(
-            'DELCHAN',
-            sprintf('%s:dropoff:%d', $this->doorstepChanNamespace, $dropoff->getId())
-        );
+        $this->geofencing->deleteChannel($dropoff);
     }
 }
