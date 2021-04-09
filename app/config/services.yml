@@ -628,6 +628,9 @@ services:
   AppBundle\Api\EventSubscriber\ProductOptionSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
+  AppBundle\Api\EventSubscriber\ProductOptionValueSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
   AppBundle\Action\Settings:
     public: true
     arguments:
