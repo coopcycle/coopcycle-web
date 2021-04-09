@@ -300,17 +300,6 @@ h1, h2, h3, h4, h5, h6 {
   background-color: rgba(255, 255, 255, 0.75);
 }
 
-// Custom class to allow scrolling inside modal
-// @see https://github.com/reactjs/react-modal/issues/283
-.ReactModal__Overlay--overflow {
-  @media (max-width: $screen-xs-max) {
-    height: 100vh;
-    .ReactModal__Content {
-      overflow-y: auto;
-    }
-  }
-}
-
 .ReactModal__Content {
   position: absolute;
   top: 50%;

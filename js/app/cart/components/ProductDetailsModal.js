@@ -24,7 +24,7 @@ class ProductDetailsModal extends Component {
         onRequestClose={ this.closeModal.bind(this) }
         shouldCloseOnOverlayClick={ true }
         contentLabel={ this.props.name }
-        overlayClassName="ReactModal__Overlay--overflow"
+        overlayClassName="ReactModal__Overlay--cart"
         className="ReactModal__Content--product-options"
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">

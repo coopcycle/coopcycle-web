@@ -41,7 +41,7 @@ class AddressModal extends Component {
         onRequestClose={ this.closeModal.bind(this) }
         shouldCloseOnOverlayClick={ false }
         contentLabel={ this.props.t('ENTER_YOUR_ADDRESS') }
-        overlayClassName="ReactModal__Overlay--overflow"
+        overlayClassName="ReactModal__Overlay--cart"
         className="ReactModal__Content--enter-address"
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">

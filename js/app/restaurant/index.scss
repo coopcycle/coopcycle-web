@@ -536,6 +536,20 @@ button.menu-item:active {
   }
 }
 
+// Custom class to allow scrolling inside modal
+// @see https://github.com/reactjs/react-modal/issues/283
+.ReactModal__Overlay--cart {
+  @media (max-width: $screen-xs-max) {
+    // height: 100vh;
+    // Dot *NOT* use 100vh on mobile
+    // https://developers.google.com/web/updates/2016/12/url-bar-resizing
+    height: 100%;
+    .ReactModal__Content {
+      overflow-y: auto;
+    }
+  }
+}
+
 .ReactModal__Content--enter-address {
   overflow: inherit;
   display: flex;
@@ -610,6 +624,7 @@ button.menu-item:active {
   justify-content: space-between;
 
   padding: 0;
+  max-height: calc(100% - 30px);
 
   @media (min-width: $screen-lg-min) {
     width: 40%;
@@ -619,7 +634,7 @@ button.menu-item:active {
   }
   @media (max-width: $screen-xs-max) {
     width: calc(100% - 30px);
-    height: calc(100vh - 30px);
+    height: calc(100% - 30px);
   }
 
   .product-modal-container {
@@ -627,7 +642,7 @@ button.menu-item:active {
     display: flex;
     flex-direction: column;
     height: 100%;
-    max-height: calc(100vh - 30px);
+    overflow: hidden;
 
     main {
       flex: 1;
