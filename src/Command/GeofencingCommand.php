@@ -156,7 +156,9 @@ class GeofencingCommand extends Command
                     }
 
                     if (!$task->isAssigned()) {
+                        $this->logMessage(sprintf('Stop monitoring geofences for task #%d', $task->getId()));
                         $this->geofencing->deleteChannel($task);
+                        return;
                     }
 
                     // This is not the assigned messenger
