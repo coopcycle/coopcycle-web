@@ -9,10 +9,10 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
+use AppBundle\Service\Geofencing;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Redis;
 use Prophecy\Argument;
 use Psr\Log\NullLogger;
 
@@ -24,12 +24,10 @@ class DeleteGeofencingChannelTest extends TestCase
 
     public function setUp(): void
     {
-        $this->tile38 = $this->prophesize(Redis::class);
+        $this->geofencing = $this->prophesize(Geofencing::class);
 
         $this->reactor = new DeleteGeofencingChannel(
-            $this->tile38->reveal(),
-            'coopcycle',
-            new NullLogger()
+            $this->geofencing->reveal()
         );
     }
 
@@ -53,11 +51,8 @@ class DeleteGeofencingChannelTest extends TestCase
             ->getDelivery()
             ->willReturn($delivery->reveal());
 
-        $this->tile38
-            ->rawCommand(
-                'DELCHAN',
-                'coopcycle:dropoff:42'
-            )
+        $this->geofencing
+            ->deleteChannel($dropoff->reveal())
             ->shouldBeCalled();
 
         call_user_func_array($this->reactor, [ new Event\OrderDropped($order->reveal()) ]);
@@ -70,11 +65,8 @@ class DeleteGeofencingChannelTest extends TestCase
             ->getDelivery()
             ->willReturn(null);
 
-        $this->tile38
-            ->rawCommand(
-                'DELCHAN',
-                Argument::type('string')
-            )
+        $this->geofencing
+            ->deleteChannel(Argument::type(Task::class))
             ->shouldNotBeCalled();
 
         call_user_func_array($this->reactor, [ new Event\OrderDropped($order->reveal()) ]);
