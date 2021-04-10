@@ -6,7 +6,12 @@ var ESLintPlugin = require('eslint-webpack-plugin')
 Encore
 
   .setOutputPath(__dirname + '/web/build')
+
   .setPublicPath('/build')
+
+  // Use this if you want to debug on a real device
+  // .setPublicPath('http://192.168.0.11:8080')
+  // .setManifestKeyPrefix('/build')
 
   .addEntry('admin-orders', './js/app/admin/orders.js')
   .addEntry('admin-restaurants', './js/app/admin/restaurants.js')
