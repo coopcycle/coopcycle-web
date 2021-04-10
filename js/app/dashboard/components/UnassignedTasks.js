@@ -17,8 +17,7 @@ class StandaloneTasks extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     if (nextProps.tasks === this.props.tasks
-      && nextProps.offset === this.props.offset
-      && nextProps.selectedTasksLength === this.props.selectedTasksLength) {
+      && nextProps.offset === this.props.offset) {
       return false
     }
 
