@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation, useTranslation } from 'react-i18next'
 import moment from 'moment'
-import { ContextMenuTrigger } from 'react-contextmenu'
+import { useContextMenu } from 'react-contexify'
 import _ from 'lodash'
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
@@ -144,6 +144,10 @@ class Task extends React.Component {
 
     const { color, task, selected, isVisible, date, assigned } = this.props
 
+    const { show } = useContextMenu({
+      id: 'dashboard',
+    })
+
     const classNames = [
       'list-group-item',
       'list-group-item--' + task.type.toLowerCase(),
@@ -173,17 +177,19 @@ class Task extends React.Component {
       'data-task-id': task['@id'],
       onDoubleClick: this.onDoubleClick,
       onClick: this.onClick,
-      onContextMenu: () => this.props.selectTask(task)
     }
 
-    // Don't return the task object directly, to avoid stripping the "id" prop
-    const collect = (props) => ({ task: props.task })
-
     return (
-      <ContextMenuTrigger renderTag="span" id="dashboard"
-        task={ task }
-        collect={ collect }
-        attributes={ contextMenuTriggerAttrs }>
+      <span
+        onContextMenu={ (e) => {
+          e.preventDefault()
+          this.props.selectTask(task)
+          show(e, {
+            props: { task }
+          })
+        }}
+        { ...contextMenuTriggerAttrs }
+      >
         <span className="list-group-item-color" style={{ backgroundColor: color }}></span>
         <span>
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
@@ -193,7 +199,7 @@ class Task extends React.Component {
           <TaskIconRight task={ task } assigned={ assigned } onRemove={ this.props.onRemove } />
           <TaskEta task={ task } date={ date } />
         </span>
-      </ContextMenuTrigger>
+      </span>
     )
 
   }

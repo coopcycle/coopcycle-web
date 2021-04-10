@@ -2,7 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
-import { ContextMenu, MenuItem, connectMenu } from 'react-contextmenu'
+import { Menu, Item, Separator } from 'react-contexify'
+
 import moment from 'moment'
 
 import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay } from '../redux/actions'
@@ -18,16 +19,14 @@ const MOVE_TO_NEXT_WORKING_DAY_MULTI = 'MOVE_TO_NEXT_WORKING_DAY_MULTI'
 
 import { selectUnassignedTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
+import 'react-contexify/dist/ReactContexify.css'
+
 function _unassign(tasksToUnassign, unassignTasks) {
   const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo)
   _.forEach(tasksByUsername, (tasks, username) => unassignTasks(username, tasks))
 }
 
-/**
- * The variable "trigger" contains the task that was right-clicked
- */
 const DynamicMenu = ({
-  id, trigger,
   unassignedTasks, selectedTasks, nextWorkingDay,
   unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
   t }) => {
@@ -40,85 +39,94 @@ const DynamicMenu = ({
 
   const actions = []
 
-  if (trigger) {
+  let selectedTask
 
-    const isAssigned = !_.find(unassignedTasks, unassignedTask => unassignedTask['@id'] === trigger.task['@id'])
-    if (isAssigned) {
-      actions.push(UNASSIGN_SINGLE)
-      if (selectedTasks.length === 1) {
+  if (selectedTasks.length > 0) {
+
+    const isMultiple = selectedTasks.length > 1
+
+    if (isMultiple) {
+
+      if (tasksToUnassign.length > 0) {
+        actions.push(UNASSIGN_MULTI)
+      }
+
+      if (containsOnlyUnassignedTasks) {
+        actions.push(CANCEL_MULTI)
+        actions.push(MOVE_TO_NEXT_DAY_MULTI)
+        actions.push(MOVE_TO_NEXT_WORKING_DAY_MULTI)
+      }
+
+    } else {
+
+      selectedTask = selectedTasks[0]
+
+      const isAssigned = !_.find(unassignedTasks, unassignedTask => unassignedTask['@id'] === selectedTask['@id'])
+
+      if (isAssigned) {
+        actions.push(UNASSIGN_SINGLE)
         actions.push(MOVE_TO_TOP)
         actions.push(MOVE_TO_BOTTOM)
       }
+
     }
-
-    if (selectedTasks.length > 0) {
-
-      const isTriggerSelected = _.find(selectedTasks, selectedTask => selectedTask['@id'] === trigger.task['@id'])
-
-      if (isTriggerSelected) {
-        if (tasksToUnassign.length > 0) {
-          actions.push(UNASSIGN_MULTI)
-        }
-        if (containsOnlyUnassignedTasks) {
-          actions.push(CANCEL_MULTI)
-          actions.push(MOVE_TO_NEXT_DAY_MULTI)
-          actions.push(MOVE_TO_NEXT_WORKING_DAY_MULTI)
-        }
-      }
-    }
-
   }
 
   return (
-    <ContextMenu id={ id }>
-      { actions.includes(UNASSIGN_SINGLE) && (
-        <MenuItem onClick={ () => _unassign([ trigger.task ], unassignTasks) }>
-          { t('ADMIN_DASHBOARD_UNASSIGN_TASK', { id: trigger.task.id }) }
-        </MenuItem>
-      )}
-      { actions.includes(MOVE_TO_TOP) && (
-        <MenuItem onClick={ () => moveToTop(trigger.task) }>
-          { t('ADMIN_DASHBOARD_MOVE_TO_TOP') }
-        </MenuItem>
-      )}
-      { actions.includes(MOVE_TO_BOTTOM) && (
-        <MenuItem onClick={ () => moveToBottom(trigger.task) }>
-          { t('ADMIN_DASHBOARD_MOVE_TO_BOTTOM') }
-        </MenuItem>
-      )}
+    <Menu id="dashboard">
+      <Item
+        hidden={ !(actions.includes(UNASSIGN_SINGLE) && selectedTask) }
+        onClick={ () => _unassign([ selectedTask ], unassignTasks) }
+      >
+        { selectedTask && t('ADMIN_DASHBOARD_UNASSIGN_TASK', { id: selectedTask.id }) }
+      </Item>
+      <Item
+        hidden={ !(actions.includes(MOVE_TO_TOP) && selectedTask) }
+        onClick={ () => moveToTop(selectedTask) }
+      >
+        { t('ADMIN_DASHBOARD_MOVE_TO_TOP') }
+      </Item>
+      <Item
+        hidden={ !(actions.includes(MOVE_TO_BOTTOM) && selectedTask) }
+        onClick={ () => moveToBottom(selectedTask) }
+      >
+        { t('ADMIN_DASHBOARD_MOVE_TO_BOTTOM') }
+      </Item>
       { actions.includes(UNASSIGN_MULTI) && (
-        <MenuItem divider />
+        <Separator />
       )}
-      { actions.includes(UNASSIGN_MULTI) && (
-        <MenuItem onClick={ () => _unassign(tasksToUnassign, unassignTasks) }>
-          { t('ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI', { count: tasksToUnassign.length }) }
-        </MenuItem>
-      )}
-      { actions.includes(CANCEL_MULTI) && (
-        <MenuItem onClick={ () => cancelTasks(selectedTasks) }>
-          { t('ADMIN_DASHBOARD_CANCEL_TASKS_MULTI', { count: selectedTasks.length }) }
-        </MenuItem>
-      )}
-      { actions.includes(MOVE_TO_NEXT_DAY_MULTI) && (
-        <MenuItem onClick={ () => moveTasksToNextDay(selectedTasks) }>
-          { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI', { count: selectedTasks.length }) }
-        </MenuItem>
-      )}
-      { actions.includes(MOVE_TO_NEXT_WORKING_DAY_MULTI) && (
-        <MenuItem onClick={ () => moveTasksToNextWorkingDay(selectedTasks) }>
-          { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI', { count: selectedTasks.length, nextWorkingDay: moment(nextWorkingDay).format('LL') }) }
-        </MenuItem>
-      )}
+      <Item
+        hidden={ !actions.includes(UNASSIGN_MULTI) }
+        onClick={ () => _unassign(tasksToUnassign, unassignTasks) }
+      >
+        { t('ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI', { count: tasksToUnassign.length }) }
+      </Item>
+      <Item
+        hidden={ !actions.includes(CANCEL_MULTI) }
+        onClick={ () => cancelTasks(selectedTasks) }
+      >
+        { t('ADMIN_DASHBOARD_CANCEL_TASKS_MULTI', { count: selectedTasks.length }) }
+      </Item>
+      <Item
+        hidden={ !actions.includes(MOVE_TO_NEXT_DAY_MULTI) }
+        onClick={ () => moveTasksToNextDay(selectedTasks) }
+      >
+        { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI', { count: selectedTasks.length }) }
+      </Item>
+      <Item
+        hidden={ !actions.includes(MOVE_TO_NEXT_WORKING_DAY_MULTI) }
+        onClick={ () => moveTasksToNextWorkingDay(selectedTasks) }
+      >
+        { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI', { count: selectedTasks.length, nextWorkingDay: moment(nextWorkingDay).format('LL') }) }
+      </Item>
       { actions.length === 0 && (
-        <MenuItem disabled>
+        <Item disabled>
           { t('ADMIN_DASHBOARD_NO_ACTION_AVAILABLE') }
-        </MenuItem>
+        </Item>
       )}
-    </ContextMenu>
+    </Menu>
   )
 }
-
-const Menu = connectMenu('dashboard')(DynamicMenu)
 
 function mapStateToProps(state) {
 
@@ -140,4 +148,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Menu))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(DynamicMenu))

@@ -124,7 +124,7 @@
     "react-beautiful-dnd": "^13.1.0",
     "react-chartjs-2": "^2.11.1",
     "react-color": "^2.19.3",
-    "react-contextmenu": "^2.14.0",
+    "react-contexify": "^5.0.0",
     "react-cropper": "^2.1.7",
     "react-dom": "^16.14.0",
     "react-dropzone": "^11.3.2",
