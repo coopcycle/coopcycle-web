@@ -101,9 +101,6 @@ export const polylineEnabled = (state = {}, action) => {
 }
 
 export const selectedTasks = (state = [], action) => {
-
-  let newState = state.slice(0)
-
   switch (action.type) {
   case TOGGLE_TASK:
 
@@ -114,9 +111,7 @@ export const selectedTasks = (state = [], action) => {
       return _.filter(state, task => task !== action.task)
     }
 
-    if (!action.multiple) {
-      newState = []
-    }
+    const newState = action.multiple ? state.slice(0) : []
     newState.push(action.task)
 
     return newState
