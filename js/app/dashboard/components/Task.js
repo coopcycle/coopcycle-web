@@ -167,7 +167,7 @@ class Task extends React.Component {
       classNames.push('task__highlighted')
     }
 
-    const contextMenuTriggerAttrs = {
+    const taskProps = {
       ...taskAttributes,
       style: {
         display: isVisible ? 'block' : 'none',
@@ -177,19 +177,18 @@ class Task extends React.Component {
       'data-task-id': task['@id'],
       onDoubleClick: this.onDoubleClick,
       onClick: this.onClick,
+      onContextMenu: (e) => {
+        e.preventDefault()
+
+        this.props.selectTask(task)
+        show(e, {
+          props: { task }
+        })
+      }
     }
 
     return (
-      <span
-        onContextMenu={ (e) => {
-          e.preventDefault()
-          this.props.selectTask(task)
-          show(e, {
-            props: { task }
-          })
-        }}
-        { ...contextMenuTriggerAttrs }
-      >
+      <span { ...taskProps }>
         <span className="list-group-item-color" style={{ backgroundColor: color }}></span>
         <span>
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
@@ -197,7 +196,10 @@ class Task extends React.Component {
           <TaskAttrs task={ task } />
           <TaskTags task={ task } />
           <TaskIconRight task={ task } assigned={ assigned } onRemove={ this.props.onRemove } />
-          <TaskEta task={ task } date={ date } />
+          <TaskEta
+            after={ task.after }
+            before={ task.before }
+            date={ date } />
         </span>
       </span>
     )

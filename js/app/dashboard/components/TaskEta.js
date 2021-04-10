@@ -13,6 +13,8 @@ setInterval(() => {
   listeners.forEach(listener => listener())
 }, 1000 * 60)
 
+const TODAY = moment().format('YYYY-MM-DD')
+
 class NowCursor extends React.Component {
 
   constructor(props) {
@@ -58,11 +60,21 @@ class TaskEta extends React.Component {
     }
   }
 
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.after === this.props.after && nextProps.before === this.props.before) {
+      return false
+    }
+
+    return true
+  }
+
   render() {
 
-    const { after, before } = this.props.task
-    const [ percentAfter, percentBefore ] = timeframeToPercentage([ after, before ], moment(this.props.date))
-    const isSameDay = moment(this.props.date).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')
+    const [ percentAfter, percentBefore ] = timeframeToPercentage(
+      [ this.props.after, this.props.before ],
+      moment(this.props.date)
+    )
+    const isSameDay = moment(this.props.date).format('YYYY-MM-DD') === TODAY
     const timeframeLeft = (percentAfter * 100)
     const timeframeWidth = ((percentBefore - percentAfter) * 100)
 

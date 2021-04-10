@@ -27,6 +27,7 @@ class TaskLists extends React.Component {
           }
         </h4>
         <Accordion
+          allowZeroExpanded
           id="accordion"
           className="dashboard__panel__scroll"
           style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
