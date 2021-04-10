@@ -11,7 +11,6 @@ export {
   selectUnassignedTasks,
   selectAllTasks,
   selectTasksWithColor,
-  selectTaskListItemsByUsername,
   makeSelectTaskListItemsByUsername,
 } from './selectors'
 
