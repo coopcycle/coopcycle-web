@@ -31,7 +31,7 @@ class TaskLists extends React.Component {
           className="dashboard__panel__scroll"
           style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
           {
-            _.map(taskLists, (taskList, index) => {
+            _.map(taskLists, (taskList) => {
 
               if (this.props.hiddenCouriers.includes(taskList.username)) {
                 return null
