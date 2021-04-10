@@ -1,8 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
-import { withTranslation } from 'react-i18next'
-import { Menu, Item, Separator } from 'react-contexify'
+import { useTranslation } from 'react-i18next'
+import { Menu, Item } from 'react-contexify'
 
 import moment from 'moment'
 
@@ -28,8 +28,10 @@ function _unassign(tasksToUnassign, unassignTasks) {
 
 const DynamicMenu = ({
   unassignedTasks, selectedTasks, nextWorkingDay,
-  unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
-  t }) => {
+  unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay
+}) => {
+
+  const { t } = useTranslation()
 
   const tasksToUnassign =
     _.filter(selectedTasks, selectedTask =>
@@ -92,9 +94,6 @@ const DynamicMenu = ({
       >
         { t('ADMIN_DASHBOARD_MOVE_TO_BOTTOM') }
       </Item>
-      { actions.includes(UNASSIGN_MULTI) && (
-        <Separator />
-      )}
       <Item
         hidden={ !actions.includes(UNASSIGN_MULTI) }
         onClick={ () => _unassign(tasksToUnassign, unassignTasks) }
@@ -148,4 +147,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(DynamicMenu))
+export default connect(mapStateToProps, mapDispatchToProps)(DynamicMenu)

@@ -109,6 +109,10 @@ const TaskIconRight = ({ task, assigned, onRemove }) => {
   return null
 }
 
+const { show } = useContextMenu({
+  id: 'dashboard',
+})
+
 class Task extends React.Component {
 
   constructor(props) {
@@ -143,10 +147,6 @@ class Task extends React.Component {
   render() {
 
     const { color, task, selected, isVisible, date, assigned } = this.props
-
-    const { show } = useContextMenu({
-      id: 'dashboard',
-    })
 
     const classNames = [
       'list-group-item',
