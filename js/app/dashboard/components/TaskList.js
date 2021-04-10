@@ -10,7 +10,7 @@ import Popconfirm from 'antd/lib/popconfirm'
 import Task from './Task'
 import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
-import { selectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
+import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
 
 moment.locale($('html').attr('lang'))
 
@@ -208,23 +208,30 @@ class TaskList extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
+const makeMapStateToProps = () => {
 
-  const items = selectTaskListItemsByUsername(state, ownProps.username)
+  const selectTaskListItemsByUsername = makeSelectTaskListItemsByUsername()
 
-  const visibleTaskIds = _.intersectionWith(
-    selectVisibleTaskIds(state),
-    items.map(task => task['@id'])
-  )
+  const mapStateToProps = (state, ownProps) => {
 
-  return {
-    polylineEnabled: state.polylineEnabled[ownProps.username],
-    tasks: items,
-    isEmpty: items.length === 0 || visibleTaskIds.length === 0,
-    distance: ownProps.distance,
-    duration: ownProps.duration,
-    filters: state.settings.filters,
+    const items = selectTaskListItemsByUsername(state, ownProps)
+
+    const visibleTaskIds = _.intersectionWith(
+      selectVisibleTaskIds(state),
+      items.map(task => task['@id'])
+    )
+
+    return {
+      polylineEnabled: state.polylineEnabled[ownProps.username],
+      tasks: items,
+      isEmpty: items.length === 0 || visibleTaskIds.length === 0,
+      distance: ownProps.distance,
+      duration: ownProps.duration,
+      filters: state.settings.filters,
+    }
   }
+
+  return mapStateToProps
 }
 
 function mapDispatchToProps(dispatch) {
@@ -235,4 +242,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(TaskList))
+export default connect(makeMapStateToProps, mapDispatchToProps)(withTranslation()(TaskList))

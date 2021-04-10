@@ -12,6 +12,7 @@ export {
   selectAllTasks,
   selectTasksWithColor,
   selectTaskListItemsByUsername,
+  makeSelectTaskListItemsByUsername,
 } from './selectors'
 
 export * from './actions'

@@ -50,17 +50,25 @@ export const selectTasksWithColor = createSelector(
   allTasks => mapToColor(allTasks)
 )
 
-export const selectTaskListItemsByUsername = createSelector(
-  taskSelectors.selectEntities, // FIXME This is recalculated all the time
-  (state, username) => taskListSelectors.selectById(state, username),
-  (tasks, taskList) => {
+const selectTaskListByUsername = (state, props) =>
+  taskListSelectors.selectById(state, props.username)
 
-    if (!taskList) {
-      return []
+// https://github.com/reduxjs/reselect#connecting-a-selector-to-the-redux-store
+// https://redux.js.org/recipes/computing-derived-data
+export const makeSelectTaskListItemsByUsername = () => {
+
+  return createSelector(
+    taskSelectors.selectEntities, // FIXME This is recalculated all the time
+    selectTaskListByUsername,
+    (tasks, taskList) => {
+
+      if (!taskList) {
+        return []
+      }
+
+      return taskList.itemIds
+        .filter(id => Object.prototype.hasOwnProperty.call(tasks, id)) // a task with this id may be not loaded yet
+        .map(id => tasks[id])
     }
-
-    return taskList.itemIds
-      .filter(id => Object.prototype.hasOwnProperty.call(tasks, id)) // a task with this id may be not loaded yet
-      .map(id => tasks[id])
-  }
-)
+  )
+}
