@@ -7,11 +7,12 @@ import {
 } from '@reduxjs/toolkit'
 
 import { moment } from '../../coopcycle-frontend-js'
-import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter } from '../../coopcycle-frontend-js/logistics/redux'
+import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter, taskAdapter } from '../../coopcycle-frontend-js/logistics/redux'
 import { filter, forEach, find, reduce, map, differenceWith, includes } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
 
 const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
+const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
 
 export const recurrenceRulesAdapter = createEntityAdapter({
   selectId: (o) => o['@id'],
@@ -126,13 +127,21 @@ export const selectPolylines = createSelector(
 )
 
 export const selectAsTheCrowFlies = createSelector(
+  taskSelectors.selectEntities,
   selectTaskLists,
-  (taskLists) => {
+  (tasksById, taskLists) => {
     let asTheCrowFlies = {}
     forEach(taskLists, taskList => {
       asTheCrowFlies[taskList.username] =
-        map(taskList.items, item => ([ item.address.geo.latitude, item.address.geo.longitude ]))
+        map(taskList.itemIds, itemId => {
+          const item = tasksById[itemId]
+          return [
+            item.address.geo.latitude,
+            item.address.geo.longitude
+          ]
+        })
     })
+
     return asTheCrowFlies
   }
 )

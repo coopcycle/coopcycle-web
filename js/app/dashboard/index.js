@@ -127,7 +127,7 @@ function start() {
       document.querySelector('.dashboard__loader').remove()
 
       // Make sure map is rendered correctly with Split.js
-      mapRef.current.invalidateSize()
+      // mapRef.current.invalidateSize()
     }
   )
 

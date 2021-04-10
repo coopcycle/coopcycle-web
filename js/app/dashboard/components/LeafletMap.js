@@ -3,150 +3,115 @@ import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
+
 import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction } from '../redux/actions'
-import { selectVisibleTaskIds, selectHiddenTaskIds, selectPolylines, selectAsTheCrowFlies, selectPositions } from '../redux/selectors'
 import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
+import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle } from './MapLayers'
 
-class LeafletMap extends Component {
+const MapContext = React.createContext([ null, () => {} ])
 
-  _draw() {
-    const {
-      tasks,
-      visibleTaskIds,
-      hiddenTaskIds,
-      polylines,
-      asTheCrowFlies,
-      clustersEnabled,
-    } = this.props
+const MapProvider = (props) => {
 
-    const visibleTasks = _.intersectionWith(tasks, visibleTaskIds, (task, id) => task['@id'] === id)
-    const hiddenTasks  = _.intersectionWith(tasks, hiddenTaskIds,  (task, id) => task['@id'] === id)
+  const [ map, setMap ] = React.useState(null);
 
-    visibleTasks.forEach(task => this.proxy.addTask(task))
-    hiddenTasks.forEach(task => this.proxy.hideTask(task))
+  const fromTask = React.useRef(null);
+  const toTask   = React.useRef(null);
 
-    _.forEach(polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
-    _.forEach(asTheCrowFlies, (polyline, username) => this.proxy.setPolylineAsTheCrowFlies(username, polyline))
+  React.useEffect(() => {
 
-    if (clustersEnabled) {
-      this.proxy.showClusters()
-    } else {
-      this.proxy.hideClusters()
-    }
-  }
-
-  componentDidMount() {
-
-    this.map = MapHelper.init('map', {
-      onLoad: this.props.onLoad
+    const LMap = MapHelper.init('map', {
+      onLoad: props.onLoad
     })
-    this.proxy = new MapProxy(this.map, {
-      onEditClick: this.props.setCurrentTask,
+
+    const proxy = new MapProxy(LMap, {
+      onEditClick: props.setCurrentTask,
       onTaskMouseDown: task => {
         if (task.isAssigned) {
-          this.proxy.disableDragging()
-          this.fromTask = task
+          proxy.disableDragging()
+          fromTask.current = task
         }
       },
       onTaskMouseOver: task => {
         if (task.isAssigned) {
-          this.proxy.enableConnect(task)
+          proxy.enableConnect(task)
         }
-        if (this.fromTask && task !== this.fromTask && !task.isAssigned) {
-          this.toTask = task
-          this.proxy.enableConnect(task, true)
+        if (fromTask.current && task !== fromTask.current && !task.isAssigned) {
+          toTask.current = task
+          proxy.enableConnect(task, true)
         }
       },
       onTaskMouseOut: (task) => {
-        this.toTask = null
-        this.proxy.disableConnect(task)
+        toTask.current = null
+        proxy.disableConnect(task)
       },
       onMouseMove: (e) => {
-        if (this.fromTask) {
-          const targetLatLng = !!this.toTask ? this.proxy.toLatLng(this.toTask) : e.latlng
-          this.proxy.setDrawPolyline(this.proxy.toLatLng(this.fromTask), targetLatLng, !!this.toTask)
-          this.proxy.enableConnect(this.fromTask, !!this.toTask)
+        if (fromTask.current) {
+          const targetLatLng = !!toTask.current ? proxy.toLatLng(toTask.current) : e.latlng
+          proxy.setDrawPolyline(proxy.toLatLng(fromTask.current), targetLatLng, !!toTask.current)
+          proxy.enableConnect(fromTask.current, !!toTask.current)
         }
       },
       onMouseUp: () => {
 
-        if (!!this.fromTask && !!this.toTask) {
-          this.props.assignAfter(this.fromTask.assignedTo, this.toTask, this.fromTask)
+        if (!!fromTask.current && !!toTask.current) {
+          props.assignAfter(fromTask.current.assignedTo, toTask.current, fromTask.current)
         }
 
-        if (!!this.fromTask) {
-          this.proxy.disableConnect(this.fromTask)
+        if (!!fromTask.current) {
+          proxy.disableConnect(fromTask.current)
         }
-        if (!!this.toTask) {
-          this.proxy.disableConnect(this.toTask)
+        if (!!toTask.current) {
+          proxy.disableConnect(toTask.current)
         }
 
-        this.fromTask = null
-        this.toTask = null
+        fromTask.current = null
+        toTask.current = null
 
-        this.proxy.clearDrawPolyline()
-        this.proxy.enableDragging()
+        proxy.clearDrawPolyline()
+        proxy.enableDragging()
       },
       onMarkersSelected: markers => {
         const tasks = []
         markers.forEach(marker => {
-          const task = _.find(this.props.tasks, t => t['@id'] === marker.options.task)
+          const task = _.find(props.tasks, t => t['@id'] === marker.options.task)
           if (task) {
             tasks.push(task)
           }
         })
-        this.props.selectTasks(tasks)
+        props.selectTasks(tasks)
       }
     })
 
-    this._draw()
+    setMap(proxy)
 
-    this.props.positions.forEach(position => {
-      const { username, coords, lastSeen, offline } = position
-      this.proxy.setGeolocation(username, coords, lastSeen, offline)
-    })
-  }
+  }, [])
 
-  componentDidUpdate(prevProps) {
+  return (
+    <MapContext.Provider value={ map }>
+      <div id="map"></div>
+      { map && props.children }
+    </MapContext.Provider>
+  )
+}
 
-    const {
-      polylineEnabled,
-      polylines,
-      selectedTasks,
-      positions,
-      polylineStyle,
-    } = this.props
+export const useMap = () => React.useContext(MapContext)
 
-    this._draw()
-
-    selectedTasks.forEach(task => this.proxy.addTask(task, '#EEB516'))
-
-    _.forEach(polylineEnabled, (enabled, username) => {
-      if (enabled) {
-        if (polylineStyle === 'as_the_crow_flies') {
-          this.proxy.hidePolyline(username)
-          this.proxy.showPolylineAsTheCrowFlies(username, polylines[username])
-        } else {
-          this.proxy.hidePolylineAsTheCrowFlies(username)
-          this.proxy.showPolyline(username, polylines[username])
-        }
-      } else {
-        this.proxy.hidePolylineAsTheCrowFlies(username)
-        this.proxy.hidePolyline(username)
-      }
-    })
-
-    if (prevProps.positions !== positions) {
-      positions.forEach(position => {
-        const { username, coords, lastSeen, offline } = position
-        this.proxy.setGeolocation(username, coords, lastSeen, offline)
-      })
-    }
-  }
+class LeafletMap extends Component {
 
   render() {
+
     return (
-      <div id="map"></div>
+      <MapProvider
+        onLoad={ this.props.onLoad }
+        tasks={ this.props.tasks }
+        setCurrentTask={ this.props.setCurrentTask }
+        assignAfter={ this.props.assignAfter }
+        selectTasks={ this.props.selectTasks }>
+        <CourierMapLayer />
+        <TaskMapLayer />
+        <PolylineMapLayer />
+        <ClustersMapToggle />
+      </MapProvider>
     )
   }
 }
@@ -155,15 +120,6 @@ function mapStateToProps(state) {
 
   return {
     tasks: selectAllTasks(state),
-    visibleTaskIds: selectVisibleTaskIds(state),
-    hiddenTaskIds: selectHiddenTaskIds(state),
-    polylines: selectPolylines(state),
-    polylineEnabled: state.polylineEnabled,
-    selectedTasks: state.selectedTasks,
-    positions: selectPositions(state),
-    polylineStyle: state.settings.polylineStyle,
-    asTheCrowFlies: selectAsTheCrowFlies(state),
-    clustersEnabled: state.settings.clustersEnabled,
   }
 }
 
