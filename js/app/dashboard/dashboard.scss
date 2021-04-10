@@ -94,21 +94,8 @@ html, body {
       }
     }
 
-    &.dashboard__panel--assignees {
-      flex: 2;
-    }
-
     &__scroll {
       overflow: scroll;
-    }
-
-    &__heading:hover {
-      background-color: darken($gray, 15%);
-      cursor: pointer;
-    }
-
-    &__heading__link:hover {
-      text-decoration: none;
     }
 
     &__search {
@@ -185,6 +172,21 @@ html, body {
       max-height: 100%;
     }
   }
+
+  .accordion__button {
+    padding: 1em 0.5em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: darken(#f5f5f5, 10%);
+    border-bottom: 1px solid darken(#f5f5f5, 20%);
+    > span {
+      font-size: 16px;
+    }
+    &:hover {
+      background-color: darken(#f5f5f5, 15%);
+    }
+  }
 }
 
 .list-group-item {
@@ -228,22 +230,6 @@ html, body {
     background-color: lighten(#F39C12, 30%);
     border: 3px dashed #F1C40F;
     min-height: ($line-height-computed * 2) + (6 * 2);
-  }
-}
-
-.taskList__panel-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  &__unassign {
-    padding-left: 4px;
-  }
-  .dashboard__panel__heading__link {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-right: 15px;
   }
 }
 
@@ -316,28 +302,6 @@ html, body {
 .dashboard__task-modal__complete-form {
   background-color: #fefedd;
   padding: 20px;
-}
-
-.taskList__summary {
-  position: relative;
-  &-polyline {
-    $enabled-color: #CCC;
-    $disabled-color: #333;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 15px;
-    color: $enabled-color;
-    &:hover {
-      color: lighten($enabled-color, 15%);
-    }
-    &--enabled {
-      color: $disabled-color;
-      &:hover {
-        color: lighten($disabled-color, 15%);
-      }
-    }
-  }
 }
 
 .ReactModal__Content--task-form,

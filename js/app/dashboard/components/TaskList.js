@@ -6,6 +6,13 @@ import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import { Progress, Tooltip } from 'antd'
 import Popconfirm from 'antd/lib/popconfirm'
+import {
+  AccordionItem,
+  AccordionItemHeading,
+  AccordionItemButton,
+  AccordionItemPanel,
+} from 'react-accessible-accordion'
+import classNames from 'classnames'
 
 import Task from './Task'
 import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
@@ -62,30 +69,6 @@ const ProgressBar = React.memo(({ completedTasks, tasks }) => {
 
 class TaskList extends React.Component {
 
-  constructor (props) {
-    super(props)
-    this.state = {
-      collapsed: props.collapsed
-    }
-  }
-
-  componentDidMount() {
-
-    const { username, collapsed } = this.props
-
-    $('#collapse-' + username).on('shown.bs.collapse', () => {
-      this.setState({ collapsed: false })
-    })
-
-    $('#collapse-' + username).on('hidden.bs.collapse', () => {
-      this.setState({ collapsed: true })
-    })
-
-    if (!collapsed) {
-      $('#collapse-' + username).collapse('show')
-    }
-  }
-
   remove(task) {
     this.props.unassignTasks(this.props.username, task)
   }
@@ -101,8 +84,6 @@ class TaskList extends React.Component {
 
     let { tasks } = this.props
 
-    const { collapsed } = this.state
-
     tasks = _.orderBy(tasks, ['position', 'id'])
 
     const uncompletedTasks = _.filter(tasks, t => t.status === 'TODO')
@@ -113,61 +94,26 @@ class TaskList extends React.Component {
       .add(duration, 'seconds')
       .format('HH:mm')
 
-    const distanceFormatted = (distance / 1000).toFixed(2) + ' Km',
-      collabsableId = ['collapse', username].join('-')
-
-    const polylineClassNames = ['pull-right', 'taskList__summary-polyline']
-    if (polylineEnabled) {
-      polylineClassNames.push('taskList__summary-polyline--enabled')
-    }
+    const distanceFormatted = (distance / 1000).toFixed(2) + ' Km'
 
     const avatarURL = window.Routing.generate('user_avatar', { username })
 
-    const taskListClasslist = ['taskList__tasks', 'list-group', 'nomargin']
-    if (isEmpty) {
-      taskListClasslist.push('taskList__tasks--empty')
-    }
-
     return (
-      <div className="panel panel-default nomargin noradius noborder">
-        <div className="panel-heading dashboard__panel__heading">
-          <div className="panel-title taskList__panel-title">
-            <a
-              className="dashboard__panel__heading__link"
-              role="button"
-              data-toggle="collapse"
-              data-target={ '#' + collabsableId }
-              aria-expanded={ collapsed ? 'false' : 'true' }
-            >
-              <span>
-                <img src={ avatarURL } width="24" height="24" />
-                <small className="text-monospace ml-2">
-                  <strong className="mr-2">{ username }</strong>
-                  <span className="text-muted">{ `(${tasks.length})` }</span>
-                </small>
-              </span>
-              { tasks.length > 0 && (
-              <div style={{ width: '33.3333%' }}>
-                <ProgressBar completedTasks={ completedTasks.length } tasks={ tasks.length } />
-              </div>
-              ) }
-            </a>
-            <a href="#"
-              className="mr-2"
-              title="Optimize"
-              style={{
-                color: '#f1c40f',
-                visibility: tasks.length > 1 ? 'visible' : 'hidden'
-              }}
-              onClick={ e => {
-                e.preventDefault()
-                this.props.optimizeTaskList({
-                  '@id': this.props.uri,
-                  username: this.props.username,
-                })
-              }}>
-              <i className="fa fa-bolt"></i>
-            </a>
+      <AccordionItem>
+        <AccordionItemHeading>
+          <AccordionItemButton>
+            <span>
+              <img src={ avatarURL } width="24" height="24" />
+              <small className="text-monospace ml-2">
+                <strong className="mr-2">{ username }</strong>
+                <span className="text-muted">{ `(${tasks.length})` }</span>
+              </small>
+            </span>
+            { tasks.length > 0 && (
+            <div style={{ width: '33.3333%' }}>
+              <ProgressBar completedTasks={ completedTasks.length } tasks={ tasks.length } />
+            </div>
+            ) }
             <Popconfirm
               placement="left"
               title={ this.props.t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
@@ -175,26 +121,65 @@ class TaskList extends React.Component {
               okText={ this.props.t('CROPPIE_CONFIRM') }
               cancelText={ this.props.t('ADMIN_DASHBOARD_CANCEL') }>
               <a href="#"
-                className="taskList__panel-title__unassign"
+                className="p-2"
                 style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
                 onClick={ e => e.preventDefault() }>
-                <i className="fa fa-close"></i>
+                <i className="fa fa-lg fa-close"></i>
               </a>
             </Popconfirm>
-          </div>
-        </div>
-        <div role="tabpanel" id={ collabsableId } className="collapse">
+          </AccordionItemButton>
+        </AccordionItemHeading>
+        <AccordionItemPanel>
           { tasks.length > 0 && (
-            <div className="panel-body taskList__summary">
-              <strong>{ this.props.t('ADMIN_DASHBOARD_DURATION') }</strong>  <span>{ durationFormatted }</span> - <strong>{ this.props.t('ADMIN_DASHBOARD_DISTANCE') }</strong>  <span>{ distanceFormatted }</span>
-              <a role="button" className={ polylineClassNames.join(' ') } onClick={ () => this.props.togglePolyline(username) }>
-                <i className="fa fa-map fa-2x"></i>
-              </a>
+            <div className="d-flex justify-content-between align-items-center p-4">
+              <div>
+                <strong className="mr-2">{ this.props.t('ADMIN_DASHBOARD_DURATION') }</strong>
+                <span>{ durationFormatted }</span>
+                <span className="mx-2">—</span>
+                <strong className="mr-2">{ this.props.t('ADMIN_DASHBOARD_DISTANCE') }</strong>
+                <span>{ distanceFormatted }</span>
+              </div>
+              <div>
+                <a href="#"
+                  title="Optimize"
+                  style={{
+                    color: '#f1c40f',
+                    visibility: tasks.length > 1 ? 'visible' : 'hidden'
+                  }}
+                  onClick={ e => {
+                    e.preventDefault()
+                    this.props.optimizeTaskList({
+                      '@id': this.props.uri,
+                      username: this.props.username,
+                    })
+                  }}
+                >
+                  <i className="fa fa-2x fa-bolt"></i>
+                </a>
+                <a role="button"
+                  className={ classNames({
+                    'ml-3': true,
+                    'invisible': tasks.length < 1,
+                    'text-muted': !polylineEnabled
+                  }) }
+                  onClick={ () => this.props.togglePolyline(username) }
+                >
+                  <i className="fa fa-map fa-2x"></i>
+                </a>
+              </div>
             </div>
           )}
           <Droppable droppableId={ `assigned:${username}` }>
             {(provided) => (
-              <div className={ taskListClasslist.join(' ') } ref={ provided.innerRef } { ...provided.droppableProps }>
+              <div ref={ provided.innerRef }
+                className={ classNames({
+                  'taskList__tasks': true,
+                  'list-group': true,
+                  'm-0': true,
+                  'taskList__tasks--empty': isEmpty
+                }) }
+                { ...provided.droppableProps }
+              >
                 <InnerList
                   tasks={ tasks }
                   onRemove={ task => this.remove(task) } />
@@ -202,8 +187,8 @@ class TaskList extends React.Component {
               </div>
             )}
           </Droppable>
-        </div>
-      </div>
+        </AccordionItemPanel>
+      </AccordionItem>
     )
   }
 }

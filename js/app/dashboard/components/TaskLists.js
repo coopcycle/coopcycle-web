@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
+import { Accordion } from 'react-accessible-accordion'
 
 import { openAddUserModal } from '../redux/actions'
 import TaskList from './TaskList'
@@ -9,13 +10,6 @@ import TaskList from './TaskList'
 import { selectTaskLists } from '../redux/selectors'
 
 class TaskLists extends React.Component {
-
-  componentDidMount() {
-    // Hide other collapsibles when a collapsible is going to be shown
-    $('#accordion').on('show.bs.collapse', '.collapse', () => {
-      $('#accordion').find('.collapse.in').collapse('hide')
-    })
-  }
 
   render() {
 
@@ -32,7 +26,7 @@ class TaskLists extends React.Component {
             </a>)
           }
         </h4>
-        <div
+        <Accordion
           id="accordion"
           className="dashboard__panel__scroll"
           style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
@@ -43,12 +37,9 @@ class TaskLists extends React.Component {
                 return null
               }
 
-              let collapsed = !(index === 0)
-
               return (
                 <TaskList
                   key={ taskList['@id'] }
-                  collapsed={ collapsed }
                   username={ taskList.username }
                   distance={ taskList.distance }
                   duration={ taskList.duration }
@@ -56,7 +47,7 @@ class TaskLists extends React.Component {
               )
             })
           }
-        </div>
+        </Accordion>
       </div>
     )
   }

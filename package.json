@@ -120,6 +120,7 @@
     "prop-types": "^15.7.2",
     "qs": "^6.10.1",
     "react": "^16.14.0",
+    "react-accessible-accordion": "^3.3.4",
     "react-autosuggest": "^10.1.0",
     "react-beautiful-dnd": "^13.1.0",
     "react-chartjs-2": "^2.11.1",
