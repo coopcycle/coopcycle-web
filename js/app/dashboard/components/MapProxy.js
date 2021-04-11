@@ -260,6 +260,11 @@ export default class MapProxy {
     let marker = this.pickupGroupMarkers.get(group.restaurant['@id'])
     let popupComponent = this.pickupGroupPopups.get(group.restaurant['@id'])
 
+    // FIXME
+    // There is a race condition here,
+    // because addGroup() can be called repeatedly with the same group
+    // As the popup is added to pickupGroupPopups asynchronously,
+    // it may be not ready yet when called again
     if (!marker) {
 
       const latLng = L.latLng(
@@ -268,23 +273,29 @@ export default class MapProxy {
       )
 
       marker = L.marker(latLng, {
-        // TODO Use divIcon to add border & count to icon
-        // icon: L.divIcon({
-        //   html: `<img src="${image}" class="img-circle" width="24" height="24" />`,
-        //   iconSize: L.point(24, 24),
-        // })
-        icon: L.icon({
-          iconUrl: group.restaurant.image,
-          iconSize: [ 28, 28 ],
-          className: 'img-circle'
+        icon: L.divIcon({
+          // Make sure to remove the default CSS class "leaflet-div-icon"
+          className: '',
+          html:
+            `<div style="width: 32px; height: 32px; border: 2px solid #333; border-radius: 50%;">
+              <img src="${group.restaurant.image}" class="img-circle" width="28" height="28" />
+            </div>`,
+          iconSize: L.point(32, 32),
         })
+        // Alternative method with L.icon
+        // icon: L.icon({
+        //   iconUrl: group.restaurant.image,
+        //   iconSize: [ 28, 28 ],
+        //   className: 'img-circle'
+        // })
       })
+
+      this.pickupGroupMarkers.set(group.restaurant['@id'], marker)
 
       const el = document.createElement('div')
       popupComponent = React.createRef()
 
       const cb = () => {
-        this.pickupGroupMarkers.set(group.restaurant['@id'], marker)
         this.pickupGroupPopups.set(group.restaurant['@id'], popupComponent)
       }
 
@@ -295,7 +306,7 @@ export default class MapProxy {
         onEditClick={ this.onEditClick } />, el, cb)
 
       const popup = L.popup({
-        offset: [ 0, -10 ]
+        offset: [ 0, -15 ]
       })
         .setContent(el)
 
@@ -304,8 +315,9 @@ export default class MapProxy {
       marker.addTo(this.map)
 
     } else {
+      // TODO Queue properly calls to addGroup()
       // TODO Manage selected state (add border)
-      popupComponent.current.updateTasks(group.tasks)
+      popupComponent && popupComponent.current.updateTasks(group.tasks)
     }
   }
 
