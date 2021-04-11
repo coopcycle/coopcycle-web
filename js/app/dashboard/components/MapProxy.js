@@ -6,6 +6,7 @@ import 'leaflet-area-select'
 import React from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
+import { Badge } from 'antd'
 
 import MapHelper from '../../MapHelper'
 import LeafletPopupContent from './LeafletPopupContent'
@@ -116,6 +117,30 @@ class GroupPopupContent extends React.Component {
   }
 }
 
+class RestaurantIcon extends React.Component {
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      count: this.props.count
+    }
+  }
+
+  updateCount(count) {
+    this.setState({ count })
+  }
+
+  render () {
+    return (
+      <Badge count={ this.state.count } size="small" offset={[ -4, 4 ]}>
+        <div style={{ width: '32px', height: '32px', border: '2px solid #333', borderRadius: '50%' }}>
+          <img src={ this.props.image } className="img-circle" width="28" height="28" />
+        </div>
+      </Badge>
+    )
+  }
+}
+
 export default class MapProxy {
 
   constructor(map, options) {
@@ -129,6 +154,7 @@ export default class MapProxy {
 
     this.pickupGroupMarkers = new Map()
     this.pickupGroupPopups = new Map()
+    this.pickupGroupIcons = new Map()
 
     this.courierMarkers = new Map()
     this.courierPopups = new Map()
@@ -259,6 +285,7 @@ export default class MapProxy {
 
     let marker = this.pickupGroupMarkers.get(group.restaurant['@id'])
     let popupComponent = this.pickupGroupPopups.get(group.restaurant['@id'])
+    let iconComponent = this.pickupGroupIcons.get(group.restaurant['@id'])
 
     // FIXME
     // There is a race condition here,
@@ -272,22 +299,25 @@ export default class MapProxy {
         group.tasks[0].address.geo.longitude
       )
 
+      const iconEl = document.createElement('div')
+      iconComponent = React.createRef()
+
+      const onIconRendered = () => {
+        this.pickupGroupIcons.set(group.restaurant['@id'], iconComponent)
+      }
+
+      render(<RestaurantIcon
+        ref={ iconComponent }
+        image={ group.restaurant.image }
+        count={ group.tasks.length } />, iconEl, onIconRendered)
+
       marker = L.marker(latLng, {
         icon: L.divIcon({
           // Make sure to remove the default CSS class "leaflet-div-icon"
           className: '',
-          html:
-            `<div style="width: 32px; height: 32px; border: 2px solid #333; border-radius: 50%;">
-              <img src="${group.restaurant.image}" class="img-circle" width="28" height="28" />
-            </div>`,
+          html: iconEl,
           iconSize: L.point(32, 32),
         })
-        // Alternative method with L.icon
-        // icon: L.icon({
-        //   iconUrl: group.restaurant.image,
-        //   iconSize: [ 28, 28 ],
-        //   className: 'img-circle'
-        // })
       })
 
       this.pickupGroupMarkers.set(group.restaurant['@id'], marker)
@@ -295,7 +325,7 @@ export default class MapProxy {
       const el = document.createElement('div')
       popupComponent = React.createRef()
 
-      const cb = () => {
+      const onPopupRendered = () => {
         this.pickupGroupPopups.set(group.restaurant['@id'], popupComponent)
       }
 
@@ -303,7 +333,7 @@ export default class MapProxy {
         ref={ popupComponent }
         restaurant={ group.restaurant }
         tasks={ group.tasks }
-        onEditClick={ this.onEditClick } />, el, cb)
+        onEditClick={ this.onEditClick } />, el, onPopupRendered)
 
       const popup = L.popup({
         offset: [ 0, -15 ]
@@ -318,6 +348,7 @@ export default class MapProxy {
       // TODO Queue properly calls to addGroup()
       // TODO Manage selected state (add border)
       popupComponent && popupComponent.current.updateTasks(group.tasks)
+      iconComponent && iconComponent.current.updateCount(group.tasks.length)
     }
   }
 
