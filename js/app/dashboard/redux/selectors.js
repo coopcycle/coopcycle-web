@@ -128,21 +128,21 @@ export const selectPolylines = createSelector(
 
 export const selectAsTheCrowFlies = createSelector(
   taskSelectors.selectEntities,
-  selectTaskLists,
-  (tasksById, taskLists) => {
-    let asTheCrowFlies = {}
-    forEach(taskLists, taskList => {
-      asTheCrowFlies[taskList.username] =
-        map(taskList.itemIds, itemId => {
-          const item = tasksById[itemId]
-          return [
-            item.address.geo.latitude,
-            item.address.geo.longitude
-          ]
-        })
-    })
+  taskListSelectors.selectEntities,
+  (tasksById, taskListsByUsername) => {
 
-    return asTheCrowFlies
+    return mapValues(taskListsByUsername, taskList => {
+      const polyline = map(taskList.itemIds, itemId => {
+        const item = tasksById[itemId]
+
+        return item ? [
+          item.address.geo.latitude,
+          item.address.geo.longitude
+        ] : []
+      })
+
+      return filter(polyline, (coords) => coords.length === 2)
+    })
   }
 )
 
