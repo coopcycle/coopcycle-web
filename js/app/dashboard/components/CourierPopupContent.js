@@ -37,7 +37,7 @@ export default class extends Component {
 
     return (
       <div className="text-center">
-        <span>{ username }</span>
+        <strong>{ username }</strong>
         <br />
         <TimeAgo date={ lastSeen.toDate() } formatter={ formatter } />
       </div>

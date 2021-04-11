@@ -371,10 +371,19 @@ export default class MapProxy {
         username={ username }
         lastSeen={ lastSeen } />, popupContent, cb)
 
-      marker.bindPopup(popupContent, {
-        offset: [ 3, 70 ],
-        minWidth: 150,
-      })
+      const tooltip = L.tooltip({
+        offset: [ 0, -15 ],
+        direction: 'top'
+      }).setContent(popupContent)
+
+      marker.bindTooltip(tooltip)
+      marker
+        .on('tooltipopen', () => {
+          this.showPolyline(username, 'as_the_crow_flies')
+        })
+        .on('tooltipclose', () => {
+          this.hidePolyline(username)
+        })
 
       marker.setOpacity(offline ? 0.5 : 1)
 
