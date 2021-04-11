@@ -11,7 +11,7 @@ import {
   createTaskListSuccess,
   createTaskListFailure,
 } from '../../coopcycle-frontend-js/logistics/redux'
-import { selectNextWorkingDay } from './selectors'
+import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
 
 function createClient(dispatch) {
 
@@ -1018,8 +1018,7 @@ export function handleDragStart(result) {
 
     // If the user is starting to drag something that is not selected then we need to clear the selection.
     // https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/patterns/multi-drag.md#dragging
-    const isDraggableSelected =
-      !!_.find(selectedTasks, t => t['@id'] === result.draggableId)
+    const isDraggableSelected = selectedTasks.includes(result.draggableId)
 
     if (!isDraggableSelected) {
       dispatch(clearSelectedTasks())
@@ -1062,7 +1061,7 @@ export function handleDragEnd(result) {
 
     const allTasks = selectAllTasks(getState())
     const taskLists = selectTaskLists(getState())
-    const selectedTasks = getState().selectedTasks
+    const selectedTasks = selectSelectedTasks(getState())
 
     const username = destination.droppableId.replace('assigned:', '')
     const taskList = _.find(taskLists, tl => tl.username === username)
