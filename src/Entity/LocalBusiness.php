@@ -148,7 +148,7 @@ class LocalBusiness extends BaseLocalBusiness implements
      *
      * @Assert\Type(type="string")
      * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"restaurant", "order", "restaurant_seo"})
+     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple"})
      */
     protected $name;
 
@@ -187,7 +187,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @var Address
      *
-     * @Groups({"restaurant", "order", "restaurant_seo"})
+     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple"})
      */
     protected $address;
 

@@ -7,7 +7,8 @@ const initialState = {
   uploaderEndpoint: '',
   exampleSpreadsheetUrl: '#',
   couriersList: [],
-  nav: ''
+  nav: '',
+  restaurants: [],
 }
 
 export default (state = initialState) => state

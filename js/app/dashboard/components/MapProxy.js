@@ -5,6 +5,8 @@ import 'leaflet.markercluster'
 import 'leaflet-area-select'
 import React from 'react'
 import { render } from 'react-dom'
+import moment from 'moment'
+
 import MapHelper from '../../MapHelper'
 import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
@@ -15,7 +17,11 @@ const tagsColor = tags => {
   return tag.color
 }
 
-const taskColor = task => {
+const taskColor = (task, selected) => {
+
+  if (selected) {
+    return '#EEB516'
+  }
 
   if (task.group && task.group.tags.length > 0) {
     return tagsColor(task.group.tags)
@@ -69,6 +75,47 @@ const createIcon = username => {
   })
 }
 
+class GroupPopupContent extends React.Component {
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      tasks: this.props.tasks
+    }
+  }
+
+  updateTasks(tasks) {
+    this.setState({ tasks })
+  }
+
+  render() {
+
+    return (
+      <div>
+        <div className="mb-2">
+          <strong>{ this.props.restaurant.name }</strong>
+        </div>
+        <ul className="list-unstyled">
+        { this.state.tasks.map(task =>
+          <li key={ task['@id'] } className="py-1">
+            <a href="#" onClick={ (e) => {
+              e.preventDefault()
+              this.props.onEditClick(task)
+            }}
+            >
+              <strong className="mr-2">{ `#${task.id}` }</strong>
+              <span className="text-muted">
+                { `${moment(task.after).format('LT')} — ${moment(task.before).format('LT')}` }
+              </span>
+            </a>
+          </li>
+        )}
+        </ul>
+      </div>
+    )
+  }
+}
+
 export default class MapProxy {
 
   constructor(map, options) {
@@ -79,6 +126,9 @@ export default class MapProxy {
     this.taskMarkers = new Map()
     this.taskPopups = new Map()
     this.taskConnectCircles = new Map()
+
+    this.pickupGroupMarkers = new Map()
+    this.pickupGroupPopups = new Map()
 
     this.courierMarkers = new Map()
     this.courierPopups = new Map()
@@ -128,11 +178,11 @@ export default class MapProxy {
 
   }
 
-  addTask(task, markerColor) {
+  addTask(task, selected = false) {
 
     let marker = this.taskMarkers.get(task['id'])
 
-    const color = markerColor || taskColor(task)
+    const color = taskColor(task, selected)
     const iconName = taskIcon(task)
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const latLng = L.latLng(task.address.geo.latitude, task.address.geo.longitude)
@@ -203,6 +253,60 @@ export default class MapProxy {
 
     this.tasksLayerGroup.addLayer(marker)
     this.clusterGroup.addLayer(marker)
+  }
+
+  addGroup(group/*, selected*/) {
+
+    let marker = this.pickupGroupMarkers.get(group.restaurant['@id'])
+    let popupComponent = this.pickupGroupPopups.get(group.restaurant['@id'])
+
+    if (!marker) {
+
+      const latLng = L.latLng(
+        group.tasks[0].address.geo.latitude,
+        group.tasks[0].address.geo.longitude
+      )
+
+      marker = L.marker(latLng, {
+        // TODO Use divIcon to add border & count to icon
+        // icon: L.divIcon({
+        //   html: `<img src="${image}" class="img-circle" width="24" height="24" />`,
+        //   iconSize: L.point(24, 24),
+        // })
+        icon: L.icon({
+          iconUrl: group.restaurant.image,
+          iconSize: [ 28, 28 ],
+          className: 'img-circle'
+        })
+      })
+
+      const el = document.createElement('div')
+      popupComponent = React.createRef()
+
+      const cb = () => {
+        this.pickupGroupMarkers.set(group.restaurant['@id'], marker)
+        this.pickupGroupPopups.set(group.restaurant['@id'], popupComponent)
+      }
+
+      render(<GroupPopupContent
+        ref={ popupComponent }
+        restaurant={ group.restaurant }
+        tasks={ group.tasks }
+        onEditClick={ this.onEditClick } />, el, cb)
+
+      const popup = L.popup({
+        offset: [ 0, -10 ]
+      })
+        .setContent(el)
+
+      marker.bindPopup(popup)
+
+      marker.addTo(this.map)
+
+    } else {
+      // TODO Manage selected state (add border)
+      popupComponent.current.updateTasks(group.tasks)
+    }
   }
 
   enableConnect(task, active = false) {

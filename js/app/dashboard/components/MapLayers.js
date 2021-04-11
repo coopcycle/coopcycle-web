@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 
-import { selectVisibleTaskIds, selectHiddenTaskIds, selectPolylines, selectAsTheCrowFlies, selectPositions, selectSelectedTasks } from '../redux/selectors'
+import { selectVisibleTaskIds, selectHiddenTaskIds, selectPolylines, selectAsTheCrowFlies, selectPositions, selectSelectedTasks, selectPickupGroups } from '../redux/selectors'
 import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
 import { useMap } from './LeafletMap'
@@ -23,7 +23,16 @@ const CourierLayer = ({ positions }) => {
   return null
 }
 
-const TaskLayer = ({ tasks, visibleTaskIds, hiddenTaskIds, selectedTasks }) => {
+const matchPickupGroup = (task, pickupGroups) => {
+  if (Object.prototype.hasOwnProperty.call(pickupGroups, task.address['@id'])) {
+    const pickupGroup = pickupGroups[task.address['@id']]
+    if (-1 !== pickupGroup.tasks.indexOf(task)) {
+      return pickupGroup
+    }
+  }
+}
+
+const TaskLayer = ({ tasks, visibleTaskIds, hiddenTaskIds, selectedTasks, pickupGroups }) => {
 
   const map = useMap()
 
@@ -32,10 +41,17 @@ const TaskLayer = ({ tasks, visibleTaskIds, hiddenTaskIds, selectedTasks }) => {
     const visibleTasks = _.intersectionWith(tasks, visibleTaskIds, (task, id) => task['@id'] === id)
     const hiddenTasks  = _.intersectionWith(tasks, hiddenTaskIds,  (task, id) => task['@id'] === id)
 
-    visibleTasks.forEach(task => map.addTask(task))
-    hiddenTasks.forEach(task => map.hideTask(task))
+    visibleTasks.forEach(task => {
+      const selected = -1 !== selectedTasks.indexOf(task)
+      const pickupGroup = matchPickupGroup(task, pickupGroups)
+      if (pickupGroup) {
+        map.addGroup(pickupGroup, selected)
+      } else {
+        map.addTask(task, selected)
+      }
+    })
 
-    selectedTasks.forEach(task => map.addTask(task, '#EEB516'))
+    hiddenTasks.forEach(task => map.hideTask(task))
 
   }, [ tasks, visibleTaskIds, hiddenTaskIds, selectedTasks ])
 
@@ -88,6 +104,7 @@ function mapStateToPropsTask(state) {
     visibleTaskIds: selectVisibleTaskIds(state),
     hiddenTaskIds: selectHiddenTaskIds(state),
     selectedTasks: selectSelectedTasks(state),
+    pickupGroups: selectPickupGroups(state),
   }
 }
 

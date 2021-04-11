@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Utils;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Store;
@@ -183,6 +184,17 @@ trait AdminDashboardTrait
             ]);
         }, $stores);
 
+        $restaurants = $this->getDoctrine()->getRepository(LocalBusiness::class)->findBy([], ['name' => 'ASC']);
+
+        $restaurantsNormalized = array_map(function (LocalBusiness $restaurant) {
+            return $this->get('serializer')->normalize($restaurant, 'jsonld', [
+                'resource_class' => LocalBusiness::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['restaurant_simple']
+            ]);
+        }, $restaurants);
+
         return $this->render('admin/dashboard_iframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
@@ -198,6 +210,7 @@ trait AdminDashboardTrait
             'positions' => $positions,
             'task_recurrence_rules' => $recurrenceRulesNormalized,
             'stores' => $storesNormalized,
+            'restaurants' => $restaurantsNormalized,
         ]);
     }
 

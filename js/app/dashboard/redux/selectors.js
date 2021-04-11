@@ -8,7 +8,7 @@ import {
 
 import { moment } from '../../coopcycle-frontend-js'
 import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter, taskAdapter } from '../../coopcycle-frontend-js/logistics/redux'
-import { filter, forEach, find, reduce, map, differenceWith, includes } from 'lodash'
+import { filter, forEach, find, reduce, map, differenceWith, includes, keyBy, groupBy, mapValues, pickBy } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
 
 const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
@@ -270,4 +270,27 @@ export const selectSelectedTasks = createSelector(
   taskSelectors.selectEntities,
   state => state.selectedTasks,
   (tasksById, selectedTasks) => selectedTasks.map(id => tasksById[id])
+)
+
+export const selectPickupTasks = createSelector(
+  taskSelectors.selectAll,
+  (tasks) => filter(tasks, task => task.type === 'PICKUP')
+)
+
+export const selectPickupGroups = createSelector(
+  selectPickupTasks,
+  state => state.config.restaurants,
+  (tasks, restaurants) => {
+
+    const tasksByAddress = groupBy(tasks, 'address.@id')
+    const restaurantsByAddress = keyBy(restaurants, 'address')
+
+    const hash = mapValues(restaurantsByAddress, (restaurant, address) => ({
+      restaurant,
+      tasks: Object.prototype.hasOwnProperty.call(tasksByAddress, address) ?
+        tasksByAddress[address] : []
+    }))
+
+    return pickBy(hash, (group) => group.tasks.length > 0)
+  }
 )
