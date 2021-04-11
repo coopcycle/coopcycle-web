@@ -53,15 +53,8 @@ const PolylineLayer = ({ polylines, asTheCrowFlies, polylineEnabled, polylineSty
 
     _.forEach(polylineEnabled, (enabled, username) => {
       if (enabled) {
-        if (polylineStyle === 'as_the_crow_flies') {
-          map.hidePolyline(username)
-          map.showPolylineAsTheCrowFlies(username, polylines[username])
-        } else {
-          map.hidePolylineAsTheCrowFlies(username)
-          map.showPolyline(username, polylines[username])
-        }
+        map.showPolyline(username, polylineStyle)
       } else {
-        map.hidePolylineAsTheCrowFlies(username)
         map.hidePolyline(username)
       }
     })

@@ -32,6 +32,7 @@ const MapProvider = (props) => {
       onTaskMouseOver: task => {
         if (task.isAssigned) {
           proxy.enableConnect(task)
+          proxy.showPolyline(task.assignedTo, 'as_the_crow_flies')
         }
         if (fromTask.current && task !== fromTask.current && !task.isAssigned) {
           toTask.current = task
@@ -39,6 +40,9 @@ const MapProvider = (props) => {
         }
       },
       onTaskMouseOut: (task) => {
+        if (task.isAssigned) {
+          proxy.hidePolyline(task.assignedTo)
+        }
         toTask.current = null
         proxy.disableConnect(task)
       },
