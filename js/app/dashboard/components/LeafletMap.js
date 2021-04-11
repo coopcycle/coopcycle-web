@@ -2,10 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
-import _ from 'lodash'
 
-import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction } from '../redux/actions'
-import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
+import { setCurrentTask, assignAfter, selectTask, selectTasksByIds } from '../redux/actions'
 import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle } from './MapLayers'
 
 const MapContext = React.createContext([ null, () => {} ])
@@ -71,14 +69,8 @@ const MapProvider = (props) => {
         proxy.enableDragging()
       },
       onMarkersSelected: markers => {
-        const tasks = []
-        markers.forEach(marker => {
-          const task = _.find(props.tasks, t => t['@id'] === marker.options.task)
-          if (task) {
-            tasks.push(task)
-          }
-        })
-        props.selectTasks(tasks)
+        const taskIds = markers.map(marker => marker.options.task)
+        props.selectTasksByIds(taskIds)
       }
     })
 
@@ -103,10 +95,9 @@ class LeafletMap extends Component {
     return (
       <MapProvider
         onLoad={ this.props.onLoad }
-        tasks={ this.props.tasks }
         setCurrentTask={ this.props.setCurrentTask }
         assignAfter={ this.props.assignAfter }
-        selectTasks={ this.props.selectTasks }>
+        selectTasksByIds={ this.props.selectTasksByIds }>
         <CourierMapLayer />
         <TaskMapLayer />
         <PolylineMapLayer />
@@ -116,20 +107,13 @@ class LeafletMap extends Component {
   }
 }
 
-function mapStateToProps(state) {
-
-  return {
-    tasks: selectAllTasks(state),
-  }
-}
-
 function mapDispatchToProps (dispatch) {
   return {
     setCurrentTask: task => dispatch(setCurrentTask(task)),
     assignAfter: (username, task, after) => dispatch(assignAfter(username, task, after)),
     selectTask: task => dispatch(selectTask(task)),
-    selectTasks: tasks => dispatch(selectTasksAction(tasks)),
+    selectTasksByIds: taskIds => dispatch(selectTasksByIds(taskIds)),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LeafletMap)
+export default connect(() => ({}), mapDispatchToProps)(LeafletMap)

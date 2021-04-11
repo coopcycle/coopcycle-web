@@ -96,6 +96,7 @@ export const TOGGLE_POLYLINE = 'TOGGLE_POLYLINE'
 export const TOGGLE_TASK = 'TOGGLE_TASK'
 export const SELECT_TASK = 'SELECT_TASK'
 export const SELECT_TASKS = 'SELECT_TASKS'
+export const SELECT_TASKS_BY_IDS = 'SELECT_TASKS_BY_IDS'
 export const CLEAR_SELECTED_TASKS = 'CLEAR_SELECTED_TASKS'
 export const SET_TASK_LIST_GROUP_MODE = 'SET_TASK_LIST_GROUP_MODE'
 export const REMOVE_TASK = 'REMOVE_TASK'
@@ -305,6 +306,10 @@ export function selectTask(task) {
 
 export function selectTasks(tasks) {
   return { type: SELECT_TASKS, tasks }
+}
+
+export function selectTasksByIds(taskIds) {
+  return { type: SELECT_TASKS_BY_IDS, taskIds }
 }
 
 export function clearSelectedTasks() {

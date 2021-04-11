@@ -7,6 +7,7 @@ import {
   TOGGLE_TASK,
   SELECT_TASK,
   SELECT_TASKS,
+  SELECT_TASKS_BY_IDS,
   SET_TASK_LIST_GROUP_MODE,
   OPEN_NEW_TASK_MODAL,
   CLOSE_NEW_TASK_MODAL,
@@ -128,6 +129,10 @@ export const selectedTasks = (state = [], action) => {
   case SELECT_TASKS:
 
     return action.tasks.map(task => task['@id'])
+
+  case SELECT_TASKS_BY_IDS:
+
+    return action.taskIds
 
   case CLEAR_SELECTED_TASKS:
   case MODIFY_TASK_LIST_REQUEST_SUCCESS:
