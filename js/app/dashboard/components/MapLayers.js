@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 
-import { selectVisibleTaskIds, selectHiddenTaskIds, selectPolylines, selectAsTheCrowFlies, selectPositions } from '../redux/selectors'
+import { selectVisibleTaskIds, selectHiddenTaskIds, selectPolylines, selectAsTheCrowFlies, selectPositions, selectSelectedTasks } from '../redux/selectors'
 import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
 import { useMap } from './LeafletMap'
@@ -94,7 +94,7 @@ function mapStateToPropsTask(state) {
     tasks: selectAllTasks(state),
     visibleTaskIds: selectVisibleTaskIds(state),
     hiddenTaskIds: selectHiddenTaskIds(state),
-    selectedTasks: state.selectedTasks,
+    selectedTasks: selectSelectedTasks(state),
   }
 }
 

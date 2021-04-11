@@ -265,3 +265,9 @@ export const selectCurrentTaskEvents = createSelector(
     return Object.prototype.hasOwnProperty.call(taskEvents, currentTask['@id']) ? taskEvents[currentTask['@id']] : []
   }
 )
+
+export const selectSelectedTasks = createSelector(
+  taskSelectors.selectEntities,
+  state => state.selectedTasks,
+  (tasksById, selectedTasks) => selectedTasks.map(id => tasksById[id])
+)

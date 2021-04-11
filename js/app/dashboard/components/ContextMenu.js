@@ -7,7 +7,7 @@ import { Menu, Item } from 'react-contexify'
 import moment from 'moment'
 
 import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay } from '../redux/actions'
-import { selectNextWorkingDay } from '../redux/selectors'
+import { selectNextWorkingDay, selectSelectedTasks } from '../redux/selectors'
 
 const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
 const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
@@ -131,7 +131,7 @@ function mapStateToProps(state) {
 
   return {
     unassignedTasks: selectUnassignedTasks(state),
-    selectedTasks: state.selectedTasks,
+    selectedTasks: selectSelectedTasks(state),
     nextWorkingDay: selectNextWorkingDay(state),
   }
 }

@@ -104,30 +104,30 @@ export const selectedTasks = (state = [], action) => {
   switch (action.type) {
   case TOGGLE_TASK:
 
-    if (-1 !== state.indexOf(action.task)) {
+    if (-1 !== state.indexOf(action.task['@id'])) {
       if (!action.multiple) {
         return []
       }
-      return _.filter(state, task => task !== action.task)
+      return _.filter(state, task => task !== action.task['@id'])
     }
 
     const newState = action.multiple ? state.slice(0) : []
-    newState.push(action.task)
+    newState.push(action.task['@id'])
 
     return newState
 
   case SELECT_TASK:
 
-    if (-1 !== state.indexOf(action.task)) {
+    if (-1 !== state.indexOf(action.task['@id'])) {
 
       return state
     }
 
-    return [ action.task ]
+    return [ action.task['@id'] ]
 
   case SELECT_TASKS:
 
-    return action.tasks
+    return action.tasks.map(task => task['@id'])
 
   case CLEAR_SELECTED_TASKS:
   case MODIFY_TASK_LIST_REQUEST_SUCCESS:

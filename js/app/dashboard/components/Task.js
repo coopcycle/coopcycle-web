@@ -217,7 +217,7 @@ function mapStateToProps(state, ownProps) {
   const visibleTaskIds = selectVisibleTaskIds(state)
 
   return {
-    selected: -1 !== state.selectedTasks.indexOf(ownProps.task),
+    selected: -1 !== state.selectedTasks.indexOf(ownProps.task['@id']),
     color,
     date: selectSelectedDate(state),
     isVisible: _.includes(visibleTaskIds, ownProps.task['@id']),

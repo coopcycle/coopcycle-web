@@ -11,7 +11,7 @@ import TaskGroup from './TaskGroup'
 import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup } from '../redux/actions'
-import { selectGroups, selectStandaloneTasks, selectRecurrenceRules } from '../redux/selectors'
+import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectSelectedTasks } from '../redux/selectors'
 
 class StandaloneTasks extends React.Component {
 
@@ -54,7 +54,7 @@ class StandaloneTasks extends React.Component {
 
 const StandaloneTasksWithConnect = connect(
   (state) => ({
-    selectedTasksLength: state.selectedTasks.length,
+    selectedTasksLength: selectSelectedTasks(state).length,
   })
 )(StandaloneTasks)
 
