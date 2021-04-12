@@ -162,7 +162,7 @@ class TaskType extends AbstractType
             'with_recipient_details' => false,
             'with_doorstep' => false,
             'street_address_label' => 'form.task.address.label',
-            'with_remember_address' => true,
+            'with_remember_address' => false,
         ));
     }
 }
