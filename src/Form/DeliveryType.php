@@ -310,6 +310,7 @@ class DeliveryType extends AbstractType
             'with_dropoff_doorstep' => false,
             'with_time_slot' => null,
             'with_package_set' => null,
+            'with_remember_address' => false,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

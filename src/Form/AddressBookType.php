@@ -74,6 +74,14 @@ class AddressBookType extends AbstractType
                 'mapped' => false,
             ]);
 
+        if ($options['with_remember_address']) {
+            $builder->add('rememberAddress', CheckboxType::class, [
+                'label' => 'Remember this address',
+                'required' => false,
+                'mapped' => false,
+            ]);
+        }
+
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
@@ -127,6 +135,7 @@ class AddressBookType extends AbstractType
             'data_class' => Address::class,
             'with_addresses' => [],
             'new_address_placeholder' => null,
+            'with_remember_address' => false,
         ));
     }
 

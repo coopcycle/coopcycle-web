@@ -26,6 +26,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -241,6 +242,7 @@ trait StoreTrait
         $form = $this->createDeliveryForm($delivery, [
             'with_dropoff_recipient_details' => true,
             'with_dropoff_doorstep' => true,
+            'with_remember_address' => true,
         ]);
 
         $form->handleRequest($request);
@@ -254,6 +256,8 @@ trait StoreTrait
 
                     $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
                     $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $this->getUser()->getCustomer());
+
+                    $this->handleRememberAddress($store, $form);
 
                     $entityManager->persist($order);
                     $entityManager->flush();
@@ -271,13 +275,10 @@ trait StoreTrait
 
             } else {
 
-                $this->getDoctrine()
-                    ->getManagerForClass(Delivery::class)
-                    ->persist($delivery);
+                $this->handleRememberAddress($store, $form);
 
-                $this->getDoctrine()
-                    ->getManagerForClass(Delivery::class)
-                    ->flush();
+                $entityManager->persist($delivery);
+                $entityManager->flush();
 
                 $messageBus->dispatch(
                     new DeliveryCreated($delivery)
@@ -299,6 +300,18 @@ trait StoreTrait
             'back_route' => $routes['back'],
             'show_left_menu' => $request->attributes->get('show_left_menu', true),
         ]);
+    }
+
+    private function handleRememberAddress(Store $store, FormInterface $form)
+    {
+        foreach (['pickup', 'dropoff'] as $taskType) {
+            $addressForm = $form->get($taskType)->get('address');
+            $rememberAddress = $addressForm->has('rememberAddress') && $addressForm->get('rememberAddress')->getData();
+            if ($rememberAddress) {
+                $task = $form->get($taskType)->getData();
+                $store->addAddress($task->getAddress());
+            }
+        }
     }
 
     public function storeAction($id, Request $request, TranslatorInterface $translator)

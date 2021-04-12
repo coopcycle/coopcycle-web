@@ -1164,3 +1164,4 @@ adminDashboard.api.title: API
 adminDashboard.api.help: Allow to create deliveries programmatically
 checkout.suggestions.continue_shopping_hub: You can continue shopping in other shops of <strong>%name%</strong>
 hub.disclaimer: Order from multiple shops, and we'll deliver everything at once!
+form.adress_book.remember_address: Remember this address

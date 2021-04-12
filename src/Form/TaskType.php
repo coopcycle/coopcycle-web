@@ -36,7 +36,8 @@ class TaskType extends AbstractType
     {
         $addressBookOptions = [
             'label' => $options['street_address_label'],
-            'with_addresses' => $options['with_addresses']
+            'with_addresses' => $options['with_addresses'],
+            'with_remember_address' => $options['with_remember_address'],
         ];
 
         if (isset($options['address_placeholder']) && !empty($options['address_placeholder'])) {
@@ -161,6 +162,7 @@ class TaskType extends AbstractType
             'with_recipient_details' => false,
             'with_doorstep' => false,
             'street_address_label' => 'form.task.address.label',
+            'with_remember_address' => true,
         ));
     }
 }
