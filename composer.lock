@@ -166,16 +166,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.176.9",
+            "version": "3.178.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "17dc67514b148979994758fbfb54088a8a3393bf"
+                "reference": "45692b97e12a2eed540c0afd106f143aad15e622"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/17dc67514b148979994758fbfb54088a8a3393bf",
-                "reference": "17dc67514b148979994758fbfb54088a8a3393bf",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/45692b97e12a2eed540c0afd106f143aad15e622",
+                "reference": "45692b97e12a2eed540c0afd106f143aad15e622",
                 "shasum": ""
             },
             "require": {
@@ -250,9 +250,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.176.9"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.1"
             },
-            "time": "2021-04-06T18:13:47+00:00"
+            "time": "2021-04-09T18:13:02+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -1466,26 +1466,25 @@
         },
         {
             "name": "defuse/php-encryption",
-            "version": "v2.2.1",
+            "version": "v2.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/defuse/php-encryption.git",
-                "reference": "0f407c43b953d571421e0020ba92082ed5fb7620"
+                "reference": "77880488b9954b7884c25555c2a0ea9e7053f9d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/defuse/php-encryption/zipball/0f407c43b953d571421e0020ba92082ed5fb7620",
-                "reference": "0f407c43b953d571421e0020ba92082ed5fb7620",
+                "url": "https://api.github.com/repos/defuse/php-encryption/zipball/77880488b9954b7884c25555c2a0ea9e7053f9d2",
+                "reference": "77880488b9954b7884c25555c2a0ea9e7053f9d2",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
                 "paragonie/random_compat": ">= 2",
-                "php": ">=5.4.0"
+                "php": ">=5.6.0"
             },
             "require-dev": {
-                "nikic/php-parser": "^2.0|^3.0|^4.0",
-                "phpunit/phpunit": "^4|^5"
+                "phpunit/phpunit": "^4|^5|^6|^7|^8|^9"
             },
             "bin": [
                 "bin/generate-defuse-key"
@@ -1527,9 +1526,9 @@
             ],
             "support": {
                 "issues": "https://github.com/defuse/php-encryption/issues",
-                "source": "https://github.com/defuse/php-encryption/tree/master"
+                "source": "https://github.com/defuse/php-encryption/tree/v2.3.1"
             },
-            "time": "2018-07-24T23:27:56+00:00"
+            "time": "2021-04-09T23:57:26+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -2198,16 +2197,16 @@
         },
         {
             "name": "doctrine/doctrine-migrations-bundle",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineMigrationsBundle.git",
-                "reference": "d1248471734c62b94baac36cb18e9c635775eeb0"
+                "reference": "91f0a5e2356029575f3038432cc188b12f9d5da5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineMigrationsBundle/zipball/d1248471734c62b94baac36cb18e9c635775eeb0",
-                "reference": "d1248471734c62b94baac36cb18e9c635775eeb0",
+                "url": "https://api.github.com/repos/doctrine/DoctrineMigrationsBundle/zipball/91f0a5e2356029575f3038432cc188b12f9d5da5",
+                "reference": "91f0a5e2356029575f3038432cc188b12f9d5da5",
                 "shasum": ""
             },
             "require": {
@@ -2262,7 +2261,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/DoctrineMigrationsBundle/issues",
-                "source": "https://github.com/doctrine/DoctrineMigrationsBundle/tree/3.1.0"
+                "source": "https://github.com/doctrine/DoctrineMigrationsBundle/tree/3.1.1"
             },
             "funding": [
                 {
@@ -2278,7 +2277,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-04-05T20:45:07+00:00"
+            "time": "2021-04-10T16:48:53+00:00"
         },
         {
             "name": "doctrine/event-manager",
@@ -5230,7 +5229,7 @@
         },
         {
             "name": "illuminate/cache",
-            "version": "v8.36.1",
+            "version": "v8.36.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/cache.git",
@@ -5287,7 +5286,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v8.36.1",
+            "version": "v8.36.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -5341,7 +5340,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v8.36.1",
+            "version": "v8.36.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -5389,7 +5388,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v8.36.1",
+            "version": "v8.36.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -5435,7 +5434,7 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v8.36.1",
+            "version": "v8.36.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
@@ -9270,16 +9269,16 @@
         },
         {
             "name": "odolbeau/phone-number-bundle",
-            "version": "v3.4.0",
+            "version": "v3.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/odolbeau/phone-number-bundle.git",
-                "reference": "1182127cd71e596ad8b029007799443df371bfe9"
+                "reference": "8db439fa58d12a569ef0c97bf8bd8a08ab691e78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/odolbeau/phone-number-bundle/zipball/1182127cd71e596ad8b029007799443df371bfe9",
-                "reference": "1182127cd71e596ad8b029007799443df371bfe9",
+                "url": "https://api.github.com/repos/odolbeau/phone-number-bundle/zipball/8db439fa58d12a569ef0c97bf8bd8a08ab691e78",
+                "reference": "8db439fa58d12a569ef0c97bf8bd8a08ab691e78",
                 "shasum": ""
             },
             "require": {
@@ -9333,9 +9332,9 @@
             ],
             "support": {
                 "issues": "https://github.com/odolbeau/phone-number-bundle/issues",
-                "source": "https://github.com/odolbeau/phone-number-bundle/tree/v3.4.0"
+                "source": "https://github.com/odolbeau/phone-number-bundle/tree/v3.4.1"
             },
-            "time": "2021-04-06T08:55:36+00:00"
+            "time": "2021-04-12T08:30:59+00:00"
         },
         {
             "name": "omnipay/common",
@@ -12462,16 +12461,16 @@
         },
         {
             "name": "sonata-project/exporter",
-            "version": "2.6.1",
+            "version": "2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/exporter.git",
-                "reference": "bbb4f83d705089eb90c05b6a5d39e89ba66660b0"
+                "reference": "ac62024a6d4d3ddff8da98d43119a0f3ec1ef59a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/exporter/zipball/bbb4f83d705089eb90c05b6a5d39e89ba66660b0",
-                "reference": "bbb4f83d705089eb90c05b6a5d39e89ba66660b0",
+                "url": "https://api.github.com/repos/sonata-project/exporter/zipball/ac62024a6d4d3ddff8da98d43119a0f3ec1ef59a",
+                "reference": "ac62024a6d4d3ddff8da98d43119a0f3ec1ef59a",
                 "shasum": ""
             },
             "require": {
@@ -12536,7 +12535,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sonata-project/exporter/issues",
-                "source": "https://github.com/sonata-project/exporter/tree/2.6.1"
+                "source": "https://github.com/sonata-project/exporter/tree/2.6.2"
             },
             "funding": [
                 {
@@ -12556,7 +12555,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-03-26T13:46:20+00:00"
+            "time": "2021-04-09T12:02:14+00:00"
         },
         {
             "name": "sonata-project/seo-bundle",
@@ -14532,16 +14531,16 @@
         },
         {
             "name": "sylius/resource-bundle",
-            "version": "v1.8.1",
+            "version": "v1.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusResourceBundle.git",
-                "reference": "0bb5ab5dd36edc2e6402d22f0431f2d600efe488"
+                "reference": "cfc658234c96203897a5561478fe1326df2f64fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusResourceBundle/zipball/0bb5ab5dd36edc2e6402d22f0431f2d600efe488",
-                "reference": "0bb5ab5dd36edc2e6402d22f0431f2d600efe488",
+                "url": "https://api.github.com/repos/Sylius/SyliusResourceBundle/zipball/cfc658234c96203897a5561478fe1326df2f64fa",
+                "reference": "cfc658234c96203897a5561478fe1326df2f64fa",
                 "shasum": ""
             },
             "require": {
@@ -14579,7 +14578,7 @@
                 "pamil/phpspec-skip-example-extension": "^4.2",
                 "phpspec/phpspec": "^7.0",
                 "phpspec/prophecy-phpunit": "^2.0",
-                "phpstan/phpstan": "0.12.82",
+                "phpstan/phpstan": "0.12.83",
                 "phpstan/phpstan-phpunit": "0.12.18",
                 "phpstan/phpstan-webmozart-assert": "0.12.12",
                 "phpunit/phpunit": "^9.5",
@@ -14589,7 +14588,7 @@
                 "symfony/dotenv": "^4.4 || ^5.2",
                 "symplify/easy-coding-standard": "^8.3",
                 "twig/twig": "^2.12 || ^3.0",
-                "vimeo/psalm": "4.6.4"
+                "vimeo/psalm": "4.7.0"
             },
             "suggest": {
                 "doctrine/orm": "^2.5",
@@ -14635,9 +14634,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Sylius/SyliusResourceBundle/issues",
-                "source": "https://github.com/Sylius/SyliusResourceBundle/tree/v1.8.1"
+                "source": "https://github.com/Sylius/SyliusResourceBundle/tree/v1.8.2"
             },
-            "time": "2021-03-19T11:43:14+00:00"
+            "time": "2021-04-08T10:52:00+00:00"
         },
         {
             "name": "sylius/taxation",
@@ -16916,16 +16915,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.20.0",
+            "version": "6.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "7494b78da4f5af5b761dd7b4fd9bbe52bd746f55"
+                "reference": "bccca0cf5d853c29cbc8b676558e249b0132404f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/7494b78da4f5af5b761dd7b4fd9bbe52bd746f55",
-                "reference": "7494b78da4f5af5b761dd7b4fd9bbe52bd746f55",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/bccca0cf5d853c29cbc8b676558e249b0132404f",
+                "reference": "bccca0cf5d853c29cbc8b676558e249b0132404f",
                 "shasum": ""
             },
             "require": {
@@ -16964,9 +16963,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twilio/twilio-php/issues",
-                "source": "https://github.com/twilio/twilio-php/tree/6.20.0"
+                "source": "https://github.com/twilio/twilio-php/tree/6.21.0"
             },
-            "time": "2021-03-24T21:42:05+00:00"
+            "time": "2021-04-07T19:07:34+00:00"
         },
         {
             "name": "vich/uploader-bundle",
@@ -19571,16 +19570,16 @@
         },
         {
             "name": "rector/rector-prefixed",
-            "version": "0.10.3",
+            "version": "0.10.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector-prefixed.git",
-                "reference": "49d23d3b0242da327702ee075f70de9ffdd7e415"
+                "reference": "d308686e5638c3a3069886b8ed4041a18b47d9d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/49d23d3b0242da327702ee075f70de9ffdd7e415",
-                "reference": "49d23d3b0242da327702ee075f70de9ffdd7e415",
+                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/d308686e5638c3a3069886b8ed4041a18b47d9d5",
+                "reference": "d308686e5638c3a3069886b8ed4041a18b47d9d5",
                 "shasum": ""
             },
             "require": {
@@ -19602,9 +19601,9 @@
             ],
             "description": "Prefixed and PHP 7.1 downgraded version of rector/rector",
             "support": {
-                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.3"
+                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.4"
             },
-            "time": "2021-03-24T00:46:49+00:00"
+            "time": "2021-04-09T16:41:35+00:00"
         },
         {
             "name": "sebastian/code-unit",
