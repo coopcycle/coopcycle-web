@@ -1,0 +1,84 @@
+{
+  "nodes":{
+    "nodes":{
+      "left":{
+        "nodes":[
+
+        ],
+        "attributes":{
+          "value":1800
+        }
+      },
+      "right":{
+        "nodes":{
+          "left":{
+            "nodes":{
+              "arguments":{
+                "nodes":[
+                  {
+                    "nodes":{
+                      "left":{
+                        "nodes":{
+                          "left":{
+                            "nodes":[
+
+                            ],
+                            "attributes":{
+                              "name":"distance"
+                            }
+                          },
+                          "right":{
+                            "nodes":[
+
+                            ],
+                            "attributes":{
+                              "value":8000
+                            }
+                          }
+                        },
+                        "attributes":{
+                          "operator":"-"
+                        }
+                      },
+                      "right":{
+                        "nodes":[
+
+                        ],
+                        "attributes":{
+                          "value":1000
+                        }
+                      }
+                    },
+                    "attributes":{
+                      "operator":"\/"
+                    }
+                  }
+                ],
+                "attributes":[
+
+                ]
+              }
+            },
+            "attributes":{
+              "name":"ceil"
+            }
+          },
+          "right":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":360
+            }
+          }
+        },
+        "attributes":{
+          "operator":"*"
+        }
+      }
+    },
+    "attributes":{
+      "operator":"+"
+    }
+  }
+}

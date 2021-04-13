@@ -1,4 +1,4 @@
-import parsePricingRule, { parseAST, parsePriceAST, FixedPrice, PriceRange } from '../pricing-rule-parser'
+import parsePricingRule, { parseAST, parsePriceAST, FixedPrice, PriceRange, RawPriceExpression } from '../pricing-rule-parser'
 import withZone from './with-zone.json'
 
 import withPackages from './with-packages.json'
@@ -8,6 +8,7 @@ import withOrderItemsTotal from './with-order-items-total.json'
 
 import fixedPrice from './fixed-price.json'
 import priceRange from './price-range.json'
+import rawPriceFormula from './raw-price-formula.json'
 
 describe('Pricing rule parser', function() {
 
@@ -264,17 +265,23 @@ describe('Pricing rule parser (AST)', function() {
 describe('Pricing rule price parser (AST)', function() {
 
   it('should parse fixed price', function() {
-    const result = parsePriceAST(fixedPrice)
+    const result = parsePriceAST(fixedPrice, '1053')
     expect(result).toBeInstanceOf(FixedPrice);
     expect(result.value).toBe(1053);
   })
 
   it('should parse price range', function() {
-    const result = parsePriceAST(priceRange)
+    const result = parsePriceAST(priceRange, 'price_range(distance, 450, 2000, 2500)')
     expect(result).toBeInstanceOf(PriceRange);
     expect(result.attribute).toBe('distance');
     expect(result.price).toBe(450);
     expect(result.step).toBe(2000);
     expect(result.threshold).toBe(2500);
+  })
+
+  it('should parse raw formula', function() {
+    const result = parsePriceAST(rawPriceFormula, '1800 + (ceil((distance - 8000) / 1000) * 360)')
+    expect(result).toBeInstanceOf(RawPriceExpression);
+    expect(result.expression).toBe('1800 + (ceil((distance - 8000) / 1000) * 360)');
   })
 })

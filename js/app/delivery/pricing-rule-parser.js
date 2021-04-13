@@ -175,6 +175,14 @@ export class PriceRange extends Price {
   }
 }
 
+export class RawPriceExpression extends Price {
+  constructor(expression) {
+    super()
+    this.expression = expression
+  }
+}
+
+
 export const parseAST = ast => {
 
   const acc = []
@@ -184,7 +192,7 @@ export const parseAST = ast => {
   return acc
 }
 
-const parsePriceNode = (node) => {
+const parsePriceNode = (node, expression) => {
   if (node.attributes.name === 'price_range') {
 
     const args = node.nodes.arguments.nodes
@@ -197,7 +205,11 @@ const parsePriceNode = (node) => {
     return new PriceRange(attribute, price, step, threshold)
   }
 
-  return new FixedPrice(node.attributes.value)
+  if (node.nodes.length === 0 && typeof node.attributes.value === 'number') {
+    return new FixedPrice(node.attributes.value)
+  }
+
+  return new RawPriceExpression(expression)
 }
 
-export const parsePriceAST = ast => parsePriceNode(ast.nodes)
+export const parsePriceAST = (ast, expression) => parsePriceNode(ast.nodes, expression)
