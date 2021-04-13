@@ -499,3 +499,20 @@ $pulse-color: #2ECC40;
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
   cursor: row-resize;
 }
+
+.leaftlet-restaurant-icon {
+
+  $icon-size: 28px;
+  $icon-border-size: 2px;
+  $icon-image-size: ($icon-size - ($icon-border-size * 2));
+
+  width: $icon-size;
+  height: $icon-size;
+  border: 2px solid #333;
+  border-radius: 50%;
+  opacity: 0.65;
+  > img {
+    width: $icon-image-size;
+    height: $icon-image-size;
+  }
+}

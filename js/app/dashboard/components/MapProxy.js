@@ -136,9 +136,9 @@ class RestaurantIcon extends React.Component {
 
   render () {
     return (
-      <Badge count={ this.state.count } size="small" offset={[ -4, 4 ]}>
-        <div style={{ width: '32px', height: '32px', border: '2px solid #333', borderRadius: '50%', opacity: 0.65 }}>
-          <img src={ this.props.image } className="img-circle" width="28" height="28" />
+      <Badge count={ this.state.count } size="small" offset={[ -3, 3 ]}>
+        <div className="leaftlet-restaurant-icon">
+          <img src={ this.props.image } className="img-circle" />
         </div>
       </Badge>
     )
