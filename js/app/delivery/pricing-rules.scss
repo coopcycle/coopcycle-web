@@ -9,13 +9,18 @@
 
     margin-bottom: 15px;
     font-family: 'Roboto Mono', monospace;
+    list-style: none;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     background-color: $bgcolor;
     color: darken($bgcolor, 50%);
-    padding: 15px 0;
+    padding-top: 15px;
+
+    &__main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid darken($bgcolor, 25%);
+    }
 
     &__handle {
       text-align: center;
@@ -26,6 +31,7 @@
       text-align: right;
     }
     &__price {
+      padding: 10px 15px;
       .form-control {
         background-color: darken($bgcolor, 5%);
         border: 2px dashed darken($bgcolor, 50%);
