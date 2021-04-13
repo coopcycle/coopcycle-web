@@ -8,10 +8,10 @@ export default ({ defaultValue, onChange }) => {
 
   const [ unit, setUnit ] = useState(defaultValue.attribute === 'distance' ? 'km' : 'kg')
 
-  const [ attribute, setAttribute ] = useState(defaultValue.attribute)
-  const [ price, setPrice ] = useState(defaultValue.price)
-  const [ step, setStep ] = useState(defaultValue.step)
-  const [ threshold, setThreshold ] = useState(defaultValue.threshold)
+  const [ attribute, setAttribute ] = useState(defaultValue.attribute || 'distance')
+  const [ price, setPrice ] = useState(defaultValue.price || 0)
+  const [ step, setStep ] = useState(defaultValue.step || 0)
+  const [ threshold, setThreshold ] = useState(defaultValue.threshold || 0)
 
   return (
     <div>

@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import Sortable from 'sortablejs'
 import { I18nextProvider } from 'react-i18next'
+import classNames from 'classnames'
 
 import RulePicker from '../components/RulePicker'
 import PriceRangeEditor from '../components/PriceRangeEditor'
@@ -70,34 +71,78 @@ $(document).on('click', '.delivery-pricing-ruleset__rule__remove > a', function(
   onListChange()
 })
 
+const PriceChoice = ({ defaultValue, onChange }) => {
+
+  return (
+    <select onChange={ e => onChange(e.target.value) } defaultValue={ defaultValue }>
+      <option value="fixed">Prix fixe</option>
+      <option value="range">Prix par tranche</option>
+    </select>
+  )
+}
+
 $('.delivery-pricing-ruleset__rule__price').each(function(index, item) {
 
+  const $label = $(item).find('label')
   const $input = $(item).find('input')
+
   const priceAST = $(item).data('priceExpression')
   const expression = $input.val()
 
   const price = parsePriceAST(priceAST, expression)
 
+  let priceType = 'fixed'
+
+  const rangeEditorRef = React.createRef()
+
+  let priceRangeDefaultValue = {}
+
   if (price instanceof PriceRange) {
-
-    const $parent = $input.parent()
-    const $container = $('<div />')
-
+    priceType = 'range'
     $input.addClass('d-none')
+    priceRangeDefaultValue = price
+  }
 
-    render(
-      <I18nextProvider i18n={ i18n }>
+  const $parent = $input.parent()
+  const $container = $('<div />')
+
+  $container.appendTo($parent)
+
+  render(
+    <I18nextProvider i18n={ i18n }>
+      <div
+        ref={ rangeEditorRef }
+        className={ classNames({ 'd-none': priceType !== 'range' }) }>
         <PriceRangeEditor
-          defaultValue={ price }
+          defaultValue={ priceRangeDefaultValue }
           onChange={ ({ attribute, price, step, threshold }) => {
             $input.val(`price_range(${attribute}, ${price}, ${step}, ${threshold})`)
           }} />
-      </I18nextProvider>,
-      $container[0]
-    )
+      </div>
+    </I18nextProvider>,
+    $container[0]
+  )
 
-    $container.appendTo($parent)
-  }
+  render(
+    <I18nextProvider i18n={ i18n }>
+      <PriceChoice
+        defaultValue={ priceType }
+        onChange={ value => {
+          switch (value) {
+            case 'range':
+              $input.addClass('d-none')
+              rangeEditorRef.current.classList.remove('d-none')
+              break
+            case 'fixed':
+            default:
+              rangeEditorRef.current.classList.add('d-none')
+              $input.removeClass('d-none')
+          }
+        }} />
+    </I18nextProvider>,
+    $label[0]
+  )
+
 })
 
 $('.delivery-pricing-ruleset__rule__expression').each(function(index, item) {
