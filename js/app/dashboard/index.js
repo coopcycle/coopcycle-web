@@ -84,7 +84,9 @@ function start() {
   if (persistedFilters) {
     preloadedState = {
       ...preloadedState,
-      filters: JSON.parse(persistedFilters)
+      settings: {
+        filters: JSON.parse(persistedFilters)
+      }
     }
   }
 
