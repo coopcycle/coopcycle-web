@@ -1,9 +1,13 @@
 import React from 'react'
 import { render } from 'react-dom'
 import Sortable from 'sortablejs'
+import { I18nextProvider } from 'react-i18next'
 
 import RulePicker from '../components/RulePicker'
+import PriceRangeEditor from '../components/PriceRangeEditor'
 import './pricing-rules.scss'
+import { parsePriceAST, PriceRange } from './pricing-rule-parser'
+import i18n from '../i18n'
 
 const ruleSet = $('#rule-set'),
   warning = $('form[name="pricing_rule_set"] .alert-warning')
@@ -64,6 +68,36 @@ $(document).on('click', '.delivery-pricing-ruleset__rule__remove > a', function(
   $(e.target).closest('li').remove()
 
   onListChange()
+})
+
+$('.delivery-pricing-ruleset__rule__price').each(function(index, item) {
+
+  const $input = $(item).find('input')
+  const priceAST = $(item).data('priceExpression')
+  const expression = $input.val()
+
+  const price = parsePriceAST(priceAST, expression)
+
+  if (price instanceof PriceRange) {
+
+    const $parent = $input.parent()
+    const $container = $('<div />')
+
+    $input.addClass('d-none')
+
+    render(
+      <I18nextProvider i18n={ i18n }>
+        <PriceRangeEditor
+          defaultValue={ price }
+          onChange={ ({ attribute, price, step, threshold }) => {
+            $input.val(`price_range(${attribute}, ${price}, ${step}, ${threshold})`)
+          }} />
+      </I18nextProvider>,
+      $container[0]
+    )
+
+    $container.appendTo($parent)
+  }
 })
 
 $('.delivery-pricing-ruleset__rule__expression').each(function(index, item) {
