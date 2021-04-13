@@ -76,6 +76,7 @@ $('.delivery-pricing-ruleset__rule__expression').each(function(index, item) {
       zones={ zones }
       packages={ packages }
       expression={ $input.val() }
+      expressionAST={ $(item).data('expression') }
       onExpressionChange={ onExpressionChange }
     />,
     $(item).find('.rule-expression-container')[0]

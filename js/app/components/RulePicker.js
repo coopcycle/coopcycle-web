@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
 import RulePickerLine from './RulePickerLine'
-import parsePricingRule from '../delivery/pricing-rule-parser'
+import { parseAST } from '../delivery/pricing-rule-parser'
 
 export const numericTypes = [
   'distance',
@@ -57,7 +57,7 @@ class RulePicker extends React.Component {
     super(props)
 
     this.state = {
-      lines: parsePricingRule(this.props.expression),
+      lines: parseAST(this.props.expressionAST),
       // This is used as a "revision counter",
       // to create an accurate React key prop
       rev: 0
