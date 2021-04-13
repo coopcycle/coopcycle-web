@@ -1,9 +1,13 @@
-import parsePricingRule, { parseAST } from '../pricing-rule-parser'
+import parsePricingRule, { parseAST, parsePriceAST, FixedPrice, PriceRange } from '../pricing-rule-parser'
 import withZone from './with-zone.json'
+
 import withPackages from './with-packages.json'
 import withDiffHours from './with-diff-hours.json'
 import withDropoffDoorstep from './with-dropoff-doorstep.json'
 import withOrderItemsTotal from './with-order-items-total.json'
+
+import fixedPrice from './fixed-price.json'
+import priceRange from './price-range.json'
 
 describe('Pricing rule parser', function() {
 
@@ -254,5 +258,23 @@ describe('Pricing rule parser (AST)', function() {
         { left: 'order.itemsTotal', operator: '>', right: 10 }
       ]
     )
+  })
+})
+
+describe('Pricing rule price parser (AST)', function() {
+
+  it('should parse fixed price', function() {
+    const result = parsePriceAST(fixedPrice)
+    expect(result).toBeInstanceOf(FixedPrice);
+    expect(result.value).toBe(1053);
+  })
+
+  it('should parse price range', function() {
+    const result = parsePriceAST(priceRange)
+    expect(result).toBeInstanceOf(PriceRange);
+    expect(result.attribute).toBe('distance');
+    expect(result.price).toBe(450);
+    expect(result.step).toBe(2000);
+    expect(result.threshold).toBe(2500);
   })
 })

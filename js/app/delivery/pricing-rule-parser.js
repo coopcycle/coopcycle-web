@@ -154,6 +154,27 @@ const traverseNode = (node, accumulator) => {
   }
 }
 
+export class Price {
+
+}
+
+export class FixedPrice extends Price {
+  constructor(value) {
+    super()
+    this.value = value
+  }
+}
+
+export class PriceRange extends Price {
+  constructor(attribute, price, step, threshold) {
+    super()
+    this.attribute = attribute
+    this.price = price
+    this.step = step
+    this.threshold = threshold
+  }
+}
+
 export const parseAST = ast => {
 
   const acc = []
@@ -162,3 +183,21 @@ export const parseAST = ast => {
 
   return acc
 }
+
+const parsePriceNode = (node) => {
+  if (node.attributes.name === 'price_range') {
+
+    const args = node.nodes.arguments.nodes
+
+    const attribute = args[0].attributes.name
+    const price     = args[1].attributes.value
+    const step      = args[2].attributes.value
+    const threshold = args[3].attributes.value
+
+    return new PriceRange(attribute, price, step, threshold)
+  }
+
+  return new FixedPrice(node.attributes.value)
+}
+
+export const parsePriceAST = ast => parsePriceNode(ast.nodes)

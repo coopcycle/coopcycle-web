@@ -1,0 +1,48 @@
+{
+  "nodes":{
+    "nodes":{
+      "arguments":{
+        "nodes":[
+          {
+            "nodes":[
+
+            ],
+            "attributes":{
+              "name":"distance"
+            }
+          },
+          {
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":450
+            }
+          },
+          {
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":2000
+            }
+          },
+          {
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":2500
+            }
+          }
+        ],
+        "attributes":[
+
+        ]
+      }
+    },
+    "attributes":{
+      "name":"price_range"
+    }
+  }
+}
