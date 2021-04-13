@@ -910,7 +910,12 @@ class AdminController extends AbstractController
 
             $em->flush();
 
-            return $this->redirectToRoute('admin_deliveries_pricing');
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_deliveries_pricing_ruleset', ['id' => $ruleSet->getId()]);
         }
 
         return $this->render('admin/pricing_rule_set.html.twig', [
