@@ -76,6 +76,8 @@ const createIcon = username => {
   })
 }
 
+const taskComparator = task => moment(task.before)
+
 class GroupPopupContent extends React.Component {
 
   constructor (props) {
@@ -91,13 +93,15 @@ class GroupPopupContent extends React.Component {
 
   render() {
 
+    const sortedTasks = _.sortBy(this.state.tasks, [ taskComparator ])
+
     return (
       <div>
         <div className="mb-2">
           <strong>{ this.props.restaurant.name }</strong>
         </div>
         <ul className="list-unstyled">
-        { this.state.tasks.map(task =>
+        { sortedTasks.map(task =>
           <li key={ task['@id'] } className="py-1">
             <a href="#" onClick={ (e) => {
               e.preventDefault()
@@ -133,7 +137,7 @@ class RestaurantIcon extends React.Component {
   render () {
     return (
       <Badge count={ this.state.count } size="small" offset={[ -4, 4 ]}>
-        <div style={{ width: '32px', height: '32px', border: '2px solid #333', borderRadius: '50%' }}>
+        <div style={{ width: '32px', height: '32px', border: '2px solid #333', borderRadius: '50%', opacity: 0.65 }}>
           <img src={ this.props.image } className="img-circle" width="28" height="28" />
         </div>
       </Badge>
