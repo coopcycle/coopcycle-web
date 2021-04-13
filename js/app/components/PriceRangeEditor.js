@@ -6,9 +6,11 @@ export default ({ defaultValue, onChange }) => {
 
   const { t } = useTranslation()
 
-  const [ unit, setUnit ] = useState(defaultValue.attribute === 'distance' ? 'km' : 'kg')
+  const defaultAttribute = defaultValue.attribute || 'distance'
 
-  const [ attribute, setAttribute ] = useState(defaultValue.attribute || 'distance')
+  const [ unit, setUnit ] = useState(defaultAttribute ? 'km' : 'kg')
+
+  const [ attribute, setAttribute ] = useState(defaultAttribute)
   const [ price, setPrice ] = useState(defaultValue.price || 0)
   const [ step, setStep ] = useState(defaultValue.step || 0)
   const [ threshold, setThreshold ] = useState(defaultValue.threshold || 0)
