@@ -1,0 +1,93 @@
+{
+  "nodes":{
+    "nodes":{
+      "left":{
+        "nodes":{
+          "left":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "name":"distance"
+            }
+          },
+          "right":{
+            "nodes":{
+              "left":{
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":12000
+                }
+              },
+              "right":{
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":16000
+                }
+              }
+            },
+            "attributes":{
+              "operator":".."
+            }
+          }
+        },
+        "attributes":{
+          "operator":"in"
+        }
+      },
+      "right":{
+        "nodes":{
+          "node":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "name":"packages"
+            }
+          },
+          "attribute":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":"containsAtLeastOne"
+            }
+          },
+          "arguments":{
+            "nodes":[
+              {
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":0
+                }
+              },
+              {
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":"Grand"
+                }
+              }
+            ],
+            "attributes":[
+
+            ]
+          }
+        },
+        "attributes":{
+          "type":2
+        }
+      }
+    },
+    "attributes":{
+      "operator":"and"
+    }
+  }
+}
