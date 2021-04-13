@@ -272,13 +272,14 @@ export const selectSelectedTasks = createSelector(
   (tasksById, selectedTasks) => selectedTasks.map(id => tasksById[id])
 )
 
-export const selectPickupTasks = createSelector(
+export const selectVisiblePickupTasks = createSelector(
   taskSelectors.selectAll,
-  (tasks) => filter(tasks, task => task.type === 'PICKUP')
+  selectHiddenTaskIds,
+  (tasks, hiddenTaskIds) => filter(tasks, task => task.type === 'PICKUP' && !hiddenTaskIds.includes(task['@id']))
 )
 
 export const selectPickupGroups = createSelector(
-  selectPickupTasks,
+  selectVisiblePickupTasks,
   state => state.config.restaurants,
   (tasks, restaurants) => {
 
