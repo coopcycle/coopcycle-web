@@ -122,6 +122,12 @@ const traverseNode = (node, accumulator) => {
           operator: node.attributes.operator,
           right:    node.nodes.right.attributes.value,
         })
+      } else if (node.nodes.left.nodes.node?.attributes.name === 'order' && node.nodes.left.nodes.attribute?.attributes.value === 'itemsTotal') {
+        accumulator.push({
+          left:     `${node.nodes.left.nodes.node.attributes.name}.${node.nodes.left.nodes.attribute.attributes.value}`,
+          operator: node.attributes.operator,
+          right:    node.nodes.right.attributes.value,
+        })
       } else if (node.nodes.left.attributes.name === 'diff_hours' || node.nodes.left.attributes.name === 'diff_days') {
         accumulator.push({
           left:     `${node.nodes.left.attributes.name}(${node.nodes.left.nodes.arguments.nodes[0].attributes.name})`,

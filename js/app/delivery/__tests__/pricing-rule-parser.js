@@ -3,6 +3,7 @@ import withZone from './with-zone.json'
 import withPackages from './with-packages.json'
 import withDiffHours from './with-diff-hours.json'
 import withDropoffDoorstep from './with-dropoff-doorstep.json'
+import withOrderItemsTotal from './with-order-items-total.json'
 
 describe('Pricing rule parser', function() {
 
@@ -241,5 +242,17 @@ describe('Pricing rule parser (AST)', function() {
       ]
     )
 
+  })
+
+  it('should parse AST with order items total', function() {
+
+    const result = parseAST(withOrderItemsTotal)
+
+    expect(result).toEqual(
+      [
+        { left: 'distance', operator: 'in', right: [ 1000, 8000 ] },
+        { left: 'order.itemsTotal', operator: '>', right: 10 }
+      ]
+    )
   })
 })
