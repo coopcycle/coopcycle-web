@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import Sortable from 'sortablejs'
-import { I18nextProvider } from 'react-i18next'
+import { I18nextProvider, useTranslation } from 'react-i18next'
 import classNames from 'classnames'
 
 import RulePicker from '../components/RulePicker'
@@ -73,10 +73,12 @@ $(document).on('click', '.delivery-pricing-ruleset__rule__remove > a', function(
 
 const PriceChoice = ({ defaultValue, onChange }) => {
 
+  const { t } = useTranslation()
+
   return (
     <select onChange={ e => onChange(e.target.value) } defaultValue={ defaultValue }>
-      <option value="fixed">Prix fixe</option>
-      <option value="range">Prix par tranche</option>
+      <option value="fixed">{ t('PRICE_RANGE_EDITOR.TYPE_FIXED') }</option>
+      <option value="range">{ t('PRICE_RANGE_EDITOR.TYPE_RANGE') }</option>
     </select>
   )
 }

@@ -229,7 +229,9 @@
         "PAYMENT_FORM_NOT_SUPPORTED": "Nous nʼacceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique.",
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "par tranche de",
-            "ABOVE": "à partir de"
+            "ABOVE": "à partir de",
+            "TYPE_FIXED": "Prix fixe",
+            "TYPE_RANGE": "Prix par tranches"
         }
     }
 }

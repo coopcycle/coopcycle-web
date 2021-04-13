@@ -233,7 +233,9 @@
         "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "Are you sure you want to delete all the tasks in this group?",
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "for every",
-            "ABOVE": "above"
+            "ABOVE": "above",
+            "TYPE_FIXED": "Fixed price",
+            "TYPE_RANGE": "Price by ranges"
         }
     }
 }
