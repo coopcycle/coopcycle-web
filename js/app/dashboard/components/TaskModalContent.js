@@ -53,7 +53,7 @@ class TaskModalContent extends React.Component {
 
     return (
       <TaskCompleteForm
-        loaging={ this.props.loading }
+        loading={ this.props.loading }
         completeTaskErrorMessage={ this.props.completeTaskErrorMessage }
         onCloseClick={ this.onCloseClick.bind(this) }
         onSubmit={ (values) => {
