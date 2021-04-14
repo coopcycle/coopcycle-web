@@ -300,6 +300,12 @@ class StripeManager
             foreach ($restaurants as $restaurant) {
 
                 $stripeAccount  = $restaurant->getStripeAccount($livemode);
+
+                // This may happen in dev environment
+                if (null === $stripeAccount) {
+                    continue;
+                }
+
                 $transferAmount = $order->getTransferAmount($restaurant);
 
                 if ($transferAmount > 0) {
