@@ -57,7 +57,7 @@ class RulePicker extends React.Component {
     super(props)
 
     this.state = {
-      lines: parseAST(this.props.expressionAST),
+      lines: this.props.expressionAST ? parseAST(this.props.expressionAST) : [],
       // This is used as a "revision counter",
       // to create an accurate React key prop
       rev: 0
