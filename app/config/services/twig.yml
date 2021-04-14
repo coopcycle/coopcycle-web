@@ -16,10 +16,6 @@ services:
     arguments:
       $assetsFilesystem: '@assets_filesystem'
 
-  AppBundle\Twig\TaxRateRuntime:
-    arguments:
-      $taxRateRepository: '@sylius.repository.tax_rate'
-
   AppBundle\Twig\OrderRuntime:
     arguments:
       $redis: '@snc_redis.default'
