@@ -55,9 +55,30 @@
 {% if tab == 'refunds' %}
   {% include 'restaurant/_partials/refunds.html.twig' %}
 {% else %}
+
+<div class="mb-4 d-flex justify-content-end">
+  <div class="btn-group">
+    <button type="button" class="btn btn-default">
+      {{ with_details ? 'restaurant.stats.view_detailed'|trans : 'restaurant.stats.view_simple'|trans }}
+    </button>
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="caret"></span>
+      <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-right">
+      <li><a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, details: (with_details ? '0' : '1') })) }}">
+        {{ with_details ? 'restaurant.stats.view_simple'|trans : 'restaurant.stats.view_detailed'|trans }}
+      </a></li>
+    </ul>
+  </div>
+</div>
+
+{% set columns =
+  stats.columns|filter(c => (stats.isProductTaxColumn(c) or stats.isTaxColumn(c)) ? with_details : true)  %}
+
 <table class="table table-condensed">
   <thead>
-    {% for column in stats.columns %}
+    {% for column in columns %}
       <th class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
         {{ stats.getColumnLabel(column) }}
       </th>
@@ -67,7 +88,7 @@
   <tbody>
     {% for order in stats.getPagination(app.request.query.get('page', 1)) %}
       <tr class="{{ ('#' ~ order.id) in refunded_orders_hash|keys ? 'text-danger' : '' }}">
-        {% for column in stats.columns %}
+        {% for column in columns %}
         <td class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
           {{ stats.getRowValueForPage(column, loop.parent.loop.index0, app.request.query.get('page', 1)) }}
         </td>
@@ -95,7 +116,7 @@
   </tbody>
   <tfoot>
     <tr>
-      {% for column in stats.columns %}
+      {% for column in columns %}
         <td class="text-right">
           <strong>{{ stats.getColumnTotal(column) }}</strong>
         </td>

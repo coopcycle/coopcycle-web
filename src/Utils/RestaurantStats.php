@@ -360,12 +360,12 @@ class RestaurantStats implements \Countable
         }, []);
     }
 
-    private function isTaxColumn($column)
+    public function isTaxColumn($column)
     {
         return in_array($column, $this->taxColumns);
     }
 
-    private function isProductTaxColumn($column)
+    public function isProductTaxColumn($column)
     {
         return in_array($column, $this->productTaxColumns);
     }

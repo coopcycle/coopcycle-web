@@ -1211,7 +1211,8 @@ trait RestaurantTrait
             'end' => $end,
             'tab' => $tab,
             'cube_token' => (null !== $vendor && null !== $token) ? $token->toString() : null,
-            'picker_type' => $request->query->has('date') ? 'date' : 'month'
+            'picker_type' => $request->query->has('date') ? 'date' : 'month',
+            'with_details' => $request->query->getBoolean('details', false),
         ]));
     }
 
