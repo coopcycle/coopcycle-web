@@ -1141,25 +1141,7 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
-        $date = new \DateTime();
-
-        if ($request->query->has('month')) {
-            $month = $request->query->get('month');
-            if (1 === preg_match('/([0-9]{4})-([0-9]{2})/', $month, $matches)) {
-                $year = $matches[1];
-                $month = $matches[2];
-                $date->setDate($year, $month, 1);
-            }
-        }
-
-        $start = clone $date;
-        $end = clone $date;
-
-        $start->setDate($date->format('Y'), $date->format('m'), 1);
-        $start->setTime(0, 0, 1);
-
-        $end->setDate($date->format('Y'), $date->format('m'), $date->format('t'));
-        $end->setTime(23, 59, 59);
+        [ $start, $end ] = $this->extractRange($request);
 
         $refundedOrders = $entityManager->getRepository(Order::class)
             ->findRefundedOrdersByRestaurantAndDateRange(
@@ -1226,7 +1208,41 @@ trait RestaurantTrait
             'end' => $end,
             'tab' => $tab,
             'cube_token' => (null !== $vendor && null !== $token) ? $token->toString() : null,
+            'picker_type' => $request->query->has('date') ? 'date' : 'month'
         ]));
+    }
+
+    private function extractRange(Request $request)
+    {
+        $date = new \DateTime($request->query->get('date'));
+
+        $type = $request->query->has('date') ? 'date' : 'month';
+
+        if ($request->query->has('month')) {
+            $month = $request->query->get('month');
+            if (1 === preg_match('/([0-9]{4})-([0-9]{2})/', $month, $matches)) {
+                $year = $matches[1];
+                $month = $matches[2];
+                $date->setDate($year, $month, 1);
+            }
+        }
+
+        $start = clone $date;
+        $end = clone $date;
+
+        $start->setTime(0, 0, 1);
+        $end->setTime(23, 59, 59);
+
+        if ($type === 'month') {
+            $start->setDate($date->format('Y'), $date->format('m'), 1);
+            // Last day of month
+            $end->setDate($date->format('Y'), $date->format('m'), $date->format('t'));
+        }
+
+        return [
+            $start,
+            $end
+        ];
     }
 
     public function newRestaurantReusablePackagingAction($id, Request $request, TranslatorInterface $translator)

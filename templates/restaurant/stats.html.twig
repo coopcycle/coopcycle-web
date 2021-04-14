@@ -22,7 +22,8 @@
     <div id="month-picker" class="d-inline-block"
       data-route-name="{{ stats_route }}"
       data-restaurant="{{ restaurant.id }}"
-      data-default-value="{{ start|date('Y-m') }}"></div>
+      data-default-value="{{ start|date('Y-m') }}"
+      data-picker-type="{{ picker_type }}"></div>
   </div>
 </div>
 
@@ -117,6 +118,10 @@
 </nav>
 {% endif %}
 
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('metrics') }}
 {% endblock %}
 
 {% block scripts %}
