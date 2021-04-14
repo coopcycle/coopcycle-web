@@ -521,7 +521,7 @@ class RestaurantStats implements \Countable
 
     public function isNumericColumn($column)
     {
-        if ($this->isTaxColumn($column)) {
+        if ($this->isTaxColumn($column) || $this->isProductTaxColumn($column)) {
 
             return true;
         }
