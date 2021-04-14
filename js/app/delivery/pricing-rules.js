@@ -7,8 +7,20 @@ import classNames from 'classnames'
 import RulePicker from '../components/RulePicker'
 import PriceRangeEditor from '../components/PriceRangeEditor'
 import './pricing-rules.scss'
-import { parsePriceAST, PriceRange } from './pricing-rule-parser'
+import { parsePriceAST, PriceRange, FixedPrice } from './pricing-rule-parser'
 import i18n from '../i18n'
+
+const PriceChoice = ({ defaultValue, onChange }) => {
+
+  const { t } = useTranslation()
+
+  return (
+    <select onChange={ e => onChange(e.target.value) } defaultValue={ defaultValue }>
+      <option value="fixed">{ t('PRICE_RANGE_EDITOR.TYPE_FIXED') }</option>
+      <option value="range">{ t('PRICE_RANGE_EDITOR.TYPE_RANGE') }</option>
+    </select>
+  )
+}
 
 const ruleSet = $('#rule-set'),
   warning = $('form[name="pricing_rule_set"] .alert-warning')
@@ -37,53 +49,7 @@ const onListChange = () => {
   })
 }
 
-$('#add-pricing-rule').on('click', function(e) {
-  e.preventDefault()
-
-  let newRule = ruleSet.attr('data-prototype')
-  newRule = newRule.replace(/__name__/g, ruleSet.find('li').length)
-
-  let newLi = $('<li></li>').addClass('delivery-pricing-ruleset__rule').html(newRule),
-    $ruleExpression = newLi.find('.delivery-pricing-ruleset__rule__expression'),
-    $input = $ruleExpression.find('input[data-expression]')
-
-  function onExpressionChange(newExpression) {
-    $input.val(newExpression)
-  }
-
-  render(
-    <RulePicker
-      zones={ zones }
-      packages={ packages }
-      onExpressionChange={ onExpressionChange }
-    />,
-    newLi.find('.rule-expression-container')[0]
-  )
-  newLi.appendTo(ruleSet)
-
-  onListChange()
-})
-
-$(document).on('click', '.delivery-pricing-ruleset__rule__remove > a', function(e) {
-  e.preventDefault()
-  $(e.target).closest('li').remove()
-
-  onListChange()
-})
-
-const PriceChoice = ({ defaultValue, onChange }) => {
-
-  const { t } = useTranslation()
-
-  return (
-    <select onChange={ e => onChange(e.target.value) } defaultValue={ defaultValue }>
-      <option value="fixed">{ t('PRICE_RANGE_EDITOR.TYPE_FIXED') }</option>
-      <option value="range">{ t('PRICE_RANGE_EDITOR.TYPE_RANGE') }</option>
-    </select>
-  )
-}
-
-$('.delivery-pricing-ruleset__rule__price').each(function(index, item) {
+const renderPriceChoice = (item) => {
 
   const $label = $(item).find('label')
   const $input = $(item).find('input')
@@ -91,7 +57,7 @@ $('.delivery-pricing-ruleset__rule__price').each(function(index, item) {
   const priceAST = $(item).data('priceExpression')
   const expression = $input.val()
 
-  const price = parsePriceAST(priceAST, expression)
+  const price = priceAST ? parsePriceAST(priceAST, expression) : new FixedPrice(0)
 
   let priceType = 'fixed'
 
@@ -144,7 +110,48 @@ $('.delivery-pricing-ruleset__rule__price').each(function(index, item) {
     </I18nextProvider>,
     $label[0]
   )
+}
 
+$('#add-pricing-rule').on('click', function(e) {
+  e.preventDefault()
+
+  let newRule = ruleSet.attr('data-prototype')
+  newRule = newRule.replace(/__name__/g, ruleSet.find('li').length)
+
+  let newLi = $('<li></li>').addClass('delivery-pricing-ruleset__rule').html(newRule),
+    $ruleExpression = newLi.find('.delivery-pricing-ruleset__rule__expression'),
+    $input = $ruleExpression.find('input[data-expression]')
+
+  function onExpressionChange(newExpression) {
+    $input.val(newExpression)
+  }
+
+  render(
+    <RulePicker
+      zones={ zones }
+      packages={ packages }
+      onExpressionChange={ onExpressionChange }
+    />,
+    newLi.find('.rule-expression-container')[0]
+  )
+  newLi.appendTo(ruleSet)
+
+  renderPriceChoice(
+    newLi.find('.delivery-pricing-ruleset__rule__price')
+  )
+
+  onListChange()
+})
+
+$(document).on('click', '.delivery-pricing-ruleset__rule__remove > a', function(e) {
+  e.preventDefault()
+  $(e.target).closest('li').remove()
+
+  onListChange()
+})
+
+$('.delivery-pricing-ruleset__rule__price').each(function(index, item) {
+  renderPriceChoice(item)
 })
 
 $('.delivery-pricing-ruleset__rule__expression').each(function(index, item) {
