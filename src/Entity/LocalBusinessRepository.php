@@ -223,4 +223,39 @@ class LocalBusinessRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    private function createZeroWasteQueryBuilder()
+    {
+        $qb = $this->createQueryBuilder('r');
+        $qb
+            ->andWhere(
+                'r.enabled = :enabled'
+            )
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('r.depositRefundEnabled', ':enabled'),
+                    $qb->expr()->eq('r.loopeatEnabled', ':enabled')
+                )
+            )
+            ->setParameter('enabled', true);
+
+        return $qb;
+    }
+
+    public function findZeroWaste()
+    {
+        return $this->createZeroWasteQueryBuilder()
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countZeroWaste()
+    {
+        $qb = $this->createZeroWasteQueryBuilder();
+        $qb
+            ->select('COUNT(r.id)');
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
 }

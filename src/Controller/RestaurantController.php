@@ -753,20 +753,7 @@ class RestaurantController extends AbstractController
     public function listByTagsAction($tags, Request $request,
         LocalBusinessRepository $repository)
     {
-        $qb = $repository->createQueryBuilder('r');
-        $qb
-            ->andWhere(
-                'r.enabled = :enabled'
-            )
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->eq('r.depositRefundEnabled', ':enabled'),
-                    $qb->expr()->eq('r.loopeatEnabled', ':enabled')
-                )
-            );
-        $qb->setParameter('enabled', true);
-
-        $restaurants = $qb->getQuery()->getResult();
+        $restaurants = $repository->findZeroWaste();
 
         return $this->render('restaurant/list_by_tags.html.twig', array(
             'count' => count($restaurants),

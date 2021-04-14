@@ -105,6 +105,8 @@ class IndexController extends AbstractController
 
         $hashids = new Hashids($this->getParameter('secret'), 12);
 
+        $countZeroWaste = $repository->countZeroWaste();
+
         return $this->render('index/index.html.twig', array(
             'restaurants' => $restaurants,
             'stores' => $stores,
@@ -115,6 +117,7 @@ class IndexController extends AbstractController
             'addresses_normalized' => $this->getUserAddresses(),
             'delivery_form' => $form ? $form->createView() : null,
             'hashid' => $deliveryForm ? $hashids->encode($deliveryForm->getId()) : '',
+            'zero_waste_count' => $countZeroWaste,
         ));
     }
 

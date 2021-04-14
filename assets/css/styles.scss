@@ -436,3 +436,13 @@ h1, h2, h3, h4, h5, h6 {
     }
   }
 }
+
+.homepage-zerowaste {
+  background-color: #00DD61;
+  color: lighten(#00DD61, 50%);
+  a {
+    font-size: $font-size-large;
+    color: lighten(#00DD61, 50%);
+    text-decoration: none;
+  }
+}
