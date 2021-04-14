@@ -51,6 +51,7 @@ class RestaurantStats implements \Countable
         PaginatorInterface $paginator,
         string $locale,
         TranslatorInterface $translator,
+        TaxesHelper $taxesHelper,
         bool $withVendorName = false,
         bool $withMessenger = false)
     {
@@ -58,9 +59,9 @@ class RestaurantStats implements \Countable
 
         $this->paginator = $paginator;
         $this->translator = $translator;
+        $this->taxesHelper = $taxesHelper;
         $this->withVendorName = $withVendorName;
         $this->withMessenger = $withMessenger;
-        $this->taxesHelper = new TaxesHelper($entityManager->getRepository(TaxRate::class), $translator);
 
         $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
         $this->numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
@@ -190,24 +191,35 @@ class RestaurantStats implements \Countable
 
     private function computeTaxes()
     {
+        $this->serviceTaxRateCode = $this->taxesHelper->getServiceTaxRateCode();
+
+        $this->taxColumns =
+            array_map(fn (TaxRate $rate) => $rate->getCode(), $this->taxesHelper->getBaseRates());
+
+        $this->taxColumns[] = $this->serviceTaxRateCode;
+
         foreach ($this->result as $order) {
 
-            $taxAdjustments = array_filter($order->adjustments, fn($adjustment) => $adjustment['type'] === 'tax');
-            $taxRateCodes = array_map(fn($adjustment) => $adjustment['origin_code'], $taxAdjustments);
+            $taxAdjustments =
+                array_filter($order->adjustments, fn($adjustment) => $adjustment['type'] === 'tax');
 
             $this->taxTotals[$order->getId()] = array_combine(
-                $taxRateCodes,
-                array_pad([], count($taxRateCodes), 0)
+                $this->taxColumns,
+                array_pad([], count($this->taxColumns), 0)
             );
 
             foreach ($taxAdjustments as $adjustment) {
-                $this->taxTotals[$order->getId()][$adjustment['origin_code']] += $adjustment['amount'];
+
+                $taxRateCode = $adjustment['origin_code'];
+
+                // This allows showing fewer columns
+                if (!in_array($taxRateCode, $this->taxColumns)) {
+                    $taxRateCode = $this->taxesHelper->getMatchingBaseRateCode($taxRateCode);
+                }
+
+                $this->taxTotals[$order->getId()][$taxRateCode] += $adjustment['amount'];
             }
-
-            $this->taxColumns = array_merge($this->taxColumns, $taxRateCodes);
         }
-
-        $this->taxColumns = array_unique($this->taxColumns);
     }
 
     private function computeColumnTotals()
@@ -301,10 +313,14 @@ class RestaurantStats implements \Countable
         $headings[] = 'completed_at';
         $headings[] = 'total_products_excl_tax';
         foreach ($this->taxColumns as $taxLabel) {
+            if ($taxLabel === $this->serviceTaxRateCode) {
+                continue;
+            }
             $headings[] = $taxLabel;
         }
         $headings[] = 'total_products_incl_tax';
         $headings[] = 'delivery_fee';
+        $headings[] = $this->serviceTaxRateCode;
         $headings[] = 'packaging_fee';
         $headings[] = 'tip';
         $headings[] = 'promotions';

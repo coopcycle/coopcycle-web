@@ -8,6 +8,7 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Form\OrderExportType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\ReceiptGenerator;
+use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Utils\RestaurantStats;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -42,7 +43,8 @@ trait OrderTrait
         TranslatorInterface $translator,
         EntityManagerInterface $entityManager,
         RepositoryInterface $taxRateRepository,
-        PaginatorInterface $paginator)
+        PaginatorInterface $paginator,
+        TaxesHelper $taxesHelper)
     {
         $response = new Response();
 
@@ -89,6 +91,7 @@ trait OrderTrait
                     $paginator,
                     $this->getParameter('kernel.default_locale'),
                     $translator,
+                    $taxesHelper,
                     $withVendorName = true,
                     $withMessenger
                 );

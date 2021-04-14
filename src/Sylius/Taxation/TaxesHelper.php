@@ -2,19 +2,28 @@
 
 namespace AppBundle\Sylius\Taxation;
 
+use AppBundle\Entity\Sylius\TaxCategory;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
-use Doctrine\Persistence\ObjectRepository;
+use Doctrine\ORM\Query\Expr;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaxesHelper
 {
     private $translator;
 
-    public function __construct(ObjectRepository $taxRateRepository, TranslatorInterface $translator)
+    public function __construct(
+        RepositoryInterface $taxRateRepository,
+        TranslatorInterface $translator,
+        SettingsManager $settingsManager,
+        string $country)
     {
         $this->taxRateRepository = $taxRateRepository;
         $this->translator = $translator;
+        $this->settingsManager = $settingsManager;
+        $this->country = $country;
     }
 
     /**
@@ -72,5 +81,72 @@ class TaxesHelper
             $this->translator->trans($taxRate->getName(), [], 'taxation'),
             ($taxRate->getAmount() * 100)
         );
+    }
+
+    private static $baseTaxCategories = [
+        'BASE_STANDARD',
+        'BASE_INTERMEDIARY',
+        'BASE_REDUCED',
+    ];
+
+    public function getBaseRates()
+    {
+        $qb = $this->taxRateRepository->createQueryBuilder('r');
+        $qb
+            ->join(TaxCategory::class, 'c', Expr\Join::WITH, 'r.category = c.id')
+            ->andWhere('r.country = :country')
+            ->andWhere(
+                $qb->expr()->in('c.code', ':codes')
+            )
+            ->setParameter('country', $this->country)
+            ->setParameter('codes', self::$baseTaxCategories)
+            ->orderBy('r.amount', 'ASC')
+            ;
+
+        return $qb->getQuery()->getResult();
+    }
+
+    private static $baseRateCodeCache = [];
+
+    public function getMatchingBaseRateCode($code)
+    {
+        if (!isset(self::$baseRateCodeCache[$code])) {
+
+            $rate = $this->taxRateRepository->findOneByCode($code);
+            $baseRates = $this->getBaseRates();
+
+            foreach ($baseRates as $baseRate) {
+                if ($rate->getAmount() === $baseRate->getAmount()) {
+                    self::$baseRateCodeCache[$code] = $baseRate->getCode();
+
+                    return self::$baseRateCodeCache[$code];
+                }
+            }
+
+            self::$baseRateCodeCache[$code] = null;
+        }
+
+        return self::$baseRateCodeCache[$code];
+    }
+
+    public function getServiceTaxRateCode()
+    {
+        $subjectToVat = $this->settingsManager->get('subject_to_vat');
+        $code = $subjectToVat ? 'SERVICE' : 'SERVICE_TAX_EXEMPT';
+
+        $qb = $this->taxRateRepository->createQueryBuilder('r');
+        $qb
+            ->join(TaxCategory::class, 'c', Expr\Join::WITH, 'r.category = c.id')
+            ->andWhere('r.country = :country')
+            ->andWhere('c.code = :code')
+            ->setParameter('country', $this->country)
+            ->setParameter('code', $code)
+            ;
+
+        $rate = $qb->getQuery()->getOneOrNullResult();
+
+        if ($rate) {
+            return $rate->getCode();
+        }
     }
 }

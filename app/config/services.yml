@@ -1120,3 +1120,8 @@ services:
       $tile38: '@snc_redis.tile38'
       $doorstepChanNamespace: '%tile38_doorstep_chan_namespace%'
       $fleetKey: '%tile38_fleet_key%'
+
+  AppBundle\Sylius\Taxation\TaxesHelper:
+    arguments:
+      $country: '%region_iso%'
+      # $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'

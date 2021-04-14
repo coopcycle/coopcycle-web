@@ -35,6 +35,7 @@ use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\ProductInterface;
+use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Utils\MenuEditor;
 use AppBundle\Utils\PreparationTimeCalculator;
 use AppBundle\Utils\RestaurantStats;
@@ -1129,7 +1130,8 @@ trait RestaurantTrait
         SlugifyInterface $slugify,
         TranslatorInterface $translator,
         EntityManagerInterface $entityManager,
-        PaginatorInterface $paginator)
+        PaginatorInterface $paginator,
+        TaxesHelper $taxesHelper)
     {
         $tab = $request->query->get('tab', 'orders');
 
@@ -1157,7 +1159,8 @@ trait RestaurantTrait
             $restaurant,
             $paginator,
             $this->getParameter('kernel.default_locale'),
-            $translator
+            $translator,
+            $taxesHelper
         );
 
         if ($request->isMethod('POST')) {
