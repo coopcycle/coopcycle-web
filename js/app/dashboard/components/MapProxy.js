@@ -320,7 +320,7 @@ export default class MapProxy {
           // Make sure to remove the default CSS class "leaflet-div-icon"
           className: '',
           html: iconEl,
-          iconSize: L.point(32, 32),
+          iconSize: L.point(28, 28),
         })
       })
 
