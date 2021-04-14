@@ -7,6 +7,8 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import moment from 'moment'
 
+import MonthPicker from '../widgets/MonthPicker'
+
 const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
 const commonOptions = {
   maintainAspectRatio: false,
@@ -100,3 +102,18 @@ if (rootElement) {
 
   ReactDOM.render(<ChartRenderer />, rootElement);
 }
+
+const monthPickerEl = document.querySelector('#month-picker')
+
+const routeName = monthPickerEl.dataset.routeName
+const restaurant = monthPickerEl.dataset.restaurant
+const defaultValue = monthPickerEl.dataset.defaultValue
+
+new MonthPicker(monthPickerEl, {
+  defaultValue,
+  onChange: function(date, dateString) {
+    window.location.href = window.Routing.generate(routeName, { id: restaurant, month: dateString });
+  }
+})
+
+$('[data-toggle="tooltip"]').tooltip()

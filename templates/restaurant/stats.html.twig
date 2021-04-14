@@ -19,7 +19,10 @@
     <form method="post" class="d-inline-block mr-2">
       <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-download"></i> {{ 'basics.export'|trans }}</button>
     </form>
-    <div id="month-picker" class="d-inline-block"></div>
+    <div id="month-picker" class="d-inline-block"
+      data-route-name="{{ stats_route }}"
+      data-restaurant="{{ restaurant.id }}"
+      data-default-value="{{ start|date('Y-m') }}"></div>
   </div>
 </div>
 
@@ -118,15 +121,4 @@
 
 {% block scripts %}
   {{ encore_entry_script_tags('metrics') }}
-  <script>
-    new CoopCycle.MonthPicker(document.querySelector('#month-picker'), {
-      defaultValue: "{{ start|date('Y-m') }}",
-      onChange: function(date, dateString) {
-        window.location.href = Routing.generate("{{ stats_route }}", { id: {{ restaurant.id }}, month: dateString });
-      }
-    });
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-  </script>
 {% endblock %}
