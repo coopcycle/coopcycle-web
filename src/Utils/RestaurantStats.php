@@ -37,7 +37,9 @@ class RestaurantStats implements \Countable
 
     private $columnTotals = [];
     private $taxTotals = [];
+    private $itemsTotalExclTaxTotals = [];
     private $taxColumns = [];
+    private $productTaxColumns;
 
     private $numberFormatter;
 
@@ -99,6 +101,10 @@ class RestaurantStats implements \Countable
             return;
         }
 
+        //
+        // Add "regular" adjustments
+        //
+
         $qb = $this->entityManager
             ->getRepository(Adjustment::class)
             ->createQueryBuilder('a');
@@ -136,6 +142,52 @@ class RestaurantStats implements \Countable
         $this->result = array_map(function ($order) use ($adjustmentsByOrderId) {
 
             $order->adjustments = $adjustmentsByOrderId[$order->id];
+
+            return $order;
+
+        }, $this->result);
+
+        //
+        // Add "virtual" adjustments with items total excl. tax
+        //
+
+        $qb = $this->entityManager
+            ->getRepository(OrderItem::class)
+            ->createQueryBuilder('oi');
+
+        $qb
+            ->select('IDENTITY(oi.order) AS order_id')
+            ->addSelect('a.originCode AS tax_rate_code')
+            ->addSelect('(SUM(oi.total) - SUM(a.amount)) AS items_total_excl_tax')
+            ->leftJoin(Adjustment::class, 'a', Expr\Join::WITH, 'a.orderItem = oi.id')
+            ->andWhere(
+                $qb->expr()->in('oi.order', ':ids')
+            )
+            ->andWhere('a.type = :tax')
+            ->groupBy('order_id', 'tax_rate_code')
+            ->setParameter('ids', $this->ids)
+            ->setParameter('tax', AdjustmentInterface::TAX_ADJUSTMENT);
+
+        $totalExclTaxByRate = $qb->getQuery()->getArrayResult();
+
+        $byOrderId = [];
+        foreach ($totalExclTaxByRate as $entry) {
+            $byOrderId[$entry['order_id']][] = $entry;
+        }
+
+        $this->result = array_map(function ($order) use ($byOrderId) {
+
+            foreach ($byOrderId[$order->id] as $entry) {
+
+                $order->adjustments[] = [
+                    'type'          => 'items_total_excl_tax',
+                    'amount'        => $entry['items_total_excl_tax'],
+                    'neutral'       => true,
+                    'order_id'      => $order->id,
+                    'order_item_id' => null,
+                    'origin_code'   => $entry['tax_rate_code'],
+                ];
+            }
 
             return $order;
 
@@ -193,10 +245,15 @@ class RestaurantStats implements \Countable
     {
         $this->serviceTaxRateCode = $this->taxesHelper->getServiceTaxRateCode();
 
-        $this->taxColumns =
+        $productTaxColumns =
             array_map(fn (TaxRate $rate) => $rate->getCode(), $this->taxesHelper->getBaseRates());
 
-        $this->taxColumns[] = $this->serviceTaxRateCode;
+        $this->taxColumns = array_merge(
+            $productTaxColumns,
+            [ $this->serviceTaxRateCode ]
+        );
+
+        $this->productTaxColumns = array_map(fn ($code) => sprintf('product.%s', $code), $productTaxColumns);
 
         foreach ($this->result as $order) {
 
@@ -218,6 +275,26 @@ class RestaurantStats implements \Countable
                 }
 
                 $this->taxTotals[$order->getId()][$taxRateCode] += $adjustment['amount'];
+            }
+
+            $itemsTotalExclTaxAdjustments =
+                array_filter($order->adjustments, fn($adjustment) => $adjustment['type'] === 'items_total_excl_tax');
+
+            $this->itemsTotalExclTaxTotals[$order->getId()] = array_combine(
+                $this->productTaxColumns,
+                array_pad([], count($this->productTaxColumns), 0)
+            );
+
+            foreach ($itemsTotalExclTaxAdjustments as $adjustment) {
+
+                $taxRateCode = $adjustment['origin_code'];
+
+                // This allows showing fewer columns
+                if (!in_array($taxRateCode, $this->taxColumns)) {
+                    $taxRateCode = $this->taxesHelper->getMatchingBaseRateCode($taxRateCode);
+                }
+
+                $this->itemsTotalExclTaxTotals[$order->getId()][$taxRateCode] = $adjustment['amount'];
             }
         }
     }
@@ -288,6 +365,11 @@ class RestaurantStats implements \Countable
         return in_array($column, $this->taxColumns);
     }
 
+    private function isProductTaxColumn($column)
+    {
+        return in_array($column, $this->productTaxColumns);
+    }
+
     private function formatNumber(int $amount, $bypass = false)
     {
         return $bypass ? $amount : $this->numberFormatter->format($amount / 100);
@@ -311,12 +393,15 @@ class RestaurantStats implements \Countable
         $headings[] = 'order_number';
         $headings[] = 'fulfillment_method';
         $headings[] = 'completed_at';
+        foreach ($this->productTaxColumns as $code) {
+            $headings[] = $code;
+        }
         $headings[] = 'total_products_excl_tax';
-        foreach ($this->taxColumns as $taxLabel) {
-            if ($taxLabel === $this->serviceTaxRateCode) {
+        foreach ($this->taxColumns as $code) {
+            if ($code === $this->serviceTaxRateCode) {
                 continue;
             }
-            $headings[] = $taxLabel;
+            $headings[] = $code;
         }
         $headings[] = 'total_products_incl_tax';
         $headings[] = 'delivery_fee';
@@ -339,6 +424,12 @@ class RestaurantStats implements \Countable
             return $this->taxesHelper->translate($column);
         }
 
+        if ($this->isProductTaxColumn($column)) {
+            $code = str_replace('product.', '', $column);
+
+            return $this->taxesHelper->translate($code);
+        }
+
         return $this->translator->trans(sprintf('order.export.heading.%s', $column));
     }
 
@@ -351,6 +442,14 @@ class RestaurantStats implements \Countable
             return $formatted ? $this->formatNumber(
                 $this->taxTotals[$order->getId()][$column] ?? 0
             ) : $this->taxTotals[$order->getId()][$column] ?? 0;
+        }
+
+        if ($this->isProductTaxColumn($column)) {
+            $code = str_replace('product.', '', $column);
+
+            return $formatted ? $this->formatNumber(
+                $this->itemsTotalExclTaxTotals[$order->getId()][$code] ?? 0
+            ) : $this->itemsTotalExclTaxTotals[$order->getId()][$code] ?? 0;
         }
 
         switch ($column) {
