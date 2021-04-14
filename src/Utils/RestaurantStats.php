@@ -70,6 +70,8 @@ class RestaurantStats implements \Countable
         $this->ids = array_map(fn ($o) => $o->id, $this->result);
 
         $this->addAdjustments();
+        $this->addVendors();
+
         $this->computeTaxes();
         $this->computeColumnTotals();
 
@@ -133,6 +135,53 @@ class RestaurantStats implements \Countable
         $this->result = array_map(function ($order) use ($adjustmentsByOrderId) {
 
             $order->adjustments = $adjustmentsByOrderId[$order->id];
+
+            return $order;
+
+        }, $this->result);
+    }
+
+    private function addVendors()
+    {
+        if (count($this->ids) === 0) {
+            return;
+        }
+
+        $qb = $this->entityManager
+            ->getRepository(OrderVendor::class)
+            ->createQueryBuilder('v');
+
+        $qb
+            ->select('IDENTITY(v.order) AS order_id')
+            ->addSelect('IDENTITY(v.restaurant) AS restaurant_id')
+            ->addSelect('r.name AS restaurant_name')
+            ->addSelect('IDENTITY(r.hub) AS hub_id')
+            ->addSelect('h.name AS hub_name')
+            ->addSelect('v.itemsTotal')
+            ->addSelect('v.transferAmount')
+            ->leftJoin(LocalBusiness::class, 'r', Expr\Join::WITH, 'v.restaurant = r.id')
+            ->leftJoin(Hub::class, 'h', Expr\Join::WITH, 'r.hub = h.id')
+            ->andWhere(
+                $qb->expr()->in('v.order', $this->ids)
+            );
+
+        $vendors = $qb->getQuery()->getArrayResult();
+
+        $vendorsByOrderId = array_reduce($vendors, function ($accumulator, $vendor) {
+
+            if (!isset($accumulator[$vendor['order_id']])) {
+                $accumulator[$vendor['order_id']] = [];
+            }
+
+            $accumulator[$vendor['order_id']][] = $vendor;
+
+            return $accumulator;
+
+        }, []);
+
+        $this->result = array_map(function ($order) use ($vendorsByOrderId) {
+
+            $order->vendors = $vendorsByOrderId[$order->id];
 
             return $order;
 
@@ -411,21 +460,11 @@ class RestaurantStats implements \Countable
         $rsm = new ResultSetMappingBuilder($this->entityManager, ResultSetMappingBuilder::COLUMN_RENAMING_INCREMENT);
 
         $rsm->addRootEntityFromClassMetadata(Order::class, 'o');
-        $rsm->addJoinedEntityFromClassMetadata(OrderVendor::class, 'v', 'o', 'vendors');
-
-        $rsm->addJoinedEntityResult(LocalBusiness::class, 'r', 'v', 'restaurant');
-        $rsm->addFieldResult('r', 'restaurant_id', 'id');
-        $rsm->addFieldResult('r', 'restaurant_name', 'name');
-
-        $rsm->addJoinedEntityResult(Hub::class, 'h', 'r', 'hub');
-        $rsm->addFieldResult('h', 'hub_id', 'id');
-        $rsm->addFieldResult('h', 'hub_name', 'name');
+        $rsm->addJoinedEntityResult(OrderVendor::class, 'v', 'o', 'vendors');
 
         $sql = 'SELECT ' . $rsm->generateSelectClause() . ' '
             . 'FROM sylius_order o '
             . 'LEFT JOIN sylius_order_vendor v ON (o.id = v.order_id) '
-            . 'LEFT JOIN restaurant r ON (v.restaurant_id = r.id) '
-            . 'LEFT JOIN hub h ON (r.hub_id = h.id) '
             . 'WHERE '
             . '(o.shipping_time_range && CAST(:range AS tsrange)) = true '
             . 'AND o.state = :state'
@@ -443,7 +482,7 @@ class RestaurantStats implements \Countable
         }
 
         $result = $query->getArrayResult();
-        $orders = array_map(fn ($data) => OrderView::create($data), $result);
+        $orders = array_map(fn ($data) => OrderView::create($data, $restaurant), $result);
 
         return $orders;
     }

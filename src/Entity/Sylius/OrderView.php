@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Vendor;
 use Carbon\Carbon;
@@ -10,26 +11,27 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 
 class OrderView
 {
+    private $restaurant;
+
     public $id;
     public $number;
     public $takeaway;
-    public $adjustments = [];
+
     public $shippingTimeRange;
-
-    public $vendorType;
-    public $vendorName;
-
-    public $restaurant;
-
     public $total;
     public $itemsTotal;
 
-    private $itemsTaxTotal;
+    public $adjustments = [];
+    public $vendors = [];
 
+    private $itemsTaxTotal;
     private $adjustmentsTotalCache = [];
     private $adjustmentsTotalRecursivelyCache = [];
 
-    public $vendors = [];
+    public function __construct(?LocalBusiness $restaurant = null)
+    {
+        $this->restaurant = $restaurant;
+    }
 
     public function getId()
     {
@@ -127,11 +129,11 @@ class OrderView
 
     public function getRevenue(): int
     {
-        if (count($this->vendors) === 1) {
-
-            if ($this->vendors[0]['itemsTotal'] !== $this->itemsTotal) {
-
-                return $this->vendors[0]['transferAmount'];
+        if ($this->isMultiVendor() && null !== $this->restaurant) {
+            foreach ($this->vendors as $vendor) {
+                if ($vendor['restaurant_id'] === $this->restaurant->getId()) {
+                    return $vendor['transferAmount'];
+                }
             }
         }
 
@@ -150,11 +152,7 @@ class OrderView
             return false;
         }
 
-        if (count($this->vendors) === 1) {
-            return false;
-        }
-
-        return $this->vendors[0]['itemsTotal'] !== $this->itemsTotal;
+        return count($this->vendors) > 1;
     }
 
     public function getVendorName(): string
@@ -164,25 +162,17 @@ class OrderView
             return '';
         }
 
-        foreach ($this->vendors as $vendor) {
+        if ($this->isMultiVendor()) {
 
-            if ($this->isMultiVendor()) {
-
-                if (isset($vendor['restaurant']['hub']) && is_array($vendor['restaurant']['hub'])) {
-
-                    return $vendor['restaurant']['hub']['name'];
-                }
-            }
-
-            return $vendor['restaurant']['name'];
+            return $this->vendors[0]['hub_name'];
         }
 
-        return '';
+        return $this->vendors[0]['restaurant_name'];
     }
 
-    public static function create(array $data): self
+    public static function create(array $data, ?LocalBusiness $restaurant = null): self
     {
-        $order = new self();
+        $order = new self($restaurant);
 
         $order->id                = $data['id'];
         $order->number            = $data['number'];
@@ -190,7 +180,6 @@ class OrderView
         $order->takeaway          = $data['takeaway'];
         $order->itemsTotal        = $data['itemsTotal'];
         $order->total             = $data['total'];
-        $order->vendors           = $data['vendors'];
 
         return $order;
     }
