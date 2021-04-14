@@ -474,6 +474,8 @@ class RestaurantStats implements \Countable
             $sql .= ' AND v.restaurant_id = :restaurant';
         }
 
+        $sql .= ' ORDER BY o.shipping_time_range DESC';
+
         $query = $this->entityManager->createNativeQuery($sql, $rsm);
         $query->setParameter('state', OrderInterface::STATE_FULFILLED);
         $query->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')));
