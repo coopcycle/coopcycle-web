@@ -18970,16 +18970,16 @@
         },
         {
             "name": "phpstan/phpstan-symfony",
-            "version": "0.12.22",
+            "version": "0.12.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-symfony.git",
-                "reference": "4f94ccd437d7031d3513807ad8d4aee551813e0e"
+                "reference": "76d75e326a3b47587c44a2b3aaadeae24f86adcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/4f94ccd437d7031d3513807ad8d4aee551813e0e",
-                "reference": "4f94ccd437d7031d3513807ad8d4aee551813e0e",
+                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/76d75e326a3b47587c44a2b3aaadeae24f86adcc",
+                "reference": "76d75e326a3b47587c44a2b3aaadeae24f86adcc",
                 "shasum": ""
             },
             "require": {
@@ -19034,9 +19034,9 @@
             "description": "Symfony Framework extensions and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-symfony/issues",
-                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.22"
+                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.24"
             },
-            "time": "2021-04-02T17:12:58+00:00"
+            "time": "2021-04-13T14:34:41+00:00"
         },
         {
             "name": "phpstan/phpstan-webmozart-assert",
