@@ -1160,3 +1160,4 @@ adminDashboard.api.help: Créez des livraisons de facon automatisée
 checkout.suggestions.continue_shopping_hub: Vous pouvez continuer votre commande dans les autres boutiques <strong>%name%</strong>
 hub.disclaimer: Commandez dans plusieurs boutiques, et on vous livre en une seule fois !
 form.adress_book.remember_address: Se souvenir de cette adresse
+restaurant.list.tags.zerowaste: Zéro déchet
