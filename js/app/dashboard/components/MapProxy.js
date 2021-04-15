@@ -110,7 +110,14 @@ export default class MapProxy {
       showCoverageOnHover: false,
       spiderfyOnMaxZoom: false,
       zoomToBoundsOnClick: false,
-      maxClusterRadius: 50,
+      maxClusterRadius: (zoom) => {
+        if (zoom >= 14) {
+
+          return 0
+        }
+
+        return 50
+      },
     })
     this.pickupClusterGroup.on('clusterclick', (a) => {
       L.popup({
