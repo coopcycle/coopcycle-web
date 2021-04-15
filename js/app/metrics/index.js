@@ -8,6 +8,8 @@ import moment from 'moment'
 
 import { antdLocale } from '../i18n'
 
+import './index.scss'
+
 const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
 const commonOptions = {
   maintainAspectRatio: false,

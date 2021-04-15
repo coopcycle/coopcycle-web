@@ -1,0 +1,8 @@
+.table-restaurant-stats {
+  > thead > tr > th,
+  > tbody > tr > td,
+  > tfoot > tr > td {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 12px;
+  }
+}

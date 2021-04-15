@@ -76,14 +76,16 @@
 {% set columns =
   stats.columns|filter(c => (stats.isProductTaxColumn(c) or stats.isTaxColumn(c)) ? with_details : true)  %}
 
-<table class="table table-condensed">
+<table class="table table-condensed table-restaurant-stats">
   <thead>
-    {% for column in columns %}
+    <tr>
+      {% for column in columns %}
       <th class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
         {{ stats.getColumnLabel(column) }}
       </th>
-    {% endfor %}
-    <th></th>
+      {% endfor %}
+      <th></th>
+    </tr>
   </thead>
   <tbody>
     {% for order in stats.getPagination(app.request.query.get('page', 1)) %}
