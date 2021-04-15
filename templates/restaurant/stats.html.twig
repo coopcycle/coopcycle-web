@@ -76,7 +76,7 @@
 {% set columns =
   stats.columns|filter(c => (stats.isProductTaxColumn(c) or stats.isTaxColumn(c)) ? with_details : true)  %}
 
-<table class="table table-condensed table-restaurant-stats">
+<table class="table table-hover table-condensed table-restaurant-stats">
   <thead>
     <tr>
       {% for column in columns %}
