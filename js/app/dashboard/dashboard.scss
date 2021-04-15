@@ -521,8 +521,8 @@ $pulse-color: #2ECC40;
   .leaflet-popup-content {
     margin: 0;
     .leaflet-popup-pickup-group-content {
-      max-height: calc((100vh - 50px) * 0.4);
-      overflow-y: scroll;
+      max-height: calc(40vh - 50px);
+      overflow: auto;
     }
   }
 }

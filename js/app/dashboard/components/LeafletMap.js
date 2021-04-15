@@ -77,7 +77,7 @@ const GroupTable = ({ tasks, onEditClick }) => {
         </tbody>
       </table>
       { pages > 1 && (
-      <div className="text-right">
+      <div className="text-right mr-2">
         { pagesArray.map(p =>
           <a key={ `p-${p}` }
             href="#"
@@ -112,7 +112,7 @@ class GroupPopupContent extends React.Component {
       <div className="mt-5 mb-3">
         <div className="leaflet-popup-pickup-group-content">
         { _.map(tasksByAddress, (tasks, key) =>
-          <div key={ key }>
+          <div key={ key } className="mb-3">
             <GroupHeading tasks={ tasks } />
             <GroupTable tasks={ tasks } onEditClick={ this.props.onEditClick } />
           </div>
