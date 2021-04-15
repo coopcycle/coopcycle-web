@@ -37,16 +37,8 @@ class GroupPopupContent extends React.Component {
 
   render() {
 
-    const {
-      clusterTaskIds,
-      visibleTaskIds,
-    } = this.props
-
-    const visibleTasks = _.intersectionWith(this.props.tasks, visibleTaskIds, (task, id) => task['@id'] === id)
-    const clusterTasks = _.intersectionWith(visibleTasks, clusterTaskIds, (task, id) => task['@id'] === id)
-
     const tasksByAddress = _.mapValues(
-      _.groupBy(clusterTasks, (task) => `${task.address['@id']}|${task.orgName}` ),
+      _.groupBy(this.props.clusterTasks, (task) => `${task.address['@id']}|${task.orgName}` ),
       (tasks) => _.sortBy(tasks, [ sortByBefore ])
     )
 
@@ -157,21 +149,20 @@ const MapProvider = (props) => {
         proxy.enableDragging()
       },
       onMarkersSelected: markers => {
-        const taskIds = markers.map(marker => marker.options.task)
+        const taskIds = markers.map(marker => marker.options.task['@id'])
         props.selectTasksByIds(taskIds)
       },
       onPickupClusterClick: (a) => {
 
         const childMarkers = a.layer.getAllChildMarkers()
-        const taskIds = childMarkers.map(m => m.options.task)
+        const tasks = childMarkers.map(m => m.options.task)
 
         const el = document.createElement('div')
 
         render(<GroupPopupContent
-          clusterTaskIds={ taskIds }
-          tasks={ props.tasks }
-          visibleTaskIds={ props.visibleTaskIds }
-          onEditClick={ proxy.onEditClick } />, el)
+          onEditClick={ proxy.onEditClick }
+          clusterTasks={ tasks }
+          />, el)
 
         return el
       }

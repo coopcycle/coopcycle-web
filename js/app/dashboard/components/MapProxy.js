@@ -194,8 +194,6 @@ export default class MapProxy {
 
       marker.bindPopup(popup)
 
-      L.Util.setOptions(marker, { task: task['@id'] })
-
     } else {
 
       // OPTIMIZATION
@@ -223,6 +221,8 @@ export default class MapProxy {
       popupComponent.current.updateTask(task)
 
     }
+
+    L.Util.setOptions(marker, { task })
 
     marker.off('mouseover').on('mouseover', () => this.onTaskMouseOver(task))
     marker.off('mouseout').on('mouseout', () => this.onTaskMouseOut(task))
