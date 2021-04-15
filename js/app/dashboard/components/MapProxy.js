@@ -5,8 +5,6 @@ import 'leaflet.markercluster'
 import 'leaflet-area-select'
 import React from 'react'
 import { render } from 'react-dom'
-import moment from 'moment'
-import { Badge } from 'antd'
 
 import MapHelper from '../../MapHelper'
 import LeafletPopupContent from './LeafletPopupContent'
@@ -76,75 +74,6 @@ const createIcon = username => {
   })
 }
 
-const taskComparator = task => moment(task.before)
-
-class GroupPopupContent extends React.Component {
-
-  constructor (props) {
-    super(props)
-    this.state = {
-      tasks: this.props.tasks
-    }
-  }
-
-  updateTasks(tasks) {
-    this.setState({ tasks })
-  }
-
-  render() {
-
-    const sortedTasks = _.sortBy(this.state.tasks, [ taskComparator ])
-
-    return (
-      <div>
-        <div className="mb-2">
-          <strong>{ this.props.restaurant.name }</strong>
-        </div>
-        <ul className="list-unstyled">
-        { sortedTasks.map(task =>
-          <li key={ task['@id'] } className="py-1">
-            <a href="#" onClick={ (e) => {
-              e.preventDefault()
-              this.props.onEditClick(task)
-            }}
-            >
-              <strong className="mr-2">{ `#${task.id}` }</strong>
-              <span className="text-muted">
-                { `${moment(task.after).format('LT')} — ${moment(task.before).format('LT')}` }
-              </span>
-            </a>
-          </li>
-        )}
-        </ul>
-      </div>
-    )
-  }
-}
-
-class RestaurantIcon extends React.Component {
-
-  constructor (props) {
-    super(props)
-    this.state = {
-      count: this.props.count
-    }
-  }
-
-  updateCount(count) {
-    this.setState({ count })
-  }
-
-  render () {
-    return (
-      <Badge count={ this.state.count } size="small" offset={[ -3, 3 ]}>
-        <div className="leaftlet-restaurant-icon">
-          <img src={ this.props.image } className="img-circle" />
-        </div>
-      </Badge>
-    )
-  }
-}
-
 export default class MapProxy {
 
   constructor(map, options) {
@@ -177,6 +106,22 @@ export default class MapProxy {
       showCoverageOnHover: false,
     })
 
+    this.pickupClusterGroup = L.markerClusterGroup({
+      showCoverageOnHover: false,
+      spiderfyOnMaxZoom: false,
+      zoomToBoundsOnClick: false,
+      // maxClusterRadius: 0,
+    })
+    this.pickupClusterGroup.on('clusterclick', (a) => {
+      L.popup({
+        offset: [ 0, -15 ]
+      })
+        .setLatLng(a.latlng)
+        .setContent(options.onPickupClusterClick(a))
+        .openOn(this.map)
+    })
+    this.pickupClusterGroup.addTo(this.map)
+
     this.onTaskMouseDown = options.onTaskMouseDown
     this.onTaskMouseOver = options.onTaskMouseOver
     this.onTaskMouseOut = options.onTaskMouseOut
@@ -208,7 +153,7 @@ export default class MapProxy {
 
   }
 
-  addTask(task, selected = false) {
+  addTask(task, selected = false, isRestaurantAddress = false) {
 
     let marker = this.taskMarkers.get(task['id'])
 
@@ -242,7 +187,7 @@ export default class MapProxy {
 
       marker.bindPopup(popup)
 
-      marker.options.task = task['@id']
+      L.Util.setOptions(marker, { task: task['@id'] })
 
     } else {
 
@@ -281,78 +226,11 @@ export default class MapProxy {
       this.onTaskMouseDown(task)
     })
 
-    this.tasksLayerGroup.addLayer(marker)
-    this.clusterGroup.addLayer(marker)
-  }
-
-  addGroup(group/*, selected*/) {
-
-    let marker = this.pickupGroupMarkers.get(group.restaurant['@id'])
-    let popupComponent = this.pickupGroupPopups.get(group.restaurant['@id'])
-    let iconComponent = this.pickupGroupIcons.get(group.restaurant['@id'])
-
-    // FIXME
-    // There is a race condition here,
-    // because addGroup() can be called repeatedly with the same group
-    // As the popup is added to pickupGroupPopups asynchronously,
-    // it may be not ready yet when called again
-    if (!marker) {
-
-      const latLng = L.latLng(
-        group.tasks[0].address.geo.latitude,
-        group.tasks[0].address.geo.longitude
-      )
-
-      const iconEl = document.createElement('div')
-      iconComponent = React.createRef()
-
-      const onIconRendered = () => {
-        this.pickupGroupIcons.set(group.restaurant['@id'], iconComponent)
-      }
-
-      render(<RestaurantIcon
-        ref={ iconComponent }
-        image={ group.restaurant.image }
-        count={ group.tasks.length } />, iconEl, onIconRendered)
-
-      marker = L.marker(latLng, {
-        icon: L.divIcon({
-          // Make sure to remove the default CSS class "leaflet-div-icon"
-          className: '',
-          html: iconEl,
-          iconSize: L.point(28, 28),
-        })
-      })
-
-      this.pickupGroupMarkers.set(group.restaurant['@id'], marker)
-
-      const el = document.createElement('div')
-      popupComponent = React.createRef()
-
-      const onPopupRendered = () => {
-        this.pickupGroupPopups.set(group.restaurant['@id'], popupComponent)
-      }
-
-      render(<GroupPopupContent
-        ref={ popupComponent }
-        restaurant={ group.restaurant }
-        tasks={ group.tasks }
-        onEditClick={ this.onEditClick } />, el, onPopupRendered)
-
-      const popup = L.popup({
-        offset: [ 0, -15 ]
-      })
-        .setContent(el)
-
-      marker.bindPopup(popup)
-
-      marker.addTo(this.map)
-
+    if (task.type === 'PICKUP' && isRestaurantAddress) {
+      this.pickupClusterGroup.addLayer(marker)
     } else {
-      // TODO Queue properly calls to addGroup()
-      // TODO Manage selected state (add border)
-      popupComponent && popupComponent.current.updateTasks(group.tasks)
-      iconComponent && iconComponent.current.updateCount(group.tasks.length)
+      this.tasksLayerGroup.addLayer(marker)
+      this.clusterGroup.addLayer(marker)
     }
   }
 
@@ -394,6 +272,7 @@ export default class MapProxy {
     if (marker) {
       this.tasksLayerGroup.removeLayer(marker)
       this.clusterGroup.removeLayer(marker)
+      this.pickupClusterGroup.removeLayer(marker)
     }
   }
 

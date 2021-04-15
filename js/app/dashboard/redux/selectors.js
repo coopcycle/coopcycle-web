@@ -295,3 +295,8 @@ export const selectPickupGroups = createSelector(
     return pickBy(hash, (group) => group.tasks.length > 0)
   }
 )
+
+export const selectRestaurantAddressIds = createSelector(
+  state => state.config.restaurants,
+  (restaurants) => restaurants.map(restaurant => restaurant.address)
+)

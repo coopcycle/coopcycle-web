@@ -1,10 +1,79 @@
 import React, { Component } from 'react'
+import { render } from 'react-dom'
 import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
+import _ from 'lodash'
+import moment from 'moment'
 
 import { setCurrentTask, assignAfter, selectTask, selectTasksByIds } from '../redux/actions'
 import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle } from './MapLayers'
+import { selectVisibleTaskIds } from '../redux/selectors'
+import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
+
+const sortByBefore = task => moment(task.before)
+
+const GroupHeading = ({ tasks }) => {
+  const task = _.first(tasks)
+
+  if (task.orgName) {
+    return (
+      <div className="mb-2">
+        <strong className="d-block">{ task.orgName }</strong>
+        <small className="text-muted">{ task.address.streetAddress }</small>
+      </div>
+    )
+  }
+
+  return (
+    <strong className="d-block mb-2">{ task.address.streetAddress }</strong>
+  )
+}
+
+class GroupPopupContent extends React.Component {
+
+  render() {
+
+    const {
+      clusterTaskIds,
+      visibleTaskIds,
+    } = this.props
+
+    const visibleTasks = _.intersectionWith(this.props.tasks, visibleTaskIds, (task, id) => task['@id'] === id)
+    const clusterTasks = _.intersectionWith(visibleTasks, clusterTaskIds, (task, id) => task['@id'] === id)
+
+    const tasksByAddress = _.mapValues(
+      _.groupBy(clusterTasks, (task) => `${task.address['@id']}|${task.orgName}` ),
+      (tasks) => _.sortBy(tasks, [ sortByBefore ])
+    )
+
+    return (
+      <div>
+        { _.map(tasksByAddress, (tasks, key) =>
+          <div key={ key }>
+            <GroupHeading tasks={ tasks } />
+            <ul className="list-unstyled">
+            { tasks.map(task =>
+              <li key={ task['@id'] } className="py-1">
+                <a href="#" onClick={ (e) => {
+                  e.preventDefault()
+                  this.props.onEditClick(task)
+                }}
+                >
+                  <strong className="mr-2">{ `#${task.id}` }</strong>
+                  <span className="text-muted">
+                    { `${moment(task.after).format('LT')} — ${moment(task.before).format('LT')}` }
+                  </span>
+                </a>
+              </li>
+            )}
+            </ul>
+          </div>
+        )}
+      </div>
+    )
+  }
+}
 
 const MapContext = React.createContext([ null, () => {} ])
 
@@ -75,6 +144,21 @@ const MapProvider = (props) => {
       onMarkersSelected: markers => {
         const taskIds = markers.map(marker => marker.options.task)
         props.selectTasksByIds(taskIds)
+      },
+      onPickupClusterClick: (a) => {
+
+        const childMarkers = a.layer.getAllChildMarkers()
+        const taskIds = childMarkers.map(m => m.options.task)
+
+        const el = document.createElement('div')
+
+        render(<GroupPopupContent
+          clusterTaskIds={ taskIds }
+          tasks={ props.tasks }
+          visibleTaskIds={ props.visibleTaskIds }
+          onEditClick={ proxy.onEditClick } />, el)
+
+        return el
       }
     })
 
@@ -98,10 +182,13 @@ class LeafletMap extends Component {
 
     return (
       <MapProvider
+        tasks={ this.props.tasks }
+        visibleTaskIds={ this.props.visibleTaskIds }
         onLoad={ this.props.onLoad }
         setCurrentTask={ this.props.setCurrentTask }
         assignAfter={ this.props.assignAfter }
-        selectTasksByIds={ this.props.selectTasksByIds }>
+        selectTasksByIds={ this.props.selectTasksByIds }
+      >
         <CourierMapLayer />
         <TaskMapLayer />
         <PolylineMapLayer />
@@ -111,7 +198,16 @@ class LeafletMap extends Component {
   }
 }
 
+function mapStateToProps(state) {
+
+  return {
+    tasks: selectAllTasks(state),
+    visibleTaskIds: selectVisibleTaskIds(state),
+  }
+}
+
 function mapDispatchToProps (dispatch) {
+
   return {
     setCurrentTask: task => dispatch(setCurrentTask(task)),
     assignAfter: (username, task, after) => dispatch(assignAfter(username, task, after)),
@@ -120,4 +216,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(() => ({}), mapDispatchToProps)(LeafletMap)
+export default connect(mapStateToProps, mapDispatchToProps)(LeafletMap)

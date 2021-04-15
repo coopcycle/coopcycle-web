@@ -2,7 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 
-import { selectVisibleTaskIds, selectHiddenTaskIds, selectPolylines, selectAsTheCrowFlies, selectPositions, selectSelectedTasks, selectPickupGroups } from '../redux/selectors'
+import { selectVisibleTaskIds, selectHiddenTaskIds, selectPolylines, selectAsTheCrowFlies,
+  selectPositions, selectSelectedTasks, selectRestaurantAddressIds } from '../redux/selectors'
 import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
 import { useMap } from './LeafletMap'
@@ -23,16 +24,7 @@ const CourierLayer = ({ positions }) => {
   return null
 }
 
-const matchPickupGroup = (task, pickupGroups) => {
-  if (Object.prototype.hasOwnProperty.call(pickupGroups, task.address['@id'])) {
-    const pickupGroup = pickupGroups[task.address['@id']]
-    if (-1 !== pickupGroup.tasks.indexOf(task)) {
-      return pickupGroup
-    }
-  }
-}
-
-const TaskLayer = ({ tasks, visibleTaskIds, hiddenTaskIds, selectedTasks, pickupGroups }) => {
+const TaskLayer = ({ tasks, visibleTaskIds, hiddenTaskIds, selectedTasks, /*pickupGroups,*/ restaurantAddressIds }) => {
 
   const map = useMap()
 
@@ -43,12 +35,8 @@ const TaskLayer = ({ tasks, visibleTaskIds, hiddenTaskIds, selectedTasks, pickup
 
     visibleTasks.forEach(task => {
       const selected = -1 !== selectedTasks.indexOf(task)
-      const pickupGroup = matchPickupGroup(task, pickupGroups)
-      if (pickupGroup) {
-        map.addGroup(pickupGroup, selected)
-      } else {
-        map.addTask(task, selected)
-      }
+      const isRestaurantAddress = -1 !== restaurantAddressIds.indexOf(task.address['@id'])
+      map.addTask(task, selected, isRestaurantAddress)
     })
 
     hiddenTasks.forEach(task => map.hideTask(task))
@@ -104,7 +92,7 @@ function mapStateToPropsTask(state) {
     visibleTaskIds: selectVisibleTaskIds(state),
     hiddenTaskIds: selectHiddenTaskIds(state),
     selectedTasks: selectSelectedTasks(state),
-    pickupGroups: selectPickupGroups(state),
+    restaurantAddressIds: selectRestaurantAddressIds(state),
   }
 }
 
