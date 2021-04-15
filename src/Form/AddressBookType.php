@@ -76,7 +76,7 @@ class AddressBookType extends AbstractType
 
         if ($options['with_remember_address']) {
             $builder->add('rememberAddress', CheckboxType::class, [
-                'label' => 'Remember this address',
+                'label' => 'form.adress_book.remember_address',
                 'required' => false,
                 'mapped' => false,
             ]);
