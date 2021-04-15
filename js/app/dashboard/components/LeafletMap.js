@@ -20,14 +20,80 @@ const GroupHeading = ({ tasks }) => {
   if (task.orgName) {
     return (
       <div className="mb-2">
-        <strong className="d-block">{ task.orgName }</strong>
+        <strong className="d-block">{ `${task.orgName} (${tasks.length})` }</strong>
         <small className="text-muted">{ task.address.streetAddress }</small>
       </div>
     )
   }
 
   return (
-    <strong className="d-block mb-2">{ task.address.streetAddress }</strong>
+    <strong className="d-block mb-2">{ `${task.address.streetAddress} (${tasks.length})` }</strong>
+  )
+}
+
+const TASKS_PER_PAGE = 5
+
+const GroupTable = ({ tasks, onEditClick }) => {
+
+  const [ page, setPage ] = React.useState(1)
+
+  const pages = Math.ceil(tasks.length / TASKS_PER_PAGE)
+
+  // Create an array starting at 1
+  const pagesArray =
+    Array.from({ length: pages }, (value, index) => index + 1)
+
+  const offset = (page - 1) * TASKS_PER_PAGE
+  const tasksForPage = tasks.slice(offset, offset + TASKS_PER_PAGE)
+
+  return (
+    <div>
+      <table className="table table-hover table-condensed mb-2">
+        <tbody>
+        { tasksForPage.map(task =>
+          <tr key={ task['@id'] } className="py-1">
+            <td>
+              <a href="#" onClick={ (e) => {
+                e.preventDefault()
+                onEditClick(task)
+              }}
+              >
+                <strong className="mr-2">{ `#${task.id}` }</strong>
+                <span className="text-muted">
+                  { `${moment(task.after).format('LT')} — ${moment(task.before).format('LT')}` }
+                </span>
+              </a>
+            </td>
+            <td className="text-right">
+              <i className={ classNames({
+                'fa': true,
+                'fa-check': task.status === 'DONE',
+                'fa-play':  task.status === 'DOING',
+                'd-none': !isDoingOrDone(task) }) }
+              ></i>
+            </td>
+          </tr>
+        )}
+        </tbody>
+      </table>
+      { pages > 1 && (
+      <div className="text-right">
+        { pagesArray.map(p =>
+          <a key={ `p-${p}` }
+            href="#"
+            className={ classNames({
+              'p-2': true,
+              'bg-light': p === page
+            }) }
+            onClick={ e => {
+              e.preventDefault()
+              setPage(p)
+            }}
+          >{ p }</a>
+        )}
+      </div>
+      ) }
+    </div>
   )
 }
 
@@ -47,34 +113,7 @@ class GroupPopupContent extends React.Component {
         { _.map(tasksByAddress, (tasks, key) =>
           <div key={ key }>
             <GroupHeading tasks={ tasks } />
-            <table className="table table-hover table-condensed">
-              <tbody>
-              { tasks.map(task =>
-                <tr key={ task['@id'] } className="py-1">
-                  <td>
-                    <a href="#" onClick={ (e) => {
-                      e.preventDefault()
-                      this.props.onEditClick(task)
-                    }}
-                    >
-                      <strong className="mr-2">{ `#${task.id}` }</strong>
-                      <span className="text-muted">
-                        { `${moment(task.after).format('LT')} — ${moment(task.before).format('LT')}` }
-                      </span>
-                    </a>
-                  </td>
-                  <td className="text-right">
-                    <i className={ classNames({
-                      'fa': true,
-                      'fa-check': task.status === 'DONE',
-                      'fa-play':  task.status === 'DOING',
-                      'd-none': !isDoingOrDone(task) }) }
-                    ></i>
-                  </td>
-                </tr>
-              )}
-              </tbody>
-            </table>
+            <GroupTable tasks={ tasks } onEditClick={ this.props.onEditClick } />
           </div>
         )}
       </div>
