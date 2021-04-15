@@ -121,7 +121,8 @@ export default class MapProxy {
     })
     this.pickupClusterGroup.on('clusterclick', (a) => {
       L.popup({
-        offset: [ 0, -15 ]
+        offset: [ 0, -15 ],
+        className: 'leaflet-popup-pickup-group'
       })
         .setLatLng(a.latlng)
         .setContent(options.onPickupClusterClick(a))

@@ -19,7 +19,7 @@ const GroupHeading = ({ tasks }) => {
 
   if (task.orgName) {
     return (
-      <div className="mb-2">
+      <div className="mb-2 px-2">
         <strong className="d-block">{ `${task.orgName} (${tasks.length})` }</strong>
         <small className="text-muted">{ task.address.streetAddress }</small>
       </div>
@@ -27,7 +27,7 @@ const GroupHeading = ({ tasks }) => {
   }
 
   return (
-    <strong className="d-block mb-2">{ `${task.address.streetAddress} (${tasks.length})` }</strong>
+    <strong className="d-block mb-2 px-2">{ `${task.address.streetAddress} (${tasks.length})` }</strong>
   )
 }
 
@@ -109,13 +109,15 @@ class GroupPopupContent extends React.Component {
     )
 
     return (
-      <div>
+      <div className="mt-5 mb-3">
+        <div className="leaflet-popup-pickup-group-content">
         { _.map(tasksByAddress, (tasks, key) =>
           <div key={ key }>
             <GroupHeading tasks={ tasks } />
             <GroupTable tasks={ tasks } onEditClick={ this.props.onEditClick } />
           </div>
         )}
+        </div>
       </div>
     )
   }
@@ -147,7 +149,6 @@ const MapProvider = (props) => {
       onTaskMouseOver: task => {
         if (task.isAssigned) {
           proxy.enableConnect(task)
-          proxy.showPolyline(task.assignedTo, 'as_the_crow_flies')
         }
         if (fromTask.current && task !== fromTask.current && !task.isAssigned) {
           toTask.current = task
