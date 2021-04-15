@@ -5,6 +5,7 @@ import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
 import moment from 'moment'
+import classNames from 'classnames'
 
 import { setCurrentTask, assignAfter, selectTask, selectTasksByIds } from '../redux/actions'
 import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle } from './MapLayers'
@@ -30,6 +31,8 @@ const GroupHeading = ({ tasks }) => {
   )
 }
 
+const isDoingOrDone = task => _.includes(['DOING', 'DONE'], task.status)
+
 class GroupPopupContent extends React.Component {
 
   render() {
@@ -52,22 +55,34 @@ class GroupPopupContent extends React.Component {
         { _.map(tasksByAddress, (tasks, key) =>
           <div key={ key }>
             <GroupHeading tasks={ tasks } />
-            <ul className="list-unstyled">
-            { tasks.map(task =>
-              <li key={ task['@id'] } className="py-1">
-                <a href="#" onClick={ (e) => {
-                  e.preventDefault()
-                  this.props.onEditClick(task)
-                }}
-                >
-                  <strong className="mr-2">{ `#${task.id}` }</strong>
-                  <span className="text-muted">
-                    { `${moment(task.after).format('LT')} — ${moment(task.before).format('LT')}` }
-                  </span>
-                </a>
-              </li>
-            )}
-            </ul>
+            <table className="table table-hover table-condensed">
+              <tbody>
+              { tasks.map(task =>
+                <tr key={ task['@id'] } className="py-1">
+                  <td>
+                    <a href="#" onClick={ (e) => {
+                      e.preventDefault()
+                      this.props.onEditClick(task)
+                    }}
+                    >
+                      <strong className="mr-2">{ `#${task.id}` }</strong>
+                      <span className="text-muted">
+                        { `${moment(task.after).format('LT')} — ${moment(task.before).format('LT')}` }
+                      </span>
+                    </a>
+                  </td>
+                  <td className="text-right">
+                    <i className={ classNames({
+                      'fa': true,
+                      'fa-check': task.status === 'DONE',
+                      'fa-play':  task.status === 'DOING',
+                      'd-none': !isDoingOrDone(task) }) }
+                    ></i>
+                  </td>
+                </tr>
+              )}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
