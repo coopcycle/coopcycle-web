@@ -39,4 +39,12 @@ trait TaggableTrait
     {
         $this->tags = is_array($tags) ? $tags : explode(' ', $tags);
     }
+
+    public function addTags($tags)
+    {
+        $this->tags = array_merge(
+            $this->getTags(),
+            is_array($tags) ? $tags : explode(' ', $tags)
+        );
+    }
 }

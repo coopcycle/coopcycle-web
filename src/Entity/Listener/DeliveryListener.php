@@ -18,7 +18,7 @@ class DeliveryListener
         $tags = $store->getTags();
 
         foreach ($delivery->getTasks() as $task) {
-            $task->setTags($tags);
+            $task->addTags($tags);
         }
     }
 }
