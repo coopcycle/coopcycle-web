@@ -58,19 +58,6 @@ class OrderTimeHelperTest extends TestCase
             '2020-03-31T14:50:00+02:00',
         ];
 
-        $cart = $this->prophesize(OrderInterface::class);
-        $cart
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
-        $cart
-            ->getVendor()
-            ->willReturn(
-                Vendor::withRestaurant($restaurant->reveal())
-            );
-        $cart
-            ->getFulfillmentMethod()
-            ->willReturn('delivery');
-
         $fulfillmentMethod = new FulfillmentMethod();
         $fulfillmentMethod->setOpeningHours(["Mo-Su 13:00-15:00"]);
         $fulfillmentMethod->setOpeningHoursBehavior('asap');
@@ -93,6 +80,22 @@ class OrderTimeHelperTest extends TestCase
         $restaurant
             ->getClosingRules()
             ->willReturn(new ArrayCollection());
+
+        $cart = $this->prophesize(OrderInterface::class);
+        $cart
+            ->getRestaurant()
+            ->willReturn($restaurant->reveal());
+        $cart
+            ->getVendor()
+            ->willReturn(
+                Vendor::withRestaurant($restaurant->reveal())
+            );
+        $cart
+            ->getFulfillmentMethod()
+            ->willReturn('delivery');
+        $cart
+            ->getFulfillmentMethodObject()
+            ->willReturn($fulfillmentMethod);
 
         $this->shippingDateFilter
             ->accept($cart, Argument::type(TsRange::class))

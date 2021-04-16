@@ -75,7 +75,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
     private function createRestaurantProphecy(
         Address $address,
-        $minimumCartAmount,
         $maxDistanceExpression,
         $canDeliver)
     {
@@ -84,9 +83,6 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $restaurant
             ->getAddress()
             ->willReturn($address);
-
-        $fulfillmentMethod = new FulfillmentMethod();
-        $fulfillmentMethod->setMinimumAmount($minimumCartAmount);
 
         $restaurant
             ->getDeliveryPerimeterExpression()
@@ -97,14 +93,11 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $restaurant
             ->getOpeningHoursBehavior()
             ->willReturn('asap');
-        $restaurant
-            ->getFulfillmentMethod(Argument::type('string'))
-            ->willReturn($fulfillmentMethod);
 
         return $restaurant;
     }
 
-    private function createOrderProphecy(LocalBusiness $restaurant, ?Address $shippingAddress, $takeaway = false)
+    private function createOrderProphecy(LocalBusiness $restaurant, ?Address $shippingAddress, int $minimumCartAmount, $takeaway = false)
     {
         $order = $this->prophesize(Order::class);
 
@@ -136,6 +129,13 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->getFulfillmentMethod()
             ->willReturn($takeaway ? 'collection' : 'delivery');
 
+        $fulfillmentMethod = new FulfillmentMethod();
+        $fulfillmentMethod->setMinimumAmount($minimumCartAmount);
+
+        $order
+            ->getFulfillmentMethodObject()
+            ->willReturn($fulfillmentMethod);
+
         return $order;
     }
 
@@ -149,14 +149,14 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
-            $shippingAddress
+            $shippingAddress,
+            $minimumCartAmount = 2000
         );
 
         $shippingTimeRange =
@@ -191,14 +191,14 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
-            $shippingAddress->reveal()
+            $shippingAddress->reveal(),
+            $minimumCartAmount = 2000
         );
 
         $order
@@ -233,14 +233,14 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
-            $shippingAddress->reveal()
+            $shippingAddress->reveal(),
+            $minimumCartAmount = 2000
         );
 
         $order
@@ -278,14 +278,14 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
-            $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );
 
         $order = $this->createOrderProphecy(
             $restaurant->reveal(),
-            $shippingAddress
+            $shippingAddress,
+            $minimumCartAmount = 2000
         );
 
         $shippingTimeRange =

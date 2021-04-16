@@ -31,11 +31,7 @@ class OrderValidator extends ConstraintValidator
             return;
         }
 
-        $vendor = $order->getVendor();
-
-        $fulfillmentMethod = $vendor->getFulfillmentMethod($object->getFulfillmentMethod());
-        $minimumAmount = $fulfillmentMethod->getMinimumAmount();
-
+        $minimumAmount = $order->getFulfillmentMethodObject()->getMinimumAmount();
         $itemsTotal = $order->getItemsTotal();
 
         if ($itemsTotal < $minimumAmount) {

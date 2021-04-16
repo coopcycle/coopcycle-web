@@ -93,12 +93,10 @@ class OrderTimeHelper
         if (!isset($this->choicesCache[$hash])) {
 
             $vendor = $cart->getVendor();
-            $fulfillmentMethod = $vendor->getFulfillmentMethod(
-                $cart->getFulfillmentMethod()
-            );
+            $fulfillmentMethod = $cart->getFulfillmentMethodObject();
 
             $choiceLoader = new AsapChoiceLoader(
-                $vendor->getOpeningHours($cart->getFulfillmentMethod()),
+                $fulfillmentMethod->getOpeningHours(),
                 $vendor->getClosingRules(),
                 $this->getOrderingDelayMinutes($fulfillmentMethod->getOrderingDelayMinutes()),
                 $fulfillmentMethod->getOption('range_duration', 10),
@@ -119,8 +117,7 @@ class OrderTimeHelper
 
     public function getShippingTimeRanges(OrderInterface $cart)
     {
-        $vendor = $cart->getVendor();
-        $fulfillmentMethod = $vendor->getFulfillmentMethod($cart->getFulfillmentMethod());
+        $fulfillmentMethod = $cart->getFulfillmentMethodObject();
 
         $this->logger->info(sprintf('Cart has fulfillment method "%s" and behavior "%s"',
             $fulfillmentMethod->getType(),
@@ -129,7 +126,7 @@ class OrderTimeHelper
 
         if ($fulfillmentMethod->getOpeningHoursBehavior() === 'time_slot') {
 
-            $ranges = [];
+            $vendor = $cart->getVendor();
 
             $choiceLoader = new TimeSlotChoiceLoader(
                 TimeSlot::create($fulfillmentMethod, $vendor),
@@ -139,6 +136,7 @@ class OrderTimeHelper
             );
             $choiceList = $choiceLoader->loadChoiceList();
 
+            $ranges = [];
             foreach ($choiceList->getChoices() as $choice) {
                 $ranges[] = $choice->toTsRange();
             }
@@ -187,8 +185,7 @@ class OrderTimeHelper
                 ->format(\DateTime::ATOM);
         }
 
-        $vendor = $cart->getVendor();
-        $fulfillmentMethod = $vendor->getFulfillmentMethod($cart->getFulfillmentMethod());
+        $fulfillmentMethod = $cart->getFulfillmentMethodObject();
 
         return [
             'behavior' => $fulfillmentMethod->getOpeningHoursBehavior(),
