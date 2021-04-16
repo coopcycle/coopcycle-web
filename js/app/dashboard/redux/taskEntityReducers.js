@@ -17,7 +17,11 @@ export default (state = initialState, action) => {
       return taskAdapter.upsertMany(state, action.tasks)
 
     case MODIFY_TASK_LIST_REQUEST_SUCCESS:
-      return taskAdapter.upsertMany(state, action.taskList.items)
+      const entities = action.taskList.items.map(item => ({
+        '@id': item.task,
+        position: item.position
+      }))
+      return taskAdapter.upsertMany(state, entities)
 
     case UPDATE_TASK:
       return taskAdapter.upsertOne(state, action.task)

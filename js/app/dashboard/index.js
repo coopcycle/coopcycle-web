@@ -27,10 +27,8 @@ function start() {
   const dashboardEl = document.getElementById('dashboard')
 
   let date = moment(dashboardEl.dataset.date)
-  let unassignedTasks = JSON.parse(dashboardEl.dataset.unassignedTasks)
+  let allTasks = JSON.parse(dashboardEl.dataset.allTasks)
   let taskLists = JSON.parse(dashboardEl.dataset.taskLists)
-
-  let assignedTasks = taskListUtils.assignedTasks(taskLists)
 
   // normalize data, keep only task ids, instead of the whole objects
   taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
@@ -48,7 +46,7 @@ function start() {
       entities: {
         tasks: taskAdapter.upsertMany(
           taskAdapter.getInitialState(),
-          unassignedTasks.concat(assignedTasks)
+          allTasks
         ),
         taskLists: taskListAdapter.upsertMany(
           taskListAdapter.getInitialState(),

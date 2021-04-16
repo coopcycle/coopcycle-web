@@ -116,29 +116,30 @@ trait AdminDashboardTrait
             return $response;
         }
 
-        $unassignedTasks = $this->getDoctrine()
+        $allTasks = $this->getDoctrine()
             ->getRepository(Task::class)
-            ->findUnassignedByDate($date);
+            ->findByDate($date)
+            ;
 
         $taskLists = $this->getDoctrine()
             ->getRepository(TaskList::class)
             ->findByDate($date);
 
-        $unassignedTasksNormalized = array_map(function (Task $task) {
+        $allTasksNormalized = array_map(function (Task $task) {
             return $this->get('serializer')->normalize($task, 'jsonld', [
                 'resource_class' => Task::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
                 'groups' => ['task', 'delivery', 'address', sprintf('address_%s', $this->getParameter('country_iso'))]
             ]);
-        }, $unassignedTasks);
+        }, $allTasks);
 
         $taskListsNormalized = array_map(function (TaskList $taskList) {
             return $this->get('serializer')->normalize($taskList, 'jsonld', [
                 'resource_class' => TaskList::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
-                'groups' => ['task_collection', 'task', 'delivery', 'address', sprintf('address_%s', $this->getParameter('country_iso'))]
+                'groups' => ['task_collection']
             ]);
         }, $taskLists);
 
@@ -200,7 +201,7 @@ trait AdminDashboardTrait
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
             'couriers' => $couriers,
-            'unassigned_tasks' => $unassignedTasksNormalized,
+            'all_tasks' => $allTasksNormalized,
             'task_lists' => $taskListsNormalized,
             'task_export_form' => $taskExportForm->createView(),
             'tags' => $tagManager->getAllTags(),
@@ -330,7 +331,7 @@ trait AdminDashboardTrait
             'resource_class' => TaskList::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['task_collection', 'task', 'delivery', 'address']
+            'groups' => ['task_collection']
         ]));
     }
 
@@ -359,7 +360,7 @@ trait AdminDashboardTrait
             'resource_class' => TaskList::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['task_collection', 'task']
+            'groups' => ['task_collection']
         ]);
 
         return new JsonResponse($taskListNormalized);

@@ -60,5 +60,5 @@ export function mapToColor(tasks) {
 }
 
 export function tasksToIds(tasks) {
-  return tasks.map((item) => item['@id'])
+  return tasks.map((item) => item['@type'] === 'TaskCollectionItem' ? item.task : item['@id'])
 }

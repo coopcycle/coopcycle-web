@@ -142,6 +142,26 @@ describe('taskUtils', () => {
         '/api/tasks/2',
       ])
     })
+
+    it('should map tasks to task ids with TaskCollectionItem', () => {
+
+      let tasks = [
+        {
+          '@type': 'TaskCollectionItem',
+          'task': '/api/tasks/1',
+        }, {
+          '@type': 'TaskCollectionItem',
+          'task': '/api/tasks/2',
+        }
+      ]
+
+      let ids = tasksToIds(tasks)
+
+      expect(ids).toEqual([
+        '/api/tasks/1',
+        '/api/tasks/2',
+      ])
+    })
   })
 
 })

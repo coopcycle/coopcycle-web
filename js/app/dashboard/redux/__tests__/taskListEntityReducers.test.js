@@ -191,17 +191,15 @@ describe('taskListEntityReducers', () => {
               username: 'bot_1',
               items: [
                 {
-                  '@id': '/api/tasks/1',
-                  id : 1,
-                  next: '/api/tasks/2',
-                  isAssigned: true,
-                  assignedTo: 'bot_1'
+                  '@id': '_:1',
+                  '@type': 'TaskCollectionItem',
+                  task: '/api/tasks/1',
+                  position: 0
                 }, {
-                  '@id': '/api/tasks/2',
-                  id : 2,
-                  previous: '/api/tasks/1',
-                  isAssigned: true,
-                  assignedTo: 'bot_1'
+                  '@id': '_:2',
+                  '@type': 'TaskCollectionItem',
+                  task: '/api/tasks/2',
+                  position: 1
                 }
               ]
             },
