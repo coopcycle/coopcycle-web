@@ -142,25 +142,24 @@ trait AdminDashboardTrait
         $couriers = $this->getDoctrine()
             ->getRepository(User::class)
             ->createQueryBuilder('u')
-            ->select("u.username")
+            ->select('u.username')
             ->where('u.roles LIKE :roles')
             ->orderBy('u.username', 'ASC')
             ->setParameter('roles', '%ROLE_COURIER%')
             ->getQuery()
-            ->getResult();
+            ->getArrayResult();
 
-        $allTags = $this->getDoctrine()
+        $normalizedTags = $this->getDoctrine()
             ->getRepository(Tag::class)
-            ->findAll();
-
-        $normalizedTags = [];
-        foreach ($allTags as $tag) {
-            $normalizedTags[] = [
-                'name' => $tag->getName(),
-                'slug' => $tag->getSlug(),
-                'color' => $tag->getColor(),
-            ];
-        }
+            ->createQueryBuilder('t')
+            ->select(
+                't.name',
+                't.slug',
+                't.color'
+            )
+            ->getQuery()
+            ->getArrayResult()
+            ;
 
         $positions = $this->loadPositions($tile38);
 
