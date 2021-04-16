@@ -226,6 +226,9 @@
         "PAYMENT_FORM_REDIRECT_HELP": "Budete přesměrováni na bankovní web, kde dokončíte platbu",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Zobrazit podle předání, vzestupně.",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Přesunout ({{count}}) úkolů na následující pracovní den ({{nextWorkingDay}})",
-        "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Přesunout ({{count}}) úkolů na další den"
+        "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Přesunout ({{count}}) úkolů na další den",
+        "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Zobrazit pravidla opakování",
+        "PAYMENT_FORM_NOT_SUPPORTED": "Karty Ticket Restaurant (zatím!) Nepřijímáme, použijte prosím klasickou kreditní kartu.",
+        "EDENRED_SPLIT_AMOUNTS": "Pomocí karty Edenred můžete platit {{edenred}}, stále však musíte platit {{card}} kreditní kartou"
     }
 }

@@ -1138,3 +1138,5 @@ form.customize.order_confirm_enabled.label: Zobrazit zprávu s potvrzením vlast
 form.option_value.value.placeholder: např. hranolky, salát…
 basics.enabled: Povoleno
 order.export.empty: Nejsou k dispozici žádné objednávky k exportu
+order.export.heading.promotions: Propagace
+form.payment.method.name.label: Způsob platby
