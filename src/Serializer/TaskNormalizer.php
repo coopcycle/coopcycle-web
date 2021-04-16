@@ -53,6 +53,10 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['comments'] = '';
         }
 
+        if (isset($data['tags']) && is_array($data['tags']) && count($data['tags']) > 0) {
+            $data['tags'] = $this->tagManager->expand($data['tags']);
+        }
+
         // FIXME Avoid coupling normalizer with groups
         // https://medium.com/@rebolon/the-symfony-serializer-a-great-but-complex-component-fbc09baa65a0
         if (in_array('task', $context['groups'])) {
@@ -120,12 +124,6 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if ($address && null === $task->getAddress()) {
             $task->setAddress($address);
-        }
-
-        if (isset($data['tags'])) {
-            $slugs = is_array($data['tags']) ? $data['tags'] : explode(' ', $data['tags']);
-            $tags = $this->tagManager->fromSlugs($slugs);
-            $task->setTags($tags);
         }
 
         if (isset($data['assignedTo'])) {

@@ -6,7 +6,6 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Tag;
 use AppBundle\Service\Geocoder;
-use AppBundle\Service\TagManager;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Cocur\Slugify\Slugify;
@@ -18,12 +17,10 @@ use Prophecy\Argument;
 class TaskSpreadsheetParserTest extends TestCase
 {
     private $geocoder;
-    private $tagManager;
 
     protected function createParser(): AbstractSpreadsheetParser
     {
         $this->geocoder = $this->prophesize(Geocoder::class);
-        $this->tagManager = $this->prophesize(TagManager::class);
         $this->phoneNumberUtil = $this->prophesize(PhoneNumberUtil::class);
         $this->userManager = $this->prophesize(UserManagerInterface::class);
 
@@ -38,7 +35,6 @@ class TaskSpreadsheetParserTest extends TestCase
 
         return new TaskSpreadsheetParser(
             $this->geocoder->reveal(),
-            $this->tagManager->reveal(),
             new Slugify(),
             $this->phoneNumberUtil->reveal(),
             $this->userManager->reveal(),
@@ -55,10 +51,6 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->geocoder
             ->reverse(Argument::type('float'), Argument::type('float'))
             ->willReturn(new Address());
-
-        $this->tagManager
-            ->fromSlugs(Argument::type('array'))
-            ->willReturn([ new Tag() ]);
 
         $this->phoneNumberUtil
             ->parse(Argument::any(), Argument::type('string'))

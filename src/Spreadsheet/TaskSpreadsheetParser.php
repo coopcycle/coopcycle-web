@@ -7,7 +7,6 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
-use AppBundle\Service\TagManager;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Common\Exception\IOException;
@@ -25,7 +24,6 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
     const TIME_PATTERN = '/(?<hour>[0-9]{1,2})[:hH]+(?<minute>[0-9]{1,2})?/';
 
     private $geocoder;
-    private $tagManager;
     private $slugify;
     private $userManager;
     private $phoneNumberUtil;
@@ -33,14 +31,12 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
     public function __construct(
         Geocoder $geocoder,
-        TagManager $tagManager,
         SlugifyInterface $slugify,
         PhoneNumberUtil $phoneNumberUtil,
         UserManagerInterface $userManager,
         string $countryCode)
     {
         $this->geocoder = $geocoder;
-        $this->tagManager = $tagManager;
         $this->slugify = $slugify;
         $this->userManager = $userManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
@@ -279,8 +275,7 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
         if (!empty($tagsAsString)) {
             $slugs = explode(' ', $tagsAsString);
-            $slugs = array_map([$this->slugify, 'slugify'], $slugs);
-            $tags = $this->tagManager->fromSlugs($slugs);
+            $tags = array_map([$this->slugify, 'slugify'], $slugs);
             $task->setTags($tags);
         }
     }

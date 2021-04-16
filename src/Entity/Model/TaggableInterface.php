@@ -2,9 +2,6 @@
 
 namespace AppBundle\Entity\Model;
 
-use AppBundle\Service\TagManager;
-use Doctrine\Common\Collections\Collection;
-
 interface TaggableInterface
 {
     /**
@@ -13,17 +10,12 @@ interface TaggableInterface
     public function getTaggableResourceClass();
 
     /**
-     * @return Collection
+     * @return string[]
      */
     public function getTags();
 
     /**
-     * @param mixed $tags
+     * @param string[]|string $tags
      */
     public function setTags($tags);
-
-    /**
-     * @param TagManager $tagManager
-     */
-    public function setTagManager(TagManager $tagManager);
 }

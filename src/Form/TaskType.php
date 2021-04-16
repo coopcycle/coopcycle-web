@@ -4,7 +4,6 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
-use AppBundle\Service\TagManager;
 use AppBundle\Service\TaskManager;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
@@ -23,12 +22,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaskType extends AbstractType
 {
-    private $tagManager;
     private $country;
 
-    public function __construct(TagManager $tagManager, string $country)
+    public function __construct(string $country)
     {
-        $this->tagManager = $tagManager;
         $this->country = $country;
     }
 
@@ -122,8 +119,7 @@ class TaskType extends AbstractType
                 $task = $event->getForm()->getParent()->getData();
 
                 $tagsAsString = $event->getData();
-                $slugs = explode(' ', $tagsAsString);
-                $tags = $this->tagManager->fromSlugs($slugs);
+                $tags = explode(' ', $tagsAsString);
 
                 $task->setTags($tags);
             });

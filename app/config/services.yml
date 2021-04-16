@@ -427,6 +427,7 @@ services:
     arguments: [ '@coopcycle.tag_manager' ]
     tags:
       - { name: doctrine.event_subscriber, connection: default }
+      - { name: monolog.logger, channel: coopcycle.tagging }
 
   AppBundle\Service\DeliveryManager:
     arguments:
@@ -887,6 +888,8 @@ services:
   AppBundle\Service\TagManager:
     arguments:
       $cache: '@tag_manager.cache'
+    tags:
+      - { name: monolog.logger, channel: coopcycle.tagging }
 
   AppBundle\Log\RequestResponseProcessor:
     tags:

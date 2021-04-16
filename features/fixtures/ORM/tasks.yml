@@ -31,7 +31,7 @@ AppBundle\Entity\Tag:
 AppBundle\Entity\Task\Group:
   task_group_1:
     name: 'Group #1'
-    tags: [ '@tag_important' ]
+    tags: [ 'important' ]
 
 AppBundle\Entity\Task:
   task_1:
