@@ -352,7 +352,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     public function addAddress(Address $address)
     {
-        $this->getAddresses()->add($address);
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+        }
 
         return $this;
     }

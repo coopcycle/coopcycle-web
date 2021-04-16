@@ -89,9 +89,7 @@ class StoreType extends LocalBusinessType
 
             if (null === $store->getId()) {
                 $defaultAddress = $store->getAddress();
-                if (!$store->getAddresses()->contains($defaultAddress)) {
-                    $store->addAddress($defaultAddress);
-                }
+                $store->addAddress($defaultAddress);
             }
         });
     }

@@ -190,9 +190,7 @@ trait StoreTrait
 
             $address = $form->getData();
 
-            if (!$store->getAddresses()->contains($address)) {
-                $store->addAddress($address);
-            }
+            $store->addAddress($address);
 
             // Set as default if no default address is defined yet
             if (null === $store->getAddress()) {
