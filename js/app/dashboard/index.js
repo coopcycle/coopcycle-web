@@ -72,7 +72,7 @@ function start() {
       exampleSpreadsheetUrl: dashboardEl.dataset.exampleSpreadsheetUrl,
       couriersList: JSON.parse(dashboardEl.dataset.couriersList),
       nav: dashboardEl.dataset.nav,
-      restaurants: JSON.parse(dashboardEl.dataset.restaurants),
+      pickupClusterAddresses: JSON.parse(dashboardEl.dataset.pickupClusterAddresses),
     },
     tracking: {
       positions,

@@ -8,7 +8,7 @@ const initialState = {
   exampleSpreadsheetUrl: '#',
   couriersList: [],
   nav: '',
-  restaurants: [],
+  pickupClusterAddresses: [],
 }
 
 export default (state = initialState) => state

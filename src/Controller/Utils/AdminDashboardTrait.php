@@ -4,6 +4,8 @@ namespace AppBundle\Controller\Utils;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
+use AppBundle\Entity\Address;
+use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
@@ -20,6 +22,7 @@ use AppBundle\Form\TaskUploadType;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\TaskImageNamer;
 use Cocur\Slugify\SlugifyInterface;
+use Doctrine\ORM\Query\Expr;
 use Nucleos\UserBundle\Model\UserInterface;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use Hashids\Hashids;
@@ -63,10 +66,11 @@ trait AdminDashboardTrait
         TaskManager $taskManager,
         JWTManagerInterface $jwtManager,
         CentrifugoClient $centrifugoClient,
-        Redis $tile38)
+        Redis $tile38,
+        IriConverterInterface $iriConverter)
     {
         return $this->dashboardFullscreenAction((new \DateTime())->format('Y-m-d'),
-            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38);
+            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter);
     }
 
     /**
@@ -77,7 +81,8 @@ trait AdminDashboardTrait
         TaskManager $taskManager,
         JWTManagerInterface $jwtManager,
         CentrifugoClient $centrifugoClient,
-        Redis $tile38)
+        Redis $tile38,
+        IriConverterInterface $iriConverter)
     {
         $hashids = new Hashids($this->getParameter('secret'), 8);
 
@@ -184,16 +189,24 @@ trait AdminDashboardTrait
             ]);
         }, $stores);
 
-        $restaurants = $this->getDoctrine()->getRepository(LocalBusiness::class)->findBy([], ['name' => 'ASC']);
+        $qb = $this->getDoctrine()
+            ->getRepository(Address::class)
+            ->createQueryBuilder('a');
+        $qb
+            ->select('a.id')
+            ->leftJoin(LocalBusiness::class, 'r', Expr\Join::WITH, 'r.address = a.id')
+            ->leftJoin(Hub::class,           'h', Expr\Join::WITH, 'h.address = a.id')
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->isNotNull('r.id'),
+                    $qb->expr()->isNotNull('h.id')
+                )
+            );
 
-        $restaurantsNormalized = array_map(function (LocalBusiness $restaurant) {
-            return $this->get('serializer')->normalize($restaurant, 'jsonld', [
-                'resource_class' => LocalBusiness::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
-                'groups' => ['restaurant_simple']
-            ]);
-        }, $restaurants);
+        $addressIris = array_map(
+            fn ($address) => $iriConverter->getItemIriFromResourceClass(Address::class, $address),
+            $qb->getQuery()->getArrayResult()
+        );
 
         return $this->render('admin/dashboard_iframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),
@@ -210,7 +223,7 @@ trait AdminDashboardTrait
             'positions' => $positions,
             'task_recurrence_rules' => $recurrenceRulesNormalized,
             'stores' => $storesNormalized,
-            'restaurants' => $restaurantsNormalized,
+            'pickup_cluster_addresses' => $addressIris,
         ]);
     }
 
