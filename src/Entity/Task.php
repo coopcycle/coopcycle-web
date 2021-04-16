@@ -262,9 +262,14 @@ class Task implements TaggableInterface, OrganizationAwareInterface
 
     /**
      * @var Collection<int,TaskImage>
-     * @Groups({"task", "task_edit"})
+     * @Groups({"task_edit"})
      */
     private $images;
+
+    /**
+     * @var int
+     */
+    private $imageCount = 0;
 
     /**
      * @Groups({"task", "task_create", "task_edit"})
@@ -590,6 +595,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
         }
 
         $this->images = $images;
+        $this->imageCount = count($this->images);
 
         return $this;
     }
@@ -597,6 +603,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     public function addImage($image)
     {
         $this->images->add($image);
+        $this->imageCount = count($this->images);
 
         return $this;
     }
@@ -732,5 +739,18 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     public function getRecurrenceRule(): ?RecurrenceRule
     {
         return $this->recurrenceRule;
+    }
+
+    /**
+     * @SerializedName("images")
+     * @Groups({"task"})
+     */
+    public function getImagesWithCache()
+    {
+        if (0 === $this->imageCount) {
+            return new ArrayCollection();
+        }
+
+        return $this->getImages();
     }
 }

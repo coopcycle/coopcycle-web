@@ -14,6 +14,11 @@
     <field name="comments" type="text" column="comments" nullable="true"/>
     <field name="doorstep" type="boolean" column="doorstep"/>
     <field name="ref" type="string" column="ref" nullable="true"/>
+    <field name="imageCount" type="integer" column="image_count" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
