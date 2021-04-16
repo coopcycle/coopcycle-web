@@ -50,7 +50,9 @@
             data-new-address="{{ path(store_address_new_route, { id: store.id }) }}"
             data-name="{{ address.name|e('html_attr') }}"
             data-street-address="{{ address.streetAddress|e('html_attr') }}"
-            data-description="{{ address.description|e('html_attr') }}">{{ 'basics.edit'|trans }}</a>
+            data-description="{{ address.description|e('html_attr') }}"
+            data-telephone="{{ (address.telephone is not empty ? address.telephone|phone_number_format('NATIONAL') : '')|e('html_attr') }}"
+            data-contact-name="{{ address.contactName|e('html_attr') }}">{{ 'basics.edit'|trans }}</a>
         </td>
       </tr>
     {% endfor %}

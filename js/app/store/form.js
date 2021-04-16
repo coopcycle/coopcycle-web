@@ -37,19 +37,25 @@ $('#address-form-modal').on('show.bs.modal', function (event) {
     var streetAddress = button.data('streetAddress')
     var name = button.data('name')
     var description = button.data('description')
+    var telephone = button.data('telephone')
+    var contactName = button.data('contactName')
 
     modal.find('form input[type="search"]').val(streetAddress)
 
     // Map form fields
     addressMapper(modal.find('form input[type="search"]').get(0), addressObj)
 
-    modal.find('form input[type="text"]').val(name)
-    modal.find('form textarea').val(description)
+    modal.find('#address_name').val(name)
+    modal.find('#address_description').val(description)
+    modal.find('#address_telephone').val(telephone)
+    modal.find('#address_contactName').val(contactName)
 
     modal.find('form').attr('action', address)
   } else {
-    modal.find('form input[type="search"]').val('')
-    modal.find('form input[type="text"]').val('')
+    modal.find('#address_name').val('')
+    modal.find('#address_description').val('')
+    modal.find('#address_telephone').val('')
+    modal.find('#address_contactName').val('')
 
     modal.find('form').attr('action', newAddress)
   }

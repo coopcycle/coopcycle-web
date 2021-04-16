@@ -183,10 +183,7 @@ trait StoreTrait
     {
         $routes = $request->attributes->get('routes');
 
-        $form = $this->createForm(AddressType::class, $address, [
-            'with_name' => true,
-            'with_widget' => true,
-        ]);
+        $form = $this->createStoreAddressForm($address);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -410,10 +407,7 @@ trait StoreTrait
 
         $address = new Address();
 
-        $addressForm = $this->createForm(AddressType::class, $address, [
-            'with_name' => true,
-            'with_widget' => true,
-        ]);
+        $addressForm = $this->createStoreAddressForm($address);
 
         return $this->render('store/addresses.html.twig', [
             'layout' => $request->attributes->get('layout'),
@@ -425,6 +419,16 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'store_addresses_route' => $routes['store_addresses'],
+        ]);
+    }
+
+    private function createStoreAddressForm(Address $address)
+    {
+        return $this->createForm(AddressType::class, $address, [
+            'with_name' => true,
+            'with_widget' => true,
+            'with_telephone' => true,
+            'with_contact_name' => true,
         ]);
     }
 }
