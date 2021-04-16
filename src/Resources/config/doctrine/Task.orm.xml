@@ -45,7 +45,7 @@
         <join-column name="delivery_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="address" target-entity="AppBundle\Entity\Address">
+    <many-to-one field="address" target-entity="AppBundle\Entity\Address" fetch="EAGER">
       <cascade>
         <cascade-persist/>
       </cascade>
@@ -66,7 +66,7 @@
         <join-column name="assigned_to" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="organization" target-entity="AppBundle\Entity\Organization">
+    <many-to-one field="organization" target-entity="AppBundle\Entity\Organization" fetch="EAGER">
       <join-columns>
         <join-column name="organization_id" referenced-column-name="id" on-delete="SET NULL" />
       </join-columns>
