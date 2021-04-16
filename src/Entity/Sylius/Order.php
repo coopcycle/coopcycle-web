@@ -1029,23 +1029,11 @@ class Order extends BaseOrder implements OrderInterface
         foreach ($this->getItems() as $item) {
 
             $product = $item->getVariant()->getProduct();
+            $restaurant = $product->getRestaurant();
 
-            if ($this->getVendor()->isHub()) {
-                $hub = $this->getVendor()->getHub();
-                $vendor = null;
-                foreach ($hub->getRestaurants() as $restaurant) {
-                    if ($restaurant->hasProduct($product)) {
-                        $vendor = $restaurant;
-                        break;
-                    }
-                }
-            } else {
-                $vendor = $this->getVendor()->getRestaurant();
-            }
-
-            if ($vendor) {
-                $items = isset($hash[$vendor]) ? $hash[$vendor] : [];
-                $hash[$vendor] = array_merge($items, [ $item ]);
+            if (null !== $restaurant) {
+                $items = isset($hash[$restaurant]) ? $hash[$restaurant] : [];
+                $hash[$restaurant] = array_merge($items, [ $item ]);
             }
         }
 
