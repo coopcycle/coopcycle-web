@@ -103,7 +103,9 @@ framework:
             project.cache:
                 adapter: cache.app
             tag_manager.cache:
-                adapter: cache.app
+                adapters:
+                  - cache.adapter.array
+                  - cache.app
     messenger:
         buses:
             messenger.bus.default:
