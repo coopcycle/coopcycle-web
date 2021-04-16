@@ -33,7 +33,7 @@ const GroupHeading = ({ tasks }) => {
 
 const TASKS_PER_PAGE = 5
 
-const GroupTable = ({ tasks, onEditClick }) => {
+const GroupTable = ({ tasks, onEditClick, onMouseEnter, onMouseLeave }) => {
 
   const [ page, setPage ] = React.useState(1)
 
@@ -51,7 +51,11 @@ const GroupTable = ({ tasks, onEditClick }) => {
       <table className="table table-hover table-condensed mb-2">
         <tbody>
         { tasksForPage.map(task =>
-          <tr key={ task['@id'] } className="py-1">
+          <tr key={ task['@id'] } className="py-1"
+            onMouseEnter={() => {
+              onMouseEnter(task)
+            }}
+            onMouseLeave={ onMouseLeave }>
             <td>
               <a href="#" onClick={ (e) => {
                 e.preventDefault()
@@ -114,7 +118,10 @@ class GroupPopupContent extends React.Component {
         { _.map(tasksByAddress, (tasks, key) =>
           <div key={ key } className="mb-3">
             <GroupHeading tasks={ tasks } />
-            <GroupTable tasks={ tasks } onEditClick={ this.props.onEditClick } />
+            <GroupTable tasks={ tasks }
+              onEditClick={ this.props.onEditClick }
+              onMouseEnter={ this.props.onMouseEnter }
+              onMouseLeave={ this.props.onMouseLeave } />
           </div>
         )}
         </div>
@@ -202,6 +209,12 @@ const MapProvider = (props) => {
         render(<GroupPopupContent
           onEditClick={ proxy.onEditClick }
           clusterTasks={ tasks }
+          onMouseEnter={ task => {
+            proxy.pointToNext(task, a.latlng)
+          }}
+          onMouseLeave={ () => {
+            proxy.hideNext()
+          }}
           />, el)
 
         return el

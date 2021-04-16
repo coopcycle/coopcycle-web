@@ -3,6 +3,7 @@ import L from 'leaflet'
 import 'leaflet-polylinedecorator'
 import 'leaflet.markercluster'
 import 'leaflet-area-select'
+import 'leaflet-swoopy'
 import React from 'react'
 import { render } from 'react-dom'
 
@@ -102,6 +103,9 @@ export default class MapProxy {
     this.tasksLayerGroup = new L.LayerGroup()
     this.tasksLayerGroup.addTo(this.map)
 
+    this.swoopyLayerGroup = L.layerGroup()
+    this.swoopyLayerGroup.addTo(this.map)
+
     this.clusterGroup = L.markerClusterGroup({
       showCoverageOnHover: false,
     })
@@ -163,14 +167,14 @@ export default class MapProxy {
 
   addTask(task, selected = false, isRestaurantAddress = false) {
 
-    let marker = this.taskMarkers.get(task['id'])
+    let marker = this.taskMarkers.get(task['@id'])
 
     const color = taskColor(task, selected)
     const iconName = taskIcon(task)
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const latLng = L.latLng(task.address.geo.latitude, task.address.geo.longitude)
 
-    let popupComponent = this.taskPopups.get(task['id'])
+    let popupComponent = this.taskPopups.get(task['@id'])
 
     if (!marker) {
 
@@ -181,8 +185,8 @@ export default class MapProxy {
       popupComponent = React.createRef()
 
       const cb = () => {
-        this.taskMarkers.set(task['id'], marker)
-        this.taskPopups.set(task['id'], popupComponent)
+        this.taskMarkers.set(task['@id'], marker)
+        this.taskPopups.set(task['@id'], popupComponent)
       }
 
       render(<LeafletPopupContent
@@ -243,12 +247,12 @@ export default class MapProxy {
   }
 
   enableConnect(task, active = false) {
-    let circle = this.taskConnectCircles.get(task['id'])
+    let circle = this.taskConnectCircles.get(task['@id'])
     if (!circle) {
       // Use CircleMarker to keep size independent of zoom level
       // @see https://stackoverflow.com/a/24335153
       circle = L.circleMarker(this.toLatLng(task), { radius: 4, opacity: 1.0, fillOpacity: 1.0 })
-      this.taskConnectCircles.set(task['id'], circle)
+      this.taskConnectCircles.set(task['@id'], circle)
     }
     if (active) {
       circle.setStyle({
@@ -269,14 +273,14 @@ export default class MapProxy {
   }
 
   disableConnect(task) {
-    let circle = this.taskConnectCircles.get(task['id'])
+    let circle = this.taskConnectCircles.get(task['@id'])
     if (circle && this.map.hasLayer(circle)) {
       circle.removeFrom(this.map)
     }
   }
 
   hideTask(task) {
-    const marker = this.taskMarkers.get(task['id'])
+    const marker = this.taskMarkers.get(task['@id'])
     if (marker) {
       this.tasksLayerGroup.removeLayer(marker)
       this.clusterGroup.removeLayer(marker)
@@ -470,5 +474,35 @@ export default class MapProxy {
       task.address.geo.latitude,
       task.address.geo.longitude
     ]
+  }
+
+  pointToNext(task, clusterLatLng) {
+
+    if (!task.next) {
+      return
+    }
+
+    const thisMarker = this.taskMarkers.get(task['@id'])
+    const nextMarker = this.taskMarkers.get(task.next)
+
+    if (!thisMarker || !nextMarker) {
+      return
+    }
+
+    this.swoopyLayerGroup.clearLayers()
+
+    const swoopy = L.swoopyArrow(clusterLatLng, nextMarker.getLatLng(), {
+      color: '#3498DB',
+      weight: 3,
+      arrowId: '#custom_arrow',
+      opacity: 0.9,
+      factor: 0.7,
+    })
+
+    swoopy.addTo(this.swoopyLayerGroup)
+  }
+
+  hideNext() {
+    this.swoopyLayerGroup.clearLayers()
   }
 }

@@ -23,6 +23,7 @@
     "form-data": "^2.3.3",
     "i18next": "^19.9.2",
     "jsonwebtoken": "^8.5.1",
+    "leaflet-swoopy": "^3.4.1",
     "locutus": "^2.0.14",
     "lodash": "^4.17.21",
     "lynx": "^0.2.0",
