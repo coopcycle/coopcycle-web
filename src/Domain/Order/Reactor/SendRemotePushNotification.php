@@ -56,7 +56,7 @@ class SendRemotePushNotification
         );
 
         // Send to owners
-        $owners = $order->getVendor()->getOwners()->toArray();
+        $owners = $order->getNotificationRecipients()->toArray();
 
         if (count($owners) > 0) {
 

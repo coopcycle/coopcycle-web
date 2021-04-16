@@ -42,7 +42,7 @@ class PublishLiveUpdate
             return;
         }
 
-        $owners = $order->getVendor()->getOwners();
+        $owners = $order->getNotificationRecipients();
 
         if (count($owners) === 0) {
             return;

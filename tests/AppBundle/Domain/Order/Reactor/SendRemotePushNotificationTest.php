@@ -77,6 +77,7 @@ class SendRemotePushNotificationTest extends KernelTestCase
         $restaurant->addOwner($owner);
 
         $order->setRestaurant($restaurant);
+        $order->addRestaurant($restaurant, 1000, 0);
 
         $this->setId($restaurant, 1);
         $this->setId($order, 1);

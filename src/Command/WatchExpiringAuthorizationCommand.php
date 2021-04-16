@@ -129,7 +129,7 @@ class WatchExpiringAuthorizationCommand extends Command
                 );
 
                 // Send email to restaurant owners
-                $owners = $order->getRestaurant()->getOwners()->toArray();
+                $owners = $order->getNotificationRecipients()->toArray();
                 if (count($owners) > 0) {
 
                     $ownerMails = [];

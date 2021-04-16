@@ -1164,4 +1164,17 @@ class Order extends BaseOrder implements OrderInterface
 
         return null;
     }
+
+    public function getNotificationRecipients(): Collection
+    {
+        $recipients = new ArrayCollection();
+
+        foreach ($this->getRestaurants() as $restaurant) {
+            foreach ($restaurant->getOwners() as $owner) {
+                $recipients->add($owner);
+            }
+        }
+
+        return $recipients;
+    }
 }
