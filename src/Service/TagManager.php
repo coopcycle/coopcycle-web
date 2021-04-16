@@ -243,4 +243,19 @@ class TagManager
             $removed
         ];
     }
+
+    public function getAllTags(): array
+    {
+        return $this->entityManager
+            ->getRepository(Tag::class)
+            ->createQueryBuilder('t')
+            ->select(
+                't.name',
+                't.slug',
+                't.color'
+            )
+            ->getQuery()
+            ->getArrayResult()
+            ;
+    }
 }

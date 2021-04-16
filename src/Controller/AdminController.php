@@ -829,22 +829,14 @@ class AdminController extends AbstractController
             return  $this->redirectToRoute('admin_tags');
         }
 
-        $tags = $this->getDoctrine()->getRepository(Tag::class)->findAll();
-
         if ($request->query->has('format')) {
             if ('json' === $request->query->get('format')) {
-                $data = array_map(function (Tag $tag) {
-                    return [
-                        'id' => $tag->getId(),
-                        'name' => $tag->getName(),
-                        'slug' => $tag->getSlug(),
-                        'color' => $tag->getColor(),
-                    ];
-                }, $tags);
 
-                return new JsonResponse($data);
+                return new JsonResponse($tagManager->getAllTags());
             }
         }
+
+        $tags = $this->getDoctrine()->getRepository(Tag::class)->findAll();
 
         return $this->render('admin/tags.html.twig', [
             'tags' => $tags

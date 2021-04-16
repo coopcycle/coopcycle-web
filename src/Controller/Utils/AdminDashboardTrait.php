@@ -19,6 +19,7 @@ use AppBundle\Entity\Task\RecurrenceRule as TaskRecurrenceRule;
 use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
+use AppBundle\Service\TagManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\TaskImageNamer;
 use Cocur\Slugify\SlugifyInterface;
@@ -67,10 +68,11 @@ trait AdminDashboardTrait
         JWTManagerInterface $jwtManager,
         CentrifugoClient $centrifugoClient,
         Redis $tile38,
-        IriConverterInterface $iriConverter)
+        IriConverterInterface $iriConverter,
+        TagManager $tagManager)
     {
         return $this->dashboardFullscreenAction((new \DateTime())->format('Y-m-d'),
-            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter);
+            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter, $tagManager);
     }
 
     /**
@@ -82,7 +84,8 @@ trait AdminDashboardTrait
         JWTManagerInterface $jwtManager,
         CentrifugoClient $centrifugoClient,
         Redis $tile38,
-        IriConverterInterface $iriConverter)
+        IriConverterInterface $iriConverter,
+        TagManager $tagManager)
     {
         $hashids = new Hashids($this->getParameter('secret'), 8);
 
@@ -149,20 +152,6 @@ trait AdminDashboardTrait
             ->getQuery()
             ->getArrayResult();
 
-        $normalizedTags = $this->getDoctrine()
-            ->getRepository(Tag::class)
-            ->createQueryBuilder('t')
-            ->select(
-                't.name',
-                't.slug',
-                't.color'
-            )
-            ->getQuery()
-            ->getArrayResult()
-            ;
-
-        $positions = $this->loadPositions($tile38);
-
         $this->getDoctrine()->getManager()->getFilters()->enable('soft_deleteable');
 
         $recurrenceRules =
@@ -214,12 +203,12 @@ trait AdminDashboardTrait
             'unassigned_tasks' => $unassignedTasksNormalized,
             'task_lists' => $taskListsNormalized,
             'task_export_form' => $taskExportForm->createView(),
-            'tags' => $normalizedTags,
+            'tags' => $tagManager->getAllTags(),
             'jwt' => $jwtManager->create($this->getUser()),
             'centrifugo_token' => $centrifugoClient->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600)),
             'centrifugo_tracking_channel' => sprintf('$%s_tracking', $this->getParameter('centrifugo_namespace')),
             'centrifugo_events_channel' => sprintf('%s_events#%s', $this->getParameter('centrifugo_namespace'), $this->getUser()->getUsername()),
-            'positions' => $positions,
+            'positions' => $this->loadPositions($tile38),
             'task_recurrence_rules' => $recurrenceRulesNormalized,
             'stores' => $storesNormalized,
             'pickup_cluster_addresses' => $addressIris,
