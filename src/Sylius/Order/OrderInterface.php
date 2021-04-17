@@ -25,7 +25,8 @@ interface OrderInterface extends
     ChannelAwareInterface,
     PromotionSubjectInterface,
     PromotionCouponAwarePromotionSubjectInterface,
-    CustomerAwareInterface
+    CustomerAwareInterface,
+    OrderSupportInterface
 {
     public const STATE_ACCEPTED = 'accepted';
     public const STATE_REFUSED = 'refused';

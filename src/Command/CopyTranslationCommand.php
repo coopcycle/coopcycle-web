@@ -2,7 +2,6 @@
 
 namespace AppBundle\Command;
 
-use Craue\ConfigBundle\Util\Config;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;

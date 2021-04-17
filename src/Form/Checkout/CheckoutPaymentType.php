@@ -65,17 +65,15 @@ class CheckoutPaymentType extends AbstractType
                 return;
             }
 
-            $vendor = $order->getVendor();
-
             $choices = [
                 'Credit card' => 'card',
             ];
 
-            if ($vendor->isStripePaymentMethodEnabled('giropay')) {
+            if ($order->supportsGiropay()) {
                 $choices['Giropay'] = 'giropay';
             }
 
-            if (!$order->isMultiVendor() && null !== $vendor->getEdenredMerchantId()) {
+            if ($order->supportsEdenred()) {
                 if ($order->getCustomer()->hasEdenredCredentials()) {
                     $amounts = $this->edenredPayment->splitAmounts($order);
                     if ($amounts['edenred'] > 0) {

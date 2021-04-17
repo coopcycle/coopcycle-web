@@ -1214,4 +1214,24 @@ class Order extends BaseOrder implements OrderInterface
 
         return $recipients;
     }
+
+    public function supportsGiropay(): bool
+    {
+        if ($this->isMultiVendor()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->isStripePaymentMethodEnabled('giropay');
+    }
+
+    public function supportsEdenred(): bool
+    {
+        if ($this->isMultiVendor()) {
+
+            return false;
+        }
+
+        return null !== $this->getRestaurant()->getEdenredMerchantId();
+    }
 }
