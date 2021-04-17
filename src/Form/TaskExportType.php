@@ -72,10 +72,7 @@ class TaskExportType extends AbstractType
 
             $records = [];
             foreach ($tasks as $task) {
-                $tags = [];
-                foreach ($task->getTags() as $tag) {
-                    $tags[] = $tag->getSlug();
-                }
+
                 $address = $task->getAddress();
                 $finishedAt = '';
 
@@ -104,7 +101,7 @@ class TaskExportType extends AbstractType
                     $task->hasEvent(Event\TaskFailed::messageName()) ? $task->getLastEvent(Event\TaskFailed::messageName())->getData('notes') : '',
                     $finishedAt,
                     $task->isAssigned() ? $task->getAssignedCourier() : '',
-                    implode(',', $tags)
+                    implode(',', $task->getTags())
                 ];
             }
             $csv->insertAll($records);
