@@ -113,20 +113,8 @@ class EmailManager
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
 
-    public function createOrderCreatedMessageForOwner(OrderInterface $order, LocalBusiness $restaurant = null)
+    public function createOrderCreatedMessageForOwner(OrderInterface $order, LocalBusiness $restaurant)
     {
-        if (null === $restaurant) {
-            $vendor = $order->getVendor();
-            if ($order->isMultiVendor()) {
-                // To stay retro-compatible
-                // FIXME
-                // This doesn't mean that the order contains a product from the merchant
-                $restaurant = $order->getRestaurants()->first();
-            } else {
-                $restaurant = $vendor->getRestaurant();
-            }
-        }
-
         $subject = $this->translator->trans(
             'owner.order.created.subject',
             ['%order.number%' => $order->getNumber()],

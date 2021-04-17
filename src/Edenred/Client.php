@@ -89,7 +89,7 @@ class Client extends BaseClient
         $order = $payment->getOrder();
 
         $body = [
-            "mid" => $order->getVendor()->getEdenredMerchantId(),
+            "mid" => $order->getRestaurant()->getEdenredMerchantId(),
             "order_ref" => $order->getNumber(),
             "amount" => $payment->getAmountForMethod('EDENRED'),
             "capture_mode" => "manual",
