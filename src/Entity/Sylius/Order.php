@@ -77,7 +77,11 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *         "responses"={
  *           "200"={
  *             "description"="Order timing information",
- *             "schema"=Order::SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA
+ *             "content"={
+ *               "application/json": {
+ *                 "schema"=Order::SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA
+ *               }
+ *             }
  *           }
  *         }
  *       }
@@ -176,6 +180,11 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *         "responses"={
  *           "200"={
  *             "description"="Order timing information",
+ *             "content"={
+ *               "application/json": {
+ *                 "schema"=Order::SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA
+ *               }
+ *             }
  *           }
  *         }
  *       }

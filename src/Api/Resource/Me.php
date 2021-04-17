@@ -21,13 +21,17 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *         "responses"={
  *           "200"={
  *             "description"="Authenticated token information",
- *             "schema"={
- *               "type"="object",
- *               "properties"={
- *                 "addresses"={"type"="array","items"={"$ref"="#/definitions/Address"}},
- *                 "username"={"type"="string"},
- *                 "email"={"type"="string"},
- *                 "roles"={"type"="array","items"={"type"="string"}},
+ *             "content"={
+ *               "application/json": {
+ *                 "schema"={
+ *                   "type"="object",
+ *                   "properties"={
+ *                     "addresses"={"type"="array","items"={"$ref"="#/definitions/Address"}},
+ *                     "username"={"type"="string"},
+ *                     "email"={"type"="string"},
+ *                     "roles"={"type"="array","items"={"type"="string"}},
+ *                   }
+ *                 }
  *               }
  *             }
  *           }
