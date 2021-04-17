@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Service;
 
 use AppBundle\Service\SettingsManager;
+use Craue\ConfigBundle\CacheAdapter\CacheAdapterInterface;
 use Craue\ConfigBundle\Util\Config as CraueConfig;
 use Craue\ConfigBundle\Entity\Setting;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,6 +20,7 @@ class SettingsManagerTest extends TestCase
     public function setUp(): void
     {
         $this->craueConfig = $this->prophesize(CraueConfig::class);
+        $this->craueCache = $this->prophesize(CacheAdapterInterface::class);
         $this->doctrine = $this->prophesize(ManagerRegistry::class);
         $this->phoneNumberUtil = $this->prophesize(PhoneNumberUtil::class);
     }
@@ -82,6 +84,7 @@ class SettingsManagerTest extends TestCase
 
         $settingsManager = new SettingsManager(
             $this->craueConfig->reveal(),
+            $this->craueCache->reveal(),
             Setting::class,
             $this->doctrine->reveal(),
             $this->phoneNumberUtil->reveal(),

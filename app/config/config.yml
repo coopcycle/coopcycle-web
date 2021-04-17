@@ -56,17 +56,28 @@ parameters:
     centrifugo_tracking_channel: '$%centrifugo_namespace%_tracking'
     edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
     nucleos_profile.registration.confirmation.enabled: false
+    craue_config.cache_adapter.class: Craue\ConfigBundle\CacheAdapter\SymfonyCacheComponentAdapter
 
 services:
-    # It is important to set a namespace,
-    # so that Symfony doesn't use "framework.cache.prefix_seed"
+    # For some cache pools, want *STABLE* cache keys between deploys.
+    # To achieve this, we *EXPLICITLY* set a namespace,
+    # so that Symfony doesn't use "framework.cache.prefix_seed",
+    # which changes between different versions of the kernel.
+    #
+    # https://symfony.com/doc/current/cache.html#creating-custom-namespaced-pools
     restart_workers_signal.cache:
         parent: cache.adapter.redis
         tags:
-          - name: cache.pool
-            provider: snc_redis.default
-            namespace: messenger
+            - { name: cache.pool, provider: snc_redis.default, namespace: messenger }
+
     cache.messenger.restart_workers_signal: '@restart_workers_signal.cache'
+
+    craue_config_cache_provider:
+        class: Symfony\Component\Cache\Adapter\ChainAdapter
+        arguments:
+            - [ '@cache.adapter.array', '@cache.app' ]
+        tags:
+            - { name: cache.pool, namespace: craue_config }
 
 framework:
     #esi:             ~
