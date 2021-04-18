@@ -51,6 +51,11 @@ class OrderVendorProcessor implements OrderProcessorInterface
 
     private function processVendors(OrderInterface $order, \SplObjectStorage $restaurants)
     {
+        if (count($restaurants) === 0 && $order->isEmpty()) {
+            $this->logger->debug('Order is empty, skipping');
+            return;
+        }
+
         $this->logger->debug(sprintf('Adding %d vendors to order #%d', count($restaurants), $order->getId()));
 
         $originalVendors = new ArrayCollection();
@@ -69,7 +74,9 @@ class OrderVendorProcessor implements OrderProcessorInterface
         }
 
         foreach ($originalVendors as $vendor) {
-            if (!$restaurants->contains($vendor->getRestaurant())) {
+            // Make sure $vendor is already managed by Doctrine
+            if ($this->entityManager->contains($vendor) && !$restaurants->contains($vendor->getRestaurant())) {
+                $this->logger->debug('Removing vendor from order');
                 $order->getVendors()->removeElement($vendor);
                 $this->entityManager->remove($vendor);
             }
