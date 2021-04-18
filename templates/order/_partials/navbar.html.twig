@@ -10,7 +10,7 @@
       </button>
       <span class="navbar-brand">
         {% if is_granted('ROLE_ADMIN') and order.hasVendor() %}
-        {% if order.vendor.isHub() %}
+        {% if order.isMultiVendor() %}
         <span>{{ order.vendor.name }}</span>
         {% else %}
         <a href="{{ path('admin_restaurant', { id: order.restaurant.id  }) }}">{{ order.restaurant.name }}</a>

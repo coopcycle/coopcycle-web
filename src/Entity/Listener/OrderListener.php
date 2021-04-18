@@ -11,29 +11,6 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 class OrderListener
 {
-    public function preFlush(Order $order, PreFlushEventArgs $args)
-    {
-        $entityManager = $args->getEntityManager();
-        $vendor = $order->getVendor();
-
-        if (null !== $vendor) {
-            if (!$entityManager->contains($vendor)) {
-                $params = $vendor->isHub() ?
-                    ['hub' => $vendor->getHub()] : ['restaurant' => $vendor->getRestaurant()];
-
-                $existingVendor = $entityManager->getRepository(Vendor::class)
-                    ->findOneBy($params);
-
-                if (null !== $existingVendor) {
-                    $order->setVendor($existingVendor);
-                } else {
-                    $entityManager->persist($vendor);
-                    $entityManager->flush();
-                }
-            }
-        }
-    }
-
     public function preUpdate(Order $order, PreUpdateEventArgs $args)
     {
         $objectManager = $args->getObjectManager();

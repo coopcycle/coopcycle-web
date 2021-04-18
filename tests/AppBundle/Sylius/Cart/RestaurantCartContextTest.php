@@ -132,9 +132,7 @@ class RestaurantCartContextTest extends TestCase
         $expectedCart->getCustomer()->willReturn($this->prophesize(CustomerInterface::class));
         $expectedCart->getRestaurant()->willReturn($restaurant->reveal());
         $expectedCart->getVendor()->willReturn(
-            Vendor::withRestaurant(
-                $restaurant->reveal()
-            )
+            $restaurant->reveal()
         );
         $expectedCart
             ->isMultiVendor()
@@ -182,9 +180,7 @@ class RestaurantCartContextTest extends TestCase
         $expectedCart->getRestaurant()->willReturn($restaurant->reveal());
         $expectedCart->getChannel()->willReturn($this->webChannel->reveal());
         $expectedCart->getVendor()->willReturn(
-            Vendor::withRestaurant(
-                $restaurant->reveal()
-            )
+            $restaurant->reveal()
         );
         $expectedCart
             ->isMultiVendor()
@@ -205,7 +201,6 @@ class RestaurantCartContextTest extends TestCase
 
         $expectedCart->clearItems()->shouldHaveBeenCalled();
         $expectedCart->setShippingTimeRange(null)->shouldHaveBeenCalled();
-        $expectedCart->setRestaurant($otherRestaurant->reveal())->shouldHaveBeenCalled();
     }
 
     public function testNonExistingCartStoredInSession()
@@ -270,7 +265,7 @@ class RestaurantCartContextTest extends TestCase
 
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
-        $cartProphecy->getVendor()->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+        $cartProphecy->getVendor()->willReturn($restaurant->reveal());
         $cartProphecy->isMultiVendor()->willReturn(false);
         $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
 
@@ -307,7 +302,7 @@ class RestaurantCartContextTest extends TestCase
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getCustomer()->willReturn($this->prophesize(CustomerInterface::class));
         $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
-        $cartProphecy->getVendor()->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+        $cartProphecy->getVendor()->willReturn($restaurant->reveal());
         $cartProphecy->isMultiVendor()->willReturn(false);
         $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
 
@@ -346,7 +341,7 @@ class RestaurantCartContextTest extends TestCase
 
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
-        $cartProphecy->getVendor()->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+        $cartProphecy->getVendor()->willReturn($restaurant->reveal());
         $cartProphecy->isMultiVendor()->willReturn(false);
         $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
 

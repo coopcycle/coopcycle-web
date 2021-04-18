@@ -2,7 +2,6 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
-use AppBundle\Entity\Vendor;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -47,9 +46,6 @@ class OrderVendorProcessor implements OrderProcessorInterface
         $restaurants = $this->getRestaurants($order);
 
         $this->processVendors($order, $restaurants);
-
-        $vendor = $this->processVendor($order, $restaurants);
-        $order->setVendor($vendor);
     }
 
     private function processVendors(OrderInterface $order, \SplObjectStorage $restaurants)
@@ -87,76 +83,6 @@ class OrderVendorProcessor implements OrderProcessorInterface
                 $this->entityManager->remove($vendor);
             }
         }
-    }
-
-    private function processVendor(OrderInterface $order, \SplObjectStorage $restaurants): Vendor
-    {
-        $this->logger->debug(sprintf('Order %s | Checking if order needs vendor upgrade/downgrade',
-            $this->loggingUtils->getOrderId($order)));
-
-        $vendor = $order->getVendor();
-
-        $this->logger->debug(sprintf('Order %s | There are %d vendors in order',
-            $this->loggingUtils->getOrderId($order), count($restaurants)));
-
-        if (count($restaurants) === 0) {
-
-            return $vendor;
-        }
-
-        if (count($restaurants) === 1) {
-
-            // Make sure the vendor matches
-
-            // Do not use $restaurants->current()
-            // It does not work
-
-            foreach ($restaurants as $restaurant) {
-
-                if ($vendor->getRestaurant() === $restaurant) {
-                    $this->logger->debug(sprintf('Order %s | The vendor for order is OK, skipping',
-                        $this->loggingUtils->getOrderId($order)));
-
-                    return $vendor;
-                }
-
-                $this->logger->debug(sprintf('Order %s | The vendor for order is KO, fixing',
-                    $this->loggingUtils->getOrderId($order)));
-
-                return Vendor::withRestaurant($restaurant);
-            }
-        }
-
-        //
-        // Upgrade if needed
-        //
-
-        $hubs = new \SplObjectStorage();
-
-        foreach ($restaurants as $restaurant) {
-            if ($restaurant->belongsToHub()) {
-                $hubs->attach($restaurant->getHub());
-            }
-        }
-
-        if (count($hubs) === 1) {
-
-            $hub = $hubs->current();
-
-            if ($vendor->getHub() === $hub) {
-                $this->logger->debug(sprintf('Order %s | The vendor for order is OK, skipping',
-                    $this->loggingUtils->getOrderId($order)));
-
-                return $vendor;
-            }
-
-            $this->logger->debug(sprintf('Order %s | The vendor for order is KO, fixing',
-                $this->loggingUtils->getOrderId($order)));
-
-            return Vendor::withHub($hub);
-        }
-
-        return $vendor;
     }
 
     private function getRestaurants(OrderInterface $order): \SplObjectStorage

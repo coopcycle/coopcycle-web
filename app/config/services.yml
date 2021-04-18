@@ -402,7 +402,9 @@ services:
       - "@sylius.factory.product_variant"
     public: true
 
-  AppBundle\Sylius\Cart\RestaurantResolver: ~
+  AppBundle\Sylius\Cart\RestaurantResolver:
+    tags:
+      - { name: monolog.logger, channel: coopcycle.order_processing }
 
   AppBundle\Sylius\Cart\RestaurantCartContext:
     arguments:
@@ -503,10 +505,6 @@ services:
       - { name: doctrine.orm.entity_listener }
 
   AppBundle\Entity\Listener\DeliveryListener:
-    tags:
-      - { name: doctrine.orm.entity_listener }
-
-  AppBundle\Entity\Listener\OrderListener:
     tags:
       - { name: doctrine.orm.entity_listener }
 

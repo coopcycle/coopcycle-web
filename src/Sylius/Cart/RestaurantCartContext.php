@@ -88,8 +88,8 @@ final class RestaurantCartContext implements CartContextInterface
                 $this->session->remove($this->sessionKeyName);
             } else {
                 try {
-                    if (!$cart->isMultiVendor() && !$cart->getVendor()->getRestaurant()->isEnabled()
-                        && !$this->authorizationChecker->isGranted('edit', $cart->getVendor()->getRestaurant())) {
+                    if (!$cart->isMultiVendor() && !$cart->getRestaurant()->isEnabled()
+                        && !$this->authorizationChecker->isGranted('edit', $cart->getVendor())) {
                         $cart = null;
                         $this->session->remove($this->sessionKeyName);
                     }
@@ -107,7 +107,6 @@ final class RestaurantCartContext implements CartContextInterface
                     if (!$this->resolver->accept($cart)) {
                         $cart->clearItems();
                         $cart->setShippingTimeRange(null);
-                        $cart->setRestaurant($restaurant);
                     }
                 }
             }

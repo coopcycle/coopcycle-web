@@ -75,7 +75,7 @@ class OrderFactory implements FactoryInterface
     public function createForRestaurant(LocalBusiness $restaurant)
     {
         $order = $this->createNew();
-        $order->setRestaurant($restaurant);
+        $order->addRestaurant($restaurant);
 
         if (!$restaurant->isFulfillmentMethodEnabled('delivery') && $restaurant->isFulfillmentMethodEnabled('collection')) {
             $order->setTakeaway(true);
