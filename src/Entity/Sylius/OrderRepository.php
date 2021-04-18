@@ -6,8 +6,8 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Refund;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -23,15 +23,14 @@ class OrderRepository extends BaseOrderRepository
 {
     public function findCartsByRestaurant(LocalBusiness $restaurant)
     {
-        return $this->createQueryBuilder('o')
-            ->join(Vendor::class, 'v', Join::WITH, 'o.vendor = v.id')
+        $qb = $this->createQueryBuilder('o')
             ->andWhere('o.state = :state')
-            ->andWhere('v.restaurant = :restaurant')
             ->setParameter('state', OrderInterface::STATE_CART)
-            ->setParameter('restaurant', $restaurant)
-            ->getQuery()
-            ->getResult()
         ;
+
+        $qb = self::addVendorClause($qb, 'o', $restaurant);
+
+        return $qb->getQuery()->getResult();
     }
 
     public function findOrdersByDate(\DateTime $date)
@@ -90,7 +89,7 @@ class OrderRepository extends BaseOrderRepository
         $this->addDateRangeClause($qb, $start, $end);
 
         if ($withVendor) {
-            $qb->andWhere('o.vendor IS NOT NULL');
+            $qb->join(OrderVendor::class, 'v', Join::WITH, 'o.id = v.order');
         }
 
         $qb
@@ -226,16 +225,15 @@ class OrderRepository extends BaseOrderRepository
     {
         $qb = $this->createQueryBuilder('o');
         $qb
-            ->join(Vendor::class,           'v', Join::WITH, 'o.vendor = v.id')
             ->join(PaymentInterface::class, 'p', Join::WITH, 'p.order = o.id')
             ->join(Refund::class,           'r', Join::WITH, 'r.payment = p.id')
-            ->andWhere('v.restaurant = :restaurant')
             ->andWhere('o.state = :state_fulfilled')
             ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
-            ->setParameter('restaurant', $restaurant)
             ->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')))
             ->setParameter('state_fulfilled', OrderInterface::STATE_FULFILLED)
             ;
+
+        $qb = self::addVendorClause($qb, 'o', $restaurant);
 
         return $qb->getQuery()->getResult();
     }

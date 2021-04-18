@@ -26,11 +26,11 @@ use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
-use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AddOrganizationType;
 use AppBundle\Form\AttachToOrganizationType;
@@ -684,7 +684,7 @@ class AdminController extends AbstractController
         // Allow filtering by store & restaurant with KnpPaginator
         $qb->leftJoin(Store::class, 's', Expr\Join::WITH, 's.id = d.store');
         $qb->leftJoin(Order::class, 'o', Expr\Join::WITH, 'o.id = d.order');
-        $qb->leftJoin(Vendor::class, 'v', Expr\Join::WITH, 'o.vendor = v.id');
+        $qb->leftJoin(OrderVendor::class, 'v', Expr\Join::WITH, 'o.id = v.order');
         $qb->leftJoin(LocalBusiness::class, 'r', Expr\Join::WITH, 'v.restaurant = r.id');
 
         $deliveries = $paginator->paginate(

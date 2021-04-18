@@ -4,7 +4,6 @@ namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Entity\Vendor;
 use Carbon\Carbon;
 use Doctrine\DBAL\Connection;
 use AppBundle\Sylius\Order\AdjustmentInterface;

@@ -4,7 +4,6 @@ namespace AppBundle\Action\Restaurant;
 
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
-use AppBundle\Entity\Vendor;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use Symfony\Component\HttpFoundation\Request;

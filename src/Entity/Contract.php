@@ -86,6 +86,14 @@ class Contract
     /**
      * @return int
      */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return int
+     */
     public function getFlatDeliveryPrice()
     {
         return $this->flatDeliveryPrice;

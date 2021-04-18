@@ -18,7 +18,6 @@ use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Sylius\TaxonRepository;
-use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\ClosingRuleType;
 use AppBundle\Form\MenuEditorType;
@@ -1187,20 +1186,14 @@ trait RestaurantTrait
             $key
         );
 
-        $token = null;
-        $vendor = $entityManager->getRepository(Vendor::class)
-            ->findOneBy(['restaurant' => $restaurant]);
+        // https://github.com/lcobucci/jwt/issues/229
+        $now = new \DateTimeImmutable('@' . time());
 
-        if (null !== $vendor) {
-            // https://github.com/lcobucci/jwt/issues/229
-            $now = new \DateTimeImmutable('@' . time());
-
-            $token = $config->builder()
-                ->expiresAt($now->modify('+1 hour'))
-                ->withClaim('database', $this->getParameter('database_name'))
-                ->withClaim('vendor_id', $vendor->getId())
-                ->getToken($config->signer(), $config->signingKey());
-        }
+        $token = $config->builder()
+            ->expiresAt($now->modify('+1 hour'))
+            ->withClaim('database', $this->getParameter('database_name'))
+            ->withClaim('vendor_id', $restaurant->getId())
+            ->getToken($config->signer(), $config->signingKey());
 
         return $this->render('restaurant/stats.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
@@ -1210,7 +1203,7 @@ trait RestaurantTrait
             'start' => $start,
             'end' => $end,
             'tab' => $tab,
-            'cube_token' => (null !== $vendor && null !== $token) ? $token->toString() : null,
+            'cube_token' => $token->toString(),
             'picker_type' => $request->query->has('date') ? 'date' : 'month',
             'with_details' => $request->query->getBoolean('details', false),
         ]));

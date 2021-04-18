@@ -4,7 +4,6 @@ namespace AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Sylius\OrderTimeline;
-use AppBundle\Entity\Vendor;
 use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
