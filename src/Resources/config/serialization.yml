@@ -195,7 +195,7 @@ AppBundle\Entity\LocalBusiness\FulfillmentMethod:
     enabled:
       groups: ['restaurant']
 
-AppBundle\Entity\Vendor:
+AppBundle\Entity\Hub:
   attributes:
     name:
       groups: ['order', 'order_minimal']

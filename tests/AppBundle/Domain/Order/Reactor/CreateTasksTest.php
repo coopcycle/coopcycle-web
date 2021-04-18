@@ -111,7 +111,7 @@ class CreateTasksTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->getShippingAddress()
             ->willReturn($shippingAddress);

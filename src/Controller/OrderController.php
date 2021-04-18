@@ -105,11 +105,9 @@ class OrderController extends AbstractController
         if (count($errors->findByCodes(ShippingAddressConstraint::ADDRESS_NOT_SET)) > 0) {
 
             $vendor = $order->getVendor();
-            if ($order->isMultiVendor()) {
-                return $this->redirectToRoute('hub', ['id' => $vendor->getHub()->getId()]);
-            }
+            $routeName = $order->isMultiVendor() ? 'hub' : 'restaurant';
 
-            return $this->redirectToRoute('restaurant', ['id' => $vendor->getRestaurant()->getId()]);
+            return $this->redirectToRoute($routeName, ['id' => $vendor->getId()]);
         }
 
         $user = $this->getUser();

@@ -14,15 +14,15 @@
   </mj-text>
   <mj-text align="left" line-height="20px">
   {% set telephone = coopcycle_setting('phone_number') %}
-  {% if not order.vendor.isHub() %}
-    {% set telephone = order.vendor.restaurant.telephone %}
+  {% if not order.isMultiVendor() %}
+    {% set telephone = order.vendor.telephone %}
   {% endif %}
   {{ ('order.foodtech.accepted.' ~ order.fulfillmentMethod ~ '.disclaimer')|trans({
     '%name%': order.vendor.name,
     '%phone_number%': telephone ? telephone|phone_number_format('NATIONAL') : 'N/A'
   }, 'emails')|raw }}
   </mj-text>
-  {% if not order.vendor.isHub() and order.vendor.restaurant.loopeatEnabled and order.reusablePackagingEnabled %}
+  {% if not order.isMultiVendor() and order.vendor.loopeatEnabled and order.reusablePackagingEnabled %}
   <mj-text align="left" line-height="20px">
   {{ ('order.loopeat.accepted')|trans({}, 'emails')|raw }}
   </mj-text>

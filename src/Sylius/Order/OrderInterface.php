@@ -167,11 +167,6 @@ interface OrderInterface extends
     public function getVendor(): ?Vendor;
 
     /**
-     * @param Vendor|null $vendor
-     */
-    public function setVendor(?Vendor $vendor): void;
-
-    /**
      * @return boolean
      */
     public function hasVendor(): bool;
