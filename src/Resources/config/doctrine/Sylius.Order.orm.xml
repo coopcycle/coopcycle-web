@@ -102,7 +102,7 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
-    <one-to-many field="vendors" target-entity="AppBundle\Entity\Sylius\OrderVendor" mapped-by="order">
+    <one-to-many field="vendors" target-entity="AppBundle\Entity\Sylius\OrderVendor" mapped-by="order" orphan-removal="true">
       <cascade>
         <cascade-persist/>
       </cascade>
