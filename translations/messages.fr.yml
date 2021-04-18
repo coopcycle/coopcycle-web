@@ -1164,3 +1164,9 @@ restaurant.list.tags.zerowaste: Zéro déchet
 homepage.zerowaste: Découvrez nos restaurants zéro déchet !
 restaurant.stats.view_simple: Affichage simple
 restaurant.stats.view_detailed: Affichage détaillé
+form.items_total_promotion.items_total.label: À partir de
+form.items_total_promotion.fixed_discount_amount.label: Appliquer une réduction de
+restaurant_promotion.items_total.help: Cela vous permet d'appliquer une réduction à partir d'un montant d'achat.
+  Votre marge sera réduite du montant de la réduction.
+  Cela ne <strong>diminuera pas</strong> les frais perçus par
+  la plate-forme.

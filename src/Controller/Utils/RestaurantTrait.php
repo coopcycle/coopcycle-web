@@ -30,6 +30,7 @@ use AppBundle\Form\RestaurantType;
 use AppBundle\Form\Restaurant\DepositRefundSettingsType;
 use AppBundle\Form\Restaurant\ReusablePackagingType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
+use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -1337,36 +1338,67 @@ trait RestaurantTrait
 
             $type = $request->query->get('type');
 
-            if ($type === 'offer_delivery') {
+            switch ($type) {
+                case 'offer_delivery':
 
-                $form = $this->createForm(OfferDeliveryType::class, null, [
-                    'local_business' => $restaurant
-                ]);
+                    $form = $this->createForm(OfferDeliveryType::class, null, [
+                        'local_business' => $restaurant
+                    ]);
 
-                $form->handleRequest($request);
-                if ($form->isSubmitted() && $form->isValid()) {
+                    $form->handleRequest($request);
+                    if ($form->isSubmitted() && $form->isValid()) {
 
-                    $promotion = $form->getData();
+                        $promotion = $form->getData();
 
-                    $restaurant->addPromotion($promotion);
+                        $restaurant->addPromotion($promotion);
 
-                    $this->getDoctrine()
-                        ->getManagerForClass(LocalBusiness::class)->flush();
+                        $this->getDoctrine()
+                            ->getManagerForClass(LocalBusiness::class)->flush();
 
-                    // $this->addFlash(
-                    //     'notice',
-                    //     $translator->trans('global.changesSaved')
-                    // );
+                        // $this->addFlash(
+                        //     'notice',
+                        //     $translator->trans('global.changesSaved')
+                        // );
 
-                    return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
-                }
+                        return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
+                    }
 
-                return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
-                    'layout' => $request->attributes->get('layout'),
-                    'restaurant' => $restaurant,
-                    'form' => $form->createView(),
-                    'promotion_type' => $type,
-                ]));
+                    return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
+                        'layout' => $request->attributes->get('layout'),
+                        'restaurant' => $restaurant,
+                        'form' => $form->createView(),
+                        'promotion_type' => $type,
+                    ]));
+
+                case 'items_total':
+                    $form = $this->createForm(ItemsTotalBasedPromotionType::class, null, [
+                        'local_business' => $restaurant
+                    ]);
+
+                    $form->handleRequest($request);
+                    if ($form->isSubmitted() && $form->isValid()) {
+
+                        $promotion = $form->getData();
+
+                        $restaurant->addPromotion($promotion);
+
+                        $this->getDoctrine()
+                            ->getManagerForClass(LocalBusiness::class)->flush();
+
+                        // $this->addFlash(
+                        //     'notice',
+                        //     $translator->trans('global.changesSaved')
+                        // );
+
+                        return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
+                    }
+
+                    return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
+                        'layout' => $request->attributes->get('layout'),
+                        'restaurant' => $restaurant,
+                        'form' => $form->createView(),
+                        'promotion_type' => $type,
+                    ]));
             }
         }
 

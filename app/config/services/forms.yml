@@ -178,6 +178,11 @@ services:
       $promotionRuleFactory: '@sylius.factory.promotion_rule'
     tags: [ form.type ]
 
+  AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType:
+    arguments:
+      $promotionRuleFactory: '@sylius.factory.promotion_rule'
+    tags: [ form.type ]
+
   AppBundle\Form\Checkout\CheckoutPaymentType:
     tags: [ form.type ]
 

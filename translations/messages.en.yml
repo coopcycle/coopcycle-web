@@ -1027,6 +1027,7 @@ restaurant_promotion.offer_delivery.help: This allows you to offer the delivery 
   <strong>on your own money</strong>. Your margin will be diminished by the amount
   of the delivery fees. This will <strong>not diminish</strong> the fees perceived
   by the platform.
+restaurant_promotion.items_total: Based on items total
 form.offer_delivery.coupon_code.error.exists: This code already exists
 form.offer_delivery.coupon_code.help: It is your responsibility to communicate this
   code to the customer, either personally or via social networks
@@ -1169,3 +1170,5 @@ restaurant.list.tags.zerowaste: Zero waste
 homepage.zerowaste: Discover our zero waste restaurants!
 restaurant.stats.view_simple: Simple view
 restaurant.stats.view_detailed: Detailed view
+form.items_total_promotion.items_total.label: Above items total
+form.items_total_promotion.fixed_discount_amount.label: Apply a discount of

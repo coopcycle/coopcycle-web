@@ -348,6 +348,13 @@ services:
         label: 'Is restaurant'
         form_type: AppBundle\Form\Sylius\Promotion\Rule\IsRestaurantConfigurationType
 
+  AppBundle\Sylius\Promotion\Checker\Rule\IsItemsTotalAboveRuleChecker:
+    tags:
+      - name: sylius.promotion_rule_checker
+        type: is_items_total_above
+        label: 'Is items total above'
+        form_type: AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType
+
   coopcycle.sylius.factory.product_variant:
     class: AppBundle\Sylius\Product\ProductVariantFactory
     decorates: sylius.factory.product_variant

@@ -18,6 +18,11 @@
           {{ 'restaurant_promotion.offer_delivery'|trans }}
         </a>
       </li>
+      <li>
+        <a href="{{ path(promotion_new_route, { id: restaurant.id, type: 'items_total' }) }}">
+          {{ 'restaurant_promotion.items_total'|trans }}
+        </a>
+      </li>
     </ul>
   </div>
 </div>
