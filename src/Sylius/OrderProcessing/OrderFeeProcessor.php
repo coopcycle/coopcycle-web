@@ -8,7 +8,6 @@ use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
@@ -178,12 +177,10 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         }
 
         foreach ($promotion->getActions() as $action) {
-            if ($action->getType() === DeliveryPercentageDiscountPromotionActionCommand::TYPE) {
-                $configuration = $action->getConfiguration();
-                if (isset($configuration['decrase_platform_fee'])) {
+            $configuration = $action->getConfiguration();
+            if (isset($configuration['decrase_platform_fee'])) {
 
-                    return $configuration['decrase_platform_fee'];
-                }
+                return $configuration['decrase_platform_fee'];
             }
         }
 
