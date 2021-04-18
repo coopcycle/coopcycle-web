@@ -479,10 +479,22 @@ class Order extends BaseOrder implements OrderInterface
      */
     public function setRestaurant(?LocalBusiness $restaurant): void
     {
+        $currentRestaurant = $this->getRestaurant();
+
         $vendor = new Vendor();
         $vendor->setRestaurant($restaurant);
 
         $this->vendor = $vendor;
+
+        if (null !== $restaurant && $restaurant !== $currentRestaurant) {
+
+            $this->vendors->clear();
+
+            $this->clearItems();
+            $this->setShippingTimeRange(null);
+
+            $this->addRestaurant($restaurant);
+        }
     }
 
     public function hasVendor(): bool
@@ -1175,7 +1187,7 @@ class Order extends BaseOrder implements OrderInterface
         return false;
     }
 
-    public function addRestaurant(LocalBusiness $restaurant, int $itemsTotal, int $transferAmount)
+    public function addRestaurant(LocalBusiness $restaurant, int $itemsTotal = 0, int $transferAmount = 0)
     {
         $vendor = $this->getVendorByRestaurant($restaurant);
 
