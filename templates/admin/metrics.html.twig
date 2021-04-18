@@ -1,0 +1,20 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.metrics.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+<div id="cubejs"
+  data-api-url="{{ cubejs_api_url }}"
+  data-token="{{ cube_token }}"
+  style="min-height: 240px;"></div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('metrics-admin') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('metrics-admin') }}
+{% endblock %}

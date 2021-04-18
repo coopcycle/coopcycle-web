@@ -2077,4 +2077,26 @@ class AdminController extends AbstractController
             'pledge_form' => $pledgeForm->createView(),
         ]);
     }
+
+    public function metricsAction(Request $request)
+    {
+        // https://cube.dev/docs/security
+        $key = \Lcobucci\JWT\Signer\Key\InMemory::plainText($_SERVER['CUBEJS_API_SECRET']);
+        $config = \Lcobucci\JWT\Configuration::forSymmetricSigner(
+            new \Lcobucci\JWT\Signer\Hmac\Sha256(),
+            $key
+        );
+
+        // https://github.com/lcobucci/jwt/issues/229
+        $now = new \DateTimeImmutable('@' . time());
+
+        $token = $config->builder()
+                ->expiresAt($now->modify('+1 hour'))
+                ->withClaim('database', $this->getParameter('database_name'))
+                ->getToken($config->signer(), $config->signingKey());
+
+        return $this->render('admin/metrics.html.twig', [
+            'cube_token' => $token->toString(),
+        ]);
+    }
 }

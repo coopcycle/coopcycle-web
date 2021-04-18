@@ -540,3 +540,10 @@ admin_customize:
         _controller: AppBundle\Controller\AdminController::customizeAction
         layout: 'admin.html.twig'
     methods:  [ GET, POST ]
+
+admin_metrics:
+    path: /admin/metrics
+    defaults:
+        _controller: AppBundle\Controller\AdminController::metricsAction
+        layout: 'admin.html.twig'
+    methods:  [ GET ]

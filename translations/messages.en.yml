@@ -1176,3 +1176,4 @@ restaurant_promotion.items_total.help: This allows you to apply a discount above
   Your margin will be diminished by the amount
   of the discount. This will <strong>not diminish</strong> the fees perceived
   by the platform.
+adminDashboard.metrics.title: Metrics
