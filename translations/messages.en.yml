@@ -1172,3 +1172,7 @@ restaurant.stats.view_simple: Simple view
 restaurant.stats.view_detailed: Detailed view
 form.items_total_promotion.items_total.label: Above items total
 form.items_total_promotion.fixed_discount_amount.label: Apply a discount of
+restaurant_promotion.items_total.help: This allows you to apply a discount above a certain amount.
+  Your margin will be diminished by the amount
+  of the discount. This will <strong>not diminish</strong> the fees perceived
+  by the platform.
