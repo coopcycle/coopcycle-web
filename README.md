@@ -2,6 +2,7 @@ CoopCycle
 =========
 
 [![Build Status](https://travis-ci.org/coopcycle/coopcycle-web.svg?branch=master)](https://travis-ci.org/coopcycle/coopcycle-web)
+[![Financial Contributors on Open Collective](https://opencollective.com/coopcycle/all/badge.svg?label=financial+contributors)](https://opencollective.com/coopcycle) 
 
 CoopCycle is a **self-hosted** platform to order meals in your neighborhood and get them delivered by bike couriers. The only difference with proprietary platforms as Deliveroo or UberEats is that this software is [reserved to co-ops](#license).
 
@@ -177,3 +178,33 @@ The code is licensed under the [Coopyleft License](https://wiki.coopcycle.org/en
 
 - You are matching with the social and common company’s criteria as define by their national law, or by the European Commission in its [October 25th, 2011 communication](http://www.europarl.europa.eu/meetdocs/2009_2014/documents/com/com_com(2011)0681_/com_com(2011)0681_en.pdf), or by default by the Article 1 of the French law [n°2014-856 of July 31st, 2014](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000029313296&categorieLien=id) “relative à l’économie sociale et solidaire”
 - You are using a cooperative model in which workers are employees
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/coopcycle/coopcycle-web/graphs/contributors"><img src="https://opencollective.com/coopcycle/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/coopcycle/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/coopcycle"><img src="https://opencollective.com/coopcycle/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/coopcycle/contribute)]
+
+<a href="https://opencollective.com/coopcycle/organization/0/website"><img src="https://opencollective.com/coopcycle/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/coopcycle/organization/1/website"><img src="https://opencollective.com/coopcycle/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/coopcycle/organization/2/website"><img src="https://opencollective.com/coopcycle/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/coopcycle/organization/3/website"><img src="https://opencollective.com/coopcycle/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/coopcycle/organization/4/website"><img src="https://opencollective.com/coopcycle/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/coopcycle/organization/5/website"><img src="https://opencollective.com/coopcycle/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/coopcycle/organization/6/website"><img src="https://opencollective.com/coopcycle/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/coopcycle/organization/7/website"><img src="https://opencollective.com/coopcycle/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/coopcycle/organization/8/website"><img src="https://opencollective.com/coopcycle/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/coopcycle/organization/9/website"><img src="https://opencollective.com/coopcycle/organization/9/avatar.svg"></a>
