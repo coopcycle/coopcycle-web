@@ -141,5 +141,8 @@ class TaggableSubscriber implements EventSubscriber
                 $this->tagManager->clearCache($taggable);
             }
         }
+
+        $this->added->removeAll($this->added);
+        $this->removed->removeAll($this->removed);
     }
 }
