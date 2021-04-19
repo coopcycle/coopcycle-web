@@ -16,7 +16,6 @@ class TagManager
 {
     private $entityManager;
     private $cache;
-    private $tagEntityCache = [];
     private $logger;
 
     public function __construct(EntityManagerInterface $entityManager, CacheInterface $cache, LoggerInterface $logger)
@@ -187,12 +186,13 @@ class TagManager
 
     private function getTagEntity(string $slug)
     {
-        if (!isset($this->tagEntityCache[$slug])) {
-            $this->tagEntityCache[$slug] = $this->entityManager
-                ->getRepository(Tag::class)->findOneBySlug($slug);
-        }
-
-        return $this->tagEntityCache[$slug];
+        // Do *NOT* cache entities, because they may have been detached.
+        // This causes the following error:
+        //
+        // A new entity was found through the relationship 'AppBundle\Entity\Tagging#tag'
+        // that was not configured to cascade persist operations for entity: AppBundle\Entity\Tag
+        return $this->entityManager
+            ->getRepository(Tag::class)->findOneBySlug($slug);
     }
 
     public function expand($tags)
