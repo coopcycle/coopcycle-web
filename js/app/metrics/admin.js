@@ -6,6 +6,7 @@ import AverageDistance from './components/AverageDistance'
 import NumberOfTasks from './components/NumberOfTasks'
 import BestRestaurants from './components/BestRestaurants'
 import AverageCart from './components/AverageCart'
+import OrderCountPerDayOfWeek from './components/OrderCountPerDayOfWeek'
 
 import './index.scss'
 
@@ -27,6 +28,9 @@ if (rootElement) {
           </div>
           <div style={{ minHeight: '240px' }}>
             <AverageCart cubejsApi={ cubejsApi } />
+          </div>
+          <div style={{ minHeight: '240px' }}>
+            <OrderCountPerDayOfWeek cubejsApi={ cubejsApi } />
           </div>
         </div>, rootElement);
       break

@@ -52,7 +52,9 @@ cube(`Order`, {
     },
 
     dayOfWeek: {
-      sql: `TO_CHAR(LOWER(shipping_time_range), 'Day')`,
+      // https://www.postgresql.org/docs/current/functions-formatting.html
+      // ISO 8601 day of the week, Monday (1) to Sunday (7)
+      sql: `TO_CHAR(LOWER(shipping_time_range), 'ID')`,
       type: `string`
     },
 
