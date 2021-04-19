@@ -61,7 +61,7 @@ const Chart = ({ cubejsApi }) => {
             "member": "Task.status",
             "operator": "notEquals",
             "values": [
-              "cancelled"
+              "CANCELLED"
             ]
           }
         ],
