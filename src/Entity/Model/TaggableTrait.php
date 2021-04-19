@@ -38,7 +38,7 @@ trait TaggableTrait
     public function setTags($tags)
     {
         $this->tags = is_array($tags) ? $tags : explode(' ', $tags);
-        $this->tags = array_unique($tags);
+        $this->tags = array_unique($this->tags);
     }
 
     public function addTags($tags)
@@ -47,6 +47,6 @@ trait TaggableTrait
             $this->getTags(),
             is_array($tags) ? $tags : explode(' ', $tags)
         );
-        $this->tags = array_unique($tags);
+        $this->tags = array_unique($this->tags);
     }
 }
