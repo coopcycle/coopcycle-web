@@ -4,6 +4,7 @@ import cubejs from '@cubejs-client/core';
 
 import AverageDistance from './components/AverageDistance'
 import NumberOfTasks from './components/NumberOfTasks'
+import BestRestaurants from './components/BestRestaurants'
 
 import './index.scss'
 
@@ -16,13 +17,26 @@ if (rootElement) {
     { apiUrl: rootElement.dataset.apiUrl }
   );
 
-  ReactDOM.render(
-    <div>
-      <div style={{ minHeight: '240px' }}>
-        <AverageDistance cubejsApi={ cubejsApi } />
-      </div>
-      <div style={{ minHeight: '240px' }}>
-        <NumberOfTasks cubejsApi={ cubejsApi } />
-      </div>
-    </div>, rootElement);
+  switch (rootElement.dataset.view) {
+    case 'marketplace':
+      ReactDOM.render(
+        <div>
+          <div style={{ minHeight: '240px' }}>
+            <BestRestaurants cubejsApi={ cubejsApi } />
+          </div>
+        </div>, rootElement);
+      break
+
+    case 'logistics':
+    default:
+      ReactDOM.render(
+        <div>
+          <div style={{ minHeight: '240px' }}>
+            <AverageDistance cubejsApi={ cubejsApi } />
+          </div>
+          <div style={{ minHeight: '240px' }}>
+            <NumberOfTasks cubejsApi={ cubejsApi } />
+          </div>
+        </div>, rootElement);
+  }
 }
