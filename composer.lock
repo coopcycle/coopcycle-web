@@ -6595,16 +6595,16 @@
         },
         {
             "name": "kreait/firebase-php",
-            "version": "5.17.1",
+            "version": "5.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kreait/firebase-php.git",
-                "reference": "b8cf3752fc512b8617deb45f0b4bda07eacc522d"
+                "reference": "2fb3778725bb26000c49e9299ed4a52ac142a4e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kreait/firebase-php/zipball/b8cf3752fc512b8617deb45f0b4bda07eacc522d",
-                "reference": "b8cf3752fc512b8617deb45f0b4bda07eacc522d",
+                "url": "https://api.github.com/repos/kreait/firebase-php/zipball/2fb3778725bb26000c49e9299ed4a52ac142a4e3",
+                "reference": "2fb3778725bb26000c49e9299ed4a52ac142a4e3",
                 "shasum": ""
             },
             "require": {
@@ -6619,7 +6619,7 @@
                 "guzzlehttp/promises": "^1.4",
                 "guzzlehttp/psr7": "^1.7",
                 "kreait/clock": "^1.0.1",
-                "kreait/firebase-tokens": "^1.14.0",
+                "kreait/firebase-tokens": "^1.15.0",
                 "mtdowling/jmespath.php": "^2.3",
                 "php": "^7.2|~8.0.0",
                 "psr/cache": "^1.0",
@@ -6683,20 +6683,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-04-13T21:21:50+00:00"
+            "time": "2021-04-19T00:41:29+00:00"
         },
         {
             "name": "kreait/firebase-tokens",
-            "version": "1.14.0",
+            "version": "1.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kreait/firebase-tokens-php.git",
-                "reference": "dc8b7da46f45538b3f413dc04a74e24dc7d6bd48"
+                "reference": "b39d7c3a78d0912c9a617cd42d4bd356209b1b91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kreait/firebase-tokens-php/zipball/dc8b7da46f45538b3f413dc04a74e24dc7d6bd48",
-                "reference": "dc8b7da46f45538b3f413dc04a74e24dc7d6bd48",
+                "url": "https://api.github.com/repos/kreait/firebase-tokens-php/zipball/b39d7c3a78d0912c9a617cd42d4bd356209b1b91",
+                "reference": "b39d7c3a78d0912c9a617cd42d4bd356209b1b91",
                 "shasum": ""
             },
             "require": {
@@ -6752,7 +6752,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kreait/firebase-tokens-php/issues",
-                "source": "https://github.com/kreait/firebase-tokens-php/tree/1.14.0"
+                "source": "https://github.com/kreait/firebase-tokens-php/tree/1.15.0"
             },
             "funding": [
                 {
@@ -6760,7 +6760,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-12-08T23:58:48+00:00"
+            "time": "2021-04-19T00:26:58+00:00"
         },
         {
             "name": "laminas/laminas-code",
@@ -7168,16 +7168,16 @@
         },
         {
             "name": "league/csv",
-            "version": "9.7.0",
+            "version": "9.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/csv.git",
-                "reference": "4cacd9c72c4aa8bdbef43315b2ca25c46a0f833f"
+                "reference": "0ec57e8264ec92565974ead0d1724cf1026e10c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/csv/zipball/4cacd9c72c4aa8bdbef43315b2ca25c46a0f833f",
-                "reference": "4cacd9c72c4aa8bdbef43315b2ca25c46a0f833f",
+                "url": "https://api.github.com/repos/thephpleague/csv/zipball/0ec57e8264ec92565974ead0d1724cf1026e10c1",
+                "reference": "0ec57e8264ec92565974ead0d1724cf1026e10c1",
                 "shasum": ""
             },
             "require": {
@@ -7248,7 +7248,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-03-26T22:08:10+00:00"
+            "time": "2021-04-17T16:32:08+00:00"
         },
         {
             "name": "league/event",
@@ -12074,16 +12074,16 @@
         },
         {
             "name": "sentry/sentry-symfony",
-            "version": "4.0.3",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-symfony.git",
-                "reference": "cc73694eacd8af7acab12ca5c9d115b4b7a8a872"
+                "reference": "4b5796901c526cadea57a82daa56059f93fbcfa5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/cc73694eacd8af7acab12ca5c9d115b4b7a8a872",
-                "reference": "cc73694eacd8af7acab12ca5c9d115b4b7a8a872",
+                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/4b5796901c526cadea57a82daa56059f93fbcfa5",
+                "reference": "4b5796901c526cadea57a82daa56059f93fbcfa5",
                 "shasum": ""
             },
             "require": {
@@ -12091,16 +12091,19 @@
                 "php": "^7.2||^8.0",
                 "php-http/discovery": "^1.11",
                 "sentry/sdk": "^3.1",
-                "symfony/config": "^3.4.43||^4.4.11||^5.0.11",
-                "symfony/console": "^3.4.43||^4.4.11||^5.0.11",
-                "symfony/dependency-injection": "^3.4.43||^4.4.11||^5.0.11",
-                "symfony/event-dispatcher": "^3.4.43||^4.4.11||^5.0.11",
-                "symfony/http-kernel": "^3.4.43||^4.4.11||^5.0.11",
-                "symfony/psr-http-message-bridge": "^2.0",
-                "symfony/security-core": "^3.4.43||^4.4.11||^5.0.11"
+                "symfony/config": "^3.4.44||^4.4.20||^5.0.11",
+                "symfony/console": "^3.4.44||^4.4.20||^5.0.11",
+                "symfony/dependency-injection": "^3.4.44||^4.4.20||^5.0.11",
+                "symfony/event-dispatcher": "^3.4.44||^4.4.20||^5.0.11",
+                "symfony/http-kernel": "^3.4.44||^4.4.20||^5.0.11",
+                "symfony/polyfill-php80": "^1.22",
+                "symfony/psr-http-message-bridge": "^1.2||^2.0",
+                "symfony/security-core": "^3.4.44||^4.4.20||^5.0.11"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.17",
+                "doctrine/dbal": "^2.10||^3.0",
+                "doctrine/doctrine-bundle": "^1.12||^2.0",
+                "friendsofphp/php-cs-fixer": "^2.18",
                 "jangregor/phpstan-prophecy": "^0.8",
                 "monolog/monolog": "^1.3||^2.0",
                 "phpspec/prophecy": "!=1.11.0",
@@ -12109,17 +12112,22 @@
                 "phpstan/phpstan": "^0.12",
                 "phpstan/phpstan-phpunit": "^0.12",
                 "phpunit/phpunit": "^8.5||^9.0",
-                "symfony/browser-kit": "^3.4.43||^4.4.11||^5.0.11",
-                "symfony/framework-bundle": "^3.4.43||^4.4.11||^5.0.11",
-                "symfony/messenger": "^4.4.11||^5.0.11",
+                "symfony/browser-kit": "^3.4.44||^4.4.20||^5.0.11",
+                "symfony/cache": "^3.4.44||^4.4.20||^5.0.11",
+                "symfony/dom-crawler": "^3.4.44||^4.4.20||^5.0.11",
+                "symfony/framework-bundle": "^3.4.44||^4.4.20||^5.0.11",
+                "symfony/messenger": "^4.4.20||^5.0.11",
                 "symfony/monolog-bundle": "^3.4",
-                "symfony/phpunit-bridge": "^5.0",
-                "symfony/polyfill-php80": "^1.22",
-                "symfony/yaml": "^3.4.43||^4.4.11||^5.0.11",
+                "symfony/phpunit-bridge": "^5.2.6",
+                "symfony/twig-bundle": "^3.4.44||^4.4.20||^5.0.11",
+                "symfony/yaml": "^3.4.44||^4.4.20||^5.0.11",
                 "vimeo/psalm": "^4.3"
             },
             "suggest": {
-                "monolog/monolog": "Allow sending log messages to Sentry by using the included Monolog handler."
+                "doctrine/doctrine-bundle": "Allow distributed tracing of database queries using Sentry.",
+                "monolog/monolog": "Allow sending log messages to Sentry by using the included Monolog handler.",
+                "symfony/cache": "Allow distributed tracing of cache pools using Sentry.",
+                "symfony/twig-bundle": "Allow distributed tracing of Twig template rendering using Sentry."
             },
             "type": "symfony-bundle",
             "extra": {
@@ -12162,7 +12170,7 @@
             ],
             "support": {
                 "issues": "https://github.com/getsentry/sentry-symfony/issues",
-                "source": "https://github.com/getsentry/sentry-symfony/tree/4.0.3"
+                "source": "https://github.com/getsentry/sentry-symfony/tree/4.1.0"
             },
             "funding": [
                 {
@@ -12174,7 +12182,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2021-03-03T16:05:24+00:00"
+            "time": "2021-04-18T21:04:42+00:00"
         },
         {
             "name": "simple-bus/message-bus",
@@ -14930,22 +14938,22 @@
         },
         {
             "name": "symfony/contracts",
-            "version": "v2.3.1",
+            "version": "v2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/contracts.git",
-                "reference": "f7783bdec14b06c323d30a5f74ba70a17ec0ce81"
+                "reference": "8434102b404d119dcaf98c8fe19a2655573ac17a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/contracts/zipball/f7783bdec14b06c323d30a5f74ba70a17ec0ce81",
-                "reference": "f7783bdec14b06c323d30a5f74ba70a17ec0ce81",
+                "url": "https://api.github.com/repos/symfony/contracts/zipball/8434102b404d119dcaf98c8fe19a2655573ac17a",
+                "reference": "8434102b404d119dcaf98c8fe19a2655573ac17a",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.5",
-                "psr/cache": "^1.0",
-                "psr/container": "^1.0",
+                "psr/cache": "^1.0|^2.0|^3.0",
+                "psr/container": "^1.1",
                 "psr/event-dispatcher": "^1.0"
             },
             "replace": {
@@ -14968,9 +14976,8 @@
             },
             "type": "library",
             "extra": {
-                "branch-version": "2.3",
                 "branch-alias": {
-                    "dev-main": "2.3-dev"
+                    "dev-main": "2.4-dev"
                 }
             },
             "autoload": {
@@ -15009,7 +15016,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/contracts/tree/v2.3.1"
+                "source": "https://github.com/symfony/contracts/tree/v2.4.0"
             },
             "funding": [
                 {
@@ -15025,7 +15032,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-14T17:08:19+00:00"
+            "time": "2021-04-11T23:07:08+00:00"
         },
         {
             "name": "symfony/monolog-bundle",
