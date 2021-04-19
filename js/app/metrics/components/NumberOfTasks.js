@@ -56,6 +56,15 @@ const Chart = ({ cubejsApi }) => {
             "dateRange": "Last 30 days"
           }
         ],
+        "filters": [
+          {
+            "member": "Task.status",
+            "operator": "notEquals",
+            "values": [
+              "cancelled"
+            ]
+          }
+        ],
         "order": {
           "Task.date": "asc"
         }

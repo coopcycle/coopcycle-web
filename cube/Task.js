@@ -1,5 +1,5 @@
 cube(`Task`, {
-  sql: `SELECT id, done_before AS before FROM public.task`,
+  sql: `SELECT id, type, done_after AS after, done_before AS before, status FROM public.task`,
 
   joins: {
 
@@ -22,6 +22,11 @@ cube(`Task`, {
     date: {
       sql: `before`,
       type: `time`
+    },
+
+    status: {
+      sql: `status`,
+      type: `string`
     },
 
   },
