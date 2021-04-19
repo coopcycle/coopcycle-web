@@ -46,15 +46,27 @@ cube(`Order`, {
     },
 
     // https://cube.dev/docs/working-with-string-time-dimensions
+    // https://stackoverflow.com/questions/45141426/how-to-get-average-between-two-dates-in-postgresql
     shippingTimeRange: {
-      sql: `LOWER(shipping_time_range)`,
+      sql: `(LOWER(shipping_time_range) + (UPPER(shipping_time_range) - LOWER(shipping_time_range)) / 2)`,
       type: `time`
     },
 
     dayOfWeek: {
       // https://www.postgresql.org/docs/current/functions-formatting.html
       // ISO 8601 day of the week, Monday (1) to Sunday (7)
-      sql: `TO_CHAR(LOWER(shipping_time_range), 'ID')`,
+      sql: `TO_CHAR(${shippingTimeRange}, 'ID')`,
+      type: `string`
+    },
+
+    hour : {
+      sql: `TO_CHAR(${shippingTimeRange}, 'HH24')::numeric`,
+      type: `number`
+    },
+
+    hourRange: {
+      // This will output ranges of 2 hours, like 10-12, 12-14, etc...
+      sql: `LPAD((${hour} - (${hour} % 2))::text, 2, '0') || '-' || LPAD((${hour} - (${hour} % 2) + 2)::text, 2, '0')`,
       type: `string`
     },
 
