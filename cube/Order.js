@@ -2,7 +2,10 @@ cube(`Order`, {
   sql: `SELECT * FROM public.sylius_order`,
 
   joins: {
-
+    OrderVendor: {
+      relationship: `hasMany`,
+      sql: `${Order}.id = ${OrderVendor}.order_id`
+    }
   },
 
   measures: {

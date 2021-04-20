@@ -20,7 +20,7 @@ cube(`OrderVendor`, {
 
   dimensions: {
     id: {
-      // Define a cmposite primary key
+      // Define a composite primary key
       sql: `${CUBE}.order_id || '-' || ${CUBE}.restaurant_id`,
       type: `string`,
       primaryKey: true
