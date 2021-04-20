@@ -82,9 +82,7 @@ class TaskList extends React.Component {
       isEmpty,
     } = this.props
 
-    let { tasks } = this.props
-
-    tasks = _.orderBy(tasks, ['position', 'id'])
+    const { tasks } = this.props
 
     const uncompletedTasks = _.filter(tasks, t => t.status === 'TODO')
     const completedTasks = _.filter(tasks, t => t.status === 'DONE')
