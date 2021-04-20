@@ -13,6 +13,7 @@
     {% endif %}
     <th></th>
     <th></th>
+    <th></th>
   </thead>
   <tbody>
   {% for delivery in deliveries %}
@@ -73,6 +74,13 @@
         {% endif %}
       </td>
       {% endif %}
+      <td class="text-center">
+        {% if delivery.hasImages() %}
+          <a href="{{ path(routes.download_images, { storeId: store.id, deliveryId: delivery.id }) }}">
+            <i class="fa fa-lg fa-camera"></i>
+          </a>
+        {% endif %}
+      </td>
       <td class="text-center" width="10%">
         <small class="text-muted">{{ delivery.createdAt|ago }}</small>
       </td>

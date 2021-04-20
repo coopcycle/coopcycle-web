@@ -369,6 +369,12 @@ dashboard_store_delivery_new:
         show_left_menu: false
     methods:  [ GET, POST ]
 
+dashboard_store_delivery_download_images:
+    path: /dashboard/stores/{storeId}/deliveries/{deliveryId}/images/download
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::downloadDeliveryImagesAction
+    methods:  [ GET ]
+
 dashboard_store_address_new:
     path: /dashboard/stores/{id}/addresses/new
     defaults:

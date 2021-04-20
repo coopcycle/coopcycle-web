@@ -460,4 +460,24 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
         return $shipment;
     }
+
+    public function getImages()
+    {
+        $images = new ArrayCollection();
+
+        foreach ($this->getPickup()->getImages() as $image) {
+            $images->add($image);
+        }
+
+        foreach ($this->getDropoff()->getImages() as $image) {
+            $images->add($image);
+        }
+
+        return $images;
+    }
+
+    public function hasImages()
+    {
+        return count($this->getImages()) > 0;
+    }
 }

@@ -23,6 +23,7 @@ use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\FormError;
@@ -30,9 +31,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait StoreTrait
 {
@@ -428,5 +432,52 @@ trait StoreTrait
             'with_telephone' => true,
             'with_contact_name' => true,
         ]);
+    }
+
+    public function downloadDeliveryImagesAction($storeId, $deliveryId, Request $request,
+        StorageInterface $storage,
+        Filesystem $taskImagesFilesystem)
+    {
+        $delivery = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->find($deliveryId);
+
+        $this->denyAccessUnlessGranted('edit', $delivery);
+
+        if (!$delivery->hasImages()) {
+            throw new BadRequestHttpException(sprintf('Delivery #%d has no images', $deliveryId));
+        }
+
+        $zip = new \ZipArchive();
+        $zipName = tempnam(sys_get_temp_dir(), 'coopcycle_delivery_images');
+        $zip->open($zipName, \ZipArchive::CREATE);
+
+        foreach ($delivery->getImages() as $image) {
+
+            // FIXME
+            // It's not clean to use resolveUri()
+            // but the problem is that resolvePath() returns the path with prefix,
+            // while $taskImagesFilesystem is alreay aware of the prefix
+            $imagePath = ltrim($storage->resolveUri($image, 'file'), '/');
+
+            if (!$taskImagesFilesystem->has($imagePath)) {
+                throw new BadRequestHttpException(sprintf('Image at path "%s" not found', $imagePath));
+            }
+
+            $zip->addFromString(basename($imagePath), $taskImagesFilesystem->read($imagePath));
+        }
+
+        $zip->close();
+
+        $response = new Response(file_get_contents($zipName));
+        $response->headers->set('Content-Type', 'application/zip');
+        $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            sprintf('coopcycle-delivery-images-%d.zip', $deliveryId)
+        ));
+
+        unlink($zipName);
+
+        return $response;
     }
 }
