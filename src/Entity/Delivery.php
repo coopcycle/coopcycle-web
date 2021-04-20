@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
@@ -74,6 +75,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *        "security"="is_granted('edit', object)",
  *        "openapi_context"={
  *          "summary"="Marks a Delivery as dropped"
+ *        }
+ *     },
+ *     "cancel"={
+ *        "method"="DELETE",
+ *        "controller"=CancelDelivery::class,
+ *        "write"=false,
+ *        "security"="is_granted('edit', object)",
+ *        "openapi_context"={
+ *          "summary"="Cancels a Delivery"
  *        }
  *     }
  *   },

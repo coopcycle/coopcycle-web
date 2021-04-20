@@ -43,7 +43,7 @@ security:
 
         api_deliveries:
             pattern:   ^/api/deliveries
-            methods: [ GET, POST, PUT ]
+            methods: [ GET, POST, PUT, DELETE ]
             stateless: true
             anonymous: ~
             bearer_token: true

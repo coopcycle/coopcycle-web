@@ -901,3 +901,14 @@ Feature: Deliveries
       }
       """
     Then the response status code should be 200
+
+  Scenario: Cancel delivery
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | deliveries.yml      |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "DELETE" request to "/api/deliveries/1"
+    Then the response status code should be 204
