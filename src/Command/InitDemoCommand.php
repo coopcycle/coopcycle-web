@@ -258,10 +258,15 @@ class InitDemoCommand extends Command
         if ('fr' === $this->country) {
             $providers[] = AddokProvider::withBANServer($httpAdapter);
         }
+
+        // Make sure we use a language supported by Photon
+        // "language es is not supported, supported languages are: default, en, fr, de, it"
+        $geocoderLocale = in_array($this->defaultLocale, ['en', 'fr', 'de', 'it']) ? $this->defaultLocale : 'en';
+
         $providers[] = PhotonProvider::withKomootServer($httpAdapter);
 
         $statefulGeocoder =
-            new StatefulGeocoder(new ChainProvider($providers), $this->defaultLocale);
+            new StatefulGeocoder(new ChainProvider($providers), $geocoderLocale);
 
         $this->geocoder->setGeocoder($statefulGeocoder);
 

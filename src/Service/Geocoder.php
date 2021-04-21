@@ -135,7 +135,11 @@ class Geocoder
 
     public function reverse(float $latitude, float $longitude)
     {
-        $results = $this->getGeocoder()->reverse($latitude, $longitude);
+        $query = ReverseQuery::fromCoordinates($latitude, $longitude);
+
+        $results = $this->getGeocoder()->reverseQuery(
+            $query
+        );
 
         if (count($results) > 0) {
             $result = $results->first();
@@ -154,14 +158,19 @@ class Geocoder
 
     private function formatAddress(Location $location)
     {
-        if ('addok' === $location->getProvidedBy()) {
-            // If it's addok, we use French formatting
-            return sprintf('%s %s, %s %s',
-                $location->getStreetNumber(), $location->getStreetName(), $location->getPostalCode(), $location->getLocality());
+        switch ($location->getProvidedBy()) {
+            case 'addok':
+                // If it's addok, we use French formatting
+                return sprintf('%s %s, %s %s',
+                    $location->getStreetNumber(), $location->getStreetName(), $location->getPostalCode(), $location->getLocality());
+
+            case 'opencage':
+                Assert::isInstanceOf($location, OpenCageAddress::class);
+
+                return $location->getFormattedAddress();
         }
 
-        Assert::isInstanceOf($location, OpenCageAddress::class);
-
-        return $location->getFormattedAddress();
+        return sprintf('%s %s, %s %s',
+            $location->getStreetName(), $location->getStreetNumber(), $location->getPostalCode(), $location->getLocality());
     }
 }
