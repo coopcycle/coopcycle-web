@@ -7,8 +7,8 @@ RUN apk add --no-cache \
         icu \
         zlib
 
-ENV APCU_VERSION 5.1.18
-ENV PHPREDIS_VERSION 5.1.1
+ENV APCU_VERSION 5.1.20
+ENV PHPREDIS_VERSION 5.3.4
 
 RUN set -xe \
     && apk add --no-cache \
