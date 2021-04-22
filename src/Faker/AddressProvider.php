@@ -37,12 +37,18 @@ class AddressProvider extends BaseProvider
 
         [ $lngMax, $latMax, $lngMin, $latMin ] = $viewbox;
 
+        // Retry 10 times to generate an address
         for ($i = 0; $i < 10; $i++) {
 
             $latitude = $this->generator->latitude($latMin, $latMax);
             $longitude = $this->generator->longitude($lngMin, $lngMax);
 
-            return $this->geocoder->reverse($latitude, $longitude);
+            $address = $this->geocoder->reverse($latitude, $longitude);
+
+            if (null !== $address) {
+
+                return $address;
+            }
         }
 
         throw new \Exception('Could not generate an address');
