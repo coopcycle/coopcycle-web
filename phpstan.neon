@@ -27,7 +27,6 @@ parameters:
         - '#Call to an undefined method Symfony\\Component\\DependencyInjection\\Extension\\ExtensionInterface::addSecurityListenerFactory\(\)#'
         - '#Strict comparison using === between null and Sylius\\Component\\Order\\Model\\OrderInterface will always evaluate to false#'
         - '#Call to an undefined method [a-zA-Z\\]+::accessControl\(\)#'
-        - '#Comparison operation "<" between 0\|1 and 10 is always true#'
         - '#Call to an undefined method League\\Geotools\\Distance\\DistanceInterface::flat\(\)#'
         - '#Call to an undefined method Sylius\\Component\\Promotion\\Model\\PromotionSubjectInterface::getRestaurant\(\)#'
         - '#Call to an undefined method Sylius\\Component\\(.*)RepositoryInterface::findOneBy[a-zA-Z]+\(\)#'
