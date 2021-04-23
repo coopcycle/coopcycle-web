@@ -131,6 +131,7 @@ class SetupCommand extends Command
         'ARS',
         'CRC',
         'AUD',
+        'MXN',
     ];
 
     public function __construct(
