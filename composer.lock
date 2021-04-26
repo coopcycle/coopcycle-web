@@ -19526,20 +19526,20 @@
         },
         {
             "name": "rector/rector-prefixed",
-            "version": "0.10.9",
+            "version": "0.10.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector-prefixed.git",
-                "reference": "194bdec71fe74935eeb62290c0078eae32e47fe8"
+                "reference": "b52a938d682300a5c27c624d78f6c34d4ccf466d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/194bdec71fe74935eeb62290c0078eae32e47fe8",
-                "reference": "194bdec71fe74935eeb62290c0078eae32e47fe8",
+                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/b52a938d682300a5c27c624d78f6c34d4ccf466d",
+                "reference": "b52a938d682300a5c27c624d78f6c34d4ccf466d",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0|^8.0",
+                "php": "^7.1|^8.0",
                 "phpstan/phpstan": "^0.12.83"
             },
             "conflict": {
@@ -19555,15 +19555,20 @@
                     "dev-main": "0.10-dev"
                 }
             },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Prefixed and PHP 7.0 downgraded version of rector/rector",
             "support": {
-                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.9"
+                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.11"
             },
-            "time": "2021-04-20T23:23:23+00:00"
+            "time": "2021-04-24T12:44:58+00:00"
         },
         {
             "name": "sebastian/code-unit",
