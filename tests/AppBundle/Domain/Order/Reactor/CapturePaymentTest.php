@@ -16,6 +16,7 @@ use AppBundle\Service\StripeManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
+use Psr\Log\NullLogger;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -51,7 +52,8 @@ class CapturePaymentTest extends TestCase
         );
 
         $this->capturePayment = new CapturePayment(
-            $this->gateway
+            $this->gateway,
+            new NullLogger()
         );
     }
 

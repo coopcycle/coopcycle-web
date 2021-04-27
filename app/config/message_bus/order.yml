@@ -178,6 +178,7 @@ services:
     class: AppBundle\Domain\Order\Reactor\CapturePayment
     arguments:
       - '@AppBundle\Payment\Gateway'
+      - '@logger'
     tags:
         - name: event_subscriber
           subscribes_to: order:fulfilled
