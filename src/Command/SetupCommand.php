@@ -547,6 +547,9 @@ class SetupCommand extends Command
             'account.updated',
             'payment_intent.succeeded',
             'payment_intent.payment_failed',
+            'charge.captured',
+            'charge.succeeded',
+            'charge.updated',
             // Used for Giropay legacy integration
             'source.chargeable',
             'source.failed',
