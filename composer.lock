@@ -166,16 +166,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.178.9",
+            "version": "3.178.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "89710500988a8a7d77f1282fcf6a1d0ad8297eaf"
+                "reference": "a3d2c2317e8102a48eac14ebb39401f814ad5057"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/89710500988a8a7d77f1282fcf6a1d0ad8297eaf",
-                "reference": "89710500988a8a7d77f1282fcf6a1d0ad8297eaf",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a3d2c2317e8102a48eac14ebb39401f814ad5057",
+                "reference": "a3d2c2317e8102a48eac14ebb39401f814ad5057",
                 "shasum": ""
             },
             "require": {
@@ -250,9 +250,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.9"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.10"
             },
-            "time": "2021-04-23T18:28:02+00:00"
+            "time": "2021-04-26T18:15:34+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -4780,16 +4780,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.8.1",
+            "version": "1.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "35ea11d335fd638b5882ff1725228b3d35496ab1"
+                "reference": "dc960a912984efb74d0a90222870c72c87f10c91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/35ea11d335fd638b5882ff1725228b3d35496ab1",
-                "reference": "35ea11d335fd638b5882ff1725228b3d35496ab1",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/dc960a912984efb74d0a90222870c72c87f10c91",
+                "reference": "dc960a912984efb74d0a90222870c72c87f10c91",
                 "shasum": ""
             },
             "require": {
@@ -4849,9 +4849,9 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/1.8.1"
+                "source": "https://github.com/guzzle/psr7/tree/1.8.2"
             },
-            "time": "2021-03-21T16:25:00+00:00"
+            "time": "2021-04-26T09:17:50+00:00"
         },
         {
             "name": "hashids/hashids",
@@ -8975,12 +8975,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosProfileBundle.git",
-                "reference": "d7b1d4b6bdf1dc179444415a65f1911f0d2a355f"
+                "reference": "d82bf52b0fca8d101e3cda3841d3c469c16d1629"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/d7b1d4b6bdf1dc179444415a65f1911f0d2a355f",
-                "reference": "d7b1d4b6bdf1dc179444415a65f1911f0d2a355f",
+                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/d82bf52b0fca8d101e3cda3841d3c469c16d1629",
+                "reference": "d82bf52b0fca8d101e3cda3841d3c469c16d1629",
                 "shasum": ""
             },
             "require": {
@@ -9069,7 +9069,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2021-04-26T03:40:34+00:00"
+            "time": "2021-04-27T04:06:59+00:00"
         },
         {
             "name": "nucleos/user-bundle",
@@ -9077,12 +9077,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosUserBundle.git",
-                "reference": "153fc8589c972d65a0e8b6d1a9483936f5a9f71a"
+                "reference": "c7aa311b1d3fe1aea0c419ed63566ba8bb110389"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosUserBundle/zipball/153fc8589c972d65a0e8b6d1a9483936f5a9f71a",
-                "reference": "153fc8589c972d65a0e8b6d1a9483936f5a9f71a",
+                "url": "https://api.github.com/repos/nucleos/NucleosUserBundle/zipball/c7aa311b1d3fe1aea0c419ed63566ba8bb110389",
+                "reference": "c7aa311b1d3fe1aea0c419ed63566ba8bb110389",
                 "shasum": ""
             },
             "require": {
@@ -9185,7 +9185,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2021-04-26T03:39:03+00:00"
+            "time": "2021-04-27T03:23:38+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -16385,16 +16385,16 @@
         },
         {
             "name": "symfony/webpack-encore-bundle",
-            "version": "v1.11.1",
+            "version": "v1.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/webpack-encore-bundle.git",
-                "reference": "395b60a549ded8e7f77f0d551815d7555e2d9eb0"
+                "reference": "f282fb17ffa4839ba491eb7e3f5ffdd40c86f969"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/webpack-encore-bundle/zipball/395b60a549ded8e7f77f0d551815d7555e2d9eb0",
-                "reference": "395b60a549ded8e7f77f0d551815d7555e2d9eb0",
+                "url": "https://api.github.com/repos/symfony/webpack-encore-bundle/zipball/f282fb17ffa4839ba491eb7e3f5ffdd40c86f969",
+                "reference": "f282fb17ffa4839ba491eb7e3f5ffdd40c86f969",
                 "shasum": ""
             },
             "require": {
@@ -16436,7 +16436,7 @@
             "description": "Integration with your Symfony app & Webpack Encore!",
             "support": {
                 "issues": "https://github.com/symfony/webpack-encore-bundle/issues",
-                "source": "https://github.com/symfony/webpack-encore-bundle/tree/v1.11.1"
+                "source": "https://github.com/symfony/webpack-encore-bundle/tree/v1.11.2"
             },
             "funding": [
                 {
@@ -16452,7 +16452,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-02-17T13:45:51+00:00"
+            "time": "2021-04-26T12:48:17+00:00"
         },
         {
             "name": "theofidry/alice-data-fixtures",
