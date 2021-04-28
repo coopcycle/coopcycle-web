@@ -18,8 +18,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
 use Psr\Log\NullLogger;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Stripe;
 
 class CapturePaymentTest extends TestCase
@@ -36,18 +34,10 @@ class CapturePaymentTest extends TestCase
 
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
 
-        $this->messageBus = $this->prophesize(MessageBusInterface::class);
-        $this->messageBus
-            ->dispatch(Argument::type(RetrieveStripeFee::class), Argument::type('array'))
-            ->will(function ($args) {
-                return new Envelope($args[0]);
-            });
-
         $this->gateway = new Gateway(
             $this->gatewayResolver->reveal(),
             $this->stripeManager->reveal(),
             $this->mercadopagoManager->reveal(),
-            $this->messageBus->reveal(),
             $this->edenred->reveal()
         );
 
@@ -134,14 +124,6 @@ class CapturePaymentTest extends TestCase
             ->shouldBeCalled();
 
         call_user_func_array($this->capturePayment, [ new OrderFulfilled($order->reveal()) ]);
-
-        $this
-            ->messageBus
-            ->dispatch(
-                new RetrieveStripeFee($order->reveal()),
-                Argument::type('array')
-            )
-            ->shouldHaveBeenCalled();
     }
 
     public function testDoesNothingForCancelledOrders()
@@ -220,13 +202,5 @@ class CapturePaymentTest extends TestCase
             ->shouldBeCalled();
 
         call_user_func_array($this->capturePayment, [ new OrderCancelled($order->reveal(), OrderInterface::CANCEL_REASON_NO_SHOW) ]);
-
-        $this
-            ->messageBus
-            ->dispatch(
-                new RetrieveStripeFee($order->reveal()),
-                Argument::type('array')
-            )
-            ->shouldHaveBeenCalled();
     }
 }

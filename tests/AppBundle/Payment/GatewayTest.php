@@ -14,8 +14,6 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Prophecy\Argument;
 
 class GatewayTest extends TestCase
@@ -35,18 +33,10 @@ class GatewayTest extends TestCase
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
         $this->edenred = $this->prophesize(EdenredClient::class);
 
-        $this->messageBus = $this->prophesize(MessageBusInterface::class);
-        $this->messageBus
-            ->dispatch(Argument::type('object'), Argument::type('array'))
-            ->will(function ($args) {
-                return new Envelope($args[0]);
-            });
-
         $this->gateway = new Gateway(
             $this->gatewayResolver->reveal(),
             $this->stripeManager->reveal(),
             $this->mercadopagoManager->reveal(),
-            $this->messageBus->reveal(),
             $this->edenred->reveal()
         );
     }

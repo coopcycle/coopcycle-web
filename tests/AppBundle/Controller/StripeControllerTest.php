@@ -23,6 +23,7 @@ use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use PHPUnit\Framework\TestCase;
@@ -42,6 +43,7 @@ class StripeControllerTest extends TestCase
         $this->eventBus = $this->prophesize(MessageBus::class);
         $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);
         $this->stripeManager = $this->prophesize(StripeManager::class);
+        $this->adjustmentFactory = $this->prophesize(AdjustmentFactoryInterface::class);
 
         $orderFactory = $this->prophesize(FactoryInterface::class);
 
@@ -51,6 +53,7 @@ class StripeControllerTest extends TestCase
             $this->secret,
             true,
             $this->entityManager->reveal(),
+            $this->adjustmentFactory->reveal(),
             new NullLogger()
         );
     }

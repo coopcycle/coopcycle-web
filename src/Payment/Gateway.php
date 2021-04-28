@@ -8,27 +8,22 @@ use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\StripeManager;
 use Omnipay\Common\Message\ResponseInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 class Gateway
 {
     private $resolver;
     private $stripeManager;
     private $mercadopagoManager;
-    private $messageBus;
 
     public function __construct(
         GatewayResolver $resolver,
         StripeManager $stripeManager,
         MercadopagoManager $mercadopagoManager,
-        MessageBusInterface $messageBus,
         EdenredClient $edenred)
     {
         $this->resolver = $resolver;
         $this->stripeManager = $stripeManager;
         $this->mercadopagoManager = $mercadopagoManager;
-        $this->messageBus = $messageBus;
         $this->edenred = $edenred;
     }
 
@@ -102,11 +97,6 @@ class Gateway
                     $captureId = $this->edenred->captureTransaction($payment);
                     $payment->setEdenredCaptureId($captureId);
                 }
-
-                $this->messageBus->dispatch(
-                    new RetrieveStripeFee($payment->getOrder()),
-                    [ new DelayStamp(30000) ]
-                );
 
                 return new StripeResponse([]);
         }

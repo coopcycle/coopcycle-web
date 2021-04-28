@@ -167,6 +167,7 @@ services:
     arguments:
       $secret: '%secret%'
       $debug: '%kernel.debug%'
+      $adjustmentFactory: '@sylius.factory.adjustment'
     tags:
       - { name: monolog.logger, channel: stripe }
 
