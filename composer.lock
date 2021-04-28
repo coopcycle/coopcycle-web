@@ -166,16 +166,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.178.10",
+            "version": "3.178.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "a3d2c2317e8102a48eac14ebb39401f814ad5057"
+                "reference": "ae5590158d773402f09ddc79b82e0d9243d3e990"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a3d2c2317e8102a48eac14ebb39401f814ad5057",
-                "reference": "a3d2c2317e8102a48eac14ebb39401f814ad5057",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ae5590158d773402f09ddc79b82e0d9243d3e990",
+                "reference": "ae5590158d773402f09ddc79b82e0d9243d3e990",
                 "shasum": ""
             },
             "require": {
@@ -250,9 +250,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.10"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.11"
             },
-            "time": "2021-04-26T18:15:34+00:00"
+            "time": "2021-04-27T18:16:30+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -5226,16 +5226,16 @@
         },
         {
             "name": "illuminate/cache",
-            "version": "v8.38.0",
+            "version": "v8.40.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/cache.git",
-                "reference": "8e7e15e726895a757f23602f410f4b28567214a8"
+                "reference": "267a541171a375d56622117fbd0a60515402f2ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/cache/zipball/8e7e15e726895a757f23602f410f4b28567214a8",
-                "reference": "8e7e15e726895a757f23602f410f4b28567214a8",
+                "url": "https://api.github.com/repos/illuminate/cache/zipball/267a541171a375d56622117fbd0a60515402f2ef",
+                "reference": "267a541171a375d56622117fbd0a60515402f2ef",
                 "shasum": ""
             },
             "require": {
@@ -5279,20 +5279,20 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-04-01T12:57:50+00:00"
+            "time": "2021-04-27T20:56:51+00:00"
         },
         {
             "name": "illuminate/collections",
-            "version": "v8.38.0",
+            "version": "v8.40.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "21690cd5591f2d42d792e5e4a687f9beba829f1d"
+                "reference": "deccb956d38710f3f8baf36dd876c3fa1585ec22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/21690cd5591f2d42d792e5e4a687f9beba829f1d",
-                "reference": "21690cd5591f2d42d792e5e4a687f9beba829f1d",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/deccb956d38710f3f8baf36dd876c3fa1585ec22",
+                "reference": "deccb956d38710f3f8baf36dd876c3fa1585ec22",
                 "shasum": ""
             },
             "require": {
@@ -5333,20 +5333,20 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-04-14T11:48:08+00:00"
+            "time": "2021-04-22T21:08:09+00:00"
         },
         {
             "name": "illuminate/contracts",
-            "version": "v8.38.0",
+            "version": "v8.40.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "5764f703ea8f74ced163125d810951cd5ef2b7e1"
+                "reference": "5152041a5c4ac4dbebb3c8ee72d05666c592ae08"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/5764f703ea8f74ced163125d810951cd5ef2b7e1",
-                "reference": "5764f703ea8f74ced163125d810951cd5ef2b7e1",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/5152041a5c4ac4dbebb3c8ee72d05666c592ae08",
+                "reference": "5152041a5c4ac4dbebb3c8ee72d05666c592ae08",
                 "shasum": ""
             },
             "require": {
@@ -5381,11 +5381,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-04-01T13:09:31+00:00"
+            "time": "2021-04-23T13:31:10+00:00"
         },
         {
             "name": "illuminate/macroable",
-            "version": "v8.38.0",
+            "version": "v8.40.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -5431,16 +5431,16 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v8.38.0",
+            "version": "v8.40.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "735391f31e145aad4f7aff3d9736ef70452dd1fe"
+                "reference": "ce1682ef73ab28a61be01c24ec5b090bdf2c3256"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/735391f31e145aad4f7aff3d9736ef70452dd1fe",
-                "reference": "735391f31e145aad4f7aff3d9736ef70452dd1fe",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/ce1682ef73ab28a61be01c24ec5b090bdf2c3256",
+                "reference": "ce1682ef73ab28a61be01c24ec5b090bdf2c3256",
                 "shasum": ""
             },
             "require": {
@@ -5495,7 +5495,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-04-15T11:51:39+00:00"
+            "time": "2021-04-28T12:56:25+00:00"
         },
         {
             "name": "imagine/imagine",
@@ -8975,12 +8975,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosProfileBundle.git",
-                "reference": "d82bf52b0fca8d101e3cda3841d3c469c16d1629"
+                "reference": "9b10b9bea310a612a04246e60cd8c92c38bccc11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/d82bf52b0fca8d101e3cda3841d3c469c16d1629",
-                "reference": "d82bf52b0fca8d101e3cda3841d3c469c16d1629",
+                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/9b10b9bea310a612a04246e60cd8c92c38bccc11",
+                "reference": "9b10b9bea310a612a04246e60cd8c92c38bccc11",
                 "shasum": ""
             },
             "require": {
@@ -9069,7 +9069,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2021-04-27T04:06:59+00:00"
+            "time": "2021-04-28T05:10:09+00:00"
         },
         {
             "name": "nucleos/user-bundle",
@@ -9077,12 +9077,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosUserBundle.git",
-                "reference": "c7aa311b1d3fe1aea0c419ed63566ba8bb110389"
+                "reference": "705e4b4859bf1735d8b3ce4aade9ee5b56a9c601"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosUserBundle/zipball/c7aa311b1d3fe1aea0c419ed63566ba8bb110389",
-                "reference": "c7aa311b1d3fe1aea0c419ed63566ba8bb110389",
+                "url": "https://api.github.com/repos/nucleos/NucleosUserBundle/zipball/705e4b4859bf1735d8b3ce4aade9ee5b56a9c601",
+                "reference": "705e4b4859bf1735d8b3ce4aade9ee5b56a9c601",
                 "shasum": ""
             },
             "require": {
@@ -9185,7 +9185,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2021-04-27T03:23:38+00:00"
+            "time": "2021-04-28T04:02:18+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -18915,16 +18915,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.84",
+            "version": "0.12.85",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "9c43f15da8798c8f30a4b099e6a94530a558cfd5"
+                "reference": "20e6333c0067875ad7697cd8acdf245c6ef69d03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9c43f15da8798c8f30a4b099e6a94530a558cfd5",
-                "reference": "9c43f15da8798c8f30a4b099e6a94530a558cfd5",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/20e6333c0067875ad7697cd8acdf245c6ef69d03",
+                "reference": "20e6333c0067875ad7697cd8acdf245c6ef69d03",
                 "shasum": ""
             },
             "require": {
@@ -18955,7 +18955,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.84"
+                "source": "https://github.com/phpstan/phpstan/tree/0.12.85"
             },
             "funding": [
                 {
@@ -18971,26 +18971,26 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-04-19T17:10:54+00:00"
+            "time": "2021-04-27T14:13:16+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
-            "version": "0.12.27",
+            "version": "0.12.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-symfony.git",
-                "reference": "a3b3976441534082e971228f0ad4d5ab51ba20b1"
+                "reference": "e4b9ea96b78057a758ac648986d2339259448293"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/a3b3976441534082e971228f0ad4d5ab51ba20b1",
-                "reference": "a3b3976441534082e971228f0ad4d5ab51ba20b1",
+                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/e4b9ea96b78057a758ac648986d2339259448293",
+                "reference": "e4b9ea96b78057a758ac648986d2339259448293",
                 "shasum": ""
             },
             "require": {
                 "ext-simplexml": "*",
                 "php": "^7.1 || ^8.0",
-                "phpstan/phpstan": "^0.12.83"
+                "phpstan/phpstan": "^0.12.85"
             },
             "conflict": {
                 "symfony/framework-bundle": "<3.0"
@@ -19001,12 +19001,12 @@
                 "phpstan/phpstan-phpunit": "^0.12.16",
                 "phpstan/phpstan-strict-rules": "^0.12.5",
                 "phpunit/phpunit": "^7.5.20",
-                "symfony/config": "^4.2",
-                "symfony/console": "^4.0",
-                "symfony/framework-bundle": "^4.0",
-                "symfony/http-foundation": "^4.0",
-                "symfony/messenger": "^4.2",
-                "symfony/serializer": "^4.0"
+                "symfony/config": "^4.2 || ^5.0",
+                "symfony/console": "^4.0 || ^5.0",
+                "symfony/framework-bundle": "^4.0 || ^5.0",
+                "symfony/http-foundation": "^4.0 || ^5.0",
+                "symfony/messenger": "^4.2 || ^5.0",
+                "symfony/serializer": "^4.0 || ^5.0"
             },
             "type": "phpstan-extension",
             "extra": {
@@ -19039,9 +19039,9 @@
             "description": "Symfony Framework extensions and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-symfony/issues",
-                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.27"
+                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.28"
             },
-            "time": "2021-04-25T16:29:33+00:00"
+            "time": "2021-04-27T09:18:16+00:00"
         },
         {
             "name": "phpstan/phpstan-webmozart-assert",
