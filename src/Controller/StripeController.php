@@ -239,14 +239,17 @@ class StripeController extends AbstractController
     }
 
     /**
+     * @param Stripe\PaymentIntent|string $paymentIntent
      * @return PaymentInterface|null
      */
-    private function findOneByPaymentIntent(Stripe\PaymentIntent $paymentIntent): ?PaymentInterface
+    private function findOneByPaymentIntent($paymentIntent): ?PaymentInterface
     {
+        $value = $paymentIntent instanceof Stripe\PaymentIntent ? $paymentIntent->id : $paymentIntent;
+
         $qb = $this->entityManager->getRepository(PaymentInterface::class)
             ->createQueryBuilder('p')
             ->andWhere('JSON_GET_FIELD_AS_TEXT(p.details, \'payment_intent\') = :payment_intent')
-            ->setParameter('payment_intent', $paymentIntent->id);
+            ->setParameter('payment_intent', $value);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
