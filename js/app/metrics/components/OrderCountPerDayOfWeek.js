@@ -3,6 +3,7 @@ import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
 import { Bar } from 'react-chartjs-2';
 import moment from 'moment'
+import _ from 'lodash'
 
 const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
 const commonOptions = {
@@ -20,20 +21,20 @@ const renderChart = ({ resultSet, error }) => {
     return <Spin />;
   }
 
-  // TODO Make it work for days with zero orders
-  // const labels = []
-  // for (let d = 1; d <= 7; d++) {
-  //   labels.push(moment().isoWeekday(d).format('dddd'))
-  // }
+  // Make it work for days with zero orders
+  const labels = []
+  for (let d = 1; d <= 7; d++) {
+    labels.push(moment().isoWeekday(d).format('dddd'))
+  }
 
   const data = {
-    labels: resultSet.categories().map((c) => {
-      const d = parseInt(c.category, 10)
-      return moment().isoWeekday(d).format('dddd')
-    }),
+    labels,
     datasets: resultSet.series().map((s, index) => ({
       label: s.title,
-      data: s.series.map((r) => r.value),
+      data: labels.map((label, index) => {
+        const r = _.find(s.series, s => parseInt(s.category, 10) === index)
+        return r ? r.value : 0
+      }),
       backgroundColor: COLORS_SERIES[index],
       fill: false,
     })),
