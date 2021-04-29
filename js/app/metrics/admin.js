@@ -1,15 +1,18 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-import cubejs from '@cubejs-client/core';
+import { render } from 'react-dom'
+import cubejs from '@cubejs-client/core'
+import { Provider } from 'react-redux'
 
-import AverageDistance from './components/AverageDistance'
-import NumberOfTasks from './components/NumberOfTasks'
+import LogisticsDashboard from './components/LogisticsDashboard'
+
 import BestRestaurants from './components/BestRestaurants'
 import AverageCart from './components/AverageCart'
 import OrderCountPerDayOfWeek from './components/OrderCountPerDayOfWeek'
 import OrderCountPerHourRange from './components/OrderCountPerHourRange'
 
 import './index.scss'
+
+import store from './redux/store'
 
 const rootElement = document.getElementById('cubejs');
 
@@ -22,7 +25,7 @@ if (rootElement) {
 
   switch (rootElement.dataset.view) {
     case 'marketplace':
-      ReactDOM.render(
+      render(
         <div>
           <div style={{ minHeight: '240px' }}>
             <BestRestaurants cubejsApi={ cubejsApi } />
@@ -41,14 +44,9 @@ if (rootElement) {
 
     case 'logistics':
     default:
-      ReactDOM.render(
-        <div>
-          <div style={{ minHeight: '240px' }}>
-            <AverageDistance cubejsApi={ cubejsApi } />
-          </div>
-          <div style={{ minHeight: '240px' }}>
-            <NumberOfTasks cubejsApi={ cubejsApi } />
-          </div>
-        </div>, rootElement);
+      render(
+        <Provider store={ store }>
+          <LogisticsDashboard cubejsApi={ cubejsApi } />
+        </Provider>, rootElement)
   }
 }
