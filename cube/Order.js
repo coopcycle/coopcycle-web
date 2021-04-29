@@ -62,14 +62,9 @@ cube(`Order`, {
       type: `string`
     },
 
-    hour : {
-      sql: `TO_CHAR(${shippingTimeRange}, 'HH24')::numeric`,
-      type: `number`
-    },
-
     hourRange: {
-      // This will output ranges of 2 hours, like 10-12, 12-14, etc...
-      sql: `LPAD((${hour} - (${hour} % 2))::text, 2, '0') || '-' || LPAD((${hour} - (${hour} % 2) + 2)::text, 2, '0')`,
+      // This will output ranges of 1 hour, like "10:00 - 11:00", "11:00 - 12:00", etc...
+      sql: `LPAD(TO_CHAR(${shippingTimeRange}, 'HH24'), 2, '0') || ':00' || ' - ' || LPAD((TO_CHAR(${shippingTimeRange}, 'HH24')::numeric + 1)::text, 2, '0') || ':00'`,
       type: `string`
     },
 

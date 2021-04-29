@@ -2,6 +2,7 @@ import React from 'react'
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
 import { Bar } from 'react-chartjs-2';
+import _ from 'lodash'
 
 const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
 const commonOptions = {
@@ -19,11 +20,19 @@ const renderChart = ({ resultSet, error }) => {
     return <Spin />;
   }
 
+  const labels = []
+  for (let h = 0; h < 24; h++) {
+    labels.push(`${_.pad(h, 2, '0')}:00 - ${_.pad(h + 1, 2, '0')}:00`)
+  }
+
   const data = {
-    labels: resultSet.categories().map((c) => c.category),
+    labels,
     datasets: resultSet.series().map((s, index) => ({
       label: s.title,
-      data: s.series.map((r) => r.value),
+      data: labels.map((label) => {
+        const r = _.find(s.series, s => s.category === label)
+        return r ? r.value : 0
+      }),
       backgroundColor: COLORS_SERIES[index],
       fill: false,
     })),
