@@ -32,7 +32,8 @@ const renderChart = ({ resultSet, error }) => {
     datasets: resultSet.series().map((s, index) => ({
       label: s.title,
       data: labels.map((label, index) => {
-        const r = _.find(s.series, s => parseInt(s.category, 10) === index)
+        const isoWeekday = index + 1
+        const r = _.find(s.series, s => parseInt(s.category, 10) === isoWeekday)
         return r ? r.value : 0
       }),
       backgroundColor: COLORS_SERIES[index],
