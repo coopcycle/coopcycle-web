@@ -8,8 +8,6 @@ const { Option } = Select
 
 const Navbar = ({ dateRange, changeDateRange }) => {
 
-  console.log('Navbar', dateRange)
-
   return (
     <div className="d-flex justify-content-end border-bottom py-4 mb-4">
       <Select
