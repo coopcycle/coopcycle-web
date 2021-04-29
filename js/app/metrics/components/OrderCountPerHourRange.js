@@ -22,7 +22,7 @@ const renderChart = ({ resultSet, error }) => {
 
   const labels = []
   for (let h = 0; h < 24; h++) {
-    labels.push(`${_.pad(h, 2, '0')}:00 - ${_.pad(h + 1, 2, '0')}:00`)
+    labels.push(`${_.padStart(h, 2, '0')}:00 - ${_.padStart(h + 1, 2, '0')}:00`)
   }
 
   const data = {
