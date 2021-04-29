@@ -41,6 +41,9 @@ const renderChart = ({ resultSet, error }) => {
 
   const options = {
     ...commonOptions,
+    legend: {
+      display: false
+    },
     scales: {
       xAxes: [
         {

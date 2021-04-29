@@ -1,9 +1,9 @@
 import React from 'react'
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
-import { HorizontalBar } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
+import chroma from 'chroma-js'
 
-const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
 const commonOptions = {
   maintainAspectRatio: false,
 };
@@ -21,28 +21,28 @@ const renderChart = ({ resultSet, error }) => {
 
   const data = {
     labels: resultSet.categories().map((c) => c.category),
-    datasets: resultSet.series().map((s, index) => ({
-      label: 'Number of orders',
-      data: s.series.map((r) => r.value),
-      backgroundColor: COLORS_SERIES[index],
-      fill: false,
-    })),
+    datasets: resultSet.series().map((s) => {
+
+      const colorScale = chroma.scale(['#10ac84', '#feca57']).domain([ 0, s.series.length - 1 ])
+      const colors = s.series.map((r, i) => colorScale(i).hex())
+
+      return {
+        label: 'Number of orders',
+        data: s.series.map((r) => r.value),
+        backgroundColor: colors,
+        hoverBackgroundColor: colors,
+      }
+    }),
   };
+
   const options = {
     ...commonOptions,
-    scales: {
-      xAxes: [
-        {
-          stacked: true,
-          ticks: {
-            precision: 0,
-          },
-        },
-      ],
-    },
+    legend: {
+      position: 'left'
+    }
   };
-  return <HorizontalBar data={data} options={options} />;
 
+  return <Pie data={data} options={options} />;
 };
 
 const Chart = ({ cubejsApi, dateRange }) => {
@@ -80,13 +80,13 @@ const Chart = ({ cubejsApi, dateRange }) => {
       resetResultSetOnChange={false}
       render={(props) => renderChart({
         ...props,
-        chartType: 'horizontalBar',
+        chartType: 'pie',
         pivotConfig: {
           "x": [
-            "measures"
+            "Restaurant.name"
           ],
           "y": [
-            "Restaurant.name"
+            "measures"
           ],
           "fillMissingDates": true,
           "joinDateRange": false
