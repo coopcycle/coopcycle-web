@@ -13,18 +13,20 @@ const Dashboard = ({ cubejsApi, dateRange }) => {
   return (
     <div>
       <Navbar />
-      <ChartPanel title="Best restaurants">
-        <BestRestaurants cubejsApi={ cubejsApi } dateRange={ dateRange } />
-      </ChartPanel>
-      <ChartPanel title="Average order total">
-        <AverageCart cubejsApi={ cubejsApi } dateRange={ dateRange } />
-      </ChartPanel>
-      <ChartPanel title="Number of orders per day of week">
-        <OrderCountPerDayOfWeek cubejsApi={ cubejsApi } dateRange={ dateRange } />
-      </ChartPanel>
-      <ChartPanel title="Number of orders per hour range">
-        <OrderCountPerHourRange cubejsApi={ cubejsApi } dateRange={ dateRange } />
-      </ChartPanel>
+      <div className="metrics-grid">
+        <ChartPanel title="Best restaurants">
+          <BestRestaurants cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        </ChartPanel>
+        <ChartPanel title="Average order total">
+          <AverageCart cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        </ChartPanel>
+        <ChartPanel title="Number of orders per day of week">
+          <OrderCountPerDayOfWeek cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        </ChartPanel>
+        <ChartPanel title="Number of orders per hour range">
+          <OrderCountPerHourRange cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        </ChartPanel>
+      </div>
     </div>
   )
 }
