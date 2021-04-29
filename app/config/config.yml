@@ -659,6 +659,7 @@ fos_js_routing:
         - admin_dashboard_fullscreen
         - admin_foodtech_dashboard
         - admin_foodtech_settings
+        - admin_metrics
         - admin_order_accept
         - admin_order_refuse
         - admin_order_cancel

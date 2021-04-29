@@ -2,14 +2,25 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Select } from 'antd'
 
-import { changeDateRange } from '../redux/actions'
+import { changeDateRange, changeView } from '../redux/actions'
 
 const { Option } = Select
 
-const Navbar = ({ dateRange, changeDateRange }) => {
+const Navbar = ({ dateRange, changeDateRange, changeView }) => {
 
   return (
-    <div className="d-flex justify-content-end border-bottom py-4 mb-4">
+    <div className="d-flex align-items-center justify-content-between border-bottom py-4 mb-4">
+      <div>
+        <a href="#" onClick={ e => {
+          e.preventDefault()
+          changeView('marketplace')
+        }}>Marketplace</a>
+        <span className="mx-2">|</span>
+        <a href="#" onClick={ e => {
+          e.preventDefault()
+          changeView('logistics')
+        }}>Logistics</a>
+      </div>
       <Select
         defaultValue={ dateRange }
         onChange={ changeDateRange }>
@@ -30,7 +41,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   return {
-    changeDateRange: dateRange => dispatch(changeDateRange(dateRange))
+    changeDateRange: dateRange => dispatch(changeDateRange(dateRange)),
+    changeView: view => dispatch(changeView(view)),
   }
 }
 
