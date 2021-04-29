@@ -7,11 +7,15 @@ import Dashboard from './components/Dashboard'
 
 import './index.scss'
 
-import store from './redux/store'
+import createStore from './redux/store'
 
 const rootElement = document.getElementById('cubejs');
 
 if (rootElement) {
+
+  const { dateRange, view } = { ...rootElement.dataset }
+
+  const store = createStore({ dateRange, view })
 
   const cubejsApi = cubejs(
     rootElement.dataset.token,

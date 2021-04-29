@@ -7,12 +7,16 @@ const middlewares = [ updateQueryString ]
 const composeEnhancers = (typeof window !== 'undefined' &&
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 
-export default createStore(
-  reducers,
-  {
-    ...initialState,
-  },
-  composeEnhancers(
-    applyMiddleware(...middlewares)
+export default (preloadedState) => {
+
+  return createStore(
+    reducers,
+    {
+      ...initialState,
+      ...preloadedState,
+    },
+    composeEnhancers(
+      applyMiddleware(...middlewares)
+    )
   )
-)
+}
