@@ -4,17 +4,20 @@ import { connect } from 'react-redux'
 import AverageDistance from './AverageDistance'
 import NumberOfTasks from './NumberOfTasks'
 import Navbar from './Navbar'
+import ChartPanel from './ChartPanel'
 
 const Dashboard = ({ cubejsApi, dateRange }) => {
 
   return (
     <div>
       <Navbar />
-      <div style={{ minHeight: '240px' }}>
-        <AverageDistance cubejsApi={ cubejsApi } dateRange={ dateRange } />
-      </div>
-      <div style={{ minHeight: '240px' }}>
-        <NumberOfTasks cubejsApi={ cubejsApi } dateRange={ dateRange } />
+      <div className="metrics-grid">
+        <ChartPanel title="Average distance">
+          <AverageDistance cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        </ChartPanel>
+        <ChartPanel title="Number of tasks">
+          <NumberOfTasks cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        </ChartPanel>
       </div>
     </div>
   )
