@@ -8,6 +8,8 @@ const commonOptions = {
   maintainAspectRatio: false,
 };
 
+import { getCubeDateRange } from '../utils'
+
 const renderChart = ({ resultSet, error }) => {
   if (error) {
     return <div>{error.toString()}</div>;
@@ -49,7 +51,7 @@ const renderChart = ({ resultSet, error }) => {
 
 };
 
-const Chart = ({ cubejsApi }) => {
+const Chart = ({ cubejsApi, dateRange }) => {
 
   return (
     <QueryRenderer
@@ -60,7 +62,7 @@ const Chart = ({ cubejsApi }) => {
         "timeDimensions": [
           {
             "dimension": "Order.shippingTimeRange",
-            "dateRange": "Last 30 days"
+            "dateRange": getCubeDateRange(dateRange)
           }
         ],
         "order": [
