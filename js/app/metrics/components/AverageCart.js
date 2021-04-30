@@ -1,14 +1,8 @@
 import React from 'react'
 import { QueryRenderer } from '@cubejs-client/react';
-import { Spin } from 'antd';
-import { Line } from 'react-chartjs-2';
-import moment from 'moment'
+import { Spin, Statistic } from 'antd';
 
-const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
-const commonOptions = {
-  maintainAspectRatio: false,
-};
-
+import { getCurrencySymbol } from '../../i18n'
 import { getCubeDateRange } from '../utils'
 
 const renderChart = ({ resultSet, error }) => {
@@ -20,30 +14,17 @@ const renderChart = ({ resultSet, error }) => {
     return <Spin />;
   }
 
-  const data = {
-    labels: resultSet.categories().map((c) => moment(c.category).format('ll')),
-    datasets: resultSet.series().map((s, index) => ({
-      label: 'Average order total',
-      data: s.series.map((r) => r.value),
-      borderColor: COLORS_SERIES[index],
-      fill: false,
-    })),
-  };
-  const options = {
-    ...commonOptions,
-    legend: {
-      display: false
-    },
-    scales: {
-      xAxes: [
-        {
-          stacked: true,
-        },
-      ],
-    },
-  };
-  return <Line data={data} options={options} />;
-
+  return (
+    <React.Fragment>
+    { resultSet.seriesNames().map((s) => (
+      <Statistic
+        key={ s.key }
+        value={ resultSet.totalRow()[s.key] }
+        precision={ 2 }
+        suffix={ getCurrencySymbol() } />
+    ))}
+    </React.Fragment>
+  )
 };
 
 const Chart = ({ cubejsApi, dateRange }) => {
@@ -57,13 +38,10 @@ const Chart = ({ cubejsApi, dateRange }) => {
         "timeDimensions": [
           {
             "dimension": "Order.shippingTimeRange",
-            "granularity": "day",
             "dateRange": getCubeDateRange(dateRange)
           }
         ],
-        "order": {
-          "Order.shippingTimeRange": "asc"
-        },
+        "order": {},
         "filters": [
           {
             "member": "Order.state",
@@ -80,9 +58,7 @@ const Chart = ({ cubejsApi, dateRange }) => {
         ...props,
         chartType: 'line',
         pivotConfig: {
-          "x": [
-            "Order.shippingTimeRange.day"
-          ],
+          "x": [],
           "y": [
             "measures"
           ],

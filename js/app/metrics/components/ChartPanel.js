@@ -5,7 +5,7 @@ const Panel = ({ title, children }) => {
   return (
     <div className="border">
       <h5 className="bg-light m-0 p-3">{ title }</h5>
-      <div className="p-3" style={{ minHeight: '240px' }}>
+      <div className="metrics-chart-panel p-3">
         { children }
       </div>
     </div>
