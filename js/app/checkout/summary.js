@@ -146,15 +146,14 @@ $('#checkout_address_reusablePackagingEnabled').on('change', function() {
   var iframeUrl = $(this).data('loopeatAuthorizeUrl');
   var oAuthFlow = $(this).data('loopeatOauthFlow');
   var hasCredentials = $(this).data('loopeatCredentials') === true;
-  var required = $(this).data('loopeatRequired');
   if (!hasCredentials && isChecked && isLoopeat && iframeUrl) {
     if (oAuthFlow === 'iframe') {
-      $('#modal-loopeat iframe').attr('src', iframeUrl + '&loopeats_required='+required);
+      $('#modal-loopeat iframe').attr('src', iframeUrl);
       $('#modal-loopeat').modal('show');
     } else {
       $('#modal-loopeat-redirect-warning [data-continue]')
         .off('click')
-        .on('click', () => window.location.href = iframeUrl + '&loopeats_required='+required)
+        .on('click', () => window.location.href = iframeUrl)
       $('#modal-loopeat-redirect-warning').modal('show');
     }
   } else {
