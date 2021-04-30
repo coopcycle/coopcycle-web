@@ -166,16 +166,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.178.11",
+            "version": "3.179.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ae5590158d773402f09ddc79b82e0d9243d3e990"
+                "reference": "f4f2c01b53f71379a1ed8ccccf4305949a69ccbe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ae5590158d773402f09ddc79b82e0d9243d3e990",
-                "reference": "ae5590158d773402f09ddc79b82e0d9243d3e990",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f4f2c01b53f71379a1ed8ccccf4305949a69ccbe",
+                "reference": "f4f2c01b53f71379a1ed8ccccf4305949a69ccbe",
                 "shasum": ""
             },
             "require": {
@@ -250,9 +250,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.11"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.179.1"
             },
-            "time": "2021-04-27T18:16:30+00:00"
+            "time": "2021-04-29T18:17:25+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -4307,16 +4307,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.21",
+            "version": "8.12.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "272b8123ba7f1b7975620c6389e7206281b4a3ce"
+                "reference": "dc9992c35e52235c36241ebb5ddc280ceebe3c09"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/272b8123ba7f1b7975620c6389e7206281b4a3ce",
-                "reference": "272b8123ba7f1b7975620c6389e7206281b4a3ce",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/dc9992c35e52235c36241ebb5ddc280ceebe3c09",
+                "reference": "dc9992c35e52235c36241ebb5ddc280ceebe3c09",
                 "shasum": ""
             },
             "require": {
@@ -4330,7 +4330,7 @@
                 "pear/versioncontrol_git": "^0.5",
                 "phing/phing": "^2.7",
                 "php-coveralls/php-coveralls": "^1.0|^2.0",
-                "symfony/console": "^2.8|^3.0",
+                "symfony/console": "^2.8|^3.0|^v4.4|^v5.2",
                 "symfony/phpunit-bridge": "^4.2 || ^5"
             },
             "type": "library",
@@ -4376,7 +4376,7 @@
                 "issues": "https://github.com/giggsey/libphonenumber-for-php/issues",
                 "source": "https://github.com/giggsey/libphonenumber-for-php"
             },
-            "time": "2021-04-06T08:37:32+00:00"
+            "time": "2021-04-29T07:34:59+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -19575,16 +19575,16 @@
         },
         {
             "name": "rector/rector-prefixed",
-            "version": "0.10.11",
+            "version": "0.10.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector-prefixed.git",
-                "reference": "b52a938d682300a5c27c624d78f6c34d4ccf466d"
+                "reference": "7ce477dc73fa4ad829b517907652b90ff6a769b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/b52a938d682300a5c27c624d78f6c34d4ccf466d",
-                "reference": "b52a938d682300a5c27c624d78f6c34d4ccf466d",
+                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/7ce477dc73fa4ad829b517907652b90ff6a769b4",
+                "reference": "7ce477dc73fa4ad829b517907652b90ff6a769b4",
                 "shasum": ""
             },
             "require": {
@@ -19615,9 +19615,9 @@
             ],
             "description": "Prefixed and PHP 7.0 downgraded version of rector/rector",
             "support": {
-                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.11"
+                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.15"
             },
-            "time": "2021-04-24T12:44:58+00:00"
+            "time": "2021-04-29T15:53:22+00:00"
         },
         {
             "name": "sebastian/code-unit",
