@@ -16165,16 +16165,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v5.2.6",
+            "version": "v5.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "f52424eb407dc67f164afed33a514da1ebbfab10"
+                "reference": "b9afe804b73183a4b98466f20d35b7c7a10bfacd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/f52424eb407dc67f164afed33a514da1ebbfab10",
-                "reference": "f52424eb407dc67f164afed33a514da1ebbfab10",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/b9afe804b73183a4b98466f20d35b7c7a10bfacd",
+                "reference": "b9afe804b73183a4b98466f20d35b7c7a10bfacd",
                 "shasum": ""
             },
             "require": {
@@ -16365,7 +16365,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/symfony/issues",
-                "source": "https://github.com/symfony/symfony/tree/v5.2.6"
+                "source": "https://github.com/symfony/symfony/tree/v5.2.7"
             },
             "funding": [
                 {
@@ -16381,7 +16381,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-03-29T05:17:12+00:00"
+            "time": "2021-05-01T14:53:29+00:00"
         },
         {
             "name": "symfony/webpack-encore-bundle",
