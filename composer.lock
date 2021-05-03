@@ -19575,16 +19575,16 @@
         },
         {
             "name": "rector/rector-prefixed",
-            "version": "0.10.15",
+            "version": "0.10.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector-prefixed.git",
-                "reference": "7ce477dc73fa4ad829b517907652b90ff6a769b4"
+                "reference": "e13c9ddc3da493eba1c84e165aa47641bf5fb0c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/7ce477dc73fa4ad829b517907652b90ff6a769b4",
-                "reference": "7ce477dc73fa4ad829b517907652b90ff6a769b4",
+                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/e13c9ddc3da493eba1c84e165aa47641bf5fb0c0",
+                "reference": "e13c9ddc3da493eba1c84e165aa47641bf5fb0c0",
                 "shasum": ""
             },
             "require": {
@@ -19613,11 +19613,11 @@
             "license": [
                 "MIT"
             ],
-            "description": "Prefixed and PHP 7.0 downgraded version of rector/rector",
+            "description": "Prefixed and PHP 7.1 downgraded version of rector/rector",
             "support": {
-                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.15"
+                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.17"
             },
-            "time": "2021-04-29T15:53:22+00:00"
+            "time": "2021-05-02T23:15:10+00:00"
         },
         {
             "name": "sebastian/code-unit",
