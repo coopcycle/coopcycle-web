@@ -18975,16 +18975,16 @@
         },
         {
             "name": "phpstan/phpstan-symfony",
-            "version": "0.12.28",
+            "version": "0.12.30",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-symfony.git",
-                "reference": "e4b9ea96b78057a758ac648986d2339259448293"
+                "reference": "8377e227368bdec99d4753a8a050e162450c2217"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/e4b9ea96b78057a758ac648986d2339259448293",
-                "reference": "e4b9ea96b78057a758ac648986d2339259448293",
+                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/8377e227368bdec99d4753a8a050e162450c2217",
+                "reference": "8377e227368bdec99d4753a8a050e162450c2217",
                 "shasum": ""
             },
             "require": {
@@ -19003,7 +19003,7 @@
                 "phpunit/phpunit": "^7.5.20",
                 "symfony/config": "^4.2 || ^5.0",
                 "symfony/console": "^4.0 || ^5.0",
-                "symfony/framework-bundle": "^4.0 || ^5.0",
+                "symfony/framework-bundle": "^4.4 || ^5.0",
                 "symfony/http-foundation": "^4.0 || ^5.0",
                 "symfony/messenger": "^4.2 || ^5.0",
                 "symfony/serializer": "^4.0 || ^5.0"
@@ -19039,9 +19039,9 @@
             "description": "Symfony Framework extensions and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-symfony/issues",
-                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.28"
+                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.30"
             },
-            "time": "2021-04-27T09:18:16+00:00"
+            "time": "2021-05-03T09:17:26+00:00"
         },
         {
             "name": "phpstan/phpstan-webmozart-assert",
