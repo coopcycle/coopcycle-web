@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9e80741d39a6ac64bd7b40eede1e41d2",
+    "content-hash": "fece35924dc4fd223b93f04d9c14925e",
     "packages": [
         {
             "name": "api-platform/core",
@@ -166,16 +166,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.180.0",
+            "version": "3.180.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "761d06d3d320bd1a0114f9d937eccd1613e1913b"
+                "reference": "88b91af651a9affd384b184332a4d52d69ab7c81"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/761d06d3d320bd1a0114f9d937eccd1613e1913b",
-                "reference": "761d06d3d320bd1a0114f9d937eccd1613e1913b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/88b91af651a9affd384b184332a4d52d69ab7c81",
+                "reference": "88b91af651a9affd384b184332a4d52d69ab7c81",
                 "shasum": ""
             },
             "require": {
@@ -250,9 +250,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.180.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.180.2"
             },
-            "time": "2021-05-03T20:41:22+00:00"
+            "time": "2021-05-05T02:47:28+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -8975,12 +8975,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosProfileBundle.git",
-                "reference": "e2d1391970c19344d1e9303d39c568cb222e9ace"
+                "reference": "122160224fefb2a00d2ddf82bde93654dd708fbd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/e2d1391970c19344d1e9303d39c568cb222e9ace",
-                "reference": "e2d1391970c19344d1e9303d39c568cb222e9ace",
+                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/122160224fefb2a00d2ddf82bde93654dd708fbd",
+                "reference": "122160224fefb2a00d2ddf82bde93654dd708fbd",
                 "shasum": ""
             },
             "require": {
@@ -9069,7 +9069,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2021-05-04T03:36:51+00:00"
+            "time": "2021-05-05T03:25:57+00:00"
         },
         {
             "name": "nucleos/user-bundle",
@@ -9077,12 +9077,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosUserBundle.git",
-                "reference": "e7a2365a177e8693cabd786ce617b51be88de000"
+                "reference": "a28753ff9de79af365c0c659641bfeb256b6c727"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosUserBundle/zipball/e7a2365a177e8693cabd786ce617b51be88de000",
-                "reference": "e7a2365a177e8693cabd786ce617b51be88de000",
+                "url": "https://api.github.com/repos/nucleos/NucleosUserBundle/zipball/a28753ff9de79af365c0c659641bfeb256b6c727",
+                "reference": "a28753ff9de79af365c0c659641bfeb256b6c727",
                 "shasum": ""
             },
             "require": {
@@ -9185,7 +9185,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2021-05-04T03:45:55+00:00"
+            "time": "2021-05-05T04:08:52+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -16165,16 +16165,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v5.2.7",
+            "version": "v5.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "b9afe804b73183a4b98466f20d35b7c7a10bfacd"
+                "reference": "f52424eb407dc67f164afed33a514da1ebbfab10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/b9afe804b73183a4b98466f20d35b7c7a10bfacd",
-                "reference": "b9afe804b73183a4b98466f20d35b7c7a10bfacd",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/f52424eb407dc67f164afed33a514da1ebbfab10",
+                "reference": "f52424eb407dc67f164afed33a514da1ebbfab10",
                 "shasum": ""
             },
             "require": {
@@ -16365,7 +16365,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/symfony/issues",
-                "source": "https://github.com/symfony/symfony/tree/v5.2.7"
+                "source": "https://github.com/symfony/symfony/tree/v5.2.6"
             },
             "funding": [
                 {
@@ -16381,7 +16381,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-01T14:53:29+00:00"
+            "time": "2021-03-29T05:17:12+00:00"
         },
         {
             "name": "symfony/webpack-encore-bundle",
@@ -18975,16 +18975,16 @@
         },
         {
             "name": "phpstan/phpstan-symfony",
-            "version": "0.12.30",
+            "version": "0.12.32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-symfony.git",
-                "reference": "8377e227368bdec99d4753a8a050e162450c2217"
+                "reference": "f3fb189151b3a2cd99dbc5e7ae2b493d99111bf7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/8377e227368bdec99d4753a8a050e162450c2217",
-                "reference": "8377e227368bdec99d4753a8a050e162450c2217",
+                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/f3fb189151b3a2cd99dbc5e7ae2b493d99111bf7",
+                "reference": "f3fb189151b3a2cd99dbc5e7ae2b493d99111bf7",
                 "shasum": ""
             },
             "require": {
@@ -19039,9 +19039,9 @@
             "description": "Symfony Framework extensions and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-symfony/issues",
-                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.30"
+                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.32"
             },
-            "time": "2021-05-03T09:17:26+00:00"
+            "time": "2021-05-04T17:47:30+00:00"
         },
         {
             "name": "phpstan/phpstan-webmozart-assert",
@@ -19575,16 +19575,16 @@
         },
         {
             "name": "rector/rector-prefixed",
-            "version": "0.10.18",
+            "version": "0.10.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector-prefixed.git",
-                "reference": "16ff45bd878b3f4abac3d64f514bca258fa85100"
+                "reference": "b508a4f774437f75d1b37d7460897e628857f0aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/16ff45bd878b3f4abac3d64f514bca258fa85100",
-                "reference": "16ff45bd878b3f4abac3d64f514bca258fa85100",
+                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/b508a4f774437f75d1b37d7460897e628857f0aa",
+                "reference": "b508a4f774437f75d1b37d7460897e628857f0aa",
                 "shasum": ""
             },
             "require": {
@@ -19615,9 +19615,9 @@
             ],
             "description": "Prefixed and PHP 7.1 downgraded version of rector/rector",
             "support": {
-                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.18"
+                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.19"
             },
-            "time": "2021-05-04T09:07:54+00:00"
+            "time": "2021-05-04T18:53:51+00:00"
         },
         {
             "name": "sebastian/code-unit",
