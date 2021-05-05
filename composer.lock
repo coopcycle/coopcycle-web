@@ -19575,16 +19575,16 @@
         },
         {
             "name": "rector/rector-prefixed",
-            "version": "0.10.18",
+            "version": "0.10.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector-prefixed.git",
-                "reference": "16ff45bd878b3f4abac3d64f514bca258fa85100"
+                "reference": "b508a4f774437f75d1b37d7460897e628857f0aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/16ff45bd878b3f4abac3d64f514bca258fa85100",
-                "reference": "16ff45bd878b3f4abac3d64f514bca258fa85100",
+                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/b508a4f774437f75d1b37d7460897e628857f0aa",
+                "reference": "b508a4f774437f75d1b37d7460897e628857f0aa",
                 "shasum": ""
             },
             "require": {
@@ -19615,9 +19615,9 @@
             ],
             "description": "Prefixed and PHP 7.1 downgraded version of rector/rector",
             "support": {
-                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.18"
+                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.19"
             },
-            "time": "2021-05-04T09:07:54+00:00"
+            "time": "2021-05-04T18:53:51+00:00"
         },
         {
             "name": "sebastian/code-unit",
