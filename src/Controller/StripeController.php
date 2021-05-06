@@ -234,6 +234,8 @@ class StripeController extends AbstractController
                 return $this->handlePaymentIntentPaymentFailed($event, $eventBus, $emailManager);
             case Stripe\Event::CHARGE_CAPTURED:
                 return $this->handleChargeCaptured($event);
+            case Stripe\Event::CHARGE_SUCCEEDED:
+                return $this->handleChargeSucceeded($event);
         }
 
         return new Response('', 200);
@@ -391,6 +393,45 @@ class StripeController extends AbstractController
         $order->addAdjustment($stripeFeeAdjustment);
 
         $this->entityManager->flush();
+    }
+
+    private function handleChargeSucceeded(Stripe\Event $event)
+    {
+        $charge = $event->data->object;
+
+        // We handle this event *ONLY* if Giropay was used
+        if ($charge->payment_method_details->type !== 'giropay') {
+
+            return new Response('', 200);
+        }
+
+        $stripeFee = $this->getStripeFee($event);
+
+        $this->logger->info(sprintf('Stripe fee  = %d', $stripeFee));
+
+        if ($stripeFee > 0) {
+
+            // Can happen when using Stripe CLI
+            if (empty($charge->payment_intent)) {
+                $this->logger->error(sprintf('Charge "%s" has no payment intent, skipping', $charge->id));
+
+                return new Response('', 200);
+            }
+
+            $this->logger->info(sprintf('Retrieving payment intent "%s"', $charge->payment_intent));
+
+            $payment = $this->findOneByPaymentIntent($charge->payment_intent);
+
+            if (null === $payment) {
+                $this->logger->error(sprintf('Payment Intent "%s" not found', $charge->payment_intent));
+
+                return new Response('', 200);
+            }
+
+            $this->addStripeFeeAdjustment($payment->getOrder(), $stripeFee);
+        }
+
+        return new Response('', 200);
     }
 
     /**
