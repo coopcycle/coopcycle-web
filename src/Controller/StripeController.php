@@ -321,7 +321,7 @@ class StripeController extends AbstractController
         return new Response('', 200);
     }
 
-    private function handleChargeCaptured(Stripe\Event $event)
+    private function handleChargeCaptured(Stripe\Event $event): Response
     {
         $charge = $event->data->object;
 
@@ -395,7 +395,7 @@ class StripeController extends AbstractController
         $this->entityManager->flush();
     }
 
-    private function handleChargeSucceeded(Stripe\Event $event)
+    private function handleChargeSucceeded(Stripe\Event $event): Response
     {
         $charge = $event->data->object;
 
