@@ -20,6 +20,7 @@ use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Stripe;
 use Stripe\Exception\ApiErrorException;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
+use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -322,24 +323,7 @@ class StripeController extends AbstractController
     {
         $charge = $event->data->object;
 
-        $this->logger->info(sprintf('Retrieving balance transaction "%s" for charge "%s"',
-            $charge->balance_transaction, $charge->id));
-
-        $stripeOptions = [];
-        if ($event->account) {
-            $stripeOptions['stripe_account'] = $event->account;
-        }
-
-        $balanceTransaction =
-            Stripe\BalanceTransaction::retrieve($charge->balance_transaction, $stripeOptions);
-
-        $stripeFee = 0;
-        foreach ($balanceTransaction->fee_details as $feeDetail) {
-            if ('stripe_fee' === $feeDetail->type) {
-                $stripeFee = $feeDetail->amount;
-                break;
-            }
-        }
+        $stripeFee = $this->getStripeFee($event);
 
         $this->logger->info(sprintf('Stripe fee  = %d', $stripeFee));
 
@@ -362,22 +346,51 @@ class StripeController extends AbstractController
                 return new Response('', 200);
             }
 
-            $order = $payment->getOrder();
-
-            $order->removeAdjustments(AdjustmentInterface::STRIPE_FEE_ADJUSTMENT);
-
-            $stripeFeeAdjustment = $this->adjustmentFactory->createWithData(
-                AdjustmentInterface::STRIPE_FEE_ADJUSTMENT,
-                'Stripe fee',
-                $stripeFee,
-                $neutral = true
-            );
-            $order->addAdjustment($stripeFeeAdjustment);
-
-            $this->entityManager->flush();
+            $this->addStripeFeeAdjustment($payment->getOrder(), $stripeFee);
         }
 
         return new Response('', 200);
+    }
+
+    private function getStripeFee(Stripe\Event $event)
+    {
+        $charge = $event->data->object;
+
+        $this->logger->info(sprintf('Retrieving balance transaction "%s" for charge "%s"',
+            $charge->balance_transaction, $charge->id));
+
+        $stripeOptions = [];
+        if ($event->account) {
+            $stripeOptions['stripe_account'] = $event->account;
+        }
+
+        $balanceTransaction =
+            Stripe\BalanceTransaction::retrieve($charge->balance_transaction, $stripeOptions);
+
+        $stripeFee = 0;
+        foreach ($balanceTransaction->fee_details as $feeDetail) {
+            if ('stripe_fee' === $feeDetail->type) {
+
+                return $feeDetail->amount;
+            }
+        }
+
+        return 0;
+    }
+
+    private function addStripeFeeAdjustment(OrderInterface $order, $stripeFee)
+    {
+        $order->removeAdjustments(AdjustmentInterface::STRIPE_FEE_ADJUSTMENT);
+
+        $stripeFeeAdjustment = $this->adjustmentFactory->createWithData(
+            AdjustmentInterface::STRIPE_FEE_ADJUSTMENT,
+            'Stripe fee',
+            $stripeFee,
+            $neutral = true
+        );
+        $order->addAdjustment($stripeFeeAdjustment);
+
+        $this->entityManager->flush();
     }
 
     /**
