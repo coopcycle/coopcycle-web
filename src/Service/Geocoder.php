@@ -116,7 +116,7 @@ class Geocoder
         // @see https://opencagedata.com/api#forward-opt
         // @see https://opencagedata.com/bounds-finder
         [ $latitude, $longitude ] = explode(',', $this->settingsManager->get('latlng'));
-        $viewbox = GeoUtils::getViewbox($latitude, $longitude, 50);
+        $viewbox = GeoUtils::getViewbox(floatval($latitude), floatval($longitude), 50);
         [ $lngMax, $latMax, $lngMin, $latMin ] = $viewbox;
         $bounds = new Bounds($latMax, $lngMin, $latMin, $lngMax);
 

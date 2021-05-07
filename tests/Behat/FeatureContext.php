@@ -210,6 +210,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @BeforeScenario
+     */
+    public function createMandatorySettings()
+    {
+        $this->theSettingHasValue('latlng', '48.856613,2.352222');
+    }
+
+    /**
      * @AfterScenario
      */
     public function unSetCarbon()
