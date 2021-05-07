@@ -224,7 +224,7 @@ class Client extends BaseClient
             return $responseData['data']['cancel_id'];
         } catch (RequestException $e) {
             $this->logger->error(sprintf(
-                'Could not authorize transaction: "%s"',
+                'Could not cancel transaction: "%s"',
                 (string) $e->getResponse()->getBody()
             ));
 
