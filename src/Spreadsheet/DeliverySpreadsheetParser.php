@@ -69,6 +69,10 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             $this->enhanceTask($delivery->getPickup(), 'pickup', $record);
             $this->enhanceTask($delivery->getDropoff(), 'dropoff', $record);
 
+            if (isset($record['weight']) && is_numeric($record['weight'])) {
+                $delivery->setWeight(floatval($record['weight']) * 1000);
+            }
+
             $deliveries[] = $delivery;
         }
 
@@ -176,6 +180,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.address.telephone' => '+33612345678',
                 'dropoff.comments' => '',
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
+                'weight' => '5.5'
             ],
             [
                 'pickup.address' => '24 rue de rivoli paris',
@@ -190,6 +195,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.address.telephone' => '+33612345678',
                 'dropoff.comments' => '',
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
+                'weight' => '8.0'
             ],
         ];
     }
