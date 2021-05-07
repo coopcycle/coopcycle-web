@@ -16,6 +16,8 @@ service:
       standard: 0.23
     ar:
       standard: 0.21
+    mx:
+      standard: 0.16
     au:
       gst: 0.10
 
@@ -38,6 +40,8 @@ service_tax_exempt:
     ar:
       zero: 0.0
     au:
+      zero: 0.0
+    mx:
       zero: 0.0
 
 drink:
@@ -111,6 +115,8 @@ base_standard:
       standard: 0.21
     au:
       gst: 0.10
+    mx:
+      standard: 0.16
 
 base_intermediary:
   rates:
@@ -145,6 +151,8 @@ base_reduced:
       reduced: 0.05
     ar:
       reduced: 0.025
+    mx:
+      reduced: 0.08
 
 base_exempt:
   rates:
@@ -165,4 +173,6 @@ base_exempt:
     ar:
       zero: 0.00
     au:
+      zero: 0.00
+    mx:
       zero: 0.00
