@@ -88,7 +88,7 @@ class OrderTimeHelperTest extends TestCase
         $cart
             ->getVendor()
             ->willReturn(
-                Vendor::withRestaurant($restaurant->reveal())
+                $restaurant->reveal()
             );
         $cart
             ->getFulfillmentMethod()

@@ -59,7 +59,6 @@
         <cascade-persist />
       </cascade>
     </many-to-one>
-    <many-to-one field="vendor" target-entity="AppBundle\Entity\Vendor" />
     <many-to-one field="shippingAddress" target-entity="AppBundle\Entity\Address">
       <cascade>
         <cascade-all/>
@@ -107,10 +106,5 @@
         <cascade-persist/>
       </cascade>
     </one-to-many>
-    <entity-listeners>
-      <entity-listener class="AppBundle\Entity\Listener\OrderListener">
-        <lifecycle-callback type="preFlush" method="preFlush"/>
-      </entity-listener>
-    </entity-listeners>
   </entity>
 </doctrine-mapping>

@@ -8,7 +8,6 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Payment;
-use AppBundle\Entity\Vendor;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -125,7 +124,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequestForAccount('GET', '/v1/payment_intents/pi_12345678', 'acct_123456');
@@ -152,9 +151,6 @@ class StripeManagerTest extends TestCase
             ->getRestaurants()
             ->willReturn([ $restaurant1, $restaurant2 ]);
 
-        $vendor = new Vendor();
-        $vendor->setHub($hub->reveal());
-
         $order
             ->getNumber()
             ->willReturn('000001');
@@ -172,7 +168,7 @@ class StripeManagerTest extends TestCase
             ->willReturn(new ArrayCollection([ $restaurant1, $restaurant2 ]));
         $order
             ->getVendor()
-            ->willReturn($vendor);
+            ->willReturn($hub->reveal());
         $order
             ->getTransferAmount(Argument::type(LocalBusiness::class))
             ->will(function ($args) use ($restaurant1, $restaurant2) {
@@ -228,9 +224,6 @@ class StripeManagerTest extends TestCase
             ->getRestaurants()
             ->willReturn([ $restaurant1, $restaurant2 ]);
 
-        $vendor = new Vendor();
-        $vendor->setHub($hub->reveal());
-
         $order
             ->getNumber()
             ->willReturn('000001');
@@ -248,7 +241,7 @@ class StripeManagerTest extends TestCase
             ->willReturn(new ArrayCollection([ $restaurant1 ]));
         $order
             ->getVendor()
-            ->willReturn($vendor);
+            ->willReturn($hub->reveal());
         $order
             ->getTransferAmount(Argument::type(LocalBusiness::class))
             ->will(function ($args) use ($restaurant1, $restaurant2) {
@@ -305,7 +298,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->getFeeTotal()
             ->willReturn(750);
@@ -354,7 +347,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->getTotal()
             ->willReturn(3000);
@@ -397,7 +390,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->isMultiVendor()
             ->willReturn(false);
@@ -452,7 +445,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->isMultiVendor()
             ->willReturn(false);

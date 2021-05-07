@@ -255,8 +255,6 @@ class Order extends BaseOrder implements OrderInterface
 {
     protected $customer;
 
-    protected $vendor;
-
     /**
      * @Assert\Valid
      * @AssertShippingAddress
@@ -297,7 +295,7 @@ class Order extends BaseOrder implements OrderInterface
 
     /**
      * @Assert\Expression(
-     *   "!this.isTakeaway() or (this.isTakeaway() and this.getRestaurant().isFulfillmentMethodEnabled('collection'))",
+     *   "!this.isTakeaway() or (this.isTakeaway() and this.getVendor().isFulfillmentMethodEnabled('collection'))",
      *   message="order.collection.not_available",
      *   groups={"cart"}
      * )
@@ -466,12 +464,12 @@ class Order extends BaseOrder implements OrderInterface
      */
     public function getRestaurant(): ?LocalBusiness
     {
-        if (null === $this->vendor) {
+        if (!$this->hasVendor() || $this->isMultiVendor()) {
 
             return null;
         }
 
-        return $this->vendor->getRestaurant();
+        return $this->getRestaurants()->first();
     }
 
     /**
@@ -479,14 +477,7 @@ class Order extends BaseOrder implements OrderInterface
      */
     public function setRestaurant(?LocalBusiness $restaurant): void
     {
-        $currentRestaurant = $this->getRestaurant();
-
-        $vendor = new Vendor();
-        $vendor->setRestaurant($restaurant);
-
-        $this->vendor = $vendor;
-
-        if (null !== $restaurant && $restaurant !== $currentRestaurant) {
+        if (null !== $restaurant && $restaurant !== $this->getRestaurant()) {
 
             $this->vendors->clear();
 
@@ -499,7 +490,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function hasVendor(): bool
     {
-        return null !== $this->getVendor();
+        return count($this->getVendors()) > 0;
     }
 
     /**
@@ -1063,12 +1054,14 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getVendor(): ?Vendor
     {
-        return $this->vendor;
-    }
+        if (!$this->hasVendor()) {
 
-    public function setVendor(?Vendor $vendor): void
-    {
-        $this->vendor = $vendor;
+            return null;
+        }
+
+        $first = $this->getRestaurants()->first();
+
+        return $this->isMultiVendor() ? $first->getHub() : $first;
     }
 
     public function getItemsGroupedByVendor(): \SplObjectStorage
@@ -1202,7 +1195,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function isMultiVendor(): bool
     {
-        return $this->hasVendor() && $this->getVendor()->isHub();
+        return $this->hasVendor() && count($this->getVendors()) > 1;
     }
 
     public function getPickupAddress(): ?Address

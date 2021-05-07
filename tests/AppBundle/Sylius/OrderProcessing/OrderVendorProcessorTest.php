@@ -139,8 +139,6 @@ class OrderVendorProcessorTest extends TestCase
         $product2 = $this->prophesize(ProductInterface::class);
         $product2->getRestaurant()->willReturn($restaurant);
 
-        $vendor = Vendor::withRestaurant($restaurant);
-
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getState()
@@ -154,9 +152,6 @@ class OrderVendorProcessorTest extends TestCase
         $order
             ->isMultiVendor()
             ->willReturn(false);
-        $order
-            ->getVendor()
-            ->willReturn($vendor);
         $order
             ->getVendors()
             ->willReturn(new ArrayCollection([
@@ -182,10 +177,6 @@ class OrderVendorProcessorTest extends TestCase
         $order
             ->addRestaurant($restaurant, 0, 1700)
             ->shouldBeCalled();
-
-        $order->setVendor(Argument::that(function (Vendor $vnd) use ($vendor) {
-            return $vendor === $vnd;
-        }))->shouldBeCalled();
 
         $this->orderProcessor->process($order->reveal());
     }
@@ -215,11 +206,6 @@ class OrderVendorProcessorTest extends TestCase
             ->isMultiVendor()
             ->willReturn(false);
         $order
-            ->getVendor()
-            ->willReturn(
-                Vendor::withRestaurant($otherRestaurant)
-            );
-        $order
             ->getVendors()
             ->willReturn(new ArrayCollection([
                 new OrderVendor($order->reveal(), $otherRestaurant, 2000, 0)
@@ -244,10 +230,6 @@ class OrderVendorProcessorTest extends TestCase
             ->addRestaurant($restaurant, 0, 1700)
             ->shouldBeCalled();
 
-        $order->setVendor(Argument::that(function (Vendor $vendor) use ($restaurant) {
-            return $vendor->getRestaurant() === $restaurant;
-        }))->shouldBeCalled();
-
         $this->orderProcessor->process($order->reveal());
     }
 
@@ -262,8 +244,6 @@ class OrderVendorProcessorTest extends TestCase
         $product2 = $this->prophesize(ProductInterface::class);
         $product2->getRestaurant()->willReturn($restaurant);
 
-        $hub = new Hub();
-
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getState()
@@ -277,11 +257,6 @@ class OrderVendorProcessorTest extends TestCase
         $order
             ->isMultiVendor()
             ->willReturn(false);
-        $order
-            ->getVendor()
-            ->willReturn(
-                Vendor::withHub($hub)
-            );
         $order
             ->getVendors()
             ->willReturn(new ArrayCollection([
@@ -309,14 +284,10 @@ class OrderVendorProcessorTest extends TestCase
             ->addRestaurant($restaurant, 0, 850)
             ->shouldBeCalled();
 
-        $order->setVendor(Argument::that(function (Vendor $vendor) use ($restaurant) {
-            return $vendor->getRestaurant() === $restaurant;
-        }))->shouldBeCalled();
-
         $this->orderProcessor->process($order->reveal());
     }
 
-    public function testProcessUpgradesVendorAndAddsAdjustments()
+    public function testProcessUpgradesVendor()
     {
         $hub = $this->prophesize(Hub::class);
 
@@ -333,8 +304,6 @@ class OrderVendorProcessorTest extends TestCase
                 $restaurant3,
                 $restaurant4
             ]);
-
-        $vendor = Vendor::withHub($hub->reveal());
 
         $product1 = $this->prophesize(ProductInterface::class);
         $product1->getRestaurant()->willReturn($restaurant1);
@@ -367,9 +336,6 @@ class OrderVendorProcessorTest extends TestCase
         $order
             ->isMultiVendor()
             ->willReturn(true);
-        $order
-            ->getVendor()
-            ->willReturn($vendor);
         $order
             ->getRestaurants()
             ->willReturn(new ArrayCollection([
@@ -446,10 +412,6 @@ class OrderVendorProcessorTest extends TestCase
 
                 return true;
             });
-
-        $order->setVendor(Argument::that(function (Vendor $vnd) use ($vendor) {
-            return $vendor === $vnd;
-        }))->shouldBeCalled();
 
         $this->orderProcessor->process($order->reveal());
     }

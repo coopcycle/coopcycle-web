@@ -10,10 +10,11 @@ use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Resource\Model\ToggleableInterface;
 use Sylius\Component\Resource\Model\ToggleableTrait;
 
-class Hub implements OpenCloseInterface, ToggleableInterface
+class Hub implements OpenCloseInterface, ToggleableInterface, Vendor
 {
     use ClosingRulesTrait;
     use FulfillmentMethodsTrait;
@@ -153,5 +154,18 @@ class Hub implements OpenCloseInterface, ToggleableInterface
         }
 
         return array_unique($types);
+    }
+
+    public function getOwners(): Collection
+    {
+        $owners = new ArrayCollection();
+        foreach ($this->getRestaurants() as $restaurant) {
+            foreach ($restaurant->getOwners() as $owner) {
+                $owners->add($owner);
+            }
+
+        }
+
+        return $owners;
     }
 }

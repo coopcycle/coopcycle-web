@@ -117,7 +117,8 @@ class LocalBusiness extends BaseLocalBusiness implements
     CatalogInterface,
     OpenCloseInterface,
     OrganizationAwareInterface,
-    ShippingOptionsInterface
+    ShippingOptionsInterface,
+    Vendor
 {
     use Timestampable;
     use SoftDeleteableEntity;
@@ -148,7 +149,7 @@ class LocalBusiness extends BaseLocalBusiness implements
      *
      * @Assert\Type(type="string")
      * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple"})
+     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple", "order", "order_minimal"})
      */
     protected $name;
 
@@ -187,7 +188,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @var Address
      *
-     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple"})
+     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple", "order", "order_minimal"})
      */
     protected $address;
 
