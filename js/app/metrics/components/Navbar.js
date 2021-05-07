@@ -1,8 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Select } from 'antd'
+import _ from 'lodash'
 
 import { changeDateRange, changeView } from '../redux/actions'
+import { dateRanges } from '../utils'
 
 const { Option } = Select
 
@@ -24,8 +26,9 @@ const Navbar = ({ dateRange, changeDateRange, changeView }) => {
       <Select
         defaultValue={ dateRange }
         onChange={ changeDateRange }>
-        <Option value="30d">Last 30 days</Option>
-        <Option value="3mo">Last 3 months</Option>
+        { _.map(dateRanges, (label, key) =>
+          <Option key={ key } value={ key }>{ label }</Option>
+        )}
       </Select>
     </div>
   )
