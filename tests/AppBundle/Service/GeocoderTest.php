@@ -29,6 +29,8 @@ class GeocoderTest extends TestCase
         $this->rateLimiterStore = $this->prophesize(Store::class);
         $this->settingsManager = $this->prophesize(SettingsManager::class);
 
+        $this->settingsManager->get('latlng')->willReturn('48.856613,2.352222');
+
         $this->geocoder = new Geocoder(
             $this->rateLimiterStore->reveal(),
             $this->settingsManager->reveal(),

@@ -4,8 +4,10 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Utils\GeoUtils;
 use Geocoder\Geocoder as GeocoderInterface;
 use Geocoder\Location;
+use Geocoder\Model\Bounds;
 use Geocoder\Provider\Addok\Addok as AddokProvider;
 use Geocoder\Provider\Chain\Chain as ChainProvider;
 use Geocoder\Provider\OpenCage\OpenCage as OpenCageProvider;
@@ -109,8 +111,18 @@ class Geocoder
      */
     public function geocode($value)
     {
+        // The value of the bounds parameter should be specified as two coordinate points
+        // forming the south-west and north-east corners of a bounding box (min lon, min lat, max lon, max lat).
+        // @see https://opencagedata.com/api#forward-opt
+        // @see https://opencagedata.com/bounds-finder
+        [ $latitude, $longitude ] = explode(',', $this->settingsManager->get('latlng'));
+        $viewbox = GeoUtils::getViewbox($latitude, $longitude, 50);
+        [ $lngMax, $latMax, $lngMin, $latMin ] = $viewbox;
+        $bounds = new Bounds($latMax, $lngMin, $latMin, $lngMax);
+
         $query = GeocodeQuery::create($value)
-            ->withData('proximity', $this->settingsManager->get('latlng'));
+            ->withData('proximity', $this->settingsManager->get('latlng'))
+            ->withBounds($bounds);
 
         $results = $this->getGeocoder()->geocodeQuery(
             $query
