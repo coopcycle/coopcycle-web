@@ -148,3 +148,7 @@ services:
       $localeRegex: "%locale_regex%"
     tags:
       - { name: 'console.command', command: 'coopcycle:translations:copy' }
+
+  AppBundle\Command\EdenredCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:edenred:capture' }
