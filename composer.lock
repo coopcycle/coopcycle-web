@@ -256,27 +256,30 @@
         },
         {
             "name": "azuyalabs/yasumi",
-            "version": "2.3.0",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azuyalabs/yasumi.git",
-                "reference": "e2f37e6de3b15642b83275a24bbfe101cd5c7791"
+                "reference": "083a0d0579fee17e68d688d463bc01098ac2691f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azuyalabs/yasumi/zipball/e2f37e6de3b15642b83275a24bbfe101cd5c7791",
-                "reference": "e2f37e6de3b15642b83275a24bbfe101cd5c7791",
+                "url": "https://api.github.com/repos/azuyalabs/yasumi/zipball/083a0d0579fee17e68d688d463bc01098ac2691f",
+                "reference": "083a0d0579fee17e68d688d463bc01098ac2691f",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": ">=7.2"
+                "php": ">=7.3"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.16",
-                "fzaninotto/faker": "^1.9",
+                "infection/infection": "^0.17 | ^0.22",
                 "mikey179/vfsstream": "^1.6",
-                "phpunit/phpunit": "^8.5"
+                "phan/phan": "^4.0",
+                "phpstan/phpstan": "^0.12.66",
+                "phpunit/phpunit": "^8.5 | ^9.4",
+                "vimeo/psalm": "^4"
             },
             "suggest": {
                 "ext-calendar": "For calculating the date of Easter"
@@ -322,7 +325,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2020-06-22T12:46:20+00:00"
+            "time": "2021-05-09T09:03:34+00:00"
         },
         {
             "name": "babdev/pagerfanta-bundle",
