@@ -25,28 +25,56 @@ order.foodtech.accepted.collection: "Ordu honetan jaso beharko duzu zure eskaera
 order.foodtech.accepted.collection.disclaimer: "Arazorik baduzu, jarri harremanetan\
   \ <strong>%name%</strong>-(r)ekin <strong>%phone_number%</strong> telefono zenbakian\
   \ denborarekin zure eskaera ezeztatu ahal izateko."
-order.foodtech.cancelled: ""
-admin.order.created.subject: ''
+order.foodtech.cancelled: "Jatetxeak ezin du zure %order.number% eskaera prestatu.\n\
+  <br>\nZure dirua hurrengo 5 egunetan itzuliko zaizu automatikoki.\n"
+admin.order.created.subject: 'Eskaera berria konfirmatzeke'
 admin.order.created.body: |
+  Kaixo,
+  <br>
+  Eskaera berria sortu da.
 admin.order_foodtech.created.body: |
-admin.pledge.subject: ''
-admin.send_invitation.subject: ''
+  Kaixo,
+  <br>
+  Eskaera berria sortu da <strong>%restaurant.name%</strong>(r)entzako.
+admin.pledge.subject: 'Iradokizun berria bidali da!'
+admin.send_invitation.subject: 'CoopCyclera gonbidapena!'
 admin.send_invitation.body: |
-admin.send_invitation.create_password: ''
+  Kaixo  %username%,
+  <br>
+  Mezu hau, zure CoopCycle gunera gonbidapena da, zure kontua sortzen amaitzeko egin klik jarraian duzun estekan.
+admin.send_invitation.create_password: 'Nire pasahitza sortu'
 admin.pledge.body: |
-user.pledge.subject: ''
+  Kaixo,
+  <br>
+  %username% k %pledge.name% CoopCyclen egotea nahi du!
+user.pledge.subject: 'Zure iradokizuna orain CoopCyclen dago!'
 user.pledge.body: |
-owner.order.created.subject: ''
+  Kaixo,
+  <br>
+  Zuri esker, %pledge.name% CoopCyclen dago orain!
+owner.order.created.subject: 'Eskaera berria berresteko'
 owner.order.created.body: |
-order.created.subject: ''
-order.created.body: ""
-order.accepted.subject: ''
-order.accepted.body.intro: ""
-order.cancelled.subject: ''
+  Aupa,
+  <br>
+  Eskaera berria sortu da <strong>%restaurant.name%</strong>(r)entzako.
+order.created.subject: '%order.number% eskaera jaso da'
+order.created.body: "Kaixo\n<br>\nZure eskaera jaso dugu.\n<br>\nAhalik eta azkarren\
+  \ egiaztatuko dugu zure eskaera eta baieztatzean mezu elektroniko bat bidaliko dizugu.\n"
+order.accepted.subject: 'Zure %order.number% eskaera baieztatu da'
+order.accepted.body.intro: "Kaixo,\n<br>\nZure eskaera baieztatu da."
+order.cancelled.subject: 'Zure %order.number% eskaera bertan behera utzi da'
 order.cancelled.body.intro: |
-order.delayed.subject: ''
+  Kaixo,
+  <br>
+  Sentitzen dugu, baina zure eskaera bertan behera utzi da.
+order.delayed.subject: 'Zure %order.number% eskaera atzeratu egin da'
 order.delayed.body: |
-task.done.subject: ''
+  Kaixo,
+  <br>
+  Sentitzen dugu, baina zure eskaera %delay% minutuz atzeratuko da.
+  <br>
+  Barkatu eragozpenak.
+task.done.subject: '#%task.id% zeregina gauzatu da'
 task.done.body: |
   Kaixo,
   <br>
