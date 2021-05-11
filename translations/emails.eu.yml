@@ -39,7 +39,7 @@ admin.order_foodtech.created.body: |
 admin.pledge.subject: 'Iradokizun berria bidali da!'
 admin.send_invitation.subject: 'CoopCyclera gonbidapena!'
 admin.send_invitation.body: |
-  Kaixo  %username%,
+  Kaixo %username%,
   <br>
   Mezu hau, zure CoopCycle gunera gonbidapena da, zure kontua sortzen amaitzeko egin klik jarraian duzun estekan.
 admin.send_invitation.create_password: 'Nire pasahitza sortu'
