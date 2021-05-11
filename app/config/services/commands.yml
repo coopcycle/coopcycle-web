@@ -152,3 +152,7 @@ services:
   AppBundle\Command\EdenredCommand:
     tags:
       - { name: 'console.command', command: 'coopcycle:edenred:capture' }
+
+  AppBundle\Command\AnonymizeCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:anonymize' }
