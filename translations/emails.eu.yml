@@ -1,16 +1,30 @@
 registration.email.subject: |
+  E-posta berrespena
 registration.email.message: |
-registration.email.confirm: ''
-registration.email.disclaimer: ''
+  <h2>Ongi etorri %brand_name%-(e)ra, %username%</h2>
+  Mezu hau jaso duzu %brand_name%-(e)n kontu berria sortu duzulako.
+  <br>
+  Berretsi zure helbide elektronikoa azpiko botoian klik eginez.
+registration.email.confirm: 'Berretsi e-posta'
+registration.email.disclaimer: 'Esteka hau zure kontua balioztatzeko aldi batean soilik
+  erabili daiteke'
 registration.email.textMessage: |
-resetting.email.message: ''
-resetting.email.reset: ''
-order.view: ''
+  Ongi etorri %brand_name%-(e)ra, %username%,\n\n
+  Mezu hau jaso duzu %brand_name%-(e)n kontu berria sortu duzulako.\n
+  Zure e-posta berresteko, egin klik hurrengo estekan: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
+resetting.email.message: '<h2>Kaixo %username%</h2> Zure pasahitza berresteko, mesedez,
+  egin klik azpiko botoian.'
+resetting.email.reset: 'Berezarri pasahitza'
+order.view: 'Ikusi eskaera'
 order.public_url: |
-order.foodtech.accepted.delivery: ""
-order.foodtech.accepted.delivery.disclaimer: ""
-order.foodtech.accepted.collection: ""
-order.foodtech.accepted.collection.disclaimer: ""
+  Zure eskaeraren egoera jarraitzeko, <a href="%order.public_url%">egin klik hemen</a>.
+order.foodtech.accepted.delivery: "Ordu honetan helduko zaizu zure eskaera:"
+order.foodtech.accepted.delivery.disclaimer: "Zurekin harremanetan jarriko gara helbidea\
+  \ aurkitzeko arazoak baditugun"
+order.foodtech.accepted.collection: "Ordu honetan jaso beharko duzu zure eskaera:"
+order.foodtech.accepted.collection.disclaimer: "Arazorik baduzu, jarri harremanetan\
+  \ <strong>%name%</strong>-(r)ekin <strong>%phone_number%</strong> telefono zenbakian\
+  \ denborarekin zure eskaera ezeztatu ahal izateko."
 order.foodtech.cancelled: ""
 admin.order.created.subject: ''
 admin.order.created.body: |
@@ -34,19 +48,40 @@ order.delayed.subject: ''
 order.delayed.body: |
 task.done.subject: ''
 task.done.body: |
-task.failed.subject: ''
+  Kaixo,
+  <br>
+  #%task.id% zeregina burutu da.
+task.failed.subject: 'Ezin izan da #%task.id% zeregina burutu'
 task.failed.body: |
-order.payment.subject: ''
-order.payment.body: ""
-covid_19.subject: ''
-covid_19.body: ""
+  Kaixo,
+  <br>
+  Ezin izan da #%task.id% zeregina burutu.
+order.payment.subject: 'Zure %order.number% eskaeraren ordainketa'
+order.payment.body: "Kaixo,\n<br>\nEgin duzun eskaera baten entrega burutu dugu.\n\
+  <br>\nAzpian kreditu-txartelarekin ordaintzeko esteka bat aurkituko duzu.\n"
+covid_19.subject: 'COVID-19 | Zure eskaerarentzako argibide garrantzitsuak'
+covid_19.body: "<h1>Zure banaketa jarraitzeko instrukzioak</h1>\n<p>Uneko COVID-19\
+  \ (Coronavirus) pandemia dela eta, hurrengo instrukzioak <strong>jarraitu behar\
+  \ dituzu</strong> :</p>\n<h2>1. Mantendu distantzia soziala</h2>\n<p>Zure eskaera\
+  \ ate aurrean utziko dugu, banatzera datorren pertsonarengana hurbiltzeko beharra\
+  \ izan ez dezazun. Ez da beharrezkoa eskupekorik uztea ere.</p>\n<h2>2. Ireki zure\
+  \ eskaera hartu ostean</h2>\n<p>Birusa kartoizko eta plastikozko azaletan hainbat\
+  \ egun iraun dezake bizirik. Paketeak beraz birusaren transmisio bektore oso altuak\
+  \ dira.\nHorregatik <strong>zure eskaera paketetik atera eta platerretan zerbitzatzea</strong>\
+  \ eskatzen dizugu.</p>\n<h2>3. Paketea nola bota</h2>\n<p>Zure eskaera paketetik\
+  \ atera ostean, ziurtatu <strong>paketea itxitako zaborrontzi batean botatzen duzula</strong>\
+  \ gero nahi gabe ukitu ez dezazun.</p>\n<h2>4. Garbitu eskuak!</h2>\n<p>Zure eskaera\
+  \ paketetik atera eta paketea bota ostean, <strong>garbitu zure eskuak!</strong></p>\n"
 
-order.expiring_authorization.subject: ''
-order.expiring_authorization.text: ''
+order.expiring_authorization.subject: 'Orainketa baimena laster iraungiko da'
+order.expiring_authorization.text: 'Ordainketa baimena <strong>%order.number%</strong>
+  eskaerarako laster iraungiko da. <br> Eskaera bukatu beharko zenuke baimena iraungi
+  baino lehen dirua galtzen saihesteko.'
 
-order.receipt.subject: ''
-order.receipt.body: ""
+order.receipt.subject: 'Zure %order.number% eskaeraren ordainagiria'
+order.receipt.body: "Kaixo,\n<br>\nZure eskaeraren ordainagiria erantsi da."
 
-order.payment_failed.subject: ''
-order.payment_failed.body: ""
-order.payment_failed.return_to_order: ''
+order.payment_failed.subject: 'Errore bat gertatu da zure ordainketa prozesatzen'
+order.payment_failed.body: "Kaixo,\n<br>\nBarkatu, errore bat gertatu da zure ordainketa\
+  \ prozesatzen. Mesedez, saiatu berriro ordainketa metodo desberdin batekin."
+order.payment_failed.return_to_order: 'Itzuli eskaerara'
