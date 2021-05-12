@@ -221,7 +221,7 @@ services:
 
   # https://cube.dev/docs/getting-started-docker
   cube:
-    image: cubejs/cube:latest
+    image: cubejs/cube:alpine
     ports:
       - 4000:4000
     depends_on:
