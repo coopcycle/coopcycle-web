@@ -748,7 +748,7 @@ form.customize.custom_banner.label: Custom banner
 form.customize.custom_banner.help: Make sure that the banner is a repeatable SVG pattern
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
-product_option.strategy.option_value: Each option has a different price
+product_option.strategy.option_value: Custom price
 roles.ROLE_ADMIN: Administrator
 roles.ROLE_COURIER: Courier
 roles.ROLE_RESTAURANT: Restaurant
