@@ -27,6 +27,8 @@ class OrderView
     private $adjustmentsTotalCache = [];
     private $adjustmentsTotalRecursivelyCache = [];
 
+    public $refunds = [];
+
     public function __construct(?LocalBusiness $restaurant = null)
     {
         $this->restaurant = $restaurant;
@@ -136,7 +138,8 @@ class OrderView
             }
         }
 
-        return $this->getTotal() - $this->getFeeTotal() - $this->getStripeFeeTotal();
+        return $this->getTotal() - $this->getFeeTotal() - $this->getStripeFeeTotal()
+            + $this->getRefundTotal();
     }
 
     public function hasVendor(): bool
@@ -181,5 +184,12 @@ class OrderView
         $order->total             = $data['total'];
 
         return $order;
+    }
+
+    public function getRefundTotal(): int
+    {
+        $total = array_reduce($this->refunds, fn ($total, $refund) => $total + $refund['amount'], 0);
+
+        return $total > 0 ? $total * -1 : $total;
     }
 }

@@ -7,6 +7,7 @@ use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Refund;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Sylius\OrderView;
@@ -25,6 +26,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Knp\Component\Pager\Paginator;
 use League\Csv\Writer as CsvWriter;
 use Sylius\Component\Order\Model\Adjustment;
+use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RestaurantStats implements \Countable
@@ -74,6 +76,7 @@ class RestaurantStats implements \Countable
 
         $this->addAdjustments();
         $this->addVendors();
+        $this->addRefunds();
 
         $this->computeTaxes();
         $this->computeColumnTotals();
@@ -236,6 +239,43 @@ class RestaurantStats implements \Countable
 
             if (isset($vendorsByOrderId[$order->id])) {
                 $order->vendors = $vendorsByOrderId[$order->id];
+            }
+
+            return $order;
+
+        }, $this->result);
+    }
+
+    private function addRefunds()
+    {
+        if (count($this->ids) === 0) {
+            return;
+        }
+
+        $qb = $this->entityManager->getRepository(Order::class)
+            ->createQueryBuilder('o');
+        $qb
+            ->select([
+                'o.id AS order_id',
+                'r.liableParty',
+                'r.amount',
+            ])
+            ->join(PaymentInterface::class, 'p', Expr\Join::WITH, 'p.order = o.id')
+            ->join(Refund::class,           'r', Expr\Join::WITH, 'r.payment = p.id')
+            ->andWhere(
+                $qb->expr()->in('o.id', ':ids')
+            )
+            ->setParameter('ids', $this->ids)
+            ;
+
+        $refunds = $qb->getQuery()->getArrayResult();
+
+        $this->result = array_map(function ($order) use ($refunds) {
+
+            foreach ($refunds as $refund) {
+                if ($refund['order_id'] === $order->id) {
+                    $order->refunds[] = $refund;
+                }
             }
 
             return $order;
@@ -414,6 +454,7 @@ class RestaurantStats implements \Countable
         $headings[] = 'total_incl_tax';
         $headings[] = 'stripe_fee';
         $headings[] = 'platform_fee';
+        $headings[] = 'refund_total';
         $headings[] = 'net_revenue';
 
         return $headings;
@@ -487,6 +528,8 @@ class RestaurantStats implements \Countable
                 return $this->formatNumber($order->getStripeFeeTotal(), !$formatted);
             case 'platform_fee':
                 return $this->formatNumber($order->getFeeTotal(), !$formatted);
+            case 'refund_total':
+                return $this->formatNumber($order->getRefundTotal(), !$formatted);
             case 'net_revenue':
                 return $this->formatNumber($order->getRevenue(), !$formatted);
         }
@@ -538,6 +581,7 @@ class RestaurantStats implements \Countable
             'total_incl_tax',
             'stripe_fee',
             'platform_fee',
+            'refund_total',
             'net_revenue',
         ]);
     }

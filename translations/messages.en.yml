@@ -972,6 +972,7 @@ order.export.heading.stripe_fee: Stripe fee
 order.export.heading.platform_fee: Platform fee
 order.export.heading.net_revenue: Net revenue
 order.export.heading.completed_by: Completed by
+order.export.heading.refund_total: Refunds
 order.export.empty: There are no orders to export
 form.order_export.messenger.label: Add column with messenger who completed the order
 basics.show: Show

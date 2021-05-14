@@ -932,6 +932,7 @@ order.export.heading.stripe_fee: Frais Stripe
 order.export.heading.platform_fee: Frais Plateforme
 order.export.heading.net_revenue: Revenu net
 order.export.heading.completed_by: Livrée par
+order.export.heading.refund_total: Remboursements
 form.order_export.messenger.label: Inclure une colonne avec le coursier ayant livré
   la commande
 basics.show: Afficher
