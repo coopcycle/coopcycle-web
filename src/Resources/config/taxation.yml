@@ -128,6 +128,8 @@ base_intermediary:
       intermediary: 0.1
     fr:
       intermediary: 0.1
+    gb:
+      intermediary: 0.05
     pl:
       intermediary: 0.08
     ar:
@@ -145,8 +147,6 @@ base_reduced:
       reduced: 0.04
     fr:
       reduced: 0.055
-    gb:
-      reduced: 0.05
     pl:
       reduced: 0.05
     ar:
